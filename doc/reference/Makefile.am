@@ -18,7 +18,9 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-HIGNORE = internal.h shishi-int.h crypto.h
+HIGNORE = asn1.h cfg.h crypto.h diskio.h internal.h resolver.h	\
+	shishi-int.h starttls.h utils.h
+
 HTML_OBJECTS = index.html c4.html shishi-shishi.html
 
 EXTRA_DIST = $(PACKAGE)-docs.tmpl $(HTML_OBJECTS) $(IMAGES)
