@@ -10,6 +10,12 @@ AC_DEFUN([gl_FUNC_STRDUP],
 [
   AC_REPLACE_FUNCS(strdup)
   AC_CHECK_DECLS_ONCE(strdup)
+  AH_BOTTOM([
+#if defined HAVE_DECL_STRDUP && !HAVE_DECL_STRDUP
+/* Duplicate S, returning an identical malloc'd string.  */
+extern char *strdup (const char *s);
+#endif
+])
   gl_PREREQ_STRDUP
 ])
 
