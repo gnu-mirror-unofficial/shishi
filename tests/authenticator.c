@@ -55,7 +55,8 @@ test (Shishi * handle)
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
   char *p;
-  int n, m, res;
+  int res;
+  size_t n, m;
   uint32_t seq;
 
   /* shishi_authenticator */
