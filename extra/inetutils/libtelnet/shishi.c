@@ -458,6 +458,8 @@ krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
     }
   cnamerealm[cnamerealmlen] = '\0';
 
+  /* XXX check authorization */
+
   Data (a, KRB_ACCEPT, cnamerealm, cnamerealm ? -1 : 0);
   DEBUG(("telnetd: Kerberos5 identifies him as ``%s''\r\n",
 	 cnamerealm ? cnamerealm : ""));
