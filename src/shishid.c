@@ -866,25 +866,18 @@ process (Shishi * handle, struct arguments *arg,
 
 int quit = 0;
 
-void ctrlc (int signum);
-
-void
+static void
 ctrlc (int signum)
 {
   quit = 1;
 }
 
 static int
-doit (Shishi * handle, struct arguments *arg)
+kdc_listen (struct arguments *arg)
 {
   struct listenspec *ls;
-  fd_set readfds;
-  struct sockaddr addr;
-  socklen_t length = sizeof (addr);
   int maxfd = 0;
-  int rc;
   int i;
-  int sent_bytes, read_bytes;
   int yes;
 
   for (i = 0; i < arg->nlistenspec; i++)
@@ -950,31 +943,20 @@ doit (Shishi * handle, struct arguments *arg)
   if (!arg->silent)
     printf ("Listening on %d ports...\n", maxfd);
 
-  if (arg->setuid)
-    {
-      struct passwd *passwd;
+  return 0;
+}
 
-      passwd = getpwnam (arg->setuid);
-      if (passwd == NULL)
-	{
-	  perror ("setuid: getpwnam");
-	  return 1;
-	}
-
-      rc = setuid (passwd->pw_uid);
-      if (rc == -1)
-	{
-	  perror ("setuid");
-	  return 1;
-	}
-
-      if (!arg->silent)
-	printf ("User identity set to `%s' (%d)...\n",
-		passwd->pw_name, passwd->pw_uid);
-    }
-
-  signal (SIGINT, ctrlc);
-  signal (SIGTERM, ctrlc);
+static int
+kdc_loop (Shishi * handle, struct arguments *arg)
+{
+  struct listenspec *ls;
+  fd_set readfds;
+  struct sockaddr addr;
+  socklen_t length = sizeof (addr);
+  int maxfd = 0;
+  int rc;
+  int i;
+  int sent_bytes, read_bytes;
 
   while (!quit)
     {
@@ -1010,8 +992,8 @@ doit (Shishi * handle, struct arguments *arg)
 
 		/* XXX search for closed fd's before allocating new entry */
 		arg->listenspec = realloc (arg->listenspec,
-					  sizeof (*arg->listenspec) *
-					  (arg->nlistenspec + 1));
+					   sizeof (*arg->listenspec) *
+					   (arg->nlistenspec + 1));
 		if (arg->listenspec != NULL)
 		  {
 		    struct sockaddr_in *sin;
@@ -1093,6 +1075,45 @@ doit (Shishi * handle, struct arguments *arg)
 	  }
     }
 
+  return 0;
+}
+
+static int
+kdc_setuid (struct arguments *arg)
+{
+  struct passwd *passwd;
+  int rc;
+
+  if (!arg->setuid)
+    return 0;
+
+  passwd = getpwnam (arg->setuid);
+  if (passwd == NULL)
+    {
+      perror ("setuid: getpwnam");
+      return 1;
+    }
+
+  rc = setuid (passwd->pw_uid);
+  if (rc == -1)
+    {
+      perror ("setuid");
+      return 1;
+    }
+
+  if (!arg->silent)
+    printf ("User identity set to `%s' (%d)...\n",
+	    passwd->pw_name, passwd->pw_uid);
+
+  return 0;
+}
+
+static void
+kdc_unlisten (struct arguments *arg)
+{
+  int i;
+  int rc;
+
   for (i = 0; i < arg->nlistenspec; i++)
     if (arg->listenspec[i].sockfd)
       {
@@ -1108,12 +1129,35 @@ doit (Shishi * handle, struct arguments *arg)
 	else if (!arg->silent)
 	  printf ("done\n");
       }
+}
+
+static int
+launch (Shishi * handle, struct arguments *arg)
+{
+  int rc;
+
+  rc = kdc_listen (arg);
+  if (rc != 0)
+    return rc;
+
+  rc = kdc_setuid (arg);
+  if (rc != 0)
+    return rc;
+
+  signal (SIGINT, ctrlc);
+  signal (SIGTERM, ctrlc);
+
+  rc = kdc_loop (handle, arg);
+  if (rc != 0)
+    return rc;
+
+  kdc_unlisten (arg);
 
   return 0;
 }
 
 int
-launch_1 (Shishi * handle, struct arguments *arg)
+setup (Shishi * handle, struct arguments *arg)
 {
   char *tgtname;
   int rc;
@@ -1136,7 +1180,7 @@ launch_1 (Shishi * handle, struct arguments *arg)
       return 1;
     }
 
-  rc = doit (handle, arg);
+  rc = launch (handle, arg);
 
   shishi_key_done (&arg->tgskey);
 
@@ -1144,7 +1188,7 @@ launch_1 (Shishi * handle, struct arguments *arg)
 }
 
 int
-launch (struct arguments *arg)
+init (struct arguments *arg)
 {
   Shishi * handle;
   int rc;
@@ -1156,7 +1200,7 @@ launch (struct arguments *arg)
       return 1;
     }
 
-  rc = launch_1 (handle, arg);
+  rc = setup (handle, arg);
 
   shishi_done (handle);
 
@@ -1184,7 +1228,7 @@ main (int argc, char *argv[])
   if (!arg.cfgfile)
     arg.cfgfile = strdup (SYSTEMCFGFILE);
 
-  rc = launch (&arg);
+  rc = init (&arg);
 
   free (arg.keyfile);
   free (arg.cfgfile);
