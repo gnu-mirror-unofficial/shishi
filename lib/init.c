@@ -42,7 +42,7 @@ _shishi_gettext_init (void)
 #endif /* ENABLE_NLS */
 
 /**
- * shishi_init:
+ * shishi:
  *
  * Initializes the Shishi library.  If this function fails, it may print
  * diagnostic errors to stderr.
@@ -158,7 +158,7 @@ _shishi_init_read (Shishi * handle,
  * @handle: pointer to handle to be created.
  *
  * Create a Shishi library handle and read the system configuration
- * file, user configuration file and user tickets from the defaul
+ * file, user configuration file and user tickets from the default
  * paths.  The paths to the system configuration file is decided at
  * compile time, and is $sysconfdir/shishi.conf.  The user
  * configuration file is $HOME/.shishi/config, and the user ticket
