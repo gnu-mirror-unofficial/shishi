@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
-"POT-Creation-Date: 2002-11-23 04:14+0100\n"
+"POT-Creation-Date: 2002-11-28 06:03+0100\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -62,7 +62,7 @@ msgid "Option `%s' only valid with KDC/TGS."
 msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
 
 #: src/shishi.c:299 src/shishi.c:326 src/shishi.c:334 src/shishi.c:342
-#: src/shishi.c:350 src/shishi.c:358 src/shishi.c:365 src/shishi.c:372
+#: src/shishi.c:350 src/shishi.c:358 src/shishi.c:365
 #, c-format
 msgid "Option `%s' only valid with KDC/AS/TGS."
 msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
@@ -72,17 +72,17 @@ msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
 msgid "Option `%s' only valid with AP and KDC/AS/TGS."
 msgstr ""
 
-#: src/shishi.c:379
+#: src/shishi.c:372
 #, c-format
 msgid "Too many arguments: `%s'"
 msgstr "För många parametrar: `%s'"
 
-#: src/shishi.c:416
+#: src/shishi.c:409
 #, c-format
 msgid "Unknown command: '%s'"
 msgstr "Okänt kommando: '%s'"
 
-#: src/shishi.c:866
+#: src/shishi.c:856
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""
