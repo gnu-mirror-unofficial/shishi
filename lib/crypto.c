@@ -2323,10 +2323,10 @@ shishi_dr (Shishi * handle,
     {
       printf ("dr (%s, key, constant, %d)\n",
 	      shishi_cipher_name (shishi_key_type (key)), derivedrandomlen);
-      printf ("\t ;; key (length %d):\n", shishi_key_type (key));
-      hexprint (shishi_key_value (key), shishi_key_type (key));
+      printf ("\t ;; key (length %d):\n", shishi_key_length (key));
+      hexprint (shishi_key_value (key), shishi_key_length (key));
       puts ("");
-      binprint (shishi_key_value (key), shishi_key_type (key));
+      binprint (shishi_key_value (key), shishi_key_length (key));
       puts ("");
       printf ("\t ;; constant  %s':\n", constant);
       escapeprint (constant, constantlen);
