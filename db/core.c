@@ -22,9 +22,7 @@
 #include "internal.h"
 
 int
-shisa_enumerate_realms (Shisa *dbh,
-			char ***realms,
-			size_t *nrealms)
+shisa_enumerate_realms (Shisa * dbh, char ***realms, size_t * nrealms)
 {
   _Shisa_db *db;
   size_t i;
@@ -46,10 +44,9 @@ shisa_enumerate_realms (Shisa *dbh,
 }
 
 int
-shisa_enumerate_principals (Shisa *dbh,
+shisa_enumerate_principals (Shisa * dbh,
 			    const char *realm,
-			    char ***principals,
-			    size_t *nprincipals)
+			    char ***principals, size_t * nprincipals)
 {
   _Shisa_db *db;
   size_t i;
@@ -74,8 +71,7 @@ shisa_enumerate_principals (Shisa *dbh,
 int
 shisa_principal_find (Shisa * dbh,
 		      const char *realm,
-		      const char *principal,
-		      Shisa_principal *ph)
+		      const char *principal, Shisa_principal * ph)
 {
   _Shisa_db *db;
   size_t i;
@@ -94,8 +90,7 @@ shisa_principal_find (Shisa * dbh,
 int
 shisa_principal_update (Shisa * dbh,
 			const char *realm,
-			const char *principal,
-			const Shisa_principal * ph)
+			const char *principal, const Shisa_principal * ph)
 {
   _Shisa_db *db;
   size_t i;
@@ -104,7 +99,8 @@ shisa_principal_update (Shisa * dbh,
   for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
     {
       /* XXX ignore read-only backends. */
-      rc = db->backend->principal_update (dbh, db->state, realm, principal, ph);
+      rc =
+	db->backend->principal_update (dbh, db->state, realm, principal, ph);
       /* XXX ignore error and continue for ignore-error backends. */
       return rc;
     }
@@ -116,8 +112,7 @@ int
 shisa_principal_add (Shisa * dbh,
 		     const char *realm,
 		     const char *principal,
-		     const Shisa_principal * ph,
-		     const Shisa_key * key)
+		     const Shisa_principal * ph, const Shisa_key * key)
 {
   _Shisa_db *db;
   size_t i;
@@ -139,9 +134,7 @@ shisa_principal_add (Shisa * dbh,
 }
 
 int
-shisa_principal_remove (Shisa * dbh,
-			const char *realm,
-			const char *principal)
+shisa_principal_remove (Shisa * dbh, const char *realm, const char *principal)
 {
   _Shisa_db *db;
   size_t i;
@@ -165,8 +158,7 @@ int
 shisa_enumerate_keys (Shisa * dbh,
 		      const char *realm,
 		      const char *principal,
-		      Shisa_key ***keys,
-		      size_t *nkeys)
+		      Shisa_key *** keys, size_t * nkeys)
 {
   _Shisa_db *db;
   size_t i;
@@ -191,16 +183,13 @@ shisa_enumerate_keys (Shisa * dbh,
 int
 shisa_key_add (Shisa * dbh,
 	       const char *realm,
-	       const char *principal,
-	       uint32_t kvno,
-	       const Shisa_key * key)
+	       const char *principal, uint32_t kvno, const Shisa_key * key)
 {
   return SHISA_NO_KEY;
 }
 
 void
-shisa_key_free (Shisa * dbh,
-		Shisa_key * key)
+shisa_key_free (Shisa * dbh, Shisa_key * key)
 {
   if (key->key)
     free (key->key);

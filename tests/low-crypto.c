@@ -1,4 +1,4 @@
-/* low-crypto.c		Shishi crypto primitives self tests.
+/* low-crypto.c --- Shishi crypto primitives self tests.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -22,7 +22,7 @@
 #include "utils.c"
 
 void
-test (Shishi *handle)
+test (Shishi * handle)
 {
   char *out, *ivout;
   int err;
@@ -99,7 +99,8 @@ test (Shishi *handle)
   else
     {
       if (memcmp (out, "\x58\x93\x7a\x58\xfe\xea\x82\xf8"
-		  "\x0e\x64\x62\x01\x40\x2b\x2c\xed\x5d\x54\xc1\xfa", 20) == 0)
+		  "\x0e\x64\x62\x01\x40\x2b\x2c\xed\x5d\x54\xc1\xfa",
+		  20) == 0)
 	success ("shishi_hmac_sha1() OK\n");
       else
 	{
@@ -141,7 +142,7 @@ test (Shishi *handle)
     }
 
   err = shishi_arcfour (handle, 0, "keykeykey", 9, NULL, NULL,
-			    "abcdefgh", 8, &out);
+			"abcdefgh", 8, &out);
   if (err)
     fail ("shishi_arcfour() failed: %d\n", err);
   else
@@ -201,8 +202,7 @@ test (Shishi *handle)
 		  "\x6c\x65\xbb\xf3\x3e\xdb\x4d\xd9"
 		  "\x1d\xa3\x9d\xf4\x17\x69\x6e\x82"
 		  "\x02\xa8\x2d\x9c\xce\x1a\xb2\xfc"
-		  "\xfa\x5c\x67\x2f\x8f\x01\x80\xd5"
-		  "\x09\xa2", 258) == 0)
+		  "\xfa\x5c\x67\x2f\x8f\x01\x80\xd5" "\x09\xa2", 258) == 0)
 	success ("shishi_arcfour() OK\n");
       else
 	{
@@ -383,7 +383,7 @@ test (Shishi *handle)
       free (out);
     }
 
-#ifdef USE_GCRYPT /* XXX Nettle fails this one right now. */
+#ifdef USE_GCRYPT		/* XXX Nettle fails this one right now. */
   err = shishi_aes_cts (handle, 0, "keykeykeykeykeyk", 16,
 			"iviviviviviviviv", &ivout,
 			"abcdefghijklmnopqrstuvx", 25, &out);

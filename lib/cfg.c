@@ -322,7 +322,7 @@ shishi_cfg (Shishi * handle, char *option)
 		      sinaddr->sin_port = htons (88);
 		  }
 		else
-		  sinaddr->sin_port = htons(port);
+		  sinaddr->sin_port = htons (port);
 	      }
 	  if (realm)
 	    break;

@@ -1,4 +1,4 @@
-/* libgcrypt.c   shishi crypto wrappers around libgcrypt.
+/* libgcrypt.c --- Shishi crypto wrappers around Libgcrypt.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -385,19 +385,20 @@ struct arcfour_ctx
 #define SWAP(a,b) do { int _t = a; a = b; b = _t; } while(0)
 
 static void
-arcfour_set_key(struct arcfour_ctx *ctx,
-		unsigned length, const uint8_t *key)
+arcfour_set_key (struct arcfour_ctx *ctx,
+		 unsigned length, const uint8_t * key)
 {
   unsigned i, j, k;
 
   /* Initialize context */
-  for (i = 0; i<256; i++)
+  for (i = 0; i < 256; i++)
     ctx->S[i] = i;
 
-  for (i = j = k = 0; i<256; i++)
+  for (i = j = k = 0; i < 256; i++)
     {
-      j += ctx->S[i] + key[k]; j &= 0xff;
-      SWAP(ctx->S[i], ctx->S[j]);
+      j += ctx->S[i] + key[k];
+      j &= 0xff;
+      SWAP (ctx->S[i], ctx->S[j]);
       /* Repeat key as needed */
       k = (k + 1) % length;
     }
@@ -405,22 +406,26 @@ arcfour_set_key(struct arcfour_ctx *ctx,
 }
 
 static void
-arcfour_crypt(struct arcfour_ctx *ctx,
-	      unsigned length, uint8_t *dst,
-	      const uint8_t *src)
+arcfour_crypt (struct arcfour_ctx *ctx,
+	       unsigned length, uint8_t * dst, const uint8_t * src)
 {
   register uint8_t i, j;
 
-  i = ctx->i; j = ctx->j;
-  while(length--)
+  i = ctx->i;
+  j = ctx->j;
+  while (length--)
     {
-      i++; i &= 0xff;
-      j += ctx->S[i]; j &= 0xff;
-      SWAP(ctx->S[i], ctx->S[j]);
-      *dst++ = *src++ ^ ctx->S[ (ctx->S[i] + ctx->S[j]) & 0xff ];
+      i++;
+      i &= 0xff;
+      j += ctx->S[i];
+      j &= 0xff;
+      SWAP (ctx->S[i], ctx->S[j]);
+      *dst++ = *src++ ^ ctx->S[(ctx->S[i] + ctx->S[j]) & 0xff];
     }
-  ctx->i = i; ctx->j = j;
+  ctx->i = i;
+  ctx->j = j;
 }
+
 /* END: Taken from Nettle arcfour.h and arcfour.c */
 
 int

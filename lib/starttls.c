@@ -136,7 +136,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
   *outlen = bytes_read;
 
   do
-    ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
+    ret = gnutls_bye (session, GNUTLS_SHUT_RDWR);
   while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
 
   if (ret != GNUTLS_E_SUCCESS)
@@ -155,7 +155,8 @@ _shishi_sendrecv_tls (Shishi * handle,
 		      Shishi_tkts_hint * hint)
 {
   const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
-			  GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0 };
+    GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
+  };
   gnutls_session session;
   gnutls_anon_client_credentials anoncred;
   gnutls_certificate_credentials x509cred;

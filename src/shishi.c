@@ -33,7 +33,7 @@
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #else
-# define setlocale(Category, Locale) /* empty */
+# define setlocale(Category, Locale)	/* empty */
 #endif
 #include <gettext.h>
 #define _(String) gettext (String)
@@ -199,15 +199,15 @@ main (int argc, char *argv[])
 	{
 	  if (args.server_name_arg &&
 	      !shishi_tkt_server_p (shishi_tkts_nth (shishi_tkts_default (sh),
-						     i), args.server_name_arg))
+						     i),
+				    args.server_name_arg))
 	    continue;
 
 	  if (args.verbose_flag)
 	    {
 	      printf ("Removing ticket:\n");
 	      shishi_tkt_pretty_print (shishi_tkts_nth
-				       (shishi_tkts_default
-					(sh), i), stdout);
+				       (shishi_tkts_default (sh), i), stdout);
 	    }
 
 	  rc = shishi_tkts_remove (shishi_tkts_default (sh), i);

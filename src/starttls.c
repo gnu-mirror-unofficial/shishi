@@ -55,13 +55,14 @@ logcertinfo (gnutls_session session)
 	unsigned char *serial = NULL, *serialhex = NULL;
 	char *issuer = NULL, *subject = NULL;
 	size_t seriallen, issuerlen, subjectlen;
-	unsigned char md5fingerprint[16], md5fingerprinthex[3*16+1];
+	unsigned char md5fingerprint[16], md5fingerprinthex[3 * 16 + 1];
 	size_t md5fingerprintlen;
 	int algo;
 	unsigned bits;
 	const char *keytype, *validity;
 
-	rc = gnutls_x509_crt_import (cert, &cert_list[i], GNUTLS_X509_FMT_DER);
+	rc =
+	  gnutls_x509_crt_import (cert, &cert_list[i], GNUTLS_X509_FMT_DER);
 	if (rc < 0)
 	  {
 	    syslog (LOG_ERR, "TLS xci[%d] failed (%d): %s", i,
@@ -80,10 +81,10 @@ logcertinfo (gnutls_session session)
 	  }
 
 	for (i = 0; i < md5fingerprintlen; i++)
-	  sprintf (&md5fingerprinthex[3*i], "%.2x:", md5fingerprint[i]);
+	  sprintf (&md5fingerprinthex[3 * i], "%.2x:", md5fingerprint[i]);
 
 	expiration_time = gnutls_x509_crt_get_expiration_time (cert);
-	if (expiration_time == (time_t) -1)
+	if (expiration_time == (time_t) - 1)
 	  {
 	    syslog (LOG_ERR, "TLS xcget[%d] failed (%d): %s", i,
 		    rc, gnutls_strerror (rc));
@@ -91,7 +92,7 @@ logcertinfo (gnutls_session session)
 	  }
 
 	activation_time = gnutls_x509_crt_get_activation_time (cert);
-	if (expiration_time == (time_t) -1)
+	if (expiration_time == (time_t) - 1)
 	  {
 	    syslog (LOG_ERR, "TLS xcgat[%d] failed (%d): %s", i,
 		    rc, gnutls_strerror (rc));
@@ -155,9 +156,9 @@ logcertinfo (gnutls_session session)
 	    goto cleanup;
 	  }
 
-	serialhex = xmalloc (2*seriallen+1);
+	serialhex = xmalloc (2 * seriallen + 1);
 	for (i = 0; i < seriallen; i++)
-	  sprintf (&serialhex[2*i], "%.2x", serial[i]);
+	  sprintf (&serialhex[2 * i], "%.2x", serial[i]);
 
 
 	algo = gnutls_x509_crt_get_pk_algorithm (cert, &bits);
@@ -267,7 +268,8 @@ kdc_extension (struct listenspec *ls)
       memcmp (ls->buf, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN) == 0)
     {
       const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
-			      GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0 };
+	GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
+      };
 
       syslog (LOG_INFO, "Trying STARTTLS");
 
@@ -317,7 +319,8 @@ kdc_extension (struct listenspec *ls)
 	  return -1;
 	}
 
-      gnutls_certificate_server_set_request (ls->session, GNUTLS_CERT_REQUEST);
+      gnutls_certificate_server_set_request (ls->session,
+					     GNUTLS_CERT_REQUEST);
 
       gnutls_dh_set_prime_bits (ls->session, DH_BITS);
       gnutls_transport_set_ptr (ls->session,

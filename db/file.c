@@ -62,11 +62,11 @@ struct Shisa_file
 typedef struct Shisa_file Shisa_file;
 
 enum
-  {
-    READ_ONLY_OPTION = 0,
-    ALLOW_CREATE_OPTION = 1,
-    THE_END
-  };
+{
+  READ_ONLY_OPTION = 0,
+  ALLOW_CREATE_OPTION = 1,
+  THE_END
+};
 
 static char *const _shisa_file_opts[] = {
   /* [READ_ONLY_OPTION] =        */ "read-only",
@@ -75,9 +75,7 @@ static char *const _shisa_file_opts[] = {
 };
 
 int
-shisa_file_cfg (Shisa *dbh,
-		Shisa_file *info,
-		const char *option)
+shisa_file_cfg (Shisa * dbh, Shisa_file * info, const char *option)
 {
   char *opt = option ? xstrdup (option) : NULL;
   char *p = opt;
@@ -109,10 +107,8 @@ shisa_file_cfg (Shisa *dbh,
 }
 
 int
-shisa_file_init (Shisa *dbh,
-		 const char *location,
-		 const char *options,
-		 void **state)
+shisa_file_init (Shisa * dbh,
+		 const char *location, const char *options, void **state)
 {
   Shisa_file *info;
   int rc;
@@ -132,10 +128,8 @@ shisa_file_init (Shisa *dbh,
 }
 
 int
-shisa_file_enumerate_realms (Shisa *dbh,
-			     void *state,
-			     char ***realms,
-			     size_t *nrealms)
+shisa_file_enumerate_realms (Shisa * dbh,
+			     void *state, char ***realms, size_t * nrealms)
 {
   Shisa_file *info = state;
 
@@ -146,11 +140,10 @@ shisa_file_enumerate_realms (Shisa *dbh,
 }
 
 int
-shisa_file_enumerate_principals (Shisa *dbh,
+shisa_file_enumerate_principals (Shisa * dbh,
 				 void *state,
 				 const char *realm,
-				 char ***principals,
-				 size_t *nprincipals)
+				 char ***principals, size_t * nprincipals)
 {
   Shisa_file *info = state;
 
@@ -167,8 +160,7 @@ int
 shisa_file_principal_find (Shisa * dbh,
 			   void *state,
 			   const char *realm,
-			   const char *principal,
-			   Shisa_principal *ph)
+			   const char *principal, Shisa_principal * ph)
 {
   Shisa_file *info = state;
 
@@ -227,8 +219,7 @@ principal_add (Shisa * dbh,
 	       void *state,
 	       const char *realm,
 	       const char *principal,
-	       const Shisa_principal * ph,
-	       const Shisa_key * key)
+	       const Shisa_principal * ph, const Shisa_key * key)
 {
   Shisa_file *info = state;
 
@@ -255,8 +246,7 @@ shisa_file_principal_add (Shisa * dbh,
 			  void *state,
 			  const char *realm,
 			  const char *principal,
-			  const Shisa_principal * ph,
-			  const Shisa_key * key)
+			  const Shisa_principal * ph, const Shisa_key * key)
 {
   int rc;
 
@@ -278,7 +268,8 @@ realm_remove (Shisa * dbh, void *state, const char *realm)
   if (!_shisa_isdir2 (info->path, realm))
     return SHISA_NO_REALM;
 
-  rc = shisa_file_enumerate_principals (dbh, state, realm, NULL, &nprincipals);
+  rc =
+    shisa_file_enumerate_principals (dbh, state, realm, NULL, &nprincipals);
   if (rc != SHISA_OK)
     return rc;
 
@@ -293,9 +284,7 @@ realm_remove (Shisa * dbh, void *state, const char *realm)
 
 static int
 remove_keys (Shisa * dbh,
-	     void *state,
-	     const char *realm,
-	     const char *principal)
+	     void *state, const char *realm, const char *principal)
 {
   Shisa_file *info = state;
   char **files;
@@ -326,9 +315,7 @@ remove_keys (Shisa * dbh,
 
 static int
 remove_info (Shisa * dbh,
-	     void *state,
-	     const char *realm,
-	     const char *principal)
+	     void *state, const char *realm, const char *principal)
 {
   Shisa_file *info = state;
   char **files;
@@ -355,9 +342,7 @@ remove_info (Shisa * dbh,
 
 static int
 principal_remove (Shisa * dbh,
-		  void *state,
-		  const char *realm,
-		  const char *principal)
+		  void *state, const char *realm, const char *principal)
 {
   Shisa_file *info = state;
   int rc;
@@ -381,8 +366,7 @@ principal_remove (Shisa * dbh,
 int
 shisa_file_principal_remove (Shisa * dbh,
 			     void *state,
-			     const char *realm,
-			     const char *principal)
+			     const char *realm, const char *principal)
 {
   int rc;
 
@@ -396,11 +380,9 @@ shisa_file_principal_remove (Shisa * dbh,
 
 int
 read_key (Shisa * dbh,
-	  Shisa_file *info,
+	  Shisa_file * info,
 	  const char *realm,
-	  const char *principal,
-	  const char *keyfile,
-	  Shisa_key **key)
+	  const char *principal, const char *keyfile, Shisa_key ** key)
 {
   Shisa_key tmpkey;
   FILE *fh;
@@ -456,7 +438,7 @@ read_key (Shisa * dbh,
   rc = fclose (fh);
   if (rc != 0)
     {
-      perror(keyfile);
+      perror (keyfile);
       return SHISA_NO_KEY;
     }
 
@@ -471,8 +453,7 @@ shisa_file_enumerate_keys (Shisa * dbh,
 			   void *state,
 			   const char *realm,
 			   const char *principal,
-			   Shisa_key ***keys,
-			   size_t *nkeys)
+			   Shisa_key *** keys, size_t * nkeys)
 {
   Shisa_file *info = state;
   char **files;
@@ -511,11 +492,10 @@ shisa_file_key_add (Shisa * dbh,
 		    void *state,
 		    const char *realm,
 		    const char *principal,
-		    uint32_t kvno,
-		    const Shisa_key * key)
+		    uint32_t kvno, const Shisa_key * key)
 {
   Shisa_file *info = state;
-  size_t passwdlen = key && key->password ? strlen(key->password) : 0;
+  size_t passwdlen = key && key->password ? strlen (key->password) : 0;
   char *file;
   FILE *fh;
 
@@ -552,7 +532,7 @@ shisa_file_key_add (Shisa * dbh,
 }
 
 void
-shisa_file_done (Shisa *dbh, void *state)
+shisa_file_done (Shisa * dbh, void *state)
 {
   Shisa_file *info = state;
 

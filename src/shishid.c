@@ -29,8 +29,8 @@
 #include "error.h"
 
 /* Global variables. */
-Shishi * handle;
-Shisa * dbh;
+Shishi *handle;
+Shisa *dbh;
 struct gengetopt_args_info arg;
 struct listenspec *listenspec;
 char *fatal_krberror;
@@ -239,7 +239,8 @@ doit (void)
 
   err = gnutls_certificate_allocate_credentials (&x509cred);
   if (err)
-    error (EXIT_FAILURE, 0, "Cannot allocate GNUTLS X.509 credential: %s (%d)",
+    error (EXIT_FAILURE, 0,
+	   "Cannot allocate GNUTLS X.509 credential: %s (%d)",
 	   gnutls_strerror (err), err);
 
   if (arg.x509cafile_given)
@@ -259,9 +260,9 @@ doit (void)
     {
       int num;
 
-      num = gnutls_certificate_set_x509_crl_file(x509cred,
-						 arg.x509crlfile_arg,
-						 GNUTLS_X509_FMT_PEM);
+      num = gnutls_certificate_set_x509_crl_file (x509cred,
+						  arg.x509crlfile_arg,
+						  GNUTLS_X509_FMT_PEM);
       if (num <= 0)
 	error (EXIT_FAILURE, 0, "No X.509 CRLs found in `%s' (%d): %s",
 	       arg.x509crlfile_arg, num, gnutls_strerror (num));
@@ -271,10 +272,10 @@ doit (void)
 
   if (arg.x509certfile_given && arg.x509keyfile_given)
     {
-      err = gnutls_certificate_set_x509_key_file(x509cred,
-						 arg.x509certfile_arg,
-						 arg.x509keyfile_arg,
-						 GNUTLS_X509_FMT_PEM);
+      err = gnutls_certificate_set_x509_key_file (x509cred,
+						  arg.x509certfile_arg,
+						  arg.x509keyfile_arg,
+						  GNUTLS_X509_FMT_PEM);
       if (err != GNUTLS_E_SUCCESS)
 	error (EXIT_FAILURE, 0,
 	       "No X.509 server certificate/key found in `%s'/`%s' (%d): %s",
@@ -423,8 +424,7 @@ parse_listen (char *listen)
 	  val += strlen (FAMILY_IPV4 ":");
 	}
 #ifdef WITH_IPV6
-      else if (strncmp (val, FAMILY_IPV6 ":", strlen (FAMILY_IPV6 ":")) ==
-	       0)
+      else if (strncmp (val, FAMILY_IPV6 ":", strlen (FAMILY_IPV6 ":")) == 0)
 	{
 	  ls->family = AF_INET6;
 	  val += strlen (FAMILY_IPV6 ":");

@@ -117,7 +117,7 @@ extern int errno;
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #else
-# define setlocale(Category, Locale) /* empty */
+# define setlocale(Category, Locale)	/* empty */
 #endif
 #include <gettext.h>
 #define _(String) gettext (String)
@@ -149,7 +149,7 @@ struct listenspec
   int port;
   int type;
   int sockfd;
-  char buf[BUFSIZ]; /* XXX */
+  char buf[BUFSIZ];		/* XXX */
   size_t bufpos;
   int usetls;
 #ifdef USE_STARTTLS
@@ -158,8 +158,8 @@ struct listenspec
   struct listenspec *next;
 };
 
-extern Shishi * handle;
-extern Shisa * dbh;
+extern Shishi *handle;
+extern Shisa *dbh;
 extern struct gengetopt_args_info arg;
 extern struct listenspec *listenspec;
 extern char *fatal_krberror;

@@ -81,8 +81,7 @@ shisa_cfg_db (Shisa * dbh, char *value)
     {
       shisa_info (dbh, "Cannot initialize `%s' database backend.\n"
 		  "Location `%s' and options `%s'.", db,
-		  location ? location : "N/A",
-		  options ? options : "N/A");
+		  location ? location : "N/A", options ? options : "N/A");
       return rc;
     }
 

@@ -110,8 +110,7 @@ shishi_as_derive_salt (Shishi * handle,
 int
 shishi_kdcreq_sendrecv_hint (Shishi * handle,
 			     Shishi_asn1 kdcreq,
-			     Shishi_asn1 * kdcrep,
-			     Shishi_tkts_hint * hint)
+			     Shishi_asn1 * kdcrep, Shishi_tkts_hint * hint)
 {
   char *der;
   size_t der_len;

@@ -33,7 +33,7 @@
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #else
-# define setlocale(Category, Locale) /* empty */
+# define setlocale(Category, Locale)	/* empty */
 #endif
 #include <gettext.h>
 #define _(String) gettext (String)
@@ -74,8 +74,8 @@ void
 printtimefield (const char *fieldname, time_t t)
 {
   char *p = ctime (&t);
-  p[strlen(p) - 1] = '\0';
-  printfield (fieldname, t == (time_t) -1 ? "N/A" : p);
+  p[strlen (p) - 1] = '\0';
+  printfield (fieldname, t == (time_t) - 1 ? "N/A" : p);
 }
 
 void
@@ -103,8 +103,7 @@ dumplist_realm_principal (const char *realm, const char *principal)
   int rc;
 
   if (args_info.dump_given ||
-      args_info.enabled_flag ||
-      args_info.disabled_flag)
+      args_info.enabled_flag || args_info.disabled_flag)
     {
       rc = shisa_principal_find (dbh, realm, principal, &ph);
       if (rc != SHISA_OK)
@@ -117,7 +116,7 @@ dumplist_realm_principal (const char *realm, const char *principal)
   if (args_info.disabled_flag && !ph.isdisabled)
     return SHISA_OK;
 
-  printf("\t%s\n", principal);
+  printf ("\t%s\n", principal);
 
   if (args_info.dump_given)
     {
@@ -127,19 +126,19 @@ dumplist_realm_principal (const char *realm, const char *principal)
 
       printfield ("Account is", ph.isdisabled ? "DISABLED" : "enabled");
       printuint32field ("Current key version", ph.kvno);
-      if (ph.notusedbefore != (time_t) -1)
+      if (ph.notusedbefore != (time_t) - 1)
 	printtimefield ("Account not valid before", ph.notusedbefore);
-      if (ph.lastinitialtgt != (time_t) -1)
+      if (ph.lastinitialtgt != (time_t) - 1)
 	printtimefield ("Last initial TGT request at", ph.lastinitialtgt);
-      if (ph.lastinitialrequest != (time_t) -1)
+      if (ph.lastinitialrequest != (time_t) - 1)
 	printtimefield ("Last initial request at", ph.lastinitialrequest);
-      if (ph.lasttgt != (time_t) -1)
+      if (ph.lasttgt != (time_t) - 1)
 	printtimefield ("Last TGT request at", ph.lasttgt);
-      if (ph.lastrenewal != (time_t) -1)
+      if (ph.lastrenewal != (time_t) - 1)
 	printtimefield ("Last ticket renewal at", ph.lastrenewal);
-      if (ph. passwordexpire!= (time_t) -1)
+      if (ph.passwordexpire != (time_t) - 1)
 	printtimefield ("Password expire on", ph.passwordexpire);
-      if (ph.accountexpire != (time_t) -1)
+      if (ph.accountexpire != (time_t) - 1)
 	printtimefield ("Account expire on", ph.accountexpire);
 
       rc = shisa_enumerate_keys (dbh, realm, principal, &keys, &nkeys);
@@ -253,9 +252,7 @@ dumplist (void)
 
 int
 apply_options (const char *realm,
-	       const char *principal,
-	       Shisa_principal *ph,
-	       Shisa_key *dbkey)
+	       const char *principal, Shisa_principal * ph, Shisa_key * dbkey)
 {
   char *passwd = args_info.password_arg;
   char *salt = args_info.salt_arg;
@@ -291,8 +288,7 @@ apply_options (const char *realm,
 	  rc = shishi_key_from_string (sh, etype,
 				       passwd, strlen (passwd),
 				       salt, strlen (salt),
-				       str2keyparam,
-				       &key);
+				       str2keyparam, &key);
 	}
       else
 	rc = shishi_key_random (sh, etype, &key);
@@ -362,8 +358,8 @@ add_principal (const char *realm, const char *principal)
   Shisa_key key;
   int rc;
 
-  memset (&ph, 0, sizeof(ph));
-  memset (&key, 0, sizeof(key));
+  memset (&ph, 0, sizeof (ph));
+  memset (&key, 0, sizeof (key));
   rc = apply_options (realm, principal, &ph, &key);
   if (rc != EXIT_SUCCESS)
     return EXIT_FAILURE;
@@ -406,8 +402,8 @@ add (void)
       char *tmp;
 
       /* This is mostly meant for 'make install', as it set up the
-	 default realm, and write a host key to stdout, which can be
-	 redirected into $prefix/etc/shishi/shishi.keys. */
+         default realm, and write a host key to stdout, which can be
+         redirected into $prefix/etc/shishi/shishi.keys. */
 
       printf ("Adding default realm `%s'...\n", realm);
       rc = add_principal (realm, NULL);
@@ -540,7 +536,8 @@ main (int argc, char *argv[])
 
   rc = shisa_init_with_paths (&dbh, args_info.configuration_file_arg);
   if (rc != SHISA_OK)
-    error (EXIT_FAILURE, 0, "Initialization failed:\n%s", shisa_strerror (rc));
+    error (EXIT_FAILURE, 0, "Initialization failed:\n%s",
+	   shisa_strerror (rc));
 
   rc = shisa_cfg (dbh, args_info.library_options_arg);
   if (rc != SHISA_OK)

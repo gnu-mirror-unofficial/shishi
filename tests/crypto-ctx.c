@@ -1,4 +1,4 @@
-/* crypto-ctx.c		Shishi crypto context self tests.
+/* crypto-ctx.c --- Shishi crypto context self tests.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -30,7 +30,8 @@ static const char iv[] =
 const char *in =
   "abcdefghijklmnopqrstuvwxyz01234567890123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-struct tv {
+struct tv
+{
   int etype;
   size_t start;
   size_t step;
@@ -53,7 +54,7 @@ const struct tv tv[] = {
 };
 
 void
-test (Shishi *handle)
+test (Shishi * handle)
 {
   Shishi_crypto *ctx, *ctx2;
   Shishi_key *key;
@@ -145,9 +146,9 @@ test (Shishi *handle)
 
 	  if (ok)
 	    {
-	      puts("expected");
+	      puts ("expected");
 	      hexprint (in, j);
-	      puts("computed");
+	      puts ("computed");
 	      hexprint (out2, len2);
 	      fail ("shishi_crypto_encrypt (in1, %d) failed\n", tvp->etype);
 	      continue;

@@ -1,4 +1,4 @@
-/* principal.c	get and set default principal
+/* principal.c --- Get and set default principal.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -199,8 +199,7 @@ shishi_parse_name (Shishi * handle, const char *name,
 int
 shishi_principal_name (Shishi * handle,
 		       Shishi_asn1 namenode,
-		       const char *namefield,
-		       char **out, size_t * outlen)
+		       const char *namefield, char **out, size_t * outlen)
 {
   char *format;
   int i, j, n;

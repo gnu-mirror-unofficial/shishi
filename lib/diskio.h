@@ -25,7 +25,8 @@ extern int _shishi_print_armored_data (Shishi * handle, FILE * fh,
 extern int _shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
 			      char *asn1type);
 extern int _shishi_authenticator_input (Shishi * handle,
-					FILE * fh, Shishi_asn1 * authenticator,
+					FILE * fh,
+					Shishi_asn1 * authenticator,
 					int type);
 extern int _shishi_apreq_input (Shishi * handle, FILE * fh,
 				Shishi_asn1 * apreq, int type);
@@ -39,7 +40,7 @@ extern int _shishi_krberror_input (Shishi * handle, FILE * fh,
 				   Shishi_asn1 * krberror, int type);
 extern int _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 				       Shishi_asn1 * encapreppart, int type);
-extern int _shishi_safe_input (Shishi * handle, FILE * fh,
-			       Shishi_asn1 * safe, int type);
-extern int _shishi_priv_input (Shishi * handle, FILE * fh,
-			       Shishi_asn1 * priv, int type);
+extern int _shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe,
+			       int type);
+extern int _shishi_priv_input (Shishi * handle, FILE * fh, Shishi_asn1 * priv,
+			       int type);

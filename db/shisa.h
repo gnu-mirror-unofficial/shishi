@@ -106,8 +106,7 @@ extern int shisa_enumerate_principals (Shisa * dbh,
 
 extern int shisa_principal_find (Shisa * dbh,
 				 const char *realm,
-				 const char *principal,
-				 Shisa_principal * ph);
+				 const char *principal, Shisa_principal * ph);
 extern int shisa_principal_update (Shisa * dbh,
 				   const char *realm,
 				   const char *principal,
@@ -118,19 +117,16 @@ extern int shisa_principal_add (Shisa * dbh,
 				const Shisa_principal * ph,
 				const Shisa_key * key);
 extern int shisa_principal_remove (Shisa * dbh,
-				   const char *realm,
-				   const char *principal);
+				   const char *realm, const char *principal);
 
 extern int shisa_enumerate_keys (Shisa * dbh,
 				 const char *realm,
 				 const char *principal,
-				 Shisa_key ***keys,
-				 size_t *nkeys);
+				 Shisa_key *** keys, size_t * nkeys);
 extern int shisa_key_add (Shisa * dbh,
 			  const char *realm,
 			  const char *principal,
-			  uint32_t kvno,
-			  const Shisa_key * key);
+			  uint32_t kvno, const Shisa_key * key);
 extern void shisa_key_free (Shisa * dbh, Shisa_key * key);
 
 /* error.c */
@@ -141,11 +137,9 @@ extern void shisa_info (Shisa * dbh, const char *format, ...);
 extern int shisa_valid_principal_find (Shisa * dbh,
 				       const char *client,
 				       const char *realm,
-				       time_t t,
-				       Shisa_principal * ph);
+				       time_t t, Shisa_principal * ph);
 extern int shisa_valid_key_find (Shisa * dbh,
 				 const Shisa_principal * ph,
-				 time_t t,
-				 Shisa_key ** key);
+				 time_t t, Shisa_key ** key);
 
 #endif /* SHISA_H */

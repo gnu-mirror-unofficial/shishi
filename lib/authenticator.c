@@ -860,7 +860,7 @@ shishi_authenticator_add_random_subkey (Shishi * handle,
 
   n = shishi_cfg_clientkdcetype (handle, &etypes);
   if (n <= 0)
-    return SHISHI_TICKET_BAD_KEYTYPE; /* XXX */
+    return SHISHI_TICKET_BAD_KEYTYPE;	/* XXX */
 
   res = shishi_authenticator_add_random_subkey_etype (handle, authenticator,
 						      etypes[0]);

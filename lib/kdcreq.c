@@ -386,7 +386,7 @@ shishi_kdcreq_set_cname (Shishi * handle,
  **/
 int
 shishi_kdcreq_client (Shishi * handle, Shishi_asn1 kdcreq,
-		      char **client, size_t *clientlen)
+		      char **client, size_t * clientlen)
 {
   return shishi_principal_name (handle, kdcreq, "req-body.cname",
 				client, clientlen);

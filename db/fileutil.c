@@ -52,10 +52,9 @@ unescape_filename (const char *path)
   while (*path)
     {
       if (path[0] == '%' &&
-	  path[1] && ishex (path[1]) &&
-	  path[2] && ishex (path[2]))
+	  path[1] && ishex (path[1]) && path[2] && ishex (path[2]))
 	{
-	  *p++ = tohex(path[1], path[2]);
+	  *p++ = tohex (path[1], path[2]);
 	  path += 3;
 	}
       else
@@ -77,8 +76,7 @@ escape_filename (const char *path)
       if ((path[0] >= 'a' && path[0] <= 'z') ||
 	  (path[0] >= 'A' && path[0] <= 'Z') ||
 	  (path[0] >= '0' && path[0] <= '9') ||
-	  path[0] == '-' ||
-	  path[0] == '.')
+	  path[0] == '-' || path[0] == '.')
 	*p++ = *path++;
       else
 	{
@@ -162,7 +160,7 @@ _shisa_isdir3 (const char *path1, const char *realm, const char *principal)
 }
 
 int
-_shisa_isdir4 (const char *path1,  const char *realm,
+_shisa_isdir4 (const char *path1, const char *realm,
 	       const char *principal, const char *path4)
 {
   char *saferealm = escape_filename (realm);
@@ -330,17 +328,15 @@ mtime (const char *file)
   int rc;
 
   rc = stat (file, &buf);
-  if (rc != 0 || !S_ISREG(buf.st_mode))
-    return (time_t) -1;
+  if (rc != 0 || !S_ISREG (buf.st_mode))
+    return (time_t) - 1;
 
   return buf.st_atime;
 }
 
 int
 _shisa_mtime4 (const char *path1,
-	       const char *realm,
-	       const char *principal,
-	       const char *path4)
+	       const char *realm, const char *principal, const char *path4)
 {
   char *saferealm = escape_filename (realm);
   char *safeprincipal = escape_filename (principal);
@@ -373,9 +369,7 @@ isfile (const char *path)
 
 int
 _shisa_isfile4 (const char *path1,
-		const char *realm,
-		const char *principal,
-		const char *path4)
+		const char *realm, const char *principal, const char *path4)
 {
   char *saferealm = escape_filename (realm);
   char *safeprincipal = escape_filename (principal);
@@ -408,8 +402,7 @@ uint32link (const char *file)
 int
 _shisa_uint32link4 (const char *path1,
 		    const char *realm,
-		    const char *principal,
-		    const char *path4)
+		    const char *principal, const char *path4)
 {
   char *saferealm = escape_filename (realm);
   char *safeprincipal = escape_filename (principal);
@@ -428,7 +421,8 @@ _shisa_uint32link4 (const char *path1,
 }
 
 static int
-ls_1 (const char *path, int onlydir, char ***files, size_t *nfiles, DIR *dir)
+ls_1 (const char *path, int onlydir, char ***files, size_t * nfiles,
+      DIR * dir)
 {
   struct dirent *de;
 
@@ -451,7 +445,7 @@ ls_1 (const char *path, int onlydir, char ***files, size_t *nfiles, DIR *dir)
     {
       size_t i;
 
-      perror(path);
+      perror (path);
 
       if (files)
 	{
@@ -468,7 +462,7 @@ ls_1 (const char *path, int onlydir, char ***files, size_t *nfiles, DIR *dir)
 }
 
 static int
-ls (const char *path, int onlydir, char ***files, size_t *nfiles)
+ls (const char *path, int onlydir, char ***files, size_t * nfiles)
 {
   DIR *dir;
   int rc;
@@ -476,7 +470,7 @@ ls (const char *path, int onlydir, char ***files, size_t *nfiles)
   dir = opendir (path);
   if (dir == NULL)
     {
-      perror(path);
+      perror (path);
       return -1;
     }
 
@@ -493,7 +487,7 @@ ls (const char *path, int onlydir, char ***files, size_t *nfiles)
     {
       size_t i;
 
-      perror(path);
+      perror (path);
 
       if (files)
 	{
@@ -510,14 +504,14 @@ ls (const char *path, int onlydir, char ***files, size_t *nfiles)
 }
 
 int
-_shisa_ls (const char *path, char ***files, size_t *nfiles)
+_shisa_ls (const char *path, char ***files, size_t * nfiles)
 {
   return ls (path, 0, files, nfiles);
 }
 
 int
 _shisa_ls2 (const char *path, const char *realm,
-	    char ***files, size_t *nfiles)
+	    char ***files, size_t * nfiles)
 {
   char *saferealm = escape_filename (realm);
   char *tmp;
@@ -535,8 +529,7 @@ _shisa_ls2 (const char *path, const char *realm,
 
 int
 _shisa_ls3 (const char *path, const char *realm,
-	    const char *principal,
-	    char ***files, size_t *nfiles)
+	    const char *principal, char ***files, size_t * nfiles)
 {
   char *saferealm = escape_filename (realm);
   char *safeprincipal = escape_filename (principal);
@@ -557,7 +550,7 @@ _shisa_ls3 (const char *path, const char *realm,
 int
 _shisa_ls4 (const char *path, const char *realm,
 	    const char *principal, const char *path4,
-	    char ***files, size_t *nfiles)
+	    char ***files, size_t * nfiles)
 {
   char *saferealm = escape_filename (realm);
   char *safeprincipal = escape_filename (principal);
@@ -576,14 +569,14 @@ _shisa_ls4 (const char *path, const char *realm,
 }
 
 int
-_shisa_lsdir (const char *path, char ***files, size_t *nfiles)
+_shisa_lsdir (const char *path, char ***files, size_t * nfiles)
 {
   return ls (path, 1, files, nfiles);
 }
 
 int
 _shisa_lsdir2 (const char *path, const char *realm,
-	       char ***files, size_t *nfiles)
+	       char ***files, size_t * nfiles)
 {
   char *saferealm = escape_filename (realm);
   char *tmp;
@@ -657,8 +650,7 @@ _shisa_rm5 (const char *path1, const char *realm, const char *principal,
 
 FILE *
 _shisa_fopen4 (const char *path1, const char *realm,
-	       const char *principal, const char *path4,
-	       const char *mode)
+	       const char *principal, const char *path4, const char *mode)
 {
   char *saferealm = escape_filename (realm);
   char *safeprincipal = escape_filename (principal);

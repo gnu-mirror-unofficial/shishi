@@ -85,8 +85,7 @@ asreq1 (Shishi_as * as)
     }
   printf ("Found keys for server %s@%s...\n", servername, realm);
 
-  err = shisa_enumerate_keys (dbh, realm, username,
-			      &userkeys, &nuserkeys);
+  err = shisa_enumerate_keys (dbh, realm, username, &userkeys, &nuserkeys);
   if (err != SHISA_OK)
     {
       printf ("Error getting keys for %s@%s\n", username, realm);
@@ -109,7 +108,7 @@ asreq1 (Shishi_as * as)
 	    printf ("Matching against server etype %d...\n",
 		    serverkeys[j]->etype);
 	    if (serverkeys[j]->etype == etype)
-		serverdbkey = serverkeys[j];
+	      serverdbkey = serverkeys[j];
 	  }
       if (userdbkey == NULL)
 	for (j = 0; j < nuserkeys; j++)
@@ -238,7 +237,7 @@ tgsreq1 (Shishi_tgs * tgs)
   /* XXX use etype/kvno to select key. */
 
   rc = shishi_key_from_value (handle, tgkeys[0]->etype,
-			       tgkeys[0]->key, &tgkey);
+			      tgkeys[0]->key, &tgkey);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -279,7 +278,7 @@ tgsreq1 (Shishi_tgs * tgs)
      kvno, best algorithm?) here. */
 
   rc = shishi_key_from_value (handle, serverkeys[0]->etype,
-			       serverkeys[0]->key, &serverkey);
+			      serverkeys[0]->key, &serverkey);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -300,7 +299,7 @@ tgsreq1 (Shishi_tgs * tgs)
      type as the selected long-term server key. */
 
   rc = shishi_key_random (handle, shishi_key_type (serverkey),
-			   &newsessionkey);
+			  &newsessionkey);
   if (rc)
     return rc;
 

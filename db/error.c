@@ -45,7 +45,8 @@ static struct shisa_error_msgs _shisa_error_messages[] = {
   {SHISA_ADD_REALM_ERROR, "Error adding realm to database."},
   {SHISA_REMOVE_REALM_NONEMPTY, "Tried to remove a non-empty realm."},
   {SHISA_REMOVE_REALM_ERROR, "Error removing realm from database."},
-  {SHISA_ADD_PRINCIPAL_EXISTS, "Tried to add a principal that already exist."},
+  {SHISA_ADD_PRINCIPAL_EXISTS,
+   "Tried to add a principal that already exist."},
   {SHISA_ADD_PRINCIPAL_ERROR, "Error adding principal to database."},
   {SHISA_REMOVE_PRINCIPAL_ERROR, "Error removing principal from database."},
 };
@@ -64,9 +65,9 @@ shisa_strerror (int err)
   size_t i;
 
   for (i = 0; i < sizeof (_shisa_error_messages) /
-	 sizeof (_shisa_error_messages[0]); i++)
+       sizeof (_shisa_error_messages[0]); i++)
     if (_shisa_error_messages[i].errorcode == err)
-	return _(_shisa_error_messages[i].message);
+      return _(_shisa_error_messages[i].message);
 
   return _("Unknown Shisa error");
 }
