@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in.
 
 SUBDIRS = m4
+INCLUDES = -I../intl
 
 AUTOMAKE_OPTIONS = 1.5 gnits no-dependencies
 
