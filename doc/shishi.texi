@@ -1860,8 +1860,8 @@ themselves to the Kerberos server.  For details on the implementation,
 Anonymous TLS is the simplest to set up and use.  In fact, only the
 client need to be informed that your KDC support TLS.  This can be
 done in the configuration file with the @samp{/tls} parameter for
-@samp{kdc-realm} (@pxref{realm-kdc,, Shishi Configuration}), or placed
-the KDC address in DNS using the @samp{_tls} SRV record
+@samp{kdc-realm} (@pxref{realm-kdc,, Shishi Configuration}), or by
+placing the KDC address in DNS using the @samp{_tls} SRV record
 (@pxref{Configuring DNS for KDC}).
 
 To continue our example from previous sections, recall we started
@@ -1874,14 +1874,14 @@ Generating Diffie-Hellman parameters...
 Initializing GNUTLS...done
 Listening on IPv4:*:4711/tcp...
 Listening on 1 ports...
-/usr/local/sbin/shishid: Starting (GNUTLS `1.0.3')
-/usr/local/sbin/shishid: Listening on IPv4:*:4711/tcp socket 4
+shishid: Starting (GNUTLS `1.0.3')
+shishid: Listening on IPv4:*:4711/tcp socket 4
 @end example
 
 Let's use the client to talk with it, using TLS.
 
 @example
-jas@@latte:~/ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711/tcp' \
+jas@@latte:~$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711/tcp' \
     simon@@EXAMPLE.ORG
 Enter password for `simon@@EXAMPLE.ORG':
 simon@@EXAMPLE.ORG:
@@ -2179,8 +2179,8 @@ Generating Diffie-Hellman parameters...
 Initializing GNUTLS...done
 Listening on *:4711/tcp...
 Listening on 1 ports...
-/usr/local/sbin/shishid: Starting (GNUTLS `1.0.2')
-/usr/local/sbin/shishid: Listening on *:4711/tcp socket 4
+shishid: Starting (GNUTLS `1.0.2')
+shishid: Listening on *:4711/tcp socket 4
 @end example
 
 Then acquire tickets as usual.  In case you wonder how shishi finds
