@@ -48,7 +48,6 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
 {
   char *p;
   va_list ap;
-  int rc;
 
 #ifdef WITH_STRINGPREP
   if (VERBOSE (handle))
@@ -68,9 +67,6 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
   *s = xstrdup (p);
 
   printf ("\n");
-
-  if (rc != SHISHI_OK)
-    return rc;
 
   if (VERBOSENOISE (handle))
     {
@@ -112,6 +108,8 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
 
       if (strcasecmp (handle->stringprocess, "stringprep") == 0)
 	{
+	  int rc;
+
 	  rc = stringprep_profile (*s, &p, "SASLprep", 0);
 	  if (rc == SHISHI_OK)
 	    {
