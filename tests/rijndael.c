@@ -28,14 +28,14 @@
 #define ZERO "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 
 static struct {
-  char *key;
+  const char *key;
   size_t keylen;
-  char *iv;
-  char *in;
+  const char *iv;
+  const char *in;
   size_t inlen;
-  char *out;
+  const char *out;
   size_t outlen;
-  char *nextiv;
+  const char *nextiv;
 } tv[] = {
   {
     KEY, 16,

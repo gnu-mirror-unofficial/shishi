@@ -1,5 +1,5 @@
 /* crypto.c	Shishi crypto self tests.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -24,11 +24,11 @@
 struct drdk
 {
   int type;
-  char *key;
+  const char *key;
   int nusage;
-  char *usage;
-  char *dr;
-  char *dk;
+  const char *usage;
+  const char *dr;
+  const char *dk;
 };
 const struct drdk drdk[] = {
 #if WITH_3DES
@@ -119,8 +119,8 @@ const struct drdk drdk[] = {
 struct nfold
 {
   int n;
-  char *in;
-  char *out;
+  const char *in;
+  const char *out;
 };
 const struct nfold nfold[] = {
   {64, "012345", "\xBE\x07\x26\x31\x27\x6B\x19\x55"},
@@ -157,11 +157,11 @@ const struct nfold nfold[] = {
 
 struct str2key
 {
-  char *password;
-  char *salt;
-  char *key;
+  const char *password;
+  const char *salt;
+  const char *key;
   int etype;
-  char *parameters;
+  const char *parameters;
 };
 const struct str2key str2key[] = {
 #define ESZETT "\xC3\x9F"
@@ -288,10 +288,10 @@ const struct str2key str2key[] = {
 struct pkcs5
 {
   int iterations;
-  char *password;
-  char *salt;
+  const char *password;
+  const char *salt;
   int dklen;
-  char *expected;
+  const char *expected;
 };
 const struct pkcs5 pkcs5[] = {
   {1, "password", "ATHENA.MIT.EDUraeburn", 16,

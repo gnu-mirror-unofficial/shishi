@@ -1,5 +1,5 @@
 /* authenticator.c	Shishi authenticator self tests.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -55,9 +55,10 @@ test (Shishi * handle)
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
   char *p;
-  int res, t;
+  int res;
   size_t n, m;
-  uint32_t seq;
+  int32_t t;
+  uint32_t s;
 
   /* shishi_authenticator */
   a = shishi_authenticator (handle);
@@ -78,7 +79,7 @@ test (Shishi * handle)
     fail ("shishi_authenticator_remove_subkey() failed\n");
 
   /* shishi_authenticator_seqnumber_get */
-  res = shishi_authenticator_seqnumber_get (handle, a, &seq);
+  res = shishi_authenticator_seqnumber_get (handle, a, &s);
   if (res == SHISHI_OK)
     success ("shishi_authenticator_seqnumber_get() OK\n");
   else
@@ -92,8 +93,8 @@ test (Shishi * handle)
     fail ("shishi_authenticator_seqnumber_set() failed\n");
 
   /* shishi_authenticator_seqnumber_get */
-  res = shishi_authenticator_seqnumber_get (handle, a, &seq);
-  if (res == SHISHI_OK && seq == 42)
+  res = shishi_authenticator_seqnumber_get (handle, a, &s);
+  if (res == SHISHI_OK && s == 42)
     success ("shishi_authenticator_seqnumber_get() OK\n");
   else
     fail ("shishi_authenticator_seqnumber_get() failed\n");
@@ -260,10 +261,10 @@ test (Shishi * handle)
     fail ("shishi_authenticator_cusec_set() failed\n");
 
   /* shishi_authenticator_cusec_get */
-  res = shishi_authenticator_cusec_get (handle, a, &t);
+  res = shishi_authenticator_cusec_get (handle, a, &s);
   if (debug)
     printf ("shishi_authenticator_cusec_get () => `%d'.\n", t);
-  if (res == SHISHI_OK && t == 4711)
+  if (res == SHISHI_OK && s == 4711)
     success ("shishi_authenticator_cusec_get() OK\n");
   else
     fail ("shishi_authenticator_cusec_get() failed\n");
