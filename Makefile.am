@@ -21,11 +21,16 @@
 DISTCHECK_CONFIGURE_FLAGS = \
 	--disable-gtk-doc --without-system-asn1 --without-libgcrypt
 
-MOST_SUBDIRS = m4 po gl lib src tests doc
+SUBDIRS = m4 po gl
 
-DIST_SUBDIRS = crypto asn1 $(MOST_SUBDIRS) examples extra
+if ASN1
+SUBDIRS += asn1
+endif
+if NETTLE
+SUBDIRS += crypto
+endif
 
-SUBDIRS = @CRYPTO@ @ASN1@ $(MOST_SUBDIRS)
+SUBDIRS += lib src tests doc examples extra
 
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 

@@ -251,11 +251,10 @@ fi
 AC_MSG_CHECKING([whether to use the system's libtasn1])
 AC_MSG_RESULT($system_asn1)
 if test "$system_asn1" = "no"; then
-	ASN1=asn1
 	LIBTASN1_LIBS="\$(top_builddir)/asn1/libminitasn1.la"
 	LIBTASN1_CFLAGS="-I\$(top_srcdir)/asn1"
 fi
-AC_SUBST(ASN1)
+AM_CONDITIONAL(ASN1, test "$system_asn1" = "no")
 AC_SUBST(LIBTASN1_LIBS)
 AC_SUBST(LIBTASN1_CFLAGS)
 
@@ -274,13 +273,11 @@ AC_MSG_RESULT($libgcrypt)
 if test "$libgcrypt" != "no" ; then
 	AC_DEFINE(USE_GCRYPT, 1, [Define to 1 if you want to use libgcrypt.])
 else
-	CRYPTO=crypto
 	CRYPTO_CFLAGS="-I\$(top_srcdir)/crypto"
 	CRYPTO_LIBS="\$(top_builddir)/crypto/libnettle.la"
 fi
 AM_CONDITIONAL(LIBGCRYPT, test "$libgcrypt" != "no")
 AM_CONDITIONAL(NETTLE, test "$libgcrypt" = "no")
-AC_SUBST(CRYPTO)
 AC_SUBST(CRYPTO_CFLAGS)
 AC_SUBST(CRYPTO_LIBS)
 
