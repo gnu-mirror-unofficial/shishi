@@ -17,6 +17,13 @@ and automake 1.7+.  Bootstrap the build environment with:
 
 Then run ./configure etc as usual.
 
+A note to binary package builders: please build using --disable-shared
+because during the development phase, only the so revision will be
+bumped on releases.  If you build shared libraries, other packages
+that link to them may stop working when a new release of the library
+is installed.  The reason for this is simply that the package is not
+mature enough to warrant proper shared object versioning.
+
 ----------------------------------------------------------------------
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
