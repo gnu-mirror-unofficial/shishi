@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-07-10 20:13+0200\n"
+"POT-Creation-Date: 2003-08-15 05:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,74 +16,490 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/shishi.c:133 src/shishi.c:143 src/shishi.c:152 src/shishi.c:161
-#: src/shishi.c:168 src/shishi.c:190 src/shishi.c:197 src/shishi.c:207
-#: src/shishi.c:217 src/shishi.c:224 src/shishi.c:307 src/shishi.c:314
+#: lib/aprep.c:145
+#, c-format
+msgid "Writing AP-REP to %s...\n"
+msgstr ""
+
+#: lib/aprep.c:152
+#, c-format
+msgid "Writing AP-REP in %s format...\n"
+msgstr ""
+
+#: lib/aprep.c:167
+#, c-format
+msgid "Writing AP-REP to %s...done\n"
+msgstr ""
+
+#: lib/aprep.c:225
+#, c-format
+msgid "Reading AP-REP from %s...\n"
+msgstr ""
+
+#: lib/aprep.c:232
+#, c-format
+msgid "Reading AP-REP in %s format...\n"
+msgstr ""
+
+#: lib/aprep.c:247
+#, c-format
+msgid "Reading AP-REP from %s...done\n"
+msgstr ""
+
+#: lib/apreq.c:207
+#, c-format
+msgid "Writing AP-REQ to %s...\n"
+msgstr ""
+
+#: lib/apreq.c:214
+#, c-format
+msgid "Writing AP-REQ in %s format...\n"
+msgstr ""
+
+#: lib/apreq.c:229
+#, c-format
+msgid "Writing AP-REQ to %s...done\n"
+msgstr ""
+
+#: lib/apreq.c:287
+#, c-format
+msgid "Reading AP-REQ from %s...\n"
+msgstr ""
+
+#: lib/apreq.c:294
+#, c-format
+msgid "Reading AP-REQ in %s format...\n"
+msgstr ""
+
+#: lib/apreq.c:309
+#, c-format
+msgid "Reading AP-REQ from %s...done\n"
+msgstr ""
+
+#: lib/authenticator.c:142
+#, c-format
+msgid "Writing Authenticator to %s...\n"
+msgstr ""
+
+#: lib/authenticator.c:149
+#, c-format
+msgid "Writing Authenticator in %s format...\n"
+msgstr ""
+
+#: lib/authenticator.c:164
+#, c-format
+msgid "Writing Authenticator to %s...done\n"
+msgstr ""
+
+#: lib/authenticator.c:225
+#, c-format
+msgid "Reading Authenticator from %s...\n"
+msgstr ""
+
+#: lib/authenticator.c:232
+#, c-format
+msgid "Reading Authenticator in %s format...\n"
+msgstr ""
+
+#: lib/authenticator.c:247
+#, c-format
+msgid "Reading Authenticator from %s...done\n"
+msgstr ""
+
+#: lib/diskio.c:915
+#, c-format
+msgid "Writing KEY to %s...\n"
+msgstr ""
+
+#: lib/diskio.c:930
+#, c-format
+msgid "Writing KEY to %s...done\n"
+msgstr ""
+
+#: lib/encapreppart.c:118
+#, c-format
+msgid "Writing EncAPRepPart to %s...\n"
+msgstr ""
+
+#: lib/encapreppart.c:125
+#, c-format
+msgid "Writing EncAPRepPart in %s format...\n"
+msgstr ""
+
+#: lib/encapreppart.c:140
+#, c-format
+msgid "Writing EncAPRepPart to %s...done\n"
+msgstr ""
+
+#: lib/encapreppart.c:200
+#, c-format
+msgid "Reading EncAPRepPart from %s...\n"
+msgstr ""
+
+#: lib/encapreppart.c:207
+#, c-format
+msgid "Reading EncAPRepPart in %s format...\n"
+msgstr ""
+
+#: lib/encapreppart.c:222
+#, c-format
+msgid "Reading EncAPRepPart from %s...done\n"
+msgstr ""
+
+#: lib/enckdcreppart.c:366 lib/ticket.c:138
+#, c-format
+msgid "Could not set sname: %s\n"
+msgstr ""
+
+#: lib/error.c:49
+msgid "Shishi success"
+msgstr ""
+
+#: lib/error.c:53
+msgid "Memory allocation error in shishi library."
+msgstr ""
+
+#: lib/error.c:57
+msgid ""
+"Base64 encoding or decoding failed.  This usually means the data is corrupt."
+msgstr ""
+
+#: lib/error.c:62
+msgid "Could not open file."
+msgstr ""
+
+#: lib/error.c:66
+msgid "Could not close file."
+msgstr ""
+
+#: lib/error.c:70
+msgid "Internal error in low-level crypto routines."
+msgstr ""
+
+#: lib/error.c:76
+msgid "Replay protection value (nonce) differ between request and reply."
+msgstr ""
+
+#: lib/error.c:80
+msgid "Client realm value differ between request and reply."
+msgstr ""
+
+#: lib/error.c:84
+msgid "Client name value differ between request and reply."
+msgstr ""
+
+#: lib/error.c:88
+msgid "Error in ASN.1 data, probably due to corrupt data."
+msgstr ""
+
+#: lib/error.c:94
+msgid ""
+"Low-level cryptographic primitive failed.  This usually indicates bad "
+"password or data corruption."
+msgstr ""
+
+#: lib/error.c:99
+msgid ""
+"Timedout talking to KDC. This usually indicates a network or KDC address "
+"problem."
+msgstr ""
+
+#: lib/error.c:104
+msgid "No KDC for realm known."
+msgstr ""
+
+#: lib/error.c:108
+msgid ""
+"The system call socket() failed.  This usually indicates that your system "
+"does not support the socket type."
+msgstr ""
+
+#: lib/error.c:113
+msgid ""
+"The system call bind() failed.  This usually indicates insufficient "
+"permissions."
+msgstr ""
+
+#: lib/error.c:118
+msgid "The system call sendto() failed."
+msgstr ""
+
+#: lib/error.c:122
+msgid "The system call close() failed."
+msgstr ""
+
+#: lib/error.c:126
+msgid "Server replied with an error message to request."
+msgstr ""
+
+#: lib/error.c:130
+msgid ""
+"Ticketset not initialized.  This usually indicates an internal application "
+"error."
+msgstr ""
+
+#: lib/error.c:135
+msgid ""
+"Keytype used to encrypt ticket doesn't match provided key. This usually "
+"indicates an internal application error."
+msgstr ""
+
+#: lib/error.c:140
+msgid ""
+"Could not decrypt AP-REQ using provided key. This usually indicates an "
+"internal application error."
+msgstr ""
+
+#: lib/error.c:145
+msgid ""
+"Could not decrypt Ticket using provided key. This usually indicates an "
+"internal application error."
+msgstr ""
+
+#: lib/error.c:150
+#, c-format
+msgid "Unknown shishi error (%d)"
+msgstr ""
+
+#: lib/kdcrep.c:152
+#, c-format
+msgid "Writing KDC-REP to %s...\n"
+msgstr ""
+
+#: lib/kdcrep.c:159
+#, c-format
+msgid "Writing KDC-REP in %s format...\n"
+msgstr ""
+
+#: lib/kdcrep.c:174
+#, c-format
+msgid "Writing KDC-REP to %s...done\n"
+msgstr ""
+
+#: lib/kdcrep.c:232
+#, c-format
+msgid "Reading KDC-REP from %s...\n"
+msgstr ""
+
+#: lib/kdcrep.c:239
+#, c-format
+msgid "Reading KDC-REP in %s format...\n"
+msgstr ""
+
+#: lib/kdcrep.c:254
+#, c-format
+msgid "Reading KDC-REP from %s...done\n"
+msgstr ""
+
+#: lib/kdcreq.c:230
+#, c-format
+msgid "Writing KDC-REQ to %s...\n"
+msgstr ""
+
+#: lib/kdcreq.c:237
+#, c-format
+msgid "Writing KDC-REQ in %s format...\n"
+msgstr ""
+
+#: lib/kdcreq.c:252
+#, c-format
+msgid "Writing KDC-REQ to %s...done\n"
+msgstr ""
+
+#: lib/kdcreq.c:310
+#, c-format
+msgid "Reading KDC-REQ from %s...\n"
+msgstr ""
+
+#: lib/kdcreq.c:317
+#, c-format
+msgid "Reading KDC-REQ in %s format...\n"
+msgstr ""
+
+#: lib/kdcreq.c:332
+#, c-format
+msgid "Reading KDC-REQ from %s...done\n"
+msgstr ""
+
+#: lib/krberror.c:98
+#, c-format
+msgid "Writing KRB-ERROR to %s...\n"
+msgstr ""
+
+#: lib/krberror.c:105
+#, c-format
+msgid "Writing KRB-ERROR in %s format...\n"
+msgstr ""
+
+#: lib/krberror.c:120
+#, c-format
+msgid "Writing KRB-ERROR to %s...done\n"
+msgstr ""
+
+#: lib/krberror.c:178
+#, c-format
+msgid "Reading KRB-ERROR from %s...\n"
+msgstr ""
+
+#: lib/krberror.c:185
+#, c-format
+msgid "Reading KRB-ERROR in %s format...\n"
+msgstr ""
+
+#: lib/krberror.c:200
+#, c-format
+msgid "Reading KRB-ERROR from %s...done\n"
+msgstr ""
+
+#: lib/krberror.c:377
+#, c-format
+msgid "Unknown KRB-ERROR error code %d."
+msgstr ""
+
+#: lib/principal.c:386
+#, c-format
+msgid "Could not set principal name: %s\n"
+msgstr ""
+
+#: lib/safe.c:261
+#, c-format
+msgid "Writing SAFE to %s...\n"
+msgstr ""
+
+#: lib/safe.c:268
+#, c-format
+msgid "Writing SAFE in %s format...\n"
+msgstr ""
+
+#: lib/safe.c:283
+#, c-format
+msgid "Writing SAFE to %s...done\n"
+msgstr ""
+
+#: lib/safe.c:341
+#, c-format
+msgid "Reading SAFE from %s...\n"
+msgstr ""
+
+#: lib/safe.c:348
+#, c-format
+msgid "Reading SAFE in %s format...\n"
+msgstr ""
+
+#: lib/safe.c:363
+#, c-format
+msgid "Reading SAFE from %s...done\n"
+msgstr ""
+
+#: lib/tkt.c:719
+#, c-format
+msgid "Time of last initial request for a TGT:\t%s"
+msgstr ""
+
+#: lib/tkt.c:889
+#, c-format
+msgid "Authtime:\t%s"
+msgstr ""
+
+#: lib/tkt.c:893
+#, c-format
+msgid "Starttime:\t%s"
+msgstr ""
+
+#: lib/tkt.c:898
+#, c-format
+msgid "Endtime:\t%s"
+msgstr ""
+
+#: lib/tkt.c:905
+#, c-format
+msgid "Renewable until:\t%s"
+msgstr ""
+
+#: lib/tkt.c:916
+#, c-format
+msgid "Server:\t\t%s key %s (%d)\n"
+msgstr ""
+
+#: lib/tkt.c:925
+#, c-format
+msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
+msgstr ""
+
+#: lib/tkt.c:935
+msgid "Ticket flags:\t"
+msgstr ""
+
+#: src/shishi.c:238
+#, c-format
+msgid "Cannot create key: %s"
+msgstr ""
+
+#: src/shishi.c:257
+msgid "Error in string2key"
+msgstr ""
+
+#: src/shishi.c:267
+#, c-format
+msgid "Could not create key: %s\n"
+msgstr ""
+
+#: src/shishi.c:296
+#, c-format
+msgid "Could not find key: %s\n"
+msgstr ""
+
+#: src/shishi.c:328 src/shishi.c:341 src/shishi.c:397 src/shishi.c:408
+#, c-format
+msgid "`%s': %s\n"
+msgstr ""
+
+#: src/shishi.c:353
+#, c-format
+msgid "Error reading `%s'\n"
+msgstr ""
+
+#: src/shishi.c:357
+#, c-format
+msgid "Read %d bytes...\n"
+msgstr ""
+
+#: src/shishi.c:367
+msgid "Error ciphering\n"
+msgstr ""
+
+#: src/shishi.c:386
+#, c-format
+msgid "Short write (%d < %d)...\n"
+msgstr ""
+
+#: src/shishi.c:389
+#, c-format
+msgid "Wrote %d bytes...\n"
+msgstr ""
+
+#: src/shishi.c:508 src/shishi.c:518 src/shishi.c:527 src/shishi.c:536
+#: src/shishi.c:543 src/shishi.c:554 src/shishi.c:561 src/shishi.c:571
+#: src/shishi.c:581 src/shishi.c:588 src/shishi.c:608 src/shishi.c:615
 #, c-format
 msgid "Option `%s' only valid with CRYPTO."
 msgstr ""
 
-#: src/shishi.c:137
+#: src/shishi.c:512
 #, c-format
 msgid "Unknown encryption type in `%s'"
 msgstr ""
 
-#: src/shishi.c:146 src/shishi.c:155
+#: src/shishi.c:521 src/shishi.c:530
 msgid "Cannot both encrypt and decrypt."
 msgstr ""
 
-#: src/shishi.c:183 src/shishi.c:269
-#, c-format
-msgid "Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."
-msgstr ""
-
-#: src/shishi.c:233 src/shishi.c:241 src/shishi.c:248
-#, c-format
-msgid "Option `%s' only valid with AP."
-msgstr ""
-
-#: src/shishi.c:287
-#, c-format
-msgid "Option `%s' only valid with AP, CLIENT, CRYPTO and KDC/AS/TGS."
-msgstr ""
-
-#: src/shishi.c:300
-#, c-format
-msgid "Option `%s' only valid with CRYPTO and KDC/AS/TGS."
-msgstr ""
-
-#: src/shishi.c:330 src/shishi.c:337
-#, c-format
-msgid "Option `%s' only valid with KDC."
-msgstr ""
-
-#: src/shishi.c:346
-#, c-format
-msgid "Option `%s' only valid with KDC/TGS."
-msgstr ""
-
-#: src/shishi.c:353 src/shishi.c:382 src/shishi.c:390 src/shishi.c:398
-#: src/shishi.c:406 src/shishi.c:414 src/shishi.c:421
-#, c-format
-msgid "Option `%s' only valid with KDC/AS/TGS."
-msgstr ""
-
-#: src/shishi.c:363 src/shishi.c:374
-#, c-format
-msgid "Option `%s' only valid with AP and KDC/AS/TGS."
-msgstr ""
-
-#: src/shishi.c:428
+#: src/shishi.c:650
 #, c-format
 msgid "Too many arguments: `%s'"
 msgstr ""
 
-#: src/shishi.c:469
-#, c-format
-msgid "Unknown command: '%s'"
-msgstr ""
-
-#: src/shishi.c:1004
+#: src/shishi.c:893
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""
