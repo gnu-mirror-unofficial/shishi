@@ -19,6 +19,8 @@
  *
  */
 
+#include <libtasn1.h>
+#define _SHISHI_HAS_LIBTASN1_H 1
 #include "internal.h"
 
 #define HEADERBEG "-----BEGIN SHISHI %s-----"
@@ -79,7 +81,8 @@ _shishi_print_armored_data (Shishi * handle,
 }
 
 int
-_shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1, char *asn1type)
+_shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
+		   char *asn1type)
 {
   char der[BUFSIZ];
   int derlen;
@@ -333,7 +336,8 @@ shishi_enckdcreppart_read (Shishi * handle,
 }
 
 int
-_shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq, int type)
+_shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq,
+		      int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -393,7 +397,8 @@ _shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq, int type)
 }
 
 int
-_shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep, int type)
+_shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep,
+		      int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -452,7 +457,8 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep, int type)
 }
 
 int
-_shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq, int type)
+_shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
+		     int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -498,7 +504,8 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq, int type)
 }
 
 int
-_shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep, int type)
+_shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep,
+		     int type)
 {
   char der[BUFSIZ];
   size_t derlen;
