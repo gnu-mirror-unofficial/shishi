@@ -19,7 +19,7 @@
  *
  */
 
-/* Note!  This file is #include'd by file.c. */
+#include "internal.h"
 
 /* For stat. */
 #include <sys/stat.h>
@@ -36,15 +36,19 @@ extern int errno;
 
 #include "xreadlink.h"
 
-static int
-isdir (const char *path)
+int
+_shisa_isdir (const char *path)
 {
   struct stat buf;
   int rc;
 
   rc = stat (path, &buf);
   if (rc != 0 || !S_ISDIR (buf.st_mode))
-    return 0;
+    {
+      errno = ENOTDIR;
+      perror (path);
+      return 0;
+    }
 
   return 1;
 }
@@ -57,22 +61,22 @@ isdir2 (const char *path1, const char *path2)
 
   asprintf (&tmp, "%s/%s", path1, path2);
 
-  rc = isdir (tmp);
+  rc = _shisa_isdir (tmp);
 
   free (tmp);
 
   return rc;
 }
 
-static int
-isdir3 (const char *path1, const char *path2, const char *path3)
+int
+_shisa_isdir3 (const char *path1, const char *path2, const char *path3)
 {
   char *tmp;
   int rc;
 
   asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
 
-  rc = isdir (tmp);
+  rc = _shisa_isdir (tmp);
 
   free (tmp);
 
@@ -92,41 +96,11 @@ mtime (const char *file)
   return buf.st_atime;
 }
 
-static int
-mtime2 (const char *path1, const char *path2)
-{
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s", path1, path2);
-
-  rc = mtime (tmp);
-
-  free (tmp);
-
-  return rc;
-}
-
-static int
-mtime3 (const char *path1, const char *path2, const char *path3)
-{
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
-
-  rc = mtime (tmp);
-
-  free (tmp);
-
-  return rc;
-}
-
-static int
-mtime4 (const char *path1,
-	const char *path2,
-	const char *path3,
-	const char *path4)
+int
+_shisa_mtime4 (const char *path1,
+	       const char *path2,
+	       const char *path3,
+	       const char *path4)
 {
   char *tmp;
   int rc;
@@ -153,11 +127,11 @@ isfile (const char *path)
   return 1;
 }
 
-static int
-isfile4 (const char *path1,
-	const char *path2,
-	const char *path3,
-	const char *path4)
+int
+_shisa_isfile4 (const char *path1,
+		const char *path2,
+		const char *path3,
+		const char *path4)
 {
   char *tmp;
   int rc;
@@ -185,11 +159,11 @@ uint32link (const char *file)
   return atol (link);
 }
 
-static int
-uint32link4 (const char *path1,
-	     const char *path2,
-	     const char *path3,
-	     const char *path4)
+int
+_shisa_uint32link4 (const char *path1,
+		    const char *path2,
+		    const char *path3,
+		    const char *path4)
 {
   char *tmp;
   int rc;
@@ -211,7 +185,7 @@ unescape_filename (const char *path)
 }
 
 static int
-ls_1 (const char *path, char ***files, size_t *nfiles, DIR *dir)
+_shisa_ls_1 (const char *path, char ***files, size_t *nfiles, DIR *dir)
 {
   struct dirent *de;
   int rc;
@@ -243,8 +217,8 @@ ls_1 (const char *path, char ***files, size_t *nfiles, DIR *dir)
   return SHISA_OK;
 }
 
-static int
-ls (const char *path, char ***files, size_t *nfiles)
+int
+_shisa_ls (const char *path, char ***files, size_t *nfiles)
 {
   struct dirent *de;
   DIR *dir;
@@ -257,7 +231,7 @@ ls (const char *path, char ***files, size_t *nfiles)
       return -1;
     }
 
-  rc = ls_1 (path, files, nfiles, dir);
+  rc = _shisa_ls_1 (path, files, nfiles, dir);
   if (rc != SHISA_OK)
     {
       rc = closedir (dir);
@@ -281,4 +255,20 @@ ls (const char *path, char ***files, size_t *nfiles)
     }
 
   return 0;
+}
+
+int
+_shisa_ls2 (const char *path1, const char *path2,
+	    char ***files, size_t *nfiles)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s", path1, path2);
+
+  rc = _shisa_ls (tmp, files, nfiles);
+
+  free (tmp);
+
+  return rc;
 }

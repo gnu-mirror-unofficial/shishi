@@ -86,6 +86,12 @@ struct Shisa
   size_t ndbs;
 };
 
+extern int getsubopt (char **optionp, char *const *tokens, char **valuep);
+
+/* db.c */
+extern _Shisa_backend *_shisa_find_backend (const char *name);
+
+/* file.c */
 extern int shisa_file_init (Shisa *dbh,
 			    const char *location,
 			    const char *options,
@@ -105,8 +111,5 @@ extern int shisa_file_principal_find (Shisa * dbh,
 				      const char *realm,
 				      Shisa_principal **ph);
 extern void shisa_file_done (Shisa *dbh, void *state);
-
-extern _Shisa_backend *_shisa_find_backend (const char *name);
-extern int getsubopt (char **optionp, char *const *tokens, char **valuep);
 
 #endif /* _INTERNAL_H */

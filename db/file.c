@@ -49,7 +49,19 @@
 
 #include "internal.h"
 
-#include "fileutil.c"
+/* fileutil.c */
+extern int _shisa_isdir (const char *path);
+extern int _shisa_isdir3 (const char *path1, const char *path2,
+			  const char *path3);
+extern int _shisa_mtime4 (const char *path1, const char *path2,
+			  const char *path3, const char *path4);
+extern int _shisa_isfile4 (const char *path1, const char *path2,
+			   const char *path3, const char *path4);
+extern int _shisa_uint32link4 (const char *path1, const char *path2,
+			       const char *path3, const char *path4);
+extern int _shisa_ls (const char *path, char ***files, size_t *nfiles);
+extern int _shisa_ls2 (const char *path1, const char *path2,
+		       char ***files, size_t *nfiels);
 
 struct Shisa_file
 {
@@ -116,12 +128,8 @@ shisa_file_init (Shisa *dbh,
   Shisa_file *info;
   int rc;
 
-  if (!isdir (location))
-    {
-      errno = ENOTDIR;
-      perror (location);
-      return SHISA_OPEN_ERROR;
-    }
+  if (!_shisa_isdir (location))
+    return SHISA_OPEN_ERROR;
 
   *state = info = xcalloc (1, sizeof (*info));
   rc = shisa_file_cfg (dbh, info, options);
@@ -142,7 +150,7 @@ shisa_file_enumerate_realms (Shisa *dbh,
   Shisa_file *info = state;
   int rc;
 
-  rc = ls (info->path, realms, nrealms);
+  rc = _shisa_ls (info->path, realms, nrealms);
 
   return rc;
 }
@@ -155,14 +163,9 @@ shisa_file_enumerate_principals (Shisa *dbh,
 				 size_t *nprincipals)
 {
   Shisa_file *info = state;
-  char *tmp;
   int rc;
 
-  asprintf (&tmp, "%s/%s", info->path, realm);
-
-  rc = ls (tmp, principals, nprincipals);
-
-  free (tmp);
+  rc = _shisa_ls2 (info->path, realm, principals, nprincipals);
 
   return rc;
 }
@@ -177,25 +180,28 @@ shisa_file_principal_find (Shisa * dbh,
   Shisa_file *info = state;
   Shisa_principal *princ;
 
-  if (!isdir3 (info->path, realm, client))
+  if (!_shisa_isdir3 (info->path, realm, client))
     return SHISA_NO_PRINCIPAL;
 
   princ = xmalloc (sizeof (*princ));
   princ->name = xstrdup (client);
   princ->realm = xstrdup (realm);
-  princ->notusedbefore = mtime4 (info->path, realm, client, "validfrom.stamp");
-  princ->isdisabled = isfile4 (info->path, realm, client, "disabled.flag");
-  princ->kvno = uint32link4 (info->path, realm, client, "latest.key");
+  princ->notusedbefore =
+    _shisa_mtime4 (info->path, realm, client, "validfrom.stamp");
+  princ->isdisabled =
+    _shisa_isfile4 (info->path, realm, client, "disabled.flag");
+  princ->kvno = _shisa_uint32link4 (info->path, realm, client, "latest.key");
   princ->lastinitialtgt =
-    mtime4 (info->path, realm, client, "lastinitaltgt.stamp");
+    _shisa_mtime4 (info->path, realm, client, "lastinitaltgt.stamp");
   princ->lastinitialrequest =
-    mtime4 (info->path, realm, client, "lastinitial.stamp");
-  princ->lasttgt = mtime4 (info->path, realm, client, "lasttgt.stamp");
-  princ->lastrenewal = mtime4 (info->path, realm, client, "lastrenewal.stamp");
+    _shisa_mtime4 (info->path, realm, client, "lastinitial.stamp");
+  princ->lasttgt = _shisa_mtime4 (info->path, realm, client, "lasttgt.stamp");
+  princ->lastrenewal =
+    _shisa_mtime4 (info->path, realm, client, "lastrenewal.stamp");
   princ->passwordexpire =
-    mtime4 (info->path, realm, client, "passwordexpire.stamp");
+    _shisa_mtime4 (info->path, realm, client, "passwordexpire.stamp");
   princ->accountexpire =
-    mtime4 (info->path, realm, client, "accountexpire.stamp");
+    _shisa_mtime4 (info->path, realm, client, "accountexpire.stamp");
 
   *ph = princ;
 
