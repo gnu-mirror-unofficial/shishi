@@ -23,6 +23,7 @@
 #define SHISHI_H
 
 #include <stdio.h>		/* FILE */
+#include <stddef.h>		/* size_t */
 #include <libtasn1.h>		/* ASN1_TYPE */
 
 #define SHISHI_VERSION "@PACKAGE_VERSION@"
@@ -31,34 +32,34 @@
 enum
 {
   SHISHI_OK = 0,
-  SHISHI_HANDLE_ERROR,
-  SHISHI_ASN1_ERROR,
-  SHISHI_FOPEN_ERROR,
-  SHISHI_FCLOSE_ERROR,
-  SHISHI_MALLOC_ERROR,
-  SHISHI_BASE64_ERROR,
-  SHISHI_REALM_MISMATCH,
-  SHISHI_CNAME_MISMATCH,
-  SHISHI_NONCE_MISMATCH,
-  SHISHI_TGSREP_BAD_KEYTYPE,
-  SHISHI_KDCREP_BAD_KEYTYPE,
-  SHISHI_APREP_BAD_KEYTYPE,
-  SHISHI_APREP_VERIFY_FAILED,
-  SHISHI_APREQ_BAD_KEYTYPE,
-  SHISHI_TOO_SMALL_BUFFER,
-  SHISHI_DERIVEDKEY_TOO_SMALL,
-  SHISHI_KEY_TOO_LARGE,
-  SHISHI_CRYPTO_ERROR,
-  SHISHI_GCRYPT_ERROR,
-  SHISHI_SOCKET_ERROR,
-  SHISHI_BIND_ERROR,
-  SHISHI_SENDTO_ERROR,
-  SHISHI_RECVFROM_ERROR,
-  SHISHI_CLOSE_ERROR,
-  SHISHI_KDC_TIMEOUT,
-  SHISHI_KDC_NOT_KNOWN_FOR_REALM,
-  SHISHI_TTY_ERROR,
-  SHISHI_GOT_KRBERROR
+  SHISHI_ASN1_ERROR = 1,
+  SHISHI_FOPEN_ERROR = 2,
+  SHISHI_FCLOSE_ERROR = 3,
+  SHISHI_MALLOC_ERROR = 4,
+  SHISHI_BASE64_ERROR = 5,
+  SHISHI_REALM_MISMATCH = 6,
+  SHISHI_CNAME_MISMATCH = 7,
+  SHISHI_NONCE_MISMATCH = 8,
+  SHISHI_TGSREP_BAD_KEYTYPE = 9,
+  SHISHI_KDCREP_BAD_KEYTYPE = 10,
+  SHISHI_APREP_BAD_KEYTYPE = 11,
+  SHISHI_APREP_VERIFY_FAILED = 12,
+  SHISHI_APREQ_BAD_KEYTYPE = 13,
+  SHISHI_TOO_SMALL_BUFFER = 14,
+  SHISHI_DERIVEDKEY_TOO_SMALL = 15,
+  SHISHI_KEY_TOO_LARGE = 16,
+  SHISHI_CRYPTO_ERROR = 17,
+  SHISHI_GCRYPT_ERROR = 18,
+  SHISHI_SOCKET_ERROR = 19,
+  SHISHI_BIND_ERROR = 20,
+  SHISHI_SENDTO_ERROR = 21,
+  SHISHI_RECVFROM_ERROR = 22,
+  SHISHI_CLOSE_ERROR = 23,
+  SHISHI_KDC_TIMEOUT = 24,
+  SHISHI_KDC_NOT_KNOWN_FOR_REALM = 25,
+  SHISHI_TTY_ERROR = 26,
+  SHISHI_GOT_KRBERROR = 27,
+  SHISHI_HANDLE_ERROR = 28
 };
 
 /* This is not specified in the ASN.1 syntax for some reason. */
@@ -471,22 +472,22 @@ extern int shishi_kdc_req_set_sname (Shishi * handle,
 				     char *service[]);
 extern int shishi_kdc_req_set_realm (Shishi * handle,
 				     ASN1_TYPE node, char *realm);
-extern int
-shishi_tgs_process (Shishi * handle,
-		    ASN1_TYPE tgsreq,
-		    ASN1_TYPE tgsrep,
-		    ASN1_TYPE oldenckdcreppart, ASN1_TYPE * enckdcreppart);
-extern int
-shishi_as_process (Shishi * handle,
-		   ASN1_TYPE asreq,
-		   ASN1_TYPE asrep, char *string, ASN1_TYPE * enckdcreppart);
-extern int
-shishi_kdc_process (Shishi * handle,
-		    ASN1_TYPE kdcreq,
-		    ASN1_TYPE kdcrep,
-		    int keyusage,
-		    int keytype,
-		    char *key, int keylen, ASN1_TYPE * enckdcreppart);
+extern int shishi_tgs_process (Shishi * handle,
+			       ASN1_TYPE tgsreq,
+			       ASN1_TYPE tgsrep,
+			       ASN1_TYPE oldenckdcreppart,
+			       ASN1_TYPE * enckdcreppart);
+extern int shishi_as_process (Shishi * handle,
+			      ASN1_TYPE asreq,
+			      ASN1_TYPE asrep,
+			      char *string,
+			      ASN1_TYPE * enckdcreppart);
+extern int shishi_kdc_process (Shishi * handle,
+			       ASN1_TYPE kdcreq,
+			       ASN1_TYPE kdcrep,
+			       Shishi_key *key,
+			       int keyusage,
+			       ASN1_TYPE * enckdcreppart);
 extern
   int
 shishi_kdcrep_get_ticket (Shishi * handle,
@@ -528,51 +529,35 @@ extern const char *shishi_cipher_name (int type);
 extern int shishi_cipher_blocksize (int type);
 extern int shishi_cipher_minpadsize (int type);
 extern int shishi_cipher_confoundersize (int type);
-extern int shishi_cipher_keylen (int type);
+extern size_t shishi_cipher_keylen (int type);
 extern int shishi_etype_parse (char *cipher);
-extern int
-shishi_string_to_key (Shishi * handle,
-		      int keytype,
-		      char *password,
-		      int n_password,
-		      char *salt,
-		      int n_salt,
-		      char *parameter, char *outkey, int *outkeylen);
 extern int shishi_randomize (Shishi * handle, char *data, int datalen);
-extern int
-shishi_encrypt (Shishi * handle,
-		int keyusage,
-		int keytype,
-		char *key,
-		int keylen, char *in, int inlen, char *out, int *outlen);
-extern int
-shishi_decrypt (Shishi * handle,
-		int keyusage,
-		int keytype,
-		char *key,
-		int keylen, char *in, int inlen, char *out, int *outlen);
-extern int
-shishi_checksum (Shishi * handle,
-		 int cksumtype,
-		 int keyusage,
-		 int keytype,
-		 char *key,
-		 int keylen, char *in, int inlen, char *out, int *outlen);
-extern int
-shishi_dk (Shishi * handle,
-	   int type,
-	   char *key,
-	   int n_key,
-	   char *constant,
-	   int n_constant, char *derivedkey, int n_derivedkey);
-
-extern int
-shishi_dr (Shishi * handle,
-	   int type,
-	   char *key,
-	   int n_key,
-	   char *derivedkey,
-	   int n_derivedkey, char *constant, int n_constant);
+extern int shishi_encrypt (Shishi * handle,
+			   Shishi_key *key,
+			   int keyusage,
+			   char *in, int inlen,
+			   char *out, int *outlen);
+extern int shishi_decrypt (Shishi * handle,
+			   Shishi_key *key,
+			   int keyusage,
+			   char *in, int inlen,
+			   char *out, int *outlen);
+extern int shishi_checksum (Shishi * handle,
+			    Shishi_key *key,
+			    int keyusage,
+			    int cksumtype,
+			    char *in, int inlen, char *out, int *outlen);
+extern int shishi_dk (Shishi * handle,
+		      Shishi_key *key,
+		      char *constant,
+		      int constantlen,
+		      Shishi_key *derivedkey);
+extern int shishi_dr (Shishi * handle,
+		      Shishi_key *key,
+		      char *derivedkey,
+		      int derivedkeylen,
+		      char *constant,
+		      int constantlen);
 extern int shishi_n_fold (Shishi * handle, char *in, int m, char *out, int n);
 
 /* version.c */
@@ -618,10 +603,51 @@ extern int
 shishi_ap_reply_verify (Shishi * handle, Shishi_ap * ap, ASN1_TYPE aprep);
 
 /* key.c */
-extern int shishi_key_get_type (Shishi_key * key);
-extern char *shishi_key_get_value (Shishi_key * key);
-extern int shishi_key_get_length (Shishi_key * key);
-extern Shishi_key *shishi_key (Shishi *handle, int type,
-			       char *value, int length);
+extern int shishi_key_type (Shishi_key * key);
+extern void shishi_key_type_set (Shishi_key * key, int type);
+extern char *shishi_key_value (Shishi_key * key);
+extern void shishi_key_value_set (Shishi_key * key, char *value);
+extern const char *shishi_key_name (Shishi_key * key);
+extern size_t shishi_key_length (Shishi_key * key);
+extern Shishi_key *shishi_key (int type, char *value);
+extern void shishi_key_done (Shishi_key *key);
+extern void shishi_key_copy (Shishi_key * dstkey, Shishi_key *srckey);
+extern int shishi_key_from_random (Shishi *handle,
+				   int type,
+				   char *random,
+				   int randomlen,
+				   Shishi_key **outkey);
+extern int shishi_key_from_string (Shishi *handle,
+				   int type,
+				   char *password,
+				   int passwordlen,
+				   char *salt,
+				   int saltlen,
+				   char *parameter,
+				   Shishi_key **outkey);
+
+/* encapreppart.c */
+extern ASN1_TYPE shishi_encapreppart (Shishi * handle);
+
+/* apreq.c */
+extern ASN1_TYPE shishi_apreq (Shishi * handle);
+
+/* kdcrep.c */
+extern int shishi_kdcrep_decrypt (Shishi * handle,
+				  ASN1_TYPE kdcrep,
+				  Shishi_key *key,
+				  int keyusage,
+				  ASN1_TYPE * enckdcreppart);
+/* enckdcreppart.c */
+extern int shishi_enckdcreppart_get_key (Shishi * handle,
+					 ASN1_TYPE enckdcreppart,
+					 Shishi_key **key);
+
+/* aprep.c */
+extern int shishi_aprep_decrypt (Shishi * handle,
+				 ASN1_TYPE aprep,
+				 Shishi_key *key,
+				 int keyusage,
+				 ASN1_TYPE * encapreppart);
 
 #endif

@@ -23,9 +23,8 @@
 
 static int
 null_encrypt (Shishi * handle,
+	      Shishi_key *key,
 	      int keyusage,
-	      char *key,
-	      int keylen,
 	      char *in,
 	      int inlen,
 	      char *out,
@@ -42,9 +41,8 @@ null_encrypt (Shishi * handle,
 
 static int
 null_decrypt (Shishi * handle,
+	      Shishi_key *key,
 	      int keyusage,
-	      char *key,
-	      int keylen,
 	      char *in,
 	      int inlen,
 	      char *out,
@@ -63,7 +61,7 @@ static int
 null_random_to_key (Shishi * handle,
 		    char *random,
 		    int randomlen,
-		    char *outkey)
+		    Shishi_key *outkey)
 {
   return SHISHI_OK;
 }
@@ -75,7 +73,7 @@ null_string_to_key (Shishi * handle,
 		    char *salt,
 		    int saltlen,
 		    char *parameter,
-		    char *outkey)
+		    Shishi_key *outkey)
 {
   return SHISHI_OK;
 }

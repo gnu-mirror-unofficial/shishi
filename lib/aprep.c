@@ -289,13 +289,9 @@ shishi_aprep_enc_part_add (Shishi * handle,
   int buflen;
   unsigned char der[BUFSIZ];
   int derlen;
-  unsigned char key[BUFSIZ];
-  int keylen;
-  int keytype;
+  Shishi_key *key;
 
-  keylen = sizeof (key);
-  res = shishi_encticketpart_get_key (handle, encticketpart,
-				      &keytype, key, &keylen);
+  res = shishi_encticketpart_get_key (handle, encticketpart, &key);
   if (res != SHISHI_OK)
     return res;
 
@@ -315,15 +311,16 @@ shishi_aprep_enc_part_add (Shishi * handle,
     }
 
   buflen = BUFSIZ;
-  res = shishi_encrypt (handle, SHISHI_KEYUSAGE_ENCAPREPPART,
-			keytype, key, keylen, der, derlen, buf, &buflen);
+  res = shishi_encrypt (handle, key, SHISHI_KEYUSAGE_ENCAPREPPART,
+			der, derlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "des_encrypt fail\n");
       return res;
     }
 
-  res = shishi_aprep_enc_part_set (handle, aprep, keytype, buf, buflen);
+  res = shishi_aprep_enc_part_set (handle, aprep, shishi_key_type(key),
+				   buf, buflen);
 
   return res;
 }
@@ -384,9 +381,9 @@ shishi_aprep_get_enc_part_etype (Shishi * handle, ASN1_TYPE aprep, int *etype)
 int
 shishi_aprep_decrypt (Shishi * handle,
 		      ASN1_TYPE aprep,
+		      Shishi_key *key,
 		      int keyusage,
-		      int keytype,
-		      char *key, int keylen, ASN1_TYPE * encapreppart)
+		      ASN1_TYPE * encapreppart)
 {
   int res;
   int i, len;
@@ -401,7 +398,7 @@ shishi_aprep_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (etype != keytype)
+  if (etype != shishi_key_type(key))
     return SHISHI_APREP_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
@@ -410,8 +407,8 @@ shishi_aprep_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_decrypt (handle, keyusage, etype,
-			key, keylen, cipher, cipherlen, buf, &buflen);
+  res = shishi_decrypt (handle, key, keyusage, cipher, cipherlen,
+			buf, &buflen);
   if (res != SHISHI_OK)
     {
       if (VERBOSE (handle))

@@ -22,6 +22,7 @@ init.lo
 kdc.lo
 kdcrep.lo
 kdcreq.lo
+key.lo
 krberror.lo
 libshishi.la
 netio.lo

@@ -405,9 +405,9 @@ error:
 int
 shishi_kdcrep_decrypt (Shishi * handle,
 		       ASN1_TYPE kdcrep,
+		       Shishi_key *key,
 		       int keyusage,
-		       int keytype,
-		       char *key, int keylen, ASN1_TYPE * enckdcreppart)
+		       ASN1_TYPE * enckdcreppart)
 {
   int res;
   int i, len;
@@ -422,7 +422,8 @@ shishi_kdcrep_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (etype != keytype)
+  puts("a");
+  if (etype != shishi_key_type(key))
     return SHISHI_KDCREP_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
@@ -431,8 +432,8 @@ shishi_kdcrep_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_decrypt (handle, keyusage, etype,
-			key, keylen, cipher, cipherlen, buf, &buflen);
+  res = shishi_decrypt (handle, key, keyusage,
+			cipher, cipherlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
       if (VERBOSE (handle))

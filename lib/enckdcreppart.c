@@ -29,31 +29,34 @@
  * @keyvalue: output array with key.
  * @keyvalue_len: on input, maximum size of output array with key,
  *                on output, holds the actual size of output array with key.
- * 
+ *
  * Extract the key to use with the ticket sent in the KDC-REP
  * associated with the EndKDCRepPart input variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int
 shishi_enckdcreppart_get_key (Shishi * handle,
 			      ASN1_TYPE enckdcreppart,
-			      int *keytype,
-			      unsigned char *keyvalue, int *keyvalue_len)
+			      Shishi_key **key)
 {
   int res;
-  unsigned char buf[BUFSIZ];
+  char buf[BUFSIZ];
+  int buflen;
+  int keytype;
 
-  res = _shishi_asn1_integer_field (handle, enckdcreppart,
-				    keytype, "EncKDCRepPart.key.keytype");
+  res = _shishi_asn1_integer_field (handle, enckdcreppart, &keytype,
+				    "EncKDCRepPart.key.keytype");
   if (res != SHISHI_OK)
     return res;
 
-  res = _shishi_asn1_field (handle, enckdcreppart,
-			    keyvalue, keyvalue_len,
+  buflen = BUFSIZ;
+  res = _shishi_asn1_field (handle, enckdcreppart, buf, &buflen,
 			    "EncKDCRepPart.key.keyvalue");
   if (res != ASN1_SUCCESS)
     return res;
+
+  *key = shishi_key (keytype, buf);
 
   return SHISHI_OK;
 }

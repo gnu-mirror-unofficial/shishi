@@ -21,6 +21,14 @@
 
 #include "internal.h"
 
+struct Shishi_ticket
+{
+  char *principal;
+  ASN1_TYPE ticket;
+  ASN1_TYPE enckdcreppart;
+  Shishi_key *key;
+};
+
 int
 shishi_ticket_realm_get (Shishi * handle,
 			 ASN1_TYPE ticket, char *realm, int *realmlen)
@@ -108,6 +116,30 @@ ASN1_TYPE
 shishi_ticket_enckdcreppart (Shishi_ticket * ticket)
 {
   return ticket->enckdcreppart;
+}
+
+/**
+ * shishi_ticket_key:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ticket: input variable with ticket info.
+ *
+ * Return value: Returns key extracted from enckdcreppart.
+ **/
+Shishi_key *
+shishi_ticket_key (Shishi *handle, Shishi_ticket * ticket)
+{
+  if (!ticket->key)
+    {
+      int res;
+
+      res = shishi_enckdcreppart_get_key (handle,
+					  shishi_ticket_enckdcreppart (ticket),
+					  &ticket->key);
+      if (res != SHISHI_OK)
+	return NULL;
+    }
+
+  return ticket->key;
 }
 
 /**
@@ -564,9 +596,7 @@ shishi_ticket_apreq_data_usage (Shishi * handle,
 {
   ASN1_TYPE authenticator = ASN1_TYPE_EMPTY;
   int res;
-  unsigned char key[BUFSIZ];
-  int keylen;
-  int keytype;
+  Shishi_key *key;
 
   *apreq = shishi_apreq (handle);
   if (apreq == NULL)
@@ -584,10 +614,9 @@ shishi_ticket_apreq_data_usage (Shishi * handle,
       return res;
     }
 
-  keylen = sizeof (key);
-  res = shishi_enckdcreppart_get_key
-    (handle,
-     shishi_ticket_enckdcreppart (ticket), &keytype, key, &keylen);
+  res = shishi_enckdcreppart_get_key (handle,
+				      shishi_ticket_enckdcreppart (ticket),
+				      &key);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not extract key: %s\n",
@@ -596,8 +625,8 @@ shishi_ticket_apreq_data_usage (Shishi * handle,
     }
 
   res = shishi_apreq_make_authenticator_der
-    (handle, *apreq, authenticatorcksumkeyusage, authenticatorkeyusage,
-     keytype, key, keylen, data, datalen);
+    (handle, *apreq, key, authenticatorcksumkeyusage, authenticatorkeyusage,
+     data, datalen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make authenticator: %s\n",
@@ -684,8 +713,8 @@ shishi_ticket_tgsreq (Shishi * handle,
 int
 shishi_ticket_decrypt (Shishi * handle,
 		       ASN1_TYPE ticket,
-		       int keytype,
-		       char *key, int keylen, ASN1_TYPE * encticketpart)
+		       Shishi_key *key,
+		       ASN1_TYPE * encticketpart)
 {
   int res;
   int i, len;
@@ -700,7 +729,8 @@ shishi_ticket_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (etype != keytype)
+  puts("o");
+  if (etype != shishi_key_type(key))
     return SHISHI_KDCREP_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
@@ -709,8 +739,7 @@ shishi_ticket_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_decrypt (handle, SHISHI_KEYUSAGE_KDCREP_TICKET,
-			key, keytype, keylen,
+  res = shishi_decrypt (handle, key, SHISHI_KEYUSAGE_KDCREP_TICKET,
 			cipher, cipherlen, buf, &buflen);
 
   if (res != SHISHI_OK)

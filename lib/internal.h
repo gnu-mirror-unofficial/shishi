@@ -125,6 +125,7 @@ extern char *_shishi_gettext (const char *str);
 
 #define GENERALIZEDTIME_TIME_LEN 15
 #define MAX_KEY_LEN 32
+#define MAX_RANDOM_LEN 32
 #define MAX_HASH_LEN 32
 
 #define SHISHI_VERBOSE_CRYPTO  (1<<1)
@@ -141,13 +142,6 @@ extern char *_shishi_gettext (const char *str);
 		  SHISHI_VERBOSE_CRYPTO |	\
 		  SHISHI_VERBOSE_NOICE)
 #define VERBOSE(h) (h->verbose & ~VERBOSES)
-
-struct Shishi_ticket
-{
-  char *principal;
-  ASN1_TYPE ticket;
-  ASN1_TYPE enckdcreppart;
-};
 
 struct Shishi_ticketset
 {
@@ -194,13 +188,6 @@ struct Shishi_ap
   ASN1_TYPE apreq;
   ASN1_TYPE aprep;
   ASN1_TYPE encapreppart;
-};
-
-struct Shishi_key
-{
-  int type;
-  char value[MAX_KEY_LEN];
-  int length;
 };
 
 struct Shishi

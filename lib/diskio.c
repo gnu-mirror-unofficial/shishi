@@ -760,25 +760,26 @@ _shishi_krberror_input (Shishi * handle,
 }
 
 int
-shishi_key_print (Shishi * handle, FILE * fh, int keytype, char *key,
-		  int keylen, int kvno, char *clientname, char *realm)
+shishi_key_print (Shishi * handle, FILE * fh, Shishi *key,
+		  char *clientname, char *realm)
 {
   char b64key[BUFSIZ];
   int res;
   int i;
 
-  shishi_to_base64 (b64key, key, keylen, sizeof (b64key));
+  shishi_to_base64 (b64key, shishi_key_value(key),
+		    shishi_key_length(key), sizeof (b64key));
 
   fprintf (fh, HEADERBEG "\n", "KEY");
 
-  fprintf (fh, "Keytype: %d (%s)\n", keytype,
-	   shishi_cipher_name (keytype));
+  fprintf (fh, "Keytype: %d (%s)\n", shishi_key_type(key),
+	   shishi_cipher_name (shishi_key_type(key)));
   if (clientname)
     fprintf (fh, "Clientname: %s\n", clientname);
   if (realm)
     fprintf (fh, "Realm: %s\n", realm);
-  if (kvno)
-    fprintf (fh, "Key-Version-Number: %d\n", kvno);
+  if (shishi_key_version(key))
+    fprintf (fh, "Key-Version-Number: %d\n", shishi_key_version(key));
   fprintf (fh, "\n");
 
   for (i = 0; i < strlen (b64key); i++)
@@ -796,8 +797,8 @@ shishi_key_print (Shishi * handle, FILE * fh, int keytype, char *key,
 }
 
 int
-shishi_key_to_file (Shishi * handle, char *filename, int keytype, char *key,
-		    int keylen, int kvno, char *clientname, char *realm)
+shishi_key_to_file (Shishi * handle, char *filename, Shishi *key,
+		    char *clientname, char *realm)
 {
   FILE *fh;
   int res;
@@ -809,8 +810,7 @@ shishi_key_to_file (Shishi * handle, char *filename, int keytype, char *key,
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  res = shishi_key_print (handle, fh, keytype, key, keylen,
-			  kvno, clientname, realm);
+  res = shishi_key_print (handle, fh, key, clientname, realm);
   if (res != SHISHI_OK)
     return res;
 

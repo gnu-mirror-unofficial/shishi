@@ -23,30 +23,26 @@
 
 static int
 des3_encrypt (Shishi * handle,
+	      Shishi_key *key,
 	      int keyusage,
-	      char *key,
-	      int keylen,
 	      char *in,
 	      int inlen,
 	      char *out,
 	      int *outlen)
 {
-  return simplified_encrypt (handle, keyusage, SHISHI_DES3_CBC_HMAC_SHA1_KD,
-			     key, keylen, in, inlen, out, outlen);
+  return simplified_encrypt (handle, key, keyusage, in, inlen, out, outlen);
 }
 
 static int
 des3_decrypt (Shishi * handle,
+	      Shishi_key *key,
 	      int keyusage,
-	      char *key,
-	      int keylen,
 	      char *in,
 	      int inlen,
 	      char *out,
 	      int *outlen)
 {
-  return simplified_decrypt (handle, keyusage, SHISHI_DES3_CBC_HMAC_SHA1_KD,
-			     key, keylen, in, inlen, out, outlen);
+  return simplified_decrypt (handle, key, keyusage, in, inlen, out, outlen);
 }
 
 /* The 168 bits of random key data are converted to a protocol key
@@ -70,11 +66,15 @@ des3_decrypt (Shishi * handle,
  */
 static int
 des3_random_to_key (Shishi * handle,
-		    char random[168 / 8],
+		    char *random,
 		    int randomlen,
-		    char key[3 * 8])
+		    Shishi_key *outkey)
 {
+  unsigned char tmpkey[3*8];
   int i;
+
+  if (randomlen < 168 / 8)
+    return !SHISHI_OK;
 
   if (VERBOSECRYPTO(handle))
     {
@@ -86,28 +86,31 @@ des3_random_to_key (Shishi * handle,
       puts ("");
     }
 
-  memcpy (key, random, 7);
-  memcpy (key + 8, random + 7, 7);
-  memcpy (key + 16, random + 14, 7);
+  memcpy (tmpkey, random, 7);
+  memcpy (tmpkey + 8, random + 7, 7);
+  memcpy (tmpkey + 16, random + 14, 7);
   for (i = 0; i < 3; i++)
     {
-      key[i * 8 + 7] =
-	((key[i * 8 + 0] & 0x01) << 1) |
-	((key[i * 8 + 1] & 0x01) << 2) |
-	((key[i * 8 + 2] & 0x01) << 3) |
-	((key[i * 8 + 3] & 0x01) << 4) |
-	((key[i * 8 + 4] & 0x01) << 5) |
-	((key[i * 8 + 5] & 0x01) << 6) | ((key[i * 8 + 6] & 0x01) << 7);
-      des_set_odd_key_parity (key + i * 8);
+      tmpkey[i * 8 + 7] =
+	((tmpkey[i * 8 + 0] & 0x01) << 1) |
+	((tmpkey[i * 8 + 1] & 0x01) << 2) |
+	((tmpkey[i * 8 + 2] & 0x01) << 3) |
+	((tmpkey[i * 8 + 3] & 0x01) << 4) |
+	((tmpkey[i * 8 + 4] & 0x01) << 5) |
+	((tmpkey[i * 8 + 5] & 0x01) << 6) |
+	((tmpkey[i * 8 + 6] & 0x01) << 7);
+      des_set_odd_key_parity (tmpkey + i * 8);
     }
+
+  shishi_key_value_set(outkey, tmpkey);
 
   if (VERBOSECRYPTO(handle))
     {
       printf ("key = des3_random_to_key (random)\n");
       printf ("\t ;; key:\n");
-      hexprint (key, 3 * 8);
+      hexprint (tmpkey, 3 * 8);
       puts ("");
-      binprint (key, 3 * 8);
+      binprint (tmpkey, 3 * 8);
       puts ("");
     }
 
@@ -121,11 +124,11 @@ des3_string_to_key (Shishi * handle,
 		    char *salt,
 		    int saltlen,
 		    char *parameter,
-		    char *outkey)
+		    Shishi_key *outkey)
 {
   char *s;
   int n_s;
-  char key[3 * 8];
+  Shishi_key *key;
   int keylen = 3 * 8;
   char nfold[168 / 8];
   int nfoldlen = 168 / 8;
@@ -134,13 +137,10 @@ des3_string_to_key (Shishi * handle,
   if (VERBOSECRYPTO(handle))
     {
       printf ("des3_string_to_key (string, salt)\n");
-
       printf ("\t ;; String:\n");
       escapeprint (string, stringlen);
       hexprint (string, stringlen);
       puts ("");
-      puts ("");
-
       printf ("\t ;; Salt:\n");
       escapeprint (salt, saltlen);
       hexprint (salt, saltlen);
@@ -160,23 +160,25 @@ des3_string_to_key (Shishi * handle,
 
   free(s);
 
+  key = shishi_key(shishi_key_type(outkey), NULL);
+
   res = des3_random_to_key (handle, nfold, nfoldlen, key);
   if (res != SHISHI_OK)
     return res;
 
   /* key = DK (tmpKey, KerberosConstant) */
-  res = shishi_dk (handle, SHISHI_DES3_CBC_HMAC_SHA1_KD, key, keylen,
-		   "kerberos", strlen ("kerberos"), outkey, keylen);
+  res = shishi_dk (handle, key, "kerberos", strlen ("kerberos"), outkey);
   if (res != SHISHI_OK)
     return res;
+
+  shishi_key_done(key);
 
   if (VERBOSECRYPTO(handle))
     {
       printf ("des3_string_to_key (string, salt)\n");
       printf ("\t ;; Key:\n");
-      escapeprint (outkey, keylen);
-      hexprint (outkey, keylen);
-      puts ("");
+      hexprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      binprint (shishi_key_value(outkey), shishi_key_length(outkey));
       puts ("");
     }
 

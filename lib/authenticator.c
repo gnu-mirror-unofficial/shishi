@@ -24,11 +24,11 @@
 /**
  * shishi_authenticator:
  * @handle: shishi handle as allocated by shishi_init().
- * 
+ *
  * This function creates a new Authenticator, populated with some
  * default values.  It uses the current time as returned by the system
  * for the ctime and cusec fields.
- * 
+ *
  * Return value: Returns the authenticator or ASN1_TYPE_EMPTY on
  * failure.
  **/
@@ -101,9 +101,9 @@ error:
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @authenticator: authenticator as allocated by shishi_authenticator().
- * 
+ *
  * Print ASCII armored DER encoding of authenticator to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -119,9 +119,9 @@ shishi_authenticator_print (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @authenticator: authenticator as allocated by shishi_authenticator().
- * 
+ *
  * Save DER encoding of authenticator to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -138,10 +138,10 @@ shishi_authenticator_save (Shishi * handle,
  * @filetype: input variable specifying type of file to be written,
  *            see Shishi_filetype.
  * @filename: input variable with filename to write to.
- * 
+ *
  * Write Authenticator to file in specified TYPE.  The file will be
  * truncated if it exists.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -184,10 +184,10 @@ shishi_authenticator_to_file (Shishi * handle, ASN1_TYPE authenticator,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @authenticator: output variable with newly allocated authenticator.
- * 
+ *
  * Read ASCII armored DER encoded authenticator from file and populate
  * given authenticator variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -202,10 +202,10 @@ shishi_authenticator_parse (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @authenticator: output variable with newly allocated authenticator.
- * 
+ *
  * Read DER encoded authenticator from file and populate given
  * authenticator variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -222,9 +222,9 @@ shishi_authenticator_read (Shishi * handle,
  * @filetype: input variable specifying type of file to be read,
  *            see Shishi_filetype.
  * @filename: input variable with filename to read from.
- * 
+ *
  * Read Authenticator from file in specified TYPE.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -267,9 +267,9 @@ shishi_authenticator_from_file (Shishi * handle, ASN1_TYPE * authenticator,
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: authenticator as allocated by shishi_authenticator().
  * @crealm: input array with realm.
- * 
+ *
  * Set realm field in authenticator to specified value.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -295,9 +295,9 @@ shishi_authenticator_set_crealm (Shishi * handle,
  * @name_type: type of principial, see Shishi_name_type, usually
  *             SHISHI_NT_UNKNOWN.
  * @principal: input array with principal name.
- * 
+ *
  * Set principal field in authenticator to specified value.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -362,13 +362,10 @@ int
 shishi_authenticator_cusec_get (Shishi * handle,
 				ASN1_TYPE authenticator, int *cusec)
 {
-  int len;
   int res;
 
-  len = sizeof (*cusec);
-  *cusec = 0;
-  res = _shishi_asn1_field (handle, authenticator, cusec, &len,
-			    "Authenticator.cusec");
+  res = _shishi_asn1_integer_field (handle, authenticator, cusec,
+				    "Authenticator.cusec");
   *cusec = ntohl (*cusec);
 
   return res;
@@ -418,13 +415,13 @@ shishi_authenticator_remove_cksum (Shishi * handle, ASN1_TYPE authenticator)
  * @cksumtype: input checksum type to store in authenticator.
  * @cksum: input checksum data to store in authenticator.
  * @cksumlen: size of input checksum data to store in authenticator.
- * 
+ *
  * Store checksum value in authenticator.  A checksum is usually created
  * by calling shishi_checksum() on some application specific data using
  * the key from the ticket that is being used.  To save time, you may
  * want to use shishi_authenticator_add_cksum() instead, which calculates
  * the checksum and calls this function in one step.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -456,18 +453,18 @@ shishi_authenticator_set_cksum (Shishi * handle,
  * @enckdcreppart: ticket information where the key is taken from.
  * @data: input array with data to calculate checksum on.
  * @datalen: size of input array with data to calculate checksum on.
- * 
+ *
  * Calculate checksum for data and store it in the authenticator.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_authenticator_add_cksum (Shishi * handle,
 				ASN1_TYPE authenticator,
+				Shishi_key *key,
 				int keyusage,
-				int keytype,
-				char *key,
-				int keylen, char *data, int datalen)
+				char *data,
+				int datalen)
 {
   int res;
 
@@ -475,12 +472,11 @@ shishi_authenticator_add_cksum (Shishi * handle,
     {
       char cksum[BUFSIZ];
       int cksumlen;
-      int cksumtype = shishi_cipher_defaultcksumtype (keytype);
+      int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type(key));
 
       cksumlen = sizeof (cksum);
-      res =
-	shishi_checksum (handle, cksumtype, keyusage, keytype, key, keylen,
-			 data, datalen, cksum, &cksumlen);
+      res = shishi_checksum (handle, key, keyusage, cksumtype,
+			     data, datalen, cksum, &cksumlen);
       if (res != SHISHI_OK)
 	return res;
 

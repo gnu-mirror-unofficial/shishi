@@ -224,22 +224,22 @@ shishi_ap_reply_verify_der (Shishi * handle,
 int
 shishi_ap_reply_verify (Shishi * handle, Shishi_ap * ap, ASN1_TYPE aprep)
 {
-  unsigned char key[MAX_KEY_LEN];
-  int keylen;
-  int etype, keytype;
+  Shishi_key *key;
+  int etype;
   int res;
 
-  keylen = sizeof (key);
   res = shishi_enckdcreppart_get_key (handle,
 				      shishi_ticket_enckdcreppart (ap->ticket),
-				      &keytype, key, &keylen);
+				      &key);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_aprep_decrypt (handle, aprep, SHISHI_KEYUSAGE_ENCAPREPPART,
-			      keytype, key, keylen, &ap->encapreppart);
+  res = shishi_aprep_decrypt (handle, aprep, key, SHISHI_KEYUSAGE_ENCAPREPPART,
+			      &ap->encapreppart);
   if (res != SHISHI_OK)
     return res;
+
+  shishi_key_done(key);
 
   res = shishi_aprep_verify (handle, ap->authenticator, ap->encapreppart);
   if (res != SHISHI_OK)

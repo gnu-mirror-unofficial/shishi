@@ -29,13 +29,13 @@
  * @salt: output array with salt.
  * @saltlen: on input, maximum size of output array with salt, on output,
  *           holds actual size of output array with salt.
- * 
+ *
  * Derive the salt that should be used when deriving a key via
  * shishi_string_to_key() for an AS exchange.  Currently this searches
  * for PA-DATA of type SHISHI_PA_PW_SALT in the AS-REP and returns it
  * if found, otherwise the salt is derived from the client name and
  * realm in AS-REQ.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -209,11 +209,11 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: AS-REQ to compare realm field in.
  * @kdcrep: AS-REP to compare realm field in.
- * 
+ *
  * Verify that AS-REQ.req-body.realm and AS-REP.crealm fields matches.
  * This is one of the steps that has to be performed when processing a
  * AS-REQ and AS-REP exchange, see shishi_kdc_process().
- * 
+ *
  * Return value: Returns SHISHI_OK if successful,
  * SHISHI_REALM_MISMATCH if the values differ, or an error code.
  **/
@@ -261,11 +261,11 @@ shishi_as_check_crealm (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: AS-REQ to compare client name field in.
  * @kdcrep: AS-REP to compare client name field in.
- * 
+ *
  * Verify that AS-REQ.req-body.realm and AS-REP.crealm fields matches.
  * This is one of the steps that has to be performed when processing a
  * AS-REQ and AS-REP exchange, see shishi_kdc_process().
- * 
+ *
  * Return value: Returns SHISHI_OK if successful,
  * SHISHI_CNAME_MISMATCH if the values differ, or an error code.
  **/
@@ -341,7 +341,7 @@ shishi_as_check_cname (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ to compare nonce field in.
  * @enckdcreppart: Encrypted KDC-REP part to compare nonce field in.
- * 
+ *
  * Verify that KDC-REQ.req-body.nonce and EncKDCRepPart.nonce fields
  * matches.  This is one of the steps that has to be performed when
  * processing a KDC-REQ and KDC-REP exchange.
@@ -430,12 +430,12 @@ shishi_kdc_check_nonce (Shishi * handle,
  * @kdcrep: input variable that holds the received KDC-REP.
  * @oldenckdcreppart: input variable with EncKDCRepPart used in request.
  * @enckdcreppart: output variable that holds new EncKDCRepPart.
- * 
+ *
  * Process a TGS client exchange and output decrypted EncKDCRepPart
  * which holds details for the new ticket received.  This function
  * simply derives the encryption key from the ticket used to construct
  * the TGS request and calls shishi_kdc_process(), which see.
- * 
+ *
  * Return value: Returns SHISHI_OK iff the TGS client exchange was
  * successful.
  **/
@@ -445,27 +445,24 @@ shishi_tgs_process (Shishi * handle,
 		    ASN1_TYPE tgsrep,
 		    ASN1_TYPE oldenckdcreppart, ASN1_TYPE * enckdcreppart)
 {
-  unsigned char key[BUFSIZ];
-  int keylen;
-  int etype, keytype;
+  Shishi_key *key;
+  int etype;
   int res;
 
   res = shishi_kdcrep_get_enc_part_etype (handle, tgsrep, &etype);
   if (res != SHISHI_OK)
     return res;
 
-  keylen = sizeof (key);
-  res = shishi_enckdcreppart_get_key (handle, oldenckdcreppart,
-				      &keytype, key, &keylen);
+  res = shishi_enckdcreppart_get_key (handle, oldenckdcreppart, &key);
   if (res != SHISHI_OK)
     return res;
 
-  if (etype != keytype)
+  if (etype != shishi_key_type(key))
     return SHISHI_TGSREP_BAD_KEYTYPE;
 
-  res = shishi_kdc_process (handle, tgsreq, tgsrep,
+  res = shishi_kdc_process (handle, tgsreq, tgsrep, key,
 			    SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
-			    keytype, key, keylen, enckdcreppart);
+			    enckdcreppart);
 
   return res;
 }
@@ -477,12 +474,12 @@ shishi_tgs_process (Shishi * handle,
  * @kdcrep: input variable that holds the received KDC-REP.
  * @string: input variable with zero terminated password.
  * @enckdcreppart: output variable that holds new EncKDCRepPart.
- * 
+ *
  * Process an AS client exchange and output decrypted EncKDCRepPart
  * which holds details for the new ticket received.  This function
  * simply derives the encryption key from the password and calls
  * shishi_kdc_process(), which see.
- * 
+ *
  * Return value: Returns SHISHI_OK iff the AS client exchange was
  * successful.
  **/
@@ -515,9 +512,8 @@ shishi_as_process (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_kdc_process (handle, asreq, asrep,
-			    SHISHI_KEYUSAGE_ENCASREPPART, keytype, key,
-			    keylen, enckdcreppart);
+  res = shishi_kdc_process (handle, asreq, asrep, key,
+			    SHISHI_KEYUSAGE_ENCASREPPART, enckdcreppart);
 
   return res;
 }
@@ -531,7 +527,7 @@ shishi_as_process (Shishi * handle,
  * @key: input array with key to decrypt encrypted part of KDC-REP with.
  * @keylen: size of input array with key.
  * @enckdcreppart: output variable that holds new EncKDCRepPart.
- * 
+ *
  * Process a KDC client exchange and output decrypted EncKDCRepPart
  * which holds details for the new ticket received.  Use
  * shishi_kdcrep_get_ticket() to extract the ticket.  This function
@@ -544,7 +540,7 @@ shishi_as_process (Shishi * handle,
  * Usually the shishi_as_process() and shishi_tgs_process() functions
  * should be used instead, since they simplify the decryption key
  * computation.
- * 
+ *
  * Return value: Returns SHISHI_OK iff the KDC client exchange was
  * successful.
  **/
@@ -552,9 +548,9 @@ int
 shishi_kdc_process (Shishi * handle,
 		    ASN1_TYPE kdcreq,
 		    ASN1_TYPE kdcrep,
+		    Shishi_key *key,
 		    int keyusage,
-		    int keytype,
-		    char *key, int keylen, ASN1_TYPE * enckdcreppart)
+		    ASN1_TYPE * enckdcreppart)
 {
   int res;
   int i, len;
@@ -602,8 +598,7 @@ shishi_kdc_process (Shishi * handle,
 	return res;
     }
 
-  res = shishi_kdcrep_decrypt (handle, kdcrep, keyusage, keytype, key, keylen,
-			       enckdcreppart);
+  res = shishi_kdcrep_decrypt (handle, kdcrep, key, keyusage, enckdcreppart);
   if (res != SHISHI_OK)
     return res;
 

@@ -25,8 +25,7 @@ int
 crypto (Shishi * handle, struct arguments arg)
 {
   FILE *infh, *outfh;
-  char key[BUFSIZ];
-  int keylen = sizeof (key);
+  Shishi_key *key;
   char out[BUFSIZ];
   int outlen;
   char in[BUFSIZ];
@@ -54,6 +53,8 @@ crypto (Shishi * handle, struct arguments arg)
 	     "warning: using %s is silly, consider using --algorithm.\n",
 	     shishi_cipher_name (arg.algorithm));
 
+  key = shishi_key(arg.algorithm, NULL);
+
   if (arg.password)
     {
       rc = shishi_string_to_key (handle, arg.algorithm,
@@ -61,7 +62,7 @@ crypto (Shishi * handle, struct arguments arg)
 				 strlen (arg.password),
 				 arg.salt,
 				 strlen(arg.salt),
-				 arg.parameter, key, &keylen);
+				 arg.parameter, key);
       if (rc != SHISHI_OK)
 	{
 	  shishi_error_printf (handle, _("Error in string2key"));
@@ -71,25 +72,32 @@ crypto (Shishi * handle, struct arguments arg)
     }
   else if (arg.keyvalue)
     {
-      if (strlen (arg.keyvalue) > sizeof (key))
+      char buf[BUFSIZ];
+      int buflen;
+
+      if (strlen (arg.keyvalue) > sizeof (buf))
 	{
 	  shishi_error_printf (handle, _("Value in --keyvalue too large."));
 	  return SHISHI_TOO_SMALL_BUFFER;
 	}
 
-      keylen = shishi_from_base64 (key, arg.keyvalue);
-      if (keylen <= 0)
+      buflen = shishi_from_base64 (buf, arg.keyvalue);
+      if (buflen != shishi_key_length(key))
 	{
-	  shishi_error_printf (handle, _("Value in --keyvalue invalid."));
+	  shishi_error_printf (handle, _("Bad length of --keyvalue value."));
 	  return SHISHI_BASE64_ERROR;
 	}
+      shishi_key_value_set(key, buf);
     }
   else if (arg.random)
     {
-      keylen = shishi_cipher_keylen (arg.algorithm);
-      rc = shishi_randomize(handle, key, keylen);
+      char buf[BUFSIZ];
+
+      rc = shishi_randomize(handle, buf, shishi_key_length(key));
       if (rc != SHISHI_OK)
 	return rc;
+
+      shishi_key_value_set(key, buf);
     }
   else if (arg.readkeyfile)
     {
@@ -108,8 +116,7 @@ crypto (Shishi * handle, struct arguments arg)
       ((arg.password || arg.random || arg.keyvalue) &&
        !(arg.encrypt_p || arg.decrypt_p)))
     {
-      shishi_key_print (handle, stdout, arg.algorithm, key, keylen, arg.kvno,
-			arg.cname, arg.realm);
+      shishi_key_print (handle, stdout, key, arg.cname, arg.realm);
     }
 
   if (arg.encrypt_p || arg.decrypt_p)
@@ -152,11 +159,11 @@ crypto (Shishi * handle, struct arguments arg)
 
       inlen = sizeof (in);
       if (arg.encrypt_p)
-	rc = shishi_encrypt (handle, arg.keyusage, arg.algorithm,
-			     key, keylen, out, outlen, in, &inlen);
+	rc = shishi_encrypt (handle, key, arg.keyusage,
+			     out, outlen, in, &inlen);
       else
-	rc = shishi_decrypt (handle, arg.keyusage, arg.algorithm,
-			     key, keylen, in, inlen, out, &outlen);
+	rc = shishi_decrypt (handle, key, arg.keyusage,
+			     in, inlen, out, &outlen);
       if (rc != SHISHI_OK)
 	{
 	  shishi_error_printf (handle, _("Error ciphering\n"));
@@ -209,8 +216,7 @@ crypto (Shishi * handle, struct arguments arg)
     }
 
   if (arg.writekeyfile)
-    shishi_key_to_file (handle, arg.writekeyfile, arg.algorithm, key,
-			keylen, arg.kvno, arg.cname, arg.realm);
+    shishi_key_to_file (handle, arg.writekeyfile, key, arg.cname, arg.realm);
 
   return 0;
 }

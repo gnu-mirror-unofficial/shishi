@@ -51,7 +51,7 @@ kdc_write_apreq (Shishi * handle, struct arguments arg, ASN1_TYPE req)
       if (res != ASN1_SUCCESS)
 	{
 	  fprintf (stdout, libtasn1_strerror (res));
-	  return ASN1_TYPE_EMPTY;
+	  return SHISHI_ASN1_ERROR;
 	}
 
       if (patype == SHISHI_PA_TGS_REQ)
@@ -95,27 +95,29 @@ kdc_response (Shishi * handle,
 
   if (arg.keyvalue && arg.algorithm)
     {
-      unsigned char key[BUFSIZ];
+      unsigned char buf[BUFSIZ];
       int keylen;
       int keytype;
+      Shishi_key *key;
 
-      if (strlen (arg.keyvalue) > sizeof (key))
+      key = shishi_key(arg.algorithm, NULL);
+
+      if (strlen (arg.keyvalue) > sizeof (buf))
 	{
 	  fprintf (stderr, "keyvalue too large\n");
 	  return 1;
 	}
-      keylen = shishi_from_base64 (key, arg.keyvalue);
-      if (keylen <= 0)
+      keylen = shishi_from_base64 (buf, arg.keyvalue);
+      if (keylen != shishi_key_length(key))
 	{
 	  fprintf (stderr, "base64 decoding of key value failed\n");
 	  return 1;
 	}
 
-      keytype = arg.algorithm;
+      shishi_key_value_set(key, buf);
 
-      res = shishi_kdc_process (handle, req, rep,
-				oldtkt ? 3 : 8,
-				keytype, key, keylen, &kdcreppart);
+      res = shishi_kdc_process (handle, req, rep, key,
+				oldtkt ? 3 : 8, &kdcreppart);
     }
   else if (oldtkt)
     res = shishi_tgs_process (handle, req, rep,

@@ -160,10 +160,10 @@ error:
 /**
  * shishi_as_req:
  * @handle: shishi handle as allocated by shishi_init().
- * 
+ *
  * This function creates a new AS-REQ, populated with some default
  * values.
- * 
+ *
  * Return value: Returns the AS-REQ or ASN1_TYPE_EMPTY on failure.
  **/
 ASN1_TYPE
@@ -204,10 +204,10 @@ shishi_asreq (Shishi * handle, char *realm, char *server, char *client)
 /**
  * shishi_tgs_req:
  * @handle: shishi handle as allocated by shishi_init().
- * 
+ *
  * This function creates a new TGS-REQ, populated with some default
  * values.
- * 
+ *
  * Return value: Returns the TGS-REQ or ASN1_TYPE_EMPTY on failure.
  **/
 ASN1_TYPE
@@ -222,9 +222,7 @@ shishi_tgsreq (Shishi * handle,
 	       char *realm, char *server, Shishi_ticket * ticket)
 {
   ASN1_TYPE req = ASN1_TYPE_EMPTY;
-  unsigned char key[BUFSIZ];
-  int keylen;
-  int keytype;
+  Shishi_key *key;
   int res;
 
   req = shishi_tgs_req (handle);
@@ -239,16 +237,14 @@ shishi_tgsreq (Shishi * handle,
       return ASN1_TYPE_EMPTY;
     }
 
-  keylen = sizeof (key);
-  res = shishi_enckdcreppart_get_key
-    (handle,
-     shishi_ticket_enckdcreppart (ticket), &keytype, key, &keylen);
+  res = shishi_enckdcreppart_get_key (handle,
+				      shishi_ticket_enckdcreppart (ticket),
+				      &key);
   if (res != SHISHI_OK)
     return ASN1_TYPE_EMPTY;
 
-  res = shishi_kdcreq_make_padata_tgs
-    (handle, req,
-     shishi_ticket_ticket (ticket), keytype, key, keylen);
+  res = shishi_kdcreq_make_padata_tgs (handle, req,
+				       shishi_ticket_ticket (ticket), key);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make TGS PA-DATA: %s\n",
@@ -264,9 +260,9 @@ shishi_tgsreq (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @kdcreq: KDC-REQ to print.
- * 
+ *
  * Print ASCII armored DER encoding of KDC-REQ to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -280,9 +276,9 @@ shishi_kdcreq_print (Shishi * handle, FILE * fh, ASN1_TYPE kdcreq)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @kdcreq: KDC-REQ to save.
- * 
+ *
  * Print DER encoding of KDC-REQ to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -298,10 +294,10 @@ shishi_kdcreq_save (Shishi * handle, FILE * fh, ASN1_TYPE kdcreq)
  * @filetype: input variable specifying type of file to be written,
  *            see Shishi_filetype.
  * @filename: input variable with filename to write to.
- * 
+ *
  * Write KDC-REQ to file in specified TYPE.  The file will be truncated
  * if it exists.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -344,10 +340,10 @@ shishi_kdcreq_to_file (Shishi * handle, ASN1_TYPE kdcreq,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @kdcreq: output variable with newly allocated KDC-REQ.
- * 
+ *
  * Read ASCII armored DER encoded KDC-REQ from file and populate given
  * variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -361,9 +357,9 @@ shishi_kdcreq_parse (Shishi * handle, FILE * fh, ASN1_TYPE * kdcreq)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @kdcreq: output variable with newly allocated KDC-REQ.
- * 
+ *
  * Read DER encoded KDC-REQ from file and populate given variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -379,9 +375,9 @@ shishi_kdcreq_read (Shishi * handle, FILE * fh, ASN1_TYPE * kdcreq)
  * @filetype: input variable specifying type of file to be read,
  *            see Shishi_filetype.
  * @filename: input variable with filename to read from.
- * 
+ *
  * Read KDC-REQ from file in specified TYPE.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -426,9 +422,9 @@ shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
  * @name_type: type of principial, see Shishi_name_type, usually
  *             SHISHI_NT_UNKNOWN.
  * @principal: input array with principal name.
- * 
+ *
  * Set the client name field in the KDC-REQ.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -491,9 +487,9 @@ shishi_kdcreq_cnamerealm_get (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ variable to set realm field in.
  * @realm: input array with name of realm.
- * 
+ *
  * Set the realm field in the KDC-REQ.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -518,10 +514,10 @@ shishi_kdcreq_set_realm (Shishi * handle, ASN1_TYPE kdcreq, char *realm)
  * @kdcreq: KDC-REQ variable to set etype field in.
  * @etype: input array with encryption types.
  * @netype: number of elements in input array with encryption types.
- * 
+ *
  * Set the list of supported or wanted encryption types in the
  * request.  The list should be sorted in priority order.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -569,9 +565,9 @@ shishi_kdcreq_set_etype (Shishi * handle,
  * @name_type: type of principial, see Shishi_name_type, usually
  *             SHISHI_NT_UNKNOWN.
  * @principal: input array with principal name.
- * 
+ *
  * Set the server name field in the KDC-REQ.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -683,13 +679,13 @@ shishi_kdcreq_set_realmserver (Shishi * handle,
  * @padatatype: type of PA-DATA, see Shishi_padata_type.
  * @data: input array with PA-DATA value.
  * @datalen: size of input array with PA-DATA value.
- * 
+ *
  * Add new pre authentication data (PA-DATA) to KDC-REQ.  This is used
  * to pass various information to KDC, such as in case of a
  * SHISHI_PA_TGS_REQ padatatype the AP-REQ that authenticates the user
  * to get the ticket.  (But also see shishi_kdcreq_add_padata_tgs()
  * which takes an AP-REQ directly.)
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -733,12 +729,12 @@ error:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ to add PA-DATA to.
  * @apreq: AP-REQ to add as PA-DATA.
- * 
+ *
  * Add TGS pre-authentication data to KDC-REQ.  The data is an AP-REQ
  * that authenticates the request.  This functions simply DER encodes
  * the AP-REQ and calls shishi_kdcreq_add_padata() with a
  * SHISHI_PA_TGS_REQ padatatype.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -776,14 +772,14 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
  * Set ticket in KDC-REQ and create an AP-REQ for ticket, that
  * protects the KDC-REQ.req-body, and add it to the KDC-REQ using
  * shishi_kdcreq_add_padata_tgs().
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_kdcreq_make_padata_tgs (Shishi * handle,
 			       ASN1_TYPE kdcreq,
 			       ASN1_TYPE ticket,
-			       int keytype, char *key, int keylen)
+			       Shishi_key *key)
 {
   ASN1_TYPE apreq = ASN1_TYPE_EMPTY;
   int res;
@@ -805,11 +801,10 @@ shishi_kdcreq_make_padata_tgs (Shishi * handle,
     }
 
   res = shishi_apreq_make_authenticator
-    (handle,
-     apreq,
+    (handle, apreq, key,
      SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
      SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR,
-     keytype, key, keylen, kdcreq, "KDC-REQ.req-body");
+     kdcreq, "KDC-REQ.req-body");
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make authenticator: %s\n",

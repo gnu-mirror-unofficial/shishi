@@ -62,22 +62,25 @@ shishi_encticketpart_get_enc_part_etype (Shishi * handle,
 int
 shishi_encticketpart_get_key (Shishi * handle,
 			      ASN1_TYPE encticketpart,
-			      int *keytype,
-			      unsigned char *keyvalue, int *keyvalue_len)
+			      Shishi_key **key)
 {
   int res;
-  unsigned char buf[BUFSIZ];
+  char buf[BUFSIZ];
+  int buflen;
+  int keytype;
 
-  res = _shishi_asn1_integer_field (handle, encticketpart, keytype,
+  res = _shishi_asn1_integer_field (handle, encticketpart, &keytype,
 				    "EncTicketPart.key.keytype");
   if (res != SHISHI_OK)
     return res;
 
-  res = _shishi_asn1_field (handle, encticketpart,
-			    keyvalue, keyvalue_len,
+  buflen = BUFSIZ;
+  res = _shishi_asn1_field (handle, encticketpart, buf, &buflen,
 			    "EncTicketPart.key.keyvalue");
   if (res != ASN1_SUCCESS)
     return res;
+
+  *key = shishi_key (keytype, buf);
 
   return SHISHI_OK;
 }
