@@ -1031,7 +1031,7 @@ main (int argc, char *argv[])
 	hint.client = (char *) arg.cname;
 	hint.server = (char *) (arg.sname ? arg.sname : arg.tgtname);
 	hint.starttime = arg.starttime;
-	hint.starttime = arg.endtime;
+	hint.endtime = arg.endtime;
 	hint.renew_till = arg.renew_till;
 	hint.renewable = arg.renewable;
 
