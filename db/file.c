@@ -49,20 +49,7 @@
 
 #include "internal.h"
 
-/* For stat. */
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-/* For readdir. */
-#include <dirent.h>
-
-#include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
-
-#include "xreadlink.h"
+#include "fileutil.c"
 
 struct Shisa_file
 {
@@ -120,49 +107,6 @@ shisa_file_cfg (Shisa *dbh,
   return SHISA_OK;
 }
 
-static int
-isdir (const char *path)
-{
-  struct stat buf;
-  int rc;
-
-  rc = stat (path, &buf);
-  if (rc != 0 || !S_ISDIR (buf.st_mode))
-    return 0;
-
-  return 1;
-}
-
-static int
-isdir2 (const char *path1, const char *path2)
-{
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s", path1, path2);
-
-  rc = isdir (tmp);
-
-  free (tmp);
-
-  return rc;
-}
-
-static int
-isdir3 (const char *path1, const char *path2, const char *path3)
-{
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
-
-  rc = isdir (tmp);
-
-  free (tmp);
-
-  return rc;
-}
-
 int
 shisa_file_init (Shisa *dbh,
 		 const char *location,
@@ -189,95 +133,7 @@ shisa_file_init (Shisa *dbh,
   return SHISA_OK;
 }
 
-static char *
-unescape_filename (const char *path)
-{
-  /* XXX fix. */
-  return xstrdup (path);
-}
-
-static int
-shisa_file_ls_1 (Shisa *dbh,
-		 char *path,
-		 char ***files,
-		 size_t *nfiles,
-		 DIR *dir)
-{
-  struct dirent *de;
-  int rc;
-
-  while (errno = 0, (de = readdir (dir)) != NULL)
-    {
-      if (strcmp (de->d_name, ".") == 0 || strcmp (de->d_name, "..") == 0)
-	continue;
-      if (isdir2 (path, de->d_name))
-	{
-	  *files = xrealloc (*files, (*nfiles + 1) * sizeof (**files));
-	  (*files)[(*nfiles)++] = unescape_filename (de->d_name);
-	}
-    }
-
-  if (errno != 0)
-    {
-      size_t i;
-
-      perror(path);
-
-      for (i = 0; i < *nfiles; i++)
-	free (**files);
-      free (*files);
-
-      return SHISA_LIST_REALM_ERROR;
-    }
-
-  return SHISA_OK;
-}
-
-static int
-shisa_file_ls (Shisa *dbh,
-	       char *path,
-	       char ***files,
-	       size_t *nfiles)
-{
-  struct dirent *de;
-  DIR *dir;
-  int rc, tmprc;
-
-  dir = opendir (path);
-  if (dir == NULL)
-    {
-      perror(path);
-      return SHISA_LIST_REALM_ERROR;
-    }
-
-  rc = shisa_file_ls_1 (dbh, path, files, nfiles, dir);
-  if (rc != SHISA_OK)
-    {
-      rc = closedir (dir);
-      if (rc != 0)
-	perror (path);
-      return SHISA_LIST_REALM_ERROR;
-    }
-
-  rc = closedir (dir);
-  if (rc != 0)
-    {
-      size_t i;
-
-      perror(path);
-
-      for (i = 0; i < *nfiles; i++)
-	free (**files);
-      free (*files);
-
-      return SHISA_LIST_REALM_ERROR;
-    }
-
-  return SHISA_OK;
-}
-
-
-extern int
+int
 shisa_file_enumerate_realms (Shisa *dbh,
 			     void *state,
 			     char ***realms,
@@ -286,7 +142,7 @@ shisa_file_enumerate_realms (Shisa *dbh,
   Shisa_file *info = state;
   int rc;
 
-  rc = shisa_file_ls (dbh, info->path, realms, nrealms);
+  rc = ls (info->path, realms, nrealms);
 
   return rc;
 }
@@ -304,131 +160,7 @@ shisa_file_enumerate_principals (Shisa *dbh,
 
   asprintf (&tmp, "%s/%s", info->path, realm);
 
-  rc = shisa_file_ls (dbh, tmp, principals, nprincipals);
-
-  free (tmp);
-
-  return rc;
-}
-
-static time_t
-mtime (const char *file)
-{
-  struct stat buf;
-  int rc;
-
-  rc = stat (file, &buf);
-  if (rc != 0 || !S_ISREG(buf.st_mode))
-    return (time_t) -1;
-
-  return buf.st_atime;
-}
-
-static int
-mtime2 (const char *path1, const char *path2)
-{
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s", path1, path2);
-
-  rc = mtime (tmp);
-
-  free (tmp);
-
-  return rc;
-}
-
-static int
-mtime3 (const char *path1, const char *path2, const char *path3)
-{
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
-
-  rc = mtime (tmp);
-
-  free (tmp);
-
-  return rc;
-}
-
-static int
-mtime4 (const char *path1,
-	const char *path2,
-	const char *path3,
-	const char *path4)
-{
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
-
-  rc = mtime (tmp);
-
-  free (tmp);
-
-  return rc;
-}
-
-static int
-isfile (const char *path)
-{
-  struct stat buf;
-  int rc;
-
-  rc = stat (path, &buf);
-  if (rc != 0 || !S_ISREG (buf.st_mode))
-    return 0;
-
-  return 1;
-}
-
-static int
-isfile4 (const char *path1,
-	const char *path2,
-	const char *path3,
-	const char *path4)
-{
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
-
-  rc = isfile (tmp);
-
-  free (tmp);
-
-  return rc;
-}
-
-static uint32_t
-uint32link (const char *file)
-{
-  char *link;
-  uint32_t num;
-  char *endptr;
-
-  link = xreadlink (file);
-  if (link == NULL)
-    return 0;
-
-  return atol (link);
-}
-
-static int
-uint32link4 (const char *path1,
-	     const char *path2,
-	     const char *path3,
-	     const char *path4)
-{
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
-
-  rc = uint32link (tmp);
+  rc = ls (tmp, principals, nprincipals);
 
   free (tmp);
 
@@ -451,24 +183,19 @@ shisa_file_principal_find (Shisa * dbh,
   princ = xmalloc (sizeof (*princ));
   princ->name = xstrdup (client);
   princ->realm = xstrdup (realm);
-  princ->notusedbefore = mtime4 (info->path, realm,
-				 client, "validfrom.stamp");
-  princ->isdisabled = isfile4 (info->path, realm,
-			       client, "disabled.flag");
-  princ->kvno = uint32link4 (info->path, realm,
-			     client, "latest.key");
-  princ->lastinitialtgt = mtime4 (info->path, realm,
-				  client, "lastinittgt.stamp");
-  princ->lastinitialrequest = mtime4 (info->path, realm,
-				      client, "lastinitial.stamp");
-  princ->lasttgt = mtime4 (info->path, realm,
-			   client, "lasttgt.stamp");
-  princ->lastrenewal = mtime4 (info->path, realm,
-			       client, "lastrenewal.stamp");
-  princ->passwordexpire = mtime4 (info->path, realm,
-				  client, "passwordexpire.stamp");
-  princ->accountexpire = mtime4 (info->path, realm,
-				 client, "accountexpire.stamp");
+  princ->notusedbefore = mtime4 (info->path, realm, client, "validfrom.stamp");
+  princ->isdisabled = isfile4 (info->path, realm, client, "disabled.flag");
+  princ->kvno = uint32link4 (info->path, realm, client, "latest.key");
+  princ->lastinitialtgt =
+    mtime4 (info->path, realm, client, "lastinitaltgt.stamp");
+  princ->lastinitialrequest =
+    mtime4 (info->path, realm, client, "lastinitial.stamp");
+  princ->lasttgt = mtime4 (info->path, realm, client, "lasttgt.stamp");
+  princ->lastrenewal = mtime4 (info->path, realm, client, "lastrenewal.stamp");
+  princ->passwordexpire =
+    mtime4 (info->path, realm, client, "passwordexpire.stamp");
+  princ->accountexpire =
+    mtime4 (info->path, realm, client, "accountexpire.stamp");
 
   *ph = princ;
 
@@ -486,23 +213,4 @@ shisa_file_done (Shisa *dbh, void *state)
 	free (info->path);
       free (info);
     }
-}
-
-static int
-has_info_txt (char *path, char *directory)
-{
-  struct stat buf;
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s/info.txt", path, directory);
-
-  rc = stat (tmp, &buf);
-
-  free (tmp);
-
-  if (rc != 0 || !S_ISREG (buf.st_mode))
-    return 0;
-
-  return 1;
 }

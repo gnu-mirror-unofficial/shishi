@@ -27,7 +27,8 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" \
 
 include_HEADERS = shisa.h
 lib_LTLIBRARIES = libshisa.la
-libshisa_la_SOURCES = shisa.h init.c cfg.c db.c error.c core.c file.c
+libshisa_la_SOURCES = shisa.h init.c cfg.c db.c error.c core.c \
+	file.c fileutil.c
 libshisa_la_LIBADD = ../gl/libfoo.la
 # XXX use different libtool version for this library?
 libshisa_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
