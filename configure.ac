@@ -272,7 +272,7 @@ AC_SUBST(LIBTASN1_CFLAGS)
 # Check for libgcrypt
 AC_ARG_WITH(libgcrypt,
   AC_HELP_STRING([--with-libgcrypt], [use libgcrypt for low-level crypto]),
-  libgcrypt=$withval, libgcrypt=yes)
+  libgcrypt=$withval, libgcrypt=no)
 if test "$libgcrypt" != "no" ; then
 	AM_PATH_LIBGCRYPT(1.1.43, :, [
 		libgcrypt=no
