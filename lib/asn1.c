@@ -22,16 +22,24 @@
 #include "internal.h"
 
 int
-_shishi_a2d (Shishi *handle, ASN1_TYPE node, char *der, int *len)
+_shishi_a2d_field (Shishi *handle,
+		   ASN1_TYPE node, char *field,
+		   char *der, int *len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   int rc;
 
-  rc = asn1_der_coding (node, node->name, der, len, errorDescription);
+  rc = asn1_der_coding (node, field, der, len, errorDescription);
   if (rc != ASN1_SUCCESS)
     return SHISHI_ASN1_ERROR;
 
   return SHISHI_OK;
+}
+
+int
+_shishi_a2d (Shishi *handle, ASN1_TYPE node, char *der, int *len)
+{
+  return _shishi_a2d_field (handle, node, node->name, der, len);
 }
 
 int

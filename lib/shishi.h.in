@@ -322,26 +322,6 @@ extern int shishi_ticket_server_p (Shishi_ticket * ticket, char *service);
 extern int shishi_ticket_valid_at_time_p (Shishi_ticket * ticket, time_t now);
 extern int shishi_ticket_valid_now_p (Shishi_ticket * ticket);
 
-
-extern int shishi_ticket_apreq_data (Shishi * handle, Shishi_ticket * ticket,
-				     char *data, int datalen,
-				     ASN1_TYPE * apreq);
-extern int shishi_ticket_apreq_data_usage (Shishi * handle,
-					   Shishi_ticket * ticket,
-					   int authenticatorcksumkeyusage,
-					   int authenticatorkeyusage,
-					   char *data, int datalen,
-					   ASN1_TYPE * apreq);
-extern int shishi_ticket_apreq_asn1 (Shishi * handle, Shishi_ticket * ticket,
-				     ASN1_TYPE node, char *field,
-				     ASN1_TYPE * apreq);
-extern int shishi_ticket_apreq_asn1_usage (Shishi * handle,
-					   Shishi_ticket * ticket,
-					   int authenticatorcksumkeyusage,
-					   int authenticatorkeyusage,
-					   ASN1_TYPE node, char *field,
-					   ASN1_TYPE * apreq);
-
 /* ticketset.c */
 extern char *shishi_ticketset_default_file_guess (void);
 extern const char *shishi_ticketset_default_file (Shishi * handle);
@@ -636,6 +616,24 @@ extern const char *shishi_ap_option2string (int option);
 extern int shishi_ap_string2option (const char *str);
 
 extern int shishi_ap (Shishi * handle, Shishi_ap ** ap);
+extern int shishi_ap_tktoptions (Shishi * handle,
+				 Shishi_ap ** ap,
+				 Shishi_ticket *ticket,
+				 int options);
+extern int shishi_ap_tktoptionsdata (Shishi * handle,
+				     Shishi_ap ** ap,
+				     Shishi_ticket *ticket,
+				     int options,
+				     char *data,
+				     int len);
+extern int shishi_ap_tktoptionsasn1usage (Shishi * handle,
+					  Shishi_ap ** ap,
+					  Shishi_ticket *ticket,
+					  int options,
+					  ASN1_TYPE node,
+					  char *field,
+					  int authenticatorcksumkeyusage,
+					  int authenticatorkeyusage);
 
 extern Shishi_ticket *shishi_ap_ticket (Shishi_ap * ap);
 extern void shishi_ap_ticket_set (Shishi_ap * ap, Shishi_ticket * ticket);

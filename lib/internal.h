@@ -186,10 +186,15 @@ struct Shishi
 /* asn1.c */
 
 int
-_shishi_asn1_done (Shishi * handle, ASN1_TYPE node);
+_shishi_a2d (Shishi *handle, ASN1_TYPE node, char *der, int *len);
 
 int
-_shishi_a2d (Shishi *handle, ASN1_TYPE node, char *der, int *len);
+_shishi_a2d_field (Shishi *handle,
+		   ASN1_TYPE node, char *field,
+		   char *der, int *len);
+
+int
+_shishi_asn1_done (Shishi * handle, ASN1_TYPE node);
 
 int
 _shishi_asn1_field (Shishi * handle,

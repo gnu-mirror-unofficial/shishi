@@ -181,15 +181,18 @@ shishi_ap_tktoptions (Shishi * handle,
 }
 
 /**
- * shishi_ap_tktoptions:
+ * shishi_ap_tktoptionsdata:
  * @handle: shishi handle as allocated by shishi_init().
  * @ap: pointer to new structure that holds information about AP exchange
  * @ticket: ticket to set in newly created AP.
  * @options: AP-REQ options to set in newly created AP.
+ * @data: input array with data to checksum in Authenticator.
+ * @len: length of input array with data to checksum in Authenticator.
  *
  * Create a new AP exchange, and set the ticket (see
  * shishi_ap_ticket_set()) and set the AP-REQ apoptions (see
- * shishi_apreq_options_set()).
+ * shishi_apreq_options_set()) and set the Authenticator checksum
+ * data.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -216,8 +219,56 @@ shishi_ap_tktoptionsdata (Shishi * handle,
       return rc;
     }
 
-  (*ap)->authenticatorcksumdata = data;
-  (*ap)->authenticatorcksumdatalen = len;
+  shishi_ap_authenticator_cksumdata_set (*ap, data, len);
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_ap_tktoptionsasn1:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ap: pointer to new structure that holds information about AP exchange
+ * @ticket: ticket to set in newly created AP.
+ * @options: AP-REQ options to set in newly created AP.
+ * @node: input ASN.1 structure to store as authenticator checksum data.
+ *
+ * DER decode ASN.1 structure and allocate new AP exchange and set
+ * ticket, options and authenticator checksum data using
+ * shishi_ap_tktoptionsdata().
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_tktoptionsasn1usage (Shishi * handle,
+			       Shishi_ap ** ap,
+			       Shishi_ticket *ticket,
+			       int options,
+			       ASN1_TYPE node,
+			       char *field,
+			       int authenticatorcksumkeyusage,
+			       int authenticatorkeyusage)
+{
+  char *buf;
+  int buflen;
+  int res;
+
+  buf = malloc(BUFSIZ);
+  buflen = BUFSIZ;
+
+  res = _shishi_a2d_field (handle, node, field, buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
+
+  /* XXX what is this? */
+  memmove (buf, buf + 2, buflen - 2);
+  buflen -= 2;
+
+  res = shishi_ap_tktoptionsdata(handle, ap, ticket, options, buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
+
+  (*ap)->authenticatorcksumkeyusage = authenticatorcksumkeyusage;
+  (*ap)->authenticatorkeyusage = authenticatorkeyusage;
 
   return SHISHI_OK;
 }

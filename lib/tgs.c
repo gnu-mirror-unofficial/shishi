@@ -28,8 +28,7 @@ struct Shishi_tgs
 {
   ASN1_TYPE tgsreq;
   Shishi_ticket *tgticket;
-  ASN1_TYPE authenticator;
-  ASN1_TYPE apreq;
+  Shishi_ap *ap;
   ASN1_TYPE tgsrep;
   ASN1_TYPE krberror;
   Shishi_ticket *ticket;
@@ -62,31 +61,17 @@ shishi_tgs_get_tgticket (Shishi_tgs * tgs)
 }
 
 /**
- * shishi_tgs_get_authenticator:
+ * shishi_tgs_ap:
  * @tgs: structure that holds information about TGS exchange
  *
- * Return value: Returns the generated Authenticator (part of AP-REQ)
- *               from the TGS exchange, or NULL if not yet set or an
- *               error occured.
- **/
-ASN1_TYPE
-shishi_tgs_get_authenticator (Shishi_tgs * tgs)
-{
-  return tgs->authenticator;
-}
-
-/**
- * shishi_tgs_get_apreq:
- * @tgs: structure that holds information about TGS exchange
- *
- * Return value: Returns the generated AP-REQ (part of TGS-REQ) from
- *               the TGS exchange, or NULL if not yet set or an error
+ * Return value: Returns the AP exchange (part of TGS-REQ) from the
+ *               TGS exchange, or NULL if not yet set or an error
  *               occured.
  **/
-ASN1_TYPE
-shishi_tgs_get_apreq (Shishi_tgs * tgs)
+Shishi_ap *
+shishi_tgs_ap (Shishi_tgs * tgs)
 {
-  return tgs->apreq;
+  return tgs->ap;
 }
 
 /**
@@ -154,10 +139,8 @@ shishi_tgs_realmsname (Shishi * handle,
 		       Shishi_ticket * tgticket,
 		       Shishi_tgs ** tgs, char *realm, char *sname)
 {
-  char user[BUFSIZ];
-  int userlen;
+  ASN1_TYPE ticket, kdcreppart, apreq;
   int res;
-  ASN1_TYPE ticket, kdcreppart;
 
   *tgs = malloc (sizeof (**tgs));
   if (*tgs == NULL)
@@ -175,10 +158,12 @@ shishi_tgs_realmsname (Shishi * handle,
       goto done;
     }
 
-  res = shishi_ticket_apreq_asn1_usage
-    (handle, tgticket, SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
-     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR,
-     (*tgs)->tgsreq, "KDC-REQ.req-body", &(*tgs)->apreq);
+  res = shishi_ap_tktoptionsasn1usage
+    (handle, &(*tgs)->ap, tgticket, 0, (*tgs)->tgsreq, "KDC-REQ.req-body",
+     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
+     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
+  if (res == SHISHI_OK)
+    res = shishi_ap_req_asn1((*tgs)->ap, &apreq);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make AP-REQ: %s\n",
@@ -186,15 +171,13 @@ shishi_tgs_realmsname (Shishi * handle,
       goto done;
     }
 
-  res = shishi_kdcreq_add_padata_tgs (handle, (*tgs)->tgsreq, (*tgs)->apreq);
+  res = shishi_kdcreq_add_padata_tgs (handle, (*tgs)->tgsreq, apreq);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not add padata to TGS: %s\n",
 			   shishi_strerror_details (handle));
       goto done;
     }
-
-  (*tgs)->authenticator = shishi_last_authenticator (handle);
 
   res = shishi_kdcreq_sendrecv (handle, (*tgs)->tgsreq, &(*tgs)->tgsrep);
   if (res == SHISHI_GOT_KRBERROR)
