@@ -1,0 +1,167 @@
+2003-06-30  Werner Koch  <wk@gnupg.org>
+
+	* src/gpg-error.h: Add WRONG_CARD.
+
+2003-06-22  Marcus Brinkmann  <marcus@g10code.de>
+
+	* src/gpg-error.h: Fix value of GPG_ERR_CANCELED.
+
+2003-06-06  Marcus Brinkmann  <marcus@g10code.de>
+
+	* configure.ac: Define GPG_ERROR_CONFIG_LIBS and
+	GPG_ERROR_CONFIG_CFLAGS.
+	Add src/gpg-error-config to config files.
+	* src/Makefile.am (EXTRA_DIST): Add gpg-error-config.in and
+	gpg-error.m4.
+	(bin_SCRIPTS): New variable.
+	(m4datadir, m4data_DATA): New variables.
+	* src/gpg-error-config.in: New file.
+	* src/gpg-error.m4: New file.
+
+2003-06-05  Marcus Brinkmann  <marcus@g10code.de>
+
+	* src/gpg-error.h (gpg_err_make_from_errno): Fix implementation.
+
+	* src/gpg-error.h (gpg_err_code_t): Add GPG_ERR_SIG_EXPIRED.
+	(err-codes.h.in): Likewise.
+
+	* src/gpg-error.h (gpg_error_from_errno): Change return type to
+	gpg_error_t.
+
+2003-06-04  Marcus Brinkmann  <marcus@g10code.de>
+
+	* src/gpg-error.h (gpg_err_code_t): Add GPG_ERR_INV_ENGINE,
+	GPG_ERR_PUBKEY_NOT_TRUSTED, GPG_ERR_DECRYPT_FAILED,
+	GPG_ERR_KEY_EXPIRED.
+	(gpg_make_error): Rename to gpg_err_make.
+	(gpg_error): Use here.
+	* tests/t-strerror.c (main): And here.
+	(gpg_make_error_from_errno): Rename to gpg_err_make_from_errno.
+
+	* src/gpg-error.h (gpg_make_error_from_errno): New inline function.
+	(gpg_error_from_errno): Likewise.
+
+	* src/code-from-errno.c (gpg_err_code_from_errno): Handle the case
+	of no error at all.
+
+2003-06-04  Marcus Brinkmann  <marcus@g10code.de>
+
+	* src/gpg-error.h (gpg_err_source_t): Add GPG_ERR_SOURCE_USER_1 to
+	GPG_ERR_SOURCE_USER_4.
+	(gpg_err_code_t): Add GPG_ERR_USER_1 to GPG_ERR_USER_16.
+	* src/err-sources.h.in: Likewise.
+	* src/err-codes.h.in: Likewise.
+
+	* src/gpg-error.h: Rename GPG_ERR_INVALID_RESPONSE to
+	GPG_ERR_INV_RESPONSE, GPG_ERR_INVALID_CARD to GPG_ERR_INV_CARD,
+	GPG_ERR_INVALID_INDEX to GPG_ERR_INV_INDEX, GPG_ERR_INVALID_ID to
+	GPG_ERR_INV_ID, GPG_ERR_AGENT_ERROR to GPG_ERR_AGENT,
+	GPG_ERR_ASSUAN_ERROR to GPG_ERR_ASSUAN, GPG_ERR_PIN_ENTRY_ERROR to
+	GPG_ERR_PIN_ENTRY, GPG_ERR_DIRMNGR_ERROR to GPG_ERR_DIRMNGR,
+	GPG_ERR_CARD_ERROR to GPG_ERR_CARD, GPG_ERR_CONFIGURATION_ERROR to
+	GPG_ERR_CONFIGURATION, GPG_ERR_SCDAEMON_ERROR to GPG_ERR_SCDAEMON.
+
+2003-06-03  Werner Koch  <wk@gnupg.org>
+
+	* src/gpg-error.h, src/err-codes.h.in: Add codes for TIMEOUT,
+	INV_HANDLE, NOTHING_FOUND, WRONG_BLOB_TYPE and MISSING_VALUE.
+	* src/gpg-error.h, src/err-sources.h.in: Add KEYBOX which is the
+	keybox subsystem of GnuPG.
+
+2003-06-02  Moritz Schulte  <moritz@g10code.com>
+
+	* src/gpg-error.h: Fix description of gpg_err_code_to_errno
+	(i.e. substitute `ERR' with `CODE').
+	* src/code-to-errno.c: Likewise.
+
+	* tests/t-strerror.c: Include <gpg-error.h> instead of
+	<gpg/error.h>.
+
+2003-06-01  Marcus Brinkmann  <marcus@g10code.de>
+
+	* src/strerror.c: Include <string.h>.
+
+	* src/gpg-error.h (gpg_err_code_t): Remove GPG_ERR_FILE_READ,
+	GPG_ERR_FILE_WRITE, GPG_ERR_FILE_OPEN, GPG_ERR_FILE_CREATE,
+	GPG_ERR_FILE_CLOSE, GPG_ERR_FILE_DELETE, GPG_ERR_FILE_EXISTS,
+	GPG_ERR_FILE, GPG_ERR_IO, GPG_ERR_OUT_OF_CORE, GPG_ERR_READ_ERROR,
+	GPG_ERR_WRITE_ERROR.
+	* src/err-codes.h.in: Likewise.
+
+	* src/Makefile.am (EXTRA_DIST): Add err-sources.h and err-codes.h.
+
+	* src/mkerrcodes1.awk: New file.
+	* src/mkerrcodes2.awk: New file.
+	* src/mkerrnos.awk: New file.
+	* src/errnos.in: New file.
+	* src/code-from-errno.c: New file.
+	* src/code-to-errno.c: New file.
+	* src/Makefile.am (libgpg_error_la_SOURCES): Remove err-sources.h
+	and err-codes.h.  Add code-to-errno.c and code-from-errno.c.
+	(code-to-errno.h): New target.
+	(code-from-errno.h): Likewise.
+	(EXTRA_DIST): Add mkerrnos.awk, errnos.in, and mkerrcodes1.awk.
+	(BUILT_SOURCES): Add code-to-errno.h and code-from-errno.h.
+	(CLEANFILES): Likewise.
+	* src/strerror.c (gpg_strerror): Use strerror for system errors.
+	* src/err-codes.h.in: Add 16382 (Unknown system error).
+	* src/gpg-error.h (gpg_err_code_t): Add system errors.
+	(GPG_ERR_CODE_DIM): Change to 32768.
+	(GPG_ERR_SYSTEM_ERROR): New macro.
+	(gpg_err_code_from_errno): New prototype.
+	(gpg_err_code_to_errno): Likewise.
+
+	* src/Makefile.am (nobase_include_HEADERS): Rename target to ...
+	(include_HEADERS): ... this.  Change file to gpg-error.h
+	(libgpg_error_la_SOURCES): Change gpg/error.h to gpg-error.h.
+	* src/gpg/error.h: Move to ...
+	* src/gpg-error.h: ... here.  New file.
+	* src/strerror.c: Include <gpg-error.h>, not <gpg/error.h>.
+	* src/strsource.c: Likewise.
+	
+	* src/gpg/error.h (gpg_error_t): Change type to unsigned int, not
+	long.
+
+2003-05-26  Marcus Brinkmann  <marcus@g10code.de>
+
+	* src/gpg/error.h (gpg_make_error): Only OR in the error source if
+	there is an error, this allows to test for success with "if (!err)"
+	and similar tests.
+
+2003-05-15  Marcus Brinkmann  <marcus@g10code.de>
+
+	* src/mkstrtable.awk: Add exception clause to license about the
+	output of the script.
+	* configure.ac: Change license to LGPL 2.1 or later.
+	* Makefile.am: Likewise.
+	* src/Makefile.am: Likewise.
+	* src/err-codes.h.in: Likewise.
+	* src/err-sources.h.in: Likewise.
+	* src/strsource.c: Likewise.
+	* src/strerror.c: Likewise.
+	* src/gpg/error.h: Likewise.
+	* tests/Makefile.am: Likewise.
+
+	* src/mkstrtable.awk: New variable HEADER.  Copy input until first
+	line with an actual code and description occurs.	
+	* src/err-codes.h.in: Uncomment license, so it is copied into the
+	output.
+	* src/err-sources.h.in: Likewise.
+
+2003-05-15  Marcus Brinkmann  <marcus@g10code.de>
+
+	* COPYING.LIB: New file.
+
+2003-05-15  Marcus Brinkmann  <marcus@g10code.de>
+
+	* Initial check-in.
+
+ Copyright 2003 g10 Code GmbH
+
+ This file is free software; as a special exception the author gives
+ unlimited permission to copy and/or distribute it, with or without
+ modifications, as long as this notice is preserved.
+
+ This file is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+ implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
