@@ -81,6 +81,15 @@ printuint32field (const char *fieldname, uint32_t num)
   free (p);
 }
 
+void
+print3field (const char *fieldname, const char *text, uint32_t num)
+{
+  char *p;
+  asprintf (&p, "%s (0x%x, %d)", text, num, num);
+  printfield (fieldname, p);
+  free (p);
+}
+
 int
 dumplist_realm_principal (const char *realm, const char *principal)
 {
@@ -136,7 +145,8 @@ dumplist_realm_principal (const char *realm, const char *principal)
 		{
 		  printuint32field ("Key", i);
 
-		  printuint32field ("\tEtype", keys[i]->etype);
+		  print3field ("\tEtype", shishi_cipher_name (keys[i]->etype),
+			       keys[i]->etype);
 		  if (args_info.keys_given)
 		    {
 		      Shishi_key *key;
