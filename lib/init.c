@@ -21,9 +21,6 @@
 
 #include "internal.h"
 
-#define INFOSTR "libshishi: info: "
-#define WARNSTR "libshishi: warning: "
-
 
 /**
  * shishi:
@@ -337,30 +334,4 @@ shishi_init_server_with_paths (Shishi ** handle, const char *systemcfgfile)
     return rc;
 
   return SHISHI_OK;
-}
-
-void
-shishi_info (Shishi * handle, const char *fmt, ...)
-{
-  va_list ap;
-  va_start (ap, fmt);
-
-  fprintf (stderr, INFOSTR);
-  vfprintf (stderr, fmt, ap);
-  fprintf (stderr, "\n");
-
-  va_end (ap);
-}
-
-void
-shishi_warn (Shishi * handle, const char *fmt, ...)
-{
-  va_list ap;
-  va_start (ap, fmt);
-
-  fprintf (stderr, WARNSTR);
-  vfprintf (stderr, fmt, ap);
-  fprintf (stderr, "\n");
-
-  va_end (ap);
 }

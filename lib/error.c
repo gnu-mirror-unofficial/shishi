@@ -159,3 +159,48 @@ shishi_error_printf (Shishi * handle, char *format, ...)
 
   va_end (ap);
 }
+
+#define INFOSTR "libshishi: info: "
+#define WARNSTR "libshishi: warning: "
+
+/**
+ * shishi_info:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @fmt: printf style format string.
+ * @...: print style arguments.
+ *
+ * Print informational message to stderr.
+ **/
+void
+shishi_info (Shishi * handle, const char *fmt, ...)
+{
+  va_list ap;
+  va_start (ap, fmt);
+
+  fprintf (stderr, INFOSTR);
+  vfprintf (stderr, fmt, ap);
+  fprintf (stderr, "\n");
+
+  va_end (ap);
+}
+
+/**
+ * shishi_warn:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @fmt: printf style format string.
+ * @...: print style arguments.
+ *
+ * Print a warning to standard error.
+ **/
+void
+shishi_warn (Shishi * handle, const char *fmt, ...)
+{
+  va_list ap;
+  va_start (ap, fmt);
+
+  fprintf (stderr, WARNSTR);
+  vfprintf (stderr, fmt, ap);
+  fprintf (stderr, "\n");
+
+  va_end (ap);
+}
