@@ -150,7 +150,7 @@ _shishi_init_read (Shishi * handle,
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
-  if (DEBUG (handle))
+  if (VERBOSE (handle))
     shishi_cfg_print (handle, stdout);
 
   return SHISHI_OK;
@@ -210,7 +210,7 @@ shishi_warn (Shishi * handle, char *fmt, ...)
 {
   va_list ap;
   va_start (ap, fmt);
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     {
       fprintf (stderr, "libshishi: warning: ");
       vfprintf (stderr, fmt, ap);

@@ -92,6 +92,19 @@ shishi_tgs_get_tgsrep (Shishi_tgs * tgs)
 }
 
 /**
+ * shishi_tgs_get_krberror:
+ * @tgs: structure that holds information about TGS exchange
+ * 
+ * Return value: Returns the received TGS-REP from the TGS exchange,
+ *               or NULL if not yet set or an error occured.
+ **/
+ASN1_TYPE
+shishi_tgs_get_krberror (Shishi_tgs * tgs)
+{
+  return tgs->krberror;
+}
+
+/**
  * shishi_tgs_get_ticket:
  * @tgs: structure that holds information about TGS exchange
  * 
@@ -141,7 +154,7 @@ shishi_tgs_realmsname (Shishi * handle,
 
   (*tgs)->tgsreq = shishi_tgs_req (handle);
   if ((*tgs)->tgsreq == ASN1_TYPE_EMPTY)
-    return ASN1_TYPE_EMPTY;
+    return SHISHI_ASN1_ERROR;
 
   res = shishi_kdcreq_set_realmserver (handle, (*tgs)->tgsreq, realm, sname);
   if (res != SHISHI_OK)
@@ -173,6 +186,11 @@ shishi_tgs_realmsname (Shishi * handle,
   (*tgs)->authenticator = shishi_last_authenticator (handle);
 
   res = shishi_kdcreq_sendrecv (handle, (*tgs)->tgsreq, &(*tgs)->tgsrep);
+  if (res == SHISHI_GOT_KRBERROR)
+    {
+      (*tgs)->krberror = (*tgs)->tgsrep;
+      (*tgs)->tgsrep = NULL;
+    }
   if (res != SHISHI_OK)
     goto done;
 

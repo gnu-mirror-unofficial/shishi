@@ -180,7 +180,7 @@ shishi_ticketset_read (Shishi * handle,
       if (res != SHISHI_OK)
 	break;
 
-      if (DEBUG (handle))
+      if (VERBOSE (handle))
 	{
 	  printf ("Read ticket for principal `':\n");
 	  shishi_enckdcreppart_print (handle, stdout, enckdcreppart);
@@ -444,7 +444,7 @@ shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
   if (!ticketset)
     ticketset = shishi_ticketset (handle);
 
-  if (!handle->silent)
+  if (VERBOSE(handle))
     fprintf (stderr,
 	     "Searching tickets for client `%s' and server `%s'\n",
 	     client, server);

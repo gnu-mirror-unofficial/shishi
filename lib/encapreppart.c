@@ -119,14 +119,14 @@ shishi_encapreppart_to_file (Shishi * handle, ASN1_TYPE encapreppart,
   FILE *fh;
   int res;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Writing EncAPRepPart to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Writing EncAPRepPart in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -141,7 +141,7 @@ shishi_encapreppart_to_file (Shishi * handle, ASN1_TYPE encapreppart,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Writing EncAPRepPart to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -201,14 +201,14 @@ shishi_encapreppart_from_file (Shishi * handle, ASN1_TYPE * encapreppart,
   int res;
   FILE *fh;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Reading EncAPRepPart from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Reading EncAPRepPart in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -223,7 +223,7 @@ shishi_encapreppart_from_file (Shishi * handle, ASN1_TYPE * encapreppart,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Reading EncAPRepPart from %s...done\n"), filename);
 
   return SHISHI_OK;

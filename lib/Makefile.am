@@ -24,7 +24,7 @@ EXTRA_DIST = rfc1510.asn1 rfc1510bis.asn1 \
 
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = internal.h gettext.h \
-	init.c cfg.c done.c realm.c principal.c error.c \
+	init.c cfg.c done.c realm.c principal.c error.c krberror.c \
 	base64.c vasprintf.c \
 	gztime.c diskio.c \
 	authenticator.c \

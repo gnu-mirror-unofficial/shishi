@@ -169,7 +169,7 @@ _shishi_read_armored_data (Shishi * handle,
 	  continue;
 	}
       line[strlen (line) - 1] = '\0';
-      if (DEBUG (handle))
+      if (VERBOSE (handle))
 	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
 
       /* XXX check if all chars in line are b64 data, otherwise bail out */
@@ -695,6 +695,60 @@ _shishi_authenticator_input (Shishi * handle,
   *authenticator = shishi_der2asn1_authenticator (handle->asn1, der,
 						  derlen, errorDescription);
   if (*authenticator == ASN1_TYPE_EMPTY)
+    {
+      printf ("bad magic %s\n", errorDescription);
+      shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
+
+      return !SHISHI_OK;
+    }
+
+  return SHISHI_OK;
+}
+
+int
+_shishi_krberror_input (Shishi * handle,
+			FILE * fh, ASN1_TYPE * krberror, int type)
+{
+  char der[BUFSIZ];
+  size_t derlen;
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
+  char b64der[BUFSIZ];
+  size_t b64len = 0;
+  int res;
+  int i;
+  size_t nread;
+  int in_data = 0;
+  int lno = 0;
+
+  if (type == 0)
+    {
+      b64len = sizeof (b64der);
+      res = _shishi_read_armored_data (handle, fh, b64der, b64len,
+				       "KRB-ERROR");
+      if (res != SHISHI_OK)
+	{
+	  printf ("armor data read fail\n");
+	  return res;
+	}
+
+      derlen = shishi_from_base64 (&der[0], b64der);
+    }
+  else
+    {
+      derlen = fread (der, sizeof (der[0]), 
+		      sizeof (der) / sizeof (der[0]), fh);
+      if (derlen <= 0 || !feof (fh) || ferror (fh))
+	{
+	  shishi_error_printf (handle,
+			       "Error reading from file (got %d bytes)...",
+			       derlen);
+	  return !SHISHI_OK;
+	}
+    }
+
+  *krberror = shishi_der2asn1_krberror (handle->asn1, der,
+					derlen, errorDescription);
+  if (*krberror == ASN1_TYPE_EMPTY)
     {
       printf ("bad magic %s\n", errorDescription);
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");

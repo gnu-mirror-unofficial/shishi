@@ -44,13 +44,15 @@ _shishi_asn1_optional_field (Shishi * handle,
 {
   int rc;
 
-  *datalen = 0;
   rc = asn1_read_value (node, field, data, datalen);
   if (rc != ASN1_SUCCESS && rc != ASN1_ELEMENT_NOT_FOUND)
     {
       shishi_error_set (handle, libtasn1_strerror (rc));
       return SHISHI_ASN1_ERROR;
     }
+
+  if (rc == ASN1_ELEMENT_NOT_FOUND)
+    *datalen = 0;
 
   return SHISHI_OK;
 }
@@ -830,6 +832,33 @@ shishi_der2asn1_authenticator (ASN1_TYPE definitions,
   asn1_result = asn1_create_element (definitions,
 				     "Kerberos5.Authenticator",
 				     &structure, "Authenticator");
+  if (asn1_result != ASN1_SUCCESS)
+    {
+      strcpy (errorDescription, libtasn1_strerror (asn1_result));
+      return ASN1_TYPE_EMPTY;
+    }
+
+  asn1_result = asn1_der_decoding (&structure,
+				   der, der_len, errorDescription);
+  if (asn1_result != ASN1_SUCCESS)
+    {
+      asn1_delete_structure (&structure);
+      return ASN1_TYPE_EMPTY;
+    }
+
+  return structure;
+}
+
+ASN1_TYPE
+shishi_der2asn1_krberror (ASN1_TYPE definitions,
+			       char *der, int der_len, char *errorDescription)
+{
+  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
+  int asn1_result = ASN1_SUCCESS;
+
+  asn1_result = asn1_create_element (definitions,
+				     "Kerberos5.KRB-ERROR",
+				     &structure, "KRB-ERROR");
   if (asn1_result != ASN1_SUCCESS)
     {
       strcpy (errorDescription, libtasn1_strerror (asn1_result));

@@ -165,7 +165,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
     }
   der_len = out_len;
 
-  if (DEBUGASN1 (handle))
+  if (VERBOSEASN1 (handle))
     printf ("received %d bytes\n", der_len);
 
   *kdcrep = shishi_der2asn1_as_rep (handle->asn1, der,
@@ -190,9 +190,8 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
 		  return !SHISHI_OK;
 		}
 
-	      shishi_error_printf (handle, "Received KRB-ERROR.");
-
-	      return !SHISHI_OK;
+	      shishi_error_clear (handle);
+	      return SHISHI_GOT_KRBERROR;
 	    }
 	  else
 	    {
@@ -245,7 +244,7 @@ shishi_as_check_crealm (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
   reqrealm[reqrealmlen] = '\0';
   reprealm[reprealmlen] = '\0';
 
-  if (DEBUGASN1 (handle))
+  if (VERBOSEASN1 (handle))
     {
       printf ("request realm: %s\n", reqrealm);
       printf ("reply realm: %s\n", reprealm);
@@ -319,7 +318,7 @@ shishi_as_check_cname (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
 	  return SHISHI_ASN1_ERROR;
 	}
 
-      if (DEBUGASN1 (handle))
+      if (VERBOSEASN1 (handle))
 	{
 	  reqcname[reqcnamelen] = '\0';
 	  repcname[repcnamelen] = '\0';
@@ -380,7 +379,7 @@ shishi_kdc_check_nonce (Shishi * handle,
       return SHISHI_ASN1_ERROR;
     }
 
-  if (DEBUGASN1 (handle))
+  if (VERBOSEASN1 (handle))
     {
       int i;
 

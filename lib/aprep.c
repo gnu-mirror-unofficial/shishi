@@ -147,14 +147,14 @@ shishi_aprep_to_file (Shishi * handle, ASN1_TYPE aprep,
   FILE *fh;
   int res;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Writing AP-REP to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Writing AP-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -169,7 +169,7 @@ shishi_aprep_to_file (Shishi * handle, ASN1_TYPE aprep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Writing AP-REP to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -227,14 +227,14 @@ shishi_aprep_from_file (Shishi * handle, ASN1_TYPE * aprep,
   int res;
   FILE *fh;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Reading AP-REP from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Reading AP-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -249,7 +249,7 @@ shishi_aprep_from_file (Shishi * handle, ASN1_TYPE * aprep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Reading AP-REP from %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -414,7 +414,7 @@ shishi_aprep_decrypt (Shishi * handle,
 			key, keylen, cipher, cipherlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
-      if (!SILENT (handle))
+      if (VERBOSE (handle))
 	printf ("decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
 			   "decrypt fail, most likely wrong password\n");
@@ -425,7 +425,7 @@ shishi_aprep_decrypt (Shishi * handle,
      until we can parse it. */
   for (i = 0; i < 8; i++)
     {
-      if (DEBUG (handle))
+      if (VERBOSEASN1 (handle))
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
       *encapreppart = shishi_d2a_encapreppart (handle, &buf[0], buflen - i);
@@ -485,7 +485,7 @@ shishi_aprep_verify (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (DEBUG (handle))
+  if (VERBOSE (handle))
     {
       printf ("authenticator cusec %d ctime %s\n", authenticatorcusec,
 	      authenticatorctime);

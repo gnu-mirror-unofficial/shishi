@@ -113,7 +113,7 @@ shishi_kdc_sendrecv (Shishi * handle,
 	      struct Shishi_kdcinfo *ki =
 		&handle->realminfos[i].kdcaddresses[k];
 
-	      if (DEBUG(handle))
+	      if (VERBOSE(handle))
 		{
 		  printf ("Sending to %s (%s)...\n", ki->name,
 			  inet_ntoa (((struct sockaddr_in *)

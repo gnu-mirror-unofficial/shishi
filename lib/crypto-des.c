@@ -214,7 +214,7 @@ des_md4_verify (Shishi * handle, char *out, int *outlen)
 
   gcry_md_write (hd, out, *outlen);
   p = gcry_md_read (hd, GCRY_MD_MD4);
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       int i;
 
@@ -234,7 +234,7 @@ des_md4_verify (Shishi * handle, char *out, int *outlen)
     }
   else
     {
-      if (DEBUG(handle))
+      if (VERBOSE(handle))
 	printf ("des-cbc-md4 verify fail\n");
       res = !SHISHI_OK;
     }
@@ -308,7 +308,7 @@ des_md5_verify (Shishi * handle, char *out, int *outlen)
 
   gcry_md_write (hd, out, *outlen);
   p = gcry_md_read (hd, GCRY_MD_MD5);
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       int i;
 
@@ -328,7 +328,7 @@ des_md5_verify (Shishi * handle, char *out, int *outlen)
     }
   else
     {
-      if (DEBUG(handle))
+      if (VERBOSE(handle))
 	printf ("des-cbc-md5 verify fail\n");
       res = !SHISHI_OK;
     }
@@ -606,7 +606,7 @@ des_key_correction (Shishi * handle, char *key)
     {
       if (res == GCRYERR_WEAK_KEY)
 	{
-	  if (DEBUGCRYPTO(handle))
+	  if (VERBOSECRYPTO(handle))
 	    printf ("\t ;; WEAK KEY (corrected)\n");
 	  key[7] ^= 0xF0;
 	}
@@ -687,7 +687,7 @@ des_string_to_key (Shishi * handle,
   char temp, temp2;
   int res;
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("des_string_to_key (string, salt)\n");
 
@@ -723,7 +723,7 @@ des_string_to_key (Shishi * handle,
   memset (s + stringlen + saltlen, 0, n_s - stringlen - saltlen);
   memset (tempkey, 0, sizeof (tempkey));	/* tempkey = NULL; */
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("\t ;; s = pad(string|salt):\n");
       escapeprint (s, n_s);
@@ -733,7 +733,7 @@ des_string_to_key (Shishi * handle,
 
   for (i = 0; i < n_s / 8; i++)
     {
-      if (DEBUGCRYPTO(handle))
+      if (VERBOSECRYPTO(handle))
 	{
 	  printf ("for (8byteblock in s) {\n");
 	  printf ("\t ;; loop iteration %d\n", i);
@@ -749,7 +749,7 @@ des_string_to_key (Shishi * handle,
       for (j = 0; j < 8; j++)
 	s[i * 8 + j] = s[i * 8 + j] & ~0x80;
 
-      if (DEBUGCRYPTO(handle))
+      if (VERBOSECRYPTO(handle))
 	{
 	  printf ("\t ;; 56bitstring:\n");
 	  bin7print (&s[i * 8], 8);
@@ -780,7 +780,7 @@ des_string_to_key (Shishi * handle,
 	      s[i * 8 + j] = temp2;
 	      s[i * 8 + 7 - j] = temp;
 	    }
-	  if (DEBUGCRYPTO(handle))
+	  if (VERBOSECRYPTO(handle))
 	    {
 	      printf ("reverse(56bitstring)\n");
 	      printf ("\t ;; 56bitstring after reverse\n");
@@ -791,7 +791,7 @@ des_string_to_key (Shishi * handle,
 
       odd = !odd;
 
-      if (DEBUGCRYPTO(handle))
+      if (VERBOSECRYPTO(handle))
 	{
 	  printf ("odd = ! odd\n");
 	  printf ("tempstring = tempstring XOR 56bitstring;\n");
@@ -801,7 +801,7 @@ des_string_to_key (Shishi * handle,
       for (j = 0; j < 8; j++)
 	tempkey[j] ^= s[i * 8 + j];
 
-      if (DEBUGCRYPTO(handle))
+      if (VERBOSECRYPTO(handle))
 	{
 	  printf ("\t ;; tempstring\n");
 	  bin7print (tempkey, 8);
@@ -813,7 +813,7 @@ des_string_to_key (Shishi * handle,
   for (j = 0; j < 8; j++)
     tempkey[j] = tempkey[j] << 1;
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("for (8byteblock in s) {\n");
       printf ("}\n");
@@ -831,7 +831,7 @@ des_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("\t ;; tempkey\n");
       escapeprint (tempkey, 8);
@@ -856,7 +856,7 @@ des_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("\t ;; key\n");
       escapeprint (tempkey, 8);

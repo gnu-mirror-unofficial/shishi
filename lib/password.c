@@ -123,7 +123,7 @@ shishi_prompt_password (Shishi *handle,
   va_list ap;
   int rc;
 
-  if (DEBUG(handle))
+  if (VERBOSE(handle))
     {
       printf("Libstringprep thinks your locale is `%s'.\n",
 	     stringprep_locale_charset());
@@ -140,7 +140,7 @@ shishi_prompt_password (Shishi *handle,
   if (rc != SHISHI_OK)
     return rc;
 
-  if (DEBUG(handle))
+  if (VERBOSE(handle))
     {
       int i;
       printf("Read password (length %d): ", strlen(s));
@@ -164,7 +164,7 @@ shishi_prompt_password (Shishi *handle,
 	  free(p);
 	}
 
-      if (DEBUG(handle))
+      if (VERBOSE(handle))
 	{
 	  int i;
 	  printf("Password converted to %s (length %d): ",
@@ -181,7 +181,7 @@ shishi_prompt_password (Shishi *handle,
 	  if (rc != SHISHI_OK)
 	    return rc;
 
-	  if (DEBUG(handle))
+	  if (VERBOSE(handle))
 	    {
 	      int i;
 	      printf("Stringprep'ed password (length %d): ", strlen(s));

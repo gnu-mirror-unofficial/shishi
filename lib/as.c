@@ -26,19 +26,6 @@
    arrays. */
 
 /**
- * shishi_as_get_ticket:
- * @as: structure that holds information about AS exchange
- * 
- * Return value: Returns the newly aquired ticket from the AS
- *               exchange, or NULL if not yet set or an error occured.
- **/
-Shishi_ticket *
-shishi_as_get_ticket (Shishi_as * as)
-{
-  return as->ticket;
-}
-
-/**
  * shishi_as_get_asreq:
  * @as: structure that holds information about AS exchange
  * 
@@ -62,6 +49,32 @@ ASN1_TYPE
 shishi_as_get_asrep (Shishi_as * as)
 {
   return as->asrep;
+}
+
+/**
+ * shishi_as_get_krberror:
+ * @as: structure that holds information about AS exchange
+ * 
+ * Return value: Returns the received KRB-ERROR packet from the AS
+ *               exchange, or NULL if not yet set or an error occured.
+ **/
+ASN1_TYPE
+shishi_as_get_krberror (Shishi_as * as)
+{
+  return as->krberror;
+}
+
+/**
+ * shishi_as_get_ticket:
+ * @as: structure that holds information about AS exchange
+ * 
+ * Return value: Returns the newly aquired ticket from the AS
+ *               exchange, or NULL if not yet set or an error occured.
+ **/
+Shishi_ticket *
+shishi_as_get_ticket (Shishi_as * as)
+{
+  return as->ticket;
 }
 
 /**
@@ -216,6 +229,11 @@ shishi_as_cnamerealmsname (Shishi * handle,
     goto done;
 
   res = shishi_kdcreq_sendrecv (handle, (*as)->asreq, &(*as)->asrep);
+  if (res == SHISHI_GOT_KRBERROR)
+    {
+      (*as)->krberror = (*as)->asrep;
+      (*as)->asrep = NULL;
+    }
   if (res != SHISHI_OK)
     goto done;
 

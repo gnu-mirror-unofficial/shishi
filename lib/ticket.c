@@ -715,7 +715,7 @@ shishi_ticket_decrypt (Shishi * handle,
 
   if (res != SHISHI_OK)
     {
-      if (!SILENT (handle))
+      if (VERBOSE (handle))
 	printf ("des_decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
 			   "des_decrypt fail, most likely wrong password\n");
@@ -726,7 +726,7 @@ shishi_ticket_decrypt (Shishi * handle,
      until we can parse it. */
   for (i = 0; i < 8; i++)
     {
-      if (DEBUG (handle))
+      if (VERBOSEASN1 (handle))
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
       *encticketpart = shishi_d2a_encticketpart (handle, &buf[0], buflen - i);

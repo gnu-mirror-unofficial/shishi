@@ -111,9 +111,15 @@ shishi_strerror (int err)
 
     case SHISHI_SENDTO_ERROR:
       p = _("The system call sendto() failed.");
+      break;
 
     case SHISHI_CLOSE_ERROR:
       p = _("The system call close() failed.");
+      break;
+
+    case SHISHI_GOT_KRBERROR:
+      p = _("Server replied with an error message to request.");
+      break;
 
     default:
       shishi_asprintf (&p, _("Unknown shishi error (%d)"), err);

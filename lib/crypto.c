@@ -210,7 +210,7 @@ simplified_hmac_verify (Shishi * handle,
 
   if (memcmp (hash, hmac, hmaclen) != 0)
     {
-      if (DEBUG (handle))
+      if (VERBOSE (handle))
 	printf ("verify fail\n");
       return SHISHI_CRYPTO_ERROR;
     }
@@ -237,7 +237,7 @@ simplified_derivekey (Shishi * handle,
   char constant[5];
   int res;
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("simplified_derivekey\n");
       printf ("\t ;; mode %d (%s)\n", derivekeymode,
@@ -272,7 +272,7 @@ simplified_derivekey (Shishi * handle,
       memcpy (derivedkey, key, keylen);
     }
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; simplified_derivekey out (%d):\n", *derivedkeylen);
       hexprint (derivedkey, *derivedkeylen);
@@ -433,7 +433,7 @@ lcm (int a, int b)
 static int
 rot13 (Shishi * handle, unsigned char *in, unsigned char *out, int len)
 {
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; rot 13 in:\n");
       escapeprint (in, len);
@@ -475,7 +475,7 @@ rot13 (Shishi * handle, unsigned char *in, unsigned char *out, int len)
       out[1] = (in[1] & ~(0xFF & (0xFF << 3))) | (0xFF & (last << 3));
     }
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; rot13 out:\n");
       escapeprint (out, len);
@@ -569,7 +569,7 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
 
   lcmmn = lcm (m, n);
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("%d-fold (string)\n", n * 8);
       printf ("\t ;; string length %d bytes %d bits\n", m, m * 8);
@@ -588,7 +588,7 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
   /* Replicate the input th the LCMMN length */
   for (i = 0; i < (lcmmn / m); i++)
     {
-      if (DEBUGCRYPTO (handle))
+      if (VERBOSECRYPTO (handle))
 	{
 	  printf ("\t ;; %d-th replication\n", i + 1);
 	  printf ("string = rot13(string)\n");
@@ -597,13 +597,13 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
       memcpy ((char *) &buf[i * m], a, m);
       rot13 (handle, a, a, m);
 
-      if (DEBUGCRYPTO (handle))
+      if (VERBOSECRYPTO (handle))
 	puts ("");
     }
 
   memset (out, 0, n);		/* just in case */
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; replicated string (length %d):\n", lcmmn);
       hexprint (buf, lcmmn);
@@ -620,7 +620,7 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
 
   for (i = 0; i < (lcmmn / n); i++)
     {
-      if (DEBUGCRYPTO (handle))
+      if (VERBOSECRYPTO (handle))
 	{
 	  printf ("\t ;; %d-th one's complement addition sum\n", i + 1);
 	  printf ("\t ;; sum:\n");
@@ -638,7 +638,7 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
 
       ocadd (out, (char *) &buf[i * n], out, n);
 
-      if (DEBUGCRYPTO (handle))
+      if (VERBOSECRYPTO (handle))
 	{
 	  printf ("\t ;; sum:\n");
 	  hexprint (out, n);
@@ -649,7 +649,7 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
 	}
     }
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; nfold\n");
       hexprint (out, n);
@@ -699,7 +699,7 @@ shishi_dr (Shishi * handle,
   int len, totlen, cipherlen;
   int res;
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("dr (%s, key, constant, %d)\n",
 	      shishi_cipher_name (etype), derivedrandomlen);
@@ -732,7 +732,7 @@ shishi_dr (Shishi * handle,
 	return res;
     }
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; possibly nfolded constant (length %d):\n", blocksize);
       escapeprint (nfoldconstant, blocksize);
@@ -758,7 +758,7 @@ shishi_dr (Shishi * handle,
     }
   while (totlen < derivedrandomlen);
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; derived random (length %d):\n", derivedrandomlen);
       hexprint (derivedrandom, derivedrandomlen);
@@ -798,7 +798,7 @@ shishi_dk (Shishi * handle,
   int tmplen, len;
   int res;
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("dk (%s, key, constant, %d)\n",
 	      shishi_cipher_name (etype), derivedkeylen);
@@ -1188,7 +1188,7 @@ shishi_string_to_key (Shishi * handle,
   Shishi_string_to_key_function string2key;
   int res;
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("string_to_key (%s, password, salt)\n",
 	      shishi_cipher_name (keytype));
@@ -1222,7 +1222,7 @@ shishi_string_to_key (Shishi * handle,
 		       salt, saltlen, parameter, outkey);
   *outkeylen = shishi_cipher_keylen (keytype);
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; string_to_key key:\n");
       hexprint (outkey, *outkeylen);
@@ -1260,7 +1260,7 @@ shishi_random_to_key (Shishi * handle,
   Shishi_random_to_key_function random2key;
   int res;
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("random_to_key (%s, random)\n", shishi_cipher_name (keytype));
       printf ("\t ;; random:\n");
@@ -1289,7 +1289,7 @@ shishi_random_to_key (Shishi * handle,
   res = (*random2key) (handle, random, randomlen, outkey);
   *outkeylen = shishi_cipher_keylen (keytype);
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; random_to_key key:\n");
       hexprint (outkey, *outkeylen);
@@ -1330,7 +1330,7 @@ shishi_checksum (Shishi * handle,
 {
   int res;
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("checksum (%s, in, key)\n", shishi_cipher_name (cksumtype));
       printf ("\t ;; in:\n");
@@ -1444,7 +1444,7 @@ shishi_checksum (Shishi * handle,
       break;
     }
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; checksum out:\n");
       escapeprint (out, *outlen);
@@ -1484,7 +1484,7 @@ shishi_encrypt (Shishi * handle,
   Shishi_encrypt_function encrypt;
   int res;
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("encrypt (type=%s, usage=%d, key, in)\n",
 	      shishi_cipher_name (keytype), keyusage);
@@ -1515,7 +1515,7 @@ shishi_encrypt (Shishi * handle,
 
   res = (*encrypt) (handle, keyusage, key, keylen, in, inlen, out, outlen);
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; encrypt out:\n");
       escapeprint (out, *outlen);
@@ -1555,7 +1555,7 @@ shishi_decrypt (Shishi * handle,
   Shishi_decrypt_function decrypt;
   int res;
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("decrypt (type=%s, usage=%d, key, in)\n",
 	      shishi_cipher_name (keytype), keyusage);
@@ -1586,7 +1586,7 @@ shishi_decrypt (Shishi * handle,
 
   res = (*decrypt) (handle, keyusage, key, keylen, in, inlen, out, outlen);
 
-  if (DEBUGCRYPTO (handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; decrypt out:\n");
       escapeprint (out, *outlen);

@@ -94,7 +94,7 @@ aes_string_to_key (Shishi * handle,
   int iterations = 0x0000b000;
   int res;
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("aes_string_to_key (password, salt)\n");
 
@@ -128,7 +128,7 @@ aes_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("\t;; aes_string_to_key key:\n");
       hexprint (outkey, keylen);

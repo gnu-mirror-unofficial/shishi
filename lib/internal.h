@@ -187,22 +187,26 @@ struct Shishi_realminfo
   int nkdcaddresses;
 };
 
-#define SHISHI_DEBUG_CRYPTO (1<<1)
-#define SHISHI_DEBUG_ASN1   (1<<2)
+#define SHISHI_VERBOSE_CRYPTO  (1<<1)
+#define SHISHI_VERBOSE_ASN1    (1<<2)
+#define SHISHI_VERBOSE_NOICE   (1<<3)
 
 #define KRBTGT "krbtgt"
 #define PRINCIPAL_DELIMITER "/"
 
-#define DEBUGASN1(h) (h->debugmask & SHISHI_DEBUG_ASN1)
-#define DEBUGCRYPTO(h) (h->debugmask & SHISHI_DEBUG_CRYPTO)
-#define DEBUG(h) (h->debugmask & ~SHISHI_DEBUG_ASN1 & ~SHISHI_DEBUG_CRYPTO)
-
-#define SILENT(h) (h->silent)
+#define VERBOSEASN1(h) (h->verbose & SHISHI_VERBOSE_ASN1)
+#define VERBOSECRYPTO(h) (h->verbose & SHISHI_VERBOSE_CRYPTO)
+#define VERBOSENOICE(h) (h->verbose & SHISHI_VERBOSE_NOICE)
+#define VERBOSES (SHISHI_VERBOSE_ASN1 | \
+		  SHISHI_VERBOSE_CRYPTO | \
+		  SHISHI_VERBOSE_NOICE)
+#define VERBOSE(h) (h->verbose & ~VERBOSES)
 
 struct Shishi_as
 {
   ASN1_TYPE asreq;
   ASN1_TYPE asrep;
+  ASN1_TYPE krberror;
   Shishi_ticket *ticket;
 };
 
@@ -213,6 +217,7 @@ struct Shishi_tgs
   ASN1_TYPE authenticator;
   ASN1_TYPE apreq;
   ASN1_TYPE tgsrep;
+  ASN1_TYPE krberror;
   Shishi_ticket *ticket;
 };
 
@@ -228,8 +233,7 @@ struct Shishi_ap
 struct Shishi
 {
   ASN1_TYPE asn1;
-  int debugmask;
-  int silent;
+  int verbose;
   char *default_realm;
   char *default_principal;
   int kdctimeout;

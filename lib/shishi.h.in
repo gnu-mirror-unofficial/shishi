@@ -55,7 +55,8 @@ enum
   SHISHI_CLOSE_ERROR,
   SHISHI_KDC_TIMEOUT,
   SHISHI_KDC_NOT_KNOWN_FOR_REALM,
-  SHISHI_TTY_ERROR
+  SHISHI_TTY_ERROR,
+  SHISHI_GOT_KRBERROR
 };
 
 /* This is not specified in the ASN.1 syntax for some reason. */

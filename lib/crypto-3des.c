@@ -76,7 +76,7 @@ des3_random_to_key (Shishi * handle,
 {
   int i;
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("des3_random_to_key (random)\n");
       printf ("\t ;; random (length %d):\n", 168 / 8);
@@ -101,7 +101,7 @@ des3_random_to_key (Shishi * handle,
       des_set_odd_key_parity (key + i * 8);
     }
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("key = des3_random_to_key (random)\n");
       printf ("\t ;; key:\n");
@@ -132,7 +132,7 @@ des3_string_to_key (Shishi * handle,
   char temp, temp2;
   int res;
 
-  if (DEBUGCRYPTO(handle))
+  if (VERBOSECRYPTO(handle))
     {
       printf ("des3_string_to_key (string, salt)\n");
 

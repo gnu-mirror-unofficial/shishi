@@ -65,10 +65,10 @@ enum
   KDC_OPTION,
   KDC_TIMEOUT_OPTION,
   KDC_RETRIES_OPTION,
-  SILENT_OPTION,
-  DEBUG_CRYPTO_OPTION,
-  DEBUG_ASN1_OPTION,
-  DEBUG_OPTION,
+  VERBOSE_CRYPTO_OPTION,
+  VERBOSE_ASN1_OPTION,
+  VERBOSE_NOICE_OPTION,
+  VERBOSE_OPTION,
   STRINGPROCESS_OPTION,
   THE_END
 };
@@ -81,10 +81,10 @@ static const char *_shishi_opts[] = {
   /* [KDC_OPTION] =               */ "kdc",
   /* [KDC_TIMEOUT_OPTION] =       */ "kdc-timeout",
   /* [KDC_RETRIES_OPTION] =       */ "kdc-retries",
-  /* [SILENT_OPTION] =            */ "silent",
-  /* [DEBUG_CRYPTO_OPTION] =      */ "debug-crypto",
-  /* [DEBUG_ASN1_OPTION] =        */ "debug-asn1",
-  /* [DEBUG_OPTION] =             */ "debug",
+  /* [VERBOSE_CRYPTO_OPTION] =    */ "verbose-crypto",
+  /* [VERBOSE_ASN1_OPTION] =      */ "verbose-asn1",
+  /* [VERBOSE_NOICE_OPTION] =     */ "verbose-noice",
+  /* [VERBOSE_OPTION] =           */ "verbose",
   /* [STRINGPROCESS_OPTION] =     */ "stringprocess",
   /* [THE_END] =                  */ NULL
 };
@@ -167,21 +167,21 @@ shishi_cfg (Shishi * handle, char *option)
 	case KDC_OPTION:
 	  handle->kdc = strdup (value);
 	  break;
-	case SILENT_OPTION:
-	  handle->silent = 1;
-	  break;
 	case STRINGPROCESS_OPTION:
 	  handle->stringprocess = strdup (value);
 	  break;
-	case DEBUG_OPTION:
-	  handle->debugmask = value && atoi (value) ? atoi (value) :
-	    ~0 & ~SHISHI_DEBUG_CRYPTO & ~SHISHI_DEBUG_ASN1;
+	case VERBOSE_OPTION:
+	  handle->verbose = value && atoi (value) ? atoi (value) :
+	    ~0 & ~VERBOSES;
 	  break;
-	case DEBUG_CRYPTO_OPTION:
-	  handle->debugmask |= SHISHI_DEBUG_CRYPTO;
+	case VERBOSE_CRYPTO_OPTION:
+	  handle->verbose |= SHISHI_VERBOSE_CRYPTO;
 	  break;
-	case DEBUG_ASN1_OPTION:
-	  handle->debugmask |= SHISHI_DEBUG_ASN1;
+	case VERBOSE_ASN1_OPTION:
+	  handle->verbose |= SHISHI_VERBOSE_ASN1;
+	  break;
+	case VERBOSE_NOICE_OPTION:
+	  handle->verbose |= SHISHI_VERBOSE_NOICE;
 	  break;
 	case -1:
 	  for (i = 0; i < handle->nrealminfos; i++)
@@ -288,7 +288,7 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
   if (fclose (fh) != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (DEBUG (handle))
+  if (VERBOSE (handle))
     shishi_cfg_print (handle, stdout);
 
   return SHISHI_OK;
@@ -297,7 +297,7 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
 /**
  * shishi_cfg_print: 
  * @handle: Shishi library handle create by shishi_init().
- * @fh: file descriptor to print debug configuration information.
+ * @fh: file descriptor to print verbose configuration information.
  * 
  * Return Value: Returns SHISHI_OK.
  **/
@@ -316,8 +316,7 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
     fprintf (fh, " %s", shishi_cipher_name (handle->clientkdcetypes[i]));
   fprintf (fh, "\n");
   fprintf (fh, "\tKDC: %s\n", handle->kdc ? handle->kdc : "(NULL)");
-  fprintf (fh, "\tSilent: %d\n", handle->silent);
-  fprintf (fh, "\tDebug: %d\n", handle->debugmask);
+  fprintf (fh, "\tVerbose: %d\n", handle->verbose);
   for (i = 0; i < handle->nrealminfos; i++)
     {
       fprintf (fh, "\tRealm %s's KDCs:", handle->realminfos[i].name);

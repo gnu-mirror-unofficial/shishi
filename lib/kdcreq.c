@@ -311,14 +311,14 @@ shishi_kdcreq_to_file (Shishi * handle, ASN1_TYPE kdcreq,
   FILE *fh;
   int res;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Writing KDC-REQ to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Writing KDC-REQ in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -333,7 +333,7 @@ shishi_kdcreq_to_file (Shishi * handle, ASN1_TYPE kdcreq,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Writing KDC-REQ to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -391,14 +391,14 @@ shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
   int res;
   FILE *fh;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Reading KDC-REQ from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Reading KDC-REQ in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -413,7 +413,7 @@ shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT (handle))
+  if (VERBOSE (handle))
     printf (_("Reading KDC-REQ from %s...done\n"), filename);
 
   return SHISHI_OK;
