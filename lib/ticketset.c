@@ -49,6 +49,8 @@ shishi_ticketset_init (Shishi * handle, Shishi_ticketset ** ticketset)
 int
 shishi_ticketset_size (Shishi * handle, Shishi_ticketset * ticketset)
 {
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
   return ticketset ? ticketset->ntickets : 0;
 }
 
@@ -66,6 +68,9 @@ Shishi_ticket *
 shishi_ticketset_get (Shishi * handle,
 		      Shishi_ticketset * ticketset, int ticketno)
 {
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
+
   if (ticketset == NULL || ticketno > ticketset->ntickets)
     return NULL;
 
@@ -85,6 +90,9 @@ shishi_ticketset_add (Shishi * handle,
 		      Shishi_ticketset * ticketset, 
 		      Shishi_ticket * ticket)
 {
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
+
   ticketset->tickets = realloc (ticketset->tickets,
 				sizeof (*ticketset->tickets) *
 				++ticketset->ntickets);
@@ -118,6 +126,9 @@ shishi_ticketset_new (Shishi * handle,
   Shishi_ticket *tkt;
   int res;
 
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
+
   tkt = shishi_ticket (handle, principal, ticket, enckdcreppart);
 
   res = shishi_ticketset_add (handle, ticketset, tkt);
@@ -145,6 +156,9 @@ shishi_ticketset_read (Shishi * handle,
 		       Shishi_ticketset * ticketset, FILE *fh)
 {
   int res;
+
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
 
   res = SHISHI_OK;
   while (!feof (fh))
@@ -192,10 +206,13 @@ shishi_ticketset_read (Shishi * handle,
 int
 shishi_ticketset_from_file (Shishi * handle,
 			    Shishi_ticketset * ticketset, 
-			    char *filename)
+			    const char *filename)
 {
   FILE *fh;
   int res;
+
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
@@ -234,6 +251,9 @@ shishi_ticketset_write (Shishi * handle,
   int warn = 1;
   int res;
   int i;
+
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
 
   for (i=0; i < ticketset->ntickets; i++)
     {
@@ -286,6 +306,9 @@ shishi_ticketset_to_file (Shishi * handle,
   FILE *fh;
   int res;
 
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
+
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
@@ -327,6 +350,9 @@ shishi_ticketset_print_for_service (Shishi * handle,
   int res;
   int ntickets, found;
   int i;
+
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
 
   found = 0;
   for (i = 0; i < shishi_ticketset_size (handle, ticketset); i++)
@@ -408,6 +434,9 @@ shishi_ticketset_print (Shishi * handle,
 			Shishi_ticketset * ticketset, 
 			FILE *fh)
 {
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
+
   return shishi_ticketset_print_for_service (handle, ticketset, fh, NULL);
 }
 
@@ -418,10 +447,13 @@ shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
 {
   int i;
 
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
+
   if (!handle->silent)
     fprintf (stderr,
-	     "Searching tickets for client `%s' and server `%s'\n",
-	     client, server);
+	     "Searching tickets for client `%s' and server `%s' %d\n",
+	     client, server, ticketset);
 
   for (i = 0; i < ticketset->ntickets; i++)
     {
@@ -443,7 +475,7 @@ shishi_ticketset_find_ticket_for_server (Shishi * handle,
 					 char *server)
 {
   return shishi_ticketset_find_ticket_for_clientserver
-    (handle, ticketset, NULL, server);
+    (handle, ticketset, shishi_principal_default_get (handle), server);
 }
 
 int
@@ -479,9 +511,43 @@ shishi_ticketset_done (Shishi * handle, Shishi_ticketset * ticketset)
 {
   int i;
 
+  if (!ticketset)
+    ticketset = shishi_ticketset (handle);
+
   for (i = 0; i < ticketset->ntickets; i++)
     free (ticketset->tickets[i]);
   free (ticketset);
 
+  if (!ticketset)
+    handle->ticketset = NULL;
+
   return;
+}
+
+const char *
+shishi_ticketset_default_file (Shishi *handle)
+{
+  char *home;
+
+  if (!handle->ticketsetfile)
+    {
+      home = getenv ("HOME");
+
+      if (home == NULL)
+	home = "";
+
+      shishi_asprintf (&handle->ticketsetfile, "%s%s", home, TICKET_FILE);
+    }
+
+  return handle->ticketsetfile;
+}
+
+Shishi_ticketset *
+shishi_ticketset (Shishi *handle)
+{
+  if (!handle->ticketset &&
+      (shishi_ticketset_init (handle, &handle->ticketset) != SHISHI_OK))
+    handle->ticketset = NULL;
+
+  return handle->ticketset;
 }
