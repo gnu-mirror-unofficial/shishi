@@ -35,7 +35,7 @@ nodist_include_HEADERS = shishi-int.h
 
 include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
-libshishi_la_SOURCES = internal.h \
+libshishi_la_SOURCES = shishi.h.in internal.h \
 	init.c cfg.c realm.c principal.c error.c krberror.c \
 	gztime.c diskio.c authorize.c \
 	authenticator.c \
@@ -82,4 +82,4 @@ kerberos5.c: $(srcdir)/kerberos5.asn1
 	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $^
 
 indent:
-	indent $(SOURCES) crypto-*.c nettle.c libgcrypt.c shishi.h.in
+	indent $(SOURCES) nettle.c libgcrypt.c
