@@ -779,6 +779,9 @@ shishi_ap_rep_verify (Shishi_ap * ap)
   if (VERBOSE (ap->handle))
     printf ("Decrypting AP-REP...\n");
 
+  if (VERBOSEASN1 (ap->handle))
+    shishi_aprep_print (ap->handle, stdout, ap->aprep);
+
   res = shishi_aprep_decrypt (ap->handle, ap->aprep,
 			      shishi_ticket_key (ap->ticket),
 			      SHISHI_KEYUSAGE_ENCAPREPPART,
@@ -792,6 +795,9 @@ shishi_ap_rep_verify (Shishi_ap * ap)
   res = shishi_aprep_verify (ap->handle, ap->authenticator, ap->encapreppart);
   if (res != SHISHI_OK)
     return res;
+
+  if (VERBOSE (ap->handle))
+    printf ("Verified AP-REP successfully...\n");
 
   return SHISHI_OK;
 }

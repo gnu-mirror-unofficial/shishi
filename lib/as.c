@@ -144,6 +144,12 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char *password)
   if (VERBOSE (as->handle))
     printf ("Processing AS-REQ and AS-REP...\n");
 
+  if (VERBOSEASN1 (as->handle))
+    shishi_kdcreq_print (as->handle, stdout, as->asreq);
+
+  if (VERBOSEASN1 (as->handle))
+    shishi_kdcrep_print (as->handle, stdout, as->asrep);
+
   userlen = sizeof (user);
   res = shishi_kdcreq_cnamerealm_get (as->handle, as->asreq, user, &userlen);
   if (res != SHISHI_OK)
