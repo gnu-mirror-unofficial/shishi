@@ -30,17 +30,24 @@
 enum Shisa_rc
 {
   SHISA_OK = 0,
+  /* init.c */
   SHISA_INIT_ERROR = 1,
+  /* cfg.c */
   SHISA_CFG_NO_FILE = 2,
   SHISA_CFG_IO_ERROR = 3,
   SHISA_CFG_SYNTAX_ERROR = 4,
+  /* db.c: file.c */
   SHISA_OPEN_ERROR = 5,
-  SHISA_NO_REALM = 6,
-  SHISA_LIST_REALM_ERROR = 7,
-  SHISA_NO_PRINCIPAL = 8,
-  SHISA_LIST_PRINCIPAL_ERROR = 8,
-  SHISA_FIND_ERROR = 9,
-  SHISA_NO_KEY = 10
+  SHISA_ENUMERATE_REALM_ERROR = 6,
+  SHISA_ENUMERATE_PRINCIPAL_ERROR = 7,
+  SHISA_NO_REALM = 8,
+  SHISA_NO_PRINCIPAL = 9,
+  SHISA_NO_KEY = 10,
+  SHISA_FIND_ERROR = 11,
+  SHISA_ADD_REALM_EXISTS = 12,
+  SHISA_ADD_REALM_ERROR = 13,
+  SHISA_REMOVE_REALM_NONEMPTY = 14,
+  SHISA_REMOVE_REALM_ERROR = 15
 };
 typedef enum Shisa_rc Shisa_rc;
 
@@ -90,13 +97,16 @@ extern int shisa_cfg_db (Shisa * dbh, char *value);
 extern int shisa_cfg_from_file (Shisa * dbh, const char *cfg);
 extern const char *shisa_cfg_default_systemfile (Shisa * dbh);
 
-/* Core API. */
+/* core.c. */
 extern int shisa_enumerate_realms (Shisa * dbh,
 				   char ***realms, size_t * nrealms);
 extern int shisa_enumerate_principals (Shisa * dbh,
 				       const char *realm,
 				       char ***principals,
 				       size_t * nprincipals);
+
+extern int shisa_realm_add (Shisa * dbh, const char *realm);
+extern int shisa_realm_remove (Shisa * dbh, const char *realm);
 
 extern int shisa_principal_find (Shisa * dbh,
 				 const char *client,
@@ -105,7 +115,8 @@ extern void shisa_principal_free (Shisa_principal * ph);
 extern int shisa_principal_set (Shisa * dbh, const Shisa_principal * ph);
 extern int shisa_principal_add (Shisa * dbh, const Shisa_principal * ph,
 				const Shisa_key * key);
-extern int shisa_principal_remove (Shisa * dbh, const Shisa_principal * ph);
+extern int shisa_principal_remove (Shisa * dbh, const char *realm,
+				   const char *principal);
 
 extern int shisa_key_find (Shisa * dbh, const Shisa_principal * ph,
 			   Shisa_key ** key);
@@ -117,13 +128,15 @@ extern int shisa_key_add (Shisa * dbh, const Shisa_principal * ph,
 extern int shisa_key_remove (Shisa * dbh, const Shisa_principal * ph,
 			     const Shisa_key * key);
 
-/* Utility API. */
-extern int shisa_principal_find_enabled (Shisa * dbh,
-					 const char *client,
-					 const char *realm,
-					 time_t t,
-					 Shisa_principal ** ph);
-extern int shisa_addpasswd (Shisa * dbh, Shisa_principal * ph,
-			    const char *passwd);
+/* tool.c */
+extern int shisa_valid_principal_find (Shisa * dbh,
+				       const char *client,
+				       const char *realm,
+				       time_t t,
+				       Shisa_principal ** ph);
+extern int shisa_valid_key_find (Shisa * dbh,
+				 const Shisa_principal * ph,
+				 time_t t,
+				 Shisa_key ** key);
 
 #endif /* SHISA_H */

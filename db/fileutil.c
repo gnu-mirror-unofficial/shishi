@@ -44,17 +44,13 @@ _shisa_isdir (const char *path)
 
   rc = stat (path, &buf);
   if (rc != 0 || !S_ISDIR (buf.st_mode))
-    {
-      errno = ENOTDIR;
-      perror (path);
-      return 0;
-    }
+    return 0;
 
   return 1;
 }
 
-static int
-isdir2 (const char *path1, const char *path2)
+int
+_shisa_isdir2 (const char *path1, const char *path2)
 {
   char *tmp;
   int rc;
@@ -77,6 +73,66 @@ _shisa_isdir3 (const char *path1, const char *path2, const char *path3)
   asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
 
   rc = _shisa_isdir (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
+_shisa_mkdir (const char *file)
+{
+  int rc;
+
+  rc = mkdir (file, S_IRUSR | S_IWUSR | S_IXUSR);
+  if (rc != 0)
+    {
+      perror (file);
+      return -1;
+    }
+
+  return 0;
+}
+
+int
+_shisa_mkdir2 (const char *path1, const char *path2)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s", path1, path2);
+
+  rc = _shisa_mkdir (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
+_shisa_rmdir (const char *file)
+{
+  int rc;
+
+  rc = rmdir (file);
+  if (rc != 0)
+    {
+      perror (file);
+      return -1;
+    }
+
+  return 0;
+}
+
+int
+_shisa_rmdir2 (const char *path1, const char *path2)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s", path1, path2);
+
+  rc = _shisa_rmdir (tmp);
 
   free (tmp);
 
@@ -194,10 +250,14 @@ _shisa_ls_1 (const char *path, char ***files, size_t *nfiles, DIR *dir)
     {
       if (strcmp (de->d_name, ".") == 0 || strcmp (de->d_name, "..") == 0)
 	continue;
-      if (isdir2 (path, de->d_name))
+      if (_shisa_isdir2 (path, de->d_name))
 	{
-	  *files = xrealloc (*files, (*nfiles + 1) * sizeof (**files));
-	  (*files)[(*nfiles)++] = unescape_filename (de->d_name);
+	  if (files)
+	    {
+	      *files = xrealloc (*files, (*nfiles + 1) * sizeof (**files));
+	      (*files)[(*nfiles)] = unescape_filename (de->d_name);
+	    }
+	  (*nfiles)++;
 	}
     }
 
@@ -207,14 +267,18 @@ _shisa_ls_1 (const char *path, char ***files, size_t *nfiles, DIR *dir)
 
       perror(path);
 
-      for (i = 0; i < *nfiles; i++)
-	free (**files);
-      free (*files);
+      if (files)
+	{
+	  for (i = 0; i < *nfiles; i++)
+	    free (**files);
+	  if (*nfiles > 0)
+	    free (*files);
+	}
 
-      return SHISA_LIST_REALM_ERROR;
+      return -1;
     }
 
-  return SHISA_OK;
+  return 0;
 }
 
 int
@@ -231,8 +295,7 @@ _shisa_ls (const char *path, char ***files, size_t *nfiles)
       return -1;
     }
 
-  rc = _shisa_ls_1 (path, files, nfiles, dir);
-  if (rc != SHISA_OK)
+  if (_shisa_ls_1 (path, files, nfiles, dir) != 0)
     {
       rc = closedir (dir);
       if (rc != 0)
@@ -247,9 +310,13 @@ _shisa_ls (const char *path, char ***files, size_t *nfiles)
 
       perror(path);
 
-      for (i = 0; i < *nfiles; i++)
-	free (**files);
-      free (*files);
+      if (files)
+	{
+	  for (i = 0; i < *nfiles; i++)
+	    free (**files);
+	  if (*nfiles > 0)
+	    free (*files);
+	}
 
       return -1;
     }

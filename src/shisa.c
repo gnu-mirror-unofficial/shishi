@@ -43,10 +43,13 @@
 
 #include "shisa_cmd.h"
 
+/* The name the program was run with, stripped of any leading path. */
+char *program_name;
+
 void
 printfield (const char *fieldname, const char *value)
 {
-  printf ("\t%s %s.\n", fieldname, value);
+  printf ("\t\t%s %s.\n", fieldname, value);
 }
 
 void
@@ -90,7 +93,7 @@ dumplist_realm_principal (Shisa *dbh,
   if (args_info.disabled_flag && !ph->isdisabled)
     return SHISA_OK;
 
-  printf("%s@%s\n", principal, realm);
+  printf("\t%s@%s\n", principal, realm);
 
   if (args_info.dump_given)
     {
@@ -127,6 +130,8 @@ dumplist_realm (Shisa *dbh, struct gengetopt_args_info args_info,
   size_t i;
   int rc;
 
+  printf ("%s\n", realm);
+
   rc = shisa_enumerate_principals (dbh, realm, &principals, &nprincipals);
   if (rc != SHISA_OK)
     return rc;
@@ -137,7 +142,8 @@ dumplist_realm (Shisa *dbh, struct gengetopt_args_info args_info,
 	rc = dumplist_realm_principal (dbh, args_info, realm, principals[i]);
       free (principals[i]);
     }
-  free (principals);
+  if (nprincipals > 0)
+    free (principals);
 
   return rc;
 }
@@ -168,10 +174,106 @@ dumplist (Shisa *dbh, struct gengetopt_args_info args_info)
 	    rc = dumplist_realm (dbh, args_info, realms[i]);
 	  free (realms[i]);
 	}
-      free (realms);
+      if (nrealms > 0)
+	free (realms);
     }
 
   return rc;
+}
+
+int
+add_realm_principal (Shisa *dbh, struct gengetopt_args_info args_info,
+		     const char *realm, const char *principal)
+{
+  puts("add princ");
+}
+
+int
+add_realm (Shisa *dbh, struct gengetopt_args_info args_info,
+	   const char *realm)
+{
+  int rc;
+
+  printf ("Adding realm `%s'...", realm); fflush (stdout);
+
+  rc = shisa_realm_add (dbh, realm);
+  if (rc != SHISA_OK)
+    {
+      printf ("failure: %s\n", shisa_strerror (rc));
+      return EXIT_FAILURE;
+    }
+
+  printf ("done\n", realm);
+
+  return EXIT_SUCCESS;
+}
+
+int
+add (Shisa *dbh, struct gengetopt_args_info args_info)
+{
+  int rc;
+
+  if (args_info.inputs_num == 1)
+    rc = add_realm (dbh, args_info, args_info.inputs[0]);
+  else if (args_info.inputs_num == 2)
+    rc = add_realm_principal (dbh, args_info, args_info.inputs[0],
+			      args_info.inputs[1]);
+  else
+    {
+      error (0, 0, "too few arguments");
+      error (0, 0, "Try `%s --help' for more information.", program_name);
+      return EXIT_FAILURE;
+    }
+
+  return EXIT_SUCCESS;
+}
+
+int
+delete_realm_principal (Shisa *dbh, struct gengetopt_args_info args_info,
+			const char *realm, const char *principal)
+{
+  puts("del princ");
+}
+
+int
+delete_realm (Shisa *dbh, struct gengetopt_args_info args_info,
+	      const char *realm)
+{
+  int rc;
+
+  printf ("Removing realm `%s'...", realm); fflush (stdout);
+
+  rc = shisa_realm_remove (dbh, realm);
+  if (rc != SHISA_OK)
+    {
+      printf ("failure: %s\n", shisa_strerror (rc));
+      return EXIT_FAILURE;
+    }
+
+  printf ("done\n", realm);
+
+  return EXIT_SUCCESS;
+
+}
+
+int
+delete (Shisa *dbh, struct gengetopt_args_info args_info)
+{
+  int rc;
+
+  if (args_info.inputs_num == 1)
+    rc = delete_realm (dbh, args_info, args_info.inputs[0]);
+  else if (args_info.inputs_num == 2)
+    rc = delete_realm_principal (dbh, args_info, args_info.inputs[0],
+				 args_info.inputs[1]);
+  else
+    {
+      error (0, 0, "too few arguments");
+      error (0, 0, "Try `%s --help' for more information.", program_name);
+      return EXIT_FAILURE;
+    }
+
+  return EXIT_SUCCESS;
 }
 
 int
@@ -184,6 +286,7 @@ main (int argc, char *argv[])
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
+  program_name = argv[0];
 
   if (cmdline_parser (argc, argv, &args_info) != 0)
     return 1;
@@ -213,13 +316,11 @@ main (int argc, char *argv[])
 	   args_info.library_options_arg, shisa_strerror (rc));
 
   if (args_info.list_given || args_info.dump_given)
-    {
-      rc = dumplist (dbh, args_info);
-      if (rc != SHISA_OK)
-	error (0, 0, "List failed: %s", shisa_strerror (rc));
-    }
-  else
-    rc = 1;
+    rc = dumplist (dbh, args_info);
+  else if (args_info.add_given)
+    rc = add (dbh, args_info);
+  else if (args_info.remove_given)
+    rc = delete (dbh, args_info);
 
   shisa_done (dbh);
 

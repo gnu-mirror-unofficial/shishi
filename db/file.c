@@ -51,8 +51,10 @@
 
 /* fileutil.c */
 extern int _shisa_isdir (const char *path);
+extern int _shisa_isdir2 (const char *path1, const char *path2);
 extern int _shisa_isdir3 (const char *path1, const char *path2,
 			  const char *path3);
+extern int _shisa_rmdir2 (const char *path1, const char *path2);
 extern int _shisa_mtime4 (const char *path1, const char *path2,
 			  const char *path3, const char *path4);
 extern int _shisa_isfile4 (const char *path1, const char *path2,
@@ -132,6 +134,7 @@ shisa_file_init (Shisa *dbh,
     return SHISA_OPEN_ERROR;
 
   *state = info = xcalloc (1, sizeof (*info));
+
   rc = shisa_file_cfg (dbh, info, options);
   if (rc != SHISA_OK)
     return rc;
@@ -148,11 +151,11 @@ shisa_file_enumerate_realms (Shisa *dbh,
 			     size_t *nrealms)
 {
   Shisa_file *info = state;
-  int rc;
 
-  rc = _shisa_ls (info->path, realms, nrealms);
+  if (_shisa_ls (info->path, realms, nrealms) != 0)
+    return SHISA_ENUMERATE_REALM_ERROR;
 
-  return rc;
+  return SHISA_OK;
 }
 
 int
@@ -163,11 +166,56 @@ shisa_file_enumerate_principals (Shisa *dbh,
 				 size_t *nprincipals)
 {
   Shisa_file *info = state;
+
+  if (!_shisa_isdir2 (info->path, realm))
+    return SHISA_NO_REALM;
+
+  if (_shisa_ls2 (info->path, realm, principals, nprincipals) != 0)
+    return SHISA_ENUMERATE_PRINCIPAL_ERROR;
+
+  return SHISA_OK;
+}
+
+int
+shisa_file_realm_add (Shisa * dbh,
+		      void *state,
+		      const char *realm)
+{
+  Shisa_file *info = state;
+
+  if (_shisa_isdir2 (info->path, realm))
+    return SHISA_ADD_REALM_EXISTS;
+
+  if (_shisa_mkdir2 (info->path, realm) != 0)
+    return SHISA_ADD_REALM_ERROR;
+
+  return SHISA_OK;
+
+}
+
+int
+shisa_file_realm_remove (Shisa * dbh,
+			 void *state,
+			 const char *realm)
+{
+  Shisa_file *info = state;
+  size_t nprincipals = 0;
   int rc;
 
-  rc = _shisa_ls2 (info->path, realm, principals, nprincipals);
+  if (!_shisa_isdir2 (info->path, realm))
+    return SHISA_NO_REALM;
 
-  return rc;
+  rc = shisa_file_enumerate_principals (dbh, state, realm, NULL, &nprincipals);
+  if (rc != SHISA_OK)
+    return rc;
+
+  if (nprincipals > 0)
+    return SHISA_REMOVE_REALM_NONEMPTY;
+
+  if (_shisa_rmdir2 (info->path, realm) != 0)
+    return SHISA_REMOVE_REALM_ERROR;
+
+  return SHISA_OK;
 }
 
 int
@@ -204,6 +252,29 @@ shisa_file_principal_find (Shisa * dbh,
     _shisa_mtime4 (info->path, realm, client, "accountexpire.stamp");
 
   *ph = princ;
+
+  return SHISA_OK;
+}
+
+int
+shisa_file_principal_add (Shisa * dbh,
+			  void *state,
+			  const Shisa_principal * ph,
+			  const Shisa_key * key)
+{
+  Shisa_file *info = state;
+
+  return SHISA_OK;
+
+}
+
+int
+shisa_file_principal_remove (Shisa * dbh,
+			     void *state,
+			     const char *realm,
+			     const char *principal)
+{
+  Shisa_file *info = state;
 
   return SHISA_OK;
 }

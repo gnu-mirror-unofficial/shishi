@@ -34,6 +34,17 @@ static struct shisa_error_msgs _shisa_error_messages[] = {
   {SHISA_CFG_IO_ERROR, "File I/O error for Shisa configuration file."},
   {SHISA_CFG_SYNTAX_ERROR, "Syntax error in Shisa configuration token."},
   {SHISA_OPEN_ERROR, "Shisa database could not be opened."},
+  {SHISA_ENUMERATE_REALM_ERROR, "Error enumerating realms in database."},
+  {SHISA_ENUMERATE_PRINCIPAL_ERROR,
+   "Error enumerating principals in database."},
+  {SHISA_NO_REALM, "Supplied realm does not exist."},
+  {SHISA_NO_PRINCIPAL, "Supplied principal does not exist."},
+  {SHISA_NO_KEY, "Principal is not associated with any key."},
+  {SHISA_FIND_ERROR, "Error finding principal."},
+  {SHISA_ADD_REALM_EXISTS, "Tried to add a realm that already exist."},
+  {SHISA_ADD_REALM_ERROR, "Error adding realm to database."},
+  {SHISA_REMOVE_REALM_NONEMPTY, "Tried to remove a non-empty realm."},
+  {SHISA_REMOVE_REALM_ERROR, "Error removing realm from database."}
 };
 
 /**

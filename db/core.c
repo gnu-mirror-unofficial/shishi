@@ -31,7 +31,8 @@ shisa_enumerate_realms (Shisa *dbh,
   int rc;
 
   *nrealms = 0;
-  *realms = NULL;
+  if (realms)
+    *realms = NULL;
 
   for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
     {
@@ -55,7 +56,8 @@ shisa_enumerate_principals (Shisa *dbh,
   int rc;
 
   *nprincipals = 0;
-  *principals = NULL;
+  if (principals)
+    *principals = NULL;
 
   for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
     {
@@ -84,6 +86,42 @@ shisa_principal_find (Shisa * dbh,
       rc = db->backend->principal_find (dbh, db->state, client, realm, ph);
       if (rc == SHISA_OK || (rc != SHISA_OK && rc != SHISA_NO_PRINCIPAL))
 	return rc;
+    }
+
+  return SHISA_NO_PRINCIPAL;
+}
+
+int
+shisa_realm_add (Shisa * dbh, const char *realm)
+{
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      /* XXX ignore read-only backends. */
+      rc = db->backend->realm_add (dbh, db->state, realm);
+      /* XXX ignore error for ignore-error backends. */
+      return rc;
+    }
+
+  return SHISA_NO_PRINCIPAL;
+}
+
+int
+shisa_realm_remove (Shisa * dbh, const char *realm)
+{
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      /* XXX ignore read-only backends. */
+      rc = db->backend->realm_remove (dbh, db->state, realm);
+      /* XXX ignore error for ignore-error backends. */
+      return rc;
     }
 
   return SHISA_NO_PRINCIPAL;
