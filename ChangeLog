@@ -1,3 +1,102 @@
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: Generated.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.10.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ticket.c: Typo.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Fix.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.ggo, NEWS: Add.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Update --help's.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Fix.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/argp-ba.c, gl/argp-eexst.c,
+	gl/argp-fmtstream.c, gl/argp-fmtstream.h, gl/argp-fs-xinl.c,
+	gl/argp-help.c, gl/argp-namefrob.h, gl/argp-parse.c, gl/argp-pv.c,
+	gl/argp-pvh.c, gl/argp-xinl.c, gl/argp.h, gl/mempcpy.c,
+	gl/mempcpy.h, gl/sysexit_.h, gl/m4/argp.m4, gl/m4/mempcpy.m4,
+	gl/m4/sysexits.m4: Remove argp.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Add shishid.1.  Fix shishi.1.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Fix.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am, src/shishi.c, src/shishi.ggo: Rewrite shishi.c
+	to use gengetopt instead of argp.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/foo.c: Add.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/foo.c, src/shishi.c: Move low-level crypto stuff from shishi
+	to foo.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Deinitialize gnutls on quit.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Typo.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add DNS SRV.  Add TLS shishid.  Add TLS for
+	STARTTLS protocol.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix GNUTLS server.  Use error before listening
+	stage, syslog later.
+
+2003-12-13  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/shishi.h.in:
+	(shishi_ap_etype_tktoptionsdata): Add.
+
+2003-12-13  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c:
+	(act_hint_on_kdcreq): Set hint->etype in KDC-REQ.
+
+2003-12-12  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-12-12  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
 2003-12-12  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.9.
