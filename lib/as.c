@@ -1,5 +1,5 @@
 /* as.c		High level client AS functions
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -240,7 +240,7 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
 {
   Shishi_asn1 ticket, kdcreppart;
   char user[BUFSIZ];
-  int userlen;
+  size_t userlen;
   int res;
 
   if (VERBOSE (as->handle))
@@ -265,9 +265,9 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
 
   if (key == NULL && password == NULL)
     {
-      char *password;
+      char *passwd;
 
-      res = shishi_prompt_password (as->handle, &password,
+      res = shishi_prompt_password (as->handle, &passwd,
 				    "Enter password for `%s': ", user);
       if (res != SHISHI_OK)
 	{
@@ -277,8 +277,8 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
 	}
 
       res = shishi_as_process (as->handle, as->asreq, as->asrep,
-			       password, &kdcreppart);
-      free (password);
+			       passwd, &kdcreppart);
+      free (passwd);
     }
   else if (key == NULL)
     res = shishi_as_process (as->handle, as->asreq, as->asrep,
