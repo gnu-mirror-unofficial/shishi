@@ -1,29 +1,32 @@
 Shishi ANNOUNCE -- Overview to attract interest.
+Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
-Shishi is a (still incomplete) implementation of the RFC 1510 and RFC
-1510bis network authentication system.  RFC 1510 can be used to
-authenticate users in distributed systems.
+Shishi is a (still incomplete) implementation of the RFC 1510(bis)
+network authentication system.  Shishi can be used to authenticate
+users in distributed systems.
 
 Shishi contains a library ('libshishi') that can be used by
 application developers to add support for RFC 1510.  Shishi contains a
 command line utility ('shishi') that is used by users to interface
 with the library, to acquire and manage tickets (and more).  Included
 are also a TELNET client and server (based on GNU InetUtils) for
-remote network login, and a PAM module for host security.  Of course,
-a manual documenting user aspects as well as the programming API is
-included.
+remote network login, and a PAM module for host security.  A
+rudimentary key distribution center (KDC) daemon is included.  Of
+course, a manual documenting user aspects as well as the programming
+API is included.
 
-Shishi currently supports AS/TGS exchanges for acquiring tickets, and
-the AP exchange for performing client and server authentication.
-Shishi is internationalized; error and status messages can be
-translated into the users' language; username and passwords can be
-converted into any available character set (normally including
-ISO-8859-1 and UTF-8) and be processed using an experimental
-Stringprep profile.  The des-cbc-md4, des-cbc-md5, des3-cbc-sha1-kd,
-aes128-cts-hmac-sha1-96, and aes256-cts-hmac-sha1-96 encryption types,
-and the rsa-md4-des, rsa-md5-des, hmac-sha1-des3-kd,
-hmac-sha1-96-aes128, hmac-sha1-96-aes256 checksum types are supported.
+Shishi currently supports AS/TGS exchanges for acquiring tickets, the
+AP exchange for performing client and server authentication, and SAFE
+for integrity protected application data exchanges.  Shishi is
+internationalized; error and status messages can be translated into
+the users' language; user name and passwords can be converted into any
+available character set (normally including ISO-8859-1 and UTF-8) and
+also be processed using an experimental Stringprep profile.  The
+des-cbc-md4, des-cbc-md5, des3-cbc-sha1-kd, aes128-cts-hmac-sha1-96,
+and aes256-cts-hmac-sha1-96 encryption types, and the rsa-md4-des,
+rsa-md5-des, hmac-sha1-des3-kd, hmac-sha1-96-aes128,
+hmac-sha1-96-aes256 checksum types are supported.
 
 Shishi is developed for the GNU/Linux system, but runs on over 20
 platforms including most major Unix platforms and Windows.
@@ -43,8 +46,6 @@ Further information including paid contract development:
 Simon Josefsson <simon@josefsson.org>
 
 ----------------------------------------------------------------------
-Copyright (C) 2002 Simon Josefsson
-
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
 notice and this notice are preserved.
