@@ -71,7 +71,7 @@ shishi_keys_for_serverrealm_in_file (Shishi * handle,
 	  strcmp (server, shishi_key_principal (key)) == 0)
 	break;
 
-      shishi_key_done (&key);
+      shishi_key_done (key);
     }
 
   res = fclose (fh);

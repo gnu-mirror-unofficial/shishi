@@ -46,7 +46,7 @@ doit (Shishi * h, Shishi_ap * ap, int verbose)
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, "Could not read SAFE:\n%s\n%s\n",
-		   shishi_strerror (res), shishi_strerror_details (h));
+		   shishi_strerror (res), shishi_error (h));
 	  return 1;
 	}
 
@@ -54,7 +54,7 @@ doit (Shishi * h, Shishi_ap * ap, int verbose)
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, "Could not create SAFE:\n%s\n%s\n",
-		   shishi_strerror (res), shishi_strerror_details (h));
+		   shishi_strerror (res), shishi_error (h));
 	  return 1;
 	}
 
@@ -64,7 +64,7 @@ doit (Shishi * h, Shishi_ap * ap, int verbose)
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, "Could not verify SAFE:\n%s\n%s\n",
-		   shishi_strerror (res), shishi_strerror_details (h));
+		   shishi_strerror (res), shishi_error (h));
 	  return 1;
 	}
 
@@ -74,7 +74,7 @@ doit (Shishi * h, Shishi_ap * ap, int verbose)
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, "Could not extract user data:\n%s\n%s\n",
-		   shishi_strerror (res), shishi_strerror_details (h));
+		   shishi_strerror (res), shishi_error (h));
 	  return 1;
 	}
       userdata[userdatalen] = '\0';
@@ -109,7 +109,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
   key = shishi_hostkeys_for_server (h, sname);
   if (!key)
     {
-      printf ("could not find key: %s\n", shishi_strerror_details (h));
+      printf ("could not find key: %s\n", shishi_error (h));
       return NULL;
     }
 

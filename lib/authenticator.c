@@ -864,7 +864,7 @@ shishi_authenticator_add_random_subkey (Shishi * handle,
 					 shishi_key_value (subkey),
 					 shishi_key_length (subkey));
 
-  shishi_key_done (&subkey);
+  shishi_key_done (subkey);
 
   return res;
 }

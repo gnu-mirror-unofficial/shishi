@@ -407,7 +407,7 @@ void
 shishi_tkt_done (Shishi_tkt * tkt)
 {
   if (tkt->key)
-    shishi_key_done (&tkt->key);
+    shishi_key_done (tkt->key);
   free (tkt);
 }
 
