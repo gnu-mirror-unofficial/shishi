@@ -346,7 +346,8 @@ shishi_cfg (Shishi * handle, char *option)
 int
 shishi_cfg_from_file (Shishi * handle, const char *cfg)
 {
-  struct linebuffer lb;
+  char *line = NULL;
+  size_t len = 0;
   FILE *fh;
 
   if (cfg == NULL)
@@ -359,14 +360,19 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
       return SHISHI_FOPEN_ERROR;
     }
 
-  initbuffer (&lb);
-
-  while (readlinebuffer (&lb, fh))
+  while (!feof (fh))
     {
-      char *p = lb.buffer;
+      ssize_t n = getline (&line, &len, fh);
+      char *p = line;
       char *q;
 
-      p[lb.length - 1] = '\0';
+      if (n <= 0)
+	/* End of file or error.  */
+	break;
+
+      while (strlen (p) > 0 && (p[strlen (p) - 1] == '\n' ||
+				p[strlen (p) - 1] == '\r'))
+	p[strlen (p) - 1] = '\0';
 
       while (*p && strchr (" \t\r\n", *p))
 	p++;
@@ -381,10 +387,11 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
       shishi_cfg (handle, p);
     }
 
+  if (line)
+    free (line);
+
   if (ferror (fh))
     shishi_error_printf (handle, "Error reading configuration file");
-
-  freebuffer (&lb);
 
   if (fclose (fh) != 0)
     return SHISHI_FCLOSE_ERROR;

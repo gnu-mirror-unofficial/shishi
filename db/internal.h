@@ -38,7 +38,6 @@
 #define N_(String) gettext_noop (String)
 
 #include "xalloc.h"
-#include "linebuffer.h"
 
 #include "shisa.h"
 

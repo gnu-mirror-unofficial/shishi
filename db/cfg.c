@@ -135,7 +135,8 @@ shisa_cfg (Shisa * dbh, char *option)
 int
 shisa_cfg_from_file (Shisa * dbh, const char *cfg)
 {
-  struct linebuffer lb;
+  char *line = NULL;
+  size_t len = 0;
   FILE *fh;
 
   if (cfg == NULL)
@@ -148,14 +149,19 @@ shisa_cfg_from_file (Shisa * dbh, const char *cfg)
       return SHISA_CFG_NO_FILE;
     }
 
-  initbuffer (&lb);
-
-  while (readlinebuffer (&lb, fh))
+  while (!feof (fh))
     {
-      char *p = lb.buffer;
+      ssize_t n = getline (&line, &len, fh);
+      char *p = line;
       char *q;
 
-      p[lb.length - 1] = '\0';
+      if (n <= 0)
+	/* End of file or error.  */
+	break;
+
+      while (strlen (p) > 0 && (p[strlen (p) - 1] == '\n' ||
+				p[strlen (p) - 1] == '\r'))
+	p[strlen (p) - 1] = '\0';
 
       while (*p && strchr (" \t\r\n", *p))
 	p++;
@@ -170,7 +176,8 @@ shisa_cfg_from_file (Shisa * dbh, const char *cfg)
       shisa_cfg (dbh, p);
     }
 
-  freebuffer (&lb);
+  if (line)
+    free (line);
 
   if (ferror (fh))
     return SHISA_CFG_IO_ERROR;
