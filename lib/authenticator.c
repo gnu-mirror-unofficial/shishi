@@ -42,6 +42,7 @@ shishi_authenticator (Shishi * handle)
   Shishi_asn1 node = NULL;
   struct timeval tv;
   struct timezone tz;
+  uint32_t seqnr;
 
   node = shishi_asn1_authenticator (handle);
   if (!node)
@@ -71,7 +72,9 @@ shishi_authenticator (Shishi * handle)
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "seq-number", NULL, 0);
+  shishi_randomize (handle, 0, &seqnr, sizeof(seqnr));
+
+  res = shishi_asn1_write_uint32 (handle, node, "seq-number", seqnr);
   if (res != SHISHI_OK)
     goto error;
 
