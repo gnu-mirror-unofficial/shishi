@@ -1,5 +1,6 @@
-/* xstrndup.c -- copy at most n bytes of a string with out of memory checking
-   Copyright (C) 2003 Simon Josefsson
+/* Duplicate a bounded initial segment of a string, with out-of-memory
+   checking.
+   Copyright (C) 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,24 +20,20 @@
 # include <config.h>
 #endif
 
-#if STDC_HEADERS || HAVE_STRING_H
-# include <string.h>
-#else
-# include <strings.h>
-#endif
+/* Specification.  */
+#include "xstrndup.h"
 
-#include <sys/types.h>
-
+#include "strndup.h"
 #include "xalloc.h"
 
-/* Return a newly allocated copy of at most n bytes of STRING.  */
-
+/* Return a newly allocated copy of at most N bytes of STRING.
+   In other words, return a copy of the initial segment of length N of
+   STRING.  */
 char *
 xstrndup (const char *string, size_t n)
 {
-  /* FIXME we may allocate more than needed amount. however strlen()
-     may read out of bounds in case string is never zero
-     terminated. looping through string (limited by n) waste cpu, this
-     waste memory. */
-  return strncpy (xmalloc (n), string, n);
+  char *s = strndup (string, n);
+  if (! s)
+    xalloc_die ();
+  return s;
 }

@@ -37,6 +37,7 @@ AM_CONFIG_HEADER(config.h)
 # Checks for header files.
 AC_PROG_CC
 AC_GNU_SOURCE
+gl_USE_SYSTEM_EXTENSIONS
 AC_HEADER_STDC
 AC_CHECK_HEADERS([sys/types.h])
 AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
@@ -221,30 +222,32 @@ AC_SUBST(CRYPTO_LIBS)
 AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
 
 # For gnulib stuff in gl/.
-gl_FUNC_STRNLEN
-gl_FUNC_STRNDUP
-gl_FUNC_MEMPCPY
 gl_FUNC_ALLOCA
 gl_ARGP
 gl_ERROR
+gl_EXITFAIL
+gl_GETDATE
 gl_FUNC_GETHOSTNAME
 gl_GETOPT
 jm_FUNC_MALLOC
 gl_FUNC_MEMMOVE
+gl_FUNC_MEMPCPY
 gl_FUNC_MEMSET
+gl_FUNC_MKTIME
 jm_FUNC_REALLOC
 gt_FUNC_SETENV
 gl_STRCASE
 gl_FUNC_STRCHRNUL
 gl_FUNC_STRDUP
 gl_FUNC_STRERROR
+gl_FUNC_STRNDUP
+gl_FUNC_STRNLEN
 gl_SYSEXITS
 jm_FUNC_GLIBC_UNLOCKED_IO
 gl_FUNC_VASNPRINTF
 gl_FUNC_VASPRINTF
 gl_XALLOC
-gl_GETDATE
-gl_FUNC_MKTIME
+gl_XSTRNDUP
 
 # Checks for library functions.
 AC_FUNC_STRFTIME

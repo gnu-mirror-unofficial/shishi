@@ -1,4 +1,5 @@
-/* Copy memory area and return pointer after last written byte.
+/* Duplicate a bounded initial segment of a string, with out-of-memory
+   checking.
    Copyright (C) 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -15,15 +16,9 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Specification.  */
-#include "mempcpy.h"
+#include <stddef.h>
 
-#include <string.h>
-
-/* Copy N bytes of SRC to DEST, return pointer to bytes after the
-   last written byte.  */
-void *
-mempcpy (void *dest, const void *src, size_t n)
-{
-  return (char *) memcpy (dest, src, n) + n;
-}
+/* Return a newly allocated copy of at most N bytes of STRING.
+   In other words, return a copy of the initial segment of length N of
+   STRING.  */
+extern char *xstrndup (const char *string, size_t n);

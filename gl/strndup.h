@@ -1,4 +1,4 @@
-/* Copy memory area and return pointer after last written byte.
+/* Duplicate a size-bounded string.
    Copyright (C) 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -15,15 +15,16 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Specification.  */
-#include "mempcpy.h"
+#if HAVE_STRNDUP
 
+/* Get strndup() declaration.  */
 #include <string.h>
 
-/* Copy N bytes of SRC to DEST, return pointer to bytes after the
-   last written byte.  */
-void *
-mempcpy (void *dest, const void *src, size_t n)
-{
-  return (char *) memcpy (dest, src, n) + n;
-}
+#else
+
+#include <stddef.h>
+
+/* Return a newly allocated copy of at most N bytes of STRING.  */
+extern char *strndup (const char *string, size_t n);
+
+#endif

@@ -1,5 +1,6 @@
-/* Copy memory area and return pointer after last written byte.
-   Copyright (C) 2003 Free Software Foundation, Inc.
+/* Failure exit status
+
+   Copyright (C) 2002 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -12,18 +13,19 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   along with this program; see the file COPYING.
+   If not, write to the Free Software Foundation,
+   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Specification.  */
-#include "mempcpy.h"
+#if HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-#include <string.h>
+#if HAVE_STDLIB_H
+# include <stdlib.h>
+#endif
+#ifndef EXIT_FAILURE
+# define EXIT_FAILURE 1
+#endif
 
-/* Copy N bytes of SRC to DEST, return pointer to bytes after the
-   last written byte.  */
-void *
-mempcpy (void *dest, const void *src, size_t n)
-{
-  return (char *) memcpy (dest, src, n) + n;
-}
+int volatile exit_failure = EXIT_FAILURE;

@@ -1,7 +1,11 @@
-## Process this file with automake to produce Makefile.in.
+# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc getdate mktime
+# s/libfoo_a/libfoo_la/g
+# s/libfoo.a/libfoo.la/
+# s/#libfoo_la_LIBADD = @LIBOBJS@/libfoo_la_LIBADD = @LTLIBOBJS@/g
 
 SUBDIRS = m4
-INCLUDES = -I../intl
+
+## Process this file with automake to produce Makefile.in.
 
 AUTOMAKE_OPTIONS = 1.5 gnits no-dependencies
 
@@ -17,21 +21,30 @@ MOSTLYCLEANFILES =
 CLEANFILES =
 DISTCLEANFILES =
 MAINTAINERCLEANFILES =
+BUILT_SOURCES += $(ALLOCA_H)
 EXTRA_DIST += alloca_.h
 
 # We need the following in order to create an <alloca.h> when the system
 # doesn't have one that works with the given compiler.
-all-local $(libfoo_la_OBJECTS): @ALLOCA_H@
+all-local $(libfoo_la_OBJECTS): $(ALLOCA_H)
 alloca.h: alloca_.h
-	cp $(srcdir)/alloca_.h alloca.h-t
-	mv alloca.h-t alloca.h
+	cp $(srcdir)/alloca_.h $@-t
+	mv $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 libfoo_la_LIBADD += @ALLOCA@
+#libfoo_la_LIBADD += @LTALLOCA@
 libfoo_la_SOURCES += argp.h argp-ba.c argp-eexst.c \
            argp-fmtstream.c argp-fmtstream.h argp-fs-xinl.c argp-help.c \
            argp-namefrob.h argp-parse.c argp-pv.c argp-pvh.c argp-xinl.c
 
+
+libfoo_la_SOURCES += exitfail.h exitfail.c
+
+
+libfoo_la_SOURCES += getdate.h getdate.y
+BUILT_SOURCES += getdate.c
+MAINTAINERCLEANFILES += getdate.c
 
 
 libfoo_la_SOURCES += getopt.h getopt.c getopt1.c
@@ -40,9 +53,15 @@ libfoo_la_SOURCES += gettext.h
 
 
 
+libfoo_la_SOURCES += mempcpy.h
+
+
 
 
 libfoo_la_SOURCES += setenv.h
+
+
+libfoo_la_SOURCES += strchrnul.h
 
 
 
@@ -64,12 +83,7 @@ libfoo_la_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
 libfoo_la_SOURCES += vasprintf.h
 
-libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c xstrndup.c
+libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
 
-libfoo_la_SOURCES += mempcpy.h
+libfoo_la_SOURCES += xstrndup.h xstrndup.c
 
-libfoo_la_SOURCES += strchrnul.h
-
-libfoo_la_SOURCES += getdate.h getdate.y
-BUILT_SOURCES += getdate.c
-MAINTAINERCLEANFILES += getdate.c
