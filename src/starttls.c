@@ -24,103 +24,171 @@
 /* Get Shishid stuff. */
 #include "kdc.h"
 
-static const char *
-bin2hex (const void *bin, size_t bin_size)
-{
-  static char printable[120];
-  unsigned char *_bin;
-  char *print;
-  size_t i;
-
-  print = printable;
-  for (i = 0; i < bin_size; i++)
-    {
-      sprintf (print, "%.2x ", _bin[i]);
-      print += 2;
-    }
-
-  return printable;
-}
-
 /* This function will print information about this session's peer
- * certificate.
- */
+ * certificate. */
 static void
-print_x509_certificate_info (gnutls_session session)
+logcertinfo (gnutls_session session)
 {
-  char serial[40];
-  char dn[128];
-  size_t size;
-  unsigned int algo, bits;
-  time_t expiration_time, activation_time;
   const gnutls_datum *cert_list;
-  int cert_list_size = 0;
+  unsigned cert_list_size = 0;
   gnutls_x509_crt cert;
+  size_t i;
+  int rc;
 
   cert_list = gnutls_certificate_get_peers (session, &cert_list_size);
+  if (!cert_list)
+    return;
 
-  if (cert_list_size > 0 &&
-      gnutls_certificate_type_get (session) == GNUTLS_CRT_X509)
+  rc = gnutls_x509_crt_init (&cert);
+  if (rc < 0)
     {
-
-      /* no error checking
-       */
-      gnutls_x509_crt_init (&cert);
-
-      gnutls_x509_crt_import (cert, &cert_list[0], GNUTLS_X509_FMT_DER);
-
-      printf (" - Certificate info:\n");
-
-      expiration_time = gnutls_x509_crt_get_expiration_time (cert);
-      activation_time = gnutls_x509_crt_get_activation_time (cert);
-
-      printf (" - Certificate is valid since: %s", ctime (&activation_time));
-      printf (" - Certificate expires: %s", ctime (&expiration_time));
-
-      /* Print the serial number of the certificate.
-       */
-      size = sizeof (serial);
-      gnutls_x509_crt_get_serial (cert, serial, &size);
-
-      printf (" - Certificate serial number: %s\n", bin2hex (serial, size));
-
-      /* Extract some of the public key algorithm's parameters
-       */
-      algo = gnutls_x509_crt_get_pk_algorithm (cert, &bits);
-
-      printf ("Certificate public key: ");
-
-      if (algo == GNUTLS_PK_RSA)
-	{
-	  printf ("RSA\n");
-	  printf (" Modulus: %d bits\n", bits);
-	}
-      else if (algo == GNUTLS_PK_DSA)
-	{
-	  printf ("DSA\n");
-	  printf (" Exponent: %d bits\n", bits);
-	}
-      else
-	{
-	  printf ("UNKNOWN\n");
-	}
-
-      /* Print the version of the X.509 certificate.
-       */
-      printf (" - Certificate version: #%d\n",
-	      gnutls_x509_crt_get_version (cert));
-
-      size = sizeof (dn);
-      gnutls_x509_crt_get_dn (cert, dn, &size);
-      printf (" - DN: %s\n", dn);
-
-      size = sizeof (dn);
-      gnutls_x509_crt_get_issuer_dn (cert, dn, &size);
-      printf (" - Certificate Issuer's DN: %s\n", dn);
-
-      gnutls_x509_crt_deinit (cert);
-
+      syslog (LOG_ERR, "TLS xci failed (%d): %s", rc, gnutls_strerror (rc));
+      return;
     }
+
+  for (i = 0; i < cert_list_size; i++)
+    if (gnutls_certificate_type_get (session) == GNUTLS_CRT_X509)
+      {
+	time_t expiration_time, activation_time;
+	char *expiration_time_str = NULL, *activation_time_str = NULL;
+	unsigned char *serial = NULL, *serialhex = NULL;
+	char *issuer = NULL, *subject = NULL;
+	size_t seriallen, issuerlen, subjectlen;
+	unsigned char md5fingerprint[16], md5fingerprinthex[3*16+1];
+	size_t md5fingerprintlen;
+	int algo;
+	unsigned bits;
+	char *keytype;
+
+	rc = gnutls_x509_crt_import (cert, &cert_list[i], GNUTLS_X509_FMT_DER);
+	if (rc < 0)
+	  {
+	    syslog (LOG_ERR, "TLS xci[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+
+	md5fingerprintlen = sizeof (md5fingerprint);
+	rc = gnutls_fingerprint (GNUTLS_DIG_MD5, &cert_list[i],
+				 md5fingerprint, &md5fingerprintlen);
+	if (rc != GNUTLS_E_SUCCESS)
+	  {
+	    syslog (LOG_ERR, "TLS f[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+
+	for (i = 0; i < md5fingerprintlen; i++)
+	  sprintf (&md5fingerprinthex[3*i], "%.2x:", md5fingerprint[i]);
+
+	expiration_time = gnutls_x509_crt_get_expiration_time (cert);
+	if (expiration_time == (time_t) -1)
+	  {
+	    syslog (LOG_ERR, "TLS xcget[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+
+	activation_time = gnutls_x509_crt_get_activation_time (cert);
+	if (expiration_time == (time_t) -1)
+	  {
+	    syslog (LOG_ERR, "TLS xcgat[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+
+	expiration_time_str = xstrdup (ctime (&expiration_time));
+	if (expiration_time_str[strlen (expiration_time_str) - 1] == '\n')
+	  expiration_time_str[strlen (expiration_time_str) - 1] = '\0';
+
+	activation_time_str = xstrdup (ctime (&activation_time));
+	if (activation_time_str[strlen (activation_time_str) - 1] == '\n')
+	  activation_time_str[strlen (activation_time_str) - 1] = '\0';
+
+	rc = gnutls_x509_crt_get_dn (cert, NULL, &subjectlen);
+	if (rc != GNUTLS_E_SUCCESS && rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
+	  {
+	    syslog (LOG_ERR, "TLS xcgd[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+	subject = xmalloc (++subjectlen);
+	rc = gnutls_x509_crt_get_dn (cert, subject, &subjectlen);
+	if (rc != GNUTLS_E_SUCCESS)
+	  {
+	    syslog (LOG_ERR, "TLS xcgd2[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+
+	rc = gnutls_x509_crt_get_issuer_dn (cert, NULL, &issuerlen);
+	if (rc != GNUTLS_E_SUCCESS && rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
+	  {
+	    syslog (LOG_ERR, "TLS xcgid[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+	issuer = xmalloc (++issuerlen);
+	rc = gnutls_x509_crt_get_issuer_dn (cert, issuer, &issuerlen);
+	if (rc != GNUTLS_E_SUCCESS)
+	  {
+	    syslog (LOG_ERR, "TLS xcgid2[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+
+	seriallen = 0;
+	rc = gnutls_x509_crt_get_serial (cert, NULL, &seriallen);
+	if (rc != GNUTLS_E_SUCCESS && rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
+	  {
+	    syslog (LOG_ERR, "TLS xcgs[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+	serial = xmalloc (seriallen);
+	rc = gnutls_x509_crt_get_serial (cert, serial, &seriallen);
+	if (rc != GNUTLS_E_SUCCESS)
+	  {
+	    syslog (LOG_ERR, "TLS xcgs2[%d] failed (%d): %s", i,
+		    rc, gnutls_strerror (rc));
+	    goto cleanup;
+	  }
+
+	serialhex = xmalloc (2*seriallen+1);
+	for (i = 0; i < seriallen; i++)
+	  sprintf (&serialhex[2*i], "%.2x", serial[i]);
+
+	algo = gnutls_x509_crt_get_pk_algorithm (cert, &bits);
+	if (algo == GNUTLS_PK_RSA)
+	  keytype = "RSA modulus";
+	else if (algo == GNUTLS_PK_DSA)
+	  keytype = "DSA exponent";
+	else
+	  keytype = "UNKNOWN";
+
+	syslog (LOG_INFO, "TLS client `%s', issued by `%s', serial "
+		"number `%s', MD5 fingerprint `%s', activated `%s', "
+		"expires `%s', version #%d, key %s %d bits",
+		subject, issuer, serialhex, md5fingerprinthex,
+		activation_time_str, expiration_time_str,
+		gnutls_x509_crt_get_version (cert), keytype, bits);
+
+      cleanup:
+	if (serialhex)
+	  free (serialhex);
+	if (serial)
+	  free (serial);
+	if (expiration_time_str)
+	  free (expiration_time_str);
+	if (activation_time_str)
+	  free (activation_time_str);
+	if (issuer)
+	  free (issuer);
+	if (subject)
+	  free (subject);
+      }
+
+  gnutls_x509_crt_deinit (cert);
 }
 
 /* This function will log some details of the given session. */
@@ -162,7 +230,7 @@ logtlsinfo (gnutls_session session)
 	syslog (LOG_INFO, "TLS certificate authentication with %d bit "
 		"ephemeral Diffie-Hellman",
 		gnutls_dh_get_prime_bits (session));
-      print_x509_certificate_info (session);
+      logcertinfo (session);
       break;
 
     default:
