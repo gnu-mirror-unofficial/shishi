@@ -777,6 +777,20 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
       /* Get TGT ... XXX cross realm */
 
       rc = shishi_as (tkts->handle, &as);
+      if (hint->renewable)
+	{
+	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req(as),
+					  SHISHI_KDCOPTIONS_RENEWABLE);
+
+	  if (rc == SHISHI_OK)
+	    rc = shishi_asn1_write (tkts->handle, shishi_as_req(as),
+				    "req-body.rtime",
+				    shishi_generalize_time (tkts->handle,
+							    time (NULL) + 42),
+				    0);
+	}
+      if (rc == SHISHI_OK)
+	rc = shishi_as_req_build (as);
       if (rc == SHISHI_OK)
 	rc = shishi_as_sendrecv (as);
       if (rc == SHISHI_OK)
