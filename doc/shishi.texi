@@ -1,10 +1,9 @@
-\input texinfo   @c -*-texinfo-*-
+\input texinfo   @c -*- mode: texinfo; coding: us-ascii; -*-
 @c Copyright (C) 2002, 2003 Simon Josefsson
 @c This file is part of Shishi.
 @c See below for copying conditions.
 
 @setfilename shishi.info
-@documentencoding ISO-8859-1
 @include version.texi
 @settitle Shishi
 @finalout
