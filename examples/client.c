@@ -30,61 +30,6 @@
 /* XXX remove this */
 const char *program_name = "client";
 
-static int
-doit (Shishi * handle, Shishi_ap * ap, int verbose)
-{
-  char line[BUFSIZ];
-  int res;
-
-  printf ("Application exchange start.  Press ^D to finish.\n");
-
-  while (fgets (line, sizeof (line), stdin))
-    {
-      Shishi_safe *safe;
-
-      line[strlen(line)-1] = '\0';
-      printf ("read: %s\n", line);
-
-      res = shishi_safe (handle, &safe);
-      if (res != SHISHI_OK)
-	{
-	  printf ("Could not build SAFE: %s\n", shishi_strerror (res));
-	  return res;
-	}
-
-      res = shishi_safe_set_user_data (handle, shishi_safe_safe (safe),
-				       line, strlen (line));
-      if (res != SHISHI_OK)
-	{
-	  printf ("Could not set application data in SAFE: %s\n",
-		  shishi_strerror (res));
-	  return res;
-	}
-
-      res = shishi_safe_build (safe, shishi_ap_key (ap));
-      if (res != SHISHI_OK)
-	{
-	  printf ("Could not build SAFE: %s\n", shishi_strerror (res));
-	  return res;
-	}
-
-      res = shishi_safe_print (handle, stdout, shishi_safe_safe (safe));
-      if (res != SHISHI_OK)
-	{
-	  printf ("Could not print SAFE: %s\n", shishi_strerror (res));
-	  return res;
-	}
-    }
-
-  if (ferror (stdin))
-    {
-      printf ("error reading stdin\n");
-      return 1;
-    }
-
-  return 0;
-}
-
 static Shishi_ap *
 auth (Shishi * h, int verbose, const char *cname, const char *sname)
 {
@@ -151,7 +96,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
     {
       Shishi_asn1 aprep;
 
-      printf ("Waiting for server to authenticate itself...\n");
+      printf ("Cut'n'paste AP-REP from server...\n");
 
       rc = shishi_aprep_parse (h, stdin, &aprep);
       if (rc != SHISHI_OK)
@@ -215,7 +160,10 @@ main (int argc, char *argv[])
   ap = auth (h, 1, shishi_principal_default (h), sname);
 
   if (ap)
-    rc = doit (h, ap, 1);
+    {
+      printf ("Authentication done...\n");
+      rc = 0;
+    }
   else
     rc = 1;
 
