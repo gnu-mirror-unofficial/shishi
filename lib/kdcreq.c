@@ -558,6 +558,16 @@ shishi_kdcreq_set_etype (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_kdcreq_options:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to set etype field in.
+ * @flags: pointer to output integer with flags.
+ *
+ * Extract KDC-Options from KDC-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq, int *flags)
 {
@@ -565,6 +575,22 @@ shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq, int *flags)
 				     "req-body.kdc-options", flags);
 }
 
+/**
+ * shishi_kdcreq_renewable_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to set etype field in.
+ *
+ * Determine if KDC-Option renewable flag is set.
+ *
+ * The RENEWABLE option indicates that the ticket to be issued is to
+ * have its RENEWABLE flag set. It may only be set on the initial
+ * request, or when the ticket-granting ticket on which the request is
+ * based is also renewable. If this option is requested, then the
+ * rtime field in the request contains the desired absolute expiration
+ * time for the ticket.
+ *
+ * Return value: Returns non-0 iff renewable flag is set in KDC-REQ.
+ **/
 int
 shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
@@ -575,6 +601,17 @@ shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq)
   return options & SHISHI_KDCOPTIONS_RENEWABLE;
 }
 
+/**
+ * shishi_kdcreq_options_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to set etype field in.
+ * @options: integer with flags to store in KDC-REQ.
+ *
+ * Set options in KDC-REQ.  Note that this reset any already existing
+ * flags.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq, int options)
 {
@@ -588,6 +625,16 @@ shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq, int options)
   return SHISHI_OK;
 }
 
+/**
+ * shishi_kdcreq_options_add:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to set etype field in.
+ * @options: integer with flags to add in KDC-REQ.
+ *
+ * Add KDC-Option to KDC-REQ.  This preserves all existing options.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_kdcreq_options_add (Shishi * handle, Shishi_asn1 kdcreq, int option)
 {
