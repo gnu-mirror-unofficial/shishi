@@ -658,12 +658,15 @@ shishi_tkts_find (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 {
   int i;
 
-  fprintf (stderr, "Searching tickets... ");
-  if (hint->server)
-    fprintf (stderr, "server=`%s' ", hint->server);
-  if (hint->client)
-    fprintf (stderr, "client=`%s' ", hint->client);
-  fprintf (stderr, "\n");
+  if (VERBOSENOICE(tkts->handle))
+    {
+      fprintf (stderr, "Searching tickets... ");
+      if (hint->server)
+	fprintf (stderr, "server=`%s' ", hint->server);
+      if (hint->client)
+	fprintf (stderr, "client=`%s' ", hint->client);
+      fprintf (stderr, "\n");
+    }
 
   for (i = hint->startpos; i < tkts->ntkts; i++)
     {
