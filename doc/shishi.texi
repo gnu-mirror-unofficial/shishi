@@ -2414,6 +2414,7 @@ configuration file syntaxes for the Shishi tools.
 * Parameters for shishid::      Command line parameters for 'shishid'.
 * Parameters for shisa::        Command line parameters for 'shisa'.
 * Environment variables::       Overriding compile-time defaults at run-time.
+* Date input formats::          Details of the understood date formats.
 @end menu
 
 @node Environmental Assumptions
@@ -3032,12 +3033,12 @@ Specify default ticket life time.
 
 The string can be in almost any common format.  It can contain month
 names, time zones, `am' and `pm', `yesterday', `ago', `next', etc.
-Refer to the "Date input formats" in the GNU CoreUtils package for
-entire story (@pxref{Date input formats, ,Date input formats,
-coreutils, GNU CoreUtils}).  As an extra feature, if the resulting
-string you specify has expired within the last 24 hours, an extra day
-is added to it.  This allows you to specify "17:00" to always mean the
-next 17:00, even if your system clock happens to be 17:30.
+@xref{Date input formats}, for the long story.
+
+As an extra feature, if the time specified by your string correspond
+to a time during the last 24 hours, an extra day is added to it.  This
+allows you to specify relative times such as "17:00" to always mean
+the next 17:00, even if your system clock happens to be 17:30.
 
 The default is 8 hours.
 
@@ -3384,6 +3385,10 @@ library.  If not specified, it will be @code{$SHISHI_HOME/tickets}, or
 @code{$HOME/.shishi/tickets} if @code{$SHISHI_HOME} is not specified.
 
 @end itemize
+
+@lowersections
+@include getdate.texi
+@raisesections
 
 @c **********************************************************
 @c ***************  Programming Manual  *********************
