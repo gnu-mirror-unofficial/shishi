@@ -1,8 +1,10 @@
 Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
-Copyright (C) 2002, 2003, 2004 Simon Josefsson
+Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson
 See the end for copying conditions.
 
 * Version 0.0.22 (unreleased)
+
+** Gnulib files updated, and uses within the library updated.
 
 * Version 0.0.21 (released 2004-12-17)
 
