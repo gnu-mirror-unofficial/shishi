@@ -1943,6 +1943,7 @@ extern int shishi_aprep_enc_part_add (Shishi * handle, Shishi_asn1 aprep,
 				      Shishi_asn1 encticketpart,
 				      Shishi_asn1 encapreppart);
 extern int shishi_aprep_enc_part_make (Shishi * handle, Shishi_asn1 aprep,
+				       Shishi_asn1 encapreppart,
 				       Shishi_asn1 authenticator,
 				       Shishi_asn1 encticketpart);
 extern int shishi_aprep_get_enc_part_etype (Shishi * handle,

@@ -1143,7 +1143,8 @@ shishi_ap_rep_build (Shishi_ap * ap)
     printf ("Building AP-REP...\n");
 
   aprep = shishi_aprep (ap->handle);
-  rc = shishi_aprep_enc_part_make (ap->handle, aprep, ap->authenticator,
+  rc = shishi_aprep_enc_part_make (ap->handle, aprep, ap->encapreppart,
+				   ap->authenticator,
 				   shishi_tkt_encticketpart (ap->tkt));
   if (rc != SHISHI_OK)
     {

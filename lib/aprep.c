@@ -325,19 +325,11 @@ shishi_aprep_enc_part_add (Shishi * handle,
 int
 shishi_aprep_enc_part_make (Shishi * handle,
 			    Shishi_asn1 aprep,
+			    Shishi_asn1 encapreppart,
 			    Shishi_asn1 authenticator,
 			    Shishi_asn1 encticketpart)
 {
-  Shishi_asn1 encapreppart = NULL;
   int res;
-
-  encapreppart = shishi_encapreppart (handle);
-  if (encapreppart == NULL)
-    {
-      shishi_error_printf (handle, "Could not create EncAPRepPart: %s\n",
-			   shishi_error (handle));
-      return SHISHI_ASN1_ERROR;
-    }
 
   res = shishi_encapreppart_time_copy (handle, encapreppart, authenticator);
   if (res != SHISHI_OK)
