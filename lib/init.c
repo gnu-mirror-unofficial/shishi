@@ -24,23 +24,6 @@
 #define INFOSTR "libshishi: info: "
 #define WARNSTR "libshishi: warning: "
 
-#if ENABLE_NLS
-char *
-_shishi_gettext (const char *str)
-{
-  return dgettext (PACKAGE, str);
-}
-
-static void
-_shishi_gettext_init (void)
-{
-  bindtextdomain (PACKAGE, LOCALEDIR);
-#ifdef HAVE_BIND_TEXTDOMAIN_CODESET
-  bind_textdomain_codeset (PACKAGE, "UTF-8");
-#endif
-  textdomain (PACKAGE);
-}
-#endif /* ENABLE_NLS */
 
 /**
  * shishi:
@@ -56,7 +39,8 @@ shishi (void)
   Shishi *handle;
   char *tmp;
 
-  _shishi_gettext_init ();
+  bindtextdomain (PACKAGE, LOCALEDIR);
+  textdomain (PACKAGE);
 
   handle = (Shishi *) malloc (sizeof (*handle));
   if (!handle)

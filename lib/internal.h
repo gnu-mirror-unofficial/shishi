@@ -123,18 +123,15 @@
 #include <resolv.h>
 #endif
 
-#ifdef ENABLE_NLS
-extern char *_shishi_gettext (const char *str);
-#define _(String) _shishi_gettext (String)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
-#endif
-
 #include "setenv.h"
 #include "vasprintf.h"
 #include "gettext.h"
 #include "xalloc.h"
 #include "shishi.h"
+
+#define _(String) dgettext (PACKAGE, String)
+#define gettext_noop(String) String
+#define N_(String) gettext_noop (String)
 
 #define GENERALIZEDTIME_TIME_LEN 15
 #define MAX_KEY_LEN 32
