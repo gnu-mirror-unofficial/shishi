@@ -1655,7 +1655,7 @@ structure.
    }
 @end verbatim
 
-@c @include shishi-api-safe.texi
+@include shishi-api-priv.texi
 
 
 @node Ticket Functions
