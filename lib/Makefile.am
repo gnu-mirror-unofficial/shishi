@@ -19,9 +19,7 @@
 # Boston, MA 02111-1307, USA.
 
 EXTRA_DIST = rfc1510.asn1 rfc1510bis.asn1 \
-	crypto-null.c crypto-des.c crypto-3des.c crypto-aes.c \
-	setenv.c unsetenv.c strdup.c memmove.c memset.c strcasecmp.c \
-	strerror.c gethostname.c
+	crypto-null.c crypto-des.c crypto-3des.c crypto-aes.c
 
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = internal.h gettext.h \
