@@ -64,9 +64,9 @@ release:
 	rm -f $(distdir).tar.gz.asc
 	gpg -a --sign --detach $(distdir).tar.gz
 	gpg --verify $(distdir).tar.gz.asc
+	cvs rtag $(tag) $(PACKAGE)
 	test -d $(htmldir) && cp -v doc/$(PACKAGE).{ps,pdf,html} $(htmldir)/
 	test -d $(htmldir)/reference && \
-		cp -v doc/reference/*.html $(htmldir)/reference/
+		cp -v doc/reference/html/*.html $(htmldir)/reference/
 	test -d $(htmldir) && cd $(htmldir) && cvs commit -m "Update." \
 		$(PACKAGE).{ps,pdf,html} reference/*.html
-	cvs rtag $(tag) $(PACKAGE)
