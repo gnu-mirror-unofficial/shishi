@@ -31,7 +31,7 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_AGE)
 AC_SUBST(LT_REVISION)
 
-AM_INIT_AUTOMAKE(gnits)
+AM_INIT_AUTOMAKE([gnits no-dependencies])
 AM_CONFIG_HEADER(config.h)
 
 # Checks for header files.
