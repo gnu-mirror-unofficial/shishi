@@ -41,6 +41,8 @@ of shishi.conf and shisa.conf (system configuration files),
 shishi.skel (user configuration file template), shishi.keys (host
 specific keys) and the Shisa database root, respectively.
 
+** IANA allocated Telnet Encrypt command 12 for the AES-CCM mode.
+
 ** Some more self tests were added.
 
 * Version 0.0.8 (released 2003-10-16)
