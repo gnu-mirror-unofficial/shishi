@@ -918,6 +918,9 @@ main (int argc, char *argv[])
 	  {
 	    shishi_kdcreq_print (handle, stdout, shishi_as_req (as));
 	    shishi_kdcrep_print (handle, stdout, shishi_as_rep (as));
+	    shishi_enckdcreppart_print
+	      (handle, stdout, shishi_ticket_enckdcreppart
+	       (shishi_as_ticket (as)));
 	  }
 
 	tkt = shishi_as_ticket (as);
