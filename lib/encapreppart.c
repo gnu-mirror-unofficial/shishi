@@ -277,6 +277,16 @@ shishi_encapreppart_ctime_get (Shishi * handle,
   return res;
 }
 
+/**
+ * shishi_encapreppart_ctime_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encapreppart: EncAPRepPart as allocated by shishi_encapreppart().
+ * @ctime: string with generalized time value to store in EncAPRepPart.
+ *
+ * Store client time in EncAPRepPart.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_encapreppart_ctime_set (Shishi * handle,
 			       Shishi_asn1 encapreppart, char *ctime)
@@ -284,36 +294,54 @@ shishi_encapreppart_ctime_set (Shishi * handle,
   int res;
 
   res = shishi_asn1_write (handle, encapreppart, "ctime",
-			   ctime, strlen (ctime));
+			   ctime, GENERALIZEDTIME_TIME_LEN);
   if (res != SHISHI_OK)
     return res;
 
   return SHISHI_OK;
 }
 
+/**
+ * shishi_encapreppart_cusec_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encapreppart: EncAPRepPart as allocated by shishi_encapreppart().
+ * @cusec: output integer with client microseconds field.
+ *
+ * Extract client microseconds field from EncAPRepPart.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_encapreppart_cusec_get (Shishi * handle,
 			       Shishi_asn1 encapreppart, int *cusec)
 {
   int res;
 
-  res = shishi_asn1_integer_field (handle, encapreppart, cusec,
-				   "cusec");
-  *cusec = ntohl (*cusec);
+  res = shishi_asn1_read_integer (handle, encapreppart, "cusec", cusec);
+  if (res != SHISHI_OK)
+    return res;
 
   return res;
 }
 
+/**
+ * shishi_encapreppart_cusec_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encapreppart: EncAPRepPart as allocated by shishi_encapreppart().
+ * @cusec: client microseconds to set in authenticator, 0-999999.
+ *
+ * Set the cusec field in the Authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_encapreppart_cusec_set (Shishi * handle,
-			       Shishi_asn1 encapreppart, int cusec)
+				Shishi_asn1 encapreppart,
+				int cusec)
 {
-  char usec[BUFSIZ];
   int res;
 
-  sprintf (usec, "%d", cusec);
-  res = shishi_asn1_write (handle, encapreppart, "cusec",
-			   usec, 0);
+  res = shishi_asn1_write_integer (handle, encapreppart, "cusec", cusec);
   if (res != SHISHI_OK)
     return res;
 
