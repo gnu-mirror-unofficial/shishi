@@ -36,10 +36,10 @@
  * @format: printf(3) style format string.
  * @...: printf(3) style arguments.
  *
- * Format and print a prompt to stdout, and read a password from
- * stdint.  The password is possibly converted (e.g., converted from
- * Latin-1 to UTF-8, or processed using Stringprep profile) following
- * any 'stringprocess' keywords in configuration files.
+ * Format and print a prompt, and read a password from user.  The
+ * password is possibly converted (e.g., converted from Latin-1 to
+ * UTF-8, or processed using Stringprep profile) following any
+ * 'stringprocess' keywords in configuration files.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
