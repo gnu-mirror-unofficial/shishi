@@ -255,9 +255,9 @@ doit (void)
   kdc_listen ();
 
 #ifdef LOG_PERROR
-  openlog (PACKAGE, LOG_CONS | LOG_PERROR, LOG_DAEMON);
+  openlog (program_name, LOG_CONS | LOG_PERROR, LOG_DAEMON);
 #else
-  openlog (PACKAGE, LOG_CONS, LOG_DAEMON);
+  openlog (program_name, LOG_CONS, LOG_DAEMON);
 #endif
 
   kdc_setuid ();
