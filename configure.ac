@@ -54,7 +54,7 @@ AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
 AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
 	sys/time.h sys/types.h sys/select.h sys/socket.h sys/stat.h stdint.h \
 	termios.h signal.h pwd.h errno.h syslog.h)
-AC_CHECK_HEADERS(netinet/in.h netinet/in6.h)
+AC_CHECK_HEADERS(netinet/in.h netinet/in6.h arpa/inet.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
