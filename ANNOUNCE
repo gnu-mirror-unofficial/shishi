@@ -2,13 +2,13 @@ Shishi ANNOUNCE -- Overview to attract interest.
 Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
-Shishi is a (still incomplete) implementation of the RFC 1510(bis)
+Shishi is a (still incomplete) implementation of the Kerberos 5
 network authentication system.  Shishi can be used to authenticate
 users in distributed systems.
 
 Shishi contains a library ('libshishi') that can be used by
-application developers to add support for RFC 1510.  Shishi contains a
-command line utility ('shishi') that is used by users to acquire and
+application developers to add support for Kerberos 5.  Shishi contains
+a command line utility ('shishi') that is used by users to acquire and
 manage tickets (and more).  The server side, a Key Distribution
 Center, is implemented by 'shishid'.  Of course, a manual documenting
 usage aspects as well as the programming API is included.
