@@ -27,51 +27,29 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <string.h>
 
+/* Get setuid, read, etc. */
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+# include <unistd.h>
 #endif
 
+/* Get gethostbyname, getservbyname. */
 #ifdef HAVE_NETDB_H
-#include <netdb.h>
+# include <netdb.h>
 #endif
 
-#if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
-/* extern int h_errno; */
-#endif
-
+/* Get getpwnam. */
 #ifdef HAVE_PWD_H
-#include <pwd.h>
+# include <pwd.h>
 #endif
 
+/* For select, etc. */
 #ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
+# include <sys/types.h>
 #endif
 
-#ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif
-
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
-
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
-
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#else
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif
-#endif
-
+/* For select, etc. */
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>
 # include <time.h>
@@ -83,56 +61,85 @@
 # endif
 #endif
 
-#if HAVE_STRING_H
-# if !STDC_HEADERS && HAVE_MEMORY_H
-#  include <memory.h>
-# endif
-# include <string.h>
-#endif
-#if HAVE_STRINGS_H
-# include <strings.h>
+/* Get select, etc. */
+#ifdef HAVE_SYS_SELECT_H
+# include <sys/select.h>
 #endif
 
+/* Get accept, sendto, etc. */
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_IOCTL_H
+# include <sys/ioctl.h>
+#endif
+
+/* Get errno. */
+#ifdef HAVE_ERRNO_H
+# include <errno.h>
+#endif
+#ifndef errno
+extern int errno;
+#endif
+
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#else
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif
+#endif
+
+/* Get signal, etc. */
 #ifdef HAVE_SIGNAL_H
-#include <signal.h>
+# include <signal.h>
 #endif
 
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
+# include <netinet/in.h>
 #endif
 #ifdef HAVE_NETINET_IN6_H
-#include <netinet/in6.h>
+# include <netinet/in6.h>
 #endif
 
 #ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
+# include <arpa/inet.h>
 #endif
 
 #ifdef HAVE_SYSLOG_H
-#include <syslog.h>
+# include <syslog.h>
 #endif
 
 #ifdef USE_STARTTLS
-#include <gnutls/gnutls.h>
+# include <gnutls/gnutls.h>
 #endif
 
+/* Setup i18n. */
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #else
 # define setlocale(Category, Locale) /* empty */
 #endif
-
 #include <gettext.h>
 #define _(String) gettext (String)
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
 
+/* Get xmalloc. */
 #include "xalloc.h"
+
+/* Get error. */
+#include "error.h"
+
+/* Get program_name, etc. */
 #include "progname.h"
 
+/* Shishi and Shisa library. */
 #include <shishi.h>
 #include <shisa.h>
 
+/* Command line parameter parser via gengetopt. */
 #include "shishid_cmd.h"
 
 #define FAMILY_IPV4 "IPv4"
@@ -172,142 +179,6 @@ Shisa * dbh;
 struct gengetopt_args_info arg;
 struct listenspec *listenspec;
 int nlistenspec;
-
-static void
-parse_listen (char *listen)
-{
-  char *ptrptr;
-  char *val;
-  int i;
-
-  for (i = 0; (val = strtok_r (i == 0 ? listen : NULL, ", \t", &ptrptr)); i++)
-    {
-      char *service, *proto;
-      struct servent *se;
-      struct hostent *he;
-      struct listenspec *ls;
-      struct sockaddr_in *sin;
-#ifdef WITH_IPV6
-      struct sockaddr_in6 *sin6;
-#endif
-
-      nlistenspec++;
-      listenspec = xrealloc (listenspec, sizeof (*listenspec) * nlistenspec);
-      ls = &listenspec[nlistenspec - 1];
-      memset (ls, 0, sizeof (*ls));
-      ls->str = strdup (val);
-      ls->bufpos = 0;
-      sin = (struct sockaddr_in *) &ls->addr;
-#ifdef WITH_IPV6
-      sin6 = (struct sockaddr_in6 *) &ls->addr;
-#endif
-
-      proto = strrchr (val, '/');
-      if (proto == NULL)
-	error (1, 0, "Could not find type in listen spec: `%s'", ls->str);
-      *proto = '\0';
-      proto++;
-
-      if (strcmp (proto, "tcp") == 0)
-	ls->type = SOCK_STREAM;
-      else
-	ls->type = SOCK_DGRAM;
-
-      service = strrchr (val, ':');
-      if (service == NULL)
-	error (1, 0, "Could not find service in listen spec: `%s'", ls->str);
-      *service = '\0';
-      service++;
-
-      se = getservbyname (service, proto);
-      if (se)
-	ls->port = ntohs (se->s_port);
-      else if (strcmp (service, "kerberos") == 0)
-	ls->port = 88;
-      else if (atoi (service) != 0)
-	ls->port = atoi (service);
-      else
-	error (1, 0, "Unknown service `%s' in listen spec: `%s'",
-	       service, ls->str);
-
-#ifdef WITH_IPV6
-      if (ls->family == AF_INET6)
-	sin6->sin6_port = htons (ls->port);
-      else
-#endif
-	sin->sin_port = htons (ls->port);
-
-      if (strncmp (val, FAMILY_IPV4 ":", strlen (FAMILY_IPV4 ":")) == 0)
-	{
-	  ls->family = AF_INET;
-	  val += strlen (FAMILY_IPV4 ":");
-	}
-#ifdef WITH_IPV6
-      else if (strncmp (val, FAMILY_IPV6 ":", strlen (FAMILY_IPV6 ":")) ==
-	       0)
-	{
-	  ls->family = AF_INET6;
-	  val += strlen (FAMILY_IPV6 ":");
-	}
-#endif
-      else
-	ls->family = AF_INET;
-
-      if (strcmp (val, "*") == 0)
-	{
-#ifdef WITH_IPV6
-	  if (ls->family == AF_INET6)
-	    sin6->sin6_addr = in6addr_any;
-	  else
-#endif
-	    sin->sin_addr.s_addr = htonl (INADDR_ANY);
-	}
-      else if ((he = gethostbyname (val)))
-	{
-	  if (he->h_addrtype == AF_INET)
-	    {
-	      sin->sin_family = AF_INET;
-	      memcpy (&sin->sin_addr, he->h_addr_list[0], he->h_length);
-	    }
-#ifdef WITH_IPV6
-	  else if (he->h_addrtype == AF_INET6)
-	    {
-	      sin6->sin6_family = AF_INET6;
-	      memcpy (&sin6->sin6_addr, he->h_addr_list[0], he->h_length);
-	    }
-#endif
-	  else
-	    error (1, 0, "Unknown protocol family (%d) returned "
-		   "by gethostbyname(\"%s\"): `%s'", he->h_addrtype,
-		   val, ls->str);
-	}
-      else
-	error (1, 0, "Unknown host `%s' in listen spec: `%s'", val, ls->str);
-    }
-}
-
-static int
-setup_fatal_krberror (Shishi * handle)
-{
-  Shishi_asn1 krberr;
-  int rc;
-
-  krberr = shishi_krberror (handle);
-  if (!krberr)
-    return SHISHI_MALLOC_ERROR;
-
-  rc = shishi_krberror_set_etext (handle, krberr,
-				  "Internal KDC error, contact administrator");
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_der (handle, krberr, &fatal_krberror,
-			    &fatal_krberror_len);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  return SHISHI_OK;
-}
 
 static int
 asreq1 (Shishi_as * as)
@@ -1088,6 +959,142 @@ launch (void)
   kdc_unlisten ();
 
   return 0;
+}
+
+static void
+parse_listen (char *listen)
+{
+  char *ptrptr;
+  char *val;
+  int i;
+
+  for (i = 0; (val = strtok_r (i == 0 ? listen : NULL, ", \t", &ptrptr)); i++)
+    {
+      char *service, *proto;
+      struct servent *se;
+      struct hostent *he;
+      struct listenspec *ls;
+      struct sockaddr_in *sin;
+#ifdef WITH_IPV6
+      struct sockaddr_in6 *sin6;
+#endif
+
+      nlistenspec++;
+      listenspec = xrealloc (listenspec, sizeof (*listenspec) * nlistenspec);
+      ls = &listenspec[nlistenspec - 1];
+      memset (ls, 0, sizeof (*ls));
+      ls->str = strdup (val);
+      ls->bufpos = 0;
+      sin = (struct sockaddr_in *) &ls->addr;
+#ifdef WITH_IPV6
+      sin6 = (struct sockaddr_in6 *) &ls->addr;
+#endif
+
+      proto = strrchr (val, '/');
+      if (proto == NULL)
+	error (1, 0, "Could not find type in listen spec: `%s'", ls->str);
+      *proto = '\0';
+      proto++;
+
+      if (strcmp (proto, "tcp") == 0)
+	ls->type = SOCK_STREAM;
+      else
+	ls->type = SOCK_DGRAM;
+
+      service = strrchr (val, ':');
+      if (service == NULL)
+	error (1, 0, "Could not find service in listen spec: `%s'", ls->str);
+      *service = '\0';
+      service++;
+
+      se = getservbyname (service, proto);
+      if (se)
+	ls->port = ntohs (se->s_port);
+      else if (strcmp (service, "kerberos") == 0)
+	ls->port = 88;
+      else if (atoi (service) != 0)
+	ls->port = atoi (service);
+      else
+	error (1, 0, "Unknown service `%s' in listen spec: `%s'",
+	       service, ls->str);
+
+#ifdef WITH_IPV6
+      if (ls->family == AF_INET6)
+	sin6->sin6_port = htons (ls->port);
+      else
+#endif
+	sin->sin_port = htons (ls->port);
+
+      if (strncmp (val, FAMILY_IPV4 ":", strlen (FAMILY_IPV4 ":")) == 0)
+	{
+	  ls->family = AF_INET;
+	  val += strlen (FAMILY_IPV4 ":");
+	}
+#ifdef WITH_IPV6
+      else if (strncmp (val, FAMILY_IPV6 ":", strlen (FAMILY_IPV6 ":")) ==
+	       0)
+	{
+	  ls->family = AF_INET6;
+	  val += strlen (FAMILY_IPV6 ":");
+	}
+#endif
+      else
+	ls->family = AF_INET;
+
+      if (strcmp (val, "*") == 0)
+	{
+#ifdef WITH_IPV6
+	  if (ls->family == AF_INET6)
+	    sin6->sin6_addr = in6addr_any;
+	  else
+#endif
+	    sin->sin_addr.s_addr = htonl (INADDR_ANY);
+	}
+      else if ((he = gethostbyname (val)))
+	{
+	  if (he->h_addrtype == AF_INET)
+	    {
+	      sin->sin_family = AF_INET;
+	      memcpy (&sin->sin_addr, he->h_addr_list[0], he->h_length);
+	    }
+#ifdef WITH_IPV6
+	  else if (he->h_addrtype == AF_INET6)
+	    {
+	      sin6->sin6_family = AF_INET6;
+	      memcpy (&sin6->sin6_addr, he->h_addr_list[0], he->h_length);
+	    }
+#endif
+	  else
+	    error (1, 0, "Unknown protocol family (%d) returned "
+		   "by gethostbyname(\"%s\"): `%s'", he->h_addrtype,
+		   val, ls->str);
+	}
+      else
+	error (1, 0, "Unknown host `%s' in listen spec: `%s'", val, ls->str);
+    }
+}
+
+static int
+setup_fatal_krberror (Shishi * handle)
+{
+  Shishi_asn1 krberr;
+  int rc;
+
+  krberr = shishi_krberror (handle);
+  if (!krberr)
+    return SHISHI_MALLOC_ERROR;
+
+  rc = shishi_krberror_set_etext (handle, krberr,
+				  "Internal KDC error, contact administrator");
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_der (handle, krberr, &fatal_krberror,
+			    &fatal_krberror_len);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
 }
 
 static int
