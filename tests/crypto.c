@@ -213,6 +213,7 @@ str2key[] =
 #define S_CARON "\xC5\xA1"
 #define C_ACUTE "\xC4\x87"
 #define G_CLEF "\xF0\x9D\x84\x9E"
+#ifdef USE_GCRYPT
   {
   "password",
       "ATHENA.MIT.EDUraeburn",
@@ -241,6 +242,7 @@ str2key[] =
   "NNNN6666",
       "FFFFAAAA", "\xC4\xBF\x6B\x25\xAD\xF7\xA4\xF8", SHISHI_DES_CBC_MD5}
   ,
+#endif
   {
   "password",
       "ATHENA.MIT.EDUraeburn",
