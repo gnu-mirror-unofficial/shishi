@@ -317,9 +317,8 @@ shishi_tgs_tkt_set (Shishi_tgs * tgs, Shishi_tkt * tkt)
  * shishi_tgs_sendrecv:
  * @tgs: structure that holds information about TGS exchange
  *
- * Send TGS-REQ and receive TGS-REP or KRB-ERROR.  This is the initial
- * Kerberos 5 authentication, usually used to acquire a Ticket
- * Granting Ticket.
+ * Send TGS-REQ and receive TGS-REP or KRB-ERROR.  This is the
+ * subsequent authentication, usually used to acquire server tickets.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/

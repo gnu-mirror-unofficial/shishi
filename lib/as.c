@@ -480,8 +480,7 @@ shishi_as_tkt_set (Shishi_as * as, Shishi_tkt * tkt)
  * @as: structure that holds information about AS exchange
  *
  * Send AS-REQ and receive AS-REP or KRB-ERROR.  This is the initial
- * Kerberos 5 authentication, usually used to acquire a Ticket
- * Granting Ticket.
+ * authentication, usually used to acquire a Ticket Granting Ticket.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
