@@ -198,7 +198,6 @@ int
 _shishi_authenticator_input (Shishi * handle,
 			     FILE * fh, Shishi_asn1 * authenticator,
 			     int type);
-
 int
 _shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
 		     int type);
@@ -212,6 +211,8 @@ int _shishi_krberror_input (Shishi * handle, FILE * fh,
 			    Shishi_asn1 * krberror, int type);
 int _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 				Shishi_asn1 * encapreppart, int type);
+int _shishi_safe_input (Shishi * handle, FILE * fh,
+			Shishi_asn1 * safe, int type);
 
 Shishi_asn1 _shishi_asn1_read (void);
 int _shishi_cipher_init (void);

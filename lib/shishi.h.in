@@ -1184,14 +1184,39 @@ extern int shishi_encticketpart_get_enc_part_etype (Shishi * handle,
 extern int shishi_encticketpart_get_key (Shishi * handle,
 					 Shishi_asn1 encticketpart,
 					 Shishi_key ** key);
+extern int shishi_encticketpart_crealm_set (Shishi * handle,
+					    Shishi_asn1 encticketpart,
+					    const char *realm);
 extern int shishi_encticketpart_cname_get (Shishi * handle,
 					   Shishi_asn1 encticketpart,
 					   char *cname, int *cnamelen);
+extern int shishi_encticketpart_cname_set (Shishi * handle,
+					   Shishi_asn1 encticketpart,
+					   Shishi_name_type name_type,
+					   const char *principal);
 extern int shishi_encticketpart_cnamerealm_get (Shishi * handle,
 						Shishi_asn1 encticketpart,
 						char *cnamerealm,
 						int *cnamerealmlen);
 extern int shishi_encticketpart_print (Shishi * handle, FILE * fh,
 				       Shishi_asn1 encticketpart);
+extern int shishi_encticketpart_flags_set (Shishi * handle,
+					   Shishi_asn1 encticketpart,
+					   int flags);
+extern int shishi_encticketpart_transited_set (Shishi * handle,
+					       Shishi_asn1 encticketpart,
+					       int trtype,
+					       char *trdata, size_t trdatalen);
+extern int shishi_encticketpart_authtime_set (Shishi * handle,
+					      Shishi_asn1 encticketpart,
+					      char *authtime);
+extern int shishi_encticketpart_endtime_set (Shishi * handle,
+					     Shishi_asn1 encticketpart,
+					     char *endtime);
+extern int shishi_encticketpart_authtime (Shishi * handle,
+					  Shishi_asn1 encticketpart,
+					  char *authtime, int *authtimelen);
+extern time_t shishi_encticketpart_authctime (Shishi * handle,
+					      Shishi_asn1 encticketpart);
 
 #endif
