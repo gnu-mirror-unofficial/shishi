@@ -30,11 +30,27 @@ struct Shishi_ap
   Shishi_asn1 apreq;
   Shishi_asn1 aprep;
   Shishi_asn1 encapreppart;
+  /* Key usage for encryption entire Authenticator ASN.1 blob, stored
+     in AP-REQ. */
   int authenticatorkeyusage;
+  /* Key usage for computing checksum of authenticatorcksumdata in the
+     Authenticator, in AP-REQ. */
   int authenticatorcksumkeyusage;
+  /* Sets the checksum algorithm type in Authenticator, in AP-REQ.  If
+     there is data in authenticatorcksumdata to compute a checksum on,
+     this also indicate the algorithm to use for this computation. */
   int32_t authenticatorcksumtype;
+  /* Auxilliary application data to compute checksum on and store in
+     Authenticator, in AP-REQ.  Note that data is not stored in
+     AP-REQ, only a checksum of it. */
   char *authenticatorcksumdata;
   size_t authenticatorcksumdatalen;
+  /* Raw checksum data to store in Authenticator, in AP-REQ.
+     Normally, this is the output of the checksum algorithm computed
+     on the data in authenticatorcksumdata, but some applications
+     (e.g., GSS-API) put something weird in the checksum field. */
+  char *authenticatorcksumraw;
+  size_t authenticatorcksumrawlen;
 };
 
 /**
