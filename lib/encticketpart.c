@@ -57,6 +57,13 @@ shishi_encticketpart (Shishi * handle)
       return NULL;
     }
 
+  res = shishi_encticketpart_flags_set (handle, node, 0);
+  if (res != SHISHI_OK)
+    {
+      shishi_asn1_done (handle, node);
+      return NULL;
+    }
+
   return node;
 }
 
@@ -168,7 +175,7 @@ shishi_encticketpart_flags_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write_uint32 (handle, encticketpart, "flags", flags);
+  res = shishi_asn1_write_bitstring (handle, encticketpart, "flags", flags);
   if (res != SHISHI_OK)
     return res;
 
