@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _INTERNAL_H
-#define _INTERNAL_H
+#ifndef _GSS_INTERNAL_H
+#define _GSS_INTERNAL_H
 
 #include "../lib/internal.h"
 #include "gssapi.h"
@@ -40,4 +40,4 @@ struct gss_name_t
   int foo;
 };
 
-#endif /* _INTERNAL_H */
+#endif /* _GSS_INTERNAL_H */
