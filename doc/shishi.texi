@@ -1282,13 +1282,13 @@ you to customize Shisa to use an external user database, such as a
 * Starting Shishid::            Issue Kerberos tickets to your users.
 * Multiple servers::            High availability and load-balancing.
 * Developer information::       Writing your own Shisa database backend.
-* Old Approach::                
 @end menu
 
 @node Introduction to Shisa
 @section Introduction to Shisa
 
-Shisa is the user database part of Shishi.  It is responsible for
+The user database part of Shishi is called Shisa.  The Shisa library
+is independent of the core Shishi library.  Shisa is responsible for
 storing the name of your realms, the name of your principals (users),
 accounting information for the users (i.e., when each account start to
 be valid and when it expire), and the cryptographic keys each user
@@ -1368,21 +1368,21 @@ parameters, but here we will give you a walk-through of the typical
 uses of the tool.
 
 Installing Shishi usually create a realm with two principals; one
-ticket granting ticket, and one administrator principal with a random
-password.  This is what you typically need to get started, but it
-doesn't serve our purposes.  So we start by removing the principals
-and the realm.  To do that, we need to figure out the name of the
-realm.  The @samp{--list} or @samp{--dump} parameters can be used for
-this.  (Most ``long'' parameters, like @samp{--dump}, have shorter
-names as well, in this case @samp{-d}, @ref{Parameters for shisa}).
+ticket granting ticket for the realm, and one host key for the server.
+This is what you typically need to get started, but it doesn't serve
+our purposes.  So we start by removing the principals and the realm.
+To do that, we need to figure out the name of the realm.  The
+@samp{--list} or @samp{--dump} parameters can be used for this.  (Most
+``long'' parameters, like @samp{--dump}, have shorter names as well,
+in this case @samp{-d}, @ref{Parameters for shisa}).
 
 @example
 jas@@latte:~/src/shishi$ shisa -d
 latte
-        krbtgt
+        krbtgt/latte
                 Account is enabled.
                 Current key version 0 (0x0).
-        admin
+        host/latte
                 Account is enabled.
                 Current key version 0 (0x0).
 jas@@latte:~/src/shishi$
@@ -1429,16 +1429,16 @@ some principals.  We want to remove the realm to demonstrate how you
 create the realm from scratch.  (Of course, you can have more than one
 realm in the database, but for this example we assume you want to set
 up a realm named the same as Shishi guessed you would name it, so the
-existing realm need to be removed first.)  The @samp{--remove}
-parameter is used for this purpose, as follows.
+existing realm need to be removed first.)  The @samp{--remove} (short
+form @samp{-r}) parameter is used for this purpose, as follows.
 
 @example
-jas@@latte:~/src/shishi$ shisa -r latte admin
-Removing principal `admin@@latte'...
-Removing principal `admin@@latte'...done
-jas@@latte:~/src/shishi$ shisa -r latte krbtgt
-Removing principal `krbtgt@@latte'...
-Removing principal `krbtgt@@latte'...done
+jas@@latte:~/src/shishi$ shisa -r latte host/latte
+Removing principal `host/latte@@latte'...
+Removing principal `host/latte@@latte'...done
+jas@@latte:~/src/shishi$ shisa -r latte krbtgt/latte
+Removing principal `krbtgt/latte@@latte'...
+Removing principal `krbtgt/latte@@latte'...done
 jas@@latte:~/src/shishi$ shisa -r latte
 Removing realm `latte'...
 Removing realm `latte'...done
@@ -1453,10 +1453,10 @@ do the above:
 
 @example
 jas@@latte:~/src/shishi$ shisa -r latte -f
-Removing principal `krbtgt@@latte'...
-Removing principal `krbtgt@@latte'...done
-Removing principal `admin@@latte'...
-Removing principal `admin@@latte'...done
+Removing principal `krbtgt/latte@@latte'...
+Removing principal `krbtgt/latte@@latte'...done
+Removing principal `host/latte@@latte'...
+Removing principal `host/latte@@latte'...done
 Removing realm `latte'...
 Removing realm `latte'...done
 jas@@latte:~/src/shishi$
@@ -1616,116 +1616,6 @@ and certainly not in the Shishi library or the @file{shishid} server.
 
 Of course, we would appreciate if you would send us your new backend
 if you believe it is generally useful (@pxref{Bug Reports}).
-
-@node Old Approach
-@section Old Approach
-
-@strong{Warning!}  This document the earlier user database system.  It
-is no longer used and this section will be removed eventually.
-
-This section describe how you get the KDC server up and running to
-answer queries from clients.
-
-First you must create a user database.  The user database part of
-Shishi is called Shisa.  The Shisa library is independent of the core
-Shishi library, and may be separated into a standalone project once it
-mature.  The Shisa library's sole purpose is to provide a simple API
-for Shishi applications to retrieve 
-
-
-Currently this is rather
-simplistic, and the database only contains cryptographic keys.  Use
-the @samp{shishi --string-to-key} command to generate keys, and store
-them in the @file{shishid.keys} file.  The file path is
-@file{/usr/local/etc/shishid.keys} by default, although you can use
-@samp{shishid -k} to specify another location.
-
-Create a random key for the Kerberos Ticket Granting Service for your
-realm:
-
-@cartouche
-@example
-$ shishi --string-to-key --random \
-krbtgt/latte.josefsson.org@@latte.josefsson.org | \
-tee /usr/local/etc/shishid.keys
------BEGIN SHISHI KEY-----
-Keytype: 18 (aes256-cts-hmac-sha1-96)
-Principal: krbtgt/latte.josefsson.org
-Realm: latte.josefsson.org
-
-oconxMTf59B5bvTylY+KE4mchA/gtmYI2Qok+48tnSM=
------END SHISHI KEY-----
-$
-@end example
-@end cartouche
-
-Create a key for a user from a specified password:
-
-@cartouche
-@example
-$ shishi --string-to-key=fnord \
-simon@@latte.josefsson.org | tee --append \
-/usr/local/etc/shishid.keys
------BEGIN SHISHI KEY-----
-Keytype: 18 (aes256-cts-hmac-sha1-96)
-Principal: simon
-Realm: latte.josefsson.org
-
-c1rqwvYwuDFrABvqWVq9bWUsQWg/xbErsIUmLN+3lYM=
------END SHISHI KEY-----
-$
-@end example
-@end cartouche
-
-There is nothing special with a ticket granting key, you could have
-created it based on a password similar to the user key.  However,
-please keep in mind that passwords typically have little entropy.
-
-Finally, create a random key for a service:
-
-@cartouche
-@example
-$ shishi --string-to-key --random \
-imap/latte.josefsson.org@@latte.josefsson.org | \
-tee --append /usr/local/etc/shishid.keys
------BEGIN SHISHI KEY-----
-Keytype: 18 (aes256-cts-hmac-sha1-96)
-Principal: imap/latte.josefsson.org
-Realm: latte.josefsson.org
-
-ts2v0QHWyW9FyXbWtCvLPqdEc60qPq5Yvat3p82rp5c=
------END SHISHI KEY-----
-$
-@end example
-@end cartouche
-
-You are now ready to start the KDC.  Refer to the reference manual for
-available parameters (@pxref{Parameters for shishid}).
-
-@cartouche
-@example
-$ shishid
-@end example
-@end cartouche
-
-Then you can use @samp{shishi} as usual to acquire tickets
-(@pxref{User Manual}).  The following example demonstrate a AS-REQ for
-@samp{krbtgt/latte.josefsson.org} followed by a TGS-REQ for
-@samp{imap/latte.josefsson.org}.
-
-@cartouche
-@example
-$ shishi simon@@latte.josefsson.org imap/latte.josefsson.org
-Enter password for `simon@@latte.josefsson.org':
-simon@@latte.josefsson.org:
-Acquired:       Wed Aug 27 17:16:37 2003
-Expires:        Wed Aug 27 17:33:17 2003
-Server:         imap/latte.josefsson.org key aes256-cts-hmac-sha1-96 (18)
-Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
-Ticket flags:   FORWARDED PROXIABLE (12)
-$
-@end example
-@end cartouche
 
 @c **********************************************************
 @c ****************  Reference Manual  **********************
