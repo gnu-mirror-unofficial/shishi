@@ -1,3 +1,207 @@
+2003-08-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.3.
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-help.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/argp.m4: Remove unused things.
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Look for libsocket, libnsl, libsyslog.
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-namefrob.h: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-help.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-help.c, gl/argp-parse.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: fix
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-help.c, gl/argp-parse.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-help.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-xinl.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: add strndup.h
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: generated
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-eexst.c, gl/argp-fmtstream.c, gl/argp-parse.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-namefrob.h: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-namefrob.h: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-fs-xinl.c, gl/argp-pvh.c, gl/argp-pv.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-namefrob.h, gl/argp-xinl.c, gl/argp-ba.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-fmtstream.h, gl/argp-help.c: libc sync
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-fmtstream.h: move lockfile stuff to argp-namefrob.h
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp.h: libc sync.
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp.h: Libc sync.
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/alloca.c, gl/alloca_.h, gl/asnprintf.c,
+	  gl/asprintf.c, gl/error.c, gl/exitfail.c, gl/exitfail.h,
+	  gl/gettext.h, gl/mempcpy.c, gl/mempcpy.h, gl/printf-args.c,
+	  gl/printf-args.h, gl/printf-parse.c, gl/printf-parse.h,
+	  gl/realloc.c, gl/setenv.c, gl/strerror.c, gl/strndup.h,
+	  gl/unsetenv.c, gl/vasnprintf.c, gl/vasnprintf.h, gl/vasprintf.c,
+	  gl/vasprintf.h, gl/xalloc.h, gl/xmalloc.c, gl/xstrdup.c,
+	  gl/xstrndup.c, gl/xstrndup.h, gl/m4/Makefile.am,
+	  gl/m4/exitfail.m4, gl/m4/extensions.m4, gl/m4/intmax_t.m4,
+	  gl/m4/lib-ld.m4, gl/m4/lib-link.m4, gl/m4/lib-prefix.m4,
+	  gl/m4/mempcpy.m4, gl/m4/unlocked-io.m4, gl/m4/vasnprintf.m4,
+	  gl/m4/xstrndup.m4, configure.ac: Gnulib sync.
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c: Fix ticket messages.
+
+2003-08-22  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Commit unfinished --renew code for later.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c, lib/crypto.c, lib/kdc.c, lib/principal.c,
+	  lib/shishi.h.in, src/client-cksum.c, src/client.c, src/server.c,
+	  src/shishi.c: Fix warnings.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/pam_shishi.c, lib/authenticator.c,
+	  lib/crypto-3des.c, lib/crypto-des.c, lib/crypto.c,
+	  lib/internal.h, lib/kdc.c, lib/pkcs5.c, lib/shishi.h.in,
+	  lib/ticket.c, src/client-cksum.c, src/client.c, src/shishi.c,
+	  tests/authenticator.c: Fix -Wall warnings.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c: Typo.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/aprep.c, lib/apreq.c, lib/crypto-des.c, lib/encapreppart.c,
+	  lib/enckdcreppart.c, lib/encticketpart.c, lib/kdc.c,
+	  lib/kdcrep.c, lib/kdcreq.c, lib/safe.c, lib/tgs.c, lib/ticket.c:
+	  More ASN.1 API fixes (to get rid of BUFSIZ buffers on stack).
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/aprep.c, lib/apreq.c, lib/asn1.c, lib/authenticator.c,
+	  lib/encapreppart.c, lib/enckdcreppart.c, lib/encticketpart.c,
+	  lib/kdcrep.c, lib/kdcreq.c, lib/krberror.c, lib/safe.c,
+	  lib/shishi.h.in, lib/ticket.c, lib/tkt.c, po/shishi.pot,
+	  po/sv.po: ASN.1 API fixes.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdc.c: Use new netio API.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Allocate buffer, no inline copy.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Build client-cksum.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* src/client-cksum.c: Add.
+
+2003-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/apreq.c, lib/as.c, lib/authenticator.c, lib/cfg.c,
+	  lib/crypto.c, lib/enckdcreppart.c, lib/encticketpart.c,
+	  lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c, lib/key.c,
+	  lib/principal.c, lib/safe.c, lib/shishi.h.in, lib/ticket.c,
+	  lib/tkts.c, lib/version.c: GTK-DOC fixes.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/draft-ietf-krb-wg-gssapi-cfx-00.txt: Add.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Typo.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Update --help.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, NEWS: Bump versions.
+
 2003-08-17  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.2.
