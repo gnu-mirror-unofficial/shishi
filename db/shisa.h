@@ -1,4 +1,4 @@
-/* shisa.h --- Header file for Shishi database library.
+/* shisa.h --- Header file for concurrent write-safe Kerberos database library.
  * Copyright (C) 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -24,7 +24,7 @@
 
 #include <stddef.h>		/* size_t */
 #include <time.h>		/* time_t */
-#include <shishi-int.h>		/* uint32_t */
+#include <shishi-int.h>		/* int32_t, uint32_t */
 
 /* Error codes */
 enum Shisa_rc
@@ -51,7 +51,7 @@ struct Shisa_principal
   char *name;
   char *realm;
   int isdisabled;
-  int32_t kvno;
+  uint32_t kvno;
   time_t notusedbefore;
   time_t lastinitialtgt;	/* time of last initial request for a TGT */
   time_t lastinitialrequest;	/* time of last initial request */
