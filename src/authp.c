@@ -22,7 +22,7 @@
 #include "data.h"
 
 int
-ap (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
+ap (Shishi * handle, struct arguments arg)
 {
   ASN1_TYPE apreq;
   int res;
@@ -62,7 +62,7 @@ ap (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       int res;
 
       ticket = shishi_ticketset_find_ticket_for_clientserver (handle,
-							      ticketset,
+							      NULL,
 							      arg.cname,
 							      arg.sname);
       if (ticket == NULL)

@@ -123,12 +123,13 @@ extern int h_errno;
 /* Short and long parameter */
 enum
 {
-  COMMAND_AP,
+  COMMAND_AP = 1,
   COMMAND_AS,
   COMMAND_CLIENT,
   COMMAND_CRYPTO,
   COMMAND_KDC,
   COMMAND_LIST,
+  COMMAND_DESTROY,
   COMMAND_SERVER,
   COMMAND_TGS
 };
@@ -182,6 +183,7 @@ enum
   OPTION_CRYPTO_DEBUG,
   OPTION_CRYPTO_GENERATE_KEY,
   OPTION_LIST_SERVER_NAME,
+  OPTION_DESTROY_SERVER_NAME,
   OPTION_CLIENT_REALM,
   OPTION_CLIENT_SERVER_NAME,
   OPTION_CLIENT_AP_OPTIONS,
@@ -270,16 +272,12 @@ struct arguments
   int apoptions;
 };
 
-extern int ap (Shishi * handle, Shishi_ticketset * ticketset,
-	       struct arguments arg);
+extern int ap (Shishi * handle, struct arguments arg);
 
-extern int kdc (Shishi * handle, Shishi_ticketset * ticketset,
-		struct arguments arg);
+extern int kdc (Shishi * handle, struct arguments arg);
 
-extern int client (Shishi * handle, Shishi_ticketset * ticketset,
-		   struct arguments arg);
+extern int client (Shishi * handle, struct arguments arg);
 
-extern int server (Shishi * handle, Shishi_ticketset * ticketset,
-		   struct arguments arg);
+extern int server (Shishi * handle, struct arguments arg);
 
 #endif

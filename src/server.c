@@ -24,7 +24,7 @@
 #define SERVER_NAME "sample"
 
 int
-server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
+server (Shishi * handle, struct arguments arg)
 {
   Shishi_ticket *tkt;
   ASN1_TYPE apreq, aprep, ticket, encticketpart, authenticator;

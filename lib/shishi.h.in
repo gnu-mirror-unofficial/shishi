@@ -59,7 +59,8 @@ enum
   SHISHI_KDC_NOT_KNOWN_FOR_REALM = 25,
   SHISHI_TTY_ERROR = 26,
   SHISHI_GOT_KRBERROR = 27,
-  SHISHI_HANDLE_ERROR = 28
+  SHISHI_HANDLE_ERROR = 28,
+  SHISHI_INVALID_TICKETSET = 29
 };
 
 /* This is not specified in the ASN.1 syntax for some reason. */
@@ -357,11 +358,15 @@ extern void
 shishi_ticketset_done (Shishi * handle, Shishi_ticketset * ticketset);
 extern const char *shishi_ticketset_default_file (Shishi * handle);
 extern Shishi_ticketset *shishi_ticketset (Shishi * handle);
-extern Shishi_ticket *shishi_ticketset_find_ticket_for_server (Shishi *
-							       handle,
-							       Shishi_ticketset
-							       * ticketset,
-							       char *server);
+extern Shishi_ticket *
+shishi_ticketset_find_ticket_for_server (Shishi *
+					 handle,
+					 Shishi_ticketset * ticketset,
+					 char *server);
+extern Shishi_ticket *
+shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
+					       Shishi_ticketset * ticketset,
+					       char *client, char *server);
 
 /* ap.c */
 extern ASN1_TYPE shishi_ap_req (Shishi * handle);

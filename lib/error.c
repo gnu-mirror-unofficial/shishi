@@ -126,6 +126,11 @@ shishi_strerror (int err)
       p = _("Server replied with an error message to request.");
       break;
 
+    case SHISHI_INVALID_TICKETSET:
+      p = _("Ticketset not initialized.  This usually indicates an internal "
+	    "application error.");
+      break;
+
     default:
       shishi_asprintf (&p, _("Unknown shishi error (%d)"), err);
       break;

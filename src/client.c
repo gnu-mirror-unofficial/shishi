@@ -24,7 +24,7 @@
 #define SERVER_NAME "sample"
 
 int
-client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
+client (Shishi * handle, struct arguments arg)
 {
   Shishi_ticket *tkt, *tmptkt;
   Shishi_ap *ap;
@@ -63,13 +63,13 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       printf ("Service name: `%s'\n", arg.sname);
     }
 
-  tkt = shishi_ticketset_find_ticket_for_clientserver (handle, ticketset,
+  tkt = shishi_ticketset_find_ticket_for_clientserver (handle, NULL,
 						       arg.cname, arg.sname);
   if (tkt == NULL)
     {
       ASN1_TYPE req, rep;
 
-      tkt = shishi_ticketset_find_ticket_for_clientserver (handle, ticketset,
+      tkt = shishi_ticketset_find_ticket_for_clientserver (handle, NULL,
 							   arg.cname,
 							   arg.tgtname);
       if (tkt == NULL)
@@ -88,7 +88,7 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       if (res != 0)
 	return res;
 
-      res = shishi_ticketset_add (handle, ticketset, tmptkt);
+      res = shishi_ticketset_add (handle, NULL, tmptkt);
       if (res != SHISHI_OK)
 	{
 	  printf ("Could not add ticket: %s", shishi_strerror (res));

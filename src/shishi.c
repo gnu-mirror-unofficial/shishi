@@ -414,23 +414,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	argp_error (state, _("Too many arguments: `%s'"), arg);
       else
 	{
-	  if (strcmp (arg, "ap") == 0)
-	    {
-	      arguments->command = COMMAND_AP;
-	    }
-	  else if (strcmp (arg, "client") == 0)
-	    {
-	      arguments->command = COMMAND_CLIENT;
-	    }
-	  else if (strcmp (arg, "crypto") == 0)
-	    {
-	      arguments->command = COMMAND_CRYPTO;
-	    }
-	  else if (strcmp (arg, "kdc") == 0)
-	    {
-	      arguments->command = COMMAND_KDC;
-	    }
-	  else if (strcmp (arg, "as") == 0)
+	  if (strcmp (arg, "as") == 0)
 	    {
 	      arguments->command = COMMAND_AS;
 	    }
@@ -442,9 +426,29 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	    {
 	      arguments->command = COMMAND_LIST;
 	    }
+	  else if (strcmp (arg, "destroy") == 0)
+	    {
+	      arguments->command = COMMAND_DESTROY;
+	    }
+	  else if (strcmp (arg, "client") == 0)
+	    {
+	      arguments->command = COMMAND_CLIENT;
+	    }
 	  else if (strcmp (arg, "server") == 0)
 	    {
 	      arguments->command = COMMAND_SERVER;
+	    }
+	  else if (strcmp (arg, "ap") == 0)
+	    {
+	      arguments->command = COMMAND_AP;
+	    }
+	  else if (strcmp (arg, "crypto") == 0)
+	    {
+	      arguments->command = COMMAND_CRYPTO;
+	    }
+	  else if (strcmp (arg, "kdc") == 0)
+	    {
+	      arguments->command = COMMAND_KDC;
 	    }
 	  else
 	    {
@@ -452,12 +456,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	    }
 	  break;
 	}
-      break;
-
-    case ARGP_KEY_END:
-      if (state->arg_num < 1)
-	/* No arguments supplied. */
-	arguments->command = COMMAND_AS;
       break;
 
     default:
@@ -471,38 +469,44 @@ static struct argp_option options[] = {
 
   {0, 0, 0, 0, "Authentication commands:", 10},
 
-  {"as", 0, 0, OPTION_DOC,
-   "Acquire ticket granting ticket using password and the Authentication "
+  {"as", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
+   "Acquire ticket granting ticket using password via the Authentication "
    "Service (AS) exchange."},
 
-  {"list", 0, 0, OPTION_DOC,
-   "List tickets."},
-
-  {"tgs", 0, 0, OPTION_DOC,
-   "Acquire ticket using the ticket granting ticket and the Ticket-Granting "
+  {"tgs", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
+   "Acquire ticket using the ticket granting ticket via the Ticket-Granting "
    "Service (TGS) exchange."},
 
-  {0, 0, 0, 0, "Utility commands:", 20},
+  {0, 0, 0, 0, "Ticket management:", 20},
 
-  {"client", 0, 0, OPTION_DOC,
+  {"list", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
+   "List tickets."},
+
+  {"destroy", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
+   "Destroy tickets."},
+
+  {0, 0, 0, 0, "Utilities:", 30},
+
+  {"client", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
    "Kerberos client."},
 
-  {"server", 0, 0, OPTION_DOC,
+  {"server", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
    "Kerberos server."},
 
-  {0, 0, 0, 0, "Low-level commands:", 30},
+  {0, 0, 0, 0, "Low-level commands:", 40},
 
-  {"ap", 0, 0, OPTION_DOC,
+  {"ap", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
    "Kerberos Client/Server Authentication (AP-REQ and AP-REP)."},
 
-  {"crypto", 0, 0, OPTION_DOC,
+  {"crypto", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
    "Cryptographic functions."},
 
-  {"kdc", 0, 0, OPTION_DOC,
-   "Key Distribution Center Services; Authentication Service (AS) "
-   "and Ticket-Granting Service (TGS)."},
+  {"kdc", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
+   "Key Distribution Center Services (AS and TGS)."},
 
-  {0, 0, 0, 0, "If no command is given, Shishi invokes the AS command.", 40},
+  {0, 0, 0, 0, "If no command is given, Shishi invokes the AS command "
+   "if no ticket granting ticket is found, otherwise the LIST command "
+   "is invoked.", 50},
 
   /************** AS */
 
@@ -517,15 +521,8 @@ static struct argp_option options[] = {
   {"realm", 'r', "REALM", 0,
    "Realm of client and server. Default is DNS domain of local host."},
 
-  {"string-to-key", OPTION_AS_PASSWORD, "PASSWORD", 0,
+  {"password", OPTION_AS_PASSWORD, "PASSWORD", 0,
    "Password to decrypt response (discouraged). Default is to prompt user."},
-
-  /************** LIST */
-
-  {0, 0, 0, 0, "Options for the List command (LIST-OPTIONS):", 200},
-
-  {"server-name", OPTION_LIST_SERVER_NAME, "NAME", 0,
-   "Restrict list to tickets for specified server."},
 
   /************** TGS */
 
@@ -548,6 +545,20 @@ static struct argp_option options[] = {
 
   {"server-name", OPTION_TGS_SERVER_NAME, "NAME", 0,
    "Name of server."},
+
+  /************** LIST */
+
+  {0, 0, 0, 0, "Options for the List command (LIST-OPTIONS):", 200},
+
+  {"server-name", OPTION_LIST_SERVER_NAME, "NAME", 0,
+   "Restrict list to tickets for specified server."},
+
+  /************** DESTROY */
+
+  {0, 0, 0, 0, "Options for the Destroy command (DESTROY-OPTIONS):", 200},
+
+  {"server-name", OPTION_DESTROY_SERVER_NAME, "NAME", 0,
+   "Destroy only tickets for specified server."},
 
  /************** CLIENT */
 
@@ -584,7 +595,7 @@ static struct argp_option options[] = {
    "Name of server. Defaults to \"sample/REALM\" where REALM "
    "is realm of server (see --realm)."},
 
-  {"string-to-key", OPTION_SERVER_PASSWORD, "PASSWORD", 0,
+  {"password", OPTION_SERVER_PASSWORD, "PASSWORD", 0,
    "Password to decrypt response (discouraged)."},
 
   /************** AP */
@@ -697,7 +708,8 @@ static struct argp_option options[] = {
    "Force TGS mode. Default is to use TGS iff a TGT is found."},
 
   {"realm", 'r', "REALM", 0,
-   "Realm of server. Default is DNS domain of local host. For AS, this also indicates realm of client."},
+   "Realm of server. Default is DNS domain of local host. For AS, this also "
+   "indicates realm of client."},
 
   {"server", OPTION_KDC_SERVER, "HOST", 0,
    "Send request to HOST. Default uses address from configuration file."},
@@ -731,7 +743,7 @@ static struct argp_option options[] = {
   {"sendrecv", OPTION_KDC_SENDRECV, 0, 0,
    "Only send request and receive response."},
 
-  {"string-to-key", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
+  {"password", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
    "Password to decrypt response (discouraged).  Only for AS."},
 
   {"write-ap-request-file", OPTION_KDC_WRITE_AP_REQUEST_FILE, "[TYPE,]FILE",
@@ -788,15 +800,15 @@ static struct argp_option options[] = {
 
   {0, 0, 0, 0, "Examples:", 2000},
 
-  {"shishi as", 0, 0, OPTION_DOC,
+  {"shishi as", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
    "Get a ticket granting ticket from the default KDC server for the "
    "default user and realm."},
 
-  {"shishi tgs --server-name=imap", 0, 0, OPTION_DOC,
+  {"shishi tgs --server-name=imap", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
    "Get a ticket for the imap server."},
 
   {"shishi list --server-name=krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG",
-   0, 0, OPTION_DOC,
+   0, 0, OPTION_DOC|OPTION_NO_USAGE,
    "List tickets for the Ticket Granting Service in the JOSEFSSON.ORG realm."},
 
   {0}
@@ -805,13 +817,16 @@ static struct argp_option options[] = {
 static struct argp argp = {
   options,
   parse_opt,
-  "COMMAND [COMMAND-OPTION...]\n"
-    "[as] [AS-OPTION...]\n"
-    "list [LIST-OPTION...]\n"
-    "tgs [TGS-OPTION...]\n"
-    "client [CLIENT-OPTION...]\n"
-    "server [SERVER-OPTION...]\n"
-    "ap [AP-OPTION...]\n" "crypto [CRYPTO-OPTION...]\n" "kdc [KDC-OPTION...]",
+  "[COMMAND [COMMAND-OPTION...]]\n"
+  "as [AS-OPTION...]\n"
+  "tgs [TGS-OPTION...]\n"
+  "list [LIST-OPTION...]\n"
+  "destroy [DESTROY-OPTION...]\n"
+  "client [CLIENT-OPTION...]\n"
+  "server [SERVER-OPTION...]\n"
+  "ap [AP-OPTION...]\n"
+  "crypto [CRYPTO-OPTION...]\n"
+  "kdc [KDC-OPTION...]",
   "Shishi -- An implementation of Kerberos 5"
 };
 
@@ -832,7 +847,6 @@ main (int argc, char *argv[])
   char *home = getenv ("HOME");
   const char *ticketfile;
   Shishi *handle;
-  Shishi_ticketset *ticketset;
   int rc;
 
   setlocale (LC_ALL, "");
@@ -849,7 +863,6 @@ main (int argc, char *argv[])
   if (handle == NULL)
     die ("Internal error: could not initialize shishi\n");
 
-  ticketset = shishi_ticketset (handle);
   ticketfile = arg.ticketfile ? arg.ticketfile :
     shishi_ticketset_default_file (handle);
 
@@ -869,12 +882,9 @@ main (int argc, char *argv[])
     }
 
   rc = 1;
+ again:
   switch (arg.command)
     {
-    case COMMAND_AP:
-      rc = ap (handle, ticketset, arg);
-      break;
-
     case COMMAND_AS:
       {
 	Shishi_as *as;
@@ -908,39 +918,10 @@ main (int argc, char *argv[])
 	if (!arg.silent)
 	  shishi_ticket_print (handle, tkt, stdout);
 
-	rc = shishi_ticketset_add (handle, ticketset, tkt);
+	rc = shishi_ticketset_add (handle, NULL, tkt);
 	if (rc != SHISHI_OK)
 	  printf ("Could not add ticket: %s", shishi_strerror (rc));
       }
-      break;
-
-    case COMMAND_CLIENT:
-      rc = client (handle, ticketset, arg);
-      break;
-
-    case COMMAND_CRYPTO:
-      rc = crypto (handle, arg);
-      if (rc != SHISHI_OK)
-	fprintf (stderr, "Operation failed:\n%s\n%s\n",
-		 shishi_strerror (rc), shishi_strerror_details (handle));
-      break;
-
-    case COMMAND_KDC:
-      rc = kdc (handle, ticketset, arg);
-      break;
-
-    case COMMAND_LIST:
-      if (!arg.silent)
-	printf (_("Tickets in `%s':\n"), ticketfile);
-
-      rc = shishi_ticketset_print_for_service (handle, ticketset,
-					       stdout, arg.sname);
-      if (rc != SHISHI_OK)
-	fprintf (stderr, "Could not list tickets: %s", shishi_strerror (rc));
-      break;
-
-    case COMMAND_SERVER:
-      rc = server (handle, ticketset, arg);
       break;
 
     case COMMAND_TGS:
@@ -966,7 +947,7 @@ main (int argc, char *argv[])
 	  }
 
 	tgt = shishi_ticketset_find_ticket_for_clientserver
-	  (handle, ticketset, shishi_principal_default_get (handle),
+	  (handle, NULL, shishi_principal_default_get (handle),
 	   arg.tgtname);
 	if (tgt == NULL)
 	  {
@@ -1001,20 +982,118 @@ main (int argc, char *argv[])
 	if (!arg.silent)
 	  shishi_ticket_print (handle, tkt, stdout);
 
-	rc = shishi_ticketset_add (handle, ticketset, tkt);
+	rc = shishi_ticketset_add (handle, NULL, tkt);
 	if (rc != SHISHI_OK)
 	  printf ("Could not add ticket: %s", shishi_strerror (rc));
       }
       break;
 
+    case COMMAND_LIST:
+      if (!arg.silent)
+	printf (_("Tickets in `%s':\n"), ticketfile);
+
+      rc = shishi_ticketset_print_for_service (handle, NULL,
+					       stdout, arg.sname);
+      if (rc != SHISHI_OK)
+	fprintf (stderr, "Could not list tickets: %s", shishi_strerror (rc));
+      break;
+
+    case COMMAND_DESTROY:
+      {
+	int i, removed = 0;
+	for (i = 0; i < shishi_ticketset_size (handle, NULL); i++)
+	  {
+	    if (arg.sname &&
+		shishi_ticket_server_p (handle,
+					shishi_ticketset_get (handle, NULL, i),
+					arg.sname))
+	      continue;
+
+	    if (arg.verbose)
+	      {
+		printf("Removing ticket:\n");
+		shishi_ticket_print(handle,
+				    shishi_ticketset_get (handle, NULL, i),
+				    stdout);
+	      }
+
+	    rc = shishi_ticketset_remove (handle, NULL, i);
+	    if (rc != SHISHI_OK)
+	      fprintf (stderr, "Could not destroy ticket %d:\n%s\n", i,
+		       shishi_strerror (rc));
+	    i--;
+	    removed++;
+	  }
+	if (removed == 0)
+	  printf("No tickets removed.\n");
+	else if (removed == 1)
+	  printf("1 ticket removed.\n");
+	else
+	  printf("%d tickets removed.\n", removed);
+	rc = SHISHI_OK;
+      }
+      break;
+
+    case COMMAND_CLIENT:
+      rc = client (handle, arg);
+      break;
+
+    case COMMAND_SERVER:
+      rc = server (handle, arg);
+      break;
+
+    case COMMAND_AP:
+      rc = ap (handle, arg);
+      break;
+
+    case COMMAND_CRYPTO:
+      rc = crypto (handle, arg);
+      if (rc != SHISHI_OK)
+	fprintf (stderr, "Operation failed:\n%s\n%s\n",
+		 shishi_strerror (rc), shishi_strerror_details (handle));
+      break;
+
+    case COMMAND_KDC:
+      rc = kdc (handle, arg);
+      break;
+
     default:
-      die ("Internal error: unknown command `%d'\n", arg.command);
+      {
+	Shishi_tgs *tgs;
+	Shishi_ticket *tgt;
+	Shishi_ticket *tkt;
+
+	if (arg.cname != NULL)
+	  shishi_principal_default_set (handle, arg.cname);
+
+	if (arg.realm != NULL)
+	  shishi_realm_default_set (handle, arg.realm);
+
+	if (arg.tgtname == NULL)
+	  {
+	    char *realm = shishi_realm_default_get (handle);
+	    int len = strlen ("krbtgt/") + strlen (realm) + 1;
+	    arg.tgtname = malloc (len);
+	    if (arg.tgtname == NULL)
+	      return SHISHI_MALLOC_ERROR;
+	    sprintf (arg.tgtname, "krbtgt/%s", realm);
+	  }
+
+	tgt = shishi_ticketset_find_ticket_for_clientserver
+	  (handle, NULL, shishi_principal_default_get (handle),
+	   arg.tgtname);
+	if (tgt == NULL)
+	  arg.command = COMMAND_AS;
+	else
+	  arg.command = COMMAND_LIST;
+	goto again;
+      }
       break;
     }
 
   if (rc == SHISHI_OK)
     {
-      rc = shishi_ticketset_to_file (handle, ticketset,
+      rc = shishi_ticketset_to_file (handle, NULL,
 				     arg.ticketwritefile ?
 				     arg.ticketwritefile : ticketfile);
       if (rc != SHISHI_OK)

@@ -176,7 +176,7 @@ kdc_response (Shishi * handle,
 }
 
 int
-kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
+kdc (Shishi * handle, struct arguments arg)
 {
   ASN1_TYPE req = ASN1_TYPE_EMPTY;
   ASN1_TYPE rep = ASN1_TYPE_EMPTY;
@@ -233,7 +233,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
   else
     {
       oldtkt = shishi_ticketset_find_ticket_for_clientserver (handle,
-							      ticketset,
+							      NULL,
 							      arg.cname,
 							      arg.tgtname);
       if (arg.forcetgs_p && oldtkt == NULL)
@@ -387,7 +387,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
   if (!arg.silent)
     printf ("Adding new ticket...\n");
 
-  res = shishi_ticketset_add (handle, ticketset, newtkt);
+  res = shishi_ticketset_add (handle, NULL, newtkt);
   if (res != SHISHI_OK)
     {
       printf ("Could not add ticket: %s", shishi_strerror (res));
