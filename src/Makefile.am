@@ -26,7 +26,7 @@ shishi_SOURCES = shishi.c gettext.h
 sbin_PROGRAMS = shishid
 shishid_SOURCES = shishid.c
 
-noinst_PROGRAMS = client server
+noinst_PROGRAMS = client server client-cksum
 
 localedir = $(datadir)/locale
 
