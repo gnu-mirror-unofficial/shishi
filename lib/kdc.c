@@ -444,17 +444,17 @@ shishi_kdc_check_nonce_1 (Shishi * handle,
 			  char *reqnonce, size_t reqnoncelen,
 			  char *repnonce, size_t repnoncelen)
 {
-  if (VERBOSEASN1 (handle))
+  if (VERBOSENOICE (handle))
     {
       size_t i;
 
       printf ("request nonce (len=%d) ", reqnoncelen);
       for (i = 0; i < reqnoncelen; i++)
-	printf ("%02X", reqnonce[i]);
+	printf ("%02x", reqnonce[i] & 0xFF);
       printf ("\n");
       printf ("reply nonce (len=%d) ", repnoncelen);
       for (i = 0; i < repnoncelen; i++)
-	printf ("%02X", repnonce[i]);
+	printf ("%02x", repnonce[i] & 0xFF);
       printf ("\n");
     }
 
@@ -476,7 +476,7 @@ shishi_kdc_check_nonce_1 (Shishi * handle,
       if (memcmp (reqnonce + reqnoncelen - 4, repnonce, 4) != 0)
 	return SHISHI_NONCE_MISMATCH;
 
-      fprintf (stderr, "warning: server truncated long nonce to 4 bytes\n");
+      shishi_warn (handle, "server truncated long nonce to 4 bytes");
 
       return SHISHI_OK;
     }
@@ -529,20 +529,6 @@ shishi_kdc_check_nonce (Shishi * handle,
       shishi_error_printf (handle, "Could not read reply nonce: %s\n",
 			   shishi_strerror (res));
       return res;
-    }
-
-  if (VERBOSEASN1 (handle))
-    {
-      size_t i;
-
-      printf ("request nonce (len=%d) ", reqnoncelen);
-      for (i = 0; i < reqnoncelen; i++)
-	printf ("%02X", reqnonce[i]);
-      printf ("\n");
-      printf ("reply nonce (len=%d) ", repnoncelen);
-      for (i = 0; i < repnoncelen; i++)
-	printf ("%02X", repnonce[i]);
-      printf ("\n");
     }
 
   res = shishi_kdc_check_nonce_1 (handle, reqnonce, reqnoncelen,
