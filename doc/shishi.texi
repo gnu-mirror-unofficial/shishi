@@ -3371,6 +3371,7 @@ library.
 * AS/TGS Functions::            Low-level KDC functions; AS and TGS.
 * Authenticator Functions::     Low-level authenticator functions.
 * Cryptographic Functions::     Low-level cryptographic functions.
+* X.509 Functions::             Utility functions for X.509 support.
 * Utility Functions::           Utilities for use in the global context.
 * Error Handling::              Error codes and such.
 * Examples::                    Example code.
@@ -4056,6 +4057,12 @@ cryptographic library used (e.g., Nettle) and is used internally by
 Shishi.
 
 @include texi/nettle.c.texi
+
+
+@node X.509 Functions
+@section X.509 Functions
+
+@include texi/pki.c.texi
 
 
 @node Utility Functions
