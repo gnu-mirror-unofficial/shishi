@@ -59,8 +59,8 @@ shishi_ticketset_default_file_guess (void)
  * shishi_ticketset_default_file:
  * @handle: Shishi library handle create by shishi_init().
  *
- * Return value: Returns the default ticket set used in the library.
- * (Not a copy of it, so don't modify or deallocate it.)
+ * Return value: Returns the default ticket set filename used in the
+ * library.  (Not a copy of it, so don't modify or deallocate it.)
  **/
 const char *
 shishi_ticketset_default_file (Shishi * handle)
@@ -81,7 +81,7 @@ shishi_ticketset_default_file (Shishi * handle)
  * shishi_ticketset_default_file_set:
  * @handle: Shishi library handle create by shishi_init().
  * @ticketsetfile: string with new default ticketset file name, or
- * NULL to reset to default.
+ *                 NULL to reset to default.
  *
  * Set the default ticket set filename used in the library.  The
  * string is copied into the library, so you can dispose of the

@@ -203,10 +203,10 @@ des_md4_verify (Shishi * handle, char *out, int *outlen)
       int i;
 
       for (i = 0; i < 16; i++)
-	printf ("%02X ", md[i]);
+	printf ("%02X ", md[i] & 0xFF);
       printf ("\n");
       for (i = 0; i < 16; i++)
-	printf ("%02X ", p[i]);
+	printf ("%02X ", p[i] & 0xFF);
       printf ("\n");
     }
 
@@ -297,10 +297,10 @@ des_md5_verify (Shishi * handle, char *out, int *outlen)
       int i;
 
       for (i = 0; i < 16; i++)
-	printf ("%02X ", md[i]);
+	printf ("%02X ", md[i] & 0xFF);
       printf ("\n");
       for (i = 0; i < 16; i++)
-	printf ("%02X ", p[i]);
+	printf ("%02X ", p[i] & 0xFF);
       printf ("\n");
     }
 
@@ -876,7 +876,7 @@ checksum_md4 (Shishi * handle,
 #if 0
   printf ("cksum in len=%d:", inlen);
   for (i = 0; i < inlen; i++)
-    printf ("%02x ", in[i]);
+    printf ("%02x ", in[i] & 0xFF);
   printf ("\n");
 #endif
 
@@ -887,7 +887,7 @@ checksum_md4 (Shishi * handle,
 #if 0
   printf ("cksum random: ");
   for (i = 0; i < 8; i++)
-    printf ("%02X ", buffer[i]);
+    printf ("%02X ", buffer[i] & 0xFF);
   printf ("\n");
 #endif
 
@@ -901,7 +901,7 @@ checksum_md4 (Shishi * handle,
 #if 0
   printf ("cksum md4: ");
   for (i = 0; i < 16; i++)
-    printf ("%02X ", p[i]);
+    printf ("%02X ", p[i] & 0xFF);
   printf ("\n");
 #endif
 
@@ -915,7 +915,7 @@ checksum_md4 (Shishi * handle,
 #if 0
   printf ("cksum out: ");
   for (i = 0; i < *outlen; i++)
-    printf ("%02X ", out[i]);
+    printf ("%02X ", out[i] & 0xFF);
   printf ("\n");
 #endif
 
@@ -945,7 +945,7 @@ checksum_md5 (Shishi * handle,
 #if 0
   printf ("cksum in len=%d:", inlen);
   for (i = 0; i < inlen; i++)
-    printf ("%02x ", in[i]);
+    printf ("%02x ", in[i] & 0xFF);
   printf ("\n");
 #endif
 
@@ -956,7 +956,7 @@ checksum_md5 (Shishi * handle,
 #if 0
   printf ("cksum random: ");
   for (i = 0; i < 8; i++)
-    printf ("%02X ", buffer[i]);
+    printf ("%02X ", buffer[i] & 0xFF);
   printf ("\n");
 #endif
 
@@ -970,7 +970,7 @@ checksum_md5 (Shishi * handle,
 #if 0
   printf ("cksum md5: ");
   for (i = 0; i < 16; i++)
-    printf ("%02X ", p[i]);
+    printf ("%02X ", p[i] & 0xFF);
   printf ("\n");
 #endif
 
@@ -984,7 +984,7 @@ checksum_md5 (Shishi * handle,
 #if 0
   printf ("cksum out: ");
   for (i = 0; i < *outlen; i++)
-    printf ("%02X ", out[i]);
+    printf ("%02X ", out[i] & 0xFF);
   printf ("\n");
 #endif
 

@@ -142,6 +142,9 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char * password)
   int userlen;
   int res;
 
+  if (VERBOSE(as->handle))
+    printf("Processing AS-REQ and AS-REP...\n");
+
   userlen = sizeof (user);
   res = shishi_kdcreq_cnamerealm_get (as->handle, as->asreq, user, &userlen);
   if (res != SHISHI_OK)
@@ -180,6 +183,12 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char * password)
   if (res != SHISHI_OK)
     return res;
 
+  if (VERBOSE(as->handle))
+    printf("Got EncKDCRepPart...\n");
+
+  if (VERBOSEASN1(as->handle))
+    shishi_enckdcreppart_print(as->handle, stdout, kdcreppart);
+
   res = shishi_kdcrep_get_ticket (as->handle, as->asrep, &ticket);
   if (res != SHISHI_OK)
     {
@@ -188,6 +197,12 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char * password)
 			   shishi_strerror_details (as->handle));
       return res;
     }
+
+  if (VERBOSE(as->handle))
+    printf("Got Ticket...\n");
+
+  if (VERBOSEASN1(as->handle))
+    shishi_asn1ticket_print(as->handle, stdout, ticket);
 
   as->ticket = shishi_ticket (as->handle, ticket, kdcreppart, as->asrep);
   if (as->ticket == NULL)
@@ -283,14 +298,31 @@ shishi_as_sendrecv (Shishi_as * as)
 {
   int res;
 
+  if (VERBOSE(as->handle))
+    printf("Sending AS-REQ...\n");
+
+  if (VERBOSEASN1(as->handle))
+    shishi_kdcreq_print(as->handle, stdout, as->asreq);
+
   res = shishi_kdcreq_sendrecv (as->handle, as->asreq, &as->asrep);
   if (res == SHISHI_GOT_KRBERROR)
     {
       as->krberror = as->asrep;
       as->asrep = NULL;
+
+      if (VERBOSE(as->handle))
+	printf("Received KRB-ERROR...\n");
+      if (VERBOSEASN1(as->handle))
+	shishi_krberror_print(as->handle, stdout, as->krberror);
     }
   if (res != SHISHI_OK)
     return res;
+
+  if (VERBOSE(as->handle))
+    printf("Received AS-REP...\n");
+
+  if (VERBOSEASN1(as->handle))
+    shishi_kdcrep_print(as->handle, stdout, as->asrep);
 
   return SHISHI_OK;
 }

@@ -157,6 +157,9 @@ shishi_tgs_req_build (Shishi_tgs * tgs)
   int res;
   int apoptions;
 
+  if (VERBOSE(tgs->handle))
+    printf("Building TGS-REQ...\n");
+
   res = shishi_apreq_options (tgs->handle, shishi_ap_req(tgs->ap), &apoptions);
   if (res != SHISHI_OK)
     {
@@ -178,6 +181,13 @@ shishi_tgs_req_build (Shishi_tgs * tgs)
 			   shishi_strerror (res));
       return res;
     }
+
+
+  if (VERBOSE(tgs->handle))
+    printf("Got AP-REQ...\n");
+
+  if (VERBOSEASN1(tgs->handle))
+    shishi_apreq_print(tgs->handle, stdout, shishi_ap_req(tgs->ap));
 
   res = shishi_kdcreq_add_padata_tgs (tgs->handle, tgs->tgsreq,
 				      shishi_ap_req(tgs->ap));
@@ -219,6 +229,9 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
   ASN1_TYPE kdcreppart, ticket;
   int res;
 
+  if (VERBOSE(tgs->handle))
+    printf("Processing TGS-REQ and TGS-REP...\n");
+
   res = shishi_tgs_process (tgs->handle, tgs->tgsreq, tgs->tgsrep,
 			    shishi_ticket_enckdcreppart (tgs->tgticket),
 			    &kdcreppart);
@@ -229,6 +242,12 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
       return res;
     }
 
+  if (VERBOSE(tgs->handle))
+    printf("Got EncKDCRepPart...\n");
+
+  if (VERBOSEASN1(tgs->handle))
+    shishi_enckdcreppart_print(tgs->handle, stdout, kdcreppart);
+
   res = shishi_kdcrep_get_ticket (tgs->handle, tgs->tgsrep, &ticket);
   if (res != SHISHI_OK)
     {
@@ -237,6 +256,12 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
 			   shishi_strerror (res));
       return res;
     }
+
+  if (VERBOSE(tgs->handle))
+    printf("Got Ticket...\n");
+
+  if (VERBOSEASN1(tgs->handle))
+    shishi_asn1ticket_print(tgs->handle, stdout, ticket);
 
   tgs->ticket = shishi_ticket (tgs->handle, ticket, kdcreppart, tgs->tgsrep);
   if (tgs->ticket == NULL)
@@ -302,14 +327,32 @@ shishi_tgs_sendrecv (Shishi_tgs * tgs)
 {
   int res;
 
+  if (VERBOSE(tgs->handle))
+    printf("Sending TGS-REQ...\n");
+
+  if (VERBOSEASN1(tgs->handle))
+    shishi_kdcreq_print(tgs->handle, stdout, tgs->tgsreq);
+
   res = shishi_kdcreq_sendrecv (tgs->handle, tgs->tgsreq, &tgs->tgsrep);
   if (res == SHISHI_GOT_KRBERROR)
     {
       tgs->krberror = tgs->tgsrep;
       tgs->tgsrep = NULL;
+
+      if (VERBOSE(tgs->handle))
+	printf("Received KRB-ERROR...\n");
+      if (VERBOSEASN1(tgs->handle))
+	shishi_krberror_print(tgs->handle, stdout, tgs->krberror);
     }
   if (res != SHISHI_OK)
     return res;
+
+
+  if (VERBOSE(tgs->handle))
+    printf("Received TGS-REP...\n");
+
+  if (VERBOSEASN1(tgs->handle))
+    shishi_kdcrep_print(tgs->handle, stdout, tgs->tgsrep);
 
   return SHISHI_OK;
 }

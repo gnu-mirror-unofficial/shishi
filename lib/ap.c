@@ -498,6 +498,9 @@ shishi_ap_req_build (Shishi_ap * ap)
 {
   int res;
 
+  if (VERBOSE(ap->handle))
+    printf("Building AP-REQ...\n");
+
   res = shishi_apreq_set_ticket (ap->handle, ap->apreq,
 				 shishi_ticket_ticket(ap->ticket));
   if (res != SHISHI_OK)
@@ -519,6 +522,12 @@ shishi_ap_req_build (Shishi_ap * ap)
 			   shishi_strerror_details (ap->handle));
       return res;
     }
+
+  if (VERBOSE(ap->handle))
+    printf("Got Authenticator...\n");
+
+  if (VERBOSEASN1(ap->handle))
+    shishi_authenticator_print(ap->handle, stdout, ap->authenticator);
 
   res = shishi_apreq_add_authenticator (ap->handle, ap->apreq,
 					shishi_ticket_key(ap->ticket),
