@@ -63,9 +63,12 @@ _shishi_crypto_init (Shishi * handle)
 }
 
 int
-shishi_randomize (Shishi * handle, char *data, size_t datalen)
+shishi_randomize (Shishi * handle, int strong, char *data, size_t datalen)
 {
-  gcry_randomize (data, datalen, GCRY_STRONG_RANDOM);
+  if (strong)
+    gcry_randomize (data, datalen, GCRY_STRONG_RANDOM);
+  else
+    gcry_randomize (data, datalen, GCRY_VERY_STRONG_RANDOM);
   return SHISHI_OK;
 }
 

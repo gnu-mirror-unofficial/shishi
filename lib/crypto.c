@@ -307,7 +307,7 @@ _shishi_simplified_encrypt (Shishi * handle,
       ptlen = inlen + blen + padzerolen;
       pt = xmalloc (ptlen);
 
-      res = shishi_randomize (handle, pt, blen);
+      res = shishi_randomize (handle, 0, pt, blen);
       if (res != SHISHI_OK)
 	goto done;
 

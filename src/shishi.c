@@ -304,7 +304,7 @@ crypto (Shishi * handle, struct arguments arg)
     {
       char buf[BUFSIZ];
 
-      rc = shishi_randomize (handle, buf,
+      rc = shishi_randomize (handle, 1, buf,
 			     shishi_cipher_randomlen (arg.algorithm));
       if (rc != SHISHI_OK)
 	return rc;

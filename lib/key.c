@@ -356,7 +356,7 @@ shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_randomize (handle, buf, len);
+  rc = shishi_randomize (handle, 1, buf, len);
   if (rc != SHISHI_OK)
     return rc;
 

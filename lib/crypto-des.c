@@ -34,7 +34,7 @@ raw_des_checksum0 (Shishi * handle, int algo,
   int hlen = 16;
   int rc;
 
-  rc = shishi_randomize (handle, out, blen);
+  rc = shishi_randomize (handle, 0, out, blen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -78,7 +78,7 @@ raw_des_checksum1 (Shishi * handle, int algo,
   int hlen = 16;
   int rc;
 
-  rc = shishi_randomize (handle, out, blen);
+  rc = shishi_randomize (handle, 0, out, blen);
   if (rc != SHISHI_OK)
     return rc;
 

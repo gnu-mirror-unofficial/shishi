@@ -105,7 +105,7 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (res != SHISHI_OK)
     goto error;
 
-  shishi_randomize (handle, &noncebuf[0], sizeof (noncebuf));
+  shishi_randomize (handle, 0, &noncebuf[0], sizeof (noncebuf));
   res = shishi_asn1_write (handle, node, "req-body.nonce", noncebuf,
 			   sizeof (noncebuf));
   if (res != SHISHI_OK)

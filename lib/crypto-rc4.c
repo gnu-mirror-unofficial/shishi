@@ -121,7 +121,7 @@ arcfour_hmac_encrypt (Shishi * handle,
   pt = xmalloc (16 + 8 + inlen);
 
   memset (pt, 0, 16);
-  err = shishi_randomize (handle, pt + 16, 8);
+  err = shishi_randomize (handle, 0, pt + 16, 8);
   if (err)
     goto done;
   memcpy (pt + 16 + 8, in, inlen);
@@ -196,7 +196,7 @@ arcfour_hmac_decrypt (Shishi * handle,
   pt = xmalloc (16 + 8 + inlen);
 
   memset (pt, 0, 16);
-  err = shishi_randomize (handle, pt + 16, 8);
+  err = shishi_randomize (handle, 0, pt + 16, 8);
   if (err)
     goto done;
   memcpy (pt + 16 + 8, in, inlen);

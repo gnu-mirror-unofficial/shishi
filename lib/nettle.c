@@ -40,28 +40,32 @@ _shishi_crypto_init (Shishi * handle)
 /**
  * shishi_randomize:
  * @handle: shishi handle as allocated by shishi_init().
+ * @strong: 0 iff operation should not block, non-0 for very strong randomness.
  * @data: output array to be filled with random data.
  * @datalen: size of output array.
  *
- * Store cryptographically strong random data of given size in the
- * provided buffer.
+ * Store cryptographically random data of given size in the provided
+ * buffer.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
-shishi_randomize (Shishi * handle, char *data, size_t datalen)
+shishi_randomize (Shishi * handle, int strong, char *data, size_t datalen)
 {
   int fd;
   char *device;
   size_t len = 0;
   int rc;
 
-  device = "/dev/random";
+  if (strong)
+    device = "/dev/random";
+  else
+    device = "/dev/urandom";
 
   fd = open (device, O_RDONLY);
   if (fd < 0)
     {
-      shishi_error_printf (handle, "Could not open random device: %s",
+      shishi_error_printf (handle, "Could not open %s: %s", device,
 			   strerror (errno));
       return SHISHI_FILE_ERROR;
     }
@@ -74,23 +78,22 @@ shishi_randomize (Shishi * handle, char *data, size_t datalen)
 
       if (tmp < 0)
 	{
-	  shishi_error_printf (handle, "Could not read from random device: %s",
-			       strerror (errno));
+	  shishi_error_printf (handle, "Could not read from %s: %s",
+			       device, strerror (errno));
 	  return SHISHI_FILE_ERROR;
 	}
 
       len += tmp;
 
       if (len < datalen)
-	shishi_error_printf (handle, "Short read from random device: %d < %d",
-			     len, datalen);
+	shishi_error_printf (handle, "Short read from %s: %d < %d",
+			     device, len, datalen);
     }
   while (len < datalen);
 
   rc = close (fd);
   if (rc < 0)
-    shishi_warn (handle, "Could not close random device: %s",
-		 strerror (errno));
+    shishi_warn (handle, "Could not close %s: %s", device, strerror (errno));
 
   return SHISHI_OK;
 }
