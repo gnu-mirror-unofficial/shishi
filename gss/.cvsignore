@@ -8,4 +8,5 @@ cred.lo
 misc.lo
 msg.lo
 name.lo
+obsolete.lo
 oid.lo
