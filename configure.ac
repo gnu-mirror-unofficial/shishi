@@ -292,12 +292,6 @@ AM_CONDITIONAL(STARTTLS, test "$starttls" != "no")
 # Check for gtk-doc.
 GTK_DOC_CHECK(1.1)
 
-# Docbook
-AM_MISSING_PROG(DOCBOOK2HTML, docbook2html, $missing_dir)
-AM_MISSING_PROG(DOCBOOK2TXT, docbook2txt, $missing_dir)
-AM_MISSING_PROG(DOCBOOK2PDF, docbook2pdf, $missing_dir)
-AM_MISSING_PROG(DOCBOOK2PS, docbook2ps, $missing_dir)
-
 # Let people enable/disable various encryption/checksum types.
 AC_ARG_ENABLE(des, AC_HELP_STRING([--disable-des],
 			[disable DES related encryption/checksum types]),
