@@ -582,6 +582,9 @@ typedef struct Shishi_crypto Shishi_crypto;
 #define SHISHI_GENERALIZEDTIME_LENGTH 15
 #define SHISHI_GENERALIZEDTIMEZ_LENGTH (SHISHI_GENERALIZEDTIME_LENGTH + 1)
 
+/* If non-NULL, call this function when memory is exhausted. */
+extern void (*shishi_alloc_fail_function) (void);
+
 /* init.c */
 extern Shishi *shishi (void);
 extern Shishi *shishi_server (void);

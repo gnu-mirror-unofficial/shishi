@@ -153,3 +153,16 @@ shishi_get_date (const char *p, const time_t * now)
 
   return thenspec.tv_sec;
 }
+
+/* If non-NULL, call this function when memory is exhausted. */
+void (*shishi_alloc_fail_function) (void) = 0;
+
+void
+xalloc_die (void)
+{
+  if (shishi_alloc_fail_function)
+    (*shishi_alloc_fail_function) ();
+  fflush (stdout);
+  fprintf (stderr, _("%s: Memory allocation failed\n"), PACKAGE);
+  abort ();
+}

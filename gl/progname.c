@@ -56,7 +56,7 @@ set_program_name (const char *argv0)
    earlier call to set_program_name.  Return NULL if unknown.  The
    short program name is computed by removing all directory names and
    path separators. */
-char *
+const char *
 get_short_program_name (void)
 {
   const char *slash = NULL;

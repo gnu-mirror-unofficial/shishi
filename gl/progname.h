@@ -39,7 +39,7 @@ extern void set_program_name (const char *argv0);
    earlier call to set_program_name.  Return NULL if unknown.  The
    short program name is computed by removing all directory names and
    path separators. */
-extern char *get_short_program_name (void);
+extern const char *get_short_program_name (void);
 
 
 #ifdef __cplusplus
