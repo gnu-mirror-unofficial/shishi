@@ -97,5 +97,6 @@ void krb5shishi_is P((Authenticator *, unsigned char *, int));
 void krb5shishi_reply P((Authenticator *, unsigned char *, int));
 int krb5shishi_status P((Authenticator *, char *, int));
 void krb5shishi_printsub P((unsigned char *, int, unsigned char *, int));
+void krb5shishi_cleanup P((Authenticator *));
 #endif
 #endif

@@ -133,14 +133,16 @@ Authenticator authenticators[] = {
 				krb5shishi_is,
 				krb5shishi_reply,
 				krb5shishi_status,
-				krb5shishi_printsub },
+	  krb5shishi_printsub,
+	  krb5shishi_cleanup },
 	{ AUTHTYPE_KERBEROS_V5, AUTH_WHO_CLIENT|AUTH_HOW_ONE_WAY,
 				krb5shishi_init,
 				krb5shishi_send,
 				krb5shishi_is,
 				krb5shishi_reply,
 				krb5shishi_status,
-				krb5shishi_printsub },
+	  krb5shishi_printsub,
+	  krb5shishi_cleanup },
 #endif
 #ifdef	KRB5
 # ifdef	ENCRYPTION
@@ -626,6 +628,8 @@ auth_finished(ap, result)
 	Authenticator *ap;
 	int result;
 {
+  if (ap->cleanup)
+    (*ap->cleanup) (ap);
 	if (!(authenticated = ap))
 		authenticated = &NoAuth;
 	validuser = result;
