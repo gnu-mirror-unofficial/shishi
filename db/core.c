@@ -75,7 +75,7 @@ int
 shisa_principal_find (Shisa * dbh,
 		      const char *client,
 		      const char *realm,
-		      Shisa_principal **ph)
+		      Shisa_principal *ph)
 {
   _Shisa_db *db;
   size_t i;
@@ -92,6 +92,69 @@ shisa_principal_find (Shisa * dbh,
 }
 
 int
+shisa_principal_update (Shisa * dbh,
+			const char *client,
+			const char *realm,
+			const Shisa_principal * ph)
+{
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      /* XXX ignore read-only backends. */
+      rc = db->backend->principal_update (dbh, db->state, client, realm, ph);
+      /* XXX ignore error and continue for ignore-error backends. */
+      return rc;
+    }
+
+  return SHISA_ADD_PRINCIPAL_ERROR;
+}
+
+int
+shisa_principal_add (Shisa * dbh,
+		     const char *client,
+		     const char *realm,
+		     const Shisa_principal * ph,
+		     const Shisa_key * key)
+{
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      /* XXX ignore read-only backends. */
+      rc = db->backend->principal_add (dbh, db->state, client, realm, ph, key);
+      /* XXX ignore error and continue for ignore-error backends. */
+      return rc;
+    }
+
+  return SHISA_ADD_PRINCIPAL_ERROR;
+}
+
+int
+shisa_principal_remove (Shisa * dbh,
+			const char *realm,
+			const char *principal)
+{
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      /* XXX ignore read-only backends. */
+      rc = db->backend->principal_remove (dbh, db->state, realm, principal);
+      /* XXX ignore error and continue for ignore-error backends. */
+      return rc;
+    }
+
+  return SHISA_REMOVE_PRINCIPAL_ERROR;
+}
+
+int
 shisa_realm_add (Shisa * dbh, const char *realm)
 {
   _Shisa_db *db;
@@ -102,7 +165,7 @@ shisa_realm_add (Shisa * dbh, const char *realm)
     {
       /* XXX ignore read-only backends. */
       rc = db->backend->realm_add (dbh, db->state, realm);
-      /* XXX ignore error for ignore-error backends. */
+      /* XXX ignore error and continue for ignore-error backends. */
       return rc;
     }
 
@@ -120,23 +183,9 @@ shisa_realm_remove (Shisa * dbh, const char *realm)
     {
       /* XXX ignore read-only backends. */
       rc = db->backend->realm_remove (dbh, db->state, realm);
-      /* XXX ignore error for ignore-error backends. */
+      /* XXX ignore error and continue for ignore-error backends. */
       return rc;
     }
 
   return SHISA_NO_PRINCIPAL;
-}
-
-void
-shisa_principal_free (Shisa_principal *ph)
-{
-  if (ph)
-    {
-      if (ph->name)
-	free (ph->name);
-      if (ph->realm)
-	free (ph->realm);
-      free (ph);
-    }
-
 }

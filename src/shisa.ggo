@@ -31,13 +31,17 @@ option "modify" m "Modify entry for specified PRINCIPAL in REALM in database." n
 option "remove" r "Remove specified PRINCIPAL in REALM from database." no
 
 section "Parameters"
-option "force" f "Allow removal of non-empty realms." flag off
-option "enabled" - "Only dump or list enabled principals." flag off
-option "disabled" - "Only dump or list disabled principals." flag off
+option "force" f "Allow removal of non-empty realms.\n" flag off
+option "enabled" - "Only dump or list enabled principals.\n" flag off
+option "disabled" - "Only dump or list disabled principals.\n" flag off
+
+section "Values (for --add and --modify)"
+option "encryption-type" E "Specify the encryption type of key." no
+option "password" - "Derive key from this password." no
 
 section "Other options"
 option "configuration-file" c "Use specified configuration file." string typestr="FILE" no
 option "library-options" o "Parse string as configuration file statement." string typestr="STRING" no
 
-option "verbose" v "Produce verbose output." flag off
-option "quiet" q "Don't produce any diagnostic output." flag off
+option "verbose" v "Produce verbose output.\n" flag off
+option "quiet" q "Don't produce any diagnostic output.\n" flag off

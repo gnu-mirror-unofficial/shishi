@@ -110,6 +110,21 @@ _shisa_mkdir2 (const char *path1, const char *path2)
 }
 
 int
+_shisa_mkdir3 (const char *path1, const char *path2, const char *path3)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
+
+  rc = _shisa_mkdir (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
 _shisa_rmdir (const char *file)
 {
   int rc;
@@ -131,6 +146,21 @@ _shisa_rmdir2 (const char *path1, const char *path2)
   int rc;
 
   asprintf (&tmp, "%s/%s", path1, path2);
+
+  rc = _shisa_rmdir (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
+_shisa_rmdir3 (const char *path1, const char *path2, const char *path3)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
 
   rc = _shisa_rmdir (tmp);
 

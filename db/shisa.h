@@ -47,7 +47,11 @@ enum Shisa_rc
   SHISA_ADD_REALM_EXISTS = 12,
   SHISA_ADD_REALM_ERROR = 13,
   SHISA_REMOVE_REALM_NONEMPTY = 14,
-  SHISA_REMOVE_REALM_ERROR = 15
+  SHISA_REMOVE_REALM_ERROR = 15,
+  SHISA_ADD_PRINCIPAL_EXISTS = 16,
+  SHISA_ADD_PRINCIPAL_ERROR = 17,
+  SHISA_REMOVE_PRINCIPAL_NONEMPTY = 18,
+  SHISA_REMOVE_PRINCIPAL_ERROR = 19
 };
 typedef enum Shisa_rc Shisa_rc;
 
@@ -55,8 +59,6 @@ typedef struct Shisa Shisa;
 
 struct Shisa_principal
 {
-  char *name;
-  char *realm;
   int isdisabled;
   uint32_t kvno;
   time_t notusedbefore;
@@ -110,12 +112,19 @@ extern int shisa_realm_remove (Shisa * dbh, const char *realm);
 
 extern int shisa_principal_find (Shisa * dbh,
 				 const char *client,
-				 const char *realm, Shisa_principal ** ph);
-extern void shisa_principal_free (Shisa_principal * ph);
-extern int shisa_principal_set (Shisa * dbh, const Shisa_principal * ph);
-extern int shisa_principal_add (Shisa * dbh, const Shisa_principal * ph,
+				 const char *realm,
+				 Shisa_principal * ph);
+extern int shisa_principal_update (Shisa * dbh,
+				   const char *client,
+				   const char *realm,
+				   const Shisa_principal * ph);
+extern int shisa_principal_add (Shisa * dbh,
+				const char *client,
+				const char *realm,
+				const Shisa_principal * ph,
 				const Shisa_key * key);
-extern int shisa_principal_remove (Shisa * dbh, const char *realm,
+extern int shisa_principal_remove (Shisa * dbh,
+				   const char *realm,
 				   const char *principal);
 
 extern int shisa_key_find (Shisa * dbh, const Shisa_principal * ph,
@@ -133,7 +142,7 @@ extern int shisa_valid_principal_find (Shisa * dbh,
 				       const char *client,
 				       const char *realm,
 				       time_t t,
-				       Shisa_principal ** ph);
+				       Shisa_principal * ph);
 extern int shisa_valid_key_find (Shisa * dbh,
 				 const Shisa_principal * ph,
 				 time_t t,

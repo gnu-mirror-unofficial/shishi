@@ -65,9 +65,16 @@ typedef int (*_Shisa_db_principal_find) (Shisa * dbh,
 					 void *state,
 					 const char *client,
 					 const char *realm,
-					 Shisa_principal **ph);
+					 Shisa_principal *ph);
+typedef int (*_Shisa_db_principal_update) (Shisa * dbh,
+					   void *state,
+					   const char *client,
+					   const char *realm,
+					   const Shisa_principal * ph);
 typedef int (*_Shisa_db_principal_add) (Shisa * dbh,
 					void *state,
+					const char *client,
+					const char *realm,
 					const Shisa_principal * ph,
 					const Shisa_key * key);
 typedef int (*_Shisa_db_principal_remove) (Shisa * dbh,
@@ -85,6 +92,7 @@ struct _Shisa_backend
   _Shisa_db_realm_add realm_add;
   _Shisa_db_realm_remove realm_remove;
   _Shisa_db_principal_find principal_find;
+  _Shisa_db_principal_update principal_update;
   _Shisa_db_principal_add principal_add;
   _Shisa_db_principal_remove principal_remove;
   _Shisa_db_done done;
@@ -133,9 +141,16 @@ extern int shisa_file_principal_find (Shisa * dbh,
 				      void *state,
 				      const char *client,
 				      const char *realm,
-				      Shisa_principal **ph);
+				      Shisa_principal *ph);
+extern int shisa_file_principal_update (Shisa * dbh,
+					void *state,
+					const char *client,
+					const char *realm,
+					const Shisa_principal * ph);
 extern int shisa_file_principal_add (Shisa * dbh,
 				     void *state,
+				     const char *client,
+				     const char *realm,
 				     const Shisa_principal * ph,
 				     const Shisa_key * key);
 extern int shisa_file_principal_remove (Shisa * dbh,

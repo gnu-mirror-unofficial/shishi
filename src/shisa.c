@@ -40,11 +40,16 @@
 #define N_(String) gettext_noop (String)
 
 #include <shisa.h>
+#include <shishi.h>
 
 #include "shisa_cmd.h"
 
 /* The name the program was run with, stripped of any leading path. */
 char *program_name;
+
+Shishi *sh;
+Shisa *dbh;
+struct gengetopt_args_info args_info;
 
 void
 printfield (const char *fieldname, const char *value)
@@ -70,12 +75,9 @@ printuint32field (const char *fieldname, uint32_t num)
 }
 
 int
-dumplist_realm_principal (Shisa *dbh,
-			  struct gengetopt_args_info args_info,
-			  const char *realm,
-			  const char *principal)
+dumplist_realm_principal (const char *principal, const char *realm)
 {
-  Shisa_principal *ph = NULL;
+  Shisa_principal ph;
   int rc;
 
   if (args_info.dump_given ||
@@ -87,43 +89,39 @@ dumplist_realm_principal (Shisa *dbh,
 	return rc;
     }
 
-  if (args_info.enabled_flag && ph->isdisabled)
+  if (args_info.enabled_flag && ph.isdisabled)
     return SHISA_OK;
 
-  if (args_info.disabled_flag && !ph->isdisabled)
+  if (args_info.disabled_flag && !ph.isdisabled)
     return SHISA_OK;
 
-  printf("\t%s@%s\n", principal, realm);
+  printf("\t%s\n", principal);
 
   if (args_info.dump_given)
     {
-      printfield ("Account is", ph->isdisabled ? "DISABLED" : "enabled");
-      printuint32field ("Current key version", ph->kvno);
-      if (ph->notusedbefore != (time_t) -1)
-	printtimefield ("Account not valid before", ph->notusedbefore);
-      if (ph->lastinitialtgt != (time_t) -1)
-	printtimefield ("Last initial TGT request at", ph->lastinitialtgt);
-      if (ph->lastinitialrequest != (time_t) -1)
-	printtimefield ("Last initial request at", ph->lastinitialrequest);
-      if (ph->lasttgt != (time_t) -1)
-	printtimefield ("Last TGT request at", ph->lasttgt);
-      if (ph->lastrenewal != (time_t) -1)
-	printtimefield ("Last ticket renewal at", ph->lastrenewal);
-      if (ph-> passwordexpire!= (time_t) -1)
-	printtimefield ("Password expire on", ph->passwordexpire);
-      if (ph->accountexpire != (time_t) -1)
-	printtimefield ("Account expire on", ph->accountexpire);
+      printfield ("Account is", ph.isdisabled ? "DISABLED" : "enabled");
+      printuint32field ("Current key version", ph.kvno);
+      if (ph.notusedbefore != (time_t) -1)
+	printtimefield ("Account not valid before", ph.notusedbefore);
+      if (ph.lastinitialtgt != (time_t) -1)
+	printtimefield ("Last initial TGT request at", ph.lastinitialtgt);
+      if (ph.lastinitialrequest != (time_t) -1)
+	printtimefield ("Last initial request at", ph.lastinitialrequest);
+      if (ph.lasttgt != (time_t) -1)
+	printtimefield ("Last TGT request at", ph.lasttgt);
+      if (ph.lastrenewal != (time_t) -1)
+	printtimefield ("Last ticket renewal at", ph.lastrenewal);
+      if (ph. passwordexpire!= (time_t) -1)
+	printtimefield ("Password expire on", ph.passwordexpire);
+      if (ph.accountexpire != (time_t) -1)
+	printtimefield ("Account expire on", ph.accountexpire);
     }
-
-  if (ph != NULL)
-    shisa_principal_free (ph);
 
   return SHISA_OK;
 }
 
 int
-dumplist_realm (Shisa *dbh, struct gengetopt_args_info args_info,
-		const char *realm)
+dumplist_realm (const char *realm)
 {
   char **principals;
   size_t nprincipals;
@@ -139,7 +137,7 @@ dumplist_realm (Shisa *dbh, struct gengetopt_args_info args_info,
   for (i = 0; i < nprincipals; i++)
     {
       if (rc == SHISA_OK)
-	rc = dumplist_realm_principal (dbh, args_info, realm, principals[i]);
+	rc = dumplist_realm_principal (principals[i], realm);
       free (principals[i]);
     }
   if (nprincipals > 0)
@@ -149,15 +147,19 @@ dumplist_realm (Shisa *dbh, struct gengetopt_args_info args_info,
 }
 
 int
-dumplist (Shisa *dbh, struct gengetopt_args_info args_info)
+dumplist (void)
 {
   int rc;
 
   if (args_info.inputs_num == 1)
-    rc = dumplist_realm (dbh, args_info, args_info.inputs[0]);
+    rc = dumplist_realm (args_info.inputs[0]);
   else if (args_info.inputs_num == 2)
-    rc = dumplist_realm_principal (dbh, args_info, args_info.inputs[0],
-				   args_info.inputs[1]);
+    {
+      char *realm = args_info.inputs[0];
+      char *principal = args_info.inputs[1];
+      printf ("%s\n", realm);
+      rc = dumplist_realm_principal (principal, realm);
+    }
   else
     {
       char **realms;
@@ -171,7 +173,7 @@ dumplist (Shisa *dbh, struct gengetopt_args_info args_info)
       for (i = 0; i < nrealms; i++)
 	{
 	  if (rc == SHISA_OK)
-	    rc = dumplist_realm (dbh, args_info, realms[i]);
+	    rc = dumplist_realm (realms[i]);
 	  free (realms[i]);
 	}
       if (nrealms > 0)
@@ -182,15 +184,65 @@ dumplist (Shisa *dbh, struct gengetopt_args_info args_info)
 }
 
 int
-add_realm_principal (Shisa *dbh, struct gengetopt_args_info args_info,
-		     const char *realm, const char *principal)
+modify_realm_principal (const char *principal, const char *realm)
 {
-  puts("add princ");
+  Shisa_principal ph;
+  int rc;
+
+  printf ("Modifying principal `%s@%s'...", realm, principal); fflush (stdout);
+
+  rc = shisa_principal_update (dbh, realm, principal, &ph);
+  if (rc != SHISA_OK)
+    {
+      printf ("failure: %s\n", shisa_strerror (rc));
+      return EXIT_FAILURE;
+    }
+
+  printf ("done\n");
+
+  return EXIT_SUCCESS;
 }
 
 int
-add_realm (Shisa *dbh, struct gengetopt_args_info args_info,
-	   const char *realm)
+modify (void)
+{
+  int rc;
+
+  if (args_info.inputs_num == 2)
+    rc = modify_realm_principal (args_info.inputs[1], args_info.inputs[0]);
+  else
+    {
+      error (0, 0, "too few arguments");
+      error (0, 0, "Try `%s --help' for more information.", program_name);
+      return EXIT_FAILURE;
+    }
+
+  return EXIT_SUCCESS;
+}
+
+int
+add_realm_principal (const char *principal, const char *realm)
+{
+  Shisa_principal ph;
+  Shisa_key key;
+  int rc;
+
+  printf ("Adding principal `%s@%s'...", realm, principal); fflush (stdout);
+
+  rc = shisa_principal_add (dbh, realm, principal, &ph, &key);
+  if (rc != SHISA_OK)
+    {
+      printf ("failure: %s\n", shisa_strerror (rc));
+      return EXIT_FAILURE;
+    }
+
+  printf ("done\n");
+
+  return EXIT_SUCCESS;
+}
+
+int
+add_realm (const char *realm)
 {
   int rc;
 
@@ -203,21 +255,20 @@ add_realm (Shisa *dbh, struct gengetopt_args_info args_info,
       return EXIT_FAILURE;
     }
 
-  printf ("done\n", realm);
+  printf ("done\n");
 
   return EXIT_SUCCESS;
 }
 
 int
-add (Shisa *dbh, struct gengetopt_args_info args_info)
+add (void)
 {
   int rc;
 
   if (args_info.inputs_num == 1)
-    rc = add_realm (dbh, args_info, args_info.inputs[0]);
+    rc = add_realm (args_info.inputs[0]);
   else if (args_info.inputs_num == 2)
-    rc = add_realm_principal (dbh, args_info, args_info.inputs[0],
-			      args_info.inputs[1]);
+    rc = add_realm_principal (args_info.inputs[1], args_info.inputs[0]);
   else
     {
       error (0, 0, "too few arguments");
@@ -229,15 +280,26 @@ add (Shisa *dbh, struct gengetopt_args_info args_info)
 }
 
 int
-delete_realm_principal (Shisa *dbh, struct gengetopt_args_info args_info,
-			const char *realm, const char *principal)
+delete_realm_principal (const char *realm, const char *principal)
 {
-  puts("del princ");
+  int rc;
+
+  printf ("Removing principal `%s@%s'...", realm, principal); fflush (stdout);
+
+  rc = shisa_principal_remove (dbh, principal, realm);
+  if (rc != SHISA_OK)
+    {
+      printf ("failure: %s\n", shisa_strerror (rc));
+      return EXIT_FAILURE;
+    }
+
+  printf ("done\n");
+
+  return EXIT_SUCCESS;
 }
 
 int
-delete_realm (Shisa *dbh, struct gengetopt_args_info args_info,
-	      const char *realm)
+delete_realm (const char *realm)
 {
   int rc;
 
@@ -257,15 +319,14 @@ delete_realm (Shisa *dbh, struct gengetopt_args_info args_info,
 }
 
 int
-delete (Shisa *dbh, struct gengetopt_args_info args_info)
+delete (void)
 {
   int rc;
 
   if (args_info.inputs_num == 1)
-    rc = delete_realm (dbh, args_info, args_info.inputs[0]);
+    rc = delete_realm (args_info.inputs[0]);
   else if (args_info.inputs_num == 2)
-    rc = delete_realm_principal (dbh, args_info, args_info.inputs[0],
-				 args_info.inputs[1]);
+    rc = delete_realm_principal (args_info.inputs[1], args_info.inputs[0]);
   else
     {
       error (0, 0, "too few arguments");
@@ -279,8 +340,6 @@ delete (Shisa *dbh, struct gengetopt_args_info args_info)
 int
 main (int argc, char *argv[])
 {
-  Shisa *dbh;
-  struct gengetopt_args_info args_info;
   int rc;
 
   setlocale (LC_ALL, "");
@@ -315,14 +374,21 @@ main (int argc, char *argv[])
     error (1, 0, "Could not read library options `%s': %s",
 	   args_info.library_options_arg, shisa_strerror (rc));
 
+  rc = shishi_init (&sh);
+  if (rc != SHISHI_OK)
+    error (1, 0, "Shishi initialize failed: %s", shishi_strerror (rc));
+
   if (args_info.list_given || args_info.dump_given)
-    rc = dumplist (dbh, args_info);
+    rc = dumplist ();
   else if (args_info.add_given)
-    rc = add (dbh, args_info);
+    rc = add ();
   else if (args_info.remove_given)
-    rc = delete (dbh, args_info);
+    rc = delete ();
+  else if (args_info.modify_given)
+    rc = modify ();
 
   shisa_done (dbh);
+  shishi_done (sh);
 
   return rc;
 }
