@@ -29,26 +29,42 @@
 #include <ctype.h>
 
 #ifdef HAVE_LOCALE_H
-#include <locale.h>
+# include <locale.h>
+#else
+# define setlocale(Category, Locale) /* empty */
 #endif
 
 #include <gettext.h>
+#define _(String) gettext (String)
+#define gettext_noop(String) String
+#define N_(String) gettext_noop (String)
 
 #include <shisa.h>
+
+#include "shisa_cmd.h"
 
 int
 main (int argc, char *argv[])
 {
   Shisa *dbh;
+  struct gengetopt_args_info args_info;
   int rc;
 
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
-  rc = shisa_init (&dbh);
+  if (cmdline_parser (argc, argv, &args_info) != 0)
+    return 1;
+
+  rc = shisa_init_with_paths (&dbh, args_info.configuration_file_arg);
   if (rc != SHISA_OK)
     error (1, 0, "Initialization failed");
+
+  rc = shisa_cfg (dbh, args_info.library_options_arg);
+  if (rc != SHISA_OK)
+    error (1, 0, "Could not read library options: %s\n",
+	   args_info.library_options_arg);
 
   shisa_done (dbh);
 
