@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.8 (unreleased)
 
+** Passwords are processed with SASLprep instead of KRBprep.
+
 ** Support for upgrading TCP connections to KDC to TLS supported (STARTTLS).
 STARTTLS support will be compiled in automatically, if you have GNUTLS
 installed, but can be disabled unconditionally by configuring with
