@@ -22,6 +22,7 @@
 #include <libtasn1.h>
 #define _SHISHI_HAS_LIBTASN1_H 1
 #include "internal.h"
+#include "diskio.h"
 
 #define HEADERBEG "-----BEGIN SHISHI %s-----"
 #define HEADEREND "-----END SHISHI %s-----"
@@ -148,7 +149,8 @@ shishi_encticketpart_print (Shishi * handle, FILE * fh,
 
 static int
 _shishi_read_armored_data (Shishi * handle,
-			   FILE * fh, char *buffer, size_t len, char *tag)
+			   FILE * fh, char *buffer, size_t len,
+			   const char *tag)
 {
   int lno = 0;
   size_t maxsize = len;
