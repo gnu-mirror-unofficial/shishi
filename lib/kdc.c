@@ -1,5 +1,5 @@
 /* kdc.c	Key distribution (AS/TGS) functions
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -44,10 +44,9 @@ shishi_as_derive_salt (Shishi * handle,
 		       Shishi_asn1 asrep, char *salt, size_t * saltlen)
 {
   size_t len = *saltlen;
-  size_t tmplen;
+  size_t tmplen, i, n;
   char *format;
   int res;
-  int i, n;
 
   res = shishi_asn1_number_of_elements (handle, asrep, "padata", &n);
   if (res == SHISHI_ASN1_NO_ELEMENT)
@@ -296,9 +295,8 @@ shishi_kdc_copy_cname (Shishi * handle,
 {
   char *buf;
   char *format;
-  size_t buflen;
+  size_t buflen, i, n;
   int res;
-  int i, n;
 
   res = shishi_asn1_read2 (handle, encticketpart,
 			   "cname.name-type", &buf, &buflen);
@@ -359,10 +357,9 @@ int
 shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 {
   char *reqcname, *repcname;
-  size_t reqcnamelen, repcnamelen;
+  size_t reqcnamelen, repcnamelen, i, j;
   char *format;
   int res;
-  int i, j;
 
   /* We do not compare msg-type as recommended on the ietf-krb-wg list */
 
@@ -382,15 +379,15 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   for (i = 1; i <= j; i++)
     {
       asprintf (&format, "req-body.cname.name-string.?%d", i);
-      res =
-	shishi_asn1_read2 (handle, asreq, format, &reqcname, &reqcnamelen);
+      res = shishi_asn1_read2 (handle, asreq, format,
+			       &reqcname, &reqcnamelen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
 
       asprintf (&format, "cname.name-string.?%d", i);
-      res =
-	shishi_asn1_read2 (handle, asrep, format, &repcname, &repcnamelen);
+      res = shishi_asn1_read2 (handle, asrep, format,
+			       &repcname, &repcnamelen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
