@@ -1,13 +1,12 @@
 Shishi README -- Important introductory notes.
-Copyright (C) 2002, 2003 Simon Josefsson
+Copyright (C) 2002, 2003, 2004 Simon Josefsson
 See the end for copying conditions.
 
 This directory holds Shishi, an implementation of Kerberos 5.  Shishi
 is part of a GNU system.
 
-See ANNOUNCE for an overview, and doc/shishi.{info,ps,pdf} for the
-manual.  Installation instructions are found in the INSTALL file in
-this directory.
+See doc/shishi.{info,ps,pdf} for the manual.  Installation
+instructions are found in the INSTALL file in this directory.
 
 The library, applications and self tests (lib/, db/, src/, tests/) are
 licensed under the GNU General Public License license (see COPYING),

@@ -4,15 +4,13 @@ See the end for copying conditions.
 
 * Version 0.0.16 (unreleased)
 
-** Cross compile builds should work.
-It should work for any sane cross compile target, but the only tested
-platform is uClibc/uClinux on Motorola Coldfire.
-
 ** New environment variables to override defaults in Shishi library.
 SHISHI_USER specifies default client username, SHISHI_HOME specifies
 user Shishi home directory (for configuration file, ticket cache,
 etc), SHISHI_TICKETS the ticket cache file, SHISHI_CONFIG for the
 system configuration file, SHISHI_KEYS for system wide host keys.
+
+** Experimental KDC now handle non-default ticket life time.
 
 ** Nettle is now preferred over Libgcrypt, even if Libgcrypt is available.
 Use configure parameter --with-libgcrypt to override.
@@ -23,7 +21,9 @@ Use configure parameter --with-libgcrypt to override.
 
 ** Many gnulib compatibility files were updated.
 
-** Experimental KDC now handle non-default ticket life time.
+** Cross compile builds should work.
+It should work for any sane cross compile target, but the only tested
+platform is uClibc/uClinux on Motorola Coldfire.
 
 * Version 0.0.15 (released 2004-04-18)
 
