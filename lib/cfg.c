@@ -141,7 +141,7 @@ shishi_cfg (Shishi * handle, char *option)
 	case TICKET_LIFE_OPTION:
 	  {
 	    time_t now = time (NULL);
-	    time_t then = get_date (value, &now);
+	    time_t then = shishi_get_date (value, &now);
 	    int diff = difftime (then, now);
 
 	    if (value && then != -1 && diff > 0)
@@ -161,7 +161,7 @@ shishi_cfg (Shishi * handle, char *option)
 	case RENEW_LIFE_OPTION:
 	  {
 	    time_t now = time (NULL);
-	    time_t then = get_date (value, &now);
+	    time_t then = shishi_get_date (value, &now);
 	    int diff = difftime (then, now);
 
 	    if (value && then != -1 && diff > 0)
