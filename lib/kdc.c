@@ -136,7 +136,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
     {
       shishi_error_printf (handle, "Could not DER encode AS-REQ: %s\n",
 			   shishi_strerror (res));
-      return !SHISHI_OK;
+      return res;
     }
 
   realmlen = sizeof (realm);
@@ -147,7 +147,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
     {
       shishi_error_printf (handle, "Could not get realm: %s\n",
 			   shishi_strerror_details (handle));
-      return !SHISHI_OK;
+      return res;
     }
   realm[realmlen] = '\0';
 
@@ -157,7 +157,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
     {
       shishi_error_printf (handle, "Could not send to KDC: %s\n",
 			   shishi_strerror_details (handle));
-      return !SHISHI_OK;
+      return res;
     }
   der_len = out_len;
 
@@ -179,7 +179,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
 		  shishi_error_printf
 		    (handle, "Could not DER decode AS-REP/KRB-ERROR: %s",
 		     shishi_strerror_details (handle));
-		  return !SHISHI_OK;
+		  return SHISHI_ASN1_ERROR;
 		}
 
 	      shishi_error_clear (handle);
