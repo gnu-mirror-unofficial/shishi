@@ -22,7 +22,7 @@ apis = shishi_ap.3 shishi_ap_nosubkey.3 shishi_ap_done.3 shishi_ap_set_tktoption
 
 dist_man_MANS = shishi.1 $(apis)
 
-MAINTAINERCLEANFILES = $(dist_man_MANS)
+DISTCLEANFILES = $(dist_man_MANS)
 
 shishi.1: $(top_srcdir)/src/shishi.c $(top_builddir)/src/shishi
 	$(HELP2MAN) \
