@@ -197,7 +197,8 @@ enum
   OPTION_TGS_REALM,
   OPTION_TGS_TICKET_GRANTER,
   OPTION_TGS_CLIENT_NAME,
-  OPTION_TGS_SERVER_NAME
+  OPTION_TGS_SERVER_NAME,
+  OPTION_VERBOSE_LIBRARY
 };
 
 #define TYPE_TEXT_NAME "text"
@@ -208,7 +209,7 @@ enum
 
 struct arguments
 {
-  int silent, verbose;
+  int silent, verbose, verbose_library;
   char *etypes;
   char *lib_options;
   int command;

@@ -78,6 +78,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->verbose = 1;
       break;
 
+    case OPTION_VERBOSE_LIBRARY:
+      arguments->verbose_library = 1;
+      break;
+
     case 'o':
       arguments->lib_options = arg;
       break;
@@ -756,6 +760,9 @@ static struct argp_option options[] = {
   {"verbose", 'v', 0, 0,
    "Produce verbose output.",},
 
+  {"verbose-library", OPTION_VERBOSE_LIBRARY, 0, 0,
+   "Produce verbose output in the library.",},
+
   {"quiet", 'q', 0, 0,
    "Don't produce any output."},
 
@@ -853,6 +860,13 @@ main (int argc, char *argv[])
   rc = shishi_cfg (handle, arg.lib_options);
   if (rc != SHISHI_OK)
     die ("Could not read library options: %s\n", shishi_strerror (rc));
+
+  if (arg.verbose_library)
+    {
+      rc = shishi_cfg (handle, "verbose");
+      if (rc != SHISHI_OK)
+	die ("Could not make library verbose: %s\n", shishi_strerror (rc));
+    }
 
   rc = 1;
   switch (arg.command)
@@ -1009,5 +1023,5 @@ main (int argc, char *argv[])
 
   shishi_done (handle);
 
-  return rc;
+  return rc == SHISHI_OK ? 0 : 1;
 }
