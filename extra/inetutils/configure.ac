@@ -35,8 +35,7 @@ AM_PROG_LIBTOOL
 
 # Include files that we link into our own include directory from headers.
 # Initialize it with the things we always want to use.
-INCLUDES="crypt.h arpa/telnet.h arpa/ftp.h arpa/tftp.h protocols/talkd.h
-	tftpsubs.h"
+INCLUDES="arpa/telnet.h tftpsubs.h"
 
 # Files that we link from somewhere other than headers to includes .  The
 # number of entries in LINK_SRCS should match that in LINK_DSTS.
