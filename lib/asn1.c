@@ -87,7 +87,7 @@ shishi_asn1_empty_p (Shishi * handle, Shishi_asn1 node, const char *field)
   return 0;
 }
 
-/* XXX obsolete */
+/* XXX obsolete, see shishi_asn1_read2 */
 int
 shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 		  const char *field, char *data, size_t * datalen)
@@ -116,9 +116,9 @@ shishi_asn1_read2 (Shishi * handle,
 		   char **data, size_t * datalen)
 {
   int rc;
+  int len = 0;
 
-  *datalen = 0;
-  rc = asn1_read_value (node, field, NULL, (int *) datalen);
+  rc = asn1_read_value (node, field, NULL, &len);
   if (rc != ASN1_MEM_ERROR)
     {
       shishi_error_set (handle, libtasn1_strerror (rc));
@@ -130,11 +130,21 @@ shishi_asn1_read2 (Shishi * handle,
 	return SHISHI_ASN1_ERROR;
     }
 
-  *data = xmalloc (*datalen);
+  if (data)
+    {
+      size_t datalen = (size_t) len;
 
-  rc = shishi_asn1_read (handle, node, field, *data, datalen);
-  if (rc != SHISHI_OK)
-    return rc;
+      *data = xmalloc (len + 1);
+
+      rc = shishi_asn1_read (handle, node, field, *data, &datalen);
+      if (rc != SHISHI_OK)
+	return rc;
+
+      (*data)[len] = '\0';
+    }
+
+  if (datalen)
+    *datalen = (size_t) len;
 
   return SHISHI_OK;
 }
@@ -210,6 +220,7 @@ shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
   return SHISHI_OK;
 }
 
+/* XXX obsolete, see shishi_asn1_read2_optional */
 int
 shishi_asn1_read_optional (Shishi * handle,
 			   Shishi_asn1 node, const char *field,
@@ -226,6 +237,25 @@ shishi_asn1_read_optional (Shishi * handle,
 
   if (rc == ASN1_ELEMENT_NOT_FOUND)
     *datalen = 0;
+
+  return SHISHI_OK;
+}
+
+/* XXX rename and document */
+int
+shishi_asn1_read2_optional (Shishi * handle,
+			    Shishi_asn1 node, const char *field,
+			    char **data, size_t * datalen)
+{
+  int rc;
+
+  rc = shishi_asn1_read2 (handle, node, field, data, datalen);
+  if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
+    return rc;
+
+  if (rc == SHISHI_ASN1_NO_ELEMENT)
+    if (datalen)
+      *datalen = 0;
 
   return SHISHI_OK;
 }
