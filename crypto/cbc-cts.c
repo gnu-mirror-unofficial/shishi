@@ -34,13 +34,10 @@
 #include "cbc-cts.h"
 
 #include "memxor.h"
+#include "nettle-internal.h"
 
 void
-cbc_cts_encrypt (void *ctx,
-		 void (*f) (void *ctx,
-			    unsigned length,
-			    uint8_t * dst,
-			    const uint8_t * src),
+cbc_cts_encrypt (void *ctx, nettle_crypt_func f,
 		 unsigned block_size, uint8_t * iv,
 		 unsigned length, uint8_t * dst, const uint8_t * src)
 {
@@ -74,18 +71,15 @@ cbc_cts_encrypt (void *ctx,
 }
 
 void
-cbc_cts_decrypt (void *ctx,
-		 void (*f) (void *ctx,
-			    unsigned length,
-			    uint8_t * dst,
-			    const uint8_t * src),
+cbc_cts_decrypt (void *ctx, nettle_crypt_func f,
 		 unsigned block_size, uint8_t * iv,
 		 unsigned length, uint8_t * dst, const uint8_t * src)
 {
   unsigned nblocks = length / block_size;
   unsigned restbytes = (length % block_size) == 0 ?
     block_size : length % block_size;
-  uint8_t *tmpiv = alloca (block_size);
+  TMP_DECL(tmpiv, uint8_t, NETTLE_MAX_CIPHER_BLOCK_SIZE);
+  TMP_ALLOC(tmpiv, block_size);
 
   if (length > block_size)
     {
