@@ -133,9 +133,10 @@ main (int argc, char *argv[])
   else
     fail ("shishi_safe_verify() failed (%d)\n", res);
 
+#if WITH_DES
   /* shishi_safe_set_cksum */
-  res =
-    shishi_safe_set_cksum (handle, asn1safe, SHISHI_RSA_MD5_DES, "bar", 3);
+  res = shishi_safe_set_cksum (handle, asn1safe, SHISHI_RSA_MD5_DES,
+			       "bar", 3);
   if (res == SHISHI_OK)
     success ("shishi_safe_set_cksum() OK\n");
   else
@@ -147,6 +148,7 @@ main (int argc, char *argv[])
     success ("shishi_safe_verify() OK\n");
   else
     fail ("shishi_safe_verify() failed (%d)\n", res);
+#endif
 
   /* shishi_safe_safe_der() */
   res = shishi_safe_safe_der (safe, &p, &l);
