@@ -119,7 +119,7 @@ kdc_response (Shishi * handle,
     }
   else if (oldtkt)
     res = shishi_tgs_process (handle, req, rep,
-			      shishi_ticket_enckdcreppart (handle, oldtkt),
+			      shishi_ticket_enckdcreppart (oldtkt),
 			      &kdcreppart);
   else if (arg.password)
     res = shishi_as_process (handle, req, rep, arg.password, &kdcreppart);
