@@ -30,7 +30,7 @@ if NETTLE
 SUBDIRS += crypto
 endif
 
-SUBDIRS += lib src tests doc
+SUBDIRS += lib db src tests doc
 
 DIST_SUBDIRS = m4 po gl asn1 crypto lib src tests doc examples extra
 
