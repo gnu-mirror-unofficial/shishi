@@ -3312,6 +3312,9 @@ Usage: shisa [OPTIONS]... [REALM [PRINCIPAL]]...
 Operations:
   -a, --add                          Add realm or principal to database.
   -d, --dump                         Dump entries in database.
+  -n, --key-add                      Add new key to a principal in database.
+      --key-remove                   Remove a key from a principal in
+                                       database.
   -l, --list                         List entries in database.
   -m, --modify                       Modify principal entry in database.
   -r, --remove                       Remove realm or principal from database.
@@ -3323,18 +3326,19 @@ Parameters:
                                          (default=off)
       --disabled                     Only dump or list disabled principals.
                                          (default=off)
-      --keys                         Print sensitive cryptographic key and password.
-                                         (default=off)
+      --keys                         Print cryptographic key and password in
+                                       hostkey format.  (default=off)
  
-Values (for --add and --modify):
+Values:
   -E, --encryption-type=STRING       Override default key encryption type.
                                        Valid values include 'aes128',
                                        'aes256', 'aes' (same as 'aes256'),
                                        '3des', 'des-md5', 'des-md4',
                                        'des-crc', 'des' (same as 'des-md5'),
                                        and 'arcfour'.
-      --random                       Use a random key.  (default)
+      --key-version=NUMBER           Version of key.
       --password[=STRING]            Derive key from this password.
+      --random                       Use a random key.  (default)
       --salt=STRING                  Use specified salt for deriving key.
                                        Defaults to concatenation of realm and
                                        (unwrapped) principal name.
