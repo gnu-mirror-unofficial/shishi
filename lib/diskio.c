@@ -689,6 +689,53 @@ _shishi_krberror_input (Shishi * handle,
 }
 
 int
+_shishi_safe_input (Shishi * handle, FILE * fh, ASN1_TYPE * safe, int type)
+{
+  char der[BUFSIZ];
+  size_t derlen;
+  char b64der[BUFSIZ];
+  size_t b64len = 0;
+  int res;
+
+  if (type == 0)
+    {
+      b64len = sizeof (b64der);
+      res = _shishi_read_armored_data (handle, fh, b64der, b64len,
+				       "KRB-SAFE");
+      if (res != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, "armor data read fail\n");
+	  return res;
+	}
+
+      derlen = shishi_from_base64 (&der[0], b64der);
+    }
+  else
+    {
+      derlen = fread (der, sizeof (der[0]),
+		      sizeof (der) / sizeof (der[0]), fh);
+      if (derlen <= 0 || !feof (fh) || ferror (fh))
+	{
+	  shishi_error_printf (handle,
+			       "Error reading from file (got %d bytes)...",
+			       derlen);
+	  return !SHISHI_OK;
+	}
+    }
+
+  *safe = shishi_d2a_krberror (handle, der, derlen);
+  if (*safe == ASN1_TYPE_EMPTY)
+    {
+      printf ("bad magic %s\n", shishi_strerror_details(handle));
+      shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
+
+      return !SHISHI_OK;
+    }
+
+  return SHISHI_OK;
+}
+
+int
 shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 {
   int lno = 0;

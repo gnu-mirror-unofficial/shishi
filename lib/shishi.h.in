@@ -267,6 +267,7 @@ typedef struct Shishi_as Shishi_as;
 typedef struct Shishi_tgs Shishi_tgs;
 typedef struct Shishi_ap Shishi_ap;
 typedef struct Shishi_key Shishi_key;
+typedef struct Shishi_safe Shishi_safe;
 
 /* init.c */
 extern Shishi *shishi (void);

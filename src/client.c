@@ -26,6 +26,7 @@ client (Shishi * handle, struct arguments arg)
 {
   Shishi_ticket *tkt;
   Shishi_ap *ap;
+  Shishi_safe *safe;
   int res;
 
   if (arg.cname == NULL)
@@ -59,14 +60,14 @@ client (Shishi * handle, struct arguments arg)
   res = shishi_ap_tktoptions (handle, &ap, tkt, arg.apoptions);
   if (res != SHISHI_OK)
     {
-      printf ("Could not create AP: %s", shishi_strerror (res));
+      printf ("Could not create AP: %s\n", shishi_strerror (res));
       return res;
     }
 
   res = shishi_ap_req_build (ap);
   if (res != SHISHI_OK)
     {
-      printf ("Could not build AP-REQ: %s", shishi_strerror (res));
+      printf ("Could not build AP-REQ: %s\n", shishi_strerror (res));
       return res;
     }
 
@@ -91,6 +92,20 @@ client (Shishi * handle, struct arguments arg)
 	printf("AP-REP verification OK...\n");
       else
 	printf("AP-REP verification error: %s\n", shishi_strerror(res));
+    }
+
+  res = shishi_safe(handle, &safe);
+  if (res != SHISHI_OK)
+    {
+      printf ("Could not build SAFE: %s\n", shishi_strerror (res));
+      return res;
+    }
+
+  res = shishi_safe_print(handle, stdout, safe);
+  if (res != SHISHI_OK)
+    {
+      printf ("Could not print SAFE: %s\n", shishi_strerror (res));
+      return res;
     }
 
   return SHISHI_OK;

@@ -251,8 +251,11 @@ shishi_key_done (Shishi_key **key)
 void
 shishi_key_copy (Shishi_key * dstkey, Shishi_key *srckey)
 {
+  shishi_key_principal_set(dstkey, shishi_key_principal(srckey));
+  shishi_key_realm_set(dstkey, shishi_key_realm(srckey));
   shishi_key_type_set(dstkey, shishi_key_type(srckey));
   shishi_key_value_set(dstkey, shishi_key_value(srckey));
+  shishi_key_version_set(dstkey, shishi_key_version(srckey));
 }
 
 /**
