@@ -1,4 +1,4 @@
-# argp.m4 serial 2
+# argp.m4 serial 1
 dnl Copyright (C) 2003 Free Software Foundation, Inc.
 dnl This file is free software, distributed under the terms of the GNU
 dnl General Public License.  As a special exception to the GNU General
@@ -8,14 +8,6 @@ dnl the same distribution terms as the rest of that program.
 
 AC_DEFUN([gl_ARGP],
 [
-  gl_ARGP_PREREQ
-])
-
-# Prerequisites of lib/argp*.
-AC_DEFUN([gl_ARGP_PREREQ],
-[
-  AC_CHECK_HEADERS([linewrap.h features.h])
-  AC_CHECK_DECLS([program_invocation_name, program_invocation_short_name],,,
-                 [[#include <errno.h>]])
-  AC_CHECK_FUNCS(flockfile funlockfile)
+  AC_CHECK_HEADERS([argp.h linewrap.h])
+  AC_CHECK_FUNCS(argp_parse)
 ])
