@@ -1274,7 +1274,7 @@ shishi_checksum_name (int32_t type)
  * shishi_checksum_cksumlen:
  * @type: encryption type, see Shishi_etype.
  *
- * Return value: Return length of checksum used for the encryption type,
+ * Return value: Return length of checksum used for the checksum type,
  * as defined in the standards.
  **/
 size_t
