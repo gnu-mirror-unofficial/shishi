@@ -822,6 +822,9 @@ main (int argc, char *argv[])
 	  {
 	    printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
 		    shishi_strerror_details (handle));
+	    if (rc == SHISHI_GOT_KRBERROR)
+	      shishi_krberror_pretty_print(handle, stdout,
+					   shishi_as_get_krberror(as));
 	    break;
 	  }
 
@@ -906,6 +909,9 @@ main (int argc, char *argv[])
 	  {
 	    printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
 		    shishi_strerror_details (handle));
+	    if (rc == SHISHI_GOT_KRBERROR)
+	      shishi_krberror_pretty_print(handle, stdout,
+					   shishi_tgs_get_krberror(tgs));
 	    break;
 	  }
 
