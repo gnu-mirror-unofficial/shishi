@@ -50,9 +50,9 @@ shishi_principal_default_guess (void)
  * shishi_principal_default:
  * @handle: Shishi library handle create by shishi_init().
  *
- * The default principal name is the name returned from getpwuid
- * (getuid) but can be overridden by specifying the environment
- * variable SHISHI_USER.
+ * The default principal name is the name returned from
+ * getpwuid(getuid) but can be overridden by specifying the
+ * environment variable SHISHI_USER.
  *
  * Return value: Returns the default principal name used in the
  * library.  (Not a copy of it, so don't modify or deallocate it.)
