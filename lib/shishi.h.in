@@ -1045,7 +1045,7 @@ extern int shishi_kdcreq_set_cname (Shishi * handle, Shishi_asn1 kdcreq,
 				    Shishi_name_type name_type,
 				    const char *principal);
 extern int shishi_kdcreq_server (Shishi * handle, Shishi_asn1 kdcreq,
-				 char **server, size_t ** serverlen);
+				 char **server, size_t *serverlen);
 extern int shishi_kdcreq_sname_get (Shishi * handle, Shishi_asn1 kdcreq,
 				    char *sname, size_t * snamelen);
 extern int shishi_kdcreq_snamerealm_get (Shishi * handle, Shishi_asn1 kdcreq,
