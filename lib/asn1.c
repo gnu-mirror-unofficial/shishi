@@ -19,7 +19,31 @@
  *
  */
 
+#include <libtasn1.h>
+#define _SHISHI_HAS_LIBTASN1_H 1
 #include "internal.h"
+
+extern const ASN1_ARRAY_TYPE shishi_asn1_tab[];
+
+Shishi_asn1
+_shishi_asn1_read (void)
+{
+  Shishi_asn1 definitions = NULL;
+  int asn1_result = ASN1_SUCCESS;
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
+
+  asn1_result = asn1_array2tree (shishi_asn1_tab,
+				 &definitions, errorDescription);
+  if (asn1_result != ASN1_SUCCESS)
+    {
+      fprintf (stderr, "libshishi: error: %s\n", errorDescription);
+      fprintf (stderr, "libshishi: error: %s\n",
+	       libtasn1_strerror (asn1_result));
+      return NULL;
+    }
+
+  return definitions;
+}
 
 int
 shishi_a2d_field (Shishi * handle,
@@ -224,26 +248,6 @@ error:
 }
 
 Shishi_asn1
-shishi_asn1_encticketpart (Shishi * handle)
-{
-  int res = ASN1_SUCCESS;
-  Shishi_asn1 node = NULL;
-
-  res = asn1_create_element (handle->asn1, "Kerberos5.EncTicketPart",
-			     &node, "EncTicketPart");
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  return node;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != NULL)
-    asn1_delete_structure (&node);
-  return NULL;
-}
-
-Shishi_asn1
 shishi_asn1_new (Shishi * handle, const char *field, const char *name)
 {
   ASN1_TYPE node = ASN1_TYPE_EMPTY;
@@ -257,6 +261,30 @@ shishi_asn1_new (Shishi * handle, const char *field, const char *name)
     }
 
   return (Shishi_asn1) node;
+}
+
+Shishi_asn1
+shishi_asn1_asreq (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.AS-REQ", "KDC-REQ");
+}
+
+Shishi_asn1
+shishi_asn1_asrep (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.AS-REP", "KDC-REP");
+}
+
+Shishi_asn1
+shishi_asn1_tgsreq (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.TGS-REQ", "KDC-REQ");
+}
+
+Shishi_asn1
+shishi_asn1_tgsrep (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.TGS-REP", "KDC-REP");
 }
 
 Shishi_asn1
@@ -275,6 +303,42 @@ Shishi_asn1
 shishi_asn1_encapreppart (Shishi * handle)
 {
   return shishi_asn1_new (handle, "Kerberos5.EncAPRepPart", "EncAPRepPart");
+}
+
+Shishi_asn1
+shishi_asn1_encticketpart (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.EncTicketPart", "EncTicketPart");
+}
+
+Shishi_asn1
+shishi_asn1_authenticator (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.Authenticator", "Authenticator");
+}
+
+Shishi_asn1
+shishi_asn1_enckdcreppart (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.EncKDCRepPart", "EncKDCRepPart");
+}
+
+Shishi_asn1
+shishi_asn1_encasreppart (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.EncASRepPart", "EncKDCRepPart");
+}
+
+Shishi_asn1
+shishi_asn1_krberror (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.KRB-ERROR", "KRB-ERROR");
+}
+
+Shishi_asn1
+shishi_asn1_krbsafe (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.KRB-SAFE", "KRB-SAFE");
 }
 
 Shishi_asn1
