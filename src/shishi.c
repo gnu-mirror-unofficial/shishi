@@ -526,7 +526,7 @@ static struct argp_option options[] = {
 
   /************** TGS */
 
-  {0, 0, 0, 0, "Options for Ticket Granting Service (TGS-OPTIONS):", 300},
+  {0, 0, 0, 0, "Options for Ticket Granting Service (TGS-OPTIONS):", 200},
 
   {"client-name", OPTION_TGS_CLIENT_NAME, "NAME", 0,
    "Client name. Default is login username. Used to locate ticket "
@@ -548,21 +548,21 @@ static struct argp_option options[] = {
 
   /************** LIST */
 
-  {0, 0, 0, 0, "Options for the List command (LIST-OPTIONS):", 200},
+  {0, 0, 0, 0, "Options for the List command (LIST-OPTIONS):", 300},
 
   {"server-name", OPTION_LIST_SERVER_NAME, "NAME", 0,
-   "Restrict list to tickets for specified server."},
+   "List only tickets for specified server."},
 
   /************** DESTROY */
 
-  {0, 0, 0, 0, "Options for the Destroy command (DESTROY-OPTIONS):", 200},
+  {0, 0, 0, 0, "Options for the Destroy command (DESTROY-OPTIONS):", 400},
 
   {"server-name", OPTION_DESTROY_SERVER_NAME, "NAME", 0,
    "Destroy only tickets for specified server."},
 
  /************** CLIENT */
 
-  {0, 0, 0, 0, "Options for Network Client (CLIENT-OPTIONS):", 400},
+  {0, 0, 0, 0, "Options for Network Client (CLIENT-OPTIONS):", 500},
 
   {"options", OPTION_CLIENT_AP_OPTIONS, "OPTION[,OPTION...]", 0,
    "Indicate AP-OPTIONS separated by comma (,) or whitespace. "
@@ -580,7 +580,7 @@ static struct argp_option options[] = {
 
   /************** SERVER */
 
-  {0, 0, 0, 0, "Options for Network Server (SERVER-OPTIONS):", 500},
+  {0, 0, 0, 0, "Options for Network Server (SERVER-OPTIONS):", 600},
 
   {"client-name", OPTION_KDC_CLIENT_NAME, "NAME", 0,
    "Client name. Default is login username."},
@@ -601,7 +601,7 @@ static struct argp_option options[] = {
   /************** AP */
 
   {0, 0, 0, 0,
-   "Options for low-level Client/Server Authentication (AP-OPTIONS):", 600},
+   "Options for low-level Client/Server Authentication (AP-OPTIONS):", 700},
 
   {"data", OPTION_AP_AUTHENTICATOR_DATA, "B64STRING", 0,
    "Base64 encoded data to checksum in generated authenticator. "
@@ -636,7 +636,7 @@ static struct argp_option options[] = {
   /************** CRYPTO */
 
   {0, 0, 0, 0,
-   "Options for low-level cryptography (CRYPTO-OPTIONS):", 700},
+   "Options for low-level cryptography (CRYPTO-OPTIONS):", 800},
 
   {"algorithm", OPTION_CRYPTO_ALGORITHM, "ALGORITHM", 0,
    "Cipher algorithm, expressed either as the etype integer or "
@@ -693,7 +693,7 @@ static struct argp_option options[] = {
   /************** KDC */
 
   {0, 0, 0, 0,
-   "Options for low-level Key Distribution Services (KDC-OPTIONS):", 800},
+   "Options for low-level Key Distribution Services (KDC-OPTIONS):", 900},
 
   {"client-name", OPTION_KDC_CLIENT_NAME, "NAME", 0,
    "Client name. Default is login username. Only for AS."},
