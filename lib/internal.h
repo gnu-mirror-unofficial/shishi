@@ -242,7 +242,6 @@ struct Shishi
   char *kdc;
   char error[1024];
   char *gztime_buf[40];
-  int shortnonceworkaround;
   char *usercfgfile;
   char *ticketsetfile;
   Shishi_ticketset *ticketset;

@@ -90,8 +90,6 @@ shishi (void)
 
   handle->asn1 = read_asn1 ();
 
-  handle->shortnonceworkaround = 1;
-
   handle->kdctimeout = 5;
   handle->kdcretries = 3;
 

@@ -40,7 +40,7 @@ _shishi_kdcreq (Shishi * handle, int as)
   int res = ASN1_SUCCESS;
   ASN1_TYPE node = ASN1_TYPE_EMPTY;
   char *servicebuf[3];
-  char noncebuf[20];
+  char noncebuf[4];
 
   if (as)
     res =
@@ -125,8 +125,7 @@ _shishi_kdcreq (Shishi * handle, int as)
 
   shishi_randomize (handle, &noncebuf[0], sizeof (noncebuf));
   res = asn1_write_value (node, "KDC-REQ.req-body.nonce", noncebuf,
-			  handle->
-			  shortnonceworkaround ? 4 : sizeof (noncebuf));
+			  sizeof (noncebuf));
   if (res != ASN1_SUCCESS)
     goto error;
 

@@ -70,11 +70,6 @@ shishi_strerror (int err)
 	_("Replay protection value (nonce) differ between request and reply");
       break;
 
-    case SHISHI_NONCE_LENGTH_MISMATCH:
-      p = _("Length of replay protection value (nonce) differ, probably due "
-	    "to buggy server that truncates value to 4 byte (--short-nonce).");
-      break;
-
     case SHISHI_REALM_MISMATCH:
       p = _("Client realm value differ between request and reply");
       break;

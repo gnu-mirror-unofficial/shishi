@@ -189,7 +189,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
 		}
 
 	      shishi_error_printf
-		(handle, "Received KRB-ERROR. if tgs, try --short-nonce");
+		(handle, "Received KRB-ERROR.");
 
 	      return !SHISHI_OK;
 	    }
@@ -345,12 +345,6 @@ shishi_as_check_cname (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
  * matches.  This is one of the steps that has to be performed when
  * processing a KDC-REQ and KDC-REP exchange.
  *
- * If the "shortnonceworkaround" variable is set in the handle, this
- * function accepts truncated nonces in the response after printing an
- * warning to stderr. (Specifically, if the sent nonce was longer than
- * 4 byte and the received nonce 4 bytes and matched the last 4 bytes
- * of the sent nonce, it is accepted.)
- *
  * Return value: Returns SHISHI_OK if successful,
  * SHISHI_NONCE_LENGTH_MISMATCH if the nonces have different lengths
  * (usually indicates that buggy server truncated nonce to 4 bytes),
@@ -398,19 +392,31 @@ shishi_kdc_check_nonce (Shishi * handle,
       printf ("\n");
     }
 
-  if (handle->shortnonceworkaround && repnoncelen == 4 && reqnoncelen > 4)
+  if (reqnoncelen > 4 && repnoncelen == 4)
     {
-      fprintf (stderr, "warning: buggy server truncated nonce to 4 bytes\n");
+      /* This case warrants some explanation.
+       *
+       * RFC 1510 didn't restrict nonce to 4 bytes, so the nonce field
+       * may be longer. There are KDCs that will accept longer nonces
+       * but truncated them to 4 bytes in the response.  If we happen
+       * to parse such a KDC request, we consider it OK even though it
+       * isn't.  I doubt this is a security problem, because you need
+       * to break the integrity protection of the encryption system
+       * as well as guess the nonce correctly.  The nonce doesn't seem
+       * to serve any purpose at all, really.
+       *
+       */
+
       if (memcmp (reqnonce + reqnoncelen - 4, repnonce, 4) != 0)
 	return SHISHI_NONCE_MISMATCH;
+
+      fprintf (stderr, "warning: server truncated long nonce to 4 bytes\n");
 
       return SHISHI_OK;
     }
 
-  if (reqnoncelen != repnoncelen)
-    return SHISHI_NONCE_LENGTH_MISMATCH;
-
-  if (memcmp (reqnonce, repnonce, repnoncelen) != 0)
+  if (reqnoncelen != repnoncelen || 
+      memcmp (reqnonce, repnonce, repnoncelen) != 0)
     return SHISHI_NONCE_MISMATCH;
 
   return SHISHI_OK;
@@ -595,7 +601,7 @@ shishi_kdc_process (Shishi * handle,
 	return res;
     }
 
-  res = shishi_kdcrep_decrypt (handle, kdcrep, keyusage, keytype, key, keylen, 
+  res = shishi_kdcrep_decrypt (handle, kdcrep, keyusage, keytype, key, keylen,
 			       enckdcreppart);
   if (res != SHISHI_OK)
     return res;
