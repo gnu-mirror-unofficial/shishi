@@ -365,7 +365,7 @@ apply_options (const char *realm,
 	  char *p;
 	  asprintf (&salt, "%s%s", realm, principal);
 
-	  /* FIXME: Parse principal/realm and creat proper salt. */
+	  /* FIXME: Parse principal/realm and create proper salt. */
 	  while ((p = strchr (salt, '/')))
 	    memmove (p, p + 1, strlen (p));
 	}
