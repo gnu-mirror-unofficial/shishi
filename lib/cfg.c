@@ -486,9 +486,9 @@ shishi_cfg_default_userdirectory (Shishi * handle)
   char *home;
   char *envdir;
 
-  file = getenv ("SHISHI_HOME");
-  if (file)
-    return file;
+  envdir = getenv ("SHISHI_HOME");
+  if (envdir)
+    return envdir;
 
   if (!handle->userdirectory)
     {
@@ -531,11 +531,7 @@ shishi_cfg_default_userfile (Shishi * handle)
   char *home;
 
   if (!handle->usercfgfile)
-    {
-      home = getenv ("HOME");
-
-      asprintf (&handle->usercfgfile, "%s%s", home ? home : "", USERCFG_FILE);
-    }
+    handle->usercfgfile = shishi_cfg_userdirectory_file (handle, USERCFG_FILE);
 
   return handle->usercfgfile;
 }
