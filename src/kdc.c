@@ -35,7 +35,8 @@ asreq1 (Shishi_as * as)
   int rc;
   char *username = NULL, *servername = NULL, *realm = NULL;
   Shisa_principal server, user;
-  uint32_t sessionkeytype = -1, etype;
+  uint32_t sessionkeytype = -1;
+  int32_t etype;
   int i;
 
   /*
