@@ -482,7 +482,8 @@ from the base protocol by the simplified key derivation function
 (similar to the password key derivation functions of
 @code{des3-cbc-sha1-kd}).  It has no security proof, but is assumed to
 provide good security, if the key derivation function is good.  It is
-compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
+compatible with the @code{aes*-cts-hmac-sha1-96} encryption
+mechanisms.
 
 @end table
 
