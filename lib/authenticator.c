@@ -1,5 +1,5 @@
 /* authenticator.c	functions for authenticators
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -79,9 +79,11 @@ shishi_authenticator (Shishi * handle)
   if (res != ASN1_SUCCESS)
     goto error;
 
+#if 0
   res = asn1_write_value (node, "Authenticator.authorization-data", NULL, 0);
   if (res != ASN1_SUCCESS)
     goto error;
+#endif
 
   return node;
 
@@ -403,7 +405,6 @@ shishi_authenticator_remove_cksum (Shishi * handle, ASN1_TYPE authenticator)
   return SHISHI_OK;
 }
 
-
 /**
  * shishi_authenticator_set_cksum:
  * @handle: shishi handle as allocated by shishi_init().
@@ -443,6 +444,80 @@ shishi_authenticator_set_cksum (Shishi * handle,
 }
 
 /**
+ * shishi_authenticator_clear_authorizationdata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: Authenticator as allocated by shishi_authenticator().
+ *
+ * Remove the authorization-data field from Authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_clear_authorizationdata (Shishi * handle,
+					      ASN1_TYPE authenticator)
+{
+  int res;
+
+  res = asn1_write_value (authenticator, "Authenticator.authorization-data",
+			  NULL, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_authenticator_add_authorizationdata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @adtype: input authorization data type to add.
+ * @addata: input authorization data to add.
+ * @addatalen: size of input authorization data to add.
+ *
+ * Add authorization data to authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_add_authorizationdata (Shishi * handle,
+					    ASN1_TYPE authenticator,
+					    int adtype,
+					    char *addata, int addatalen)
+{
+  char format[BUFSIZ];
+  char buf[BUFSIZ];
+  int res;
+  int i;
+
+  res = asn1_write_value (authenticator, "Authenticator.authorization-data",
+			  "NEW", 1);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  res = asn1_number_of_elements (authenticator,
+				 "Authenticator.authorization-data", &i);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  sprintf (buf, "%d", adtype);
+  sprintf (format, "Authenticator.authorization-data.?%d.ad-type", i);
+  res = asn1_write_value (authenticator, format, buf, 0);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  sprintf (format, "Authenticator.authorization-data.?%d.ad-data", i);
+  res = asn1_write_value (authenticator, format, addata, addatalen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  return SHISHI_OK;
+
+ error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  return SHISHI_ASN1_ERROR;
+}
+
+/**
  * shishi_authenticator_add_cksum:
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: authenticator as allocated by shishi_authenticator().
@@ -462,7 +537,7 @@ shishi_authenticator_add_cksum (Shishi * handle,
 {
   int res;
 
-  if (datalen > 0)
+  if (data && datalen > 0)
     {
       char cksum[BUFSIZ];
       int cksumlen;
