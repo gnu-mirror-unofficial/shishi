@@ -98,13 +98,10 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "req-body.from", NULL, 0);
-  if (res != SHISHI_OK)
-    goto error;
-
   res = shishi_asn1_write (handle, node, "req-body.till",
 			   shishi_generalize_time (handle,
-						   time (NULL) + 1000), 0);
+						   time (NULL) +
+						   handle->ticketlife), 0);
   if (res != SHISHI_OK)
     goto error;
 
@@ -715,4 +712,55 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
     return res;
 
   return res;
+}
+
+int
+shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  char buffer[BUFSIZ];		/* XXX dynamically allocate this */
+  int buflen;
+  int res;
+
+  if (VERBOSE (handle))
+    printf ("Building KDC-REQ...\n");
+
+  buflen = sizeof(buffer);
+  res = shishi_asn1_empty_field (handle, kdcreq, buffer, &buflen,
+				 "req-body.rtime");
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not read rtime\n");
+      return res;
+    }
+
+  if (buflen == 0)
+    {
+      res = shishi_asn1_write (handle, kdcreq, "req-body.rtime", NULL, 0);
+      if (res != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, "Could not write rtime\n");
+	  return res;
+	}
+    }
+
+  buflen = sizeof(buffer);
+  res = shishi_asn1_empty_field (handle, kdcreq, buffer, &buflen,
+				 "req-body.from");
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not read from\n");
+      return res;
+    }
+
+  if (buflen == 0)
+    {
+      res = shishi_asn1_write (handle, kdcreq, "req-body.from", NULL, 0);
+      if (res != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, "Could not write from\n");
+	  return res;
+	}
+    }
+
+  return SHISHI_OK;
 }
