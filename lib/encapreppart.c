@@ -1,5 +1,5 @@
 /* encapreppart.c --- Encrypted authentication reply part functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -41,6 +41,7 @@ shishi_encapreppart (Shishi * handle)
   Shishi_asn1 node = NULL;
   struct timeval tv;
   struct timezone tz;
+  uint32_t seqnr;
 
   node = shishi_asn1_encapreppart (handle);
   if (!node)
@@ -61,7 +62,18 @@ shishi_encapreppart (Shishi * handle)
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "seq-number", NULL, 0);
+  /*
+   * For sequence numbers to adequately support the detection of
+   * replays they SHOULD be non-repeating, even across connection
+   * boundaries. The initial sequence number SHOULD be random and
+   * uniformly distributed across the full space of possible sequence
+   * numbers, so that it cannot be guessed by an attacker and so that
+   * it and the successive sequence numbers do not repeat other
+   * sequences.
+   */
+  shishi_randomize (handle, 0, &seqnr, sizeof(seqnr));
+
+  res = shishi_asn1_write_uint32 (handle, node, "seq-number", seqnr);
   if (res != SHISHI_OK)
     goto error;
 
