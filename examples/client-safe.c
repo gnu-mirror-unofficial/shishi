@@ -1,6 +1,6 @@
-/* client-safe.c	sample kerberos authenticated client with integrity
- *                      protected application data exchange
- * Copyright (C) 2003  Simon Josefsson
+/* client-safe.c --- Sample Shishi authenticated client with integrity
+ *                   protected application data exchange.
+ * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *

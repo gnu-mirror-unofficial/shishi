@@ -1,5 +1,5 @@
 /* realm.c --- Realm related functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -107,7 +107,7 @@ shishi_realm_default_set (Shishi * handle, const char *realm)
  * @handle: Shishi library handle create by shishi_init().
  * @server: hostname to find realm for.
  *
- * Find Kerberos realm for a host using configuration file.
+ * Find realm for a host using configuration file.
  *
  * Return value: Returns realm for host, or NULL if not found.
  **/
@@ -122,7 +122,7 @@ shishi_realm_for_server_file (Shishi * handle, char *server)
  * @handle: Shishi library handle create by shishi_init().
  * @server: hostname to find realm for.
  *
- * Find Kerberos realm for a host using DNS lookups, according to
+ * Find realm for a host using DNS lookups, according to
  * draft-ietf-krb-wg-krb-dns-locate-03.txt.  Since DNS lookups may be
  * spoofed, relying on the realm information may result in a
  * redirection attack.  In a single-realm scenario, this only achieves
@@ -138,8 +138,8 @@ shishi_realm_for_server_file (Shishi * handle, char *server)
  * _kerberos.mrkserver.asdf.com.   IN      TXT     "MARKETING.ASDF.COM"
  * _kerberos.salesserver.asdf.com. IN      TXT     "SALES.ASDF.COM"
  *
- * Let us suppose that in this case, a Kerberos client wishes to use a
- * Kerberized service on the host foo.asdf.com.  It would first query:
+ * Let us suppose that in this case, a client wishes to use a service
+ * on the host foo.asdf.com.  It would first query:
  *
  * _kerberos.foo.asdf.com. IN TXT
  *
@@ -188,8 +188,8 @@ shishi_realm_for_server_dns (Shishi * handle, char *server)
  * @handle: Shishi library handle create by shishi_init().
  * @server: hostname to find realm for.
  *
- * Find Kerberos realm for a host, using various methods.  Currently
- * this includes static configuration files (see
+ * Find realm for a host, using various methods.  Currently this
+ * includes static configuration files (see
  * shishi_realm_for_server_file()) and DNS (see
  * shishi_realm_for_server_dns()).
  *

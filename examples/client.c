@@ -1,5 +1,5 @@
-/* client.c	sample kerberos authenticated client
- * Copyright (C) 2003  Simon Josefsson
+/* client.c --- Sample client with authentication using Shishi.
+ * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *

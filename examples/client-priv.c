@@ -1,6 +1,6 @@
-/* client-priv.c	sample kerberos authenticated client with privacy
- *                      protected application data exchange
- * Copyright (C) 2003  Simon Josefsson
+/* client-priv.c --- Sample Shishi authenticated client, with privacy
+ *                   protected application data exchange.
+ * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *

@@ -1,5 +1,5 @@
-/* client-cksum.c	sample kerberos authenticated client with checksum
- * Copyright (C) 2003  Simon Josefsson
+/* client-cksum.c --- Sample Shishi authenticated client, with checksum data.
+ * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *

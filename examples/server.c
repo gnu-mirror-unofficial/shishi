@@ -1,5 +1,5 @@
-/* server.c	sample kerberos authenticated server
- * Copyright (C) 2003  Simon Josefsson
+/* server.c --- Sample server with authentication using Shishi.
+ * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
