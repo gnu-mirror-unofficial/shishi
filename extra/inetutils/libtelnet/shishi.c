@@ -183,7 +183,7 @@ krb5shishi_send (Authenticator *ap)
     }
 
   if (auth_debug_mode)
-    shishi_ticket_print (shishi_handle, tkt, stdout);
+    shishi_ticket_print (tkt, stdout);
 
   if (!UserNameRequested)
     {
@@ -201,7 +201,7 @@ krb5shishi_send (Authenticator *ap)
 #if 0
   // ENCRYPTION
   ap_opts |= SHISHI_APOPTIONS_USE_SESSION_KEY;
-#endif 
+#endif
 
   //krb5_auth_con_setflags (telnet_context, auth_context,
   // KRB5_AUTH_CONTEXT_RET_TIME);
@@ -211,8 +211,8 @@ krb5shishi_send (Authenticator *ap)
 
   if (tkt)
     {
-      rc = shishi_ap_data (shishi_handle, tkt, (char *) &type_check, 2, 
-			   &auth_handle);
+      rc = shishi_ap_tktoptionsdata (shishi_handle, &auth_handle, tkt,
+				     ap_opts, (char *) &type_check, 2);
       if (rc != SHISHI_OK)
 	{
 	  DEBUG(("telnet: Kerberos V5: Could not make AP-REQ (%s)\r\n",
@@ -220,27 +220,16 @@ krb5shishi_send (Authenticator *ap)
 	  return 0;
 	}
 
-      rc = shishi_apreq_options_add (shishi_handle, 
-				     shishi_ap_get_apreq (auth_handle), 
-				     ap_opts);
-      if (rc != SHISHI_OK)
-	{
-	  DEBUG(("telnet: Kerberos V5: could not set AP-Options (%s)\r\n",
-		 shishi_strerror (rc)));
-	  return 0;
-	}
-
       if (auth_debug_mode)
 	{
 	  shishi_authenticator_print
-	    (shishi_handle, stdout, shishi_ap_get_authenticator (auth_handle));
-	  shishi_apreq_print (shishi_handle, stdout, 
-			      shishi_ap_get_apreq (auth_handle));
+	    (shishi_handle, stdout, shishi_ap_authenticator (auth_handle));
+	  shishi_apreq_print (shishi_handle, stdout,
+			      shishi_ap_req (auth_handle));
 	}
 
       apreq_len = sizeof(apreq);
-      rc = shishi_ap_request_get_der (shishi_handle, auth_handle, 
-				      apreq, &apreq_len);
+      rc = shishi_ap_req_der (auth_handle, apreq, &apreq_len);
       if (rc != ASN1_SUCCESS)
 	{
 	  DEBUG(("telnet: Kerberos V5: could not DER encode (%s)\r\n",
@@ -330,8 +319,7 @@ krb5shishi_reply (Authenticator *ap, unsigned char *data, int cnt)
     case KRB_RESPONSE:
       if ((ap->way & AUTH_HOW_MASK) == AUTH_HOW_MUTUAL)
 	{
-	  if (shishi_ap_reply_verify_der (shishi_handle, auth_handle, 
-					  data, cnt) != SHISHI_OK)
+	  if (shishi_ap_rep_verify_der (auth_handle, data, cnt) != SHISHI_OK)
 	    {
 	      printf ("[ Mutual authentication failed ]\r\n");
 	      auth_send_retry ();
@@ -340,11 +328,10 @@ krb5shishi_reply (Authenticator *ap, unsigned char *data, int cnt)
 
 	  if (auth_debug_mode)
 	    {
-	      shishi_aprep_print (shishi_handle, stdout, 
-				  shishi_ap_get_aprep (auth_handle));
-	      shishi_encapreppart_print (shishi_handle, stdout, 
-					 shishi_ap_get_encapreppart
-					 (auth_handle));
+	      shishi_aprep_print (shishi_handle, stdout,
+				  shishi_ap_rep (auth_handle));
+	      shishi_encapreppart_print (shishi_handle, stdout,
+					 shishi_ap_encapreppart (auth_handle));
 	    }
 
 #ifdef ENCRYPTION
@@ -385,6 +372,7 @@ int
 krb5shishi_is_auth (Authenticator *ap, unsigned char *data, int cnt,
 		    char *errbuf, int errbuflen)
 {
+  printd (data, cnt);
 #if 0
   int r = 0;
   krb5_keytab keytabid = 0;

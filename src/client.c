@@ -34,6 +34,20 @@ client (Shishi * handle, struct arguments arg)
   if (arg.verbose)
     printf ("Service name: `%s'\n", arg.sname);
 
+  if (arg.sname == NULL)
+    {
+      asprintf(&arg.sname, "host/www");
+      if (arg.sname == NULL)
+	die("Could not allocate server name.");
+    }
+
+  if (arg.verbose)
+    {
+      printf ("Client name: `%s'\n", arg.cname);
+      printf ("Realm: `%s'\n", arg.realm);
+      printf ("Service name: `%s'\n", arg.sname);
+    }
+
   tkt = shishi_ticketset_get_ticket_for_server (handle, NULL, arg.sname);
   if (tkt == NULL)
     {
@@ -41,28 +55,27 @@ client (Shishi * handle, struct arguments arg)
       return res;
     }
 
-  res = shishi_ap_data (handle, tkt, NULL, 0, &ap);
+  res = shishi_ap_tktoptions (handle, &ap, tkt, arg.apoptions);
   if (res != SHISHI_OK)
     {
       printf ("Could not create AP: %s", shishi_strerror (res));
       return res;
     }
 
-  res = shishi_apreq_options_set (handle, shishi_ap_get_apreq(ap),
-				  arg.apoptions);
+  res = shishi_ap_req_build (ap);
   if (res != SHISHI_OK)
     {
-      printf ("Could not set AP-Options: %s", shishi_strerror (res));
+      printf ("Could not build AP-REQ: %s", shishi_strerror (res));
       return res;
     }
 
   if (arg.verbose)
     shishi_authenticator_print (handle, stdout,
-				shishi_ap_get_authenticator(ap));
+				shishi_ap_authenticator(ap));
 
-  shishi_apreq_print (handle, stdout, shishi_ap_get_apreq(ap));
+  shishi_apreq_print (handle, stdout, shishi_ap_req(ap));
 
-  if (shishi_apreq_mutual_required_p (handle, shishi_ap_get_apreq(ap)))
+  if (shishi_apreq_mutual_required_p (handle, shishi_ap_req(ap)))
     {
       ASN1_TYPE aprep;
 
@@ -70,7 +83,7 @@ client (Shishi * handle, struct arguments arg)
 
       res = shishi_aprep_parse (handle, stdin, &aprep);
 
-      res = shishi_ap_reply_verify (handle, ap, aprep);
+      res = shishi_ap_rep_verify_asn1 (ap, aprep);
       if (res == SHISHI_APREP_VERIFY_FAILED)
 	printf("AP-REP verification failed...\n");
       else if (res == SHISHI_OK)

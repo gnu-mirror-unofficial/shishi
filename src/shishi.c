@@ -889,13 +889,6 @@ main (int argc, char *argv[])
 	die("Could not allocate TGT name.");
     }
 
-  if (arg.sname == NULL)
-    {
-      asprintf(&arg.sname, "host/www");
-      if (arg.sname == NULL)
-	die("Could not allocate server name.");
-    }
-
   rc = 1;
 
  again:
@@ -926,7 +919,7 @@ main (int argc, char *argv[])
 	tkt = shishi_as_get_ticket (as);
 
 	if (!arg.silent)
-	  shishi_ticket_print (handle, tkt, stdout);
+	  shishi_ticket_print (tkt, stdout);
 
 	rc = shishi_ticketset_add (handle, NULL, tkt);
 	if (rc != SHISHI_OK)
@@ -974,7 +967,7 @@ main (int argc, char *argv[])
 	tkt = shishi_tgs_get_ticket (tgs);
 
 	if (!arg.silent)
-	  shishi_ticket_print (handle, tkt, stdout);
+	  shishi_ticket_print (tkt, stdout);
 
 	rc = shishi_ticketset_add (handle, NULL, tkt);
 	if (rc != SHISHI_OK)
@@ -999,8 +992,7 @@ main (int argc, char *argv[])
 	for (i = 0; i < shishi_ticketset_size (handle, NULL); i++)
 	  {
 	    if (arg.sname &&
-		!shishi_ticket_server_p (handle,
-					 shishi_ticketset_get (handle,
+		!shishi_ticket_server_p (shishi_ticketset_get (handle,
 							       NULL, i),
 					 arg.sname))
 	      continue;
@@ -1008,8 +1000,7 @@ main (int argc, char *argv[])
 	    if (arg.verbose)
 	      {
 		printf("Removing ticket:\n");
-		shishi_ticket_print(handle,
-				    shishi_ticketset_get (handle, NULL, i),
+		shishi_ticket_print(shishi_ticketset_get (handle, NULL, i),
 				    stdout);
 	      }
 

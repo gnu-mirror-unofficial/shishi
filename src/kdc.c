@@ -247,7 +247,7 @@ kdc (Shishi * handle, struct arguments arg)
 	  {
 	    fprintf (stderr, "Found ticket, doing TGS...\n");
 	    if (arg.verbose)
-	      shishi_ticket_print (handle, oldtkt, stdout);
+	      shishi_ticket_print (oldtkt, stdout);
 	  }
 	else
 	  fprintf (stderr, "No usable ticket, doing AS...\n");
@@ -395,7 +395,7 @@ kdc (Shishi * handle, struct arguments arg)
     }
 
   if (!arg.silent)
-    shishi_ticket_print (handle, newtkt, stdout);
+    shishi_ticket_print (newtkt, stdout);
 
   if (!arg.silent)
     printf ("Adding new ticket...done\n");

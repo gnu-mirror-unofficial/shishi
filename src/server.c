@@ -21,8 +21,6 @@
 
 #include "data.h"
 
-#define SERVER_NAME "sample"
-
 int
 server (Shishi * handle, struct arguments arg)
 {
@@ -43,20 +41,9 @@ server (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      int len = strlen (SERVER_NAME "/") + strlen (arg.realm) + 1;
-      arg.sname = malloc (len);
+      asprintf(&arg.sname, "host/www");
       if (arg.sname == NULL)
-	return SHISHI_MALLOC_ERROR;
-      sprintf (arg.sname, "%s/%s", SERVER_NAME, arg.realm);
-    }
-
-  if (arg.tgtname == NULL)
-    {
-      int len = strlen ("krbtgt/") + strlen (arg.realm) + 1;
-      arg.tgtname = malloc (len);
-      if (arg.tgtname == NULL)
-	return SHISHI_MALLOC_ERROR;
-      sprintf (arg.tgtname, "krbtgt/%s", arg.realm);
+	die("Could not allocate server name.");
     }
 
   if (arg.verbose)
