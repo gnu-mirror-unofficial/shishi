@@ -133,7 +133,7 @@ kdc_response (Shishi * handle,
       shishi_kdcreq_cnamerealm_get (handle, req, user, &userlen);
       user[userlen] = '\0';
 
-      res = shishi_prompt_password (stdin, password, BUFSIZ,
+      res = shishi_prompt_password (handle, stdin, password, BUFSIZ,
 				    stdout, "Enter password for `%s': ",
 				    user);
 
