@@ -4389,16 +4389,20 @@ Informational model and user database administration.
 
 Non-formal specification.  Unclear on the etype to use for session
 keys (etype in request or database?).  Unclear on how to populate some
-``evident'' fields (e.g., cname in tickets for AS-REQ).  Unclear error
+``evident'' fields (e.g., cname in tickets for AS-REQ, or crealm,
+cname, realm, sname, ctime and cusec in KRB-ERROR).  Unclear error
 code semantics (e.g., logic for when to use S_PRINCIPAL_UNKNOWN
-absent).
+absent).  Some KRB-ERROR fields are required, but can't be usefully
+populated in some situations, and no guidance is given on what they
+should contain.
 
-RFC 1510/1510bis incompatibilities.  NULL enctype removed.  KRB_SAFE
-text (3.4.1) now says the checksum is generated using the session or
-sub-session key, which contradicts itself (3.2.6) and 1510 which both
-allow the application to define the key.  Verification of KRB_SAFE now
-require the key to be compatible with the (sub-)session key, in 1510
-the only requirement was that it was collision proof.
+RFC 1510/1510bis incompatibilities.  NULL enctype removed without
+discussion, and it is still used by some 1964 GSSAPI implementations.
+KRB_SAFE text (3.4.1) now says the checksum is generated using the
+session or sub-session key, which contradicts itself (3.2.6) and 1510
+which both allow the application to define the key.  Verification of
+KRB_SAFE now require the key to be compatible with the (sub-)session
+key, in 1510 the only requirement was that it was collision proof.
 
 Errors in clarifications.  Incorrectly remove the OPTIONAL flag on the
 KDC-REQ-BODY.enc-authorization-data field.
