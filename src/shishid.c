@@ -535,27 +535,16 @@ asreq (Shishi * handle, struct arguments *arg,
 
   shishi_as_req_set (as, kdcreq);
 
-  *out = malloc (BUFSIZ);
-  if (*out == NULL)
-    {
-      syslog (LOG_ERR, "Incoming request failed: Cannot allocate memory\n");
-      /* XXX hard coded KRB-ERROR? */
-      *out = NULL;
-      *outlen = 0;
-      return;
-    }
-  *outlen = BUFSIZ;
-
   rc = asreq1 (handle, arg, as);
   if (rc != SHISHI_OK)
     {
       syslog (LOG_NOTICE, "Could not answer request: %s: %s\n",
 	      shishi_strerror (rc),
 	      shishi_krberror_message (handle, shishi_as_krberror (as)));
-      rc = shishi_as_krberror_der (as, *out, outlen);
+      rc = shishi_as_krberror_der (as, out, outlen);
     }
   else
-    rc = shishi_as_rep_der (as, *out, outlen);
+    rc = shishi_as_rep_der (as, out, outlen);
   if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR,
@@ -690,27 +679,16 @@ tgsreq (Shishi * handle, struct arguments *arg,
 
   shishi_tgs_req_set (tgs, kdcreq);
 
-  *out = malloc (BUFSIZ);
-  if (*out == NULL)
-    {
-      syslog (LOG_ERR, "Incoming request failed: Cannot allocate memory\n");
-      /* XXX hard coded KRB-ERROR? */
-      *out = NULL;
-      *outlen = 0;
-      return;
-    }
-  *outlen = BUFSIZ;
-
   rc = tgsreq1 (handle, arg, tgs);
   if (rc != SHISHI_OK)
     {
       syslog (LOG_NOTICE, "Could not answer request: %s: %s\n",
 	      shishi_strerror (rc),
 	      shishi_krberror_message (handle, shishi_tgs_krberror (tgs)));
-      rc = shishi_tgs_krberror_der (tgs, *out, outlen);
+      rc = shishi_tgs_krberror_der (tgs, out, outlen);
     }
   else
-    rc = shishi_tgs_rep_der (tgs, *out, outlen);
+    rc = shishi_tgs_rep_der (tgs, out, outlen);
   if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR,
@@ -1134,7 +1112,6 @@ int
 main (int argc, char *argv[])
 {
   struct arguments arg;
-  Shishi *handle;
   int rc;
 
 #ifdef LOG_PERROR
