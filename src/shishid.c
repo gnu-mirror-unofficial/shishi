@@ -1286,7 +1286,7 @@ main (int argc, char *argv[])
   textdomain (PACKAGE);
   set_program_name (argv[0]);
 
-  if (cmdline_parser (argc, argv, &args_info) != 0)
+  if (cmdline_parser (argc, argv, &arg) != 0)
     error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
 	   program_name);
 
