@@ -11,7 +11,8 @@ IN A PRODUCTION ENVIRONMENT!
 It will not become stable without help.  Donate time or money.
 
 To compile from CVS, you need perl, texinfo, GTK-DOC, autoconf 2.5+,
-and automake 1.7+.  Bootstrap the build environment with:
+automake 1.7+, help2man, gengetopt and asn1Parser.  Bootstrap the
+build environment with:
 
   $ ./autogen.sh
 

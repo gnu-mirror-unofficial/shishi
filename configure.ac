@@ -31,8 +31,8 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
-AC_PREREQ(2.59)
-AM_INIT_AUTOMAKE([1.8 gnits])
+AC_PREREQ(2.57)
+AM_INIT_AUTOMAKE([1.7 gnits])
 AC_CONFIG_HEADERS(config.h)
 
 # Checks for header files.
@@ -48,7 +48,6 @@ AC_CHECK_HEADERS(stdlib.h string.h strings.h memory.h \
 	arpa/nameser.h arpa/inet.h netinet/in.h netinet/in6.h)
 
 # Checks for programs.
-AC_LIBTOOL_TAGS
 AC_PROG_LIBTOOL
 AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION(0.12.1)
@@ -123,7 +122,7 @@ AC_SEARCH_LIBS(syslog, syslog)
 
 # Check for PAM
 AC_ARG_ENABLE(pam,
-  AS_HELP_STRING([--disable-pam], [Don't use PAM even if available]))
+  AC_HELP_STRING([--disable-pam], [Don't use PAM even if available]))
 if test "$enable_pam" != "no"; then
 	AC_CHECK_HEADERS(security/pam_appl.h)
 	AC_CHECK_HEADERS(security/pam_modules.h, [], [],
@@ -146,7 +145,7 @@ AC_MSG_RESULT($enable_pam)
 
 # Check for IPv6
 AC_ARG_ENABLE(ipv6,
-  AS_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
+  AC_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
 if test "$enable_ipv6" != "no"; then
   enable_ipv6=yes
   AC_CHECK_DECLS([AF_INET6, IN6ADDR_ANY_INIT],,enable_ipv6=no,[
@@ -188,7 +187,7 @@ AC_MSG_RESULT($enable_ipv6)
 
 # Check gdbm
 #AC_ARG_WITH(system-gdbm,
-#  AS_HELP_STRING([--without-system-gdbm], [Don't use the system's gdbm]))
+#  AC_HELP_STRING([--without-system-gdbm], [Don't use the system's gdbm]))
 #if test "$with_system_gdbm" != "no" ; then
 #  AC_CHECK_LIB(gdbm, gdbm_open,,with_system_gdbm=no)
 #fi
@@ -203,7 +202,7 @@ AC_MSG_RESULT($enable_ipv6)
 
 # Check for idn
 AC_ARG_WITH(stringprep,
-  AS_HELP_STRING([--without-stringprep],
+  AC_HELP_STRING([--without-stringprep],
 		[don't use libidn for string processing even if available]),
 	stringprep=$withval, stringprep=yes)
 if test "$stringprep" != "no"; then
@@ -220,7 +219,7 @@ fi
 
 # Check for libtasn1
 AC_ARG_WITH(system-asn1,
-	AS_HELP_STRING([--with-system-asn1], [Use the system's libtasn1]),
+	AC_HELP_STRING([--with-system-asn1], [Use the system's libtasn1]),
 	system_asn1=$withval, system_asn1=auto)
 if test "$system_asn1" = "auto"; then
 	save_LIBS=$LIBS
@@ -255,7 +254,7 @@ AC_SUBST(LIBTASN1_CFLAGS)
 
 # Check for libgcrypt
 AC_ARG_WITH(libgcrypt,
-  AS_HELP_STRING([--with-libgcrypt], [use libgcrypt for low-level crypto]),
+  AC_HELP_STRING([--with-libgcrypt], [use libgcrypt for low-level crypto]),
   libgcrypt=$withval, libgcrypt=yes)
 if test "$libgcrypt" != "no" ; then
 	AM_PATH_LIBGCRYPT(1.1.43, :, [
@@ -278,7 +277,7 @@ AC_SUBST(CRYPTO_LIBS)
 
 # Check for gnutls.
 AC_ARG_ENABLE(starttls,
-	AS_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
+	AC_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
 	starttls=$enableval, starttls=yes)
 if test "$starttls" != "no"; then
 	AM_PATH_LIBGNUTLS(1.0.0, starttls=yes, starttls=no)
@@ -300,7 +299,7 @@ AM_MISSING_PROG(DOCBOOK2PDF, docbook2pdf, $missing_dir)
 AM_MISSING_PROG(DOCBOOK2PS, docbook2ps, $missing_dir)
 
 # Let people enable/disable various encryption/checksum types.
-AC_ARG_ENABLE(des, AS_HELP_STRING([--disable-des],
+AC_ARG_ENABLE(des, AC_HELP_STRING([--disable-des],
 			[disable DES related encryption/checksum types]),
 		enable_des=$enableval, enable_des=yes)
 AM_CONDITIONAL(DES, test "$enable_des" != "no")
@@ -310,7 +309,7 @@ fi
 AC_MSG_CHECKING([if DES related encryption/checksum types should be used])
 AC_MSG_RESULT($enable_des)
 
-AC_ARG_ENABLE(3des, AS_HELP_STRING([--disable-3des],
+AC_ARG_ENABLE(3des, AC_HELP_STRING([--disable-3des],
 			[disable 3DES encryption/checksum type]),
 		enable_3des=$enableval, enable_3des=yes)
 AM_CONDITIONAL(DES3, test "$enable_3des" != "no")
@@ -320,7 +319,7 @@ fi
 AC_MSG_CHECKING([if 3DES encryption/checksum type should be used])
 AC_MSG_RESULT($enable_3des)
 
-AC_ARG_ENABLE(aes, AS_HELP_STRING([--disable-aes],
+AC_ARG_ENABLE(aes, AC_HELP_STRING([--disable-aes],
 			[disable AES encryption/checksum types]),
 		enable_aes=$enableval, enable_aes=yes)
 AM_CONDITIONAL(AES, test "$enable_aes" != "no")
@@ -330,7 +329,7 @@ fi
 AC_MSG_CHECKING([if AES encryption/checksum types should be used])
 AC_MSG_RESULT($enable_aes)
 
-AC_ARG_ENABLE(md, AS_HELP_STRING([--disable-md],
+AC_ARG_ENABLE(md, AC_HELP_STRING([--disable-md],
 			[disable unkeyed MD4/MD5 checksum types]),
 		enable_md=$enableval, enable_md=yes)
 AM_CONDITIONAL(MD, test "$enable_md" != "no")
@@ -340,7 +339,7 @@ fi
 AC_MSG_CHECKING([if unkeyed MD checksum types should be used])
 AC_MSG_RESULT($enable_md)
 
-AC_ARG_ENABLE(null, AS_HELP_STRING([--disable-null],
+AC_ARG_ENABLE(null, AC_HELP_STRING([--disable-null],
 			[disable dummy NULL encryption/checksum type]),
 		enable_null=$enableval, enable_null=yes)
 AM_CONDITIONAL(NULL, test "$enable_null" != "no")
@@ -350,7 +349,7 @@ fi
 AC_MSG_CHECKING([if dummy NULL encryption/checksum type should be used])
 AC_MSG_RESULT($enable_null)
 
-AC_ARG_ENABLE(arcfour, AS_HELP_STRING([--disable-arcfour],
+AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--disable-arcfour],
 			[disable ARCFOUR encryption/checksum type]),
 		enable_arcfour=$enableval, enable_arcfour=yes)
 AM_CONDITIONAL(ARCFOUR, test "$enable_arcfour" != "no")
@@ -363,7 +362,7 @@ AC_MSG_RESULT($enable_arcfour)
 
 AC_SUBST(CONFDIR, "\$(sysconfdir)/\$(PACKAGE)")
 AC_ARG_WITH(conf-dir,
-            AS_HELP_STRING([--with-conf-dir=DIR],
+            AC_HELP_STRING([--with-conf-dir=DIR],
                            [store configuration in DIR [[PREFIX/etc/shishi]]]),
             [case "${withval}" in
             /*) CONFDIR="${withval}";;
@@ -374,7 +373,7 @@ AC_MSG_NOTICE([configuration files will be stored in $CONFDIR])
 
 AC_SUBST(SKELDIR, "\$(sysconfdir)/\$(PACKAGE)")
 AC_ARG_WITH(skel-dir,
-            AS_HELP_STRING([--with-skel-dir=DIR],
+            AC_HELP_STRING([--with-skel-dir=DIR],
                            [store template cfg in DIR [[PREFIX/etc/shishi]]]),
             [case "${withval}" in
             /*) SKELDIR="${withval}";;
@@ -385,7 +384,7 @@ AC_MSG_NOTICE([user template configuration file in $SKELDIR])
 
 AC_SUBST(KEYDIR, "\$(sysconfdir)/\$(PACKAGE)")
 AC_ARG_WITH(key-dir,
-            AS_HELP_STRING([--with-key-dir=DIR],
+            AC_HELP_STRING([--with-key-dir=DIR],
                            [store host keys in DIR [[PREFIX/etc/shishi]]]),
             [case "${withval}" in
             /*) KEYDIR="${withval}";;
