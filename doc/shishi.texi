@@ -2415,7 +2415,8 @@ This manual borrows text from the Kerberos 5 specification.
 @appendix Protocol Extensions
 
 This appendix specifies the non-standard protocol elements implemented
-by Shishi.
+by Shishi.  By nature of being non-standard, everything described here
+is experimental.  Comments and feedback is appreciated.
 
 @menu
 * STARTTLS protected KDC exchanges::	How Shishi talks to KDC protected by TLS.

@@ -4,6 +4,13 @@ See the end for copying conditions.
 
 * Version 0.0.8 (unreleased)
 
+** Support for upgrading TCP connections to KDC to TLS supported (STARTTLS).
+STARTTLS support will be compiled in automatically, if you have GNUTLS
+installed, but can be disabled unconditionally by configuring with
+--disable-tls.  Use the 'realm-kdc' configuration token to specify
+which KDCs the client should use it against, e.g.,
+'realm-kdc=MYREALM.ORG,kdc.myrealm.org/tls'.
+
 * Version 0.0.7 (released 2003-09-21)
 
 ** Encryption types can now be referred to using shorter aliases.
