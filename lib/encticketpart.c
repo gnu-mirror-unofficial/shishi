@@ -141,8 +141,9 @@ shishi_encticketpart_key_set (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, encticketpart, "EncTicketPart.key.keyvalue",
-			  shishi_key_value (key), shishi_key_length (key));
+  res = shishi_asn1_write (handle, encticketpart,
+			   "EncTicketPart.key.keyvalue",
+			   shishi_key_value (key), shishi_key_length (key));
   if (res != SHISHI_OK)
     return res;
 
@@ -299,7 +300,7 @@ shishi_encticketpart_authtime_set (Shishi * handle,
   int res;
 
   res = shishi_asn1_write (handle, encticketpart, "EncTicketPart.authtime",
-			  authtime, GENERALIZEDTIME_TIME_LEN);
+			   authtime, GENERALIZEDTIME_TIME_LEN);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
