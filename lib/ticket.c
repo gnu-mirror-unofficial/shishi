@@ -315,21 +315,22 @@ shishi_ticket_ok_as_delegate_p (Shishi_ticket * ticket)
 }
 
 int
-shishi_ticket_realm (Shishi_ticket * ticket, char *realm, int *realmlen)
+shishi_ticket_realm (Shishi_ticket * ticket, const char *realm, int *realmlen)
 {
   return shishi_ticket_realm_get (ticket->handle, ticket->ticket,
 				  realm, realmlen);
 }
 
 int
-shishi_ticket_server (Shishi_ticket * ticket, char *service, int *servicelen)
+shishi_ticket_server (Shishi_ticket * ticket,
+		      const char *service, int *servicelen)
 {
   return shishi_ticket_sname_get (ticket->handle, ticket->ticket,
 				  service, servicelen);
 }
 
 int
-shishi_ticket_server_p (Shishi_ticket * ticket, char *service)
+shishi_ticket_server_p (Shishi_ticket * ticket, const char *service)
 {
   char *buf;
   int buflen;

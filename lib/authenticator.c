@@ -303,7 +303,8 @@ shishi_authenticator_set_crealm (Shishi * handle,
 int
 shishi_authenticator_set_cname (Shishi * handle,
 				ASN1_TYPE node,
-				Shishi_name_type name_type, char *principal)
+				Shishi_name_type name_type,
+				const char *principal)
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];

@@ -21,6 +21,26 @@
 
 #include "internal.h"
 
+ASN1_TYPE
+shishi_krberror (Shishi * handle)
+{
+  int res = ASN1_SUCCESS;
+  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+
+  res = asn1_create_element (handle->asn1, "Kerberos5.KRB-ERROR", &node,
+			     "KRB-ERROR");
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  return node;
+
+ error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  if (node != ASN1_TYPE_EMPTY)
+    asn1_delete_structure (&node);
+  return NULL;
+}
+
 /**
  * shishi_krberror_print:
  * @handle: shishi handle as allocated by shishi_init().
@@ -148,7 +168,7 @@ shishi_krberror_read (Shishi * handle, FILE * fh, ASN1_TYPE * krberror)
  **/
 int
 shishi_krberror_from_file (Shishi * handle, ASN1_TYPE * krberror,
-			int filetype, char *filename)
+			   int filetype, char *filename)
 {
   int res;
   FILE *fh;
@@ -360,7 +380,6 @@ shishi_krberror_get_errorcode (Shishi *handle, ASN1_TYPE krberror,
   return _shishi_asn1_integer_field (handle, krberror, errorcode,
 				     "KRB-ERROR.error-code");
 }
-
 
 int
 shishi_krberror_get_errorcode_fast (Shishi *handle, ASN1_TYPE krberror)

@@ -23,11 +23,62 @@
 
 struct Shishi_as
 {
+  Shishi *handle;
   ASN1_TYPE asreq;
   ASN1_TYPE asrep;
   ASN1_TYPE krberror;
   Shishi_ticket *ticket;
 };
+
+/**
+ * shishi_as:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @as: holds pointer to newly allocate Shishi_as structure.
+ *
+ * Allocate a new AS exchange variable.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_as (Shishi * handle, Shishi_as ** as)
+{
+  Shishi_as *las;
+  int res;
+
+  *as = malloc (sizeof (**as));
+  if (*as == NULL)
+    return SHISHI_MALLOC_ERROR;
+  las = *as;
+  memset(las, 0, sizeof(*las));
+
+  las->handle = handle;
+
+  las->asreq = shishi_asreq (handle);
+  if (las->asreq == NULL)
+    {
+      shishi_error_printf (handle, "Could not create AS-REQ: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  las->asrep = shishi_asrep (handle);
+  if (las->asreq == NULL)
+    {
+      shishi_error_printf (handle, "Could not create AS-REP: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  las->krberror = shishi_krberror (handle);
+  if (las->krberror == NULL)
+    {
+      shishi_error_printf (handle, "Could not create KRB-ERROR: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  return SHISHI_OK;
+}
 
 /* TODO: add shishi_as_clientserver(h,p,a,client,server) and make the
    shishi_as_cnamerealmsname function take real cname/sname pointer
@@ -41,22 +92,126 @@ struct Shishi_as
  *               exchange, or NULL if not yet set or an error occured.
  **/
 ASN1_TYPE
-shishi_as_get_asreq (Shishi_as * as)
+shishi_as_req (Shishi_as * as)
 {
   return as->asreq;
 }
 
 /**
- * shishi_as_get_asrep:
+ * shishi_as_req_set:
+ * @as: structure that holds information about AS exchange
+ * @asreq: asreq to store in AS.
+ *
+ * Set the AS-REQ in the AP exchange.
+ **/
+void
+shishi_as_req_set (Shishi_as * as, ASN1_TYPE asreq)
+{
+  if (as->asreq)
+    _shishi_asn1_done(as->handle, as->asreq);
+  as->asreq = asreq;
+}
+
+/**
+ * shishi_as_rep:
  * @as: structure that holds information about AS exchange
  *
  * Return value: Returns the received AS-REP packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
 ASN1_TYPE
-shishi_as_get_asrep (Shishi_as * as)
+shishi_as_rep (Shishi_as * as)
 {
   return as->asrep;
+}
+
+/**
+ * shishi_as_rep_process:
+ * @as: structure that holds information about AS exchange
+ *
+ * Process new AS-REP and set ticket.  The key is used to decrypt the
+ * AP-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char * password)
+{
+  ASN1_TYPE ticket, kdcreppart;
+  char user[BUFSIZ];
+  int userlen;
+  int res;
+
+  userlen = sizeof (user);
+  res = shishi_kdcreq_cnamerealm_get (as->handle, as->asreq, user, &userlen);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (as->handle, "Could not extract cname and "
+			   "realm from AS-REQ: %s\n", shishi_strerror (res),
+			   shishi_strerror_details (as->handle));
+      return res;
+    }
+  user[userlen] = '\0';
+
+  if (key == NULL && password == NULL)
+    {
+      char password[BUFSIZ];
+
+      res = shishi_prompt_password (as->handle,
+				    stdin, password, BUFSIZ,
+				    stdout, "Enter password for `%s': ",
+				    user);
+      if (res != SHISHI_OK)
+	{
+	  shishi_error_printf (as->handle, "Reading password failed: %s\n",
+			       shishi_strerror (res));
+	  return res;
+	}
+
+      res = shishi_as_process (as->handle, as->asreq, as->asrep,
+			       password, &kdcreppart);
+    }
+  else if (key == NULL)
+    res = shishi_as_process (as->handle, as->asreq, as->asrep,
+			     password, &kdcreppart);
+  else
+    res = shishi_kdc_process (as->handle, as->asreq, as->asrep, key,
+			      SHISHI_KEYUSAGE_ENCASREPPART, &kdcreppart);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_kdcrep_get_ticket (as->handle, as->asrep, &ticket);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (as->handle,
+			   "Could not extract ticket from AS-REP: %s",
+			   shishi_strerror_details (as->handle));
+      return res;
+    }
+
+  as->ticket = shishi_ticket (as->handle, strdup (user), ticket, kdcreppart);
+  if (as->ticket == NULL)
+    {
+      shishi_error_printf (as->handle, "Could not create ticket");
+      return SHISHI_MALLOC_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_as_rep_set:
+ * @as: structure that holds information about AS exchange
+ * @asrep: asrep to store in AS.
+ *
+ * Set the AS-REP in the AP exchange.
+ **/
+void
+shishi_as_rep_set (Shishi_as * as, ASN1_TYPE asrep)
+{
+  if (as->asrep)
+    _shishi_asn1_done(as->handle, as->asrep);
+  as->asrep = asrep;
 }
 
 /**
@@ -67,9 +222,24 @@ shishi_as_get_asrep (Shishi_as * as)
  *               exchange, or NULL if not yet set or an error occured.
  **/
 ASN1_TYPE
-shishi_as_get_krberror (Shishi_as * as)
+shishi_as_krberror (Shishi_as * as)
 {
   return as->krberror;
+}
+
+/**
+ * shishi_as_krberror_set:
+ * @as: structure that holds information about AS exchange
+ * @krberror: krberror to store in AS.
+ *
+ * Set the KRB-ERROR in the AP exchange.
+ **/
+void
+shishi_as_krberror_set (Shishi_as * as, ASN1_TYPE krberror)
+{
+  if (as->krberror)
+    _shishi_asn1_done(as->handle, as->krberror);
+  as->krberror = krberror;
 }
 
 /**
@@ -80,221 +250,34 @@ shishi_as_get_krberror (Shishi_as * as)
  *               exchange, or NULL if not yet set or an error occured.
  **/
 Shishi_ticket *
-shishi_as_get_ticket (Shishi_as * as)
+shishi_as_ticket (Shishi_as * as)
 {
   return as->ticket;
 }
 
 /**
- * shishi_as:
- * @handle: shishi handle as allocated by shishi_init().
- * @password: password of client, or NULL to query user.
- * @as: holds pointer to newly allocate Shishi_as structure.
+ * shishi_as_sendrecv:
+ * @as: structure that holds information about AS exchange
  *
- * Perform initial Kerberos 5 authentication, in order to acquire a
- * Ticket Granting Ticket.  It uses defaults from the handle for the
- * client principal name, server realm and server name.  The server name
- * is by default the ticket-granting server name of the realm.  The
- * password field holds a user supplied password, or NULL to make this
- * function query for one.
+ * Send AS-REQ and receive AS-REP or KRB-ERROR.  This is the initial
+ * Kerberos 5 authentication, usually used to acquire a Ticket
+ * Granting Ticket.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_as (Shishi * handle, char *password, Shishi_as ** as)
+shishi_as_sendrecv (Shishi_as * as)
 {
-  char *realm;
-  char *server;
-  char *client;
   int res;
 
-  realm = shishi_realm_default (handle);
-
-  server = malloc (strlen (KRBTGT PRINCIPAL_DELIMITER) + strlen (realm) + 1);
-  if (server == NULL)
-    return SHISHI_MALLOC_ERROR;
-
-  sprintf (server, KRBTGT PRINCIPAL_DELIMITER "%s", realm);
-
-  res = shishi_as_password_cnamerealmsname
-    (handle, password, as,
-     shishi_principal_default (handle), realm, server);
-
-  free (server);
-
-  return res;
-}
-
-/**
- * shishi_as_password_cnamerealmsname:
- * @handle: shishi handle as allocated by shishi_init().
- * @password: password of client, or NULL to query user.
- * @as: holds pointer to newly allocate Shishi_as structure.
- * @cname: client principal name
- * @realm: server realm (also indicates client realm)
- * @sname: server principal name
- *
- * Perform initial Kerberos 5 authentication, in order to acquire a
- * Ticket Granting Ticket.  It uses the supplied values for the client
- * principal name, server realm and server name.  The server name
- * should normally be the ticket-granting server name of the realm.
- * The password field holds a user supplied password, or NULL to make
- * this function query for one.
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_as_password_cnamerealmsname (Shishi * handle,
-				    char *password,
-				    Shishi_as ** as,
-				    char *cname, char *realm, char *sname)
-{
-  return shishi_as_cnamerealmsname (handle, password, NULL, as,
-				    cname, realm, sname);
-
-}
-
-
-/**
- * shishi_as_rawkey_cnamerealmsname:
- * @handle: shishi handle as allocated by shishi_init().
- * @keytype: cryptographic encryption type, see Shishi_etype.
- * @key: input array with cryptographic key to use.
- * @keylen: size of input array with cryptographic key.
- * @as: holds pointer to newly allocate Shishi_as structure.
- * @cname: client principal name
- * @realm: server realm (also indicates client realm)
- * @sname: server principal name
- *
- * Perform initial Kerberos 5 authentication, in order to acquire a
- * Ticket Granting Ticket.  It uses the supplied values for the client
- * principal name, server realm and server name.  The server name
- * should normally be the ticket-granting server name of the realm.
- * The key is used to decrypt the AP-REP, but also used when creating
- * the AP-REQ to indicate that the only supported encryption type is
- * the supplied keytype.
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_as_key_cnamerealmsname (Shishi * handle,
-			       Shishi_key *key,
-			       Shishi_as ** as,
-			       char *cname, char *realm, char *sname)
-{
-  return shishi_as_cnamerealmsname (handle, NULL, key, as,
-				    cname, realm, sname);
-}
-
-/**
- * shishi_as_cnamerealmsname:
- * @handle: shishi handle as allocated by shishi_init().
- * @keytype: cryptographic encryption type (see Shishi_etype), or -1.
- * @password: input array with cryptographic key or password string to use.
- * @keylen: size of input array with cryptographic key, or 0 if password.
- * @as: holds pointer to newly allocate Shishi_as structure.
- * @cname: client principal name
- * @realm: server realm (also indicates client realm)
- * @sname: server principal name
- *
- * Perform initial Kerberos 5 authentication, in order to acquire a
- * Ticket Granting Ticket.  It uses the supplied values for the client
- * principal name, server realm and server name.  The server name
- * should normally be the ticket-granting server name of the realm.
- * If the keytype is -1, the password field holds a user supplied
- * password, or NULL to make this function query for one.  If the
- * keytype is not -1, the password is used as the raw encryption key
- * (of length specified by keylen), and it is used to decrypt the
- * AP-REP, but also used when creating the AP-REQ to indicate that the
- * only supported encryption type is the supplied keytype.
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_as_cnamerealmsname (Shishi * handle,
-			   char *password,
-			   Shishi_key *key,
-			   Shishi_as ** as,
-			   char *cname, char *realm, char *sname)
-{
-  char user[BUFSIZ];
-  int userlen;
-  int res;
-  ASN1_TYPE ticket, kdcreppart;
-
-  *as = malloc (sizeof (**as));
-  if (*as == NULL)
-    return SHISHI_MALLOC_ERROR;
-
-  /* XXX use keytype to set etype in request */
-
-  (*as)->asreq = shishi_asreq (handle, realm, sname, cname);
-  if ((*as)->asreq == ASN1_TYPE_EMPTY)
-    goto done;
-
-  res = shishi_kdcreq_sendrecv (handle, (*as)->asreq, &(*as)->asrep);
+  res = shishi_kdcreq_sendrecv (as->handle, as->asreq, &as->asrep);
   if (res == SHISHI_GOT_KRBERROR)
     {
-      (*as)->krberror = (*as)->asrep;
-      (*as)->asrep = NULL;
+      as->krberror = as->asrep;
+      as->asrep = NULL;
     }
   if (res != SHISHI_OK)
-    goto done;
-
-  if (key == NULL && password == NULL)
-    {
-      char password[BUFSIZ];
-
-      res = shishi_prompt_password (handle,
-				    stdin, password, BUFSIZ,
-				    stdout, "Enter password for `%s@%s': ",
-				    shishi_principal_default (handle),
-				    shishi_realm_default (handle));
-      if (res != SHISHI_OK)
-	{
-	  printf ("Reading password failed: %s\n%s", shishi_strerror (res));
-	  return res;
-	}
-      res = shishi_as_process (handle, (*as)->asreq, (*as)->asrep,
-			       password, &kdcreppart);
-    }
-  else if (key == NULL)
-    res = shishi_as_process (handle, (*as)->asreq, (*as)->asrep,
-			     password, &kdcreppart);
-  else
-    res = shishi_kdc_process (handle, (*as)->asreq, (*as)->asrep, key,
-			      SHISHI_KEYUSAGE_ENCASREPPART, &kdcreppart);
-  if (res != SHISHI_OK)
-    goto done;
-
-  res = shishi_kdcrep_get_ticket (handle, (*as)->asrep, &ticket);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not extract ticket from AS-REP: %s",
-			   shishi_strerror_details (handle));
-      return res;
-    }
-
-  userlen = sizeof (user);
-  res = shishi_kdcreq_cnamerealm_get (handle, (*as)->asreq, user, &userlen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not extract cname AS-REP: %s\n",
-			   shishi_strerror (res),
-			   shishi_strerror_details (handle));
-      return res;
-    }
-  user[userlen] = '\0';
-  (*as)->ticket = shishi_ticket (handle, strdup (user), ticket, kdcreppart);
-  if ((*as)->ticket == NULL)
-    {
-      shishi_error_printf (handle, "Could not create ticket");
-      return SHISHI_MALLOC_ERROR;
-    }
+    return res;
 
   return SHISHI_OK;
-
-done:
-  free (*as);
-  return res;
 }

@@ -35,55 +35,6 @@ struct Shishi_ap
   int authenticatorcksumdatalen;
 };
 
-#define APOPTION_RESERVED "reserved"
-#define APOPTION_USE_SESSION_KEY "use-session-key"
-#define APOPTION_MUTUAL_REQUIRED "mutual-required"
-#define APOPTION_UNKNOWN "unknown"
-
-const char *
-shishi_ap_option2string (int option)
-{
-  char *str;
-
-  switch (option)
-    {
-    case SHISHI_APOPTIONS_RESERVED:
-      str = APOPTION_RESERVED;
-      break;
-
-    case SHISHI_APOPTIONS_USE_SESSION_KEY:
-      str = APOPTION_USE_SESSION_KEY;
-      break;
-
-    case SHISHI_APOPTIONS_MUTUAL_REQUIRED:
-      str = APOPTION_MUTUAL_REQUIRED;
-      break;
-
-    default:
-      str = APOPTION_UNKNOWN;
-      break;
-    }
-
-  return str;
-}
-
-int
-shishi_ap_string2option (const char *str)
-{
-  int option;
-
-  if (strcasecmp (str, APOPTION_RESERVED) == 0)
-    option = SHISHI_APOPTIONS_RESERVED;
-  else if (strcasecmp (str, APOPTION_USE_SESSION_KEY) == 0)
-    option = SHISHI_APOPTIONS_USE_SESSION_KEY;
-  else if (strcasecmp (str, APOPTION_MUTUAL_REQUIRED) == 0)
-    option = SHISHI_APOPTIONS_MUTUAL_REQUIRED;
-  else
-    option = strtol (str, (char **) NULL, 0);
-
-  return option;
-}
-
 /**
  * shishi_ap:
  * @handle: shishi handle as allocated by shishi_init().
@@ -649,4 +600,53 @@ shishi_ap_encapreppart_set (Shishi_ap * ap, ASN1_TYPE encapreppart)
   if (ap->encapreppart)
     _shishi_asn1_done(ap->handle, ap->encapreppart);
   ap->encapreppart = encapreppart;
+}
+
+#define APOPTION_RESERVED "reserved"
+#define APOPTION_USE_SESSION_KEY "use-session-key"
+#define APOPTION_MUTUAL_REQUIRED "mutual-required"
+#define APOPTION_UNKNOWN "unknown"
+
+const char *
+shishi_ap_option2string (int option)
+{
+  char *str;
+
+  switch (option)
+    {
+    case SHISHI_APOPTIONS_RESERVED:
+      str = APOPTION_RESERVED;
+      break;
+
+    case SHISHI_APOPTIONS_USE_SESSION_KEY:
+      str = APOPTION_USE_SESSION_KEY;
+      break;
+
+    case SHISHI_APOPTIONS_MUTUAL_REQUIRED:
+      str = APOPTION_MUTUAL_REQUIRED;
+      break;
+
+    default:
+      str = APOPTION_UNKNOWN;
+      break;
+    }
+
+  return str;
+}
+
+int
+shishi_ap_string2option (const char *str)
+{
+  int option;
+
+  if (strcasecmp (str, APOPTION_RESERVED) == 0)
+    option = SHISHI_APOPTIONS_RESERVED;
+  else if (strcasecmp (str, APOPTION_USE_SESSION_KEY) == 0)
+    option = SHISHI_APOPTIONS_USE_SESSION_KEY;
+  else if (strcasecmp (str, APOPTION_MUTUAL_REQUIRED) == 0)
+    option = SHISHI_APOPTIONS_MUTUAL_REQUIRED;
+  else
+    option = strtol (str, (char **) NULL, 0);
+
+  return option;
 }

@@ -81,7 +81,7 @@ error:
  * Return value: Returns the AS-REP or ASN1_TYPE_EMPTY on failure.
  **/
 ASN1_TYPE
-shishi_as_rep (Shishi * handle)
+shishi_asrep (Shishi * handle)
 {
   return _shishi_kdcrep (handle, 1);
 }
@@ -96,7 +96,7 @@ shishi_as_rep (Shishi * handle)
  * Return value: Returns the TGS-REP or ASN1_TYPE_EMPTY on failure.
  **/
 ASN1_TYPE
-shishi_tgs_rep (Shishi * handle)
+shishi_tgsrep (Shishi * handle)
 {
   return _shishi_kdcrep (handle, 0);
 }

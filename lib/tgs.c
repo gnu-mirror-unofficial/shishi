@@ -146,7 +146,7 @@ shishi_tgs_realmsname (Shishi * handle,
   if (*tgs == NULL)
     return SHISHI_MALLOC_ERROR;
 
-  (*tgs)->tgsreq = shishi_tgs_req (handle);
+  (*tgs)->tgsreq = shishi_tgsreq (handle);
   if ((*tgs)->tgsreq == ASN1_TYPE_EMPTY)
     return SHISHI_ASN1_ERROR;
 

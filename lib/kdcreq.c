@@ -167,18 +167,18 @@ error:
  * Return value: Returns the AS-REQ or ASN1_TYPE_EMPTY on failure.
  **/
 ASN1_TYPE
-shishi_as_req (Shishi * handle)
+shishi_asreq (Shishi * handle)
 {
   return _shishi_kdcreq (handle, 1);
 }
 
 ASN1_TYPE
-shishi_asreq (Shishi * handle, char *realm, char *server, char *client)
+shishi_asreq_rsc (Shishi * handle, char *realm, char *server, char *client)
 {
   ASN1_TYPE req = ASN1_TYPE_EMPTY;
   int res;
 
-  req = shishi_as_req (handle);
+  req = shishi_asreq (handle);
   if (req == ASN1_TYPE_EMPTY)
     return ASN1_TYPE_EMPTY;
 
@@ -211,21 +211,20 @@ shishi_asreq (Shishi * handle, char *realm, char *server, char *client)
  * Return value: Returns the TGS-REQ or ASN1_TYPE_EMPTY on failure.
  **/
 ASN1_TYPE
-shishi_tgs_req (Shishi * handle)
+shishi_tgsreq (Shishi * handle)
 {
   return _shishi_kdcreq (handle, 0);
 }
 
 
 ASN1_TYPE
-shishi_tgsreq (Shishi * handle,
-	       char *realm, char *server, Shishi_ticket * ticket)
+shishi_tgsreq_rst (Shishi * handle,
+		   char *realm, char *server, Shishi_ticket * ticket)
 {
   ASN1_TYPE req = ASN1_TYPE_EMPTY;
-  Shishi_key *key;
   int res;
 
-  req = shishi_tgs_req (handle);
+  req = shishi_tgsreq (handle);
   if (req == ASN1_TYPE_EMPTY)
     return ASN1_TYPE_EMPTY;
 
@@ -237,14 +236,9 @@ shishi_tgsreq (Shishi * handle,
       return ASN1_TYPE_EMPTY;
     }
 
-  res = shishi_enckdcreppart_get_key (handle,
-				      shishi_ticket_enckdcreppart (ticket),
-				      &key);
-  if (res != SHISHI_OK)
-    return ASN1_TYPE_EMPTY;
-
   res = shishi_kdcreq_make_padata_tgs (handle, req,
-				       shishi_ticket_ticket (ticket), key);
+				       shishi_ticket_ticket (ticket),
+				       shishi_ticket_key (ticket));
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make TGS PA-DATA: %s\n",
@@ -430,7 +424,8 @@ shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
 int
 shishi_kdcreq_set_cname (Shishi * handle,
 			 ASN1_TYPE kdcreq,
-			 Shishi_name_type name_type, char *principal)
+			 Shishi_name_type name_type,
+			 const char *principal)
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];
@@ -493,7 +488,7 @@ shishi_kdcreq_cnamerealm_get (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_kdcreq_set_realm (Shishi * handle, ASN1_TYPE kdcreq, char *realm)
+shishi_kdcreq_set_realm (Shishi * handle, ASN1_TYPE kdcreq, const char *realm)
 {
   int res = ASN1_SUCCESS;
 
@@ -622,7 +617,7 @@ shishi_kdcreq_set_sname (Shishi * handle,
 }
 
 int
-shishi_kdcreq_set_server (Shishi * handle, ASN1_TYPE req, char *server)
+shishi_kdcreq_set_server (Shishi * handle, ASN1_TYPE req, const char *server)
 {
   char *tmpserver;
   char **serverbuf;
