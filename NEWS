@@ -13,7 +13,8 @@ system configuration file, SHISHI_KEYS for system wide host keys.
 ** Experimental KDC now handle non-default ticket life time.
 
 ** Nettle is now preferred over Libgcrypt, even if Libgcrypt is available.
-Use configure parameter --with-libgcrypt to override.
+Use configure parameter --with-libgcrypt to override.  Nettle is the
+minimalistic crypto library included with Shishi.
 
 ** The pkg-config script no longer use the linker parameter -R.
 
