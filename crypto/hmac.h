@@ -107,6 +107,7 @@ void
 hmac_md5_digest(struct hmac_md5_ctx *ctx,
 		unsigned length, uint8_t *digest);
 
+
 /* hmac-sha1 */
 struct hmac_sha1_ctx HMAC_CTX(struct sha1_ctx);
 
