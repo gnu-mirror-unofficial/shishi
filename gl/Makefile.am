@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in.
 
 # GNULIB modules:
-# alloca error getopt realloc setenv strcase strchrnul strnlen strdup strndup xstrndup vasprintf vasnprintf xalloc getdate timegm gethostname xgethostname xgetdomainname getline xreadlink progname
+# error getopt realloc setenv strcase strchrnul strnlen strdup strndup xstrndup vasprintf vasnprintf xalloc getdate timegm gethostname xgethostname xgetdomainname getline xreadlink progname
 
 # Local not-yet-in-gnulib modules:
 # + base64
@@ -40,6 +40,8 @@ MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 libfoo_la_LIBADD += @ALLOCA@
 #libfoo_la_LIBADD += @LTALLOCA@
+libfoo_la_SOURCES += allocsa.h allocsa.c
+
 
 libfoo_la_SOURCES += exit.h
 
@@ -56,10 +58,11 @@ libfoo_la_SOURCES += getdomainname.h
 libfoo_la_SOURCES += getline.h
 EXTRA_DIST += getndelim2.h getndelim2.c
 
-libfoo_la_SOURCES += getopt.h getopt.c getopt1.c
+libfoo_la_SOURCES += getopt.h getopt.c getopt1.c getopt_int.h
 
 libfoo_la_SOURCES += gettext.h
 
+libfoo_la_SOURCES += gettime.c
 
 
 
@@ -86,7 +89,7 @@ libfoo_la_SOURCES += strcase.h
 
 libfoo_la_SOURCES += strchrnul.h
 
-
+libfoo_la_SOURCES += strdup.h
 
 libfoo_la_SOURCES += strndup.h
 
@@ -94,6 +97,8 @@ libfoo_la_SOURCES += strndup.h
 libfoo_la_SOURCES += timegm.h
 
 libfoo_la_SOURCES += time_r.h
+
+libfoo_la_SOURCES += timespec.h
 
 libfoo_la_SOURCES += unlocked-io.h
 
@@ -116,5 +121,6 @@ libfoo_la_SOURCES += xstrndup.h xstrndup.c
 
 # Local changes
 
+libfoo_la_LIBADD += @LIB_CLOCK_GETTIME@
 libfoo_la_SOURCES += base64.c base64.h
 EXTRA_DIST += README
