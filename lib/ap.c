@@ -266,6 +266,43 @@ shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
   return SHISHI_OK;
 }
 
+
+/**
+ * shishi_ap_set_tktoptionsraw:
+ * @ap: structure that holds information about AP exchange
+ * @tkt: ticket to set in AP.
+ * @options: AP-REQ options to set in AP.
+ * @data: input array with data to store in checksum field in Authenticator.
+ * @len: length of input array with data to store in checksum field in
+ *   Authenticator.
+ *
+ * Set the ticket (see shishi_ap_tkt_set()) and set the AP-REQ
+ * apoptions (see shishi_apreq_options_set()) and set the raw
+ * Authenticator checksum data.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_set_tktoptionsraw (Shishi_ap * ap,
+			     Shishi_tkt * tkt,
+			     int options, const char *data, size_t len)
+{
+  int rc;
+
+  shishi_ap_tkt_set (ap, tkt);
+
+  rc = shishi_apreq_options_set (ap->handle, shishi_ap_req (ap), options);
+  if (rc != SHISHI_OK)
+    {
+      printf ("Could not set AP-Options: %s", shishi_strerror (rc));
+      return rc;
+    }
+
+  shishi_ap_authenticator_cksumraw_set (ap, data, len);
+
+  return SHISHI_OK;
+}
+
 /**
  * shishi_ap_set_tktoptionsasn1usage:
  * @ap: structure that holds information about AP exchange
@@ -373,6 +410,42 @@ shishi_ap_tktoptionsdata (Shishi * handle,
     return rc;
 
   rc = shishi_ap_set_tktoptionsdata (*ap, tkt, options, data, len);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_ap_tktoptionsraw:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ap: pointer to new structure that holds information about AP exchange
+ * @tkt: ticket to set in newly created AP.
+ * @options: AP-REQ options to set in newly created AP.
+ * @data: input array with data to store in checksum field in Authenticator.
+ * @len: length of input array with data to store in checksum field in
+ *   Authenticator.
+ *
+ * Create a new AP exchange using shishi_ap(), and set the ticket,
+ * AP-REQ apoptions and the raw Authenticator checksum data field
+ * using shishi_ap_set_tktoptionsraw().  A random session key is added
+ * to the authenticator, using the same keytype as the ticket.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_tktoptionsraw (Shishi * handle,
+			 Shishi_ap ** ap,
+			 Shishi_tkt * tkt, int options,
+			 const char *data, size_t len)
+{
+  int rc;
+
+  rc = shishi_ap_etype (handle, ap, shishi_tkt_keytype_fast (tkt));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_ap_set_tktoptionsraw (*ap, tkt, options, data, len);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -512,12 +585,15 @@ shishi_ap_authenticator_cksumdata (Shishi_ap * ap, char *out, size_t * len)
 /**
  * shishi_ap_authenticator_cksumdata_set:
  * @ap: structure that holds information about AP exchange
- * @authenticatorcksumdata: input array with authenticator checksum
- * data to use in AP.
- * @authenticatorcksumdatalen: length of input array with authenticator
- * checksum data to use in AP.
+ * @authenticatorcksumdata: input array with data to compute checksum
+ *   on and store in Authenticator in AP-REQ.
+ * @authenticatorcksumdatalen: length of input array with data to
+ *   compute checksum on and store in Authenticator in AP-REQ.
  *
- * Set the Authenticator Checksum Data in the AP exchange.
+ * Set the Authenticator Checksum Data in the AP exchange.  This is
+ * the data that will be checksumed, and the checksum placed in the
+ * checksum field.  It is not the actual checksum field.  See also
+ * shishi_ap_authenticator_cksumraw_set.
  **/
 void
 shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
@@ -529,6 +605,28 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 }
 
 /**
+ * shishi_ap_authenticator_cksumraw_set:
+ * @ap: structure that holds information about AP exchange
+ * @authenticatorcksumdata: input array with authenticator checksum
+ *   field value to set in Authenticator in AP-REQ.
+ * @authenticatorcksumdatalen: length of input array with
+ *   authenticator checksum field value to set in Authenticator in AP-REQ.
+ *
+ * Set the Authenticator Checksum Data in the AP exchange.  This is
+ * the actual checksum field, not data to compute checksum on and then
+ * store in the checksum field.  See also
+ * shishi_ap_authenticator_cksumdata_set.
+ **/
+void
+shishi_ap_authenticator_cksumraw_set (Shishi_ap * ap,
+				      const char *authenticatorcksumraw,
+				      size_t authenticatorcksumrawlen)
+{
+  ap->authenticatorcksumraw = authenticatorcksumraw;
+  ap->authenticatorcksumrawlen = authenticatorcksumrawlen;
+}
+
+/**
  * shishi_ap_authenticatorcksumtype:
  * @ap: structure that holds information about AP exchange
  *
@@ -536,7 +634,7 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
  *
  * Return value: Return the authenticator checksum type.
  **/
-int
+int32_t
 shishi_ap_authenticator_cksumtype (Shishi_ap * ap)
 {
   return ap->authenticatorcksumtype;
@@ -550,7 +648,7 @@ shishi_ap_authenticator_cksumtype (Shishi_ap * ap)
  * Set the Authenticator Checksum Type in the AP exchange.
  **/
 void
-shishi_ap_authenticator_cksumtype_set (Shishi_ap * ap, int cksumtype)
+shishi_ap_authenticator_cksumtype_set (Shishi_ap * ap, int32_t cksumtype)
 {
   ap->authenticatorcksumtype = cksumtype;
 }
@@ -691,7 +789,12 @@ shishi_ap_req_build (Shishi_ap * ap)
     }
 
   cksumtype = shishi_ap_authenticator_cksumtype (ap);
-  if (cksumtype == SHISHI_NO_CKSUMTYPE)
+  if (ap->authenticatorcksumraw && ap->authenticatorcksumrawlen > 0)
+    res = shishi_authenticator_set_cksum (ap->handle, ap->authenticator,
+					  cksumtype,
+					  ap->authenticatorcksumraw,
+					  ap->authenticatorcksumrawlen);
+  else if (cksumtype == SHISHI_NO_CKSUMTYPE)
     res = shishi_authenticator_add_cksum (ap->handle, ap->authenticator,
 					  shishi_tkt_key (ap->tkt),
 					  ap->authenticatorcksumkeyusage,
