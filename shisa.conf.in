@@ -22,9 +22,9 @@
 # --read-only       No data is written to this data source.
 # --ignore-errors   Ignore failures in this backend.
 
-# The default uses one "file" data source (see below) but for a larger
-# installation you may want to combine several data sources.  Here is
-# an example.
+# The default (when the configuration file is empty) uses one "file"
+# data source (see below), but for a larger installation you may want
+# to combine several data sources.  Here is an example.
 
 # db --read-only file /var/local/master
 # db --ignore-errors ldap kdc.example.org ca=/etc/shisa/kdc-ca.pem
@@ -33,7 +33,7 @@
 # This demonstrate how you can store critical principals on local disk
 # (the first entry, /var/local/master) that will always be found
 # without looking in the LDAP directory.  The critical principals
-# could be, e.g., krbtgt/EXAMPLE.ORG: The second entry denote a LDAP
+# could be, e.g., krbtgt/EXAMPLE.ORG.  The second entry denote a LDAP
 # server that could hold user principals.  As you can see, Shisa will
 # not let the caller know about errors with the LDAP source (they will
 # be logged, however).  Instead, if for instance the LDAP server has
@@ -53,8 +53,8 @@
 # db file FILENAME
 #
 # Examples:
-# db file /var/shishi/local.db
-# db file /usr/share/shishi/global.db read-only
+# db file /var/shishi
+# db file /usr/share/shishi read-only
 #
 # If nothing is specified, the default will be:
-# db file /var/shishi/shisa.db allow-create
+# db file /usr/local/var/shishi/shisa.db
