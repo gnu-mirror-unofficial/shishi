@@ -281,8 +281,7 @@ shishi_encapreppart_get_key (Shishi * handle,
  **/
 int
 shishi_encapreppart_ctime (Shishi * handle,
-			   Shishi_asn1 encapreppart,
-			   char **ctime)
+			   Shishi_asn1 encapreppart, char **ctime)
 {
   return shishi_time (handle, encapreppart, "ctime", ctime);
 }

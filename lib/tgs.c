@@ -193,7 +193,7 @@ shishi_tgs_req_set (Shishi_tgs * tgs, Shishi_asn1 tgsreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tgs_req_der (Shishi_tgs * tgs, char **out, size_t *outlen)
+shishi_tgs_req_der (Shishi_tgs * tgs, char **out, size_t * outlen)
 {
   int rc;
 
@@ -346,7 +346,7 @@ shishi_tgs_rep (Shishi_tgs * tgs)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tgs_rep_der (Shishi_tgs * tgs, char **out, size_t *outlen)
+shishi_tgs_rep_der (Shishi_tgs * tgs, char **out, size_t * outlen)
 {
   int rc;
 
@@ -494,7 +494,7 @@ shishi_tgs_krberror (Shishi_tgs * tgs)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tgs_krberror_der (Shishi_tgs * tgs, char **out, size_t *outlen)
+shishi_tgs_krberror_der (Shishi_tgs * tgs, char **out, size_t * outlen)
 {
   int rc;
 

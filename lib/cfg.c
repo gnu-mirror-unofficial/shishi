@@ -198,7 +198,7 @@ shishi_cfg (Shishi * handle, char *option)
 	    ri = shishi_realminfo_new (handle, value);
 	    ri->serverwildcards = xrealloc (ri->serverwildcards,
 					    ++ri->nserverwildcards *
-					    sizeof(*ri->serverwildcards));
+					    sizeof (*ri->serverwildcards));
 	    ri->serverwildcards[ri->nserverwildcards - 1] = xstrdup (value);
 	  }
 	  break;
@@ -255,11 +255,11 @@ shishi_cfg (Shishi * handle, char *option)
 		  {
 		    *p = '\0';
 		    p++;
-		    if (strcmp(p, "udp") == 0)
+		    if (strcmp (p, "udp") == 0)
 		      protocol = UDP;
-		    else if (strcmp(p, "tcp") == 0)
+		    else if (strcmp (p, "tcp") == 0)
 		      protocol = TCP;
-		    else if (strcmp(p, "tls") == 0)
+		    else if (strcmp (p, "tls") == 0)
 		      protocol = TLS;
 		    else
 		      shishi_warn (handle,

@@ -100,7 +100,7 @@ shishi_done (Shishi * handle)
     }
 
   /*  if (handle->default_realm)
-      free (handle->default_realm); */
+     free (handle->default_realm); */
   if (handle->usercfgfile)
     free (handle->usercfgfile);
   if (handle->tktsdefaultfile)

@@ -34,8 +34,7 @@
  **/
 int
 shishi_ticket_realm_get (Shishi * handle,
-			 Shishi_asn1 ticket,
-			 char **realm, size_t *realmlen)
+			 Shishi_asn1 ticket, char **realm, size_t * realmlen)
 {
   return shishi_asn1_read2 (handle, ticket, "realm", realm, realmlen);
 }
@@ -144,8 +143,7 @@ shishi_ticket_set_server (Shishi * handle,
 				 SHISHI_NT_PRINCIPAL, serverbuf);
   if (res != SHISHI_OK)
     {
-      fprintf (stderr, _("Could not set sname: %s\n"),
-	       shishi_error (handle));
+      fprintf (stderr, _("Could not set sname: %s\n"), shishi_error (handle));
       return res;
     }
   free (serverbuf);
@@ -157,7 +155,7 @@ shishi_ticket_set_server (Shishi * handle,
 int
 shishi_ticket_snamerealm_get (Shishi * handle,
 			      Shishi_asn1 ticket,
-			      char *serverrealm, size_t *serverrealmlen)
+			      char *serverrealm, size_t * serverrealmlen)
 {
   return shishi_principal_name_realm_get (handle, ticket, "sname",
 					  ticket, "realm",

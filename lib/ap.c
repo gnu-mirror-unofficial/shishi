@@ -190,8 +190,7 @@ shishi_ap_set_tktoptions (Shishi_ap * ap, Shishi_tkt * tkt, int options)
 int
 shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
 			      Shishi_tkt * tkt,
-			      int options,
-			      const char *data, size_t len)
+			      int options, const char *data, size_t len)
 {
   int rc;
 
@@ -400,7 +399,7 @@ shishi_ap_tkt_set (Shishi_ap * ap, Shishi_tkt * tkt)
  * SHISHI_TOO_SMALL_BUFFER if buffer provided was too small.
  **/
 int
-shishi_ap_authenticator_cksumdata (Shishi_ap * ap, char *out, size_t *len)
+shishi_ap_authenticator_cksumdata (Shishi_ap * ap, char *out, size_t * len)
 {
   if (*len < ap->authenticatorcksumdatalen)
     return SHISHI_TOO_SMALL_BUFFER;
@@ -451,8 +450,7 @@ shishi_ap_authenticator_cksumtype (Shishi_ap * ap)
  * Set the Authenticator Checksum Type in the AP exchange.
  **/
 void
-shishi_ap_authenticator_cksumtype_set (Shishi_ap * ap,
-				       int cksumtype)
+shishi_ap_authenticator_cksumtype_set (Shishi_ap * ap, int cksumtype)
 {
   ap->authenticatorcksumtype = cksumtype;
 }
@@ -528,7 +526,7 @@ shishi_ap_req_set (Shishi_ap * ap, Shishi_asn1 apreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ap_req_der (Shishi_ap * ap, char **out, size_t *outlen)
+shishi_ap_req_der (Shishi_ap * ap, char **out, size_t * outlen)
 {
   int rc;
 
@@ -654,8 +652,7 @@ shishi_ap_req_build (Shishi_ap * ap)
  **/
 int
 shishi_ap_req_process_keyusage (Shishi_ap * ap,
-				Shishi_key * key,
-				int32_t keyusage)
+				Shishi_key * key, int32_t keyusage)
 {
   Shishi_asn1 ticket, authenticator;
   Shishi_tkt *tkt;

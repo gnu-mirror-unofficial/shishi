@@ -330,8 +330,7 @@ shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
 int
 shishi_apreq_set_authenticator (Shishi * handle,
 				Shishi_asn1 apreq,
-				int32_t etype,
-				const char *buf, size_t buflen)
+				int32_t etype, const char *buf, size_t buflen)
 {
   int res;
 

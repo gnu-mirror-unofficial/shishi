@@ -76,7 +76,7 @@ shishi_der2asn1 (Shishi * handle,
 int
 shishi_a2d_field (Shishi * handle,
 		  Shishi_asn1 node, const char *field,
-		  char *der, size_t *len)
+		  char *der, size_t * len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
   int rc;
@@ -93,14 +93,14 @@ shishi_a2d_field (Shishi * handle,
 }
 
 int
-shishi_a2d (Shishi * handle, Shishi_asn1 node, char *der, size_t *len)
+shishi_a2d (Shishi * handle, Shishi_asn1 node, char *der, size_t * len)
 {
   return shishi_a2d_field (handle, node, "", der, len);
 }
 
 int
 shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
-		      const char *field, char **der, size_t *len)
+		      const char *field, char **der, size_t * len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
   int rc;
@@ -126,7 +126,7 @@ shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
 }
 
 int
-shishi_new_a2d (Shishi * handle, Shishi_asn1 node, char **der, size_t *len)
+shishi_new_a2d (Shishi * handle, Shishi_asn1 node, char **der, size_t * len)
 {
   return shishi_a2d_new_field (handle, node, "", der, len);
 }
@@ -385,11 +385,11 @@ shishi_asn1_read_empty_p (Shishi * handle,
 
 int
 shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
-				const char *field, size_t *n)
+				const char *field, size_t * n)
 {
   int rc;
 
-  rc = asn1_number_of_elements (node, field, (int*)n);
+  rc = asn1_number_of_elements (node, field, (int *) n);
   if (rc != ASN1_SUCCESS)
     {
       if (rc == ASN1_ELEMENT_NOT_FOUND)

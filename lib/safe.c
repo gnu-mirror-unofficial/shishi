@@ -183,7 +183,7 @@ shishi_safe_safe_set (Shishi_safe * safe, Shishi_asn1 asn1safe)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_safe_safe_der (Shishi_safe * safe, char **out, size_t *outlen)
+shishi_safe_safe_der (Shishi_safe * safe, char **out, size_t * outlen)
 {
   int rc;
 
@@ -459,12 +459,13 @@ shishi_safe_set_cksum (Shishi * handle,
  **/
 int
 shishi_safe_user_data (Shishi * handle,
-		       Shishi_asn1 safe, char **userdata, size_t * userdatalen)
+		       Shishi_asn1 safe, char **userdata,
+		       size_t * userdatalen)
 {
   int res;
 
   res = shishi_asn1_read2 (handle, safe, "safe-body.user-data",
-			  userdata, userdatalen);
+			   userdata, userdatalen);
   if (res != SHISHI_OK)
     return res;
 
@@ -588,7 +589,7 @@ shishi_safe_verify (Shishi_safe * safe, Shishi_key * key)
 
   rc = SHISHI_OK;
 
- done:
+done:
   if (cksum)
     free (cksum);
   if (safeder)

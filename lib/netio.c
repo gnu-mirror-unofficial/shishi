@@ -219,7 +219,8 @@ shishi_sendrecv_tls (Shishi * handle,
   /* Allow connections to servers that have OpenPGP keys as well.
    */
   const int cert_type_priority[3] = { GNUTLS_CRT_X509,
-				      GNUTLS_CRT_OPENPGP, 0 };
+    GNUTLS_CRT_OPENPGP, 0
+  };
 
   sockfd = socket (AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0)
@@ -235,79 +236,88 @@ shishi_sendrecv_tls (Shishi * handle,
       return SHISHI_CONNECT_ERROR;
     }
 
-   gnutls_global_init();
+  gnutls_global_init ();
 
-   /* X509 stuff */
-   gnutls_certificate_allocate_credentials(&xcred);
+  /* X509 stuff */
+  gnutls_certificate_allocate_credentials (&xcred);
 
-   /* set's the trusted cas file
-    */
-   //gnutls_certificate_set_x509_trust_file(xcred, CAFILE, GNUTLS_X509_FMT_PEM);
-   /* Initialize TLS session 
-    */
-   gnutls_init(&session, GNUTLS_CLIENT);
+  /* set's the trusted cas file
+   */
+  //gnutls_certificate_set_x509_trust_file(xcred, CAFILE, GNUTLS_X509_FMT_PEM);
+  /* Initialize TLS session 
+   */
+  gnutls_init (&session, GNUTLS_CLIENT);
 
-   /* Use default priorities */
-   gnutls_set_default_priority(session);
-   gnutls_certificate_type_set_priority(session, cert_type_priority);
+  /* Use default priorities */
+  gnutls_set_default_priority (session);
+  gnutls_certificate_type_set_priority (session, cert_type_priority);
 
-   /* put the x509 credentials to the current session
-    */
-   gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, xcred);
+  /* put the x509 credentials to the current session
+   */
+  gnutls_credentials_set (session, GNUTLS_CRD_CERTIFICATE, xcred);
 
-   gnutls_transport_set_ptr( session, (gnutls_transport_ptr)sockfd);
+  gnutls_transport_set_ptr (session, (gnutls_transport_ptr) sockfd);
 
-   /* Perform the TLS handshake
-    */
-   ret = gnutls_handshake( session);
+  /* Perform the TLS handshake
+   */
+  ret = gnutls_handshake (session);
 
-   if (ret < 0) {
-      fprintf(stderr, "*** Handshake failed\n");
-      gnutls_perror(ret);
-   } else {
-      printf("- Handshake was completed\n");
-   }
+  if (ret < 0)
+    {
+      fprintf (stderr, "*** Handshake failed\n");
+      gnutls_perror (ret);
+    }
+  else
+    {
+      printf ("- Handshake was completed\n");
+    }
 
-   tmpbuf[3] = inlen & 0xFF;
-   tmpbuf[2] = (inlen >> 8) & 0xFF;
-   tmpbuf[1] = (inlen >> 16) & 0xFF;
-   tmpbuf[0] = (inlen >> 24) & 0xFF;
+  tmpbuf[3] = inlen & 0xFF;
+  tmpbuf[2] = (inlen >> 8) & 0xFF;
+  tmpbuf[1] = (inlen >> 16) & 0xFF;
+  tmpbuf[0] = (inlen >> 24) & 0xFF;
 
-   gnutls_record_send( session, tmpbuf, 4);
+  gnutls_record_send (session, tmpbuf, 4);
 
-   gnutls_record_send( session, indata, inlen);
+  gnutls_record_send (session, indata, inlen);
 
-   ret = gnutls_record_recv( session, tmpbuf, sizeof(tmpbuf));
-   if (ret == 0) {
-      printf("- Peer has closed the TLS connection\n");
-   } else if (ret < 0) {
-      fprintf(stderr, "*** Error: %s\n", gnutls_strerror(ret));
-   } else if (ret > 0) {
-      printf("- Received %d bytes: ", ret);
-      for (i = 0; i < ret; i++) {
-	fputc(tmpbuf[i], stdout);
-      }
-      fputs("\n", stdout);
-   }
-   gnutls_bye( session, GNUTLS_SHUT_RDWR);
+  ret = gnutls_record_recv (session, tmpbuf, sizeof (tmpbuf));
+  if (ret == 0)
+    {
+      printf ("- Peer has closed the TLS connection\n");
+    }
+  else if (ret < 0)
+    {
+      fprintf (stderr, "*** Error: %s\n", gnutls_strerror (ret));
+    }
+  else if (ret > 0)
+    {
+      printf ("- Received %d bytes: ", ret);
+      for (i = 0; i < ret; i++)
+	{
+	  fputc (tmpbuf[i], stdout);
+	}
+      fputs ("\n", stdout);
+    }
+  gnutls_bye (session, GNUTLS_SHUT_RDWR);
 
-   shutdown(sockfd, SHUT_RDWR);     /* no more receptions */
+  shutdown (sockfd, SHUT_RDWR);	/* no more receptions */
 
-   if (close (sockfd) != 0)
-     {
-       shishi_error_set (handle, strerror (errno));
-       return SHISHI_CLOSE_ERROR;
-     }
+  if (close (sockfd) != 0)
+    {
+      shishi_error_set (handle, strerror (errno));
+      return SHISHI_CLOSE_ERROR;
+    }
 
-   gnutls_deinit(session);
+  gnutls_deinit (session);
 
-   gnutls_certificate_free_credentials(xcred);
+  gnutls_certificate_free_credentials (xcred);
 
-   gnutls_global_deinit();
+  gnutls_global_deinit ();
 
-   *outlen = ret - 4;
-   *outdata = xmalloc (*outlen);
-   memcpy (*outdata, tmpbuf + 4, *outlen);
+  *outlen = ret - 4;
+  *outdata = xmalloc (*outlen);
+  memcpy (*outdata, tmpbuf + 4, *outlen);
 
   return SHISHI_OK;
 }
@@ -335,7 +345,8 @@ shishi_kdc_sendrecv_1 (Shishi * handle, struct Shishi_kdcinfo *ki,
   if (VERBOSE (handle))
     printf ("Sending to %s (%s) via %s...\n", ki->name,
 	    inet_ntoa (((struct sockaddr_in *) &ki->sockaddress)->sin_addr),
-	    ki->protocol == TCP ? "tcp" : ki->protocol == TLS ? "tls" : "udp");
+	    ki->protocol == TCP ? "tcp" : ki->protocol ==
+	    TLS ? "tls" : "udp");
 
   switch (ki->protocol)
     {

@@ -386,7 +386,7 @@ shishi_asreq_cnamerealm_get (Shishi * handle,
 
 int
 shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
-			 char *realm, size_t *realmlen)
+			 char *realm, size_t * realmlen)
 {
   return shishi_asn1_read_optional (handle, kdcreq, "req-body.realm",
 				    realm, realmlen);
@@ -647,7 +647,7 @@ int
 shishi_kdcreq_get_padata (Shishi * handle,
 			  Shishi_asn1 kdcreq,
 			  Shishi_padata_type padatatype,
-			  char **out, size_t *outlen)
+			  char **out, size_t * outlen)
 {
   char *format;
   int res;
@@ -670,7 +670,7 @@ shishi_kdcreq_get_padata (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      if (patype == (int32_t)padatatype)
+      if (patype == (int32_t) padatatype)
 	{
 	  asprintf (&format, "padata.?%d.padata-value", i);
 	  res = shishi_asn1_read2 (handle, kdcreq, format, out, outlen);
@@ -699,8 +699,7 @@ shishi_kdcreq_get_padata (Shishi * handle,
  **/
 int
 shishi_kdcreq_get_padata_tgs (Shishi * handle,
-			      Shishi_asn1 kdcreq,
-			      Shishi_asn1 *apreq)
+			      Shishi_asn1 kdcreq, Shishi_asn1 * apreq)
 {
   char *der;
   size_t derlen;
@@ -743,8 +742,7 @@ shishi_kdcreq_get_padata_tgs (Shishi * handle,
 int
 shishi_kdcreq_add_padata (Shishi * handle,
 			  Shishi_asn1 kdcreq,
-			  int padatatype,
-			  const char *data, size_t datalen)
+			  int padatatype, const char *data, size_t datalen)
 {
   char *format;
   int res;

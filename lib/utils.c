@@ -22,15 +22,15 @@
 #include "internal.h"
 
 time_t
-xtime (time_t *t)
+xtime (time_t * t)
 {
   time_t now;
 
   now = time (t);
-  if (now == (time_t)-1)
+  if (now == (time_t) - 1)
     {
-      perror("time");
-      abort();
+      perror ("time");
+      abort ();
     }
 
   return now;
@@ -44,8 +44,8 @@ xgettimeofday (struct timeval *tv, struct timezone *tz)
   rc = gettimeofday (tv, tz);
   if (rc != 0)
     {
-      perror("gettimeofday");
-      abort();
+      perror ("gettimeofday");
+      abort ();
     }
 
   return rc;

@@ -50,13 +50,13 @@ shishi_krberror (Shishi * handle)
     return NULL;
 
   rc = shishi_asn1_write (handle, krberror, "pvno",
-			   SHISHI_KRB_ERROR_DEFAULT_PVNO,
-			   SHISHI_KRB_ERROR_DEFAULT_PVNO_LEN);
+			  SHISHI_KRB_ERROR_DEFAULT_PVNO,
+			  SHISHI_KRB_ERROR_DEFAULT_PVNO_LEN);
 
   if (rc == SHISHI_OK)
     rc = shishi_asn1_write (handle, krberror, "msg-type",
-			     SHISHI_KRB_ERROR_DEFAULT_MSG_TYPE,
-			     SHISHI_KRB_ERROR_DEFAULT_MSG_TYPE_LEN);
+			    SHISHI_KRB_ERROR_DEFAULT_MSG_TYPE,
+			    SHISHI_KRB_ERROR_DEFAULT_MSG_TYPE_LEN);
 
 
   if (rc == SHISHI_OK)
@@ -247,11 +247,10 @@ shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_build (Shishi * handle,
-		       Shishi_asn1 krberror)
+shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror)
 {
   char *time;
-  size_t tmplen = sizeof(time);
+  size_t tmplen = sizeof (time);
   char *tmp;
   int32_t errc;
   int usec;
@@ -259,8 +258,7 @@ shishi_krberror_build (Shishi * handle,
 
   rc = shishi_krberror_ctime (handle, krberror, &time);
   if (rc != SHISHI_OK &&
-      rc != SHISHI_ASN1_NO_ELEMENT &&
-      rc != SHISHI_ASN1_NO_VALUE)
+      rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   free (time);
   if (rc == SHISHI_ASN1_NO_VALUE)
@@ -272,8 +270,7 @@ shishi_krberror_build (Shishi * handle,
 
   rc = shishi_krberror_cusec (handle, krberror, &usec);
   if (rc != SHISHI_OK &&
-      rc != SHISHI_ASN1_NO_ELEMENT &&
-      rc != SHISHI_ASN1_NO_VALUE)
+      rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   if (rc == SHISHI_ASN1_NO_VALUE)
     {
@@ -284,8 +281,7 @@ shishi_krberror_build (Shishi * handle,
 
   rc = shishi_krberror_crealm (handle, krberror, &tmp, &tmplen);
   if (rc != SHISHI_OK &&
-      rc != SHISHI_ASN1_NO_ELEMENT &&
-      rc != SHISHI_ASN1_NO_VALUE)
+      rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   if (rc == SHISHI_OK)
     free (tmp);
@@ -296,11 +292,10 @@ shishi_krberror_build (Shishi * handle,
 	return rc;
     }
 
-  tmplen = sizeof(time);
+  tmplen = sizeof (time);
   rc = shishi_krberror_cname (handle, krberror, time, &tmplen);
   if (rc != SHISHI_OK &&
-      rc != SHISHI_ASN1_NO_ELEMENT &&
-      rc != SHISHI_ASN1_NO_VALUE)
+      rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   if (rc == SHISHI_ASN1_NO_VALUE || (rc == SHISHI_OK && tmplen == 0))
     {
@@ -310,8 +305,7 @@ shishi_krberror_build (Shishi * handle,
     }
 
   rc = shishi_krberror_realm (handle, krberror, &tmp, &tmplen);
-  if (rc != SHISHI_OK &&
-      rc != SHISHI_ASN1_NO_VALUE)
+  if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   if (rc == SHISHI_OK)
     free (tmp);
@@ -322,10 +316,9 @@ shishi_krberror_build (Shishi * handle,
 	return rc;
     }
 
-  tmplen = sizeof(time);
+  tmplen = sizeof (time);
   rc = shishi_krberror_sname (handle, krberror, time, &tmplen);
-  if (rc != SHISHI_OK &&
-      rc != SHISHI_ASN1_NO_VALUE)
+  if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   if (rc == SHISHI_ASN1_NO_VALUE || tmplen == 0)
     {
@@ -336,8 +329,7 @@ shishi_krberror_build (Shishi * handle,
 
   rc = shishi_krberror_edata (handle, krberror, &tmp, &tmplen);
   if (rc != SHISHI_OK &&
-      rc != SHISHI_ASN1_NO_ELEMENT &&
-      rc != SHISHI_ASN1_NO_VALUE)
+      rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   if (rc == SHISHI_OK)
     free (tmp);
@@ -361,8 +353,7 @@ shishi_krberror_build (Shishi * handle,
 
   rc = shishi_krberror_etext (handle, krberror, &tmp, &tmplen);
   if (rc != SHISHI_OK &&
-      rc != SHISHI_ASN1_NO_ELEMENT &&
-      rc != SHISHI_ASN1_NO_VALUE)
+      rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   if (rc == SHISHI_OK)
     free (tmp);
@@ -394,8 +385,7 @@ shishi_krberror_build (Shishi * handle,
  **/
 int
 shishi_krberror_der (Shishi * handle,
-		     Shishi_asn1 krberror,
-		     char **out, size_t *outlen)
+		     Shishi_asn1 krberror, char **out, size_t * outlen)
 {
   int rc;
 
@@ -423,8 +413,7 @@ shishi_krberror_der (Shishi * handle,
  **/
 int
 shishi_krberror_crealm (Shishi * handle,
-			Shishi_asn1 krberror,
-			char **realm, size_t *realmlen)
+			Shishi_asn1 krberror, char **realm, size_t * realmlen)
 {
   return shishi_asn1_read2 (handle, krberror, "crealm", realm, realmlen);
 }
@@ -439,8 +428,7 @@ shishi_krberror_crealm (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_remove_crealm (Shishi * handle,
-			       Shishi_asn1 krberror)
+shishi_krberror_remove_crealm (Shishi * handle, Shishi_asn1 krberror)
 {
   int res;
 
@@ -463,8 +451,7 @@ shishi_krberror_remove_crealm (Shishi * handle,
  **/
 int
 shishi_krberror_set_crealm (Shishi * handle,
-			    Shishi_asn1 krberror,
-			    const char *crealm)
+			    Shishi_asn1 krberror, const char *crealm)
 {
   int res;
 
@@ -489,8 +476,7 @@ shishi_krberror_set_crealm (Shishi * handle,
  **/
 int
 shishi_krberror_cname (Shishi * handle,
-		       Shishi_asn1 krberror,
-		       char *out, size_t *outlen)
+		       Shishi_asn1 krberror, char *out, size_t * outlen)
 {
   int rc;
 
@@ -516,8 +502,7 @@ shishi_krberror_cname (Shishi * handle,
 int
 shishi_krberror_set_cname (Shishi * handle,
 			   Shishi_asn1 krberror,
-			   Shishi_name_type name_type,
-			   const char *cname[])
+			   Shishi_name_type name_type, const char *cname[])
 {
   int res;
 
@@ -539,8 +524,7 @@ shishi_krberror_set_cname (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_remove_cname (Shishi * handle,
-			       Shishi_asn1 krberror)
+shishi_krberror_remove_cname (Shishi * handle, Shishi_asn1 krberror)
 {
   int res;
 
@@ -563,8 +547,7 @@ shishi_krberror_remove_cname (Shishi * handle,
  **/
 int
 shishi_krberror_client_set (Shishi * handle,
-			    Shishi_asn1 krberror,
-			    const char *client)
+			    Shishi_asn1 krberror, const char *client)
 {
   int res;
 
@@ -588,8 +571,7 @@ shishi_krberror_client_set (Shishi * handle,
  **/
 int
 shishi_krberror_realm (Shishi * handle,
-		       Shishi_asn1 krberror,
-		       char **realm, size_t *realmlen)
+		       Shishi_asn1 krberror, char **realm, size_t * realmlen)
 {
   return shishi_asn1_read2 (handle, krberror, "realm", realm, realmlen);
 }
@@ -606,8 +588,7 @@ shishi_krberror_realm (Shishi * handle,
  **/
 int
 shishi_krberror_set_realm (Shishi * handle,
-			   Shishi_asn1 krberror,
-			   const char *realm)
+			   Shishi_asn1 krberror, const char *realm)
 {
   int res;
 
@@ -632,8 +613,7 @@ shishi_krberror_set_realm (Shishi * handle,
  **/
 int
 shishi_krberror_sname (Shishi * handle,
-		       Shishi_asn1 krberror,
-		       char *out, size_t *outlen)
+		       Shishi_asn1 krberror, char *out, size_t * outlen)
 {
   int rc;
 
@@ -687,8 +667,7 @@ shishi_krberror_remove_sname (Shishi * handle, Shishi_asn1 krberror)
 int
 shishi_krberror_set_sname (Shishi * handle,
 			   Shishi_asn1 krberror,
-			   Shishi_name_type name_type,
-			   const char *sname[])
+			   Shishi_name_type name_type, const char *sname[])
 {
   int res;
 
@@ -712,8 +691,7 @@ shishi_krberror_set_sname (Shishi * handle,
  **/
 int
 shishi_krberror_server_set (Shishi * handle,
-			    Shishi_asn1 krberror,
-			    const char *server)
+			    Shishi_asn1 krberror, const char *server)
 {
   int res;
 
@@ -735,8 +713,7 @@ shishi_krberror_server_set (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_ctime (Shishi * handle,
-		       Shishi_asn1 krberror, char **ctime)
+shishi_krberror_ctime (Shishi * handle, Shishi_asn1 krberror, char **ctime)
 {
   return shishi_time (handle, krberror, "ctime", ctime);
 }
@@ -753,8 +730,7 @@ shishi_krberror_ctime (Shishi * handle,
  **/
 int
 shishi_krberror_ctime_set (Shishi * handle,
-			   Shishi_asn1 krberror,
-			   const char *ctime)
+			   Shishi_asn1 krberror, const char *ctime)
 {
   int res;
 
@@ -801,9 +777,7 @@ shishi_krberror_remove_ctime (Shishi * handle, Shishi_asn1 krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_cusec (Shishi * handle,
-		       Shishi_asn1 krberror,
-		       int *cusec)
+shishi_krberror_cusec (Shishi * handle, Shishi_asn1 krberror, int *cusec)
 {
   int res;
 
@@ -868,9 +842,7 @@ shishi_krberror_remove_cusec (Shishi * handle, Shishi_asn1 krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_stime (Shishi * handle,
-		       Shishi_asn1 krberror,
-		       char **stime)
+shishi_krberror_stime (Shishi * handle, Shishi_asn1 krberror, char **stime)
 {
   return shishi_time (handle, krberror, "stime", stime);
 }
@@ -887,8 +859,7 @@ shishi_krberror_stime (Shishi * handle,
  **/
 int
 shishi_krberror_stime_set (Shishi * handle,
-			   Shishi_asn1 krberror,
-			   const char *stime)
+			   Shishi_asn1 krberror, const char *stime)
 {
   int res;
 
@@ -911,8 +882,7 @@ shishi_krberror_stime_set (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_susec (Shishi * handle,
-		       Shishi_asn1 krberror, int *susec)
+shishi_krberror_susec (Shishi * handle, Shishi_asn1 krberror, int *susec)
 {
   int res;
 
@@ -1034,8 +1004,7 @@ shishi_krberror_etext (Shishi * handle, Shishi_asn1 krberror,
  **/
 int
 shishi_krberror_set_etext (Shishi * handle,
-			   Shishi_asn1 krberror,
-			   const char *etext)
+			   Shishi_asn1 krberror, const char *etext)
 {
   int res;
 
@@ -1097,8 +1066,7 @@ shishi_krberror_edata (Shishi * handle, Shishi_asn1 krberror,
  **/
 int
 shishi_krberror_set_edata (Shishi * handle,
-			   Shishi_asn1 krberror,
-			   const char *edata)
+			   Shishi_asn1 krberror, const char *edata)
 {
   int res;
 
@@ -1142,7 +1110,8 @@ shishi_krberror_remove_edata (Shishi * handle, Shishi_asn1 krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_pretty_print (Shishi * handle, FILE * fh, Shishi_asn1 krberror)
+shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
+			      Shishi_asn1 krberror)
 {
   char *buf;
   size_t len;
@@ -1189,12 +1158,18 @@ struct krb_error_msgs _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
   {SHISHI_KDC_ERR_NONE, "No error"},
   {SHISHI_KDC_ERR_NAME_EXP, "Client's entry in database has expired"},
   {SHISHI_KDC_ERR_SERVICE_EXP, "Server's entry in database has expired"},
-  {SHISHI_KDC_ERR_BAD_PVNO, "Requested protocol version number not supported"},
-  {SHISHI_KDC_ERR_C_OLD_MAST_KVNO, "Client's key encrypted in old master key"},
-  {SHISHI_KDC_ERR_S_OLD_MAST_KVNO, "Server's key encrypted in old master key"},
-  {SHISHI_KDC_ERR_C_PRINCIPAL_UNKNOWN, "Client not found in Kerberos database"},
-  {SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN, "Server not found in Kerberos database"},
-  {SHISHI_KDC_ERR_PRINCIPAL_NOT_UNIQUE, "Multiple principal entries in database"},
+  {SHISHI_KDC_ERR_BAD_PVNO,
+   "Requested protocol version number not supported"},
+  {SHISHI_KDC_ERR_C_OLD_MAST_KVNO,
+   "Client's key encrypted in old master key"},
+  {SHISHI_KDC_ERR_S_OLD_MAST_KVNO,
+   "Server's key encrypted in old master key"},
+  {SHISHI_KDC_ERR_C_PRINCIPAL_UNKNOWN,
+   "Client not found in Kerberos database"},
+  {SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN,
+   "Server not found in Kerberos database"},
+  {SHISHI_KDC_ERR_PRINCIPAL_NOT_UNIQUE,
+   "Multiple principal entries in database"},
   {SHISHI_KDC_ERR_NULL_KEY, "The client or server has a null key"},
   {SHISHI_KDC_ERR_CANNOT_POSTDATE, "Ticket not eligible for postdating"},
   {SHISHI_KDC_ERR_NEVER_VALID, "Requested start time is later than end time"},
@@ -1205,18 +1180,23 @@ struct krb_error_msgs _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
   {SHISHI_KDC_ERR_PADATA_TYPE_NOSUPP, "KDC has no support for padata type"},
   {SHISHI_KDC_ERR_TRTYPE_NOSUPP, "KDC has no support for transited type"},
   {SHISHI_KDC_ERR_CLIENT_REVOKED, "Clients credentials have been revoked"},
-  {SHISHI_KDC_ERR_SERVICE_REVOKED, "Credentials for server have been revoked"},
+  {SHISHI_KDC_ERR_SERVICE_REVOKED,
+   "Credentials for server have been revoked"},
   {SHISHI_KDC_ERR_TGT_REVOKED, "TGT has been revoked"},
   {SHISHI_KDC_ERR_CLIENT_NOTYET, "Client not yet valid - try again later"},
   {SHISHI_KDC_ERR_SERVICE_NOTYET, "Server not yet valid - try again later"},
   {SHISHI_KDC_ERR_KEY_EXPIRED, "Password has expired "},
-  {SHISHI_KDC_ERR_PREAUTH_FAILED, "Pre-authentication information was invalid"},
-  {SHISHI_KDC_ERR_PREAUTH_REQUIRED, "Additional pre-authenticationrequired [40]"},
+  {SHISHI_KDC_ERR_PREAUTH_FAILED,
+   "Pre-authentication information was invalid"},
+  {SHISHI_KDC_ERR_PREAUTH_REQUIRED,
+   "Additional pre-authenticationrequired [40]"},
   {SHISHI_KDC_ERR_SERVER_NOMATCH, "Requested server and ticket don't match"},
-  {SHISHI_KDC_ERR_MUST_USE_USER2USER, "Server principal valid for user2user only"},
+  {SHISHI_KDC_ERR_MUST_USE_USER2USER,
+   "Server principal valid for user2user only"},
   {SHISHI_KDC_ERR_PATH_NOT_ACCPETED, "KDC Policy rejects transited path"},
   {SHISHI_KDC_ERR_SVC_UNAVAILABLE, "A service is not available"},
-  {SHISHI_KRB_AP_ERR_BAD_INTEGRITY, "Integrity check on decrypted field failed"},
+  {SHISHI_KRB_AP_ERR_BAD_INTEGRITY,
+   "Integrity check on decrypted field failed"},
   {SHISHI_KRB_AP_ERR_TKT_EXPIRED, "Ticket expired"},
   {SHISHI_KRB_AP_ERR_TKT_NYV, "Ticket not yet valid"},
   {SHISHI_KRB_AP_ERR_REPEAT, "Request is a replay"},
@@ -1234,9 +1214,11 @@ struct krb_error_msgs _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
   {SHISHI_KRB_AP_ERR_BADDIRECTION, "Incorrect message direction"},
   {SHISHI_KRB_AP_ERR_METHOD, "Alternative authentication method required"},
   {SHISHI_KRB_AP_ERR_BADSEQ, "Incorrect sequence number in message"},
-  {SHISHI_KRB_AP_ERR_INAPP_CKSUM, "Inappropriate type of checksum in message"},
+  {SHISHI_KRB_AP_ERR_INAPP_CKSUM,
+   "Inappropriate type of checksum in message"},
   {SHISHI_KRB_AP_PATH_NOT_ACCEPTED, "Policy rejects transited path"},
-  {SHISHI_KRB_ERR_RESPONSE_TOO_BIG, "Response too big for UDP, retry with TCP"},
+  {SHISHI_KRB_ERR_RESPONSE_TOO_BIG,
+   "Response too big for UDP, retry with TCP"},
   {SHISHI_KRB_ERR_GENERIC, "Generic error (description in e-text)"},
   {SHISHI_KRB_ERR_FIELD_TOOLONG, "Field is too long for this implementation"},
   {SHISHI_KDC_ERROR_CLIENT_NOT_TRUSTED, "(pkinit)"},

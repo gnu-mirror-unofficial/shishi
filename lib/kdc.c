@@ -576,8 +576,7 @@ shishi_tgs_process (Shishi * handle,
 		    Shishi_asn1 tgsreq,
 		    Shishi_asn1 tgsrep,
 		    Shishi_asn1 authenticator,
-		    Shishi_asn1 oldenckdcreppart,
-		    Shishi_asn1 * enckdcreppart)
+		    Shishi_asn1 oldenckdcreppart, Shishi_asn1 * enckdcreppart)
 {
   Shishi_key *tktkey;
   Shishi_key *subkey;
@@ -604,8 +603,8 @@ shishi_tgs_process (Shishi * handle,
     res = shishi_kdc_process (handle, tgsreq, tgsrep,
 			      use_subkey ? subkey : tktkey,
 			      use_subkey ?
-			      SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY :
-			      SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
+			      SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY
+			      : SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
 			      enckdcreppart);
 
   /* Entire if statement to work around buggy KDCs. */

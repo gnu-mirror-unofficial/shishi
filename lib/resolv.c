@@ -90,7 +90,7 @@ _srv_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
 static void *
 _txt_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
 {
-  size_t len = (size_t)**scan;
+  size_t len = (size_t) ** scan;
   char *p;
 
   p = xmalloc (len + 1);
@@ -155,7 +155,7 @@ _shishi_resolv (const char *zone, unsigned int query_type)
 
   /* do the actual query */
   if ((len = res_query (zone, C_IN, query_type, packet.buf, MAX_PACKET)) < 0
-      || len < (int)sizeof (HEADER))
+      || len < (int) sizeof (HEADER))
     return NULL;
 
   /* we got a valid result, containing two types of records - packet

@@ -91,7 +91,7 @@ shishi_tkt_build (Shishi_tkt * tkt, Shishi_key * key)
  * Return value: Returns client principal of ticket.
  **/
 int
-shishi_tkt_client (Shishi_tkt * tkt, char *client, size_t *clientlen)
+shishi_tkt_client (Shishi_tkt * tkt, char *client, size_t * clientlen)
 {
   return shishi_principal_name_get (tkt->handle, tkt->kdcrep,
 				    "cname", client, clientlen);
@@ -128,7 +128,7 @@ shishi_tkt_client_p (Shishi_tkt * tkt, const char *client)
 
 int
 shishi_tkt_cnamerealm (Shishi_tkt * tkt,
-		       char *cnamerealm, size_t *cnamerealmlen)
+		       char *cnamerealm, size_t * cnamerealmlen)
 {
   return shishi_principal_name_realm_get (tkt->handle,
 					  tkt->kdcrep, "cname",
@@ -568,13 +568,13 @@ shishi_tkt_ok_as_delegate_p (Shishi_tkt * tkt)
 }
 
 int
-shishi_tkt_realm (Shishi_tkt * tkt, char **realm, size_t *realmlen)
+shishi_tkt_realm (Shishi_tkt * tkt, char **realm, size_t * realmlen)
 {
   return shishi_ticket_realm_get (tkt->handle, tkt->ticket, realm, realmlen);
 }
 
 int
-shishi_tkt_server (Shishi_tkt * tkt, char *server, size_t *serverlen)
+shishi_tkt_server (Shishi_tkt * tkt, char *server, size_t * serverlen)
 {
   return shishi_ticket_sname_get (tkt->handle, tkt->ticket,
 				  server, serverlen);
@@ -611,7 +611,7 @@ shishi_tkt_server_p (Shishi_tkt * tkt, const char *server)
 
 int
 shishi_tkt_server_realm (Shishi_tkt * tkt,
-			 char *serverrealm, size_t *serverrealmlen)
+			 char *serverrealm, size_t * serverrealmlen)
 {
   return shishi_ticket_snamerealm_get (tkt->handle, tkt->ticket,
 				       serverrealm, serverrealmlen);
@@ -640,7 +640,7 @@ shishi_tkt_keytype_p (Shishi_tkt * tkt, int32_t etype)
 
 int
 shishi_tkt_lastreq (Shishi_tkt * tkt,
-		    char *lrtime, size_t *lrtimelen, int lrtype)
+		    char *lrtime, size_t * lrtimelen, int lrtype)
 {
   char *format;
   int tmplrtype;
@@ -729,7 +729,7 @@ shishi_tkt_lastreq_pretty_print (Shishi_tkt * tkt, FILE * fh)
 }
 
 int
-shishi_tkt_authtime (Shishi_tkt * tkt, char *authtime, size_t *authtimelen)
+shishi_tkt_authtime (Shishi_tkt * tkt, char *authtime, size_t * authtimelen)
 {
   return shishi_asn1_read (tkt->handle, tkt->enckdcreppart, "authtime",
 			   authtime, authtimelen);
@@ -756,7 +756,8 @@ shishi_tkt_authctime (Shishi_tkt * tkt)
 }
 
 int
-shishi_tkt_starttime (Shishi_tkt * tkt, char *starttime, size_t *starttimelen)
+shishi_tkt_starttime (Shishi_tkt * tkt, char *starttime,
+		      size_t * starttimelen)
 {
   return shishi_asn1_read_optional (tkt->handle, tkt->enckdcreppart,
 				    "starttime", starttime, starttimelen);
@@ -783,7 +784,7 @@ shishi_tkt_startctime (Shishi_tkt * tkt)
 }
 
 int
-shishi_tkt_endtime (Shishi_tkt * tkt, char *endtime, size_t *endtimelen)
+shishi_tkt_endtime (Shishi_tkt * tkt, char *endtime, size_t * endtimelen)
 {
   return shishi_asn1_read (tkt->handle, tkt->enckdcreppart, "endtime",
 			   endtime, endtimelen);
@@ -810,7 +811,8 @@ shishi_tkt_endctime (Shishi_tkt * tkt)
 }
 
 int
-shishi_tkt_renew_till (Shishi_tkt * tkt, char *renewtill, size_t *renewtilllen)
+shishi_tkt_renew_till (Shishi_tkt * tkt, char *renewtill,
+		       size_t * renewtilllen)
 {
   return shishi_asn1_read_optional (tkt->handle, tkt->enckdcreppart,
 				    "renew-till", renewtill, renewtilllen);

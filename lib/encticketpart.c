@@ -328,7 +328,7 @@ shishi_encticketpart_endtime_set (Shishi * handle,
 int
 shishi_encticketpart_authtime (Shishi * handle,
 			       Shishi_asn1 encticketpart,
-			       char *authtime, size_t *authtimelen)
+			       char *authtime, size_t * authtimelen)
 {
   return shishi_asn1_read (handle, encticketpart, "authtime",
 			   authtime, authtimelen);
@@ -358,7 +358,7 @@ shishi_encticketpart_authctime (Shishi * handle, Shishi_asn1 encticketpart)
 int
 shishi_encticketpart_cname_get (Shishi * handle,
 				Shishi_asn1 encticketpart,
-				char *cname, size_t *cnamelen)
+				char *cname, size_t * cnamelen)
 {
   return shishi_principal_name_get (handle, encticketpart,
 				    "cname", cname, cnamelen);
@@ -367,7 +367,7 @@ shishi_encticketpart_cname_get (Shishi * handle,
 int
 shishi_encticketpart_cnamerealm_get (Shishi * handle,
 				     Shishi_asn1 encticketpart,
-				     char *cnamerealm, size_t *cnamerealmlen)
+				     char *cnamerealm, size_t * cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, encticketpart,
 					  "cname",

@@ -363,8 +363,7 @@ shishi_enckdcreppart_server_set (Shishi * handle,
 					SHISHI_NT_PRINCIPAL, serverbuf);
   if (res != SHISHI_OK)
     {
-      fprintf (stderr, _("Could not set sname: %s\n"),
-	       shishi_error (handle));
+      fprintf (stderr, _("Could not set sname: %s\n"), shishi_error (handle));
       return res;
     }
   free (serverbuf);

@@ -891,8 +891,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 
   if (!tkt)
     {
-      printf ("No ticket in TGS-REP?!: %s\n",
-	      shishi_error (tkts->handle));
+      printf ("No ticket in TGS-REP?!: %s\n", shishi_error (tkts->handle));
       return NULL;
     }
 

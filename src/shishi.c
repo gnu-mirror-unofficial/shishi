@@ -881,9 +881,8 @@ static struct argp argp = {
   options,
   parse_opt,
   "[CLIENT [SERVER]] [OPTION...]\n"
-  "--list [CLIENT [SERVER]]\n"
-  "--destroy [CLIENT [SERVER]]\n"
-  "--string-to-key [CLIENT] [OPTION...]\n",
+    "--list [CLIENT [SERVER]]\n"
+    "--destroy [CLIENT [SERVER]]\n" "--string-to-key [CLIENT] [OPTION...]\n",
   "Shishi -- A Kerberos 5 implementation",
   NULL,
   NULL,
@@ -1068,8 +1067,7 @@ main (int argc, char *argv[])
 	    rc = shishi_tkt_pretty_print (tkt, stdout);
 	    if (rc != SHISHI_OK)
 	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
-		       shishi_strerror (rc),
-		       shishi_error (handle));
+		       shishi_strerror (rc), shishi_error (handle));
 	  }
 
 	/* Get ticket using TGT ... */
@@ -1104,8 +1102,7 @@ main (int argc, char *argv[])
 	tkt = shishi_tgs_tkt (tgs);
 	if (!tkt)
 	  {
-	    printf ("No ticket in TGS-REP?!: %s\n",
-		    shishi_error (handle));
+	    printf ("No ticket in TGS-REP?!: %s\n", shishi_error (handle));
 	    break;
 	  }
 
@@ -1141,8 +1138,7 @@ main (int argc, char *argv[])
 	    rc = shishi_tkt_pretty_print (tkt, stdout);
 	    if (rc != SHISHI_OK)
 	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
-		       shishi_strerror (rc),
-		       shishi_error (handle));
+		       shishi_strerror (rc), shishi_error (handle));
 	  }
       }
       break;

@@ -858,7 +858,7 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
   size_t i;
 
   base64_to (b64key, shishi_key_value (key),
-		    shishi_key_length (key), sizeof (b64key));
+	     shishi_key_length (key), sizeof (b64key));
 
   fprintf (fh, HEADERBEG "\n", "KEY");
 

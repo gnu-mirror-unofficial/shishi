@@ -361,8 +361,7 @@ shishi_authenticator_client_set (Shishi * handle,
  **/
 int
 shishi_authenticator_ctime (Shishi * handle,
-			    Shishi_asn1 authenticator,
-			    char **ctime)
+			    Shishi_asn1 authenticator, char **ctime)
 {
   return shishi_time (handle, authenticator, "ctime", ctime);
 }
@@ -440,7 +439,7 @@ shishi_authenticator_cusec_set (Shishi * handle,
 int
 shishi_authenticator_cname_get (Shishi * handle,
 				Shishi_asn1 authenticator,
-				char *cname, size_t *cnamelen)
+				char *cname, size_t * cnamelen)
 {
   return shishi_principal_name_get (handle, authenticator,
 				    "cname", cname, cnamelen);
@@ -449,7 +448,7 @@ shishi_authenticator_cname_get (Shishi * handle,
 int
 shishi_authenticator_cnamerealm_get (Shishi * handle,
 				     Shishi_asn1 authenticator,
-				     char *cnamerealm, size_t *cnamerealmlen)
+				     char *cnamerealm, size_t * cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, authenticator,
 					  "cname",
@@ -703,7 +702,7 @@ int
 shishi_authenticator_authorizationdata (Shishi * handle,
 					Shishi_asn1 authenticator,
 					int *adtype,
-					char *addata, size_t *addatalen,
+					char *addata, size_t * addatalen,
 					int nth)
 {
   char *format;
@@ -743,7 +742,8 @@ shishi_authenticator_authorizationdata (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_authenticator_remove_subkey (Shishi * handle, Shishi_asn1 authenticator)
+shishi_authenticator_remove_subkey (Shishi * handle,
+				    Shishi_asn1 authenticator)
 {
   int res;
 
@@ -772,12 +772,11 @@ shishi_authenticator_get_subkey (Shishi * handle,
 {
   int res;
   int subkeytype;
-  char * subkeyvalue;
+  char *subkeyvalue;
   size_t subkeylen;
   int n;
 
-  res = shishi_asn1_number_of_elements (handle, authenticator,
-					"subkey", &n);
+  res = shishi_asn1_number_of_elements (handle, authenticator, "subkey", &n);
   if (res != SHISHI_OK)
     return res;
 
@@ -787,7 +786,7 @@ shishi_authenticator_get_subkey (Shishi * handle,
     return res;
 
   res = shishi_asn1_read2 (handle, authenticator, "subkey.keyvalue",
-			  &subkeyvalue, &subkeylen);
+			   &subkeyvalue, &subkeylen);
   if (res != SHISHI_OK)
     return res;
 
@@ -819,9 +818,9 @@ shishi_authenticator_get_subkey (Shishi * handle,
  **/
 int
 shishi_authenticator_set_subkey (Shishi * handle,
-				Shishi_asn1 authenticator,
-				int32_t subkeytype,
-				char *subkey, size_t subkeylen)
+				 Shishi_asn1 authenticator,
+				 int32_t subkeytype,
+				 char *subkey, size_t subkeylen)
 {
   int res;
 
@@ -852,12 +851,12 @@ shishi_authenticator_add_random_subkey (Shishi * handle,
 					Shishi_asn1 authenticator)
 {
   int res;
-  int * etypes;
-  Shishi_key * subkey;
+  int *etypes;
+  Shishi_key *subkey;
 
   res = shishi_cfg_clientkdcetype (handle, &etypes);
   if (!res)
-      return res;
+    return res;
 
   res = shishi_key_random (handle, etypes[0], &subkey);
   if (res != SHISHI_OK)
@@ -889,11 +888,11 @@ shishi_authenticator_add_subkey (Shishi * handle,
 				 Shishi_key * subkey)
 {
   int res;
-  int * etypes;
+  int *etypes;
 
   res = shishi_cfg_clientkdcetype (handle, &etypes);
   if (res != SHISHI_OK)
-      return res;
+    return res;
 
   res = shishi_authenticator_set_subkey (handle, authenticator,
 					 shishi_key_type (subkey),

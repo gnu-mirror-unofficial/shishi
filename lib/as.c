@@ -173,7 +173,7 @@ shishi_as_req_set (Shishi_as * as, Shishi_asn1 asreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_as_req_der (Shishi_as * as, char **out, size_t *outlen)
+shishi_as_req_der (Shishi_as * as, char **out, size_t * outlen)
 {
   int rc;
 
@@ -385,7 +385,7 @@ shishi_as_rep_build (Shishi_as * as, Shishi_key * key)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_as_rep_der (Shishi_as * as, char **out, size_t *outlen)
+shishi_as_rep_der (Shishi_as * as, char **out, size_t * outlen)
 {
   int rc;
 
@@ -462,7 +462,7 @@ shishi_as_krberror (Shishi_as * as)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_as_krberror_der (Shishi_as * as, char **out, size_t *outlen)
+shishi_as_krberror_der (Shishi_as * as, char **out, size_t * outlen)
 {
   int rc;
 

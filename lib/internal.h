@@ -160,7 +160,8 @@
 #define HOST_NAME_MAX BUFSIZ
 #endif
 
-enum {
+enum
+{
   UDP,
   TCP,
   TLS
@@ -178,7 +179,7 @@ struct Shishi_realminfo
   char *name;
   struct Shishi_kdcinfo *kdcaddresses;
   size_t nkdcaddresses;
-  char  **serverwildcards;
+  char **serverwildcards;
   size_t nserverwildcards;
 };
 

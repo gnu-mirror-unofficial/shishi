@@ -252,8 +252,7 @@ shishi_aprep_from_file (Shishi * handle, Shishi_asn1 * aprep,
 int
 shishi_aprep_enc_part_set (Shishi * handle,
 			   Shishi_asn1 aprep,
-			   int etype,
-			   const char *buf, size_t buflen)
+			   int etype, const char *buf, size_t buflen)
 {
   int res;
 
@@ -464,8 +463,7 @@ shishi_aprep_verify (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_encapreppart_ctime (handle, encapreppart,
-				   &encapreppartctime);
+  res = shishi_encapreppart_ctime (handle, encapreppart, &encapreppartctime);
   if (res != SHISHI_OK)
     return res;
 

@@ -128,13 +128,14 @@ main (int argc, char *argv[])
 
   /* shishi_safe_verify */
   res = shishi_safe_verify (safe, key);
-  if (res == SHISHI_CRYPTO_ERROR) /* t==42 unsupported cksumtype */
+  if (res == SHISHI_CRYPTO_ERROR)	/* t==42 unsupported cksumtype */
     success ("shishi_safe_verify() OK\n");
   else
     fail ("shishi_safe_verify() failed (%d)\n", res);
 
   /* shishi_safe_set_cksum */
-  res = shishi_safe_set_cksum (handle, asn1safe, SHISHI_RSA_MD5_DES, "bar", 3);
+  res =
+    shishi_safe_set_cksum (handle, asn1safe, SHISHI_RSA_MD5_DES, "bar", 3);
   if (res == SHISHI_OK)
     success ("shishi_safe_set_cksum() OK\n");
   else

@@ -149,14 +149,15 @@ shishi_realm_for_server_dns (Shishi * handle, char *server)
   char *tmp = NULL;
   char *p = server;
 
-  do {
-    asprintf (&tmp, "_kerberos.%s", p);
-    rrs = _shishi_resolv (tmp, T_TXT);
-    free (tmp);
-    p = strchr (p, '.');
-    if (p)
-      p++;
-  }
+  do
+    {
+      asprintf (&tmp, "_kerberos.%s", p);
+      rrs = _shishi_resolv (tmp, T_TXT);
+      free (tmp);
+      p = strchr (p, '.');
+      if (p)
+	p++;
+    }
   while (!rrs && p && *p);
 
   if (!rrs)
@@ -168,8 +169,9 @@ shishi_realm_for_server_dns (Shishi * handle, char *server)
       return NULL;
     }
 
-  shishi_warn (handle, "DNS maps '%s' to '%s'.", server, (char*)rrs->rr);
-  shishi_warn (handle, "Consider using a 'server-realm' configuration token.");
+  shishi_warn (handle, "DNS maps '%s' to '%s'.", server, (char *) rrs->rr);
+  shishi_warn (handle,
+	       "Consider using a 'server-realm' configuration token.");
 
   return rrs->rr;
 }

@@ -231,7 +231,7 @@ shishi_key (Shishi * handle, Shishi_key ** key)
  * Deallocates key information structure.
  **/
 void
-shishi_key_done (Shishi_key *key)
+shishi_key_done (Shishi_key * key)
 {
   free (key);
 }
