@@ -1,3 +1,120 @@
+2003-08-08  Moritz Schulte  <moritz@g10code.com>
+
+	* pubkey.c (sexp_to_enc): Fixed extraction of S-Expression: do not
+	fail if no `flags' sub S-Expression is found.
+
+2003-07-27  Werner Koch  <wk@gnupg.org>
+
+	* md.c (gcry_md_lookup_func_oid): Allow for empty OID lists.
+
+2003-07-23  Moritz Schulte  <moritz@g10code.com>
+
+	* ac.c (gcry_ac_data_construct): New argument: include_flags, only
+	include `flags' S-expression, if include_flags is true.  Adjust
+	callers.  Thanks for triggering a bug caused by `flags'
+	sub-S-expression where they are not expected to Ralf Schneider.
+
+2003-07-21  Moritz Schulte  <moritz@g10code.com>
+
+	* pubkey.c (gcry_pk_lookup_func_name): Use new member name
+	`aliases' instead of `sexp_names'.
+
+	* ac.c (gcry_ac_key_data_get): New function.
+
+	* cipher.c (gcry_cipher_lookup_func_name): Fix return value.
+
+2003-07-20  Moritz Schulte  <moritz@g10code.com>
+
+	* blowfish.c: Adjusted for new gcry_cipher_spec_t structure.
+	* cast5.c: Likewise.
+	* twofish.c: Likewise.
+	* arcfour.c: Likewise.
+	* rijndael.c (rijndael_oids, rijndael192_oids, rijndael256_oids):
+	New variables, adjust for new gcry_cipher_spec_t structure.
+	* des.c (oids_tripledes): New variable, adjust for new
+	gcry_cipher_spec_t structure.
+
+	* md.c (oid_table): Removed.
+
+	* tiger.c (oid_spec_tiger): New variable.
+	(digest_spec_tiger): Adjusted for new gry_md_spec_t structure.
+
+	* sha512.c (oid_spec_sha512): New variable.
+	(digest_spec_sha512): Adjusted for new gry_md_spec_t structure.
+
+	* sha512.c (oid_spec_sha384): New variable.
+	(digest_spec_sha384): Adjusted for new gry_md_spec_t structure.
+
+	* sha256.c (oid_spec_sha256): New variable.
+	(digest_spec_sha256): Adjusted for new gry_md_spec_t structure.
+
+	* sha1.c (oid_spec_sha1): New variable.
+	(digest_spec_sha1): Adjusted for new gry_md_spec_t structure.
+
+	* rmd160.c (oid_spec_rmd160): New variable.
+	(digest_spec_rnd160): Adjusted for new gry_md_spec_t structure.
+
+	* md5.c (oid_spec_md5): New variable.
+	(digest_spec_md5): Adjusted for new gry_md_spec_t structure.
+
+	* md4.c (oid_spec_md4): New variable.
+	(digest_spec_md4): Adjusted for new gry_md_spec_t structure.
+
+	* crc.c (digest_spec_crc32, digest_spec_crc32_rfc1510,
+	digest_spec_crc32_rfc2440): Adjusted for new gry_md_spec_t
+	structure.
+
+2003-07-19  Moritz Schulte  <moritz@g10code.com>
+
+	* md.c (gcry_md_lookup_func_oid): New function.
+	(search_oid): New function, copied from cipher.c.
+	(gcry_md_map_name): Adjust for new search_oid_interface.
+
+	* cipher.c (oid_table): Removed table.
+	(gcry_cipher_lookup_func_oid): New function.
+	(search_oid): Rewritten to use the module functions.
+	(gcry_cipher_map_name): Adjust for new search_oid interface.
+	(gcry_cipher_mode_from_oid): Likewise.
+
+2003-07-18  Werner Koch  <wk@gnupg.org>
+
+	* md.c (gcry_md_hash_buffer): Convert ERR to gpg_error_t in
+	gpg_strerror.
+
+2003-07-14  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.c (gcry_cipher_lookup_func_name): Also check the cipher
+	name aliases, not just the primary name.
+	(gcry_cipher_map_name): Remove kludge for aliasing Rijndael to
+	AES.
+
+	* arcfour.c, blowfish.c, cast5.c, des.c, twofish.c: Adjust cipher
+	specification structures.
+
+	* rijndael.c (rijndael_names, rijndael192_names,
+	rijndael256_names): New variables, use them in the cipher
+	specifications.
+
+	* rmd160test.c: Removed file.
+
+	* ac.c, arcfour.c, blowfish.c, cast5.c, cipher.c, des.c, dsa.c,
+	elgamal.c, md.c, pubkey.c, random.c, rijndael.c, rsa.c, twofish.c:
+	Used gcry_err* wrappers for libgpg symbols.
+
+	* primegen.c (gen_prime): Correct the order arguments to
+	extra_check.
+
+2003-07-12  Moritz Schulte  <moritz@g10code.com>
+
+	* ac.c: Replaced all public occurences of gpg_error_t with
+	gcry_error_t.
+	* cipher.c: Likewise.
+	* md.c: Likewise.
+	* pubkey.c: Likewise.
+	* random.c: Likewise.
+
+	* cipher.c: Added support for TWOFISH128.
+
 2003-07-08  Moritz Schulte  <moritz@g10code.com>
 
 	* ac.c (gcry_ac_data_copy_internal): New function, based on
@@ -136,6 +253,14 @@
 2003-06-29  Moritz Schulte  <moritz@g10code.com>
 
 	* ac.c: New file.
+
+2003-06-26  Werner Koch  <wk@gnupg.org>
+
+	* md.c (gcry_md_hash_buffer): Trigger BUG correcly with new API.
+
+2003-06-19  Werner Koch  <wk@gnupg.org>
+
+	* md.c (gcry_md_is_enabled): Fixed. 
 
 2003-06-18  Werner Koch  <wk@gnupg.org>
 

@@ -1,3 +1,101 @@
+2003-08-07  Werner Koch  <wk@gnupg.org>
+
+	* module.c (_gcry_module_release): Don't act if module is NULL.
+
+2003-07-30  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h (enum gcry_ac_id): Added: GCRY_AC_ELG_E.
+	Reverted change: use gcry_md_flags enumeration list instead of
+	defines.
+
+2003-07-29  Werner Koch  <wk@gnupg.org>
+
+	* global.c (gcry_control): Add GCRYCTL_SET_RANDOM_SEED_FILE and
+	GCRYCTL_UPDATE_RANDOM_SEED_FILE.
+	* gcrypt.h: Ditto.  Renamed index to idx, so avoid warning
+	related to the old index function.
+
+2003-07-28  Moritz Schulte  <moritz@g10code.com>
+
+	* global.c (gcry_err_code_from_errno, gcry_err_code_to_errno)
+	(gcry_err_make_from_errno, gcry_error_from_errno): New functions.
+
+	* gcrypt.h: Declared: gcry_err_code_from_errno,
+	gcry_err_code_to_errno, gcry_err_make_from_errno,
+	gcry_error_from_errno.
+
+	* Makefile.am (include_HEADERS): Added: gcrypt-module.h.
+
+	* gcrypt.h: Include <gcrypt-module.h>.
+
+	* gcrypt-module.h: New file.
+
+2003-07-27  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.h (gcry_mpi_scan, gcry_mpi_print): API change.
+	(gcry_mpi_dump): New.
+
+2003-07-21  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h: Declared: gcry_ac_key_data_get.
+	(gcry_pk_spec): Renamed member `sexp_names' into `aliases'.
+
+2003-07-20  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h (gcry_md_oid_spec_t): New type.
+	(gcry_md_spec): New member: oids.
+
+2003-07-19  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h (gcry_cipher_oid_spec_t): New type.
+	(gcry_cipher_spec): New member: oids;
+
+2003-07-18  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.h (gcry_mpi_set_opaque): Add a warning comment.
+
+2003-07-15  Moritz Schulte  <moritz@g10code.com>
+
+	* secmem.c (compress_pool): Remove function, since unused blocks
+	are automatically concatenad.
+
+	* gcrypt.h: Bumped version number up to 1.1.42-cvs.
+
+2003-07-14  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h (gcry_cipher_spec): New member: aliases.
+
+	* Makefile.am (noinst_PROGRAMS, testapi_SOURCES, testapai_LDADD,
+	benchmark_SOURCES, benchmark_LDADD): Removed.
+
+	* benchmark.c, testapi.c: Removed files.
+
+	* mpi.h: Removed disabled typedef.
+	* g10lib.h: Likewise.
+
+	* benchmark.c, g10lib.h, gcrypt.h, global.c, module.c, sexp.c:
+	Used gcry_err* wrappers for libgpg-error symbols.
+
+2003-07-12  Moritz Schulte  <moritz@g10code.com>
+
+	* global.c: Likewise.
+
+	* gcrypt.h: New type: gcry_error_t, gcry_err_code_t and
+	gcry_err_source_t.
+	(gcry_err_make, gcry_error, gcry_err_code, gcry_err_source): New
+	functions.
+
+	* global.c (gcry_strerror): New function.
+	(gcry_strsource): New function.
+
+	* gcrypt.h: New symbol: GCRY_CIPHER_TWOFISH128.
+
+2003-07-09  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h (enum gcry_md_flags): Removed, used define instead,
+	since that is more common than an enumeration list when it comes
+	to flags that can be bitwise ORed.
+	
 2003-07-08  Moritz Schulte  <moritz@g10code.com>
 
 	* global.c: Use new types for handlers.

@@ -1,6 +1,6 @@
 # Configure.ac script for Libgcrypt
-# Copyright (C) 1998, 1999, 2000, 2001,
-#               2002, 2003 Free Software Foundation, Inc.
+# Copyright (C) 1998, 1999, 2000, 2001, 2002
+#               2003 Free Software Foundation, Inc.
 #
 # This file is part of Libgcrypt.
 #
@@ -26,15 +26,15 @@ AC_PREREQ(2.52)
 # but remove a "-cvs" prefix right *before* a release and append it
 # soon later.
 
-AC_INIT(libgcrypt, 1.1.13-cvs, bug-libgcrypt@gnupg.org)
+AC_INIT(libgcrypt, 1.1.43-cvs, bug-libgcrypt@gnupg.org)
 
 # LT Version numbers, remember to change them just *before* a release.
 #   (Interfaces removed:    CURRENT++, AGE=0, REVISION=0)
 #   (Interfaces added:      CURRENT++, AGE++, REVISION=0)
 #   (No interfaces changed:                   REVISION++)
-LIBGCRYPT_LT_CURRENT=6
-LIBGCRYPT_LT_AGE=5
-LIBGCRYPT_LT_REVISION=1
+LIBGCRYPT_LT_CURRENT=7
+LIBGCRYPT_LT_AGE=0
+LIBGCRYPT_LT_REVISION=0
 
 PACKAGE=$PACKAGE_NAME
 VERSION=$PACKAGE_VERSION
@@ -212,6 +212,9 @@ case "${target}" in
         ;;
 esac
 
+
+AC_C_BIGENDIAN
+
 AC_CHECK_SIZEOF(unsigned short, 2)
 AC_CHECK_SIZEOF(unsigned int, 4)
 AC_CHECK_SIZEOF(unsigned long, 4)
@@ -336,6 +339,15 @@ AC_DEFINE_UNQUOTED(EGD_SOCKET_NAME, "$egd_socket_name",
                    [Define if you don't want the default EGD socket name.
                     For details see cipher/rndegd.c])
 
+# Implementation of --disable-asm.
+AC_MSG_CHECKING([whether assembler modules are requested])
+AC_ARG_ENABLE([asm],
+              AC_HELP_STRING([--disable-asm],
+	                     [Disable assembler modules]),
+              [try_asm_modules=$enableval],
+              [try_asm_modules=yes])
+AC_MSG_RESULT($try_asm_modules)
+
 # Implementation of the --enable-m-guard switch.
 AC_MSG_CHECKING([whether memory guard is requested])
 AC_ARG_ENABLE(m-guard,
@@ -394,10 +406,12 @@ AC_DEFINE_UNQUOTED(NAME_OF_DEV_URANDOM, "$NAME_OF_DEV_URANDOM",
 ###############################
 
 AM_PATH_GPG_ERROR(0.1)
+if test "x$GPG_ERROR_LIBS" = "x"; then
+  AC_MSG_ERROR([libgpg-error is needed])
+fi
+
 AC_DEFINE(GPG_ERR_SOURCE_DEFAULT, GPG_ERR_SOURCE_GCRYPT,
           [The default error source for libgcrypt.])
-CFLAGS="$CFLAGS -I\$(top_srcdir)/../errcrypto/src"
-LDFLAGS="$LDFLAGS -L\$(top_srcdir)/../errcrypto/src"
 
 # Solaris needs -lsocket and -lnsl. Unisys system includes
 # gethostbyname in libsocket but needs libnsl for socket.
@@ -431,7 +445,6 @@ AC_C_INLINE
 AC_TYPE_SIZE_T
 AC_TYPE_SIGNAL
 AC_DECL_SYS_SIGLIST
-AC_C_BIGENDIAN
 
 GNUPG_CHECK_TYPEDEF(byte, HAVE_BYTE_TYPEDEF)
 GNUPG_CHECK_TYPEDEF(ushort, HAVE_USHORT_TYPEDEF)
@@ -778,3 +791,5 @@ fi
 # Give some feedback
 echo   "                Configured for: $PRINTABLE_OS_NAME ($target)"
 echo
+
+

@@ -1,3 +1,31 @@
+2003-08-07  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac: Fail, if libgpg-error could not be found.
+
+2003-07-31  Werner Koch  <wk@gnupg.org>
+
+	Released 1.1.42.
+	
+	* configure.ac: Set LT version to 7/0/0.
+
+2003-07-30  Werner Koch  <wk@gnupg.org>
+
+	* AUTHORS (Maintainer): Assigned Moritz as Maintainer.
+
+2003-07-30  Moritz Schulte  <moritz@g10code.com>
+
+	* NEWS: Include much more complete list of `Interface changes
+	relative to the 1.1.12 release'.
+
+2003-07-14  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac: Bumbed version number up to 1.1.42-cvs.
+
+2003-07-09  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac: Reintroduce --disable-asm, since it is needed by
+	mpi/config.links.
+
 2003-07-05  Moritz Schulte  <moritz@g10code.com>
 
 	* README: Few changes, mention libgpg-error.
@@ -796,7 +824,7 @@ Fri Feb 13 19:43:41 1998  Werner Koch  (wk@isil.d.shuttle.de)
 	* Makefile.am: Likewise
 
 	
- Copyright 1998,1999,2000,2001,2002 Free Software Foundation, Inc.
+ Copyright 1998,1999,2000,2001,2002,2003 Free Software Foundation, Inc.
 
  This file is free software; as a special exception the author gives
  unlimited permission to copy and/or distribute it, with or without
