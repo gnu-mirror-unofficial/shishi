@@ -92,16 +92,13 @@ aes_string_to_key (Shishi * handle,
 
   if (VERBOSECRYPTO (handle))
     {
-      puts ("");
       printf ("aes_string_to_key (password, salt)\n");
       printf ("\t ;; Password:\n");
       escapeprint (password, passwordlen);
       hexprint (password, passwordlen);
-      puts ("");
       printf ("\t ;; Salt:\n");
       escapeprint (salt, saltlen);
       hexprint (salt, saltlen);
-      puts ("");
       printf ("\t ;; Iteration count %d (%08x):\n", iterations, iterations);
     }
 
@@ -129,9 +126,7 @@ aes_string_to_key (Shishi * handle,
       printf ("aes_string_to_key (password, salt)\n");
       printf ("\t ;; Key:\n");
       hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
-      puts ("");
       binprint (shishi_key_value (outkey), shishi_key_length (outkey));
-      puts ("");
     }
 
   return SHISHI_OK;

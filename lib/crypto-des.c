@@ -263,9 +263,7 @@ des_decrypt_verify (Shishi * handle,
     {
       puts ("DES verify:");
       hexprint (incoming, hlen);
-      puts ("");
       hexprint (computed, hlen);
-      puts ("");
     }
 
   if (memcmp (computed, incoming, hlen) != 0)
@@ -441,18 +439,12 @@ des_string_to_key (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       printf ("des_string_to_key (string, salt)\n");
-
       printf ("\t ;; String:\n");
       escapeprint (string, stringlen);
       hexprint (string, stringlen);
-      puts ("");
-      puts ("");
-
       printf ("\t ;; Salt:\n");
       escapeprint (salt, saltlen);
       hexprint (salt, saltlen);
-      puts ("");
-
       printf ("odd = 1;\n");
       printf ("s = string | salt;\n");
       printf ("tempstring = 0; /* 56-bit string */\n");
@@ -476,7 +468,6 @@ des_string_to_key (Shishi * handle,
       printf ("\t ;; s = pad(string|salt):\n");
       escapeprint (s, n_s);
       hexprint (s, n_s);
-      puts ("");
     }
 
   for (i = 0; i < n_s / 8; i++)
@@ -488,9 +479,7 @@ des_string_to_key (Shishi * handle,
 	  printf ("\t ;; 8byteblock:\n");
 	  escapeprint (&s[i * 8], 8);
 	  hexprint (&s[i * 8], 8);
-	  puts ("");
 	  binprint (&s[i * 8], 8);
-	  puts ("");
 	  printf ("56bitstring = removeMSBits(8byteblock);\n");
 	}
 
@@ -501,7 +490,6 @@ des_string_to_key (Shishi * handle,
 	{
 	  printf ("\t ;; 56bitstring:\n");
 	  bin7print (&s[i * 8], 8);
-	  puts ("");
 	  printf ("if (odd == 0) reverse(56bitstring);\t ;; odd=%d\n", odd);
 	}
 
@@ -533,7 +521,6 @@ des_string_to_key (Shishi * handle,
 	      printf ("reverse(56bitstring)\n");
 	      printf ("\t ;; 56bitstring after reverse\n");
 	      bin7print (&s[i * 8], 8);
-	      puts ("");
 	    }
 	}
 
@@ -553,8 +540,6 @@ des_string_to_key (Shishi * handle,
 	{
 	  printf ("\t ;; tempstring\n");
 	  bin7print (tempkey, 8);
-	  puts ("");
-	  puts ("");
 	}
     }
 
@@ -568,9 +553,7 @@ des_string_to_key (Shishi * handle,
       printf ("\t ;; for loop terminated\n");
       printf ("\t ;; tempstring as 64bitblock\n");
       hexprint (tempkey, 8);
-      puts ("");
       binprint (tempkey, 8);
-      puts ("");
       printf ("/* add parity as low bit of each byte */\n");
       printf ("tempkey = key_correction(add_parity_bits(tempstring));\n");
     }
@@ -584,10 +567,7 @@ des_string_to_key (Shishi * handle,
       printf ("\t ;; tempkey\n");
       escapeprint (tempkey, 8);
       hexprint (tempkey, 8);
-      puts ("");
       binprint (tempkey, 8);
-      puts ("");
-      puts ("");
       printf ("key = key_correction(DES-CBC-check(s,tempkey));\n");
     }
 
@@ -611,10 +591,7 @@ des_string_to_key (Shishi * handle,
       printf ("\t ;; key\n");
       escapeprint (tempkey, 8);
       hexprint (tempkey, 8);
-      puts ("");
       binprint (tempkey, 8);
-      puts ("");
-      puts ("");
     }
 
   shishi_key_value_set (outkey, tempkey);

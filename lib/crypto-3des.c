@@ -145,9 +145,7 @@ des3_random_to_key (Shishi * handle,
       printf ("des3_random_to_key (random)\n");
       printf ("\t ;; random (length %d):\n", 168 / 8);
       hexprint (random, 168 / 8);
-      puts ("");
       binprint (random, 168 / 8);
-      puts ("");
     }
 
   memcpy (tmpkey, random, 7);
@@ -172,9 +170,7 @@ des3_random_to_key (Shishi * handle,
       printf ("key = des3_random_to_key (random)\n");
       printf ("\t ;; key:\n");
       hexprint (tmpkey, 3 * 8);
-      puts ("");
       binprint (tmpkey, 3 * 8);
-      puts ("");
     }
 
   return SHISHI_OK;
@@ -201,11 +197,9 @@ des3_string_to_key (Shishi * handle,
       printf ("\t ;; String:\n");
       escapeprint (string, stringlen);
       hexprint (string, stringlen);
-      puts ("");
       printf ("\t ;; Salt:\n");
       escapeprint (salt, saltlen);
       hexprint (salt, saltlen);
-      puts ("");
     }
 
   /* s = passwordString + salt */
@@ -241,7 +235,6 @@ des3_string_to_key (Shishi * handle,
       printf ("\t ;; Key:\n");
       hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
       binprint (shishi_key_value (outkey), shishi_key_length (outkey));
-      puts ("");
     }
 
   return SHISHI_OK;

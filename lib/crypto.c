@@ -51,6 +51,7 @@ hexprint (const char *str, int len)
       if ((i + 1) % 16 == 0 && i + 1 < len)
 	printf ("\n\t ;; ");
     }
+  puts ("");
 }
 
 static void
@@ -74,6 +75,7 @@ binprint (const char *str, int len)
       if ((i + 1) % 6 == 0 && i + 1 < len)
 	printf ("\n\t ;; ");
     }
+  puts ("");
 }
 
 static void
@@ -96,6 +98,7 @@ bin7print (const char *str, int len)
       if ((i + 1) % 6 == 0 && i + 1 < len)
 	printf ("\n\t ;; ");
     }
+  puts ("");
 }
 
 static int
@@ -113,7 +116,7 @@ lcm (int a, int b)
   return a * b / gcd (a, b);
 }
 
-static int
+static void
 rot13 (Shishi * handle, char *in, char *out, int len)
 {
   if (VERBOSECRYPTO (handle))
@@ -121,9 +124,7 @@ rot13 (Shishi * handle, char *in, char *out, int len)
       printf ("\t ;; rot 13 in:\n");
       escapeprint (in, len);
       hexprint (in, len);
-      puts ("");
       binprint (in, len);
-      puts ("");
     }
 
   if (len == 1)
@@ -163,15 +164,11 @@ rot13 (Shishi * handle, char *in, char *out, int len)
       printf ("\t ;; rot13 out:\n");
       escapeprint (out, len);
       hexprint (out, len);
-      puts ("");
       binprint (out, len);
-      puts ("");
     }
-
-  return SHISHI_OK;
 }
 
-static int
+static void
 ocadd (char *add1, char *add2, char *sum, int len)
 {
   int i;
@@ -187,6 +184,7 @@ ocadd (char *add1, char *add2, char *sum, int len)
       else
 	carry = 0;
     }
+
   if (carry)
     {
       int done = 0;
@@ -202,8 +200,6 @@ ocadd (char *add1, char *add2, char *sum, int len)
       if (!done)
 	memset (sum, 0, len);
     }
-
-  return SHISHI_OK;
 }
 
 static int
@@ -239,14 +235,10 @@ simplified_hmac_verify (Shishi * handle,
       printf ("\t ;; HMAC verify:\n");
       escapeprint (hash, hlen);
       hexprint (hash, hlen);
-      puts ("");
       binprint (hash, hlen);
-      puts ("");
       escapeprint (hmac, hmaclen);
       hexprint (hmac, hmaclen);
-      puts ("");
       binprint (hmac, hmaclen);
-      puts ("");
     }
 
   same = (hlen == hmaclen) && memcmp (hash, hmac, hmaclen) == 0;
@@ -288,7 +280,6 @@ simplified_derivekey (Shishi * handle,
 	      derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY ? "privacy" :
 	      "base-key");
       hexprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
     }
 
 
@@ -323,7 +314,6 @@ simplified_derivekey (Shishi * handle,
 	      shishi_key_length (derivedkey));
       hexprint (shishi_key_value (derivedkey),
 		shishi_key_length (derivedkey));
-      puts ("");
     }
 
   return res;
@@ -1254,11 +1244,9 @@ shishi_string_to_key (Shishi * handle,
       printf ("\t ;; password:\n");
       escapeprint (password, passwordlen);
       hexprint (password, passwordlen);
-      puts ("");
       printf ("\t ;; salt:\n");
       escapeprint (salt, saltlen);
       hexprint (salt, saltlen);
-      puts ("");
     }
 
   string2key = _shishi_cipher_string_to_key (shishi_key_type (outkey));
@@ -1276,9 +1264,7 @@ shishi_string_to_key (Shishi * handle,
     {
       printf ("\t ;; string_to_key key:\n");
       hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
-      puts ("");
       binprint (shishi_key_value (outkey), shishi_key_length (outkey));
-      puts ("");
     }
 
   return res;
@@ -1312,9 +1298,7 @@ shishi_random_to_key (Shishi * handle,
       printf ("random_to_key (%s, random)\n", shishi_key_name (outkey));
       printf ("\t ;; random:\n");
       hexprint (random, randomlen);
-      puts ("");
       binprint (random, randomlen);
-      puts ("");
     }
 
   random2key = _shishi_cipher_random_to_key (keytype);
@@ -1331,9 +1315,7 @@ shishi_random_to_key (Shishi * handle,
     {
       printf ("\t ;; random_to_key key:\n");
       hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
-      puts ("");
       binprint (shishi_key_value (outkey), shishi_key_length (outkey));
-      puts ("");
     }
 
   return res;
@@ -1372,11 +1354,9 @@ shishi_checksum (Shishi * handle,
 	      shishi_key_name (key), cksumtype);
       printf ("\t ;; key (%d):\n", shishi_key_length (key));
       hexprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
       printf ("\t ;; in:\n");
       escapeprint (in, inlen);
       hexprint (in, inlen);
-      puts ("");
     }
 
   if (cksumtype == 0)
@@ -1399,7 +1379,6 @@ shishi_checksum (Shishi * handle,
       printf ("\t ;; checksum out:\n");
       escapeprint (*out, *outlen);
       hexprint (*out, *outlen);
-      puts ("");
     }
 
   return res;
@@ -1437,15 +1416,12 @@ shishi_verify (Shishi * handle,
       printf ("verify (%s, %d, in, out)\n", shishi_key_name (key), cksumtype);
       printf ("\t ;; key (%d):\n", shishi_key_length (key));
       hexprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
       printf ("\t ;; data:\n");
       escapeprint (in, inlen);
       hexprint (in, inlen);
-      puts ("");
       printf ("\t ;; mic:\n");
       escapeprint (cksum, cksumlen);
       hexprint (cksum, cksumlen);
-      puts ("");
     }
 
   if (cksumtype == 0)
@@ -1520,17 +1496,14 @@ shishi_encrypt_ivupdate_etype (Shishi * handle,
 	      shishi_key_name (key), keyusage);
       printf ("\t ;; key (%d):\n", shishi_key_length (key));
       hexprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
       printf ("\t ;; in (%d):\n", inlen);
       escapeprint (in, inlen);
       hexprint (in, inlen);
-      puts ("");
       if (iv)
 	{
 	  printf ("\t ;; iv (%d):\n", ivlen);
 	  escapeprint (iv, ivlen);
 	  hexprint (iv, ivlen);
-	  puts ("");
 	}
     }
 
@@ -1550,13 +1523,11 @@ shishi_encrypt_ivupdate_etype (Shishi * handle,
       printf ("\t ;; encrypt out:\n");
       escapeprint (*out, *outlen);
       hexprint (*out, *outlen);
-      puts ("");
       if (ivout && ivoutlen)
 	{
 	  printf ("\t ;; iv out:\n");
 	  escapeprint (*ivout, *ivoutlen);
 	  hexprint (*ivout, *ivoutlen);
-	  puts ("");
 	}
     }
 
@@ -1828,11 +1799,9 @@ shishi_decrypt_ivupdate_etype (Shishi * handle,
 	      shishi_key_name (key), keyusage);
       printf ("\t ;; key (%d):\n", shishi_key_length (key));
       hexprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
       printf ("\t ;; in (%d):\n", inlen);
       escapeprint (in, inlen);
       hexprint (in, inlen);
-      puts ("");
     }
 
   decrypt = _shishi_cipher_decrypt (etype);
@@ -1851,7 +1820,6 @@ shishi_decrypt_ivupdate_etype (Shishi * handle,
       printf ("\t ;; decrypt out:\n");
       escapeprint (*out, *outlen);
       hexprint (*out, *outlen);
-      puts ("");
     }
 
   return res;
@@ -2119,10 +2087,8 @@ shishi_n_fold (Shishi * handle,
       printf ("\t ;; string length %d bytes %d bits\n", m, m * 8);
       escapeprint (a, m);
       hexprint (a, m);
-      puts ("");
       printf ("\t ;; lcm(%d, %d) = lcm(%d, %d) = %d\n",
 	      8 * m, 8 * n, m, n, lcmmn);
-      puts ("");
     }
 
   buf = (char *) xmalloc (lcmmn);
@@ -2138,9 +2104,6 @@ shishi_n_fold (Shishi * handle,
 
       memcpy ((char *) &buf[i * m], a, m);
       rot13 (handle, a, a, m);
-
-      if (VERBOSECRYPTO (handle))
-	puts ("");
     }
 
   memset (out, 0, n);		/* just in case */
@@ -2149,9 +2112,7 @@ shishi_n_fold (Shishi * handle,
     {
       printf ("\t ;; replicated string (length %d):\n", lcmmn);
       hexprint (buf, lcmmn);
-      puts ("");
       binprint (buf, lcmmn);
-      puts ("");
       printf ("sum = 0\n");
     }
 
@@ -2167,14 +2128,10 @@ shishi_n_fold (Shishi * handle,
 	  printf ("\t ;; %d-th one's complement addition sum\n", i + 1);
 	  printf ("\t ;; sum:\n");
 	  hexprint (out, n);
-	  puts ("");
 	  binprint (out, n);
-	  puts ("");
 	  printf ("\t ;; A (offset %d):\n", i * n);
 	  hexprint (&buf[i * n], n);
-	  puts ("");
 	  binprint (&buf[i * n], n);
-	  puts ("");
 	  printf ("sum = ocadd(sum, A);\n");
 	}
 
@@ -2184,10 +2141,7 @@ shishi_n_fold (Shishi * handle,
 	{
 	  printf ("\t ;; sum:\n");
 	  hexprint (out, n);
-	  puts ("");
 	  binprint (out, n);
-	  puts ("");
-	  puts ("");
 	}
     }
 
@@ -2195,10 +2149,7 @@ shishi_n_fold (Shishi * handle,
     {
       printf ("\t ;; nfold\n");
       hexprint (out, n);
-      puts ("");
       binprint (out, n);
-      puts ("");
-      puts ("");
     }
 
   free (buf);
@@ -2243,16 +2194,11 @@ shishi_dr (Shishi * handle,
 	      shishi_cipher_name (shishi_key_type (key)), derivedrandomlen);
       printf ("\t ;; key (length %d):\n", shishi_key_length (key));
       hexprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
       binprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
       printf ("\t ;; constant  %s':\n", constant);
       escapeprint (constant, constantlen);
       hexprint (constant, constantlen);
-      puts ("");
       binprint (constant, constantlen);
-      puts ("");
-      puts ("");
     }
 
   if (constantlen > MAX_DR_CONSTANT)
@@ -2275,9 +2221,7 @@ shishi_dr (Shishi * handle,
       printf ("\t ;; possibly nfolded constant (length %d):\n", blocksize);
       escapeprint (nfoldconstant, blocksize);
       hexprint (nfoldconstant, blocksize);
-      puts ("");
       binprint (nfoldconstant, blocksize);
-      puts ("");
     }
 
   memcpy (plaintext, nfoldconstant, blocksize);
@@ -2302,9 +2246,7 @@ shishi_dr (Shishi * handle,
     {
       printf ("\t ;; derived random (length %d):\n", derivedrandomlen);
       hexprint (derivedrandom, derivedrandomlen);
-      puts ("");
       binprint (derivedrandom, derivedrandomlen);
-      puts ("");
     }
 
   return SHISHI_OK;
@@ -2336,16 +2278,11 @@ shishi_dk (Shishi * handle,
       printf ("dk (%s, key, constant)\n", shishi_key_name (key));
       printf ("\t ;; key (length %d):\n", shishi_key_length (key));
       hexprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
       binprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
       printf ("\t ;; constant:\n");
       escapeprint (constant, constantlen);
       hexprint (constant, constantlen);
-      puts ("");
       binprint (constant, constantlen);
-      puts ("");
-      puts ("");
     }
 
   shishi_key_type_set (derivedkey, shishi_key_type (key));
