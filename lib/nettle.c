@@ -205,6 +205,22 @@ update_crc32 (uint32_t crc, const char *buf, size_t len)
   return crc;
 }
 
+/**
+ * shishi_crc:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @in: input character array of data to checksum.
+ * @inlen: length of input character array of data to checksum.
+ * @out: newly allocated character array with checksum of data.
+ *
+ * Compute checksum of data using CRC32 modified according to RFC
+ * 1510.  The @out buffer must be deallocated by the caller.
+ *
+ * The modifications compared to standard CRC32 is that no initial and
+ * final XOR is performed, and that the output is returned in
+ * LSB-first order.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_crc (Shishi * handle, const char *in, size_t inlen, char *out[4])
 {
