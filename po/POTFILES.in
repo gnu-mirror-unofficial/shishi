@@ -14,8 +14,4 @@ lib/principal.c
 lib/safe.c
 lib/ticket.c
 lib/tkt.c
-src/authp.c
-src/crypto.c
-src/kdc.c
-src/server.c
 src/shishi.c

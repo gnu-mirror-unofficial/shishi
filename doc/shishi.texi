@@ -224,7 +224,7 @@ Finished.
 
 @item Improve internationalization
 
-@item Fix fixed size buffers.
+@item Add AP-REQ reply cache (week).
 
 @end itemize
 
