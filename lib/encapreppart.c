@@ -53,8 +53,7 @@ shishi_encapreppart (Shishi * handle)
     goto error;
 
   gettimeofday (&tv, &tz);
-  res = shishi_asn1_write_integer (handle, node, "cusec",
-				   tv.tv_usec % 1000000);
+  res = shishi_encapreppart_cusec_set (handle, node, tv.tv_usec % 1000000);
   if (res != SHISHI_OK)
     goto error;
 
@@ -349,7 +348,8 @@ shishi_encapreppart_ctime_set (Shishi * handle,
  **/
 int
 shishi_encapreppart_cusec_get (Shishi * handle,
-			       Shishi_asn1 encapreppart, int *cusec)
+			       Shishi_asn1 encapreppart,
+			       uint32_t *cusec)
 {
   int res;
 
@@ -372,7 +372,8 @@ shishi_encapreppart_cusec_get (Shishi * handle,
  **/
 int
 shishi_encapreppart_cusec_set (Shishi * handle,
-			       Shishi_asn1 encapreppart, int cusec)
+			       Shishi_asn1 encapreppart,
+			       uint32_t cusec)
 {
   int res;
 

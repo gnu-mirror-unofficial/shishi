@@ -432,7 +432,8 @@ shishi_authenticator_ctime_set (Shishi * handle,
  **/
 int
 shishi_authenticator_cusec_get (Shishi * handle,
-				Shishi_asn1 authenticator, int *cusec)
+				Shishi_asn1 authenticator,
+				uint32_t *cusec)
 {
   int res;
 
@@ -455,7 +456,8 @@ shishi_authenticator_cusec_get (Shishi * handle,
  **/
 int
 shishi_authenticator_cusec_set (Shishi * handle,
-				Shishi_asn1 authenticator, int cusec)
+				Shishi_asn1 authenticator,
+				uint32_t cusec)
 {
   int res;
 

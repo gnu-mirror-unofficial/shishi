@@ -1,5 +1,5 @@
 /* diskio.h --- Read and write data structures from disk.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,9 +21,9 @@
 
 extern int _shishi_print_armored_data (Shishi * handle, FILE * fh,
 				       Shishi_asn1 asn1,
-				       char *asn1type, char *headers);
+				       const char *asn1type, char *headers);
 extern int _shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
-			      char *asn1type);
+			      const char *asn1type);
 extern int _shishi_authenticator_input (Shishi * handle,
 					FILE * fh,
 					Shishi_asn1 * authenticator,

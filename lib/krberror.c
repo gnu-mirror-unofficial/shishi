@@ -259,7 +259,7 @@ shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror)
   size_t tmplen = sizeof (t);
   char *tmp;
   int32_t errc;
-  int usec;
+  uint32_t usec;
   int rc;
 
   rc = shishi_krberror_ctime (handle, krberror, &t);
@@ -784,7 +784,7 @@ shishi_krberror_remove_ctime (Shishi * handle, Shishi_asn1 krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_cusec (Shishi * handle, Shishi_asn1 krberror, int *cusec)
+shishi_krberror_cusec (Shishi * handle, Shishi_asn1 krberror, uint32_t *cusec)
 {
   int res;
 
@@ -806,7 +806,9 @@ shishi_krberror_cusec (Shishi * handle, Shishi_asn1 krberror, int *cusec)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_cusec_set (Shishi * handle, Shishi_asn1 krberror, int cusec)
+shishi_krberror_cusec_set (Shishi * handle,
+			   Shishi_asn1 krberror,
+			   uint32_t cusec)
 {
   int res;
 
@@ -889,7 +891,9 @@ shishi_krberror_stime_set (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_susec (Shishi * handle, Shishi_asn1 krberror, int *susec)
+shishi_krberror_susec (Shishi * handle,
+		       Shishi_asn1 krberror,
+		       uint32_t *susec)
 {
   int res;
 
@@ -911,7 +915,9 @@ shishi_krberror_susec (Shishi * handle, Shishi_asn1 krberror, int *susec)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_susec_set (Shishi * handle, Shishi_asn1 krberror, int susec)
+shishi_krberror_susec_set (Shishi * handle,
+			   Shishi_asn1 krberror,
+			   uint32_t susec)
 {
   int res;
 
