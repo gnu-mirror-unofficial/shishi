@@ -3843,7 +3843,7 @@ be found at @url{http://josefsson.org/gss/}.
 @node Acknowledgements
 @chapter Acknowledgements
 
-Shishi uses Libtasn1 by Fabio Fiorina, Libnettle by Niels Möller,
+Shishi uses Libtasn1 by Fabio Fiorina, Libnettle by Niels M@"oller,
 Libgcrypt and Libgpg-error by Werner Koch, Libidn by Simon Josefsson,
 cvs2cl by Karl Fogel, and gdoc by Michael Zucchi.
 
