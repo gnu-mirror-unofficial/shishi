@@ -93,7 +93,7 @@ shishi_authenticator (Shishi * handle)
   if (seqnr == 0)
     seqnr++;
 
-  res = shishi_asn1_write_uint32 (handle, node, "seq-number", seqnr);
+  res = shishi_authenticator_seqnumber_set (handle, node, seqnr);
   if (res != SHISHI_OK)
     goto error;
 
@@ -484,6 +484,53 @@ shishi_authenticator_seqnumber_get (Shishi * handle,
     return res;
 
   return res;
+}
+
+/**
+ * shishi_authenticator_seqnumber_remove:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ *
+ * Remove sequence number field in Authenticator.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_seqnumber_remove (Shishi * handle,
+				       Shishi_asn1 authenticator)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, authenticator, "seq-number", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_authenticator_seqnumber_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @seqnumber: integer with sequence number field to store in Authenticator.
+ *
+ * Store sequence number field in Authenticator.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_seqnumber_set (Shishi * handle,
+				    Shishi_asn1 authenticator,
+				    uint32_t seqnumber)
+{
+  int res;
+
+  res = shishi_asn1_write_uint32 (handle, authenticator,
+				  "seq-number", seqnumber);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
 }
 
 int
