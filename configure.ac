@@ -47,13 +47,13 @@ AC_CHECK_HEADERS(stdlib.h string.h strings.h memory.h \
 	arpa/nameser.h arpa/inet.h netinet/in.h netinet/in6.h)
 
 # Checks for programs.
+AC_LIBTOOL_TAGS
 AC_PROG_LIBTOOL
 AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION(0.12.1)
 AM_MISSING_PROG(PERL, perl, $missing_dir)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
 AM_MISSING_PROG(ASN1PARSER, asn1Parser, $missing_dir)
-AM_WITH_DMALLOC
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_UID_T
