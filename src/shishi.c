@@ -886,7 +886,14 @@ main (int argc, char *argv[])
     {
       asprintf(&arg.tgtname, "krbtgt/%s", shishi_realm_default (handle));
       if (arg.tgtname == NULL)
-	return SHISHI_MALLOC_ERROR;
+	die("Could not allocate TGT name.");
+    }
+
+  if (arg.sname == NULL)
+    {
+      asprintf(&arg.sname, "host/www");
+      if (arg.sname == NULL)
+	die("Could not allocate server name.");
     }
 
   rc = 1;
