@@ -1446,11 +1446,10 @@ gcc -o foo foo.c `pkg-config shishi --cflags --libs`
 
 If you work on a project that uses Autoconf (@pxref{top, GNU
 Autoconf,, autoconf}) to help find installed libraries, the
-suggestions in the previous section is not the entire story.  There
+suggestions in the previous section are not the entire story.  There
 are a few methods to detect and incorporate Shishi into your Autoconf
-based package.  The most portable and preferred approach, is to use
-Libtool in your project, and use the normal Autoconf header file and
-library tests.
+based package.  The preferred approach, is to use Libtool in your
+project, and use the normal Autoconf header file and library tests.
 
 @subsubsection Autoconf test via @samp{pkg-config}
 
@@ -1483,11 +1482,10 @@ AC_MSG_RESULT($kerberos_v5)
 
 @subsubsection Standalone Autoconf test using Libtool
 
-If your package uses Libtool(@pxref{top, GNU Libtool,, libtool}) , you
-can use the normal Autoconf tests to find the Shishi library and
-depend on the Libtool dependency tracking to also include the proper
-dependency libraries (e.g., Libidn).  The following illustrate this
-scenario.
+If your package uses Libtool(@pxref{top, GNU Libtool,, libtool}), you
+can use the normal Autoconf tests to find the Shishi library and rely
+on the Libtool dependency tracking to include the proper dependency
+libraries (e.g., Libidn).  The following illustrate this scenario.
 
 @example
 AC_CHECK_HEADER(shishi.h,
@@ -1515,7 +1513,8 @@ If your package does not use Libtool, as well as detecting the Shishi
 library as in the previous case, you must also detect whatever
 dependencies Shishi requires to work (e.g., libidn).  Since the
 dependencies are in a state of flux, we do not provide an example and
-we do not recommend this approach.
+we do not recommend this approach, unless you are experienced
+developer.
 
 @node Initialization Functions
 @section Initialization Functions
