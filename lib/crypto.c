@@ -264,6 +264,7 @@ _shishi_simplified_dencrypt (Shishi * handle,
     case SHISHI_DES_CBC_CRC:
     case SHISHI_DES_CBC_MD4:
     case SHISHI_DES_CBC_MD5:
+    case SHISHI_DES_CBC_NONE:
       rc = shishi_des (handle, decryptp, shishi_key_value (key),
 		       iv, ivout, pt, ptlen, out);
       if (ivoutlen)
@@ -273,6 +274,7 @@ _shishi_simplified_dencrypt (Shishi * handle,
       break;
 
     case SHISHI_DES3_CBC_HMAC_SHA1_KD:
+    case SHISHI_DES3_CBC_NONE:
       rc = shishi_3des (handle, decryptp, shishi_key_value (key),
 			iv, ivout, pt, inlen + padzerolen, out);
       if (ivoutlen)
