@@ -30,20 +30,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <ctype.h>
 #endif
 
+#if HAVE_UNISTD_H
 #include <unistd.h>
-#include <ctype.h>
+#endif
 
+#ifdef HAVE_NETDB_H
 #include <netdb.h>
-extern int h_errno;
-#include <pwd.h>
-#include <sys/types.h>
+#endif
 
+#if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
+extern int h_errno;
+#endif
+
+#ifdef HAVE_PWD_H
+#include <pwd.h>
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+#ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
+#endif
+
+#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
+#endif
+
+#ifdef HAVE_ERRNO_H
 #include <errno.h>
+#endif
 
 #if HAVE_INTTYPES_H
 # include <inttypes.h>
@@ -78,12 +102,12 @@ extern int h_errno;
 #include <signal.h>
 #endif
 
-#include "setenv.h"
-
-#include "libtasn1.h"
-
-#include "gettext.h"
-#include "shishi.h"
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_NETINET_IN6_H
+#include <netinet/in6.h>
+#endif
 
 #ifdef ENABLE_NLS
 extern char *_shishi_gettext (const char *str);
@@ -95,69 +119,11 @@ extern char *_shishi_gettext (const char *str);
 #endif
 #endif
 
-typedef enum
-{
-  /* 1. AS-REQ PA-ENC-TIMESTAMP padata timestamp, encrypted with the
-     client key */
-  SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP = 1,
-  /* 2. AS-REP Ticket and TGS-REP Ticket (includes TGS session key or 
-     application session key), encrypted with the service key  */
-  SHISHI_KEYUSAGE_KDCREP_TICKET = 2,
-  /* 3. AS-REP encrypted part (includes TGS session key or application
-     session key), encrypted with the client key */
-  SHISHI_KEYUSAGE_ENCASREPPART = 3,
-  /* 4. TGS-REQ KDC-REQ-BODY AuthorizationData, encrypted with the TGS
-     session key  */
-  SHISHI_KEYUSAGE_TGSREQ_AUTHORIZATIONDATA_TGS_SESSION_KEY = 4,
-  /* 5. TGS-REQ KDC-REQ-BODY AuthorizationData, encrypted with the TGS
-     authenticator subkey (section 5.4.1) */
-  SHISHI_KEYUSAGE_TGSREQ_AUTHORIZATIONDATA_TGS_AUTHENTICATOR_KEY = 5,
-  /* 6. TGS-REQ PA-TGS-REQ padata AP-REQ Authenticator cksum, keyed with the
-     TGS session key  */
-  SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM = 6,
-  /* 7. TGS-REQ PA-TGS-REQ padata AP-REQ Authenticator (includes TGS
-     authenticator subkey), encrypted with the TGS session key */
-  SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR = 7,
-  /* 8. TGS-REP encrypted part (includes application session key), encrypted
-     with the TGS session key */
-  SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY = 8,
-  /* 9. TGS-REP encrypted part (includes application session key), encrypted
-     with the TGS authenticator subkey */
-  SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY = 9,
-  /* 10. AP-REQ Authenticator cksum, keyed with the application
-     session key */
-  SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR_CKSUM = 10,
-  /* 11. AP-REQ Authenticator (includes application authenticator subkey),
-     encrypted with the application session key */
-  SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR = 11,
-  /* 12. AP-REP encrypted part (includes application session subkey),
-     encrypted with the application session key */
-  SHISHI_KEYUSAGE_ENCAPREPPART = 12,
-  /* 13. KRB-PRIV encrypted part, encrypted with a key chosen by the
-     application */
-  SHISHI_KEYUSAGE_KRB_PRIV = 13,
-  /* 14. KRB-CRED encrypted part, encrypted with a key chosen by the
-     application */
-  SHISHI_KEYUSAGE_KRB_CRED = 14,
-  /* 15. KRB-SAFE cksum, keyed with a key chosen by the application */
-  SHISHI_KEYUSAGE_KRB_SAFE = 15,
-  /* 18. KRB-ERROR checksum (e-cksum) */
-  SHISHI_KEYUSAGE_KRB_ERROR = 18,
-  /* 19. AD-KDCIssued checksum (ad-checksum) */
-  SHISHI_KEYUSAGE_AD_KDCISSUED = 19,
-  /* 20. Checksum for Mandatory Ticket Extensions */
-  SHISHI_KEYUSAGE_TICKET_EXTENSION = 20,
-  /* 21. Checksum in Authorization Data in Ticket Extensions */
-  SHISHI_KEYUSAGE_TICKET_EXTENSION_AUTHORIZATION = 21,
-  /* 22-24. Reserved for use in GSSAPI mechanisms derived from RFC 1964.
-     (raeburn/MIT) */
-  /* 25-511. Reserved for future use in Kerberos and related protocols. */
-  /* 512-1023. Reserved for uses internal to a Kerberos implementation. */
-}
-Shishi_keyusage;
+#include "setenv.h"
+#include "gettext.h"
+#include "shishi.h"
 
 #define GENERALIZEDTIME_TIME_LEN 15
-
 #define MAX_KEY_LEN 32
 #define MAX_HASH_LEN 32
 

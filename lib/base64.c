@@ -32,8 +32,7 @@
  * 
  */
 
-#include <string.h>
-#include <ctype.h>
+#include "internal.h"
 
 char B64Chars[64] = {
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',

@@ -22,9 +22,8 @@
 /* XXX? zeroize password */
 
 #include "internal.h"
-
-#include "stringprep.h"
-#include "stringprep_kerberos5.h"
+#include <stringprep.h>
+#include <stringprep_kerberos5.h>
 
 #if defined (HAVE_TERMIOS_H)
 
