@@ -117,6 +117,7 @@
 #include "gettext.h"
 
 #include "vasprintf.h"
+#include "xvasprintf.h"
 #include "base64.h"
 #include "b64.h"
 #include "getdate.h"
