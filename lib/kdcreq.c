@@ -415,14 +415,6 @@ shishi_kdcreq_client (Shishi * handle, Shishi_asn1 kdcreq,
 }
 
 int
-shishi_kdcreq_cname_get (Shishi * handle,
-			 Shishi_asn1 kdcreq, char *cname, size_t * cnamelen)
-{
-  return shishi_principal_name_get (handle, kdcreq,
-				    "req-body.cname", cname, cnamelen);
-}
-
-int
 shishi_asreq_cnamerealm_get (Shishi * handle,
 			     Shishi_asn1 asreq,
 			     char *cnamerealm, size_t * cnamerealmlen)
