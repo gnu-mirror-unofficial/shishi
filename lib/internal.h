@@ -114,9 +114,6 @@ extern char *_shishi_gettext (const char *str);
 #define _(String) _shishi_gettext (String)
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
-#ifndef HAVE_NGETTEXT
-#define ngettext(S1, S2, N) ((N) == 1 ? _(S1) : _(S2))
-#endif
 #endif
 
 #include "setenv.h"
