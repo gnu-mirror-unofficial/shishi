@@ -29,12 +29,12 @@
 #include <ctype.h>
 #include <string.h>
 
+/* Get i18n. */
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #else
 # define setlocale(Category, Locale) /* empty */
 #endif
-
 #include <gettext.h>
 #define _(String) gettext (String)
 #define gettext_noop(String) String
