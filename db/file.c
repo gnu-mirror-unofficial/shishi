@@ -47,6 +47,8 @@
  *
  */
 
+/* XXX fix race conditions. */
+
 #include "internal.h"
 
 /* fileutil.c */

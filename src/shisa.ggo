@@ -40,7 +40,7 @@ option "encryption-type" E "Override default key encryption type.  Valid values 
 option "random" - "Use a random key.  (default)" no
 option "password" - "Derive key from this password." string no
 option "salt" - "Use specified salt for deriving key.  Defaults to concatenation of realm and (unwrapped) principal name." string no
-option "string-to-key-parameter" - "Encryption algorithm specific parameter for password derivation.  Currently only the AES algorithm can utilize this, where it is interpreted as the iteration count of the PKCS#5 PBKDF2 key deriver." string no
+option "string-to-key-parameter" - "Encryption algorithm specific parameter for password derivation.  Currently only the AES algorithm can utilize this, where it is interpreted as the iteration count of the PKCS#5 PBKDF2 key deriver." string typestr="HEX" no
 
 section "Other options"
 option "configuration-file" c "Use specified configuration file." string typestr="FILE" no

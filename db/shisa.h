@@ -74,10 +74,10 @@ typedef struct Shisa_principal Shisa_principal;
 struct Shisa_key
 {
   int32_t etype;
-  char *value;
-  size_t valuelen;
-  char *saltvalue;
-  size_t saltvaluelen;
+  char *key;
+  size_t keylen;
+  char *salt;
+  size_t saltlen;
   char *str2keyparam;
   size_t str2keyparamlen;
   char *password;

@@ -184,6 +184,65 @@ dumplist (void)
 }
 
 int
+apply_options (const char *realm,
+	       const char *principal,
+	       Shisa_principal *ph,
+	       Shisa_key *dbkey)
+{
+  char *salt = args_info.salt_arg;
+  char *str2keyparam = NULL;
+  size_t str2keyparamlen = 0;
+  Shishi_key *key;
+  int32_t etype;
+  int rc;
+
+  if (args_info.encryption_type_given)
+    {
+      rc = shishi_cfg_clientkdcetype_set (sh, args_info.encryption_type_arg);
+      if (rc != SHISHI_OK)
+	return EXIT_FAILURE;
+    }
+  etype = shishi_cfg_clientkdcetype_fast (sh);
+
+  if (salt == NULL)
+    asprintf (&salt, "%s%s", realm, principal);
+
+  if (args_info.string_to_key_parameter_given)
+    {
+      /* XXX */
+    }
+
+  if (args_info.password_given)
+    rc = shishi_key_from_string (sh, etype,
+				 args_info.password_arg,
+				 strlen (args_info.password_arg),
+				 salt, strlen (salt),
+				 str2keyparam,
+				 &key);
+  else
+    rc = shishi_key_random (sh, etype, &key);
+  if (rc != SHISHI_OK)
+    return EXIT_FAILURE;
+
+  if (!args_info.quiet_flag)
+    shishi_key_print (sh, stdout, key);
+
+  dbkey->etype = etype;
+  dbkey->key = shishi_key_value (key);
+  dbkey->keylen = shishi_key_length (key);
+  dbkey->salt = salt;
+  dbkey->saltlen = strlen (salt);
+  dbkey->str2keyparam = str2keyparam;
+  dbkey->str2keyparamlen = str2keyparamlen;
+  dbkey->password = args_info.password_arg;
+  dbkey->notusedafter = (time_t) -1;
+  dbkey->notusedbefore = (time_t) -1;
+  dbkey->isdisabled = 0;
+
+  return EXIT_SUCCESS;
+}
+
+int
 modify_principal (const char *realm, const char *principal)
 {
   Shisa_principal ph;
@@ -226,6 +285,12 @@ add_principal (const char *realm, const char *principal)
   Shisa_principal ph;
   Shisa_key key;
   int rc;
+
+  memset (&ph, 0, sizeof(ph));
+  memset (&key, 0, sizeof(key));
+  rc = apply_options (realm, principal, &ph, &key);
+  if (rc != EXIT_SUCCESS)
+    return EXIT_FAILURE;
 
   if (principal == NULL)
     printf ("Adding realm `%s'...", realm);
