@@ -95,6 +95,7 @@ Shishi implements the Kerberos 5 network security system.
 * Overview::
 * Cryptographic Overview::
 * Supported Platforms::
+* Downloading and Installing::
 * Bug Reports::
 * Contributing::
 @end menu
@@ -557,6 +558,41 @@ i386-unknown-freebsd4.7.
 
 If you use Shishi on, or port Shishi to, a new platform please report
 it to the author (@pxref{Bug Reports}).
+
+@node Downloading and Installing
+@section Downloading and Installing
+@cindex Installation
+@cindex Download
+
+The package can be downloaded from several places, including
+@url{http://josefsson.org/shishi/releases/}.  The latest version is
+stored in a file, e.g., @samp{shishi-0.0.42.tar.gz} where the
+@samp{0.0.42} indicate the highest version number.
+
+The package is then extracted, configured and built like many other
+packages that use Autoconf.  For detailed information on configuring
+and building it, refer to the @file{INSTALL} file that is part of the
+distribution archive.
+
+Here is an example terminal session that download, configure, build
+and install the package.  You will need a few basic tools, such as
+@samp{sh}, @samp{make} and @samp{cc}.
+
+@example
+$ wget -q http://josefsson.org/shishi/releases/shishi-0.0.4.tar.gz
+$ tar xfz shishi-0.0.4.tar.gz
+$ cd shishi-0.0.4/
+$ ./configure
+...
+$ make
+...
+$ make install
+...
+@end example
+
+After this you should be prepared to continue with the user,
+administration or programming manual, depending on how you want to use
+Shishi.
 
 @node Bug Reports
 @section Bug Reports
@@ -1267,6 +1303,7 @@ A faster way to find out how to adapt your application for use with
 * Initialization::
 * Version Check::
 * Building the source::
+* Autoconf tests::
 @end menu
 
 @node Header
@@ -1369,6 +1406,84 @@ specifying both options to @command{pkg-config}:
 @example
 gcc -o foo foo.c `pkg-config shishi --cflags --libs`
 @end example
+
+@node Autoconf tests
+@subsection Autoconf tests
+@cindex Autoconf tests
+@cindex Configure tests
+
+If you work on a project that uses Autoconf (@pxref{top, GNU
+Autoconf,, autoconf}) to help find installed libraries, the
+suggestions in the previous section is not the entire story.  There
+are a few methods to detect and incorporate Shishi into your Autoconf
+based package.  The most portable and preferred approach, is to use
+Libtool in your project, and use the normal Autoconf header file and
+library tests.
+
+@subsubsection Autoconf test via @samp{pkg-config}
+
+If your audience is a typical GNU/Linux desktop, you can often assume
+they have the @samp{pkg-config} tool installed, in which you can use
+its Autoconf M4 macro to find and set up your package for use with
+Shishi.  The following illustrate this scenario.
+
+@example
+AC_ARG_ENABLE(kerberos_v5,
+	AC_HELP_STRING([--disable-kerberos_v5],
+                       [don't use the KERBEROS_V5 mechanism]),
+	kerberos_v5=$enableval)
+if test "$kerberos_v5" != "no" ; then
+	PKG_CHECK_MODULES(SHISHI, shishi >= 0.0.0,
+			[kerberos_v5=yes],
+                        [kerberos_v5=no])
+	if test "$kerberos_v5" != "yes" ; then
+		kerberos_v5=no
+		AC_MSG_WARN([shishi not found, disabling Kerberos 5])
+	else
+		kerberos_v5=yes
+		AC_DEFINE(USE_KERBEROS_V5, 1,
+                          [Define to 1 if you want Kerberos 5.])
+	fi
+fi
+AC_MSG_CHECKING([if Kerberos 5 should be used])
+AC_MSG_RESULT($kerberos_v5)
+@end example
+
+@subsubsection Standalone Autoconf test using Libtool
+
+If your package uses Libtool(@pxref{top, GNU Libtool,, libtool}) , you
+can use the normal Autoconf tests to find the Shishi library and
+depend on the Libtool dependency tracking to also include the proper
+dependency libraries (e.g., Libidn).  The following illustrate this
+scenario.
+
+@example
+AC_CHECK_HEADER(shishi.h,
+	AC_CHECK_LIB(shishi, shishi_check_version,
+		[kerberos5=yes AC_SUBST(SHISHI_LIBS, -lshishi)],
+		kerberos5=no),
+	kerberos5=no)
+AC_ARG_ENABLE(kerberos5,
+	AC_HELP_STRING([--disable-kerberos5],
+                       [disable Kerberos 5 unconditionally]),
+	kerberos5=$enableval)
+if test "$kerberos5" != "no" ; then
+	AC_DEFINE(USE_KERBEROS_V5, 1,
+		  [Define to 1 if you want Kerberos 5.])
+else
+	AC_MSG_WARN([Shishi not found, disabling Kerberos 5])
+fi
+AC_MSG_CHECKING([if Kerberos 5 should be used])
+AC_MSG_RESULT($kerberos5)
+@end example
+
+@subsubsection Standalone Autoconf test
+
+If your package does not use Libtool, as well as detecting the Shishi
+library as in the previous case, you must also detect whatever
+dependencies Shishi requires to work (e.g., libidn).  Since the
+dependencies are in a state of flux, we do not provide an example and
+we do not recommend this approach.
 
 @node Initialization Functions
 @section Initialization Functions
