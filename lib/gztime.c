@@ -1,5 +1,5 @@
 /* gztime.c	convert into GeneralizedTime
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -22,11 +22,11 @@
 #include "internal.h"
 
 const char *
-shishi_generalize_time (Shishi * handle, time_t time)
+shishi_generalize_time (Shishi * handle, time_t t)
 {
   struct tm *tm;
 
-  tm = gmtime (&time);
+  tm = gmtime (&t);
   strftime (handle->gztime_buf, sizeof (handle->gztime_buf),
 	    "%Y%m%d%H%M%SZ", tm);
 
@@ -52,14 +52,14 @@ my_timegm (struct tm *tm)
 }
 
 time_t
-shishi_generalize_ctime (Shishi * handle, char *now)
+shishi_generalize_ctime (Shishi * handle, const char *t)
 {
   struct tm tm;
   time_t t;
 
   memset (&tm, 0, sizeof (tm));
 
-  sscanf (now, "%4u%2u%2u%2u%2u%2uZ",
+  sscanf (t, "%4u%2u%2u%2u%2u%2uZ",
 	  &tm.tm_year, &tm.tm_mon, &tm.tm_mday,
 	  &tm.tm_hour, &tm.tm_min, &tm.tm_sec);
   tm.tm_year -= 1900;
