@@ -216,6 +216,11 @@ int _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 Shishi_asn1 _shishi_asn1_read (void);
 int _shishi_cipher_init (void);
 
+int
+shishi_asn1_integer2_field (Shishi * handle,
+			    Shishi_asn1 node, unsigned long *i,
+			    const char *field);
+
 #if WITH_DMALLOC
 #include <dmalloc.h>
 #endif

@@ -413,6 +413,7 @@ extern int shishi_tkt_valid_now_p (Shishi_tkt * tkt);
 extern int shishi_tkt_decrypt (Shishi_tkt * tkt, Shishi_key * key);
 extern void shishi_tkt_done (Shishi_tkt * tkt);
 extern int shishi_tkt_flags (Shishi_tkt * tkt, int *flags);
+extern int shishi_tkt_flags_set (Shishi_tkt * tkt, int flags);
 extern int shishi_tkt_forwardable_p (Shishi_tkt * tkt);
 extern int shishi_tkt_forwarded_p (Shishi_tkt * tkt);
 extern int shishi_tkt_proxiable_p (Shishi_tkt * tkt);
@@ -664,6 +665,10 @@ extern Shishi_asn1 shishi_enckdcreppart (Shishi * handle);
 extern int shishi_enckdcreppart_nonce_set (Shishi * handle,
 					   Shishi_asn1 enckdcreppart,
 					   unsigned long nonce);
+extern int
+shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
+					     Shishi_asn1 enckdcreppart,
+					     Shishi_asn1 encticketpart);
 
 /* kdc.c */
 extern int shishi_as_derive_salt (Shishi * handle,
@@ -698,11 +703,6 @@ extern int shishi_kdc_check_nonce (Shishi * handle, Shishi_asn1 kdcreq,
 /* kdcrep.c */
 extern Shishi_asn1 shishi_asrep (Shishi * handle);
 extern Shishi_asn1 shishi_tgsrep (Shishi * handle);
-extern int shishi_kdcrep_get_ticket (Shishi * handle,
-				     Shishi_asn1 kdcrep,
-				     Shishi_asn1 * ticket);
-extern int shishi_kdcrep_get_enc_part_etype (Shishi * handle,
-					     Shishi_asn1 asrep, int *etype);
 extern int shishi_kdcrep_save (Shishi * handle, FILE * fh,
 			       Shishi_asn1 kdcrep);
 extern int shishi_kdcrep_print (Shishi * handle, FILE * fh,
@@ -715,6 +715,19 @@ extern int shishi_kdcrep_read (Shishi * handle, FILE * fh,
 			       Shishi_asn1 * kdcrep);
 extern int shishi_kdcrep_from_file (Shishi * handle, Shishi_asn1 * kdcrep,
 				    int filetype, char *filename);
+extern int shishi_kdcrep_clear_padata (Shishi * handle, Shishi_asn1 kdcrep);
+extern int shishi_kdcrep_get_enc_part_etype (Shishi * handle,
+					     Shishi_asn1 asrep, int *etype);
+extern int shishi_kdcrep_add_enc_part (Shishi * handle,
+				       Shishi_asn1 kdcrep,
+				       Shishi_key * key,
+				       int keyusage,
+				       Shishi_asn1 enckdcreppart);
+extern int shishi_kdcrep_get_ticket (Shishi * handle,
+				     Shishi_asn1 kdcrep,
+				     Shishi_asn1 * ticket);
+extern int shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
+				     Shishi_asn1 ticket);
 
 /* krberror.c */
 extern Shishi_asn1 shishi_krberror (Shishi * handle);
