@@ -57,7 +57,8 @@ shishi_tkts_default_file_guess (void)
  * @handle: Shishi library handle create by shishi_init().
  *
  * Return value: Returns the default ticket set filename used in the
- * library.  (Not a copy of it, so don't modify or deallocate it.)
+ * library.  The string is not a copy, so don't modify or deallocate
+ * it.
  **/
 const char *
 shishi_tkts_default_file (Shishi * handle)

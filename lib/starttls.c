@@ -154,11 +154,15 @@ _shishi_sendrecv_tls (Shishi * handle,
 		      char **outdata, int *outlen, int timeout,
 		      Shishi_tkts_hint * hint)
 {
-  const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
+  const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
+			  GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0 };
   gnutls_session session;
   gnutls_anon_client_credentials anoncred;
+  gnutls_certificate_credentials x509cred;
   int sockfd;
   int ret, outerr;
+  const char *certfile = shishi_x509cert_default_file (handle);
+  const char *keyfile = shishi_x509key_default_file (handle);
 
   ret = gnutls_init (&session, GNUTLS_CLIENT);
   if (ret != GNUTLS_E_SUCCESS)
@@ -188,6 +192,33 @@ _shishi_sendrecv_tls (Shishi * handle,
   if (ret != GNUTLS_E_SUCCESS)
     {
       shishi_error_printf (handle, "TLS cs failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_CRYPTO_ERROR;
+    }
+
+  ret = gnutls_certificate_allocate_credentials (&x509cred);
+  if (ret != GNUTLS_E_SUCCESS)
+    {
+      shishi_error_printf (handle, "TLS cac failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_CRYPTO_ERROR;
+    }
+
+  ret = gnutls_certificate_set_x509_key_file (x509cred, certfile,
+					      keyfile, GNUTLS_X509_FMT_PEM);
+  if (ret != GNUTLS_E_SUCCESS && ret != GNUTLS_E_FILE_ERROR)
+    {
+      shishi_error_printf (handle, "TLS csxkf failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_CRYPTO_ERROR;
+    }
+  else if (ret == GNUTLS_E_SUCCESS)
+    shishi_error_printf (handle, "Loaded client certificate");
+
+  ret = gnutls_credentials_set (session, GNUTLS_CRD_CERTIFICATE, x509cred);
+  if (ret != GNUTLS_E_SUCCESS)
+    {
+      shishi_error_printf (handle, "TLS cs X.509 failed (%d): %s",
 			   ret, gnutls_strerror (ret));
       return SHISHI_CRYPTO_ERROR;
     }

@@ -2039,4 +2039,14 @@ extern int shishi_authorized_p (Shishi * handle,
 				Shishi_tkt * tkt, const char *authzname);
 extern int shishi_authorization_parse (const char *authorization);
 
+/* pki.c */
+extern char *shishi_x509cert_default_file_guess (Shishi * handle);
+extern void shishi_x509cert_default_file_set (Shishi * handle,
+					      const char *x509certfile);
+extern const char *shishi_x509cert_default_file (Shishi * handle);
+extern char *shishi_x509key_default_file_guess (Shishi * handle);
+extern void shishi_x509key_default_file_set (Shishi * handle,
+					     const char *x509keyfile);
+extern const char *shishi_x509key_default_file (Shishi * handle);
+
 #endif

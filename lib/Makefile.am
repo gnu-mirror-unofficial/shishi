@@ -38,7 +38,7 @@ include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = shishi.h.in internal.h \
 	init.c cfg.c realm.c principal.c error.c krberror.c \
-	gztime.c diskio.c authorize.c \
+	gztime.c diskio.c authorize.c pki.c \
 	authenticator.c \
 	kdc.c kdcreq.c kdcrep.c enckdcreppart.c as.c tgs.c \
 	ap.c apreq.c aprep.c encapreppart.c \
