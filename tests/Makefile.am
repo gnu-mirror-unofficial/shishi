@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -27,7 +27,7 @@ LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 
 check_PROGRAMS = authenticator crypto gztime priv safe \
 	ticketset crypto-ctx low-crypto
-TESTS = $(check_PROGRAMS) shisa.sh
+TESTS = $(check_PROGRAMS)
 
 indent:
 	indent $(SOURCES)
