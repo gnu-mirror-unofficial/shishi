@@ -42,7 +42,7 @@ Free Software Foundation raise funds for GNU development.''
 
 @dircategory Net Utilities
 @direntry
-* shishi: (shishi)		Kerberos 5 implementation
+* shishi: (shishi)		An RFC 1510 implementation
 @end direntry
 
 @titlepage
@@ -64,7 +64,9 @@ Free Software Foundation raise funds for GNU development.''
 
 @menu
 * Introduction::                How to use this manual.
-* Programming API::             How to use the library programmatically.
+* User Manual::                 Using Shishi as a user.
+* Administration Manual::       Administrating server aspects of Shishi.
+* Programming Manual::          Calling Shishi from a programming language.
 * Acknowledgements::            Whom to blame.
 
 Appendices
@@ -80,17 +82,20 @@ Indices
 @end menu
 
 
+@c **********************************************************
+@c ********************  Introduction  **********************
+@c **********************************************************
 @node Introduction
 @chapter Introduction
 
-Shishi is a package that implements the Kerberos network security
-system.
+Shishi implements the RFC 1510 network security system, also known as
+Kerberos 5.
 
 @menu
 * Getting Started::             
-* Features::                    
-* Kerberos Overview::                    
-* Kerberos Cryptographic Overview::                    
+* Features and Project Status::                    
+* Overview::                    
+* Cryptographic Overview::                    
 @end menu
 
 @node Getting Started
@@ -101,7 +106,7 @@ interface.  All commands, functions and data types provided by Shishi
 are explained.
 
 The reader is assumed to possess basic familiarity with network
-security and Kerberos.
+security and RFC 1510.
 
 This manual can be used in several ways.  If read from the beginning
 to the end, it gives a good introduction into the library and how it
@@ -112,8 +117,8 @@ library.  Experienced programmers might want to start looking at the
 examples at the end of the manual, and then only read up those parts
 of the interface which are unclear.
 
-@node Features
-@section Features
+@node Features and Project Status
+@section Features and Project Status
 
 Shishi might have a couple of advantages over other packages doing a
 similar job.
@@ -140,16 +145,55 @@ The following table summarize what is currently implemented.
 
 @table @asis
 
-@item Encryption suites: NULL, des-cbc-crc, des-cbc-md4 des-cbc-md5, des3-cbc-sha1-kd, aes128-cts-hmac-sha1-96, aes256-cts-hmac-sha1-96.
+@item Initial authentication (AS) from raw key or password.
 
-@item Checksum suites (all of the required checksums associated in the supported encryption suites): rsa-md4-des, rsa-md5-des, hmac-sha1-des3-kd, hmac-sha1-96-aes128, hmac-sha1-96-aes256.
+@item Subsequent authentication (TGS).
+
+@item Client-Server authentication (AP).
+
+@item Ticket cache file, supporting multiple principals and realms.
+
+@item Most standard cryptographic primitives 
+(@pxref{Cryptographic Overview}).
+
+@item Telnet client.
+
+@item 
 
 @end table
 
-@node Kerberos Overview
-@section Kerberos Overview
+The following table summarize what the current objectives are (i.e.,
+the todo list) and an estimate on how long it will take to implement
+the feature.
 
-This section describes Kerberos 5 from a protocol point of
+@table @asis
+
+@item Cross-realm support (week).
+
+@item PKINIT (use libksba, weeks)
+
+@item GSSAPI (separate project, months)
+
+@item Port to cyclone (cyclone need to mature first)
+
+@item Modularize ASN.1 library so it can be replaced (days)
+
+@item Modularize Crypto library so it can be replaced (days)
+
+@item KDC (initiated, weeks)
+
+@item PAM module (week)
+
+@item Set/Change password protocol (weeks?)
+
+@item Port applications to use Shishi (indefinite)
+
+@end table
+
+@node Overview
+@section Overview
+
+This section describes RFC 1510 from a protocol point of
 view@footnote{The text is a lightly adapted version of the
 introduction section from RFC 1510 by J. Kohl and C. Neuman, September
 1993, unclear copyrights, but presumably owned by The Internet
@@ -238,13 +282,13 @@ between principals can be secured by encrypting the data to be passed
 using the session key passed in the ticket, and contained in the
 credentials.
 
-@node Kerberos Cryptographic Overview
-@section Kerberos Cryptographic Overview
+@node Cryptographic Overview
+@section Cryptographic Overview
 
-Shishi implements several of the standard kerberos cryptographic
-primitives.  Here are the names of the supported encryption suites,
-with some notes on their status and there associated checksum suite.
-They are ordered by increased security as perceived by the author.
+Shishi implements several of the standard cryptographic primitives.
+Here are the names of the supported encryption suites, with some notes
+on their status and there associated checksum suite.  They are ordered
+by increased security as perceived by the author.
 
 @table @code
 
@@ -258,26 +302,26 @@ weak.  It is associated with the @code{NULL} checksum.
 
 @code{des-cbc-crc} is DES encryption and decryption with 56 bit keys
 and 8 byte blocks in CBC mode. The keys can be derived from passwords
-by an obscure kerberos specific algorithm. Data is integrity protected
-with an unkeyed but encrypted @code{CRC32}-like checksum.  It is
-weak. It is associated with the @code{rsa-md5-des} checksum.
+by an obscure application specific algorithm. Data is integrity
+protected with an unkeyed but encrypted @code{CRC32}-like checksum.
+It is weak. It is associated with the @code{rsa-md5-des} checksum.
 
 @item des-cbc-md4
 
 @code{des-cbc-md4} is DES encryption and decryption with 56 bit keys
 and 8 byte blocks in CBC mode. The keys can be derived from passwords
-by an obscure kerberos specific algorithm. Data is integrity protected
-with an unkeyed but encrypted MD4 hash.  It is weak. It is associated
-with the @code{rsa-md4-des} checksum.
+by an obscure application specific algorithm. Data is integrity
+protected with an unkeyed but encrypted MD4 hash.  It is weak. It is
+associated with the @code{rsa-md4-des} checksum.
 
 @item des-cbc-md5
 
 @code{des-cbc-md5} is DES encryption and decryption with 56 bit keys
 and 8 byte blocks in CBC mode.  The keys can be derived from passwords
-by an obscure kerberos specific algorithm. Data is integrity protected
-with an unkeyed but encrypted MD5 hash.  It is weak.  It is associated
-with the @code{rsa-md5-des} checksum.  This is the strongest RFC 1510
-interoperable mechanism.
+by an obscure application specific algorithm. Data is integrity
+protected with an unkeyed but encrypted MD5 hash.  It is weak.  It is
+associated with the @code{rsa-md5-des} checksum.  This is the
+strongest RFC 1510 interoperable mechanism.
 
 @item des3-cbc-sha1-kd
 
@@ -287,8 +331,8 @@ mode. The keys can be derived from passwords by a algorithm based on
 the paper "A Better Key Schedule For DES-like Ciphers"
 @footnote{@url{http://www.research.att.com/~smb/papers/ides.pdf}} by
 Uri Blumenthal and Steven M. Bellovin (it is not clear to the author
-if the algorithm, and the way it is used in kerberos, is used by any
-other applications, although it seems unlikely).  Data is integrity
+if the algorithm, and the way it is used, is used by any other
+applications, although it seems unlikely).  Data is integrity
 protected with a keyed (HMAC) SHA1 hash.  It has no security proof,
 but is widely assumed to provide adequate security.  It is associated
 with the @code{hmac-sha1-des3-kd} checksum.
@@ -314,9 +358,9 @@ respectively.
 
 @end table
 
-Kerberos do not include any way to negotiate which checksum mechanisms
-to use, so in most cases the associated checksum will be used.
-However, checksum mechanisms can be used with other encryption
+The protocol do not include any way to negotiate which checksum
+mechanisms to use, so in most cases the associated checksum will be
+used.  However, checksum mechanisms can be used with other encryption
 mechanisms, as long as they are compatible in terms of key format etc.
 Here are the names of the supported checksum mechanisms, with some
 notes on their status and the compatible encryption mechanisms. They
@@ -371,10 +415,397 @@ is compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
 
 
 @c **********************************************************
-@c *****************  Programming API  **********************
+@c ********************  User Manual  **********************
 @c **********************************************************
-@node Programming API
-@chapter Programming API
+@node User Manual
+@chapter User Manual
+
+Usually Shishi interacts with you to get some initial authentication
+information like a password, and then contacts a server to receive a
+so called ticket granting ticket.  From now on, you rarely interacts
+with Shishi directly.  Applications that needs security services
+instruct the Shishi library to use the ticket granting ticket to get
+new tickets for various servers.  An example could be if you log on to
+a host remotely; the host usually requires authentication before
+permitting you in.  The @samp{telnet} application uses the ticket
+granting ticket to get a ticket for the server, and then use this
+ticket to authenticate you to the server (and usually also
+authenticating the server to you, so you know who you are talking with
+the right host).  You perform the initial authentication by typing
+@command{shishi as} at the prompt.  The @samp{as} command is the
+default command for Shishi, so you can type only @command{shishi} if
+you want to save a few key strokes.  Sometimes it is necessary to
+supply options telling Shishi what your principal (username) or realm
+is.  @xref{as}, for the details.  In the example, I need to specify my
+name and realm.
+
+@example
+@cartouche
+jas@@latte:~/src/shishi$ shishi as --client-name \
+	simon --realm JOSEFSSON.ORG
+Unknown option `read-krb5conf=/etc/krb5.conf'
+Unknown option `server-realm=lab.josefsson.org'
+Unknown option `.josefsson.org'
+Sending to latte.josefsson.org (217.208.172.73)...
+Enter password for `simon@@JOSEFSSON.ORG':
+Warning: using insecure memory!
+simon@@JOSEFSSON.ORG:
+Authtime:       Fri Nov 22 23:44:02 2002
+Endtime:        Sat Nov 23 00:00:42 2002        valid
+Service:        krbtgt/JOSEFSSON.ORG
+Key type:       des3-cbc-sha1-kd (16)
+Flags:  16384
+jas@@latte:~/src/shishi$
+@end cartouche
+@end example
+
+As you can see, Shishi also prints a short description of the ticket
+received.
+
+A logical next step is to display all tickets you have received (by
+the way, the tickets are usually stored as text in
+@file{~/.shishi/tickets}).  This is achieved by typing @command{shishi
+list}.
+
+@example
+@cartouche
+jas@@latte:~/src/shishi$ shishi list
+Unknown option `read-krb5conf=/etc/krb5.conf'
+Unknown option `server-realm=lab.josefsson.org'
+Unknown option `.josefsson.org'
+Tickets in `/home/jas/.shishi/tickets':
+
+jas@@JOSEFSSON.ORG:
+Authtime:       Fri Nov 22 23:46:18 2002
+Endtime:        Sat Nov 23 00:02:58 2002        valid
+Service:        krbtgt/JOSEFSSON.ORG
+Key type:       des3-cbc-sha1-kd (16)
+Flags:  16384
+
+jas@@JOSEFSSON.ORG:
+Authtime:       Fri Nov 22 23:46:18 2002
+Endtime:        Sat Nov 23 00:02:58 2002        valid
+Service:        host/h73n1c1o299.bredband.skanova.com
+Key type:       des3-cbc-sha1-kd (16)
+Flags:  0
+
+2 tickets found.
+jas@@latte:~/src/shishi$
+@end cartouche
+@end example
+
+As you can see, I had a ticket for the server
+@samp{host/h73n1c1o299.bredband.skanova.com} which was generated by
+@samp{telnet}:ing to that host.  The observant reader might notice
+that it now says the tickets are owned by @samp{jas@@JOSEFSSON.ORG}
+instead of @samp{simon@@JOSEFSSON.ORG}.  This is because the identity
+of the ticket owner is not stored in the ticket file, but must be set
+every time with @samp{--client-name} parameter.  Since the parameter
+was not given, Shishi defaults to using the username on the system.
+Perhaps this has been fixed in your version of Shishi, if not you are
+very welcome to fix the problem.
+
+If, for some weird reason, you want to manually get a ticket for a
+specific server, you can use the @command{shishi tgs} command
+(@pxref{tgs}).  Normally, however, the application that uses Shishi
+will take care of getting a ticket for the appropriate server, so you
+don't need this command.  But maybe you just want to tinker with
+things.  Or maybe you are bored.  What do I know.  (If you read this
+far you really must be bored though.) Anyway.
+
+@example
+@cartouche
+jas@@latte:~/src/shishi$ src/shishi tgs \
+	--server-name user/billg  --client-name simon \
+	-e des-cbc-md5
+Unknown option `read-krb5conf=/etc/krb5.conf'
+Unknown option `server-realm=lab.josefsson.org'
+Unknown option `.josefsson.org'
+Searching tickets for client `simon' and server `krbtgt/JOSEFSSON.ORG'
+Warning: using insecure memory!
+Sending to latte.josefsson.org (217.208.172.73)...
+jas@@JOSEFSSON.ORG:
+Authtime:       Fri Nov 22 23:46:18 2002
+Endtime:        Sat Nov 23 00:02:58 2002        valid
+Service:        user/billg
+Key type:       des-cbc-md5 (3)
+Flags:  0
+jas@@latte:~/src/shishi$
+@end cartouche
+@end example
+
+As you can see, I received a ticket for @samp{user/billg} with a
+@samp{des-cbc-md5} (@pxref{Cryptographic Overview}) encryption key
+specified with the @samp{-e} parameter.
+
+The rest of the commands are rather esoteric, so I think it is better
+if you read the following reference sections instead of trying to
+understand any weird examples I may come up with.  If you can think of
+something neat that the other commands can be used for, feel free to
+suggest a paragraph or two here.
+
+@menu
+* as::                          Initial Authentication.
+* list::                        Listing tickets in cache.
+* tgs::                         Getting subsequent tickets manually.
+* client::                      Simple Client.
+* server::                      Simple Server.
+* ap::                          Low-level client-server authentication.
+* crypto::                      Low-level cryptographic functions.
+* kdc::                         Low-level AS/TGS exchange.
+* miscellaneous::               Various options.
+@end menu
+
+@node as
+@section as
+
+@example
+  as                         Acquire ticket granting ticket using password and
+                             the Authentication Service (AS) exchange.
+
+ Options for Authentication Service (AS-OPTIONS):
+      --client-name=NAME     Client name. Default is login username.
+  -e, --encryption-type=ETYPE,[ETYPE...]
+                             Encryption types to use.  ETYPE is either
+                             registered name or integer.
+  -r, --realm=REALM          Realm of client and server. Default is DNS domain
+                             of local host.
+      --string-to-key=PASSWORD   Password to decrypt response (discouraged).
+                             Default is to prompt user.
+@end example
+
+
+@node list
+@section list
+
+@example
+  list                       List tickets.
+
+ Options for the List command (LIST-OPTIONS):
+      --server-name=NAME     Restrict list to tickets for specified server.
+@end example
+
+
+@node tgs
+@section tgs
+
+@example
+  tgs                        Acquire ticket using the ticket granting ticket
+                             and the Ticket-Granting Service (TGS) exchange.
+
+ Options for Ticket Granting Service (TGS-OPTIONS):
+      --client-name=NAME     Client name. Default is login username. Used to
+                             locate ticket granting ticket.
+      --encryption-type=ETYPE,[ETYPE...]
+                             Encryption types to use.  ETYPE is either
+                             registered name or integer.
+      --realm=REALM          Realm of server. Default is DNS domain of local
+                             host.
+      --server-name=NAME     Name of server.
+      --ticket-granter=NAME  Name of server field in the ticket to use as the
+                             ticket granter. Defaults to "krbtgt/REALM@@REALM"
+                             where REALM is server realm (see --realm).
+@end example
+
+
+@node client
+@section client
+
+@example
+  client                     Kerberos client.
+
+ Options for Network Client (CLIENT-OPTIONS):
+      --options=OPTION[,OPTION...]
+                             Indicate AP-OPTIONS separated by comma (,) or
+                             whitespace. Options are integers (ORed together)
+                             or the pre-defined strings "use-session-key"
+                             indicating that the ticket is encrypted in the
+                             server's TGT key rather than its own key (not
+                             implemented) or "mutual-required" indicating that
+                             mutual authentication is required.
+      --realm=REALM          Realm of server. Defaults to DNS domain of local
+                             host.
+      --server-name=NAME     Name of server. Defaults to "sample/REALM" where
+                             REALM is realm of server (see --realm).
+@end example
+
+
+@node server
+@section server
+
+@example
+  server                     Kerberos server.
+
+ Options for Network Server (SERVER-OPTIONS):
+      --client-name=NAME     Client name. Default is login username.
+      --key-value=KEY        Cipher key of server.
+      --realm=REALM          Realm of server. Defaults to DNS domain of local
+                             host.
+      --server-name=NAME     Name of server. Defaults to "sample/REALM" where
+                             REALM is realm of server (see --realm).
+      --string-to-key=PASSWORD   Password to decrypt response (discouraged).
+@end example
+
+
+@node ap
+@section ap
+
+@example
+  ap                         Kerberos Client/Server Authentication (AP-REQ and
+                             AP-REP).
+
+ Options for low-level Client/Server Authentication (AP-OPTIONS):
+      --data=B64STRING       Base64 encoded data to checksum in generated
+                             authenticator. By default checksum is omitted
+                             (indicating no application payload).
+      --read-ap-request-file=[TYPE,]FILE
+                             Read AP-REQ from FILE in format TYPE; TEXT
+                             (default) or DER. Default is to generate it.
+      --read-data-file=[TYPE,]FILE
+                             Read data to checksum in generated authenticator
+                             from FILE in format TYPE, BASE64, HEX or BINARY
+                             (default). By default checksum is omitted
+                             (indicating no application payload).
+      --realm=REALM          Realm of server. Defaults to DNS domain of local
+                             host. Used for locating the ticket to use.
+      --server-name=NAME     Name of server. Defaults to "krbtgt.DEFAULTREALM"
+                             where DEFAULTREALM is realm of server. Used for
+                             locating the ticket to use.
+      --write-ap-request-file=[TYPE,]FILE
+                             Write AP-REQ to FILE in format TYPE; TEXT
+                             (default) or DER.  Default is stdout.
+      --write-authenticator-file=[TYPE,]FILE
+                             Write authenticator to FILE in format TYPE; TEXT
+                             (default) or DER. Not written by default.
+@end example
+
+
+@node crypto
+@section crypto
+
+@example
+  crypto                     Cryptographic functions.
+
+ Options for low-level cryptography (CRYPTO-OPTIONS):
+      --algorithm=ALGORITHM  Use ciphering algorithm, expressed either as the
+                             etype integer or the registered name.
+      --client-name=NAME     Client name. Default is login username. Used for
+                             generating cipher key.
+      --decrypt              Decrypt data
+      --encrypt              Encrypt data
+      --input-file=[TYPE,]FILE   Read data from FILE in TYPE, BASE64, HEX or
+                             BINARY (default).
+      --key-file=[TYPE,]FILE Read/write cipher key from/to FILE in TYPE
+      --key-value=KEY        Specify cipher key directly (discouraged)
+      --output-file=[TYPE,]FILE   Write data to FILE in TYPE, BASE64, HEX or
+                             BINARY (default).
+      --realm=REALM          Realm of principal. Defaults to DNS domain of
+                             local host. Used for generating cipher key.
+      --string-to-key=PASSWORD   Convert password to key.  Client-name and
+                             realm also modify the key.
+@end example
+
+
+@node kdc
+@section kdc
+
+@example
+  kdc                        Key Distribution Center Services; Authentication
+                             Service (AS) and Ticket-Granting Service (TGS).
+
+ Options for low-level Key Distribution Services (KDC-OPTIONS):
+      --client-name=NAME     Client name. Default is login username. Only for
+                             AS.
+      --encryption-type=ETYPE,[ETYPE...]
+                             Encryption types to use.  ETYPE is either
+                             registered name or integer.
+      --force-as             Force AS mode. Default is to use TGS iff a TGT is
+                             found.
+      --force-tgs            Force TGS mode. Default is to use TGS iff a TGT is
+                             found.
+      --key-value=KEY        Cipher key to decrypt response (discouraged).
+      --read-kdc-request-file=[TYPE,]FILE
+                             Read KDC-REQ from FILE in format TYPE; TEXT
+                             (default) or DER. Default is to generate it.
+      --read-kdc-response-file=[TYPE,]FILE
+                             Read KDC-REP from FILE in format TYPE; TEXT
+                             (default) or DER. Default is to receive it from
+                             server.
+      --realm=REALM          Realm of server. Default is DNS domain of local
+                             host. For AS, this also indicates realm of
+                             client.
+      --request              Only generate the request.
+      --response             Only parse request and response and output ticket.
+
+      --sendrecv             Only send request and receive response.
+      --server=HOST          Send request to HOST. Default uses address from
+                             configuration file.
+      --server-name=NAME     Server name. Default is "krbtgt/REALM" where REALM
+                             is server realm (see --realm).
+      --short-nonce          Use a 4 byte nonce. Required by some buggy
+                             servers.
+      --string-to-key=PASSWORD   Password to decrypt response (discouraged).
+                             Only for AS.
+      --ticket-granter=NAME  Service name in ticket to use for authenticating
+                             request. Only for TGS. Defaults to
+                             "krbtgt/REALM@@REALM" where REALM is server realm
+                             (see --realm).
+      --write-ap-request-file=[TYPE,]FILE
+                             Write AP-REQ to FILE in TYPE, either TEXT
+                             (default) or DER. Only for TGS. Not written by
+                             default.
+      --write-authenticator-file=[TYPE,]FILE
+                             Write Authenticator to FILE in TYPE, either TEXT
+                             (default) or DER. Only for TGS. Not written by
+                             default.
+      --write-kdc-request-file=[TYPE,]FILE
+                             Write KDC-REQ to FILE in format TYPE; TEXT
+                             (default) or DER. Not written by default.
+      --write-kdc-response-file=[TYPE,]FILE
+                             Write KDC-REP to FILE in format TYPE; TEXT
+                             (default) or DER. Not written by default.
+@end example
+
+
+@node miscellaneous
+@section miscellaneous
+
+These parameters are applicable to all commands.
+
+@example
+      --configuration-file=FILE   Read user configuration from file.  Default
+                             is ~/.shishi/config.
+  -o, --library-options=STRING   Parse STRING as a configuration file
+                             statement.
+  -q, --quiet, --silent      Don't produce any output.
+  -s, --system-configuration-file=FILE
+                             Read system wide configuration from file.  Default
+                             is /usr/local/etc/shishi.conf.
+  -t, --ticket-file=FILE     Read tickets from FILE. Default is
+                             $HOME/.shishi/tickets.
+  -v, --verbose              Produce verbose output.
+  -w, --ticket-write-file=FILE   Write tickets to FILE.  Default is to write
+                             them back to ticket file.
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
+@end example
+
+
+@c **********************************************************
+@c ****************  Administration Manual  *****************
+@c **********************************************************
+@node Administration Manual
+@chapter Administration Manual
+
+TBW.
+
+
+@c **********************************************************
+@c ***************  Programming Manual  *********************
+@c **********************************************************
+@node Programming Manual
+@chapter Programming Manual
 
 This chapter describes all the publicly available functions in the
 library.
@@ -899,8 +1330,9 @@ This chapter does not contain example code which illustrate how
 
 Simon Josefsson created Shishi autumn 2002.
 
-Shishi uses Libgcrypt by Werner Koch and Libtasn1 by Fabio Fiorina,
-and is inspired by their makefiles and documentation.
+Shishi uses Libgcrypt by Werner Koch et al and Libtasn1 by Fabio
+Fiorina et al.  Ken Raeburn and Sam Hartman answered questions
+regarding specification issues.
 
 @c **********************************************************
 @c *******************  Appendices  *************************
