@@ -59,7 +59,7 @@ shishi_key_principal_set (Shishi_key * key, const char *principal)
   if (key->principal)
     free (key->principal);
   if (principal)
-    key->principal = strdup (principal);
+    key->principal = xstrdup (principal);
   else
     key->principal = NULL;
 }
@@ -92,7 +92,7 @@ shishi_key_realm_set (Shishi_key * key, const char *realm)
   if (key->realm)
     free (key->realm);
   if (realm)
-    key->realm = strdup (realm);
+    key->realm = xstrdup (realm);
   else
     key->realm = NULL;
 }
