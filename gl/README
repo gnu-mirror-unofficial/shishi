@@ -1,0 +1,14 @@
+Shishi gl/README -- Information about the gnulib library.
+Copyright (C) 2003 Simon Josefsson
+See the end for copying conditions.
+
+This directory, and the sub-directory m4/, contains a copy of some of
+the files in GNULib.
+
+If you notice any discrepencies between the copy in Shishi and the
+upstream version, please let me know, it is most likely an oversight.
+
+----------------------------------------------------------------------
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
