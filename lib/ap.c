@@ -231,9 +231,7 @@ shishi_ap_reply_verify (Shishi * handle, Shishi_ap * ap, ASN1_TYPE aprep)
 
   keylen = sizeof (key);
   res = shishi_enckdcreppart_get_key (handle,
-				      shishi_ticket_enckdcreppart (handle,
-								   ap->
-								   ticket),
+				      shishi_ticket_enckdcreppart (ap->ticket),
 				      &keytype, key, &keylen);
   if (res != SHISHI_OK)
     return res;

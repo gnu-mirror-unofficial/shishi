@@ -195,7 +195,7 @@ shishi_tgs_realmsname (Shishi * handle,
     goto done;
 
   res = shishi_tgs_process (handle, (*tgs)->tgsreq, (*tgs)->tgsrep,
-			    shishi_ticket_enckdcreppart (handle, tgticket),
+			    shishi_ticket_enckdcreppart (tgticket),
 			    &kdcreppart);
   if (res != SHISHI_OK)
     goto done;
@@ -211,7 +211,7 @@ shishi_tgs_realmsname (Shishi * handle,
 
   (*tgs)->ticket =
     shishi_ticket (handle,
-		   strdup (shishi_ticket_principal (handle, tgticket)),
+		   strdup (shishi_ticket_principal (tgticket)),
 		   ticket, kdcreppart);
   if ((*tgs)->ticket == NULL)
     {

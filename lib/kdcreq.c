@@ -242,13 +242,13 @@ shishi_tgsreq (Shishi * handle,
   keylen = sizeof (key);
   res = shishi_enckdcreppart_get_key
     (handle,
-     shishi_ticket_enckdcreppart (handle, ticket), &keytype, key, &keylen);
+     shishi_ticket_enckdcreppart (ticket), &keytype, key, &keylen);
   if (res != SHISHI_OK)
     return ASN1_TYPE_EMPTY;
 
   res = shishi_kdcreq_make_padata_tgs
     (handle, req,
-     shishi_ticket_ticket (handle, ticket), keytype, key, keylen);
+     shishi_ticket_ticket (ticket), keytype, key, keylen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make TGS PA-DATA: %s\n",

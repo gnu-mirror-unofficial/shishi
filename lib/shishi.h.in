@@ -47,6 +47,7 @@ enum
   SHISHI_APREQ_BAD_KEYTYPE,
   SHISHI_TOO_SMALL_BUFFER,
   SHISHI_DERIVEDKEY_TOO_SMALL,
+  SHISHI_KEY_TOO_LARGE,
   SHISHI_CRYPTO_ERROR,
   SHISHI_GCRYPT_ERROR,
   SHISHI_SOCKET_ERROR,
@@ -248,6 +249,7 @@ typedef struct Shishi_ticketset Shishi_ticketset;
 typedef struct Shishi_as Shishi_as;
 typedef struct Shishi_tgs Shishi_tgs;
 typedef struct Shishi_ap Shishi_ap;
+typedef struct Shishi_key Shishi_key;
 
 /* init.c */
 extern Shishi *shishi (void);
@@ -300,17 +302,15 @@ extern int shishi_asn1ticket_service (Shishi * handle,
 				      char *service, int *servicelen);
 
 /* ticket.c */
-extern ASN1_TYPE
-shishi_ticket_ticket (Shishi * handle, Shishi_ticket * ticket);
-extern ASN1_TYPE
-shishi_ticket_enckdcreppart (Shishi * handle, Shishi_ticket * ticket);
-extern Shishi_ticket *shishi_ticket (Shishi * handle, char *principal,
+extern ASN1_TYPE shishi_ticket_ticket (Shishi_ticket * ticket);
+extern ASN1_TYPE shishi_ticket_enckdcreppart (Shishi_ticket * ticket);
+extern Shishi_ticket *shishi_ticket (Shishi * handle,
+				     char *principal,
 				     ASN1_TYPE ticket,
 				     ASN1_TYPE enckdcreppart);
 extern int shishi_ticket_print (Shishi * handle, Shishi_ticket * ticket,
 				FILE * fh);
-extern char *shishi_ticket_principal (Shishi * handle,
-				      Shishi_ticket * ticket);
+extern char *shishi_ticket_principal (Shishi_ticket * ticket);
 extern int shishi_ticket_authtime (Shishi * handle, Shishi_ticket * ticket,
 				   char *authtime, int *authtimelen);
 extern int shishi_ticket_starttime (Shishi * handle, Shishi_ticket * ticket,

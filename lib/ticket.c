@@ -51,9 +51,9 @@ shishi_ticket_snamerealm_get (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcrep: Ticket variable to get value from.
  * @etype: output variable that holds the value.
- * 
+ *
  * Extract Ticket.enc-part.etype.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -75,11 +75,11 @@ shishi_asn1ticket_get_enc_part_etype (Shishi * handle,
  * shishi_ticket_principal:
  * @handle: shishi handle as allocated by shishi_init().
  * @ticket: input variable with ticket info.
- * 
+ *
  * Return value: Returns client principal of ticket.
  **/
 char *
-shishi_ticket_principal (Shishi * handle, Shishi_ticket * ticket)
+shishi_ticket_principal (Shishi_ticket * ticket)
 {
   return ticket->principal ? ticket->principal : "<none>";
 }
@@ -88,11 +88,11 @@ shishi_ticket_principal (Shishi * handle, Shishi_ticket * ticket)
  * shishi_ticket_ticket:
  * @handle: shishi handle as allocated by shishi_init().
  * @ticket: input variable with ticket info.
- * 
+ *
  * Return value: Returns actual ticket.
  **/
 ASN1_TYPE
-shishi_ticket_ticket (Shishi * handle, Shishi_ticket * ticket)
+shishi_ticket_ticket (Shishi_ticket * ticket)
 {
   return ticket->ticket;
 }
@@ -101,11 +101,11 @@ shishi_ticket_ticket (Shishi * handle, Shishi_ticket * ticket)
  * shishi_ticket_enckdcreppart:
  * @handle: shishi handle as allocated by shishi_init().
  * @ticket: input variable with ticket info.
- * 
+ *
  * Return value: Returns auxilliary ticket information.
  **/
 ASN1_TYPE
-shishi_ticket_enckdcreppart (Shishi * handle, Shishi_ticket * ticket)
+shishi_ticket_enckdcreppart (Shishi_ticket * ticket)
 {
   return ticket->enckdcreppart;
 }
@@ -116,9 +116,9 @@ shishi_ticket_enckdcreppart (Shishi * handle, Shishi_ticket * ticket)
  * @principal: input variable with client principal of ticket.
  * @ticket: input variable with ticket.
  * @enckdcreppart: input variable with auxilliary ticket information.
- * 
+ *
  * Create a new ticket handle.
- * 
+ *
  * Return value: Returns new ticket handle, or %NULL on error.
  **/
 Shishi_ticket *
@@ -490,7 +490,7 @@ shishi_ticket_print (Shishi * handle, Shishi_ticket * ticket, FILE * fh)
   int res;
   time_t t;
 
-  printf ("%s:\n", shishi_ticket_principal (handle, ticket));
+  printf ("%s:\n", shishi_ticket_principal (ticket));
 
   t = shishi_ticket_authctime (handle, ticket);
   printf (_("Authtime:\t%s"), ctime (&t));
@@ -587,7 +587,7 @@ shishi_ticket_apreq_data_usage (Shishi * handle,
   keylen = sizeof (key);
   res = shishi_enckdcreppart_get_key
     (handle,
-     shishi_ticket_enckdcreppart (handle, ticket), &keytype, key, &keylen);
+     shishi_ticket_enckdcreppart (ticket), &keytype, key, &keylen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not extract key: %s\n",
