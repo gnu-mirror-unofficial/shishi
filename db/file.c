@@ -1,5 +1,5 @@
 /* file.c --- File based Kerberos database.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -423,6 +423,7 @@ read_key (Shisa * dbh,
   FILE *fh;
   char *file;
   unsigned passwdlen;
+  char junk;
   int rc;
 
   asprintf (&file, "keys/%s", keyfile);
@@ -433,7 +434,7 @@ read_key (Shisa * dbh,
 
   memset (&tmpkey, 0, sizeof (tmpkey));
 
-  rc = fscanf (fh, "%u %u %u %u %u %u\n", &tmpkey.etype, &tmpkey.keylen,
+  rc = fscanf (fh, "%u %u %u %u %u %u", &tmpkey.etype, &tmpkey.keylen,
 	       &tmpkey.saltlen, &tmpkey.str2keyparamlen, &passwdlen,
 	       &tmpkey.priority);
   if (rc != 5 && rc != 6)
@@ -441,6 +442,12 @@ read_key (Shisa * dbh,
 
   if (rc == 5)
     tmpkey.priority = 0;
+
+  if (rc == 6)
+    /* We can't include '\n' in scanf format above, because any
+       whitespace on the next line will be skipped. */
+    if (fread (&junk, 1, 1, fh) != 1 || junk != '\n')
+      return SHISA_NO_KEY;
 
   if (tmpkey.keylen > 0)
     {
