@@ -258,8 +258,9 @@ main (int argc, char *argv[])
 
       tkt = shishi_tkts_get (shishi_tkts_default (sh), &hint);
       if (!tkt)
-	error (EXIT_FAILURE, 0, "Could not get ticket as `%s' for `%s'.\n",
-	       hint.client, hint.server);
+	error (EXIT_FAILURE, 0, "Could not get ticket as `%s' for `%s'.",
+	       hint.client ? hint.client : shishi_principal_default (sh),
+	       hint.server);
 
       shishi_tkt_pretty_print (tkt, stdout);
     }
