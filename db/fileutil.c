@@ -204,6 +204,22 @@ _shisa_rmdir3 (const char *path1, const char *path2, const char *path3)
   return rc;
 }
 
+int
+_shisa_rmdir4 (const char *path1, const char *path2,
+	       const char *path3, const char *path4)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
+
+  rc = _shisa_rmdir (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
 static time_t
 mtime (const char *file)
 {
@@ -412,6 +428,23 @@ _shisa_ls2 (const char *path1, const char *path2,
 }
 
 int
+_shisa_ls3 (const char *path1, const char *path2,
+	    const char *path3,
+	    char ***files, size_t *nfiles)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
+
+  rc = _shisa_ls (tmp, files, nfiles);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
 _shisa_ls4 (const char *path1, const char *path2,
 	    const char *path3, const char *path4,
 	    char ***files, size_t *nfiles)
@@ -444,6 +477,53 @@ _shisa_lsdir2 (const char *path1, const char *path2,
   asprintf (&tmp, "%s/%s", path1, path2);
 
   rc = _shisa_lsdir (tmp, files, nfiles);
+
+  free (tmp);
+
+  return rc;
+}
+
+static int
+rm (const char *path)
+{
+  int rc;
+
+  rc = unlink (path);
+  if (rc != 0)
+    {
+      perror (path);
+      return -1;
+    }
+
+  return 0;
+}
+
+int
+_shisa_rm4 (const char *path1, const char *path2,
+	    const char *path3, const char *path4)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
+
+  rc = rm (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
+_shisa_rm5 (const char *path1, const char *path2, const char *path3,
+	    const char *path4, const char *path5)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s/%s/%s", path1, path2, path3, path4, path5);
+
+  rc = rm (tmp);
 
   free (tmp);
 
