@@ -4,4 +4,5 @@ Makefile
 Makefile.in
 client
 client-cksum
+client-safe
 server
