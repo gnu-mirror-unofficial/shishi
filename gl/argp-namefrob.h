@@ -86,6 +86,8 @@
 #define __vsnprintf vsnprintf
 #undef __strchrnul
 #define __strchrnul strchrnul
+#undef __strerror_r
+#define __strerror strerror_r
 #undef __mempcpy
 #define __mempcpy mempcpy
 #undef __strndup
@@ -134,6 +136,9 @@
 #if defined(HAVE_DECL_PUTCHAR_UNLOCKED) && !HAVE_DECL_PUTCHAR_UNLOCKED
 # define putchar_unlocked(x) putchar (x)
 # endif
+
+extern char *__argp_basename (char *name);
+extern char *__argp_short_program_name (void);
 
 #endif /* !_LIBC */
 
