@@ -1,5 +1,5 @@
 /* resolv.c --- Resolver glue.
- * Copyright (C) 2003  Simon Josefsson
+ * Copyright (C) 2003, 2004  Simon Josefsson
  * Copyright (c) 2002 Jeremie Miller, Thomas Muldowney,
  *                    Ryan Eatmon, Robert Norris
  *
@@ -31,6 +31,9 @@
 
 #ifdef HAVE_LIBRESOLV
 
+/* Get xinet_ntoa. */
+#include "xinet.h"
+
 /* the largest packet we'll send and receive */
 #if PACKETSZ > 1024
 # define MAX_PACKET PACKETSZ
@@ -52,7 +55,7 @@ _a_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
   GETLONG (in.s_addr, *scan);
   in.s_addr = ntohl (in.s_addr);
 
-  return xstrdup (inet_ntoa (in));
+  return xinet_ntoa (in);
 }
 
 static void *
