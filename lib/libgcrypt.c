@@ -277,7 +277,8 @@ shishi_des_cbc_mac (Shishi * handle,
 }
 
 static int
-libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int decryptp,
+libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int mode,
+		    int decryptp,
 		    const char *key, size_t keylen,
 		    const char *iv,
 		    char **ivout,
@@ -287,7 +288,6 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int decryptp,
   size_t ivlen = gcry_cipher_get_algo_blklen (algo);
   gcry_cipher_hd_t ch;
   gpg_error_t err;
-  int mode = GCRY_CIPHER_MODE_CBC;
 
   err = gcry_cipher_open (&ch, algo, mode, flags);
   if (err != GPG_ERR_NO_ERROR)
@@ -354,7 +354,8 @@ shishi_arcfour (Shishi * handle, int decryptp,
 		char **out)
 {
   return libgcrypt_dencrypt (handle, GCRY_CIPHER_ARCFOUR, 0,
-			     decryptp, key, keylen, NULL, NULL, in, inlen, out);
+			     GCRY_CIPHER_MODE_STREAM, decryptp,
+			     key, keylen, NULL, NULL, in, inlen, out);
 }
 
 int
@@ -365,7 +366,7 @@ shishi_des (Shishi * handle, int decryptp,
 	    const char *in, size_t inlen,
 	    char **out)
 {
-  return libgcrypt_dencrypt (handle, GCRY_CIPHER_DES, 0,
+  return libgcrypt_dencrypt (handle, GCRY_CIPHER_DES, 0, GCRY_CIPHER_MODE_CBC,
 			     decryptp, key, 8, iv, ivout, in, inlen, out);
 }
 
@@ -377,7 +378,7 @@ shishi_3des (Shishi * handle, int decryptp,
 	     const char *in, size_t inlen,
 	     char **out)
 {
-  return libgcrypt_dencrypt (handle, GCRY_CIPHER_3DES, 0,
+  return libgcrypt_dencrypt (handle, GCRY_CIPHER_3DES, 0, GCRY_CIPHER_MODE_CBC,
 			     decryptp, key, 24, iv, ivout, in, inlen, out);
 }
 
@@ -390,5 +391,6 @@ shishi_aes_cts (Shishi * handle, int decryptp,
 		char **out)
 {
   return libgcrypt_dencrypt (handle, GCRY_CIPHER_AES, GCRY_CIPHER_CBC_CTS,
-			     decryptp, key, keylen, iv, ivout, in, inlen, out);
+			     GCRY_CIPHER_MODE_CBC, decryptp,
+			     key, keylen, iv, ivout, in, inlen, out);
 }
