@@ -313,11 +313,9 @@ shishi_principal_name_set (Shishi * handle,
   char *buf, *asn1name;
   int i;
 
-  asprintf (&buf, "%d", name_type);
   asprintf (&asn1name, "%s.name-type", namefield);
-  res = shishi_asn1_write (handle, namenode, asn1name, buf, 0);
+  res = shishi_asn1_write_int32 (handle, namenode, asn1name, name_type);
   free (asn1name);
-  free (buf);
   if (res != SHISHI_OK)
     return res;
 

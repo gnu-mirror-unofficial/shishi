@@ -8,13 +8,10 @@ users in distributed systems.
 
 Shishi contains a library ('libshishi') that can be used by
 application developers to add support for RFC 1510.  Shishi contains a
-command line utility ('shishi') that is used by users to interface
-with the library, to acquire and manage tickets (and more).  Included
-are also a TELNET client and server (based on GNU InetUtils) for
-remote network login, and a PAM module for host security.  A
-rudimentary key distribution center (KDC) daemon is included.  Of
-course, a manual documenting user aspects as well as the programming
-API is included.
+command line utility ('shishi') that is used by users to acquire and
+manage tickets (and more).  The server side, a Key Distribution
+Center, is implemented by 'shishid'.  Of course, a manual documenting
+usage aspects as well as the programming API is included.
 
 Shishi currently supports AS/TGS exchanges for acquiring tickets, the
 AP exchange for performing client and server authentication, and SAFE
@@ -35,7 +32,7 @@ kind of devices including iPAQ handhelds and S/390 mainframes.
 Shishi is free software licensed under the GNU Public License.
 
 The project web page:
-http://josefsson.org/shishi/
+http://www.gnu.org/software/shishi/
 
 For more information see:
 http://www.ietf.org/rfc/rfc1510.txt
