@@ -229,6 +229,10 @@ main (int argc, char *argv[])
 	    printf ("%d tickets removed.\n", removed);
 	}
     }
+  else if (args.renew_given)
+    {
+      error (EXIT_FAILURE, 0, "Command --renew not implemented.");
+    }
   else
     {
       Shishi_tkt *tkt;
