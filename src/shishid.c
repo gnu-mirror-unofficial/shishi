@@ -160,6 +160,7 @@ extern int errno;
 #define DH_BITS 1024
 #ifdef USE_STARTTLS
 static gnutls_dh_params dh_params;
+static gnutls_anon_server_credentials anoncred;
 #endif
 
 static char *fatal_krberror;
@@ -175,6 +176,9 @@ struct listenspec
   int sockfd;
   char buf[BUFSIZ]; /* XXX */
   size_t bufpos;
+#ifdef USE_STARTTLS
+  gnutls_session session;
+#endif
 };
 
 Shishi * handle;
@@ -868,17 +872,7 @@ kdc_loop (void)
 		    ls->bufpos == 4 &&
 		    memcmp (ls->buf, "\x70\x00\x00\x01", 4) == 0)
 		  {
-		    int err, i;
-		    int ret;
-		    struct sockaddr_in sa_serv;
-		    struct sockaddr_in sa_cli;
-		    int client_len;
-		    char topbuf[512];
-		    gnutls_session session;
-		    char buffer[BUFSIZ + 1];
-		    int optval = 1;
 		    const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
-		    gnutls_anon_server_credentials anoncred;
 
 		    if (!arg.quiet_flag)
 		      printf ("Trying to upgrade to TLS...\n");
@@ -886,61 +880,63 @@ kdc_loop (void)
 		    sent_bytes = sendto (ls->sockfd, "\x70\x00\x00\x02", 4,
 					 0, &addr, length);
 
-		    gnutls_anon_allocate_server_credentials (&anoncred);
-		    gnutls_anon_set_server_dh_params (anoncred, dh_params);
-		    gnutls_init (&session, GNUTLS_SERVER);
-		    gnutls_set_default_priority (session);
-		    gnutls_kx_set_priority (session, kx_prio);
-		    gnutls_credentials_set (session, GNUTLS_CRD_ANON,
-					    anoncred);
-		    gnutls_certificate_server_set_request (session,
-							   GNUTLS_CERT_REQUEST);
-		    gnutls_dh_set_prime_bits (session, DH_BITS);
-		    gnutls_transport_set_ptr (session,
-					      (gnutls_transport_ptr) ls->
-					      sockfd);
+		    rc = gnutls_init (&ls->session, GNUTLS_SERVER);
+		    if (rc != GNUTLS_E_SUCCESS)
+		      error (EXIT_FAILURE, 0, "gnutls_init %d", rc);
+		    rc = gnutls_set_default_priority (ls->session);
+		    if (rc != GNUTLS_E_SUCCESS)
+		      error (EXIT_FAILURE, 0, "gnutls_sdp %d", rc);
+		    rc = gnutls_kx_set_priority (ls->session, kx_prio);
+		    if (rc != GNUTLS_E_SUCCESS)
+		      error (EXIT_FAILURE, 0, "gnutls_ksp %d", rc);
+		    rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_ANON,
+						 anoncred);
+		    if (rc != GNUTLS_E_SUCCESS)
+		      error (EXIT_FAILURE, 0, "gnutls_cs %d", rc);
+		    gnutls_dh_set_prime_bits (ls->session, DH_BITS);
+		    gnutls_transport_set_ptr (ls->session,
+					      (gnutls_transport_ptr)
+					      ls->sockfd);
 
-		    ret = gnutls_handshake (session);
-		    if (ret < 0)
+		    rc = gnutls_handshake (ls->session);
+		    if (rc < 0)
+		      printf ("Handshake has failed %d: %s\n",
+			      rc, gnutls_strerror (rc));
+		    else
 		      {
-			gnutls_deinit (session);
 			if (!arg.quiet_flag)
-			  printf ("Handshake has failed %d: %s\n",
-				  ret, gnutls_strerror (ret));
+			  printf ("TLS successful\n");
+
+			bzero (ls->buf, BUFSIZ);
+			rc = gnutls_record_recv (ls->session, ls->buf,
+						 sizeof (ls->buf) - 1);
+
+			if (rc == 0)
+			  {
+			    printf ("- Peer has closed the GNUTLS connection\n");
+			  }
+			else if (rc < 0)
+			  {
+			    printf ("*** Corrupted data(%d). Closing.\n\n", rc);
+			  }
+			else if (rc > 0)
+			  {
+			    char *p;
+			    size_t plen;
+
+			    process (ls->buf, rc, &p, &plen);
+
+			    printf ("TLS process %d sending %d\n", rc, plen);
+
+			    gnutls_record_send (ls->session, p, plen);
+
+			    if (p != fatal_krberror)
+			      free (p);
+			  }
+			ls->bufpos = 0;
 		      }
-
-		    if (!arg.quiet_flag)
-		      printf ("TLS successful\n");
-
-		    bzero (buffer, BUFSIZ + 1);
-		    ret = gnutls_record_recv (session, buffer, BUFSIZ);
-
-		    if (ret == 0)
-		      {
-			printf ("- Peer has closed the GNUTLS connection\n");
-		      }
-		    else if (ret < 0)
-		      {
-			printf ("*** Corrupted data(%d). Closing.\n\n", ret);
-		      }
-		    else if (ret > 0)
-		      {
-			char *p;
-			size_t plen;
-
-			process (buffer, ret, &p, &plen);
-
-			printf ("TLS process %d sending %d\n", ret, plen);
-
-			gnutls_record_send (session, p, plen);
-
-			if (p != fatal_krberror)
-			  free (p);
-		      }
-		    ls->bufpos = 0;
-		    gnutls_bye (session, GNUTLS_SHUT_WR);
-		    gnutls_deinit (session);
-		    gnutls_global_deinit ();
+		    gnutls_bye (ls->session, GNUTLS_SHUT_WR);
+		    gnutls_deinit (ls->session);
 		  }
 		else
 #endif
@@ -1262,6 +1258,11 @@ init (void)
   if (err)
     error (EXIT_FAILURE, 0, "Cannot generate GNUTLS DH parameters: %s (%d)",
 	   gnutls_strerror (err), err);
+  err = gnutls_anon_allocate_server_credentials (&anoncred);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot allocate GNUTLS credential: %s (%d)",
+	   gnutls_strerror (err), err);
+  gnutls_anon_set_server_dh_params (anoncred, dh_params);
   if (!arg.quiet_flag)
     printf ("Initializing GNUTLS...done\n");
 #endif
