@@ -32,6 +32,11 @@
 
 #include <shishi.h>
 
+/* Libtool defines PIC for shared objects */
+#ifndef PIC
+#define PAM_STATIC
+#endif
+
 /* These #defines must be present according to PAM documentation. */
 #define PAM_SM_AUTH
 #define PAM_SM_ACCOUNT
