@@ -115,7 +115,7 @@ shisa_init_with_paths (Shisa ** dbh, const char *file)
 
   if ((*dbh)->ndbs == 0)
     {
-      rc = shisa_cfg_db (*dbh, "file foo allow-create");
+      rc = shisa_cfg_db (*dbh, "file " DEFAULTDBPATH);
       if (rc != SHISA_OK)
 	return rc;
     }
