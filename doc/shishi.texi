@@ -1001,6 +1001,7 @@ library.
 * Utility Functions::           Utilities for use in the global context.
 * Error Handling::              Error codes and such.
 * Examples::                    Example code.
+* Generic Security Service::    If you want to use the GSS API instead.
 @end menu
 
 @node Preparation
@@ -1629,16 +1630,36 @@ to always be @code{0} so you may use it in boolean constructs.
 This chapter does not contain example code which illustrate how
 `Shishi' can be used when writing your own application.
 
+@node Generic Security Service
+@section Generic Security Service
+@cindex Generic Security Service (GSS)
+
+As an alternative to the native Shishi programming API, it is possible
+to program Shishi through the Generic Security Services (GSS) API.
+The advantage of using GSS-API in your security application, instead
+of the native Shishi API, is that it will be easier to port your
+application between different Kerberos 5 implementations, and even
+beyond Kerberos 5 to different security systems, that support GSS-API.
+In the free software world, however, the only widely used security
+system that supports GSS-API is Kerberos 5, so the last advantage is
+somewhat academic.  But if you are porting applications using GSS-API
+for other Kerberos 5 implementations, or want a more mature and stable
+API than the native Shishi API, you may find using Shishi's GSS-API
+interface compelling.  Note that GSS-API only offer basic services,
+for more advanced uses you must use the native API.
+
+Since the GSS is not specific to Shishi, it is distributed
+independently from Shishi.  Further information on the GSS project can
+be found at @url{http://josefsson.org/gss/}.
+
 @c **********************************************************
 @c *******************  Acknowledgements  *******************
 @c **********************************************************
 @node Acknowledgements
 @chapter Acknowledgements
 
-Simon Josefsson created Shishi autumn 2002.
-
-Shishi uses Libgcrypt by Werner Koch et al and Libtasn1 by Fabio
-Fiorina et al.
+Shishi uses Libgcrypt by Werner Koch et al, Libtasn1 by Fabio Fiorina
+et al, and includes copies of GNU Mailutils and GNU IDN Library.
 
 @c **********************************************************
 @c *******************  Appendices  *************************
