@@ -1,5 +1,5 @@
 /* kdc.c --- Process AS and TGS requests.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -350,16 +350,16 @@ asreq1 (Shishi_as * as)
 	goto fatal;
       }
 
-    if (tilllen != 16 || strnlen (till, tilllen) != 15)
+    if (tilllen != 16 || strlen (till) != 15)
       {
 	syslog (LOG_ERR, "Invalid 'till' field in request (%d): %s", tilllen,
 		till);
 	goto fatal;
       }
 
-    rc =
-      shishi_encticketpart_endtime_set (handle,
-					shishi_tkt_encticketpart (tkt), till);
+    rc = shishi_encticketpart_endtime_set (handle,
+					   shishi_tkt_encticketpart (tkt),
+					   till);
 
     free (till);
   }
