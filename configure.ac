@@ -36,7 +36,6 @@ AM_CONFIG_HEADER(config.h)
 
 # Checks for header files.
 AC_PROG_CC
-AC_GNU_SOURCE
 gl_USE_SYSTEM_EXTENSIONS
 AC_HEADER_STDC
 AC_CHECK_HEADERS(stdlib.h string.h strings.h memory.h \
@@ -382,8 +381,8 @@ fi
 AC_MSG_CHECKING([if dummy NULL encryption/checksum type should be used])
 AC_MSG_RESULT($enable_null)
 
-AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--disable-arcfour],
-			[disable ARCFOUR encryption/checksum type]),
+AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--enable-arcfour],
+			[enable ARCFOUR encryption/checksum type]),
 		enable_arcfour=$enableval, enable_arcfour=no)
 AM_CONDITIONAL(ARCFOUR, test "$enable_arcfour" != "no")
 if test "$enable_arcfour" != "no"; then
