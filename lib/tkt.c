@@ -1058,7 +1058,7 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
       if (lrtype == tmplrtype)
 	{
 	  asprintf (&format, "last-req.?%d.lr-value", i);
-	  res = shishi_asn1_read2 (tkt->handle, tkt->enckdcreppart,
+	  res = shishi_asn1_read (tkt->handle, tkt->enckdcreppart,
 				   format, lrtime, lrtimelen);
 	  free (format);
 	  if (res != SHISHI_OK)
@@ -1106,7 +1106,7 @@ shishi_tkt_lastreqc (Shishi_tkt * tkt, Shishi_lrtype lrtype)
 int
 shishi_tkt_authtime (Shishi_tkt * tkt, char **authtime, size_t * authtimelen)
 {
-  return shishi_asn1_read2 (tkt->handle, tkt->enckdcreppart, "authtime",
+  return shishi_asn1_read (tkt->handle, tkt->enckdcreppart, "authtime",
 			    authtime, authtimelen);
 }
 
@@ -1145,7 +1145,7 @@ shishi_tkt_starttime (Shishi_tkt * tkt,
 		      char **starttime,
 		      size_t * starttimelen)
 {
-  return shishi_asn1_read2_optional (tkt->handle, tkt->enckdcreppart,
+  return shishi_asn1_read_optional (tkt->handle, tkt->enckdcreppart,
 				     "starttime", starttime, starttimelen);
 }
 
@@ -1182,7 +1182,7 @@ shishi_tkt_startctime (Shishi_tkt * tkt)
 int
 shishi_tkt_endtime (Shishi_tkt * tkt, char **endtime, size_t * endtimelen)
 {
-  return shishi_asn1_read2 (tkt->handle, tkt->enckdcreppart, "endtime",
+  return shishi_asn1_read (tkt->handle, tkt->enckdcreppart, "endtime",
 			    endtime, endtimelen);
 }
 
@@ -1220,7 +1220,7 @@ shishi_tkt_renew_till (Shishi_tkt * tkt,
 		       char **renewtill,
 		       size_t * renewtilllen)
 {
-  return shishi_asn1_read2_optional (tkt->handle, tkt->enckdcreppart,
+  return shishi_asn1_read_optional (tkt->handle, tkt->enckdcreppart,
 				     "renew-till", renewtill, renewtilllen);
 }
 

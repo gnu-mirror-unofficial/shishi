@@ -407,7 +407,7 @@ shishi_safe_cksum (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read2 (handle, safe, "cksum.checksum", cksum, cksumlen);
+  res = shishi_asn1_read (handle, safe, "cksum.checksum", cksum, cksumlen);
   if (res != SHISHI_OK)
     return res;
 
@@ -467,7 +467,7 @@ shishi_safe_user_data (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_read2 (handle, safe, "safe-body.user-data",
+  res = shishi_asn1_read (handle, safe, "safe-body.user-data",
 			   userdata, userdatalen);
   if (res != SHISHI_OK)
     return res;

@@ -421,7 +421,7 @@ int
 shishi_krberror_crealm (Shishi * handle,
 			Shishi_asn1 krberror, char **realm, size_t * realmlen)
 {
-  return shishi_asn1_read2 (handle, krberror, "crealm", realm, realmlen);
+  return shishi_asn1_read (handle, krberror, "crealm", realm, realmlen);
 }
 
 /**
@@ -579,7 +579,7 @@ int
 shishi_krberror_realm (Shishi * handle,
 		       Shishi_asn1 krberror, char **realm, size_t * realmlen)
 {
-  return shishi_asn1_read2 (handle, krberror, "realm", realm, realmlen);
+  return shishi_asn1_read (handle, krberror, "realm", realm, realmlen);
 }
 
 /**
@@ -1002,7 +1002,7 @@ int
 shishi_krberror_etext (Shishi * handle, Shishi_asn1 krberror,
 		       char **etext, size_t * etextlen)
 {
-  return shishi_asn1_read2 (handle, krberror, "e-text", etext, etextlen);
+  return shishi_asn1_read (handle, krberror, "e-text", etext, etextlen);
 }
 
 /**
@@ -1064,7 +1064,7 @@ int
 shishi_krberror_edata (Shishi * handle, Shishi_asn1 krberror,
 		       char **edata, size_t * edatalen)
 {
-  return shishi_asn1_read2 (handle, krberror, "e-data", edata, edatalen);
+  return shishi_asn1_read (handle, krberror, "e-data", edata, edatalen);
 }
 
 /**

@@ -1080,7 +1080,7 @@ extern int shishi_kdcreq_set_sname (Shishi * handle, Shishi_asn1 kdcreq,
 extern int shishi_kdcreq_realm (Shishi * handle, Shishi_asn1 kdcreq,
 				char **realm, size_t * realmlen);
 extern int shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
-				    char *realm, size_t * realmlen);
+				    char **realm, size_t * realmlen);
 extern int shishi_kdcreq_set_realm (Shishi * handle, Shishi_asn1 kdcreq,
 				    const char *realm);
 extern int shishi_kdcreq_set_server (Shishi * handle, Shishi_asn1 req,
@@ -1550,10 +1550,11 @@ extern int shishi_asn1_empty_p (Shishi * handle, Shishi_asn1 node,
 				const char *field);
 
 extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
-			     const char *field, char *data, size_t * datalen);
-extern int shishi_asn1_read2 (Shishi * handle, Shishi_asn1 node,
-			      const char *field,
-			      char **data, size_t * datalen);
+			     const char *field,
+			     char **data, size_t * datalen);
+extern int shishi_asn1_read_inline (Shishi * handle, Shishi_asn1 node,
+				    const char *field,
+				    char *data, size_t * datalen);
 extern int shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
 				     const char *field, int *i);
 extern int shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
@@ -1564,10 +1565,7 @@ extern int shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
 				       const char *field, uint32_t * flags);
 extern int shishi_asn1_read_optional (Shishi * handle,
 				      Shishi_asn1 node, const char *field,
-				      char *data, size_t * datalen);
-extern int shishi_asn1_read2_optional (Shishi * handle,
-				       Shishi_asn1 node, const char *field,
-				       char **data, size_t * datalen);
+				      char **data, size_t * datalen);
 
 extern int shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 			      const char *field,

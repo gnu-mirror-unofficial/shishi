@@ -602,7 +602,7 @@ shishi_authenticator_cksum (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read2 (handle, authenticator, "cksum.checksum",
+  res = shishi_asn1_read (handle, authenticator, "cksum.checksum",
 			   cksum, cksumlen);
   if (res != SHISHI_OK)
     return res;
@@ -829,7 +829,7 @@ shishi_authenticator_authorizationdata (Shishi * handle,
     return res;
 
   asprintf (&format, "authorization-data.?%d.ad-data", i);
-  res = shishi_asn1_read2 (handle, authenticator, format, addata, addatalen);
+  res = shishi_asn1_read (handle, authenticator, format, addata, addatalen);
   free (format);
   if (res != SHISHI_OK)
     return res;
@@ -885,7 +885,7 @@ shishi_authenticator_get_subkey (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read2 (handle, authenticator, "subkey.keyvalue",
+  res = shishi_asn1_read (handle, authenticator, "subkey.keyvalue",
 			   &subkeyvalue, &subkeylen);
   if (res != SHISHI_OK)
     return res;

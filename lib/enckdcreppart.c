@@ -94,7 +94,7 @@ shishi_enckdcreppart_get_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read2 (handle, enckdcreppart, "key.keyvalue",
+  res = shishi_asn1_read (handle, enckdcreppart, "key.keyvalue",
 			   &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
@@ -356,7 +356,7 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
   size_t buflen;
   int res;
 
-  res = shishi_asn1_read2 (handle, encticketpart, "flags", &buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "flags", &buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
@@ -365,7 +365,7 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = shishi_asn1_read2 (handle, encticketpart, "authtime", &buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "authtime", &buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
@@ -374,7 +374,7 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = shishi_asn1_read2 (handle, encticketpart, "starttime", &buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "starttime", &buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return SHISHI_ASN1_ERROR;
 
@@ -389,7 +389,7 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = shishi_asn1_read2 (handle, encticketpart, "endtime", &buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "endtime", &buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
@@ -399,7 +399,7 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
     return SHISHI_ASN1_ERROR;
 
   res =
-    shishi_asn1_read2 (handle, encticketpart, "renew-till", &buf, &buflen);
+    shishi_asn1_read (handle, encticketpart, "renew-till", &buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return SHISHI_ASN1_ERROR;
 

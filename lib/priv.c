@@ -546,7 +546,7 @@ shishi_encprivpart_user_data (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_read2 (handle, encprivpart, "user-data",
+  res = shishi_asn1_read (handle, encprivpart, "user-data",
 			   userdata, userdatalen);
   if (res != SHISHI_OK)
     return res;
@@ -658,7 +658,7 @@ shishi_priv_process (Shishi_priv * priv, Shishi_key * key)
   if (etype != shishi_key_type (key))
     return SHISHI_PRIV_BAD_KEYTYPE;
 
-  res = shishi_asn1_read2 (priv->handle, priv->priv, "enc-part.cipher",
+  res = shishi_asn1_read (priv->handle, priv->priv, "enc-part.cipher",
 			   &cipher, &cipherlen);
   if (res != SHISHI_OK)
     return res;

@@ -283,7 +283,7 @@ shishi_encapreppart_get_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read2 (handle, encapreppart, "subkey.keyvalue",
+  res = shishi_asn1_read (handle, encapreppart, "subkey.keyvalue",
 			   &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
@@ -481,7 +481,7 @@ shishi_encapreppart_time_copy (Shishi * handle,
   size_t buflen;
   int res;
 
-  res = shishi_asn1_read2 (handle, authenticator, "cusec", &buf, &buflen);
+  res = shishi_asn1_read (handle, authenticator, "cusec", &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -490,7 +490,7 @@ shishi_encapreppart_time_copy (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read2 (handle, authenticator, "ctime", &buf, &buflen);
+  res = shishi_asn1_read (handle, authenticator, "ctime", &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 

@@ -12,6 +12,10 @@ See the end for copying conditions.
 shishi_new_a2d: RENAMED to shishi_asn1_to_der.
 shishi_a2d_new_field: RENAMED to shishi_asn1_to_der_field.
 shishi_a2d, shishi_a2d_field: REMOVED.
+shishi_asn1_read: RENAMED to shishi_asn1_read_inline.
+shishi_asn1_read2: RENAMED to shishi_asn1_read.
+shishi_asn1_read2_optional: RENAMED to shishi_asn1_read_optional.
+shishi_asn1_read_optional: MODIFIED, now allocate output.
 
 * Version 0.0.17 (released 2004-08-08)
 

@@ -455,16 +455,16 @@ int
 shishi_kdcreq_realm (Shishi * handle, Shishi_asn1 kdcreq,
 		     char **realm, size_t * realmlen)
 {
-  return shishi_asn1_read2_optional (handle, kdcreq, "req-body.realm",
+  return shishi_asn1_read_optional (handle, kdcreq, "req-body.realm",
 				     realm, realmlen);
 }
 
 int
 shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
-			 char *realm, size_t * realmlen)
+			 char **realm, size_t * realmlen)
 {
   return shishi_asn1_read_optional (handle, kdcreq, "req-body.realm",
-				    realm, realmlen);
+				     realm, realmlen);
 }
 
 /**
@@ -612,7 +612,7 @@ int
 shishi_kdcreq_till (Shishi * handle, Shishi_asn1 kdcreq,
 		    char **till, size_t * tilllen)
 {
-  return shishi_asn1_read2 (handle, kdcreq, "req-body.till",
+  return shishi_asn1_read (handle, kdcreq, "req-body.till",
 			    till, tilllen);
 }
 
@@ -1166,7 +1166,7 @@ shishi_kdcreq_get_padata (Shishi * handle,
       if (patype == (int32_t) padatatype)
 	{
 	  asprintf (&format, "padata.?%d.padata-value", i);
-	  res = shishi_asn1_read2 (handle, kdcreq, format, out, outlen);
+	  res = shishi_asn1_read (handle, kdcreq, format, out, outlen);
 	  free (format);
 	  if (res != SHISHI_OK)
 	    return res;

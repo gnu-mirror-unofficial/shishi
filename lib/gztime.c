@@ -116,7 +116,7 @@ shishi_time (Shishi * handle, Shishi_asn1 node,
   len = SHISHI_GENERALIZEDTIME_LENGTH + 1;
   *t = xmalloc (len);
 
-  res = shishi_asn1_read (handle, node, field, *t, &len);
+  res = shishi_asn1_read_inline (handle, node, field, *t, &len);
   if (res != SHISHI_OK)
     return res;
 

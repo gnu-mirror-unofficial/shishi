@@ -91,10 +91,29 @@ shishi_asn1_empty_p (Shishi * handle, Shishi_asn1 node, const char *field)
   return 0;
 }
 
-/* XXX obsolete, see shishi_asn1_read2 */
+/**
+ * shishi_asn1_read_inline:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @node: ASN.1 variable to read field from.
+ * @field: name of field in @node to read.
+ * @data: pre-allocated output buffer that will hold ASN.1 field data.
+ * @datalen: on input, maximum size of output buffer,
+ *             on output, actual size of output buffer.
+ *
+ * Extract data stored in a ASN.1 field into a fixed size buffer
+ * allocated by caller.
+ *
+ * Note that since it is difficult to predict the length of the field,
+ * it is often better to use shishi_asn1_read() instead.
+ *
+ * Return value: Returns SHISHI_OK if successful,
+ *   SHISHI_ASN1_NO_ELEMENT if the element do not exist,
+ *   SHISHI_ASN1_NO_VALUE if the field has no value, ot
+ *   SHISHI_ASN1_ERROR otherwise.
+ **/
 int
-shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
-		  const char *field, char *data, size_t * datalen)
+shishi_asn1_read_inline (Shishi * handle, Shishi_asn1 node,
+			 const char *field, char *data, size_t * datalen)
 {
   int rc;
 
@@ -113,9 +132,23 @@ shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
   return SHISHI_OK;
 }
 
-/* XXX rename and document */
+/**
+ * shishi_asn1_read:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @node: ASN.1 variable to read field from.
+ * @field: name of field in @node to read.
+ * @data: newly allocated output buffer that will hold ASN.1 field data.
+ * @datalen: actual size of output buffer.
+ *
+ * Extract data stored in a ASN.1 field into a newly allocated buffer.
+ *
+ * Return value: Returns SHISHI_OK if successful,
+ *   SHISHI_ASN1_NO_ELEMENT if the element do not exist,
+ *   SHISHI_ASN1_NO_VALUE if the field has no value, ot
+ *   SHISHI_ASN1_ERROR otherwise.
+ **/
 int
-shishi_asn1_read2 (Shishi * handle,
+shishi_asn1_read (Shishi * handle,
 		   Shishi_asn1 node, const char *field,
 		   char **data, size_t * datalen)
 {
@@ -142,7 +175,7 @@ shishi_asn1_read2 (Shishi * handle,
 
       if (len > 0)
 	{
-	  rc = shishi_asn1_read (handle, node, field, *data, &dlen);
+	  rc = shishi_asn1_read_inline (handle, node, field, *data, &dlen);
 	  if (rc != SHISHI_OK)
 	    return rc;
 	}
@@ -152,6 +185,42 @@ shishi_asn1_read2 (Shishi * handle,
 
   if (datalen)
     *datalen = (size_t) len;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_asn1_read_optional:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @node: ASN.1 variable to read field from.
+ * @field: name of field in @node to read.
+ * @data: newly allocated output buffer that will hold ASN.1 field data.
+ * @datalen: actual size of output buffer.
+ *
+ * Extract data stored in a ASN.1 field into a newly allocated buffer.
+ * If the field does not exist (i.e., SHISHI_ASN1_NO_ELEMENT), this
+ * function set datalen to 0 and succeeds.  Can be useful to read
+ * ASN.1 fields which are marked OPTIONAL in the grammar, if you want
+ * to avoid special error handling in your code.
+ *
+ * Return value: Returns SHISHI_OK if successful,
+ *   SHISHI_ASN1_NO_VALUE if the field has no value, ot
+ *   SHISHI_ASN1_ERROR otherwise.
+ **/
+int
+shishi_asn1_read_optional (Shishi * handle,
+			   Shishi_asn1 node, const char *field,
+			   char **data, size_t * datalen)
+{
+  int rc;
+
+  rc = shishi_asn1_read (handle, node, field, data, datalen);
+  if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
+    return rc;
+
+  if (rc == SHISHI_ASN1_NO_ELEMENT)
+    if (datalen)
+      *datalen = 0;
 
   return SHISHI_OK;
 }
@@ -166,14 +235,14 @@ shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
 
   memset (buf, 0, sizeof (buf));
   buflen = sizeof (buf);
-  rc = shishi_asn1_read (handle, node, field, buf, &buflen);
+  rc = shishi_asn1_read_inline (handle, node, field, buf, &buflen);
   if (rc != SHISHI_OK)
     return rc;
 
   if (buflen < 4)
     {
       memset (buf, 0, sizeof (buf));
-      rc = shishi_asn1_read (handle, node, field, &buf[4 - buflen], &buflen);
+      rc = shishi_asn1_read_inline (handle, node, field, &buf[4 - buflen], &buflen);
       if (rc != SHISHI_OK)
 	return rc;
     }
@@ -205,7 +274,7 @@ shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
   size_t i;
   int res;
 
-  res = shishi_asn1_read2 (handle, node, field, &buf, &buflen);
+  res = shishi_asn1_read (handle, node, field, &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -223,46 +292,6 @@ shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
 		 ((buf[i] << 3) & 0x20) |
 		 ((buf[i] << 5) & 0x40) | ((buf[i] << 7) & 0x80)) << (8 * i);
     }
-
-  return SHISHI_OK;
-}
-
-/* XXX obsolete, see shishi_asn1_read2_optional */
-int
-shishi_asn1_read_optional (Shishi * handle,
-			   Shishi_asn1 node, const char *field,
-			   char *data, size_t * datalen)
-{
-  int rc;
-
-  rc = asn1_read_value (node, field, (unsigned char *) data, (int *) datalen);
-  if (rc != ASN1_SUCCESS && rc != ASN1_ELEMENT_NOT_FOUND)
-    {
-      shishi_error_set (handle, libtasn1_strerror (rc));
-      return SHISHI_ASN1_ERROR;
-    }
-
-  if (rc == ASN1_ELEMENT_NOT_FOUND)
-    *datalen = 0;
-
-  return SHISHI_OK;
-}
-
-/* XXX rename and document */
-int
-shishi_asn1_read2_optional (Shishi * handle,
-			    Shishi_asn1 node, const char *field,
-			    char **data, size_t * datalen)
-{
-  int rc;
-
-  rc = shishi_asn1_read2 (handle, node, field, data, datalen);
-  if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
-    return rc;
-
-  if (rc == SHISHI_ASN1_NO_ELEMENT)
-    if (datalen)
-      *datalen = 0;
 
   return SHISHI_OK;
 }
