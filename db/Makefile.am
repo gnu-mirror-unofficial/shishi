@@ -18,7 +18,8 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-AM_CPPFLAGS = -I$(top_srcdir)/gl
+# -I../lib is to get shishi-int.h and uint32_t.
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I../lib
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shisa.conf\" \
