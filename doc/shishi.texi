@@ -2442,6 +2442,7 @@ configuration file syntaxes for the Shishi tools.
 * Parameters for shishi::       Command line parameters for 'shishi'.
 * Parameters for shishid::      Command line parameters for 'shishid'.
 * Parameters for shisa::        Command line parameters for 'shisa'.
+* Environment variables::       Overriding compile-time defaults at run-time.
 @end menu
 
 @node Environmental Assumptions
@@ -3383,6 +3384,20 @@ Other options:
   -q, --quiet                        Don't produce any diagnostic output.
                                          (default=off)
 @end example
+
+@node Environment variables
+@section Environment variables
+
+A few of the compile-time defaults may be overridden at run-time by
+using environment variables.  The following variables are supported.
+
+@itemize @bullet
+
+@item @env{SHISHI_CONFIG}
+Specify the location of the default system configuration file.  Used
+by the Shishi library.
+
+@end itemize
 
 @c **********************************************************
 @c ***************  Programming Manual  *********************
