@@ -111,9 +111,6 @@ extern char *_shishi_gettext (const char *str);
 #define _(String) _shishi_gettext (String)
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
-#ifndef HAVE_NGETTEXT
-#define ngettext(S1, S2, N) ((N) == 1 ? _(S1) : _(S2))
-#endif
 #endif
 
 #include <shishi.h>
@@ -353,17 +350,23 @@ process (Shishi * handle,
 
   shishi_kdcreq_print (handle, stdout, kdcreq);
 
+  puts("o");
   kdcrep = shishi_as_rep (handle);
 
   //shishi_kdcrep_print(handle, stdout, kdcrep);
+  puts("o");
 
   ticket = shishi_asn1_ticket (handle);
+  puts("o");
 
   //shishi_asn1ticket_print (handle, stdout, ticket);
 
   encticketpart = shishi_asn1_encticketpart (handle);
+  puts("o");
 
   shishi_encticketpart_print (handle, stdout, encticketpart);
+
+  puts("o");
 
 }
 
@@ -534,8 +537,7 @@ doit (Shishi * handle, struct arguments arg)
 		    ls->buf[ls->bufpos] = '\0';
 		  }
 
-		printf ("Has %d bytes from %s: %s\n",
-			ls->bufpos, ls->str, ls->buf);
+		printf ("Has %d bytes from %s\n", ls->bufpos, ls->str);
 
 		if (arg.listenspec[i].type == SOCK_DGRAM ||
 		    (ls->bufpos > 4
