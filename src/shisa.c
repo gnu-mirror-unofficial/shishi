@@ -318,7 +318,10 @@ main (int argc, char *argv[])
   program_name = argv[0];
 
   if (cmdline_parser (argc, argv, &args_info) != 0)
-    return 1;
+    {
+      error (1, 0, "Try `%s --help' for more information.", argv[0]);
+      return 1;
+    }
 
   if (args_info.add_given + args_info.dump_given + args_info.list_given +
       args_info.modify_given + args_info.remove_given > 1 ||
@@ -332,6 +335,9 @@ main (int argc, char *argv[])
       args_info.modify_given + args_info.remove_given != 1)
     {
       cmdline_parser_print_help ();
+      printf("\nMandatory arguments to long options are "
+	     "mandatory for short options too.\n\n"
+	     "Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
       return 1;
     }
 

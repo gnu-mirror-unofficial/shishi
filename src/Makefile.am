@@ -32,7 +32,8 @@ shisa_SOURCES = shisa.c gettext.h shisa.ggo $(BUILT_SOURCES)
 shisa_LDADD = ../db/libshisa.la ../lib/libshishi.la
 
 $(BUILT_SOURCES): shisa.ggo
-	gengetopt --unamed-opts --input $< --file-name shisa_cmd
+	gengetopt --unamed-opts --no-handle-help --no-handle-error \
+		 --input $< --file-name shisa_cmd
 	perl -pi -e 's/\[FILES\]/\[REALM \[PRINCIPAL\]\]/g' shisa_cmd.c
 
 sbin_PROGRAMS = shishid
