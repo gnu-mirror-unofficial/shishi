@@ -1994,7 +1994,6 @@ shishi_decrypt_etype (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @key: key to decrypt with.
  * @keyusage: integer specifying what this key is decrypting.
- * @etype: integer specifying what cipher to use.
  * @iv: input array with initialization vector
  * @ivlen: size of input array with initialization vector.
  * @ivout: output array with newly allocated updated initialization vector.
@@ -2004,11 +2003,11 @@ shishi_decrypt_etype (Shishi * handle,
  * @out: output array with newly allocated decrypted data.
  * @outlen: output variable with size of newly allocated output array.
  *
- * Decrypts data as per encryption method using specified
- * initialization vector and key.  The key actually used is derived
- * using the key usage.  If key usage is 0, no key derivation is used.
- * The OUT buffer must be deallocated by the caller.  If IVOUT or
- * IVOUTLEN is NULL, the updated IV is not saved anywhere.
+ * Decrypts data using specified initialization vector and key.  The
+ * key actually used is derived using the key usage.  If key usage is
+ * 0, no key derivation is used.  The OUT buffer must be deallocated
+ * by the caller.  If IVOUT or IVOUTLEN is NULL, the updated IV is not
+ * saved anywhere.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
  * exactly, some Kerberos encryption types add pad to make the data
@@ -2025,7 +2024,6 @@ int
 shishi_decrypt_ivupdate (Shishi * handle,
 			 Shishi_key * key,
 			 int keyusage,
-			 int32_t etype,
 			 const char *iv, size_t ivlen,
 			 char **ivout, size_t * ivoutlen,
 			 const char *in, size_t inlen,
