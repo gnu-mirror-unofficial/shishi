@@ -410,7 +410,7 @@ shishi_tgs_set_realm (Shishi_tgs * tgs, const char *realm)
 }
 
 /**
- * shishi_tgs_set_realm:
+ * shishi_tgs_set_realmserver:
  * @tgs: structure that holds information about TGS exchange
  * @realm: indicates the realm to acquire ticket for.
  * @server: indicates the server to acquire ticket for.

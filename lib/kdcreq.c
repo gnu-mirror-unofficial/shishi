@@ -496,7 +496,7 @@ shishi_kdcreq_set_etype (Shishi * handle,
  * @kdcreq: KDC-REQ variable to set server name field in.
  * @name_type: type of principial, see Shishi_name_type, usually
  *             SHISHI_NT_UNKNOWN.
- * @principal: input array with principal name.
+ * @sname: input array with principal name.
  *
  * Set the server name field in the KDC-REQ.
  *
@@ -505,7 +505,7 @@ shishi_kdcreq_set_etype (Shishi * handle,
 int
 shishi_kdcreq_set_sname (Shishi * handle,
 			 ASN1_TYPE kdcreq,
-			 Shishi_name_type name_type, char *service[])
+			 Shishi_name_type name_type, char *sname[])
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];
@@ -529,7 +529,7 @@ shishi_kdcreq_set_sname (Shishi * handle,
     }
 
   i = 1;
-  while (service[i - 1])
+  while (sname[i - 1])
     {
       res = asn1_write_value (kdcreq, "KDC-REQ.req-body.sname.name-string",
 			      "NEW", 1);
@@ -540,7 +540,7 @@ shishi_kdcreq_set_sname (Shishi * handle,
 	}
 
       sprintf (buf, "KDC-REQ.req-body.sname.name-string.?%d", i);
-      res = asn1_write_value (kdcreq, buf, service[i - 1], 0);
+      res = asn1_write_value (kdcreq, buf, sname[i - 1], 0);
       if (res != ASN1_SUCCESS)
 	{
 	  shishi_error_set (handle, libtasn1_strerror (res));
