@@ -110,7 +110,8 @@ printdbkey (const char *realm, const char *principal, Shisa_key * dbkey)
       shishi_key_print (sh, stdout, key);
     }
   else
-    error (0, 0, "shishi_key_from_value: %s\n", shishi_strerror (rc));
+    error (0, 0, "shishi_key_from_value failed (%d):\n%s",
+	   rc, shishi_strerror (rc));
 }
 
 int
@@ -124,7 +125,7 @@ dumplist_realm_principal (const char *realm, const char *principal)
       rc = shisa_principal_find (dbh, realm, principal, &ph);
       if (rc != SHISA_OK)
 	{
-	  error (0, 0, "shishi_principal_find failed (%d): %s\n",
+	  error (0, 0, "shishi_principal_find failed (%d):\n%s",
 		 rc, shisa_strerror (rc));
 	  return rc;
 	}
@@ -164,7 +165,7 @@ dumplist_realm_principal (const char *realm, const char *principal)
       rc = shisa_keys_find (dbh, realm, principal, NULL, &keys, &nkeys);
       if (rc != SHISA_OK)
 	{
-	  error (0, 0, "shishi_keys_find(%s, %s) failed (%d): %s\n",
+	  error (0, 0, "shishi_keys_find(%s, %s) failed (%d):\n%s",
 		 realm, principal, rc, shisa_strerror (rc));
 	  return rc;
 	}
@@ -271,8 +272,11 @@ add (const char *realm, const char *principal,
 
   rc = shisa_principal_add (dbh, realm, principal, ph, key);
   if (rc != SHISA_OK)
-    error (EXIT_FAILURE, 0, "shisa_principal_add failed (%d): %s",
+    error (EXIT_FAILURE, 0, "shisa_principal_add failed (%d):\n%s",
 	   rc, shisa_strerror (rc));
+
+  if (args.keys_given)
+    printdbkey (realm, principal, key);
 
   if (principal == NULL)
     printf ("Adding realm `%s'...done\n", realm);
@@ -293,7 +297,7 @@ delete (const char *realm, const char *principal)
 
       rc = shisa_enumerate_principals (dbh, realm, &principals, &nprincipals);
       if (rc != SHISA_OK)
-	error (EXIT_FAILURE, 0, "shisa_enumerate_principals failed (%d): %s",
+	error (EXIT_FAILURE, 0, "shisa_enumerate_principals failed (%d):\n%s",
 	       rc, shisa_strerror (rc));
 
       for (i = 0; i < nprincipals; i++)
@@ -314,7 +318,7 @@ delete (const char *realm, const char *principal)
 
   rc = shisa_principal_remove (dbh, realm, principal);
   if (rc != SHISA_OK)
-    error (EXIT_FAILURE, 0, "shisa_principal_remove failed (%d): %s",
+    error (EXIT_FAILURE, 0, "shisa_principal_remove failed (%d):\n%s",
 	   rc, shisa_strerror (rc));
 
   if (principal == NULL)
@@ -369,24 +373,21 @@ apply_options (const char *realm,
 
 	  rc = shishi_key_from_string (sh, etype,
 				       passwd, strlen (passwd),
-				       salt, strlen (salt),
+				       salt, salt ? strlen (salt) : 0,
 				       str2keyparam, &key);
 	}
       else
 	rc = shishi_key_random (sh, etype, &key);
 
       if (rc != SHISHI_OK)
-	error (EXIT_FAILURE, 0, "Could not create key (%d): %s", rc,
-	       shishi_strerror (rc));
+	error (EXIT_FAILURE, 0, "Could not create key (%d):\n%s",
+	       rc, shishi_strerror (rc));
 
       if (realm && principal)
 	{
 	  shishi_key_realm_set (key, realm);
 	  shishi_key_principal_set (key, principal);
 	}
-
-      if (args.verbose_flag)
-	shishi_key_print (sh, stdout, key);
 
       dbkey->kvno = args.key_version_arg;
       dbkey->etype = etype;
@@ -501,14 +502,13 @@ main (int argc, char *argv[])
       add (realm, tmp, &ph, &key);
       free (tmp);
 
-      args.verbose_flag = 1;
-
       host = xgethostname ();
       asprintf (&tmp, "host/%s", host);
       free (host);
 
       memset (&key2, 0, sizeof (key2));
       apply_options (realm, tmp, NULL, &key2);
+      args.keys_given = 1;
 
       add (realm, tmp, &ph, &key2);
       free (tmp);
@@ -519,7 +519,7 @@ main (int argc, char *argv[])
 
       rc = shisa_principal_update (dbh, realm, principal, &ph);
       if (rc != SHISA_OK)
-	error (EXIT_FAILURE, 0, "shisa_principal_update failed (%d): %s\n",
+	error (EXIT_FAILURE, 0, "shisa_principal_update failed (%d):\n%s",
 	       rc, shisa_strerror (rc));
 
       printf ("Modifying principal `%s@%s'...done\n", principal, realm);
@@ -530,7 +530,7 @@ main (int argc, char *argv[])
 
       rc = shisa_key_add (dbh, realm, principal, &key);
       if (rc != SHISA_OK)
-	error (EXIT_FAILURE, 0, "shisa_key_add failed (%d): %s\n",
+	error (EXIT_FAILURE, 0, "shisa_key_add failed (%d):\n%s",
 	       rc, shisa_strerror (rc));
 
       if (args.keys_given)
@@ -542,9 +542,15 @@ main (int argc, char *argv[])
     {
       printf ("Removing key from `%s@%s'...\n", principal, realm);
 
+      if (!args.password_given)
+	{
+	  key.keylen = 0;
+	  key.password = NULL;
+	}
+
       rc = shisa_key_remove (dbh, realm, principal, &key);
       if (rc != SHISA_OK)
-	error (EXIT_FAILURE, 0, "shisa_key_remove failed (%d): %s\n",
+	error (EXIT_FAILURE, 0, "shisa_key_remove failed (%d):\n%s",
 	       rc, shisa_strerror (rc));
 
       printf ("Removing key from `%s@%s'...done\n", principal, realm);
