@@ -29,6 +29,7 @@
 static void
 logcertinfo (gnutls_session session)
 {
+  time_t now = time (NULL);
   const gnutls_datum *cert_list;
   unsigned cert_list_size = 0;
   gnutls_x509_crt cert;
@@ -46,8 +47,8 @@ logcertinfo (gnutls_session session)
       return;
     }
 
-  for (i = 0; i < cert_list_size; i++)
-    if (gnutls_certificate_type_get (session) == GNUTLS_CRT_X509)
+  if (gnutls_certificate_type_get (session) == GNUTLS_CRT_X509)
+    for (i = 0; i < cert_list_size; i++)
       {
 	time_t expiration_time, activation_time;
 	char *expiration_time_str = NULL, *activation_time_str = NULL;
@@ -58,7 +59,7 @@ logcertinfo (gnutls_session session)
 	size_t md5fingerprintlen;
 	int algo;
 	unsigned bits;
-	char *keytype;
+	const char *keytype, *validity;
 
 	rc = gnutls_x509_crt_import (cert, &cert_list[i], GNUTLS_X509_FMT_DER);
 	if (rc < 0)
@@ -158,6 +159,7 @@ logcertinfo (gnutls_session session)
 	for (i = 0; i < seriallen; i++)
 	  sprintf (&serialhex[2*i], "%.2x", serial[i]);
 
+
 	algo = gnutls_x509_crt_get_pk_algorithm (cert, &bits);
 	if (algo == GNUTLS_PK_RSA)
 	  keytype = "RSA modulus";
@@ -166,12 +168,19 @@ logcertinfo (gnutls_session session)
 	else
 	  keytype = "UNKNOWN";
 
-	syslog (LOG_INFO, "TLS client `%s', issued by `%s', serial "
-		"number `%s', MD5 fingerprint `%s', activated `%s', "
-		"expires `%s', version #%d, key %s %d bits",
+	if (expiration_time < now)
+	  validity = "EXPIRED";
+	else if (activation_time > now)
+	  validity = "NOT YET ACTIVATED";
+	else
+	  validity = "valid";
+
+	syslog (LOG_INFO, "TLS client certificate `%s', issued by `%s', "
+		"serial number `%s', MD5 fingerprint `%s', activated `%s', "
+		"expires `%s', version #%d, key %s %d bits, currently %s",
 		subject, issuer, serialhex, md5fingerprinthex,
 		activation_time_str, expiration_time_str,
-		gnutls_x509_crt_get_version (cert), keytype, bits);
+		gnutls_x509_crt_get_version (cert), keytype, bits, validity);
 
       cleanup:
 	if (serialhex)
@@ -189,6 +198,11 @@ logcertinfo (gnutls_session session)
       }
 
   gnutls_x509_crt_deinit (cert);
+
+  rc = gnutls_certificate_verify_peers (session);
+  if (rc != GNUTLS_E_SUCCESS)
+    syslog (LOG_ERR, "TLS client certificate verify failed (%d): %s",
+	    rc, gnutls_strerror (rc));
 }
 
 /* This function will log some details of the given session. */
