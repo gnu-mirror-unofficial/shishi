@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "cbc-ctx.h"
+#include "cbc-cts.h"
 
 #include "memxor.h"
 
