@@ -17,8 +17,12 @@ same database is permitted.  This is very much work in progress.
 
 ** A new tool 'shisa' added to add/remove/list/modify the Shisa database.
 
-** Shishid (the Kerberos server) is updated to read keys from Shisa database.
+** Shishid (the Kerberos server) now read keys via the Shisa database.
 The old hostkeys-alike file based "database" is no longer supported.
+
+** A sample Shisa database and host keys are created during installation.
+The default realm name (typically your hostname) is used, which might
+not be what you prefer, but should get you started.
 
 ** Improve behaviour with poorly synchronized clocks.
 Earlier newly acquired tickets were discarded if they were not yet
