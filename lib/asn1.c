@@ -293,14 +293,14 @@ shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
 
   for (i = 0; i < 4; i++)
     {
-      buf[i] = ((((flags & (0xFF << 8 * i)) >> 7) & 0x01) |
-		(((flags & (0xFF << 8 * i)) >> 5) & 0x02) |
-		(((flags & (0xFF << 8 * i)) >> 3) & 0x04) |
-		(((flags & (0xFF << 8 * i)) >> 1) & 0x08) |
-		(((flags & (0xFF << 8 * i)) << 1) & 0x10) |
-		(((flags & (0xFF << 8 * i)) << 3) & 0x20) |
-		(((flags & (0xFF << 8 * i)) << 5) & 0x40) |
-		(((flags & (0xFF << 8 * i)) << 7) & 0x80)) << (8 * i);
+      buf[i] = ((((flags >> (8 * i)) >> 7) & 0x01) |
+		(((flags >> (8 * i)) >> 5) & 0x02) |
+		(((flags >> (8 * i)) >> 3) & 0x04) |
+		(((flags >> (8 * i)) >> 1) & 0x08) |
+		(((flags >> (8 * i)) << 1) & 0x10) |
+		(((flags >> (8 * i)) << 3) & 0x20) |
+		(((flags >> (8 * i)) << 5) & 0x40) |
+		(((flags >> (8 * i)) << 7) & 0x80));
     }
 
   res = shishi_asn1_write (handle, node, field, buf, 32);
