@@ -294,75 +294,38 @@ shishi_kdcrep_crealm_set (Shishi * handle,
 int
 shishi_kdcrep_cname_set (Shishi * handle,
 			 Shishi_asn1 kdcrep,
-			 Shishi_name_type name_type, char *cname[])
+			 Shishi_name_type name_type,
+			 char *cname[])
 {
   int res;
-  char buf[BUFSIZ];
-  int i;
 
-  sprintf (buf, "%d", name_type);
-
-  res = shishi_asn1_write (handle, kdcrep, "cname.name-type", buf, 0);
+  res = shishi_principal_name_set (handle, kdcrep, "cname", name_type, cname);
   if (res != SHISHI_OK)
     return res;
-
-  res = shishi_asn1_write (handle, kdcrep, "cname.name-string",
-			   NULL, 0);
-  if (res != SHISHI_OK)
-    return res;
-
-  i = 1;
-  while (cname[i - 1])
-    {
-      res = shishi_asn1_write (handle, kdcrep, "cname.name-string",
-			       "NEW", 1);
-      if (res != SHISHI_OK)
-	return res;
-
-      sprintf (buf, "cname.name-string.?%d", i);
-      res = shishi_asn1_write (handle, kdcrep, buf, cname[i - 1], 0);
-      if (res != SHISHI_OK)
-	return res;
-
-      i++;
-    }
 
   return SHISHI_OK;
 }
 
+/**
+ * shishi_kdcrep_client_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcrep: Kdcrep variable to set server name field in.
+ * @name: zero-terminated string with principal name on RFC 1964 form.
+ *
+ * Set the client name field in the KDC-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_kdcrep_client_set (Shishi * handle,
-			  Shishi_asn1 kdcrep, const char *client)
+			  Shishi_asn1 kdcrep,
+			  const char *client)
 {
-  char *tmpclient;
-  char **clientbuf;
-  char *tokptr;
   int res;
-  int i;
 
-  tmpclient = strdup (client);
-  if (tmpclient == NULL)
-    return SHISHI_MALLOC_ERROR;
-
-  clientbuf = malloc (sizeof (*clientbuf));
-  for (i = 0;
-       (clientbuf[i] = strtok_r (i == 0 ? tmpclient : NULL, "/", &tokptr));
-       i++)
-    {
-      clientbuf = realloc (clientbuf, (i + 2) * sizeof (*clientbuf));
-      if (clientbuf == NULL)
-	return SHISHI_MALLOC_ERROR;
-    }
-  res = shishi_kdcrep_cname_set (handle, kdcrep,
-				 SHISHI_NT_PRINCIPAL, clientbuf);
+  res = shishi_principal_set (handle, kdcrep, "cname", client);
   if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not set cname: %s\n"),
-	       shishi_strerror_details (handle));
-      return res;
-    }
-  free (clientbuf);
-  free (tmpclient);
+    return res;
 
   return SHISHI_OK;
 }
