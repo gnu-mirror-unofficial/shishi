@@ -10,6 +10,11 @@ Kerberos 5 authentication support for telnet client and telnetd server
 using Shishi.  Apply the patch and build InetUtils using
 --enable-encryption --enable-authentication --with-shishi.
 
+The mailutils.diff file contains a patch for GNU MailUtils to add
+Kerberos 5 authentication support for the IMAP server using GSS and
+Shishi.  Apply the patch, install GSS, and build MailUtils using
+--with-gssapi.
+
 ----------------------------------------------------------------------
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
