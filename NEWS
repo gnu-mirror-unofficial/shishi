@@ -4,7 +4,7 @@ See the end for copying conditions.
 
 * Version 0.0.4 (unreleased)
 
-** Subkeys in Authenticators are supported, and is used by default in AP/TGS.
+** Authenticator subkeys are supported, and is used by default in AP/TGS.
 Some KDCs does not understand subkeys in TGS requests, and use the
 session key instead.  Shishi detect and work around this problem but
 issues a warning.
