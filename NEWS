@@ -2,6 +2,8 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004 Simon Josefsson
 See the end for copying conditions.
 
+* Version 0.0.19 (unreleased)
+
 * Version 0.0.18 (released 2004-10-15)
 
 ** When generating an AP-REP, the generated EncAPRepPart is now remembered.

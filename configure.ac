@@ -18,21 +18,21 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-AC_INIT([shishi], [0.0.18], [bug-shishi@josefsson.org])
+AC_INIT([shishi], [0.0.19], [bug-shishi@josefsson.org])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 LT_CURRENT=0
-LT_REVISION=18
+LT_REVISION=19
 LT_AGE=0
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
 AC_PREREQ(2.59)
-AM_INIT_AUTOMAKE([1.8 gnits])
+AM_INIT_AUTOMAKE([1.9 gnits])
 AC_CONFIG_HEADERS(config.h)
 AB_INIT
 
