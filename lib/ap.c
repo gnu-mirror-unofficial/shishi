@@ -25,6 +25,7 @@ struct Shishi_ap
 {
   Shishi *handle;
   Shishi_tkt *tkt;
+  Shishi_key *key;
   Shishi_asn1 authenticator;
   Shishi_asn1 apreq;
   Shishi_asn1 aprep;
@@ -692,6 +693,31 @@ shishi_ap_req_asn1 (Shishi_ap * ap, Shishi_asn1 * apreq)
   *apreq = ap->apreq;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_ap_key:
+ * @ap: structure that holds information about AP exchange
+ *
+ * Extract the application key from AP.  If subkeys are used, it is
+ * taken from the Authenticator, otherwise the session key is used.
+ *
+ * Return value: Return application
+ **/
+Shishi_key *
+shishi_ap_key (Shishi_ap * ap)
+{
+  int rc;
+
+  /* XXX do real check if subkey is present, don't just assume error
+     means no subkey */
+
+  rc = shishi_authenticator_get_subkey (ap->handle, ap->authenticator,
+					&ap->key);
+  if (rc != SHISHI_OK)
+    ap->key = shishi_tkt_key (ap->tkt);
+
+  return ap->key;
 }
 
 /**
