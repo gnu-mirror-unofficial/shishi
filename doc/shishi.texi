@@ -4406,6 +4406,13 @@ KDC-REQ-BODY.enc-authorization-data field.
 Problems with clarifications.  Uses bignum INTEGER for TYPED-DATA and
 AD-AND-OR.
 
+Problems with crypto specification.  It uses the word ``random'' many
+times, but there is no discussion on the randomness requirements.
+Practical experience indicate it is impossible to use true randomness
+for all ``random'' fields, and no implementation does this.  A post by
+Don Davis on the ietf-krb-wg list tried to provide insight, but the
+information was never added to the specification.
+
 @node Protocol Extensions
 @appendix Protocol Extensions
 
