@@ -81,7 +81,7 @@ aes_string_to_key (Shishi * handle,
   unsigned char key[256 / 8];
   int keylen = shishi_key_length (outkey);
   Shishi_key *tmpkey;
-  int iterations = 0x0000b000;
+  int iterations = 0x00001000;
   int res;
 
   if (parameter)
