@@ -149,7 +149,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
    *
    * char *out; int outlen;
    * ...
-   * rc = shishi_ap_req_der_new (ap, &out, &outlen);
+   * rc = shishi_ap_req_der (ap, &out, &outlen);
    * ...
    * write(fd, out, outlen);
    */
