@@ -32,10 +32,7 @@
  * that they can fit on the stack. For non-alloca systems, we use a
  * fix maximum size, and abort if we ever need anything larger. */
 
-#if HAVE_ALLOCA
-# if HAVE_ALLOCA_H
-#  include <alloca.h>
-# endif
+#if 0
 # define TMP_DECL(name, type, max) type *name
 # define TMP_ALLOC(name, size) (name = alloca(sizeof (*name) * size))
 #else /* !HAVE_ALLOCA */
