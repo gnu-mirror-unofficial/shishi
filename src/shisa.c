@@ -451,22 +451,22 @@ main (int argc, char *argv[])
 
   rc = shisa_init_with_paths (&dbh, args_info.configuration_file_arg);
   if (rc != SHISA_OK)
-    error (1, 0, "Initialization failed: %s", shisa_strerror (rc));
+    error (1, 0, "Initialization failed:\n %s", shisa_strerror (rc));
 
   rc = shisa_cfg (dbh, args_info.library_options_arg);
   if (rc != SHISA_OK)
-    error (1, 0, "Could not read library options `%s': %s",
+    error (1, 0, "Could not read library options `%s':\n%s",
 	   args_info.library_options_arg, shisa_strerror (rc));
 
   rc = shishi_init (&sh);
   if (rc != SHISHI_OK)
-    error (1, 0, "Shishi initialize failed: %s", shishi_strerror (rc));
+    error (1, 0, "Shishi initialization failed:\n%s", shishi_strerror (rc));
 
   if (args_info.encryption_type_given)
     {
       rc = shishi_cfg_clientkdcetype_set (sh, args_info.encryption_type_arg);
       if (rc != SHISHI_OK)
-	error (1, 0, "Could not set encryption type `%s': %s",
+	error (1, 0, "Could not set encryption type `%s':\n%s",
 	       args_info.encryption_type_arg, shishi_strerror (rc));
     }
 
