@@ -46,7 +46,7 @@ static struct shisa_error_msgs _shisa_error_messages[] = {
   {SHISA_REMOVE_REALM_NONEMPTY, "Tried to remove a non-empty realm."},
   {SHISA_REMOVE_REALM_ERROR, "Error removing realm from database."},
   {SHISA_ADD_PRINCIPAL_EXISTS, "Tried to add a principal that already exist."},
-  {SHISA_ADD_REALM_ERROR, "Error adding principal to database."},
+  {SHISA_ADD_PRINCIPAL_ERROR, "Error adding principal to database."},
   {SHISA_REMOVE_PRINCIPAL_ERROR, "Error removing principal from database."},
 };
 
