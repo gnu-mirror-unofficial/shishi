@@ -93,6 +93,13 @@ typedef enum
 }
 Shishi_padata_type;
 
+/* This is not specified in the ASN.1 syntax for some reason. */
+typedef enum
+{
+  SHISHI_TR_DOMAIN_X500_COMPRESS = 1
+}
+Shishi_tr_type;
+
 typedef enum
 {
   SHISHI_APOPTIONS_RESERVED = 0x1,	/* bit 0 */
@@ -206,7 +213,7 @@ typedef enum
     SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP = 1,
     /* 2. AS-REP Ticket and TGS-REP Ticket (includes TGS session key or
        application session key), encrypted with the service key  */
-    SHISHI_KEYUSAGE_KDCREP_TICKET = 2,
+    SHISHI_KEYUSAGE_ENCTICKETPART = 2,
     /* 3. AS-REP encrypted part (includes TGS session key or application
        session key), encrypted with the client key */
     SHISHI_KEYUSAGE_ENCASREPPART = 3,
@@ -642,9 +649,7 @@ extern int shishi_kdcreq_add_padata_tgs (Shishi * handle,
 					 ASN1_TYPE kdcreq, ASN1_TYPE apreq);
 
 /* enckdcreppart.c */
-extern ASN1_TYPE shishi_asrep (Shishi * handle);
-extern ASN1_TYPE shishi_tgsrep (Shishi * handle);
-extern int shishi_enckdcreppart (Shishi * handle, ASN1_TYPE * enckdcreppart);
+extern ASN1_TYPE shishi_enckdcreppart (Shishi * handle);
 
 /* kdc.c */
 extern int shishi_as_derive_salt (Shishi * handle,
@@ -678,6 +683,8 @@ extern int shishi_kdc_check_nonce (Shishi * handle,
 				   ASN1_TYPE kdcreq, ASN1_TYPE enckdcreppart);
 
 /* kdcrep.c */
+extern ASN1_TYPE shishi_asrep (Shishi * handle);
+extern ASN1_TYPE shishi_tgsrep (Shishi * handle);
 extern int shishi_kdcrep_get_ticket (Shishi * handle,
 				     ASN1_TYPE kdcrep,
 				     ASN1_TYPE * ticket);
@@ -1133,6 +1140,9 @@ extern int shishi_kdc_sendrecv (Shishi * handle,
 
 /* encticketpart.c */
 extern ASN1_TYPE shishi_encticketpart (Shishi * handle);
+extern int shishi_encticketpart_key_set (Shishi * handle,
+					 ASN1_TYPE encticketpart,
+					 Shishi_key *key);
 extern int shishi_encticketpart_get_enc_part_etype (Shishi * handle,
 						    ASN1_TYPE encticketpart,
 						    int *etype);
