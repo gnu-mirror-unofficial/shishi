@@ -199,18 +199,20 @@ shishi_kdc_copy_crealm (Shishi * handle,
 			Shishi_asn1 kdcrep,
 			Shishi_asn1 encticketpart)
 {
-  unsigned char buf[BUFSIZ];
-  int buflen;
+  char *buf;
+  size_t buflen;
   int res;
 
+#if 0
   buf[0] = '\0';		/* XXX if crealm is empty, buflen == 0 which
 				   causes libtasn1 to strlen(buf)... */
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "crealm", buf, &buflen);
+#endif
+  res = shishi_asn1_read2 (handle, encticketpart, "crealm", &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, kdcrep, "crealm", buf, buflen);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 
@@ -233,12 +235,12 @@ shishi_kdc_copy_crealm (Shishi * handle,
 int
 shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 {
-  char reqrealm[BUFSIZ], reprealm[BUFSIZ];
-  int reqrealmlen = BUFSIZ, reprealmlen = BUFSIZ;
+  char *reqrealm, *reprealm;
+  size_t reqrealmlen, reprealmlen;
   int res;
 
-  res = shishi_asn1_read (handle, asreq, "req-body.realm",
-			  reqrealm, &reqrealmlen);
+  res = shishi_asn1_read2 (handle, asreq, "req-body.realm",
+			   &reqrealm, &reqrealmlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read request realm: %s\n",
@@ -246,7 +248,7 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
       return res;
     }
 
-  res = shishi_asn1_read (handle, asrep, "crealm", reprealm, &reprealmlen);
+  res = shishi_asn1_read2 (handle, asrep, "crealm", &reprealm, &reprealmlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read reply realm: %s\n",
@@ -263,7 +265,12 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
       printf ("reply realm: %s\n", reprealm);
     }
 
-  if (strcmp (reqrealm, reprealm) != 0)
+  res = strcmp (reqrealm, reprealm) != 0;
+
+  free (reqrealm);
+  free (reprealm);
+
+  if (res)
     return SHISHI_REALM_MISMATCH;
 
   return SHISHI_OK;
@@ -283,19 +290,19 @@ int
 shishi_kdc_copy_cname (Shishi * handle,
 		       Shishi_asn1 kdcrep, Shishi_asn1 encticketpart)
 {
-  unsigned char buf[BUFSIZ];
-  char format[BUFSIZ];
-  int buflen;
+  char *buf;
+  char *format;
+  size_t buflen;
   int res;
   int i, n;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart,
-			  "cname.name-type", buf, &buflen);
+  res = shishi_asn1_read2 (handle, encticketpart,
+			  "cname.name-type", &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, kdcrep, "cname.name-type", buf, buflen);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 
@@ -314,14 +321,16 @@ shishi_kdc_copy_cname (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (format, "cname.name-string.?%d", i);
-      buflen = BUFSIZ;
-      res = shishi_asn1_read (handle, encticketpart, format, buf, &buflen);
+      asprintf (&format, "cname.name-string.?%d", i);
+      res = shishi_asn1_read2 (handle, encticketpart, format, &buf, &buflen);
+      free (format);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (format, "cname.name-string.?%d", i);
+      asprintf (&format, "cname.name-string.?%d", i);
       res = shishi_asn1_write (handle, kdcrep, format, buf, buflen);
+      free (format);
+      free (buf);
       if (res != SHISHI_OK)
 	return res;
     }
@@ -345,9 +354,9 @@ shishi_kdc_copy_cname (Shishi * handle,
 int
 shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 {
-  char reqcname[BUFSIZ], repcname[BUFSIZ];
-  int reqcnamelen, repcnamelen;
-  char format[BUFSIZ];
+  char *reqcname, *repcname;
+  size_t reqcnamelen, repcnamelen;
+  char *format;
   int res;
   int i, j;
 
@@ -368,15 +377,15 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 
   for (i = 1; i <= j; i++)
     {
-      sprintf (format, "req-body.cname.name-string.?%d", i);
-      reqcnamelen = sizeof (reqcname);
-      res = shishi_asn1_read (handle, asreq, format, reqcname, &reqcnamelen);
+      asprintf (&format, "req-body.cname.name-string.?%d", i);
+      res = shishi_asn1_read2 (handle, asreq, format, &reqcname, &reqcnamelen);
+      free (format);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (format, "cname.name-string.?%d", i);
-      repcnamelen = sizeof (repcname);
-      res = shishi_asn1_read (handle, asrep, format, repcname, &repcnamelen);
+      asprintf (&format, "cname.name-string.?%d", i);
+      res = shishi_asn1_read2 (handle, asrep, format, &repcname, &repcnamelen);
+      free (format);
       if (res != SHISHI_OK)
 	return res;
 
@@ -388,10 +397,13 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 	  printf ("reply cname %d: %s\n", i, repcname);
 	}
 
-      if (reqcnamelen != repcnamelen)
-	return SHISHI_CNAME_MISMATCH;
+      res = (reqcnamelen != repcnamelen) ||
+	(memcmp (reqcname, repcname, reqcnamelen) != 0);
 
-      if (memcmp (reqcname, repcname, reqcnamelen) != 0)
+      free (reqcname);
+      free (repcname);
+
+      if (res)
 	return SHISHI_CNAME_MISMATCH;
     }
 
@@ -426,48 +438,12 @@ shishi_kdc_copy_nonce (Shishi * handle,
   return SHISHI_OK;
 }
 
-/**
- * shishi_kdc_check_nonce:
- * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: KDC-REQ to compare nonce field in.
- * @enckdcreppart: Encrypted KDC-REP part to compare nonce field in.
- *
- * Verify that KDC-REQ.req-body.nonce and EncKDCRepPart.nonce fields
- * matches.  This is one of the steps that has to be performed when
- * processing a KDC-REQ and KDC-REP exchange.
- *
- * Return value: Returns SHISHI_OK if successful,
- * SHISHI_NONCE_LENGTH_MISMATCH if the nonces have different lengths
- * (usually indicates that buggy server truncated nonce to 4 bytes),
- * SHISHI_NONCE_MISMATCH if the values differ, or an error code.
- **/
-int
-shishi_kdc_check_nonce (Shishi * handle,
-			Shishi_asn1 kdcreq, Shishi_asn1 enckdcreppart)
+static int
+shishi_kdc_check_nonce_1 (Shishi * handle,
+			  char *reqnonce, size_t reqnoncelen,
+			  char *repnonce, size_t repnoncelen)
 {
-  unsigned char reqnonce[BUFSIZ];
-  unsigned char repnonce[BUFSIZ];
-  int reqnoncelen = BUFSIZ;
-  int repnoncelen = BUFSIZ;
   int res;
-
-  res = shishi_asn1_read (handle, kdcreq, "req-body.nonce",
-			  reqnonce, &reqnoncelen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not read request nonce: %s\n",
-			   shishi_strerror (res));
-      return res;
-    }
-
-  res = shishi_asn1_read (handle, enckdcreppart, "nonce",
-			  repnonce, &repnoncelen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not read reply nonce: %s\n",
-			   shishi_strerror (res));
-      return res;
-    }
 
   if (VERBOSEASN1 (handle))
     {
@@ -511,6 +487,72 @@ shishi_kdc_check_nonce (Shishi * handle,
     return SHISHI_NONCE_MISMATCH;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_kdc_check_nonce:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ to compare nonce field in.
+ * @enckdcreppart: Encrypted KDC-REP part to compare nonce field in.
+ *
+ * Verify that KDC-REQ.req-body.nonce and EncKDCRepPart.nonce fields
+ * matches.  This is one of the steps that has to be performed when
+ * processing a KDC-REQ and KDC-REP exchange.
+ *
+ * Return value: Returns SHISHI_OK if successful,
+ * SHISHI_NONCE_LENGTH_MISMATCH if the nonces have different lengths
+ * (usually indicates that buggy server truncated nonce to 4 bytes),
+ * SHISHI_NONCE_MISMATCH if the values differ, or an error code.
+ **/
+int
+shishi_kdc_check_nonce (Shishi * handle,
+			Shishi_asn1 kdcreq, Shishi_asn1 enckdcreppart)
+{
+  char *reqnonce;
+  char *repnonce;
+  size_t reqnoncelen, repnoncelen;
+  int res;
+
+  res = shishi_asn1_read2 (handle, kdcreq, "req-body.nonce",
+			   &reqnonce, &reqnoncelen);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not read request nonce: %s\n",
+			   shishi_strerror (res));
+      return res;
+    }
+
+  res = shishi_asn1_read2 (handle, enckdcreppart, "nonce",
+			   &repnonce, &repnoncelen);
+  if (res != SHISHI_OK)
+    {
+      free (reqnonce);
+      shishi_error_printf (handle, "Could not read reply nonce: %s\n",
+			   shishi_strerror (res));
+      return res;
+    }
+
+  if (VERBOSEASN1 (handle))
+    {
+      int i;
+
+      printf ("request nonce (len=%d) ", reqnoncelen);
+      for (i = 0; i < reqnoncelen; i++)
+	printf ("%02X", reqnonce[i]);
+      printf ("\n");
+      printf ("reply nonce (len=%d) ", repnoncelen);
+      for (i = 0; i < repnoncelen; i++)
+	printf ("%02X", repnonce[i]);
+      printf ("\n");
+    }
+
+  res = shishi_kdc_check_nonce_1 (handle, reqnonce, reqnoncelen,
+				  repnonce, repnoncelen);
+
+  free (reqnonce);
+  free (repnonce);
+
+  return res;
 }
 
 /**

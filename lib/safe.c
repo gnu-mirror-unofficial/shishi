@@ -44,7 +44,7 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
   Shishi_safe *lsafe;
   struct timeval tv;
   struct timezone tz;
-  char usec[BUFSIZ];
+  char *usec;
   int rc;
 
   *safe = malloc (sizeof (**safe));
@@ -76,8 +76,9 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
     return rc;
 
   gettimeofday (&tv, &tz);
-  sprintf (usec, "%ld", tv.tv_usec % 1000000);
+  asprintf (&usec, "%ld", tv.tv_usec % 1000000);
   rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.usec", usec, 0);
+  free (usec);
   if (rc != SHISHI_OK)
     return rc;
 

@@ -195,59 +195,64 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
 					     Shishi_asn1 enckdcreppart,
 					     Shishi_asn1 encticketpart)
 {
-  unsigned char buf[BUFSIZ];
-  int buflen;
+  char *buf;
+  size_t buflen;
   int res;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "flags", buf, &buflen);
+  res = shishi_asn1_read2 (handle, encticketpart, "flags", &buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   res = shishi_asn1_write (handle, enckdcreppart, "flags", buf, buflen);
+  free (buf);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "authtime", buf, &buflen);
+  res = shishi_asn1_read2 (handle, encticketpart, "authtime", &buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   res = shishi_asn1_write (handle, enckdcreppart, "authtime", buf, buflen);
+  free (buf);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "starttime", buf, &buflen);
+  res = shishi_asn1_read2 (handle, encticketpart, "starttime", &buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return SHISHI_ASN1_ERROR;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
     res = shishi_asn1_write (handle, enckdcreppart, "starttime", NULL, 0);
   else
-    res = shishi_asn1_write (handle, enckdcreppart, "starttime", buf, buflen);
+    {
+      res = shishi_asn1_write (handle, enckdcreppart, "starttime",
+			       buf, buflen);
+      free (buf);
+    }
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "endtime", buf, &buflen);
+  res = shishi_asn1_read2 (handle, encticketpart, "endtime", &buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   res = shishi_asn1_write (handle, enckdcreppart, "endtime", buf, buflen);
+  free (buf);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "renew-till", buf, &buflen);
+  res = shishi_asn1_read2 (handle, encticketpart, "renew-till", &buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return SHISHI_ASN1_ERROR;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
     res = shishi_asn1_write (handle, enckdcreppart, "renew-till", NULL, 0);
   else
-    res = shishi_asn1_write (handle, enckdcreppart,
-			     "renew-till", buf, buflen);
+    {
+      res = shishi_asn1_write (handle, enckdcreppart,
+			       "renew-till", buf, buflen);
+      free (buf);
+    }
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 

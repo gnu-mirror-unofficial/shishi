@@ -277,7 +277,7 @@ shishi_aprep_enc_part_add (Shishi * handle,
   char *buf;
   size_t buflen;
   char *der;
-  int derlen = BUFSIZ;
+  size_t derlen;
   Shishi_key *key;
 
   res = shishi_encticketpart_get_key (handle, encticketpart, &key);

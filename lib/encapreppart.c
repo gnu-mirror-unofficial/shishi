@@ -374,25 +374,25 @@ shishi_encapreppart_time_copy (Shishi * handle,
 			       Shishi_asn1 encapreppart,
 			       Shishi_asn1 authenticator)
 {
-  char buf[BUFSIZ];
-  int buflen;
+  char *buf;
+  size_t buflen;
   int res;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, authenticator, "cusec", buf, &buflen);
+  res = shishi_asn1_read2 (handle, authenticator, "cusec", &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, encapreppart, "cusec", buf, buflen);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, authenticator, "ctime", buf, &buflen);
+  res = shishi_asn1_read2 (handle, authenticator, "ctime", &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, encapreppart, "ctime", buf, buflen);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 

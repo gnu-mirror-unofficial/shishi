@@ -154,8 +154,6 @@ shishi_tgs_req (Shishi_tgs * tgs)
 int
 shishi_tgs_req_build (Shishi_tgs * tgs)
 {
-  char rtime[BUFSIZ];		/* XXX dynamically allocate this */
-  int rtimelen;
   int res;
   int apoptions;
 

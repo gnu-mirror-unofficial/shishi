@@ -649,8 +649,7 @@ shishi_kdcreq_add_padata (Shishi * handle,
 			  Shishi_asn1 kdcreq,
 			  int padatatype, char *data, int datalen)
 {
-  char format[BUFSIZ];
-  char buf[BUFSIZ];
+  char *format;
   int res;
   int i;
 
@@ -662,14 +661,15 @@ shishi_kdcreq_add_padata (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  sprintf (format, "padata.?%d.padata-value", i);
+  asprintf (&format, "padata.?%d.padata-value", i);
   res = shishi_asn1_write (handle, kdcreq, format, data, datalen);
+  free (format);
   if (res != SHISHI_OK)
     return res;
 
-  sprintf (buf, "%d", padatatype);
-  sprintf (format, "padata.?%d.padata-type", i);
-  res = shishi_asn1_write (handle, kdcreq, format, buf, 0);
+  asprintf (&format, "padata.?%d.padata-type", i);
+  res = shishi_asn1_write_uint32 (handle, kdcreq, format, padatatype);
+  free (format);
   if (res != SHISHI_OK)
     return res;
 

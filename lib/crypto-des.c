@@ -839,7 +839,6 @@ gss_des_checksum (Shishi * handle,
 		  char **out, size_t * outlen)
 {
 #ifdef USE_GCRYPT
-  char buffer[BUFSIZ];
   int buflen;
   char *keyp;
   char *p;

@@ -77,12 +77,12 @@ shishi_ticket_sname_set (Shishi * handle,
 			 Shishi_name_type name_type, char *sname[])
 {
   int res = SHISHI_OK;
-  char buf[BUFSIZ];
+  char *buf;
   int i;
 
-  sprintf (buf, "%d", name_type);
-
+  asprintf (&buf, "%d", name_type);
   res = shishi_asn1_write (handle, ticket, "sname.name-type", buf, 0);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 
@@ -97,8 +97,9 @@ shishi_ticket_sname_set (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (buf, "sname.name-string.?%d", i);
+      asprintf (&buf, "sname.name-string.?%d", i);
       res = shishi_asn1_write (handle, ticket, buf, sname[i - 1], 0);
+      free (buf);
       if (res != SHISHI_OK)
 	return res;
 

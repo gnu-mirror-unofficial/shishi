@@ -136,17 +136,15 @@ shishi_encticketpart_key_set (Shishi * handle,
 			      Shishi_asn1 encticketpart, Shishi_key * key)
 {
   int res;
-  char buf[BUFSIZ];
   int keytype;
 
   keytype = shishi_key_type (key);
-  sprintf (buf, "%d", keytype);
-  res = shishi_asn1_write (handle, encticketpart, "key.keytype", buf, 0);
+  res = shishi_asn1_write_uint32 (handle, encticketpart,
+				  "key.keytype", keytype);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, encticketpart,
-			   "key.keyvalue",
+  res = shishi_asn1_write (handle, encticketpart, "key.keyvalue",
 			   shishi_key_value (key), shishi_key_length (key));
   if (res != SHISHI_OK)
     return res;
@@ -169,10 +167,8 @@ shishi_encticketpart_flags_set (Shishi * handle,
 				Shishi_asn1 encticketpart, int flags)
 {
   int res;
-  char buf[BUFSIZ];
 
-  sprintf (buf, "%d", flags);
-  res = shishi_asn1_write (handle, encticketpart, "flags", buf, 0);
+  res = shishi_asn1_write_uint32 (handle, encticketpart, "flags", flags);
   if (res != SHISHI_OK)
     return res;
 
@@ -221,11 +217,9 @@ shishi_encticketpart_cname_set (Shishi * handle,
 				const char *principal)
 {
   int res;
-  char buf[BUFSIZ];
 
-  sprintf (buf, "%d", name_type);
-
-  res = shishi_asn1_write (handle, encticketpart, "cname.name-type", buf, 0);
+  res = shishi_asn1_write_uint32 (handle, encticketpart,
+				  "cname.name-type", name_type);
   if (res != SHISHI_OK)
     return res;
 
@@ -267,11 +261,9 @@ shishi_encticketpart_transited_set (Shishi * handle,
 				    char *trdata, size_t trdatalen)
 {
   int res;
-  char buf[BUFSIZ];
 
-  sprintf (buf, "%d", trtype);
-  res = shishi_asn1_write (handle, encticketpart,
-			   "transited.tr-type", buf, 0);
+  res = shishi_asn1_write_uint32 (handle, encticketpart,
+				  "transited.tr-type", trtype);
   if (res != SHISHI_OK)
     return res;
 
