@@ -114,7 +114,6 @@ struct cipherinfo
   int32_t type;
   char *name;
   int blocksize;
-  int minpadsize;
   int confoundersize;
   int keylen;
   int randomlen;

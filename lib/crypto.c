@@ -566,25 +566,6 @@ shishi_cipher_blocksize (int32_t type)
 }
 
 /**
- * shishi_cipher_minpadsize:
- * @type: encryption type, see Shishi_etype.
- *
- * Return value: Return the minimum pad size for encryption type, as
- * defined in the standards.
- **/
-int
-shishi_cipher_minpadsize (int32_t type)
-{
-  size_t i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->minpadsize;
-
-  return -1;
-}
-
-/**
  * shishi_cipher_confoundersize:
  * @type: encryption type, see Shishi_etype.
  *

@@ -1314,7 +1314,6 @@ extern int shishi_aes_cts (Shishi * handle, int decryptp,
 extern int shishi_cipher_supported_p (int type);
 extern const char *shishi_cipher_name (int type);
 extern int shishi_cipher_blocksize (int type);
-extern int shishi_cipher_minpadsize (int type);
 extern int shishi_cipher_confoundersize (int type);
 extern size_t shishi_cipher_keylen (int type);
 extern size_t shishi_cipher_randomlen (int type);

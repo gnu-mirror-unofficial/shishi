@@ -86,7 +86,6 @@ cipherinfo null_info = {
   0,
   0,
   0,
-  0,
   SHISHI_RSA_MD5,
   null_random_to_key,
   null_string_to_key,
