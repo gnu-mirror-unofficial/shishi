@@ -90,4 +90,27 @@
 # converting to UTF-8 improves interoperability.
 stringprocess=UTF-8
 
+# Specify default ticket life time.
+# The string can be in almost any common format.  It can contain month
+# names, time zones, `am' and `pm', `yesterday', `ago', `next', etc.
+# Refer to the "Date input formats" in the GNU CoreUtils package for
+# entire story.  As an extra feature, if the resulting string you
+# specify has expired within the last 24 hours, an extra day is added
+# to it.  This allows you to specify "17:00" to always mean the next
+# 17:00, even if your system clock happens to be 17:30.
+# The default is 8 hours.
+# Examples:
+#ticket-life=8 hours
+#ticket-life=1 day
+#ticket-life=17:00
+
+# Specify how long a renewable ticket should remain renewable.
+# See ticket-life for the syntax.  The extra feature that handles
+# negative values within the last 2 hours is not active here.
+# The default is 7 days.
+# Examples:
+#renew-life=1 week
+#renew-life=friday 17:00
+#renew-life=sunday
+
 # System configuration file ends here
