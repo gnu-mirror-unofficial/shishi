@@ -9,7 +9,6 @@
 
 #include "des.h"
 
-extern const uint32_t des_keymap[];
 extern const uint32_t des_bigmap[];
 
 /* optional customization:
