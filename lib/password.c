@@ -1,5 +1,5 @@
-/* password.c	get passwords from user
- * Copyright (C) 2002, 2003  Simon Josefsson
+/* password.c --- Get passwords from user.
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -23,81 +23,11 @@
 
 #include "internal.h"
 
+#include "getpass.h"
+
 #ifdef WITH_STRINGPREP
 #include <stringprep.h>
 #endif
-
-#if defined (HAVE_TERMIOS_H)
-
-#include <termios.h>
-
-static int
-tty_set_echo (int echo)
-{
-  struct termios termios_p;
-  int fd = fileno (stdin);
-
-  if (tcgetattr (fd, &termios_p) != 0)
-    return SHISHI_TTY_ERROR;
-
-  if (echo)
-    termios_p.c_lflag |= ECHO;
-  else
-    termios_p.c_lflag &= ~ECHO;
-
-  if (tcsetattr (fd, TCSANOW, &termios_p) != 0)
-    return SHISHI_TTY_ERROR;
-
-  return SHISHI_OK;
-}
-
-#else
-
-mail simon @ josefsson.org and tell what system this is
-#endif
-static RETSIGTYPE
-tty_echo (int signum)
-{
-  tty_set_echo (1);
-}
-
-static RETSIGTYPE
-tty_noecho (int signum)
-{
-  tty_set_echo (0);
-}
-
-static int
-read_password (char **s)
-{
-  char buf[BUFSIZ];
-  int rc;
-
-  rc = tty_set_echo (0);
-  if (rc != SHISHI_OK)
-    return rc;
-
-#ifdef HAVE_SIGNAL
-  signal (SIGQUIT, tty_echo);
-  signal (SIGCONT, tty_noecho);
-#endif
-
-  fgets (buf, sizeof (buf), stdin);
-  buf[strlen (buf) - 1] = '\0';
-
-  *s = strdup (buf);
-
-#ifdef HAVE_SIGNAL
-  signal (SIGQUIT, SIG_DFL);
-  signal (SIGCONT, SIG_DFL);
-#endif
-
-  rc = tty_set_echo (1);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  return SHISHI_OK;
-}
 
 /**
  * shishi_prompt_password:
@@ -133,7 +63,9 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
   fflush (stdout);
   va_end (ap);
 
-  rc = read_password (s);
+  p = getpass ("");
+
+  *s = xstrdup (p);
 
   printf ("\n");
 
