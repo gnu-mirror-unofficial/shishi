@@ -31,7 +31,7 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	kdc.c kdcreq.c kdcrep.c enckdcreppart.c as.c tgs.c \
 	ap.c apreq.c aprep.c encapreppart.c safe.c \
 	ticket.c encticketpart.c tkt.c tkts.c \
-	netio.c hostkeys.c key.c crypto.c pkcs5.c \
+	netio.c key.c keys.c crypto.c pkcs5.c \
 	asn1.c kerberos5.c \
 	version.c password.c \
 	resolv.c

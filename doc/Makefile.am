@@ -24,7 +24,7 @@ shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
 	shishi-api-ticket.texi shishi-api-tkt.texi shishi-api-tkts.texi \
 	shishi-api-as.texi shishi-api-tgs.texi shishi-api-safe.texi \
 	shishi-api-kdc.texi shishi-api-authenticator.texi shishi-api-ap.texi \
-	shishi-api-key.texi shishi-api-hostkeys.texi shishi-api-crypto.texi \
+	shishi-api-key.texi shishi-api-keys.texi shishi-api-crypto.texi \
 	shishi-api-error.texi shishi-api-error-labels.texi \
 	shishi-api-version.texi
 
@@ -79,7 +79,7 @@ shishi-api-ap.texi: $(top_srcdir)/lib/ap.c $(top_srcdir)/lib/apreq.c $(top_srcdi
 shishi-api-key.texi: $(top_srcdir)/lib/key.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
-shishi-api-hostkeys.texi: $(top_srcdir)/lib/hostkeys.c
+shishi-api-keys.texi: $(top_srcdir)/lib/keys.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-crypto.texi: $(top_srcdir)/lib/crypto.c
