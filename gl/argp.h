@@ -28,6 +28,10 @@
 #define __need_error_t
 #include <errno.h>
 
+#ifndef __THROW
+# define __THROW
+#endif
+
 #ifndef __const
 # define __const const
 #endif
