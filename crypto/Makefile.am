@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -22,12 +22,15 @@ EXTRA_DIST = README
 
 noinst_LTLIBRARIES = libnettle.la
 
-libnettle_la_SOURCES = macros.h nettle-meta.h keymap.h rotors.h parity.h \
+INCLUDES = -I$(top_srcdir)/lib
+
+libnettle_la_SOURCES = macros.h nettle-meta.h nettle-internal.h \
+	keymap.h rotors.h parity.h \
 	memxor.c memxor.h \
 	md4.h md4.c md4-meta.c md5.h md5.c md5-meta.c \
-	sha1.c sha.h sha1-meta.c \
+	sha.h sha1.c sha1-compress.c sha1-meta.c \
 	hmac.c hmac.h hmac-md4.c hmac-md5.c hmac-sha1.c \
-	arcfour.h arcfour.c \
+	arcfour.h arcfour.c arcfour-crypt.c \
 	des3.c des.c des.h desCode.h \
 	aes.h aes.c aes-internal.h \
 	aes-encrypt.c aes-encrypt-table.c aes-decrypt.c aes-decrypt-table.c \

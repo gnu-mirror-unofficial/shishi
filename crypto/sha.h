@@ -26,7 +26,7 @@
 #ifndef NETTLE_SHA_H_INCLUDED
 #define NETTLE_SHA_H_INCLUDED
 
-#include <inttypes.h>
+#include "shishi-int.h"
 
 /* Name mangling */
 #define sha1_init nettle_sha1_init
@@ -64,6 +64,11 @@ void
 sha1_digest(struct sha1_ctx *ctx,
 	    unsigned length,
 	    uint8_t *digest);
+
+/* Internal compression function. STATE points to 5 uint32_t words,
+   and DATA points to 16 uint32_t words which are destroyed. */
+void
+_nettle_sha1_compress(uint32_t *state, uint32_t *data);
 
 /* SHA256 */
 

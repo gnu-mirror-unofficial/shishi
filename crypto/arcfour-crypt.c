@@ -1,11 +1,11 @@
-/* arcfour.h
+/* arcfour-crypt.c
  *
  * The arcfour/rc4 stream cipher.
  */
 
 /* nettle, low-level cryptographics library
  *
- * Copyright (C) 2001 Niels Möller
+ * Copyright (C) 2001, 2004 Niels Möller
  *  
  * The nettle library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,42 +22,32 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston,
  * MA 02111-1307, USA.
  */
- 
-#ifndef NETTLE_ARCFOUR_H_INCLUDED
-#define NETTLE_ARCFOUR_H_INCLUDED
 
-#include "shishi-int.h"
+#if HAVE_CONFIG_H
+# include "config.h"
+#endif
 
-/* Name mangling */
-#define arcfour_set_key nettle_arcfour_set_key
-#define arcfour_crypt nettle_arcfour_crypt
-#define arcfour_stream nettle_arcfour_stream
+#include <assert.h>
 
-/* Minimum and maximum keysizes, and a reasonable default. In
- * octets.*/
-#define ARCFOUR_MIN_KEY_SIZE 1
-#define ARCFOUR_MAX_KEY_SIZE 256
-#define ARCFOUR_KEY_SIZE 16
-
-struct arcfour_ctx
-{
-  uint8_t S[256];
-  uint8_t i;
-  uint8_t j;
-};
-
-void
-arcfour_set_key(struct arcfour_ctx *ctx,
-		unsigned length, const uint8_t *key);
+#include "arcfour.h"
 
 void
 arcfour_crypt(struct arcfour_ctx *ctx,
 	      unsigned length, uint8_t *dst,
-	      const uint8_t *src);
+	      const uint8_t *src)
+{
+  register uint8_t i, j;
+  register int si, sj;
 
-void
-arcfour_stream(struct arcfour_ctx *ctx,
-	       unsigned length, uint8_t *dst);
-
-#endif /* NETTLE_ARCFOUR_H_INCLUDED */
-
+  i = ctx->i; j = ctx->j;
+  while(length--)
+    {
+      i++; i &= 0xff;
+      si = ctx->S[i];
+      j += si; j &= 0xff;
+      sj = ctx->S[i] = ctx->S[j];
+      ctx->S[j] = si;
+      *dst++ = *src++ ^ ctx->S[ (si + sj) & 0xff ];
+    }
+  ctx->i = i; ctx->j = j;
+}
