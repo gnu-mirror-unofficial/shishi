@@ -26,14 +26,15 @@ shishi_SOURCES = shishi.c data.h gettext.h \
 shishi_LDADD = @LTLIBINTL@ ../gl/libfoo.a ../lib/libshishi.la
 
 shishid_SOURCES = shishid.c
-shishid_LDADD = ../gl/libfoo.a ../lib/libshishi.la
+shishid_LDADD = ../lib/libshishi.la
 
 localedir = $(datadir)/locale
 
-INCLUDES = -I../asn1/lib -I../gl -I../lib -I../intl \
-	-DLOCALEDIR=\"$(localedir)\"
+INCLUDES = -I../asn1/lib -I$(top_srcdir)/gl -I../lib -I../intl \
+	@LIBIDN_CFLAGS@
 
-DEFS = -DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
+DEFS = -DLOCALEDIR=\"$(localedir)\" \
+	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
 	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
 	@DEFS@
 
