@@ -1,7 +1,25 @@
+Shishi extra/README -- notes for the extra/ subdirectory.
+See the end for copying conditions.
+
 The inetutils/ sub-directory contains a stripped down GNU Inetutils
 containing a telnet implementation with Shishi support.  Ideally I
 would like to see GNU Inetutils incorporate this feature, but until or
 unless that happens the work can be found in this directory.
 
-A patch that applies to GNU Inetutils is found in inetutils.diff in
-this directory.
+A patch that applies to GNU Inetutils is found in the file
+inetutils.diff in this directory.
+
+----------------------------------------------------------------------
+Copyright information:
+
+Copyright (C) 2002 Simon Josefsson
+
+   Permission is granted to anyone to make or distribute verbatim copies
+   of this document as received, in any medium, provided that the
+   copyright notice and this permission notice are preserved,
+   thus giving the recipient permission to redistribute in turn.
+
+   Permission is granted to distribute modified versions
+   of this document, or of portions of it,
+   under the above conditions, provided also that they
+   carry prominent notices stating who last changed them.
