@@ -151,6 +151,7 @@ struct arguments
   char *setuid;
   struct listenspec *listenspec;
   int nlistenspec;
+  Shishi_key *tgskey;
 };
 
 const char *argp_program_version = PACKAGE_STRING;
@@ -417,7 +418,7 @@ static int
 asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
 {
   Shishi_tkt *tkt;
-  Shishi_key *sessionkey, *sessiontktkey, *userkey;
+  Shishi_key *sessionkey, *userkey;
   int etype, i;
   char buf[BUFSIZ];
   int buflen;
@@ -487,13 +488,7 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
   if (!userkey)
     return !SHISHI_OK;
 
-  sessiontktkey = shishi_keys_for_serverrealm_in_file
-    (handle, arg->keyfile, "krbtgt/latte.josefsson.org",
-     "latte.josefsson.org");
-  if (!userkey)
-    return !SHISHI_OK;
-
-  err = shishi_tkt_build (tkt, sessiontktkey);
+  err = shishi_tkt_build (tkt, arg->tgskey);
   if (err)
     return err;
 
@@ -561,10 +556,9 @@ asreq (Shishi * handle, struct arguments *arg,
 static int
 tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 {
-  Shishi_key *tgskey;
   int rc;
   Shishi_tkt *tkt;
-  Shishi_key *sessionkey, *sessiontktkey, *userkey;
+  Shishi_key *sessionkey, *sessiontktkey, *serverkey;
   char buf[BUFSIZ];
   int buflen;
   int err;
@@ -604,24 +598,12 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 
   /* XXX check if ticket is for our tgt key */
 
-  tgskey = shishi_keys_for_serverrealm_in_file (handle,
-						arg->keyfile,
-						"krbtgt/latte.josefsson.org",
-						"latte.josefsson.org");
-  if (!tgskey)
-    return !SHISHI_OK;
-
   /* decrypt ticket with our key, and decrypt authenticator using key in tkt */
-  rc = shishi_ap_req_process (shishi_tgs_ap (tgs), tgskey);
+  rc = shishi_ap_req_process (shishi_tgs_ap (tgs), arg->tgskey);
   if (rc != SHISHI_OK)
     return rc;
 
   /* XXX check that checksum in authenticator match tgsreq.req-body */
-
-  shishi_ticket_print (handle, stdout, shishi_tkt_ticket (tkt));
-  shishi_encticketpart_print
-    (handle, stdout,
-     shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))));
 
   buflen = sizeof (buf) - 1;
   err = shishi_encticketpart_cname_get
@@ -657,22 +639,20 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
   if (err)
     return err;
 
-  userkey = shishi_keys_for_serverrealm_in_file (handle,
-						 arg->keyfile,
-						 username, realm);
-  if (!userkey)
+  serverkey = shishi_keys_for_serverrealm_in_file (handle,
+						   arg->keyfile,
+						   servername, realm);
+  if (!serverkey)
     return !SHISHI_OK;
+
+  err = shishi_tkt_build (tkt, serverkey);
+  if (err)
+    return err;
 
   err = shishi_encticketpart_get_key
     (handle,
      shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
      &sessiontktkey);
-
-  err = shishi_tkt_build (tkt, sessiontktkey);
-  if (err)
-    return err;
-
-  shishi_ticket_print (handle, stdout, shishi_tkt_ticket (tkt));
 
   err = shishi_tgs_rep_build (tgs, sessiontktkey);
   if (err)
@@ -680,12 +660,30 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 
   if (arg->verbose)
     {
+      puts("KDC-REQ in:");
       shishi_kdcreq_print (handle, stderr, shishi_tgs_req (tgs));
+      puts("AP-REQ in KDC-REQ:");
+      shishi_apreq_print (handle, stderr, shishi_ap_req (shishi_tgs_ap (tgs)));
+      puts("Authenticator in AP-REQ in KDC-REQ:");
+      shishi_authenticator_print (handle, stderr, shishi_ap_authenticator
+				  (shishi_tgs_ap (tgs)));
+      puts("Ticket in AP-REQ:");
+      shishi_ticket_print (handle, stdout,
+			   shishi_tkt_ticket
+			   (shishi_ap_tkt (shishi_tgs_ap (tgs))));
+      puts("EncTicketPart in AP-REQ:");
+      shishi_encticketpart_print (handle, stdout,
+				  shishi_tkt_encticketpart
+				  (shishi_ap_tkt (shishi_tgs_ap (tgs))));
+      puts("Ticket in TGS-REP:");
+      shishi_ticket_print (handle, stdout, shishi_tkt_ticket (tkt));
+      puts("EncTicketPart in TGS-REP:");
       shishi_encticketpart_print (handle, stderr,
 				  shishi_tkt_encticketpart (tkt));
-      shishi_ticket_print (handle, stderr, shishi_tkt_ticket (tkt));
+      puts("EncKDCRepPart in TGS-REP:");
       shishi_enckdcreppart_print (handle, stderr,
 				  shishi_tkt_enckdcreppart (tkt));
+      puts("KDC-REP:");
       shishi_kdcrep_print (handle, stderr, shishi_tgs_rep (tgs));
     }
 
@@ -1115,6 +1113,37 @@ doit (Shishi * handle, struct arguments *arg)
 }
 
 int
+launch_1 (Shishi * handle, struct arguments *arg)
+{
+  char *tgtname;
+  int rc;
+
+  rc = setup_fatal_krberror (handle);
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "Cannot allocate fatal error message\n");
+      return 1;
+    }
+
+  asprintf(&tgtname, "krbtgt/%s", shishi_realm_default (handle));
+  arg->tgskey = shishi_keys_for_serverrealm_in_file
+    (handle, arg->keyfile, tgtname, shishi_realm_default (handle));
+  free (tgtname);
+  if (!arg->tgskey)
+    {
+      syslog (LOG_ERR, "Key for krbtgt/%s not found in %s\n",
+	      shishi_realm_default (handle), arg->keyfile);
+      return 1;
+    }
+
+  rc = doit (handle, arg);
+
+  shishi_key_done (&arg->tgskey);
+
+  return rc;
+}
+
+int
 launch (struct arguments *arg)
 {
   Shishi * handle;
@@ -1127,14 +1156,7 @@ launch (struct arguments *arg)
       return 1;
     }
 
-  rc = setup_fatal_krberror (handle);
-  if (rc != SHISHI_OK)
-    {
-      syslog (LOG_ERR, "Cannot allocate fatal error message\n");
-      return 1;
-    }
-
-  rc = doit (handle, arg);
+  rc = launch_1 (handle, arg);
 
   shishi_done (handle);
 
