@@ -35,7 +35,7 @@ shishi_encapreppart (Shishi * handle)
     return NULL;
 
   res = shishi_asn1_write (handle, node, "EncAPRepPart.ctime",
-			  shishi_generalize_time (handle, time (NULL)), 0);
+			   shishi_generalize_time (handle, time (NULL)), 0);
   if (res != SHISHI_OK)
     goto error;
 
@@ -89,7 +89,8 @@ shishi_encapreppart_print (Shishi * handle, FILE * fh,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_encapreppart_save (Shishi * handle, FILE * fh, Shishi_asn1 encapreppart)
+shishi_encapreppart_save (Shishi * handle, FILE * fh,
+			  Shishi_asn1 encapreppart)
 {
   return _shishi_save_data (handle, fh, encapreppart, "EncAPRepPart");
 }
@@ -253,8 +254,9 @@ shishi_encapreppart_get_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read (handle, encapreppart, "EncAPRepPart.subkey.keyvalue",
-			  keyvalue, keyvalue_len);
+  res =
+    shishi_asn1_read (handle, encapreppart, "EncAPRepPart.subkey.keyvalue",
+		      keyvalue, keyvalue_len);
   if (res != SHISHI_OK)
     return res;
 
@@ -335,7 +337,8 @@ shishi_encapreppart_time_copy (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (encapreppart, "EncAPRepPart.cusec", buf, buflen);
+  res = shishi_asn1_write (handle, encapreppart, "EncAPRepPart.cusec",
+			   buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
