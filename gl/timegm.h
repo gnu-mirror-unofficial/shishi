@@ -22,10 +22,10 @@
 
 #else
 
-/* Get time_t and struct tm */
+/* Get time_t and struct tm.  */
 #include <time.h>
 
-/* Convert calendar time to simple time, inverse of mktime. */
+/* Convert calendar time to simple time, inverse of mktime.  */
 extern time_t timegm (struct tm *tm);
 
 #endif

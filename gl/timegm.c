@@ -20,7 +20,7 @@
 # include <config.h>
 #endif
 
-/* Specification.  Get mktime and gmtime declaration.  */
+/* Specification.  Get mktime and gmtime declarations.  */
 #include "timegm.h"
 
 /* Converts struct tm to time_t, assuming the data in tm is UTC rather
@@ -61,6 +61,7 @@
    Mark Baushke <mdb@cisco.com> and the rest of the Gurus at CISCO.
    Further improved by Roger with assistance from Edward J. Sabol
    based on input by Jamie Zawinski.  */
+
 time_t
 timegm (struct tm *tm)
 {
@@ -68,12 +69,12 @@ timegm (struct tm *tm)
   struct tm *tg;
 
   tl = mktime (tm);
-  if (tl == (time_t) - 1)
+  if (tl == (time_t) -1)
     {
       tm->tm_hour--;
       tl = mktime (tm);
-      if (tl == (time_t) - 1)
-	return (time_t) - 1;
+      if (tl == (time_t) -1)
+	return (time_t) -1;
       tl += 3600;
     }
 #if HAVE_GMTIME_R && HAVE_DECL_GMTIME_R
@@ -83,12 +84,12 @@ timegm (struct tm *tm)
 #endif
   tg->tm_isdst = 0;
   tb = mktime (tg);
-  if (tb == (time_t) - 1)
+  if (tb == (time_t) -1)
     {
       tg->tm_hour--;
       tb = mktime (tg);
-      if (tb == (time_t) - 1)
-	return (time_t) - 1;
+      if (tb == (time_t) -1)
+	return (time_t) -1;
       tb += 3600;
     }
   return (tl - (tb - tl));
