@@ -286,6 +286,10 @@ shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
   int i;
   int res;
 
+  /* XXX
+     Cannot handle bit strings longer than 32 bits.
+     Currently not needed though. */
+
   for (i = 0; i < 4; i++)
     {
       buf[i] = ((((flags & (0xFF << 8 * i)) >> 7) & 0x01) |
@@ -298,8 +302,7 @@ shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
 		(((flags & (0xFF << 8 * i)) << 7) & 0x80)) << (8 * i);
     }
 
-  buflen = sizeof (buf);
-  res = shishi_asn1_write (handle, node, field, buf, buflen);
+  res = shishi_asn1_write (handle, node, field, buf, 32);
   if (res != SHISHI_OK)
     return res;
 
