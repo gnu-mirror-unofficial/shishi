@@ -172,35 +172,6 @@ shishi_asreq (Shishi * handle)
   return _shishi_kdcreq (handle, 1);
 }
 
-ASN1_TYPE
-shishi_asreq_rsc (Shishi * handle, char *realm, char *server, char *client)
-{
-  ASN1_TYPE req = ASN1_TYPE_EMPTY;
-  int res;
-
-  req = shishi_asreq (handle);
-  if (req == ASN1_TYPE_EMPTY)
-    return ASN1_TYPE_EMPTY;
-
-  res = shishi_kdcreq_set_realmserver (handle, req, realm, server);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not set realm and server in KDC-REQ: %s\n"),
-	       shishi_strerror (res));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  res = shishi_kdcreq_set_cname (handle, req, SHISHI_NT_PRINCIPAL, client);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not set cname: %s\n",
-			   shishi_strerror_details (handle));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return req;
-}
-
 /**
  * shishi_tgs_req:
  * @handle: shishi handle as allocated by shishi_init().
@@ -214,39 +185,6 @@ ASN1_TYPE
 shishi_tgsreq (Shishi * handle)
 {
   return _shishi_kdcreq (handle, 0);
-}
-
-
-ASN1_TYPE
-shishi_tgsreq_rst (Shishi * handle,
-		   char *realm, char *server, Shishi_ticket * ticket)
-{
-  ASN1_TYPE req = ASN1_TYPE_EMPTY;
-  int res;
-
-  req = shishi_tgsreq (handle);
-  if (req == ASN1_TYPE_EMPTY)
-    return ASN1_TYPE_EMPTY;
-
-  res = shishi_kdcreq_set_realmserver (handle, req, realm, server);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not set realm and server in KDC-REQ: %s\n"),
-	       shishi_strerror (res));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  res = shishi_kdcreq_make_padata_tgs (handle, req,
-				       shishi_ticket_ticket (ticket),
-				       shishi_ticket_key (ticket));
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not make TGS PA-DATA: %s\n",
-			   shishi_strerror (res));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return req;
 }
 
 /**
@@ -755,65 +693,4 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
 				  SHISHI_PA_TGS_REQ, data, datalen);
 
   return res;
-}
-
-/**
- * shishi_kdcreq_make_padata_tgs:
- * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: KDC-REQ to add PA-DATA to.
- * @ticket: input variable with ticket to add to AP-REQ.
- * @enckdcreppart: input variable with encryption key details.
- *
- * Set ticket in KDC-REQ and create an AP-REQ for ticket, that
- * protects the KDC-REQ.req-body, and add it to the KDC-REQ using
- * shishi_kdcreq_add_padata_tgs().
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_kdcreq_make_padata_tgs (Shishi * handle,
-			       ASN1_TYPE kdcreq,
-			       ASN1_TYPE ticket,
-			       Shishi_key *key)
-{
-  ASN1_TYPE apreq = ASN1_TYPE_EMPTY;
-  int res;
-
-  apreq = shishi_apreq (handle);
-  if (apreq == NULL)
-    {
-      shishi_error_printf (handle, "Could not create APREQ: %s\n",
-			   shishi_strerror_details (handle));
-      return SHISHI_ASN1_ERROR;
-    }
-
-  res = shishi_apreq_set_ticket (handle, apreq, ticket);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not set ticket: %s\n",
-			   shishi_strerror_details (handle));
-      return res;
-    }
-
-  res = shishi_apreq_make_authenticator
-    (handle, apreq, key,
-     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
-     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR,
-     kdcreq, "KDC-REQ.req-body");
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not make authenticator: %s\n",
-			   shishi_strerror_details (handle));
-      return res;
-    }
-
-  res = shishi_kdcreq_add_padata_tgs (handle, kdcreq, apreq);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not add padata to TGS: %s\n",
-			   shishi_strerror_details (handle));
-      return res;
-    }
-
-  return SHISHI_OK;
 }
