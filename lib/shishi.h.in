@@ -346,14 +346,14 @@ extern const char *shishi_principal_default (Shishi * handle);
 extern void shishi_principal_default_set (Shishi * handle,
 					  const char *principal);
 extern int shishi_principal_name_get (Shishi * handle, Shishi_asn1 namenode,
-				      char *namefield, char *out,
-				      int *outlen);
+				      const char *namefield, char *out,
+				      size_t *outlen);
 extern int shishi_principal_name_realm_get (Shishi * handle,
 					    Shishi_asn1 namenode,
-					    char *namefield,
+					    const char *namefield,
 					    Shishi_asn1 realmnode,
-					    char *realmfield, char *out,
-					    int *outlen);
+					    const char *realmfield,
+					    char *out, size_t *outlen);
 
 /* ticket.c */
 extern int shishi_ticket_sname_get (Shishi * handle,
@@ -542,6 +542,10 @@ extern int shishi_authenticator_cnamerealm_get (Shishi * handle,
 						int *cnamerealmlen);
 extern int shishi_authenticator_remove_cksum (Shishi * handle,
 					      Shishi_asn1 authenticator);
+extern int shishi_authenticator_cksum (Shishi * handle,
+				       Shishi_asn1 authenticator,
+				       int *cksumtype,
+				       char *cksum, size_t *cksumlen);
 extern int shishi_authenticator_set_cksum (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   int cksumtype,
@@ -551,6 +555,19 @@ extern int shishi_authenticator_add_cksum (Shishi * handle,
 					   Shishi_key * key,
 					   int keyusage,
 					   char *data, int datalen);
+extern int
+shishi_authenticator_clear_authorizationdata (Shishi * handle,
+					      Shishi_asn1 authenticator);
+extern int
+shishi_authenticator_add_authorizationdata (Shishi * handle,
+					    Shishi_asn1 authenticator,
+					    int adtype,
+					    char *addata, int addatalen);
+extern int
+shishi_authenticator_authorizationdata (Shishi * handle,
+					Shishi_asn1 authenticator,
+					int *adtype,
+					char *addata, int *addatalen, int nth);
 extern int shishi_authenticator_read (Shishi * handle,
 				      FILE * fh, Shishi_asn1 * authenticator);
 extern int shishi_authenticator_parse (Shishi * handle,
@@ -647,6 +664,9 @@ extern int shishi_asreq_cnamerealm_get (Shishi * handle, Shishi_asn1 kdcreq,
 					size_t * cnamerealmlen);
 extern int shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq,
 				unsigned long *nonce);
+extern int shishi_kdcreq_cname_get (Shishi * handle,
+				    Shishi_asn1 kdcreq,
+				    char *cname, size_t * cnamelen);
 extern int shishi_kdcreq_set_cname (Shishi * handle, Shishi_asn1 kdcreq,
 				    Shishi_name_type name_type,
 				    const char *principal);
@@ -658,6 +678,8 @@ extern int shishi_kdcreq_snamerealm_get (Shishi * handle, Shishi_asn1 kdcreq,
 extern int shishi_kdcreq_set_sname (Shishi * handle, Shishi_asn1 kdcreq,
 				    Shishi_name_type name_type,
 				    char *service[]);
+extern int shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
+				    char *realm, int *realmlen);
 extern int shishi_kdcreq_set_realm (Shishi * handle, Shishi_asn1 node,
 				    const char *realm);
 extern int shishi_kdcreq_set_server (Shishi * handle, Shishi_asn1 req,
