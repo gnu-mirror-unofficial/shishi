@@ -134,7 +134,7 @@ raw_des_checksum (Shishi * handle,
 {
 #ifdef USE_GCRYPT
   gpg_error_t err;
-  int alg = (alg == SHISHI_DES_CBC_MD4) ? GCRY_MD_MD4 : GCRY_MD_MD5;
+  int alg = (algo == SHISHI_DES_CBC_MD4) ? GCRY_MD_MD4 : GCRY_MD_MD5;
   int hlen = gcry_md_get_algo_dlen (alg);
   char buffer[8 + MAX_HASH_LEN];
   char *p;
