@@ -1,3 +1,315 @@
+2004-01-02  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.12.
+
+2004-01-02  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.h: Fix TLS.
+
+2004-01-02  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Remove shisa.sh for now.
+
+2004-01-02  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: Generated.
+
+2004-01-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in:
+	(SHISHI_KRB5_GSSAPI_CKSUM): Add.
+
+2003-12-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2003-12-31  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add TLS resume.
+
+2003-12-31  Simon Josefsson <simon@josefsson.org>
+
+	* src/starttls.c: Log fix.
+
+2003-12-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, lib/starttls.c, src/Makefile.am, src/kdc.h, src/resume.c,
+	src/shishid.c, src/shishid.ggo, src/starttls.c: Add TLS resume
+	support.
+
+2003-12-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-12-28  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix.
+
+2003-12-28  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Add.
+
+2003-12-28  Simon Josefsson <simon@josefsson.org>
+
+	* lib/enckdcreppart.c, lib/shishi.h.in, lib/tkt.c: Add.
+
+2003-12-28  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Set flags.
+
+2003-12-28  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c, lib/shishi.h.in, lib/tgs.c: Add.
+
+2003-12-28  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encticketpart.c: Fix flags.
+
+2003-12-28  Simon Josefsson <simon@josefsson.org>
+
+	* lib/apreq.c, lib/asn1.c, lib/kdcrep.c, lib/shishi.h.in,
+	lib/ticket.c, lib/tkt.c:
+	(shishi_ticket): Add, update callers.
+
+2003-12-28  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c, src/shishid.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Doc fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Cleanup TGS.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/tkt.c, lib/tkts.c:
+	(shishi_tkt_server): Fix, and update callers.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tgs.c, lib/tkt.c, src/kdc.c: Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/shishi.h.in, lib/tgs.c, lib/tkt.c: Add.  Fix.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Cleanup.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c, src/kdc.h: Cleanup.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Improve logging for AS-REQ.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* db/err.c, db/file.c, db/shisa.h: Add.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Improve logging and error handling.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c:
+	(shishi_as_krberror_der): Use shishi_krberror_der.
+
+2003-12-27  Simon Josefsson <simon@josefsson.org>
+
+	* db/file.c, db/shisa.h, src/shisa.c, src/shisa.ggo: Add priority
+	field to dbkey.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha: Fix.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha, configure.ac: Fixes for building from CVS on
+	Fedora.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* tests/shisa.sh: Add.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/core.c: Doc fixes.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Make Shisa gdoc files.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/setup.c: Typo.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am, db/cfg.c, db/config.c, db/core.c, db/db.c,
+	db/err.c, db/error.c, db/file.c, db/fileutil.c, db/info.h,
+	db/init.c, db/internal.h, db/setup.c: Rename files to work around
+	gdoc limitation.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/db.c, db/internal.h: Sync.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Dist shisa.sh.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/fileutil.h: Add.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/core.c, db/db.c, db/file.c, db/internal.h: Indent.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/core.c, db/error.c, db/file.h, db/internal.h, db/shisa.h: Fix
+	keys_find and key_remove.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c: Fix.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/file.c: Fix.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/file.c: Fix keys_find.  Add key_remove.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c: Use new API.  Fixes.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.ggo, tests/Makefile.am, tests/shisa.sh: Add.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Use new API.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am, db/core.c, db/db.c, db/file.c, db/file.h,
+	db/internal.h, db/shisa.h: Key API fixes.
+
+2003-12-26  Simon Josefsson <simon@josefsson.org>
+
+	* db/cfg.c: Parse db statements.  Fail on cfg errors.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/Makefile.am: Add.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* db/cfg.c, db/core.c, db/db.c, db/error.c, db/file.c,
+	db/fileutil.c, db/fileutil.h, db/internal.h, db/shisa.h,
+	lib/authenticator.c, lib/cfg.c, lib/diskio.h, lib/kdc.c,
+	lib/kdcreq.c, lib/libgcrypt.c, lib/principal.c, lib/shishi.h.in,
+	lib/starttls.c, src/kdc.c, src/kdc.h, src/shisa.c, src/shishi.c,
+	src/shishid.c, src/starttls.c, tests/crypto-ctx.c,
+	tests/low-crypto.c: Indent.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/aprep.c, lib/apreq.c, lib/asn1.c,
+	lib/asn1.h, lib/authenticator.c, lib/cfg.c, lib/cfg.h,
+	lib/crypto-3des.c, lib/crypto-aes.c, lib/crypto-des.c,
+	lib/crypto-rc4.c, lib/crypto.c, lib/crypto.h, lib/diskio.c,
+	lib/diskio.h, lib/encapreppart.c, lib/gztime.c, lib/init.c,
+	lib/internal.h, lib/kdcrep.c, lib/kdcreq.c, lib/krberror.c,
+	lib/netio.c, lib/priv.c, lib/realm.c, lib/resolv.c, lib/resolver.h,
+	lib/safe.c, lib/starttls.h, lib/utils.c, lib/utils.h: Separate
+	internal.h somewhat.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Use ASCII.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: We need gnutls 1.0.0 or higher.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
 2003-12-21  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.11.
