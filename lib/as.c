@@ -135,7 +135,7 @@ shishi_as_req_build (Shishi_as * as)
  * @as: structure that holds information about AS exchange
  * @asreq: asreq to store in AS.
  *
- * Set the AS-REQ in the AP exchange.
+ * Set the AS-REQ in the AS exchange.
  **/
 void
 shishi_as_req_set (Shishi_as * as, Shishi_asn1 asreq)
@@ -387,7 +387,7 @@ shishi_as_rep_der (Shishi_as * as, char *out, int *outlen)
  * @as: structure that holds information about AS exchange
  * @asrep: asrep to store in AS.
  *
- * Set the AS-REP in the AP exchange.
+ * Set the AS-REP in the AS exchange.
  **/
 void
 shishi_as_rep_set (Shishi_as * as, Shishi_asn1 asrep)
@@ -463,7 +463,7 @@ shishi_as_krberror_der (Shishi_as * as, char *out, int *outlen)
  * @as: structure that holds information about AS exchange
  * @krberror: krberror to store in AS.
  *
- * Set the KRB-ERROR in the AP exchange.
+ * Set the KRB-ERROR in the AS exchange.
  **/
 void
 shishi_as_krberror_set (Shishi_as * as, Shishi_asn1 krberror)
@@ -491,7 +491,7 @@ shishi_as_tkt (Shishi_as * as)
  * @as: structure that holds information about AS exchange
  * @tkt: tkt to store in AS.
  *
- * Set the Tkt in the AP exchange.
+ * Set the Tkt in the AS exchange.
  **/
 void
 shishi_as_tkt_set (Shishi_as * as, Shishi_tkt * tkt)
