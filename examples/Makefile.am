@@ -20,7 +20,8 @@
 
 LDADD = @LTLIBINTL@ ../lib/libshishi.la -L../gl -lfoo
 
-noinst_PROGRAMS = client client-cksum client-safe server
+noinst_PROGRAMS = client client-cksum client-safe client-priv \
+	server
 
 INCLUDES = -I$(top_srcdir)/gl -I../lib
 
