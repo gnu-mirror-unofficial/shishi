@@ -625,7 +625,7 @@ des_cbc_check (char key[8], char *data, int n_data)
 static int
 des_random_to_key (Shishi * handle,
 		   char *random,
-		   int randomlen,
+		   size_t randomlen,
 		   Shishi_key *outkey)
 {
   char tmp[MAX_RANDOM_LEN];
@@ -850,10 +850,8 @@ checksum_md4 (Shishi * handle,
 {
   int res;
   char buffer[BUFSIZ];
-  char confounder[8];
   char md[16];
   GCRY_MD_HD hd;
-  int i;
   char *p;
 
   if (inlen + 8 > BUFSIZ)
@@ -919,10 +917,7 @@ checksum_md5 (Shishi * handle,
 {
   int res;
   char buffer[BUFSIZ];
-  char confounder[8];
-  char md[16];
   GCRY_MD_HD hd;
-  int i;
   char *p;
 
   if (inlen + 8 > BUFSIZ)

@@ -381,7 +381,7 @@ shishi_ticket_realm (Shishi_ticket * ticket, char *realm, int *realmlen)
 
 int
 shishi_ticket_server (Shishi_ticket * ticket,
-		      const char *server, int *serverlen)
+		      char *server, int *serverlen)
 {
   return shishi_ticket_sname_get (ticket->handle, ticket->ticket,
 				  server, serverlen);
@@ -456,7 +456,7 @@ shishi_ticket_lastreq (Shishi_ticket * ticket,
 		       Shihi_lrtype lrtype)
 {
   unsigned char format[BUFSIZ];
-  int tmplrtype;
+  Shihi_lrtype tmplrtype;
   int res;
   int i, n;
 
@@ -514,28 +514,27 @@ int
 shishi_ticket_lastreq_pretty_print (Shishi_ticket * ticket, FILE *fh)
 {
   time_t t;
-  int res;
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_INITIAL_TGT_REQUEST);
   if (t != (time_t) - 1)
-    printf(_("Time of last initial request for a TGT:\t%s"), ctime(&t));
+    fprintf(fh, _("Time of last initial request for a TGT:\t%s"), ctime(&t));
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_INITIAL_REQUEST);
   if (t != (time_t) - 1)
-    printf("Time of last initial request:\t%s", ctime(&t));
+    fprintf(fh, "Time of last initial request:\t%s", ctime(&t));
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_NEWEST_TGT_ISSUE);
   if (t != (time_t) - 1)
-    printf("Time of issue for the newest ticket-granting ticket used:\t%s",
+    fprintf(fh, "Time of issue for the newest ticket-granting ticket used:\t%s",
 	   ctime(&t));
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_RENEWAL);
   if (t != (time_t) - 1)
-    printf("Time of the last renewal:\t%s", ctime(&t));
+    fprintf(fh, "Time of the last renewal:\t%s", ctime(&t));
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_REQUEST);
   if (t != (time_t) - 1)
-    printf("Time of last request:\t%s", ctime(&t));
+    fprintf(fh, "Time of last request:\t%s", ctime(&t));
 
   return SHISHI_OK;
 }
@@ -688,26 +687,26 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
   if (res != SHISHI_OK)
     return res;
   buf[buflen] = '\0';
-  printf ("%s:\n", buf);
+  fprintf (fh, "%s:\n", buf);
 
   t = shishi_ticket_authctime (ticket);
-  printf (_("Authtime:\t%s"), ctime (&t));
+  fprintf (fh, _("Authtime:\t%s"), ctime (&t));
 
   t = shishi_ticket_startctime (ticket);
   if (t != (time_t) - 1)
-    printf (_("Starttime:\t%s"), ctime (&t));
+    fprintf (fh, _("Starttime:\t%s"), ctime (&t));
 
   t = shishi_ticket_endctime (ticket);
   p = ctime (&t);
   p[strlen (p) - 1] = '\0';
-  printf (_("Endtime:\t%s"), p);
+  fprintf (fh, _("Endtime:\t%s"), p);
   if (!shishi_ticket_valid_now_p (ticket))
-    printf (" (EXPIRED)");
-  printf ("\n");
+    fprintf (fh, " (EXPIRED)");
+  fprintf (fh, "\n");
 
   t = shishi_ticket_renew_tillc (ticket);
   if (t != (time_t) - 1)
-    printf (_("Renewable until:\t%s"), ctime (&t));
+    fprintf (fh, _("Renewable until:\t%s"), ctime (&t));
 
   buflen = sizeof (buf);
   buf[0] = '\0';
@@ -719,7 +718,7 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
 					      ticket->ticket, &keytype);
   if (res != SHISHI_OK)
     return res;
-  printf (_("Server:\t\t%s key %s (%d)\n"), buf,
+  fprintf (fh, _("Server:\t\t%s key %s (%d)\n"), buf,
 	  shishi_cipher_name (keytype), keytype);
 
   res = shishi_ticket_keytype (ticket, &keytype);
@@ -729,7 +728,7 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
 					  ticket->kdcrep, &etype);
   if (res != SHISHI_OK)
     return res;
-  printf (_("Ticket key:\t%s (%d) protected by %s (%d)\n"),
+  fprintf (fh, _("Ticket key:\t%s (%d) protected by %s (%d)\n"),
 	  shishi_cipher_name (keytype), keytype,
 	  shishi_cipher_name (etype), etype);
 
@@ -739,52 +738,35 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
     return res;
   if (flags)
     {
-      printf (_("Ticket flags:\t"));
+      fprintf (fh, _("Ticket flags:\t"));
       if (shishi_ticket_forwardable_p (ticket))
-	printf ("FORWARDABLE ");
+	fprintf (fh, "FORWARDABLE ");
       if (shishi_ticket_forwarded_p (ticket))
-	printf ("FORWARDED ");
+	fprintf (fh, "FORWARDED ");
       if (shishi_ticket_proxiable_p (ticket))
-	printf ("PROXIABLE ");
+	fprintf (fh, "PROXIABLE ");
       if (shishi_ticket_proxy_p (ticket))
-	printf ("PROXY ");
+	fprintf (fh, "PROXY ");
       if (shishi_ticket_may_postdate_p (ticket))
-	printf ("MAYPOSTDATE ");
+	fprintf (fh, "MAYPOSTDATE ");
       if (shishi_ticket_postdated_p (ticket))
-	printf ("POSTDATED ");
+	fprintf (fh, "POSTDATED ");
       if (shishi_ticket_invalid_p (ticket))
-	printf ("INVALID ");
+	fprintf (fh, "INVALID ");
       if (shishi_ticket_renewable_p (ticket))
-	printf ("RENEWABLE ");
+	fprintf (fh, "RENEWABLE ");
       if (shishi_ticket_initial_p (ticket))
-	printf ("INITIAL ");
+	fprintf (fh, "INITIAL ");
       if (shishi_ticket_pre_authent_p (ticket))
-	printf ("PREAUTHENT ");
+	fprintf (fh, "PREAUTHENT ");
       if (shishi_ticket_hw_authent_p (ticket))
-	printf ("HWAUTHENT ");
+	fprintf (fh, "HWAUTHENT ");
       if (shishi_ticket_transited_policy_checked_p (ticket))
-	printf ("TRANSITEDPOLICYCHECKED ");
+	fprintf (fh, "TRANSITEDPOLICYCHECKED ");
       if (shishi_ticket_ok_as_delegate_p (ticket))
-	printf ("OKASDELEGATE ");
-      printf ("(%d)\n", flags);
+	fprintf (fh, "OKASDELEGATE ");
+      fprintf (fh, "(%d)\n", flags);
     }
-
-  return SHISHI_OK;
-}
-
-int
-shishi_ticket_decrypt (Shishi_ticket * ticket,
-		       Shishi_key *key)
-{
-  int rc;
-  ASN1_TYPE encticketpart;
-
-  rc = shishi_asn1ticket_decrypt(ticket->handle, ticket->ticket, key,
-				 &encticketpart);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  ticket->encticketpart = encticketpart;
 
   return SHISHI_OK;
 }
@@ -796,11 +778,10 @@ shishi_asn1ticket_decrypt (Shishi * handle,
 			   ASN1_TYPE * encticketpart)
 {
   int res;
-  int i, len;
+  int i;
   int buflen = BUFSIZ;
   unsigned char buf[BUFSIZ];
   unsigned char cipher[BUFSIZ];
-  int realmlen = BUFSIZ;
   int cipherlen;
   int etype;
 
@@ -847,6 +828,23 @@ shishi_asn1ticket_decrypt (Shishi * handle,
 			   "Password probably correct (decrypt ok) though\n");
       return SHISHI_ASN1_ERROR;
     }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_ticket_decrypt (Shishi_ticket * ticket,
+		       Shishi_key *key)
+{
+  int rc;
+  ASN1_TYPE encticketpart;
+
+  rc = shishi_asn1ticket_decrypt(ticket->handle, ticket->ticket, key,
+				 &encticketpart);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  ticket->encticketpart = encticketpart;
 
   return SHISHI_OK;
 }

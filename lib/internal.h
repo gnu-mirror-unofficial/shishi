@@ -171,69 +171,18 @@ struct Shishi
   int nrealminfos;
   char *kdc;
   char error[1024];
-  char *gztime_buf[40];
+  char gztime_buf[40];
   char *usercfgfile;
   char *ticketsetdefaultfile;
   char *hostkeysdefaultfile;
   char *stringprocess;
   Shishi_ticketset *ticketset;
-  /* XXX remove: */
-  ASN1_TYPE lastencapreppart;
 };
 
 #define BASE_DIR "/.shishi"
 #define TICKET_FILE BASE_DIR "/tickets"
 #define USERCFG_FILE BASE_DIR "/config"
 
-/* asn1.c */
-
-int
-_shishi_a2d (Shishi *handle, ASN1_TYPE node, char *der, int *len);
-
-int
-_shishi_a2d_field (Shishi *handle,
-		   ASN1_TYPE node, char *field,
-		   char *der, int *len);
-
-ASN1_TYPE
-shishi_d2a_enckdcreppart (Shishi * handle, char *der, int der_len);
-ASN1_TYPE
-shishi_d2a_enctgsreppart (Shishi * handle, char *der, int der_len);
-ASN1_TYPE
-shishi_d2a_kdcrep (Shishi * handle, char *der, int der_len);
-
-ASN1_TYPE
-shishi_d2a_ticket (Shishi *handle, char *der, int der_len);
-
-int
-_shishi_asn1_done (Shishi * handle, ASN1_TYPE node);
-
-int
-_shishi_asn1_field (Shishi * handle,
-		    ASN1_TYPE node, char *data, size_t *datalen, char *field);
-int
-_shishi_asn1_optional_field (Shishi * handle,
-			     ASN1_TYPE node,
-			     char *data, size_t *datalen, char *field);
-int
-_shishi_asn1_integer_field (Shishi * handle, ASN1_TYPE node,
-			    int *i, char *field);
-int
-shishi_principal_name_get (Shishi * handle,
-			   ASN1_TYPE namenode,
-			   char *namefield, char *out, int *outlen);
-
-int
-shishi_format_principal_name (Shishi * handle,
-			      ASN1_TYPE namenode,
-			      char *namefield,
-			      ASN1_TYPE realmnode,
-			      char *realmfield, char *out, int *outlen);
-
-ASN1_TYPE
-shishi_der2asn1_authenticator (ASN1_TYPE definitions,
-			       char *der,
-			       int der_len, char *errorDescription);
 int
 _shishi_print_armored_data (Shishi * handle,
 			    FILE * fh,
@@ -249,6 +198,8 @@ _shishi_authenticator_input (Shishi * handle,
 int
 _shishi_apreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * apreq, int type);
 int
+_shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type);
+int
 _shishi_kdcreq_input (Shishi * handle,
 		      FILE * fh, ASN1_TYPE * asreq, int type);
 int
@@ -258,9 +209,8 @@ int
 _shishi_krberror_input (Shishi * handle,
 			FILE * fh, ASN1_TYPE * krberror, int type);
 int
-shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key);
-int
-shishi_key_print (Shishi * handle, FILE * fh, Shishi_key *key);
+_shishi_encapreppart_input (Shishi * handle, FILE * fh,
+			    ASN1_TYPE * encapreppart, int type);
 
 #if WITH_DMALLOC
 #include <dmalloc.h>

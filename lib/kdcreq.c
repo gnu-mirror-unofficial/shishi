@@ -27,14 +27,14 @@
 #define SHISHI_AS_REQ_DEFAULT_MSG_TYPE_LEN  0
 #define SHISHI_TGS_REQ_DEFAULT_MSG_TYPE      "12"
 #define SHISHI_TGS_REQ_DEFAULT_MSG_TYPE_LEN  0
-#define SHISHI_KDCREQ_DEFAULT_REQ_BODY_KDC_OPTIONS      "\x00\x00\x00\x00"
+#define SHISHI_KDCREQ_DEFAULT_REQ_BODY_KDC_OPTIONS      "\0x00\0x00\0x00\0x00"
 #define SHISHI_KDCREQ_DEFAULT_REQ_BODY_KDC_OPTIONS_LEN  32
 #define SHISHI_KDCREQ_DEFAULT_REQ_BODY_SNAME_NAME_TYPE "1"	/* SHISHI_NT_PRINCIPAL */
 #define SHISHI_KDCREQ_DEFAULT_REQ_BODY_SNAME_NAME_TYPE_LEN 0
 #define SHISHI_KDCREQ_DEFAULT_REQ_BODY_TILL ""
 #define SHISHI_KDCREQ_DEFAULT_REQ_BODY_TILL_LEN 1
 
-ASN1_TYPE
+static ASN1_TYPE
 _shishi_kdcreq (Shishi * handle, int as)
 {
   int res = ASN1_SUCCESS;
@@ -682,7 +682,7 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode AP-REQ: %s\n",
-			   shishi_strerror(handle));
+			   shishi_strerror(res));
       return SHISHI_ASN1_ERROR;
     }
 

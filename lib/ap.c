@@ -556,7 +556,7 @@ shishi_ap_req_build (Shishi_ap * ap)
 int
 shishi_ap_req_process (Shishi_ap * ap, Shishi_key *key)
 {
-  ASN1_TYPE ticket, encticketpart, authenticator;
+  ASN1_TYPE ticket, authenticator;
   Shishi_ticket *tkt;
   Shishi_key *tktkey;
   int rc;

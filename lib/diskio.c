@@ -39,7 +39,7 @@ _shishi_print_armored_data (Shishi * handle,
   int derlen = BUFSIZ;
   char b64der[BUFSIZ];
   int res;
-  int i;
+  size_t i;
 
   if (asn1 == ASN1_TYPE_EMPTY)
     return !SHISHI_OK;
@@ -143,10 +143,10 @@ shishi_encticketpart_print (Shishi * handle, FILE * fh,
 
 static int
 _shishi_read_armored_data (Shishi * handle,
-			   FILE * fh, char *buffer, int len, char *tag)
+			   FILE * fh, char *buffer, size_t len, char *tag)
 {
   int lno = 0;
-  int maxsize = len;
+  size_t maxsize = len;
   char line[BUFSIZ];
   char armorbegin[BUFSIZ];
   char armorend[BUFSIZ];
@@ -255,7 +255,7 @@ shishi_ticket_read (Shishi * handle, FILE * fh, ASN1_TYPE * ticket)
   return _shishi_ticket_input (handle, fh, ticket, 1);
 }
 
-int
+static int
 _shishi_enckdcreppart_input (Shishi * handle,
 			     FILE * fh, ASN1_TYPE * enckdcreppart, int type)
 {
@@ -441,7 +441,7 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, ASN1_TYPE * asrep, int type)
 	    {
 	      fprintf (stderr, "Could not DER decode KDC-REP: %s\n",
 		       shishi_strerror_details(handle));
-	      return ASN1_TYPE_EMPTY;
+	      return !SHISHI_OK;
 	    }
 
 	  fprintf (stderr, "Bug workaround code successful...\n");
@@ -800,8 +800,7 @@ int
 shishi_key_print (Shishi * handle, FILE * fh, Shishi_key *key)
 {
   char b64key[BUFSIZ];
-  int res;
-  int i;
+  size_t i;
 
   shishi_to_base64 (b64key, shishi_key_value(key),
 		    shishi_key_length(key), sizeof (b64key));
@@ -845,7 +844,7 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key *key)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_key_to_file (Shishi * handle, char *filename, Shishi *key)
+shishi_key_to_file (Shishi * handle, const char *filename, Shishi_key *key)
 {
   FILE *fh;
   int res;

@@ -93,7 +93,7 @@ int_vasprintf (char **result, const char *format, va_list * args)
     return 0;
 }
 
-int
+static int
 _shishi_vasprintf (char **result, const char *format, va_list args)
 {
   return int_vasprintf (result, format, &args);

@@ -21,16 +21,14 @@
 
 #include "internal.h"
 
-int
+static int
 shishi_sendrecv_udp (Shishi * handle,
 		     struct sockaddr *addr,
 		     char *indata,
 		     int inlen, char *outdata, int *outlen, int timeout)
 {
   struct sockaddr lsa;
-  struct hostent *he;
   struct sockaddr_in *lsa_inp = (struct sockaddr_in *) &lsa;
-  struct protoent *proto;
   int sockfd;
   int bytes_sent;
   struct sockaddr_storage from_sa;

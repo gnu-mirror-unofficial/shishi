@@ -31,8 +31,8 @@ _shishi_gettext (const char *str)
   return dgettext (PACKAGE, str);
 }
 
-void
-_shishi_gettext_init ()
+static void
+_shishi_gettext_init (void)
 {
   bindtextdomain (PACKAGE, LOCALEDIR);
 #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
@@ -45,7 +45,7 @@ _shishi_gettext_init ()
 extern const ASN1_ARRAY_TYPE shishi_asn1_tab[];
 
 static ASN1_TYPE
-read_asn1 ()
+read_asn1 (void)
 {
   ASN1_TYPE definitions = ASN1_TYPE_EMPTY;
   int asn1_result = ASN1_SUCCESS;
@@ -135,7 +135,7 @@ shishi (void)
   return handle;
 }
 
-int
+static int
 _shishi_init_read (Shishi * handle,
 		   const char *ticketsetfile,
 		   const char *systemcfgfile,
@@ -240,14 +240,8 @@ shishi_init_with_paths (Shishi ** handle,
 			    systemcfgfile, usercfgfile);
 }
 
-ASN1_TYPE
-shishi_last_encapreppart (Shishi * handle)
-{
-  return handle->lastencapreppart;
-}
-
 void
-shishi_warn (Shishi * handle, char *fmt, ...)
+shishi_warn (Shishi * handle, const char *fmt, ...)
 {
   va_list ap;
   va_start (ap, fmt);

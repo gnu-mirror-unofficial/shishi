@@ -54,9 +54,6 @@ shishi_encapreppart (Shishi * handle)
   if (res != ASN1_SUCCESS)
     goto error;
 
-  /* see shishi_last_encapreppart() */
-  handle->lastencapreppart = node;
-
   return node;
 
 error:

@@ -169,7 +169,7 @@ aes256_string_to_key (Shishi * handle,
 static int
 aes128_random_to_key (Shishi * handle,
 		      char *random,
-		      int randomlen,
+		      size_t randomlen,
 		      Shishi_key *outkey)
 {
   if (randomlen < shishi_key_length(outkey))
@@ -183,7 +183,7 @@ aes128_random_to_key (Shishi * handle,
 static int
 aes256_random_to_key (Shishi * handle,
 		      char *random,
-		      int randomlen,
+		      size_t randomlen,
 		      Shishi_key *outkey)
 {
   if (randomlen < shishi_key_length(outkey))

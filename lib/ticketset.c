@@ -266,7 +266,6 @@ shishi_ticketset_new (Shishi_ticketset * ticketset,
 int
 shishi_ticketset_read (Shishi_ticketset * ticketset, FILE * fh)
 {
-  char *user;
   int res;
 
   res = SHISHI_OK;
@@ -354,7 +353,6 @@ shishi_ticketset_from_file (Shishi_ticketset * ticketset,
 int
 shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
 {
-  Shishi_ticket *ticket;
   int res;
   int i;
 
@@ -408,9 +406,7 @@ shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
 int
 shishi_ticketset_expire (Shishi_ticketset * ticketset)
 {
-  Shishi_ticket *ticket;
   int warn = 0;
-  int res;
   int i = 0;
 
   while (i < ticketset->ntickets)
@@ -481,10 +477,8 @@ int
 shishi_ticketset_print_for_service (Shishi_ticketset * ticketset,
 				    FILE * fh, char *service)
 {
-  Shishi_ticket *ticket;
-  int warn = 1;
   int res;
-  int ntickets, found;
+  int found;
   int i;
 
   found = 0;
@@ -781,7 +775,6 @@ void
 shishi_ticketset_done (Shishi_ticketset ** ticketset)
 {
   Shishi_ticketset *tset;
-  int i;
 
   if (!ticketset || !*ticketset)
     return;

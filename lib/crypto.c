@@ -221,7 +221,7 @@ simplified_hmac (Shishi * handle,
 {
   GCRY_MD_HD mdh;
   int halg = GCRY_MD_SHA1;
-  int hlen = gcry_md_get_algo_dlen (halg);
+  size_t hlen = gcry_md_get_algo_dlen (halg);
   unsigned char *hash;
   int res;
 
@@ -311,11 +311,11 @@ simplified_derivekey (Shishi * handle,
       uint32_t tmp = htonl (keyusage);
       memcpy (constant, &tmp, 4);
       if (derivekeymode == SHISHI_DERIVEKEYMODE_CHECKSUM)
-	constant[4] = '\x99';
+	constant[4] = '\0x99';
       else if (derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY)
-	constant[4] = '\x55';
+	constant[4] = '\0x55';
       else /* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
-	constant[4] = '\xAA';
+	constant[4] = '\0xAA';
 
       res = shishi_dk (handle, key, constant, 5, derivedkey);
     }
@@ -748,7 +748,7 @@ static cipherinfo *ciphers[] = {
 const char *
 shishi_cipher_name (int type)
 {
-  int i;
+  size_t i;
   char *p;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
@@ -771,7 +771,7 @@ shishi_cipher_name (int type)
 int
 shishi_cipher_blocksize (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -790,7 +790,7 @@ shishi_cipher_blocksize (int type)
 int
 shishi_cipher_minpadsize (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -809,7 +809,7 @@ shishi_cipher_minpadsize (int type)
 int
 shishi_cipher_confoundersize (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -828,7 +828,7 @@ shishi_cipher_confoundersize (int type)
 size_t
 shishi_cipher_keylen (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -847,7 +847,7 @@ shishi_cipher_keylen (int type)
 size_t
 shishi_cipher_randomlen (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -866,7 +866,7 @@ shishi_cipher_randomlen (int type)
 int
 shishi_cipher_defaultcksumtype (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -884,7 +884,7 @@ shishi_cipher_defaultcksumtype (int type)
 int
 shishi_cipher_parse (const char *cipher)
 {
-  int i;
+  size_t i;
   char *endptr;
 
   i = strtol (cipher, &endptr, 0);
@@ -902,7 +902,7 @@ shishi_cipher_parse (const char *cipher)
 static Shishi_random_to_key_function
 _shishi_cipher_random_to_key (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -914,7 +914,7 @@ _shishi_cipher_random_to_key (int type)
 static Shishi_string_to_key_function
 _shishi_cipher_string_to_key (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -926,7 +926,7 @@ _shishi_cipher_string_to_key (int type)
 static Shishi_encrypt_function
 _shishi_cipher_encrypt (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -938,7 +938,7 @@ _shishi_cipher_encrypt (int type)
 static Shishi_decrypt_function
 _shishi_cipher_decrypt (int type)
 {
-  int i;
+  size_t i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
@@ -1408,7 +1408,6 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
   char *a = NULL;
   int lcmmn = 0;
   int i = 0;
-  int k = 0;
 
   /*
     To n-fold a number X, replicate the input value to a length that is
@@ -1553,7 +1552,7 @@ shishi_dr (Shishi * handle,
   char plaintext[MAX_DR_CONSTANT];
   char nfoldconstant[MAX_DR_CONSTANT];
   int blocksize = shishi_cipher_blocksize (shishi_key_type(key));
-  int len, totlen, cipherlen;
+  int totlen, cipherlen;
   int res;
 
   if (VERBOSECRYPTO (handle))
@@ -1565,7 +1564,7 @@ shishi_dr (Shishi * handle,
       puts ("");
       binprint (shishi_key_value(key), shishi_key_type(key));
       puts ("");
-      printf ("\t ;; constant:\n", constant);
+      printf ("\t ;; constant  %s':\n", constant);
       escapeprint (constant, constantlen);
       hexprint (constant, constantlen);
       puts ("");
@@ -1651,7 +1650,6 @@ shishi_dk (Shishi * handle,
 	   Shishi_key *derivedkey)
 {
   char random[MAX_RANDOM_LEN];
-  int randomlen;
   int res;
 
   if (VERBOSECRYPTO (handle))

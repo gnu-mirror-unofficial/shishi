@@ -62,7 +62,7 @@ shishi_authenticator (Shishi * handle)
     goto error;
 
   gettimeofday (&tv, &tz);
-  sprintf (usec, "%d", tv.tv_usec % 1000000);
+  sprintf (usec, "%ld", tv.tv_usec % 1000000);
   res = asn1_write_value (node, "Authenticator.cusec", usec, 0);
   if (res != ASN1_SUCCESS)
     goto error;
@@ -271,7 +271,7 @@ shishi_authenticator_from_file (Shishi * handle, ASN1_TYPE * authenticator,
  **/
 int
 shishi_authenticator_set_crealm (Shishi * handle,
-				 ASN1_TYPE authenticator, char *crealm)
+				 ASN1_TYPE authenticator, const char *crealm)
 {
   int res = ASN1_SUCCESS;
 

@@ -28,7 +28,7 @@
 #define SHISHI_TGS_REP_DEFAULT_MSG_TYPE      "13"
 #define SHISHI_TGS_REP_DEFAULT_MSG_TYPE_LEN  0
 
-ASN1_TYPE
+static ASN1_TYPE
 _shishi_kdcrep (Shishi * handle, int as)
 {
   int res = ASN1_SUCCESS;

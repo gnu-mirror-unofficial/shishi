@@ -45,7 +45,7 @@ shishi_as_derive_salt (Shishi * handle,
 {
   int len = *saltlen;
   int tmplen;
-  unsigned char format[BUFSIZ];
+  char format[BUFSIZ];
   int res = ASN1_SUCCESS;
   int i, n;
 
@@ -63,11 +63,9 @@ shishi_as_derive_salt (Shishi * handle,
   for (i = 1; i <= n; i++)
     {
       int patype;
-      int patypelen;
 
       sprintf (format, "KDC-REP.padata.?%d.padata-type", i);
-      patypelen = sizeof (patype);
-      res = asn1_read_value (asrep, format, &patype, &patypelen);
+      res = shishi_asn1_integer_field (handle, asrep, &patype, format);
       if (res != ASN1_SUCCESS)
 	{
 	  shishi_error_set (handle, libtasn1_strerror (res));
@@ -544,8 +542,6 @@ shishi_kdc_process (Shishi * handle,
 		    ASN1_TYPE * enckdcreppart)
 {
   int res;
-  int i;
-  size_t len;
   int msgtype;
 
   /*
@@ -567,9 +563,8 @@ shishi_kdc_process (Shishi * handle,
    */
 
   msgtype = 0;
-  len = sizeof (msgtype);
-  res =
-    shishi_asn1_field (handle, kdcrep, &msgtype, &len, "KDC-REP.msg-type");
+  res = shishi_asn1_integer_field (handle, kdcrep,
+				   &msgtype, "KDC-REP.msg-type");
   if (res != SHISHI_OK)
     return res;
 

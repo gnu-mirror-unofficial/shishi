@@ -129,7 +129,6 @@ des3_string_to_key (Shishi * handle,
   char *s;
   int n_s;
   Shishi_key *key;
-  int keylen = 3 * 8;
   char nfold[168 / 8];
   int nfoldlen = 168 / 8;
   int res;
