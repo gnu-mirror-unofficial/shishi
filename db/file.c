@@ -293,6 +293,68 @@ realm_remove (Shisa * dbh, void *state, const char *realm)
 }
 
 static int
+remove_keys (Shisa * dbh,
+	     void *state,
+	     const char *realm,
+	     const char *principal)
+{
+  Shisa_file *info = state;
+  char **files;
+  size_t nfiles;
+  size_t i;
+  int rc;
+
+  files = NULL;
+  nfiles = 0;
+
+  rc = _shisa_ls4 (info->path, realm, principal, "keys", &files, &nfiles);
+  if (rc != SHISA_OK)
+    return rc;
+
+  for (i = 0; i < nfiles; i++)
+    {
+      rc = _shisa_rm5 (info->path, realm, principal, "keys", files[i]);
+      free (files[i]);
+    }
+  free (files);
+
+  rc = _shisa_rmdir4 (info->path, realm, principal, "keys");
+  if (rc != SHISA_OK)
+    return rc;
+
+  return SHISA_OK;
+}
+
+static int
+remove_info (Shisa * dbh,
+	     void *state,
+	     const char *realm,
+	     const char *principal)
+{
+  Shisa_file *info = state;
+  char **files;
+  size_t nfiles;
+  size_t i;
+  int rc;
+
+  files = NULL;
+  nfiles = 0;
+
+  rc = _shisa_ls3 (info->path, realm, principal, &files, &nfiles);
+  if (rc != SHISA_OK)
+    return rc;
+
+  for (i = 0; i < nfiles; i++)
+    {
+      rc = _shisa_rm4 (info->path, realm, principal, files[i]);
+      free (files[i]);
+    }
+  free (files);
+
+  return SHISA_OK;
+}
+
+static int
 principal_remove (Shisa * dbh,
 		  void *state,
 		  const char *realm,
@@ -307,6 +369,10 @@ principal_remove (Shisa * dbh,
 
   if (!_shisa_isdir3 (info->path, realm, principal))
     return SHISA_NO_PRINCIPAL;
+
+  rc = remove_keys (dbh, state, realm, principal);
+  if (rc != SHISA_OK)
+    return rc;
 
   if (_shisa_rmdir3 (info->path, realm, principal) != 0)
     return SHISA_REMOVE_PRINCIPAL_ERROR;
