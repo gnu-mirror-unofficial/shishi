@@ -78,24 +78,24 @@
 #define __argp_fmtstream_wmargin argp_fmtstream_wmargin
 
 /* normal libc functions we call */
-#undef __sleep
-#define __sleep sleep
-#undef __strcasecmp
-#define __strcasecmp strcasecmp
-#undef __vsnprintf
-#define __vsnprintf vsnprintf
-#undef __strchrnul
-#define __strchrnul strchrnul
-#undef __strerror_r
-#define __strerror_r strerror_r
-#undef __mempcpy
-#define __mempcpy mempcpy
-#undef __strndup
-#define __strndup strndup
 #undef __flockfile
 #define __flockfile flockfile
 #undef __funlockfile
 #define __funlockfile funlockfile
+#undef __mempcpy
+#define __mempcpy mempcpy
+#undef __sleep
+#define __sleep sleep
+#undef __strcasecmp
+#define __strcasecmp strcasecmp
+#undef __strchrnul
+#define __strchrnul strchrnul
+#undef __strerror_r
+#define __strerror_r strerror_r
+#undef __strndup
+#define __strndup strndup
+#undef __vsnprintf
+#define __vsnprintf vsnprintf
 
 #if defined(HAVE_DECL_CLEARERR_UNLOCKED) && !HAVE_DECL_CLEARERR_UNLOCKED
 # define clearerr_unlocked(x) clearerr (x)
