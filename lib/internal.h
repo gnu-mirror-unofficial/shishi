@@ -1,7 +1,7 @@
 /* internal.h	internal header file for shishi
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
- * This file is part of shishi.
+ * This file is part of Shishi.
  *
  * Shishi is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
