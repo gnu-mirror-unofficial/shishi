@@ -417,7 +417,7 @@ shishi_des_cbc_mac (Shishi * handle,
 int
 shishi_arcfour (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
-		const char *iv, char **ivout,
+		const char iv[258], char *ivout[258],
 		const char *in, size_t inlen,
 		char **out)
 {

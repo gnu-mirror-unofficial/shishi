@@ -389,10 +389,11 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int mode,
 int
 shishi_arcfour (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
-		const char *iv, char **ivout,
+		const char iv[258], char *ivout[258],
 		const char *in, size_t inlen,
 		char **out)
 {
+  /* XXX Support iv/ivout. */
   return libgcrypt_dencrypt (handle, GCRY_CIPHER_ARCFOUR, 0,
 			     GCRY_CIPHER_MODE_STREAM, decryptp,
 			     key, keylen, NULL, NULL, in, inlen, out);
