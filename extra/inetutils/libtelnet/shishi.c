@@ -370,7 +370,6 @@ krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
 {
   Shishi_ap *ap;
   Shishi_key *key, *key2;
-  ASN1_TYPE ticket, encticketpart, authenticator;
   int rc;
   char cnamerealm[BUFSIZ];
   int cnamerealmlen;
@@ -393,79 +392,35 @@ krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
       return 1;
     }
 
-  //shishi_apreq_print(shishi_handle, stdout, shishi_ap_req(ap));
-
-  rc = shishi_apreq_get_ticket (shishi_handle, shishi_ap_req(ap), &ticket);
-  if (rc != SHISHI_OK)
+  key = shishi_hostkeys_for_localservice (shishi_handle, "host");
+  if (key == NULL)
     {
-      snprintf (errbuf, errbuflen, "Could not extract ticket:\n%s\n",
-		shishi_strerror (rc));
+      snprintf (errbuf, errbuflen, "Could not find key:\n%s\n",
+		shishi_strerror_details (shishi_handle));
       return 1;
     }
 
-  //shishi_asn1ticket_print(shishi_handle, stdout, ticket);
-
-  rc = shishi_key_from_string(shishi_handle, SHISHI_DES_CBC_MD5,
-			      "fnord", strlen("fnord"),
-			      "JOSEFSSON.ORGhostlatte.josefsson.org",
-			      strlen("JOSEFSSON.ORGhostlatte.josefsson.org"),
-			      NULL, &key);
+  rc = shishi_ap_req_process (ap, key);
   if (rc != SHISHI_OK)
     {
-      snprintf (errbuf, errbuflen, "Could not create key:\n%s\n",
+      snprintf (errbuf, errbuflen, "Could not process AP-REQ: %s\n",
 		shishi_strerror (rc));
       return 1;
     }
-
-  rc = shishi_ticket_decrypt (shishi_handle, ticket, key, &encticketpart);
-  if (rc != SHISHI_OK)
-    {
-      snprintf (errbuf, errbuflen, "Error decrypting ticket: %s\n",
-		shishi_strerror (rc));
-      return 1;
-    }
-
-  //shishi_encticketpart_print(shishi_handle, stdout, encticketpart);
-
-  rc = shishi_encticketpart_get_key (shishi_handle, encticketpart, &key2);
-  if (rc != SHISHI_OK)
-    {
-      snprintf (errbuf, errbuflen, "EncTicketPart get key failed: %s\n",
-		shishi_strerror (rc));
-      return 1;
-    }
-
-  rc = shishi_apreq_decrypt (shishi_handle, shishi_ap_req(ap),
-			     key2, 0, &authenticator);
-  if (rc != SHISHI_OK)
-    {
-      snprintf (errbuf, errbuflen, "Error decrypting apreq: %s\n",
-		shishi_strerror (rc));
-      return 1;
-    }
-
-  //shishi_authenticator_print(shishi_handle, stdout, authenticator);
 
   if (shishi_apreq_mutual_required_p (shishi_handle, shishi_ap_req(ap)))
     {
-      ASN1_TYPE encapreppart, aprep;
+      ASN1_TYPE aprep;
       char der[BUFSIZ];
       int derlen = BUFSIZ;;
 
-      //printf ("Mutual authentication required.\n");
-
-      aprep = shishi_aprep (shishi_handle);
-      rc = shishi_aprep_enc_part_make (shishi_handle, aprep,
-					authenticator, encticketpart);
+      rc = shishi_ap_rep_asn1(ap, &aprep);
       if (rc != SHISHI_OK)
 	{
-	  snprintf (errbuf, errbuflen, "Error making aprep: %s\n",
+	  snprintf (errbuf, errbuflen, "Error creating AP-REP: %s\n",
 		    shishi_strerror (rc));
 	  return 1;
 	}
-      //shishi_encapreppart_print (shishi_handle, stdout,
-      //shishi_last_encapreppart (shishi_handle));
-      //shishi_aprep_print (shishi_handle, stdout, aprep);
 
       rc = _shishi_a2d (shishi_handle, aprep, der, &derlen);
       if (rc != SHISHI_OK)
@@ -479,8 +434,9 @@ krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
     }
 
   cnamerealmlen = sizeof (cnamerealm);
-  rc = shishi_authenticator_cnamerealm_get (shishi_handle, authenticator,
-					    cnamerealm, &cnamerealmlen);
+  rc = shishi_encticketpart_cnamerealm_get
+    (shishi_handle, shishi_ticket_encticketpart(shishi_ap_ticket(ap)),
+     cnamerealm, &cnamerealmlen);
   if (rc != SHISHI_OK)
     {
       snprintf (errbuf, errbuflen, "Error getting authenticator name: %s\n",
