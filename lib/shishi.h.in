@@ -1357,8 +1357,14 @@ extern int shishi_checksum (Shishi * handle,
 			    Shishi_key * key,
 			    int keyusage,
 			    int32_t cksumtype,
-			    char *in, size_t inlen,
+			    const char *in, size_t inlen,
 			    char **out, size_t * outlen);
+extern int shishi_verify (Shishi * handle,
+			  Shishi_key * key,
+			  int keyusage,
+			  int cksumtype,
+			  const char *in, size_t inlen,
+			  const char *cksum, size_t cksumlen);
 extern int shishi_randomize (Shishi * handle, char *data, size_t datalen);
 extern int shishi_dk (Shishi * handle,
 		      Shishi_key * key,

@@ -691,7 +691,8 @@ simplified_checksum (Shishi * handle,
 		     Shishi_key * key,
 		     int keyusage,
 		     int cksumtype,
-		     char *in, size_t inlen, char **out, size_t * outlen)
+		     const char *in, size_t inlen,
+		     char **out, size_t * outlen)
 {
   Shishi_key *checksumkey;
   int cksumlen = shishi_checksum_cksumlen (cksumtype);
@@ -766,8 +767,15 @@ typedef int (*Shishi_checksum_function) (Shishi * handle,
 					 Shishi_key * key,
 					 int keyusage,
 					 int cksumtype,
-					 char *in, size_t inlen,
+					 const char *in, size_t inlen,
 					 char **out, size_t * outlen);
+
+typedef int (*Shishi_verify_function) (Shishi * handle,
+				       Shishi_key * key,
+				       int keyusage,
+				       int cksumtype,
+				       const char *in, size_t inlen,
+				       const char *cksum, size_t cksumlen);
 
 #include "crypto-null.c"
 #include "crypto-md.c"
@@ -1205,6 +1213,7 @@ struct checksuminfo
   char *name;
   int cksumlen;
   Shishi_checksum_function checksum;
+  Shishi_verify_function verify;
 };
 typedef struct checksuminfo checksuminfo;
 
@@ -1380,6 +1389,18 @@ _shishi_checksum (int32_t type)
   return NULL;
 }
 
+static Shishi_verify_function
+_shishi_verify (int32_t type)
+{
+  size_t i;
+
+  for (i = 0; i < sizeof (checksums) / sizeof (checksums[0]); i++)
+    if (type == checksums[i]->type)
+      return checksums[i]->verify;
+
+  return NULL;
+}
+
 /**
  * shishi_string_to_key:
  * @handle: shishi handle as allocated by shishi_init().
@@ -1506,20 +1527,17 @@ shishi_random_to_key (Shishi * handle,
 /**
  * shishi_checksum:
  * @handle: shishi handle as allocated by shishi_init().
- * @key: key to encrypt with.
- * @keyusage: integer specifying what this key is encrypting.
+ * @key: key to compute checksum with.
+ * @keyusage: integer specifying what this key is used for.
  * @cksumtype: the checksum algorithm to use.
  * @in: input array with data to integrity protect.
  * @inlen: size of input array with data to integrity protect.
- * @out: output array with integrity protected data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
+ * @out: output array with newly allocated integrity protected data.
+ * @outlen: output variable with length of output array with checksum.
  *
  * Integrity protect data using key, possibly altered by supplied key
- * usage.  If key usage is 0, no key derivation is used.
- *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
+ * usage.  If key usage is 0, no key derivation is used.  The OUT
+ * buffer must be deallocated by the caller.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1528,7 +1546,8 @@ shishi_checksum (Shishi * handle,
 		 Shishi_key * key,
 		 int keyusage,
 		 int cksumtype,
-		 char *in, size_t inlen, char **out, size_t * outlen)
+		 const char *in, size_t inlen,
+		 char **out, size_t * outlen)
 {
   Shishi_checksum_function checksum;
   int res;
@@ -1556,8 +1575,10 @@ shishi_checksum (Shishi * handle,
       return SHISHI_CRYPTO_ERROR;
     }
 
-  res =
-    (*checksum) (handle, key, keyusage, cksumtype, in, inlen, out, outlen);
+  /* XXX? check if etype and cksumtype are compatible? */
+
+  res = (*checksum) (handle, key, keyusage, cksumtype,
+		     in, inlen, out, outlen);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -1566,6 +1587,71 @@ shishi_checksum (Shishi * handle,
       hexprint (*out, *outlen);
       puts ("");
     }
+
+  return res;
+}
+
+/**
+ * shishi_verify:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to verify checksum with.
+ * @keyusage: integer specifying what this key is used for.
+ * @cksumtype: the checksum algorithm to use.
+ * @in: input array with data that was integrity protected.
+ * @inlen: size of input array with data that was integrity protected.
+ * @out: input array with alleged checksum of data.
+ * @outlen: size of input array with alleged checksum of data.
+ *
+ * Verify checksum of data using key, possibly altered by supplied key
+ * usage.  If key usage is 0, no key derivation is used.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_verify (Shishi * handle,
+	       Shishi_key * key,
+	       int keyusage,
+	       int cksumtype,
+	       const char *in, size_t inlen,
+	       const char *cksum, size_t cksumlen)
+{
+  Shishi_verify_function verify;
+  int res;
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("verify (%s, %d, in, out)\n",
+	      shishi_key_name (key), cksumtype);
+      printf ("\t ;; key (%d):\n", shishi_key_length (key));
+      hexprint (shishi_key_value (key), shishi_key_length (key));
+      puts ("");
+      printf ("\t ;; data:\n");
+      escapeprint (in, inlen);
+      hexprint (in, inlen);
+      puts ("");
+      printf ("\t ;; mic:\n");
+      escapeprint (cksum, cksumlen);
+      hexprint (cksum, cksumlen);
+      puts ("");
+    }
+
+  if (cksumtype == 0)
+    cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
+
+  verify = _shishi_verify (cksumtype);
+  if (verify == NULL)
+    {
+      shishi_error_printf (handle, "Unsupported checksum type %d", cksumtype);
+      return SHISHI_CRYPTO_ERROR;
+    }
+
+  /* XXX? check if etype and cksumtype are compatible? */
+
+  res = (*verify) (handle, key, keyusage, cksumtype,
+		   in, inlen, cksum, cksumlen);
+
+  if (VERBOSECRYPTO (handle))
+    printf ("\t ;; verify return: %d\n", res);
 
   return res;
 }
