@@ -609,14 +609,20 @@ shishi_tgs_process (Shishi * handle,
 			    enckdcreppart);
   if (res == SHISHI_CRYPTO_ERROR && use_subkey)
     {
-      res = shishi_kdc_process (handle, tgsreq, tgsrep, tktkey,
-				SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
-				enckdcreppart);
-      if (res == SHISHI_OK)
-	shishi_warn (handle, "KDC bug: Reply encrypted using wrong key.");
-    }
+      int tmpres;
 
-  return res;
+      tmpres = shishi_kdc_process (handle, tgsreq, tgsrep, tktkey,
+				   SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
+				   enckdcreppart);
+      if (tmpres != SHISHI_OK)
+	return res;
+
+      shishi_warn (handle, "KDC bug: Reply encrypted using wrong key.");
+    }
+  else if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
 }
 
 /**
