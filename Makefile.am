@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002 Simon Josefsson.
+# Copyright (C) 2002, 2003 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -59,8 +59,8 @@ EXTRA_DIST = ANNOUNCE config.rpath mkinstalldirs \
 .PHONY: ChangeLog
 ChangeLog:
 	test ! -f .cvsusers || \
-	cvs2cl --fsf --usermap .cvsusers --no-times --separate-header -I \
-  "ChangeLog|.cvsignore|.cvsusers|autogen.sh|doc/specification|libstringprep"
+	cvs2cl --fsf --usermap .cvsusers --no-times --no-common-dir \
+ -I "ChangeLog|.cvsignore|.cvsusers|autogen.sh|doc/specification|libstringprep"
 
 indent:
 	(cd lib && make indent)
