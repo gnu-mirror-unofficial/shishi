@@ -24,7 +24,8 @@
 
 #include <stddef.h>		/* size_t */
 #include <stdio.h>		/* FILE */
-#include <shishi-int.h>		/* uint32_t, etc */
+#include <time.h>		/* time_t */
+#include <shishi-int.h>		/* uint32_t */
 
 #define SHISHI_VERSION "@PACKAGE_VERSION@"
 
