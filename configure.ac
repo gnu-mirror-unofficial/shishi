@@ -398,7 +398,7 @@ AC_MSG_RESULT($enable_arcfour)
 AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile \
 	asn1/Makefile crypto/Makefile examples/Makefile \
 	lib/Makefile lib/shishi.h db/Makefile src/Makefile tests/Makefile \
-	doc/Makefile doc/reference/Makefile doc/man/Makefile \
+	doc/Makefile doc/reference/Makefile \
 	extra/Makefile extra/pam_shishi/Makefile extra/rsh-redone/Makefile \
 	gl/Makefile gl/m4/Makefile shishi.pc shishi.conf shishi.skel)
 
