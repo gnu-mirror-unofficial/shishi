@@ -17,4 +17,11 @@
 # License along with Shishi; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
-SUBDIRS = libinetutils libtelnet telnet telnetd
+AUTOMAKE_OPTIONS = 1.6
+
+EXTRA_DIST = paths
+
+SUBDIRS = headers libinetutils libtelnet telnet telnetd
+
+DISTCLEANFILES = pathdefs.make paths.defs include/*.h include/*/*.h \
+	include/stamp-h

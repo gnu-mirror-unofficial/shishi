@@ -28,7 +28,6 @@
 #include <shishi.h>
 #include <assert.h>
 
-#include <com_err.h>
 #include <netdb.h>
 #include <ctype.h>
 #include <syslog.h>

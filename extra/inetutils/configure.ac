@@ -354,12 +354,12 @@ AC_TYPE_SIGNAL
 
 dnl We may need our own definition for struct osockaddr (equivalent to the
 dnl old 4.3BSD struct sockaddr, and used in grotty bsd talk protocol)
-AC_CHECK_TYPE(struct osockaddr, ,
-              AC_DEFINE(HAVE_OSOCKADDR_H, 1,
-                        [Define to one if you have <osockaddr.h>.])
-                        INCLUDES="$INCLUDES osockaddr.h",
-	      [#include <sys/types.h>
-               #include <sys/socket.h> ])
+#AC_CHECK_TYPE(struct osockaddr, ,
+#              AC_DEFINE(HAVE_OSOCKADDR_H, 1,
+#                        [Define to one if you have <osockaddr.h>.])
+#                        INCLUDES="$INCLUDES osockaddr.h",
+#	      [#include <sys/types.h>
+#               #include <sys/socket.h> ])
 
 AC_CHECK_TYPES(struct if_nameindex, , ,
   [#include <sys/socket.h>
@@ -551,10 +551,10 @@ AC_CHECK_FUNC(setpgid, , AC_DEFINE(setpgid, setpgrp,
 
 dnl We use our own version of getopt (including our own header file) if the
 dnl system one doesn't have getopt_long.
-AC_CHECK_FUNC(getopt_long, ,
-  AC_LIBOBJ(getopt)
-  AC_LIBOBJ(getopt1)
-  INCLUDES="$INCLUDES getopt.h")
+#AC_CHECK_FUNC(getopt_long, ,
+#  AC_LIBOBJ(getopt)
+#  AC_LIBOBJ(getopt1)
+#  INCLUDES="$INCLUDES getopt.h")
 
 dnl Supply a version of poll() if the libray is missing.
 dnl syslogd uses poll() unconditionnaly.
@@ -564,9 +564,9 @@ AC_CHECK_FUNC(poll, ,
   INCLUDES="$INCLUDES poll.h")
 
 dnl Supply versions of the BSD error reporting functions if the system doesn't
-AC_CHECK_FUNC(verrx, ,
-  AC_LIBOBJ(err)
-  INCLUDES="$INCLUDES err.h")
+#AC_CHECK_FUNC(verrx, ,
+#  AC_LIBOBJ(err)
+#  INCLUDES="$INCLUDES err.h")
 
 dnl See if the __PROGNAME variable is defined, otherwise use our own.
 AC_CHECK_FUNC(__progname,
