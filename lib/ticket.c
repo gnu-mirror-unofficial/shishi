@@ -1,5 +1,5 @@
 /* ticket.c	low-level ASN.1 Ticket handling
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -118,14 +118,6 @@ shishi_ticket_server (Shishi * handle, Shishi_asn1 ticket,
 		      char **server, size_t * serverlen)
 {
   return shishi_principal_name (handle, ticket, "sname", server, serverlen);
-}
-
-int
-shishi_ticket_sname_get (Shishi * handle,
-			 Shishi_asn1 ticket, char *server, size_t * serverlen)
-{
-  return shishi_principal_name_get (handle, ticket, "sname",
-				    server, serverlen);
 }
 
 /**
