@@ -98,9 +98,19 @@ Data (Authenticator *ap, int type, unsigned char *d, int c)
 int
 krb5shishi_init (Authenticator *ap, int server)
 {
-  str_data[3] = server ? TELQUAL_REPLY : TELQUAL_IS;
-  if (shishi_handle == 0 && shishi_init(&shishi_handle))
-    return 0;
+  if (server)
+    {
+      str_data[3] = TELQUAL_REPLY;
+      if (!shishi_handle && shishi_init_server(&shishi_handle) != SHISHI_OK)
+	return 0;
+    }
+  else
+    {
+      str_data[3] = TELQUAL_IS;
+      if (!shishi_handle && shishi_init(&shishi_handle) != SHISHI_OK)
+	return 0;
+    }
+
   return 1;
 }
 
@@ -290,7 +300,7 @@ krb5shishi_reply (Authenticator *ap, unsigned char *data, int cnt)
   switch (*data++)
     {
     case KRB_REJECT:
-      if (cnt > 0) 
+      if (cnt > 0)
 	printf ("[ Kerberos V5 refuses authentication because %.*s ]\r\n",
 	       cnt, data);
       else
