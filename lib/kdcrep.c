@@ -838,3 +838,25 @@ shishi_kdcrep_decrypt (Shishi * handle,
 
   return SHISHI_OK;
 }
+
+/**
+ * shishi_kdcrep_clear_padata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcrep: KDC-REP to remove PA-DATA from.
+ *
+ * Remove the padata field from KDC-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcrep_clear_padata (Shishi * handle,
+			    ASN1_TYPE kdcrep)
+{
+  int res;
+
+  res = asn1_write_value (kdcrep, "KDC-REP.padata", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}

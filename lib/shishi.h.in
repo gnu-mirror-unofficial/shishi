@@ -65,7 +65,8 @@ enum
   SHISHI_INVALID_KEY = 31,
   SHISHI_APREQ_DECRYPT_FAILED = 32,
   SHISHI_TICKET_DECRYPT_FAILED = 33,
-  SHISHI_INVALID_TICKET = 34
+  SHISHI_INVALID_TICKET = 34,
+  SHISHI_OUT_OF_RANGE = 35
 };
 
 /* This is not specified in the ASN.1 syntax for some reason. */
@@ -295,6 +296,7 @@ extern int shishi_cfg_from_file (Shishi * handle, const char *cfg);
 extern int shishi_cfg_print (Shishi * handle, FILE * fh);
 extern const char *shishi_cfg_default_systemfile (Shishi * handle);
 extern const char *shishi_cfg_default_userfile (Shishi * handle);
+extern int shishi_cfg_clientkdcetype (Shishi * handle, int ***etypes);
 extern int shishi_cfg_clientkdcetype_set (Shishi * handle, char *value);
 
 /* error.c */
@@ -625,6 +627,9 @@ extern int shishi_kdcreq_parse (Shishi * handle, FILE * fh,
 extern int shishi_kdcreq_read (Shishi * handle, FILE * fh, ASN1_TYPE * kdcreq);
 extern int shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
 				    int filetype, char *filename);
+extern int shishi_kdcreq_etype (Shishi * handle,
+				ASN1_TYPE kdcreq,
+				int *etype, int netype);
 extern int shishi_kdcreq_set_etype (Shishi * handle,
 				    ASN1_TYPE kdcreq,
 				    int *etype, int netype);
@@ -682,8 +687,14 @@ extern int shishi_kdc_process (Shishi * handle,
 extern int shishi_kdcreq_sendrecv (Shishi * handle,
 				   ASN1_TYPE kdcreq,
 				   ASN1_TYPE * kdcrep);
+extern int shishi_kdc_copy_crealm (Shishi * handle,
+				   ASN1_TYPE kdcrep,
+				   ASN1_TYPE encticketpart);
 extern int shishi_as_check_crealm (Shishi * handle,
 				   ASN1_TYPE asreq, ASN1_TYPE asrep);
+extern int shishi_kdc_copy_cname (Shishi * handle,
+				  ASN1_TYPE kdcrep,
+				  ASN1_TYPE encticketpart);
 extern int shishi_as_check_cname (Shishi * handle,
 				  ASN1_TYPE asreq, ASN1_TYPE asrep);
 extern int shishi_kdc_copy_nonce (Shishi * handle,
@@ -750,6 +761,7 @@ const char *shishi_generalize_time (Shishi * handle, time_t time);
 extern time_t shishi_generalize_ctime (Shishi * handle, char *now);
 
 /* crypto.c */
+extern int shishi_cipher_supported_p (int type);
 extern const char *shishi_cipher_name (int type);
 extern int shishi_cipher_blocksize (int type);
 extern int shishi_cipher_minpadsize (int type);

@@ -437,6 +437,14 @@ shishi_kdcreq_cnamerealm_get (Shishi * handle,
 					  cnamerealm, cnamerealmlen);
 }
 
+int
+shishi_kdcreq_realm_get (Shishi * handle, ASN1_TYPE kdcreq,
+			  char *realm, int *realmlen)
+{
+  return shishi_asn1_optional_field (handle, kdcreq, realm, realmlen,
+				     "KDC-REQ.req-body.realm");
+}
+
 /**
  * shishi_kdcreq_set_realm:
  * @handle: shishi handle as allocated by shishi_init().
@@ -462,6 +470,33 @@ shishi_kdcreq_set_realm (Shishi * handle, ASN1_TYPE kdcreq, const char *realm)
   return SHISHI_OK;
 }
 
+/**
+ * shishi_kdcreq_etype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get etype field from.
+ * @etype: output encryption type.
+ * @netype: element number to return.
+ *
+ * Return the netype:th encryption type from KDC-REQ.  The first etype
+ * is number 1.
+ *
+ * Return value: Returns SHISHI_OK iff etype successful set.
+ **/
+int
+shishi_kdcreq_etype (Shishi * handle,
+		     ASN1_TYPE kdcreq,
+		     int *etype, int netype)
+{
+  char buf[BUFSIZ];
+  int res;
+
+  sprintf (buf, "KDC-REQ.req-body.etype.?%d", netype);
+  res = shishi_asn1_integer_field (handle, kdcreq, etype, buf);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
 
 /**
  * shishi_kdcreq_set_etype:

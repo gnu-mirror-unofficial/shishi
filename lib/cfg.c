@@ -1,5 +1,5 @@
 /* cfg.c	configuration file functions.
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -330,6 +330,23 @@ shishi_cfg_default_userfile (Shishi * handle)
     }
 
   return handle->usercfgfile;
+}
+
+/**
+ * shishi_cfg_clientkdcetype:
+ * @handle: Shishi library handle create by shishi_init().
+ * @etypes: output array with encryption types.
+ *
+ * Set the etypes variable to the array of preferred client etypes.
+ *
+ * Return value: Return the number of encryption types in the array,
+ *               0 means none.
+ **/
+int
+shishi_cfg_clientkdcetype (Shishi * handle, int ***etypes)
+{
+  *etypes = handle->clientkdcetypes;
+  return handle->nclientkdcetypes;
 }
 
 /**

@@ -197,6 +197,40 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
 }
 
 /**
+ * shishi_kdc_copy_crealm:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ to read crealm from.
+ * @encticketpart: EncTicketPart to set crealm in.
+ *
+ * Set crealm in KDC-REP to value in EncTicketPart.
+ *
+ * Return value: Returns SHISHI_OK if successful.
+ **/
+int
+shishi_kdc_copy_crealm (Shishi * handle,
+			ASN1_TYPE kdcrep,
+			ASN1_TYPE encticketpart)
+{
+  unsigned char buf[BUFSIZ];
+  int buflen;
+  int res;
+
+  buf[0] = '\0'; /* XXX if crealm is empty, buflen == 0 which
+		    causes libtasn1 to strlen(buf)... */
+  buflen = BUFSIZ;
+  res = shishi_asn1_field (handle, encticketpart, buf, &buflen,
+			   "EncTicketPart.crealm");
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  res = asn1_write_value (kdcrep, "KDC-REP.crealm", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_as_check_crealm:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: AS-REQ to compare realm field in.
@@ -244,6 +278,68 @@ shishi_as_check_crealm (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
 
   if (strcmp (reqrealm, reprealm) != 0)
     return SHISHI_REALM_MISMATCH;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_kdc_copy_crealm:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ to read cname from.
+ * @encticketpart: EncTicketPart to set cname in.
+ *
+ * Set cname in KDC-REP to value in EncTicketPart.
+ *
+ * Return value: Returns SHISHI_OK if successful.
+ **/
+int
+shishi_kdc_copy_cname (Shishi * handle,
+		       ASN1_TYPE kdcrep,
+		       ASN1_TYPE encticketpart)
+{
+  unsigned char buf[BUFSIZ];
+  char format[BUFSIZ];
+  int buflen;
+  int res;
+  int i, n;
+
+
+  buflen = BUFSIZ;
+  res = asn1_read_value (encticketpart, "EncTicketPart.cname.name-type",
+			 buf, &buflen);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  res = asn1_write_value (kdcrep, "KDC-REP.cname.name-type", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  res = asn1_number_of_elements (encticketpart,
+				 "EncTicketPart.cname.name-string", &n);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  for (i = 1; i <= n; i++)
+    {
+      res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string", "NEW", 1);
+      if (res != ASN1_SUCCESS)
+	return SHISHI_ASN1_ERROR;
+
+      sprintf (format, "EncTicketPart.cname.name-string.?%d", i);
+      buflen = BUFSIZ;
+      res = asn1_read_value (encticketpart, format, buf, &buflen);
+      if (res != ASN1_SUCCESS)
+	return SHISHI_ASN1_ERROR;
+
+      sprintf (format, "KDC-REP.cname.name-string.?%d", i);
+      res = asn1_write_value (kdcrep, format, buf, buflen);
+      if (res != ASN1_SUCCESS)
+	return SHISHI_ASN1_ERROR;
+    }
 
   return SHISHI_OK;
 }

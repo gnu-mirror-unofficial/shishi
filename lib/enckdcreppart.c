@@ -122,6 +122,32 @@ shishi_enckdcreppart_nonce_set (Shishi * handle,
 }
 
 /**
+ * shishi_enckdcreppart_flags_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @enckdcreppart: input EncKDCRepPart variable.
+ * @flags: flags to set in EncKDCRepPart.
+ *
+ * Set the EncKDCRepPart.flags field.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_enckdcreppart_flags_set (Shishi * handle,
+				ASN1_TYPE enckdcreppart,
+				int flags)
+{
+  int res;
+  char buf[BUFSIZ];
+
+  sprintf (buf, "%d", flags);
+  res = asn1_write_value (enckdcreppart, "EncKDCRepPart.flags", buf, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_enckdcreppart_populate_encticketpart:
  * @handle: shishi handle as allocated by shishi_init().
  * @enckdcreppart: input EncKDCRepPart variable.

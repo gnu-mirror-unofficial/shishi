@@ -720,6 +720,24 @@ static cipherinfo *ciphers[] = {
 };
 
 /**
+ * shishi_cipher_supported_p:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return 0 iff cipher is unsupported.
+ **/
+int
+shishi_cipher_supported_p (int type)
+{
+  size_t i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return 1;
+
+  return 0;
+}
+
+/**
  * shishi_cipher_name:
  * @type: encryption type, see Shishi_etype.
  *
