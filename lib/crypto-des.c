@@ -912,7 +912,7 @@ gss_des_checksum (Shishi * handle,
   return SHISHI_OK;
 }
 
-int
+static int
 des_md5_verify (Shishi * handle,
 		Shishi_key * key,
 		int keyusage,

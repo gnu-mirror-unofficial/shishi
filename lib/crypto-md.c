@@ -52,7 +52,6 @@ md4_checksum (Shishi * handle,
 #else
   struct md4_ctx md4;
   char digest[MD4_DIGEST_SIZE];
-  int rc;
 
   md4_init (&md4);
   md4_update (&md4, inlen, in);
@@ -94,7 +93,6 @@ md5_checksum (Shishi * handle,
 #else
   struct md5_ctx md5;
   char digest[MD5_DIGEST_SIZE];
-  int rc;
 
   md5_init (&md5);
   md5_update (&md5, inlen, in);

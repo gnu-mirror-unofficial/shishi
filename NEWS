@@ -6,6 +6,10 @@ See the end for copying conditions.
 
 ** Server host name to realm mapping via DNS supported.
 
+** SAFE functions improved.
+Example code of a client using integrity protected application data
+exchanges is in examples/client-safe.c and examples/server.c.
+
 ** Various API changes.
 
 * Version 0.0.4 (released 2003-08-31)

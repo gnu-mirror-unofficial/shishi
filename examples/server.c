@@ -36,7 +36,6 @@ doit (Shishi * h, Shishi_ap * ap, int verbose)
   Shishi_safe *safe;
   char *userdata;
   size_t userdatalen;
-  char line[BUFSIZ];
   int res;
 
   printf ("Application exchange start.  Press ^D to finish.\n");
