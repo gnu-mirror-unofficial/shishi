@@ -885,7 +885,195 @@ $
 @end example
 
 Refer to the reference manual for all available parameters
-(@pxref{Parameters for shishi}).
+(@pxref{Parameters for shishi}).  The rest of this section contains
+description of more specialized usage modes that can be ignored by
+most users.
+
+@section Proxiable and Proxy Tickets
+
+At times it may be necessary for a principal to allow a service to
+perform an operation on its behalf. The service must be able to take
+on the identity of the client, but only for a particular purpose. A
+principal can allow a service to take on the principal's identity for
+a particular purpose by granting it a proxy.
+
+The process of granting a proxy using the proxy and proxiable flags is
+used to provide credentials for use with specific services. Though
+conceptually also a proxy, users wishing to delegate their identity in
+a form usable for all purpose MUST use the ticket forwarding mechanism
+described in the next section to forward a ticket-granting ticket.
+
+The PROXIABLE flag in a ticket is normally only interpreted by the
+ticket-granting service. It can be ignored by application servers.
+When set, this flag tells the ticket-granting server that it is OK to
+issue a new ticket (but not a ticket-granting ticket) with a different
+network address based on this ticket. This flag is set if requested by
+the client on initial authentication. By default, the client will
+request that it be set when requesting a ticket-granting ticket, and
+reset when requesting any other ticket.
+
+This flag allows a client to pass a proxy to a server to perform a
+remote request on its behalf (e.g. a print service client can give the
+print server a proxy to access the client's files on a particular file
+server in order to satisfy a print request).
+
+In order to complicate the use of stolen credentials, Kerberos tickets
+are usually valid from only those network addresses specifically
+included in the ticket[4]. When granting a proxy, the client MUST
+specify the new network address from which the proxy is to be used, or
+indicate that the proxy is to be issued for use from any address.
+
+The PROXY flag is set in a ticket by the TGS when it issues a proxy
+ticket.  Application servers MAY check this flag and at their option
+they MAY require additional authentication from the agent presenting
+the proxy in order to provide an audit trail.
+
+Here is how you would acquire a PROXY ticket for the service
+@samp{imap/latte.josefsson.org}:
+
+@example
+@cartouche
+$ shishi jas@@JOSEFSSON.ORG imap/latte.josefsson.org --proxy
+Enter password for `jas@@JOSEFSSON.ORG':
+libshishi: warning: KDC bug: Reply encrypted using wrong key.
+jas@@JOSEFSSON.ORG:
+Authtime:       Mon Sep  8 20:02:35 2003
+Starttime:      Mon Sep  8 20:02:36 2003
+Endtime:        Tue Sep  9 04:02:35 2003
+Server:         imap/latte.josefsson.org key des3-cbc-sha1-kd (16)
+Ticket key:     des3-cbc-sha1-kd (16) protected by des3-cbc-sha1-kd (16)
+Ticket flags:   PROXY (16)
+$
+@end cartouche
+@end example
+
+As you noticed, this asked for your password.  The reason is that
+proxy tickets must be acquired using a proxiable ticket granting
+ticket, which was not present.  If you often need to get proxy
+tickets, you may acquire a proxiable ticket granting ticket from the
+start:
+
+@example
+@cartouche
+$ shishi --proxiable
+Enter password for `jas@@JOSEFSSON.ORG':
+jas@@JOSEFSSON.ORG:
+Authtime:       Mon Sep  8 20:04:27 2003
+Endtime:        Tue Sep  9 04:04:27 2003
+Server:         krbtgt/JOSEFSSON.ORG key des3-cbc-sha1-kd (16)
+Ticket key:     des3-cbc-sha1-kd (16) protected by des3-cbc-sha1-kd (16)
+Ticket flags:   PROXIABLE INITIAL (520)
+@end cartouche
+@end example
+
+Then you should be able to acquire proxy tickets based on that ticket
+granting ticket, as follows:
+
+@example
+@cartouche
+$ shishi jas@@JOSEFSSON.ORG imap/latte.josefsson.org --proxy
+libshishi: warning: KDC bug: Reply encrypted using wrong key.
+jas@@JOSEFSSON.ORG:
+Authtime:       Mon Sep  8 20:04:27 2003
+Starttime:      Mon Sep  8 20:04:32 2003
+Endtime:        Tue Sep  9 04:04:27 2003
+Server:         imap/latte.josefsson.org key des3-cbc-sha1-kd (16)
+Ticket key:     des3-cbc-sha1-kd (16) protected by des3-cbc-sha1-kd (16)
+Ticket flags:   PROXY (16)
+$
+@end cartouche
+@end example
+
+@section Forwardable and Forwarded Tickets
+
+Authentication forwarding is an instance of a proxy where the service
+that is granted is complete use of the client's identity. An example
+where it might be used is when a user logs in to a remote system and
+wants authentication to work from that system as if the login were
+local.
+
+The FORWARDABLE flag in a ticket is normally only interpreted by the
+ticket-granting service. It can be ignored by application servers.
+The FORWARDABLE flag has an interpretation similar to that of the
+PROXIABLE flag, except ticket-granting tickets may also be issued with
+different network addresses. This flag is reset by default, but users
+MAY request that it be set by setting the FORWARDABLE option in the AS
+request when they request their initial ticket-granting ticket.
+
+This flag allows for authentication forwarding without requiring the
+user to enter a password again. If the flag is not set, then
+authentication forwarding is not permitted, but the same result can
+still be achieved if the user engages in the AS exchange specifying
+the requested network addresses and supplies a password.
+
+The FORWARDED flag is set by the TGS when a client presents a ticket
+with the FORWARDABLE flag set and requests a forwarded ticket by
+specifying the FORWARDED KDC option and supplying a set of addresses
+for the new ticket. It is also set in all tickets issued based on
+tickets with the FORWARDED flag set. Application servers may choose to
+process FORWARDED tickets differently than non-FORWARDED tickets.
+
+If addressless tickets are forwarded from one system to another,
+clients SHOULD still use this option to obtain a new TGT in order to
+have different session keys on the different systems.
+
+Here is how you would acquire a FORWARDED ticket for the service
+@samp{host/latte.josefsson.org}:
+
+@example
+@cartouche
+$ shishi jas@@JOSEFSSON.ORG host/latte.josefsson.org --forwarded
+Enter password for `jas@@JOSEFSSON.ORG':
+libshishi: warning: KDC bug: Reply encrypted using wrong key.
+jas@@JOSEFSSON.ORG:
+Authtime:       Mon Sep  8 20:07:11 2003
+Starttime:      Mon Sep  8 20:07:12 2003
+Endtime:        Tue Sep  9 04:07:11 2003
+Server:         host/latte.josefsson.org key des3-cbc-sha1-kd (16)
+Ticket key:     des3-cbc-sha1-kd (16) protected by des3-cbc-sha1-kd (16)
+Ticket flags:   FORWARDED (4)
+$
+@end cartouche
+@end example
+
+As you noticed, this asked for your password.  The reason is that
+forwarded tickets must be acquired using a forwardable ticket granting
+ticket, which was not present.  If you often need to get forwarded
+tickets, you may acquire a forwardable ticket granting ticket from the
+start:
+
+@example
+@cartouche
+$ shishi --forwardable
+Enter password for `jas@@JOSEFSSON.ORG':
+jas@@JOSEFSSON.ORG:
+Authtime:       Mon Sep  8 20:08:53 2003
+Endtime:        Tue Sep  9 04:08:53 2003
+Server:         krbtgt/JOSEFSSON.ORG key des3-cbc-sha1-kd (16)
+Ticket key:     des3-cbc-sha1-kd (16) protected by des3-cbc-sha1-kd (16)
+Ticket flags:   FORWARDABLE INITIAL (514)
+$
+@end cartouche
+@end example
+
+Then you should be able to acquire forwarded tickets based on that
+ticket granting ticket, as follows:
+
+@example
+@cartouche
+$ shishi jas@@JOSEFSSON.ORG host/latte.josefsson.org --forwarded
+libshishi: warning: KDC bug: Reply encrypted using wrong key.
+jas@@JOSEFSSON.ORG:
+Authtime:       Mon Sep  8 20:08:53 2003
+Starttime:      Mon Sep  8 20:08:57 2003
+Endtime:        Tue Sep  9 04:08:53 2003
+Server:         host/latte.josefsson.org key des3-cbc-sha1-kd (16)
+Ticket key:     des3-cbc-sha1-kd (16) protected by des3-cbc-sha1-kd (16)
+Ticket flags:   FORWARDED (4)
+$
+@end cartouche
+@end example
+
 
 @c **********************************************************
 @c ****************  Administration Manual  *****************
@@ -1235,7 +1423,7 @@ Shishi -- A Kerberos 5 implementation
                              is to become valid immediately.
       --ticket-granter=NAME  Service name in ticket to use for authenticating
                              request. Only for TGS. Defaults to
-                             "krbtgt/REALM@REALM" where REALM is server realm
+                             "krbtgt/REALM@@REALM" where REALM is server realm
                              (see --realm).
 
  Options for low-level cryptography (CRYPTO-OPTIONS):
@@ -2136,6 +2324,8 @@ CVS, Texinfo, Help2man and Emacs.
 
 Several people reported bugs, sent patches or suggested improvements,
 see the file THANKS.
+
+This manual borrows text from the Kerberos 5 specification.
 
 @c **********************************************************
 @c *******************  Appendices  *************************
