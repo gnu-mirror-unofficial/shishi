@@ -154,7 +154,7 @@ PBKDF2 (int PRF,
 
   prf = gcry_md_open (PRF, GCRY_MD_FLAG_HMAC);
 
-  for (i = 1; i <= r-1; i++)
+  for (i = 1; i <= l; i++)
     {
       memset(T, 0, hLen);
 
@@ -191,7 +191,7 @@ PBKDF2 (int PRF,
 	    T[k] ^= U[k];
 	}
 
-      memcpy(DK + (i - 1) * hLen, T, hLen);
+      memcpy(DK + (i - 1) * hLen, T, i == l ? r : hLen);
     }
 
   gcry_md_close (prf);
