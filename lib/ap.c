@@ -500,7 +500,10 @@ shishi_ap_req_der_set (Shishi_ap * ap, char *der, int derlen)
 {
   ap->apreq = shishi_der2asn1_apreq (ap->handle, der, derlen);
 
-  return SHISHI_OK;
+  if (ap->apreq)
+    return SHISHI_OK;
+  else
+    return SHISHI_ASN1_ERROR;
 }
 
 /**
