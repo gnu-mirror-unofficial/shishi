@@ -19,9 +19,9 @@
 
 MOST_SUBDIRS = intl m4 po asn1 lib src tests doc extra
 
-DIST_SUBDIRS = crypto argp $(MOST_SUBDIRS)
+DIST_SUBDIRS = crypto argp libstringprep $(MOST_SUBDIRS)
 
-SUBDIRS = @CRYPTO@ @ARGP@ $(MOST_SUBDIRS)
+SUBDIRS = @CRYPTO@ @ARGP@ @STRINGPREP@ $(MOST_SUBDIRS)
 
 ACLOCAL_AMFLAGS = -I m4 -I crypto/src -I asn1/src
 
@@ -62,5 +62,6 @@ indent:
 	(cd tests && make indent)
 
 sign: $(distdir).tar.gz
+	rm -f $(distdir).tar.gz.asc
 	gpg -a --sign --detach $(distdir).tar.gz
 	gpg --verify $(distdir).tar.gz.asc
