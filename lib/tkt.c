@@ -690,7 +690,7 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
 }
 
 time_t
-shishi_tkt_lastreqc (Shishi_tkt * tkt, Shihi_lrtype lrtype)
+shishi_tkt_lastreqc (Shishi_tkt * tkt, Shishi_lrtype lrtype)
 {
   char lrtime[GENERALIZEDTIME_TIME_LEN + 1];
   int lrtimelen;

@@ -160,12 +160,12 @@ Shishi_KDCOptions;
 
 typedef enum
 {
-  SHISHI_MSGTYPE_AS_REQ = 10,
-  SHISHI_MSGTYPE_AS_REP = 11,
-  SHISHI_MSGTYPE_TGS_REQ = 12,
-  SHISHI_MSGTYPE_TGS_REP = 13
+  SHISHI_MSGTYPE_AS_REQ = 0x10,
+  SHISHI_MSGTYPE_AS_REP = 0x11,
+  SHISHI_MSGTYPE_TGS_REQ = 0x12,
+  SHISHI_MSGTYPE_TGS_REP = 0x13
 }
-Shihi_msgtype;
+Shishi_msgtype;
 
 typedef enum
 {
@@ -175,7 +175,7 @@ typedef enum
   SHISHI_LRTYPE_LAST_RENEWAL = 4,
   SHISHI_LRTYPE_LAST_REQUEST = 5
 }
-Shihi_lrtype;
+Shishi_lrtype;
 
 typedef enum
 {
@@ -446,7 +446,7 @@ extern int shishi_tkt_serverrealm_set (Shishi_tkt * tkt,
 extern int shishi_tkt_build (Shishi_tkt * tkt, Shishi_key * key);
 extern int shishi_tkt_lastreq (Shishi_tkt * tkt,
 			       char *lrtime, int *lrtimelen, int lrtype);
-extern time_t shishi_tkt_lastreqc (Shishi_tkt * tkt, Shihi_lrtype lrtype);
+extern time_t shishi_tkt_lastreqc (Shishi_tkt * tkt, Shishi_lrtype lrtype);
 extern int shishi_tkt_lastreq_pretty_print (Shishi_tkt * tkt, FILE * fh);
 extern int shishi_tkt_authtime (Shishi_tkt * tkt,
 				char *authtime, int *authtimelen);
