@@ -518,8 +518,8 @@ asreq (Shishi * handle, struct arguments arg,
 static Shishi_msgtype
 get_msgtype (Shishi * handle, char *in, size_t inlen)
 {
-  if (inlen > 1)
-    return *in - 0x5a;
+  if (inlen > 1 && *in >= 0x60 && *in <= 0x7F)
+    return *in - 0x60;
   else
     return 0;
 }
@@ -566,7 +566,7 @@ process (Shishi * handle, struct arguments arg,
       break;
 
     default:
-      /* XXX hard coded KRB-ERROR? */
+      /* XXX hard coded KRB-ERROR? Note 0x7F multi-byte msgtypes too. */
       *out = NULL;
       *outlen = 0;
     }
