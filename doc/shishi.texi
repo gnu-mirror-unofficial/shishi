@@ -679,10 +679,10 @@ things that you can do to increase the chances for it to be included
 in the official package.
 
 Unless your patch is very small (say, under 10 lines) we require that
-you assign the copyright of your work to the FSF.  This is to protect
-the freedom of the project.  If you have already signed papers, we
-will send you the necessary information when you submit your
-contribution.
+you assign the copyright of your work to the Free Software Foundation.
+This is to protect the freedom of the project.  If you have not
+already signed papers, we will send you the necessary information when
+you submit your contribution.
 
 For contributions that doesn't consist of actual programming code, the
 only guidelines are common sense.  Use it.
