@@ -162,24 +162,9 @@ shishi_tgs_req_build (Shishi_tgs * tgs)
   if (VERBOSE (tgs->handle))
     printf ("Building TGS-REQ...\n");
 
-  res = shishi_asn1_empty_field (tgs->handle, tgs->tgsreq, rtime, &rtimelen,
-				 "req-body.rtime");
+  res = shishi_kdcreq_build (tgs->handle, tgs->tgsreq);
   if (res != SHISHI_OK)
-    {
-      shishi_error_printf (tgs->handle, "Could not read rtime\n");
-      return res;
-    }
-
-  if (rtimelen == 0)
-    {
-      res = shishi_asn1_write (tgs->handle, tgs->tgsreq,
-			       "req-body.rtime", NULL, 0);
-      if (res != SHISHI_OK)
-	{
-	  shishi_error_printf (tgs->handle, "Could not write rtime\n");
-	  return res;
-	}
-    }
+    return res;
 
   res = shishi_apreq_options (tgs->handle, shishi_ap_req (tgs->ap),
 			      &apoptions);
