@@ -520,6 +520,7 @@ ocadd (unsigned char *add1, unsigned char *add2, unsigned char *sum, int len)
   if (carry)
     {
       int done = 0;
+
       for (i = len - 1; i >= 0; i--)
 	if (sum[i] != 0xFF)
 	  {
@@ -527,6 +528,7 @@ ocadd (unsigned char *add1, unsigned char *add2, unsigned char *sum, int len)
 	    done = 1;
 	    break;
 	  }
+
       if (!done)
 	memset (sum, 0, len);
     }
@@ -1013,6 +1015,26 @@ cipherinfo *ciphers[] = {
   &aes256_cts_hmac_sha1_96_info
 };
 
+/**
+ * shishi_cipher_name:
+ * @type: encryption type, see Shishi_etype.
+ * 
+ * Return name of encryption type, e.g. "des3-cbc-sha1-kd".
+ **/
+const char *
+shishi_cipher_name (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    {
+      if (type == ciphers[i]->type)
+	return ciphers[i]->name;
+    }
+
+  return NULL;
+}
+
 static int
 _shishi_cipher_blocksize (int type)
 {
@@ -1129,26 +1151,6 @@ _shishi_cipher_decrypt (int type)
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
       return ciphers[i]->decrypt;
-
-  return NULL;
-}
-
-/**
- * shishi_cipher_name:
- * @type: encryption type, see Shishi_etype.
- * 
- * Return name of encryption type, e.g. "des3-cbc-sha1-kd".
- **/
-const char *
-shishi_cipher_name (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    {
-      if (type == ciphers[i]->type)
-	return ciphers[i]->name;
-    }
 
   return NULL;
 }
