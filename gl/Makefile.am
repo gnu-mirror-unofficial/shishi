@@ -42,6 +42,7 @@ libfoo_la_LIBADD += @ALLOCA@
 #libfoo_la_LIBADD += @LTALLOCA@
 libfoo_la_SOURCES += allocsa.h allocsa.c
 
+libfoo_la_SOURCES += getsubopt.h
 
 libfoo_la_SOURCES += exit.h
 

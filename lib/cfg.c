@@ -24,6 +24,8 @@
 /* Get prototypes. */
 #include "cfg.h"
 
+#include "getsubopt.h"
+
 enum
 {
   DEFAULT_REALM_OPTION = 0,
@@ -64,8 +66,6 @@ static const char *_shishi_opts[] = {
   /* [STRINGPROCESS_OPTION] =        */ "stringprocess",
   /* [THE_END] =                     */ NULL
 };
-
-int getsubopt (char **optionp, char *const *tokens, char **valuep);
 
 struct Shishi_realminfo *
 _shishi_realminfo (Shishi * handle, const char *realm)

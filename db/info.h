@@ -135,7 +135,8 @@ struct Shisa
   size_t ndbs;
 };
 
-extern int getsubopt (char **optionp, char *const *tokens, char **valuep);
+/* Make sure getsubopt is available. */
+#include <getsubopt.h>
 
 /* Return structure with function pointers implementing a Shisa
    backend, given a name (e.g., "file"). */
