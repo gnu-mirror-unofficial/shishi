@@ -1,5 +1,5 @@
 /* shisa.c --- Command line interface to Shishi database.
- * Copyright (C) 2003  Simon Josefsson
+ * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -361,7 +361,14 @@ apply_options (const char *realm,
       etype = shishi_cfg_clientkdcetype_fast (sh);
 
       if (!salt && realm && principal)
-	asprintf (&salt, "%s%s", realm, principal);
+	{
+	  char *p;
+	  asprintf (&salt, "%s%s", realm, principal);
+
+	  /* FIXME: Parse principal/realm and creat proper salt. */
+	  while ((p = strchr (salt, '/')))
+	    memmove (p, p + 1, strlen (p));
+	}
 
       if (args.string_to_key_parameter_given)
 	{
