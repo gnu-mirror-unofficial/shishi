@@ -895,6 +895,7 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   tgt = shishi_tkts_find (tkts, &lochint);
 
   free (lochint.server);
+  lochint.server = NULL;
 
   if (tgt)
     return tgt;
@@ -905,7 +906,7 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   if (rc == SHISHI_OK)
     rc = shishi_as_req_build (as);
   if (rc == SHISHI_OK)
-    rc = shishi_as_sendrecv (as);
+    rc = shishi_as_sendrecv_hint (as, &lochint);
   if (rc == SHISHI_OK)
     rc = shishi_as_rep_process (as, NULL, hint->passwd);
   if (rc != SHISHI_OK)
@@ -971,7 +972,7 @@ shishi_tkts_get_tgs (Shishi_tkts * tkts,
   if (rc == SHISHI_OK)
     rc = shishi_tgs_req_build (tgs);
   if (rc == SHISHI_OK)
-    rc = shishi_tgs_sendrecv (tgs);
+    rc = shishi_tgs_sendrecv_hint (tgs, hint);
   if (rc == SHISHI_OK)
     rc = shishi_tgs_rep_process (tgs);
   if (rc != SHISHI_OK)

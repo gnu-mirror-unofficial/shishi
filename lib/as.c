@@ -514,16 +514,19 @@ shishi_as_tkt_set (Shishi_as * as, Shishi_tkt * tkt)
 }
 
 /**
- * shishi_as_sendrecv:
+ * shishi_as_sendrecv_hint:
  * @as: structure that holds information about AS exchange
+ * @hint: additional parameters that modify connection behaviour, or %NULL.
  *
  * Send AS-REQ and receive AS-REP or KRB-ERROR.  This is the initial
  * authentication, usually used to acquire a Ticket Granting Ticket.
+ * The @hint structure can be used to set, e.g., parameters for TLS
+ * authentication.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_as_sendrecv (Shishi_as * as)
+shishi_as_sendrecv_hint (Shishi_as * as, Shishi_tkts_hint * hint)
 {
   int res;
 
@@ -533,7 +536,7 @@ shishi_as_sendrecv (Shishi_as * as)
   if (VERBOSEASN1 (as->handle))
     shishi_kdcreq_print (as->handle, stdout, as->asreq);
 
-  res = shishi_kdcreq_sendrecv (as->handle, as->asreq, &as->asrep);
+  res = shishi_kdcreq_sendrecv_hint (as->handle, as->asreq, &as->asrep, hint);
   if (res == SHISHI_GOT_KRBERROR)
     {
       as->krberror = as->asrep;
@@ -554,4 +557,19 @@ shishi_as_sendrecv (Shishi_as * as)
     shishi_kdcrep_print (as->handle, stdout, as->asrep);
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_as_sendrecv:
+ * @as: structure that holds information about AS exchange
+ *
+ * Send AS-REQ and receive AS-REP or KRB-ERROR.  This is the initial
+ * authentication, usually used to acquire a Ticket Granting Ticket.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_as_sendrecv (Shishi_as * as)
+{
+  return shishi_as_sendrecv_hint (as, NULL);
 }

@@ -264,7 +264,8 @@ extern int _shishi_tls_done (Shishi * handle);
 extern int _shishi_sendrecv_tls (Shishi * handle,
 				 struct sockaddr *addr,
 				 const char *indata, int inlen,
-				 char **outdata, int *outlen, int timeout);
+				 char **outdata, int *outlen, int timeout,
+				 Shishi_tkts_hint * hint);
 
 /* utils.c */
 extern void _shishi_escapeprint (const char *str, int len);

@@ -108,8 +108,10 @@ shishi_as_derive_salt (Shishi * handle,
 }
 
 int
-shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
-			Shishi_asn1 * kdcrep)
+shishi_kdcreq_sendrecv_hint (Shishi * handle,
+			     Shishi_asn1 kdcreq,
+			     Shishi_asn1 * kdcrep,
+			     Shishi_tkts_hint * hint)
 {
   char *der;
   size_t der_len;
@@ -138,7 +140,8 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
   realm = xrealloc (realm, realmlen + 1);
   realm[realmlen] = '\0';
 
-  res = shishi_kdc_sendrecv (handle, realm, der, der_len, &buffer, &buflen);
+  res = shishi_kdc_sendrecv_hint (handle, realm, der, der_len,
+				  &buffer, &buflen, hint);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not send to KDC: %s\n",
@@ -182,6 +185,13 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
   free (buffer);
 
   return SHISHI_OK;
+}
+
+int
+shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
+			Shishi_asn1 * kdcrep)
+{
+  return shishi_kdcreq_sendrecv_hint (handle, kdcreq, kdcrep, NULL);
 }
 
 /**

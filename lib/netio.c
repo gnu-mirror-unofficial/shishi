@@ -185,7 +185,8 @@ shishi_sendrecv_tcp (Shishi * handle,
 static int
 shishi_kdc_sendrecv_1 (Shishi * handle, struct Shishi_kdcinfo *ki,
 		       const char *indata, size_t inlen,
-		       char **outdata, size_t * outlen)
+		       char **outdata, size_t * outlen,
+		       Shishi_tkts_hint * hint)
 {
   char *protname;
   int rc;
@@ -219,7 +220,7 @@ shishi_kdc_sendrecv_1 (Shishi * handle, struct Shishi_kdcinfo *ki,
     case TLS:
       rc = _shishi_sendrecv_tls (handle, &ki->sockaddress,
 				 indata, inlen, outdata, outlen,
-				 handle->kdctimeout);
+				 handle->kdctimeout, hint);
       break;
 #endif
 
@@ -243,7 +244,8 @@ shishi_kdc_sendrecv_1 (Shishi * handle, struct Shishi_kdcinfo *ki,
 static int
 shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
 			    const char *indata, size_t inlen,
-			    char **outdata, size_t * outlen)
+			    char **outdata, size_t * outlen,
+			    Shishi_tkts_hint * hint)
 {
   struct Shishi_realminfo *ri;
   size_t j, k;
@@ -260,7 +262,7 @@ shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
     for (k = 0; k < ri->nkdcaddresses; k++)
       {
 	rc = shishi_kdc_sendrecv_1 (handle, &ri->kdcaddresses[k],
-				    indata, inlen, outdata, outlen);
+				    indata, inlen, outdata, outlen, hint);
 	if (rc != SHISHI_KDC_TIMEOUT)
 	  return rc;
       }
@@ -398,15 +400,15 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
 }
 
 int
-shishi_kdc_sendrecv (Shishi * handle, char *realm,
-		     const char *indata, size_t inlen,
-		     char **outdata, size_t * outlen)
+shishi_kdc_sendrecv_hint (Shishi * handle, char *realm,
+			  const char *indata, size_t inlen,
+			  char **outdata, size_t * outlen,
+			  Shishi_tkts_hint * hint)
 {
   int rc;
 
-  rc = shishi_kdc_sendrecv_static (handle, realm,
-				   indata, inlen, outdata, outlen);
-
+  rc = shishi_kdc_sendrecv_static (handle, realm, indata, inlen,
+				   outdata, outlen, hint);
   if (rc == SHISHI_KDC_TIMEOUT || rc == SHISHI_KDC_NOT_KNOWN_FOR_REALM)
     rc = shishi_kdc_sendrecv_srv (handle, realm,
 				  indata, inlen, outdata, outlen);
@@ -415,4 +417,13 @@ shishi_kdc_sendrecv (Shishi * handle, char *realm,
 				     indata, inlen, outdata, outlen);
 
   return rc;
+}
+
+int
+shishi_kdc_sendrecv (Shishi * handle, char *realm,
+		     const char *indata, size_t inlen,
+		     char **outdata, size_t * outlen)
+{
+  return shishi_kdc_sendrecv_hint (handle, realm, indata, inlen,
+				   outdata, outlen, NULL);
 }

@@ -151,7 +151,8 @@ int
 _shishi_sendrecv_tls (Shishi * handle,
 		      struct sockaddr *addr,
 		      const char *indata, int inlen,
-		      char **outdata, int *outlen, int timeout)
+		      char **outdata, int *outlen, int timeout,
+		      Shishi_tkts_hint * hint)
 {
   const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
   gnutls_session session;

@@ -597,6 +597,8 @@ extern int shishi_cfg_print (Shishi * handle, FILE * fh);
 extern const char *shishi_cfg_default_systemfile (Shishi * handle);
 extern const char *shishi_cfg_default_userdirectory (Shishi * handle);
 extern const char *shishi_cfg_default_userfile (Shishi * handle);
+extern char *shishi_cfg_userdirectory_file (Shishi * handle,
+					    const char *file);
 extern int shishi_cfg_clientkdcetype (Shishi * handle, int32_t ** etypes);
 extern int32_t shishi_cfg_clientkdcetype_fast (Shishi * handle);
 extern int shishi_cfg_clientkdcetype_set (Shishi * handle, char *value);
@@ -977,6 +979,7 @@ extern void shishi_as_krberror_set (Shishi_as * as, Shishi_asn1 krberror);
 extern Shishi_tkt *shishi_as_tkt (Shishi_as * as);
 extern void shishi_as_tkt_set (Shishi_as * as, Shishi_tkt * tkt);
 extern int shishi_as_sendrecv (Shishi_as * as);
+extern int shishi_as_sendrecv_hint (Shishi_as * as, Shishi_tkts_hint * hint);
 extern int shishi_as_rep_process (Shishi_as * as,
 				  Shishi_key * key, const char *password);
 
@@ -1005,6 +1008,8 @@ extern void shishi_tgs_krberror_set (Shishi_tgs * tgs, Shishi_asn1 krberror);
 extern Shishi_tkt *shishi_tgs_tkt (Shishi_tgs * tgs);
 extern void shishi_tgs_tkt_set (Shishi_tgs * tgs, Shishi_tkt * tkt);
 extern int shishi_tgs_sendrecv (Shishi_tgs * tgs);
+extern int shishi_tgs_sendrecv_hint (Shishi_tgs * tgs,
+				     Shishi_tkts_hint * hint);
 extern int shishi_tgs_set_server (Shishi_tgs * tgs, const char *server);
 extern int shishi_tgs_set_realm (Shishi_tgs * tgs, const char *realm);
 extern int shishi_tgs_set_realmserver (Shishi_tgs * tgs,
@@ -1130,6 +1135,10 @@ extern int shishi_kdc_process (Shishi * handle, Shishi_asn1 kdcreq,
 			       int keyusage, Shishi_asn1 * enckdcreppart);
 extern int shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 				   Shishi_asn1 * kdcrep);
+extern int shishi_kdcreq_sendrecv_hint (Shishi * handle,
+					Shishi_asn1 kdcreq,
+					Shishi_asn1 * kdcrep,
+					Shishi_tkts_hint * hint);
 extern int shishi_kdc_copy_crealm (Shishi * handle, Shishi_asn1 kdcrep,
 				   Shishi_asn1 encticketpart);
 extern int shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq,
@@ -1886,6 +1895,10 @@ extern int shishi_aprep_get_enc_part_etype (Shishi * handle,
 extern int shishi_kdc_sendrecv (Shishi * handle, char *realm,
 				const char *indata, size_t inlen,
 				char **outdata, size_t * outlen);
+extern int shishi_kdc_sendrecv_hint (Shishi * handle, char *realm,
+				     const char *indata, size_t inlen,
+				     char **outdata, size_t * outlen,
+				     Shishi_tkts_hint * hint);
 
 /* encticketpart.c */
 extern Shishi_asn1 shishi_encticketpart (Shishi * handle);

@@ -547,16 +547,19 @@ shishi_tgs_tkt_set (Shishi_tgs * tgs, Shishi_tkt * tkt)
 }
 
 /**
- * shishi_tgs_sendrecv:
+ * shishi_tgs_sendrecv_hint:
  * @tgs: structure that holds information about TGS exchange
+ * @hint: additional parameters that modify connection behaviour, or %NULL.
  *
  * Send TGS-REQ and receive TGS-REP or KRB-ERROR.  This is the
  * subsequent authentication, usually used to acquire server tickets.
+ * The @hint structure can be used to set, e.g., parameters for TLS
+ * authentication.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tgs_sendrecv (Shishi_tgs * tgs)
+shishi_tgs_sendrecv_hint (Shishi_tgs * tgs, Shishi_tkts_hint * hint)
 {
   int res;
 
@@ -566,7 +569,8 @@ shishi_tgs_sendrecv (Shishi_tgs * tgs)
   if (VERBOSEASN1 (tgs->handle))
     shishi_kdcreq_print (tgs->handle, stdout, tgs->tgsreq);
 
-  res = shishi_kdcreq_sendrecv (tgs->handle, tgs->tgsreq, &tgs->tgsrep);
+  res = shishi_kdcreq_sendrecv_hint (tgs->handle, tgs->tgsreq,
+				     &tgs->tgsrep, hint);
   if (res == SHISHI_GOT_KRBERROR)
     {
       tgs->krberror = tgs->tgsrep;
@@ -588,6 +592,21 @@ shishi_tgs_sendrecv (Shishi_tgs * tgs)
     shishi_kdcrep_print (tgs->handle, stdout, tgs->tgsrep);
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_tgs_sendrecv:
+ * @tgs: structure that holds information about TGS exchange
+ *
+ * Send TGS-REQ and receive TGS-REP or KRB-ERROR.  This is the
+ * subsequent authentication, usually used to acquire server tickets.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_sendrecv (Shishi_tgs * tgs)
+{
+  return shishi_tgs_sendrecv_hint (tgs, NULL);
 }
 
 /**
