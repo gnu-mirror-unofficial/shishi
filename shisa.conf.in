@@ -11,17 +11,47 @@
 #
 # See the manual for a list of options.
 
-# db <type> [location] [parameters ...]
-# Specifies the data sources for Kerberos 5 data.  Multiple entries,
-# even of the same data source type, are allowed.
-#
+# db [OPTIONS] <TYPE> [LOCATION] [PARAMETERS ...]
+
+# Specify the data sources for Kerberos 5 data.  Multiple entries,
+# even of the same data source type, are allowed.  The data sources
+# are accessed in the same sequence as they are defined here.  If an
+# entry is found in one data source, it will be used for the
+# operations, without searching the remaining data sources.  Valid
+# OPTIONS include:
+
+# --read-only       No data is written to this data source.
+# --ignore-errors   Ignore failures in this backend.
+
+# The default uses one "file" data source (see below) but for a larger
+# installation you may want to combine several data sources.  Here is
+# an example.
+
+# db --read-only file /var/local/master
+# db --ignore-errors ldap kdc.example.org ca=/etc/shisa/kdc-ca.pem
+# db --read-only file /var/cache/ldap-copy
+
+# This demonstrate how you can store critical principals on local disk
+# (the first entry, /var/local/master) that will always be found
+# without looking in the LDAP directory.  The critical principals
+# could be, e.g., krbtgt/EXAMPLE.ORG: The second entry denote a LDAP
+# server that could hold user principals.  As you can see, Shisa will
+# not let the caller know about errors with the LDAP source (they will
+# be logged, however).  Instead, if for instance the LDAP server has
+# crashed, Shisa would continue and read from the /var/cache/ldap-copy
+# file source.  That file source may have been set up to contain a
+# copy of the data in the LDAP server, perhaps made on an hourly
+# basis, so that your server will be able to serve recent data even in
+# case of a crash.  Any updates or passwords change requests will
+# however not be possible while the LDAP server is inaccessible, to
+# reduce the problem of synchronizing data back into the LDAP server
+# once it is online again.
+
 # Currently only the "file" data source is supported, and denote a
-# standard text file.
+# data source that use the standard file system for storage.
 #
 # Valid syntaxes for the "file" database:
 # db file FILENAME
-# db file FILENAME allow-create
-# db file FILENAME read-only
 #
 # Examples:
 # db file /var/shishi/local.db
