@@ -8,4 +8,4 @@ libnettle_la_SOURCES = macros.h nettle-meta.h keymap.h rotors.h parity.h \
 	aes-encrypt.c aes-encrypt-table.c aes-decrypt.c aes-decrypt-table.c \
 	aes-set-encrypt-key.c aes-set-decrypt-key.c \
 	des3.c des.c des.h desCode.h \
-	cbc.h cbc.c cbc-cts.h cbc-cts.c
+	cbc.h cbc.c cbc-cts.h cbc-cts.c cbc-mac.h cbc-mac.c
