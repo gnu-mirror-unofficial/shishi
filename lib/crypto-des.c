@@ -98,6 +98,11 @@ raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
       md5_digest (&md5, MD5_DIGEST_SIZE, computed);
       hlen = MD5_DIGEST_SIZE;
       break;
+
+    default:
+      shishi_error_printf (handle, "MD %d unknown in raw des verify", algo);
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+      break;
     }
 
   if (VERBOSECRYPTO (handle))
@@ -206,6 +211,11 @@ raw_des_checksum (Shishi * handle,
       md5_digest (&md5, MD5_DIGEST_SIZE, out + 8);
 
       hlen = MD5_DIGEST_SIZE;
+      break;
+
+    default:
+      shishi_error_printf (handle, "MD %d unknown in raw des checksum", algo);
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
       break;
     }
 
@@ -762,26 +772,26 @@ des_checksum (Shishi * handle,
 	      char *in, size_t inlen, char **out, size_t * outlen,
 	      int algo)
 {
-  char buffer[BUFSIZ];
-  int buflen;
+  char cksum[8 + MAX_HASH_LEN];
+  size_t cksumlen;
   char *keyp;
   int i;
   int res;
 
-  buflen = sizeof (buffer);
-  res = raw_des_checksum (handle, algo, in, inlen, buffer, &buflen, 0);
+  res = raw_des_checksum (handle, algo, in, inlen, cksum, &cksumlen, 0);
   if (res != SHISHI_OK)
     {
-      shishi_error_set (handle, "checksum failed");
+      shishi_error_set (handle, "raw des checksum failed");
       return res;
     }
+
 
   keyp = shishi_key_value (key);
 
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
 
-  res = simplified_dencrypt (handle, key, NULL, 0, buffer, buflen,
+  res = simplified_dencrypt (handle, key, NULL, 0, cksum, cksumlen,
 			     out, outlen, 0);
 
   for (i = 0; i < 8; i++)
@@ -805,7 +815,7 @@ des_md4_checksum (Shishi * handle,
 {
   return des_checksum (handle, key, keyusage, cksumtype,
 		       in, inlen, out, outlen,
-		       SHISHI_RSA_MD4_DES);
+		       SHISHI_DES_CBC_MD4);
 }
 
 static int
@@ -817,7 +827,7 @@ des_md5_checksum (Shishi * handle,
 {
   return des_checksum (handle, key, keyusage, cksumtype,
 		       in, inlen, out, outlen,
-		       SHISHI_RSA_MD5_DES);
+		       SHISHI_DES_CBC_MD5);
 }
 
 int
