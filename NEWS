@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.16 (unreleased)
 
+** Cross compile builds should work.
+It should work for any sane cross compile target, but the only tested
+platform is uClibc/uClinux on Motorola Coldfire.
+
 ** New environment variables to override defaults in Shishi library.
 SHISHI_USER specifies default client username, SHISHI_HOME specifies
 user Shishi home directory (for configuration file, ticket cache,
