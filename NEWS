@@ -9,11 +9,11 @@ See the end for copying conditions.
 ** Low-level fixes of AES Cipher Text Stealing mode.
 Also added new self test that checks test vectors from specification.
 
-** Documentation fixes.
-
 ** Configuration tokens spelled correctly ("verbose-noice" -> "verbose-noise").
 
 ** Polish translation added, by Jakub Bogusz.
+
+** Various bugfixes.
 
 * Version 0.0.14 (released 2004-01-22)
 
