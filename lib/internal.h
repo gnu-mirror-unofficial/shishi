@@ -120,6 +120,7 @@
 #include "base64.h"
 #include "getdate.h"
 #include "getline.h"
+#include "strtok_r.h"
 #include "time_r.h"
 #include "timegm.h"
 #include "vasprintf.h"
