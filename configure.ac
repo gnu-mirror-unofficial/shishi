@@ -172,7 +172,6 @@ if test "$with_system_idn" = "no"; then
 
 The system's libidn 0.1.0 or later not used.  Using copy distributed
 with Shishi instead.  See <http://www.gnu.org/software/libidn/>.
-
 ]])
 	LIBIDN_CFLAGS="-I\$(top_srcdir)/libstringprep"
 	LIBIDN_LIBS="\$(top_builddir)/libstringprep/libidn.la"
@@ -203,7 +202,6 @@ if test "$with_system_libtasn1" = "no"; then
 
 The system's libtasn1 0.2.0 or later not used.  Using copy distributed
 with Shishi instead.  See <http://www.gnu.org/software/gnutls/>.
-
 ]])
 	LIBTASN1_CFLAGS="-I\$(top_srcdir)/asn1/lib"
 	LIBTASN1_LIBS="\$(top_builddir)/asn1/lib/libtasn1.la"
@@ -232,18 +230,18 @@ if test "$with_system_libgcrypt" = "no"; then
 
 The system's libgcrypt 1.1.13 or later not used.  Using copy distributed
 with shishi instead. See <ftp://ftp.gnupg.org/pub/gcrypt/alpha/libgcrypt/>.
-
 ]])
 	LIBGCRYPT_CFLAGS="-I\$(top_srcdir)/crypto/src"
 	LIBGCRYPT_LIBS="\$(top_builddir)/crypto/src/libgcrypt.la"
-	CRYPTO=crypto
+	CRYPTO="errcrypto crypto"
 fi
 AC_SUBST(LIBGCRYPT_CFLAGS)
 AC_SUBST(LIBGCRYPT_LIBS)
 AC_SUBST(CRYPTO)
 AC_MSG_CHECKING([if system's libgcrypt should be used])
 AC_MSG_RESULT($with_system_libgcrypt)
-AC_CONFIG_SUBDIRS(crypto)
+GPG_ERROR_CONFIG=`pwd`/errcrypto/src/gpg-error-config; export GPG_ERROR_CONFIG
+AC_CONFIG_SUBDIRS(errcrypto crypto)
 
 # For gnulib stuff in gl/.
 gl_FUNC_ALLOCA
