@@ -179,11 +179,17 @@ void
 shishi_error_printf (Shishi * handle, char *format, ...)
 {
   va_list ap;
+  char * s;
 
   va_start (ap, format);
 
-  vsnprintf (handle->error, sizeof (handle->error), format, ap);
+  vasprintf (&s, format, ap);
+  strncpy (handle->error, s, sizeof (handle->error));
+  handle->error[sizeof(handle->error)-1] = '\0';
+  free (s);
 
   if (VERBOSE (handle))
     puts (handle->error);
+
+  va_end (ap);
 }
