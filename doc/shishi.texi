@@ -337,13 +337,20 @@ credentials.
 @section Cryptographic Overview
 
 Shishi implements several of the standard cryptographic primitives.
-Here are the names of the supported encryption suites, with some notes
-on their status and there associated checksum suite.  They are ordered
-by increased security as perceived by the author.
+In this section we give the names of the supported encryption suites,
+and some notes about them, and their associated checksum suite.
+
+Statements such as ``it is weak'' should be read as meaning that there
+is no credible security analysis of the mechanism available, and/or
+that should an attack be published publicly, few people would likely
+be surprised.  Also keep in mind that the key size mentioned is the
+actual key size, not the effective key space as far as a brute force
+attack is concerned.
 
 @cindex DES
 @cindex 3DES
 @cindex AES
+@cindex ARCFOUR
 
 @table @code
 
@@ -352,6 +359,19 @@ by increased security as perceived by the author.
 @code{NULL} is a dummy encryption suite for debugging.  Encryption and
 decryption are identity functions.  No integrity protection.  It is
 weak.  It is associated with the @code{NULL} checksum.
+
+@item arcfour-hmac
+@item arcfour-hmac-exp
+
+@code{arcfour-hmac-*} are a proprietary stream cipher with 56 bit
+(@code{arcfour-hmac-exp}) or 128 bit (@code{arcfour-hmac}) keys, used
+in a proprietary way described in an expired IETF draft
+@file{draft-brezak-win2k-krb-rc4-hmac-04.txt}.  Deriving keys from
+passwords is supported, and is done by computing a message digest
+(MD4) of a 16-bit Unicode representation of the ASCII password, with
+no salt.  Data is integrity protected with a keyed hash (HMAC-MD5),
+where the key is derived from the base key in a creative way.  It is
+weak.  It is associated with the @code{arcfour-hmac-md5} checksum.
 
 @item des-cbc-crc
 
@@ -432,6 +452,16 @@ are ordered by increased security as perceived by the author.
 @code{NULL} is a dummy checksum suite for debugging.  It provides no
 integrity.  It is weak.  It is compatible with the @code{NULL}
 encryption mechanism.
+
+@item arcfour-hmac-md5
+
+@code{arcfour-hmac-md5} is a keyed HMAC-MD5 checksum computed on a MD5
+message digest, in turn computed on a four byte message type indicator
+concatenated with the application data.  (The @code{arcfour}
+designation is thus somewhat misleading, but since this checksum
+mechanism is described in the same document as the @code{arcfour}
+encryption mechanisms, it is not a completely unnatural designation.)
+It is weak.  It is compatible with all encryption mechanisms.
 
 @item rsa-md4
 

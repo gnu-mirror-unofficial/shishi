@@ -5,6 +5,8 @@ See the end for copying conditions.
 * Version 0.0.7 (unreleased)
 
 ** ARCFOUR encryption support according to draft-brezak-win2k-krb-rc4-hmac-04.
+Libgcrypt must be built with --enable-ciphers=arcfour, otherwise you
+will get a runtime error.
 
 * Version 0.0.6 (released 2003-09-14)
 
