@@ -8,9 +8,9 @@ See the end for copying conditions.
 Shisa is used by Kerberos 5 servers (KDCs) to find information about
 principals.  It will be extended to support various backends, such as
 LDAP and SQL databases, but currently only text file databases are
-supported.  Shisa consists of two parts, a library (libshisa) and a
-command line tool (shisa).  See the Administration Manual for more
-information.  This is very much work in progress.
+supported.  Shisa consists of two parts, a library (libshisa, see db/)
+and a command line tool (shisa, see src/).  See the Administration
+Manual for more information.  This is very much work in progress.
 
 ** Improve behaviour with poorly synchronized clocks.
 Earlier newly acquired tickets were discarded if they were not yet
