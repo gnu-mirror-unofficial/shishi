@@ -484,49 +484,47 @@ main (int argc, char *argv[])
   set_program_name (argv[0]);
 
   if (cmdline_parser (argc, argv, &args_info) != 0)
-    {
-      error (1, 0, "Try `%s --help' for more information.", argv[0]);
-      return 1;
-    }
+    error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
+	   program_name);
 
   if (args_info.add_given + args_info.dump_given + args_info.list_given +
       args_info.modify_given + args_info.remove_given > 1 ||
       args_info.inputs_num > 2)
     {
       error (0, 0, "too many arguments");
-      error (1, 0, "Try `%s --help' for more information.", argv[0]);
+      error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
+	     program_name);
     }
 
-  if (args_info.add_given + args_info.dump_given + args_info.list_given +
+  if (args_info.help_given ||
+      args_info.add_given + args_info.dump_given + args_info.list_given +
       args_info.modify_given + args_info.remove_given != 1)
     {
       cmdline_parser_print_help ();
       printf ("\nMandatory arguments to long options are "
 	      "mandatory for short options too.\n\n");
       printf ("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
-      return 1;
+      return EXIT_SUCCESS;
     }
 
   rc = shisa_init_with_paths (&dbh, args_info.configuration_file_arg);
   if (rc != SHISA_OK)
-    error (1, 0, "Initialization failed:\n%s", shisa_strerror (rc));
+    error (EXIT_FAILURE, 0, "Initialization failed:\n%s", shisa_strerror (rc));
 
   rc = shisa_cfg (dbh, args_info.library_options_arg);
   if (rc != SHISA_OK)
-    error (1, 0, "Could not read library options `%s':\n%s",
+    error (EXIT_FAILURE, 0, "Could not read library options `%s':\n%s",
 	   args_info.library_options_arg, shisa_strerror (rc));
 
   rc = shishi_init (&sh);
   if (rc != SHISHI_OK)
-    error (1, 0, "Shishi initialization failed:\n%s", shishi_strerror (rc));
+    error (EXIT_FAILURE, 0, "Shishi initialization failed:\n%s",
+	   shishi_strerror (rc));
 
-  if (args_info.encryption_type_given)
-    {
-      rc = shishi_cfg_clientkdcetype_set (sh, args_info.encryption_type_arg);
-      if (rc != SHISHI_OK)
-	error (1, 0, "Could not set encryption type `%s':\n%s",
-	       args_info.encryption_type_arg, shishi_strerror (rc));
-    }
+  rc = shishi_cfg_clientkdcetype_set (sh, args_info.encryption_type_arg);
+  if (rc != SHISHI_OK)
+    error (EXIT_FAILURE, 0, "Could not set encryption type `%s':\n%s",
+	   args_info.encryption_type_arg, shishi_strerror (rc));
 
   if (args_info.list_given || args_info.dump_given)
     rc = dumplist ();

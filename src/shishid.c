@@ -1286,11 +1286,9 @@ main (int argc, char *argv[])
   textdomain (PACKAGE);
   set_program_name (argv[0]);
 
-  if (cmdline_parser (argc, argv, &arg) != 0)
-    {
-      error (1, 0, "Try `%s --help' for more information.", argv[0]);
-      return 1;
-    }
+  if (cmdline_parser (argc, argv, &args_info) != 0)
+    error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
+	   program_name);
 
   if (arg.help_given)
     {
@@ -1298,7 +1296,7 @@ main (int argc, char *argv[])
       printf ("\nMandatory arguments to long options are "
 	      "mandatory for short options too.\n\n");
       printf ("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
-      return 1;
+      return EXIT_SUCCESS;
     }
 
   if (!arg.configuration_file_arg)
