@@ -65,6 +65,7 @@ Free Software Foundation raise funds for GNU development.''
 * Introduction::                How to use this manual.
 * User Manual::                 Using Shishi as end-user.
 * Administration Manual::       Administrating server aspects of Shishi.
+* Reference Manual::            Detailed description of config files, etc.
 * Programming Manual::          Calling Shishi from a programming language.
 * Acknowledgements::            Whom to blame.
 
@@ -738,6 +739,296 @@ $
 
 Below follows a list of all parameters.
 
+@c **********************************************************
+@c ****************  Administration Manual  *****************
+@c **********************************************************
+@node Administration Manual
+@chapter Administration Manual
+
+This section describe how you get the KDC server up and running to
+answer queries from clients.
+
+First you must create a user database.  Currently this is rather
+simplistic, and the database only contains cryptographic keys.  Use
+the @samp{shishi --string-to-key} command to generate keys, and store
+them in the @file{shishid.keys} file.  The file path is
+@file{/usr/local/etc/shishid.keys} by default, although you can use
+@samp{shishid -k} to specify another location.
+
+Create a random key for the Kerberos Ticket Granting Service for your
+realm:
+
+@example
+@cartouche
+$ shishi --string-to-key --random \
+krbtgt/latte.josefsson.org@@latte.josefsson.org | \
+tee /usr/local/etc/shishid.keys
+-----BEGIN SHISHI KEY-----
+Keytype: 18 (aes256-cts-hmac-sha1-96)
+Principal: krbtgt/latte.josefsson.org
+Realm: latte.josefsson.org
+
+oconxMTf59B5bvTylY+KE4mchA/gtmYI2Qok+48tnSM=
+-----END SHISHI KEY-----
+$
+@end cartouche
+@end example
+
+Create a key for a user from a specified password:
+
+@example
+@cartouche
+$ shishi --string-to-key=fnord \
+simon@@latte.josefsson.org | tee --append \
+/usr/local/etc/shishid.keys
+-----BEGIN SHISHI KEY-----
+Keytype: 18 (aes256-cts-hmac-sha1-96)
+Principal: simon
+Realm: latte.josefsson.org
+
+c1rqwvYwuDFrABvqWVq9bWUsQWg/xbErsIUmLN+3lYM=
+-----END SHISHI KEY-----
+$
+@end cartouche
+@end example
+
+There is nothing special with a ticket granting key, you could have
+created it based on a password similar to the user key.  However,
+please keep in mind that passwords typically have little entropy.
+
+Finally, create a random key for a service:
+
+@example
+@cartouche
+$ shishi --string-to-key --random \
+imap/latte.josefsson.org@@latte.josefsson.org | \
+tee --append /usr/local/etc/shishid.keys
+-----BEGIN SHISHI KEY-----
+Keytype: 18 (aes256-cts-hmac-sha1-96)
+Principal: imap/latte.josefsson.org
+Realm: latte.josefsson.org
+
+ts2v0QHWyW9FyXbWtCvLPqdEc60qPq5Yvat3p82rp5c=
+-----END SHISHI KEY-----
+$
+@end cartouche
+@end example
+
+You are now ready to start the KDC:
+
+@example
+@cartouche
+$ shishid
+@end cartouche
+@end example
+
+Then you can use @samp{shishi} as usual to acquire tickets
+(@pxref{User Manual}).  The following example demonstrate a AS-REQ for
+@samp{krbtgt/latte.josefsson.org} followed by a TGS-REQ for
+@samp{imap/latte.josefsson.org}.
+
+@example
+@cartouche
+$ shishi simon@@latte.josefsson.org imap/latte.josefsson.org
+Enter password for `simon@@latte.josefsson.org':
+simon@@latte.josefsson.org:
+Acquired:       Wed Aug 27 17:16:37 2003
+Expires:        Wed Aug 27 17:33:17 2003
+Server:         imap/latte.josefsson.org key aes256-cts-hmac-sha1-96 (18)
+Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
+Ticket flags:   FORWARDED PROXIABLE (12)
+$
+@end cartouche
+@end example
+
+@c **********************************************************
+@c ****************  Reference Manual  **********************
+@c **********************************************************
+@node Reference Manual
+@chapter Reference Manual
+
+This chapter describes in high detail all parameters, configuration
+file verbs, etc.
+
+@menu
+* Configuration file::          Meaning of tokens used in configuration file.
+* Parameters for shishi::       Command line parameters for 'shishi'.
+* Parameters for shishid::      Command line parameters for 'shishid'.
+@end menu
+
+@node Configuration file
+@section Configuration file
+
+The valid configuration file tokens are described here.  The user
+configuration file is typically located in
+@file{~/.shishi/shishi.conf} (compare @samp{shishi
+--configuration-file}) and the system configuration is typicall
+located in @file{/usr/local/etc/shishi.conf}.  All tokens are valid in
+both files, and have the same meaning.  However, as the system file is
+supposed to apply to all users on a system, it would not make sense to
+use some tokens in both files.  For example, the
+@samp{default-principal} is rarely useful in a system configuration
+file.
+
+@section @samp{default-realm}
+Specify the default realm, by default the hostname of the host is
+used.  E.g.,
+
+@example
+default-realm JOSEFSSON.ORG
+@end example
+
+@section @samp{default-principal}
+
+Specify the default principal, by default the login username is
+used. E.g.,
+
+@example
+default-principal jas
+@end example
+
+@section @samp{client-kdc-etypes}
+
+Specify which encryption types client asks server to respond in during
+AS/TGS exchanges. List valid encryption types, in preference order.
+Supported algorithms include aes256-cts-hmac-sha1-96,
+aes128-cts-hmac-sha1-96, des3-cbc-sha1-kd, des-cbc-md5, des-cbc-md4,
+des-cbc-crc and null.  This option also indicates which encryption
+types are accepted by the client when receiving the response.  Note
+that the preference order is not cryptographically protected, so a man
+in the middle can modify the order without being detected.  Thus, only
+specify encryption types you trust completely here. The default only
+includes aes256-cts-hmac-sha1-96, as suggested by RFC1510bis.  E.g.,
+
+@example
+client-kdc-etypes=aes256-cts-hmac-sha1-96 des3-cbc-sha1-kd des-cbc-md5
+@end example
+
+@section @samp{verbose}, @samp{verbose-asn1}, @samp{verbose-noice}, @samp{verbose-crypto}
+
+Enable verbose library messages.  E.g.,
+
+@example
+verbose
+verbose-noice
+@end example
+
+@section @samp{realm-kdc}
+
+Specify KDC addresses for realms.  Value is
+@samp{REALM,KDCADDRESS[/PROTOCOL][,KDCADDRESS[/PROTOCOL]...]}.
+
+KDCADDRESS is the hostname or IP address of KDC.
+
+Optional PROTOCOL is udp for UDP, tcp for TCP, and TLS for TLS
+connections.  By default UDP is tried first, and TCP used as a
+fallback if the KRB_ERR_RESPONSE_TOO_BIG error is received.
+
+If not specified, Shishi tries to locate the KDC using SRV RRs,
+which is recommended.  This option should normally only be
+used during experiments, or to access badly maintained realms.
+
+@example
+realm-kdc=JOSEFSSON.ORG,ristretto.josefsson.org
+@end example
+
+@section @samp{server-realm}
+
+Specify realm for servers. Value is
+@samp{REALM,SERVERREGEXP[,SERVERREGEXP...]}.
+
+SERVERREGEXP is a regular expression matching servers in the realm.
+The first match is used.  E.g.,
+
+@example
+server-realm=JOSEFSSON.ORG,.josefsson.org
+@end example
+
+Note: currently not used.
+
+@section @samp{kdc-timeout}, @samp{kdc-retries}
+
+How long shishi waits for a response from a KDC before continuing to
+next KDC for realm.  The default is 5 seconds.  E.g.,
+
+@example
+kdc-timeout=10
+@end example
+
+How many times shishi sends a request to a KDC before giving up.  The
+default is 3 times.  E.g.,
+
+@example
+kdc-retries=5
+@end example
+
+@section @samp{stringprocess}
+
+How username and passwords entered from the terminal, or taken from
+the command line, are processed.
+
+"none": no processing is used.
+
+"stringprep": convert from locale charset to UTF-8 and process using
+              experimental RFC 1510 stringprep profile.
+
+It can also be a string indicating a character set supported by
+iconv() via libstringprep, in which case data is converted from locale
+charset into the indicated character set. E.g., UTF-8, ISO-8859-1,
+KOI-8, EBCDIC-IS-FRISS are supported on GNU systems.  On some systems
+you can use "locale -m" to list available character sets.  By default,
+the "none" setting is used which is consistent with RFC 1510 that is
+silent on the issue.  In practice, however, converting to UTF-8
+improves interoperability.
+
+E.g.,
+
+@example
+stringprocess=UTF-8
+@end example
+
+@section @samp{ticket-life}
+Specify default ticket life time.
+
+The string can be in almost any common format.  It can contain month
+names, time zones, `am' and `pm', `yesterday', `ago', `next', etc.
+Refer to the "Date input formats" in the GNU CoreUtils package for
+entire story (@pxref{Date input formats, ,Date input formats,
+coreutils, GNU CoreUtils}).  As an extra feature, if the resulting
+string you specify has expired within the last 24 hours, an extra day
+is added to it.  This allows you to specify "17:00" to always mean the
+next 17:00, even if your system clock happens to be 17:30.
+
+The default is 8 hours.
+
+E.g.,
+
+@example
+#ticket-life=8 hours
+#ticket-life=1 day
+ticket-life=17:00
+@end example
+
+@section @samp{renew-life}
+
+Specify how long a renewable ticket should remain renewable.
+
+See ticket-life for the syntax.  The extra feature that handles
+negative values within the last 2 hours is not active here.
+
+The default is 7 days.
+
+E.g.,
+
+@example
+#renew-life=1 week
+#renew-life=friday 17:00
+renew-life=sunday
+@end example
+
+@node Parameters for shishi
+@section Parameters for shishi
+
 If no command is given, Shishi try to make sure you have a ticket
 granting ticket for the default realm, and then display it.
 
@@ -841,106 +1132,35 @@ Usage: lt-shishi [OPTION...] [CLIENT [SERVER]] [OPTION...]
   -V, --version              Print program version
 @end example
 
-@c **********************************************************
-@c ****************  Administration Manual  *****************
-@c **********************************************************
-@node Administration Manual
-@chapter Administration Manual
+@node Parameters for shishid
+@section Parameters for shishid
 
-This section describe how you get the KDC server up and running to
-answer queries from clients.
+If no parameters are specified, @samp{shishid} listens on the defaults
+interfaces and answers incoming requests using the keys in the default
+key file.
 
-First you must create a user database.  Currently this is rather
-simplistic, and the database only contains cryptographic keys.  Use
-the @samp{shishi --string-to-key} command to generate keys, and store
-them in the @file{shishid.keys} file.  The file path is
-@file{/usr/local/etc/shishid.keys} by default, although you can use
-@samp{shishid -k} to specify another location.
-
-Create a random key for the Kerberos Ticket Granting Service for your
-realm:
+Mandatory or optional arguments to long options are also mandatory or optional
+for any corresponding short options.
 
 @example
-@cartouche
-$ shishi --string-to-key --random \
-krbtgt/latte.josefsson.org@@latte.josefsson.org | \
-tee /usr/local/etc/shishid.keys
------BEGIN SHISHI KEY-----
-Keytype: 18 (aes256-cts-hmac-sha1-96)
-Principal: krbtgt/latte.josefsson.org
-Realm: latte.josefsson.org
-
-oconxMTf59B5bvTylY+KE4mchA/gtmYI2Qok+48tnSM=
------END SHISHI KEY-----
-$
-@end cartouche
-@end example
-
-Create a key for a user from a specified password:
-
-@example
-@cartouche
-$ shishi --string-to-key=fnord \
-simon@@latte.josefsson.org | tee --append \
-/usr/local/etc/shishid.keys
------BEGIN SHISHI KEY-----
-Keytype: 18 (aes256-cts-hmac-sha1-96)
-Principal: simon
-Realm: latte.josefsson.org
-
-c1rqwvYwuDFrABvqWVq9bWUsQWg/xbErsIUmLN+3lYM=
------END SHISHI KEY-----
-$
-@end cartouche
-@end example
-
-There is nothing special with a ticket granting key, you could have
-created it based on a password similar to the user key.  However,
-please keep in mind that passwords typically have little entropy.
-
-Finally, create a random key for a service:
-
-@example
-@cartouche
-$ shishi --string-to-key --random \
-imap/latte.josefsson.org@@latte.josefsson.org | \
-tee --append /usr/local/etc/shishid.keys
------BEGIN SHISHI KEY-----
-Keytype: 18 (aes256-cts-hmac-sha1-96)
-Principal: imap/latte.josefsson.org
-Realm: latte.josefsson.org
-
-ts2v0QHWyW9FyXbWtCvLPqdEc60qPq5Yvat3p82rp5c=
------END SHISHI KEY-----
-$
-@end cartouche
-@end example
-
-You are now ready to start the KDC:
-
-@example
-@cartouche
-$ shishid
-@end cartouche
-@end example
-
-Then you can use @samp{shishi} as usual to acquire tickets
-(@pxref{User Manual}).  The following example demonstrate a AS-REQ for
-@samp{krbtgt/latte.josefsson.org} followed by a TGS-REQ for
-@samp{imap/latte.josefsson.org}.
-
-@example
-@cartouche
-$ shishi simon@@latte.josefsson.org imap/latte.josefsson.org
-Enter password for `simon@@latte.josefsson.org':
-simon@@latte.josefsson.org:
-Acquired:       Wed Aug 27 17:16:37 2003
-Expires:        Wed Aug 27 17:33:17 2003
-Server:         imap/latte.josefsson.org key aes256-cts-hmac-sha1-96 (18)
-Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
-Ticket flags:   FORWARDED PROXIABLE (12)
-$
-@end cartouche
+  -c, --configuration-file=FILE   Read configuration from file.  Default is
+                             /usr/local/etc/shishi.conf.
+  -k, --key-file=FILE        Read keys from file.  Default is
+                             /usr/local/etc/shishid.keys.
+  -l, --listen=[FAMILY:]ADDRESS:SERVICE/TYPE,...
+                             What to listen on. Family is "IPv4" or "IPv6", if
+                             absent the family is decided by
+                             gethostbyname(ADDRESS). An address of "*"
+                             indicates all addresses on the local host. The
+                             default is "IPv4:*:kerberos/udp,
+                             IPv4:*:kerberos/tcp, IPv6:*:kerberos/udp,
+                             IPv6:*:kerberos/tcp".
+  -q, -s, --quiet, --silent  Don't produce any output.
+  -u, --setuid=NAME          After binding socket, set user identity.
+  -v, --verbose              Produce verbose output.
+  -?, --help                 Give this help list
+      --usage                Give a short usage message
+  -V, --version              Print program version
 @end example
 
 @c **********************************************************
