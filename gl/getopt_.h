@@ -53,13 +53,12 @@
 # define optopt __GETOPT_PREFIX##optopt
 #endif
 
-/* The elements of the ARGV arguments to getopt aren't really const,
-   because we permute them.  For glibc, __getopt_argv_const is const
-   so that prototypes pretend the elements are const, to be compatible
-   with Posix.  However, drop this pretense for standalone
-   applications, since it's not needed there and it's safer not to lie
-   to compilers.  */
-#ifdef __GETOPT_PREFIX
+/* Standalone applications get correct prototypes for getopt_long and
+   getopt_long_only; they declare "char **argv".  libc uses prototypes
+   with "char *const *argv" that are incorrect because getopt_long and
+   getopt_long_only can permute argv; this is required for backward
+   compatibility (e.g., for LSB 2.0.1).  */
+#if defined __GETOPT_PREFIX && !defined __need_getopt
 # define __getopt_argv_const /* empty */
 #else
 # define __getopt_argv_const const
@@ -131,7 +130,7 @@ extern int optopt;
    The field `has_arg' is:
    no_argument		(or 0) if the option does not take an argument,
    required_argument	(or 1) if the option requires an argument,
-   optional_argument 	(or 2) if the option takes an optional argument.
+   optional_argument	(or 2) if the option takes an optional argument.
 
    If the field `flag' is not NULL, it points to a variable that is set
    to the value given in the field `val' when the option is found, but
@@ -186,8 +185,7 @@ struct option
    arguments to the option '\0'.  This behavior is specific to the GNU
    `getopt'.  */
 
-extern int getopt (int ___argc, char *__getopt_argv_const *___argv,
-		   const char *__shortopts)
+extern int getopt (int ___argc, char *const *___argv, const char *__shortopts)
        __THROW;
 
 #ifndef __need_getopt
