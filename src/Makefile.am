@@ -18,15 +18,14 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-bin_PROGRAMS = shishi
-sbin_PROGRAMS = shishid
+LDADD = ../lib/libshishi.la
 
+bin_PROGRAMS = shishi
 shishi_SOURCES = shishi.c data.h gettext.h \
 	authp.c crypto.c client.c server.c
-shishi_LDADD = ../lib/libshishi.la
 
+sbin_PROGRAMS = shishid
 shishid_SOURCES = shishid.c
-shishid_LDADD = ../lib/libshishi.la
 
 localedir = $(datadir)/locale
 
