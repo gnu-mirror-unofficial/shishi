@@ -30,6 +30,8 @@ enum
   KDC_OPTION,
   KDC_TIMEOUT_OPTION,
   KDC_RETRIES_OPTION,
+  TICKET_LIFE_OPTION,
+  RENEW_LIFE_OPTION,
   VERBOSE_CRYPTO_OPTION,
   VERBOSE_ASN1_OPTION,
   VERBOSE_NOICE_OPTION,
@@ -46,6 +48,8 @@ static char *const _shishi_opts[] = {
   /* [KDC_OPTION] =               */ "kdc",
   /* [KDC_TIMEOUT_OPTION] =       */ "kdc-timeout",
   /* [KDC_RETRIES_OPTION] =       */ "kdc-retries",
+  /* [TICKET_LIFE_OPTION] =       */ "ticket-life",
+  /* [RENEW_LIFE_OPTION] =        */ "renew-life",
   /* [VERBOSE_CRYPTO_OPTION] =    */ "verbose-crypto",
   /* [VERBOSE_ASN1_OPTION] =      */ "verbose-asn1",
   /* [VERBOSE_NOICE_OPTION] =     */ "verbose-noice",
@@ -92,6 +96,43 @@ shishi_cfg (Shishi * handle, char *option)
 	    shishi_warn (handle, "Invalid KDC retries value: `%s'", value);
 	  else
 	    shishi_warn (handle, "Missing KDC retries value");
+	  break;
+
+	case TICKET_LIFE_OPTION:
+	  {
+	    time_t now = time(NULL);
+	    time_t then = get_date (value, &now);
+	    int diff = (int) difftime (then, now);
+
+	    if (value && then != -1 && diff > 0)
+	      handle->ticketlife = diff;
+	    else if (diff <= 0 && diff + 60*60*24 > 0)
+	      /* Hack to support "17:00" as always meaning the next 17:00. */
+	      handle->ticketlife = 60*60*24 + diff;
+	    else if (diff <= 0)
+	      shishi_warn (handle, "Negative ticket life date: `%s'", value);
+	    else if (then == -1)
+	      shishi_warn (handle, "Invalid ticket life date: `%s'", value);
+	    else
+	      shishi_warn (handle, "Missing ticket life value");
+	  }
+	  break;
+
+	case RENEW_LIFE_OPTION:
+	  {
+	    time_t now = time(NULL);
+	    time_t then = get_date (value, &now);
+	    int diff = (int) difftime (then, now);
+
+	    if (value && then != -1 && diff > 0)
+	      handle->renewlife = diff;
+	    else if (diff <= 0)
+	      shishi_warn (handle, "Negative renew life date: `%s'", value);
+	    else if (then == -1)
+	      shishi_warn (handle, "Invalid renew life date: `%s'", value);
+	    else
+	      shishi_warn (handle, "Missing renew life value");
+	  }
 	  break;
 
 	case REALM_KDC_OPTION:
@@ -270,6 +311,7 @@ int
 shishi_cfg_print (Shishi * handle, FILE * fh)
 {
   int i, j;
+  time_t tmp, now = time(NULL);
 
   fprintf (fh, "Shishi initial library configuration:\n");
   fprintf (fh, "\tDefault realm: %s\n",
@@ -282,6 +324,12 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
   fprintf (fh, "\n");
   fprintf (fh, "\tKDC: %s\n", handle->kdc ? handle->kdc : "(NULL)");
   fprintf (fh, "\tVerbose: %d\n", handle->verbose);
+  tmp = now + handle->ticketlife;
+  fprintf (fh, "\tTicket life: %d seconds. %s",
+	   handle->ticketlife, ctime(&tmp));
+  tmp = now + handle->renewlife;
+  fprintf (fh, "\tRenew life: %d seconds. %s",
+	   handle->renewlife, ctime(&tmp));
   for (i = 0; i < handle->nrealminfos; i++)
     {
       fprintf (fh, "\tRealm %s's KDCs:", handle->realminfos[i].name);
