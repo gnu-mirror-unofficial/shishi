@@ -938,6 +938,29 @@ shishi_tkt_keytype (Shishi_tkt * tkt, int32_t * etype)
 }
 
 /**
+ * shishi_tkt_keytype_fast:
+ * @tkt: input variable with ticket info.
+ *
+ * Extract encryption type of key in ticket (really EncKDCRepPart).
+ *
+ * Return value: Returns encryption type of session key in ticket
+ *   (really EncKDCRepPart), or -1 on error.
+ **/
+int32_t
+shishi_tkt_keytype_fast (Shishi_tkt * tkt)
+{
+  int32_t etype = -1;
+  int res;
+
+  res = shishi_asn1_read_int32 (tkt->handle, tkt->enckdcreppart,
+				"key.keytype", &etype);
+  if (res != SHISHI_OK)
+    return -1;
+
+  return etype;
+}
+
+/**
  * shishi_tkt_keytype_p:
  * @tkt: input variable with ticket info.
  * @etype: encryption type, see Shishi_etype.
