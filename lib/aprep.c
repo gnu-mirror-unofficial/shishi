@@ -383,7 +383,7 @@ shishi_aprep_decrypt (Shishi * handle,
   int i;
   size_t buflen = BUFSIZ;
   char buf[BUFSIZ];
-  char *cipher;
+  char cipher[BUFSIZ];
   int cipherlen;
   int etype;
 
@@ -394,7 +394,8 @@ shishi_aprep_decrypt (Shishi * handle,
   if (etype != shishi_key_type (key))
     return SHISHI_APREP_BAD_KEYTYPE;
 
-  res = shishi_asn1_new_field (handle, aprep, &cipher, &cipherlen,
+  cipherlen = BUFSIZ;
+  res = shishi_asn1_field (handle, aprep, &cipher, &cipherlen,
 			       "enc-part.cipher");
   if (res != SHISHI_OK)
     return res;
