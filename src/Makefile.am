@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002 Simon Josefsson.
+# Copyright (C) 2002, 2003 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -23,14 +23,14 @@ sbin_PROGRAMS = shishid
 
 shishi_SOURCES = shishi.c data.h gettext.h \
 	authp.c crypto.c client.c server.c
-shishi_LDADD = @LTLIBINTL@ ../lib/libshishi.la @ARGP_LIBS@
+shishi_LDADD = @LTLIBINTL@ ../gl/libfoo.a ../lib/libshishi.la
 
 shishid_SOURCES = shishid.c
-shishid_LDADD = ../lib/libshishi.la @ARGP_LIBS@
+shishid_LDADD = ../gl/libfoo.a ../lib/libshishi.la
 
 localedir = $(datadir)/locale
 
-INCLUDES = -I../asn1/lib -I../lib -I../intl @ARGP_CFLAGS@ \
+INCLUDES = -I../asn1/lib -I../gl -I../lib -I../intl \
 	-DLOCALEDIR=\"$(localedir)\"
 
 DEFS = -DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
