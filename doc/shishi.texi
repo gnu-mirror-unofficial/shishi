@@ -4168,6 +4168,9 @@ Shishi.
 @node X.509 Functions
 @section X.509 Functions
 
+The functions described in this section are used by the STARTTLS
+functionality, see @ref{Kerberos via TLS}.
+
 @include texi/pki.c.texi
 
 
