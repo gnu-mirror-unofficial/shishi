@@ -5,6 +5,10 @@ See the end for copying conditions.
 The pam_shishi/ sub-directory contains a PAM module that uses Shishi
 for authenticating users.
 
+The inetutils.diff file contains a (dated) patch for GNU InetUtils to
+add Kerberos 5 authentication support for telnet client and telnetd
+server using Shishi.
+
 ----------------------------------------------------------------------
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
