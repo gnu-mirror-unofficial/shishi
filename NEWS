@@ -4,7 +4,9 @@ See the end for copying conditions.
 
 * Version 0.0.1 (unreleased)
 
-** Libgcrypt updated.
+** InetUtils copy removed (we send patches upstream instead).
+
+** Libgcrypt updated (libpgp-error added in errcrypto/).
 
 ** Argp and other compatibility files replaced by gl/ directory.
 
