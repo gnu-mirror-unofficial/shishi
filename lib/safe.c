@@ -47,11 +47,8 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
   char *usec;
   int rc;
 
-  *safe = malloc (sizeof (**safe));
-  if (*safe == NULL)
-    return SHISHI_MALLOC_ERROR;
+  *safe = xcalloc (1, sizeof (**safe));
   lsafe = *safe;
-  memset (lsafe, 0, sizeof (*lsafe));
 
   lsafe->handle = handle;
   rc = shishi_key (handle, &lsafe->key);

@@ -50,11 +50,8 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
   Shishi_tgs *ltgs;
   int res;
 
-  *tgs = malloc (sizeof (**tgs));
-  if (*tgs == NULL)
-    return SHISHI_MALLOC_ERROR;
+  *tgs = xcmalloc (1, sizeof (**tgs));
   ltgs = *tgs;
-  memset (ltgs, 0, sizeof (*ltgs));
 
   ltgs->handle = handle;
 
@@ -391,12 +388,8 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
   if (VERBOSEASN1 (tgs->handle))
     shishi_ticket_print (tgs->handle, stdout, ticket);
 
+  /* XXX */
   tgs->tkt = shishi_tkt2 (tgs->handle, ticket, kdcreppart, tgs->tgsrep);
-  if (tgs->tkt == NULL)
-    {
-      shishi_error_printf (tgs->handle, "Could not create ticket");
-      return SHISHI_MALLOC_ERROR;
-    }
 
   return SHISHI_OK;
 }
