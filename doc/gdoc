@@ -15,7 +15,8 @@
 # This program is modified by Nikos Mavroyanopoulos, for the gnutls
 # project.
 
-# This program is modified by Simon Josefsson, for the Shishi project.
+# This program is modified by Simon Josefsson, for the Libidn and
+# Shishi project.
 
 # Note: This only supports 'c'.
 
@@ -548,7 +549,7 @@ sub output_man {
 	output_highlight($args{'sections'}{$section});
     }
     print ".SH \"REPORTING BUGS\"\n";
-    print "Report bugs to <bug-shishi\@josefsson.org>.\n";
+    print "Report bugs to <bug-". lc($args{'module'}) . "\@josefsson.org>.\n";
     print ".SH COPYRIGHT\n";
     print "Copyright \\(co 2002, 2003 Simon Josefsson.\n";
     print ".br\n";
