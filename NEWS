@@ -8,7 +8,7 @@ See the end for copying conditions.
 
 ** Documentation fixes.
 
-** Configuration tokens spelled correctly (noice -> noise).
+** Configuration tokens spelled correctly ("verbose-noice" -> "verbose-noise").
 
 ** Polish translation added, by Jakub Bogusz.
 
