@@ -1,24 +1,7 @@
-include_HEADERS = libtasn1.h 
+## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = libtasn1.h der.h asn1-api.tex mem.h gstr.h errors.h \
-             defines.h int.h parser_aux.h structure.h errors_int.h \
-             element.h asn1-api.tex
+EXTRA_DIST = ChangeLog NEWS INSTALL README THANKS COPYING COPYING.LIB
+SUBDIRS = lib src tests doc
 
-lib_LTLIBRARIES = libtasn1.la
-
-# Separate so we can create the documentation
-COBJECTS = ASN1.y decoding.c gstr.c errors.c parser_aux.c \
-           structure.c element.c coding.c
-
-libtasn1_la_SOURCES = $(COBJECTS) 
-
-libtasn1_la_LDFLAGS = -no-undefined -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-
-asn1-api.tex: $(COBJECTS)
-	@echo "% \\newpage" > asn1-api.tex
-	@for i in $(COBJECTS); \
-	do echo -n "Creating documentation for file $$i... " && $(PERL) ../doc/scripts/gdoc -tex $$i >> asn1-api.tex \
-	&& echo "ok"; \
-	done
-
-all-local: asn1-api.tex
+ChangeLog:
+	cvs2cl --utc -U .cvsusers --fsf -t -S --prune
