@@ -77,6 +77,7 @@ asreq1 (Shishi_as * as)
     {
       syslog (LOG_ERR, "shisa_principal_find failed (%d): %s",
 	      err, shisa_strerror (err));
+      err = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
   if (err == SHISA_NO_PRINCIPAL)
@@ -87,7 +88,8 @@ asreq1 (Shishi_as * as)
 					   SHISHI_KDC_ERR_C_PRINCIPAL_UNKNOWN);
       if (err != SHISHI_OK)
 	goto fatal;
-      return SHISHI_INVALID_PRINCIPAL_NAME;
+      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      goto fatal;
     }
 
   err = shisa_keys_find (dbh, realm, username, NULL, &userkeys, &nuserkeys);
@@ -95,7 +97,8 @@ asreq1 (Shishi_as * as)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
 	      username, realm, err, shisa_strerror (err));
-      return SHISHI_INVALID_PRINCIPAL_NAME;
+      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      goto fatal;
     }
 
   /* Find the server, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
@@ -105,6 +108,7 @@ asreq1 (Shishi_as * as)
     {
       syslog (LOG_ERR, "shisa_principal_find failed (%d): %s",
 	      err, shisa_strerror (err));
+      err = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
   if (err == SHISA_NO_PRINCIPAL)
@@ -115,7 +119,8 @@ asreq1 (Shishi_as * as)
 					   SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN);
       if (err != SHISHI_OK)
 	goto fatal;
-      return SHISHI_INVALID_PRINCIPAL_NAME;
+      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      goto fatal;
     }
 
   err = shisa_keys_find (dbh, realm, servername, NULL,
@@ -124,7 +129,8 @@ asreq1 (Shishi_as * as)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
 	      servername, realm, err, shisa_strerror (err));
-      return SHISHI_INVALID_PRINCIPAL_NAME;
+      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      goto fatal;
     }
 
   syslog (LOG_INFO, "AS-REQ from %s@%s for %s@%s", username, realm,
@@ -195,7 +201,8 @@ asreq1 (Shishi_as * as)
 					   SHISHI_KDC_ERR_ETYPE_NOSUPP);
       if (err != SHISHI_OK)
 	goto fatal;
-      return SHISHI_INVALID_PRINCIPAL_NAME;
+      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      goto fatal;
     }
 
   if (serverdbkey == NULL)
@@ -206,7 +213,8 @@ asreq1 (Shishi_as * as)
 					   SHISHI_KDC_ERR_ETYPE_NOSUPP);
       if (err != SHISHI_OK)
 	goto fatal;
-      return SHISHI_INVALID_PRINCIPAL_NAME;
+      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      goto fatal;
     }
 
   err = shishi_key_from_value (handle, userdbkey->etype,
@@ -497,10 +505,11 @@ tgsreq1 (Shishi_tgs * tgs)
   syslog (LOG_DEBUG, "TGS-REQ uses ticket granter %s@%s", tgname, tgrealm);
 
   rc = shisa_principal_find (dbh, tgrealm, tgname, &krbtgt);
-  if (rc != SHISA_OK && rc != SHISA_NO_PRINCIPAL)
+  if (rc != SHISA_OK)
     {
       syslog (LOG_ERR, "shisa_principal_find(%s@%s) failed (%d): %s",
 	      tgname, tgrealm, rc, shisa_strerror (rc));
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
 
@@ -508,7 +517,7 @@ tgsreq1 (Shishi_tgs * tgs)
   if (rc != SHISA_OK)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
-	      tgname, tgrealm, rc, shishi_strerror (rc));
+	      tgname, tgrealm, rc, shisa_strerror (rc));
       rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
@@ -519,7 +528,7 @@ tgsreq1 (Shishi_tgs * tgs)
 			      tgkeys[0]->key, &tgkey);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR, "shishi_key_from_value failed (%d): %s",
+      syslog (LOG_ERR, "shishi_key_from_value (tgt) failed (%d): %s",
 	      rc, shishi_strerror (rc));
       goto fatal;
     }
@@ -620,6 +629,7 @@ tgsreq1 (Shishi_tgs * tgs)
     {
       syslog (LOG_ERR, "shisa_principal_find(%s@%s) failed (%d): %s",
 	      servername, serverrealm, rc, shisa_strerror (rc));
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
   if (rc == SHISA_NO_PRINCIPAL)
@@ -630,7 +640,8 @@ tgsreq1 (Shishi_tgs * tgs)
 					  SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN);
       if (rc != SHISHI_OK)
 	goto fatal;
-      return SHISHI_INVALID_PRINCIPAL_NAME;
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
+      goto fatal;
     }
 
   rc = shisa_keys_find (dbh, serverrealm, servername, NULL,
@@ -639,6 +650,7 @@ tgsreq1 (Shishi_tgs * tgs)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
 	      servername, serverrealm, rc, shisa_strerror (rc));
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
 
@@ -648,7 +660,11 @@ tgsreq1 (Shishi_tgs * tgs)
   rc = shishi_key_from_value (handle, serverkeys[0]->etype,
 			      serverkeys[0]->key, &serverkey);
   if (rc != SHISHI_OK)
-    return rc;
+    {
+      syslog (LOG_ERR, "shisa_key_from_value (server) failed (%d): %s",
+	      rc, shishi_strerror (rc));
+      goto fatal;
+    }
 
   /* Generate session key for the newly generated ticket, of same key
      type as the selected long-term server key.  XXX let the client
@@ -658,8 +674,12 @@ tgsreq1 (Shishi_tgs * tgs)
 
   rc = shishi_key_random (handle, shishi_key_type (serverkey),
 			  &newsessionkey);
-  if (rc)
-    return rc;
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "shishi_key_random failed (%d): %s",
+	      rc, shishi_strerror (rc));
+      goto fatal;
+    }
 
   /*
    * By default, the address field, the client's name and realm, the list
