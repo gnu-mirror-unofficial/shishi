@@ -42,6 +42,7 @@ section "Values"
 option "encryption-type" E "Override default key encryption type.  Valid values include 'aes128', 'aes256', 'aes' (same as 'aes256'), '3des', 'des-md5', 'des-md4', 'des-crc', 'des' (same as 'des-md5'), and 'arcfour'." string no
 option "key-version" - "Version of key." long typestr="NUMBER" no
 option "password" - "Derive key from this password." string no argoptional
+option "priority" - "Specify key priority, used to differentiate between keys when multiple keys are eligible for use.  Higher value means higher priority.  (default is 0, which mean a random key of the best etype is chosen)" long typestr="NUMBER" no
 option "random" - "Use a random key.  (default)" no
 option "salt" - "Use specified salt for deriving key.  Defaults to concatenation of realm and (unwrapped) principal name." string no
 option "string-to-key-parameter" - "Encryption algorithm specific parameter for password derivation.  Currently only the AES algorithm can utilize this, where it is interpreted as the iteration count of the PKCS#5 PBKDF2 key deriver." string typestr="HEX" no

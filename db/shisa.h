@@ -78,6 +78,7 @@ struct Shisa_key
 {
   uint32_t kvno;
   int32_t etype;
+  int priority;
   char *key;
   size_t keylen;
   char *salt;

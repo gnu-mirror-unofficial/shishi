@@ -433,9 +433,14 @@ read_key (Shisa * dbh,
 
   memset (&tmpkey, 0, sizeof (tmpkey));
 
-  if (fscanf (fh, "%u %u %u %u %u\n", &tmpkey.etype, &tmpkey.keylen,
-	      &tmpkey.saltlen, &tmpkey.str2keyparamlen, &passwdlen) != 5)
+  rc = fscanf (fh, "%u %u %u %u %u %u\n", &tmpkey.etype, &tmpkey.keylen,
+	       &tmpkey.saltlen, &tmpkey.str2keyparamlen, &passwdlen,
+	       &tmpkey.priority);
+  if (rc != 5 && rc != 6)
     return SHISA_NO_KEY;
+
+  if (rc == 5)
+    tmpkey.priority = 0;
 
   if (tmpkey.keylen > 0)
     {
@@ -599,8 +604,8 @@ shisa_file_key_add (Shisa * dbh,
       return SHISA_ADD_KEY_ERROR;
     }
 
-  fprintf (fh, "%u %u %u %u %u\n", key->etype, key->keylen,
-	   key->saltlen, key->str2keyparamlen, passwdlen);
+  fprintf (fh, "%u %u %u %u %u %u\n", key->etype, key->keylen,
+	   key->saltlen, key->str2keyparamlen, passwdlen, key->priority);
   if (key->keylen > 0)
     fwrite (key->key, 1, key->keylen, fh);
   if (key->saltlen > 0)

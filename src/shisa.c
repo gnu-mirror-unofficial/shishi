@@ -79,6 +79,15 @@ printtimefield (const char *fieldname, time_t t)
 }
 
 void
+printintfield (const char *fieldname, int num)
+{
+  char *p;
+  asprintf (&p, "%d (0x%x)", num, num);
+  printfield (fieldname, p);
+  free (p);
+}
+
+void
 printuint32field (const char *fieldname, uint32_t num)
 {
   char *p;
@@ -173,10 +182,12 @@ dumplist_realm_principal (const char *realm, const char *principal)
       for (i = 0; i < nkeys; i++)
 	if (keys[i])
 	  {
-	    printuint32field ("Key", i);
+	    printintfield ("Key", i);
 
 	    print3field ("\tEtype", shishi_cipher_name (keys[i]->etype),
 			 keys[i]->etype);
+	    if (keys[i]->priority > 0)
+	      printintfield ("\tPriority", keys[i]->priority);
 	    if (args.keys_given)
 	      printdbkey (realm, principal, keys[i]);
 	    if (keys[i]->saltlen > 0)
@@ -391,6 +402,7 @@ apply_options (const char *realm,
 
       dbkey->kvno = args.key_version_arg;
       dbkey->etype = etype;
+      dbkey->priority = args.priority_arg;
       dbkey->key = shishi_key_value (key);
       dbkey->keylen = shishi_key_length (key);
       dbkey->salt = salt;
