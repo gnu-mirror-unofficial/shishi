@@ -106,6 +106,10 @@ extern int h_errno;
 #include <netinet/in6.h>
 #endif
 
+#ifdef HAVE_SYSLOG_H
+#include <syslog.h>
+#endif
+
 #ifdef ENABLE_NLS
 extern char *_shishi_gettext (const char *str);
 #define _(String) _shishi_gettext (String)
@@ -144,6 +148,7 @@ struct arguments
 {
   int silent, verbose;
   char *cfgfile;
+  char *setuid;
   struct listenspec *listenspec;
   int nlistenspec;
 };
@@ -174,6 +179,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
     case 'c':
       arguments->cfgfile = strdup (arg);
+      break;
+
+    case 'u':
+      arguments->setuid = strdup (arg);
       break;
 
     case ARGP_KEY_END:
@@ -327,6 +336,9 @@ static struct argp_option options[] = {
    "indicates all addresses on the local host. "
    "The default is \"" LISTEN_DEFAULT "\"."},
 
+  {"setuid", 'u', "NAME", 0,
+   "After binding socket, set user identity."},
+
   {0}
 };
 
@@ -461,7 +473,8 @@ asreq (Shishi * handle, ASN1_TYPE kdcreq, char **out, int *outlen)
   rc = shishi_as (handle, &as);
   if (rc != SHISHI_OK)
     {
-      fprintf(stderr, "cannot create as: %s\n", shishi_strerror(rc));
+      syslog(LOG_ERR, "Incoming request failed: Cannot create AS: %s\n",
+	     shishi_strerror(rc));
       /* XXX hard coded KRB-ERROR? */
       *out = strdup("foo");
       *outlen = strlen(*out);
@@ -473,7 +486,7 @@ asreq (Shishi * handle, ASN1_TYPE kdcreq, char **out, int *outlen)
   *out = malloc(BUFSIZ);
   if (*out == NULL)
     {
-      fprintf(stderr, "malloc failed\n");
+      syslog(LOG_ERR, "Incoming request failed: Cannot allocate memory\n");
       /* XXX hard coded KRB-ERROR? */
       *out = NULL;
       *outlen = 0;
@@ -484,14 +497,17 @@ asreq (Shishi * handle, ASN1_TYPE kdcreq, char **out, int *outlen)
   rc = asreq1 (handle, as);
   if (rc != SHISHI_OK)
     {
-      fprintf(stderr, "asreq1() failed: %s\n", shishi_strerror(rc));
+      syslog(LOG_NOTICE, "Could not answer request: %s: %s\n",
+	     shishi_strerror(rc),
+	     shishi_krberror_message (handle, shishi_as_krberror(as)));
       rc = shishi_as_krberror_der (as, out, outlen);
     }
   else
     rc = shishi_as_rep_der (as, *out, outlen);
   if (rc != SHISHI_OK)
     {
-      fprintf(stderr, "cannot DER encode result: %s\n", shishi_strerror(rc));
+      syslog(LOG_ERR, "Incoming request failed: Cannot DER encode reply: %s\n",
+	     shishi_strerror(rc));
       /* XXX hard coded KRB-ERROR? */
       *out = strdup("aaaaaa");
       *outlen = strlen(*out);
@@ -553,9 +569,6 @@ doit (Shishi * handle, struct arguments arg)
     {
       ls = &arg.listenspec[i];
 
-      if (!arg.silent)
-	printf ("Listening on %s...", ls->str);
-
       ls->sockfd = socket (ls->family, ls->type, 0);
       if (ls->sockfd < 0)
 	{
@@ -598,6 +611,9 @@ doit (Shishi * handle, struct arguments arg)
 	  continue;
 	}
 
+      if (!arg.silent)
+	printf ("Listening on %s...", ls->str);
+
       maxfd++;
       if (!arg.silent)
 	printf ("done\n");
@@ -611,6 +627,29 @@ doit (Shishi * handle, struct arguments arg)
 
   if (!arg.silent)
     printf ("Listening on %d ports...\n", maxfd);
+
+  if (arg.setuid)
+    {
+      struct passwd *passwd;
+
+      passwd = getpwnam(arg.setuid);
+      if (passwd == NULL)
+	{
+	  perror("setuid: getpwnam");
+	  return 1;
+	}
+
+      rc = setuid(passwd->pw_uid);
+      if (rc == -1)
+	{
+	  perror("setuid");
+	  return 1;
+	}
+
+      if (!arg.silent)
+	printf ("User identity set to `%s' (%d)...\n",
+		passwd->pw_name, passwd->pw_uid);
+    }
 
   signal (SIGINT, ctrlc);
   signal (SIGTERM, ctrlc);
@@ -755,19 +794,21 @@ main (int argc, char *argv[])
   Shishi *handle;
   int rc;
 
+  openlog(PACKAGE, LOG_PERROR, LOG_AUTHPRIV);
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
   rc = shishi_init_server_with_paths (&handle, arg.cfgfile);
   if (rc != SHISHI_OK)
     {
-      fprintf (stderr, "Could not initialize library\n");
+      syslog(LOG_ERR, "Aborting due to library initialization failure\n");
       return 1;
     }
 
   rc = doit (handle, arg);
 
   shishi_done (handle);
+  closelog();
 
   return rc;
 }
