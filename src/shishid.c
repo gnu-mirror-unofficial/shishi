@@ -28,31 +28,19 @@
 /* Get error. */
 #include "error.h"
 
-#define FAMILY_IPV4 "IPv4"
-#define FAMILY_IPV6 "IPv6"
-
-#ifdef WITH_IPV6
-# define LISTEN_DEFAULT FAMILY_IPV4 ":*:kerberos/udp, " \
-			FAMILY_IPV4 ":*:kerberos/tcp, " \
-			FAMILY_IPV6 ":*:kerberos/udp, " \
-			FAMILY_IPV6 ":*:kerberos/tcp"
-#else
-# define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
-#endif
-
+/* Global variables. */
 Shishi * handle;
 Shisa * dbh;
 struct gengetopt_args_info arg;
 struct listenspec *listenspec;
 char *fatal_krberror;
 size_t fatal_krberror_len;
-
 #ifdef USE_STARTTLS
-#define DH_BITS 1024
 gnutls_dh_params dh_params;
 gnutls_anon_server_credentials anoncred;
 #endif
 
+/* Listen to all listenspec's, removing entries that fail. */
 static void
 kdc_listen ()
 {
@@ -118,6 +106,7 @@ kdc_listen ()
     printf ("Listening on %d ports...\n", maxfd);
 }
 
+/* Close open sockets, reporting any errors. */
 static void
 kdc_unlisten (void)
 {
@@ -145,6 +134,7 @@ kdc_unlisten (void)
     }
 }
 
+/* If requested, abandon user privileges. */
 static void
 kdc_setuid (void)
 {
@@ -172,6 +162,8 @@ kdc_setuid (void)
 	    passwd->pw_name, passwd->pw_uid);
 }
 
+/* Create a hard coded error message that can be used in case kdc.c
+   fail to produce */
 static int
 setup_fatal_krberror (Shishi * handle)
 {
@@ -195,6 +187,10 @@ setup_fatal_krberror (Shishi * handle)
   return SHISHI_OK;
 }
 
+/* Core daemon part.  Initialize and set up various things, and then
+   hand over control to kdc.c via kdc_loop, and cleaning up
+   afterwards.  Note that kdc_loop only return when the process has
+   received SIGINT or SIGTERM. */
 static void
 doit (void)
 {
@@ -287,6 +283,19 @@ doit (void)
   shishi_done (handle);
 }
 
+#define FAMILY_IPV4 "IPv4"
+#define FAMILY_IPV6 "IPv6"
+
+#ifdef WITH_IPV6
+# define LISTEN_DEFAULT FAMILY_IPV4 ":*:kerberos/udp, " \
+  FAMILY_IPV4 ":*:kerberos/tcp, "			\
+  FAMILY_IPV6 ":*:kerberos/udp, "			\
+  FAMILY_IPV6 ":*:kerberos/tcp"
+#else
+# define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
+#endif
+
+/* Parse the --listen parameter, creating listenspec elements. */
 static void
 parse_listen (char *listen)
 {

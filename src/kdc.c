@@ -19,9 +19,7 @@
  *
  */
 
-#if HAVE_CONFIG_H
-# include "config.h"
-#endif
+/* Note: only use syslog to report errors in this file. */
 
 /* Get Shishid stuff. */
 #include "kdc.h"

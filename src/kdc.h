@@ -88,14 +88,6 @@
 extern int errno;
 #endif
 
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#else
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif
-#endif
-
 /* Get signal, etc. */
 #ifdef HAVE_SIGNAL_H
 # include <signal.h>
@@ -136,9 +128,6 @@ extern int errno;
 
 /* Get asprintf. */
 #include "vasprintf.h"
-
-/* Get program_name, etc. */
-#include "progname.h"
 
 /* Shishi and Shisa library. */
 #include <shishi.h>
