@@ -31,7 +31,7 @@ endif
 
 SUBDIRS += lib db src tests doc
 
-DIST_SUBDIRS = po gl asn1 crypto lib src tests doc examples extra
+DIST_SUBDIRS = po gl asn1 crypto lib db src tests doc examples extra
 
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 
