@@ -51,7 +51,7 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	@DEFS@
 
 rfc1510_asn1_tab.c: $(srcdir)/rfc1510.asn1
-	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $<
+	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $^
 
 indent:
 	indent $(SOURCES) $(CRYPTO_INCLUDES) shishi.h.in
