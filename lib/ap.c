@@ -189,7 +189,7 @@ shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
 }
 
 /**
- * shishi_ap_set_tktoptionsasn1:
+ * shishi_ap_set_tktoptionsasn1usage:
  * @ap: structure that holds information about AP exchange
  * @tkt: ticket to set in AP.
  * @options: AP-REQ options to set in AP.
@@ -295,7 +295,7 @@ shishi_ap_tktoptionsdata (Shishi * handle,
 }
 
 /**
- * shishi_ap_tktoptionsasn1:
+ * shishi_ap_tktoptionsasn1usage:
  * @handle: shishi handle as allocated by shishi_init().
  * @ap: pointer to new structure that holds information about AP exchange
  * @tkt: ticket to set in newly created AP.
