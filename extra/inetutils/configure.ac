@@ -26,14 +26,17 @@ AC_INIT([GNU inetutils], [1.4.1], [bug-inetutils@gnu.org])
 AC_CONFIG_SRCDIR([telnet/telnet.c])
 AM_CONFIG_HEADER([config.h:config.hin])
 AC_CANONICAL_SYSTEM # FIXME: Why not just _HOST?
+AC_AIX
+AC_MINIX
+AM_PROG_LIBTOOL
 
 # config.h turns this on, so make sure it's on for our tests too
 #CPPFLAGS=-D_BSD_SOURCE
 
 # Include files that we link into our own include directory from headers.
 # Initialize it with the things we always want to use.
-#INCLUDES="crypt.h arpa/telnet.h arpa/ftp.h arpa/tftp.h protocols/talkd.h
-#	tftpsubs.h"
+INCLUDES="crypt.h arpa/telnet.h arpa/ftp.h arpa/tftp.h protocols/talkd.h
+	tftpsubs.h"
 
 # Files that we link from somewhere other than headers to includes .  The
 # number of entries in LINK_SRCS should match that in LINK_DSTS.
@@ -103,7 +106,7 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
+#AC_PROG_RANLIB
 AC_PROG_YACC
 
 dnl __P is the standard name for the ansi-or-not-ansi arg-decl macro.
@@ -284,9 +287,9 @@ INCAUTH=
 #  fi
 #
 #  if test "$with_shishi" = "yes"; then
-    PKG_CHECK_MODULES(SHISHI, shishi >= 0.0.0)
-    LIBAUTH="$LIBAUTH $SHISHI_LIBS"
-    INCAUTH="$INCAUTH $SHISHI_CFLAGS"
+#    PKG_CHECK_MODULES(SHISHI, shishi >= 0.0.0)
+    LIBAUTH="$LIBAUTH ../../../lib/libshishi.la"
+#    INCAUTH="$INCAUTH $SHISHI_CFLAGS"
     AC_DEFINE(SHISHI)
 #  fi
 #
@@ -644,21 +647,21 @@ AC_CHECK_DECLS(errno, , , [#include <errno.h>])
 dnl See whether <syslog.h> will declare special internal stuff if we define
 dnl SYSLOG_NAMES before including it.  We check for various syslog internal
 dnl macros, the typedef `CODE', and the variable `prioritynames'.
-define([iu_syslog_includes],
-  [[#include <stdlib.h>
-    #define SYSLOG_NAMES
-    #include <syslog.h> ]])
-IU_CHECK_MACRO(syslog internal macros,
-  iu_syslog_includes,
-  [LOG_MAKEPRI LOG_PRI LOG_FAC],
-  AC_CHECK_TYPE(CODE,
-    AC_CHECK_DECL(prioritynames,
-      AC_DEFINE(HAVE_SYSLOG_INTERNAL, 1, [FIXME]),
-      INCLUDES="$INCLUDES syslog-int.h",
-      iu_syslog_includes),
-    INCLUDES="$INCLUDES syslog-int.h", iu_syslog_includes),
-  INCLUDES="$INCLUDES syslog-int.h")
-undefine([iu_syslog_includes])
+#define([iu_syslog_includes],
+#  [[#include <stdlib.h>
+#    #define SYSLOG_NAMES
+#    #include <syslog.h> ]])
+#IU_CHECK_MACRO(syslog internal macros,
+#  iu_syslog_includes,
+#  [LOG_MAKEPRI LOG_PRI LOG_FAC],
+#  AC_CHECK_TYPE(CODE,
+#    AC_CHECK_DECL(prioritynames,
+#      AC_DEFINE(HAVE_SYSLOG_INTERNAL, 1, [FIXME]),
+#      INCLUDES="$INCLUDES syslog-int.h",
+#      iu_syslog_includes),
+#    INCLUDES="$INCLUDES syslog-int.h", iu_syslog_includes),
+#  INCLUDES="$INCLUDES syslog-int.h")
+#undefine([iu_syslog_includes])
 
 dnl Some systems don't declare common functions (especially if they return
 dnl int), at least in the expected header file.  Check.
@@ -769,30 +772,30 @@ fi
 
 dnl Configure paths used by inetutils programs.  See the file `paths' for
 dnl details.
-#PATHDEFS_MAKE=pathdefs.make
-#PATHS_DEFS=paths.defs
-#IU_CONFIG_PATHS($srcdir/paths, PATHDEFS_MAKE, PATHS_DEFS)
-#AH_BOTTOM(
-#[/* Defaults for PATH_ variables.  */
-##include <include/confpaths.h>])
+PATHDEFS_MAKE=pathdefs.make
+PATHS_DEFS=paths.defs
+IU_CONFIG_PATHS($srcdir/paths, PATHDEFS_MAKE, PATHS_DEFS)
+AH_BOTTOM(
+[/* Defaults for PATH_ variables.  */
+#include <include/confpaths.h>])
 
 dnl Supply optional header files by linking a copy into the object include dir
-#LINK_SRCS="$LINK_SRCS `for I in $INCLUDES; do echo $ac_n ' 'headers/$I$ac_c; done`"
-#LINK_DSTS="$LINK_DSTS `for I in $INCLUDES; do echo $ac_n ' 'include/$I$ac_c; done`"
-#ac_sources="$LINK_SRCS"
-#ac_dests="$LINK_DSTS"
-#while test -n "$ac_sources"; do
-#  set $ac_dests
-#  ac_dest=$1
-#  shift
-#  ac_dests=$*
-#  set $ac_sources
-#  ac_source=$1
-#  shift
-#  ac_sources=$*
-#  ac_config_links_1="$ac_config_links_1 $ac_dest:$ac_source"
-#done
-#AC_CONFIG_LINKS([$ac_config_links_1])
+LINK_SRCS="$LINK_SRCS `for I in $INCLUDES; do echo $ac_n ' 'headers/$I$ac_c; done`"
+LINK_DSTS="$LINK_DSTS `for I in $INCLUDES; do echo $ac_n ' 'include/$I$ac_c; done`"
+ac_sources="$LINK_SRCS"
+ac_dests="$LINK_DSTS"
+while test -n "$ac_sources"; do
+  set $ac_dests
+  ac_dest=$1
+  shift
+  ac_dests=$*
+  set $ac_sources
+  ac_source=$1
+  shift
+  ac_sources=$*
+  ac_config_links_1="$ac_config_links_1 $ac_dest:$ac_source"
+done
+AC_CONFIG_LINKS([$ac_config_links_1])
 
 dnl Ok this is the end of the rope, even autoconf can't help.
 dnl For example on certain system login(1) will not work if we
@@ -810,7 +813,10 @@ case "$host" in
   ;;
 esac
 
-AC_CONFIG_FILES([Makefile libinetutils/Makefile libtelnet/Makefile telnet/Makefile telnetd/Makefile])
+AC_CONFIG_FILES([Makefile libinetutils/Makefile libtelnet/Makefile telnet/Makefile telnetd/Makefile
+include/confpaths.h:headers/confpaths.h.in
+headers/Makefile
+])
 #glob/Makefile 
 #libicmp/Makefile ping/Makefile ftp/Makefile ftpd/Makefile inetd/Makefile
 #rcp/Makefile
@@ -820,7 +826,5 @@ AC_CONFIG_FILES([Makefile libinetutils/Makefile libtelnet/Makefile telnet/Makefi
  
 # tftp/Makefile
 #tftpd/Makefile uucpd/Makefile gwhois/Makefile libls/Makefile
-#include/confpaths.h:headers/confpaths.h.in
-#headers/Makefile
 #doc/Makefile doc/rfc/Makefile])
 AC_OUTPUT
