@@ -46,19 +46,14 @@ shishi_as_derive_salt (Shishi * handle,
   int len = *saltlen;
   int tmplen;
   char format[BUFSIZ];
-  int res = ASN1_SUCCESS;
+  int res;
   int i, n;
 
-  res = asn1_number_of_elements (asrep, "KDC-REP.padata", &n);
-  if (res == ASN1_ELEMENT_NOT_FOUND)
-    {
-      n = 0;
-    }
-  else if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+  res = shishi_asn1_number_of_elements (handle, asrep, "KDC-REP.padata", &n);
+  if (res == SHISHI_ASN1_NO_ELEMENT)
+    n = 0;
+  else if (res != SHISHI_OK)
+    return res;
 
   for (i = 1; i <= n; i++)
     {
@@ -66,40 +61,30 @@ shishi_as_derive_salt (Shishi * handle,
 
       sprintf (format, "KDC-REP.padata.?%d.padata-type", i);
       res = shishi_asn1_integer_field (handle, asrep, &patype, format);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return SHISHI_ASN1_ERROR;
-	}
+      if (res != SHISHI_OK)
+	return res;
 
       if (patype == SHISHI_PA_PW_SALT)
 	{
 	  sprintf (format, "KDC-REP.padata.?%d.padata-value", i);
-	  res = asn1_read_value (asrep, format, salt, saltlen);
-	  if (res != ASN1_SUCCESS)
-	    {
-	      shishi_error_set (handle, libtasn1_strerror (res));
-	      return SHISHI_ASN1_ERROR;
-	    }
+	  res = shishi_asn1_read (handle, asrep, format, salt, saltlen);
+	  if (res != SHISHI_OK)
+	    return res;
+
 	  return SHISHI_OK;
 	}
     }
 
   len = *saltlen;
-  res = asn1_read_value (asreq, "KDC-REQ.req-body.realm", salt, &len);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
-
   res =
-    asn1_number_of_elements (asreq, "KDC-REQ.req-body.cname.name-string", &n);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+    shishi_asn1_read (handle, asreq, "KDC-REQ.req-body.realm", salt, &len);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = asn1_number_of_elements (asreq, "KDC-REQ.req-body.cname.name-string",
+				 &n);
+  if (res != SHISHI_OK)
+    return res;
 
   for (i = 1; i <= n; i++)
     {
@@ -108,12 +93,10 @@ shishi_as_derive_salt (Shishi * handle,
 	return SHISHI_TOO_SMALL_BUFFER;
 
       sprintf (format, "KDC-REQ.req-body.cname.name-string.?%d", i);
-      res = asn1_read_value (asreq, format, salt + len, &tmplen);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return SHISHI_ASN1_ERROR;
-	}
+      res = shishi_asn1_read (handle, asreq, format, salt + len, &tmplen);
+      if (res != SHISHI_OK)
+	return res;
+
       len += tmplen;
     }
 
@@ -123,7 +106,8 @@ shishi_as_derive_salt (Shishi * handle,
 }
 
 int
-shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq, Shishi_asn1 * kdcrep)
+shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
+			Shishi_asn1 * kdcrep)
 {
   char der[BUFSIZ];		/* XXX dynamically allocate this */
   int der_len, out_len;
@@ -140,9 +124,8 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq, Shishi_asn1 * kdcre
     }
 
   realmlen = sizeof (realm);
-  res =
-    shishi_asn1_field (handle, kdcreq, realm, &realmlen,
-		       "KDC-REQ.req-body.realm");
+  res = shishi_asn1_field (handle, kdcreq, realm, &realmlen,
+			   "KDC-REQ.req-body.realm");
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not get realm: %s\n",
@@ -217,14 +200,14 @@ shishi_kdc_copy_crealm (Shishi * handle,
   buf[0] = '\0';		/* XXX if crealm is empty, buflen == 0 which
 				   causes libtasn1 to strlen(buf)... */
   buflen = BUFSIZ;
-  res = shishi_asn1_field (handle, encticketpart, buf, &buflen,
-			   "EncTicketPart.crealm");
+  res = shishi_asn1_read (handle, encticketpart, "EncTicketPart.crealm",
+			  buf, &buflen);
   if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
+    return res;
 
-  res = asn1_write_value (kdcrep, "KDC-REP.crealm", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.crealm", buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
@@ -249,21 +232,22 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   int reqrealmlen = BUFSIZ, reprealmlen = BUFSIZ;
   int res;
 
-  res = asn1_read_value (asreq, "KDC-REQ.req-body.realm",
-			 reqrealm, &reqrealmlen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, asreq, "KDC-REQ.req-body.realm",
+			  reqrealm, &reqrealmlen);
+  if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read request realm: %s\n",
 			   libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
+      return res;
     }
 
-  res = asn1_read_value (asrep, "KDC-REP.crealm", reprealm, &reprealmlen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, asrep, "KDC-REP.crealm",
+			  reprealm, &reprealmlen);
+  if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read reply realm: %s\n",
 			   libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
+      return res;
     }
 
   reqrealm[reqrealmlen] = '\0';
@@ -301,42 +285,44 @@ shishi_kdc_copy_cname (Shishi * handle,
   int res;
   int i, n;
 
-
   buflen = BUFSIZ;
-  res = asn1_read_value (encticketpart, "EncTicketPart.cname.name-type",
-			 buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+  res = shishi_asn1_read (handle, encticketpart,
+			  "EncTicketPart.cname.name-type", buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (kdcrep, "KDC-REP.cname.name-type", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-type",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   res = asn1_number_of_elements (encticketpart,
 				 "EncTicketPart.cname.name-string", &n);
-  if (res != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-string",
+			   NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   for (i = 1; i <= n; i++)
     {
-      res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string", "NEW", 1);
-      if (res != ASN1_SUCCESS)
-	return SHISHI_ASN1_ERROR;
+      res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-string",
+			       "NEW", 1);
+      if (res != SHISHI_OK)
+	return res;
 
       sprintf (format, "EncTicketPart.cname.name-string.?%d", i);
       buflen = BUFSIZ;
-      res = asn1_read_value (encticketpart, format, buf, &buflen);
-      if (res != ASN1_SUCCESS)
-	return SHISHI_ASN1_ERROR;
+      res = shishi_asn1_read (handle, encticketpart, format, buf, &buflen);
+      if (res != SHISHI_OK)
+	return res;
 
       sprintf (format, "KDC-REP.cname.name-string.?%d", i);
-      res = asn1_write_value (kdcrep, format, buf, buflen);
-      if (res != ASN1_SUCCESS)
-	return SHISHI_ASN1_ERROR;
+      res = shishi_asn1_write (handle, kdcrep, format, buf, buflen);
+      if (res != SHISHI_OK)
+	return res;
     }
 
   return SHISHI_OK;
@@ -366,20 +352,16 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 
   /* We do not compare msg-type as recommended on the ietf-krb-wg list */
 
-  res =
-    asn1_number_of_elements (asreq, "KDC-REQ.req-body.cname.name-string", &i);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+  res = shishi_asn1_number_of_elements (handle, asreq,
+					"KDC-REQ.req-body.cname.name-string",
+					&i);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_number_of_elements (asrep, "KDC-REP.cname.name-string", &j);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+  res = shishi_asn1_number_of_elements (handle, asrep,
+					"KDC-REP.cname.name-string", &j);
+  if (res != SHISHI_OK)
+    return res;
 
   if (i != j)
     return SHISHI_CNAME_MISMATCH;
@@ -388,21 +370,15 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
     {
       sprintf (format, "KDC-REQ.req-body.cname.name-string.?%d", i);
       reqcnamelen = sizeof (reqcname);
-      res = asn1_read_value (asreq, format, reqcname, &reqcnamelen);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return SHISHI_ASN1_ERROR;
-	}
+      res = shishi_asn1_read (handle, asreq, format, reqcname, &reqcnamelen);
+      if (res != SHISHI_OK)
+	return res;
 
       sprintf (format, "KDC-REP.cname.name-string.?%d", i);
       repcnamelen = sizeof (repcname);
-      res = asn1_read_value (asrep, format, repcname, &repcnamelen);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return SHISHI_ASN1_ERROR;
-	}
+      res = shishi_asn1_read (handle, asrep, format, repcname, &repcnamelen);
+      if (res != SHISHI_OK)
+	return res;
 
       if (VERBOSEASN1 (handle))
 	{
@@ -475,22 +451,22 @@ shishi_kdc_check_nonce (Shishi * handle,
   int repnoncelen = BUFSIZ;
   int res;
 
-  res = asn1_read_value (kdcreq, "KDC-REQ.req-body.nonce",
-			 reqnonce, &reqnoncelen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, kdcreq, "KDC-REQ.req-body.nonce",
+			  reqnonce, &reqnoncelen);
+  if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read request nonce: %s\n",
 			   libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
+      return res;
     }
 
-  res = asn1_read_value (enckdcreppart, "EncKDCRepPart.nonce",
-			 repnonce, &repnoncelen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, enckdcreppart, "EncKDCRepPart.nonce",
+			  repnonce, &repnoncelen);
+  if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read reply nonce: %s\n",
 			   libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
+      return res;
     }
 
   if (VERBOSEASN1 (handle))
@@ -600,7 +576,8 @@ shishi_tgs_process (Shishi * handle,
 int
 shishi_as_process (Shishi * handle,
 		   Shishi_asn1 asreq,
-		   Shishi_asn1 asrep, char *string, Shishi_asn1 * enckdcreppart)
+		   Shishi_asn1 asrep, char *string,
+		   Shishi_asn1 * enckdcreppart)
 {
   unsigned char salt[BUFSIZ];
   int saltlen;
@@ -662,7 +639,8 @@ int
 shishi_kdc_process (Shishi * handle,
 		    Shishi_asn1 kdcreq,
 		    Shishi_asn1 kdcrep,
-		    Shishi_key * key, int keyusage, Shishi_asn1 * enckdcreppart)
+		    Shishi_key * key, int keyusage,
+		    Shishi_asn1 * enckdcreppart)
 {
   int res;
   int msgtype;
