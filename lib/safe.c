@@ -200,7 +200,7 @@ shishi_safe_safe_der_set (Shishi_safe * safe, char *der, int derlen)
 {
   Shishi_asn1 asn1safe;
 
-  safe = shishi_der2asn1_krbsafe (safe->handle, der, derlen);
+  asn1safe = shishi_der2asn1_krbsafe (safe->handle, der, derlen);
 
   if (asn1safe == NULL)
     return SHISHI_ASN1_ERROR;
