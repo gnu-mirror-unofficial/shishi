@@ -808,12 +808,20 @@ tgsreq1 (Shishi_tgs * tgs)
     (handle, shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
      &oldsessionkey);
   if (rc != SHISHI_OK)
-    return rc;
+    {
+      syslog (LOG_ERR, "shishi_encticketpart_get_key failed (%d): %s",
+	      rc, shishi_strerror (rc));
+      goto fatal;
+    }
 
   rc = shishi_authenticator_get_subkey
     (handle, shishi_ap_authenticator (shishi_tgs_ap (tgs)), &subkey);
   if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
-    return rc;
+    {
+      syslog (LOG_ERR, "shishi_authenticator_get_subkey failed (%d): %s",
+	      rc, shishi_strerror (rc));
+      goto fatal;
+    }
 
   if (rc == SHISHI_OK)
     rc = shishi_tgs_rep_build
