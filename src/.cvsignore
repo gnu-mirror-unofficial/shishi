@@ -3,6 +3,7 @@
 Makefile
 Makefile.in
 client
+client-cksum
 server
 shishi
 shishid
