@@ -103,9 +103,9 @@ main (int argc, char *argv[])
 
   res = shishi_authenticator_remove_subkey (handle, a);
   if (res == SHISHI_OK)
-    success ("shishi_authenticator() OK\n");
+    success ("shishi_authenticator_remove_subkey() OK\n");
   else
-    fail ("shishi_authenticator() failed\n");
+    fail ("shishi_authenticator_remove_subkey() failed\n");
 
   /* shishi_authenticator_set_crealm() */
   res = shishi_authenticator_set_crealm (handle, a, "foo");
