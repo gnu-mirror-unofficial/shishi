@@ -35,7 +35,7 @@ shishi_hostkeys_default_file (Shishi * handle)
 
   envfile = getenv ("SHISHI_KEYS");
   if (envfile)
-    return xstrdup (envfile);
+    shishi_hostkeys_default_file_set (handle, envfile);
 
   if (!handle->hostkeysdefaultfile)
     handle->hostkeysdefaultfile = xstrdup (HOSTKEYSFILE);
