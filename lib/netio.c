@@ -208,7 +208,7 @@ shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
 				    outdata, outlen, rrs);
   else
     {
-      shishi_error_printf (handle, "No KDC SRV RRs for realm %s\n", realm);
+      shishi_error_printf (handle, "No KDC SRV RRs for realm %s", realm);
       rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
     }
 
@@ -228,6 +228,9 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
   char *port;
   int rc;
 
+  if (VERBOSE (handle))
+    printf ("Trying direct realm host mapping for %s...\n", realm);
+
   se = getservbyname ("kerberos", NULL);
   if (se)
     asprintf (&port, "%d", ntohs(se->s_port));
@@ -242,7 +245,7 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
 
   if (rc != 0)
     {
-      shishi_warn (handle, "Unknown KDC host `%s' (gai rc %d)", realm, rc);
+      shishi_error_printf (handle, "No direct realm host for realm %s", realm);
       rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
       goto done;
     }
