@@ -54,7 +54,7 @@ EXTRA_DIST = config.rpath mkinstalldirs \
 
 ChangeLog:
 	cvs2cl --fsf --usermap .cvsusers --separate-header -I \
-	"ChangeLog|.cvsignore|.cvsusers|autogen.sh|doc/specification"
+    "ChangeLog|.cvsignore|.cvsusers|autogen.sh|doc/specification|libstringprep"
 
 indent:
 	(cd lib && make indent)
