@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.11 (unreleased)
 
+** The KDC has been cleaned up and the error handling is more robust.
+
 * Version 0.0.10 (released 2003-12-16)
 
 ** The TLS support in Shishid now works.
