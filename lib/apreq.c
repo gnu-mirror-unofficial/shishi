@@ -401,8 +401,8 @@ shishi_apreq_add_authenticator (Shishi * handle,
     }
 
   buflen = BUFSIZ;
-  res = shishi_derive_encrypt (handle, keytype, keyusage, buf, &buflen,
-			       der, derlen, key, keylen);
+  res = shishi_encrypt (handle, keyusage, keytype, key, keylen, 
+			der, derlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "des_encrypt fail\n");
@@ -834,6 +834,7 @@ error:
 int
 shishi_apreq_decrypt (Shishi * handle,
 		      ASN1_TYPE apreq,
+		      int keyusage,
 		      int keytype,
 		      char *key, 
 		      int keylen,
@@ -861,8 +862,8 @@ shishi_apreq_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_decrypt (handle, etype, buf, &buflen, cipher, cipherlen,
-			key, keylen);
+  res = shishi_decrypt (handle, keyusage, keytype, key, keylen,
+			cipher, cipherlen, buf, &buflen);
 
   if (res != SHISHI_OK)
     {
