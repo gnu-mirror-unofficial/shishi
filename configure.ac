@@ -281,7 +281,7 @@ AC_ARG_ENABLE(starttls,
 	AS_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
 	starttls=$enableval, starttls=yes)
 if test "$starttls" != "no"; then
-	AM_PATH_LIBGNUTLS(0.8.8, starttls=yes, starttls=no)
+	AM_PATH_LIBGNUTLS(1.0.0, starttls=yes, starttls=no)
 fi
 AC_MSG_CHECKING([if non-standard STARTTLS support should be enabled])
 AC_MSG_RESULT($starttls)
