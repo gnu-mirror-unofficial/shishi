@@ -1220,25 +1220,6 @@ init (void)
 {
   int err;
 
-#ifdef USE_STARTTLS
-  if (!arg.quiet_flag)
-    printf ("Initializing GNUTLS...\n");
-  err = gnutls_global_init ();
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS: %s (%d)",
-	   gnutls_strerror (err), err);
-  err = gnutls_dh_params_init (&dh_params);
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS DH parameters: %s (%d)",
-	   gnutls_strerror (err), err);
-  err = gnutls_dh_params_generate2 (dh_params, DH_BITS);
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot generate GNUTLS DH parameters: %s (%d)",
-	   gnutls_strerror (err), err);
-  if (!arg.quiet_flag)
-    printf ("Initializing GNUTLS...done\n");
-#endif
-
   err = shishi_init_server_with_paths (&handle, arg.configuration_file_arg);
   if (err)
     error (EXIT_FAILURE, 0, "Cannot initialize Shishi: %s (%d)",
@@ -1266,7 +1247,34 @@ init (void)
     error (EXIT_FAILURE, 0, "Cannot allocate fatal error packet: %s (%d)",
 	   shisa_strerror (err), err);
 
+#ifdef USE_STARTTLS
+  if (!arg.quiet_flag)
+    printf ("Initializing GNUTLS...\n");
+  err = gnutls_global_init ();
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS: %s (%d)",
+	   gnutls_strerror (err), err);
+  err = gnutls_dh_params_init (&dh_params);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS DH parameters: %s (%d)",
+	   gnutls_strerror (err), err);
+  err = gnutls_dh_params_generate2 (dh_params, DH_BITS);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot generate GNUTLS DH parameters: %s (%d)",
+	   gnutls_strerror (err), err);
+  if (!arg.quiet_flag)
+    printf ("Initializing GNUTLS...done\n");
+#endif
+
   err = launch ();
+
+#ifdef USE_STARTTLS
+  if (!arg.quiet_flag)
+    printf ("Deinitializing GNUTLS...\n");
+  gnutls_global_deinit ();
+  if (!arg.quiet_flag)
+    printf ("Deinitializing GNUTLS...done\n");
+#endif
 
   shisa_done (dbh);
   shishi_done (handle);
