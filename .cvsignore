@@ -1,6 +1,7 @@
 .deps
 ABOUT-NLS
 COPYING
+ChangeLog
 INSTALL
 Makefile
 Makefile.in
