@@ -63,7 +63,7 @@ _shishi_asn1_integer_field (Shishi * handle, ASN1_TYPE node,
   int buflen;
   int rc;
 
-  memset(buf, 0, sizeof(buf));
+  memset (buf, 0, sizeof (buf));
   buflen = sizeof (buf);
   rc = asn1_read_value (node, field, buf, &buflen);
   if (rc != ASN1_SUCCESS)
@@ -87,7 +87,7 @@ shishi_asn1_ticket (Shishi * handle)
   int res = ASN1_SUCCESS;
   ASN1_TYPE node = ASN1_TYPE_EMPTY;
 
-  res = asn1_create_element (handle->asn1, "Kerberos5.Ticket", 
+  res = asn1_create_element (handle->asn1, "Kerberos5.Ticket",
 			     &node, "Ticket");
   if (res != ASN1_SUCCESS)
     goto error;
@@ -113,7 +113,7 @@ shishi_asn1_encticketpart (Shishi * handle)
   int res = ASN1_SUCCESS;
   ASN1_TYPE node = ASN1_TYPE_EMPTY;
 
-  res = asn1_create_element (handle->asn1, "Kerberos5.EncTicketPart", 
+  res = asn1_create_element (handle->asn1, "Kerberos5.EncTicketPart",
 			     &node, "EncTicketPart");
   if (res != ASN1_SUCCESS)
     goto error;
@@ -227,7 +227,7 @@ shishi_d2a_encticketpart (Shishi * handle, char *der,
   ASN1_TYPE encticketpart;
 
   encticketpart = shishi_der2asn1_encticketpart (handle->asn1, der,
-					 derlen, errorDescription);
+						 derlen, errorDescription);
   if (encticketpart == ASN1_TYPE_EMPTY)
     fprintf (stdout, "Could not DER deocde Ticket\n");
 
@@ -547,8 +547,7 @@ name:EncASRepPart  type:IDENTIFIER  value:EncKDCRepPart
 */
 ASN1_TYPE
 shishi_der2asn1_encasreppart (ASN1_TYPE definitions,
-			      char *der,
-			      int der_len, char *errorDescription)
+			      char *der, int der_len, char *errorDescription)
 {
   ASN1_TYPE structure = ASN1_TYPE_EMPTY;
   int asn1_result = ASN1_SUCCESS;
@@ -607,8 +606,7 @@ name:EncTGSRepPart  type:IDENTIFIER  value:EncKDCRepPart
 */
 ASN1_TYPE
 shishi_der2asn1_enctgsreppart (ASN1_TYPE definitions,
-			       char *der,
-			       int der_len, char *errorDescription)
+			       char *der, int der_len, char *errorDescription)
 {
   ASN1_TYPE structure = ASN1_TYPE_EMPTY;
   int asn1_result = ASN1_SUCCESS;
@@ -639,8 +637,7 @@ name:EncKDCRepPart  type:IDENTIFIER  value:EncKDCRepPart
 */
 ASN1_TYPE
 shishi_der2asn1_enckdcreppart (ASN1_TYPE definitions,
-			       char *der,
-			       int der_len, char *errorDescription)
+			       char *der, int der_len, char *errorDescription)
 {
   ASN1_TYPE structure = ASN1_TYPE_EMPTY;
   int asn1_result = ASN1_SUCCESS;
@@ -714,8 +711,7 @@ shishi_der2asn1_enckdcreppart (ASN1_TYPE definitions,
 int
 shishi_principal_name_get (Shishi * handle,
 			   ASN1_TYPE namenode,
-			   char *namefield,
-			   char *out, int *outlen)
+			   char *namefield, char *out, int *outlen)
 {
   int res = ASN1_SUCCESS;
   char format[BUFSIZ];
@@ -826,8 +822,7 @@ shishi_principal_name_realm_get (Shishi * handle,
 
 ASN1_TYPE
 shishi_der2asn1_authenticator (ASN1_TYPE definitions,
-			       char *der,
-			       int der_len, char *errorDescription)
+			       char *der, int der_len, char *errorDescription)
 {
   ASN1_TYPE structure = ASN1_TYPE_EMPTY;
   int asn1_result = ASN1_SUCCESS;
@@ -854,7 +849,7 @@ shishi_der2asn1_authenticator (ASN1_TYPE definitions,
 
 ASN1_TYPE
 shishi_d2a_authenticator (Shishi * handle, char *der,
-		  int derlen, char *errorDescription)
+			  int derlen, char *errorDescription)
 {
   ASN1_TYPE authenticator;
 

@@ -75,7 +75,7 @@ crypto (Shishi * handle, struct arguments arg)
 				  arg.stringtokey,
 				  strlen (arg.stringtokey),
 				  salt,
-				  strlen (salt), 
+				  strlen (salt),
 				  NULL, key, &keylen, arg.algorithm);
       if (res != SHISHI_OK)
 	{

@@ -27,4 +27,4 @@ LDADD = @LIBARGP@ @LTLIBINTL@ ../lib/libshishi.la
 noinst_PROGRAMS = $(TESTS)
 
 indent:
-	indent $(shishi_SOURCES) $(shishid_SOURCES)
+	indent $(SOURCES)

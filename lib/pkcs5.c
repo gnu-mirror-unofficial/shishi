@@ -51,14 +51,11 @@
 #define MAX_PRF_BLOCK_LEN 80
 
 int
-PBKDF2 (int PRF, 
+PBKDF2 (int PRF,
 	const char *P,
 	size_t Plen,
 	const char *S,
-	size_t Slen,
-	unsigned int c,
-	unsigned int dkLen,
-	char *DK)
+	size_t Slen, unsigned int c, unsigned int dkLen, char *DK)
 {
   GCRY_MD_HD prf;
   char U[MAX_PRF_BLOCK_LEN];
@@ -158,13 +155,13 @@ PBKDF2 (int PRF,
 
   for (i = 1; i <= l; i++)
     {
-      memset(T, 0, hLen);
+      memset (T, 0, hLen);
 
       for (u = 1; u <= c; u++)
 	{
 	  int Ulen;
 
-	  gcry_md_reset(prf);
+	  gcry_md_reset (prf);
 
 	  rc = gcry_md_setkey (prf, P, Plen);
 	  if (rc != GCRYERR_SUCCESS)
@@ -173,30 +170,30 @@ PBKDF2 (int PRF,
 	  if (u == 1)
 	    {
 	      char tmp[4];
-	      memcpy(U, S, Slen);
+	      memcpy (U, S, Slen);
 	      tmp[0] = (i & 0xff000000) >> 24;
 	      tmp[1] = (i & 0x00ff0000) >> 16;
 	      tmp[2] = (i & 0x0000ff00) >> 8;
 	      tmp[3] = (i & 0x000000ff) >> 0;
-	      memcpy(U + Slen, tmp, 4);
+	      memcpy (U + Slen, tmp, 4);
 	      Ulen = Slen + 4;
 	    }
 	  else
 	    Ulen = hLen;
 
-	  gcry_md_write(prf, U, Ulen);
+	  gcry_md_write (prf, U, Ulen);
 
-	  p = gcry_md_read(prf, PRF);
+	  p = gcry_md_read (prf, PRF);
 	  if (p == NULL)
 	    return PKCS5_INVALID_PRF;
 
-	  memcpy(U, p, hLen);
+	  memcpy (U, p, hLen);
 
 	  for (k = 0; k < hLen; k++)
 	    T[k] ^= U[k];
 	}
 
-      memcpy(DK + (i - 1) * hLen, T, i == l ? r : hLen);
+      memcpy (DK + (i - 1) * hLen, T, i == l ? r : hLen);
     }
 
   gcry_md_close (prf);

@@ -23,21 +23,22 @@
 #endif
 
 #ifdef	__cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #if !HAVE_SETENV
 
 /* Set NAME to VALUE in the environment.
    If REPLACE is nonzero, overwrite an existing value.  */
-extern int setenv (const char *name, const char *value, int replace);
+  extern int setenv (const char *name, const char *value, int replace);
 
 #endif
 
 #if !HAVE_UNSETENV
 
 /* Remove the variable NAME from the environment.  */
-extern int unsetenv (const char *name);
+  extern int unsetenv (const char *name);
 
 #endif
 

@@ -32,7 +32,7 @@ void
 shishi_done (Shishi * handle)
 {
   if (handle->ticketset)
-    shishi_ticketset_done(handle, handle->ticketset);
+    shishi_ticketset_done (handle, handle->ticketset);
 
   /*  if (handle->default_realm)
      free (handle->default_realm); */

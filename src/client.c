@@ -34,11 +34,11 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     arg.cname = shishi_principal_default_get (handle);
 
   if (arg.realm == NULL)
-      arg.realm = shishi_realm_default_get (handle);
+    arg.realm = shishi_realm_default_get (handle);
 
   if (arg.sname == NULL)
     {
-      int len = strlen (SERVER_NAME"/") + strlen (arg.realm) + 1;
+      int len = strlen (SERVER_NAME "/") + strlen (arg.realm) + 1;
       arg.sname = malloc (len);
       if (arg.sname == NULL)
 	return SHISHI_MALLOC_ERROR;
@@ -53,13 +53,13 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 	return SHISHI_MALLOC_ERROR;
       sprintf (arg.tgtname, "krbtgt/%s", arg.realm);
     }
-  
+
   if (arg.verbose)
     {
-      printf("Client name: `%s'\n", arg.cname);
-      printf("Realm: `%s'\n", arg.realm);
-      printf("Ticket granter: `%s'\n", arg.tgtname);
-      printf("Service name: `%s'\n", arg.sname);
+      printf ("Client name: `%s'\n", arg.cname);
+      printf ("Realm: `%s'\n", arg.realm);
+      printf ("Ticket granter: `%s'\n", arg.tgtname);
+      printf ("Service name: `%s'\n", arg.sname);
     }
 
 
@@ -70,7 +70,7 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       ASN1_TYPE req, rep;
 
       tkt = shishi_ticketset_find_ticket_for_clientserver (handle, ticketset,
-							   arg.cname, 
+							   arg.cname,
 							   arg.tgtname);
       if (tkt == NULL)
 	req = shishi_asreq (handle, arg.realm, arg.sname, arg.cname);
@@ -97,7 +97,7 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       tkt = tmptkt;
     }
 
-  puts("foo");
+  puts ("foo");
 
   res = shishi_ticket_apreq_data (handle, tkt, NULL, 0, &apreq);
   if (res != SHISHI_OK)
@@ -117,7 +117,7 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     shishi_authenticator_print (handle, stdout,
 				shishi_last_authenticator (handle));
 
-  shishi_apreq_print(handle, stdout, apreq);
+  shishi_apreq_print (handle, stdout, apreq);
 
   return SHISHI_OK;
 }

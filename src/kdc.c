@@ -65,8 +65,7 @@ kdc_write_apreq (Shishi * handle, struct arguments arg, ASN1_TYPE req)
 	      return ASN1_TYPE_EMPTY;
 	    }
 
-	  apreq =
-	    shishi_d2a_apreq (handle, der, derlen, errorDescription);
+	  apreq = shishi_d2a_apreq (handle, der, derlen, errorDescription);
 	  if (apreq == ASN1_TYPE_EMPTY)
 	    {
 	      fprintf (stdout, "Could not DER deocde AP-REQ\n");
@@ -87,9 +86,8 @@ kdc_write_apreq (Shishi * handle, struct arguments arg, ASN1_TYPE req)
 int
 kdc_response (Shishi * handle,
 	      struct arguments arg,
-	      ASN1_TYPE req, ASN1_TYPE rep, 
-	      Shishi_ticket * oldtkt,
-	      Shishi_ticket ** newtkt)
+	      ASN1_TYPE req, ASN1_TYPE rep,
+	      Shishi_ticket * oldtkt, Shishi_ticket ** newtkt)
 {
   ASN1_TYPE kdcreppart = ASN1_TYPE_EMPTY;
   ASN1_TYPE ticket = ASN1_TYPE_EMPTY;
@@ -115,28 +113,29 @@ kdc_response (Shishi * handle,
 
       keytype = arg.algorithm;
 
-      res = shishi_kdc_process (handle, req, rep, 
+      res = shishi_kdc_process (handle, req, rep,
 				oldtkt ? 3 : 8,
 				keytype, key, keylen, &kdcreppart);
     }
   else if (oldtkt)
-    res = shishi_tgs_process (handle, req, rep, 
+    res = shishi_tgs_process (handle, req, rep,
 			      shishi_ticket_enckdcreppart (handle, oldtkt),
 			      &kdcreppart);
   else if (arg.stringtokey)
     res = shishi_as_process (handle, req, rep, arg.stringtokey, &kdcreppart);
-  else if (isatty(fileno(stdin)))
+  else if (isatty (fileno (stdin)))
     {
       char user[BUFSIZ];
       int userlen;
       char password[BUFSIZ];
 
-      userlen = sizeof(user);
+      userlen = sizeof (user);
       shishi_kdcreq_cnamerealm_get (handle, req, user, &userlen);
       user[userlen] = '\0';
 
       res = shishi_prompt_password (stdin, password, BUFSIZ,
-				    stdout, "Enter password for `%s': ", user);
+				    stdout, "Enter password for `%s': ",
+				    user);
 
       if (res == SHISHI_OK)
 	res = shishi_as_process (handle, req, rep, password, &kdcreppart);
@@ -164,8 +163,7 @@ kdc_response (Shishi * handle,
       return res;
     }
 
-  *newtkt = shishi_ticket (handle, "jas@JOSEFSSON.ORG", 
-			       ticket, kdcreppart);
+  *newtkt = shishi_ticket (handle, "jas@JOSEFSSON.ORG", ticket, kdcreppart);
   if (*newtkt == NULL)
     {
       printf ("Could not create ticket\n");
@@ -183,13 +181,13 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
   Shishi_ticket *oldtkt;
   Shishi_ticket *newtkt;
   int res;
-  Shishi_as * as;
+  Shishi_as *as;
 
   if (arg.cname == NULL)
     arg.cname = shishi_principal_default_get (handle);
 
   if (arg.realm == NULL)
-      arg.realm = shishi_realm_default_get (handle);
+    arg.realm = shishi_realm_default_get (handle);
 
   if (arg.sname == NULL)
     {
@@ -211,10 +209,10 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 
   if (arg.verbose)
     {
-      printf("Client name: `%s'\n", arg.cname);
-      printf("Realm: `%s'\n", arg.realm);
-      printf("Ticket granter: `%s'\n", arg.tgtname);
-      printf("Service name: `%s'\n", arg.sname);
+      printf ("Client name: `%s'\n", arg.cname);
+      printf ("Realm: `%s'\n", arg.realm);
+      printf ("Ticket granter: `%s'\n", arg.tgtname);
+      printf ("Service name: `%s'\n", arg.sname);
     }
 
   if (!arg.request_p && !arg.sendrecv_p && !arg.response_p)
@@ -232,9 +230,9 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     }
   else
     {
-      oldtkt = shishi_ticketset_find_ticket_for_clientserver (handle, 
+      oldtkt = shishi_ticketset_find_ticket_for_clientserver (handle,
 							      ticketset,
-							      arg.cname, 
+							      arg.cname,
 							      arg.tgtname);
       if (arg.forcetgs_p && oldtkt == NULL)
 	{
@@ -247,7 +245,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 	  {
 	    fprintf (stderr, "Found ticket, doing TGS...\n");
 	    if (arg.verbose)
-	      shishi_ticket_print(handle, oldtkt, stdout);
+	      shishi_ticket_print (handle, oldtkt, stdout);
 	  }
 	else
 	  fprintf (stderr, "No usable ticket, doing AS...\n");
@@ -256,7 +254,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
   /* Get request */
 
   if (!arg.silent)
-    printf("Generating KDC-REQ...\n");
+    printf ("Generating KDC-REQ...\n");
 
   if (arg.kdcreqreadfile)
     {
@@ -264,7 +262,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 				     arg.kdcreqreadtype, arg.kdcreqreadfile);
       if (res != SHISHI_OK)
 	{
-	  printf ("Could not read KDC-REQ: %s", shishi_strerror(res));
+	  printf ("Could not read KDC-REQ: %s", shishi_strerror (res));
 	  return res;
 	}
 
@@ -277,11 +275,11 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 	req = shishi_asreq (handle, arg.realm, arg.sname, arg.cname);
       else
 	req = shishi_tgsreq (handle, arg.realm, arg.sname, oldtkt);
-      
+
       if (req == ASN1_TYPE_EMPTY)
 	{
-	  printf ("Could not generate KDC-REQ: %s", 
-		  shishi_strerror_details(handle));
+	  printf ("Could not generate KDC-REQ: %s",
+		  shishi_strerror_details (handle));
 	  return 1;
 	}
 
@@ -299,7 +297,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 
 	  if (arg.verbose)
 	    shishi_apreq_print (handle, stdout, shishi_last_apreq (handle));
-	  
+
 	  if (arg.apreqwritefile)
 	    shishi_apreq_to_file (handle, shishi_last_apreq (handle),
 				  arg.apreqwritetype, arg.apreqwritefile);
@@ -311,7 +309,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
   else if (arg.sendrecv_p || arg.response_p)
     {
       fprintf
-	(stderr, 
+	(stderr,
 	 _("Request required, use --request or --read-kdc-request-file\n"));
       return 1;
     }
@@ -324,12 +322,12 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 			   arg.kdcreqwritetype, arg.kdcreqwritefile);
 
   if (!arg.silent)
-    printf("Generating KDC-REQ...done\n");
+    printf ("Generating KDC-REQ...done\n");
 
   /* Get response for request */
 
   if (!arg.silent)
-    printf("Sending KDC-REQ and receiving KDC-REP...\n");
+    printf ("Sending KDC-REQ and receiving KDC-REP...\n");
 
   if (arg.kdcrepreadfile)
     {
@@ -365,12 +363,12 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 			   arg.kdcrepwritetype, arg.kdcrepwritefile);
 
   if (!arg.silent)
-    printf("Sending KDC-REQ and receiving KDC-REP...done\n");
+    printf ("Sending KDC-REQ and receiving KDC-REP...done\n");
 
   /* Process request and response */
 
   if (!arg.silent)
-    printf("Processing KDC-REP...\n");
+    printf ("Processing KDC-REP...\n");
 
   if (arg.response_p)
     {
@@ -380,12 +378,12 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     }
 
   if (!arg.silent)
-    printf("Processing KDC-REP...done\n");
+    printf ("Processing KDC-REP...done\n");
 
   /* Add new ticket */
 
   if (!arg.silent)
-    printf("Adding new ticket...\n");
+    printf ("Adding new ticket...\n");
 
   res = shishi_ticketset_add (handle, ticketset, newtkt);
   if (res != SHISHI_OK)
@@ -398,7 +396,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     shishi_ticket_print (handle, newtkt, stdout);
 
   if (!arg.silent)
-    printf("Adding new ticket...done\n");
+    printf ("Adding new ticket...done\n");
 
   return SHISHI_OK;
 }

@@ -32,7 +32,7 @@
  *               or NULL if not yet set or an error occured.
  **/
 ASN1_TYPE
-shishi_tgs_get_tgsreq (Shishi_tgs *tgs)
+shishi_tgs_get_tgsreq (Shishi_tgs * tgs)
 {
   return tgs->tgsreq;
 }
@@ -45,7 +45,7 @@ shishi_tgs_get_tgsreq (Shishi_tgs *tgs)
  *               exchange, or NULL if not yet set or an error occured.
  **/
 Shishi_ticket *
-shishi_tgs_get_tgticket (Shishi_tgs *tgs)
+shishi_tgs_get_tgticket (Shishi_tgs * tgs)
 {
   return tgs->tgticket;
 }
@@ -59,7 +59,7 @@ shishi_tgs_get_tgticket (Shishi_tgs *tgs)
  *               error occured.
  **/
 ASN1_TYPE
-shishi_tgs_get_authenticator (Shishi_tgs *tgs)
+shishi_tgs_get_authenticator (Shishi_tgs * tgs)
 {
   return tgs->authenticator;
 }
@@ -73,7 +73,7 @@ shishi_tgs_get_authenticator (Shishi_tgs *tgs)
  *               occured.
  **/
 ASN1_TYPE
-shishi_tgs_get_apreq (Shishi_tgs *tgs)
+shishi_tgs_get_apreq (Shishi_tgs * tgs)
 {
   return tgs->apreq;
 }
@@ -86,7 +86,7 @@ shishi_tgs_get_apreq (Shishi_tgs *tgs)
  *               or NULL if not yet set or an error occured.
  **/
 ASN1_TYPE
-shishi_tgs_get_tgsrep (Shishi_tgs *tgs)
+shishi_tgs_get_tgsrep (Shishi_tgs * tgs)
 {
   return tgs->tgsrep;
 }
@@ -99,7 +99,7 @@ shishi_tgs_get_tgsrep (Shishi_tgs *tgs)
  *               exchange, or NULL if not yet set or an error occured.
  **/
 Shishi_ticket *
-shishi_tgs_get_ticket (Shishi_tgs *tgs)
+shishi_tgs_get_ticket (Shishi_tgs * tgs)
 {
   return tgs->ticket;
 }
@@ -118,35 +118,31 @@ shishi_tgs_get_ticket (Shishi_tgs *tgs)
  **/
 int
 shishi_tgs (Shishi * handle,
-	    Shishi_ticket * tgticket,
-	    Shishi_tgs ** tgs,
-	    char *server)
+	    Shishi_ticket * tgticket, Shishi_tgs ** tgs, char *server)
 {
   /* XXX parse server into realm + sname */
-  return shishi_tgs_realmsname (handle, tgticket, tgs, 
-				shishi_realm_default_get(handle), server);
+  return shishi_tgs_realmsname (handle, tgticket, tgs,
+				shishi_realm_default_get (handle), server);
 }
 
 int
 shishi_tgs_realmsname (Shishi * handle,
 		       Shishi_ticket * tgticket,
-		       Shishi_tgs ** tgs,
-		       char *realm,
-		       char *sname)
+		       Shishi_tgs ** tgs, char *realm, char *sname)
 {
   char user[BUFSIZ];
   int userlen;
   int res;
   ASN1_TYPE ticket, kdcreppart;
 
-  *tgs = malloc(sizeof(**tgs));
+  *tgs = malloc (sizeof (**tgs));
   if (*tgs == NULL)
     return SHISHI_MALLOC_ERROR;
 
   (*tgs)->tgsreq = shishi_tgs_req (handle);
   if ((*tgs)->tgsreq == ASN1_TYPE_EMPTY)
     return ASN1_TYPE_EMPTY;
-      
+
   res = shishi_kdcreq_set_realmserver (handle, (*tgs)->tgsreq, realm, sname);
   if (res != SHISHI_OK)
     {
@@ -157,7 +153,7 @@ shishi_tgs_realmsname (Shishi * handle,
 
   res = shishi_ticket_apreq_asn1_usage
     (handle, tgticket, SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
-     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR, 
+     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR,
      (*tgs)->tgsreq, "KDC-REQ.req-body", &(*tgs)->apreq);
   if (res != SHISHI_OK)
     {
@@ -174,14 +170,14 @@ shishi_tgs_realmsname (Shishi * handle,
       goto done;
     }
 
-  (*tgs)->authenticator = shishi_last_authenticator(handle);
+  (*tgs)->authenticator = shishi_last_authenticator (handle);
 
   res = shishi_kdcreq_sendrecv (handle, (*tgs)->tgsreq, &(*tgs)->tgsrep);
   if (res != SHISHI_OK)
     goto done;
 
-  res = shishi_tgs_process (handle, (*tgs)->tgsreq, (*tgs)->tgsrep, 
-			    shishi_ticket_enckdcreppart(handle, tgticket),
+  res = shishi_tgs_process (handle, (*tgs)->tgsreq, (*tgs)->tgsrep,
+			    shishi_ticket_enckdcreppart (handle, tgticket),
 			    &kdcreppart);
   if (res != SHISHI_OK)
     goto done;
@@ -189,12 +185,16 @@ shishi_tgs_realmsname (Shishi * handle,
   res = shishi_kdcrep_get_ticket (handle, (*tgs)->tgsrep, &ticket);
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "Could not extract ticket from TGS-REP: %s",
+      shishi_error_printf (handle,
+			   "Could not extract ticket from TGS-REP: %s",
 			   shishi_strerror_details (handle));
       return res;
     }
 
-  (*tgs)->ticket = shishi_ticket (handle, strdup(shishi_ticket_principal(handle, tgticket)), ticket, kdcreppart);
+  (*tgs)->ticket =
+    shishi_ticket (handle,
+		   strdup (shishi_ticket_principal (handle, tgticket)),
+		   ticket, kdcreppart);
   if ((*tgs)->ticket == NULL)
     {
       shishi_error_printf (handle, "Could not create ticket");
@@ -203,7 +203,7 @@ shishi_tgs_realmsname (Shishi * handle,
 
   return SHISHI_OK;
 
- done:
-  free(*tgs);
+done:
+  free (*tgs);
   return res;
 }

@@ -23,22 +23,24 @@
 #include <stddef.h>
 
 /* PRF types */
-enum {
+enum
+{
   /* XXX must be synchronized with libgcrypt */
-  PKCS5_PRF_MD5     = 1,
-  PKCS5_PRF_SHA1    = 2,
-  PKCS5_PRF_RMD160  = 3,
-  PKCS5_PRF_MD2     = 5,
-  PKCS5_PRF_TIGER   = 6,
-  PKCS5_PRF_HAVAL   = 7,
-  PKCS5_PRF_SHA256  = 8,
-  PKCS5_PRF_SHA384  = 9,
-  PKCS5_PRF_SHA512  = 10,
-  PKCS5_PRF_MD4     = 11
+  PKCS5_PRF_MD5 = 1,
+  PKCS5_PRF_SHA1 = 2,
+  PKCS5_PRF_RMD160 = 3,
+  PKCS5_PRF_MD2 = 5,
+  PKCS5_PRF_TIGER = 6,
+  PKCS5_PRF_HAVAL = 7,
+  PKCS5_PRF_SHA256 = 8,
+  PKCS5_PRF_SHA384 = 9,
+  PKCS5_PRF_SHA512 = 10,
+  PKCS5_PRF_MD4 = 11
 };
 
 /* Error codes */
-enum {
+enum
+{
   PKCS5_OK = 0,
   PKCS5_INVALID_PRF,
   PKCS5_INVALID_ITERATION_COUNT,
@@ -47,13 +49,10 @@ enum {
 };
 
 extern int
-PBKDF2 (int PRF, 
+PBKDF2 (int PRF,
 	const char *P,
 	size_t Plen,
 	const char *S,
-	size_t Slen,
-	unsigned int c,
-	unsigned int dkLen,
-	char *DK);
+	size_t Slen, unsigned int c, unsigned int dkLen, char *DK);
 
 #endif /* PKCS5_H */

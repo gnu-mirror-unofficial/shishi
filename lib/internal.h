@@ -95,7 +95,8 @@ extern char *_shishi_gettext (const char *str);
 #endif
 #endif
 
-typedef enum {
+typedef enum
+{
   /* 1. AS-REQ PA-ENC-TIMESTAMP padata timestamp, encrypted with the
      client key */
   SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP = 1,
@@ -152,7 +153,8 @@ typedef enum {
      (raeburn/MIT) */
   /* 25-511. Reserved for future use in Kerberos and related protocols. */
   /* 512-1023. Reserved for uses internal to a Kerberos implementation. */
-} Shishi_keyusage;
+}
+Shishi_keyusage;
 
 #define GENERALIZEDTIME_TIME_LEN 15
 
@@ -201,22 +203,22 @@ struct Shishi_as
 {
   ASN1_TYPE asreq;
   ASN1_TYPE asrep;
-  Shishi_ticket * ticket;
+  Shishi_ticket *ticket;
 };
 
 struct Shishi_tgs
 {
   ASN1_TYPE tgsreq;
-  Shishi_ticket * tgticket;
+  Shishi_ticket *tgticket;
   ASN1_TYPE authenticator;
   ASN1_TYPE apreq;
   ASN1_TYPE tgsrep;
-  Shishi_ticket * ticket;
+  Shishi_ticket *ticket;
 };
 
 struct Shishi_ap
 {
-  Shishi_ticket * ticket;
+  Shishi_ticket *ticket;
   ASN1_TYPE authenticator;
   ASN1_TYPE apreq;
   ASN1_TYPE aprep;

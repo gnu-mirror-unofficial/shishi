@@ -173,10 +173,7 @@ shishi_as_req (Shishi * handle)
 }
 
 ASN1_TYPE
-shishi_asreq (Shishi * handle,
-	      char *realm,
-	      char *server,
-	      char *client)
+shishi_asreq (Shishi * handle, char *realm, char *server, char *client)
 {
   ASN1_TYPE req = ASN1_TYPE_EMPTY;
   int res;
@@ -184,7 +181,7 @@ shishi_asreq (Shishi * handle,
   req = shishi_as_req (handle);
   if (req == ASN1_TYPE_EMPTY)
     return ASN1_TYPE_EMPTY;
-      
+
   res = shishi_kdcreq_set_realmserver (handle, req, realm, server);
   if (res != SHISHI_OK)
     {
@@ -222,9 +219,7 @@ shishi_tgs_req (Shishi * handle)
 
 ASN1_TYPE
 shishi_tgsreq (Shishi * handle,
-	       char *realm,
-	       char *server,
-	       Shishi_ticket *ticket)
+	       char *realm, char *server, Shishi_ticket * ticket)
 {
   ASN1_TYPE req = ASN1_TYPE_EMPTY;
   unsigned char key[BUFSIZ];
@@ -235,7 +230,7 @@ shishi_tgsreq (Shishi * handle,
   req = shishi_tgs_req (handle);
   if (req == ASN1_TYPE_EMPTY)
     return ASN1_TYPE_EMPTY;
-      
+
   res = shishi_kdcreq_set_realmserver (handle, req, realm, server);
   if (res != SHISHI_OK)
     {
@@ -246,16 +241,14 @@ shishi_tgsreq (Shishi * handle,
 
   keylen = sizeof (key);
   res = shishi_enckdcreppart_get_key
-    (handle, 
-     shishi_ticket_enckdcreppart(handle, ticket),
-     &keytype, key, &keylen);
+    (handle,
+     shishi_ticket_enckdcreppart (handle, ticket), &keytype, key, &keylen);
   if (res != SHISHI_OK)
     return ASN1_TYPE_EMPTY;
 
   res = shishi_kdcreq_make_padata_tgs
-    (handle, req, 
-     shishi_ticket_ticket(handle, ticket),
-     keytype, key, keylen);
+    (handle, req,
+     shishi_ticket_ticket (handle, ticket), keytype, key, keylen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make TGS PA-DATA: %s\n",
@@ -318,14 +311,14 @@ shishi_kdcreq_to_file (Shishi * handle, ASN1_TYPE kdcreq,
   FILE *fh;
   int res;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing KDC-REQ to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing KDC-REQ in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -340,7 +333,7 @@ shishi_kdcreq_to_file (Shishi * handle, ASN1_TYPE kdcreq,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing KDC-REQ to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -398,14 +391,14 @@ shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
   int res;
   FILE *fh;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading KDC-REQ from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading KDC-REQ in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -420,7 +413,7 @@ shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading KDC-REQ from %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -487,9 +480,9 @@ shishi_kdcreq_cnamerealm_get (Shishi * handle,
 			      ASN1_TYPE kdcreq,
 			      char *cnamerealm, int *cnamerealmlen)
 {
-  return shishi_principal_name_realm_get (handle, kdcreq, 
+  return shishi_principal_name_realm_get (handle, kdcreq,
 					  "KDC-REQ.req-body.cname", kdcreq,
-					  "KDC-REQ.req-body.realm", 
+					  "KDC-REQ.req-body.realm",
 					  cnamerealm, cnamerealmlen);
 }
 
@@ -599,7 +592,7 @@ shishi_kdcreq_set_sname (Shishi * handle,
       return !SHISHI_OK;
     }
 
-  res = 
+  res =
     asn1_write_value (kdcreq, "KDC-REQ.req-body.sname.name-string", NULL, 0);
   if (res != ASN1_SUCCESS)
     {
@@ -633,9 +626,7 @@ shishi_kdcreq_set_sname (Shishi * handle,
 }
 
 int
-shishi_kdcreq_set_server (Shishi * handle,
-			  ASN1_TYPE req,
-			  char *server)
+shishi_kdcreq_set_server (Shishi * handle, ASN1_TYPE req, char *server)
 {
   char *tmpserver;
   char **serverbuf;
@@ -643,16 +634,15 @@ shishi_kdcreq_set_server (Shishi * handle,
   int res;
   int i;
 
-  tmpserver = strdup(server);
+  tmpserver = strdup (server);
   if (tmpserver == NULL)
     return SHISHI_MALLOC_ERROR;
 
-  serverbuf = malloc(sizeof(*serverbuf));
-  for (i = 0; 
-       serverbuf[i] = strtok_r(i == 0 ? tmpserver : NULL, "/", &tokptr); 
-       i++)
+  serverbuf = malloc (sizeof (*serverbuf));
+  for (i = 0;
+       serverbuf[i] = strtok_r (i == 0 ? tmpserver : NULL, "/", &tokptr); i++)
     {
-      serverbuf = realloc(serverbuf, (i+2) * sizeof(*serverbuf));
+      serverbuf = realloc (serverbuf, (i + 2) * sizeof (*serverbuf));
       if (serverbuf == NULL)
 	return SHISHI_MALLOC_ERROR;
     }
@@ -663,17 +653,15 @@ shishi_kdcreq_set_server (Shishi * handle,
 	       shishi_strerror_details (handle));
       return ASN1_TYPE_EMPTY;
     }
-  free(serverbuf);
-  free(tmpserver);
+  free (serverbuf);
+  free (tmpserver);
 
   return SHISHI_OK;
 }
 
 int
 shishi_kdcreq_set_realmserver (Shishi * handle,
-			       ASN1_TYPE req,
-			       char *realm,
-			       char *server)
+			       ASN1_TYPE req, char *realm, char *server)
 {
   int res;
 
@@ -795,9 +783,7 @@ int
 shishi_kdcreq_make_padata_tgs (Shishi * handle,
 			       ASN1_TYPE kdcreq,
 			       ASN1_TYPE ticket,
-			       int keytype,
-			       char *key,
-			       int keylen)
+			       int keytype, char *key, int keylen)
 {
   ASN1_TYPE apreq = ASN1_TYPE_EMPTY;
   int res;
@@ -823,8 +809,7 @@ shishi_kdcreq_make_padata_tgs (Shishi * handle,
      apreq,
      SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
      SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR,
-     keytype, key, keylen,
-     kdcreq, "KDC-REQ.req-body");
+     keytype, key, keylen, kdcreq, "KDC-REQ.req-body");
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make authenticator: %s\n",
@@ -842,4 +827,3 @@ shishi_kdcreq_make_padata_tgs (Shishi * handle,
 
   return SHISHI_OK;
 }
-

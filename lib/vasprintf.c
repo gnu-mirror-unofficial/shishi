@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include "internal.h"
 
 static int
-int_vasprintf (char **result, const char *format, va_list *args)
+int_vasprintf (char **result, const char *format, va_list * args)
 {
   const char *p = format;
   /* Add one to make sure that it is never zero, which might cause malloc
@@ -110,4 +110,4 @@ shishi_asprintf (char **result, const char *format, ...)
   va_end (args);
 
   return done;
-} 
+}

@@ -79,7 +79,7 @@ error:
 int
 shishi_encapreppart_print (Shishi * handle, FILE * fh, ASN1_TYPE encapreppart)
 {
-  return _shishi_print_armored_data (handle, fh, encapreppart, 
+  return _shishi_print_armored_data (handle, fh, encapreppart,
 				     "EncAPRepPart", NULL);
 }
 
@@ -114,19 +114,19 @@ shishi_encapreppart_save (Shishi * handle, FILE * fh, ASN1_TYPE encapreppart)
  **/
 int
 shishi_encapreppart_to_file (Shishi * handle, ASN1_TYPE encapreppart,
-		      int filetype, char *filename)
+			     int filetype, char *filename)
 {
   FILE *fh;
   int res;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing EncAPRepPart to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing EncAPRepPart in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -141,7 +141,7 @@ shishi_encapreppart_to_file (Shishi * handle, ASN1_TYPE encapreppart,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing EncAPRepPart to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -159,7 +159,8 @@ shishi_encapreppart_to_file (Shishi * handle, ASN1_TYPE encapreppart,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_encapreppart_parse (Shishi * handle, FILE * fh, ASN1_TYPE * encapreppart)
+shishi_encapreppart_parse (Shishi * handle, FILE * fh,
+			   ASN1_TYPE * encapreppart)
 {
   return _shishi_encapreppart_input (handle, fh, encapreppart, 0);
 }
@@ -175,7 +176,8 @@ shishi_encapreppart_parse (Shishi * handle, FILE * fh, ASN1_TYPE * encapreppart)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_encapreppart_read (Shishi * handle, FILE * fh, ASN1_TYPE * encapreppart)
+shishi_encapreppart_read (Shishi * handle, FILE * fh,
+			  ASN1_TYPE * encapreppart)
 {
   return _shishi_encapreppart_input (handle, fh, encapreppart, 1);
 }
@@ -194,19 +196,19 @@ shishi_encapreppart_read (Shishi * handle, FILE * fh, ASN1_TYPE * encapreppart)
  **/
 int
 shishi_encapreppart_from_file (Shishi * handle, ASN1_TYPE * encapreppart,
-			int filetype, char *filename)
+			       int filetype, char *filename)
 {
   int res;
   FILE *fh;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading EncAPRepPart from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading EncAPRepPart in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -221,7 +223,7 @@ shishi_encapreppart_from_file (Shishi * handle, ASN1_TYPE * encapreppart,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading EncAPRepPart from %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -242,9 +244,9 @@ shishi_encapreppart_from_file (Shishi * handle, ASN1_TYPE * encapreppart,
  **/
 int
 shishi_encapreppart_get_key (Shishi * handle,
-			      ASN1_TYPE encapreppart,
-			      int *keytype,
-			      unsigned char *keyvalue, int *keyvalue_len)
+			     ASN1_TYPE encapreppart,
+			     int *keytype,
+			     unsigned char *keyvalue, int *keyvalue_len)
 {
   int res;
   unsigned char buf[BUFSIZ];
@@ -268,16 +270,14 @@ shishi_encapreppart_get_key (Shishi * handle,
 
 int
 shishi_encapreppart_ctime_get (Shishi * handle,
-			       ASN1_TYPE encapreppart, 
-			       char *ctime)
+			       ASN1_TYPE encapreppart, char *ctime)
 {
   int len;
   int res;
 
   len = GENERALIZEDTIME_TIME_LEN + 1;
-  res = _shishi_asn1_field (handle, encapreppart, 
-			    ctime, &len,
-			    "EncAPRepPart.ctime");
+  res = _shishi_asn1_field (handle, encapreppart,
+			    ctime, &len, "EncAPRepPart.ctime");
   if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
     ctime[len] = '\0';
 
@@ -286,56 +286,53 @@ shishi_encapreppart_ctime_get (Shishi * handle,
 
 int
 shishi_encapreppart_ctime_set (Shishi * handle,
-			       ASN1_TYPE encapreppart,
-			       char *ctime)
+			       ASN1_TYPE encapreppart, char *ctime)
 {
   int res;
 
-  res = asn1_write_value (encapreppart, "EncAPRepPart.ctime", 
-			  ctime, strlen(ctime));
-  if (res != ASN1_SUCCESS) 
+  res = asn1_write_value (encapreppart, "EncAPRepPart.ctime",
+			  ctime, strlen (ctime));
+  if (res != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (res));
       return SHISHI_ASN1_ERROR;
     }
 
-  return SHISHI_OK;  
+  return SHISHI_OK;
 }
 
 int
 shishi_encapreppart_cusec_get (Shishi * handle,
-			       ASN1_TYPE encapreppart, 
-			       int *cusec)
+			       ASN1_TYPE encapreppart, int *cusec)
 {
   int len;
   int res;
 
-  len = sizeof(*cusec);
+  len = sizeof (*cusec);
   *cusec = 0;
-  res = _shishi_asn1_field (handle, encapreppart, cusec, &len, 
+  res = _shishi_asn1_field (handle, encapreppart, cusec, &len,
 			    "EncAPRepPart.cusec");
-  *cusec = ntohl(*cusec);
+  *cusec = ntohl (*cusec);
 
   return res;
 }
 
 int
 shishi_encapreppart_cusec_set (Shishi * handle,
-			       ASN1_TYPE encapreppart,
-			       int cusec)
+			       ASN1_TYPE encapreppart, int cusec)
 {
   char usec[BUFSIZ];
   int res;
 
   sprintf (usec, "%d", cusec);
   res = asn1_write_value (encapreppart, "EncAPRepPart.cusec", usec, 0);
-  if (res != ASN1_SUCCESS) 
+  if (res != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (res));
       return SHISHI_ASN1_ERROR;
     }
 
-  return SHISHI_OK;  
+  return SHISHI_OK;
 }
 
 int
@@ -355,7 +352,7 @@ shishi_encapreppart_time_copy (Shishi * handle,
   res = asn1_write_value (encapreppart, "EncAPRepPart.cusec", buf, buflen);
   if (res != ASN1_SUCCESS)
     goto error;
-  
+
   buflen = BUFSIZ;
   res = asn1_read_value (authenticator, "Authenticator.ctime", buf, &buflen);
   if (res != ASN1_SUCCESS)
@@ -364,7 +361,7 @@ shishi_encapreppart_time_copy (Shishi * handle,
   res = asn1_write_value (encapreppart, "EncAPRepPart.ctime", buf, buflen);
   if (res != ASN1_SUCCESS)
     goto error;
-  
+
   return SHISHI_OK;
 
 error:

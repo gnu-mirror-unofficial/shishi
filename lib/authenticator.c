@@ -151,14 +151,14 @@ shishi_authenticator_to_file (Shishi * handle, ASN1_TYPE authenticator,
   FILE *fh;
   int res;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing Authenticator to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing Authenticator in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -173,7 +173,7 @@ shishi_authenticator_to_file (Shishi * handle, ASN1_TYPE authenticator,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing Authenticator to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -234,14 +234,14 @@ shishi_authenticator_from_file (Shishi * handle, ASN1_TYPE * authenticator,
   int res;
   FILE *fh;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading Authenticator from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading Authenticator in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -256,7 +256,7 @@ shishi_authenticator_from_file (Shishi * handle, ASN1_TYPE * authenticator,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading Authenticator from %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -344,16 +344,14 @@ shishi_authenticator_set_cname (Shishi * handle,
 
 int
 shishi_authenticator_ctime_get (Shishi * handle,
-				ASN1_TYPE authenticator, 
-				char *ctime)
+				ASN1_TYPE authenticator, char *ctime)
 {
   int len;
   int res;
 
   len = GENERALIZEDTIME_TIME_LEN + 1;
-  res = _shishi_asn1_field (handle, authenticator, 
-			    ctime, &len,
-			    "Authenticator.ctime");
+  res = _shishi_asn1_field (handle, authenticator,
+			    ctime, &len, "Authenticator.ctime");
   if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
     ctime[len] = '\0';
 
@@ -362,34 +360,32 @@ shishi_authenticator_ctime_get (Shishi * handle,
 
 int
 shishi_authenticator_cusec_get (Shishi * handle,
-				ASN1_TYPE authenticator, 
-				int *cusec)
+				ASN1_TYPE authenticator, int *cusec)
 {
   int len;
   int res;
 
-  len = sizeof(*cusec);
+  len = sizeof (*cusec);
   *cusec = 0;
-  res = _shishi_asn1_field (handle, authenticator, cusec, &len, 
-			     "Authenticator.cusec");
-  *cusec = ntohl(*cusec);
+  res = _shishi_asn1_field (handle, authenticator, cusec, &len,
+			    "Authenticator.cusec");
+  *cusec = ntohl (*cusec);
 
   return res;
 }
 
 int
 shishi_authenticator_cname_get (Shishi * handle,
-				ASN1_TYPE authenticator, 
+				ASN1_TYPE authenticator,
 				char *cname, int *cnamelen)
 {
   return shishi_principal_name_get (handle, authenticator,
-				    "Authenticator.cname",
-				    cname, cnamelen);
+				    "Authenticator.cname", cname, cnamelen);
 }
 
 int
 shishi_authenticator_cnamerealm_get (Shishi * handle,
-				     ASN1_TYPE authenticator, 
+				     ASN1_TYPE authenticator,
 				     char *cnamerealm, int *cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, authenticator,
@@ -471,8 +467,7 @@ shishi_authenticator_add_cksum (Shishi * handle,
 				int keyusage,
 				int keytype,
 				char *key,
-				int keylen,
-				char *data, int datalen)
+				int keylen, char *data, int datalen)
 {
   int res;
 
@@ -483,8 +478,9 @@ shishi_authenticator_add_cksum (Shishi * handle,
       int cksumtype = shishi_cipher_defaultcksumtype (keytype);
 
       cksumlen = sizeof (cksum);
-      res = shishi_checksum (handle, cksumtype, keyusage, keytype, key, keylen,
-			     data, datalen, cksum, &cksumlen);
+      res =
+	shishi_checksum (handle, cksumtype, keyusage, keytype, key, keylen,
+			 data, datalen, cksum, &cksumlen);
       if (res != SHISHI_OK)
 	return res;
 

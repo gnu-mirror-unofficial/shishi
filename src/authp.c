@@ -61,9 +61,9 @@ ap (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       Shishi_ticket *ticket;
       int res;
 
-      ticket = shishi_ticketset_find_ticket_for_clientserver (handle, 
+      ticket = shishi_ticketset_find_ticket_for_clientserver (handle,
 							      ticketset,
-							      arg.cname, 
+							      arg.cname,
 							      arg.sname);
       if (ticket == NULL)
 	{
@@ -93,8 +93,7 @@ ap (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       else
 	datalen = 0;
 
-      res = shishi_ticket_apreq_data (handle, ticket,
-					  data, datalen, &apreq);
+      res = shishi_ticket_apreq_data (handle, ticket, data, datalen, &apreq);
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, _("Could not make AP-REQ: %s\n"),

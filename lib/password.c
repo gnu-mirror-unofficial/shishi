@@ -29,10 +29,10 @@ static int
 tty_set_echo (int echo)
 {
   struct termios termios_p;
-  int fd = fileno(stdin);
+  int fd = fileno (stdin);
   int rc;
 
-  if (tcgetattr(fd, &termios_p) != 0)
+  if (tcgetattr (fd, &termios_p) != 0)
     return SHISHI_TTY_ERROR;
 
   if (echo)
@@ -40,7 +40,7 @@ tty_set_echo (int echo)
   else
     termios_p.c_lflag &= ~ECHO;
 
-  if (tcsetattr(fd, TCSANOW, &termios_p) != 0)
+  if (tcsetattr (fd, TCSANOW, &termios_p) != 0)
     return SHISHI_TTY_ERROR;
 
   return SHISHI_OK;
@@ -48,45 +48,43 @@ tty_set_echo (int echo)
 
 #else
 
-mail simon@josefsson.org and tell what system this is
-
+mail simon @ josefsson.org and tell what system this is
 #endif
-
-RETSIGTYPE
+  RETSIGTYPE
 tty_echo (int signum)
 {
-  tty_set_echo(1);
+  tty_set_echo (1);
 }
 
 RETSIGTYPE
 tty_noecho (int signum)
 {
-  tty_set_echo(0);
+  tty_set_echo (0);
 }
 
 int
-shishi_read_password (FILE *fh, char * s, int size)
+shishi_read_password (FILE * fh, char *s, int size)
 {
   int rc;
 
-  rc = tty_set_echo(0);
+  rc = tty_set_echo (0);
   if (rc != SHISHI_OK)
     return rc;
 
 #ifdef HAVE_SIGNAL
-  signal(SIGQUIT, tty_echo);
-  signal(SIGCONT, tty_noecho);
+  signal (SIGQUIT, tty_echo);
+  signal (SIGCONT, tty_noecho);
 #endif
 
   fgets (s, size, fh);
-  s[strlen(s)-1] = '\0';
+  s[strlen (s) - 1] = '\0';
 
 #ifdef HAVE_SIGNAL
-  signal(SIGQUIT, SIG_DFL);
-  signal(SIGCONT, SIG_DFL);
+  signal (SIGQUIT, SIG_DFL);
+  signal (SIGCONT, SIG_DFL);
 #endif
 
-  rc = tty_set_echo(1);
+  rc = tty_set_echo (1);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -94,17 +92,17 @@ shishi_read_password (FILE *fh, char * s, int size)
 }
 
 int
-shishi_prompt_password (FILE *in, char * s, int size, 
-			FILE *out, char *format, ...)
+shishi_prompt_password (FILE * in, char *s, int size,
+			FILE * out, char *format, ...)
 {
   va_list ap;
   int rc;
 
   va_start (ap, format);
-  vfprintf(out, format, ap);
-  fflush(out);
+  vfprintf (out, format, ap);
+  fflush (out);
   rc = shishi_read_password (in, s, size);
-  fprintf(out, "\n");
+  fprintf (out, "\n");
 
   return rc;
 }

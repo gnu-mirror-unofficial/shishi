@@ -35,11 +35,12 @@ _shishi_kdcrep (Shishi * handle, int as)
   ASN1_TYPE node = ASN1_TYPE_EMPTY;
 
   if (as)
-    res = 
-      asn1_create_element (handle->asn1, "Kerberos5.AS-REP", &node, "KDC-REP");
+    res =
+      asn1_create_element (handle->asn1, "Kerberos5.AS-REP", &node,
+			   "KDC-REP");
   else
     res =
-      asn1_create_element (handle->asn1, "Kerberos5.TGS-REP", &node, 
+      asn1_create_element (handle->asn1, "Kerberos5.TGS-REP", &node,
 			   "KDC-REP");
   if (res != ASN1_SUCCESS)
     goto error;
@@ -153,14 +154,14 @@ shishi_kdcrep_to_file (Shishi * handle, ASN1_TYPE kdcrep,
   FILE *fh;
   int res;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing KDC-REP to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing KDC-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -175,7 +176,7 @@ shishi_kdcrep_to_file (Shishi * handle, ASN1_TYPE kdcrep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing KDC-REP to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -233,14 +234,14 @@ shishi_kdcrep_from_file (Shishi * handle, ASN1_TYPE * kdcrep,
   int res;
   FILE *fh;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading KDC-REP from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading KDC-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -255,7 +256,7 @@ shishi_kdcrep_from_file (Shishi * handle, ASN1_TYPE * kdcrep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading KDC-REP from %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -406,9 +407,7 @@ shishi_kdcrep_decrypt (Shishi * handle,
 		       ASN1_TYPE kdcrep,
 		       int keyusage,
 		       int keytype,
-		       char *key, 
-		       int keylen, 
-		       ASN1_TYPE * enckdcreppart)
+		       char *key, int keylen, ASN1_TYPE * enckdcreppart)
 {
   int res;
   int i, len;
@@ -436,7 +435,7 @@ shishi_kdcrep_decrypt (Shishi * handle,
 			key, keylen, cipher, cipherlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
-      if (!SILENT(handle))
+      if (!SILENT (handle))
 	printf ("des_decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
 			   "des_decrypt fail, most likely wrong password\n");

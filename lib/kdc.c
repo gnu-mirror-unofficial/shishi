@@ -143,8 +143,10 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
       return !SHISHI_OK;
     }
 
-  realmlen = sizeof(realm);
-  res = _shishi_asn1_field (handle, kdcreq, realm, &realmlen, "KDC-REQ.req-body.realm");
+  realmlen = sizeof (realm);
+  res =
+    _shishi_asn1_field (handle, kdcreq, realm, &realmlen,
+			"KDC-REQ.req-body.realm");
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not get realm: %s\n",
@@ -163,7 +165,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
     }
   der_len = out_len;
 
-  if (DEBUGASN1(handle))
+  if (DEBUGASN1 (handle))
     printf ("received %d bytes\n", der_len);
 
   *kdcrep = shishi_der2asn1_as_rep (handle->asn1, der,
@@ -188,14 +190,14 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
 		  return !SHISHI_OK;
 		}
 
-	      shishi_error_printf
-		(handle, "Received KRB-ERROR.");
+	      shishi_error_printf (handle, "Received KRB-ERROR.");
 
 	      return !SHISHI_OK;
 	    }
 	  else
 	    {
-	      printf ("Buggy server replied with KDC-REP instead of AS-REP\n");
+	      printf
+		("Buggy server replied with KDC-REP instead of AS-REP\n");
 	    }
 	}
     }
@@ -243,7 +245,7 @@ shishi_as_check_crealm (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
   reqrealm[reqrealmlen] = '\0';
   reprealm[reprealmlen] = '\0';
 
-  if (DEBUGASN1(handle))
+  if (DEBUGASN1 (handle))
     {
       printf ("request realm: %s\n", reqrealm);
       printf ("reply realm: %s\n", reprealm);
@@ -317,7 +319,7 @@ shishi_as_check_cname (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
 	  return SHISHI_ASN1_ERROR;
 	}
 
-      if (DEBUGASN1(handle))
+      if (DEBUGASN1 (handle))
 	{
 	  reqcname[reqcnamelen] = '\0';
 	  repcname[repcnamelen] = '\0';
@@ -378,7 +380,7 @@ shishi_kdc_check_nonce (Shishi * handle,
       return SHISHI_ASN1_ERROR;
     }
 
-  if (DEBUGASN1(handle))
+  if (DEBUGASN1 (handle))
     {
       int i;
 
@@ -415,7 +417,7 @@ shishi_kdc_check_nonce (Shishi * handle,
       return SHISHI_OK;
     }
 
-  if (reqnoncelen != repnoncelen || 
+  if (reqnoncelen != repnoncelen ||
       memcmp (reqnonce, repnonce, repnoncelen) != 0)
     return SHISHI_NONCE_MISMATCH;
 
@@ -462,9 +464,9 @@ shishi_tgs_process (Shishi * handle,
   if (etype != keytype)
     return SHISHI_TGSREP_BAD_KEYTYPE;
 
-  res = shishi_kdc_process (handle, tgsreq, tgsrep, 
-			    SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY, keytype,
-			    key, keylen, enckdcreppart);
+  res = shishi_kdc_process (handle, tgsreq, tgsrep,
+			    SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
+			    keytype, key, keylen, enckdcreppart);
 
   return res;
 }
@@ -515,8 +517,8 @@ shishi_as_process (Shishi * handle,
     return res;
 
   res = shishi_kdc_process (handle, asreq, asrep,
-			    SHISHI_KEYUSAGE_ENCASREPPART, keytype, key, keylen,
-			    enckdcreppart);
+			    SHISHI_KEYUSAGE_ENCASREPPART, keytype, key,
+			    keylen, enckdcreppart);
 
   return res;
 }

@@ -130,17 +130,17 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case 'c':
-      arguments->cfgfile = strdup(arg);
+      arguments->cfgfile = strdup (arg);
       break;
 
     case ARGP_KEY_END:
       if (arguments->nlistenspec > 0)
 	break;
-      arg = strdup(LISTEN_DEFAULT);
+      arg = strdup (LISTEN_DEFAULT);
       /* fall through */
 
     case 'l':
-      for (i = 0; val = strtok_r(i == 0 ? arg : NULL, ", \t", &ptrptr); i++)
+      for (i = 0; val = strtok_r (i == 0 ? arg : NULL, ", \t", &ptrptr); i++)
 	{
 	  char *service, *proto;
 	  struct servent *se;
@@ -152,66 +152,67 @@ parse_opt (int key, char *arg, struct argp_state *state)
 #endif
 
 	  arguments->nlistenspec++;
-	  arguments->listenspec = realloc(arguments->listenspec,
-					  sizeof(*arguments->listenspec) * 
-					  arguments->nlistenspec);
+	  arguments->listenspec = realloc (arguments->listenspec,
+					   sizeof (*arguments->listenspec) *
+					   arguments->nlistenspec);
 	  if (arguments->listenspec == NULL)
 	    argp_error (state, "Fatal memory allocation error");
-	  ls = &arguments->listenspec[arguments->nlistenspec-1];
-	  ls->str = strdup(val);
+	  ls = &arguments->listenspec[arguments->nlistenspec - 1];
+	  ls->str = strdup (val);
 	  ls->bufpos = 0;
-	  sin = (struct sockaddr_in*)&ls->addr;
+	  sin = (struct sockaddr_in *) &ls->addr;
 #ifdef WITH_IPV6
-	  sin6 = (struct sockaddr_in6*)&ls->addr;
+	  sin6 = (struct sockaddr_in6 *) &ls->addr;
 #endif
 
-	  proto = strrchr(val, '/');
+	  proto = strrchr (val, '/');
 	  if (proto == NULL)
-	    argp_error (state, "Could not find type in listen spec: `%s'", 
+	    argp_error (state, "Could not find type in listen spec: `%s'",
 			ls->str);
 	  *proto = '\0';
 	  proto++;
 
-	  if (strcmp(proto, "tcp") == 0)
+	  if (strcmp (proto, "tcp") == 0)
 	    ls->type = SOCK_STREAM;
 	  else
 	    ls->type = SOCK_DGRAM;
 
-	  service = strrchr(val, ':');
+	  service = strrchr (val, ':');
 	  if (service == NULL)
-	    argp_error (state, "Could not find service in listen spec: `%s'", 
+	    argp_error (state, "Could not find service in listen spec: `%s'",
 			ls->str);
 	  *service = '\0';
 	  service++;
 
-	  se = getservbyname(service, proto);
+	  se = getservbyname (service, proto);
 	  if (se)
-	    ls->port = ntohs(se->s_port);
-	  else if (strcmp(service, "kerberos") == 0)
+	    ls->port = ntohs (se->s_port);
+	  else if (strcmp (service, "kerberos") == 0)
 	    ls->port = 88;
-	  else if (atoi(service) != 0)
-	    ls->port = atoi(service);
+	  else if (atoi (service) != 0)
+	    ls->port = atoi (service);
 	  else
 	    argp_error (state, "Unknown service `%s' in listen spec: `%s'",
 			service, ls->str);
 
 #ifdef WITH_IPV6
 	  if (ls->family == AF_INET6)
-	    sin6->sin6_port = htons(ls->port);
+	    sin6->sin6_port = htons (ls->port);
 	  else
 #endif
-	    sin->sin_port = htons(ls->port);
+	    sin->sin_port = htons (ls->port);
 
-	  if (strncmp(val, FAMILY_IPV4 ":", strlen(FAMILY_IPV4 ":")) == 0)
+	  if (strncmp (val, FAMILY_IPV4 ":", strlen (FAMILY_IPV4 ":")) == 0)
 	    {
 	      ls->family = AF_INET;
-	      val += strlen(FAMILY_IPV4 ":");
+	      val += strlen (FAMILY_IPV4 ":");
 	    }
 #ifdef WITH_IPV6
-	  else if (strncmp(val, FAMILY_IPV6 ":", strlen(FAMILY_IPV6 ":")) == 0)
+	  else if (strncmp (val, FAMILY_IPV6 ":", strlen (FAMILY_IPV6 ":")) ==
+		   0)
 	    {
 	      ls->family = AF_INET6;
-	      val += strlen(FAMILY_IPV6 ":");
+	      val += strlen (FAMILY_IPV6 ":");
 	    }
 #endif
 	  else
@@ -224,25 +225,25 @@ parse_opt (int key, char *arg, struct argp_state *state)
 		sin6->sin6_addr = in6addr_any;
 	      else
 #endif
-		sin->sin_addr.s_addr = htonl(INADDR_ANY);
+		sin->sin_addr.s_addr = htonl (INADDR_ANY);
 	    }
-	  else if (he = gethostbyname(val))
+	  else if (he = gethostbyname (val))
 	    {
 	      if (he->h_addrtype == AF_INET)
 		{
 		  sin->sin_family = AF_INET;
-		  memcpy(&sin->sin_addr, he->h_addr_list[0], he->h_length);
+		  memcpy (&sin->sin_addr, he->h_addr_list[0], he->h_length);
 		}
 #ifdef WITH_IPV6
 	      else if (he->h_addrtype == AF_INET6)
 		{
 		  sin6->sin6_family = AF_INET6;
-		  memcpy(&sin6->sin6_addr, he->h_addr_list[0], he->h_length);
+		  memcpy (&sin6->sin6_addr, he->h_addr_list[0], he->h_length);
 		}
 #endif
 	      else
 		argp_error (state, "Unknown protocol family (%d) returned "
-			    "by gethostbyname(\"%s\"): `%s'", he->h_addrtype, 
+			    "by gethostbyname(\"%s\"): `%s'", he->h_addrtype,
 			    val, ls->str);
 	    }
 	  else
@@ -293,24 +294,21 @@ static struct argp argp = {
 };
 
 void
-process (Shishi *handle, 
-	 struct arguments arg, 
-	 char *data,
-	 int datalen,
-	 int sockfd)
+process (Shishi * handle,
+	 struct arguments arg, char *data, int datalen, int sockfd)
 {
   ASN1_TYPE kdcreq;
   ASN1_TYPE kdcrep, ticket, encticketpart;
 
-  printf("Processing %d bytes: %s\n", datalen, data);
+  printf ("Processing %d bytes: %s\n", datalen, data);
 
   kdcreq = shishi_d2a_kdcreq (handle, data, datalen);
   if (kdcreq == ASN1_TYPE_EMPTY)
-    puts("oops");
+    puts ("oops");
 
-  shishi_kdcreq_print(handle, stdout, kdcreq);
+  shishi_kdcreq_print (handle, stdout, kdcreq);
 
-  kdcrep = shishi_as_rep(handle);
+  kdcrep = shishi_as_rep (handle);
 
   //shishi_kdcrep_print(handle, stdout, kdcrep);
 
@@ -333,13 +331,13 @@ ctrlc (int signum)
 }
 
 int
-doit (Shishi *handle, struct arguments arg)
+doit (Shishi * handle, struct arguments arg)
 {
   struct listenspec *ls;
   fd_set readfds;
   struct timeval timeout;
   struct sockaddr addr;
-  socklen_t length = sizeof(addr);
+  socklen_t length = sizeof (addr);
   int maxfd = 0;
   int rc;
   int i;
@@ -351,14 +349,14 @@ doit (Shishi *handle, struct arguments arg)
       ls = &arg.listenspec[i];
 
       if (!arg.silent)
-	printf("Listening on %s...", ls->str);
+	printf ("Listening on %s...", ls->str);
 
-      ls->sockfd = socket(ls->family, ls->type, 0);
+      ls->sockfd = socket (ls->family, ls->type, 0);
       if (ls->sockfd < 0)
 	{
 	  if (!arg.silent)
-	    printf("failed\n");
-	  perror("socket");
+	    printf ("failed\n");
+	  perror ("socket");
 	  ls->sockfd = 0;
 	  continue;
 	}
@@ -368,118 +366,121 @@ doit (Shishi *handle, struct arguments arg)
 		      (char *) &yes, sizeof (yes)) < 0)
 	{
 	  if (!arg.silent)
-	    printf("failed\n");
-	  perror("setsockopt");
-	  close(ls->sockfd);
+	    printf ("failed\n");
+	  perror ("setsockopt");
+	  close (ls->sockfd);
 	  ls->sockfd = 0;
 	  continue;
 	}
 
-      if (bind(ls->sockfd, &ls->addr, sizeof(ls->addr)) != 0)
+      if (bind (ls->sockfd, &ls->addr, sizeof (ls->addr)) != 0)
 	{
 	  if (!arg.silent)
-	    printf("failed\n");
-	  perror("bind");
-	  close(ls->sockfd);
+	    printf ("failed\n");
+	  perror ("bind");
+	  close (ls->sockfd);
 	  ls->sockfd = 0;
 	  continue;
 	}
 
-      if (ls->type == SOCK_STREAM && listen(ls->sockfd, 512) != 0)
-	{	
+      if (ls->type == SOCK_STREAM && listen (ls->sockfd, 512) != 0)
+	{
 	  if (!arg.silent)
-	    printf("failed\n");
-	  perror("listen");
-	  close(ls->sockfd);
+	    printf ("failed\n");
+	  perror ("listen");
+	  close (ls->sockfd);
 	  ls->sockfd = 0;
 	  continue;
 	}
 
       maxfd++;
       if (!arg.silent)
-	printf("done\n");
+	printf ("done\n");
     }
 
   if (maxfd == 0)
     {
-      fprintf(stderr, "Failed to bind any ports.\n");
+      fprintf (stderr, "Failed to bind any ports.\n");
       return 1;
     }
- 
-  if (!arg.silent)
-    printf("Listening on %d ports...\n", maxfd);
 
-  signal(SIGINT, ctrlc);
-  signal(SIGTERM, ctrlc);
+  if (!arg.silent)
+    printf ("Listening on %d ports...\n", maxfd);
+
+  signal (SIGINT, ctrlc);
+  signal (SIGTERM, ctrlc);
 
   while (!quit)
     {
-      sleep(1);
-      do {
-	FD_ZERO (&readfds);
-	maxfd = 0;
-	for (i = 0; i < arg.nlistenspec; i++)
-	  {
-	    if (arg.listenspec[i].sockfd >= maxfd)
-	      maxfd = arg.listenspec[i].sockfd + 1;
-	    FD_SET (arg.listenspec[i].sockfd, &readfds);
-	  }
-      } while((rc = select(maxfd, &readfds, NULL, NULL, NULL)) == 0);
-      
+      sleep (1);
+      do
+	{
+	  FD_ZERO (&readfds);
+	  maxfd = 0;
+	  for (i = 0; i < arg.nlistenspec; i++)
+	    {
+	      if (arg.listenspec[i].sockfd >= maxfd)
+		maxfd = arg.listenspec[i].sockfd + 1;
+	      FD_SET (arg.listenspec[i].sockfd, &readfds);
+	    }
+	}
+      while ((rc = select (maxfd, &readfds, NULL, NULL, NULL)) == 0);
+
       if (rc < 0)
 	{
 	  if (errno != EINTR)
-	    perror("select");
+	    perror ("select");
 	  continue;
 	}
 
       for (i = 0; i < arg.nlistenspec; i++)
 	if (FD_ISSET (arg.listenspec[i].sockfd, &readfds))
 	  {
-	    if (arg.listenspec[i].type == SOCK_STREAM && 
+	    if (arg.listenspec[i].type == SOCK_STREAM &&
 		arg.listenspec[i].family != -1)
 	      {
-		fprintf(stderr, "New connection on %s...", 
-			arg.listenspec[i].str);
+		fprintf (stderr, "New connection on %s...",
+			 arg.listenspec[i].str);
 
 		/* XXX search for closed fd's before allocating new entry */
-		arg.listenspec = realloc(arg.listenspec,
-					 sizeof(*arg.listenspec) * 
-					 (arg.nlistenspec+1));
+		arg.listenspec = realloc (arg.listenspec,
+					  sizeof (*arg.listenspec) *
+					  (arg.nlistenspec + 1));
 		if (arg.listenspec != NULL)
 		  {
-		    struct sockaddr_in* sin;
+		    struct sockaddr_in *sin;
 		    char *str;
 
 		    arg.nlistenspec++;
-		    ls = &arg.listenspec[arg.nlistenspec-1];
+		    ls = &arg.listenspec[arg.nlistenspec - 1];
 		    ls->bufpos = 0;
 		    ls->type = arg.listenspec[i].type;
 		    ls->family = -1;
-		    length = sizeof(ls->addr);
-		    ls->sockfd = accept(arg.listenspec[i].sockfd, 
-					&ls->addr, &length);
-		    sin = (struct sockaddr_in*) &ls->addr;
-		    str = inet_ntoa(sin->sin_addr);
-		    ls->str = malloc(strlen(arg.listenspec[i].str) + 
-				     strlen(" peer ") + strlen(str) + 1);
-		    sprintf(ls->str, "%s peer %s", arg.listenspec[i].str, str);
-		    puts(ls->str);
+		    length = sizeof (ls->addr);
+		    ls->sockfd = accept (arg.listenspec[i].sockfd,
+					 &ls->addr, &length);
+		    sin = (struct sockaddr_in *) &ls->addr;
+		    str = inet_ntoa (sin->sin_addr);
+		    ls->str = malloc (strlen (arg.listenspec[i].str) +
+				      strlen (" peer ") + strlen (str) + 1);
+		    sprintf (ls->str, "%s peer %s", arg.listenspec[i].str,
+			     str);
+		    puts (ls->str);
 		  }
 	      }
 	    else
 	      {
 		ls = &arg.listenspec[i];
 
-		read_bytes = recvfrom(ls->sockfd, ls->buf + ls->bufpos, 
-				      BUFSIZ - ls->bufpos, 0, &addr, &length);
+		read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
+				       BUFSIZ - ls->bufpos, 0, &addr,
+				       &length);
 
 		if (arg.listenspec[i].type == SOCK_STREAM &&
-		    arg.listenspec[i].family == -1 &&
-		    read_bytes == 0)
+		    arg.listenspec[i].family == -1 && read_bytes == 0)
 		  {
-		    printf("Peer %s disconnected\n", ls->str);
-		    close(ls->sockfd);
+		    printf ("Peer %s disconnected\n", ls->str);
+		    close (ls->sockfd);
 		    ls->sockfd = 0;
 		  }
 		else
@@ -488,13 +489,14 @@ doit (Shishi *handle, struct arguments arg)
 		    ls->buf[ls->bufpos] = '\0';
 		  }
 
-		printf("Has %d bytes from %s: %s\n",
-		       ls->bufpos, ls->str, ls->buf);
+		printf ("Has %d bytes from %s: %s\n",
+			ls->bufpos, ls->str, ls->buf);
 
 		if (arg.listenspec[i].type == SOCK_DGRAM ||
-		    (ls->bufpos > 4 && ntohl(*(int*)ls->buf) == ls->bufpos))
+		    (ls->bufpos > 4
+		     && ntohl (*(int *) ls->buf) == ls->bufpos))
 		  {
-		    process(handle, arg, ls->buf, ls->bufpos, ls->sockfd);
+		    process (handle, arg, ls->buf, ls->bufpos, ls->sockfd);
 		    ls->bufpos = 0;
 		  }
 	      }
@@ -505,17 +507,16 @@ doit (Shishi *handle, struct arguments arg)
     if (arg.listenspec[i].sockfd)
       {
 	if (!arg.silent)
-	  printf("Closing %s...", arg.listenspec[i].str);
-	rc = close(arg.listenspec[i].sockfd);
+	  printf ("Closing %s...", arg.listenspec[i].str);
+	rc = close (arg.listenspec[i].sockfd);
 	if (rc != 0)
 	  {
 	    if (!arg.silent)
-	      printf("failed\n");
-	    perror("close");
+	      printf ("failed\n");
+	    perror ("close");
 	  }
-	else
-	  if (!arg.silent)
-	    printf("done\n");
+	else if (!arg.silent)
+	  printf ("done\n");
       }
 
   return 0;
@@ -534,11 +535,11 @@ main (int argc, char *argv[])
   rc = shishi_init_with_paths (&handle, NULL, arg.cfgfile, "");
   if (rc != SHISHI_OK)
     {
-      fprintf(stderr, "Could not initialize library\n");
+      fprintf (stderr, "Could not initialize library\n");
       return 1;
     }
 
-  rc = doit(handle, arg);
+  rc = doit (handle, arg);
 
   shishi_done (handle);
 

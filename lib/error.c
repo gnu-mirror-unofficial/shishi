@@ -83,11 +83,13 @@ shishi_strerror (int err)
       break;
 
     case SHISHI_CRYPTO_ERROR:
-      p = _("Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption.");
+      p =
+	_
+	("Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption.");
       break;
 
     default:
-      shishi_asprintf(&p, _("Unknown shishi error (%d)"), err);
+      shishi_asprintf (&p, _("Unknown shishi error (%d)"), err);
       break;
     }
 

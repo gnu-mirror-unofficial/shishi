@@ -27,36 +27,38 @@ const char *argp_program_bug_address = PACKAGE_BUGREPORT;
 static void
 parse_filename (char *arg, int *type, char **var)
 {
-  if (strncasecmp (arg, TYPE_TEXT_NAME",", strlen(TYPE_TEXT_NAME",")) == 0)
+  if (strncasecmp (arg, TYPE_TEXT_NAME ",", strlen (TYPE_TEXT_NAME ",")) == 0)
     {
       (*type) = SHISHI_FILETYPE_TEXT;
-      arg += strlen(TYPE_TEXT_NAME",");
+      arg += strlen (TYPE_TEXT_NAME ",");
     }
-  else if (strncasecmp (arg, TYPE_DER_NAME",", strlen(TYPE_DER_NAME",")) == 0)
+  else if (strncasecmp (arg, TYPE_DER_NAME ",", strlen (TYPE_DER_NAME ",")) ==
+	   0)
     {
       (*type) = SHISHI_FILETYPE_DER;
-      arg += strlen(TYPE_DER_NAME",");
+      arg += strlen (TYPE_DER_NAME ",");
     }
-  else if (strncasecmp (arg, TYPE_HEX_NAME",", strlen(TYPE_HEX_NAME",")) == 0)
+  else if (strncasecmp (arg, TYPE_HEX_NAME ",", strlen (TYPE_HEX_NAME ",")) ==
+	   0)
     {
       (*type) = SHISHI_FILETYPE_HEX;
-      arg += strlen(TYPE_HEX_NAME",");
+      arg += strlen (TYPE_HEX_NAME ",");
     }
-  else if (strncasecmp (arg, TYPE_BASE64_NAME",", 
-			strlen(TYPE_BASE64_NAME",")) == 0)
+  else if (strncasecmp (arg, TYPE_BASE64_NAME ",",
+			strlen (TYPE_BASE64_NAME ",")) == 0)
     {
       (*type) = SHISHI_FILETYPE_BASE64;
-      arg += strlen(TYPE_BASE64_NAME",");
+      arg += strlen (TYPE_BASE64_NAME ",");
     }
-  else if (strncasecmp (arg, TYPE_BINARY_NAME",", 
-			strlen(TYPE_BINARY_NAME",")) == 0)
+  else if (strncasecmp (arg, TYPE_BINARY_NAME ",",
+			strlen (TYPE_BINARY_NAME ",")) == 0)
     {
       (*type) = SHISHI_FILETYPE_BINARY;
-      arg += strlen(TYPE_BINARY_NAME",");
+      arg += strlen (TYPE_BINARY_NAME ",");
     }
   else
     (*type) = 0;
-  *var  = strdup (arg);
+  *var = strdup (arg);
 }
 
 static error_t
@@ -80,19 +82,19 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case 'w':
-      arguments->ticketwritefile = strdup(arg);
+      arguments->ticketwritefile = strdup (arg);
       break;
 
     case 'e':
-      arguments->etypes = strdup(arg);
+      arguments->etypes = strdup (arg);
       break;
 
     case 's':
-      arguments->systemcfgfile = strdup(arg);
+      arguments->systemcfgfile = strdup (arg);
       break;
 
     case 'c':
-      arguments->usercfgfile = strdup(arg);
+      arguments->usercfgfile = strdup (arg);
       break;
 
     case 't':
@@ -108,13 +110,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	int i;
 
 	arguments->apoptions = 0;
-	for (i = 0; 
-	     val = strtok_r(i == 0 ? arg : NULL, ", \t\n\r", &ptrptr); 
-	     i++)
+	for (i = 0;
+	     val = strtok_r (i == 0 ? arg : NULL, ", \t\n\r", &ptrptr); i++)
 	  {
-	    int option = shishi_ap_string2option(val);
+	    int option = shishi_ap_string2option (val);
 	    if (option == 0)
-	      fprintf(stderr, "Ignoring unknown AP option: `%s'\n", val);
+	      fprintf (stderr, "Ignoring unknown AP option: `%s'\n", val);
 	    arguments->apoptions |= option;
 	  }
       }
@@ -158,7 +159,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	  arguments->command != COMMAND_AS &&
 	  arguments->command != COMMAND_KDC &&
 	  arguments->command != COMMAND_SERVER)
-	argp_error 
+	argp_error
 	  (state,
 	   _("Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."),
 	   state->argv[state->next - 1]);
@@ -169,8 +170,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       if (arguments->command != COMMAND_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->inputtype,
-		     &arguments->inputfile);
+      parse_filename (arg, &arguments->inputtype, &arguments->inputfile);
       if (arguments->inputtype == SHISHI_FILETYPE_TEXT ||
 	  arguments->inputtype == SHISHI_FILETYPE_DER)
 	arguments->inputtype == SHISHI_FILETYPE_BINARY;
@@ -180,8 +180,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       if (arguments->command != COMMAND_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->outputtype,
-		     &arguments->outputfile);
+      parse_filename (arg, &arguments->outputtype, &arguments->outputfile);
       if (arguments->outputtype == SHISHI_FILETYPE_TEXT ||
 	  arguments->outputtype == SHISHI_FILETYPE_DER)
 	arguments->outputtype == SHISHI_FILETYPE_BINARY;
@@ -193,8 +192,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
       if (arguments->command != COMMAND_AP)
 	argp_error (state, _("Option `%s' only valid with AP."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->authenticatorreadtype,
-		     &arguments->authenticatorreadfile);
+      parse_filename (arg, &arguments->authenticatorreadtype,
+		      &arguments->authenticatorreadfile);
       break;
 
     case OPTION_AP_AUTHENTICATOR_DATA:
@@ -208,8 +207,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
       if (arguments->command != COMMAND_AP)
 	argp_error (state, _("Option `%s' only valid with AP."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->authenticatordatareadtype,
-		     &arguments->authenticatordatareadfile);
+      parse_filename (arg, &arguments->authenticatordatareadtype,
+		      &arguments->authenticatordatareadfile);
       if (arguments->authenticatordatareadtype == SHISHI_FILETYPE_TEXT ||
 	  arguments->authenticatordatareadtype == SHISHI_FILETYPE_DER)
 	arguments->authenticatordatareadtype == SHISHI_FILETYPE_BINARY;
@@ -226,7 +225,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	  arguments->command != COMMAND_TGS &&
 	  arguments->command != COMMAND_SERVER)
 	argp_error (state,
-	    _("Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."),
+		    _
+		    ("Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."),
 		    state->argv[state->next - 1]);
       arguments->cname = strdup (arg);
       break;
@@ -303,54 +303,56 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
     case OPTION_AP_REQUEST_WRITE_FILE:
     case OPTION_KDC_WRITE_AP_REQUEST_FILE:
-      if (arguments->command != COMMAND_KDC && 
+      if (arguments->command != COMMAND_KDC &&
 	  arguments->command != COMMAND_AP)
-	argp_error (state, _("Option `%s' only valid with AP and KDC/AS/TGS."),
+	argp_error (state,
+		    _("Option `%s' only valid with AP and KDC/AS/TGS."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->apreqwritetype,
-		     &arguments->apreqwritefile);      
+      parse_filename (arg, &arguments->apreqwritetype,
+		      &arguments->apreqwritefile);
       break;
 
     case OPTION_AP_AUTHENTICATOR_WRITE_FILE:
     case OPTION_KDC_WRITE_AUTHENTICATOR_FILE:
       if (arguments->command != COMMAND_AP ||
 	  arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with AP and KDC/AS/TGS."),
+	argp_error (state,
+		    _("Option `%s' only valid with AP and KDC/AS/TGS."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->authenticatorwritetype,
-		     &arguments->authenticatorwritefile);
+      parse_filename (arg, &arguments->authenticatorwritetype,
+		      &arguments->authenticatorwritefile);
       break;
 
     case OPTION_KDC_WRITE_REQUEST_FILE:
       if (arguments->command != COMMAND_KDC)
 	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->kdcreqwritetype, 
-		     &arguments->kdcreqwritefile);
+      parse_filename (arg, &arguments->kdcreqwritetype,
+		      &arguments->kdcreqwritefile);
       break;
 
     case OPTION_KDC_READ_REQUEST_FILE:
       if (arguments->command != COMMAND_KDC)
 	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->kdcreqreadtype, 
-		     &arguments->kdcreqreadfile);
+      parse_filename (arg, &arguments->kdcreqreadtype,
+		      &arguments->kdcreqreadfile);
       break;
 
     case OPTION_KDC_WRITE_RESPONSE_FILE:
       if (arguments->command != COMMAND_KDC)
 	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->kdcrepwritetype, 
-		     &arguments->kdcrepwritefile);
+      parse_filename (arg, &arguments->kdcrepwritetype,
+		      &arguments->kdcrepwritefile);
       break;
 
     case OPTION_KDC_READ_RESPONSE_FILE:
       if (arguments->command != COMMAND_KDC)
 	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
 		    state->argv[state->next - 1]);
-      parse_filename(arg, &arguments->kdcrepreadtype, 
-		     &arguments->kdcrepreadfile);
+      parse_filename (arg, &arguments->kdcrepreadtype,
+		      &arguments->kdcrepreadfile);
       break;
 
     case OPTION_KDC_SENDRECV:
@@ -429,11 +431,11 @@ static struct argp_option options[] = {
 
   {0, 0, 0, 0, "Authentication commands:", 10},
 
-  {"as", 0, 0, OPTION_DOC, 
+  {"as", 0, 0, OPTION_DOC,
    "Acquire ticket granting ticket using password and the Authentication "
    "Service (AS) exchange."},
 
-  {"list", 0, 0, OPTION_DOC, 
+  {"list", 0, 0, OPTION_DOC,
    "List tickets."},
 
   {"tgs", 0, 0, OPTION_DOC,
@@ -442,21 +444,21 @@ static struct argp_option options[] = {
 
   {0, 0, 0, 0, "Utility commands:", 20},
 
-  {"client", 0, 0, OPTION_DOC, 
+  {"client", 0, 0, OPTION_DOC,
    "Kerberos client."},
 
-  {"server", 0, 0, OPTION_DOC, 
+  {"server", 0, 0, OPTION_DOC,
    "Kerberos server."},
 
   {0, 0, 0, 0, "Low-level commands:", 30},
 
-  {"ap", 0, 0, OPTION_DOC, 
+  {"ap", 0, 0, OPTION_DOC,
    "Kerberos Client/Server Authentication (AP-REQ and AP-REP)."},
 
-  {"crypto", 0, 0, OPTION_DOC, 
+  {"crypto", 0, 0, OPTION_DOC,
    "Cryptographic functions."},
 
-  {"kdc", 0, 0, OPTION_DOC, 
+  {"kdc", 0, 0, OPTION_DOC,
    "Key Distribution Center Services; Authentication Service (AS) "
    "and Ticket-Granting Service (TGS)."},
 
@@ -465,7 +467,7 @@ static struct argp_option options[] = {
   /************** AS */
 
   {0, 0, 0, 0, "Options for Authentication Service (AS-OPTIONS):", 100},
- 
+
   {"client-name", OPTION_AS_CLIENT_NAME, "NAME", 0,
    "Client name. Default is login username."},
 
@@ -488,7 +490,7 @@ static struct argp_option options[] = {
   /************** TGS */
 
   {0, 0, 0, 0, "Options for Ticket Granting Service (TGS-OPTIONS):", 300},
- 
+
   {"client-name", OPTION_TGS_CLIENT_NAME, "NAME", 0,
    "Client name. Default is login username. Used to locate ticket "
    "granting ticket."},
@@ -547,7 +549,7 @@ static struct argp_option options[] = {
 
   /************** AP */
 
-  {0, 0, 0, 0, 
+  {0, 0, 0, 0,
    "Options for low-level Client/Server Authentication (AP-OPTIONS):", 600},
 
   {"data", OPTION_AP_AUTHENTICATOR_DATA, "B64STRING", 0,
@@ -571,7 +573,7 @@ static struct argp_option options[] = {
    "Name of server. Defaults to \"krbtgt.DEFAULTREALM\" where DEFAULTREALM "
    "is realm of server. Used for locating the ticket to use."},
 
-  {"write-authenticator-file", OPTION_AP_AUTHENTICATOR_WRITE_FILE, 
+  {"write-authenticator-file", OPTION_AP_AUTHENTICATOR_WRITE_FILE,
    "[TYPE,]FILE", 0,
    "Write authenticator to FILE in format TYPE; TEXT (default) or DER. "
    "Not written by default."},
@@ -672,11 +674,12 @@ static struct argp_option options[] = {
   {"string-to-key", OPTION_CRYPTO_STRING_TO_KEY, "PASSWORD", 0,
    "Password to decrypt response (discouraged).  Only for AS."},
 
-  {"write-ap-request-file", OPTION_KDC_WRITE_AP_REQUEST_FILE, "[TYPE,]FILE", 0,
+  {"write-ap-request-file", OPTION_KDC_WRITE_AP_REQUEST_FILE, "[TYPE,]FILE",
+   0,
    "Write AP-REQ to FILE in TYPE, either TEXT (default) or DER. "
    "Only for TGS. Not written by default."},
 
-  {"write-authenticator-file", OPTION_KDC_WRITE_AUTHENTICATOR_FILE, 
+  {"write-authenticator-file", OPTION_KDC_WRITE_AUTHENTICATOR_FILE,
    "[TYPE,]FILE", 0,
    "Write Authenticator to FILE in TYPE, either TEXT (default) or DER. "
    "Only for TGS. Not written by default."},
@@ -685,7 +688,8 @@ static struct argp_option options[] = {
    "Write KDC-REQ to FILE in format TYPE; TEXT (default) or DER. "
    "Not written by default."},
 
-  {"write-kdc-response-file", OPTION_KDC_WRITE_RESPONSE_FILE, "[TYPE,]FILE", 0,
+  {"write-kdc-response-file", OPTION_KDC_WRITE_RESPONSE_FILE, "[TYPE,]FILE",
+   0,
    "Write KDC-REP to FILE in format TYPE; TEXT (default) or DER. "
    "Not written by default."},
 
@@ -702,7 +706,8 @@ static struct argp_option options[] = {
   {"silent", 0, 0, OPTION_ALIAS},
 
   {"system-configuration-file", 's', "FILE", 0,
-   "Read system wide configuration from file.  Default is " SYSTEMCFGFILE "."},
+   "Read system wide configuration from file.  Default is " SYSTEMCFGFILE
+   "."},
 
   {"configuration-file", 'c', "FILE", 0,
    "Read user configuration from file.  Default is ~/.shishi/config."},
@@ -738,25 +743,23 @@ static struct argp argp = {
   options,
   parse_opt,
   "COMMAND [COMMAND-OPTION...]\n"
-  "[as] [AS-OPTION...]\n"
-  "list [LIST-OPTION...]\n"
-  "tgs [TGS-OPTION...]\n"
-  "client [CLIENT-OPTION...]\n"
-  "server [SERVER-OPTION...]\n"
-  "ap [AP-OPTION...]\n"
-  "crypto [CRYPTO-OPTION...]\n"
-  "kdc [KDC-OPTION...]",
+    "[as] [AS-OPTION...]\n"
+    "list [LIST-OPTION...]\n"
+    "tgs [TGS-OPTION...]\n"
+    "client [CLIENT-OPTION...]\n"
+    "server [SERVER-OPTION...]\n"
+    "ap [AP-OPTION...]\n" "crypto [CRYPTO-OPTION...]\n" "kdc [KDC-OPTION...]",
   "Shishi -- An implementation of Kerberos 5"
 };
 
 void
-die(char *fmt, ...)
+die (char *fmt, ...)
 {
   va_list ap;
-  va_start(ap, fmt);
+  va_start (ap, fmt);
   vfprintf (stderr, fmt, ap);
-  va_end(ap);
-  exit(1);
+  va_end (ap);
+  exit (1);
 }
 
 int
@@ -779,21 +782,21 @@ main (int argc, char *argv[])
   rc = shishi_init_with_paths (&handle, arg.ticketfile, arg.systemcfgfile,
 			       arg.usercfgfile);
   if (rc != SHISHI_OK)
-    die("Internal error: could not initialize shishi\n");
+    die ("Internal error: could not initialize shishi\n");
   if (handle == NULL)
-    die("Internal error: could not initialize shishi\n");
+    die ("Internal error: could not initialize shishi\n");
 
   ticketset = shishi_ticketset (handle);
-  ticketfile = arg.ticketfile ? arg.ticketfile : 
-    shishi_ticketset_default_file(handle);
-    
+  ticketfile = arg.ticketfile ? arg.ticketfile :
+    shishi_ticketset_default_file (handle);
+
   rc = shishi_cfg_clientkdcetype_set (handle, arg.etypes);
   if (rc != SHISHI_OK)
-    die("Could not set encryption types: %s\n", shishi_strerror (rc));
+    die ("Could not set encryption types: %s\n", shishi_strerror (rc));
 
   rc = shishi_cfg (handle, arg.lib_options);
   if (rc != SHISHI_OK)
-    die("Could not read library options: %s\n", shishi_strerror (rc));
+    die ("Could not read library options: %s\n", shishi_strerror (rc));
 
   rc = 1;
   switch (arg.command)
@@ -804,8 +807,8 @@ main (int argc, char *argv[])
 
     case COMMAND_AS:
       {
-	Shishi_as * as;
-	Shishi_ticket * tkt;
+	Shishi_as *as;
+	Shishi_ticket *tkt;
 	char password[BUFSIZ];
 
 	if (arg.cname != NULL)
@@ -824,11 +827,11 @@ main (int argc, char *argv[])
 
 	if (arg.verbose)
 	  {
-	    shishi_kdcreq_print (handle, stdout, shishi_as_get_asreq(as));
-	    shishi_kdcrep_print (handle, stdout, shishi_as_get_asrep(as));
+	    shishi_kdcreq_print (handle, stdout, shishi_as_get_asreq (as));
+	    shishi_kdcrep_print (handle, stdout, shishi_as_get_asrep (as));
 	  }
 
-	tkt = shishi_as_get_ticket(as);
+	tkt = shishi_as_get_ticket (as);
 
 	if (!arg.silent)
 	  shishi_ticket_print (handle, tkt, stdout);
@@ -855,7 +858,7 @@ main (int argc, char *argv[])
       if (!arg.silent)
 	printf (_("Tickets in `%s':\n"), ticketfile);
 
-      rc = shishi_ticketset_print_for_service (handle, ticketset, 
+      rc = shishi_ticketset_print_for_service (handle, ticketset,
 					       stdout, arg.sname);
       if (rc != SHISHI_OK)
 	fprintf (stderr, "Could not list tickets: %s", shishi_strerror (rc));
@@ -867,9 +870,9 @@ main (int argc, char *argv[])
 
     case COMMAND_TGS:
       {
-	Shishi_tgs * tgs;
-	Shishi_ticket * tgt;
-	Shishi_ticket * tkt;
+	Shishi_tgs *tgs;
+	Shishi_ticket *tgt;
+	Shishi_ticket *tkt;
 
 	if (arg.cname != NULL)
 	  shishi_principal_default_set (handle, arg.cname);
@@ -880,7 +883,7 @@ main (int argc, char *argv[])
 	if (arg.tgtname == NULL)
 	  {
 	    char *realm = shishi_realm_default_get (handle);
-	    int len = strlen ("krbtgt/") +  strlen (realm) + 1;
+	    int len = strlen ("krbtgt/") + strlen (realm) + 1;
 	    arg.tgtname = malloc (len);
 	    if (arg.tgtname == NULL)
 	      return SHISHI_MALLOC_ERROR;
@@ -888,7 +891,7 @@ main (int argc, char *argv[])
 	  }
 
 	tgt = shishi_ticketset_find_ticket_for_clientserver
-	  (handle,  ticketset, shishi_principal_default_get (handle),
+	  (handle, ticketset, shishi_principal_default_get (handle),
 	   arg.tgtname);
 	if (tgt == NULL)
 	  {
@@ -897,7 +900,8 @@ main (int argc, char *argv[])
 	    break;
 	  }
 
-	rc = shishi_tgs (handle, tgt, &tgs, arg.sname ? arg.sname : arg.tgtname);
+	rc =
+	  shishi_tgs (handle, tgt, &tgs, arg.sname ? arg.sname : arg.tgtname);
 	if (rc != SHISHI_OK)
 	  {
 	    printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
@@ -907,14 +911,14 @@ main (int argc, char *argv[])
 
 	if (arg.verbose)
 	  {
-	    shishi_authenticator_print (handle, stdout, 
-					shishi_tgs_get_authenticator(tgs));
-	    shishi_apreq_print (handle, stdout, shishi_tgs_get_apreq(tgs));
-	    shishi_kdcreq_print (handle, stdout, shishi_tgs_get_tgsreq(tgs));
-	    shishi_kdcrep_print (handle, stdout, shishi_tgs_get_tgsrep(tgs));
+	    shishi_authenticator_print (handle, stdout,
+					shishi_tgs_get_authenticator (tgs));
+	    shishi_apreq_print (handle, stdout, shishi_tgs_get_apreq (tgs));
+	    shishi_kdcreq_print (handle, stdout, shishi_tgs_get_tgsreq (tgs));
+	    shishi_kdcrep_print (handle, stdout, shishi_tgs_get_tgsrep (tgs));
 	  }
 
-	tkt = shishi_tgs_get_ticket(tgs);
+	tkt = shishi_tgs_get_ticket (tgs);
 
 	if (!arg.silent)
 	  shishi_ticket_print (handle, tkt, stdout);
@@ -926,16 +930,15 @@ main (int argc, char *argv[])
       break;
 
     default:
-      die("Internal error: unknown command `%d'\n", arg.command);
+      die ("Internal error: unknown command `%d'\n", arg.command);
       break;
     }
 
   if (rc == SHISHI_OK)
     {
       rc = shishi_ticketset_to_file (handle, ticketset,
-				     arg.ticketwritefile ? 
-				     arg.ticketwritefile :
-				     ticketfile);
+				     arg.ticketwritefile ?
+				     arg.ticketwritefile : ticketfile);
       if (rc != SHISHI_OK)
 	printf ("Could not write tickets: %s\n", shishi_strerror (rc));
     }

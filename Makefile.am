@@ -55,3 +55,12 @@ EXTRA_DIST = config.rpath mkinstalldirs \
 ChangeLog:
 	cvs2cl --fsf --usermap .cvsusers --separate-header -I \
 	"ChangeLog|.cvsignore|.cvsusers|autogen.sh|doc/specification"
+
+indent:
+	(cd lib && make indent)
+	(cd src && make indent)
+	(cd tests && make indent)
+
+sign: $(distdir).tar.gz
+	gpg -a --sign --detach $(distdir).tar.gz
+	gpg --verify $(distdir).tar.gz.asc

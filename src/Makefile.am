@@ -37,4 +37,4 @@ DEFS = -DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
 	@DEFS@
 
 indent:
-	indent $(shishi_SOURCES) $(shishid_SOURCES)
+	indent $(SOURCES)

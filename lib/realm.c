@@ -102,11 +102,10 @@ shishi_realm_for_server_dns (Shishi * handle, char *server)
 {
   const char *p = "JOSEFSSON.ORG";
 
-  fprintf(stderr,
-	  "warning: Assuming server `%s' is in realm `%s'\n"
-	  "warning: based on insecure DNS information.\n"
-	  "warning: Abort if this appear fruadulent.\n",
-	  server, p);
+  fprintf (stderr,
+	   "warning: Assuming server `%s' is in realm `%s'\n"
+	   "warning: based on insecure DNS information.\n"
+	   "warning: Abort if this appear fruadulent.\n", server, p);
 
   return p;
 }

@@ -147,14 +147,14 @@ shishi_aprep_to_file (Shishi * handle, ASN1_TYPE aprep,
   FILE *fh;
   int res;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing AP-REP to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing AP-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -169,7 +169,7 @@ shishi_aprep_to_file (Shishi * handle, ASN1_TYPE aprep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing AP-REP to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -227,14 +227,14 @@ shishi_aprep_from_file (Shishi * handle, ASN1_TYPE * aprep,
   int res;
   FILE *fh;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading AP-REP from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading AP-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -249,7 +249,7 @@ shishi_aprep_from_file (Shishi * handle, ASN1_TYPE * aprep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading AP-REP from %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -257,8 +257,7 @@ shishi_aprep_from_file (Shishi * handle, ASN1_TYPE * aprep,
 
 int
 shishi_aprep_enc_part_set (Shishi * handle,
-			   ASN1_TYPE aprep,
-			   int etype, char *buf, int buflen)
+			   ASN1_TYPE aprep, int etype, char *buf, int buflen)
 {
   char format[BUFSIZ];
   int res = ASN1_SUCCESS;
@@ -282,8 +281,7 @@ error:
 int
 shishi_aprep_enc_part_add (Shishi * handle,
 			   ASN1_TYPE aprep,
-			   ASN1_TYPE encticketpart,
-			   ASN1_TYPE encapreppart)
+			   ASN1_TYPE encticketpart, ASN1_TYPE encapreppart)
 {
   int res = ASN1_SUCCESS;
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
@@ -317,9 +315,8 @@ shishi_aprep_enc_part_add (Shishi * handle,
     }
 
   buflen = BUFSIZ;
-  res = shishi_encrypt (handle, SHISHI_KEYUSAGE_ENCAPREPPART, 
-			keytype, key, keylen, 
-			der, derlen, buf, &buflen);
+  res = shishi_encrypt (handle, SHISHI_KEYUSAGE_ENCAPREPPART,
+			keytype, key, keylen, der, derlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "des_encrypt fail\n");
@@ -334,8 +331,7 @@ shishi_aprep_enc_part_add (Shishi * handle,
 int
 shishi_aprep_enc_part_make (Shishi * handle,
 			    ASN1_TYPE aprep,
-			    ASN1_TYPE authenticator,
-			    ASN1_TYPE encticketpart)
+			    ASN1_TYPE authenticator, ASN1_TYPE encticketpart)
 {
   ASN1_TYPE encapreppart = ASN1_TYPE_EMPTY;
   int res;
@@ -356,7 +352,7 @@ shishi_aprep_enc_part_make (Shishi * handle,
       return res;
     }
 
-  res = shishi_aprep_enc_part_add (handle, aprep, encticketpart, 
+  res = shishi_aprep_enc_part_add (handle, aprep, encticketpart,
 				   encapreppart);
   if (res != SHISHI_OK)
     {
@@ -379,8 +375,7 @@ shishi_aprep_enc_part_make (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_get_enc_part_etype (Shishi * handle,
-				 ASN1_TYPE aprep, int *etype)
+shishi_aprep_get_enc_part_etype (Shishi * handle, ASN1_TYPE aprep, int *etype)
 {
   return _shishi_asn1_integer_field (handle, aprep, etype,
 				     "AP-REP.enc-part.etype");
@@ -391,9 +386,7 @@ shishi_aprep_decrypt (Shishi * handle,
 		      ASN1_TYPE aprep,
 		      int keyusage,
 		      int keytype,
-		      char *key, 
-		      int keylen, 
-		      ASN1_TYPE * encapreppart)
+		      char *key, int keylen, ASN1_TYPE * encapreppart)
 {
   int res;
   int i, len;
@@ -421,7 +414,7 @@ shishi_aprep_decrypt (Shishi * handle,
 			key, keylen, cipher, cipherlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
-      if (!SILENT(handle))
+      if (!SILENT (handle))
 	printf ("decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
 			   "decrypt fail, most likely wrong password\n");
@@ -452,8 +445,7 @@ shishi_aprep_decrypt (Shishi * handle,
 
 int
 shishi_aprep_verify (Shishi * handle,
-		     ASN1_TYPE authenticator, 
-		     ASN1_TYPE encapreppart)
+		     ASN1_TYPE authenticator, ASN1_TYPE encapreppart)
 {
   char authenticatorctime[GENERALIZEDTIME_TIME_LEN + 1];
   char encapreppartctime[GENERALIZEDTIME_TIME_LEN + 1];
@@ -462,38 +454,38 @@ shishi_aprep_verify (Shishi * handle,
   int res;
 
   /*
-    3.2.5. Receipt of KRB_AP_REP message
+     3.2.5. Receipt of KRB_AP_REP message
 
-    If a KRB_AP_REP message is returned, the client uses the session key from
-    the credentials obtained for the server[3.10] to decrypt the message, and
-    verifies that the timestamp and microsecond fields match those in the
-    Authenticator it sent to the server. If they match, then the client is
-    assured that the server is genuine. The sequence number and subkey (if
-    present) are retained for later use.
+     If a KRB_AP_REP message is returned, the client uses the session key from
+     the credentials obtained for the server[3.10] to decrypt the message, and
+     verifies that the timestamp and microsecond fields match those in the
+     Authenticator it sent to the server. If they match, then the client is
+     assured that the server is genuine. The sequence number and subkey (if
+     present) are retained for later use.
 
-  */
+   */
 
-  res = shishi_authenticator_ctime_get (handle, authenticator, 
+  res = shishi_authenticator_ctime_get (handle, authenticator,
 					authenticatorctime);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_authenticator_cusec_get (handle, authenticator, 
+  res = shishi_authenticator_cusec_get (handle, authenticator,
 					&authenticatorcusec);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_encapreppart_ctime_get (handle, encapreppart, 
+  res = shishi_encapreppart_ctime_get (handle, encapreppart,
 				       encapreppartctime);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_encapreppart_cusec_get (handle, encapreppart, 
+  res = shishi_encapreppart_cusec_get (handle, encapreppart,
 				       &encapreppartcusec);
   if (res != SHISHI_OK)
     return res;
 
-  if (DEBUG(handle))
+  if (DEBUG (handle))
     {
       printf ("authenticator cusec %d ctime %s\n", authenticatorcusec,
 	      authenticatorctime);

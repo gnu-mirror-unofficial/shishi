@@ -22,7 +22,7 @@
 #include "internal.h"
 
 int
-shishi_cfg_clientkdcetype_set (Shishi *handle, char *value)
+shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
 {
   char *ptrptr;
   char *val;
@@ -32,23 +32,23 @@ shishi_cfg_clientkdcetype_set (Shishi *handle, char *value)
   if (value == NULL || *value == '\0')
     return SHISHI_OK;
 
-  for (i = 0;  val = strtok_r(i == 0 ? value : NULL, ", \t", &ptrptr);  i++)
+  for (i = 0; val = strtok_r (i == 0 ? value : NULL, ", \t", &ptrptr); i++)
     {
       int etype = shishi_etype_parse (val);
 
       if (etype == -1)
-	fprintf(stderr, "Ignoring unknown encryption type: `%s'\n",  val);
+	fprintf (stderr, "Ignoring unknown encryption type: `%s'\n", val);
       else
 	{
 	  int *new;
 
 	  tot++;
-	  new = realloc(handle->clientkdcetypes, 
-			tot * sizeof(*handle->clientkdcetypes));
+	  new = realloc (handle->clientkdcetypes,
+			 tot * sizeof (*handle->clientkdcetypes));
 	  if (handle->clientkdcetypes == NULL)
 	    return SHISHI_MALLOC_ERROR;
 	  handle->clientkdcetypes = new;
-	  handle->clientkdcetypes[tot-1] = etype;
+	  handle->clientkdcetypes[tot - 1] = etype;
 	  handle->nclientkdcetypes = tot;
 	}
     }
@@ -127,23 +127,23 @@ shishi_cfg (Shishi * handle, char *option)
 	  break;
 
 	case REALM_KDC_OPTION:
-	  realm = strdup(value);
-	  for (i=0; i < handle->nrealminfos; i++)
-	    if (strcmp(realm, handle->realminfos[i].name) == 0)
+	  realm = strdup (value);
+	  for (i = 0; i < handle->nrealminfos; i++)
+	    if (strcmp (realm, handle->realminfos[i].name) == 0)
 	      {
 		if (handle->realminfos[i].nkdcaddresses > 0 ||
 		    handle->realminfos[i].kdcaddresses)
 		  {
 		    if (handle->realminfos[i].kdcaddresses)
-		      free(handle->realminfos[i].kdcaddresses);
+		      free (handle->realminfos[i].kdcaddresses);
 		    handle->realminfos[i].kdcaddresses = NULL;
 		    handle->realminfos[i].nkdcaddresses = 0;
 		  }
 		break;
 	      }
-	  handle->realminfos = realloc(handle->realminfos,
-				       (handle->nrealminfos+1) * 
-				       sizeof(*handle->realminfos));
+	  handle->realminfos = realloc (handle->realminfos,
+					(handle->nrealminfos + 1) *
+					sizeof (*handle->realminfos));
 	  if (handle->realminfos == NULL)
 	    return SHISHI_MALLOC_ERROR;
 	  handle->realminfos[handle->nrealminfos].name = realm;
@@ -152,10 +152,10 @@ shishi_cfg (Shishi * handle, char *option)
 	  handle->nrealminfos++;
 	  break;
 	case DEFAULT_REALM_OPTION:
-	  handle->default_realm = strdup(value);
+	  handle->default_realm = strdup (value);
 	  break;
 	case DEFAULT_PRINCIPAL_OPTION:
-	  handle->default_principal = strdup(value);
+	  handle->default_principal = strdup (value);
 	  break;
 	case CLIENT_KDC_ETYPES_OPTION:
 	  res = shishi_cfg_clientkdcetype_set (handle, value);
@@ -163,7 +163,7 @@ shishi_cfg (Shishi * handle, char *option)
 	    return res;
 	  break;
 	case KDC_OPTION:
-	  handle->kdc = strdup(value);
+	  handle->kdc = strdup (value);
 	  break;
 	case SILENT_OPTION:
 	  handle->silent = 1;
@@ -178,42 +178,41 @@ shishi_cfg (Shishi * handle, char *option)
 	  handle->debugmask |= SHISHI_DEBUG_ASN1;
 	  break;
 	case -1:
-	  for (i=0; i < handle->nrealminfos; i++)
+	  for (i = 0; i < handle->nrealminfos; i++)
 	    if (realm && handle->realminfos[i].name == realm)
 	      {
 		struct Shishi_realminfo *ri = &handle->realminfos[i];
-		struct sockaddr_in* sinaddr;
-		struct hostent* he;
+		struct sockaddr_in *sinaddr;
+		struct hostent *he;
 		struct servent *se;
 
-		he = gethostbyname(value);
-		if (he == NULL || 
-		    he->h_addr_list[0] == NULL || 
-		    he->h_addrtype != AF_INET)
+		he = gethostbyname (value);
+		if (he == NULL ||
+		    he->h_addr_list[0] == NULL || he->h_addrtype != AF_INET)
 		  {
 		    fprintf (stderr, "Unknown KDC host `%s' (h_errno %d)\n",
 			     value, h_errno);
 		    break;
 		  }
 
-		ri->kdcaddresses = realloc(ri->kdcaddresses, 
-					   (ri->nkdcaddresses+1) *
-					   sizeof(*ri->kdcaddresses));
+		ri->kdcaddresses = realloc (ri->kdcaddresses,
+					    (ri->nkdcaddresses + 1) *
+					    sizeof (*ri->kdcaddresses));
 		if (ri->kdcaddresses == NULL)
 		  return SHISHI_MALLOC_ERROR;
-		ri->kdcaddresses[ri->nkdcaddresses].name = strdup(value);
-		sinaddr = (struct sockaddr_in*) 
+		ri->kdcaddresses[ri->nkdcaddresses].name = strdup (value);
+		sinaddr = (struct sockaddr_in *)
 		  &ri->kdcaddresses[ri->nkdcaddresses].sockaddress;
-		memset (sinaddr, 0, sizeof(struct sockaddr));
+		memset (sinaddr, 0, sizeof (struct sockaddr));
 		ri->nkdcaddresses++;
 
 		sinaddr->sin_family = he->h_addrtype;
-		memcpy(&sinaddr->sin_addr, he->h_addr_list[0], he->h_length);
+		memcpy (&sinaddr->sin_addr, he->h_addr_list[0], he->h_length);
 		se = getservbyname ("kerberos", NULL);
 		if (se)
 		  sinaddr->sin_port = se->s_port;
 		else
-		  sinaddr->sin_port = htons(88);
+		  sinaddr->sin_port = htons (88);
 	      }
 	  if (realm)
 	    break;
@@ -248,43 +247,43 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
   if (cfg == NULL)
     return SHISHI_OK;
 
-  fh = fopen(cfg, "r");
+  fh = fopen (cfg, "r");
   if (fh == NULL)
     {
-      shishi_warn(handle, "`%s': %s", cfg, strerror(errno));
+      shishi_warn (handle, "`%s': %s", cfg, strerror (errno));
       return SHISHI_FOPEN_ERROR;
     }
 
-  while (!feof(fh) && !ferror(fh))
+  while (!feof (fh) && !ferror (fh))
     {
-      if (!fgets(line, sizeof(line), fh))
+      if (!fgets (line, sizeof (line), fh))
 	continue;
 
-      line[strlen(line)-1] = '\0';
+      line[strlen (line) - 1] = '\0';
 
-      while (line[0] && strchr(" \t\r\n", line[0]))
-	memmove(line, line+1, strlen(line));
+      while (line[0] && strchr (" \t\r\n", line[0]))
+	memmove (line, line + 1, strlen (line));
 
       if (line[0] == '#' || line[0] == '\0')
 	continue;
 
-      if (strchr(line, ' ') && (strchr(line, '=') == NULL || 
-				strchr(line, ' ') < strchr(line, '=')))
+      if (strchr (line, ' ') && (strchr (line, '=') == NULL ||
+				 strchr (line, ' ') < strchr (line, '=')))
 	{
-	  char *p = strchr(line, ' ');	
-	  while (*(p+1) == ' ' || *(p+1) == '=')
-	    memmove(p, p+1, strlen(p+1)+1);
+	  char *p = strchr (line, ' ');
+	  while (*(p + 1) == ' ' || *(p + 1) == '=')
+	    memmove (p, p + 1, strlen (p + 1) + 1);
 	  *p = '=';
 	}
 
-      shishi_cfg(handle, line);
+      shishi_cfg (handle, line);
     }
 
-  if (fclose(fh) != 0)
-   return SHISHI_FCLOSE_ERROR;
+  if (fclose (fh) != 0)
+    return SHISHI_FCLOSE_ERROR;
 
-  if (DEBUG(handle))
-    shishi_cfg_print(handle, stdout);
+  if (DEBUG (handle))
+    shishi_cfg_print (handle, stdout);
 
   return SHISHI_OK;
 }
@@ -297,44 +296,43 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
  * Return Value: Returns SHISHI_OK.
  **/
 int
-shishi_cfg_print (Shishi * handle, FILE *fh)
+shishi_cfg_print (Shishi * handle, FILE * fh)
 {
-  int i,j;
+  int i, j;
 
   fprintf (fh, "Shishi initial library configuration:\n");
   fprintf (fh, "\tDefault realm: %s\n",
-	  handle->default_realm ? handle->default_realm : "(NULL)");
+	   handle->default_realm ? handle->default_realm : "(NULL)");
   fprintf (fh, "\tDefault principal: %s\n",
-	  handle->default_principal ? handle->
-	  default_principal : "(NULL)");
+	   handle->default_principal ? handle->default_principal : "(NULL)");
   fprintf (fh, "\tClient KDC etypes:");
-  for (i=0; i < handle->nclientkdcetypes; i++)
-    fprintf(fh, " %s", shishi_cipher_name(handle->clientkdcetypes[i]));
-  fprintf(fh, "\n");
+  for (i = 0; i < handle->nclientkdcetypes; i++)
+    fprintf (fh, " %s", shishi_cipher_name (handle->clientkdcetypes[i]));
+  fprintf (fh, "\n");
   fprintf (fh, "\tKDC: %s\n", handle->kdc ? handle->kdc : "(NULL)");
   fprintf (fh, "\tSilent: %d\n", handle->silent);
   fprintf (fh, "\tDebug: %d\n", handle->debugmask);
-  for (i=0; i < handle->nrealminfos; i++)
+  for (i = 0; i < handle->nrealminfos; i++)
     {
-      fprintf(fh, "\tRealm %s's KDCs:", handle->realminfos[i].name);
-      for (j=0; j < handle->realminfos[i].nkdcaddresses; j++)
-	fprintf(fh, " %s (%s)", handle->realminfos[i].kdcaddresses[j].name,
-	       inet_ntoa(((struct sockaddr_in*)&handle->realminfos[i].
-			  kdcaddresses[j].sockaddress)->sin_addr));
-      fprintf(fh, "\n");
+      fprintf (fh, "\tRealm %s's KDCs:", handle->realminfos[i].name);
+      for (j = 0; j < handle->realminfos[i].nkdcaddresses; j++)
+	fprintf (fh, " %s (%s)", handle->realminfos[i].kdcaddresses[j].name,
+		 inet_ntoa (((struct sockaddr_in *) &handle->realminfos[i].
+			     kdcaddresses[j].sockaddress)->sin_addr));
+      fprintf (fh, "\n");
     }
 
   return SHISHI_OK;
 }
 
 const char *
-shishi_cfg_default_systemfile (Shishi *handle)
+shishi_cfg_default_systemfile (Shishi * handle)
 {
   return SYSTEMCFGFILE;
 }
 
 const char *
-shishi_cfg_default_userfile (Shishi *handle)
+shishi_cfg_default_userfile (Shishi * handle)
 {
   char *home;
 

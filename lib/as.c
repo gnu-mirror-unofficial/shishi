@@ -33,7 +33,7 @@
  *               exchange, or NULL if not yet set or an error occured.
  **/
 Shishi_ticket *
-shishi_as_get_ticket (Shishi_as *as)
+shishi_as_get_ticket (Shishi_as * as)
 {
   return as->ticket;
 }
@@ -46,7 +46,7 @@ shishi_as_get_ticket (Shishi_as *as)
  *               exchange, or NULL if not yet set or an error occured.
  **/
 ASN1_TYPE
-shishi_as_get_asreq (Shishi_as *as)
+shishi_as_get_asreq (Shishi_as * as)
 {
   return as->asreq;
 }
@@ -59,7 +59,7 @@ shishi_as_get_asreq (Shishi_as *as)
  *               exchange, or NULL if not yet set or an error occured.
  **/
 ASN1_TYPE
-shishi_as_get_asrep (Shishi_as *as)
+shishi_as_get_asrep (Shishi_as * as)
 {
   return as->asrep;
 }
@@ -80,28 +80,26 @@ shishi_as_get_asrep (Shishi_as *as)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_as (Shishi * handle,
-	   char *password,
-	   Shishi_as ** as)
+shishi_as (Shishi * handle, char *password, Shishi_as ** as)
 {
   char *realm;
   char *server;
   char *client;
   int res;
 
-  realm = shishi_realm_default_get(handle);
+  realm = shishi_realm_default_get (handle);
 
-  server = malloc(strlen(KRBTGT PRINCIPAL_DELIMITER) + strlen(realm) + 1);
+  server = malloc (strlen (KRBTGT PRINCIPAL_DELIMITER) + strlen (realm) + 1);
   if (server == NULL)
     return SHISHI_MALLOC_ERROR;
 
-  sprintf(server, KRBTGT PRINCIPAL_DELIMITER "%s", realm);
+  sprintf (server, KRBTGT PRINCIPAL_DELIMITER "%s", realm);
 
   res = shishi_as_password_cnamerealmsname
-    (handle, password, as, 
-     shishi_principal_default_get(handle), realm, server);
+    (handle, password, as,
+     shishi_principal_default_get (handle), realm, server);
 
-  free(server);
+  free (server);
 
   return res;
 }
@@ -128,12 +126,10 @@ int
 shishi_as_password_cnamerealmsname (Shishi * handle,
 				    char *password,
 				    Shishi_as ** as,
-				    char *cname,
-				    char *realm,
-				    char *sname)
+				    char *cname, char *realm, char *sname)
 {
-  return shishi_as_cnamerealmsname (handle, -1, password, 0, as, 
-				     cname, realm, sname);
+  return shishi_as_cnamerealmsname (handle, -1, password, 0, as,
+				    cname, realm, sname);
 
 }
 
@@ -165,12 +161,10 @@ shishi_as_rawkey_cnamerealmsname (Shishi * handle,
 				  char *key,
 				  int keylen,
 				  Shishi_as ** as,
-				  char *cname,
-				  char *realm,
-				  char *sname)
+				  char *cname, char *realm, char *sname)
 {
-  return shishi_as_cnamerealmsname (handle, keytype, key, keylen, as, 
-				     cname, realm, sname);
+  return shishi_as_cnamerealmsname (handle, keytype, key, keylen, as,
+				    cname, realm, sname);
 }
 
 /**
@@ -203,17 +197,15 @@ shishi_as_cnamerealmsname (Shishi * handle,
 			   char *password,
 			   int keylen,
 			   Shishi_as ** as,
-			   char *cname,
-			   char *realm,
-			   char *sname)
+			   char *cname, char *realm, char *sname)
 {
-  const char * const key = password;
+  const char *const key = password;
   char user[BUFSIZ];
   int userlen;
   int res;
   ASN1_TYPE ticket, kdcreppart;
 
-  *as = malloc(sizeof(**as));
+  *as = malloc (sizeof (**as));
   if (*as == NULL)
     return SHISHI_MALLOC_ERROR;
 
@@ -230,26 +222,26 @@ shishi_as_cnamerealmsname (Shishi * handle,
   if (keytype == -1 && password == NULL)
     {
       char password[BUFSIZ];
-      
-      res = shishi_prompt_password (stdin, password, BUFSIZ, 
-				   stdout,
-				   "Enter password for `%s@%s': ", 
-				   shishi_principal_default_get (handle),
-				   shishi_realm_default_get (handle));
+
+      res = shishi_prompt_password (stdin, password, BUFSIZ,
+				    stdout,
+				    "Enter password for `%s@%s': ",
+				    shishi_principal_default_get (handle),
+				    shishi_realm_default_get (handle));
       if (res != SHISHI_OK)
 	{
-	  printf ("Reading password failed: %s\n%s",  shishi_strerror (res));
+	  printf ("Reading password failed: %s\n%s", shishi_strerror (res));
 	  return res;
 	}
-      res = shishi_as_process (handle, (*as)->asreq, (*as)->asrep, 
+      res = shishi_as_process (handle, (*as)->asreq, (*as)->asrep,
 			       password, &kdcreppart);
     }
   else if (keytype == -1)
-    res = shishi_as_process (handle, (*as)->asreq, (*as)->asrep, 
+    res = shishi_as_process (handle, (*as)->asreq, (*as)->asrep,
 			     password, &kdcreppart);
   else
-    res = shishi_kdc_process (handle, (*as)->asreq, (*as)->asrep, 
-			      SHISHI_KEYUSAGE_ENCASREPPART, 
+    res = shishi_kdc_process (handle, (*as)->asreq, (*as)->asrep,
+			      SHISHI_KEYUSAGE_ENCASREPPART,
 			      keytype, key, keylen, &kdcreppart);
   if (res != SHISHI_OK)
     goto done;
@@ -261,8 +253,8 @@ shishi_as_cnamerealmsname (Shishi * handle,
 			   shishi_strerror_details (handle));
       return res;
     }
-  
-  userlen = sizeof(user);
+
+  userlen = sizeof (user);
   res = shishi_kdcreq_cnamerealm_get (handle, (*as)->asreq, user, &userlen);
   if (res != SHISHI_OK)
     {
@@ -272,7 +264,7 @@ shishi_as_cnamerealmsname (Shishi * handle,
       return res;
     }
   user[userlen] = '\0';
-  (*as)->ticket = shishi_ticket (handle, strdup(user), ticket, kdcreppart);
+  (*as)->ticket = shishi_ticket (handle, strdup (user), ticket, kdcreppart);
   if ((*as)->ticket == NULL)
     {
       shishi_error_printf (handle, "Could not create ticket");
@@ -281,7 +273,7 @@ shishi_as_cnamerealmsname (Shishi * handle,
 
   return SHISHI_OK;
 
- done:
-  free(*as);
+done:
+  free (*as);
   return res;
 }

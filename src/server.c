@@ -40,11 +40,11 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     arg.cname = shishi_principal_default_get (handle);
 
   if (arg.realm == NULL)
-      arg.realm = shishi_realm_default_get (handle);
+    arg.realm = shishi_realm_default_get (handle);
 
   if (arg.sname == NULL)
     {
-      int len = strlen (SERVER_NAME"/") + strlen (arg.realm) + 1;
+      int len = strlen (SERVER_NAME "/") + strlen (arg.realm) + 1;
       arg.sname = malloc (len);
       if (arg.sname == NULL)
 	return SHISHI_MALLOC_ERROR;
@@ -59,13 +59,13 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 	return SHISHI_MALLOC_ERROR;
       sprintf (arg.tgtname, "krbtgt/%s", arg.realm);
     }
-  
+
   if (arg.verbose)
     {
-      printf("Client name: `%s'\n", arg.cname);
-      printf("Realm: `%s'\n", arg.realm);
-      printf("Ticket granter: `%s'\n", arg.tgtname);
-      printf("Service name: `%s'\n", arg.sname);
+      printf ("Client name: `%s'\n", arg.cname);
+      printf ("Realm: `%s'\n", arg.realm);
+      printf ("Ticket granter: `%s'\n", arg.tgtname);
+      printf ("Service name: `%s'\n", arg.sname);
     }
 
   if (arg.algorithm == 0)
@@ -91,8 +91,7 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 				  arg.algorithm,
 				  arg.stringtokey,
 				  strlen (arg.stringtokey),
-				  salt,
-				  strlen (salt), NULL, key, &keylen);
+				  salt, strlen (salt), NULL, key, &keylen);
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, _("Error in string2key: %s\n"),
@@ -117,34 +116,32 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     }
   else
     {
-      printf("No key\n");
+      printf ("No key\n");
       return 1;
     }
 
-  res = shishi_apreq_parse(handle, stdin, &apreq);
+  res = shishi_apreq_parse (handle, stdin, &apreq);
   if (res != SHISHI_OK)
     {
       fprintf (stderr, _("Could not read AP-REQ:\n%s\n%s\n"),
-	       shishi_strerror (res),
-	       shishi_strerror_details (handle));
+	       shishi_strerror (res), shishi_strerror_details (handle));
       return 1;
     }
 
-  res = shishi_apreq_get_ticket(handle, apreq, &ticket);
+  res = shishi_apreq_get_ticket (handle, apreq, &ticket);
   if (res != SHISHI_OK)
     {
       fprintf (stderr, _("Could not extract ticket:\n%s\n%s\n"),
-	       shishi_strerror (res),
-	       shishi_strerror_details (handle));
+	       shishi_strerror (res), shishi_strerror_details (handle));
       return 1;
     }
 
   if (arg.verbose)
     {
-      puts("Read:");
+      puts ("Read:");
 
-      shishi_apreq_print(handle, stdout, apreq);
-      shishi_asn1ticket_print(handle, stdout, ticket);
+      shishi_apreq_print (handle, stdout, apreq);
+      shishi_asn1ticket_print (handle, stdout, ticket);
     }
 
   res = shishi_ticket_decrypt (handle, ticket, arg.algorithm, key, keylen,
@@ -157,7 +154,7 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     }
 
   if (arg.verbose)
-    asn1_print_structure (stdout, encticketpart, encticketpart->name, 
+    asn1_print_structure (stdout, encticketpart, encticketpart->name,
 			  ASN1_PRINT_NAME_TYPE_VALUE);
 
   res = shishi_encticketpart_get_key (handle, encticketpart, &keytype,
@@ -174,47 +171,46 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
   if (res != SHISHI_OK)
     {
       fprintf (stderr, _("Error decrypting apreq:%s\n%s\n"),
-	       shishi_strerror (res),
-	       shishi_strerror_details (handle));
+	       shishi_strerror (res), shishi_strerror_details (handle));
       return 1;
     }
 
   if (arg.verbose)
-    asn1_print_structure (stdout, authenticator, authenticator->name, 
+    asn1_print_structure (stdout, authenticator, authenticator->name,
 			  ASN1_PRINT_NAME_TYPE_VALUE);
 
-  cnamerealmlen = sizeof(cnamerealm);
-  res = shishi_authenticator_cnamerealm_get (handle, authenticator, 
+  cnamerealmlen = sizeof (cnamerealm);
+  res = shishi_authenticator_cnamerealm_get (handle, authenticator,
 					     cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
-  printf("Client name (from authenticator): %s\n", cnamerealm);
+  printf ("Client name (from authenticator): %s\n", cnamerealm);
 
-  cnamerealmlen = sizeof(cnamerealm);
-  res = shishi_encticketpart_cnamerealm_get (handle, encticketpart, 
+  cnamerealmlen = sizeof (cnamerealm);
+  res = shishi_encticketpart_cnamerealm_get (handle, encticketpart,
 					     cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
-  printf("Client name (from encticketpart): %s\n", cnamerealm);
+  printf ("Client name (from encticketpart): %s\n", cnamerealm);
 
-  cnamerealmlen = sizeof(cnamerealm);
-  res = shishi_ticket_snamerealm_get (handle, ticket, 
+  cnamerealmlen = sizeof (cnamerealm);
+  res = shishi_ticket_snamerealm_get (handle, ticket,
 				      cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
-  printf("Server name (from ticket): %s\n", cnamerealm);
+  printf ("Server name (from ticket): %s\n", cnamerealm);
 
-  printf("User authenticated.\n");
+  printf ("User authenticated.\n");
 
   if (shishi_apreq_mutual_required_p (handle, apreq))
     {
       ASN1_TYPE encapreppart, aprep;
 
-      printf("Mutual authentication required.\n");
+      printf ("Mutual authentication required.\n");
 
       aprep = shishi_aprep (handle);
-      res = shishi_aprep_enc_part_make (handle, aprep, 
+      res = shishi_aprep_enc_part_make (handle, aprep,
 					authenticator, encticketpart);
       if (arg.verbose)
-	shishi_encapreppart_print (handle, stdout, 
-				   shishi_last_encapreppart(handle));
+	shishi_encapreppart_print (handle, stdout,
+				   shishi_last_encapreppart (handle));
       shishi_aprep_print (handle, stdout, aprep);
     }
 

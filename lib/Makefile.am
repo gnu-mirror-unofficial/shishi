@@ -54,4 +54,4 @@ rfc1510_asn1_tab.c: $(srcdir)/rfc1510.asn1
 	../asn1/src/asn1Parser -o $@ -n shishi_asn1_tab $<
 
 indent:
-	indent $(libshishi_la_SOURCES)
+	indent $(SOURCES)

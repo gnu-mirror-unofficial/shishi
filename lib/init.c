@@ -93,7 +93,7 @@ shishi (void)
   handle->kdctimeout = 5;
   handle->kdcretries = 3;
 
-  handle->clientkdcetypes = malloc(sizeof(*handle->clientkdcetypes)*2);
+  handle->clientkdcetypes = malloc (sizeof (*handle->clientkdcetypes) * 2);
   handle->clientkdcetypes[0] = SHISHI_DES3_CBC_HMAC_SHA1_KD;
   handle->clientkdcetypes[1] = SHISHI_DES_CBC_MD5;
   handle->nclientkdcetypes = 2;
@@ -113,10 +113,9 @@ shishi (void)
 }
 
 int
-_shishi_init_read (Shishi *handle,
+_shishi_init_read (Shishi * handle,
 		   const char *ticketsetfile,
-		   const char *systemcfgfile, 
-		   const char *usercfgfile)
+		   const char *systemcfgfile, const char *usercfgfile)
 {
   int rc = SHISHI_OK;
 
@@ -135,7 +134,8 @@ _shishi_init_read (Shishi *handle,
     return rc;
 
   if (*ticketsetfile)
-    rc = shishi_ticketset_from_file (handle, handle->ticketset, ticketsetfile);
+    rc =
+      shishi_ticketset_from_file (handle, handle->ticketset, ticketsetfile);
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
@@ -149,29 +149,28 @@ _shishi_init_read (Shishi *handle,
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
-  if (DEBUG(handle))
+  if (DEBUG (handle))
     shishi_cfg_print (handle, stdout);
 
   return SHISHI_OK;
 }
 
 int
-shishi_init_with_paths (Shishi **handle,
+shishi_init_with_paths (Shishi ** handle,
 			const char *ticketsetfile,
-			const char *systemcfgfile, 
-			const char *usercfgfile)
+			const char *systemcfgfile, const char *usercfgfile)
 {
-  if (!handle || !(*handle = shishi()))
+  if (!handle || !(*handle = shishi ()))
     return SHISHI_HANDLE_ERROR;
 
-  return _shishi_init_read (*handle, ticketsetfile, 
+  return _shishi_init_read (*handle, ticketsetfile,
 			    systemcfgfile, usercfgfile);
 }
 
 int
-shishi_init (Shishi **handle)
+shishi_init (Shishi ** handle)
 {
-  if (!handle || !(*handle = shishi()))
+  if (!handle || !(*handle = shishi ()))
     return SHISHI_HANDLE_ERROR;
 
   return _shishi_init_read (*handle, shishi_ticketset_default_file (*handle),
@@ -206,15 +205,15 @@ shishi_last_encapreppart (Shishi * handle)
 }
 
 void
-shishi_warn(Shishi * handle, char *fmt, ...)
+shishi_warn (Shishi * handle, char *fmt, ...)
 {
   va_list ap;
-  va_start(ap, fmt);
-  if (!SILENT(handle))
+  va_start (ap, fmt);
+  if (!SILENT (handle))
     {
-      fprintf(stderr, "libshishi: warning: ");
-      vfprintf(stderr, fmt, ap);
-      fprintf(stderr, "\n");
+      fprintf (stderr, "libshishi: warning: ");
+      vfprintf (stderr, fmt, ap);
+      fprintf (stderr, "\n");
     }
-  va_end(ap);
+  va_end (ap);
 }

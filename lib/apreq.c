@@ -209,14 +209,14 @@ shishi_apreq_to_file (Shishi * handle, ASN1_TYPE apreq,
   FILE *fh;
   int res;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing AP-REQ to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing AP-REQ in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -231,7 +231,7 @@ shishi_apreq_to_file (Shishi * handle, ASN1_TYPE apreq,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Writing AP-REQ to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -289,14 +289,14 @@ shishi_apreq_from_file (Shishi * handle, ASN1_TYPE * apreq,
   int res;
   FILE *fh;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading AP-REQ from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading AP-REQ in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -311,7 +311,7 @@ shishi_apreq_from_file (Shishi * handle, ASN1_TYPE * apreq,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (!SILENT(handle))
+  if (!SILENT (handle))
     printf (_("Reading AP-REQ from %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -375,8 +375,7 @@ shishi_apreq_add_authenticator (Shishi * handle,
 				int keyusage,
 				int keytype,
 				char *key,
-				int keylen,
-				ASN1_TYPE authenticator)
+				int keylen, ASN1_TYPE authenticator)
 {
   int res = ASN1_SUCCESS;
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
@@ -395,7 +394,7 @@ shishi_apreq_add_authenticator (Shishi * handle,
     }
 
   buflen = BUFSIZ;
-  res = shishi_encrypt (handle, keyusage, keytype, key, keylen, 
+  res = shishi_encrypt (handle, keyusage, keytype, key, keylen,
 			der, derlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
@@ -415,8 +414,7 @@ shishi_apreq_make_authenticator_der (Shishi * handle,
 				     int authenticatorkeyusage,
 				     int keytype,
 				     char *key,
-				     int keylen,
-				     char *der, int derlen)
+				     int keylen, char *der, int derlen)
 {
   ASN1_TYPE authenticator = ASN1_TYPE_EMPTY;
   int res;
@@ -431,8 +429,7 @@ shishi_apreq_make_authenticator_der (Shishi * handle,
 
   res = shishi_authenticator_add_cksum (handle, authenticator,
 					authenticatorcksumkeyusage,
-					keytype, key, keylen,
-					der, derlen);
+					keytype, key, keylen, der, derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle,
@@ -442,8 +439,7 @@ shishi_apreq_make_authenticator_der (Shishi * handle,
     }
 
   res = shishi_apreq_add_authenticator (handle, apreq, authenticatorkeyusage,
-					keytype, key, keylen,
-					authenticator);
+					keytype, key, keylen, authenticator);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not set authenticator: %s\n",
@@ -461,8 +457,7 @@ shishi_apreq_make_authenticator (Shishi * handle,
 				 int authenticatorkeyusage,
 				 int keytype,
 				 char *key,
-				 int keylen,
-				 ASN1_TYPE node, char *field)
+				 int keylen, ASN1_TYPE node, char *field)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   unsigned char der[BUFSIZ];
@@ -485,13 +480,11 @@ shishi_apreq_make_authenticator (Shishi * handle,
   else
     derlen = 0;
 
-  res = shishi_apreq_make_authenticator_der (handle, apreq, 
+  res = shishi_apreq_make_authenticator_der (handle, apreq,
 					     authenticatorcksumkeyusage,
 					     authenticatorkeyusage,
 					     keytype,
-					     key,
-					     keylen,
-					     der, derlen);
+					     key, keylen, der, derlen);
   if (res != SHISHI_OK)
     return res;
 
@@ -609,9 +602,7 @@ error:
 }
 
 int
-shishi_apreq_options (Shishi * handle,
-		      ASN1_TYPE apreq, 
-		      int *flags)
+shishi_apreq_options (Shishi * handle, ASN1_TYPE apreq, int *flags)
 {
   int len = sizeof (*flags);
   int res;
@@ -642,14 +633,12 @@ shishi_apreq_mutual_required_p (Shishi * handle, ASN1_TYPE apreq)
 }
 
 int
-shishi_apreq_options_set (Shishi * handle,
-			  ASN1_TYPE apreq, 
-			  int options)
+shishi_apreq_options_set (Shishi * handle, ASN1_TYPE apreq, int options)
 {
   int res;
 
-  res = asn1_write_value (apreq, "AP-REQ.ap-options", 
-			  (char*)&options, 
+  res = asn1_write_value (apreq, "AP-REQ.ap-options",
+			  (char *) &options,
 			  SHISHI_APREQ_DEFAULT_AP_OPTIONS_LEN);
   if (res != ASN1_SUCCESS)
     return SHISHI_ASN1_ERROR;
@@ -658,20 +647,18 @@ shishi_apreq_options_set (Shishi * handle,
 }
 
 int
-shishi_apreq_options_add (Shishi * handle,
-			  ASN1_TYPE apreq, 
-			  int option)
+shishi_apreq_options_add (Shishi * handle, ASN1_TYPE apreq, int option)
 {
   int options;
   int res;
 
-  res = shishi_apreq_options(handle, apreq, &options);
+  res = shishi_apreq_options (handle, apreq, &options);
   if (res != SHISHI_OK)
     return res;
 
   options |= option;
 
-  res = shishi_apreq_options_set(handle, apreq, options);
+  res = shishi_apreq_options_set (handle, apreq, options);
   if (res != SHISHI_OK)
     return res;
 
@@ -707,8 +694,7 @@ shishi_apreq_get_authenticator_etype (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_get_ticket (Shishi * handle,
-			 ASN1_TYPE apreq, ASN1_TYPE * ticket)
+shishi_apreq_get_ticket (Shishi * handle, ASN1_TYPE apreq, ASN1_TYPE * ticket)
 {
   unsigned char buf[BUFSIZ];
   unsigned char format[BUFSIZ];
@@ -755,7 +741,7 @@ shishi_apreq_get_ticket (Shishi * handle,
   if (res != ASN1_SUCCESS)
     goto error;
 
-  res = 
+  res =
     asn1_number_of_elements (apreq, "AP-REQ.ticket.sname.name-string", &n);
   if (res != ASN1_SUCCESS)
     goto error;
@@ -779,8 +765,7 @@ shishi_apreq_get_ticket (Shishi * handle,
     }
 
   buflen = BUFSIZ;
-  res =
-    asn1_read_value (apreq, "AP-REQ.ticket.enc-part.etype", buf, &buflen);
+  res = asn1_read_value (apreq, "AP-REQ.ticket.enc-part.etype", buf, &buflen);
   if (res != ASN1_SUCCESS)
     goto error;
 
@@ -789,8 +774,7 @@ shishi_apreq_get_ticket (Shishi * handle,
     goto error;
 
   buflen = BUFSIZ;
-  res =
-    asn1_read_value (apreq, "AP-REQ.ticket.enc-part.kvno", buf, &buflen);
+  res = asn1_read_value (apreq, "AP-REQ.ticket.enc-part.kvno", buf, &buflen);
   if (res != ASN1_SUCCESS)
     goto error;
 
@@ -799,7 +783,7 @@ shishi_apreq_get_ticket (Shishi * handle,
     goto error;
 
   buflen = BUFSIZ;
-  res = 
+  res =
     asn1_read_value (apreq, "AP-REQ.ticket.enc-part.cipher", buf, &buflen);
   if (res != ASN1_SUCCESS)
     goto error;
@@ -823,9 +807,7 @@ shishi_apreq_decrypt (Shishi * handle,
 		      ASN1_TYPE apreq,
 		      int keyusage,
 		      int keytype,
-		      char *key, 
-		      int keylen,
-		      ASN1_TYPE * authenticator)
+		      char *key, int keylen, ASN1_TYPE * authenticator)
 {
   int res;
   int i, len;
@@ -854,9 +836,9 @@ shishi_apreq_decrypt (Shishi * handle,
 
   if (res != SHISHI_OK)
     {
-      if (!SILENT(handle))
+      if (!SILENT (handle))
 	printf ("decrypt failed: %s\n", shishi_strerror_details (handle));
-      shishi_error_printf (handle, 
+      shishi_error_printf (handle,
 			   "decrypt fail, most likely wrong password\n");
       return res;
     }
@@ -865,7 +847,7 @@ shishi_apreq_decrypt (Shishi * handle,
      until we can parse it. */
   for (i = 0; i < 8; i++)
     {
-      if (DEBUG(handle))
+      if (DEBUG (handle))
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
       *authenticator = shishi_d2a_authenticator (handle, &buf[0], buflen - i);

@@ -86,9 +86,8 @@ shishi_ticketset_get (Shishi * handle,
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int
-shishi_ticketset_add (Shishi * handle, 
-		      Shishi_ticketset * ticketset, 
-		      Shishi_ticket * ticket)
+shishi_ticketset_add (Shishi * handle,
+		      Shishi_ticketset * ticketset, Shishi_ticket * ticket)
 {
   if (!ticketset)
     ticketset = shishi_ticketset (handle);
@@ -117,11 +116,10 @@ shishi_ticketset_add (Shishi * handle,
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int
-shishi_ticketset_new (Shishi * handle, 
-		      Shishi_ticketset * ticketset, 
-		      char *principal, 
-		      ASN1_TYPE ticket, 
-		      ASN1_TYPE enckdcreppart)
+shishi_ticketset_new (Shishi * handle,
+		      Shishi_ticketset * ticketset,
+		      char *principal,
+		      ASN1_TYPE ticket, ASN1_TYPE enckdcreppart)
 {
   Shishi_ticket *tkt;
   int res;
@@ -134,11 +132,11 @@ shishi_ticketset_new (Shishi * handle,
   res = shishi_ticketset_add (handle, ticketset, tkt);
   if (res != SHISHI_OK)
     {
-      free(tkt);
+      free (tkt);
       return res;
     }
 
-  return SHISHI_OK;  
+  return SHISHI_OK;
 }
 
 /**
@@ -153,7 +151,7 @@ shishi_ticketset_new (Shishi * handle,
  **/
 int
 shishi_ticketset_read (Shishi * handle,
-		       Shishi_ticketset * ticketset, FILE *fh)
+		       Shishi_ticketset * ticketset, FILE * fh)
 {
   int res;
 
@@ -182,7 +180,7 @@ shishi_ticketset_read (Shishi * handle,
       if (res != SHISHI_OK)
 	break;
 
-      if (DEBUG(handle))
+      if (DEBUG (handle))
 	{
 	  printf ("Read ticket for principal `':\n");
 	  shishi_enckdcreppart_print (handle, stdout, enckdcreppart);
@@ -205,7 +203,7 @@ shishi_ticketset_read (Shishi * handle,
  **/
 int
 shishi_ticketset_from_file (Shishi * handle,
-			    Shishi_ticketset * ticketset, 
+			    Shishi_ticketset * ticketset,
 			    const char *filename)
 {
   FILE *fh;
@@ -244,8 +242,7 @@ shishi_ticketset_from_file (Shishi * handle,
  **/
 int
 shishi_ticketset_write (Shishi * handle,
-			Shishi_ticketset * ticketset, 
-			FILE *fh)
+			Shishi_ticketset * ticketset, FILE * fh)
 {
   Shishi_ticket *ticket;
   int warn = 1;
@@ -255,16 +252,16 @@ shishi_ticketset_write (Shishi * handle,
   if (!ticketset)
     ticketset = shishi_ticketset (handle);
 
-  for (i=0; i < ticketset->ntickets; i++)
+  for (i = 0; i < ticketset->ntickets; i++)
     {
       if (!shishi_ticket_valid_now_p (handle, ticketset->tickets[i]))
 	{
 	  if (warn)
-	    fprintf(stderr, "warning: removing expired ticket\n"), warn = 0;
+	    fprintf (stderr, "warning: removing expired ticket\n"), warn = 0;
 	  continue;
 	}
-      
-      res = shishi_enckdcreppart_print (handle, fh, 
+
+      res = shishi_enckdcreppart_print (handle, fh,
 					ticketset->tickets[i]->enckdcreppart);
       if (res != SHISHI_OK)
 	{
@@ -273,7 +270,7 @@ shishi_ticketset_write (Shishi * handle,
 	  return res;
 	}
 
-      res = shishi_asn1ticket_print (handle, fh, 
+      res = shishi_asn1ticket_print (handle, fh,
 				     ticketset->tickets[i]->ticket);
       if (res != SHISHI_OK)
 	{
@@ -300,8 +297,7 @@ shishi_ticketset_write (Shishi * handle,
  **/
 int
 shishi_ticketset_to_file (Shishi * handle,
-			  Shishi_ticketset * ticketset, 
-			  char *filename)
+			  Shishi_ticketset * ticketset, char *filename)
 {
   FILE *fh;
   int res;
@@ -316,7 +312,7 @@ shishi_ticketset_to_file (Shishi * handle,
   res = shishi_ticketset_write (handle, ticketset, fh);
   if (res != SHISHI_OK)
     {
-      fclose(fh);
+      fclose (fh);
       return res;
     }
 
@@ -341,9 +337,8 @@ shishi_ticketset_to_file (Shishi * handle,
  **/
 int
 shishi_ticketset_print_for_service (Shishi * handle,
-				    Shishi_ticketset * ticketset, 
-				    FILE *fh,
-				    char *service)
+				    Shishi_ticketset * ticketset,
+				    FILE * fh, char *service)
 {
   Shishi_ticket *ticket;
   int warn = 1;
@@ -400,8 +395,8 @@ shishi_ticketset_print_for_service (Shishi * handle,
 
   if (found)
     {
-      printf (ngettext("\n%d ticket found.\n", "\n%d tickets found.\n", 
-		       found), found);
+      printf (ngettext ("\n%d ticket found.\n", "\n%d tickets found.\n",
+			found), found);
     }
   else
     {
@@ -431,8 +426,7 @@ done:
  **/
 int
 shishi_ticketset_print (Shishi * handle,
-			Shishi_ticketset * ticketset, 
-			FILE *fh)
+			Shishi_ticketset * ticketset, FILE * fh)
 {
   if (!ticketset)
     ticketset = shishi_ticketset (handle);
@@ -525,7 +519,7 @@ shishi_ticketset_done (Shishi * handle, Shishi_ticketset * ticketset)
 }
 
 const char *
-shishi_ticketset_default_file (Shishi *handle)
+shishi_ticketset_default_file (Shishi * handle)
 {
   char *home;
 
@@ -543,7 +537,7 @@ shishi_ticketset_default_file (Shishi *handle)
 }
 
 Shishi_ticketset *
-shishi_ticketset (Shishi *handle)
+shishi_ticketset (Shishi * handle)
 {
   if (!handle->ticketset &&
       (shishi_ticketset_init (handle, &handle->ticketset) != SHISHI_OK))

@@ -137,9 +137,10 @@ shishi_asn1ticket_print (Shishi * handle, FILE * fh, ASN1_TYPE ticket)
 }
 
 int
-shishi_encticketpart_print (Shishi * handle, FILE * fh, ASN1_TYPE encticketpart)
+shishi_encticketpart_print (Shishi * handle, FILE * fh,
+			    ASN1_TYPE encticketpart)
 {
-  return _shishi_print_armored_data (handle, fh, encticketpart, 
+  return _shishi_print_armored_data (handle, fh, encticketpart,
 				     "EncTicketPart", NULL);
 }
 
@@ -168,7 +169,7 @@ _shishi_read_armored_data (Shishi * handle,
 	  continue;
 	}
       line[strlen (line) - 1] = '\0';
-      if (DEBUG(handle))
+      if (DEBUG (handle))
 	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
 
       /* XXX check if all chars in line are b64 data, otherwise bail out */
@@ -597,7 +598,8 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type)
 }
 
 int
-_shishi_encapreppart_input (Shishi * handle, FILE * fh, ASN1_TYPE * encapreppart, int type)
+_shishi_encapreppart_input (Shishi * handle, FILE * fh,
+			    ASN1_TYPE * encapreppart, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -613,7 +615,9 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh, ASN1_TYPE * encapreppart
   if (type == 0)
     {
       b64len = sizeof (b64der);
-      res = _shishi_read_armored_data (handle, fh, b64der, b64len, "EncAPRepPart");
+      res =
+	_shishi_read_armored_data (handle, fh, b64der, b64len,
+				   "EncAPRepPart");
       if (res != SHISHI_OK)
 	{
 	  printf ("armor data read fail\n");
