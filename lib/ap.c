@@ -48,6 +48,7 @@ int
 shishi_ap (Shishi * handle, Shishi_ap ** ap)
 {
   Shishi_ap *lap;
+  int rc;
 
   *ap = malloc (sizeof (**ap));
   if (*ap == NULL)
@@ -73,6 +74,15 @@ shishi_ap (Shishi * handle, Shishi_ap ** ap)
       shishi_error_printf (handle, "Could not create AP-REQ: %s\n",
 			   shishi_strerror_details (handle));
       return SHISHI_ASN1_ERROR;
+    }
+
+  rc = shishi_apreq_options_add (handle, lap->apreq,
+				 SHISHI_APOPTIONS_USE_SESSION_KEY);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not set AP-REQ options: %s\n",
+			   shishi_strerror (rc));
+      return rc;
     }
 
   lap->aprep = shishi_aprep (handle);
@@ -123,6 +133,15 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
       shishi_error_printf (handle,
 			   "Could not remove subkey from Authenticator: %s\n",
 			   shishi_strerror_details (handle));
+      return res;
+    }
+
+  res = shishi_apreq_options_remove (handle, shishi_ap_req (*ap),
+				     SHISHI_APOPTIONS_USE_SESSION_KEY);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not remove AP-REQ options: %s\n",
+			   shishi_strerror (res));
       return res;
     }
 
