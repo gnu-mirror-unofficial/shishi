@@ -376,16 +376,83 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int mode,
   return SHISHI_OK;
 }
 
+/* BEGIN: Taken from Nettle arcfour.h and arcfour.c */
+struct arcfour_ctx
+{
+  uint8_t S[256];
+  uint8_t i;
+  uint8_t j;
+};
+
+#define SWAP(a,b) do { int _t = a; a = b; b = _t; } while(0)
+
+static void
+arcfour_set_key(struct arcfour_ctx *ctx,
+		unsigned length, const uint8_t *key)
+{
+  unsigned i, j, k;
+
+  /* Initialize context */
+  for (i = 0; i<256; i++)
+    ctx->S[i] = i;
+
+  for (i = j = k = 0; i<256; i++)
+    {
+      j += ctx->S[i] + key[k]; j &= 0xff;
+      SWAP(ctx->S[i], ctx->S[j]);
+      /* Repeat key as needed */
+      k = (k + 1) % length;
+    }
+  ctx->i = ctx->j = 0;
+}
+
+static void
+arcfour_crypt(struct arcfour_ctx *ctx,
+	      unsigned length, uint8_t *dst,
+	      const uint8_t *src)
+{
+  register uint8_t i, j;
+
+  i = ctx->i; j = ctx->j;
+  while(length--)
+    {
+      i++; i &= 0xff;
+      j += ctx->S[i]; j &= 0xff;
+      SWAP(ctx->S[i], ctx->S[j]);
+      *dst++ = *src++ ^ ctx->S[ (ctx->S[i] + ctx->S[j]) & 0xff ];
+    }
+  ctx->i = i; ctx->j = j;
+}
+/* END: Taken from Nettle arcfour.h and arcfour.c */
+
 int
 shishi_arcfour (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
 		const char iv[258], char *ivout[258],
 		const char *in, size_t inlen, char **out)
 {
-  /* XXX Support iv/ivout. */
-  return libgcrypt_dencrypt (handle, GCRY_CIPHER_ARCFOUR, 0,
-			     GCRY_CIPHER_MODE_STREAM, decryptp,
-			     key, keylen, NULL, NULL, in, inlen, out);
+  struct arcfour_ctx ctx;
+
+  /* Same as in nettle.c.  The reason for all this is that libgcrypt
+   * does not export any API to extract the ARCFOUR S-BOX, which we
+   * need. */
+
+  *out = xmalloc (inlen);
+
+  if (iv)
+    memcpy (&ctx, iv, sizeof (ctx));
+  else
+    arcfour_set_key (&ctx, keylen, key);
+
+  arcfour_crypt (&ctx, inlen, *out, in);
+
+  if (ivout)
+    {
+      *ivout = xmalloc (sizeof (ctx));
+      memcpy (*ivout, &ctx, sizeof (ctx));
+    }
+
+  return SHISHI_OK;
 }
 
 int
