@@ -49,7 +49,7 @@ shishid.1: $(top_srcdir)/src/shishid.c $(top_builddir)/src/shishid
 		--name="kerberos 5 server" \
 		--output=$@ $(top_builddir)/src/shishid
 
-GDOC_SRC = $(top_srcdir)/lib/*.c
+GDOC_SRC = $(top_srcdir)/lib/*.c $(top_srcdir)/db/*.c
 GDOC_TEXI_PREFIX = texi/
 GDOC_MAN_PREFIX = man/
 GDOC_MAN_EXTRA_ARGS = -module $(PACKAGE) -sourceversion $(VERSION) \
