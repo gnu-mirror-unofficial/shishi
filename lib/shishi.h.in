@@ -1879,7 +1879,7 @@ extern int shishi_priv_priv_der_set (Shishi_priv * priv,
 				     char *der, size_t derlen);
 extern Shishi_asn1 shishi_priv_encprivpart (Shishi_priv * priv);
 extern void shishi_priv_encprivpart_set (Shishi_priv * priv,
-					 Shishi_asn1 asn1priv);
+					 Shishi_asn1 asn1encprivpart);
 extern int shishi_priv_encprivpart_der (Shishi_priv * priv, char **out,
 					size_t * outlen);
 extern int shishi_priv_encprivpart_der_set (Shishi_priv * priv,
