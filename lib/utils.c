@@ -1,5 +1,5 @@
 /* utils.c --- Auxilliary help functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -132,4 +132,21 @@ xgettimeofday (struct timeval *tv, struct timezone *tz)
     }
 
   return rc;
+}
+
+time_t
+shishi_get_date (const char *p, const time_t *now)
+{
+  struct timespec nowspec = { 0, 0 };
+  struct timespec thenspec;
+
+  nowspec.tv_sec = now;
+
+  if (!get_date (&thenspec, p, &nowspec))
+    {
+      thenspec.tv_sec = (time_t) -1;
+      thenspec.tv_nsec = 0;
+    }
+
+  return thenspec.tv_sec;
 }
