@@ -17,7 +17,7 @@
 # License along with Shishi; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
-MOST_SUBDIRS = intl m4 po asn1 lib src test doc
+MOST_SUBDIRS = intl m4 po asn1 lib src tests doc
 
 DIST_SUBDIRS = crypto argp gdbm $(MOST_SUBDIRS)
 
