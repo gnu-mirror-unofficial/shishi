@@ -1,5 +1,5 @@
 /* krberror.c	Functions related to KRB-ERROR packet.
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,6 +21,15 @@
 
 #include "internal.h"
 
+/**
+ * shishi_krberror:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * This function creates a new KRB-ERROR, populated with some default
+ * values.
+ *
+ * Return value: Returns the KRB-ERROR or ASN1_TYPE_EMPTY on failure.
+ **/
 ASN1_TYPE
 shishi_krberror (Shishi * handle)
 {
@@ -351,6 +360,15 @@ struct krb_error_msgs _shishi_krberror_messages[KDC_ERR_SIZE] = {
   {KDC_ERR_KDC_NAME_MISMATCH, "(pkinit)"}
 };
 
+/**
+ * shishi_krberror_errorcode_message:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @errorcode: integer KRB-ERROR error code.
+ *
+ * Return value: Return a string describing error code.  This function
+ *               will always return a string even if the error code
+ *               isn't known.
+ **/
 const char *
 shishi_krberror_errorcode_message (Shishi * handle, int errorcode)
 {
@@ -363,36 +381,99 @@ shishi_krberror_errorcode_message (Shishi * handle, int errorcode)
 	return _(_shishi_krberror_messages[i].message);
     }
 
+  /* XXX memory leak */
   shishi_asprintf (&p, _("Unknown KRB-ERROR error code %d."), errorcode);
   return p;
 }
 
+/**
+ * shishi_krberror_errorcode:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: KRB-ERROR structure with error code.
+ * @errorcode: output integer KRB-ERROR error code.
+ *
+ * Extract error code from KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_krberror_get_etext (Shishi * handle, ASN1_TYPE krberror,
-			   char *etext, size_t * etextlen)
-{
-  return shishi_asn1_optional_field (handle, krberror, etext, etextlen,
-				     "KRB-ERROR.e-text");
-}
-
-int
-shishi_krberror_get_errorcode (Shishi * handle, ASN1_TYPE krberror,
-			       int *errorcode)
+shishi_krberror_errorcode (Shishi * handle,
+			   ASN1_TYPE krberror,
+			   int *errorcode)
 {
   return shishi_asn1_integer_field (handle, krberror, errorcode,
 				    "KRB-ERROR.error-code");
 }
 
+/**
+ * shishi_krberror_errorcode_fast:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: KRB-ERROR structure with error code.
+ *
+ * Return value: Return error code (see shishi_krberror_errorcode())
+ *               directly, or -1 on error.
+ **/
 int
-shishi_krberror_get_errorcode_fast (Shishi * handle, ASN1_TYPE krberror)
+shishi_krberror_errorcode_fast (Shishi * handle, ASN1_TYPE krberror)
 {
-  int i = 0;
+  int i;
 
-  shishi_krberror_get_errorcode (handle, krberror, &i);
+  if (shishi_krberror_errorcode (handle, krberror, &i) != SHISHI_OK)
+    i = -1;
 
   return i;
 }
 
+/**
+ * shishi_krberror_etext:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: KRB-ERROR structure with error code.
+ * @etext: output array with error text.
+ * @etextlen: on input, maximum size of output array with error text,
+ *            on output, actual size of output array with error text.
+ *
+ * Extract additional error text from server (possibly empty).
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_etext (Shishi * handle, ASN1_TYPE krberror,
+		       char *etext, size_t * etextlen)
+{
+  return shishi_asn1_optional_field (handle, krberror, etext, etextlen,
+				     "KRB-ERROR.e-text");
+}
+
+/**
+ * shishi_krberror_message:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: KRB-ERROR structure with error code.
+ *
+ * Extract error code (see shishi_krberror_errorcode_fast()) and
+ * return error message (see shishi_krberror_errorcode_message()).
+ *
+ * Return value: Return a string describing error code.  This function
+ *               will always return a string even if the error code
+ *               isn't known.
+ **/
+const char *
+shishi_krberror_message (Shishi * handle, ASN1_TYPE krberror)
+{
+  return shishi_krberror_errorcode_message
+    (handle, shishi_krberror_errorcode_fast (handle, krberror));
+}
+
+/**
+ * shishi_krberror_pretty_print:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @fh: file handle opened for writing.
+ * @krberror: KRB-ERROR structure with error code.
+ *
+ * Print KRB-ERROR error condition and some explanatory text to file
+ * descriptor.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_krberror_pretty_print (Shishi * handle, FILE * fh, ASN1_TYPE krberror)
 {
@@ -404,10 +485,9 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh, ASN1_TYPE krberror)
     shishi_krberror_print (handle, fh, krberror);
 
   fprintf (fh, "Kerberos error code from server:\n%s\n",
-	   shishi_krberror_errorcode_message
-	   (handle, shishi_krberror_get_errorcode_fast (handle, krberror)));
+	   shishi_krberror_message (handle, krberror));
 
-  res = shishi_krberror_get_etext (handle, krberror, buf, &len);
+  res = shishi_krberror_etext (handle, krberror, buf, &len);
   buf[len] = '\0';
   if (res == SHISHI_OK && len > 0)
     fprintf (fh, "Additional Kerberos error message from server:\n%s\n", buf);
