@@ -56,12 +56,6 @@ struct _Shisa_backend
 };
 typedef struct _Shisa_backend _Shisa_backend;
 
-struct Shisa_realm
-{
-  Shisa * dbh;
-  const char *realm;
-};
-
 struct _Shisa_db
 {
   _Shisa_backend *backend;

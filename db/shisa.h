@@ -1,4 +1,4 @@
-/* shisa.h	Header file for Shishi database library.
+/* shisa.h --- Header file for Shishi database library.
  * Copyright (C) 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -38,12 +38,13 @@ enum Shisa_rc
 typedef enum Shisa_rc Shisa_rc;
 
 typedef struct Shisa		Shisa;
-typedef struct Shisa_realm	Shisa_realm;
 typedef struct Shisa_principal	Shisa_principal;
 typedef struct Shisa_key	Shisa_key;
 
 struct Shisa_principal_info
 {
+  const char *name;
+  const char *realm;
   time_t notusedbefore;
   time_t notusedafter;
   int isdisabled;
@@ -81,31 +82,31 @@ extern void shisa_cfg_print (Shisa * dbh, FILE * fh);
 extern const char *shisa_cfg_default_systemfile (Shisa * dbh);
 
 /* */
-extern int shisa_enumerate_realms (Shisa *dbh,
-				   char ***realms,
-				   size_t *nrealms);
-extern int shisa_enumerate_principals (Shisa_realm *dbh,
+extern int shisa_enumerate_principals (Shisa *dbh,
 				       char ***principals,
 				       size_t *nprincipals);
 
 /* Core API. */
-extern int shisa_realm_create (Shisa * dbh, const char *realm,
-			       Shisa_realm **rh);
-extern int shisa_realm_find (Shisa * dbh, const char *realm, Shisa_realm **rh);
-extern const char *shisa_realm_name (Shisa_realm * rh);
-
-extern int shisa_principal_create (Shisa_realm * rh, const char *cname,
+extern int shisa_principal_create (Shisa * dbh,
+				   const char *name,
+				   const char *realm,
 				   Shisa_principal **ph);
-extern int shisa_principal_find (Shisa_realm * rh, const char *cname,
+extern int shisa_principal_find (Shisa * dbh,
+				 const char *name,
+				 const char *realm,
 				 Shisa_principal **ph);
-extern const char *shisa_principal_name (Shisa_principal *ph);
 extern int shisa_principal_info_get (Shisa_principal * ph,
 				     Shisa_principal_info *info);
+extern int shisa_principal_info_free (Shisa_principal * ph,
+				      const Shisa_principal_info *info);
 extern int shisa_principal_info_set (Shisa_principal * ph,
 				     const Shisa_principal_info *info);
 extern int shisa_principal_key_get (Shisa_principal * ph,
 				    Shisa_key_info **keyinfo);
-extern int shisa_principal_key_set (Shisa_principal * ph,
+extern int shisa_principal_key_get_version (Shisa_principal * ph,
+					    uint32_t kvno,
+					    Shisa_key_info **keyinfo);
+extern int shisa_principal_key_add (Shisa_principal * ph,
 				    const Shisa_key_info *keyinfo);
 
 /* Utility API. */

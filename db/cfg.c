@@ -116,7 +116,7 @@ shisa_cfg (Shisa * dbh, char *option)
 	  break;
 
 	default:
-	  fprintf (stderr, "Unknown option: `%s'", value);
+	  fprintf (stderr, "Unknown option: `%s'\n", value);
 	  break;
 	}
     }
