@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _PROGNAME_H
-#define _PROGNAME_H
+#ifndef PROGNAME_H
+#define PROGNAME_H
 
 /* Programs using this file should do the following in main():
      set_program_name (argv[0]);
@@ -47,4 +47,4 @@ extern char *get_short_program_name (void);
 #endif
 
 
-#endif /* _PROGNAME_H */
+#endif /* PROGNAME_H */

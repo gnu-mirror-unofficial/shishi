@@ -1,5 +1,5 @@
 /* Program name management.
-   Copyright (C) 2001-2003 Free Software Foundation, Inc.
+   Copyright (C) 2001-2004 Free Software Foundation, Inc.
    Written by Bruno Haible <haible@clisp.cons.org>, 2001.
 
    This program is free software; you can redistribute it and/or modify
@@ -59,7 +59,8 @@ set_program_name (const char *argv0)
 char *
 get_short_program_name (void)
 {
-  const char *slash;
-  slash = strrchr (program_name, '/');
+  const char *slash = NULL;
+  if (program_name)
+    slash = strrchr (program_name, '/');
   return slash != NULL ? slash + 1 : program_name;
 }
