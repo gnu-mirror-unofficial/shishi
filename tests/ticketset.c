@@ -87,7 +87,7 @@ main (int argc, char *argv[])
   Shishi_ticket *t1, *t2, *t3;
   ASN1_TYPE n1, n2, n3;
   char buffer[BUFSIZ];
-  char *p, *q, *r;
+  char *p, *q;
   int n, res;
 
   do
@@ -152,12 +152,12 @@ main (int argc, char *argv[])
     fail("shishi_ticketset_default_file_set() failed\n");
   free(p);
 
-  /* shishi_ticketset_init () */
-  res = shishi_ticketset_init (handle, &tktset);
+  /* shishi_ticketset () */
+  res = shishi_ticketset (handle, &tktset);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_init() OK\n");
+    success("shishi_ticketset() OK\n");
   else
-    fail("shishi_ticketset_init() failed\n");
+    fail("shishi_ticketset() failed\n");
 
   /* shishi_ticketset_size () */
   n = shishi_ticketset_size (tktset);
@@ -250,6 +250,8 @@ main (int argc, char *argv[])
 
   /* shishi_ticketset_get () */
   t1 = shishi_ticketset_get (tktset, 0);
+  if (debug)
+    shishi_ticket_pretty_print(t1, stdout);
   if (t1)
     success("shishi_ticketset_get() OK\n");
   else
@@ -334,6 +336,8 @@ main (int argc, char *argv[])
 
   /* shishi_ticketset_get () */
   t2 = shishi_ticketset_get (tktset, 1);
+  if (debug)
+    shishi_ticket_pretty_print(t2, stdout);
   if (t2)
     success("shishi_ticketset_get() OK\n");
   else
