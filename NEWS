@@ -14,6 +14,17 @@ user Shishi home directory (for configuration file, ticket cache,
 etc), SHISHI_TICKETS the ticket cache file, SHISHI_CONFIG for the
 system configuration file, SHISHI_KEYS for system wide host keys.
 
+** Nettle is now preferred over Libgcrypt, even if Libgcrypt is available.
+Use configure parameter --with-libgcrypt to override.
+
+** The pkg-config script no longer use the linker parameter -R.
+
+** Libtasn1 updated to 0.2.10.
+
+** Many gnulib compatibility files were updated.
+
+** Experimental KDC now handle non-default ticket life time.
+
 * Version 0.0.15 (released 2004-04-18)
 
 ** Sequence numbers in Authenticator and EncAPRepPart are now randomized.
