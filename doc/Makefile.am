@@ -22,7 +22,8 @@ SUBDIRS = reference
 
 shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
 	shishi-api-ticket.texi shishi-api-tkt.texi shishi-api-tkts.texi \
-	shishi-api-as.texi shishi-api-tgs.texi shishi-api-safe.texi \
+	shishi-api-as.texi shishi-api-tgs.texi \
+	shishi-api-safe.texi shishi-api-priv.texi \
 	shishi-api-kdc.texi shishi-api-authenticator.texi shishi-api-ap.texi \
 	shishi-api-key.texi shishi-api-keys.texi shishi-api-hostkeys.texi \
 	shishi-api-crypto.texi shishi-api-version.texi \
@@ -59,6 +60,9 @@ shishi-api-tkts.texi: $(top_srcdir)/lib/tkts.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-safe.texi: $(top_srcdir)/lib/safe.c
+	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
+
+shishi-api-priv.texi: $(top_srcdir)/lib/priv.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-as.texi: $(top_srcdir)/lib/as.c
