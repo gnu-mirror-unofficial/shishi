@@ -737,14 +737,12 @@ extern Shishi_tkt *shishi_tkt2 (Shishi * handle,
 extern void shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh);
 extern int shishi_tkt_realm (Shishi_tkt * tkt, char **realm,
 			     size_t * realmlen);
-extern int shishi_tkt_cnamerealm (Shishi_tkt * tkt, char *cnamerealm,
-				  size_t * cnamerealmlen);
-extern int shishi_tkt_cnamerealm_p (Shishi_tkt * tkt, const char *client);
 extern int shishi_tkt_client (Shishi_tkt * tkt,
 			      char **client, size_t * clientlen);
+extern int shishi_tkt_client_p (Shishi_tkt * tkt, const char *client);
 extern int shishi_tkt_clientrealm (Shishi_tkt * tkt,
 				   char **client, size_t *clientlen);
-extern int shishi_tkt_client_p (Shishi_tkt * tkt, const char *client);
+extern int shishi_tkt_clientrealm_p (Shishi_tkt * tkt, const char *client);
 extern int shishi_tkt_clientrealm_set (Shishi_tkt * tkt,
 				       const char *realm, const char *client);
 extern int shishi_tkt_serverrealm_set (Shishi_tkt * tkt,

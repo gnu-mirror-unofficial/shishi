@@ -433,7 +433,7 @@ shishi_tkt_clientrealm (Shishi_tkt * tkt,
 }
 
 /**
- * shishi_tkt_cnamerealm_p:
+ * shishi_tkt_clientrealm_p:
  * @tkt: input variable with ticket info.
  * @client: principal name (client name and realm) of ticket.
  *
@@ -442,7 +442,7 @@ shishi_tkt_clientrealm (Shishi_tkt * tkt,
  * Return value: Returns non-0 iff ticket is for specified client principal.
  **/
 int
-shishi_tkt_cnamerealm_p (Shishi_tkt * tkt, const char *client)
+shishi_tkt_clientrealm_p (Shishi_tkt * tkt, const char *client)
 {
   char *buf;
   size_t buflen;
