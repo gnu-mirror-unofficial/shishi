@@ -202,6 +202,11 @@ Shishi_KDCOptions;
 
 typedef enum
 {
+  /* 0                             unused */
+  /* 1              Ticket         PDU */
+  /* 2              Authenticator  non-PDU */
+  /* 3              EncTicketPart  non-PDU */
+  /* 4-9                           unused */
   /* Request for initial authentication */
   SHISHI_MSGTYPE_AS_REQ = 10,
   /* Response to SHISHI_MSGTYPE_AS_REQ request */
@@ -218,12 +223,19 @@ typedef enum
   SHISHI_MSGTYPE_RESERVED16 = 16,
   /* Reserved for user-to-user krb_tgt_reply */
   SHISHI_MSGTYPE_RESERVED17 = 17,
+  /* 18-19                         unused */
   /* Safe (checksummed) application message */
   SHISHI_MSGTYPE_SAFE = 20,
   /* Private (encrypted) application message */
   SHISHI_MSGTYPE_PRIV = 21,
   /* Private (encrypted) message to forward credentials */
   SHISHI_MSGTYPE_CRED = 22,
+  /* 23-24                         unused */
+  /* 25             EncASRepPart   non-PDU */
+  /* 26             EncTGSRepPart  non-PDU */
+  /* 27             EncApRepPart   non-PDU */
+  /* 28             EncKrbPrivPart non-PDU */
+  /* 29             EncKrbCredPart non-PDU */
   /* Error response */
   SHISHI_MSGTYPE_ERROR = 30
 }
