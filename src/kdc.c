@@ -1,5 +1,5 @@
 /* kdc.c	low-level authentication (AS and TGS) services
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -124,7 +124,7 @@ kdc_response (Shishi * handle,
       char password[BUFSIZ];
 
       userlen = sizeof (user);
-      shishi_kdcreq_cnamerealm_get (handle, req, user, &userlen);
+      shishi_asreq_cnamerealm_get (handle, req, user, &userlen);
       user[userlen] = '\0';
 
       res = shishi_prompt_password (handle, stdin, password, BUFSIZ,
