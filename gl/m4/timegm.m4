@@ -16,5 +16,5 @@ AC_DEFUN([gl_FUNC_TIMEGM],
 
 # Prerequisites of lib/timegm.c.
 AC_DEFUN([gl_PREREQ_TIMEGM], [
-  :
+  AC_CHECK_FUNCS(gmtime_r)
 ])
