@@ -39,7 +39,7 @@ option "keys" - "Dump or list keys as well.\n" flag off
 section "Values (for --add and --modify)"
 option "encryption-type" E "Override default key encryption type.  Valid values include 'aes128', 'aes256', 'aes' (same as 'aes256'), '3des', 'des-md5', 'des-md4', 'des-crc', 'des' (same as 'des-md5'), and 'arcfour'." string no
 option "random" - "Use a random key.  (default)" no
-option "password" - "Derive key from this password." string no
+option "password" - "Derive key from this password." string no argoptional
 option "salt" - "Use specified salt for deriving key.  Defaults to concatenation of realm and (unwrapped) principal name." string no
 option "string-to-key-parameter" - "Encryption algorithm specific parameter for password derivation.  Currently only the AES algorithm can utilize this, where it is interpreted as the iteration count of the PKCS#5 PBKDF2 key deriver." string typestr="HEX" no
 

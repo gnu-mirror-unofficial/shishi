@@ -243,12 +243,23 @@ apply_options (const char *realm,
     }
 
   if (args_info.password_given)
-    rc = shishi_key_from_string (sh, etype,
-				 args_info.password_arg,
-				 strlen (args_info.password_arg),
-				 salt, strlen (salt),
-				 str2keyparam,
-				 &key);
+    {
+      char *passwd = args_info.password_arg;
+
+      if (!passwd)
+	{
+	  rc = shishi_prompt_password (sh, &passwd, "Password for `%s@%s': ",
+				       principal, realm);
+	  if (rc != SHISHI_OK)
+	    return EXIT_FAILURE;
+	}
+
+      rc = shishi_key_from_string (sh, etype,
+				   passwd, strlen (passwd),
+				   salt, strlen (salt),
+				   str2keyparam,
+				   &key);
+    }
   else
     rc = shishi_key_random (sh, etype, &key);
   if (rc != SHISHI_OK)
