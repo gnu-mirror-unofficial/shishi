@@ -536,6 +536,7 @@ process (Shishi * handle, char *in, int inlen, char **out, int *outlen)
       fprintf (stderr, "tgs-req...\n");
     }
 
+  /* XXX hard coded KRB-ERROR? */
   *out = NULL;
   *outlen = 0;
 }
