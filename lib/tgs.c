@@ -146,7 +146,7 @@ shishi_tgs (Shishi * handle,
 {
   /* XXX parse server into realm + sname */
   return shishi_tgs_realmsname (handle, tgticket, tgs,
-				shishi_realm_default_get (handle), server);
+				shishi_realm_default (handle), server);
 }
 
 int

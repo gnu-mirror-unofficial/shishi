@@ -28,6 +28,73 @@ struct Shishi_ticketset
 };
 
 /**
+ * shishi_ticketset_default_file_guess:
+ *
+ * Guesses the default ticket filename; it is $HOME/.shishi/tickets.
+ *
+ * Return value: Returns default ticketset filename as a string that
+ * has to be deallocated with free() by the caller.
+ **/
+char *
+shishi_ticketset_default_file_guess (void)
+{
+  char *home;
+  char *p;
+
+  home = getenv ("HOME");
+
+  if (home == NULL)
+    home = "";
+
+  shishi_asprintf (&p, "%s%s", home, TICKET_FILE);
+
+  return p;
+}
+
+/**
+ * shishi_ticketset_default_file:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Return value: Returns the default ticket set used in the library.
+ * (Not a copy of it, so don't modify it.)
+ **/
+const char *
+shishi_ticketset_default_file (Shishi * handle)
+{
+  if (!handle->ticketsetdefaultfile)
+    {
+      char *p;
+
+      p=shishi_ticketset_default_file_guess ();
+      shishi_ticketset_default_file_set (handle, p);
+      free (p);
+    }
+
+  return handle->ticketsetdefaultfile;
+}
+
+/**
+ * shishi_ticketset_default_file_set:
+ * @handle: Shishi library handle create by shishi_init().
+ * @ticketsetfile: string with new default ticketset file name, or
+ * NULL to reset to default.
+ *
+ * Set the default ticket set filename used in the library.  The
+ * string is copied into the library, so you can dispose of the
+ * variable immediately after calling this function.
+ **/
+void
+shishi_ticketset_default_file_set (Shishi * handle, const char *ticketsetfile)
+{
+  if (handle->ticketsetdefaultfile)
+    free (handle->ticketsetdefaultfile);
+  if (ticketsetfile)
+    handle->ticketsetdefaultfile = strdup(ticketsetfile);
+  else
+    handle->ticketsetdefaultfile = NULL;
+}
+
+/**
  * shishi_ticketset_init:
  * @handle: shishi handle as allocated by shishi_init().
  * @ticketset: output pointer to newly allocated ticketset handle.
@@ -518,7 +585,7 @@ shishi_ticketset_find_ticket_for_server (Shishi * handle,
 					 char *server)
 {
   return shishi_ticketset_find_ticket_for_clientserver
-    (handle, ticketset, shishi_principal_default_get (handle), server);
+    (handle, ticketset, shishi_principal_default (handle), server);
 }
 
 Shishi_ticket *
@@ -537,7 +604,7 @@ shishi_ticketset_get_ticket_for_server (Shishi * handle,
 					char *server)
 {
   return shishi_ticketset_find_ticket_for_clientserver
-    (handle, ticketset, shishi_principal_default_get (handle), server);
+    (handle, ticketset, shishi_principal_default (handle), server);
 }
 
 /**
@@ -554,35 +621,20 @@ shishi_ticketset_done (Shishi * handle, Shishi_ticketset * ticketset)
 {
   int i;
 
-  if (!ticketset && !(ticketset = shishi_ticketset (handle)))
-    return SHISHI_INVALID_TICKETSET;
+  if (!ticketset)
+    {
+      ticketset = shishi_ticketset (handle);
+      handle->ticketset = NULL;
+    }
+
+  if (!ticketset)
+    return;
 
   for (i = 0; i < ticketset->ntickets; i++)
     free (ticketset->tickets[i]);
   free (ticketset);
 
-  if (!ticketset)
-    handle->ticketset = NULL;
-
   return;
-}
-
-const char *
-shishi_ticketset_default_file (Shishi * handle)
-{
-  char *home;
-
-  if (!handle->ticketsetfile)
-    {
-      home = getenv ("HOME");
-
-      if (home == NULL)
-	home = "";
-
-      shishi_asprintf (&handle->ticketsetfile, "%s%s", home, TICKET_FILE);
-    }
-
-  return handle->ticketsetfile;
 }
 
 Shishi_ticketset *

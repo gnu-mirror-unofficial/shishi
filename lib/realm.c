@@ -25,71 +25,79 @@
 #define HOST_NAME_MAX BUFSIZ
 #endif
 
+/**
+ * shishi_realm_default_guess:
+ *
+ * Guesses a realm based on getdomainname() (which really is NIS/YP
+ * domain, but if it is set it might be a good guess), or if it fails,
+ * based on gethostname(), or if it fails, the string
+ * "could-not-guess-default-realm". Note that the hostname is not
+ * trimmed off of the data returned by gethostname() to get the domain
+ * name and use that as the realm.
+ *
+ * Return value: Returns guessed realm for host as a string that has
+ * to be deallocated with free() by the caller.
+ **/
 char *
-shishi_realm_default_guess ()
+shishi_realm_default_guess (void)
 {
+  char buf[HOST_NAME_MAX];
   int ret;
-  char *tmp, *tmp2;
-  struct hostent *he;
 
-  /* XXX: how to call gethostname() without using fixed size arrays? */
+  ret = getdomainname (buf, sizeof(buf));
+  buf[sizeof(buf) - 1] = '\0';
+  if (ret != 0 || strlen(buf) == 0 || strcmp(buf, "(none)") == 0)
+    {
+      ret = gethostname (buf, sizeof(buf));
+      buf[sizeof(buf) - 1] = '\0';
 
-  tmp = (char *) malloc (HOST_NAME_MAX);
-  ret = gethostname (tmp, HOST_NAME_MAX);
-  tmp[HOST_NAME_MAX - 1] = '\0';
-  if (ret != 0)
-    {
-      strcpy (tmp, "localhost");
-    }
-  he = gethostbyname (tmp);
-  if (he)
-    {
-      free (tmp);
-      tmp = strdup (he->h_name);
+      if (ret != 0)
+	strcpy (buf, "could-not-guess-default-realm");
     }
 
-  return tmp;
-
-  /*
-     if (ret == 0)
-     {
-     char *p = (char*) strchr (tmp, '.');
-     if (p != NULL && *p != '\0')
-     {
-     p++; / * skip '.' * /
-     if (*p != '\0')
-     memmove (tmp, p, strlen(p) + 1);
-     }
-     } 
-     else
-     {
-     tmp = (char*) strdup("unknown");
-     }
-
-     tmp2 = tmp;
-     while (tmp2 && *tmp2)
-     {
-     *tmp2 = toupper(*tmp2);
-     tmp2++;
-     }
-   */
-
-  return tmp;
+  return strdup(buf);
 }
 
-
-void
-shishi_realm_default_set (Shishi * handle, const char *realm)
+/**
+ * shishi_realm_default:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Return value: Returns the default realm used in the library.  (Not
+ * a copy of it, so don't modify it.)
+ **/
+const char *
+shishi_realm_default (Shishi * handle)
 {
-  handle->default_realm = (char *) strdup (realm);
-}
+  if (!handle->default_realm)
+    {
+      char *p;
+      p = shishi_realm_default_guess();
+      shishi_realm_default_set (handle, p);
+      free(p);
+    }
 
-char *
-shishi_realm_default_get (Shishi * handle)
-{
   return handle->default_realm;
 }
 
+/**
+ * shishi_realm_default_set:
+ * @handle: Shishi library handle create by shishi_init().
+ * @realm: string with new default realm name, or NULL to reset to default.
+ *
+ * Set the default realm used in the library.  The string is copied
+ * into the library, so you can dispose of the variable immediately
+ * after calling this function.
+ **/
+void
+shishi_realm_default_set (Shishi * handle, const char *realm)
+{
+  if (handle->default_realm)
+    free (handle->default_realm);
+  if (realm)
+    handle->default_realm = strdup (realm);
+  else
+    handle->default_realm = NULL;
+}
 
 const char *
 shishi_realm_for_server_file (Shishi * handle, char *server)

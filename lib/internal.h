@@ -172,7 +172,7 @@ struct Shishi
   char error[1024];
   char *gztime_buf[40];
   char *usercfgfile;
-  char *ticketsetfile;
+  char *ticketsetdefaultfile;
   char *stringprocess;
   Shishi_ticketset *ticketset;
   /* XXX remove these: */

@@ -21,8 +21,17 @@
 
 #include "internal.h"
 
+/**
+ * shishi_principal_default_guess:
+ *
+ * Guesses a principal using getpwuid(getuid)), or if it fails, the
+ * string "user".
+ *
+ * Return value: Returns guessed default principal for user as a string that
+ * has to be deallocated with free() by the caller.
+ **/
 char *
-shishi_principal_default_guess ()
+shishi_principal_default_guess (void)
 {
   uid_t uid;
   struct passwd *pw;
@@ -33,18 +42,48 @@ shishi_principal_default_guess ()
   if (pw)
     return strdup (pw->pw_name);
   else
-    return NULL;
+    return strdup("user");
 }
 
 
+/**
+ * shishi_principal_default:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Return value: Returns the default principal name used in the
+ * library.  (Not a copy of it, so don't modify it.)
+ **/
+const char *
+shishi_principal_default (Shishi * handle)
+{
+  if (!handle->default_principal)
+    {
+      char *p;
+      p = shishi_principal_default_guess();
+      shishi_principal_default_set (handle, p);
+      free(p);
+    }
+
+  return handle->default_principal;
+}
+
+/**
+ * shishi_principal_default_set:
+ * @handle: Shishi library handle create by shishi_init().
+ * @principal: string with new default principal name, or NULL to
+ * reset to default.
+ *
+ * Set the default realm used in the library.  The string is copied
+ * into the library, so you can dispose of the variable immediately
+ * after calling this function.
+ **/
 void
 shishi_principal_default_set (Shishi * handle, const char *principal)
 {
-  handle->default_principal = (char *) strdup (principal);
-}
-
-char *
-shishi_principal_default_get (Shishi * handle)
-{
-  return handle->default_principal;
+  if (handle->default_principal)
+    free (handle->default_principal);
+  if (principal)
+    handle->default_principal = strdup (principal);
+  else
+    handle->default_principal = NULL;
 }

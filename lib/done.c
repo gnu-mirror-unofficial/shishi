@@ -24,7 +24,7 @@
 /**
  * shishi_done:
  * @handle: shishi handle as allocated by shishi_init().
- * 
+ *
  * Deallocates the shishi library handle.  The handle must not be used
  * in any calls to shishi functions after this.
  **/
@@ -38,8 +38,8 @@ shishi_done (Shishi * handle)
      free (handle->default_realm); */
   if (handle->usercfgfile)
     free (handle->usercfgfile);
-  if (handle->ticketsetfile)
-    free (handle->ticketsetfile);
+  if (handle->ticketsetdefaultfile)
+    free (handle->ticketsetdefaultfile);
 
   if (handle->asn1)
     asn1_delete_structure (&handle->asn1);

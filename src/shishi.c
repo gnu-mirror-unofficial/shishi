@@ -252,7 +252,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	  arguments->command != COMMAND_SERVER)
 	argp_error (state,
 		    _
-		    ("Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."),
+		    ("Option `%s' only valid with CRYPTO, KDC/AS/TGS "
+		     "and SERVER."),
 		    state->argv[state->next - 1]);
       arguments->cname = strdup (arg);
       break;
@@ -845,7 +846,6 @@ main (int argc, char *argv[])
 {
   struct arguments arg;
   char *home = getenv ("HOME");
-  const char *ticketfile;
   Shishi *handle;
   int rc;
 
@@ -853,18 +853,13 @@ main (int argc, char *argv[])
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
-  memset ((void *) &arg, 0, sizeof (arg));
+  memset (&arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
-  rc = shishi_init_with_paths (&handle, arg.ticketfile, arg.systemcfgfile,
-			       arg.usercfgfile);
-  if (rc != SHISHI_OK)
+  rc = shishi_init_with_paths (&handle, arg.ticketfile,
+			       arg.systemcfgfile, arg.usercfgfile);
+  if (rc == SHISHI_HANDLE_ERROR)
     die ("Internal error: could not initialize shishi\n");
-  if (handle == NULL)
-    die ("Internal error: could not initialize shishi\n");
-
-  ticketfile = arg.ticketfile ? arg.ticketfile :
-    shishi_ticketset_default_file (handle);
 
   rc = shishi_cfg_clientkdcetype_set (handle, arg.etypes);
   if (rc != SHISHI_OK)
@@ -938,7 +933,7 @@ main (int argc, char *argv[])
 
 	if (arg.tgtname == NULL)
 	  {
-	    char *realm = shishi_realm_default_get (handle);
+	    char *realm = shishi_realm_default (handle);
 	    int len = strlen ("krbtgt/") + strlen (realm) + 1;
 	    arg.tgtname = malloc (len);
 	    if (arg.tgtname == NULL)
@@ -947,7 +942,7 @@ main (int argc, char *argv[])
 	  }
 
 	tgt = shishi_ticketset_find_ticket_for_clientserver
-	  (handle, NULL, shishi_principal_default_get (handle),
+	  (handle, NULL, shishi_principal_default (handle),
 	   arg.tgtname);
 	if (tgt == NULL)
 	  {
@@ -990,7 +985,8 @@ main (int argc, char *argv[])
 
     case COMMAND_LIST:
       if (!arg.silent)
-	printf (_("Tickets in `%s':\n"), ticketfile);
+	printf (_("Tickets in `%s':\n"),
+		shishi_ticketset_default_file(handle));
 
       rc = shishi_ticketset_print_for_service (handle, NULL,
 					       stdout, arg.sname);
@@ -1072,7 +1068,7 @@ main (int argc, char *argv[])
 
 	if (arg.tgtname == NULL)
 	  {
-	    char *realm = shishi_realm_default_get (handle);
+	    char *realm = shishi_realm_default (handle);
 	    int len = strlen ("krbtgt/") + strlen (realm) + 1;
 	    arg.tgtname = malloc (len);
 	    if (arg.tgtname == NULL)
@@ -1081,7 +1077,7 @@ main (int argc, char *argv[])
 	  }
 
 	tgt = shishi_ticketset_find_ticket_for_clientserver
-	  (handle, NULL, shishi_principal_default_get (handle),
+	  (handle, NULL, shishi_principal_default (handle),
 	   arg.tgtname);
 	if (tgt == NULL)
 	  arg.command = COMMAND_AS;
@@ -1096,7 +1092,8 @@ main (int argc, char *argv[])
     {
       rc = shishi_ticketset_to_file (handle, NULL,
 				     arg.ticketwritefile ?
-				     arg.ticketwritefile : ticketfile);
+				     arg.ticketwritefile :
+				     shishi_ticketset_default_file (handle));
       if (rc != SHISHI_OK)
 	printf ("Could not write tickets: %s\n", shishi_strerror (rc));
     }

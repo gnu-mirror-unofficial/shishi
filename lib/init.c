@@ -89,6 +89,7 @@ shishi (void)
     }
   memset ((void *) handle, 0, sizeof (*handle));
 
+#if 0
   res = gcry_control (GCRYCTL_INIT_SECMEM, 512, 0);
   if (res != GCRYERR_SUCCESS)
     {
@@ -96,6 +97,9 @@ shishi (void)
 	      shishi_strerror (SHISHI_GCRYPT_ERROR));
       return NULL;
     }
+#else
+  gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0);
+#endif
 
   handle->asn1 = read_asn1 ();
   if (handle->asn1 == ASN1_TYPE_EMPTY)
@@ -136,7 +140,8 @@ shishi (void)
 int
 _shishi_init_read (Shishi * handle,
 		   const char *ticketsetfile,
-		   const char *systemcfgfile, const char *usercfgfile)
+		   const char *systemcfgfile,
+		   const char *usercfgfile)
 {
   int rc = SHISHI_OK;
 
@@ -226,10 +231,13 @@ shishi_init (Shishi ** handle)
 int
 shishi_init_with_paths (Shishi ** handle,
 			const char *ticketsetfile,
-			const char *systemcfgfile, const char *usercfgfile)
+			const char *systemcfgfile,
+			const char *usercfgfile)
 {
   if (!handle || !(*handle = shishi ()))
     return SHISHI_HANDLE_ERROR;
+
+  shishi_ticketset_default_file_set (*handle, ticketsetfile);
 
   return _shishi_init_read (*handle, ticketsetfile,
 			    systemcfgfile, usercfgfile);

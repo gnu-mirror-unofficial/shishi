@@ -32,10 +32,10 @@ client (Shishi * handle, struct arguments arg)
   int res;
 
   if (arg.cname == NULL)
-    arg.cname = shishi_principal_default_get (handle);
+    arg.cname = shishi_principal_default (handle);
 
   if (arg.realm == NULL)
-    arg.realm = shishi_realm_default_get (handle);
+    arg.realm = shishi_realm_default (handle);
 
   if (arg.sname == NULL)
     {

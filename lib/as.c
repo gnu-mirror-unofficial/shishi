@@ -108,7 +108,7 @@ shishi_as (Shishi * handle, char *password, Shishi_as ** as)
   char *client;
   int res;
 
-  realm = shishi_realm_default_get (handle);
+  realm = shishi_realm_default (handle);
 
   server = malloc (strlen (KRBTGT PRINCIPAL_DELIMITER) + strlen (realm) + 1);
   if (server == NULL)
@@ -118,7 +118,7 @@ shishi_as (Shishi * handle, char *password, Shishi_as ** as)
 
   res = shishi_as_password_cnamerealmsname
     (handle, password, as,
-     shishi_principal_default_get (handle), realm, server);
+     shishi_principal_default (handle), realm, server);
 
   free (server);
 
@@ -248,8 +248,8 @@ shishi_as_cnamerealmsname (Shishi * handle,
       res = shishi_prompt_password (handle,
 				    stdin, password, BUFSIZ,
 				    stdout, "Enter password for `%s@%s': ",
-				    shishi_principal_default_get (handle),
-				    shishi_realm_default_get (handle));
+				    shishi_principal_default (handle),
+				    shishi_realm_default (handle));
       if (res != SHISHI_OK)
 	{
 	  printf ("Reading password failed: %s\n%s", shishi_strerror (res));

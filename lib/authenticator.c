@@ -51,12 +51,12 @@ shishi_authenticator (Shishi * handle)
     goto error;
 
   res = shishi_authenticator_set_crealm (handle, node,
-					 shishi_realm_default_get (handle));
+					 shishi_realm_default (handle));
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_authenticator_set_cname (handle, node, SHISHI_NT_PRINCIPAL,
-					shishi_principal_default_get
+					shishi_principal_default
 					(handle));
   if (res != SHISHI_OK)
     goto error;

@@ -79,7 +79,7 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (as)
     {
       res = shishi_kdcreq_set_cname (handle, node, SHISHI_NT_PRINCIPAL,
-				     shishi_principal_default_get (handle));
+				     shishi_principal_default (handle));
       if (res != SHISHI_OK)
 	goto error;
     }
@@ -91,12 +91,12 @@ _shishi_kdcreq (Shishi * handle, int as)
     }
 
   res = shishi_kdcreq_set_realm (handle, node,
-				 shishi_realm_default_get (handle));
+				 shishi_realm_default (handle));
   if (res != SHISHI_OK)
     goto error;
 
   servicebuf[0] = "krbtgt";
-  servicebuf[1] = shishi_realm_default_get (handle);
+  servicebuf[1] = shishi_realm_default (handle);
   servicebuf[2] = NULL;
   res = shishi_kdcreq_set_sname (handle, node,
 				 SHISHI_NT_PRINCIPAL, servicebuf);
