@@ -26,7 +26,8 @@ shishi_strerror_details (Shishi * handle)
 {
   return handle->error ? handle->
     error :
-    "Internal application error: shishi_strerror() called without an error condition";
+    "Internal application error: shishi_strerror() called without an "
+    "error condition";
 }
 
 /**
@@ -85,8 +86,34 @@ shishi_strerror (int err)
     case SHISHI_CRYPTO_ERROR:
       p =
 	_
-	("Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption.");
+	("Low-level cryptographic primitive failed.  This usually indicates "
+	 "bad password or data corruption.");
       break;
+
+    case SHISHI_KDC_TIMEOUT:
+      p = _("Timedout talking to KDC. This usually indicates a network "
+	    "or KDC address problem.");
+      break;
+
+    case SHISHI_KDC_NOT_KNOWN_FOR_REALM:
+      p = _("No KDC for realm known.");
+      break;
+
+    case SHISHI_SOCKET_ERROR:
+      p = _("The system call socket() failed.  This usually indicates that "
+	    "your system does not support the socket type.");
+      break;
+
+    case SHISHI_BIND_ERROR:
+      p = _("The system call bind() failed.  This usually indicates "
+	    "insufficient permissions.");
+      break;
+
+    case SHISHI_SENDTO_ERROR:
+      p = _("The system call sendto() failed.");
+
+    case SHISHI_CLOSE_ERROR:
+      p = _("The system call close() failed.");
 
     default:
       shishi_asprintf (&p, _("Unknown shishi error (%d)"), err);
@@ -100,7 +127,16 @@ shishi_strerror (int err)
 void
 shishi_error_set (Shishi * handle, const char *error)
 {
-  strncpy (handle->error, error, sizeof (handle->error));
+  if (error)
+    strncpy (handle->error, error, sizeof (handle->error));
+  else
+    shishi_error_clear (handle);
+}
+
+void
+shishi_error_clear (Shishi * handle)
+{
+  handle->error[0] = '\0';
 }
 
 void
