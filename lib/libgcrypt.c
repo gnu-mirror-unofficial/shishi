@@ -360,19 +360,24 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int mode,
     {
       size_t ivdiff, ivpos = 0;
 
-      if (inlen % ivlen)
-	  ivdiff = ivlen + inlen % ivlen;
-      else
-	  ivdiff = ivlen + ivlen;
-
-      if (inlen >= ivdiff)
-	ivpos = inlen - ivdiff;
-
       *ivout = xmalloc (ivlen);
 
-      /* XXX what is the output iv for CBC-CTS mode?
-	 but is this value useful at all for that mode anyway?
-	 Mostly it is DES apps that want the updated iv, so this is ok. */
+      if (flags & GCRY_CIPHER_CBC_CTS)
+	{
+	  /* XXX what is the output iv for CBC-CTS mode?
+	     but is this value useful at all for that mode anyway?
+	     Mostly it is DES apps that want the updated iv, so this is ok. */
+
+	  if (inlen % ivlen)
+	    ivdiff = ivlen + inlen % ivlen;
+	  else
+	    ivdiff = ivlen + ivlen;
+
+	  if (inlen >= ivdiff)
+	    ivpos = inlen - ivdiff;
+	}
+      else
+	ivpos = inlen - ivlen;
 
       if (decryptp)
 	memcpy (*ivout, in + ivpos, inlen >= ivlen ? ivlen : inlen);
