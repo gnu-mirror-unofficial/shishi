@@ -20,27 +20,30 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_srcdir)/db -I../lib
 
-bin_PROGRAMS = shishi shisa
+BUILT_SOURCES = shisa_cmd.c shisa_cmd.h shishid_cmd.c shishid_cmd.h
 
-shishi_SOURCES = shishi.c gettext.h
+bin_PROGRAMS = shishi shisa
+sbin_PROGRAMS = shishid
+
+shishi_SOURCES = shishi.c
 shishi_LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
 	../lib/libshishi.la
 
-BUILT_SOURCES = shisa_cmd.c shisa_cmd.h
-shisa_SOURCES = shisa.c gettext.h shisa.ggo $(BUILT_SOURCES)
+shisa_SOURCES = shisa.c shisa.ggo shisa_cmd.h shisa_cmd.c
 shisa_LDADD = ../db/libshisa.la ../lib/libshishi.la
-
-$(BUILT_SOURCES): shisa.ggo
+shisa_cmd.c shisa_cmd.h: shisa.ggo
 	gengetopt --unamed-opts --no-handle-help --no-handle-error \
 		 --input $< --file-name shisa_cmd
 	perl -pi -e 's/\[FILES\]/\[REALM \[PRINCIPAL\]\]/g' shisa_cmd.c
 
-sbin_PROGRAMS = shishid
-shishid_SOURCES = shishid.c
+shishid_SOURCES = shishid.c shishid.ggo shishid_cmd.h shishid_cmd.c
 shishid_LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
 	../lib/libshishi.la ../db/libshisa.la
+shishid_cmd.c shishid_cmd.h: shishid.ggo
+	gengetopt --no-handle-help --no-handle-error \
+		 --input $< --file-name shishid_cmd
 
 localedir = $(datadir)/locale
 

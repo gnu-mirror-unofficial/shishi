@@ -7,3 +7,5 @@ shisa_cmd.h
 shisa_cmd.c
 shishi
 shishid
+shishid_cmd.h
+shishid_cmd.c
