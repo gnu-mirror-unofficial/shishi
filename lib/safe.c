@@ -549,35 +549,46 @@ shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
 int
 shishi_safe_verify (Shishi_safe * safe, Shishi_key * key)
 {
-  char cksum[MAX_CKSUM_LEN];
+  char *cksum;
   size_t cksumlen;
   int cksumtype;
-  char cksum2[MAX_CKSUM_LEN];
+  char *cksum2;
   size_t cksum2len;
   int cksumtype2;
   int rc;
 
-  cksumlen = sizeof (cksum);
   rc = shishi_safe_cksum (safe->handle, safe->safe,
-			  &cksumtype, cksum, &cksumlen);
+			  &cksumtype, &cksum, &cksumlen);
   if (rc != SHISHI_OK)
-    return rc;
+    goto error;
 
   rc = shishi_safe_build (safe, key);
   if (rc != SHISHI_OK)
-    return rc;
+    goto error;
 
-  cksum2len = sizeof (cksum2);
   rc = shishi_safe_cksum (safe->handle, safe->safe,
-			  &cksumtype2, cksum2, &cksum2len);
+			  &cksumtype2, &cksum2, &cksum2len);
   if (rc != SHISHI_OK)
-    return rc;
+    goto error;
 
   if (cksumtype != cksumtype2)
-    return SHISHI_SAFE_BAD_KEYTYPE;
+    {
+      rc = SHISHI_SAFE_BAD_KEYTYPE;
+      goto error;
+    }
 
   if (cksum2len != cksumlen || memcmp (cksum, cksum2, cksumlen) != 0)
-    return SHISHI_SAFE_VERIFY_FAILED;
+    {
+      rc = SHISHI_SAFE_VERIFY_FAILED;
+      goto error;
+    }
 
   return SHISHI_OK;
+
+ error:
+  if (cksum)
+    free (cksum);
+  if (cksum2)
+    free (cksum2);
+  return rc;
 }
