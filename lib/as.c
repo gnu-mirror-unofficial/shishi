@@ -196,7 +196,7 @@ shishi_as_rep (Shishi_as * as)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char *password)
+shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
 {
   Shishi_asn1 ticket, kdcreppart;
   char user[BUFSIZ];

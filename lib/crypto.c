@@ -25,7 +25,7 @@
 #include <gcrypt.h>
 
 static void
-escapeprint (char *str, int len)
+escapeprint (const char *str, int len)
 {
   int i;
 
@@ -41,7 +41,7 @@ escapeprint (char *str, int len)
 }
 
 static void
-hexprint (char *str, int len)
+hexprint (const char *str, int len)
 {
   int i;
 
@@ -57,7 +57,7 @@ hexprint (char *str, int len)
 }
 
 static void
-binprint (char *str, int len)
+binprint (const char *str, int len)
 {
   int i;
 
@@ -80,7 +80,7 @@ binprint (char *str, int len)
 }
 
 static void
-bin7print (char *str, int len)
+bin7print (const char *str, int len)
 {
   int i;
 
@@ -248,8 +248,8 @@ simplified_hmac (Shishi * handle,
 static int
 simplified_hmac_verify (Shishi * handle,
 			Shishi_key * key,
-			const char *in,
-			size_t inlen, char *hmac, size_t hmaclen)
+			const char *in, size_t inlen,
+			const char *hmac, size_t hmaclen)
 {
   char hash[MAX_HASH_LEN];
   int res;
@@ -558,29 +558,29 @@ simplified_checksum (Shishi * handle,
 }
 
 typedef int (*Shishi_random_to_key_function) (Shishi * handle,
-					      char *random,
-					      int randomlen,
+					      const char *random,
+					      size_t randomlen,
 					      Shishi_key * outkey);
 
 typedef int (*Shishi_string_to_key_function) (Shishi * handle,
-					      char *password,
-					      int passwordlen,
-					      char *salt,
-					      int saltlen,
-					      char *parameter,
+					      const char *password,
+					      size_t passwordlen,
+					      const char *salt,
+					      size_t saltlen,
+					      const char *parameter,
 					      Shishi_key * outkey);
 
 typedef int (*Shishi_encrypt_function) (Shishi * handle,
 					Shishi_key * key,
 					int keyusage,
-					char *in,
-					int inlen, char *out, int *outlen);
+					const char *in, size_t inlen,
+					char *out, size_t *outlen);
 
 typedef int (*Shishi_decrypt_function) (Shishi * handle,
 					Shishi_key * key,
 					int keyusage,
-					char *in,
-					int inlen, char *out, int *outlen);
+					const char *in, size_t inlen,
+					char *out, size_t *outlen);
 
 #include "crypto-null.c"
 #include "crypto-des.c"
@@ -985,10 +985,12 @@ _shishi_cipher_decrypt (int type)
 int
 shishi_string_to_key (Shishi * handle,
 		      int keytype,
-		      char *password,
+		      const char *password,
 		      int passwordlen,
-		      char *salt,
-		      int saltlen, char *parameter, Shishi_key * outkey)
+		      const char *salt,
+		      int saltlen,
+		      const char *parameter,
+		      Shishi_key * outkey)
 {
   Shishi_string_to_key_function string2key;
   int res;

@@ -1,5 +1,5 @@
 /* crypto-aes.c		AES crypto functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -27,10 +27,10 @@ static int
 aes128_encrypt (Shishi * handle,
 		Shishi_key *key,
 		int keyusage,
-		char *in,
-		int inlen,
+		const char *in,
+		size_t inlen,
 		char *out,
-		int *outlen)
+		size_t *outlen)
 {
   return simplified_encrypt (handle, key, keyusage, in, inlen, out, outlen);
 }
@@ -39,10 +39,10 @@ static int
 aes128_decrypt (Shishi * handle,
 		Shishi_key *key,
 		int keyusage,
-		char *in,
-		int inlen,
+		const char *in,
+		size_t inlen,
 		char *out,
-		int *outlen)
+		size_t *outlen)
 {
   return simplified_decrypt (handle, key, keyusage, in, inlen, out, outlen);
 }
@@ -51,10 +51,10 @@ static int
 aes256_encrypt (Shishi * handle,
 		Shishi_key *key,
 		int keyusage,
-		char *in,
-		int inlen,
+		const char *in,
+		size_t inlen,
 		char *out,
-		int *outlen)
+		size_t *outlen)
 {
   return simplified_encrypt (handle, key, keyusage, in, inlen, out, outlen);
 }
@@ -63,21 +63,21 @@ static int
 aes256_decrypt (Shishi * handle,
 		Shishi_key *key,
 		int keyusage,
-		char *in,
-		int inlen,
+		const char *in,
+		size_t inlen,
 		char *out,
-		int *outlen)
+		size_t *outlen)
 {
   return simplified_decrypt (handle, key, keyusage, in, inlen, out, outlen);
 }
 
 static int
 aes_string_to_key (Shishi * handle,
-		   char *password,
-		   int passwordlen,
-		   char *salt,
-		   int saltlen,
-		   char *parameter,
+		   const char *password,
+		   size_t passwordlen,
+		   const char *salt,
+		   size_t saltlen,
+		   const char *parameter,
 		   Shishi_key *outkey)
 {
   unsigned char key[256/8];
@@ -142,11 +142,11 @@ aes_string_to_key (Shishi * handle,
 
 static int
 aes128_string_to_key (Shishi * handle,
-		      char *password,
-		      int passwordlen,
-		      char *salt,
-		      int saltlen,
-		      char *parameter,
+		      const char *password,
+		      size_t passwordlen,
+		      const char *salt,
+		      size_t saltlen,
+		      const char *parameter,
 		      Shishi_key *outkey)
 {
   return aes_string_to_key (handle, password, passwordlen,
@@ -155,11 +155,11 @@ aes128_string_to_key (Shishi * handle,
 
 static int
 aes256_string_to_key (Shishi * handle,
-		      char *password,
-		      int passwordlen,
-		      char *salt,
-		      int saltlen,
-		      char *parameter,
+		      const char *password,
+		      size_t passwordlen,
+		      const char *salt,
+		      size_t saltlen,
+		      const char *parameter,
 		      Shishi_key *outkey)
 {
   return aes_string_to_key (handle, password, passwordlen,
@@ -168,7 +168,7 @@ aes256_string_to_key (Shishi * handle,
 
 static int
 aes128_random_to_key (Shishi * handle,
-		      char *random,
+		      const char *random,
 		      size_t randomlen,
 		      Shishi_key *outkey)
 {
@@ -182,7 +182,7 @@ aes128_random_to_key (Shishi * handle,
 
 static int
 aes256_random_to_key (Shishi * handle,
-		      char *random,
+		      const char *random,
 		      size_t randomlen,
 		      Shishi_key *outkey)
 {

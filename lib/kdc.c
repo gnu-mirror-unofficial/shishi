@@ -81,8 +81,9 @@ shishi_as_derive_salt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = asn1_number_of_elements (asreq, "KDC-REQ.req-body.cname.name-string",
-				 &n);
+  res = shishi_asn1_number_of_elements (handle, asreq,
+					"KDC-REQ.req-body.cname.name-string",
+					&n);
   if (res != SHISHI_OK)
     return res;
 
@@ -237,7 +238,7 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read request realm: %s\n",
-			   libtasn1_strerror (res));
+			   shishi_strerror (res));
       return res;
     }
 
@@ -246,7 +247,7 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read reply realm: %s\n",
-			   libtasn1_strerror (res));
+			   shishi_strerror (res));
       return res;
     }
 
@@ -296,8 +297,8 @@ shishi_kdc_copy_cname (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = asn1_number_of_elements (encticketpart,
-				 "EncTicketPart.cname.name-string", &n);
+  res = shishi_asn1_number_of_elements (handle, encticketpart,
+					"EncTicketPart.cname.name-string", &n);
   if (res != SHISHI_OK)
     return res;
 
@@ -456,7 +457,7 @@ shishi_kdc_check_nonce (Shishi * handle,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read request nonce: %s\n",
-			   libtasn1_strerror (res));
+			   shishi_strerror (res));
       return res;
     }
 
@@ -465,7 +466,7 @@ shishi_kdc_check_nonce (Shishi * handle,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read reply nonce: %s\n",
-			   libtasn1_strerror (res));
+			   shishi_strerror (res));
       return res;
     }
 
@@ -576,7 +577,8 @@ shishi_tgs_process (Shishi * handle,
 int
 shishi_as_process (Shishi * handle,
 		   Shishi_asn1 asreq,
-		   Shishi_asn1 asrep, char *string,
+		   Shishi_asn1 asrep,
+		   const char *string,
 		   Shishi_asn1 * enckdcreppart)
 {
   unsigned char salt[BUFSIZ];

@@ -176,10 +176,12 @@ shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
 
   rc = asn1_number_of_elements (node, field, n);
   if (rc != ASN1_SUCCESS)
-    if (rc == ASN1_ELEMENT_NOT_FOUND)
-      return SHISHI_ASN1_NO_ELEMENT;
-    else
-      return SHISHI_ASN1_ERROR;
+    {
+      if (rc == ASN1_ELEMENT_NOT_FOUND)
+	return SHISHI_ASN1_NO_ELEMENT;
+      else
+	return SHISHI_ASN1_ERROR;
+    }
 
   return SHISHI_OK;
 }

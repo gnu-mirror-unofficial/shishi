@@ -34,7 +34,6 @@ Shishi_asn1
 shishi_krberror (Shishi * handle)
 {
   Shishi_asn1 node;
-  int res;
 
   node = shishi_asn1_krberror (handle);
   if (!node)

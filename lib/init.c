@@ -55,6 +55,8 @@ shishi (void)
   Shishi *handle;
   char *tmp;
 
+  _shishi_gettext_init ();
+
   handle = (Shishi *) malloc (sizeof (*handle));
   if (handle == NULL)
     {
@@ -258,7 +260,7 @@ shishi_init_server_with_paths (Shishi ** handle, const char *systemcfgfile)
     return SHISHI_HANDLE_ERROR;
 
   if (!systemcfgfile)
-    systemcfgfile = shishi_cfg_default_systemfile (handle);
+    systemcfgfile = shishi_cfg_default_systemfile (*handle);
 
   rc = shishi_cfg_from_file (*handle, systemcfgfile);
   if (rc == SHISHI_FOPEN_ERROR)

@@ -1,5 +1,5 @@
 /* crypto-des.c	DES crypto functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -74,8 +74,8 @@ des_crc_verify (Shishi * handle, char *out, int *outlen)
 
 static int
 des_crc_checksum (Shishi * handle,
-		  char *out,
-		  int *outlen, char *in, int inlen)
+		  char *out, size_t *outlen,
+		  const char *in, size_t inlen)
 {
   int res;
   char buffer[BUFSIZ];
@@ -165,8 +165,8 @@ des_md4_verify (Shishi * handle, char *out, int *outlen)
 
 static int
 des_md4_checksum (Shishi * handle,
-		  char *out,
-		  int *outlen, char *in, int inlen)
+		  char *out, size_t *outlen,
+		  const char *in, size_t inlen)
 {
   int res;
   char buffer[BUFSIZ];
@@ -256,8 +256,8 @@ des_md5_verify (Shishi * handle, char *out, int *outlen)
 
 static int
 des_md5_checksum (Shishi * handle,
-		  char *out,
-		  int *outlen, char *in, int inlen)
+		  char *out, size_t *outlen,
+		  const char *in, size_t inlen)
 {
   int res;
   char buffer[BUFSIZ];
@@ -298,10 +298,10 @@ static int
 des_crc_encrypt (Shishi * handle,
 		 Shishi_key *key,
 		 int keyusage,
-		 char *in,
-		 int inlen,
+		 const char *in,
+		 size_t inlen,
 		 char *out,
-		 int *outlen)
+		 size_t *outlen)
 {
   char buffer[BUFSIZ];
   int buflen;
@@ -309,7 +309,7 @@ des_crc_encrypt (Shishi * handle,
 
   while ((inlen % 8) != 0)
     {
-      in[inlen] = '\0';
+      ((char*)in)[inlen] = '\0'; /* XXX */
       inlen++;
     }
 
@@ -326,10 +326,10 @@ static int
 des_crc_decrypt (Shishi * handle,
 		 Shishi_key *key,
 		 int keyusage,
-		 char *in,
-		 int inlen,
+		 const char *in,
+		 size_t inlen,
 		 char *out,
-		 int *outlen)
+		 size_t *outlen)
 {
   int res;
 
@@ -365,18 +365,18 @@ static int
 des_md4_encrypt (Shishi * handle,
 		 Shishi_key *key,
 		 int keyusage,
-		 char *in,
-		 int inlen,
+		 const char *in,
+		 size_t inlen,
 		 char *out,
-		 int *outlen)
+		 size_t *outlen)
 {
   char buffer[BUFSIZ];
-  int buflen;
+  size_t buflen;
   int res;
 
   while ((inlen % 8) != 0)
     {
-      in[inlen] = '\0';
+      ((char*)in)[inlen] = '\0'; /* XXX */
       inlen++;
     }
 
@@ -393,10 +393,10 @@ static int
 des_md4_decrypt (Shishi * handle,
 		 Shishi_key *key,
 		 int keyusage,
-		 char *in,
-		 int inlen,
+		 const char *in,
+		 size_t inlen,
 		 char *out,
-		 int *outlen)
+		 size_t *outlen)
 {
   int res;
 
@@ -420,18 +420,18 @@ static int
 des_md5_encrypt (Shishi * handle,
 		 Shishi_key *key,
 		 int keyusage,
-		 char *in,
-		 int inlen,
+		 const char *in,
+		 size_t inlen,
 		 char *out,
-		 int *outlen)
+		 size_t *outlen)
 {
   char buffer[BUFSIZ];
-  int buflen;
+  size_t buflen;
   int res;
 
   while ((inlen % 8) != 0)
     {
-      in[inlen] = '\0';
+      ((char*)in)[inlen] = '\0'; /* XXX */
       inlen++;
     }
 
@@ -448,10 +448,10 @@ static int
 des_md5_decrypt (Shishi * handle,
 		 Shishi_key *key,
 		 int keyusage,
-		 char *in,
-		 int inlen,
+		 const char *in,
+		 size_t inlen,
 		 char *out,
-		 int *outlen)
+		 size_t *outlen)
 {
   int res;
 
@@ -559,7 +559,7 @@ des_cbc_check (char key[8], char *data, int n_data)
 
 static int
 des_random_to_key (Shishi * handle,
-		   char *random,
+		   const char *random,
 		   size_t randomlen,
 		   Shishi_key *outkey)
 {
@@ -579,11 +579,11 @@ des_random_to_key (Shishi * handle,
 
 static int
 des_string_to_key (Shishi * handle,
-		   char *string,
-		   int stringlen,
-		   char *salt,
-		   int saltlen,
-		   char *parameter,
+		   const char *string,
+		   size_t stringlen,
+		   const char *salt,
+		   size_t saltlen,
+		   const char *parameter,
 		   Shishi_key *outkey)
 {
   char *s;
@@ -785,7 +785,6 @@ checksum_md4 (Shishi * handle,
 {
   int res;
   char buffer[BUFSIZ];
-  char md[16];
   GCRY_MD_HD hd;
   char *p;
 

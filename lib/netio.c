@@ -1,5 +1,5 @@
 /* netio.c	network I/O functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -24,8 +24,9 @@
 static int
 shishi_sendrecv_udp (Shishi * handle,
 		     struct sockaddr *addr,
-		     char *indata,
-		     int inlen, char *outdata, int *outlen, int timeout)
+		     const char *indata, int inlen,
+		     char *outdata, int *outlen,
+		     int timeout)
 {
   struct sockaddr lsa;
   struct sockaddr_in *lsa_inp = (struct sockaddr_in *) &lsa;
@@ -97,8 +98,8 @@ shishi_sendrecv_udp (Shishi * handle,
 int
 shishi_kdc_sendrecv (Shishi * handle,
 		     char *realm,
-		     const char *indata,
-		     size_t inlen, char *outdata, size_t * outlen)
+		     const char *indata, size_t inlen,
+		     char *outdata, size_t * outlen)
 {
   int i, j, k;
   int rc;

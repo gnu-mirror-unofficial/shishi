@@ -1,6 +1,6 @@
 /* Like vsprintf but provides a pointer to malloc'd storage, which must
    be freed by the caller.
-   Copyright (C) 1994 Free Software Foundation, Inc.
+   Copyright (C) 1994, 2003 Free Software Foundation, Inc.
    Copyright (C) 2002 Simon Josefsson
 
 This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ int_vasprintf (char **result, const char *format, va_list * args)
 	      total_width += abs (va_arg (ap, int));
 	    }
 	  else
-	    total_width += strtoul (p, &p, 10);
+	    total_width += strtoul (p, (char**)&p, 10);
 	  if (*p == '.')
 	    {
 	      ++p;
@@ -52,7 +52,7 @@ int_vasprintf (char **result, const char *format, va_list * args)
 		  total_width += abs (va_arg (ap, int));
 		}
 	      else
-		total_width += strtoul (p, &p, 10);
+		total_width += strtoul (p, (char**)&p, 10);
 	    }
 	  while (strchr ("hlL", *p))
 	    ++p;

@@ -1,5 +1,5 @@
 /* crypto-null.c	NULL crypto functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -25,10 +25,10 @@ static int
 null_encrypt (Shishi * handle,
 	      Shishi_key *key,
 	      int keyusage,
-	      char *in,
-	      int inlen,
+	      const char *in,
+	      size_t inlen,
 	      char *out,
-	      int *outlen)
+	      size_t *outlen)
 {
   if (*outlen < inlen)
     return SHISHI_TOO_SMALL_BUFFER;
@@ -43,10 +43,10 @@ static int
 null_decrypt (Shishi * handle,
 	      Shishi_key *key,
 	      int keyusage,
-	      char *in,
-	      int inlen,
+	      const char *in,
+	      size_t inlen,
 	      char *out,
-	      int *outlen)
+	      size_t *outlen)
 {
   if (*outlen < inlen)
     return SHISHI_TOO_SMALL_BUFFER;
@@ -59,8 +59,8 @@ null_decrypt (Shishi * handle,
 
 static int
 null_random_to_key (Shishi * handle,
-		    char *random,
-		    int randomlen,
+		    const char *random,
+		    size_t randomlen,
 		    Shishi_key *outkey)
 {
   return SHISHI_OK;
@@ -68,11 +68,11 @@ null_random_to_key (Shishi * handle,
 
 static int
 null_string_to_key (Shishi * handle,
-		    char *password,
-		    int passwordlen,
-		    char *salt,
-		    int saltlen,
-		    char *parameter,
+		    const char *password,
+		    size_t passwordlen,
+		    const char *salt,
+		    size_t saltlen,
+		    const char *parameter,
 		    Shishi_key *outkey)
 {
   return SHISHI_OK;

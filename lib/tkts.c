@@ -758,8 +758,8 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 
   /* Try to get cached TGT ... */
   memset(&lochint, 0, sizeof(lochint));
-  shishi_asprintf (&lochint.server, "krbtgt/%s",
-		   shishi_realm_default (tkts->handle));
+  shishi_asprintf (&tgtname, "krbtgt/%s", shishi_realm_default (tkts->handle));
+  lochint.server = tgtname;
   tgt = shishi_tkts_find (tkts, &lochint);
   if (tgt == NULL)
     {
@@ -898,7 +898,6 @@ shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
 					const char *passwd)
 {
   Shishi_tkts_hint hint;
-  Shishi_tkt *tkt;
   char buf[HOST_NAME_MAX];
   int ret;
 

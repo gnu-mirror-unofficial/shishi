@@ -1,5 +1,5 @@
 /* crypto-3des.c	3DES crypto functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -25,10 +25,10 @@ static int
 des3_encrypt (Shishi * handle,
 	      Shishi_key *key,
 	      int keyusage,
-	      char *in,
-	      int inlen,
+	      const char *in,
+	      size_t inlen,
 	      char *out,
-	      int *outlen)
+	      size_t *outlen)
 {
   return simplified_encrypt (handle, key, keyusage, in, inlen, out, outlen);
 }
@@ -37,10 +37,10 @@ static int
 des3_decrypt (Shishi * handle,
 	      Shishi_key *key,
 	      int keyusage,
-	      char *in,
-	      int inlen,
+	      const char *in,
+	      size_t inlen,
 	      char *out,
-	      int *outlen)
+	      size_t *outlen)
 {
   return simplified_decrypt (handle, key, keyusage, in, inlen, out, outlen);
 }
@@ -66,8 +66,8 @@ des3_decrypt (Shishi * handle,
  */
 static int
 des3_random_to_key (Shishi * handle,
-		    char *random,
-		    int randomlen,
+		    const char *random,
+		    size_t randomlen,
 		    Shishi_key *outkey)
 {
   unsigned char tmpkey[3*8];
@@ -119,11 +119,11 @@ des3_random_to_key (Shishi * handle,
 
 static int
 des3_string_to_key (Shishi * handle,
-		    char *string,
-		    int stringlen,
-		    char *salt,
-		    int saltlen,
-		    char *parameter,
+		    const char *string,
+		    size_t stringlen,
+		    const char *salt,
+		    size_t saltlen,
+		    const char *parameter,
 		    Shishi_key *outkey)
 {
   char *s;

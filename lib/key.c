@@ -144,7 +144,7 @@ shishi_key_value (Shishi_key * key)
  * Set the key value and length in key structure.
  **/
 void
-shishi_key_value_set (Shishi_key * key, char *value)
+shishi_key_value_set (Shishi_key * key, const char *value)
 {
   if (value &&
       shishi_cipher_keylen (key->type) > 0 &&
@@ -425,10 +425,12 @@ shishi_key_from_random (Shishi * handle,
 int
 shishi_key_from_string (Shishi * handle,
 			int type,
-			char *password,
+			const char *password,
 			int passwordlen,
-			char *salt,
-			int saltlen, char *parameter, Shishi_key ** key)
+			const char *salt,
+			int saltlen,
+			const char *parameter,
+			Shishi_key ** key)
 {
   int rc;
 
