@@ -1388,7 +1388,7 @@ To do that, we need to figure out the name of the realm.  The
 in this case @samp{-d}, @ref{Parameters for shisa}).
 
 @example
-jas@@latte:~/src/shishi$ shisa -d
+jas@@latte:~$ shisa -d
 latte
         krbtgt/latte
                 Account is enabled.
@@ -1402,7 +1402,7 @@ latte
                 Key 0 (0x0).
                         Etype aes256-cts-hmac-sha1-96 (0x12, 18).
                         Salt lattehost/latte.
-jas@@latte:~/src/shishi$
+jas@@latte:~$
 @end example
 
 The realm names are printed at column 0, the principal names are
@@ -1419,12 +1419,12 @@ If the installation did not create a default database for you, you
 might get an error similar to the following.
 
 @example
-jas@@latte:~/src/shishi$ shisa -d
+jas@@latte:~$ shisa -d
 shisa: Cannot initialize `file' database backend.
 Location `/usr/local/var/shishi' and options `N/A'.
 shisa: Initialization failed:
 Shisa database could not be opened.
-jas@@latte:~/src/shishi$
+jas@@latte:~$
 @end example
 
 This indicate the database do not exist.  For a file database, you can
@@ -1439,8 +1439,8 @@ any security vulnerabilities does not lead to a system compromise.
 systems may be possible if you use, e.g., Kerberos Telnet.)
 
 @example
-jas@@latte:~/src/shishi$ mkdir /usr/local/var/shishi
-jas@@latte:~/src/shishi$ chmod go-rwx /usr/local/var/shishi
+jas@@latte:~$ mkdir /usr/local/var/shishi
+jas@@latte:~$ chmod go-rwx /usr/local/var/shishi
 @end example
 
 Back to the first example, where you have a realm @samp{latte} with
@@ -1452,16 +1452,16 @@ existing realm need to be removed first.)  The @samp{--remove} (short
 form @samp{-r}) parameter is used for this purpose, as follows.
 
 @example
-jas@@latte:~/src/shishi$ shisa -r latte host/latte
+jas@@latte:~$ shisa -r latte host/latte
 Removing principal `host/latte@@latte'...
 Removing principal `host/latte@@latte'...done
-jas@@latte:~/src/shishi$ shisa -r latte krbtgt/latte
+jas@@latte:~$ shisa -r latte krbtgt/latte
 Removing principal `krbtgt/latte@@latte'...
 Removing principal `krbtgt/latte@@latte'...done
-jas@@latte:~/src/shishi$ shisa -r latte
+jas@@latte:~$ shisa -r latte
 Removing realm `latte'...
 Removing realm `latte'...done
-jas@@latte:~/src/shishi$
+jas@@latte:~$
 @end example
 
 You may be asking yourself ``What if the realm has many more
@@ -1471,14 +1471,14 @@ script, recall the format of @samp{--list}?), don't worry, there is a
 faster way to do the above:
 
 @example
-jas@@latte:~/src/shishi$ shisa -r latte -f
+jas@@latte:~$ shisa -r latte -f
 Removing principal `krbtgt/latte@@latte'...
 Removing principal `krbtgt/latte@@latte'...done
 Removing principal `host/latte@@latte'...
 Removing principal `host/latte@@latte'...done
 Removing realm `latte'...
 Removing realm `latte'...done
-jas@@latte:~/src/shishi$
+jas@@latte:~$
 @end example
 
 You should now have a working, but empty, Shisa database.  Let's set
@@ -1492,10 +1492,10 @@ We'll use @code{EXAMPLE.ORG} as the realm name in these examples.
 Let's create the realm.
 
 @example
-jas@@latte:~/src/shishi/doc$ shisa -a EXAMPLE.ORG
+jas@@latte:~$ shisa -a EXAMPLE.ORG
 Adding realm `EXAMPLE.ORG'...
 Adding realm `EXAMPLE.ORG'...done
-jas@@latte:~/src/shishi/doc$
+jas@@latte:~$
 @end example
 
 Currently, there are no properties associated with entire realms.  In
@@ -1508,10 +1508,10 @@ principal must look like @samp{krbtgt/REALM} (@pxref{krbtgt,,Name of
 the TGS}).  Let's create it.
 
 @example
-jas@@latte:~/src/shishi/doc$ shisa -a EXAMPLE.ORG krbtgt/EXAMPLE.ORG
+jas@@latte:~$ shisa -a EXAMPLE.ORG krbtgt/EXAMPLE.ORG
 Adding principal `krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG'...
 Adding principal `krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG'...done
-jas@@latte:~/src/shishi/doc$
+jas@@latte:~$
 @end example
 
 Now that wasn't difficult, although not very satisfying either.  What
@@ -1520,7 +1520,7 @@ also mean setting a few values in the database.  Let's view the entry
 to find out which values.
 
 @example
-jas@@latte:~/src/shishi/doc$ shisa -d
+jas@@latte:~$ shisa -d
 EXAMPLE.ORG
         krbtgt/EXAMPLE.ORG
                 Account is enabled.
@@ -1528,7 +1528,7 @@ EXAMPLE.ORG
                 Key 0 (0x0).
                         Etype aes256-cts-hmac-sha1-96 (0x12, 18).
                         Salt EXAMPLE.ORGkrbtgt/EXAMPLE.ORG.
-jas@@latte:~/src/shishi/doc$
+jas@@latte:~$
 @end example
 
 To use host based security services like @acronym{SSH} or Telnet with
@@ -1541,10 +1541,10 @@ by using the @samp{--encryption-type} (short form @samp{-E})
 parameter.
 
 @example
-jas@@latte:~/src/shishi/src$ shisa -a EXAMPLE.ORG host/mail.example.org -E des3
+jas@@latte:~$ shisa -a EXAMPLE.ORG host/mail.example.org -E des3
 Adding principal `host/mail.example.org@@EXAMPLE.ORG'...
 Adding principal `host/mail.example.org@@EXAMPLE.ORG'...done
-jas@@latte:~/src/shishi/src$
+jas@@latte:~$
 @end example
 
 To export the key, there is another Shisa parameter @samp{--keys} that
@@ -1552,7 +1552,7 @@ will print the key in a format that is recognized by Shishi.  Let's
 use it to print the host key.
 
 @example
-jas@@latte:~/src/shishi/doc$ shisa -d --keys EXAMPLE.ORG host/mail.example.org
+jas@@latte:~$ shisa -d --keys EXAMPLE.ORG host/mail.example.org
 EXAMPLE.ORG
         host/mail.example.org
                 Account is enabled.
@@ -1567,15 +1567,15 @@ Realm: EXAMPLE.ORG
 iQdA8hxdvOUHZNliZJv7noM02rXHV8gq
 -----END SHISHI KEY-----
                         Salt EXAMPLE.ORGhost/mail.example.org.
-jas@@latte:~/src/shishi/doc$
+jas@@latte:~$
 @end example
 
 So to set up the host, simply redirect output to the host key file.
 
 @example
-jas@@latte:~/src/shishi/src$ shisa -d --keys EXAMPLE.ORG \
+jas@@latte:~$ shisa -d --keys EXAMPLE.ORG \
      host/mail.example.org > /usr/local/etc/shishi/shishi.keys
-jas@@latte:~/src/shishi/src$
+jas@@latte:~$
 @end example
 
 The next logical step is to create a principal for some user, so you
@@ -1589,18 +1589,18 @@ instead of being a random key.  The @samp{--password} parameter
 indicate this.  This make the tool ask you for the password.
 
 @example
-jas@@latte:~/src/shishi/doc$ shisa -a EXAMPLE.ORG simon --password
+jas@@latte:~$ shisa -a EXAMPLE.ORG simon --password
 Password for `simon@@EXAMPLE.ORG':
 Adding principal `simon@@EXAMPLE.ORG'...
 Adding principal `simon@@EXAMPLE.ORG'...done
-jas@@latte:~/src/shishi/doc$
+jas@@latte:~$
 @end example
 
 The only special thing about this principal now is that it has a
 @code{password} field set in the database.
 
 @example
-jas@@latte:~/src/shishi/doc$ shisa -d EXAMPLE.ORG simon --keys
+jas@@latte:~$ shisa -d EXAMPLE.ORG simon --keys
 EXAMPLE.ORG
         simon
                 Account is enabled.
@@ -1616,7 +1616,7 @@ Ja7ciNtrAI3gtodLaVDQ5zhcH58ffk0kS5tGAM7ILvM=
 -----END SHISHI KEY-----
                         Salt EXAMPLE.ORGsimon.
                         Password foo.
-jas@@latte:~/src/shishi/doc$
+jas@@latte:~$
 @end example
 
 You should now be ready to start the KDC, which is explained in the
@@ -1681,7 +1681,7 @@ non-privileged user.  To continue the example of setting up the
 section, we start the server listen on port 4711 via UDP on IPv4.
 
 @example
-jas@@latte:~/src/shishi$ ~/sbin/shishid -l IPv4:*:4711/udp
+jas@@latte:~$ /usr/local/sbin/shishid -l IPv4:*:4711/udp
 Initializing GNUTLS...
 Initializing GNUTLS...done
 Listening on IPv4:*:4711/udp...done
@@ -1692,7 +1692,7 @@ If you have set up the Shisa database as in the previous example, you
 can now acquire tickets as follows.
 
 @example
-jas@@latte:~/src/shishi$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711' \
+jas@@latte:~$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711' \
    simon@@EXAMPLE.ORG
 Enter password for `simon@@EXAMPLE.ORG':
 simon@@EXAMPLE.ORG:
@@ -1701,7 +1701,7 @@ Endtime:        Fri Dec 12 01:57:41 2003
 Server:         krbtgt/EXAMPLE.ORG key aes256-cts-hmac-sha1-96 (18)
 Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
 Ticket flags:   FORWARDED PROXIABLE RENEWABLE INITIAL (12)
-jas@@latte:~/src/shishi$
+jas@@latte:~$
 @end example
 
 The output from Shishid on a successful invocation would look like:
@@ -1731,7 +1731,7 @@ when contacting the host @samp{mail.example.org} we illustrate using
 the TGS service as well.
 
 @example
-jas@@latte:~/src/shishi$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711' \
+jas@@latte:~$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711' \
    simon@@EXAMPLE.ORG host/mail.example.org
 simon@@EXAMPLE.ORG:
 Authtime:       Fri Dec 12 01:46:54 2003
@@ -1739,7 +1739,7 @@ Endtime:        Fri Dec 12 02:03:34 2003
 Server:         host/mail.example.org key des3-cbc-sha1-kd (16)
 Ticket key:     des3-cbc-sha1-kd (16) protected by aes256-cts-hmac-sha1-96 (18)
 Ticket flags:   FORWARDED PROXIABLE (45398796)
-jas@@latte:~/src/shishi$
+jas@@latte:~$
 @end example
 
 This conclude our walk-through of setting up a new Kerberos realm
@@ -1850,34 +1850,39 @@ available over TCP connections.  A full discussion of the features TLS
 have is out of scope here, but in short it means the communication is
 integrity and privacy protected, and that users can use OpenPGP, X.509
 or SRP (i.e., any mechanism supported by TLS) to authenticate
-themselves to the Kerberos server.
+themselves to the Kerberos server.  For details on the implementation,
+@xref{STARTTLS protected KDC exchanges}.
 
 @subsection Setting up Anonymous TLS
 @cindex anonymous tls
 @cindex Diffie Hellman key exchange
 
 Anonymous TLS is the simplest to set up and use.  In fact, only the
-client need to be informed of the address of your KDC with TLS
-support.  This can be done in the configuration file with the
-@samp{/tls} parameter for @samp{kdc-realm} (@pxref{realm-kdc,, Shishi
-Configuration}), or placed the KDC address in DNS using the
-@samp{_tls} SRV record (@pxref{Configuring DNS for KDC}).
+client need to be informed that your KDC support TLS.  This can be
+done in the configuration file with the @samp{/tls} parameter for
+@samp{kdc-realm} (@pxref{realm-kdc,, Shishi Configuration}), or placed
+the KDC address in DNS using the @samp{_tls} SRV record
+(@pxref{Configuring DNS for KDC}).
 
 To continue our example from previous sections, recall we started
 Shishid as follows.
 
 @example
-jas@@latte:~/src/shishi$ ~/sbin/shishid -l IPv4:*:4711/udp
+jas@@latte:~$ /usr/local/sbin/shishid -l IPv4:*:4711/udp
 Initializing GNUTLS...
+Generating Diffie-Hellman parameters...
 Initializing GNUTLS...done
-Listening on IPv4:*:4711/udp...done
+Listening on IPv4:*:4711/tcp...
 Listening on 1 ports...
+/usr/local/sbin/shishid: Starting (GNUTLS `1.0.3')
+/usr/local/sbin/shishid: Listening on IPv4:*:4711/tcp socket 4
 @end example
 
 Let's use the client to talk with it, using TLS.
 
 @example
-jas@@latte:~/src/shishi/doc$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711/tcp' simon@@EXAMPLE.ORG
+jas@@latte:~/ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711/tcp' \
+    simon@@EXAMPLE.ORG
 Enter password for `simon@@EXAMPLE.ORG':
 simon@@EXAMPLE.ORG:
 Authtime:       Tue Dec 16 05:20:47 2003
@@ -1885,16 +1890,25 @@ Endtime:        Tue Dec 16 05:37:27 2003
 Server:         krbtgt/EXAMPLE.ORG key aes256-cts-hmac-sha1-96 (18)
 Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
 Ticket flags:   FORWARDED PROXIABLE (12)
-jas@@latte:~/src/shishi/doc$
+jas@@latte:~$
 @end example
 
 On success, the server will print the following debug information.
 
 @example
-New connection on *:4711/tcp...*:4711/tcp peer 127.0.0.1
-Has 4 bytes from *:4711/tcp peer 127.0.0.1
-Trying to upgrade to TLS...
-TLS successful
+shishid: Accepted socket 6 from socket 4 as IPv4:*:4711/tcp peer 127.0.0.1
+shishid: Listening on IPv4:*:4711/tcp socket 4
+shishid: Listening on IPv4:*:4711/tcp peer 127.0.0.1 socket 6
+shishid: Has 4 bytes from IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Trying STARTTLS
+shishid: TLS handshake negotiated protocol `TLS 1.0', key exchange \
+ `Anon DH', certficate type `X.509', cipher `AES 256 CBC', mac `SHA', \
+ compression `NULL'
+shishid: TLS anonymous authentication with 1024 bit Diffie-Hellman
+shishid: Listening on IPv4:*:4711/tcp socket 4
+shishid: Listening on IPv4:*:4711/tcp peer 127.0.0.1 socket 6
+shishid: Has 138 bytes from IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Processing 138 from IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
 ASN.1 msg-type 10 (0xa)...
 Processing AS-REQ...
 servername krbtgt/EXAMPLE.ORG
@@ -1909,11 +1923,328 @@ Matching against server etype 18...
 Matching against user etype 18...
 Trying etype 16...
 Trying etype 3...
-TLS process 138 sending 505
-Has 245 bytes from *:4711/tcp peer 127.0.0.1
-Peer *:4711/tcp peer 127.0.0.1 disconnected
-Has 245 bytes from *:4711/tcp peer 127.0.0.1
+shishid: Have 505 bytes for IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Sending 505 bytes to IPv4:*:4711/tcp peer 127.0.0.1 socket 6 via TLS
+shishid: Listening on IPv4:*:4711/tcp socket 4
+shishid: Listening on IPv4:*:4711/tcp peer 127.0.0.1 socket 6
+shishid: Peer IPv4:*:4711/tcp peer 127.0.0.1 disconnected on socket 6
+shishid: Closing IPv4:*:4711/tcp peer 127.0.0.1 socket 6
+shishid: Listening on IPv4:*:4711/tcp socket 4
 @end example
+
+@subsection Setting up X.509 authenticated TLS
+@cindex X.509 authentication
+@cindex authenticated tls
+@cindex client authentication
+@cindex server authentication
+@cindex certificate authority (@acronym{CA})
+
+Setting up X.509 authentication is slightly more complicated than
+anonymous authentication.  You need a X.509 certificate authority
+(@acronym{CA}) that can generate certificates for your Kerberos server
+and Kerberos clients.  It is often easiest to setup the @acronym{CA}
+yourself.  Managing a @acronym{CA} can be a daunting task, and we only
+give the bare essentials to get things up and running.  We suggest
+that you study the relevant literature.  As a first step beyond this
+introduction, you may wish to explore more secure forms of key storage
+than storing them unencrypted on disk.
+
+The following three sections describe how you create the @acronym{CA},
+KDC certificate, and client certificates.  You can use any tool you
+like for this task, as long as they generate X.509 (PKIX) certificates
+in PEM format and RSA keys in PKCS#1 format.  Here we use
+@file{certtool} that come with @acronym{GNUTLS}, which is widely
+available.  We conclude by discussing how you use these certificates
+in the KDC and in the Shishi client.
+
+@subsubsection Create a Kerberos Certificate Authority
+
+First create a @acronym{CA} key.
+
+@example
+jas@@latte:~$ certtool --generate-privkey \
+   --outfile /usr/local/etc/shishi/shishi.key
+Generating a private key...
+Generating a 1024 bit RSA private key...
+jas@@latte:~$
+@end example
+
+Then create the @acronym{CA} certificate.  Use whatever details you
+prefer.
+
+@example
+jas@@latte:~$ certtool --generate-self-signed \
+   --load-privkey /usr/local/etc/shishi/shishi.key \
+   --outfile /usr/local/etc/shishi/shishi.cert
+Generating a self signed certificate...
+Please enter the details of the certificate's distinguished name. \
+Just press enter to ignore a field.
+Country name (2 chars): SE
+Organization name: Shishi Example CA
+Organizational unit name:
+Locality name:
+State or province name:
+Common name: CA
+This field should not be used in new certificates.
+E-mail:
+Enter the certificate's serial number (decimal): 0
+ 
+ 
+Activation/Expiration time.
+The generated certificate will expire in (days): 180
+ 
+ 
+Extensions.
+Does the certificate belong to an authority? (Y/N): y
+Is this a web server certificate? (Y/N): n
+Enter the e-mail of the subject of the certificate:
+ 
+ 
+X.509 certificate info:
+ 
+Version: 3
+Serial Number (hex): 00
+Validity:
+        Not Before: Sun Dec 21 10:59:00 2003
+        Not After: Fri Jun 18 11:59:00 2004
+Subject: C=SE,O=Shishi Example CA,CN=CA
+Subject Public Key Info:
+        Public Key Algorithm: RSA
+ 
+X.509 Extensions:
+        Basic Constraints: (critical)
+                CA:TRUE
+ 
+Is the above information ok? (Y/N): y
+ 
+ 
+Signing certificate...
+jas@@latte:~$
+@end example
+
+@subsubsection Create a Kerberos KDC Certificate
+
+First create the key for the KDC.
+
+@example
+jas@@latte:~$ certtool --generate-privkey \
+   --outfile /usr/local/etc/shishi/shishid.key
+Generating a private key...
+Generating a 1024 bit RSA private key...
+jas@@latte:~$
+@end example
+
+Then create actual KDC certificate, signed by the @acronym{CA}
+certificate created in the previous step.
+
+@example
+jas@@latte:~$ certtool --generate-certificate \
+   --load-ca-certificate /usr/local/etc/shishi/shishi.cert \
+   --load-ca-privkey /usr/local/etc/shishi/shishi.key \
+   --load-privkey /usr/local/etc/shishi/shishid.key \
+   --outfile /usr/local/etc/shishi/shishid.cert
+Generating a signed certificate...
+Loading CA's private key...
+Loading CA's certificate...
+Please enter the details of the certificate's distinguished name. \
+Just press enter to ignore a field.
+Country name (2 chars): SE
+Organization name: Shishi Example KDC
+Organizational unit name:
+Locality name:
+State or province name:
+Common name: KDC
+This field should not be used in new certificates.
+E-mail:
+Enter the certificate's serial number (decimal): 0
+ 
+ 
+Activation/Expiration time.
+The generated certificate will expire in (days): 180
+ 
+ 
+Extensions.
+Does the certificate belong to an authority? (Y/N): n
+Is this a web server certificate? (Y/N): n
+Enter the e-mail of the subject of the certificate:
+ 
+ 
+X.509 certificate info:
+ 
+Version: 3
+Serial Number (hex): 00
+Validity:
+        Not Before: Sun Dec 21 11:02:00 2003
+        Not After: Fri Jun 18 12:02:00 2004
+Subject: C=SE,O=Shishi Example KDC,CN=KDC
+Subject Public Key Info:
+        Public Key Algorithm: RSA
+ 
+X.509 Extensions:
+        Basic Constraints: (critical)
+                CA:FALSE
+ 
+Is the above information ok? (Y/N): y
+ 
+ 
+Signing certificate...
+jas@@latte:~$
+@end example
+
+@subsubsection Create a Kerberos Client Certificate
+
+First create the key for the client.
+
+@example
+jas@@latte:~$ certtool --generate-privkey \
+   --outfile ~/.shishi/client.key
+Generating a private key...
+Generating a 1024 bit RSA private key...
+jas@@latte:~$
+@end example
+
+Then create the client certificate, signed by the @acronym{CA}.  An
+alternative would be to have the KDC sign the client certificates.
+
+@example
+jas@@latte:~$ certtool --generate-certificate \
+   --load-ca-certificate /usr/local/etc/shishi/shishi.cert \
+   --load-ca-privkey /usr/local/etc/shishi/shishi.key \
+   --load-privkey ~/.shishi/client.key \
+   --outfile ~/.shishi/client.certs
+Generating a signed certificate...
+Loading CA's private key...
+Loading CA's certificate...
+Please enter the details of the certificate's distinguished name. \
+Just press enter to ignore a field.
+Country name (2 chars): SE
+Organization name: Shishi Example Client
+Organizational unit name:
+Locality name:
+State or province name:
+Common name: Client
+This field should not be used in new certificates.
+E-mail:
+Enter the certificate's serial number (decimal): 0
+ 
+ 
+Activation/Expiration time.
+The generated certificate will expire in (days): 180
+ 
+ 
+Extensions.
+Does the certificate belong to an authority? (Y/N): n
+Is this a web server certificate? (Y/N): n
+Enter the e-mail of the subject of the certificate:
+ 
+ 
+X.509 certificate info:
+ 
+Version: 3
+Serial Number (hex): 00
+Validity:
+        Not Before: Sun Dec 21 11:04:00 2003
+        Not After: Fri Jun 18 12:04:00 2004
+Subject: C=SE,O=Shishi Example Client,CN=Client
+Subject Public Key Info:
+        Public Key Algorithm: RSA
+ 
+X.509 Extensions:
+        Basic Constraints: (critical)
+                CA:FALSE
+ 
+Is the above information ok? (Y/N): y
+ 
+ 
+Signing certificate...
+jas@@latte:~$
+@end example
+
+@subsubsection Starting KDC with X.509 authentication support
+
+The KDC need the @acronym{CA} certificate (to verify client
+certificates) and the server certificate and key (to authenticate
+itself to the clients).  See elsewhere (@pxref{Parameters for
+shishid}) for the entire description of the parameters.
+
+@example
+jas@@latte:~$ shishid -l *:4711/tcp \
+   --x509cafile /usr/local/etc/shishi/shishi.cert \
+   --x509certfile /usr/local/etc/shishi/shishid.cert \
+   --x509keyfile /usr/local/etc/shishi/shishid.key
+Initializing GNUTLS...
+Parsed 1 CAs...
+Loaded server certificate/key...
+Generating Diffie-Hellman parameters...
+Initializing GNUTLS...done
+Listening on *:4711/tcp...
+Listening on 1 ports...
+/usr/local/sbin/shishid: Starting (GNUTLS `1.0.2')
+/usr/local/sbin/shishid: Listening on *:4711/tcp socket 4
+@end example
+
+Then acquire tickets as usual.  In case you wonder how shishi finds
+the client certificate and key, the filenames used above when
+generating the client certificates happen to be the default filenames
+for these files.  So it pick them up automatically.
+
+@example
+jas@@latte:~$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711/tls' \
+   simon@@EXAMPLE.ORG
+Enter password for `simon@@EXAMPLE.ORG':
+simon@@EXAMPLE.ORG:
+Authtime:       Sun Dec 21 11:15:47 2003
+Endtime:        Sun Dec 21 11:32:27 2003
+Server:         krbtgt/EXAMPLE.ORG key aes256-cts-hmac-sha1-96 (18)
+Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
+Ticket flags:   FORWARDED PROXIABLE RENEWABLE HWAUTHENT TRANSITEDPOLICYCHECKED OKASDELEGATE (12)
+jas@@latte:~$
+@end example
+
+Here is what the server would print.
+
+@example
+shishid: Accepted socket 6 from socket 4 as *:4711/tcp peer 127.0.0.1
+shishid: Listening on *:4711/tcp socket 4
+shishid: Listening on *:4711/tcp peer 127.0.0.1 socket 6
+shishid: Has 4 bytes from *:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Trying STARTTLS
+shishid: TLS handshake negotiated protocol `TLS 1.0', key exchange \
+ `RSA', certficate type `X.509', cipher `AES 256 CBC', mac `SHA', \
+  compression `NULL'
+shishid: TLS client certificate `C=SE,O=Shishi Example Client,CN=Client',\
+ issued by `C=SE,O=Shishi Example CA,CN=CA', serial number `00', MD5 \
+ fingerprint `a5:d3:1f:58:76:e3:58:cd:2d:eb:f7:45:a2:4b:52:f9:', \
+ activated `Sun Dec 21 11:04:00 2003', expires \
+ `Fri Jun 18 12:04:00 2004', version #3, key RSA modulus 1024 bits, \
+ currently valid
+shishid: Listening on *:4711/tcp socket 4
+shishid: Listening on *:4711/tcp peer 127.0.0.1 socket 6
+shishid: Has 138 bytes from *:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Processing 138 from *:4711/tcp peer 127.0.0.1 on socket 6
+ASN.1 msg-type 10 (0xa)...
+Processing AS-REQ...
+servername krbtgt/EXAMPLE.ORG
+client & server realm EXAMPLE.ORG
+Found server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
+username simon
+Found user simon@@EXAMPLE.ORG...
+Found keys for server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
+Found keys for user simon@@EXAMPLE.ORG...
+Trying etype 18...
+Matching against server etype 18...
+Matching against user etype 18...
+Trying etype 16...
+Trying etype 3...
+shishid: Have 505 bytes for *:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Sending 505 bytes to *:4711/tcp peer 127.0.0.1 socket 6 via TLS
+shishid: Listening on *:4711/tcp socket 4
+shishid: Listening on *:4711/tcp peer 127.0.0.1 socket 6
+shishid: Peer *:4711/tcp peer 127.0.0.1 disconnected on socket 6
+shishid: Closing *:4711/tcp peer 127.0.0.1 socket 6
+shishid: Listening on *:4711/tcp socket 4
+@end example
+
 
 @node Multiple servers
 @section Multiple servers
