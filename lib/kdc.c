@@ -112,9 +112,10 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 			Shishi_asn1 * kdcrep)
 {
   char *der;
-  int der_len, out_len;
-  char buffer[BUFSIZ];		/* XXX dynamically allocate this? */
-  char realm[BUFSIZ];		/* XXX dynamically allocate this */
+  int der_len;
+  size_t buflen;
+  char *buffer;
+  char *realm;
   int realmlen;
   int res;
 
@@ -126,40 +127,40 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
       return res;
     }
 
-  realmlen = sizeof (realm);
-  res = shishi_asn1_field (handle, kdcreq, realm, &realmlen,
-			   "req-body.realm");
+  res = shishi_asn1_read2 (handle, kdcreq, "req-body.realm",
+			   &realm, &realmlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not get realm: %s\n",
 			   shishi_strerror_details (handle));
       return res;
     }
+  realm = xrealloc (realm, realmlen + 1);
   realm[realmlen] = '\0';
 
-  out_len = sizeof (buffer);
-  res = shishi_kdc_sendrecv (handle, realm, der, der_len, buffer, &out_len);
+  res = shishi_kdc_sendrecv (handle, realm, der, der_len, &buffer, &buflen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not send to KDC: %s\n",
 			   shishi_strerror_details (handle));
       return res;
     }
+  free (realm);
   free (der);
 
   if (VERBOSEASN1 (handle))
-    printf ("received %d bytes\n", out_len);
+    printf ("received %d bytes\n", buflen);
 
-  *kdcrep = shishi_der2asn1_asrep (handle, buffer, out_len);
+  *kdcrep = shishi_der2asn1_asrep (handle, buffer, buflen);
   if (*kdcrep == NULL)
     {
-      *kdcrep = shishi_der2asn1_tgsrep (handle, buffer, out_len);
+      *kdcrep = shishi_der2asn1_tgsrep (handle, buffer, buflen);
       if (*kdcrep == NULL)
 	{
-	  *kdcrep = shishi_der2asn1_kdcrep (handle, buffer, out_len);
+	  *kdcrep = shishi_der2asn1_kdcrep (handle, buffer, buflen);
 	  if (*kdcrep == NULL)
 	    {
-	      *kdcrep = shishi_der2asn1_krberror (handle, buffer, out_len);
+	      *kdcrep = shishi_der2asn1_krberror (handle, buffer, buflen);
 	      if (*kdcrep == NULL)
 		{
 		  shishi_error_printf
@@ -178,6 +179,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 	    }
 	}
     }
+  free (buffer);
 
   return SHISHI_OK;
 }
