@@ -1,5 +1,5 @@
 # User configuration file for Shishi @VERSION@
-# Copyright 2002, 2003  Simon Josefsson
+# Copyright 2002, 2003, 2004  Simon Josefsson
 # 
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
@@ -54,8 +54,9 @@
 # Enable verbose library messages.
 #verbose
 #verbose-asn1
-#verbose-noice
+#verbose-noise
 #verbose-crypto
+#verbose-crypto-noise
 
 # Specify KDC addresses for realms.
 # Value is REALM,KDCADDRESS[/PROTOCOL][,KDCADDRESS[/PROTOCOL]...]
