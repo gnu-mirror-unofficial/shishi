@@ -501,6 +501,9 @@ shishi_as_process (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
+  if (VERBOSENOICE (handle))
+    shishi_key_print(handle, stderr, key);
+
   res = shishi_kdc_process (handle, asreq, asrep, key,
 			    SHISHI_KEYUSAGE_ENCASREPPART, enckdcreppart);
 
