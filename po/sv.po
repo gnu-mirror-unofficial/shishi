@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2004-01-22 19:07+0100\n"
+"POT-Creation-Date: 2004-04-18 16:38+0200\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -77,72 +77,72 @@ msgstr ""
 msgid "Reading AP-REQ from %s...done\n"
 msgstr ""
 
-#: lib/authenticator.c:169
+#: lib/authenticator.c:194
 #, c-format
 msgid "Writing Authenticator to %s...\n"
 msgstr ""
 
-#: lib/authenticator.c:176
+#: lib/authenticator.c:201
 #, c-format
 msgid "Writing Authenticator in %s format...\n"
 msgstr ""
 
-#: lib/authenticator.c:191
+#: lib/authenticator.c:216
 #, c-format
 msgid "Writing Authenticator to %s...done\n"
 msgstr ""
 
-#: lib/authenticator.c:252
+#: lib/authenticator.c:277
 #, c-format
 msgid "Reading Authenticator from %s...\n"
 msgstr ""
 
-#: lib/authenticator.c:259
+#: lib/authenticator.c:284
 #, c-format
 msgid "Reading Authenticator in %s format...\n"
 msgstr ""
 
-#: lib/authenticator.c:274
+#: lib/authenticator.c:299
 #, c-format
 msgid "Reading Authenticator from %s...done\n"
 msgstr ""
 
-#: lib/diskio.c:964
+#: lib/diskio.c:968
 #, c-format
 msgid "Writing KEY to %s...\n"
 msgstr ""
 
-#: lib/diskio.c:979
+#: lib/diskio.c:983
 #, c-format
 msgid "Writing KEY to %s...done\n"
 msgstr ""
 
-#: lib/encapreppart.c:131
+#: lib/encapreppart.c:152
 #, c-format
 msgid "Writing EncAPRepPart to %s...\n"
 msgstr ""
 
-#: lib/encapreppart.c:138
+#: lib/encapreppart.c:159
 #, c-format
 msgid "Writing EncAPRepPart in %s format...\n"
 msgstr ""
 
-#: lib/encapreppart.c:153
+#: lib/encapreppart.c:174
 #, c-format
 msgid "Writing EncAPRepPart to %s...done\n"
 msgstr ""
 
-#: lib/encapreppart.c:213
+#: lib/encapreppart.c:234
 #, c-format
 msgid "Reading EncAPRepPart from %s...\n"
 msgstr ""
 
-#: lib/encapreppart.c:220
+#: lib/encapreppart.c:241
 #, c-format
 msgid "Reading EncAPRepPart in %s format...\n"
 msgstr ""
 
-#: lib/encapreppart.c:235
+#: lib/encapreppart.c:256
 #, c-format
 msgid "Reading EncAPRepPart from %s...done\n"
 msgstr ""
@@ -247,12 +247,12 @@ msgstr ""
 msgid "Reading KRB-ERROR from %s...done\n"
 msgstr ""
 
-#: lib/krberror.c:1269
+#: lib/krberror.c:1276
 #, c-format
 msgid "Unknown KRB-ERROR error code %d."
 msgstr ""
 
-#: lib/principal.c:467
+#: lib/principal.c:465
 #, c-format
 msgid "Could not set principal name: %s\n"
 msgstr ""
@@ -287,42 +287,42 @@ msgstr ""
 msgid "Reading SAFE from %s...done\n"
 msgstr ""
 
-#: lib/tkt.c:1324
+#: lib/tkt.c:1326
 #, c-format
 msgid "Time of last initial request for a TGT:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1372
+#: lib/tkt.c:1375
 #, c-format
 msgid "Authtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1379
+#: lib/tkt.c:1382
 #, c-format
 msgid "Starttime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1390
+#: lib/tkt.c:1393
 #, c-format
 msgid "Endtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1398
+#: lib/tkt.c:1401
 #, c-format
 msgid "Renewable till:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1402
+#: lib/tkt.c:1405
 #, c-format
 msgid "Server:\t\t%s key %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1407
+#: lib/tkt.c:1410
 #, c-format
 msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1415
+#: lib/tkt.c:1418
 #, c-format
 msgid "Ticket flags:\t"
 msgstr ""

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.0.14\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2004-01-22 19:07+0100\n"
+"POT-Creation-Date: 2004-04-18 16:38+0200\n"
 "PO-Revision-Date: 2004-02-22 21:54+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -74,72 +74,72 @@ msgstr "Odczytywanie AP-REQ w formacie %s...\n"
 msgid "Reading AP-REQ from %s...done\n"
 msgstr "Odczytywanie AP-REQ z %s... zakoñczone\n"
 
-#: lib/authenticator.c:169
+#: lib/authenticator.c:194
 #, c-format
 msgid "Writing Authenticator to %s...\n"
 msgstr "Zapisywanie obiektu Authenticator do %s...\n"
 
-#: lib/authenticator.c:176
+#: lib/authenticator.c:201
 #, c-format
 msgid "Writing Authenticator in %s format...\n"
 msgstr "Zapisywanie obiektu Authenticator w formacie %s...\n"
 
-#: lib/authenticator.c:191
+#: lib/authenticator.c:216
 #, c-format
 msgid "Writing Authenticator to %s...done\n"
 msgstr "Zapisywanie obiektu Authenticator do %s... zakoñczone\n"
 
-#: lib/authenticator.c:252
+#: lib/authenticator.c:277
 #, c-format
 msgid "Reading Authenticator from %s...\n"
 msgstr "Odczytywanie obiektu Authenticator z %s...\n"
 
-#: lib/authenticator.c:259
+#: lib/authenticator.c:284
 #, c-format
 msgid "Reading Authenticator in %s format...\n"
 msgstr "Odczytywanie obiektu Authenticator w formacie %s...\n"
 
-#: lib/authenticator.c:274
+#: lib/authenticator.c:299
 #, c-format
 msgid "Reading Authenticator from %s...done\n"
 msgstr "Odczytywanie obiektu Authenticator z %s... zakoñczone\n"
 
-#: lib/diskio.c:964
+#: lib/diskio.c:968
 #, c-format
 msgid "Writing KEY to %s...\n"
 msgstr "Zapisywanie KEY do %s...\n"
 
-#: lib/diskio.c:979
+#: lib/diskio.c:983
 #, c-format
 msgid "Writing KEY to %s...done\n"
 msgstr "Zapisywanie KEY do %s... zakoñczone\n"
 
-#: lib/encapreppart.c:131
+#: lib/encapreppart.c:152
 #, c-format
 msgid "Writing EncAPRepPart to %s...\n"
 msgstr "Zapisywanie EncAPRepPart do %s...\n"
 
-#: lib/encapreppart.c:138
+#: lib/encapreppart.c:159
 #, c-format
 msgid "Writing EncAPRepPart in %s format...\n"
 msgstr "Zapisywanie EncAPRepPart w formacie %s...\n"
 
-#: lib/encapreppart.c:153
+#: lib/encapreppart.c:174
 #, c-format
 msgid "Writing EncAPRepPart to %s...done\n"
 msgstr "Zapisywanie EncAPRepPart do %s... zakoñczone\n"
 
-#: lib/encapreppart.c:213
+#: lib/encapreppart.c:234
 #, c-format
 msgid "Reading EncAPRepPart from %s...\n"
 msgstr "Odczytywanie EncAPRepPart z %s...\n"
 
-#: lib/encapreppart.c:220
+#: lib/encapreppart.c:241
 #, c-format
 msgid "Reading EncAPRepPart in %s format...\n"
 msgstr "Odczytywanie EncAPRepPart w formacie %s...\n"
 
-#: lib/encapreppart.c:235
+#: lib/encapreppart.c:256
 #, c-format
 msgid "Reading EncAPRepPart from %s...done\n"
 msgstr "Odczytywanie EncAPRepPart z %s... zakoñczone\n"
@@ -244,12 +244,12 @@ msgstr "Odczytywanie KRB-ERROR w formacie %s...\n"
 msgid "Reading KRB-ERROR from %s...done\n"
 msgstr "Odczytywanie KRB-ERROR z %s... zakoñczone\n"
 
-#: lib/krberror.c:1269
+#: lib/krberror.c:1276
 #, c-format
 msgid "Unknown KRB-ERROR error code %d."
 msgstr "Nieznany kod b³êdu KRB-ERROR %d."
 
-#: lib/principal.c:467
+#: lib/principal.c:465
 #, c-format
 msgid "Could not set principal name: %s\n"
 msgstr "Nie mo¿na ustawiæ nazwy g³ównej: %s\n"
@@ -284,42 +284,42 @@ msgstr "Odczytywanie SAFE w formacie %s...\n"
 msgid "Reading SAFE from %s...done\n"
 msgstr "Odczytywanie SAFE z %s... zakoñczone\n"
 
-#: lib/tkt.c:1324
+#: lib/tkt.c:1326
 #, c-format
 msgid "Time of last initial request for a TGT:\t%s"
 msgstr "Czas ostatniego pocz±tkowego ¿±dania TGT:\t%s"
 
-#: lib/tkt.c:1372
+#: lib/tkt.c:1375
 #, c-format
 msgid "Authtime:\t%s"
 msgstr "Czas uwierzytelnienia:\t%s"
 
-#: lib/tkt.c:1379
+#: lib/tkt.c:1382
 #, c-format
 msgid "Starttime:\t%s"
 msgstr "Czas pocz±tku:\t%s"
 
-#: lib/tkt.c:1390
+#: lib/tkt.c:1393
 #, c-format
 msgid "Endtime:\t%s"
 msgstr "Czas koñca:\t%s"
 
-#: lib/tkt.c:1398
+#: lib/tkt.c:1401
 #, c-format
 msgid "Renewable till:\t%s"
 msgstr "Odnawialny do:\t%s"
 
-#: lib/tkt.c:1402
+#: lib/tkt.c:1405
 #, c-format
 msgid "Server:\t\t%s key %s (%d)\n"
 msgstr "Serwer:\t\t%s klucz %s (%d)\n"
 
-#: lib/tkt.c:1407
+#: lib/tkt.c:1410
 #, c-format
 msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr "Klucz biletu:\t%s (%d) zabezpieczony przez %s (%d)\n"
 
-#: lib/tkt.c:1415
+#: lib/tkt.c:1418
 #, c-format
 msgid "Ticket flags:\t"
 msgstr "Flagi biletu:\t"
