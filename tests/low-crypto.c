@@ -329,6 +329,33 @@ test (Shishi * handle)
 
   err = shishi_aes_cts (handle, 0, "keykeykeykeykeyk", 16,
 			"iviviviviviviviv", &ivout,
+			"abcdefghijklmnop", 16, &out);
+  if (err)
+    fail ("shishi_aes_cts(16) failed: %d\n", err);
+  else
+    {
+      if (memcmp (out, "\x89\xee\x53\x33\x54\xa8\xb0\xb7"
+		  "\xb6\x36\xbf\x80\xb0\xba\x6a\x4a", 16) == 0)
+	success ("shishi_aes_cts(16) OK\n");
+      else
+	{
+	  hexprint (out, 16);
+	  fail ("shishi_aes_cts(16) failure\n");
+	}
+
+      if (memcmp (ivout, "\x89\xee\x53\x33\x54\xa8\xb0\xb7"
+		  "\xb6\x36\xbf\x80\xb0\xba\x6a\x4a", 16) == 0)
+	success ("shishi_aes_cts(16) OK IV\n");
+      else
+	{
+	  hexprint (ivout, 16);
+	  fail ("shishi_aes_cts(16) failure IV\n");
+	}
+      free (out);
+    }
+
+  err = shishi_aes_cts (handle, 0, "keykeykeykeykeyk", 16,
+			"iviviviviviviviv", &ivout,
 			"abcdefghijklmnopqrstuvxy", 24, &out);
   if (err)
     fail ("shishi_aes_cts(24) failed: %d\n", err);
