@@ -123,18 +123,13 @@ shishi_enckdcreppart_key_set (Shishi * handle,
 			      Shishi_asn1 enckdcreppart, Shishi_key * key)
 {
   int res;
-  char buf[BUFSIZ];
-  int keytype;
 
-  keytype = shishi_key_type (key);
-  sprintf (buf, "%d", keytype);
-  res = shishi_asn1_write (handle, enckdcreppart, "key.keytype",
-			   buf, 0);
+  res = shishi_asn1_write_integer (handle, enckdcreppart, "key.keytype",
+				   shishi_key_type (key));
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = shishi_asn1_write (handle, enckdcreppart,
-			   "key.keyvalue",
+  res = shishi_asn1_write (handle, enckdcreppart, "key.keyvalue",
 			   shishi_key_value (key), shishi_key_length (key));
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
@@ -185,11 +180,8 @@ shishi_enckdcreppart_flags_set (Shishi * handle,
 				Shishi_asn1 enckdcreppart, int flags)
 {
   int res;
-  char buf[BUFSIZ];
 
-  sprintf (buf, "%d", flags);
-  res = shishi_asn1_write (handle, enckdcreppart, "flags",
-			   buf, 0);
+  res = shishi_asn1_write_integer (handle, enckdcreppart, "flags", flags);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
@@ -329,13 +321,11 @@ shishi_enckdcreppart_sname_set (Shishi * handle,
 				Shishi_name_type name_type, char *sname[])
 {
   int res = SHISHI_OK;
-  char buf[BUFSIZ];
   int i;
+  char *buf;
 
-  sprintf (buf, "%d", name_type);
-
-  res = shishi_asn1_write (handle, enckdcreppart,
-			   "sname.name-type", buf, 0);
+  res = shishi_asn1_write_integer (handle, enckdcreppart,
+				   "sname.name-type", name_type);
   if (res != SHISHI_OK)
     return res;
 
@@ -347,13 +337,14 @@ shishi_enckdcreppart_sname_set (Shishi * handle,
   i = 1;
   while (sname[i - 1])
     {
-      res = shishi_asn1_write (handle, enckdcreppart,
-			       "sname.name-string", "NEW", 1);
+      res = shishi_asn1_write (handle, enckdcreppart, "sname.name-string",
+			       "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (buf, "sname.name-string.?%d", i);
+      asprintf (&buf, "sname.name-string.?%d", i);
       res = shishi_asn1_write (handle, enckdcreppart, buf, sname[i - 1], 0);
+      free(buf);
       if (res != SHISHI_OK)
 	return res;
 
