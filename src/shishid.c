@@ -114,13 +114,6 @@
 #include <syslog.h>
 #endif
 
-#ifdef ENABLE_NLS
-extern char *_shishi_gettext (const char *str);
-#define _(String) _shishi_gettext (String)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
-#endif
-
 #include <shishi.h>
 #include <argp.h>
 
