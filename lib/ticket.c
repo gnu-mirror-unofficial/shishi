@@ -569,76 +569,20 @@ shishi_ticket_print (Shishi * handle,
   return SHISHI_OK;
 }
 
+/* Create AP-REQ for server indicated by ticket, with authentication
+   data being provided data */
 int
-shishi_ticket_authenticator_data (Shishi * handle,
-				      Shishi_ticket * ticket,
-				      char *data,
-				      int datalen, ASN1_TYPE * authenticator)
-{
-  int res;
-
-  *authenticator = shishi_authenticator (handle);
-  if (*authenticator == NULL)
-    {
-      shishi_error_printf (handle, "Could not create Authenticator: %s\n",
-			   shishi_strerror_details (handle));
-      return SHISHI_ASN1_ERROR;
-    }
-
-  res = shishi_authenticator_add_cksum (handle, *authenticator,
-					ticket->enckdcreppart,
-					data, datalen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle,
-			   "Could not add checksum to authenticator: %s\n",
-			   shishi_strerror_details (handle));
-      return res;
-    }
-
-  return SHISHI_OK;
-}
-
-int
-shishi_ticket_authenticator (Shishi * handle,
-				 Shishi_ticket * ticket,
-				 ASN1_TYPE node,
-				 char *field, ASN1_TYPE * authenticator)
-{
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  unsigned char der[BUFSIZ];
-  size_t derlen;
-  int res;
-
-  if (node != ASN1_TYPE_EMPTY)
-    {
-      res = asn1_der_coding (node, field, der, &derlen, errorDescription);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_printf (handle, "Could not DER encode node: %s\n",
-			       errorDescription);
-	  return SHISHI_ASN1_ERROR;
-	}
-
-      memmove (der, der + 2, derlen - 2);
-      derlen -= 2;
-    }
-  else
-    derlen = 0;
-
-  res = shishi_ticket_authenticator_data (handle,
-					      ticket,
-					      der, derlen, authenticator);
-  return res;
-}
-
-int
-shishi_ticket_apreq_data (Shishi * handle,
-			  Shishi_ticket * ticket,
-			  char *data, int datalen, ASN1_TYPE * apreq)
+shishi_ticket_apreq_data_usage (Shishi * handle,
+				Shishi_ticket * ticket,
+				int authenticatorcksumkeyusage,
+				int authenticatorkeyusage,
+				char *data, int datalen, ASN1_TYPE * apreq)
 {
   ASN1_TYPE authenticator = ASN1_TYPE_EMPTY;
   int res;
+  unsigned char key[BUFSIZ];
+  int keylen;
+  int keytype;
 
   *apreq = shishi_apreq (handle);
   if (apreq == NULL)
@@ -656,22 +600,24 @@ shishi_ticket_apreq_data (Shishi * handle,
       return res;
     }
 
-  res = shishi_ticket_authenticator_data (handle,
-					      ticket,
-					      data, datalen, &authenticator);
+  keylen = sizeof (key);
+  res = shishi_enckdcreppart_get_key
+    (handle, 
+     shishi_ticket_enckdcreppart(handle, ticket),
+     &keytype, key, &keylen);
   if (res != SHISHI_OK)
     {
-      printf (_("Could not make authenticator: %s\n"),
-	      shishi_strerror_details (handle));
+      shishi_error_printf (handle, "Could not extract key: %s\n",
+			   shishi_strerror_details (handle));
       return res;
     }
 
-  res = shishi_apreq_add_authenticator (handle, *apreq,
-					ticket->enckdcreppart,
-					authenticator);
+  res = shishi_apreq_make_authenticator_der
+    (handle, *apreq, authenticatorcksumkeyusage, authenticatorkeyusage,
+     keytype, key, keylen, data, datalen);
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "Could not set authenticator: %s\n",
+      shishi_error_printf (handle, "Could not make authenticator: %s\n",
 			   shishi_strerror_details (handle));
       return res;
     }
@@ -680,9 +626,25 @@ shishi_ticket_apreq_data (Shishi * handle,
 }
 
 int
-shishi_ticket_apreq (Shishi * handle,
-		     Shishi_ticket * ticket,
-		     ASN1_TYPE node, char *field, ASN1_TYPE * apreq)
+shishi_ticket_apreq_data (Shishi * handle,
+			  Shishi_ticket * ticket,
+			  char *data, int datalen, ASN1_TYPE * apreq)
+{
+  return 
+    shishi_ticket_apreq_data_usage (handle, ticket,
+				    SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR_CKSUM,
+				    SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR,
+				    data, datalen, apreq);
+}
+
+/* Create AP-REQ for server indicated by ticket, with authentication
+   data being DER coding of provided ASN.1 node */
+int
+shishi_ticket_apreq_asn1_usage (Shishi * handle,
+				Shishi_ticket * ticket,
+				int authenticatorcksumkeyusage,
+				int authenticatorkeyusage,
+				ASN1_TYPE node, char *field, ASN1_TYPE * apreq)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   unsigned char der[BUFSIZ];
@@ -705,10 +667,26 @@ shishi_ticket_apreq (Shishi * handle,
   else
     derlen = 0;
 
-  res = shishi_ticket_apreq_data (handle, ticket, der, derlen, apreq);
+  res = shishi_ticket_apreq_data_usage (handle, ticket, 
+					authenticatorcksumkeyusage,
+					authenticatorkeyusage, 
+					der, derlen, apreq);
 
   return res;
 }
+
+int
+shishi_ticket_apreq_asn1 (Shishi * handle,
+			  Shishi_ticket * ticket,
+			  ASN1_TYPE node, char *field, ASN1_TYPE * apreq)
+{
+  return 
+    shishi_ticket_apreq_asn1_usage (handle, ticket,
+				    SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR_CKSUM,
+				    SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR,
+				    node, field, apreq);
+}
+
 
 int
 shishi_ticket_tgsreq (Shishi * handle,
@@ -749,8 +727,9 @@ shishi_ticket_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_decrypt (handle, etype, buf, &buflen, cipher, cipherlen,
-			key, keylen);
+  res = shishi_decrypt (handle, SHISHI_KEYUSAGE_KDCREP_TICKET, 
+			key, keytype, keylen,
+			cipher, cipherlen, buf, &buflen);
 
   if (res != SHISHI_OK)
     {

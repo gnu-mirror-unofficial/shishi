@@ -437,10 +437,8 @@ shishi_kdcrep_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_derive_decrypt (handle, etype, SHISHI_KEYUSAGE_ENCASREPPART,
-			       buf, &buflen, cipher, cipherlen,
-			       key, keylen);
-
+  res = shishi_decrypt (handle, SHISHI_KEYUSAGE_ENCASREPPART, etype,
+			key, keylen, cipher, cipherlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
       if (!SILENT(handle))
