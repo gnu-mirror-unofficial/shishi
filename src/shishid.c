@@ -155,7 +155,6 @@ static error_t
 parse_opt (int key, char *arg, struct argp_state *state)
 {
   struct arguments *arguments = state->input;
-  int res;
   char *ptrptr;
   char *val;
   int i;
@@ -182,7 +181,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       /* fall through */
 
     case 'l':
-      for (i = 0; val = strtok_r (i == 0 ? arg : NULL, ", \t", &ptrptr); i++)
+      for (i = 0; (val = strtok_r (i == 0 ? arg : NULL, ", \t", &ptrptr)); i++)
 	{
 	  char *service, *proto;
 	  struct servent *se;
