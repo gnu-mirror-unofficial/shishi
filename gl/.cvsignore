@@ -1,5 +1,3 @@
-Makefile
-Makefile.in
 alloca.h
 sysexits.h
 *.lo

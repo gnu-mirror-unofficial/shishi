@@ -18,8 +18,7 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-AC_PREREQ(2.59)
-AC_INIT([shishi],[0.0.9],[bug-shishi@josefsson.org])
+AC_INIT([shishi], [0.0.9], [bug-shishi@josefsson.org])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
@@ -32,7 +31,8 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
-AM_INIT_AUTOMAKE(gnits)
+AC_PREREQ(2.59)
+AM_INIT_AUTOMAKE([1.8 gnits])
 AC_CONFIG_HEADERS(config.h)
 
 # Checks for header files.
@@ -410,13 +410,12 @@ AC_ARG_WITH(db-dir,
             esac])
 AC_MSG_NOTICE([user database root path $DBDIR])
 
-AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile \
+AC_CONFIG_FILES(Makefile po/Makefile.in \
 	asn1/Makefile crypto/Makefile examples/Makefile \
 	lib/Makefile lib/shishi.h db/Makefile src/Makefile tests/Makefile \
 	doc/Makefile doc/reference/Makefile \
 	extra/Makefile extra/pam_shishi/Makefile extra/rsh-redone/Makefile \
-	gl/Makefile gl/m4/Makefile shishi.pc \
-	shishi.conf shishi.skel shisa.conf)
+	gl/Makefile shishi.pc shishi.conf shishi.skel shisa.conf)
 
 # We are done
 AC_OUTPUT

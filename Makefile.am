@@ -20,7 +20,7 @@
 
 DISTCHECK_CONFIGURE_FLAGS = --without-system-asn1 --without-libgcrypt
 
-SUBDIRS = m4 po gl
+SUBDIRS = po gl
 
 if ASN1
 SUBDIRS += asn1
@@ -31,7 +31,7 @@ endif
 
 SUBDIRS += lib db src tests doc
 
-DIST_SUBDIRS = m4 po gl asn1 crypto lib src tests doc examples extra
+DIST_SUBDIRS = po gl asn1 crypto lib src tests doc examples extra
 
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 

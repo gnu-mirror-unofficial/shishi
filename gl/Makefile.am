@@ -1,16 +1,18 @@
+## Process this file with automake to produce Makefile.in.
+
+# GNULIB modules:
 # strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm linebuffer xgethostname xgetdomainname getline xreadlink
+
+# Local not-yet-in-gnulib modules:
 # + base64 (x)memdup
 
+# After using gnulib-tool, do:
 # s/libfoo_a/libfoo_la/g
 # s/libfoo.a/libfoo.la/
 # s/libfoo_a_LIBADD = @LIBOBJS@//g
 # s/#libfoo_la_LIBADD/libfoo_la_LIBADD/g
 # s/@LIBOBJS@/@LTLIBOBJS@/g
 # s/noinst_LIBRARIES/noinst_LTLIBRARIES/g
-
-SUBDIRS = m4
-
-## Process this file with automake to produce Makefile.in.
 
 AUTOMAKE_OPTIONS = 1.5 gnits no-dependencies
 
@@ -69,6 +71,8 @@ libfoo_la_SOURCES += linebuffer.h linebuffer.c
 libfoo_la_SOURCES += mempcpy.h
 
 
+
+libfoo_la_SOURCES += progname.h progname.c
 
 
 
