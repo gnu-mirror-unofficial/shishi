@@ -267,23 +267,25 @@ shishi_d2a_kdcreq (Shishi * handle, char *der, int derlen)
   structure = shishi_d2a_asreq (handle, der, derlen);
   if (structure == ASN1_TYPE_EMPTY)
     {
-      printf ("bad kdcreq magic\n");
+      printf ("d2a_kdcreq: not asreq\n");
       shishi_error_printf (handle, "Could not DER decode AS-REQ\n");
 
       structure = shishi_d2a_tgsreq (handle, der, derlen);
       if (structure == ASN1_TYPE_EMPTY)
 	{
-	  printf ("bad kdcreq magic\n");
+	  printf ("d2a_kdcreq: not tgsreq\n");
 	  shishi_error_printf (handle, "Could not DER decode TGS-REQ\n");
 
 	  structure = shishi_d2a_kdcreq (handle, der, derlen);
 	  if (structure == ASN1_TYPE_EMPTY)
 	    {
-	      printf ("bad kdcreq magic\n");
+	      printf ("d2a_kdcreq: not kdcreq\n");
 	      shishi_error_printf (handle, "Could not DER decode KDC-REQ\n");
 
 	      return ASN1_TYPE_EMPTY;
 	    }
+	  else
+	    printf ("d2a_kdcreq: kdcreq!!\n");
 	}
     }
 
