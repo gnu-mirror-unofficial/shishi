@@ -27,8 +27,8 @@ alloca.h: alloca_.h
 	mv alloca.h-t alloca.h
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
-libfoo_la_LIBADD += @ALLOCA@
-#libfoo_la_LIBADD += @LTALLOCA@
+#libfoo_la_LIBADD += @ALLOCA@
+libfoo_la_LIBADD += @LTALLOCA@
 libfoo_la_SOURCES += argp.h argp-ba.c argp-eexst.c \
            argp-fmtstream.c argp-fmtstream.h argp-fs-xinl.c argp-help.c \
            argp-namefrob.h argp-parse.c argp-pv.c argp-pvh.c argp-xinl.c
