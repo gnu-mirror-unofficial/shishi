@@ -36,8 +36,9 @@ option "enabled" - "Only dump or list enabled principals.\n" flag off
 option "disabled" - "Only dump or list disabled principals.\n" flag off
 
 section "Values (for --add and --modify)"
-option "encryption-type" E "Specify the encryption type of key." no
-option "password" - "Derive key from this password." no
+option "encryption-type" E "Specify the encryption type of key.  Valid values include 'aes' and '3des'." string no
+option "password" - "Derive key from this password." string no
+option "random" - "Use a random key." no
 
 section "Other options"
 option "configuration-file" c "Use specified configuration file." string typestr="FILE" no

@@ -378,6 +378,14 @@ main (int argc, char *argv[])
   if (rc != SHISHI_OK)
     error (1, 0, "Shishi initialize failed: %s", shishi_strerror (rc));
 
+  if (args_info.encryption_type_given)
+    {
+      rc = shishi_cfg_clientkdcetype_set (sh, args_info.encryption_type_arg);
+      if (rc != SHISHI_OK)
+	error (1, 0, "Could not set encryption type `%s': %s",
+	       args_info.encryption_type_arg, shishi_strerror (rc));
+    }
+
   if (args_info.list_given || args_info.dump_given)
     rc = dumplist ();
   else if (args_info.add_given)
