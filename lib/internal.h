@@ -194,6 +194,8 @@ struct Shishi
   int renewlife;
   int32_t *clientkdcetypes;
   size_t nclientkdcetypes;
+  int32_t *authorizationtypes;
+  size_t nauthorizationtypes;
   struct Shishi_realminfo *realminfos;
   size_t nrealminfos;
   char *kdc;

@@ -32,6 +32,7 @@ enum
   KDC_RETRIES_OPTION,
   TICKET_LIFE_OPTION,
   RENEW_LIFE_OPTION,
+  AUTHORIZATION_TYPES_OPTION,
   VERBOSE_CRYPTO_NOICE_OPTION,
   VERBOSE_CRYPTO_OPTION,
   VERBOSE_ASN1_OPTION,
@@ -51,6 +52,7 @@ static char *const _shishi_opts[] = {
   /* [KDC_RETRIES_OPTION] =          */ "kdc-retries",
   /* [TICKET_LIFE_OPTION] =          */ "ticket-life",
   /* [RENEW_LIFE_OPTION] =           */ "renew-life",
+  /* [AUTHORIZATION_TYPES_OPTION] =  */ "authorization-types",
   /* [VERBOSE_CRYPTO_NOICE_OPTION] = */ "verbose-crypto-noice",
   /* [VERBOSE_CRYPTO_OPTION] =       */ "verbose-crypto",
   /* [VERBOSE_ASN1_OPTION] =         */ "verbose-asn1",
@@ -215,6 +217,12 @@ shishi_cfg (Shishi * handle, char *option)
 
 	case CLIENT_KDC_ETYPES_OPTION:
 	  res = shishi_cfg_clientkdcetype_set (handle, value);
+	  if (res != SHISHI_OK)
+	    return res;
+	  break;
+
+	case AUTHORIZATION_TYPES_OPTION:
+	  res = shishi_cfg_authorizationtype_set (handle, value);
 	  if (res != SHISHI_OK)
 	    return res;
 	  break;
@@ -532,6 +540,51 @@ shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
 	  handle->clientkdcetypes = new;
 	  handle->clientkdcetypes[tot - 1] = etype;
 	  handle->nclientkdcetypes = tot;
+	}
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_cfg_authorizationtype_set:
+ * @handle: Shishi library handle create by shishi_init().
+ * @value: string with authorization types.
+ *
+ * Set the "authorization-types" configuration option from given string.
+ * The string contains authorization types (integer or names) separated
+ * by comma or whitespace, e.g. "basic k5login".
+ *
+ * Return value: Return SHISHI_OK iff successful.
+ **/
+int
+shishi_cfg_authorizationtype_set (Shishi * handle, char *value)
+{
+  char *ptrptr;
+  char *val;
+  int i;
+  int tot = 0;
+
+  if (value == NULL || *value == '\0')
+    return SHISHI_OK;
+
+  for (i = 0; (val = strtok_r (i == 0 ? value : NULL, ", \t", &ptrptr)); i++)
+    {
+      int atype = shishi_authorization_parse (val);
+
+      if (atype == -1)
+	shishi_warn (handle, "Ignoring unknown authorization type: `%s'",
+		     val);
+      else
+	{
+	  int *new;
+
+	  tot++;
+	  new = xrealloc (handle->authorizationtypes,
+			  tot * sizeof (*handle->authorizationtypes));
+	  handle->authorizationtypes = new;
+	  handle->authorizationtypes[tot - 1] = atype;
+	  handle->nauthorizationtypes = tot;
 	}
     }
 

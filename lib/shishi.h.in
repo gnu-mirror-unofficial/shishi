@@ -309,6 +309,13 @@ Shishi_outputtype;
 
 typedef enum
 {
+  SHISHI_AUTHORIZATION_BASIC = 0,
+  SHISHI_AUTHORIZATION_K5LOGIN
+}
+Shishi_authorization;
+
+typedef enum
+{
   /* 1. AS-REQ PA-ENC-TIMESTAMP padata timestamp, encrypted with the
      client key */
   SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP = 1,
@@ -587,6 +594,7 @@ extern const char *shishi_cfg_default_userdirectory (Shishi * handle);
 extern const char *shishi_cfg_default_userfile (Shishi * handle);
 extern int shishi_cfg_clientkdcetype (Shishi * handle, int32_t ** etypes);
 extern int shishi_cfg_clientkdcetype_set (Shishi * handle, char *value);
+extern int shishi_cfg_authorizationtype_set (Shishi * handle, char *value);
 
 /* error.c */
 extern const char *shishi_strerror (int err);
@@ -1978,5 +1986,6 @@ extern int shishi_priv_process (Shishi_priv * priv, Shishi_key * key);
 /* authorize.c */
 extern int shishi_authorized_p (Shishi * handle,
 				Shishi_tkt * tkt, const char *authzname);
+extern int shishi_authorization_parse (const char *authorization);
 
 #endif

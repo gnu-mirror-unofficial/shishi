@@ -61,6 +61,11 @@ init_handle (int outputtype)
 				     handle->nclientkdcetypes);
   handle->clientkdcetypes[0] = SHISHI_AES256_CTS_HMAC_SHA1_96;
 
+  handle->nauthorizationtypes = 1;
+  handle->authorizationtypes = xmalloc (sizeof (*handle->authorizationtypes) *
+					handle->nauthorizationtypes);
+  handle->authorizationtypes[0] = SHISHI_AUTHORIZATION_BASIC;
+
   return handle;
 }
 
@@ -128,6 +133,8 @@ shishi_done (Shishi * handle)
     free (handle->hostkeysdefaultfile);
   if (handle->clientkdcetypes)
     free (handle->clientkdcetypes);
+  if (handle->authorizationtypes)
+    free (handle->authorizationtypes);
 
   if (handle->asn1)
     shishi_asn1_done (handle, handle->asn1);
