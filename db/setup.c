@@ -86,7 +86,7 @@ shisa_init (Shisa ** dbh)
  * shisa_init_with_paths:
  * @dbh: pointer to library handle to be created.
  * @file: Filename of system configuration, or NULL.
-
+ *
  * Create a Shisa library handle, using shisa(), and read the system
  * configuration file indicated location (or the default location, if
  * %NULL).  The paths to the default system configuration file is
