@@ -1,5 +1,5 @@
 Shishi THANKS -- Acknowledgements.
-Copyright (C) 2002, 2003 Simon Josefsson
+Copyright (C) 2002, 2003, 2004 Simon Josefsson
 See the end for copying conditions.
 
 Shishi uses Libtasn1 by Fabio Fiorina, Libnettle by Niels Möller,
@@ -12,6 +12,7 @@ CVS, Texinfo, Help2man and Emacs.
 
 Bug reports, patches and/or suggestions were also received from:
 
+Jakub Bogusz
 Nicolas Pouvesle
 
 ----------------------------------------------------------------------

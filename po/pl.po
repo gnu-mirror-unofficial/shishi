@@ -1,0 +1,330 @@
+# Polish translation for shishi.
+# This file is distributed under the same license as the shishi package.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2004
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: shishi 0.0.14\n"
+"Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
+"POT-Creation-Date: 2004-01-22 19:07+0100\n"
+"PO-Revision-Date: 2004-02-22 21:54+0100\n"
+"Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
+"Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-2\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/aprep.c:148
+#, c-format
+msgid "Writing AP-REP to %s...\n"
+msgstr "Zapisywanie AP-REP do %s...\n"
+
+#: lib/aprep.c:155
+#, c-format
+msgid "Writing AP-REP in %s format...\n"
+msgstr "Zapisywanie AP-REP w formacie %s...\n"
+
+#: lib/aprep.c:170
+#, c-format
+msgid "Writing AP-REP to %s...done\n"
+msgstr "Zapisywanie AP-REP do %s... zakoñczone\n"
+
+#: lib/aprep.c:228
+#, c-format
+msgid "Reading AP-REP from %s...\n"
+msgstr "Odczytywanie AP-REP z %s...\n"
+
+#: lib/aprep.c:235
+#, c-format
+msgid "Reading AP-REP in %s format...\n"
+msgstr "Odczytywanie AP-REP w formacie %s...\n"
+
+#: lib/aprep.c:250
+#, c-format
+msgid "Reading AP-REP from %s...done\n"
+msgstr "Odczytywanie AP-REP z %s... zakoñczone\n"
+
+#: lib/apreq.c:210
+#, c-format
+msgid "Writing AP-REQ to %s...\n"
+msgstr "Zapisywanie AP-REQ do %s...\n"
+
+#: lib/apreq.c:217
+#, c-format
+msgid "Writing AP-REQ in %s format...\n"
+msgstr "Zapisywanie AP-REQ w formacie %s...\n"
+
+#: lib/apreq.c:232
+#, c-format
+msgid "Writing AP-REQ to %s...done\n"
+msgstr "Zapisywanie AP-REQ do %s... zakoñczone\n"
+
+#: lib/apreq.c:290
+#, c-format
+msgid "Reading AP-REQ from %s...\n"
+msgstr "Odczytywanie AP-REQ z %s...\n"
+
+#: lib/apreq.c:297
+#, c-format
+msgid "Reading AP-REQ in %s format...\n"
+msgstr "Odczytywanie AP-REQ w formacie %s...\n"
+
+#: lib/apreq.c:312
+#, c-format
+msgid "Reading AP-REQ from %s...done\n"
+msgstr "Odczytywanie AP-REQ z %s... zakoñczone\n"
+
+#: lib/authenticator.c:169
+#, c-format
+msgid "Writing Authenticator to %s...\n"
+msgstr "Zapisywanie obiektu Authenticator do %s...\n"
+
+#: lib/authenticator.c:176
+#, c-format
+msgid "Writing Authenticator in %s format...\n"
+msgstr "Zapisywanie obiektu Authenticator w formacie %s...\n"
+
+#: lib/authenticator.c:191
+#, c-format
+msgid "Writing Authenticator to %s...done\n"
+msgstr "Zapisywanie obiektu Authenticator do %s... zakoñczone\n"
+
+#: lib/authenticator.c:252
+#, c-format
+msgid "Reading Authenticator from %s...\n"
+msgstr "Odczytywanie obiektu Authenticator z %s...\n"
+
+#: lib/authenticator.c:259
+#, c-format
+msgid "Reading Authenticator in %s format...\n"
+msgstr "Odczytywanie obiektu Authenticator w formacie %s...\n"
+
+#: lib/authenticator.c:274
+#, c-format
+msgid "Reading Authenticator from %s...done\n"
+msgstr "Odczytywanie obiektu Authenticator z %s... zakoñczone\n"
+
+#: lib/diskio.c:964
+#, c-format
+msgid "Writing KEY to %s...\n"
+msgstr "Zapisywanie KEY do %s...\n"
+
+#: lib/diskio.c:979
+#, c-format
+msgid "Writing KEY to %s...done\n"
+msgstr "Zapisywanie KEY do %s... zakoñczone\n"
+
+#: lib/encapreppart.c:131
+#, c-format
+msgid "Writing EncAPRepPart to %s...\n"
+msgstr "Zapisywanie EncAPRepPart do %s...\n"
+
+#: lib/encapreppart.c:138
+#, c-format
+msgid "Writing EncAPRepPart in %s format...\n"
+msgstr "Zapisywanie EncAPRepPart w formacie %s...\n"
+
+#: lib/encapreppart.c:153
+#, c-format
+msgid "Writing EncAPRepPart to %s...done\n"
+msgstr "Zapisywanie EncAPRepPart do %s... zakoñczone\n"
+
+#: lib/encapreppart.c:213
+#, c-format
+msgid "Reading EncAPRepPart from %s...\n"
+msgstr "Odczytywanie EncAPRepPart z %s...\n"
+
+#: lib/encapreppart.c:220
+#, c-format
+msgid "Reading EncAPRepPart in %s format...\n"
+msgstr "Odczytywanie EncAPRepPart w formacie %s...\n"
+
+#: lib/encapreppart.c:235
+#, c-format
+msgid "Reading EncAPRepPart from %s...done\n"
+msgstr "Odczytywanie EncAPRepPart z %s... zakoñczone\n"
+
+#: lib/enckdcreppart.c:370 lib/ticket.c:204
+#, c-format
+msgid "Could not set sname: %s\n"
+msgstr "Nie mo¿na ustawiæ sname: %s\n"
+
+#: lib/error.c:109
+#, c-format
+msgid "Unknown shishi error: %d"
+msgstr "Nieznany b³±d shishi: %d"
+
+#: lib/kdcrep.c:155
+#, c-format
+msgid "Writing KDC-REP to %s...\n"
+msgstr "Zapisywanie KDC-REP do %s...\n"
+
+#: lib/kdcrep.c:162
+#, c-format
+msgid "Writing KDC-REP in %s format...\n"
+msgstr "Zapisywanie KDC-REP w formacie %s...\n"
+
+#: lib/kdcrep.c:177
+#, c-format
+msgid "Writing KDC-REP to %s...done\n"
+msgstr "Zapisywanie KDC-REP do %s... zakoñczone\n"
+
+#: lib/kdcrep.c:235
+#, c-format
+msgid "Reading KDC-REP from %s...\n"
+msgstr "Odczytywanie KDC-REP z %s...\n"
+
+#: lib/kdcrep.c:242
+#, c-format
+msgid "Reading KDC-REP in %s format...\n"
+msgstr "Odczytywanie KDC-REP w formacie %s...\n"
+
+#: lib/kdcrep.c:257
+#, c-format
+msgid "Reading KDC-REP from %s...done\n"
+msgstr "Odczytywanie KDC-REP z %s... zakoñczone\n"
+
+#: lib/kdcreq.c:226
+#, c-format
+msgid "Writing KDC-REQ to %s...\n"
+msgstr "Zapisywanie KDC-REQ do %s...\n"
+
+#: lib/kdcreq.c:233
+#, c-format
+msgid "Writing KDC-REQ in %s format...\n"
+msgstr "Zapisywanie KDC-REQ w formacie %s...\n"
+
+#: lib/kdcreq.c:248
+#, c-format
+msgid "Writing KDC-REQ to %s...done\n"
+msgstr "Zapisywanie KDC-REQ do %s... zakoñczone\n"
+
+#: lib/kdcreq.c:306
+#, c-format
+msgid "Reading KDC-REQ from %s...\n"
+msgstr "Odczytywanie KDC-REQ z %s...\n"
+
+#: lib/kdcreq.c:313
+#, c-format
+msgid "Reading KDC-REQ in %s format...\n"
+msgstr "Odczytywanie KDC-REQ w formacie %s...\n"
+
+#: lib/kdcreq.c:328
+#, c-format
+msgid "Reading KDC-REQ from %s...done\n"
+msgstr "Odczytywanie KDC-REQ z %s... zakoñczone\n"
+
+#: lib/krberror.c:138
+#, c-format
+msgid "Writing KRB-ERROR to %s...\n"
+msgstr "Zapisywanie KRB-ERROR do %s...\n"
+
+#: lib/krberror.c:145
+#, c-format
+msgid "Writing KRB-ERROR in %s format...\n"
+msgstr "Zapisywanie KRB-ERROR w formacie %s...\n"
+
+#: lib/krberror.c:160
+#, c-format
+msgid "Writing KRB-ERROR to %s...done\n"
+msgstr "Zapisywanie KRB-ERROR do %s... zakoñczone\n"
+
+#: lib/krberror.c:218
+#, c-format
+msgid "Reading KRB-ERROR from %s...\n"
+msgstr "Odczytywanie KRB-ERROR z %s...\n"
+
+#: lib/krberror.c:225
+#, c-format
+msgid "Reading KRB-ERROR in %s format...\n"
+msgstr "Odczytywanie KRB-ERROR w formacie %s...\n"
+
+#: lib/krberror.c:240
+#, c-format
+msgid "Reading KRB-ERROR from %s...done\n"
+msgstr "Odczytywanie KRB-ERROR z %s... zakoñczone\n"
+
+#: lib/krberror.c:1269
+#, c-format
+msgid "Unknown KRB-ERROR error code %d."
+msgstr "Nieznany kod b³êdu KRB-ERROR %d."
+
+#: lib/principal.c:467
+#, c-format
+msgid "Could not set principal name: %s\n"
+msgstr "Nie mo¿na ustawiæ nazwy g³ównej: %s\n"
+
+#: lib/safe.c:279
+#, c-format
+msgid "Writing SAFE to %s...\n"
+msgstr "Zapisywanie SAFE do %s...\n"
+
+#: lib/safe.c:286
+#, c-format
+msgid "Writing SAFE in %s format...\n"
+msgstr "Zapisywanie SAFE w formacie %s...\n"
+
+#: lib/safe.c:301
+#, c-format
+msgid "Writing SAFE to %s...done\n"
+msgstr "Zapisywanie SAFE do %s... zakoñczone\n"
+
+#: lib/safe.c:359
+#, c-format
+msgid "Reading SAFE from %s...\n"
+msgstr "Odczytywanie SAFE z %s...\n"
+
+#: lib/safe.c:366
+#, c-format
+msgid "Reading SAFE in %s format...\n"
+msgstr "Odczytywanie SAFE w formacie %s...\n"
+
+#: lib/safe.c:381
+#, c-format
+msgid "Reading SAFE from %s...done\n"
+msgstr "Odczytywanie SAFE z %s... zakoñczone\n"
+
+#: lib/tkt.c:1324
+#, c-format
+msgid "Time of last initial request for a TGT:\t%s"
+msgstr "Czas ostatniego pocz±tkowego ¿±dania TGT:\t%s"
+
+#: lib/tkt.c:1372
+#, c-format
+msgid "Authtime:\t%s"
+msgstr "Czas uwierzytelnienia:\t%s"
+
+#: lib/tkt.c:1379
+#, c-format
+msgid "Starttime:\t%s"
+msgstr "Czas pocz±tku:\t%s"
+
+#: lib/tkt.c:1390
+#, c-format
+msgid "Endtime:\t%s"
+msgstr "Czas koñca:\t%s"
+
+#: lib/tkt.c:1398
+#, c-format
+msgid "Renewable till:\t%s"
+msgstr "Odnawialny do:\t%s"
+
+#: lib/tkt.c:1402
+#, c-format
+msgid "Server:\t\t%s key %s (%d)\n"
+msgstr "Serwer:\t\t%s klucz %s (%d)\n"
+
+#: lib/tkt.c:1407
+#, c-format
+msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
+msgstr "Klucz biletu:\t%s (%d) zabezpieczony przez %s (%d)\n"
+
+#: lib/tkt.c:1415
+#, c-format
+msgid "Ticket flags:\t"
+msgstr "Flagi biletu:\t"
+
+#: src/shishi.c:186
+#, c-format
+msgid "Tickets in `%s':\n"
+msgstr "Bilety w `%s':\n"
