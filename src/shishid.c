@@ -186,6 +186,7 @@ struct listenspec
   size_t bufpos;
 #ifdef USE_STARTTLS
   gnutls_session session;
+  int usetls;
 #endif
   struct listenspec *next;
 };
@@ -290,6 +291,13 @@ kdc_close (struct listenspec *ls)
 	}
       else if (!arg.quiet_flag)
 	printf ("done\n");
+
+    }
+
+  if (ls->usetls)
+    {
+      gnutls_bye (ls->session, GNUTLS_SHUT_WR);
+      gnutls_deinit (ls->session);
     }
 
   if (ls->str)
@@ -315,15 +323,16 @@ kdc_unlisten (void)
   listenspec = kdc_close (ls);
 }
 
-static void
-kdc_handle2 (struct listenspec *ls)
+static int
+kdc_extension (struct listenspec *ls)
 {
   ssize_t sent_bytes, read_bytes;
   struct sockaddr addr;
   int rc;
 
 #ifdef USE_STARTTLS
-  if (ls->type == SOCK_STREAM &&
+  if (!ls->usetls &&
+      ls->type == SOCK_STREAM &&
       ls->bufpos == 4 &&
       memcmp (ls->buf, "\x70\x00\x00\x01", 4) == 0)
     {
@@ -355,42 +364,46 @@ kdc_handle2 (struct listenspec *ls)
 
       rc = gnutls_handshake (ls->session);
       if (rc < 0)
-	printf ("Handshake has failed %d: %s\n",
-		rc, gnutls_strerror (rc));
-      else
 	{
-	  if (!arg.quiet_flag)
-	    printf ("TLS successful\n");
-
-	  rc = gnutls_record_recv (ls->session, ls->buf,
-				   sizeof (ls->buf) - 1);
-
-	  if (rc == 0)
-	    {
-	      printf ("Peer has closed the GNUTLS connection\n");
-	    }
-	  else if (rc < 0)
-	    {
-	      printf ("Corrupted data(%d).\n", rc);
-	    }
-	  else if (rc > 0)
-	    {
-	      char *p;
-	      size_t plen;
-
-	      process (ls->buf, rc, &p, &plen);
-
-	      printf ("TLS process %d sending %d\n", rc, plen);
-
-	      gnutls_record_send (ls->session, p, plen);
-
-	      if (p != fatal_krberror)
-		free (p);
-	    }
-	  ls->bufpos = 0;
+	  printf ("Handshake has failed %d: %s\n",
+		  rc, gnutls_strerror (rc));
+	  return -1;
 	}
-      gnutls_bye (ls->session, GNUTLS_SHUT_WR);
-      gnutls_deinit (ls->session);
+
+      if (!arg.quiet_flag)
+	printf ("TLS successful\n");
+
+      ls->bufpos = 0;
+      ls->usetls = 1;
+    }
+#endif
+
+  return 0;
+}
+
+static void
+kdc_handle2 (struct listenspec *ls)
+{
+  ssize_t sent_bytes, read_bytes;
+  struct sockaddr addr;
+  int rc;
+
+#ifdef USE_STARTTLS
+  if (ls->usetls)
+    {
+      char *p;
+      size_t plen;
+
+      process (ls->buf, ls->bufpos, &p, &plen);
+
+      printf ("TLS process %d sending %d\n", ls->bufpos, plen);
+
+      gnutls_record_send (ls->session, p, plen);
+
+      if (p != fatal_krberror)
+	free (p);
+
+      ls->bufpos = 0;
     }
   else
 #endif
@@ -441,17 +454,44 @@ kdc_handle2 (struct listenspec *ls)
 }
 
 static int
+kdc_ready (struct listenspec *ls)
+{
+  ssize_t sent_bytes, read_bytes;
+  struct sockaddr addr;
+  int rc;
+
+#ifdef USE_STARTTLS
+  if (ls->usetls && ls->bufpos > 0)
+    return 1;
+  else
+#endif
+    if (ls->type == SOCK_DGRAM)
+      return 1;
+    else if (ls->bufpos > 4 && ntohl (*(int *) ls->buf) + 4 == ls->bufpos)
+      return 1;
+
+  return 0;
+}
+
+static int
 kdc_read (struct listenspec *ls)
 {
   ssize_t read_bytes;
 
-  read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
-			 sizeof(ls->buf) - ls->bufpos, 0,
-			 &ls->addr, &ls->addrlen);
-
+  if (ls->usetls)
+    read_bytes = gnutls_record_recv (ls->session, ls->buf,
+				     sizeof (ls->buf));
+  else
+    read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
+			   sizeof(ls->buf) - ls->bufpos, 0,
+			   &ls->addr, &ls->addrlen);
   if (read_bytes < 0)
     {
-      error (0, errno, "Error from recvfrom (%d)", read_bytes);
+      if (ls->usetls)
+	error (0, 0, "Corrupted TLS data (%d): %s\n", read_bytes,
+	       gnutls_strerror (read_bytes));
+      else
+	error (0, errno, "Error from recvfrom (%d)", read_bytes);
       return -1;
     }
 
@@ -463,7 +503,6 @@ kdc_read (struct listenspec *ls)
     }
 
   ls->bufpos += read_bytes;
-  ls->buf[ls->bufpos] = '\0';
 
   if (!arg.quiet_flag)
     printf ("Has %d bytes from %s on socket %d\n",
@@ -544,7 +583,9 @@ kdc_loop (void)
 	    kdc_accept (ls);
 	  else if (kdc_read (ls) < 0)
 	    ls = kdc_close (ls);
-	  else
+	  else if (kdc_extension (ls) < 0)
+	    ls = kdc_close (ls);
+	  else if (kdc_ready (ls))
 	    kdc_handle2 (ls);
     }
 }
