@@ -3,19 +3,20 @@
    This file is part of the GNU C Library.
    Written by Miles Bader <miles@gnu.ai.mit.edu>.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   The GNU C Library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, write to the Free
+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+   02111-1307 USA.  */
 
 #ifndef _ARGP_H
 #define _ARGP_H
@@ -530,13 +531,6 @@ extern void *_argp_input (__const struct argp *__restrict __argp,
 extern void *__argp_input (__const struct argp *__restrict __argp,
 			   __const struct argp_state *__restrict __state)
      __THROW;
-/* Used for extracting the program name from argv[0] */
-extern char *_argp_basename(char *name) __THROW;
-extern char *__argp_basename(char *name) __THROW;
-
-/* Getting the program name given an argp state */
-extern char *_argp_short_program_name(const struct argp_state *state) __THROW;
-extern char *__argp_short_program_name(const struct argp_state *state) __THROW;
 
 #ifdef __USE_EXTERN_INLINES
 
