@@ -628,6 +628,8 @@ extern int shishi_kdcreq_from_file (Shishi * handle, Shishi_asn1 * kdcreq,
 extern int shishi_asreq_cnamerealm_get (Shishi * handle, Shishi_asn1 kdcreq,
 					char *cnamerealm,
 					size_t * cnamerealmlen);
+extern int shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq,
+				unsigned long *nonce);
 extern int shishi_kdcreq_set_cname (Shishi * handle, Shishi_asn1 kdcreq,
 				    Shishi_name_type name_type,
 				    const char *principal);
@@ -659,6 +661,9 @@ extern int shishi_kdcreq_add_padata_tgs (Shishi * handle,
 
 /* enckdcreppart.c */
 extern Shishi_asn1 shishi_enckdcreppart (Shishi * handle);
+extern int shishi_enckdcreppart_nonce_set (Shishi * handle,
+					   Shishi_asn1 enckdcreppart,
+					   unsigned long nonce);
 
 /* kdc.c */
 extern int shishi_as_derive_salt (Shishi * handle,
@@ -832,6 +837,10 @@ extern int shishi_asn1_optional_field (Shishi * handle,
 extern int shishi_asn1_integer_field (Shishi * handle,
 				      Shishi_asn1 node, int *i,
 				      const char *field);
+extern int shishi_asn1_number_of_elements (Shishi * handle,
+					   Shishi_asn1 node,
+					   const char *field,
+					   int *n);
 extern Shishi_asn1 shishi_asn1_asreq (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asrep (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_tgsreq (Shishi * handle);
