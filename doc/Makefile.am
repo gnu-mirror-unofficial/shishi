@@ -31,20 +31,23 @@ shishi_TEXINFOS = gpl.texi fdl.texi $(gdoc_TEXINFOS) \
 AM_MAKEINFOHTMLFLAGS = --no-split --number-sections
 
 dist_man_MANS = shishi.1 shisa.1 shishid.1 $(gdoc_MANS)
-DISTCLEANFILES = $(dist_man_MANS)
+MAINTAINERCLEANFILES = $(dist_man_MANS)
 
-shishi.1: $(top_srcdir)/src/shishi.c $(top_srcdir)/src/shishi.ggo
+shishi.1: $(top_srcdir)/src/shishi.c $(top_srcdir)/src/shishi.ggo \
+		$(top_srcdir)/configure.ac
 	$(HELP2MAN) \
 		--name="kerberos 5 client tool" \
 		--output=$@ $(top_builddir)/src/shishi
 
-shisa.1: $(top_srcdir)/src/shisa.c $(top_srcdir)/src/shisa.ggo
+shisa.1: $(top_srcdir)/src/shisa.c $(top_srcdir)/src/shisa.ggo \
+		$(top_srcdir)/configure.ac
 	$(HELP2MAN) \
 		--name="kerberos 5 database interface" \
 		--info-page=shishi \
 		--output=$@ $(top_builddir)/src/shisa
 
-shishid.1: $(top_srcdir)/src/shishid.c $(top_srcdir)/src/shishid.ggo
+shishid.1: $(top_srcdir)/src/shishid.c $(top_srcdir)/src/shishid.ggo \
+		$(top_srcdir)/configure.ac
 	$(HELP2MAN) \
 		--name="kerberos 5 server" \
 		--output=$@ $(top_builddir)/src/shishid
