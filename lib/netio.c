@@ -423,7 +423,6 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 	{
 	  shishi_warn (handle, "Unknown KDC host `%s' (gai rc %d)",
 		       srv->name, rc);
-	  freeaddrinfo (ai);
 	  continue;
 	}
 
