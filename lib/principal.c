@@ -162,52 +162,6 @@ shishi_parse_name (Shishi * handle, const char *name,
   return SHISHI_OK;
 }
 
-/*
-  2.1.1. Kerberos Principal Name Form
-
-  This name form shall be represented by the Object Identifier {iso(1)
-  member-body(2) United States(840) mit(113554) infosys(1) gssapi(2)
-  krb5(2) krb5_name(1)}.  The recommended symbolic name for this type
-  is "GSS_KRB5_NT_PRINCIPAL_NAME".
-
-  This name type corresponds to the single-string representation of a
-  Kerberos name.  (Within the MIT Kerberos V5 implementation, such
-  names are parseable with the krb5_parse_name() function.)  The
-  elements included within this name representation are as follows,
-  proceeding from the beginning of the string:
-
-  (1) One or more principal name components; if more than one
-  principal name component is included, the components are
-  separated by `/`.  Arbitrary octets may be included within
-  principal name components, with the following constraints and
-  special considerations:
-
-  (1a) Any occurrence of the characters `@` or `/` within a
-  name component must be immediately preceded by the `\`
-  quoting character, to prevent interpretation as a component
-  or realm separator.
-
-  (1b) The ASCII newline, tab, backspace, and null characters
-  may occur directly within the component or may be
-  represented, respectively, by `\n`, `\t`, `\b`, or `\0`.
-
-  (1c) If the `\` quoting character occurs outside the contexts
-  described in (1a) and (1b) above, the following character is
-  interpreted literally.  As a special case, this allows the
-  doubled representation `\\` to represent a single occurrence
-  of the quoting character.
-
-  (1d) An occurrence of the `\` quoting character as the last
-  character of a component is illegal.
-
-  (2) Optionally, a `@` character, signifying that a realm name
-  immediately follows. If no realm name element is included, the
-  local realm name is assumed.  The `/` , `:`, and null characters
-  may not occur within a realm name; the `@`, newline, tab, and
-  backspace characters may be included using the quoting
-  conventions described in (1a), (1b), and (1c) above.
-*/
-
 /**
  * shishi_principal_name:
  * @handle: Shishi library handle create by shishi_init().
