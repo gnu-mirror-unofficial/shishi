@@ -2,6 +2,8 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
+* Version 0.0.3 (unreleased)
+
 * Version 0.0.2 (released 2003-08-17)
 
 ** Command line handling of the 'shishi' application rewritten.
