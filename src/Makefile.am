@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -34,16 +34,16 @@ sbin_PROGRAMS = shishid
 shishi_SOURCES = shishi.c shishi.ggo shishi_cmd.h shishi_cmd.c
 shishi_LDADD = ../gl/libfoo.la ../lib/libshishi.la @LTLIBINTL@
 shishi_cmd.c shishi_cmd.h: shishi.ggo
-	gengetopt --unamed-opts --no-handle-help --no-handle-error \
-		 --input $< --file-name shishi_cmd
-	perl -pi -e 's/\[FILES\]/\[CLIENT \[SERVER\]\]/g' shishi_cmd.c
+	gengetopt --unamed-opts="CLIENT [SERVER]" \
+		--no-handle-help --no-handle-error \
+		--input $< --file-name shishi_cmd
 
 shisa_SOURCES = shisa.c shisa.ggo shisa_cmd.h shisa_cmd.c
 shisa_LDADD = ../gl/libfoo.la ../db/libshisa.la ../lib/libshishi.la @LTLIBINTL@
 shisa_cmd.c shisa_cmd.h: shisa.ggo
-	gengetopt --unamed-opts --no-handle-help --no-handle-error \
-		 --input $< --file-name shisa_cmd
-	perl -pi -e 's/\[FILES\]/\[REALM \[PRINCIPAL\]\]/g' shisa_cmd.c
+	gengetopt --unamed-opts="REALM [PRINCIPAL]" \
+		--no-handle-help --no-handle-error \
+		--input $< --file-name shisa_cmd
 
 shishid_SOURCES = shishid.c server.c kdc.h kdc.c \
 	shishid.ggo shishid_cmd.h shishid_cmd.c
