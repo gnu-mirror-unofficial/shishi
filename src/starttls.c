@@ -221,15 +221,17 @@ logtlsinfo (gnutls_session session)
   const char *mac = gnutls_mac_get_name (gnutls_mac_get (session));
   const char *compression =
     gnutls_compression_get_name (gnutls_compression_get (session));
+  int resumedp = gnutls_session_is_resumed (session);
 
   syslog (LOG_INFO, "TLS handshake negotiated protocol `%s', "
 	  "key exchange `%s', certficate type `%s', cipher `%s', "
-	  "mac `%s', compression `%s'",
+	  "mac `%s', compression `%s', %s",
 	  protocol ? protocol : "N/A",
 	  keyexchange ? keyexchange : "N/A",
 	  certtype ? certtype : "N/A",
 	  cipher ? cipher : "N/A",
-	  mac ? mac : "N/A", compression ? compression : "N/A");
+	  mac ? mac : "N/A", compression ? compression : "N/A",
+	  resumedp ? "resumed session" : "session not resumed");
 
   cred = gnutls_auth_get_type (session);
   switch (cred)
@@ -252,9 +254,6 @@ logtlsinfo (gnutls_session session)
       syslog (LOG_ERR, "Unknown TLS authentication (%d)", cred);
       break;
     }
-
-  if (gnutls_session_is_resumed (session))
-    syslog (LOG_INFO, "TLS session is resumed.");
 }
 
 #define STARTTLS_CLIENT_REQUEST "\x70\x00\x00\x01"
