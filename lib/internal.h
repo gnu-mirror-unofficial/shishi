@@ -121,15 +121,14 @@
 
 #include "gettext.h"
 
-#include "setenv.h"
+#include "base64.h"
+#include "getdate.h"
+#include "time_r.h"
+#include "timegm.h"
 #include "vasprintf.h"
 #include "xalloc.h"
-#include "xstrndup.h"
-#include "getdate.h"
-#include "base64.h"
 #include "xmemdup.h"
-#include "timegm.h"
-#include "time_r.h"
+#include "xstrndup.h"
 
 #include "shishi.h"
 

@@ -484,7 +484,7 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
 
 static void
 asreq (Shishi * handle, struct arguments *arg,
-       Shishi_asn1 kdcreq, char **out, int *outlen)
+       Shishi_asn1 kdcreq, char **out, size_t *outlen)
 {
   Shishi_as *as;
   int rc;
@@ -677,7 +677,7 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 
 static void
 tgsreq (Shishi * handle, struct arguments *arg,
-	Shishi_asn1 kdcreq, char **out, int *outlen)
+	Shishi_asn1 kdcreq, char **out, size_t *outlen)
 {
   Shishi_tgs *tgs;
   int rc;
