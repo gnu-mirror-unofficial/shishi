@@ -22,9 +22,9 @@
 This is @cite{The Shishi Reference Manual}, last updated
 @value{UPDATED}, for Version @value{VERSION} of the @acronym{Shishi}
 library.
-     
+
 Copyright @copyright{} 2002 Simon Josefsson.
-     
+
 @quotation
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.1 or
@@ -33,7 +33,7 @@ Invariant Sections, with the Front-Cover texts being ``A GNU Manual,''
 and with the Back-Cover Texts as in (a) below.  A copy of the license
 is included in the section entitled ``GNU Free Documentation
 License.''
-     
+
 (a) The FSF's Back-Cover Text is: ``You have freedom to copy and
 modify this GNU Manual, like GNU software.  Copies published by the
 Free Software Foundation raise funds for GNU development.''
@@ -53,7 +53,7 @@ Free Software Foundation raise funds for GNU development.''
 @vskip 0pt plus 1filll
 @insertcopying
 @end titlepage
-     
+
 @contents
 
 @ifnottex
@@ -157,7 +157,7 @@ A few implemented feature are mentioned below.
 
 @item Ticket cache file, supporting multiple principals and realms.
 
-@item Most standard cryptographic primitives 
+@item Most standard cryptographic primitives
 (@pxref{Cryptographic Overview}).
 
 @item Telnet client.
@@ -436,7 +436,7 @@ is compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
 @node Supported Platforms
 @section Supported Platforms
 
-Shishi is regularly tested on the following platforms:
+Shishi has been tested on the following platforms:
 
 @enumerate
 
@@ -445,15 +445,16 @@ Shishi is regularly tested on the following platforms:
 
 alphaev67-dec-osf5.0, Tru64 UNIX C compiler, and Tru64 Make.
 
-@item Debian Sid (post woody)
+@item Debian 3.0r0 (Woody)
 @cindex Debian
 
-i686-pc-linux-gnu, GCC 3.2, GNU Make.
+i686-pc-linux-gnu, GCC 2.95.4, GNU Make. This is the main development
+host.
 
-@item RedHat 7.2
+@item RedHat 8.0
 @cindex RedHat
 
-i686-pc-linux-gnu, GCC 2.96rh, GNU Make.
+i686-pc-linux-gnu, GCC 3.2, GNU Make.
 
 @item IRIX 6.5
 @cindex IRIX
@@ -486,16 +487,17 @@ report it.
 
 @itemize @bullet
 
-@item Please make sure that the bug is really in Shishi, and preferably also
-check that it hasn't already been fixed in the latest version.
+@item Please make sure that the bug is really in Shishi, and
+preferably also check that it hasn't already been fixed in the latest
+version.
 
 @item You have to send us a test case that makes it possible for us to
 reproduce the bug.
 
-@item You also have to explain what is wrong; if you get a crash, or if the
-results printed are not good and in that case, in what way.
-Make sure that the bug report includes all information you would
-need to fix this kind of bug for someone else.  
+@item You also have to explain what is wrong; if you get a crash, or
+if the results printed are not good and in that case, in what way.
+Make sure that the bug report includes all information you would need
+to fix this kind of bug for someone else.
 
 @end itemize
 
