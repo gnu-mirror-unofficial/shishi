@@ -1,0 +1,997 @@
+INTERNET-DRAFT                               Donna Skibbie 
+Kerberos Working Group                       IBM
+Intended Category:  Standards Track          Jonathan Trostle
+Expires X XXXX XXXX                          Cisco
+                                             John Griffith
+                                             Entegrity Solutions
+                                             XX XXXXXX XXXX
+
+
+             Keys Extension for the Kerberos KDC LDAP Schema
+              draft-skibbie-krb-kdckeys-ldap-schema-00.1 txt
+                       NOT YET SUBMITTED TO IETF
+                    
+
+1. Status Of This Memo
+
+This document is an Internet-Draft and is in full conformance 
+with all provisions of Section 10 of RFC 2026 [1]. 
+
+Internet-Drafts are working documents of the Internet Engineering 
+Task Force (IETF), its areas, and its working groups.  Note that 
+other groups may also distribute working documents as Internet-
+Drafts.
+
+Internet-Drafts are draft documents valid for a maximum of six 
+months and may be updated, replaced, or obsoleted by other 
+documents at any time.  It is inappropriate to use Internet-
+Drafts as reference material or to cite them other than as "work 
+in progress."
+
+The list of current Internet-Drafts can be accessed at 
+http://www.ietf.org/ietf/1id-abstracts.txt
+
+The list of Internet-Draft Shadow Directories can be accessed at 
+http://www.ietf.org/shadow.html.
+
+
+
+2. Abstract
+
+This document defines a "Keys Extension Schema."  The Keys Extension
+Schema extends the KDC LDAP schema defined in the work in progress
+IETF document <draft-skibbie-krb-kdc-ldap-schema-01.txt> so that
+key attributes used by implementations of Kerberos Version 5 Key 
+Distribution Center (KDC) service can be stored in a directory 
+that implements the Lightweight Directory Access Protocol (LDAP)
+Version 3.  The directory must implement the LDAP Version 3 
+protocol as defined in RFC 2251 [2], RFC 2252 [3], RFC 2253 [4], 
+and RFC 2256 [5].  
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",  
+"SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in 
+this document are to be interpreted as described in RFC 2119 [6].
+
+
+
+3. Overview
+
+The Keys Extension Schema is designed to meet three objectives.  The 
+first objective is to use LDAP schema definitions defined in RFC 
+2252, RFC 2256, and existing LDAP implementations.  The second objective
+is to provide a highly secure way of protecting keys.  The third objective
+is to promote inter-operability between different implementations of the
+Kerberos KDC.  
+
+The following figure illustrates the KDC LDAP schema with the addition
+of the Keys Extension Schema:
+
+                   --------------------          ---------------
+                   : DN:KrbRealmName= :          : Any DN      :
+                   : <realm name>, ...:          : with        :
+ -----------       : KrbRealm,        : optional : KrbPolicy   :
+ :Any DN   :<------: KrbRealmExt,     :--------->:             :
+ :         : n    1: KrbKeyCfg, and   : 1    1   :             :
+ -----------       : (optionally)     :          :             :
+     1::           : KrbPolicy        :          :             :
+      ::           --------------------          ---------------
+      ::                   1:           
+      ::                   1:      
+      ::            :------------------:
+      ::            : DN:cn=MKEYS, ... :
+      ::            :                  :
+      ::            :------------------:
+      ::                   1:
+      ::                   n:
+      ::         :---------------------------:
+      ::         : DN: KrbKeyVersion=<n>,... :   master key value          
+      ::         : KrbMstrKey                :-->optionally can be
+      ::         :---------------------------:   stored in any URL
+      ::                                         address, such as 
+      ::                                         a private file
+      ::         
+      ::         
+     n:: 
+ -------------------                       ---------------:
+ : Any DN with     :                       : Any DN       :
+ : KrbPrincipal    : 1     optional      1 : with         :
+ : and (optionally):---------------------->: KrbPolicy    :
+ : KrbPolicy       :                       :              :
+ :                 :                       :              :
+ -------------------                       ----------------
+      1:   1:    
+       :    :
+       :    :----------------------:
+       :                           :
+       :                           :
+      1:                          n:
+ :---------------------       ------------------------------
+ : DN: cn=KrbLog, ... :       : DN: krbKeyVersion=<n>, ... :
+ : KrbLog             :       : KrbKey                     :
+ :                    :       :                            :
+ :--------------------:       ------------------------------
+
+
+
+The following figure illustrates an alternate configuration of the
+the Keys Extension Schema.  In the alternate configuration, KrbKey 
+entries are configured to reside in a sub-tree with an RDN of
+"cn=KEYS".
+
+                   --------------------          ---------------
+                   : DN:KrbRealmName= :          : Any DN      :
+                   : <realm name>, ...:          : with        :
+ -----------       : KrbRealm,        : optional : KrbPolicy   :
+ :Any DN   :<------: KrbRealmExt,     :--------->: and         :
+ :         : n    1: and (optionally) : 1    1   : KrbKeyPolicy:
+ -----------       : KrbPolicy and    :          :             :
+     1::           : KrbKeyPolicy     :          :             :
+      ::           --------------------          ---------------
+      ::                   1:    :1         
+      ::                   1:    :----------------------------:  
+      ::            :------------------:                      :
+      ::            : DN:cn=MKEYS, ... :                      :
+      ::            :                  :                      :
+      ::            :------------------:                      :
+      ::                   1:                                 :
+      ::                   n:                                 :
+      ::      :---------------------------:                   :
+      ::      : DN: krbKeyVersion=<n>,... :   master key value:     
+      ::      : KrbMstrKey                :-->optionally can  :
+      ::      :---------------------------:   stored in any   :
+      ::                                      URL address,    :
+      ::                                      such as a       :
+      ::                                      private file    :
+      ::                                                      :
+     n::                                                      :
+ -------------------                       ---------------:   :
+ : Any DN with     :                       : Any DN       :   :
+ : KrbPrincipal    : 1     optional      1 : with         :   :
+ : and (optionally):---------------------->: KrbPolicy    :   :
+ : KrbPolicy and   : 1                     : KrbKeyPolicy :   :
+ : KrbKeyPolicy    :<-----:                :              :   :
+ -------------------      :                ----------------   :
+      1:                  :                                   :
+       :                  :                  :----------------:
+       :                  :                  :
+       :                  :                  :1
+       :                  :        ----------------------
+      1:                  :        : DN: cn=KEYS, ...   :
+ :---------------------   :        :                    :    
+ : DN: cn=KrbLog, ... :   :        ----------------------
+ : KrbLog             :   :                  : 1
+ :                    :   :                  : n
+ :--------------------:   :   --------------------------------
+                          : n : DN: krbKeyVersion=<n>        :
+                          :---:     krbPrincipalDN=<DN>, ... :
+                              : KrbKey                       :
+                              --------------------------------
+                             
+
+                          
+3.3 Configuration of Master Keys 
+
+The Keys Extension schema provides one method of configuring master
+keys.  To use this method, an entry must be configured under the 
+realm entry with an RDN of "cn=MKEYS".  
+
+The attributes defining each version of master keys in the realm are 
+included in the KrbMstrKey structural object class.  These attributes 
+must be configured in a master key entry residing directly under the  
+"cn=MKEYS" entry.  A master key entry can be shared by all the KDC 
+services in the realm or a different master key entry can be configured 
+for each KDC service in the realm.  The RDN of each master key entry 
+must include the string "krbKeyVersion=<version>", where <version> 
+is the version of the master key.  If a different master key entry is 
+configured for each KDC service in the realm, the master key entry must 
+also contain the string "krbServiceName=<service_name>" (for example, 
+"krbKeyVersion=1 krbKDCServiceName=serverA"). 
+
+The following attributes are required:
+  
+*  the master key version as specified in the RDN (krbKeyVersion)
+
+*  for each master key corresponding to this master key version, the 
+master key value or the URL address where the master key value is 
+stored, along with information about how the master key value was 
+generated (krbMstrKeyData) 
+
+The following is an example of a realm configured with two master key 
+entries, each of which is shared by all the KDC services in the realm.  
+One master key entry is for Version 1 of the master key.  The other 
+master key entry is for Version 2 of the master key.  Each master key 
+entry contains the values of two master keys:  a master key generated 
+with the DES algorithm and no salt and a master key generated with the
+triple-DES algorithm and no salt.  (See the description of the 
+"krbMstrKeyData" attribute in the "Attributes" section of this document 
+for information on how to interpret the "krbMstrKeyData" attribute.)
+
+   DN: cn=MKEYS, krbRealmName=PAYROLL, ou=Austin
+   objectclass: Container
+   cn: MKEYS
+
+   DN: krbKeyVersion=1, cn=MKEYS, krbRealmName=PAYROLL, ou=Austin
+   objectclass:  KrbMstrKey
+   krbKeyVersion: 1
+   krbMstrKeyData: 01990000080000#!#%@!#$
+   krbMstrKeyData: 05990000140000++_#%@52_#%@52
+
+   DN: krbKeyVersion=2, cn=MKEYS, krbRealmName=PAYROLL, ou=Austin
+   objectclass:  KrbMstrKey
+   krbKeyVersion: 2
+   krbMstrKeyData: 019900000800001+0*&^23
+   krbMstrKeyData: 05990000140000*^&2)(25_#%@52
+
+The following is the same as the previous example except that the 
+"cn=MKEYS" entry is configured with a referral to a more trusted LDAP 
+server named TrustedLDAPServer.  Therefore, all entries residing under 
+"cn=MKEYS" (which, in this case are the two master key entries) are 
+serviced by TrustedLDAPServer.
+
+   DN: cn=MKEYS, krbRealmName=PAYROLL, ou=Austin
+   objectclass: referral  
+   ref: ldap://TrustedLDAPServer/cn=MKEYS, krbRealmName=PAYROLL, 
+ou=Austin
+
+   DN: krbKeyVersion=1, cn=MKEYS, krbRealmName=PAYROLL, ou=Austin
+   objectclass:  KrbMstrKey
+   krbKeyVersion: 1
+   krbMstrKeyData: 01990000080000#!#%@!#$
+   krbMstrKeyData: 05990000140000++_#%@52_#%@52
+
+   DN: krbKeyVersion=2, cn=MKEYS, krbRealmName=PAYROLL, ou=Austin
+   objectclass:  KrbMstrKey
+   krbKeyVersion: 2
+   krbMstrKeyData: 019900000800001+0*&^23
+   krbMstrKeyData: 05990000140000*^&2)(25_#%@52
+
+The following is the same as the previous example with two exceptions:  
+a different master key entry is configured for each of two KDC services 
+in the realm, and the master key entries contain references to private 
+files where the actual master key values are stored.
+
+   DN: cn=MKEYS, krbRealmName=PAYROLL, ou=Austin
+   objectclass: referral  
+   ref: ldap://TrustedLDAPServer/cn=MKEYS, krbRealmName=PAYROLL, 
+ou=Austin
+
+   DN: krbKeyVersion=1 kdcServiceName=serviceA, cn=MKEYS, 
+krbRealmName=PAYROLL, ou=Austin
+   objectclass:  KrbMstrKey
+   krbKeyVersion: 1
+   krbKdcServiceName: serviceA
+   krbMstrKeyData: 01990100220000file://serveraDES/mkeyV1
+   krbMstrKeyData: 059900230000file://serveraDES3/mkeyV1
+
+   DN: krbKeyVersion=2 kdcServiceName=ServiceA, cn=MKEYS, 
+krbRealmName=PAYROLL, ou=Austin
+   objectclass:  KrbMstrKey
+   krbKeyVersion: 2
+   krbKdcServiceName: serviceA
+   krbMstrKeyData: 01990100220000file://serveraDES/mkeyV2
+   krbMstrKeyData: 05990100230000file://serveraDES3/mkeyV2
+
+   DN: krbKeyVersion=1 kdcServiceName=serviceB, cn=MKEYS, 
+krbRealmName=PAYROLL, ou=Austin
+   objectclass:  KrbMstrKey
+   krbKeyVersion: 1
+   krbKdcServiceName: serviceB
+   krbMstrKeyData: 01990100220000file://serveraDES/mkeyV1
+   krbMstrKeyData: 05990100230000file://serveraDES3/mkeyV1
+
+   DN: krbKeyVersion=2 kdcServiceName=ServiceB, cn=MKEYS, 
+krbRealmName=PAYROLL, ou=Austin
+   objectclass:  KrbMstrKey
+   krbKeyVersion: 2
+   krbKdcServiceName: serviceB
+   krbMstrKeyData: 01990100220000file://serverbDES/mkeyV2
+   krbMstrKeyData: 05990100230000file://serverbDES3/mkeyV2
+
+
+
+3.2 Configuration of Principal Keys
+
+The Keys Extension schema provides three alternate methods for
+configuring the secret keys of principals.  To indicate which of
+these methods the realm is using, the krbSecretKeyCfg attribute,
+which is defined in the KrbKeyCfg auxiliary object class, must be 
+configured in the realm entry.  The krbSecretKeyCfg attribute can 
+be configured to KRBKEY (1), KRBKEY-SUBTREE (2), or USERPASSWORD (3).
+
+The following is an example of a realm entry configured for
+the KRBKEY:
+
+  DN: krbRealmName=PAYROLL, ou=Austin
+  objectclass: KrbRealm
+  objectclass: KrbRealmExt
+  <KrbRealm and KrbRealmExt attributes>
+  objectclass: KrbKeyCfg
+  krbSecretKeyCfg: 1 
+
+
+
+3.2.1.  KRBKEY Configuration
+
+If the realm is configured to use the KRBKEY configuration,
+each version of keys for a principal must be stored in a KrbKey 
+entry residing directly under the associated principal entry.  
+Each KrbKey entry is configured using the KrbKey structural object
+class.  The RDN of each KrbKey entry must include the string 
+"krbKeyVersion=<version>", where <version> is the version of the 
+key.  The RDN also can include additional strings if this is 
+required to uniquely identity the KrbKey entry (for example, 
+"krbkeyVersion=1 krbKdcServiceName=serverA").  
+
+The following attributes are required:
+
+*  the key version as specified in the RDN(krbKeyVersion)
+
+*  for each key corresponding to this key version, the encrypted key 
+value along with information about how the encrypted key value was 
+generated and encrypted (krbKeyData)
+
+The creator of a KrbKey entry must be a trusted DN (a DN that is 
+listed in either the krbKdcServiceObject, krbPwdServiceObject or 
+krbTrustedAdmObject attribute of the realm entry).  The trusted 
+DN is responsible for doing the following:
+
+1.  Get a secret password or a sequence of secret keys from the 
+principal. 
+
+2.  If a secret password is supplied, use a string-to-key 
+algorithm to generate a secret key for each supported key type.  
+The string-to-key algorithm must conform to the string-
+to-key algorithm described in RFC 1510, taking into consideration 
+the salt type of the key type.
+
+3.  If a sequence of secret keys is supplied, verify that each 
+key type is supported.
+
+4.  Encrypt each secret key with each master key that is of the 
+same encryption type (or have one or more KDC services do this).
+
+5.  Create a KrbKey entry for each encrypted secret key.  Store 
+the encrypted secret key in the KrbKey entry along with 
+information required to generate the encrypted secret key from a 
+password.
+
+The following is an example of a configuration that uses the 
+KRBKEY method of storing secret keys.  In this example, a single 
+KrbKey entry is configured for Alice Smith.  The KrbKey entry is a 
+Version 1 entry and contains the value of two keys:  a key generated 
+with the DES algorithm and no salt and a key generated with the 
+triple-DES algorithm and a salt value of "mysalt".  Each key is 
+encrypted with master key Version 1, which is a master key that 
+is shared by all the KDC services in the realm.  (See the description 
+of the krbKeyData attribute in the "Attributes" section of this 
+document for information on how to interpret the fields in this 
+attribute.) 
+
+  DN: krbKeyVersion=1, cn=Alice Smith, cn=users, ou=Austin
+  objectclass: KrbKey
+  krbKeyVersion: 1
+  krbKeyData: 01990000080000#!#%@!#$
+  krbKeyData: 05040000080006&*&*&*&*mysalt
+
+The following is the same as the previous example except in this 
+example, each KDC service in the realm has its own master key.  
+Therefore, a different KrbKey entry is configured for each of the two 
+KDC services in the realm. 
+
+  DN: krbKeyVersion=1 krbKdcService=serverA, cn=Alice Smith, cn=users, 
+ou=Austin
+  objectclass: KrbKey
+  krbKeyVersion: 1
+  krbKeyData: 01990000080000#!#%@!#$
+  krbKeyData: 05040000080006&*&*&*&*mysalt
+
+  DN: krbKeyVersion=1 krbKdcService=serverB, cn=Alice Smith, cn=users, 
+ou=Austin
+  objectclass: KrbKey
+  krbKeyVersion: 1
+  krbKeyData: 01990000080000#12%@!#$
+  krbKeyData: 05040000080006&2&3&*&*mysalt
+
+
+3.2.2.  KRBKEY-SUBTREE Configuration
+
+If the realm is configured to use the KRBKEY-SUBTREE configuration, 
+each version of keys for a principal must be stored a KrbKey entry.
+The KrbKey entry must reside directly under an entry with an RDN 
+of "cn=KEYS" and the "cn=KEYS" entry must  reside directly below 
+the realm entry.  In addition:
+
+* the KrbKey entry must contain a krbPrincipalDN attribute with a 
+forward reference to the associated principal entry.
+
+* The RDN of the KrbKey entry must include the string 
+"krbPrincipalDN=<principalDN>" (for example, "krbVersion=1 
+krbPrincipalDN=cn=Alice Smith, ou=Austin")
+
+The following is an example of a KRBKEY-SUBTREE configuration.  
+In this example, the KrbKey entry for Alice Smith resides under a 
+"cn=KEYS" entry.  The "cn=KEYS" entry is configured with a referral to 
+an LDAP server named TrustedLDAPServer.  Therefore, all entries under 
+"cn=KEYS" (including the key for Alice Smith) are serviced by an LDAP 
+server named LDAPServer.
+
+   DN: cn=KEYS, krbRealmName=PAYROLL, ou=Austin
+   objectclass: referral  
+   ref: ldap://TrustedLDAPServer/cn=KEYS, krbRealmName=PAYROLL, 
+ou=Austin
+
+   DN: krbKeyVersion=1 krbPrincipalDN=cn=Alice Smith, cn=users, 
+ou=Austin, cn=KEYS, krbRealmName=PAYROLL, ou=Austin
+   objectclass: KrbKey
+   krbKeyVersion: 1
+   krbKeyData: 01990000080000#!#%@!#$
+   krbKeyData: 05040000080006&*&*&*&*mysalt
+
+
+
+3.2.3.  USERPASSWORD Configuration
+
+If the realm is configured to use the USERPASSWORD configuration, 
+the secret key of each principal is the password of the principal. 
+The password must be stored in the userPassword attribute of 
+the principal entry. 
+
+
+
+4. Syntaxes
+
+The Keys Extension schema uses the sytaxes listed in RFC 2252.
+
+
+
+5. Attribute Types
+
+The Keys Extension schema uses the attribute types listed in this 
+section and RFC 2256.
+
+
+
+5.1 New Attribute Types 
+
+(
+krbKdcServiceName-oid
+NAME 'krbKdcServiceName'
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 (directory string)
+SINGLE-VALUE 
+DESC 'Name of a KDC service.  The name must be the same as the name 
+specified in the serviceName attribute of the KDC service entry 
+referenced by the krbKdcServiceObject attribute of the realm entry.' 
+EQUALITY caseExactMatch 
+)
+
+(
+krbKeyData-oid 
+NAME 'krbKeyData' 
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.5 (binary)
+DESC 'A set of values with each value containing an encrypted key and 
+information about the encrypted key.  Each value is specified in the 
+following format:
+0                             1
+0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+----------+-----------+
+|enc  |salt |mkey |   key     |    salt   |  key     |   salt    |
+|type |type |ver  |   len     |    len    | value    |   value   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+----------+-----------+
+where:
+"enc type" is two decimal characters indicating the encryption 
+algorithm that was used to generate the key.  See krbEncTypeSupport
+in the referenced KDC LDAP schema draft for a list of possible encryption
+type values.
+"salt type" is two decimal characters indicating the type of salt value 
+that was used to generate the key.  See krbSaltTypeSupport in the 
+referenced KDC LDAP schema document for a list of possible salt type 
+values. 
+"mkey version" is two decimal characters indicating the version of the 
+master key that was used to transform the key into an encrypted key
+"key len" is four decimal characters indicating the length (in bytes) 
+of the encrypted key
+"salt len" is four decimal characters indicating the length of the salt 
+value ("0000" if no salt value)
+"key value" is the encrypted key
+"salt value" (if specified) is the salt value.
+For example, "01990000080000#!#%@!#$" defines an encrypted key with a 
+length of 8 bytes and a value of "#!#%@!#$".  The key was generated 
+using DES encryption and no salt value; then, encrypted with master key 
+version 0.  As another example, "05040000140006&*&*&*&*&*&*&*mysalt" defines 
+an encrypted key with a length of 8 bytes and a value of "&*&*&*&*&*&*&".  
+The key was generated using triple-DES encryption with a special salt 
+type value that has a length of 6 and a value of "mysalt"; then, 
+encrypted with master key version 0.' 
+)
+
+(
+krbKeyExpires-oid 
+NAME 'krbKeyExpires' 
+SYNTAX 1.2.840.113556.1.4.906 (interval)
+SINGLE-VALUE
+DESC 'A value indicating the date and time when a key expires.
+)
+
+(
+krbKeyName-oid 
+NAME 'krbKeyName' 
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 (directory string)
+SINGLE-VALUE 
+DESC 'Name of a secret key.' 
+EQUALITY caseExactMatch 
+)
+
+
+(
+krbKeyVersion-oid 
+NAME 'krbKeyVersion' 
+SYNTAX 1.2.840.113556.1.4.906 (interval)
+SINGLE-VALUE 
+DESC 'Version of a secret key; a monotomic increasing number 
+beginning with 1.' 
+)
+
+(
+krbMstrKeyData-oid 
+NAME 'krbMstrKeyData' 
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.5 (binary)
+DESC 'A set of master key data with each master key data containing 
+either the master key value or the URL address where the master key 
+value is stored, and information about the master key.  Each master key 
+data is specified in the following format:
+0                             1
+0  1  2  3  4  5  6  7  8  9  0  1  2  3  4  
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+----------+-----------+
+|enc  |salt |value|mkeylen  or|    salt   |mkey value|   salt    |
+|type |type |orURL|mkeyURL len|    len    |or mkeyURL|   value   |
++--+--+--+--+--+--+--+--+--+--+--+--+--+--+----------+-----------+
+where 
+"enc type" is two decimal characters indicating the encryption 
+algorithm that was used to generate the master key.  See krbEncTypeSupport
+in the referenced KDC LDAP schema document for a list of encryption
+type values.
+"salt type" is two decimal characters indicating the type of salt value 
+that was used to generate the master key.  See krbSaltTypeSupport in the
+referenced KDC LDAP schema document for a list of salt type values.
+"value or URL" is the decimal characters "00" if the master key value  
+is stored in krbMstrKeyData or "01" if the URL address of the master
+key value is stored in krbMstrKeyData.
+"mkeylen or mkeyref len" is four decimal characters indicating the 
+length (in bytes) of either the master key value or the URL address 
+where the master key is stored
+"salt len" is four decimal characters indicating the length (in bytes) 
+of the salt value ("0000" if no salt value)
+"mkey value or mkeyURL" is either the master key value or the URL 
+address where the master key is stored
+"salt value" (if specified) is the salt value. 
+For example, "01990000080000#!#%@!#$" defines a master key value with a 
+length of 8 bytes and a value of "#!#%@!#$".  The key was generated 
+using DES encryption and no salt value.  As another example, 
+"05040100180006file://mypath/mkeymysalt" defines a master key that is 
+stored at the URL address of file://mypath/mkey and this URL address 
+has a length of 18 bytes.  The master key was generated using triple-
+DES encryption with a special salt type value that has a length of 6 
+bytes and a value of "mysalt".' 
+)
+
+
+( 
+krbNextKeyVersion-oid 
+NAME 'krbNextKeyVersion' 
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 (integer)
+SINGLE-VALUE
+DESC 'A value indicating the next version of a key.'
+)
+
+(
+krbPrincipalDN-oid
+NAME 'krbPrincipalDN'
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 (DN) 
+SINGLE-VALUE
+DESC 'Forward reference to an associated principal entry.'
+EQUALITY dnMatch
+)
+ 
+( 
+krbSecretKeyCfg-oid
+NAME 'krbSecretKeyCfg'
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 (integer)
+SINGLE-VALUE
+DESC 'One of the following values indicating where the secret key 
+for a Kerberos principal is configured:
+1 = KRBKEY (default) -- The secret key is stored in one or more 
+KrbKey entries with each KrbKey entry residing directly below the 
+associated principal entry.
+2=  KRBKEY-SUBTREE -- The secret key is stored in one or more
+KrbKey entries with each KrbKey entry residing directly below an entry 
+with an RDN of "cn=KEYS" and with the "cn=KEYS" entry residing directly 
+below the realm entry.  
+3 = USERPASSWORD -- The secret key is stored in the userPassword 
+attribute of the entry representing the principal entry.
+)
+
+
+6. Object Classes
+
+The Keys Extension schema uses the object classes listed in this 
+section.
+
+( 
+KrbKey-oid 
+NAME 'KrbKey' 
+DESC 'A structural object class for use in configuring an entry 
+to represent a set of Kerberos keys for an associated Kerberos 
+principal.  If krbSecretKeyCfg=KRBKEY (which is the default), the entry 
+representing the Kerberos key must reside directly below the entry 
+representing the associated Kerberos principal.  If 
+krbSecretKeyCfg=KRBKEY-SUBTREE, the entry representing the Kerberos key 
+must reside directly below an entry with an RDN of "cn=KEYS" and the 
+"cn=KEYS" entry must reside directly below the realm entry.  In both 
+cases, the entry representing the Kerberos key must have a creator 
+identity that is a KDC service in the realm, a Kerberos password 
+administration service that is trusted in the realm, or an LDAP 
+administrator that is trusted in the realm. (The DN recorded by LDAP in 
+the creatorsName attribute of the entry representing the Kerberos key 
+must be listed in the krbKdcServiceObject, krbPwdServiceObject, or 
+krbTrustedAdmObject attribute of the entry representing the realm.)  
+The relationship between the entry representing the Kerberos key and 
+the entry representing the associated Kerberos principal is many-to-
+one.  This is because multiple Kerberos keys can be created for a 
+single principal with each key having a different version number, 
+KDC service identity, or both.  The RDN of the entry representing the 
+Kerberos key must contain a string that indicates the contents of the 
+krbKeyVersion attribute for that entry (for example, 
+"krbKeyVersion=1").  If the contents of additional attributes are 
+required to uniquely identity the entry, the RDN also must include this 
+information (for examples, "krbKeyVersion=1 krbKdcServiceName=serverA" 
+or "krbKeyVersion=1 krbPrincipalDN=Alice Smith").' 
+SUP top 
+Structural 
+MUST ( krbKeyVersion $ krbKeyData ) 
+MAY ( krbKdcServiceName $ krbKeyExpires $ krbNextKeyVersion $ 
+krbPrincipalDN) 
+)
+
+( 
+KrbKeyCfg-oid 
+NAME 'KrbKeyCfg' 
+DESC '  An auxiliary object class for use in configuring the
+krbSecretKeyCfg attribute in the realm entry, which defines
+how the principal keys in the realm are configured.'  
+SUP top 
+Auxiliary 
+MAY ( krbSecretKeyCfg )
+)
+
+( 
+KrbMstrKey-oid 
+NAME 'KrbMstrKey' 
+DESC 'A structural object class for use in configuring an entry 
+to represent a Kerberos master key.  The entry representing the 
+Kerberos master key must reside directly below an entry with an RDN of 
+"cn=MKEYS" and the "cn=MKEYS" entry must reside directly below the  
+entry representing the Kerberos realm. The relationship between the 
+entry representing the Kerberos master key and the "cn=MKEYS" entry is 
+many-to-one.  This is because multiple Kerberos master keys can be 
+created for a single realm with each key having a different version 
+number or KDC service identity.  The RDN of the entry representing the 
+Kerberos master key must contain a string that indicates the contents 
+of the krbKeyVersion attribute for that entry (for example, 
+"krbKeyVersion=1").  If the contents of additional attributes are 
+required to uniquely identity the entry, the RDN also must include this 
+information (for example, "krbKeyVersion=1 
+krbKdcServiceName=serverA").' 
+SUP top 
+Structural 
+MUST (krbKeyVersion $ krbMstrKeyData)
+MAY ( krbKdcServiceName $ krbKeyExpires $ krbKeyName $ krbNextKeyVersion ) 
+
+
+( 
+KrbKeyCfg-oid 
+NAME 'KrbKeyCfg' 
+DESC '  An auxiliary object class for use in configuring the
+krbSecretKeyCfg attribute in the realm entry, which defines
+how the principal keys in the realm are configured.'  
+SUP top 
+Auxiliary 
+MAY ( krbSecretKeyCfg )
+)
+
+
+
+7. Security Considerations
+
+---------------------------------------------------
+     AUTHENTICATION DISCLOSURE:
+
+     This document describes a directory access protocol 
+     that provides both read and update access.  Update 
+     access and read access to keying material requires 
+     secure authentication, but this document does 
+     not mandate implementation of any satisfactory 
+     authentication mechanisms.
+
+     In accordance with RFC 2026, section 4.4.1, this 
+     specification is being considered by IESG as a 
+     proposed standard despite this limitation, for the 
+     following reasons:
+        a. to encourage implementation and interoperability 
+     testing of these protocols (with or without update 
+     access) before they are deployed, and
+        b. to encourage deployment and use of these 
+     protocols in read-only applications.  (e.g. 
+     applications where LDAPv3 is used as a query language 
+     for directories which are updated by some secure 
+     mechanism other than LDAP), and
+        c. to avoid delaying the advancement and deployment 
+     of other Internet standards-track protocols which 
+     require the ability to query, but not update, LDAPv3 
+     directory servers.
+
+     Readers are hereby warned that until mandatory 
+     authentication mechanisms that are as strong or stronger
+     than Kerberos are standardized, clients and servers 
+     written according to this specification which make 
+     make use of update functionality or the reading 
+     of keying material are UNLIKELY TO INTER-OPERATE, or 
+     MAY INTER-OPERATE ONLY IF AUTHENTICATION IS REDUCED 
+     TO AN UNACCEPTABLY WEAK LEVEL.  (RFC 2829 [7]
+     mandates that LDAP servers supporting authentication
+     based on user ID and password implement the digest 
+     authentication protocol defined in RFC 2831 [8],
+     but this mechanism is considered to be weaker
+     than the Kerberos.)
+
+     Implementers are hereby discouraged from deploying 
+     LDAPv3 clients or servers which implement the update 
+     functionality, until a Proposed Standard for mandatory 
+     authentication in LDAPv3 has been approved and 
+     published as an RFC.
+
+------------------------------------------------------------
+
+
+The following entities must be trusted to protect KDC attributes as 
+described in this section:
+
+* Administrators of the Keys Extension schema
+* KDC services that use the Keys Extension schema
+* LDAP client libraries used to access the Keys Extension schema
+* LDAP servers and backend databases with access to the Keys Extension schema
+* Administrators of LDAP servers and backend databases with access to 
+KDC attributes   
+
+
+
+7.1.  Security Considerations for Administrators of the Keys Extension schema
+
+All administrators of the Keys Extension schema must be trusted,
+must comply with strict security controls, and must be responsible
+for:
+
+* Ensuring that KDC key attributes are configured in LDAP locations 
+that can be accessed only by LDAP servers that comply with the security 
+considerations described in "Section 7.4.  Security Considerations for 
+LDAP Servers and Backend Databases with Access to the Keys Extension schema".
+
+* If LDAP client libraries are used to access KDC key attributes,
+ensuring that these libraries comply with the security 
+considerations described in "Section 7.3.  Security Considerations for 
+LDAP Client Libraries Used to Access the Keys Extension schema" 
+
+* Ensuring that KDC key attributes are transmitted securely to and from 
+the LDAP server.  If KDC key attributes are transmitted over the network, 
+they must be transmitted using a security protocol with client and 
+server authentication, data integrity, and, if the attribute contains 
+key data, encryption that is as strong or stronger than triple-DES.  
+
+* If the MKEYS entry is configured in LDAP, protecting this entry
+so that only a trusted identity in the realm can insert entries under
+the MKEY entry.  
+
+* If a master key entry is configured in LDAP, protecting this entry so 
+that only trusted identities can modify, delete, or insert new 
+attributes in the entry; only trusted identities can rename or delete 
+the entry; and only a KDC service in the realm can read attributes in 
+the entry. 
+
+* If the realm is configured for KRBKEY or KRBKEY-SUBTREE:
+
+    - protecting each KrbKey entry so that only trusted identities can 
+modify, delete, or insert attributes in this entry; only trusted 
+identities can rename this entry; only trusted identities and the 
+associated principal can delete this entry; and only a KDC service can 
+read attributes from this entry.
+
+    - generating and encrypting the key value stored in each KrbKey 
+entry as described previously in this document. 
+
+    - if configured for KRBKEY-SUBTREE, protecting the KEYS entry
+so that only KDC services in the realm can insert entries under
+the KEYS entry. 
+
+* If the realm is configured for USERPASSWORD, protecting the  
+userPassword attribute so that only trusted identities 
+can insert, delete, modify, or read this attribute.
+
+
+
+7.2.  Security Considerations for KDC Servers that Use the KDC LDAP 
+Schema
+
+All KDC servers that use the Keys Extension schema must be trusted, 
+must be physically protected (for example, kept in a locked room), 
+must be carefully analyzed for security problems, and must be 
+responsible for:
+
+* Using LDAP client libraries that comply with the security 
+considerations described in "Section 7.3.  Security Considerations for 
+LDAP Client Libraries Used to Access the Keys Extension schema." 
+
+* Transmitting KDC key attributes securely to and from LDAP. 
+If KDC key attributes are transmitted over the network, they must be 
+transmitted using a security protocol with strong client and server 
+authentication, data integrity, and, if the attribute contains key 
+data, encryption that is as strong or stronger than triple-DES.
+
+* Before retrieving attributes from a KrbKey entry, verifying that the 
+entry was created by an identity that is trusted in the realm.
+
+
+
+7.3.  Security Considerations for LDAP Client Libraries Used to Access 
+the Keys Extension schema
+
+All LDAP client libraries that are used to access the KDC Keys
+Extension schema must be trusted, must be carefully analyzed 
+for security problems, and must be responsible for protecting 
+KDC key information from other identities on the same machine.  
+
+If an LDAP client library cannot be obtained that meets 
+these security requirements, it would be possible to 
+develop a secure LDAP client library, which could be used 
+by KDC servers,administrators of KDC key data, and administrators
+of LDAP servers that access KDC key data.  The estimated lines of 
+code required to develop such a library is included in the estimated
+lines of code required to develop the libraries used by a secure 
+LDAP server.  (See the next section.)
+
+
+
+7.4.  Security Considerations for LDAP Servers and Backend Databases 
+that Can Access the Keys Extension schema
+
+All LDAP servers and backend databases of LDAP servers that have 
+access to the Keys Extension Schema must be trusted, must be physically
+protected (for example, kept in a locked room), must be carefully
+analyzed for security problems, and must be responsible for:
+
+* If remote access is supported, providing a security protocol that can 
+be used to transmit attributes over the network.  The protocol must 
+support client and server authentication, data integrity, and an 
+encryption algorithm that is as strong or stronger than triple-DES.
+
+* Providing a way to protect attributes from unauthorized access. 
+
+* Providing a way of to audit access to attributes.
+
+* Replicating attributes only to other trusted LDAP servers and 
+backend databases, and replicating these attributes in a secure
+manner. If KDC key attributes are transmitted over the network,
+they must be transmitted using a security protocol with strong 
+client and server authentication, data integrity, and, if the 
+attribute contains key data, encryption that is as strong or 
+stronger than triple-DES. 
+
+* If Kerberos is used to authenticate the KDC to the LDAP server, then 
+the LDAP server secret key may not be accessible over the network.
+
+If an LDAP server cannot be obtained that meets these security
+requirements, it would be possible to develop a small, trusted
+LDAP server that reads and writes only the attributes defined
+in the Keys Extension schema.  The LDAP server could read and write
+these attributes to a small trusted database, such as a database 
+used by a legacy KDC.  The estimated lines of code required to 
+develop such a server is:
+
+    Backend routines for storing KDC 
+    key data in a trusted database:   4K of new code
+
+    LDAP libraries and includes: 25K of ported/analyzed code from 
+                                 OpenLDAP source
+
+    LDAP server (SLAPD):  12K of ported/analyzed code from OpenLDAP 
+                           source 
+
+    LDAP replication server (SLURPD):  2K of ported/analyzed code
+                                       from OpenLDAP source   
+  
+
+
+7.5.  Security Considerations for Administrators that Manage LDAP 
+Servers and Backend Database with Access to the Keys Extension schema
+
+The administrator of each LDAP server and backend database with access 
+to attributes in the Keys Extension schema must be trusted,
+must conform to strict security controls, and is responsible for:
+
+* If LDAP client libraries are used to access the attributes in the 
+schema, ensuring that these libraries comply with the security 
+considerations described in "Section 7.3.  Security Considerations for 
+LDAP Client Libraries Used to Access the Keys Extension schema." 
+
+* Enabling auditing of LDAP servers and backend databases when 
+required.
+
+* If USERPASSORD is configured, ensuring that the userPassword 
+ensuring that the LDAP server is configured to encrypt and hash 
+any data stored in this attribute using algorithms that are as 
+strong or stronger than the algorithms used by the KDC.  If the 
+value in userPassword is hashed, this must be supported by the 
+Kerberos client interfaces as well as the KDC.
+
+
+
+8. Acknowledgments
+
+This schema was developed as part of a working group effort of 
+The Open Group Directory Interoperability Forum.
+
+
+
+9. Expiration Date
+
+This draft expires XXXX XX, 2001.
+
+
+
+10. Bibliography
+
+[1] Bradner, S., "The Internet Standards Process -- Revision 3", 
+BCP 9, RFC 2026, October 1996. 
+
+[2] Wahl, M., Howes, T., and S. Kille, "Lightweight Directory 
+Access Protocol (v3)", RFC 2251, December 1997.
+
+[3] Wahl, M., Coulbeck, A., Howes, T., and S. Kille, "Lightweight 
+X.500 Directory Access Protocol (v3): Attribute Syntax 
+Definitions", RFC 2252, December 1997.
+
+[4] Wahl, M., Kille, S., and T. Howes, "Lightweight Directory 
+Access Protocol (v3): UTF-8 String Representation of 
+Distinguished Names", RFC 2253, December 1997.
+
+[12] Wahl, M., "A Summary of the X.500(96) User Schema for use 
+with LDAPv3", RFC 2256, December 1997.
+
+[6] J. Kohl, C. Neuman. The Kerberos Network Authentication 
+Service (V5), Request for Comments 1510.
+
+[7] Wahl, M.  Authentication Methods for LDAP, Request for Comments
+2829, May 2000.
+
+[8] Leach, P. and C. Newman, "Using Digest Authentication as a SASL
+Mechanism", RFC 2831, May 2000. 
+
+
+
+11. Author's Address 
+
+Donna Skibbie
+IBM Corporation
+1140 Burnet Road
+Austin, TX  78758
+Phone:  (512) 838-3896
+Email:  donnas@us.ibm.com
+
+Jonathan Trostle
+170 W. Tasman Dr.
+San Jose, CA  95134
+E-mail: jtrostle@cisco.com
+
+John Griffith
+Entegrity Solutions Corporation
+32 DW Highway
+Merrimack, NH  03054
+Email: john.griffith@entegrity.com
