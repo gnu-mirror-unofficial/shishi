@@ -1,5 +1,5 @@
 /* aprep.c --- AP-REP functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -439,8 +439,7 @@ shishi_aprep_verify (Shishi * handle,
 {
   char *authenticatorctime;
   char *encapreppartctime;
-  int authenticatorcusec;
-  int encapreppartcusec;
+  uint32_t authenticatorcusec, encapreppartcusec;
   int res;
   int different;
 

@@ -1,5 +1,5 @@
 /* tgs.c	High level client TGS functions
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -269,8 +269,8 @@ shishi_tgs_req_process (Shishi_tgs * tgs)
 int
 shishi_tgs_req_build (Shishi_tgs * tgs)
 {
+  uint32_t apoptions;
   int res;
-  int apoptions;
 
   if (VERBOSE (tgs->handle))
     printf ("Building TGS-REQ...\n");

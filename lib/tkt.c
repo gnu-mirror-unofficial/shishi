@@ -536,7 +536,7 @@ shishi_tkt_server_realm (Shishi_tkt * tkt,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tkt_flags (Shishi_tkt * tkt, int *flags)
+shishi_tkt_flags (Shishi_tkt * tkt, uint32_t *flags)
 {
   return shishi_asn1_read_bitstring (tkt->handle, tkt->enckdcreppart,
 				     "flags", flags);
@@ -553,7 +553,7 @@ shishi_tkt_flags (Shishi_tkt * tkt, int *flags)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tkt_flags_set (Shishi_tkt * tkt, int flags)
+shishi_tkt_flags_set (Shishi_tkt * tkt, uint32_t flags)
 {
   int res;
 
@@ -581,9 +581,9 @@ shishi_tkt_flags_set (Shishi_tkt * tkt, int flags)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tkt_flags_add (Shishi_tkt * tkt, int flag)
+shishi_tkt_flags_add (Shishi_tkt * tkt, uint32_t flag)
 {
-  int flags;
+  uint32_t flags;
   int res;
 
   res = shishi_tkt_flags (tkt, &flags);
