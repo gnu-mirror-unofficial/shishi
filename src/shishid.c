@@ -1,4 +1,4 @@
-/* shishid.c	kerberos 5 daemon using shishi library
+/* shishid.c	Shishi Key Distribution Center daemon.
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -331,7 +331,7 @@ static struct argp argp = {
   options,
   parse_opt,
   NULL,
-  "Shishid -- A Kerberos 5 Key Distribution Center Network Service"
+  "Shishid -- Key Distribution Center network daemon"
 };
 
 void

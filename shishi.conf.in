@@ -78,7 +78,7 @@ server-realm=JOSEFSSON.ORG,.josefsson.org
 # from the command line, are processed.
 # "none": no processing is used.
 # "stringprep": convert from locale charset to UTF-8 and process using
-#               experimental Kerberos stringprep profile.
+#               experimental RFC 1510 stringprep profile.
 # It can also be a string indicating a character set supported by
 # iconv() via libstringprep, in which case data is converted from
 # locale charset into the indicated character set. E.g., UTF-8,

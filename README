@@ -1,7 +1,7 @@
 Shishi README -- Important introductory notes.
 See the end for copying conditions.
 
-This directory holds an implementation of RFC 1510 (aka Kerberos 5).
+This directory holds an implementation of RFC 1510(bis).
 
 Installation instructions are found in the INSTALL file in this
 directory.  Further instructions are found in doc/shishi.info.

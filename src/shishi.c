@@ -503,15 +503,15 @@ static struct argp_option options[] = {
   {0, 0, 0, 0, "Utilities:", 30},
 
   {"client", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
-   "Kerberos client."},
+   "Simple stdin/stdout client."},
 
   {"server", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
-   "Kerberos server."},
+   "Simple stdin/stdout server."},
 
   {0, 0, 0, 0, "Low-level commands:", 40},
 
   {"ap", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
-   "Kerberos Client/Server Authentication (AP-REQ and AP-REP)."},
+   "Client/Server Authentication (AP-REQ and AP-REP)."},
 
   {"crypto", 0, 0, OPTION_DOC|OPTION_NO_USAGE,
    "Cryptographic functions."},
@@ -667,7 +667,8 @@ static struct argp_option options[] = {
    "Encrypt data."},
 
   {"key-usage", OPTION_CRYPTO_KEY_USAGE, "KEYUSAGE", 0,
-   "Encrypt or decrypt using Kerberos Key Usage integer."},
+   "Encrypt or decrypt using specified key usage.  Default is 0, which means no "
+   "key derivation are performed."},
 
   {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
    "Base64 encoded key value."},
@@ -842,7 +843,7 @@ static struct argp argp = {
   "ap [AP-OPTION...]\n"
   "crypto [CRYPTO-OPTION...]\n"
   "kdc [KDC-OPTION...]",
-  "Shishi -- An implementation of Kerberos 5"
+  "Shishi -- A RFC 1510(bis) implementation"
 };
 
 void

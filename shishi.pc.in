@@ -15,7 +15,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: Shishi
-Description: Implementation of Kerberos 5.
+Description: Implementation of RFC 1510(bis).
 Version: @VERSION@
 Libs: -L${libdir} -R${libdir} -lshishi @LIBGCRYPT_LIBS@ 
 Cflags: -I${includedir} @LIBGCRYPT_CFLAGS@ 
