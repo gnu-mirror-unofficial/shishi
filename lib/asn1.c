@@ -55,6 +55,29 @@ _shishi_asn1_optional_field (Shishi * handle,
   return SHISHI_OK;
 }
 
+int
+_shishi_asn1_integer_field (Shishi * handle, ASN1_TYPE node,
+			    int *i, char *field)
+{
+  char buf[4];
+  int buflen;
+  int rc;
+
+  memset(buf, 0, sizeof(buf));
+  buflen = sizeof (buf);
+  rc = asn1_read_value (node, field, buf, &buflen);
+  if (rc != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (rc));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  *i = buf[0] | buf[1] << 8 | buf[2] << 16 | buf[3] << 24;
+
+  return SHISHI_OK;
+}
+
+
 #define SHISHI_TICKET_DEFAULT_TKTVNO "5"
 #define SHISHI_TICKET_DEFAULT_TKTVNO_LEN 0
 

@@ -347,11 +347,8 @@ int
 shishi_ticket_keytype (Shishi * handle,
 			   Shishi_ticket * ticket, int *etype)
 {
-  int len = sizeof (*etype);
-  *etype = 0;
-  return _shishi_asn1_field (handle, ticket->enckdcreppart,
-			     (char *) etype, &len,
-			     "EncKDCRepPart.key.keytype");
+  return _shishi_asn1_integer_field (handle, ticket->enckdcreppart, etype,
+				     "EncKDCRepPart.key.keytype");
 }
 
 int

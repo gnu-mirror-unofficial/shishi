@@ -275,15 +275,8 @@ int
 shishi_kdcrep_get_enc_part_etype (Shishi * handle,
 				  ASN1_TYPE kdcrep, int *etype)
 {
-  int buflen;
-  int res;
-
-  *etype = 0;
-  buflen = sizeof (*etype);
-  res = _shishi_asn1_field (handle, kdcrep,
-			    etype, &buflen, "KDC-REP.enc-part.etype");
-
-  return res;
+  return _shishi_asn1_integer_field (handle, kdcrep, etype,
+				     "KDC-REP.enc-part.etype");
 }
 
 /**
@@ -424,7 +417,7 @@ shishi_kdcrep_decrypt (Shishi * handle,
   unsigned char cipher[BUFSIZ];
   int realmlen = BUFSIZ;
   int cipherlen;
-  unsigned char etype;
+  int etype;
 
   res = shishi_kdcrep_get_enc_part_etype (handle, kdcrep, &etype);
   if (res != SHISHI_OK)
