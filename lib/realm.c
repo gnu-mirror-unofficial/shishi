@@ -174,7 +174,8 @@ shishi_realm_for_server_dns (Shishi * handle, char *server)
     }
 
   shishi_warn (handle, "DNS maps '%s' to '%s'.", server, (char *) rrs->rr);
-  shishi_warn (handle, "Consider using a 'server-realm' configuration token.");
+  shishi_warn (handle,
+	       "Consider using a 'server-realm' configuration token.");
 
   return rrs->rr;
 }

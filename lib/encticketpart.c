@@ -416,7 +416,7 @@ shishi_encticketpart_client (Shishi * handle,
 int
 shishi_encticketpart_clientrealm (Shishi * handle,
 				  Shishi_asn1 encticketpart,
-				  char **client, size_t *clientlen)
+				  char **client, size_t * clientlen)
 {
   return shishi_principal_name_realm (handle,
 				      encticketpart, "cname",

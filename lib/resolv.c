@@ -287,4 +287,3 @@ shishi_resolv_free (Shishi_dns dns)
       dns = next;
     }
 }
-

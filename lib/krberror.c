@@ -486,7 +486,7 @@ shishi_krberror_set_crealm (Shishi * handle,
 int
 shishi_krberror_client (Shishi * handle,
 			Shishi_asn1 krberror,
-			char **client, size_t *clientlen)
+			char **client, size_t * clientlen)
 {
   int rc;
 
@@ -625,7 +625,7 @@ shishi_krberror_set_realm (Shishi * handle,
 int
 shishi_krberror_server (Shishi * handle,
 			Shishi_asn1 krberror,
-			char **server, size_t *serverlen)
+			char **server, size_t * serverlen)
 {
   int rc;
 

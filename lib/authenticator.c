@@ -555,7 +555,7 @@ shishi_authenticator_seqnumber_set (Shishi * handle,
 int
 shishi_authenticator_client (Shishi * handle,
 			     Shishi_asn1 authenticator,
-			     char **client, size_t *clientlen)
+			     char **client, size_t * clientlen)
 {
   return shishi_principal_name (handle, authenticator,
 				"cname", client, clientlen);
@@ -581,7 +581,7 @@ shishi_authenticator_client (Shishi * handle,
 int
 shishi_authenticator_clientrealm (Shishi * handle,
 				  Shishi_asn1 authenticator,
-				  char **client, size_t *clientlen)
+				  char **client, size_t * clientlen)
 {
   return shishi_principal_name_realm (handle,
 				      authenticator, "cname",

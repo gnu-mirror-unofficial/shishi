@@ -177,7 +177,7 @@ hexprint (const unsigned char *str, int len)
       if ((i + 1) % 16 == 0 && i + 1 < len)
 	printf ("\n\t ;; ");
     }
-  puts("");
+  puts ("");
 }
 
 static void
@@ -204,7 +204,7 @@ binprint (const unsigned char *str, int len)
       if ((i + 1) % 6 == 0 && i + 1 < len)
 	printf ("\n\t ;; ");
     }
-  puts("");
+  puts ("");
 }
 
 void test (Shishi * handle);

@@ -318,8 +318,7 @@ shishi_tkt_key_set (Shishi_tkt * tkt, Shishi_key * key)
 
 int
 shishi_tkt_clientrealm_set (Shishi_tkt * tkt,
-			    const char *realm,
-			    const char *client)
+			    const char *realm, const char *client)
 {
   int res;
 
@@ -339,8 +338,7 @@ shishi_tkt_clientrealm_set (Shishi_tkt * tkt,
 
 int
 shishi_tkt_serverrealm_set (Shishi_tkt * tkt,
-			    const char *realm,
-			    const char *server)
+			    const char *realm, const char *server)
 {
   int res;
 
@@ -374,7 +372,7 @@ shishi_tkt_serverrealm_set (Shishi_tkt * tkt,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tkt_client (Shishi_tkt * tkt, char **client, size_t *clientlen)
+shishi_tkt_client (Shishi_tkt * tkt, char **client, size_t * clientlen)
 {
   return shishi_principal_name (tkt->handle, tkt->kdcrep,
 				"cname", client, clientlen);
@@ -423,8 +421,7 @@ shishi_tkt_client_p (Shishi_tkt * tkt, const char *client)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tkt_clientrealm (Shishi_tkt * tkt,
-			char **client, size_t *clientlen)
+shishi_tkt_clientrealm (Shishi_tkt * tkt, char **client, size_t * clientlen)
 {
   return shishi_principal_name_realm (tkt->handle,
 				      tkt->kdcrep, "cname",

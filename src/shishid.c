@@ -275,9 +275,9 @@ doit (void)
   if (arg.x509certfile_given && arg.x509keyfile_given)
     {
       rc = gnutls_certificate_set_x509_key_file (x509cred,
-						  arg.x509certfile_arg,
-						  arg.x509keyfile_arg,
-						  GNUTLS_X509_FMT_PEM);
+						 arg.x509certfile_arg,
+						 arg.x509keyfile_arg,
+						 GNUTLS_X509_FMT_PEM);
       if (rc != GNUTLS_E_SUCCESS)
 	error (EXIT_FAILURE, 0,
 	       "No X.509 server certificate/key found in `%s'/`%s' (%d): %s",

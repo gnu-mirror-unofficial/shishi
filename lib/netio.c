@@ -283,8 +283,7 @@ shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
 static int
 shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 			   const char *indata, size_t inlen,
-			   char **outdata, size_t * outlen,
-			   Shishi_dns rrs)
+			   char **outdata, size_t * outlen, Shishi_dns rrs)
 {
   int rc;
 

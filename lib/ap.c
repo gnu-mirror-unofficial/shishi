@@ -608,7 +608,7 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 				       size_t authenticatorcksumdatalen)
 {
   ap->authenticatorcksumdata = xmemdup (authenticatorcksumdata,
-				       authenticatorcksumdatalen);
+					authenticatorcksumdatalen);
   ap->authenticatorcksumdatalen = authenticatorcksumdatalen;
 }
 
@@ -634,7 +634,7 @@ shishi_ap_authenticator_cksumraw_set (Shishi_ap * ap,
 {
   shishi_ap_authenticator_cksumtype_set (ap, authenticatorcksumtype);
   ap->authenticatorcksumraw = xmemdup (authenticatorcksumraw,
-				      authenticatorcksumrawlen);
+				       authenticatorcksumrawlen);
   ap->authenticatorcksumrawlen = authenticatorcksumrawlen;
 }
 
