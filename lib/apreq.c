@@ -145,9 +145,6 @@ shishi_apreq (Shishi * handle)
   if (res != ASN1_SUCCESS)
     goto error;
 
-  /* see shishi_last_apreq() */
-  handle->lastapreq = node;
-
   return node;
 
 error:

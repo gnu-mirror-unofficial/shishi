@@ -84,9 +84,6 @@ shishi_authenticator (Shishi * handle)
   if (res != ASN1_SUCCESS)
     goto error;
 
-  /* see shishi_last_authenticator() */
-  handle->lastauthenticator = node;
-
   return node;
 
 error:

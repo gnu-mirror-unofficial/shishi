@@ -172,10 +172,7 @@ struct Shishi
   char *ticketsetdefaultfile;
   char *stringprocess;
   Shishi_ticketset *ticketset;
-  /* XXX remove these: */
-  ASN1_TYPE lastauthenticator;
-  ASN1_TYPE lastapreq;
-  ASN1_TYPE lastaprep;
+  /* XXX remove: */
   ASN1_TYPE lastencapreppart;
 };
 

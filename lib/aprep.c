@@ -83,9 +83,6 @@ shishi_aprep (Shishi * handle)
   if (res != ASN1_SUCCESS)
     goto error;
 
-  /* see shishi_last_aprep() */
-  handle->lastaprep = node;
-
   return node;
 
 error:

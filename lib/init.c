@@ -242,26 +242,6 @@ shishi_init_with_paths (Shishi ** handle,
 			    systemcfgfile, usercfgfile);
 }
 
-/* XXX remove these: */
-
-ASN1_TYPE
-shishi_last_authenticator (Shishi * handle)
-{
-  return handle->lastauthenticator;
-}
-
-ASN1_TYPE
-shishi_last_apreq (Shishi * handle)
-{
-  return handle->lastapreq;
-}
-
-ASN1_TYPE
-shishi_last_aprep (Shishi * handle)
-{
-  return handle->lastaprep;
-}
-
 ASN1_TYPE
 shishi_last_encapreppart (Shishi * handle)
 {
