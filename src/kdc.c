@@ -642,8 +642,8 @@ tgsreq1 (Shishi_tgs * tgs)
       goto fatal;
     }
 
-  /* XXX select "best" available key (tgs-req etype list, highest
-     kvno, best algorithm?) here. */
+  /* XXX Select "best" available key (highest kvno, best algorithm?)
+     here. The client etype should not influence this. */
 
   rc = shishi_key_from_value (handle, serverkeys[0]->etype,
 			      serverkeys[0]->key, &serverkey);
@@ -651,7 +651,10 @@ tgsreq1 (Shishi_tgs * tgs)
     return rc;
 
   /* Generate session key for the newly generated ticket, of same key
-     type as the selected long-term server key. */
+     type as the selected long-term server key.  XXX let the client
+     influence the etype? think of AES only server and RFC 1510
+     client. if client etype is not used here, the client cannot talk
+     to the server. perhaps just as good though. */
 
   rc = shishi_key_random (handle, shishi_key_type (serverkey),
 			  &newsessionkey);
