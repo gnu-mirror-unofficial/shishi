@@ -774,6 +774,7 @@ typedef int (*Shishi_checksum_function) (Shishi * handle,
 #include "crypto-des.c"
 #include "crypto-3des.c"
 #include "crypto-aes.c"
+#include "crypto-rc4.c"
 
 struct cipherinfo
 {
@@ -927,6 +928,36 @@ static cipherinfo aes256_cts_hmac_sha1_96_info = {
   aes256_decrypt
 };
 
+static cipherinfo rc4_hmac_info = {
+  SHISHI_RC4_HMAC,
+  "rc4-hmac",
+  16,
+  0,
+  16,
+  16,
+  16,
+  SHISHI_RC4_HMAC_MD5,
+  rc4_hmac_random_to_key,
+  rc4_hmac_string_to_key,
+  rc4_hmac_encrypt,
+  rc4_hmac_decrypt
+};
+
+static cipherinfo rc4_hmac_exp_info = {
+  SHISHI_RC4_HMAC_EXP,
+  "rc4-hmac-exp",
+  16,
+  0,
+  16,
+  16,
+  16,
+  SHISHI_RC4_HMAC_MD5,
+  rc4_hmac_random_to_key,
+  rc4_hmac_string_to_key,
+  rc4_hmac_exp_encrypt,
+  rc4_hmac_exp_decrypt
+};
+
 static cipherinfo *ciphers[] = {
   &null_info,
   &des_cbc_crc_info,
@@ -936,7 +967,9 @@ static cipherinfo *ciphers[] = {
   &des3_cbc_none_info,
   &des3_cbc_sha1_kd_info,
   &aes128_cts_hmac_sha1_96_info,
-  &aes256_cts_hmac_sha1_96_info
+  &aes256_cts_hmac_sha1_96_info,
+  &rc4_hmac_info,
+  &rc4_hmac_exp_info
 };
 
 /**
@@ -1231,6 +1264,13 @@ static checksuminfo hmac_sha1_96_aes256_info = {
   aes256_checksum
 };
 
+static checksuminfo rc4_hmac_md5_info = {
+  SHISHI_RC4_HMAC_MD5,
+  "rc4-hmac-md5",
+  16,
+  rc4_hmac_md5_checksum
+};
+
 static checksuminfo *checksums[] = {
   &md4_info,
   &md4_des_info,
@@ -1239,7 +1279,8 @@ static checksuminfo *checksums[] = {
   &md5_gss_info,
   &hmac_sha1_des3_kd_info,
   &hmac_sha1_96_aes128_info,
-  &hmac_sha1_96_aes256_info
+  &hmac_sha1_96_aes256_info,
+  &rc4_hmac_md5_info
 };
 
 /**
