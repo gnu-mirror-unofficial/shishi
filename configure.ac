@@ -19,14 +19,14 @@
 # Boston, MA 02111-1307, USA.
 
 AC_PREREQ(2.50)
-AC_INIT(shishi, 0.0.6, bug-shishi@josefsson.org)
+AC_INIT(shishi, 0.0.7, bug-shishi@josefsson.org)
 
 # Interfaces removed:    CURRENT++, AGE=0, REVISION=0
 # Interfaces added:      CURRENT++, AGE++, REVISION=0
 # No interfaces changed:                   REVISION++
 LT_CURRENT=0
 LT_AGE=0
-LT_REVISION=6
+LT_REVISION=7
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_AGE)
 AC_SUBST(LT_REVISION)
