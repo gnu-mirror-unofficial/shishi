@@ -353,7 +353,7 @@ shishi_encapreppart_cusec_get (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_read_integer (handle, encapreppart, "cusec", cusec);
+  res = shishi_asn1_read_uint32 (handle, encapreppart, "cusec", cusec);
   if (res != SHISHI_OK)
     return res;
 
