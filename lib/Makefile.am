@@ -37,7 +37,7 @@ libshishi_la_LIBADD = @LIBTASN1_LIBS@ @LIBGCRYPT_LIBS@ @LIBIDN_LIBS@ \
 	@LTLIBINTL@ ../gl/libfoo.a
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-INCLUDES = -I../gl -I../intl \
+INCLUDES = -I$(top_srcdir)/gl -I../intl \
 	@LIBTASN1_CFLAGS@ @LIBGCRYPT_CFLAGS@ @LIBIDN_CFLAGS@
 
 include_HEADERS = shishi.h
