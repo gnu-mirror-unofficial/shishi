@@ -51,13 +51,12 @@ read_asn1 ()
 
   asn1_result = asn1_array2tree (shishi_asn1_tab,
 				 &definitions, errorDescription);
-
   if (asn1_result != ASN1_SUCCESS)
     {
-      printf ("Internal error reading ASN.1 definition.\n");
-      printf ("Error: %s\n", errorDescription);
-      printf ("libasn1 ERROR: %s\n", libtasn1_strerror (asn1_result));
-      exit (1);
+      fprintf (stderr, "libshishi: error: %s\n", errorDescription);
+      fprintf (stderr, "libshishi: error: %s\n",
+	       libtasn1_strerror (asn1_result));
+      return ASN1_TYPE_EMPTY;
     }
 
   return definitions;
@@ -66,8 +65,9 @@ read_asn1 ()
 /**
  * shishi_init:
  *
- * Initializes the shishi library.
- * 
+ * Initializes the Shishi library.  If this function fails, it may print
+ * diagnostic errors to stderr.
+ *
  * Return Value: Returns Shishi library handle, or %NULL on error.
  **/
 Shishi *
@@ -80,20 +80,40 @@ shishi (void)
 
   handle = (Shishi *) malloc (sizeof (*handle));
   if (handle == NULL)
-    return NULL;
+    {
+      fprintf(stderr, "libshishi: error: %s\n",
+	      shishi_strerror (SHISHI_MALLOC_ERROR));
+      return NULL;
+    }
+  memset ((void *) handle, 0, sizeof (*handle));
 
   res = gcry_control (GCRYCTL_INIT_SECMEM, 512, 0);
   if (res != GCRYERR_SUCCESS)
-    return NULL;
-
-  memset ((void *) handle, 0, sizeof (*handle));
+    {
+      fprintf(stderr, "libshishi: error: %s\n",
+	      shishi_strerror (SHISHI_GCRYPT_ERROR));
+      return NULL;
+    }
 
   handle->asn1 = read_asn1 ();
+  if (handle->asn1 == ASN1_TYPE_EMPTY)
+    {
+      fprintf(stderr, "libshishi: error: %s\n",
+	      shishi_strerror (SHISHI_ASN1_ERROR));
+      return NULL;
+    }
 
   handle->kdctimeout = 5;
   handle->kdcretries = 3;
 
   handle->clientkdcetypes = malloc (sizeof (*handle->clientkdcetypes) * 3);
+  if (handle->clientkdcetypes == NULL)
+    {
+      fprintf(stderr, "libshishi: error: %s\n",
+	      shishi_strerror (SHISHI_MALLOC_ERROR));
+      return NULL;
+    }
+
   handle->clientkdcetypes[0] = SHISHI_AES256_CTS_HMAC_SHA1_96;
   handle->clientkdcetypes[1] = SHISHI_AES128_CTS_HMAC_SHA1_96;
   handle->clientkdcetypes[2] = SHISHI_DES3_CBC_HMAC_SHA1_KD;
