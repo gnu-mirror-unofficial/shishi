@@ -2,6 +2,8 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
+* Version 0.0.12 (unreleased)
+
 * Version 0.0.11 (released 2003-12-21)
 
 ** The Shishi library now support X.509 authenticated KDC connections via TLS.
