@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002 Simon Josefsson.
+# Copyright (C) 2002, 2003 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -18,9 +18,9 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-DIST_SUBDIRS = inetutils pam_shishi
+DIST_SUBDIRS = pam_shishi
 
-SUBDIRS = inetutils @PAM_SHISHI@
+SUBDIRS = @PAM_SHISHI@
 
 indent:
 	(cd pam_shishi && make indent)

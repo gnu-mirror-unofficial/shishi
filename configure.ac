@@ -273,33 +273,6 @@ gl_XALLOC
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(signal select ngettext gethostbyname)
 
-# Configure extra tools
-enable_ftpd=no; export enable_ftpd 
-enable_inetd=no; export enable_inetd 
-enable_rexecd=no; export enable_rexecd 
-enable_rlogind=no; export enable_rlogind 
-enable_rshd=no; export enable_rshd 
-enable_syslogd=no; export enable_syslogd 
-enable_talkd=no; export enable_talkd 
-enable_telnetd=yes; export enable_telnetd 
-enable_tftpd=no; export enable_tftpd 
-enable_uucpd=no; export enable_uucpd 
-enable_ftp=no; export enable_ftp 
-enable_ping=no; export enable_ping 
-enable_rcp=no; export enable_rcp 
-enable_rlogin=no; export enable_rlogin 
-enable_rsh=yes; export enable_rsh 
-enable_logger=no; export enable_logger 
-enable_talk=no; export enable_talk 
-enable_telnet=yes; export enable_telnet 
-enable_tftp=no; export enable_tftp 
-enable_whois=no; export enable_whois 
-enable_ifconfig=no; export enable_ifconfig 
-enable_authentication=yes; export enable_authentication
-enable_encryption=yes; export enable_encryption
-with_shishi=yes; export with_shishi
-AC_CONFIG_SUBDIRS(extra/inetutils)
-
 # Check for gtk-doc.
 AC_ARG_WITH(html-dir, [  --with-html-dir=PATH path to installed docs ])
 if test "x$with_html_dir" = "x" ; then
@@ -337,7 +310,7 @@ AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
 
 AC_CONFIG_FILES(Makefile intl/Makefile po/Makefile.in m4/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
-	doc/reference/Makefile extra/Makefile extra/pam_shishi/Makefile \
+	doc/reference/Makefile extra/pam_shishi/Makefile \
 	gl/Makefile gl/m4/Makefile shishi.pc shishi.conf shishi.skel)
 
 # We are done
