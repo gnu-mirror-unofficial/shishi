@@ -518,29 +518,60 @@ asreq (Shishi * handle, Shishi_asn1 kdcreq, char **out, int *outlen)
   return;
 }
 
+static Shishi_msgtype
+get_msgtype (Shishi * handle, char *in, size_t inlen)
+{
+  if (inlen > 1)
+    return *in - 0x5a;
+  else
+    return 0;
+}
+
 static void
 process (Shishi * handle, char *in, int inlen, char **out, int *outlen)
 {
   Shishi_asn1 kdcreq;
+  Shishi_msgtype msgtype;
 
   fprintf (stderr, "Processing %d bytes...\n", inlen);
 
-  kdcreq = shishi_der2asn1_asreq (handle, in, inlen);
-  if (!kdcreq)
-    {
-      asreq (handle, kdcreq, out, outlen);
-      return;
-    }
+  msgtype = get_msgtype (handle, in, inlen);
 
-  kdcreq = shishi_der2asn1_tgsreq (handle, in, inlen);
-  if (!kdcreq)
-    {
-      fprintf (stderr, "tgs-req...\n");
-    }
+  fprintf (stderr, "ASN.1 msg-type %d (0x%x)...\n", msgtype, msgtype);
 
-  /* XXX hard coded KRB-ERROR? */
-  *out = NULL;
-  *outlen = 0;
+  switch (msgtype)
+    {
+    case SHISHI_MSGTYPE_AS_REQ:
+      kdcreq = shishi_der2asn1_asreq (handle, in, inlen);
+      if (kdcreq)
+	{
+	  shishi_kdcreq_print (handle, stdout, kdcreq);
+	  asreq (handle, kdcreq, out, outlen);
+	}
+      else
+	{
+	  fprintf (stderr, "bad as-req...\n");
+	}
+      break;
+
+    case SHISHI_MSGTYPE_TGS_REQ:
+      kdcreq = shishi_der2asn1_tgsreq (handle, in, inlen);
+      if (kdcreq)
+	{
+	  fprintf (stderr, "tgs-req...\n");
+	  shishi_kdcreq_print (handle, stdout, kdcreq);
+	}
+      else
+	{
+	  fprintf (stderr, "bad tgs-req...\n");
+	}
+      break;
+
+    default:
+      /* XXX hard coded KRB-ERROR? */
+      *out = NULL;
+      *outlen = 0;
+    }
 }
 
 int quit = 0;
@@ -569,6 +600,9 @@ doit (Shishi * handle, struct arguments arg)
   for (i = 0; i < arg.nlistenspec; i++)
     {
       ls = &arg.listenspec[i];
+
+      if (!arg.silent)
+	printf ("Listening on %s...", ls->str);
 
       ls->sockfd = socket (ls->family, ls->type, 0);
       if (ls->sockfd < 0)
@@ -611,9 +645,6 @@ doit (Shishi * handle, struct arguments arg)
 	  ls->sockfd = 0;
 	  continue;
 	}
-
-      if (!arg.silent)
-	printf ("Listening on %s...", ls->str);
 
       maxfd++;
       if (!arg.silent)
