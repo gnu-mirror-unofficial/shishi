@@ -2448,6 +2448,7 @@ is experimental.  Comments and feedback is appreciated.
 @menu
 * STARTTLS protected KDC exchanges::	How Shishi talks to KDC protected by TLS.
 * Telnet encryption with AES-CCM::      Integrity and privacy protected telnet.
+* Kerberized rsh and rlogin::           Description of KCMD protocol.
 @end menu
 
 @node STARTTLS protected KDC exchanges
@@ -2766,6 +2767,315 @@ overview of issues and recommendations related to randomness.
 
 This document is based on the various Telnet Encryption RFCs (RFC
 2946, RFC 2947, RFC 2948, RFC 2952 and RFC 2953).
+
+@node Kerberized rsh and rlogin
+@section Kerberized rsh and rlogin
+
+This appendix describe the KCMDV0.2 protocol used in shishi patched
+version of inetutils. The KCMD protocol was developped by the MIT
+Kerberos team for kerberized rsh an rlogin programs. Differences
+between rlogin an rsh will be explained, like those between v0.1 and
+v0.2 of the protocol for compatibility reasons.
+It is possible that some parts of this document are not in conformity
+with original KCMD protocol because there is no official specification
+about it. However, it seems that shishi implementation is compatible
+with MIT's one.
+
+@subsection Establish connection
+
+First the client should establish a TCP connection with the
+server. Default ports are 543 (klogin), 544 (kshell), 2105 (eklogin).
+eklogin is the same as klogin but with encryption. Their is no longer
+ekshell port because encrypted and normal connection use the same port
+(kshell).
+Kshell need a second connection for stderr. The client should send a
+null terminated string that represent the port of this second
+connection.
+Klogin and eklogin does not use a second connection for stderr so the
+client must send a null byte to the server.
+Contrary to classic rsh/rlogin, server must not check if the client
+port is in the range 0-1023. 
+
+@subsection Kerberos identification
+
+When connections are established, first thing to do is to indicate
+kerberos authentication must be used.
+So the client will send a string to indicate it will used kerberos
+5. It will call a length-string "strl" the couple (lenght of the string
+strl, null terminated string strl). Length of the string is an int32
+(32bits int) in MSB order (for the network).
+So the client send this length-string strl :
+
+@verbatim
+   KRB5_SENDAUTH_V1.0
+@end verbatim
+
+After that the client must indicate which version of the protocol it
+will used by sending this length-string strl :
+
+@verbatim
+   KCMDV0.2
+@end verbatim
+
+It can be V0.1 for older versions.
+If indentification from client is good, server will send a null
+byte (0x00). Else if authentication message is wrong, server send byte
+0x01, else if protocol version message is wrong server send byte 0x02.
+
+@subsection Kerberos authentication
+
+When client is indentified, kerberos authentication can begin. The
+client must send an AP-REQ to the server. AP-REQ authenticator must
+have a subkey (only for KCMDV0.2) and a checksum.
+Authenticator checksum is created on following string :
+
+@example
+"serverport:""terminaltype""remoteusername"
+@end example
+
+for example :
+
+@example
+543:linux/38400user
+@end example
+
+remoteusername corresponds to the identity of the client on remote machine.
+
+AP-REQ is sended in der encoded format. The length (int32) of der
+encoded AP-REQ is sended in network format (MSB), following by the der
+encoded AP-REQ.
+If all is correct, server send a null int32 (MSB format but like it is
+null it is not important).
+KCMD protocol use mutual authentication, so server must now send and
+AP-REP : (in32 lenght in MSB of der encoded AP-REP)(der encoded
+AP-REP).
+
+Now server and client are partially authenticated.
+
+@subsection Extended authentication
+
+Client must now send 3 different null terminated strings (without
+lenght) :
+
+* remote user name (user identity on remote machine)
+* terminal type for rlogin or command for rsh
+* local user name (user identity on client machine)
+
+example for rsh :
+
+@example
+"rname\0"
+"cat /usr/local/etc/shishi.conf"
+"lname\0"
+@end example
+
+Server must verify that checksum in AP-REQ authenticator is correct by
+computing a new hash like client has done.
+
+Server must verify that principal (in AP-REQ) has right to log in on
+the remote user account.
+For the moment shishi only check if remote user name is equal to
+principal. A more complex authorization code is planned.
+Look at the end to know how MIT/Heimdal do to check authorization.
+
+If all is correct server send a null byte, else an error message
+string (null terminated string) is sent. User read the first byte. If
+it is equal to zero, authentication is correct and is logged on the
+remote host. Else user can read the error messsage send by the server.
+
+@subsection Window size
+
+For rlogin protocol, when authentication is complete, the server can
+optionnaly send a message to ask for window terminal size of
+user. Then the user can respond but it is not an obligation.
+
+In KCMDV0.1 server send an urgent TCP message (MSG_OOB) with one byte
+:
+
+@example
+TIOCPKT_WINDOW = 0x80
+@end example
+
+In KCMDV0.2 server does not send an urgent message but write on the
+socket 5 bytes :
+
+@example
+'\377', '\377', 'o', 'o', TIOCPKT_WINDOW
+@end example
+
+If encryption is enabled (eklogin) server must send this 5 bytes
+encrypted.
+
+Client can answer in both protocol version with :
+       
+@example
+'\377', '\377', 's', 's', "struct winsize"
+@end example
+
+The winsize structure is filled with corresponding setting to client's
+terminal.
+If encryption is enabled this answer must be send encrypted.
+
+@subsection End of authentication
+
+The "classic" rsh/rlogin can be used now.
+
+
+@subsection Encryption
+
+Encryption mode is used when a connection with eklogin is established.
+Encryption with krsh can be used too. Before, there was a specific port
+for that (ekshell), but now to indicate that encryption must be used with
+krsh, client must add "-x " before the command when it send it between
+remote user name and local user name.
+When the client compute the checksum for AP-REQ authenticator the "-
+x" must not be included.
+
+Encryption in KCMDV0.2 is not the same as in KCMDV0.1. 
+KCMDV0.1 uses ticket session key as encryption key, and use standard
+Kerberos encryption functions. This protocol only supports des-cbc-crc,
+des-cbc-md4, des-cbc-md5 and does not use initialisation vectors.
+
+For example on each encryption/decryption calls, the following
+prototype kerberos function should be used :
+	 
+@example
+kerberos_encrypt (key, keyusage, in, out)  (or decrypt)
+@end example
+
+KCMDV0.2 can be used with all kerberos encryption modes (des, 3des,
+aes, arcfour) and use AP-REQ authenticator subkey. In opposite to
+KCMDV0.1 initialisation vectors are used. All encryptions/descryptions
+must be made using a cryptographic context (for example to use the
+updated iv, or sbox) :
+
+@example
+kerberos_init(ctx, iv, key, keyusage)
+kerberos_encrypt (ctx, in, out)
+@end example
+
+For both protocols, keyusage id for des-cbc-md5, des-cbc-md4,
+des-cbc-crc and des3-cbc-sha1 (for KCMDV0.2) :
+	
+@example    
+keyusage = 1026
+@end example
+
+For other KCMDV0.2 modes keyusage is different for each
+encryption/decryption usage.
+To understand, eklogin use 1 socket. It encrypts data (output 1) to
+send and decrypts (input 1) received data.
+Kshell use 2 sockets (1 for transmit data, 1 for stderr). So there are
+four modes :
+     
+@verbatim
+   transmit  : input  1 
+	       output 1
+
+   stderr    : input  2
+	       output 2
+@end verbatim
+
+There is a keyusage for each modes. The keyusage must correspond on
+client and server side. For example in klogin client input 1 keyusage
+will be server output 1 keyusage.
+
+@multitable @columnfractions .15 .15 .15
+@item I/O @tab Client @tab Server
+@item intput 1 @tab 1028 @tab 1030
+@item output 1 @tab 1030 @tab 1028
+@item intput 2 @tab 1032 @tab 1034
+@item output 2 @tab 1034 @tab 1032
+@end multitable
+
+Those keyusages must be used with AES and ARCFOUR modes.
+
+KCMDV0.2 uses IV (initialisation vector). Like for keyusage, client IV
+must correspond to server IV. IV size is equal to key type,
+blocksize. All bytes of IV must be initialised to :
+
+@multitable @columnfractions .15 .15 .15
+@item I/O @tab Client @tab Server
+@item intput 1 @tab 0 @tab 1
+@item output 1 @tab 1 @tab 0
+@item intput 2 @tab 2 @tab 3
+@item output 2 @tab 3 @tab 2
+@end multitable
+
+ARCFOUR mode does not use IV. However, like it is said before, a context
+must be used to keep the updated sbox.
+
+Normal message with klogin and kshell are sent like that :
+
+@example
+(int 32 lenght of message in MSB order)
+(message)
+@end example
+
+In encrypted mode it is a bit different :
+
+@example
+(int 32 length of unencrypted message in MSB order)
+(encrypted message)
+@end example
+
+In KCMDV0.2 encrypted message is create like that :
+
+@example
+encrypt (
+(int 32 length of message in MSB order)
+(message)
+)
+@end example
+
+A check on message size can be made in second version of the protocol.
+
+@subsection  KCMDV0.3
+
+
+This part only gives possible ways to extend KCMD protocol. Does not
+take that as must have in KCMD implementation.
+
+Extensions of KCMV0.2 could be made. For example kshell supposes there
+are no files with name "-x *". I think the same thing can be supposed
+with terminal name for klogin. So client could add "-x " to terminal
+type it sends to server to indicate it will use encryption. Like that
+there will be only one port for klogin/eklogin : 543.
+
+In encrypted mode kshell send command in clear on the network, this
+could be considered as insecure as user have decided to use
+encryption.
+This is not really a problem for klogin because it just sends terminal
+type.
+
+In encrypted mode, klogin and kshell clients could only send "-x" as
+command or terminal type.
+After that encryption is activated, and the client could send terminal
+type or command encrypted.
+The server will send the null byte to say that all is correct, or
+error message in encrypted form.
+
+@subsection MIT/Heimdal authorization
+
+This part describes how MIT/Heimdal version check authorization of the
+user to log in on the remote machine.
+
+Authorization check is made by looking if the file .k5login exists on
+the account of the remote user.
+If this file does not exist, remote user name must be the same as
+principal in AP-REQ to valid authorization.
+Else if this file exists, check first verify that remote user or root
+are the owner of .k5login.
+If it is not the case, the check fails.
+If it is good, check reads each line of that file and compare each
+readed name to principal.
+If principal is found in .k5login, authorization is valid, else user
+is not allowed to connect on remote host with the specified remote
+user name (that can be the same as principal).
+
+So someone (for example user "user1") can remote log into "user2"
+account if .k5login is present in user2 home dir and this file is owned
+by user2 or root and user1 name is present in this file.
 
 @node Copying This Manual
 @appendix Copying This Manual
