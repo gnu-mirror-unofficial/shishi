@@ -317,7 +317,9 @@ shishi_tkt_key_set (Shishi_tkt * tkt, Shishi_key * key)
 }
 
 int
-shishi_tkt_clientrealm_set (Shishi_tkt * tkt, char *realm, char *client)
+shishi_tkt_clientrealm_set (Shishi_tkt * tkt,
+			    const char *realm,
+			    const char *client)
 {
   int res;
 
@@ -336,7 +338,9 @@ shishi_tkt_clientrealm_set (Shishi_tkt * tkt, char *realm, char *client)
 }
 
 int
-shishi_tkt_serverrealm_set (Shishi_tkt * tkt, char *realm, char *server)
+shishi_tkt_serverrealm_set (Shishi_tkt * tkt,
+			    const char *realm,
+			    const char *server)
 {
   int res;
 
@@ -356,17 +360,24 @@ shishi_tkt_serverrealm_set (Shishi_tkt * tkt, char *realm, char *server)
 /**
  * shishi_tkt_client:
  * @tkt: input variable with ticket info.
- * @client: output buffer that holds client name of ticket.
- * @clientlen: on input, maximum size of output buffer,
- *             on output, actual size of output buffer.
+ * @client: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @clientlen).
+ * @clientlen: pointer to length of @client on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
  *
- * Return value: Returns client principal of ticket.
+ * Represent client principal name in Ticket KDC-REP as
+ * zero-terminated string.  The string is allocate by this function,
+ * and it is the responsibility of the caller to deallocate it.  Note
+ * that the output length @clientlen does not include the terminating
+ * zero.
+
+ * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tkt_client (Shishi_tkt * tkt, char *client, size_t * clientlen)
+shishi_tkt_client (Shishi_tkt * tkt, char **client, size_t *clientlen)
 {
-  return shishi_principal_name_get (tkt->handle, tkt->kdcrep,
-				    "cname", client, clientlen);
+  return shishi_principal_name (tkt->handle, tkt->kdcrep,
+				"cname", client, clientlen);
 }
 
 /**
@@ -385,36 +396,40 @@ shishi_tkt_client_p (Shishi_tkt * tkt, const char *client)
   size_t buflen;
   int res;
 
-  buflen = strlen (client) + 1;
-  buf = xmalloc (buflen);
-
-  res = shishi_tkt_client (tkt, buf, &buflen);
+  res = shishi_tkt_client (tkt, &buf, &buflen);
   if (res != SHISHI_OK)
-    {
-      free (buf);
-      return 0;
-    }
-  buf[buflen] = '\0';
+    return 0;
 
-  if (strcmp (client, buf) != 0)
-    {
-      free (buf);
-      return 0;
-    }
+  res = strcmp (client, buf) == 0;
 
   free (buf);
 
-  return 1;
+  return res;
 }
 
+/**
+ * shishi_tkt_clientrealm:
+ * @tkt: input variable with ticket info.
+ * @client: pointer to newly allocated zero terminated string containing
+ *   principal name and realm.  May be %NULL (to only populate @clientlen).
+ * @clientlen: pointer to length of @client on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
+ *
+ * Convert cname and realm fields from AS-REQ to printable principal
+ * name format.  The string is allocate by this function, and it is
+ * the responsibility of the caller to deallocate it.  Note that the
+ * output length @clientlen does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_tkt_cnamerealm (Shishi_tkt * tkt,
-		       char *cnamerealm, size_t * cnamerealmlen)
+shishi_tkt_clientrealm (Shishi_tkt * tkt,
+			char *client, size_t *clientlen)
 {
-  return shishi_principal_name_realm_get (tkt->handle,
-					  tkt->kdcrep, "cname",
-					  tkt->kdcrep, "crealm",
-					  cnamerealm, cnamerealmlen);
+  return shishi_principal_name_realm (tkt->handle,
+				      tkt->kdcrep, "cname",
+				      tkt->kdcrep, "crealm",
+				      client, clientlen);
 }
 
 /**
@@ -433,26 +448,15 @@ shishi_tkt_cnamerealm_p (Shishi_tkt * tkt, const char *client)
   size_t buflen;
   int res;
 
-  buflen = strlen (client) + 1;
-  buf = xmalloc (buflen);
-
-  res = shishi_tkt_cnamerealm (tkt, buf, &buflen);
+  res = shishi_tkt_clientrealm (tkt, &buf, &buflen);
   if (res != SHISHI_OK)
-    {
-      free (buf);
-      return 0;
-    }
-  buf[buflen] = '\0';
+    return 0;
 
-  if (strcmp (client, buf) != 0)
-    {
-      free (buf);
-      return 0;
-    }
+  res = strcmp (client, buf) == 0;
 
   free (buf);
 
-  return 1;
+  return res;
 }
 
 /**
@@ -1344,8 +1348,7 @@ shishi_tkt_lastreq_pretty_print (Shishi_tkt * tkt, FILE * fh)
 void
 shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
 {
-  char buf[BUFSIZ];
-  char *buf2;
+  char *buf;
   char *p;
   size_t buflen;
   int keytype, etype;
@@ -1354,11 +1357,9 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
   time_t t;
   time_t now = time (NULL);
 
-  buflen = sizeof (buf);
-  buf[0] = '\0';
-  res = shishi_tkt_cnamerealm (tkt, buf, &buflen);
-  buf[buflen] = '\0';
+  res = shishi_tkt_clientrealm (tkt, &buf, &buflen);
   fprintf (fh, "%s:\n", buf);
+  free (buf);
 
   t = shishi_tkt_authctime (tkt);
   fprintf (fh, _("Authtime:\t%s"), ctime (&t));
@@ -1389,10 +1390,16 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
   if (t != (time_t) - 1)
     fprintf (fh, _("Renewable till:\t%s"), ctime (&t));
 
-  res = shishi_tkt_server (tkt, &buf2, NULL);
-  res = shishi_ticket_get_enc_part_etype (tkt->handle, tkt->ticket, &keytype);
-  fprintf (fh, _("Server:\t\t%s key %s (%d)\n"), buf2,
-	   shishi_cipher_name (keytype), keytype);
+  res = shishi_tkt_server (tkt, &buf, NULL);
+  if (res == SHISHI_OK)
+    {
+      res = shishi_ticket_get_enc_part_etype (tkt->handle, tkt->ticket,
+					      &keytype);
+      if (res == SHISHI_OK)
+	fprintf (fh, _("Server:\t\t%s key %s (%d)\n"), buf,
+		 shishi_cipher_name (keytype), keytype);
+      free (buf);
+    }
 
   res = shishi_tkt_keytype (tkt, &keytype);
   res = shishi_kdcrep_get_enc_part_etype (tkt->handle, tkt->kdcrep, &etype);
