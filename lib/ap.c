@@ -81,7 +81,6 @@ int
 shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
 {
   Shishi_ap *lap;
-  int rc;
 
   *ap = malloc (sizeof (**ap));
   if (*ap == NULL)
