@@ -84,9 +84,9 @@ main (int argc, char *argv[])
   if (args.help_given)
     {
       cmdline_parser_print_help ();
-      error (0, 0, "\nMandatory arguments to long options are "
-	     "mandatory for short options too.\n\nReport bugs to <%s>.\n",
-	     PACKAGE_BUGREPORT);
+      printf ("\nMandatory arguments to long options are "
+	      "mandatory for short options too.\n\nReport bugs to <%s>.\n",
+	      PACKAGE_BUGREPORT);
       return EXIT_SUCCESS;
     }
 
