@@ -24,8 +24,9 @@
 int
 ap (Shishi * handle, struct arguments arg)
 {
-  ASN1_TYPE apreq;
+  Shishi_ap *ap;
   int res;
+
 
   if (arg.cname == NULL)
     arg.cname = shishi_principal_default (handle);
@@ -35,16 +36,22 @@ ap (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      int len = strlen ("krbtgt/") + strlen (arg.realm) + strlen ("@") +
-	strlen (arg.realm) + 1;
-      arg.sname = malloc (len);
+      asprintf(&arg.sname, "host/www");
       if (arg.sname == NULL)
-	return SHISHI_MALLOC_ERROR;
-      sprintf (arg.sname, "krbtgt/%s@%s", arg.realm, arg.realm);
+	die("Could not allocate server name.");
+    }
+
+  if (arg.verbose)
+    {
+      printf ("Client name: `%s'\n", arg.cname);
+      printf ("Realm: `%s'\n", arg.realm);
+      printf ("Service name: `%s'\n", arg.sname);
     }
 
   if (arg.apreqreadfile)
     {
+      ASN1_TYPE apreq;
+
       res = shishi_apreq_from_file (handle, &apreq,
 				    arg.apreqreadtype, arg.apreqreadfile);
       if (res != SHISHI_OK)
@@ -53,6 +60,14 @@ ap (Shishi * handle, struct arguments arg)
 		   shishi_strerror_details (handle));
 	  return 1;
 	}
+      res = shishi_ap (handle, &ap);
+      if (res != SHISHI_OK)
+	{
+	  fprintf (stderr, _("Could not make AP-REQ: %s\n"),
+		   shishi_strerror_details (handle));
+	  return 1;
+	}
+      shishi_ap_req_set (ap, apreq);
     }
   else
     {
@@ -67,9 +82,10 @@ ap (Shishi * handle, struct arguments arg)
 							      arg.sname);
       if (ticket == NULL)
 	{
-	  fprintf (stderr, _("Could not find ticket for `%s' `%s': %s\n"),
-		   arg.cname, arg.sname, shishi_strerror_details (handle));
-	  return ASN1_TYPE_EMPTY;
+	  fprintf (stderr,
+		   _("Could not find ticket for `%s', use --server-name\n"),
+		   arg.sname);
+	  return 1;
 	}
 
       if (arg.verbose)
@@ -93,25 +109,36 @@ ap (Shishi * handle, struct arguments arg)
       else
 	datalen = 0;
 
-      res = shishi_ticket_apreq_data (handle, ticket, data, datalen, &apreq);
+      res = shishi_ap_tktoptionsdata (handle, &ap, ticket, 0, data, datalen);
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, _("Could not make AP-REQ: %s\n"),
 		   shishi_strerror_details (handle));
 	  return 1;
 	}
+
+      res = shishi_ap_req_build (ap);
+      if (res != SHISHI_OK)
+	{
+	  fprintf (stderr, _("Could not build AP-REQ: %s\n"),
+		   shishi_strerror_details (handle));
+	  return 1;
+	}
     }
 
-  if (arg.authenticatorwritefile && shishi_last_authenticator (handle))
-    shishi_authenticator_to_file (handle, shishi_last_authenticator (handle),
+  if (shishi_ap_authenticator(ap))
+    shishi_authenticator_print (handle, stdout, shishi_ap_authenticator(ap));
+
+  if (arg.authenticatorwritefile && shishi_ap_authenticator(ap))
+    shishi_authenticator_to_file (handle, shishi_ap_authenticator(ap),
 				  arg.authenticatorwritetype,
 				  arg.authenticatorwritefile);
 
   if (!arg.silent)
-    shishi_apreq_print (handle, stdout, apreq);
+    shishi_apreq_print (handle, stdout, shishi_ap_req(ap));
 
   if (arg.apreqwritefile)
-    shishi_apreq_to_file (handle, apreq,
+    shishi_apreq_to_file (handle, shishi_ap_req(ap),
 			  arg.apreqwritetype, arg.apreqwritefile);
 
   return 0;

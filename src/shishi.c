@@ -957,9 +957,10 @@ main (int argc, char *argv[])
 
 	if (arg.verbose)
 	  {
-	    shishi_authenticator_print (handle, stdout,
-					shishi_tgs_get_authenticator (tgs));
-	    shishi_apreq_print (handle, stdout, shishi_tgs_get_apreq (tgs));
+	    shishi_authenticator_print
+	      (handle, stdout, shishi_ap_authenticator(shishi_tgs_ap (tgs)));
+	    shishi_apreq_print
+	      (handle, stdout, shishi_ap_req(shishi_tgs_ap (tgs)));
 	    shishi_kdcreq_print (handle, stdout, shishi_tgs_get_tgsreq (tgs));
 	    shishi_kdcrep_print (handle, stdout, shishi_tgs_get_tgsrep (tgs));
 	  }
