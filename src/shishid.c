@@ -455,6 +455,7 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
   err = shishi_tkt_serverrealm_set (tkt, realm, servername);
   if (err)
     return err;
+
 #if 0
   userkey = shishi_keys_for_serverrealm_in_file (handle,
 						 arg->keyfile,
