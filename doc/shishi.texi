@@ -3398,9 +3398,19 @@ Specify the location of the default system configuration file.  Used
 by the Shishi library.  If not specified, the default is specified at
 compile-time and is usually @file{$prefix/etc/shishi.conf}.
 
+@item @env{SHISHI_HOME}
+Specify the user specific directory for configuration files, ticket
+cache, etc.  Used by the Shishi library.  If not specified, it is
+computed as @code{$HOME/.shishi}.
+
 @item @env{SHISHI_USER}
 Specify the default principal user name.  Used by the Shishi library.
 If not specified, it is computed by calling @code{getpwuid(getuid)}.
+
+@item @env{SHISHI_TICKETS}
+Specify the file name of the ticket cache.  Used by the Shishi
+library.  If not specified, it will be @code{$SHISHI_HOME/tickets}, or
+@code{$HOME/.shishi/tickets} if @code{$SHISHI_HOME} is not specified.
 
 @end itemize
 
