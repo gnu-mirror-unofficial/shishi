@@ -21,69 +21,6 @@
  *
  */
 
-static int
-des3_cbc_sha1_kd_checksum (Shishi * handle,
-			   char *out,
-			   int *outlen, char *in, int inlen)
-{
-  int res;
-  char buffer[BUFSIZ];
-  char confounder[8];
-  char md[16];
-  GCRY_MD_HD hd;
-  int i;
-
-  if (inlen + 8 + 16 > BUFSIZ)
-    {
-      shishi_error_printf (handle, "checksum inbuffer too large");
-      return !SHISHI_OK;
-    }
-
-  memcpy (buffer + 8 + 16, in, inlen);
-  memset (buffer + 8, 0, 16);
-
-  res = shishi_randomize (handle, buffer, 8);
-  if (res != SHISHI_OK)
-    return res;
-
-#if 0
-  printf ("cksum random: ");
-  for (i = 0; i < 8; i++)
-    printf ("%02X ", buffer[i]);
-  printf ("\n");
-#endif
-
-  hd = gcry_md_open (GCRY_MD_MD5, 0);
-  if (hd)
-    {
-      char *p;
-
-      gcry_md_write (hd, buffer, inlen + 8 + 16);
-      p = gcry_md_read (hd, GCRY_MD_MD5);
-
-#if 0
-      printf ("cksum md5: ");
-      for (i = 0; i < 16; i++)
-	printf ("%02X ", p[i]);
-      printf ("\n");
-#endif
-
-      memcpy (buffer + 8, p, 16);
-      gcry_md_close (hd);
-    }
-  else
-    {
-      puts ("bajs");
-      exit (1);
-    }
-
-  memcpy (out, buffer, 8 + 16);
-
-  *outlen = 8 + 16;
-
-  return SHISHI_OK;
-}
-
 /* The 168 bits of random key data are converted to a protocol key
  * value as follows.  First, the 168 bits are divided into three
  * groups of 56 bits, which are expanded individually into 64 bits as
