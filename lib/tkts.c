@@ -437,7 +437,7 @@ shishi_tkts_expire (Shishi_tkts * tkts)
 
   while (i < tkts->ntkts)
     {
-      if (!shishi_tkt_valid_now_p (tkts->tkts[i]))
+      if (shishi_tkt_expired_p (tkts->tkts[i]))
 	{
 	  warn++;
 	  shishi_tkts_remove (tkts, i);
