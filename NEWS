@@ -15,7 +15,9 @@ you can install GNU gettext before building this package.  If you
 don't care about i18n, this package should work fine (except for i18n,
 of course).
 
-** Libtasn1 and Libgcrypt updated (libpgp-error added in errcrypto/).
+** Libgcrypt updated (libpgp-error added in errcrypto/).
+
+** Libtasn1 updated and replaced by "minitasn1" from gnutls.
 
 ** Argp and other compatibility files replaced by gl/ directory.
 
