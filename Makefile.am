@@ -18,7 +18,8 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-DISTCHECK_CONFIGURE_FLAGS = --without-system-asn1 --without-libgcrypt
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc \
+	--without-system-asn1 --without-libgcrypt
 
 SUBDIRS = po gl
 
