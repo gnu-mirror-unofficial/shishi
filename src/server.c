@@ -88,7 +88,7 @@ server (Shishi * handle, struct arguments arg)
     }
   else
     {
-      key = shishi_hostkeys_for_localservice (handle, "host");
+      key = shishi_hostkeys_for_server (handle, arg.sname);
       if (key == NULL)
 	{
 	  fprintf (stderr, "Could not find key: %s\n",
