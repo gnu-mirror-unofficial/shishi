@@ -28,7 +28,6 @@ shishi_encapreppart (Shishi * handle)
   Shishi_asn1 node = NULL;
   struct timeval tv;
   struct timezone tz;
-  char usec[BUFSIZ];
 
   node = shishi_asn1_encapreppart (handle);
   if (!node)
@@ -40,8 +39,8 @@ shishi_encapreppart (Shishi * handle)
     goto error;
 
   gettimeofday (&tv, &tz);
-  sprintf (usec, "%ld", tv.tv_usec % 1000000);
-  res = shishi_asn1_write (handle, node, "cusec", usec, 0);
+  res = shishi_asn1_write_integer (handle, node, "cusec",
+				   tv.tv_usec % 1000000);
   if (res != SHISHI_OK)
     goto error;
 
