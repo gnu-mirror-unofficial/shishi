@@ -4,6 +4,19 @@ See the end for copying conditions.
 
 * Version 0.0.2 (unreleased)
 
+** Command line handling of the 'shishi' application rewritten.
+See the (updated) user manual and --help output for the new story.
+
+** It is possible to acquire renewable tickets.
+
+** Example client and server included.
+Application data protection is not supported, but authentication is
+demonstrated.  The files are in src/client.c and src/server.c.
+
+** New configuration verbs: 'ticket-life' and 'renew-life'.
+
+** AES ciphers didn't work when nettle was used.
+
 * Version 0.0.1 (released 2003-08-10)
 
 ** InetUtils copy removed.
