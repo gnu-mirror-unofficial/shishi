@@ -96,6 +96,19 @@ shishi_safe_key_set (Shishi_safe * safe, Shishi_key * key)
 }
 
 /**
+ * shishi_safe_safe:
+ * @ap: structure that holds information about SAFE exchange
+ *
+ * Return value: Returns the ASN.1 safe in the SAFE exchange, or NULL if
+ *               not yet set or an error occured.
+ **/
+Shishi_asn1
+shishi_safe_safe (Shishi_safe * safe)
+{
+  return safe->safe;
+}
+
+/**
  * shishi_safe_print:
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
