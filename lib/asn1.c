@@ -26,24 +26,30 @@
 /* Defined in kerberos5.c, generated from kerberos5.asn1. */
 extern const ASN1_ARRAY_TYPE shishi_asn1_tab[];
 
-Shishi_asn1
-_shishi_asn1_init (void)
+int
+_shishi_asn1_init (Shishi * handle)
 {
-  Shishi_asn1 definitions = NULL;
-  int asn1_result = ASN1_SUCCESS;
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
+  int asn1_result;
 
-  asn1_result = asn1_array2tree (shishi_asn1_tab,
-				 &definitions, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
+  if (!asn1_check_version (LIBTASN1_VERSION))
     {
-      fprintf (stderr, "libshishi: error: %s\n", errorDescription);
-      fprintf (stderr, "libshishi: error: %s\n",
-	       libtasn1_strerror (asn1_result));
-      return NULL;
+      shishi_warn (handle, "asn1_check-version(%s) failed: %s",
+		   LIBTASN1_VERSION, asn1_check_version (NULL));
+      return SHISHI_ASN1_ERROR;
     }
 
-  return definitions;
+  asn1_result = asn1_array2tree (shishi_asn1_tab,
+				 &handle->asn1, errorDescription);
+  if (asn1_result != ASN1_SUCCESS)
+    {
+      shishi_warn (handle, "asn1_array2tree() failed: %s\n",
+		   libtasn1_strerror (asn1_result));
+      shishi_warn (handle, "%s", errorDescription);
+      return SHISHI_ASN1_ERROR;
+    }
+
+  return SHISHI_OK;
 }
 
 int

@@ -31,14 +31,16 @@ init_handle (int outputtype)
 
   shishi_set_outputtype (handle, outputtype);
 
-  if (_shishi_crypto_init () != SHISHI_OK)
+  rc = _shishi_crypto_init (handle);
+  if (rc != SHISHI_OK)
     {
       free (handle);
       shishi_warn (handle, "Cannot initialize crypto library");
       return NULL;
     }
 
-  if (!(handle->asn1 = _shishi_asn1_init ()))
+  rc = _shishi_asn1_init (handle);
+  if (rc != SHISHI_OK)
     {
       free (handle);
       shishi_warn (handle, "%s", shishi_strerror (SHISHI_ASN1_ERROR));

@@ -26,17 +26,35 @@
 #include <gcrypt.h>
 
 int
-_shishi_crypto_init (void)
+_shishi_crypto_init (Shishi * handle)
 {
-  if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
+  gcry_error_t err;
+
+  err = gcry_control (GCRYCTL_ANY_INITIALIZATION_P);
+  if (err == GPG_ERR_NO_ERROR)
     {
       if (gcry_check_version (GCRYPT_VERSION) == NULL)
-	return SHISHI_CRYPTO_INTERNAL_ERROR;
-      if (gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0) != GPG_ERR_NO_ERROR)
-	return SHISHI_CRYPTO_INTERNAL_ERROR;
-      if (gcry_control (GCRYCTL_INITIALIZATION_FINISHED,
-			NULL, 0) != GPG_ERR_NO_ERROR)
-	return SHISHI_CRYPTO_INTERNAL_ERROR;
+	{
+	  shishi_warn (handle, "gcry_check_version(%s) failed: %s",
+		       GCRYPT_VERSION, gcry_check_version (NULL));
+	  return SHISHI_CRYPTO_INTERNAL_ERROR;
+	}
+
+      err = gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0);
+      if (err  != GPG_ERR_NO_ERROR)
+	{
+	  shishi_warn (handle, "gcry_control (GCRYCTL_DISABLE_SECMEM)"
+		       " failed: %s", gcry_strerror (err));
+	  return SHISHI_CRYPTO_INTERNAL_ERROR;
+	}
+
+      err = gcry_control (GCRYCTL_INITIALIZATION_FINISHED, NULL, 0);
+      if (err  != GPG_ERR_NO_ERROR)
+	{
+	  shishi_warn (handle, "gcry_control (GCRYCTL_INITIALIZATION_FINISHED)"
+		       " failed: %s", gcry_strerror (err));
+	  return SHISHI_CRYPTO_INTERNAL_ERROR;
+	}
     }
 
   return SHISHI_OK;

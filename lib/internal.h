@@ -221,8 +221,8 @@ struct Shishi
 #define TICKETLIFE (60*60*8)	/* Work day */
 #define RENEWLIFE (60*60*24*7)	/* Week */
 
-extern int _shishi_crypto_init (void);
-extern Shishi_asn1 _shishi_asn1_init (void);
+extern int _shishi_crypto_init (Shishi * handle);
+extern int _shishi_asn1_init (Shishi * handle);
 
 int
 _shishi_print_armored_data (Shishi * handle,
