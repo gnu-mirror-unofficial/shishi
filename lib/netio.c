@@ -55,7 +55,7 @@ shishi_sendrecv_udp (Shishi * handle,
       return SHISHI_BIND_ERROR;
     }
 
-  bytes_sent = sendto (sockfd, (void *) indata, inlen,
+  bytes_sent = sendto (sockfd, (const void *) indata, inlen,
 		       0, addr, sizeof (*addr));
   if (bytes_sent != inlen)
     {

@@ -699,7 +699,7 @@ extern int shishi_kdcreq_snamerealm_get (Shishi * handle, Shishi_asn1 kdcreq,
 					 size_t * snamerealmlen);
 extern int shishi_kdcreq_set_sname (Shishi * handle, Shishi_asn1 kdcreq,
 				    Shishi_name_type name_type,
-				    char *service[]);
+				    const char *sname[]);
 extern int shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
 				    char *realm, int *realmlen);
 extern int shishi_kdcreq_set_realm (Shishi * handle, Shishi_asn1 node,
@@ -846,7 +846,7 @@ extern void shishi_to_base64 (unsigned char *out, const unsigned char *in,
 extern int shishi_from_base64 (unsigned char *out, const unsigned char *in);
 
 /* vasprintf.c */
-extern int shishi_asprintf (char **result, const char *format, ...);
+extern int shishi_asprintf (char **result, char *format, ...);
 
 /* gztime.c */
 const char *shishi_generalize_time (Shishi * handle, time_t time);
@@ -918,8 +918,7 @@ extern int shishi_a2d (Shishi * handle, Shishi_asn1 node,
 		       char *der, int *len);
 extern int shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
 extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
-			     const char *field,
-			     const char *data, size_t * datalen);
+			     const char *field, char *data, size_t * datalen);
 extern int shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
 				     const char *field, int *i);
 extern int shishi_asn1_write (Shishi * handle, Shishi_asn1 node,

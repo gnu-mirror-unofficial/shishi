@@ -117,7 +117,8 @@ shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 {
   int rc;
 
-  rc = asn1_write_value (node, field, (unsigned char *) data, (int) datalen);
+  rc = asn1_write_value (node, field,
+			 (const unsigned char *) data, (int) datalen);
   if (rc != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (rc));
@@ -129,7 +130,7 @@ shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 
 int
 shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
-		  const char *field, const char *data, size_t * datalen)
+		  const char *field, char *data, size_t * datalen)
 {
   int rc;
 

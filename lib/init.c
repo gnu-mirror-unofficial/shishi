@@ -58,7 +58,7 @@ shishi (void)
   _shishi_gettext_init ();
 
   handle = (Shishi *) malloc (sizeof (*handle));
-  if (handle == NULL)
+  if (!handle)
     {
       fprintf (stderr, "libshishi: error: %s\n",
 	       shishi_strerror (SHISHI_MALLOC_ERROR));

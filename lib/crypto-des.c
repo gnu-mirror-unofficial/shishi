@@ -304,19 +304,24 @@ des_crc_encrypt (Shishi * handle,
 		 size_t *outlen)
 {
   char buffer[BUFSIZ];
+  char buffer2[BUFSIZ];
   int buflen;
+  int buf2len;
   int res;
 
-  while ((inlen % 8) != 0)
+  memcpy(buffer2, in, inlen);
+  buf2len = inlen;
+
+  while ((buf2len % 8) != 0)
     {
-      ((char*)in)[inlen] = '\0'; /* XXX */
-      inlen++;
+      buffer2[buf2len] = '\0'; /* XXX */
+      buf2len++;
     }
 
   buflen = sizeof (buffer);
-  res = des_crc_checksum (handle, buffer, &buflen, in, inlen);
-  memcpy (buffer + buflen, in, inlen);
-  buflen += inlen;
+  res = des_crc_checksum (handle, buffer, &buflen, buffer2, buf2len);
+  memcpy (buffer + buflen, buffer2, buf2len);
+  buflen += buf2len;
   res = simplified_encrypt (handle, key, 0, buffer, buflen, out, outlen);
 
   return res;
@@ -371,19 +376,23 @@ des_md4_encrypt (Shishi * handle,
 		 size_t *outlen)
 {
   char buffer[BUFSIZ];
+  char buffer2[BUFSIZ];
   size_t buflen;
+  size_t buf2len;
   int res;
 
-  while ((inlen % 8) != 0)
+  memcpy(buffer2, in, inlen);
+  buf2len = inlen;
+  while ((buf2len % 8) != 0)
     {
-      ((char*)in)[inlen] = '\0'; /* XXX */
-      inlen++;
+      buffer2[buf2len] = '\0'; /* XXX */
+      buf2len++;
     }
 
   buflen = sizeof (buffer);
-  res = des_md4_checksum (handle, buffer, &buflen, in, inlen);
-  memcpy (buffer + buflen, in, inlen);
-  buflen += inlen;
+  res = des_md4_checksum (handle, buffer, &buflen, buffer2, buf2len);
+  memcpy (buffer + buflen, buffer, buf2len);
+  buflen += buf2len;
   res = simplified_encrypt (handle, key, 0, buffer, buflen, out, outlen);
 
   return res;
@@ -426,19 +435,24 @@ des_md5_encrypt (Shishi * handle,
 		 size_t *outlen)
 {
   char buffer[BUFSIZ];
+  char buffer2[BUFSIZ];
   size_t buflen;
+  size_t buf2len;
   int res;
 
-  while ((inlen % 8) != 0)
+  memcpy(buffer2, in, inlen);
+  buf2len = inlen;
+
+  while ((buf2len % 8) != 0)
     {
-      ((char*)in)[inlen] = '\0'; /* XXX */
-      inlen++;
+      buffer2[buf2len] = '\0'; /* XXX */
+      buf2len++;
     }
 
   buflen = sizeof (buffer);
-  res = des_md5_checksum (handle, buffer, &buflen, in, inlen);
-  memcpy (buffer + buflen, in, inlen);
-  buflen += inlen;
+  res = des_md5_checksum (handle, buffer, &buflen, buffer2, buf2len);
+  memcpy (buffer + buflen, buffer2, buf2len);
+  buflen += buf2len;
   res = simplified_encrypt (handle, key, 0, buffer, buflen, out, outlen);
 
   return res;
