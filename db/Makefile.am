@@ -31,6 +31,6 @@ lib_LTLIBRARIES = libshisa.la
 libshisa_la_SOURCES = shisa.h info.h \
 	setup.c config.c db.c err.c core.c \
 	file.c file.h fileutil.h fileutil.c
-libshisa_la_LIBADD = ../gl/libfoo.la
+libshisa_la_LIBADD = ../gl/libgnu.la
 # XXX use different libtool version for this library?
 libshisa_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
