@@ -1160,14 +1160,21 @@ shishi_encrypt_ivupdate_etype (Shishi * handle,
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("\t ;; encrypt out:\n");
-      _shishi_escapeprint (*out, *outlen);
-      _shishi_hexprint (*out, *outlen);
-      if (ivout && ivoutlen)
+      if (res == SHISHI_OK)
 	{
-	  printf ("\t ;; iv out:\n");
-	  _shishi_escapeprint (*ivout, *ivoutlen);
-	  _shishi_hexprint (*ivout, *ivoutlen);
+	  printf ("\t ;; encrypt out:\n");
+	  _shishi_escapeprint (*out, *outlen);
+	  _shishi_hexprint (*out, *outlen);
+	  if (ivout && ivoutlen)
+	    {
+	      printf ("\t ;; iv out:\n");
+	      _shishi_escapeprint (*ivout, *ivoutlen);
+	      _shishi_hexprint (*ivout, *ivoutlen);
+	    }
+	}
+      else
+	{
+	  printf ("\t ;; encrypt out failed %d\n", res);
 	}
     }
 
@@ -1457,9 +1464,16 @@ shishi_decrypt_ivupdate_etype (Shishi * handle,
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("\t ;; decrypt out:\n");
-      _shishi_escapeprint (*out, *outlen);
-      _shishi_hexprint (*out, *outlen);
+      if (res == SHISHI_OK)
+	{
+	  printf ("\t ;; decrypt out:\n");
+	  _shishi_escapeprint (*out, *outlen);
+	  _shishi_hexprint (*out, *outlen);
+	}
+      else
+	{
+	  printf ("\t ;; decrypt out failed %d\n", res);
+	}
     }
 
   return res;
