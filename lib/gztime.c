@@ -33,10 +33,6 @@ shishi_generalize_time (Shishi * handle, time_t time)
   return handle->gztime_buf;
 }
 
-/* This is mktime() for UTC instead of local timezone.  It is taken
-   from the GNU libc timegm() man page. If you must modify this
-   function (e.g., for portability), send the updated version to the
-   GNU libc maintainers. */
 static time_t
 my_timegm (struct tm *tm)
 {
@@ -44,7 +40,7 @@ my_timegm (struct tm *tm)
   char *tz;
 
   tz = getenv ("TZ");
-  setenv ("TZ", "", 1);
+  setenv ("TZ", "UTC", 1);
   tzset ();
   ret = mktime (tm);
   if (tz)
