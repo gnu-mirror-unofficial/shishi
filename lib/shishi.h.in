@@ -645,7 +645,7 @@ extern Shishi_tkt *shishi_tkt2 (Shishi * handle,
 				Shishi_asn1 enckdcreppart,
 				Shishi_asn1 kdcrep);
 extern int shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh);
-extern int shishi_tkt_realm (Shishi_tkt * tkt, char *realm, int *realmlen);
+extern int shishi_tkt_realm (Shishi_tkt * tkt, char **realm, size_t *realmlen);
 extern int shishi_tkt_cnamerealm (Shishi_tkt * tkt,
 				  char *cnamerealm, int *cnamerealmlen);
 extern int shishi_tkt_cnamerealm_p (Shishi_tkt * tkt, const char *client);
@@ -842,7 +842,7 @@ shishi_authenticator_add_random_subkey (Shishi * handle,
 extern int
 shishi_authenticator_add_subkey (Shishi * handle,
 				 Shishi_asn1 authenticator,
-				 Shishi_asn1 * subkey);
+				 Shishi_key *subkey);
 extern int
 shishi_authenticator_clear_authorizationdata (Shishi * handle,
 					      Shishi_asn1 authenticator);
@@ -918,6 +918,7 @@ extern void shishi_tgs_tgtkt_set (Shishi_tgs * tgs, Shishi_tkt * tgtkt);
 extern Shishi_ap *shishi_tgs_ap (Shishi_tgs * tgs);
 extern Shishi_asn1 shishi_tgs_req (Shishi_tgs * tgs);
 extern int shishi_tgs_req_der (Shishi_tgs * tgs, char **out, size_t *outlen);
+extern int shishi_tgs_req_der_set (Shishi_tgs * tgs, char *der, size_t derlen);
 extern void shishi_tgs_req_set (Shishi_tgs * tgs, Shishi_asn1 tgsreq);
 extern int shishi_tgs_req_build (Shishi_tgs * tgs);
 extern int shishi_tgs_req_process (Shishi_tgs * tgs);
@@ -928,6 +929,7 @@ extern int shishi_tgs_rep_process (Shishi_tgs * tgs);
 extern Shishi_asn1 shishi_tgs_krberror (Shishi_tgs * tgs);
 extern int shishi_tgs_krberror_der (Shishi_tgs * tgs, char **out,
 				    size_t *outlen);
+extern void shishi_tgs_krberror_set (Shishi_tgs * tgs, Shishi_asn1 krberror);
 extern Shishi_tkt *shishi_tgs_tkt (Shishi_tgs * tgs);
 extern void shishi_tgs_tkt_set (Shishi_tgs * tgs, Shishi_tkt * tkt);
 extern int shishi_tgs_sendrecv (Shishi_tgs * tgs);
@@ -1119,14 +1121,21 @@ extern int shishi_krberror_read (Shishi * handle, FILE * fh,
 				 Shishi_asn1 * krberror);
 extern int shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
 				      int filetype, char *filename);
+extern int shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror);
 extern int shishi_krberror_der (Shishi * handle,
 				Shishi_asn1 krberror,
 				char **out, size_t *outlen);
+extern int shishi_krberror_crealm (Shishi * handle,
+				   Shishi_asn1 krberror,
+				   char **realm, size_t *realmlen);
+extern int shishi_krberror_remove_crealm (Shishi * handle,
+					  Shishi_asn1 krberror);
 extern int shishi_krberror_set_crealm (Shishi * handle,
 				       Shishi_asn1 krberror,
 				       const char *crealm);
-extern int shishi_krberror_remove_crealm (Shishi * handle,
-					  Shishi_asn1 krberror);
+extern int shishi_krberror_cname (Shishi * handle,
+				  Shishi_asn1 krberror,
+				  char *out, size_t *outlen);
 extern int shishi_krberror_set_cname (Shishi * handle,
 				      Shishi_asn1 krberror,
 				      Shishi_name_type name_type,
@@ -1136,9 +1145,17 @@ extern int shishi_krberror_remove_cname (Shishi * handle,
 extern int shishi_krberror_client_set (Shishi * handle,
 				       Shishi_asn1 krberror,
 				       const char *client);
+extern int shishi_krberror_realm (Shishi * handle,
+				  Shishi_asn1 krberror,
+				  char **realm, size_t *realmlen);
 extern int shishi_krberror_set_realm (Shishi * handle,
 				      Shishi_asn1 krberror,
 				      const char *realm);
+extern int shishi_krberror_sname (Shishi * handle,
+				  Shishi_asn1 krberror,
+				  char *out, size_t *outlen);
+extern int shishi_krberror_remove_sname (Shishi * handle,
+					 Shishi_asn1 krberror);
 extern int shishi_krberror_set_sname (Shishi * handle,
 				      Shishi_asn1 krberror,
 				      Shishi_name_type name_type,
@@ -1146,8 +1163,6 @@ extern int shishi_krberror_set_sname (Shishi * handle,
 extern int shishi_krberror_server_set (Shishi * handle,
 				       Shishi_asn1 krberror,
 				       const char *server);
-extern int shishi_krberror_remove_sname (Shishi * handle,
-					 Shishi_asn1 krberror);
 extern int shishi_krberror_ctime_get (Shishi * handle,
 				      Shishi_asn1 krberror, char *ctime);
 extern int shishi_krberror_ctime_set (Shishi * handle,
