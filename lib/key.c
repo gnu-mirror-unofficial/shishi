@@ -233,6 +233,10 @@ shishi_key (Shishi * handle, Shishi_key ** key)
 void
 shishi_key_done (Shishi_key * key)
 {
+  if (key->realm)
+    free (key->realm);
+  if (key->principal)
+    free (key->principal);
   free (key);
 }
 
