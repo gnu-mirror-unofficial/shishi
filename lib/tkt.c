@@ -105,9 +105,7 @@ shishi_tkt_client_p (Shishi_tkt * tkt, const char *client)
   int res;
 
   buflen = strlen (client) + 1;
-  buf = malloc (buflen);
-  if (buf == NULL)
-    return 0;
+  buf = xmalloc (buflen);
 
   res = shishi_tkt_client (tkt, buf, &buflen);
   if (res != SHISHI_OK)
@@ -145,9 +143,7 @@ shishi_tkt_cnamerealm_p (Shishi_tkt * tkt, const char *client)
   int res;
 
   buflen = strlen (client) + 1;
-  buf = malloc (buflen);
-  if (buf == NULL)
-    return 0;
+  buf = xmalloc (buflen);
 
   res = shishi_tkt_cnamerealm (tkt, buf, &buflen);
   if (res != SHISHI_OK)
@@ -347,10 +343,7 @@ shishi_tkt (Shishi * handle, Shishi_tkt ** tkt)
   Shishi_tkt *t;
   int res;
 
-  t = malloc (sizeof (*t));
-  if (t == NULL)
-    return SHISHI_MALLOC_ERROR;
-  memset (t, 0, sizeof (*t));
+  t = xcalloc (1, sizeof (*t));
 
   t->handle = handle;
 
@@ -594,9 +587,7 @@ shishi_tkt_server_p (Shishi_tkt * tkt, const char *server)
   int res;
 
   buflen = strlen (server) + 1;
-  buf = malloc (buflen);
-  if (buf == NULL)
-    return 0;
+  buf = xmalloc (buflen);
 
   res = shishi_tkt_server (tkt, buf, &buflen);
   if (res != SHISHI_OK)

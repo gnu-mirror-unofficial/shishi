@@ -620,7 +620,7 @@ des_string_to_key (Shishi * handle,
   n_s = stringlen + saltlen;
   if ((n_s % 8) != 0)
     n_s += 8 - n_s % 8;
-  s = (char *) malloc (n_s);
+  s = (char *) xmalloc (n_s);
   memcpy (s, string, stringlen);
   if (saltlen > 0)
     memcpy (s + stringlen, salt, saltlen);

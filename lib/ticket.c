@@ -131,18 +131,14 @@ shishi_ticket_set_server (Shishi * handle,
   int res;
   int i;
 
-  tmpserver = strdup (server);
-  if (tmpserver == NULL)
-    return SHISHI_MALLOC_ERROR;
+  tmpserver = xstrdup (server);
+  serverbuf = xmalloc (sizeof (*serverbuf));
 
-  serverbuf = malloc (sizeof (*serverbuf));
   for (i = 0;
        (serverbuf[i] = strtok_r (i == 0 ? tmpserver : NULL, "/", &tokptr));
        i++)
     {
-      serverbuf = realloc (serverbuf, (i + 2) * sizeof (*serverbuf));
-      if (serverbuf == NULL)
-	return SHISHI_MALLOC_ERROR;
+      serverbuf = xrealloc (serverbuf, (i + 2) * sizeof (*serverbuf));
     }
   res = shishi_ticket_sname_set (handle, ticket,
 				 SHISHI_NT_PRINCIPAL, serverbuf);

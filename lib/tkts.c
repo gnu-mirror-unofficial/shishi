@@ -127,10 +127,7 @@ shishi_tkts_default_to_file (Shishi_tkts * tkts)
 int
 shishi_tkts (Shishi * handle, Shishi_tkts ** tkts)
 {
-  *tkts = malloc (sizeof (**tkts));
-  if (*tkts == NULL)
-    return SHISHI_MALLOC_ERROR;
-  memset (*tkts, 0, sizeof (**tkts));
+  *tkts = xcalloc (1, sizeof (**tkts));
 
   (*tkts)->handle = handle;
 
@@ -219,9 +216,7 @@ shishi_tkts_remove (Shishi_tkts * tkts, int ticketno)
 
   if (tkts->ntkts > 0)
     {
-      tkts->tkts = realloc (tkts->tkts, sizeof (*tkts->tkts) * tkts->ntkts);
-      if (tkts->tkts == NULL)
-	return SHISHI_MALLOC_ERROR;
+      tkts->tkts = xrealloc (tkts->tkts, sizeof (*tkts->tkts) * tkts->ntkts);
     }
   else
     {
@@ -247,11 +242,9 @@ shishi_tkts_add (Shishi_tkts * tkts, Shishi_tkt * tkt)
     return SHISHI_INVALID_TICKET;
 
   if (tkts->ntkts++ == 0)
-    tkts->tkts = malloc (sizeof (*tkts->tkts));
+    tkts->tkts = xmalloc (sizeof (*tkts->tkts));
   else
-    tkts->tkts = realloc (tkts->tkts, sizeof (*tkts->tkts) * tkts->ntkts);
-  if (tkts->tkts == NULL)
-    return SHISHI_MALLOC_ERROR;
+    tkts->tkts = xrealloc (tkts->tkts, sizeof (*tkts->tkts) * tkts->ntkts);
 
   tkts->tkts[tkts->ntkts - 1] = tkt;
 
@@ -277,9 +270,8 @@ shishi_tkts_new (Shishi_tkts * tkts,
   Shishi_tkt *tkt;
   int res;
 
+  /* XXX */
   tkt = shishi_tkt2 (tkts->handle, ticket, enckdcreppart, kdcrep);
-  if (tkt == NULL)
-    return SHISHI_MALLOC_ERROR;
 
   res = shishi_tkts_add (tkts, tkt);
   if (res != SHISHI_OK)
@@ -525,12 +517,7 @@ shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh,
 	  int buflen;
 
 	  buflen = strlen (service) + 1;
-	  buf = malloc (buflen);
-	  if (buf == NULL)
-	    {
-	      res = SHISHI_MALLOC_ERROR;
-	      goto done;
-	    }
+	  buf = xmalloc (buflen);
 
 	  res = shishi_tkt_server (tkt, buf, &buflen);
 	  if (res != SHISHI_OK)

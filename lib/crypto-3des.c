@@ -210,7 +210,7 @@ des3_string_to_key (Shishi * handle,
 
   /* s = passwordString + salt */
   n_s = stringlen + saltlen;
-  s = (char *) malloc (n_s);
+  s = (char *) xmalloc (n_s);
   memcpy (s, string, stringlen);
   memcpy (s + stringlen, salt, saltlen);
 
