@@ -1136,7 +1136,7 @@ setup (Shishi * handle, struct arguments *arg)
 
   rc = launch (handle, arg);
 
-  shishi_key_done (&arg->tgskey);
+  shishi_key_done (arg->tgskey);
 
   return rc;
 }

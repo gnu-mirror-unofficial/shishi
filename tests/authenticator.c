@@ -217,11 +217,8 @@ main (int argc, char *argv[])
     fail ("shishi_authenticator_to_file() failed\n");
 
   /* shishi_asn1_done() */
-  res = shishi_asn1_done (handle, a);
-  if (res == SHISHI_OK)
-    success ("shishi_asn1_done() OK\n");
-  else
-    fail ("shishi_asn1_done() failed\n");
+  shishi_asn1_done (handle, a);
+  success ("shishi_asn1_done() OK\n");
 
   a = NULL;
 

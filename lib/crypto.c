@@ -609,9 +609,9 @@ simplified_encrypt (Shishi * handle,
 
     done:
       if (&privacykey)
-	shishi_key_done (&privacykey);
+	shishi_key_done (privacykey);
       if (&integritykey)
-	shishi_key_done (&integritykey);
+	shishi_key_done (integritykey);
       if (hmac)
 	free (hmac);
       if (ct)
@@ -673,9 +673,9 @@ simplified_decrypt (Shishi * handle,
 
     done:
       if (privacykey)
-	shishi_key_done (&privacykey);
+	shishi_key_done (privacykey);
       if (integritykey)
-	shishi_key_done (&integritykey);
+	shishi_key_done (integritykey);
     }
   else
     {
@@ -705,7 +705,7 @@ simplified_checksum (Shishi * handle,
 
   res = simplified_hmac (handle, checksumkey, in, inlen, out, outlen);
 
-  shishi_key_done (&checksumkey);
+  shishi_key_done (checksumkey);
 
   if (res != SHISHI_OK)
     return res;
