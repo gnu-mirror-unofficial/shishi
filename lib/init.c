@@ -21,17 +21,32 @@
 
 #include "internal.h"
 
-Shishi *
-_shishi (void)
+static Shishi *
+init_handle (int outputtype)
 {
   Shishi *handle;
-  char *tmp;
+  int rc;
+
+  handle = xcalloc (1, sizeof (*handle));
+
+  shishi_set_outputtype (handle, outputtype);
+
+  if (_shishi_crypto_init () != SHISHI_OK)
+    {
+      free (handle);
+      shishi_warn (handle, "Cannot initialize crypto library");
+      return NULL;
+    }
+
+  if (!(handle->asn1 = _shishi_asn1_init ()))
+    {
+      free (handle);
+      shishi_warn (handle, "%s", shishi_strerror (SHISHI_ASN1_ERROR));
+      return NULL;
+    }
 
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
-
-  handle = (Shishi *) xmalloc (sizeof (*handle));
-  memset ((void *) handle, 0, sizeof (*handle));
 
   handle->kdctimeout = 5;
   handle->kdcretries = 3;
@@ -44,80 +59,39 @@ _shishi (void)
 				     handle->nclientkdcetypes);
   handle->clientkdcetypes[0] = SHISHI_AES256_CTS_HMAC_SHA1_96;
 
-  tmp = shishi_realm_default_guess ();
-  shishi_realm_default_set (handle, tmp);
-  free (tmp);
-
-  tmp = shishi_principal_default_guess ();
-  if (tmp != NULL)
-    {
-      shishi_principal_default_set (handle, tmp);
-      free (tmp);
-    }
-
-  return handle;
-}
-
-Shishi *
-_shishi_init (Shishi * handle)
-{
-  if (_shishi_crypto_init () != SHISHI_OK)
-    {
-      shishi_warn (handle, "Cannot initialize crypto library");
-      return NULL;
-    }
-
-  if ((handle->asn1 = _shishi_asn1_init ()) == NULL)
-    {
-      shishi_warn (handle, "%s", shishi_strerror (SHISHI_ASN1_ERROR));
-      return NULL;
-    }
-
   return handle;
 }
 
 /**
  * shishi:
  *
- * Initializes the Shishi library.  If this function fails, it may print
- * diagnostic errors to stderr.
+ * Initializes the Shishi library, and set up, using
+ * shishi_set_outputtype(), the library so that future warnings and
+ * informational messages are printed to stderr.  If this function
+ * fails, it may print diagnostic errors to stderr.
  *
- * Return Value: Returns Shishi library handle, or %NULL on error.
+ * Return value: Returns Shishi library handle, or %NULL on error.
  **/
 Shishi *
 shishi (void)
 {
-  Shishi *handle;
-
-  handle = _shishi();
-  if (handle == NULL)
-    return handle;
-
-  shishi_set_outputtype (handle, SHISHI_OUTPUTTYPE_STDERR);
-  
-  return _shishi_init(handle);
+  return init_handle (SHISHI_OUTPUTTYPE_STDERR);
 }
 
 /**
  * shishi_server:
  *
- * Initializes the Shishi library.  If this function fails, it may print
- * diagnostic errors to syslog.
+ * Initializes the Shishi library, and set up, using
+ * shishi_set_outputtype(), the library so that future warnings and
+ * informational messages are printed to the syslog.  If this function
+ * fails, it may print diagnostic errors to the syslog.
  *
- * Return Value: Returns Shishi library handle, or %NULL on error.
+ * Return value: Returns Shishi library handle, or %NULL on error.
  **/
 Shishi *
 shishi_server (void)
 {
-  Shishi *handle;
-
-  handle = _shishi();
-  if (handle == NULL)
-    return handle;
-
-  shishi_set_outputtype (handle, SHISHI_OUTPUTTYPE_SYSLOG);
-  
-  return _shishi_init(handle);
+  return init_handle (SHISHI_OUTPUTTYPE_SYSLOG);
 }
 
 /**
@@ -125,12 +99,13 @@ shishi_server (void)
  * @handle: shishi handle as allocated by shishi_init().
  *
  * Deallocates the shishi library handle.  The handle must not be used
- * in any calls to shishi functions after this.  If there is a default
- * tkts, it is written to the default tkts file (call
- * shishi_tkts_default_file_set() to change the default tkts
- * file). If you do not wish to write the default tkts file,
- * close the default tkts with shishi_tkts_done(handle,
- * NULL) before calling this function.
+ * in any calls to shishi functions after this.
+ *
+ * If there is a default tkts, it is written to the default tkts file
+ * (call shishi_tkts_default_file_set() to change the default tkts
+ * file). If you do not wish to write the default tkts file, close the
+ * default tkts with shishi_tkts_done(handle, NULL) before calling
+ * this function.
  **/
 void
 shishi_done (Shishi * handle)
@@ -138,12 +113,11 @@ shishi_done (Shishi * handle)
   if (handle->tkts)
     {
       shishi_tkts_to_file (handle->tkts, shishi_tkts_default_file (handle));
-
       shishi_tkts_done (&handle->tkts);
     }
 
-  /*  if (handle->default_realm)
-     free (handle->default_realm); */
+  if (handle->default_realm)
+    free (handle->default_realm);
   if (handle->usercfgfile)
     free (handle->usercfgfile);
   if (handle->tktsdefaultfile)
@@ -160,7 +134,7 @@ shishi_done (Shishi * handle)
 }
 
 static void
-_shishi_maybe_install_usercfg (Shishi * handle)
+maybe_install_usercfg (Shishi * handle)
 {
   const char *usercfg = shishi_cfg_default_userfile (handle);
   const char *userdir = shishi_cfg_default_userdirectory (handle);
@@ -212,13 +186,15 @@ _shishi_maybe_install_usercfg (Shishi * handle)
 }
 
 static int
-_shishi_init_read (Shishi * handle,
-		   const char *tktsfile,
-		   const char *systemcfgfile, const char *usercfgfile)
+init_read (Shishi * handle,
+	   const char *tktsfile,
+	   const char *systemcfgfile,
+	   const char *usercfgfile)
 {
   int rc = SHISHI_OK;
 
-  _shishi_maybe_install_usercfg (handle);
+  /* XXX Is this the correct place for this? */
+  maybe_install_usercfg (handle);
 
   if (!tktsfile)
     tktsfile = shishi_tkts_default_file (handle);
@@ -265,15 +241,16 @@ _shishi_init_read (Shishi * handle,
  * shishi_init:
  * @handle: pointer to handle to be created.
  *
- * Create a Shishi library handle and read the system configuration
- * file, user configuration file and user tickets from the default
- * paths.  The paths to the system configuration file is decided at
- * compile time, and is $sysconfdir/shishi.conf.  The user
- * configuration file is $HOME/.shishi/config, and the user ticket
- * file is $HOME/.shishi/ticket.  The handle is allocated regardless
- * of return values, except for SHISHI_HANDLE_ERROR which indicates a
- * problem allocating the handle.  (The other error conditions comes
- * from reading the files.)
+ * Create a Shishi library handle, using shishi(), and read the system
+ * configuration file, user configuration file and user tickets from
+ * their default locations.  The paths to the system configuration
+ * file is decided at compile time, and is $sysconfdir/shishi.conf.
+ * The user configuration file is $HOME/.shishi/config, and the user
+ * ticket file is $HOME/.shishi/ticket.
+ *
+ * The handle is allocated regardless of return values, except for
+ * SHISHI_HANDLE_ERROR which indicates a problem allocating the
+ * handle.  (The other error conditions comes from reading the files.)
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -283,9 +260,9 @@ shishi_init (Shishi ** handle)
   if (!handle || !(*handle = shishi ()))
     return SHISHI_HANDLE_ERROR;
 
-  return _shishi_init_read (*handle, shishi_tkts_default_file (*handle),
-			    shishi_cfg_default_systemfile (*handle),
-			    shishi_cfg_default_userfile (*handle));
+  return init_read (*handle, shishi_tkts_default_file (*handle),
+		    shishi_cfg_default_systemfile (*handle),
+		    shishi_cfg_default_userfile (*handle));
 }
 
 /**
@@ -295,8 +272,16 @@ shishi_init (Shishi ** handle)
  * @systemcfgfile: Filename of system configuration, or NULL.
  * @usercfgfile: Filename of user configuration, or NULL.
  *
- * Like shishi_init() but use explicit paths.  Like shishi_init(), the
- * handle is allocated regardless of return values, except for
+ * Create a Shishi library handle, using shishi(), and read the system
+ * configuration file, user configuration file, and user tickets from
+ * the specified locations.  If any of @usercfgfile or @systemcfgfile
+ * is NULL, the file is read from its default location, which for the
+ * system configuration file is decided at compile time, and is
+ * $sysconfdir/shishi.conf, and for the user configuration file is
+ * $HOME/.shishi/config.  If the ticket file is NULL, a ticket file is
+ * not read at all.
+ *
+ * The handle is allocated regardless of return values, except for
  * SHISHI_HANDLE_ERROR which indicates a problem allocating the
  * handle.  (The other error conditions comes from reading the files.)
  *
@@ -312,18 +297,20 @@ shishi_init_with_paths (Shishi ** handle,
 
   shishi_tkts_default_file_set (*handle, tktsfile);
 
-  return _shishi_init_read (*handle, tktsfile, systemcfgfile, usercfgfile);
+  return init_read (*handle, tktsfile, systemcfgfile, usercfgfile);
 }
 
 /**
  * shishi_init_server:
  * @handle: pointer to handle to be created.
  *
- * Like shishi_init() but only read the system configuration file.
- * Like shishi_init(), the handle is allocated regardless of return
- * values, except for SHISHI_HANDLE_ERROR which indicates a problem
- * allocating the handle.  (The other error conditions comes from
- * reading the configuration file.)
+ * Create a Shishi library handle, using shishi_server(), and read the
+ * system configuration file.  The paths to the system configuration
+ * file is decided at compile time, and is $sysconfdir/shishi.conf.
+ *
+ * The handle is allocated regardless of return values, except for
+ * SHISHI_HANDLE_ERROR which indicates a problem allocating the
+ * handle.  (The other error conditions comes from reading the file.)
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -335,8 +322,8 @@ shishi_init_server (Shishi ** handle)
   if (!handle || !(*handle = shishi_server ()))
     return SHISHI_HANDLE_ERROR;
 
-  rc =
-    shishi_cfg_from_file (*handle, shishi_cfg_default_systemfile (*handle));
+  rc = shishi_cfg_from_file (*handle,
+			     shishi_cfg_default_systemfile (*handle));
   if (rc == SHISHI_FOPEN_ERROR)
     shishi_warn (*handle, "%s: %s", shishi_cfg_default_systemfile (*handle),
 		 strerror (errno));
@@ -351,11 +338,13 @@ shishi_init_server (Shishi ** handle)
  * @handle: pointer to handle to be created.
  * @systemcfgfile: Filename of system configuration, or NULL.
  *
- * Like shishi_init() but only read the system configuration file from
- * specified location.  Like shishi_init(), the handle is allocated
- * regardless of return values, except for SHISHI_HANDLE_ERROR which
- * indicates a problem allocating the handle.  (The other error
- * conditions comes from reading the configuration file.)
+ * Create a Shishi library handle, using shishi_server(), and read the
+ * system configuration file from specified location.  The paths to
+ * the system configuration file is decided at compile time, and is
+ * $sysconfdir/shishi.conf.  The handle is allocated regardless of
+ * return values, except for SHISHI_HANDLE_ERROR which indicates a
+ * problem allocating the handle.  (The other error conditions comes
+ * from reading the file.)
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
