@@ -702,7 +702,7 @@ shishi_ap_req_asn1 (Shishi_ap * ap, Shishi_asn1 * apreq)
  * Extract the application key from AP.  If subkeys are used, it is
  * taken from the Authenticator, otherwise the session key is used.
  *
- * Return value: Return application
+ * Return value: Return application key from AP.
  **/
 Shishi_key *
 shishi_ap_key (Shishi_ap * ap)
