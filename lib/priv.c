@@ -64,7 +64,11 @@ shishi_priv (Shishi * handle, Shishi_priv ** priv)
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_asn1_write (handle, lpriv->priv, "msg-type", "20", 0);
+  rc = shishi_asn1_write (handle, lpriv->priv, "msg-type", "21", 0);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_asn1_write (handle, lpriv->priv, "enc-part.kvno", "0", 0);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -505,7 +509,8 @@ shishi_priv_enc_part_etype (Shishi * handle,
 int
 shishi_priv_set_enc_part (Shishi * handle,
 			  Shishi_asn1 priv,
-			  int etype, const char *encpart, size_t encpartlen)
+			  int32_t etype,
+			  const char *encpart, size_t encpartlen)
 {
   int res;
 
@@ -617,6 +622,8 @@ shishi_priv_build (Shishi_priv * priv, Shishi_key * key)
   res = shishi_priv_set_enc_part (priv->handle, priv->priv,
 				  shishi_key_type (key),
 				  buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
