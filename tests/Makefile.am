@@ -26,5 +26,5 @@ LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	../lib/libshishi.la
 
 check_PROGRAMS = authenticator crypto gztime priv safe \
-	ticketset crypto-ctx low-crypto rijndael
+	ticketset crypto-ctx low-crypto rijndael key
 TESTS = $(check_PROGRAMS)

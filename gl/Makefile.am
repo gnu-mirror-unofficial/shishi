@@ -262,4 +262,5 @@ libgnu_la_SOURCES += xstrndup.h xstrndup.c
 # Makefile.am ends here
 
 libgnu_la_LIBADD += @LIB_CLOCK_GETTIME@
+libgnu_la_SOURCES += b64.c b64.h
 EXTRA_DIST += README
