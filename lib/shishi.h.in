@@ -74,7 +74,9 @@ enum
   SHISHI_PKCS5_INVALID_PRF = 39,
   SHISHI_PKCS5_INVALID_ITERATION_COUNT = 40,
   SHISHI_PKCS5_INVALID_DERIVED_KEY_LENGTH = 41,
-  SHISHI_PKCS5_DERIVED_KEY_TOO_LONG = 42
+  SHISHI_PKCS5_DERIVED_KEY_TOO_LONG = 42,
+  SHISHI_INVALID_PRINCIPAL_NAME = 43,
+  SHISHI_INVALID_ARGUMENT = 44
 };
 
 /* This is not specified in the ASN.1 syntax for some reason. */
@@ -379,6 +381,8 @@ extern int shishi_principal_name_set (Shishi * handle,
 extern int shishi_principal_set (Shishi * handle,
 				 Shishi_asn1 namenode,
 				 const char *namefield, const char *name);
+extern int shishi_parse_name (Shishi * handle, const char *name,
+			      char **principal, char **realm);
 
 /* ticket.c */
 extern int shishi_ticket_sname_get (Shishi * handle,
