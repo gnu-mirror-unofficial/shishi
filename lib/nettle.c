@@ -32,7 +32,7 @@
 #include "cbc-mac.h"
 
 int
-_shishi_crypto_init (void)
+_shishi_crypto_init (Shishi * handle)
 {
   return SHISHI_OK;
 }
