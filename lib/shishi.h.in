@@ -1645,10 +1645,12 @@ extern int shishi_ap_tktoptionsdata (Shishi * handle,
 extern int shishi_ap_set_tktoptionsraw (Shishi_ap * ap,
 					Shishi_tkt * tkt,
 					int options,
+					int32_t cksumtype,
 					const char *data, size_t len);
 extern int shishi_ap_tktoptionsraw (Shishi * handle,
 				    Shishi_ap ** ap,
 				    Shishi_tkt * tkt, int options,
+				    int32_t cksumtype,
 				    const char *data, size_t len);
 extern int shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
 					      Shishi_tkt * tkt,
@@ -1677,6 +1679,7 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 				       size_t authenticatorcksumdatalen);
 extern void
 shishi_ap_authenticator_cksumraw_set (Shishi_ap * ap,
+				      int32_t cksumtype,
 				      const char *authenticatorcksumraw,
 				      size_t authenticatorcksumrawlen);
 extern int32_t shishi_ap_authenticator_cksumtype (Shishi_ap * ap);
