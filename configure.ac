@@ -174,21 +174,6 @@ fi
 AC_MSG_CHECKING([if IPv6 should be used])
 AC_MSG_RESULT($enable_ipv6)
 
-# Check gdbm
-#AC_ARG_WITH(system-gdbm,
-#  AC_HELP_STRING([--without-system-gdbm], [Don't use the system's gdbm]))
-#if test "$with_system_gdbm" != "no" ; then
-#  AC_CHECK_LIB(gdbm, gdbm_open,,with_system_gdbm=no)
-#fi
-#LIBGDBM=""
-#if test "$with_system_gdbm" = "no" ; then
-#  LIBGDBM="\$(top_builddir)/gdbm/libgdbm.a"
-#  CFLAGS="$CFLAGS -I\$(top_srcdir)/gdbm"
-#  GDBM=gdbm
-#  AC_SUBST(GDBM)
-#fi
-#AC_SUBST(LIBGDBM)
-
 # Check for idn
 AC_ARG_WITH(stringprep,
   AC_HELP_STRING([--without-stringprep],
