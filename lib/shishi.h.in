@@ -30,6 +30,7 @@
 /* Error codes */
 enum {
   SHISHI_OK = 0,
+  SHISHI_HANDLE_ERROR,
   SHISHI_ASN1_ERROR,
   SHISHI_FOPEN_ERROR,
   SHISHI_FCLOSE_ERROR,
@@ -120,23 +121,27 @@ typedef enum {
 } Shihi_msgtype;
 
 typedef enum {
-  SHISHI_NULL = 0x00,
-  SHISHI_DES_CBC_CRC = 0x01,
-  SHISHI_DES_CBC_MD4 = 0x02,
-  SHISHI_DES_CBC_MD5 = 0x03,
-  SHISHI_DES3_CBC_HMAC_SHA1_KD = 0x10
+  SHISHI_NULL                    = 0,
+  SHISHI_DES_CBC_CRC             = 1,
+  SHISHI_DES_CBC_MD4             = 2,
+  SHISHI_DES_CBC_MD5             = 3,
+  SHISHI_DES3_CBC_HMAC_SHA1_KD   = 16,
+  SHISHI_AES128_CTS_HMAC_SHA1_96 = 17,
+  SHISHI_AES256_CTS_HMAC_SHA1_96 = 18
 } Shishi_etype;
 
 typedef enum {
-  SHISHI_CRC32 = 0x01,
-  SHISHI_RSA_MD4 = 0x02,
-  SHISHI_RSA_MD4_DES = 0x03,
-  SHISHI_DES_MAC = 0x04,
-  SHISHI_DES_MAC_K = 0x05,
-  SHISHI_RSA_MD4_DES_K = 0x06,
-  SHISHI_RSA_MD5 = 0x07,
-  SHISHI_RSA_MD5_DES = 0x08,
-  SHISHI_HMAC_SHA1_DES3_KD = 12
+  SHISHI_CRC32               = 1,
+  SHISHI_RSA_MD4             = 2,
+  SHISHI_RSA_MD4_DES         = 3,
+  SHISHI_DES_MAC             = 4,
+  SHISHI_DES_MAC_K           = 5,
+  SHISHI_RSA_MD4_DES_K       = 6,
+  SHISHI_RSA_MD5             = 7,
+  SHISHI_RSA_MD5_DES         = 8,
+  SHISHI_HMAC_SHA1_96_AES128 = 10,
+  SHISHI_HMAC_SHA1_96_AES256 = 11,
+  SHISHI_HMAC_SHA1_DES3_KD   = 12
 } Shishi_cksumtype;
 
 typedef enum {
@@ -154,7 +159,12 @@ typedef struct Shishi_as Shishi_as;
 typedef struct Shishi_tgs Shishi_tgs;
 
 /* init.c */
-extern Shishi* shishi_init ();
+extern Shishi* shishi (void);
+extern int shishi_init (Shishi **handle);
+extern int shishi_init_with_paths (Shishi **handle,
+				   const char *ticketsetfile,
+				   const char *systemcfgfile, 
+				   const char *usercfgfile);
 extern void shishi_done (Shishi *handle);
 extern int shishi_verbose (Shishi *handle);
 extern int shishi_debug (Shishi *handle);
@@ -163,11 +173,15 @@ extern int shishi_debug (Shishi *handle);
 extern int
 shishi_cfg (Shishi * handle, char *option);
 extern int
-shishi_cfg_from_file (Shishi * handle, char *cfg);
+shishi_cfg_from_file (Shishi * handle, const char *cfg);
 extern int
 shishi_cfg_print (Shishi * handle, FILE *fh);
 extern int
 shishi_cfg_clientkdcetype_set (Shishi *handle, char *value);
+extern const char *
+shishi_cfg_default_systemfile (Shishi *handle);
+extern const char *
+shishi_cfg_default_userfile (Shishi *handle);
 
 /* error.c */
 extern const char *shishi_strerror (int err);
@@ -179,6 +193,12 @@ extern void shishi_error_printf (Shishi *handle, char *format, ...);
 extern char *shishi_realm_default_guess ();
 extern void shishi_realm_default_set (Shishi *handle, const char *realm);
 extern char *shishi_realm_default_get (Shishi *handle);
+extern const char *
+shishi_realm_for_server_file (Shishi * handle, char *server);
+extern const char *
+shishi_realm_for_server_dns (Shishi * handle, char *server);
+extern const char *
+shishi_realm_for_server (Shishi * handle, char *server);
 
 /* principal.c */
 extern char *shishi_principal_default_guess ();
@@ -201,6 +221,9 @@ shishi_ticket_ticket (Shishi * handle,
 extern ASN1_TYPE
 shishi_ticket_enckdcreppart (Shishi * handle,
 				 Shishi_ticket * ticket);
+extern Shishi_ticket *
+shishi_ticket (Shishi * handle, char *principal, 
+	       ASN1_TYPE ticket, ASN1_TYPE enckdcreppart);
 extern int
 shishi_ticket_print(Shishi *handle,
 			Shishi_ticket *ticket,
@@ -232,6 +255,28 @@ extern int
 shishi_ticket_keytype (Shishi *handle,
 			   Shishi_ticket *ticket,
 			   int *etype);
+extern int
+shishi_ticket_apreq_data (Shishi * handle,
+			  Shishi_ticket * ticket,
+			  char *data, int datalen, ASN1_TYPE * apreq);
+extern int
+shishi_ticket_apreq_data_usage (Shishi * handle,
+				Shishi_ticket * ticket,
+				int authenticatorcksumkeyusage,
+				int authenticatorkeyusage,
+				char *data, int datalen, ASN1_TYPE * apreq);
+extern int
+shishi_ticket_apreq_asn1 (Shishi * handle,
+			  Shishi_ticket * ticket,
+			  ASN1_TYPE node, char *field, ASN1_TYPE * apreq);
+extern int
+shishi_ticket_apreq_asn1_usage (Shishi * handle,
+				Shishi_ticket * ticket,
+				int authenticatorcksumkeyusage,
+				int authenticatorkeyusage,
+				ASN1_TYPE node, char *field, 
+				ASN1_TYPE * apreq);
+
 /* ticketset.c */
 extern int
 shishi_ticketset_init (Shishi *handle,
@@ -246,11 +291,18 @@ shishi_ticketset_size (Shishi *handle,
 extern int
 shishi_ticketset_from_file (Shishi *handle,
 			    Shishi_ticketset *ticketset,
-			    char *filename);
+			    const char *filename);
 extern void
 shishi_ticketset_done (Shishi *handle,
 		       Shishi_ticketset *ticketset);
-
+extern const char *
+shishi_ticketset_default_file (Shishi *handle);
+extern Shishi_ticketset *
+shishi_ticketset (Shishi *handle);
+extern Shishi_ticket *
+shishi_ticketset_find_ticket_for_server (Shishi * handle,
+					 Shishi_ticketset * ticketset,
+					 char *server);
 
 /* ap.c */
 extern ASN1_TYPE shishi_ap_req (Shishi *handle);
@@ -458,6 +510,9 @@ extern void shishi_to_base64 (unsigned char *out, const unsigned char *in,
 			      int len, int olen);
 extern int shishi_from_base64 (unsigned char *out, const unsigned char *in);
 
+/* vasprintf.c */
+extern int shishi_asprintf (char **result, const char *format, ...);
+
 /* gztime.c */
 extern char *shishi_generalize_time (Shishi *handle, time_t time);
 extern time_t shishi_generalize_ctime (Shishi *handle, char *now);
@@ -478,60 +533,72 @@ shishi_etype_parse (char *cipher);
 extern int
 shishi_string_to_key (Shishi *handle,
 		      int etype,
-		      unsigned char *string, 
+		      char *string, 
 		      int n_string, 
-		      unsigned char *salt, 
+		      char *salt, 
 		      int n_salt, 
-		      unsigned char *outkey,
+		      char *parameter,
+		      char *outkey,
 		      int *outkeylen);
 extern
 int
 shishi_randomize (Shishi *handle,
 		  char *data,
 		  int datalen);
-extern
-int
-shishi_encrypt (Shishi *handle,
-		int etype,
-		unsigned char *out,
-		int *outlen,
-		unsigned char *in,
-		int inlen,
-		unsigned char *key,
-		int keylen);
-extern
-int
-shishi_encrypt (Shishi *handle,
-		int etype,
-		unsigned char *out,
-		int *outlen,
-		unsigned char *in,
-		int inlen,
-		unsigned char *key,
-		int keylen);
+extern int
+shishi_encrypt (Shishi * handle,
+		int keyusage,
+		int keytype,
+		char *key,
+		int keylen,
+		char *in,
+		int inlen, 
+		char *out,
+		int *outlen);
+extern int
+shishi_decrypt (Shishi * handle,
+		int keyusage,
+		int keytype,
+		char *key,
+		int keylen,
+		char *in,
+		int inlen, 
+		char *out,
+		int *outlen);
+extern int
+shishi_checksum (Shishi * handle,
+		 int cksumtype,
+		 int keyusage,
+		 int keytype,
+		 char *key, 
+		 int keylen,
+		 char *in, 
+		 int inlen,
+		 char *out,
+		 int *outlen);
 extern int
 shishi_dk (Shishi *handle,
 	   int type,
-	   unsigned char *key,
+	   char *key,
 	   int n_key,
-	   unsigned char *constant,
+	   char *constant,
 	   int n_constant,
-	   unsigned char *derivedkey,
+	   char *derivedkey,
 	   int n_derivedkey);
 
 extern int
 shishi_dr (Shishi *handle,
 	   int type,
-	   unsigned char *key,
+	   char *key,
 	   int n_key,
-	   unsigned char *derivedkey,
+	   char *derivedkey,
 	   int n_derivedkey,
-	   unsigned char *constant,
+	   char *constant,
 	   int n_constant);
 extern int
 shishi_n_fold (Shishi *handle,
-	       unsigned char *in, int m,
-	       unsigned char *out, int n);
+	       char *in, int m,
+	       char *out, int n);
 
 /* version.c */
 extern const char *
@@ -543,5 +610,9 @@ shishi_read_password (FILE *fh, char * s, int size);
 extern int
 shishi_prompt_password (FILE *in, char * s, int size, 
 			FILE *out, char *format, ...);
+
+/* asn1.c */
+extern ASN1_TYPE
+shishi_d2a_aprep (Shishi * handle, char *der, int derlen);
 
 #endif
