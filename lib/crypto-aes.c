@@ -94,28 +94,27 @@ aes_string_to_key (Shishi * handle,
   int iterations = 0x0000b000;
   int res;
 
-  if (VERBOSECRYPTO(handle))
-    {
-      printf ("aes_string_to_key (password, salt)\n");
-
-      printf ("\t ;; Password:\n");
-      escapeprint (password, passwordlen);
-      hexprint (password, passwordlen);
-      puts ("");
-      puts ("");
-
-      printf ("\t ;; Salt:\n");
-      escapeprint (salt, saltlen);
-      hexprint (salt, saltlen);
-      puts ("");
-    }
-
   if (parameter)
     {
       iterations  = (parameter[0] & 0xFF) << 24;
       iterations |= (parameter[1] & 0xFF) << 16;
       iterations |= (parameter[2] & 0xFF) << 8;
       iterations |=  parameter[3] & 0xFF;
+    }
+
+  if (VERBOSECRYPTO(handle))
+    {
+      puts("");
+      printf ("aes_string_to_key (password, salt)\n");
+      printf ("\t ;; Password:\n");
+      escapeprint (password, passwordlen);
+      hexprint (password, passwordlen);
+      puts ("");
+      printf ("\t ;; Salt:\n");
+      escapeprint (salt, saltlen);
+      hexprint (salt, saltlen);
+      puts ("");
+      printf ("\t ;; Iteration count %d (%08x):\n", iterations, iterations);
     }
 
   /* tkey = random2key(PBKDF2(passphrase, salt, iter_count, keylength)) */
