@@ -39,10 +39,6 @@ AM_GNU_GETTEXT
 AM_GNU_GETTEXT_VERSION(0.11.5)
 AC_PROG_LIBTOOL
 AC_PROG_CC
-AC_PROG_AWK
-AC_PROG_CPP
-AC_PROG_INSTALL
-AC_PROG_LN_S
 AM_MISSING_PROG(PERL, perl, $missing_dir)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
 AM_MISSING_PROG(TEXI2PDF, texi2pdf, $missing_dir)
@@ -51,82 +47,22 @@ AM_MISSING_PROG(DOCBOOK2HTML, docbook2html, $missing_dir)
 AM_MISSING_PROG(DOCBOOK2PS, docbook2ps, $missing_dir)
 AM_MISSING_PROG(DOCBOOK2PDF, docbook2pdf, $missing_dir)
 
-dnl libtasn1 will be built
-dnl AC_CHECK_LIB([tasn1], libasn1_strerror,, AC_MSG_ERROR([libtasn1 is required]))
-
-#AM_PATH_LIBGCRYPT(1.1.9, [
-#	LIBGCRYPT="$LIBGCRYPT_LIBS"
-#	AC_SUBST(LIBGCRYPT)
-#], [
-#	AC_MSG_WARN([[
-#
-#libgcrypt 1.1.9 or later (see ftp://ftp.gnupg.org/pub/gcrypt/alpha/libgcrypt/)
-#not installed/working. Using copy distributed with shishi instead.
-#
-#Don't worry.
-#]])
-	CRYPTO=crypto
-	AC_SUBST(CRYPTO)
-	LIBGCRYPT_BUILD_CFLAGS="-I\$(top_srcdir)/crypto/src"
-	AC_SUBST(LIBGCRYPT_BUILD_CFLAGS)
-	LIBGCRYPT_BUILD_LIBS="\$(top_builddir)/crypto/src/libgcrypt.la"
-	AC_SUBST(LIBGCRYPT_BUILD_LIBS)
-	LIBGCRYPT_CFLAGS=""
-	AC_SUBST(LIBGCRYPT_CFLAGS)
-	LIBGCRYPT_LIBS="-lgcrypt"
-	AC_SUBST(LIBGCRYPT_LIBS)
-#])
-
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
+AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
+	sys/time.h sys/types.h sys/select.h sys/socket.h sys/stat.h stdint.h \
+	termios.h signal.h)
+AC_CHECK_HEADERS(netinet/in.h netinet/in6.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
-AC_C_INLINE
-AC_C_BIGENDIAN
-AC_PROG_GCC_TRADITIONAL
 AC_TYPE_SIZE_T
 AC_TYPE_UID_T
 AC_TYPE_SIGNAL
 AC_HEADER_TIME
-AC_HEADER_STDC
-AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
-	sys/time.h sys/types.h sys/select.h sys/socket.h sys/stat.h stdint.h \
-	termios.h signal.h)
-AC_CHECK_HEADERS(argp.h)
-AC_CHECK_HEADERS(netinet/in.h netinet/in6.h)
 
-# Test if the libc includes a good enough argp.
-AC_ARG_WITH(system-argp,
-  AC_HELP_STRING([--without-system-argp], [Don't use the system's argp]))
-if test "$with_system_argp" != "no" ; then
-  AC_LIB_ARGP(,with_system_argp=no)
-fi
-LIBARGP=""
-if test "$with_system_argp" = "no" ; then
-  LIBARGP="\$(top_builddir)/argp/libargp.a"
-  CFLAGS="$CFLAGS -I\$(top_srcdir)/argp"
-  ARGP=argp
-  AC_SUBST(ARGP)
-fi
-AC_SUBST(LIBARGP)
-
-# Check gdbm
-#AC_ARG_WITH(system-gdbm,
-#  AC_HELP_STRING([--without-system-gdbm], [Don't use the system's gdbm]))
-#if test "$with_system_gdbm" != "no" ; then
-#  AC_CHECK_LIB(gdbm, gdbm_open,,with_system_gdbm=no)
-#fi
-#LIBGDBM=""
-#if test "$with_system_gdbm" = "no" ; then
-#  LIBGDBM="\$(top_builddir)/gdbm/libgdbm.a"
-#  CFLAGS="$CFLAGS -I\$(top_srcdir)/gdbm"
-#  GDBM=gdbm
-#  AC_SUBST(GDBM)
-#fi
-#AC_SUBST(LIBGDBM)
-
+# Check for IPv6
 AC_ARG_ENABLE(ipv6,
   AC_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
 if test "$enable_ipv6" != "no"; then
@@ -162,46 +98,127 @@ if test "$enable_ipv6" != "no"; then
 fi
 if test "$enable_ipv6" != "no"; then
   AC_DEFINE(WITH_IPV6, 1, [Define to 1 if you want IPv6.])
+else
+	AC_MSG_WARN([[
+
+IPv6 support is disabled.
+
+]])
 fi
 AC_MSG_CHECKING([if IPv6 should be used])
 AC_MSG_RESULT($enable_ipv6)
 
+# Test if the libc includes a good enough argp.
+AC_ARG_WITH(system-argp,
+  AC_HELP_STRING([--without-system-argp], [Don't use the system's argp]))
+if test "$with_system_argp" != "no" ; then
+  AC_LIB_ARGP(,with_system_argp=no)
+fi
+if test "$with_system_argp" = "no" ; then
+  LIBS="$LIBS \$(top_builddir)/argp/libargp.a"
+  CFLAGS="$CFLAGS -I\$(top_srcdir)/argp"
+  ARGP=argp
+fi
+AC_SUBST(ARGP)
+AC_CONFIG_SUBDIRS(argp)
+
+# Check gdbm
+#AC_ARG_WITH(system-gdbm,
+#  AC_HELP_STRING([--without-system-gdbm], [Don't use the system's gdbm]))
+#if test "$with_system_gdbm" != "no" ; then
+#  AC_CHECK_LIB(gdbm, gdbm_open,,with_system_gdbm=no)
+#fi
+#LIBGDBM=""
+#if test "$with_system_gdbm" = "no" ; then
+#  LIBGDBM="\$(top_builddir)/gdbm/libgdbm.a"
+#  CFLAGS="$CFLAGS -I\$(top_srcdir)/gdbm"
+#  GDBM=gdbm
+#  AC_SUBST(GDBM)
+#fi
+#AC_SUBST(LIBGDBM)
+
 # Check for stringprep
 AC_ARG_WITH(system-stringprep,
   AC_HELP_STRING([--without-system-stringprep],
-		[Don't use the system's libstringprep]))
+		[don't use the system's libstringprep]))
 if test "$with_system_stringprep" != "no" ; then
-	PKG_CHECK_MODULES(LIBSTRINGPREP, libstringprep >= 0.0.0,
+	PKG_CHECK_MODULES(LIBSTRINGPREP, libstringprep >= 0.0.1,
 		with_system_stringprep=yes,
 		with_system_stringprep=no)
 fi
 if test "$with_system_stringprep" = "no"; then
 	AC_MSG_WARN([[
 
-libstringprep 0.0.0 or later (see http://josefsson.org/libstringprep/)
-not used, instead shishi falls back to treating principal and username
-as strings encoded in the system locale, and stores them into the
-KerberosString ASN.1 type without any processing.  This violates
-various standards but may work in practice (especially if your system
-locale is UTF-8).
+The system's libstringprep 0.0.02 or later not used. Using copy
+distributed with shishi instead.
+
+See <http://josefsson.org/libstringprep/>.
+
+Don't worry.
 ]])
+	STRINGPREP_CFLAGS="-I\$(top_srcdir)/libstringprep"
+	STRINGPREP_LIBS="\$(top_builddir)/libstringprep/libstringprep.la"
+	STRINGPREP=libstringprep
 fi
-AC_MSG_CHECKING([if Stringprep should be used])
+AC_SUBST(STRINGPREP)
+AC_MSG_CHECKING([if system's libstringprep should be used])
 AC_MSG_RESULT($with_system_stringprep)
+AC_CONFIG_SUBDIRS(libstringprep)
+
+dnl libtasn1 will be built
+dnl AC_CHECK_LIB([tasn1], libasn1_strerror,, AC_MSG_ERROR([libtasn1 is required]))
+AC_CONFIG_SUBDIRS(asn1)
+
+# Check for libgcrypt
+AC_ARG_WITH(system-libgcrypt,
+  AC_HELP_STRING([--without-system-libgcrypt],
+		[don't use the system's libgcrypt]))
+if test "$with_system_libgcrypt" != "no" ; then
+	AM_PATH_LIBGCRYPT(1.1.11, [
+		LIBGCRYPT_BUILD_LIBS="$LIBGCRYPT_LIBS"
+		LIBGCRYPT_BUILD_CFLAGS="$LIBGCRYPT_CFLAGS"
+		with_system_libgcrypt=yes
+	], [
+		with_system_libgcrypt=no
+	])
+fi
+if test "$with_system_libgcrypt" = "no"; then
+	AC_MSG_WARN([[
+
+The system's libgcrypt 1.1.11 or later not used. Using copy
+distributed with shishi instead.
+
+See <ftp://ftp.gnupg.org/pub/gcrypt/alpha/libgcrypt/>.
+
+Don't worry.
+]])
+	LIBGCRYPT_BUILD_CFLAGS="-I\$(top_srcdir)/crypto/src"
+	LIBGCRYPT_BUILD_LIBS="\$(top_builddir)/crypto/src/libgcrypt.la"
+	LIBGCRYPT_CFLAGS=""
+	AC_SUBST(LIBGCRYPT_CFLAGS)
+	LIBGCRYPT_LIBS="-lgcrypt"
+	AC_SUBST(LIBGCRYPT_LIBS)
+	CRYPTO=crypto
+fi
+AC_SUBST(LIBGCRYPT_BUILD_CFLAGS)
+AC_SUBST(LIBGCRYPT_BUILD_LIBS)
+AC_SUBST(CRYPTO)
+AC_MSG_CHECKING([if system's libgcrypt should be used])
+AC_MSG_RESULT($with_system_libgcrypt)
+AC_CONFIG_SUBDIRS(crypto)
 
 # Checks for library functions.
-AC_CHECK_FUNCS(gethostname signal \
-		memmove memset bcopy bzero \
-		select ngettext \
-		strchr strdup strerror strstr strcasecmp)
 AC_FUNC_STRFTIME
-AC_REPLACE_FUNCS(setenv unsetenv)
+AC_CHECK_FUNCS(signal select ngettext gethostbyname)
+AC_REPLACE_FUNCS(setenv unsetenv strdup memmove memset strcasecmp \
+		strerror gethostname)
 
-# gdbm
-AC_CONFIG_SUBDIRS(asn1 crypto argp extra/inetutils)
+# Configure extra tools
+AC_CONFIG_SUBDIRS(extra/inetutils)
 
 AC_CONFIG_FILES(Makefile intl/Makefile po/Makefile.in m4/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
 	extra/Makefile shishi.pc shishi.conf shishi.skel)
 
+# We are done
 AC_OUTPUT
