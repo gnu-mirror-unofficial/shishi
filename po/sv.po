@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2004-09-02 22:10+0200\n"
+"POT-Creation-Date: 2004-10-15 13:05+0200\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -107,12 +107,12 @@ msgstr ""
 msgid "Reading Authenticator from %s...done\n"
 msgstr ""
 
-#: lib/diskio.c:968
+#: lib/diskio.c:966
 #, c-format
 msgid "Writing KEY to %s...\n"
 msgstr ""
 
-#: lib/diskio.c:983
+#: lib/diskio.c:981
 #, c-format
 msgid "Writing KEY to %s...done\n"
 msgstr ""
@@ -147,7 +147,7 @@ msgstr ""
 msgid "Reading EncAPRepPart from %s...done\n"
 msgstr ""
 
-#: lib/enckdcreppart.c:311 lib/ticket.c:204
+#: lib/enckdcreppart.c:311 lib/ticket.c:196
 #, c-format
 msgid "Could not set sname: %s\n"
 msgstr ""
@@ -247,12 +247,12 @@ msgstr ""
 msgid "Reading KRB-ERROR from %s...done\n"
 msgstr ""
 
-#: lib/krberror.c:1276
+#: lib/krberror.c:1278
 #, c-format
 msgid "Unknown KRB-ERROR error code %d."
 msgstr ""
 
-#: lib/principal.c:475
+#: lib/principal.c:417
 #, c-format
 msgid "Could not set principal name: %s\n"
 msgstr ""
@@ -287,42 +287,42 @@ msgstr ""
 msgid "Reading SAFE from %s...done\n"
 msgstr ""
 
-#: lib/tkt.c:1326
+#: lib/tkt.c:1316
 #, c-format
 msgid "Time of last initial request for a TGT:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1375
+#: lib/tkt.c:1362
 #, c-format
 msgid "Authtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1382
+#: lib/tkt.c:1369
 #, c-format
 msgid "Starttime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1393
+#: lib/tkt.c:1380
 #, c-format
 msgid "Endtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1401
+#: lib/tkt.c:1388
 #, c-format
 msgid "Renewable till:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1405
+#: lib/tkt.c:1396
 #, c-format
 msgid "Server:\t\t%s key %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1410
+#: lib/tkt.c:1403
 #, c-format
 msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1418
+#: lib/tkt.c:1411
 #, c-format
 msgid "Ticket flags:\t"
 msgstr ""
