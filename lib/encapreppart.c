@@ -262,10 +262,7 @@ shishi_encapreppart_from_file (Shishi * handle, Shishi_asn1 * encapreppart,
  * shishi_encapreppart_get_key:
  * @handle: shishi handle as allocated by shishi_init().
  * @encapreppart: input EncAPRepPart variable.
- * @keytype: output variable that holds key type.
- * @keyvalue: output array with key.
- * @keyvalue_len: on input, maximum size of output array with key,
- *                on output, holds the actual size of output array with key.
+ * @key: newly allocated key.
  *
  * Extract the subkey from the encrypted AP-REP part.
  *
@@ -274,19 +271,28 @@ shishi_encapreppart_from_file (Shishi * handle, Shishi_asn1 * encapreppart,
 int
 shishi_encapreppart_get_key (Shishi * handle,
 			     Shishi_asn1 encapreppart,
-			     int32_t * keytype,
-			     char *keyvalue, size_t * keyvalue_len)
+			     Shishi_key ** key)
 {
   int res;
+  char *buf;
+  size_t buflen;
+  int32_t keytype;
 
-  *keytype = 0;
   res = shishi_asn1_read_int32 (handle, encapreppart,
-				"subkey.keytype", keytype);
+				"subkey.keytype", &keytype);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read (handle, encapreppart,
-			  "subkey.keyvalue", keyvalue, keyvalue_len);
+  res = shishi_asn1_read2 (handle, encapreppart, "subkey.keyvalue",
+			   &buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
+
+  if (shishi_cipher_keylen (keytype) != buflen)
+    return SHISHI_ENCAPREPPART_BAD_KEYTYPE;
+
+  res = shishi_key_from_value (handle, keytype, buf, key);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 

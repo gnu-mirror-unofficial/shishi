@@ -82,7 +82,8 @@ typedef enum
   SHISHI_VERIFY_FAILED = 47,
   SHISHI_PRIV_BAD_KEYTYPE = 48,
   SHISHI_FILE_ERROR = 49,
-  SHISHI_LAST_ERROR = 49
+  SHISHI_ENCAPREPPART_BAD_KEYTYPE = 50,
+  SHISHI_LAST_ERROR = 50
 }
 Shishi_rc;
 
@@ -1859,9 +1860,7 @@ extern int shishi_encapreppart_from_file (Shishi * handle,
 					  int filetype, const char *filename);
 extern int shishi_encapreppart_get_key (Shishi * handle,
 					Shishi_asn1 encapreppart,
-					int32_t * keytype,
-					char *keyvalue,
-					size_t * keyvalue_len);
+					Shishi_key ** key);
 extern int shishi_encapreppart_seqnumber_get (Shishi * handle,
 					      Shishi_asn1 encapreppart,
 					      uint32_t * seqnumber);
