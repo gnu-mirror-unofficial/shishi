@@ -31,43 +31,37 @@
 static Shishi_asn1
 _shishi_kdcrep (Shishi * handle, int as)
 {
-  int res = ASN1_SUCCESS;
-  Shishi_asn1 node = NULL;
+  int res;
+  Shishi_asn1 node;
 
   if (as)
-    res =
-      asn1_create_element (handle->asn1, "Kerberos5.AS-REP", &node,
-			   "KDC-REP");
+    node = shishi_asn1_asrep (handle);
   else
-    res =
-      asn1_create_element (handle->asn1, "Kerberos5.TGS-REP", &node,
-			   "KDC-REP");
-  if (res != ASN1_SUCCESS)
-    goto error;
+    node = shishi_asn1_tgsrep (handle);
+  if (!node)
+    return NULL;
 
-  res = asn1_write_value (node, "KDC-REP.pvno",
-			  SHISHI_KDCREP_DEFAULT_PVNO,
-			  SHISHI_KDCREP_DEFAULT_PVNO_LEN);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, node, "KDC-REP.pvno",
+			   SHISHI_KDCREP_DEFAULT_PVNO,
+			   SHISHI_KDCREP_DEFAULT_PVNO_LEN);
+  if (res != SHISHI_OK)
     goto error;
 
   if (as)
-    res = asn1_write_value (node, "KDC-REP.msg-type",
-			    SHISHI_AS_REP_DEFAULT_MSG_TYPE,
-			    SHISHI_AS_REP_DEFAULT_MSG_TYPE_LEN);
+    res = shishi_asn1_write (handle, node, "KDC-REP.msg-type",
+			     SHISHI_AS_REP_DEFAULT_MSG_TYPE,
+			     SHISHI_AS_REP_DEFAULT_MSG_TYPE_LEN);
   else
-    res = asn1_write_value (node, "KDC-REP.msg-type",
-			    SHISHI_TGS_REP_DEFAULT_MSG_TYPE,
-			    SHISHI_TGS_REP_DEFAULT_MSG_TYPE_LEN);
-  if (res != ASN1_SUCCESS)
+    res = shishi_asn1_write (handle, node, "KDC-REP.msg-type",
+			     SHISHI_TGS_REP_DEFAULT_MSG_TYPE,
+			     SHISHI_TGS_REP_DEFAULT_MSG_TYPE_LEN);
+  if (res != SHISHI_OK)
     goto error;
 
   return node;
 
 error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != NULL)
-    asn1_delete_structure (&node);
+  shishi_asn1_done (handle, node);
   return NULL;
 }
 
@@ -276,14 +270,11 @@ int
 shishi_kdcrep_crealm_set (Shishi * handle,
 			  Shishi_asn1 kdcrep, const char *crealm)
 {
-  int res = ASN1_SUCCESS;
+  int res;
 
-  res = asn1_write_value (kdcrep, "KDC-REP.crealm", crealm, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.crealm", crealm, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
@@ -305,43 +296,32 @@ shishi_kdcrep_cname_set (Shishi * handle,
 			 Shishi_asn1 kdcrep,
 			 Shishi_name_type name_type, char *cname[])
 {
-  int res = ASN1_SUCCESS;
+  int res;
   char buf[BUFSIZ];
   int i;
 
   sprintf (buf, "%d", name_type);
 
-  res = asn1_write_value (kdcrep, "KDC-REP.cname.name-type", buf, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-type", buf, 0);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-string",
+			   NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   i = 1;
   while (cname[i - 1])
     {
-      res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string", "NEW", 1);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return !SHISHI_OK;
-	}
+      res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-string", "NEW", 1);
+      if (res != SHISHI_OK)
+	return res;
 
       sprintf (buf, "KDC-REP.cname.name-string.?%d", i);
-      res = asn1_write_value (kdcrep, buf, cname[i - 1], 0);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return !SHISHI_OK;
-	}
+      res = shishi_asn1_write (handle, kdcrep, buf, cname[i - 1], 0);
+      if (res != SHISHI_OK)
+	return res;
 
       i++;
     }
@@ -444,107 +424,107 @@ shishi_kdcrep_get_ticket (Shishi * handle,
 
   /* there's GOT to be an easier way to do this */
 
-  *ticket = NULL;
-  res = asn1_create_element (handle->asn1, "Kerberos5.Ticket",
-			     ticket, "Ticket");
-  if (res != ASN1_SUCCESS)
-    {
-      *ticket = NULL;
-      goto error;
-    }
+  *ticket = shishi_asn1_ticket (handle);
+  if (!*ticket)
+    return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (kdcrep, "KDC-REP.ticket.tkt-vno", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, kdcrep, "KDC-REP.ticket.tkt-vno",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.tkt-vno", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.tkt-vno", buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (kdcrep, "KDC-REP.ticket.realm", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, kdcrep, "KDC-REP.ticket.realm",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.realm", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.realm", buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   buflen = BUFSIZ;
-  res =
-    asn1_read_value (kdcrep, "KDC-REP.ticket.sname.name-type", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, kdcrep, "KDC-REP.ticket.sname.name-type",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.sname.name-type", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.sname.name-type",
+			   buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res =
-    asn1_number_of_elements (kdcrep, "KDC-REP.ticket.sname.name-string", &n);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_number_of_elements (handle, kdcrep,
+					"KDC-REP.ticket.sname.name-string",
+					&n);
+  if (res != SHISHI_OK)
     goto error;
 
   for (i = 1; i <= n; i++)
     {
-      res = asn1_write_value (*ticket, "Ticket.sname.name-string", "NEW", 1);
-      if (res != ASN1_SUCCESS)
+      res = shishi_asn1_write (handle, *ticket, "Ticket.sname.name-string",
+			       "NEW", 1);
+      if (res != SHISHI_OK)
 	goto error;
 
       sprintf (format, "KDC-REP.ticket.sname.name-string.?%d", i);
       buflen = BUFSIZ;
-      res = asn1_read_value (kdcrep, format, buf, &buflen);
-      if (res != ASN1_SUCCESS)
+      res = shishi_asn1_read (handle, kdcrep, format, buf, &buflen);
+      if (res != SHISHI_OK)
 	goto error;
 
       sprintf (format, "Ticket.sname.name-string.?%d", i);
-      res = asn1_write_value (*ticket, format, buf, buflen);
-      if (res != ASN1_SUCCESS)
+      res = shishi_asn1_write (handle, *ticket, format, buf, buflen);
+      if (res != SHISHI_OK)
 	goto error;
     }
 
   buflen = BUFSIZ;
-  res =
-    asn1_read_value (kdcrep, "KDC-REP.ticket.enc-part.etype", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, kdcrep, "KDC-REP.ticket.enc-part.etype",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.enc-part.etype", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.etype",
+			   buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   buflen = BUFSIZ;
-  res =
-    asn1_read_value (kdcrep, "KDC-REP.ticket.enc-part.kvno", buf, &buflen);
-  if (res != ASN1_SUCCESS && res != ASN1_ELEMENT_NOT_FOUND)
+  res = shishi_asn1_read (handle, kdcrep, "KDC-REP.ticket.enc-part.kvno",
+			  buf, &buflen);
+  if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     goto error;
 
-  if (res == ASN1_ELEMENT_NOT_FOUND)
-    res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", NULL, 0);
+  if (res == SHISHI_ASN1_NO_ELEMENT)
+    res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.kvno", NULL, 0);
   else
-    res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", buf, buflen);
-  if (res != ASN1_SUCCESS)
+    res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.kvno",
+			     buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   buflen = BUFSIZ;
-  res =
-    asn1_read_value (kdcrep, "KDC-REP.ticket.enc-part.cipher", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, kdcrep, "KDC-REP.ticket.enc-part.cipher",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.enc-part.cipher", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.cipher",
+			   buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   return SHISHI_OK;
 
 error:
-  shishi_error_printf (handle, "shishi_kdcrep_get_ticket() failure: %s",
-		       libtasn1_strerror (res));
-  if (*ticket != NULL)
-    asn1_delete_structure (ticket);
-  return SHISHI_ASN1_ERROR;
+  shishi_asn1_done (handle, *ticket);
+  return res;
 }
 
 /**
@@ -561,7 +541,7 @@ int
 shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
 			  Shishi_asn1 ticket)
 {
-  int res = ASN1_SUCCESS;
+  int res = SHISHI_OK;
   Shishi_asn1 node = NULL;
   unsigned char format[BUFSIZ];
   unsigned char buf[BUFSIZ];
@@ -569,95 +549,97 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
   int i, n;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.tkt-vno", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, ticket, "Ticket.tkt-vno", buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (kdcrep, "KDC-REP.ticket.tkt-vno", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.realm", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  res = asn1_write_value (kdcrep, "KDC-REP.ticket.realm", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.ticket.tkt-vno",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.sname.name-type", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, ticket, "Ticket.realm", buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res =
-    asn1_write_value (kdcrep, "KDC-REP.ticket.sname.name-type", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.ticket.realm",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_number_of_elements (ticket, "Ticket.sname.name-string", &n);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  buflen = BUFSIZ;
+  res = shishi_asn1_read (handle, ticket, "Ticket.sname.name-type",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.ticket.sname.name-type",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_number_of_elements (handle, ticket,
+					"Ticket.sname.name-string", &n);
+  if (res != SHISHI_OK)
+    return res;
 
   for (i = 1; i <= n; i++)
     {
-      res = asn1_write_value (kdcrep, "KDC-REP.ticket.sname.name-string",
-			      "NEW", 1);
-      if (res != ASN1_SUCCESS)
-	goto error;
+      res = shishi_asn1_write (handle, kdcrep,
+			       "KDC-REP.ticket.sname.name-string", "NEW", 1);
+      if (res != SHISHI_OK)
+	return res;
 
       sprintf (format, "Ticket.sname.name-string.?%d", i);
 
       buflen = BUFSIZ;
-      res = asn1_read_value (ticket, format, buf, &buflen);
-      if (res != ASN1_SUCCESS)
-	goto error;
+      res = shishi_asn1_read (handle, ticket, format, buf, &buflen);
+      if (res != SHISHI_OK)
+	return res;
 
       sprintf (format, "KDC-REP.ticket.sname.name-string.?%d", i);
 
-      res = asn1_write_value (kdcrep, format, buf, buflen);
-      if (res != ASN1_SUCCESS)
-	goto error;
+      res = shishi_asn1_write (handle, kdcrep, format, buf, buflen);
+      if (res != SHISHI_OK)
+	return res;
     }
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.enc-part.etype", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, ticket, "Ticket.enc-part.etype",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res =
-    asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.etype", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.ticket.enc-part.etype",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.enc-part.kvno", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    res = asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.kvno", NULL, 0);
+  res = shishi_asn1_read (handle, ticket, "Ticket.enc-part.kvno",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
+    res = shishi_asn1_write (handle, kdcrep, "KDC-REP.ticket.enc-part.kvno",
+			     NULL, 0);
   else
-    res =
-      asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.kvno", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+    res = shishi_asn1_write (handle, kdcrep, "KDC-REP.ticket.enc-part.kvno",
+			     buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.enc-part.cipher", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, ticket, "Ticket.enc-part.cipher",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res =
-    asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.cipher", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.ticket.enc-part.cipher",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != NULL)
-    asn1_delete_structure (&node);
-  return !SHISHI_OK;
 }
 
 /**
@@ -683,36 +665,36 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
 			    int etype, int kvno, char *buf, int buflen)
 {
   char format[BUFSIZ];
-  int res = ASN1_SUCCESS;
+  int res = SHISHI_OK;
 
-  res = asn1_write_value (kdcrep, "KDC-REP.enc-part.cipher", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.enc-part.cipher",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   sprintf (format, "%d", etype);
-  res = asn1_write_value (kdcrep, "KDC-REP.enc-part.etype", format, 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.enc-part.etype",
+			   format, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   if (kvno == 0)
     {
-      res = asn1_write_value (kdcrep, "KDC-REP.enc-part.kvno", NULL, 0);
-      if (res != ASN1_SUCCESS)
-	goto error;
+      res = shishi_asn1_write (handle, kdcrep, "KDC-REP.enc-part.kvno",
+			       NULL, 0);
+      if (res != SHISHI_OK)
+	return res;
     }
   else
     {
       shishi_asprintf (&format, "%d", etype);
-      res = asn1_write_value (kdcrep, "KDC-REP.enc-part.kvno", format, 0);
-      if (res != ASN1_SUCCESS)
-	goto error;
+      res = shishi_asn1_write (handle, kdcrep, "KDC-REP.enc-part.kvno",
+			       format, 0);
+      if (res != SHISHI_OK)
+	return res;
     }
 
   return SHISHI_OK;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  return SHISHI_ASN1_ERROR;
 }
 
 /**
@@ -736,7 +718,7 @@ shishi_kdcrep_add_enc_part (Shishi * handle,
 			    Shishi_key * key,
 			    int keyusage, Shishi_asn1 enckdcreppart)
 {
-  int res = ASN1_SUCCESS;
+  int res = SHISHI_OK;
   char buf[BUFSIZ];
   int buflen;
   char der[BUFSIZ];
@@ -846,9 +828,9 @@ shishi_kdcrep_clear_padata (Shishi * handle, Shishi_asn1 kdcrep)
 {
   int res;
 
-  res = asn1_write_value (kdcrep, "KDC-REP.padata", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.padata", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
