@@ -810,8 +810,7 @@ shishi_prompt_password (Shishi * handle,
 /* asn1.c */
 extern int shishi_a2d_field (Shishi * handle,
 			     Shishi_asn1 node,
-			     const char *field,
-			     char *der, int *len);
+			     const char *field, char *der, int *len);
 extern int shishi_a2d (Shishi * handle, Shishi_asn1 node,
 		       char *der, int *len);
 extern int shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
@@ -880,14 +879,11 @@ extern Shishi_asn1 shishi_der2asn1_authenticator (Shishi * handle,
 						  const char *der,
 						  size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_krberror (Shishi * handle,
-					     const char *der,
-					     size_t derlen);
+					     const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_apreq (Shishi * handle,
-					  const char *der,
-					  size_t derlen);
+					  const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_aprep (Shishi * handle,
-					  const char *der,
-					  size_t derlen);
+					  const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_encapreppart (Shishi * handle,
 						 const char *der,
 						 size_t derlen);

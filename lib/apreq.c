@@ -66,80 +66,80 @@ shishi_apreq (Shishi * handle)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.pvno",
-			  SHISHI_APREQ_DEFAULT_PVNO,
-			  SHISHI_APREQ_DEFAULT_PVNO_LEN);
+			   SHISHI_APREQ_DEFAULT_PVNO,
+			   SHISHI_APREQ_DEFAULT_PVNO_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.msg-type",
-			  SHISHI_APREQ_DEFAULT_MSG_TYPE,
-			  SHISHI_APREQ_DEFAULT_MSG_TYPE_LEN);
+			   SHISHI_APREQ_DEFAULT_MSG_TYPE,
+			   SHISHI_APREQ_DEFAULT_MSG_TYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.ap-options",
-			  SHISHI_APREQ_DEFAULT_AP_OPTIONS,
-			  SHISHI_APREQ_DEFAULT_AP_OPTIONS_LEN);
+			   SHISHI_APREQ_DEFAULT_AP_OPTIONS,
+			   SHISHI_APREQ_DEFAULT_AP_OPTIONS_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.ticket.tkt-vno",
-			  SHISHI_APREQ_DEFAULT_TICKET_TKT_VNO,
-			  SHISHI_APREQ_DEFAULT_TICKET_TKT_VNO_LEN);
+			   SHISHI_APREQ_DEFAULT_TICKET_TKT_VNO,
+			   SHISHI_APREQ_DEFAULT_TICKET_TKT_VNO_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.ticket.realm",
-			  SHISHI_APREQ_DEFAULT_TICKET_REALM,
-			  SHISHI_APREQ_DEFAULT_TICKET_REALM_LEN);
+			   SHISHI_APREQ_DEFAULT_TICKET_REALM,
+			   SHISHI_APREQ_DEFAULT_TICKET_REALM_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.ticket.realm",
-			  SHISHI_APREQ_DEFAULT_TICKET_REALM,
-			  SHISHI_APREQ_DEFAULT_TICKET_REALM_LEN);
+			   SHISHI_APREQ_DEFAULT_TICKET_REALM,
+			   SHISHI_APREQ_DEFAULT_TICKET_REALM_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.ticket.sname.name-type",
-			  SHISHI_APREQ_DEFAULT_TICKET_SNAME_NAME_TYPE,
-			  SHISHI_APREQ_DEFAULT_TICKET_SNAME_NAME_TYPE_LEN);
+			   SHISHI_APREQ_DEFAULT_TICKET_SNAME_NAME_TYPE,
+			   SHISHI_APREQ_DEFAULT_TICKET_SNAME_NAME_TYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.ticket.enc-part.etype",
-			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_ETYPE,
-			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_ETYPE_LEN);
+			   SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_ETYPE,
+			   SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_ETYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.ticket.enc-part.kvno",
-			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_KVNO,
-			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_KVNO_LEN);
+			   SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_KVNO,
+			   SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_KVNO_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.ticket.enc-part.cipher",
-			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_CIPHER,
-			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_CIPHER_LEN);
+			   SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_CIPHER,
+			   SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_CIPHER_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.authenticator.etype",
-			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_ETYPE,
-			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_ETYPE_LEN);
+			   SHISHI_APREQ_DEFAULT_AUTHENTICATOR_ETYPE,
+			   SHISHI_APREQ_DEFAULT_AUTHENTICATOR_ETYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.authenticator.kvno",
-			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_KVNO,
-			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_KVNO_LEN);
+			   SHISHI_APREQ_DEFAULT_AUTHENTICATOR_KVNO,
+			   SHISHI_APREQ_DEFAULT_AUTHENTICATOR_KVNO_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REQ.authenticator.cipher",
-			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_CIPHER,
-			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_CIPHER_LEN);
+			   SHISHI_APREQ_DEFAULT_AUTHENTICATOR_CIPHER,
+			   SHISHI_APREQ_DEFAULT_AUTHENTICATOR_CIPHER_LEN);
   if (res != SHISHI_OK)
     goto error;
 
@@ -406,7 +406,8 @@ shishi_apreq_add_authenticator (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq, Shishi_asn1 ticket)
+shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
+			 Shishi_asn1 ticket)
 {
   int res;
   Shishi_asn1 node;
@@ -453,8 +454,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq, Shishi_asn1 ticket)
   for (i = 1; i <= n; i++)
     {
       res = shishi_asn1_write (handle, apreq,
-			       "AP-REQ.ticket.sname.name-string",
-			      "NEW", 1);
+			       "AP-REQ.ticket.sname.name-string", "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
@@ -547,8 +547,8 @@ shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq, int options)
   int res;
 
   res = shishi_asn1_write (handle, apreq, "AP-REQ.ap-options",
-			  (char *) &options,
-			  SHISHI_APREQ_DEFAULT_AP_OPTIONS_LEN);
+			   (char *) &options,
+			   SHISHI_APREQ_DEFAULT_AP_OPTIONS_LEN);
   if (res != SHISHI_OK)
     return res;
 
@@ -604,8 +604,7 @@ shishi_apreq_get_authenticator_etype (Shishi * handle,
  **/
 int
 shishi_apreq_get_ticket (Shishi * handle,
-			 Shishi_asn1 apreq,
-			 Shishi_asn1 * ticket)
+			 Shishi_asn1 apreq, Shishi_asn1 * ticket)
 {
   unsigned char buf[BUFSIZ];
   unsigned char format[BUFSIZ];
@@ -620,7 +619,8 @@ shishi_apreq_get_ticket (Shishi * handle,
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, apreq, "AP-REQ.ticket.tkt-vno", buf, &buflen);
+  res = shishi_asn1_read (handle, apreq, "AP-REQ.ticket.tkt-vno",
+			  buf, &buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -649,7 +649,8 @@ shishi_apreq_get_ticket (Shishi * handle,
     goto error;
 
   res = shishi_asn1_number_of_elements (handle, apreq,
-					"AP-REQ.ticket.sname.name-string", &n);
+					"AP-REQ.ticket.sname.name-string",
+					&n);
   if (res != SHISHI_OK)
     goto error;
 
@@ -762,7 +763,8 @@ shishi_apreq_decrypt (Shishi * handle,
       if (VERBOSEASN1 (handle))
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
-      *authenticator = shishi_d2a_authenticator (handle, &buf[0], buflen - i);
+      *authenticator = shishi_der2asn1_authenticator (handle, &buf[0],
+						      buflen - i);
       if (*authenticator != NULL)
 	break;
     }

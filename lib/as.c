@@ -163,7 +163,7 @@ shishi_as_req_der_set (Shishi_as * as, char *der, int derlen)
 {
   Shishi_asn1 asreq;
 
-  asreq = shishi_d2a_asreq (as->handle, der, derlen);
+  asreq = shishi_der2asn1_asreq (as->handle, der, derlen);
 
   if (asreq == NULL)
     return SHISHI_ASN1_ERROR;
@@ -389,7 +389,7 @@ shishi_as_rep_der_set (Shishi_as * as, char *der, int derlen)
 {
   Shishi_asn1 asrep;
 
-  asrep = shishi_d2a_asrep (as->handle, der, derlen);
+  asrep = shishi_der2asn1_asrep (as->handle, der, derlen);
 
   if (asrep == NULL)
     return SHISHI_ASN1_ERROR;

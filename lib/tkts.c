@@ -19,8 +19,9 @@
  *
  */
 
-/* XXX how to generalize shishi_tkts_{get,find}_tkt_for_*()??
-   unclean with lots of different functions... */
+/* XXX how to generalize shishi_tkts_{get,find}_tkt_for_*()??  unclean
+   with lots of different functions... A: getaddrinfo() like
+   approach. */
 
 #include "internal.h"
 
@@ -227,7 +228,8 @@ shishi_tkts_add (Shishi_tkts * tkts, Shishi_tkt * tkt)
  **/
 int
 shishi_tkts_new (Shishi_tkts * tkts,
-		 ASN1_TYPE ticket, ASN1_TYPE enckdcreppart, ASN1_TYPE kdcrep)
+		 Shishi_asn1 ticket, Shishi_asn1 enckdcreppart,
+		 Shishi_asn1 kdcrep)
 {
   Shishi_tkt *tkt;
   int res;
@@ -263,9 +265,9 @@ shishi_tkts_read (Shishi_tkts * tkts, FILE * fh)
   res = SHISHI_OK;
   while (!feof (fh))
     {
-      ASN1_TYPE ticket;
-      ASN1_TYPE enckdcreppart;
-      ASN1_TYPE kdcrep;
+      Shishi_asn1 ticket;
+      Shishi_asn1 enckdcreppart;
+      Shishi_asn1 kdcrep;
 
       res = shishi_kdcrep_parse (tkts->handle, fh, &kdcrep);
       if (res != SHISHI_OK)

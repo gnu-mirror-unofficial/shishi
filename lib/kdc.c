@@ -147,16 +147,16 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
   if (VERBOSEASN1 (handle))
     printf ("received %d bytes\n", der_len);
 
-  *kdcrep = shishi_d2a_asrep (handle, der, der_len);
+  *kdcrep = shishi_der2asn1_asrep (handle, der, der_len);
   if (*kdcrep == NULL)
     {
-      *kdcrep = shishi_d2a_tgsrep (handle, der, der_len);
+      *kdcrep = shishi_der2asn1_tgsrep (handle, der, der_len);
       if (*kdcrep == NULL)
 	{
-	  *kdcrep = shishi_d2a_kdcrep (handle, der, der_len);
+	  *kdcrep = shishi_der2asn1_kdcrep (handle, der, der_len);
 	  if (*kdcrep == NULL)
 	    {
-	      *kdcrep = shishi_d2a_krberror (handle, der, der_len);
+	      *kdcrep = shishi_der2asn1_krberror (handle, der, der_len);
 	      if (*kdcrep == NULL)
 		{
 		  shishi_error_printf

@@ -244,7 +244,8 @@ shishi_ticket_decrypt (Shishi * handle,
       if (VERBOSEASN1 (handle))
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
-      *encticketpart = shishi_d2a_encticketpart (handle, &buf[0], buflen - i);
+      *encticketpart = shishi_der2asn1_encticketpart (handle, &buf[0],
+						      buflen - i);
       if (*encticketpart != NULL)
 	break;
     }
@@ -290,7 +291,8 @@ shishi_ticket_set_enc_part (Shishi * handle,
     return res;
 
   sprintf (format, "%d", etype);
-  res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.etype", format, 0);
+  res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.etype",
+			   format, 0);
   if (res != SHISHI_OK)
     return res;
 

@@ -53,32 +53,32 @@ shishi_aprep (Shishi * handle)
     return NULL;
 
   res = shishi_asn1_write (handle, node, "AP-REP.pvno",
-			  SHISHI_APREP_DEFAULT_PVNO,
-			  SHISHI_APREP_DEFAULT_PVNO_LEN);
+			   SHISHI_APREP_DEFAULT_PVNO,
+			   SHISHI_APREP_DEFAULT_PVNO_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REP.msg-type",
-			  SHISHI_APREP_DEFAULT_MSG_TYPE,
-			  SHISHI_APREP_DEFAULT_MSG_TYPE_LEN);
+			   SHISHI_APREP_DEFAULT_MSG_TYPE,
+			   SHISHI_APREP_DEFAULT_MSG_TYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REP.enc-part.etype",
-			  SHISHI_APREP_DEFAULT_ENC_PART_ETYPE,
-			  SHISHI_APREP_DEFAULT_ENC_PART_ETYPE_LEN);
+			   SHISHI_APREP_DEFAULT_ENC_PART_ETYPE,
+			   SHISHI_APREP_DEFAULT_ENC_PART_ETYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REP.enc-part.kvno",
-			  SHISHI_APREP_DEFAULT_ENC_PART_KVNO,
-			  SHISHI_APREP_DEFAULT_ENC_PART_KVNO_LEN);
+			   SHISHI_APREP_DEFAULT_ENC_PART_KVNO,
+			   SHISHI_APREP_DEFAULT_ENC_PART_KVNO_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node, "AP-REP.enc-part.cipher",
-			  SHISHI_APREP_DEFAULT_ENC_PART_CIPHER,
-			  SHISHI_APREP_DEFAULT_ENC_PART_CIPHER_LEN);
+			   SHISHI_APREP_DEFAULT_ENC_PART_CIPHER,
+			   SHISHI_APREP_DEFAULT_ENC_PART_CIPHER_LEN);
   if (res != SHISHI_OK)
     goto error;
 
@@ -252,8 +252,7 @@ shishi_aprep_from_file (Shishi * handle, Shishi_asn1 * aprep,
 int
 shishi_aprep_enc_part_set (Shishi * handle,
 			   Shishi_asn1 aprep,
-			   int etype,
-			   const char *buf, int buflen)
+			   int etype, const char *buf, int buflen)
 {
   char format[BUFSIZ];
   int res;
@@ -274,7 +273,8 @@ shishi_aprep_enc_part_set (Shishi * handle,
 int
 shishi_aprep_enc_part_add (Shishi * handle,
 			   Shishi_asn1 aprep,
-			   Shishi_asn1 encticketpart, Shishi_asn1 encapreppart)
+			   Shishi_asn1 encticketpart,
+			   Shishi_asn1 encapreppart)
 {
   int res;
   char buf[BUFSIZ];
@@ -364,7 +364,8 @@ shishi_aprep_enc_part_make (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_get_enc_part_etype (Shishi * handle, Shishi_asn1 aprep, int *etype)
+shishi_aprep_get_enc_part_etype (Shishi * handle, Shishi_asn1 aprep,
+				 int *etype)
 {
   return shishi_asn1_integer_field (handle, aprep, etype,
 				    "AP-REP.enc-part.etype");
@@ -415,7 +416,8 @@ shishi_aprep_decrypt (Shishi * handle,
       if (VERBOSEASN1 (handle))
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
-      *encapreppart = shishi_d2a_encapreppart (handle, &buf[0], buflen - i);
+      *encapreppart = shishi_der2asn1_encapreppart (handle, &buf[0],
+						    buflen - i);
       if (*encapreppart != NULL)
 	break;
     }

@@ -470,7 +470,7 @@ shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen)
 int
 shishi_ap_req_der_set (Shishi_ap * ap, char *der, int derlen)
 {
-  ap->apreq = shishi_d2a_apreq (ap->handle, der, derlen);
+  ap->apreq = shishi_der2asn1_apreq (ap->handle, der, derlen);
 
   return SHISHI_OK;
 }
@@ -691,7 +691,7 @@ shishi_ap_rep_der_set (Shishi_ap * ap, char *der, int derlen)
 {
   Shishi_asn1 aprep;
 
-  aprep = shishi_d2a_aprep (ap->handle, der, derlen);
+  aprep = shishi_der2asn1_aprep (ap->handle, der, derlen);
 
   if (!aprep)
     return SHISHI_ASN1_ERROR;

@@ -76,9 +76,7 @@ shishi_der2asn1 (Shishi * handle,
 
 int
 shishi_a2d_field (Shishi * handle,
-		  Shishi_asn1 node,
-		  const char *field,
-		  char *der, int *len)
+		  Shishi_asn1 node, const char *field, char *der, int *len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   int rc;
@@ -92,8 +90,7 @@ shishi_a2d_field (Shishi * handle,
 }
 
 int
-shishi_a2d (Shishi * handle, Shishi_asn1 node,
-	    char *der, int *len)
+shishi_a2d (Shishi * handle, Shishi_asn1 node, char *der, int *len)
 {
   return shishi_a2d_field (handle, node, node->name, der, len);
 }
@@ -381,7 +378,8 @@ shishi_der2asn1_ticket (Shishi * handle, const char *der, size_t derlen)
 }
 
 Shishi_asn1
-shishi_der2asn1_encticketpart (Shishi * handle, const char *der, size_t derlen)
+shishi_der2asn1_encticketpart (Shishi * handle, const char *der,
+			       size_t derlen)
 {
   return shishi_der2asn1 (handle, "Kerberos5.EncTicketPart", "EncTicketPart",
 			  der, derlen);
@@ -461,21 +459,24 @@ shishi_der2asn1_encasreppart (Shishi * handle, const char *der, size_t derlen)
 }
 
 Shishi_asn1
-shishi_der2asn1_enctgsreppart (Shishi * handle, const char *der, size_t derlen)
+shishi_der2asn1_enctgsreppart (Shishi * handle, const char *der,
+			       size_t derlen)
 {
   return shishi_der2asn1 (handle, "Kerberos5.EncTGSRepPart", "EncKDCRepPart",
 			  der, derlen);
 }
 
 Shishi_asn1
-shishi_der2asn1_enckdcreppart (Shishi * handle, const char *der, size_t derlen)
+shishi_der2asn1_enckdcreppart (Shishi * handle, const char *der,
+			       size_t derlen)
 {
   return shishi_der2asn1 (handle, "Kerberos5.EncKDCRepPart", "EncKDCRepPart",
 			  der, derlen);
 }
 
 Shishi_asn1
-shishi_der2asn1_authenticator (Shishi * handle, const char *der, size_t derlen)
+shishi_der2asn1_authenticator (Shishi * handle, const char *der,
+			       size_t derlen)
 {
   return shishi_der2asn1 (handle, "Kerberos5.Authenticator", "Authenticator",
 			  der, derlen);

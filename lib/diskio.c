@@ -239,7 +239,7 @@ _shishi_ticket_input (Shishi * handle,
 	}
     }
 
-  *ticket = shishi_d2a_ticket (handle, der, derlen);
+  *ticket = shishi_der2asn1_ticket (handle, der, derlen);
   if (*ticket == NULL)
     return SHISHI_ASN1_ERROR;
 
@@ -294,20 +294,21 @@ _shishi_enckdcreppart_input (Shishi * handle,
 	}
     }
 
-  *enckdcreppart = shishi_d2a_encasreppart (handle, der, derlen);
+  *enckdcreppart = shishi_der2asn1_encasreppart (handle, der, derlen);
   if (*enckdcreppart == NULL)
     {
       shishi_error_printf (handle, "Could not DER decode Encasreppart: %s",
 			   shishi_strerror_details (handle));
 
-      *enckdcreppart = shishi_d2a_enctgsreppart (handle, der, derlen);
+      *enckdcreppart = shishi_der2asn1_enctgsreppart (handle, der, derlen);
       if (*enckdcreppart == NULL)
 	{
 	  shishi_error_printf (handle,
 			       "Could not DER decode Enctgsreppart: %s",
 			       shishi_strerror_details (handle));
 
-	  *enckdcreppart = shishi_d2a_enckdcreppart (handle, der, derlen);
+	  *enckdcreppart =
+	    shishi_der2asn1_enckdcreppart (handle, der, derlen);
 	  if (*enckdcreppart == NULL)
 	    {
 	      shishi_error_printf (handle,
@@ -370,19 +371,19 @@ _shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq,
 	}
     }
 
-  *asreq = shishi_d2a_asreq (handle, der, derlen);
+  *asreq = shishi_der2asn1_asreq (handle, der, derlen);
   if (*asreq == NULL)
     {
       printf ("bad asreq magic\n");
       shishi_error_printf (handle, "Could not DER decode AS-REQ\n");
 
-      *asreq = shishi_d2a_tgsreq (handle, der, derlen);
+      *asreq = shishi_der2asn1_tgsreq (handle, der, derlen);
       if (*asreq == NULL)
 	{
 	  printf ("bad tgsreq magic\n");
 	  shishi_error_printf (handle, "Could not DER decode TGS-REQ\n");
 
-	  *asreq = shishi_d2a_kdcreq (handle, der, derlen);
+	  *asreq = shishi_der2asn1_kdcreq (handle, der, derlen);
 	  if (*asreq == NULL)
 	    {
 	      printf ("bad kdcreq magic\n");
@@ -431,17 +432,17 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep,
 	}
     }
 
-  *asrep = shishi_d2a_asrep (handle, der, derlen);
+  *asrep = shishi_der2asn1_asrep (handle, der, derlen);
   if (*asrep == NULL)
     {
-      *asrep = shishi_d2a_tgsrep (handle, der, derlen);
+      *asrep = shishi_der2asn1_tgsrep (handle, der, derlen);
       if (*asrep == NULL)
 	{
 	  printf ("Could not DER decode KDC-REP: %s\n",
 		  shishi_strerror_details (handle));
 	  printf ("Parsing AS/TGS-REP as KDC-REP (bug work around)\n");
 
-	  *asrep = shishi_d2a_kdcrep (handle, der, derlen);
+	  *asrep = shishi_der2asn1_kdcrep (handle, der, derlen);
 	  if (*asrep == NULL)
 	    {
 	      fprintf (stderr, "Could not DER decode KDC-REP: %s\n",
@@ -491,7 +492,7 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
 	}
     }
 
-  *apreq = shishi_d2a_apreq (handle, der, derlen);
+  *apreq = shishi_der2asn1_apreq (handle, der, derlen);
   if (*apreq == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
@@ -538,7 +539,7 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep,
 	}
     }
 
-  *aprep = shishi_d2a_aprep (handle, der, derlen);
+  *aprep = shishi_der2asn1_aprep (handle, der, derlen);
   if (*aprep == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
@@ -587,7 +588,7 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 	}
     }
 
-  *encapreppart = shishi_d2a_encapreppart (handle, der, derlen);
+  *encapreppart = shishi_der2asn1_encapreppart (handle, der, derlen);
   if (*encapreppart == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
@@ -635,7 +636,7 @@ _shishi_authenticator_input (Shishi * handle,
 	}
     }
 
-  *authenticator = shishi_d2a_authenticator (handle, der, derlen);
+  *authenticator = shishi_der2asn1_authenticator (handle, der, derlen);
   if (*authenticator == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
@@ -683,7 +684,7 @@ _shishi_krberror_input (Shishi * handle,
 	}
     }
 
-  *krberror = shishi_d2a_krberror (handle, der, derlen);
+  *krberror = shishi_der2asn1_krberror (handle, der, derlen);
   if (*krberror == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
@@ -730,7 +731,7 @@ _shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe, int type)
 	}
     }
 
-  *safe = shishi_d2a_krberror (handle, der, derlen);
+  *safe = shishi_der2asn1_krberror (handle, der, derlen);
   if (*safe == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
