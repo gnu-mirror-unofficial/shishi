@@ -19,7 +19,7 @@
 # Boston, MA 02111-1307, USA.
 
 lib_LTLIBRARIES = libshishi-gss.la
-libshishi_gss_la_SOURCES = internal.h oid.c name.c
+libshishi_gss_la_SOURCES = internal.h oid.c cred.c context.c msg.c name.c
 libshishi_gss_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 INCLUDES = -I../intl -I../lib \
