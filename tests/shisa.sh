@@ -57,7 +57,7 @@ fi
 expectout=""
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -71,7 +71,7 @@ expectout="Adding realm \`TESTREALM'...
 Adding realm \`TESTREALM'...done"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -84,7 +84,7 @@ fi
 expectout="TESTREALM"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -98,7 +98,7 @@ expectout="Adding realm \`TESTREALM2'...
 Adding realm \`TESTREALM2'...done"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -112,7 +112,7 @@ expectout="TESTREALM
 TESTREALM2"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -126,7 +126,7 @@ expectout="Removing realm \`TESTREALM2'...
 Removing realm \`TESTREALM2'...done"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -139,7 +139,7 @@ fi
 expectout="TESTREALM"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -153,7 +153,7 @@ expectout="Adding principal \`test/principal@TESTREALM'...
 Adding principal \`test/principal@TESTREALM'...done"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -171,7 +171,7 @@ expectout="TESTREALM
 			Etype aes256-cts-hmac-sha1-96 (0x12, 18)."
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -185,7 +185,7 @@ expectout="Adding principal \`test/principal2@TESTREALM'...
 Adding principal \`test/principal2@TESTREALM'...done"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -208,7 +208,7 @@ expectout="TESTREALM
 			Etype aes256-cts-hmac-sha1-96 (0x12, 18)."
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -222,7 +222,14 @@ expectout="Adding principal \`test/principal3@TESTREALM'...
 Adding principal \`test/principal3@TESTREALM'...done"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Add third principal again.
+out=`$SHISA -c $CONF -a TESTREALM test/principal3 2>&1`
+if test $? != 1; then
+    echo rc $?
     exit 1
 fi
 
@@ -236,7 +243,7 @@ expectout="Removing principal \`test/principal2@TESTREALM'...
 Removing principal \`test/principal2@TESTREALM'...done"
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
@@ -259,12 +266,12 @@ expectout="TESTREALM
 			Etype aes256-cts-hmac-sha1-96 (0x12, 18)."
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
 echo Tring to remove entire realm.
-out=`$SHISA -c $CONF -r TESTREALM`
+out=`$SHISA -c $CONF -r TESTREALM 2>&1`
 if test $? != 1; then
     echo rc $?
     exit 1
@@ -289,7 +296,307 @@ expectout="TESTREALM
 			Etype aes256-cts-hmac-sha1-96 (0x12, 18)."
 if test "$out" != "$expectout"; then
     echo expected: $expectout >&2
-    echo got: $out >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Add principal with des key and password.
+out=`$SHISA -c $CONF -a TESTREALM test/principal2 -E des --password=foo --keys`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="Adding principal \`test/principal2@TESTREALM'...
+-----BEGIN SHISHI KEY-----
+Keytype: 3 (des-cbc-md5)
+Principal: test/principal2
+Realm: TESTREALM
+
+s3WXrcITWPE=
+-----END SHISHI KEY-----
+Adding principal \`test/principal2@TESTREALM'...done"
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Add aes key with password to principal.
+out=`$SHISA -c $CONF -n TESTREALM test/principal2 -E aes --password=foo --keys`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="Adding key to \`test/principal2@TESTREALM'...
+-----BEGIN SHISHI KEY-----
+Keytype: 18 (aes256-cts-hmac-sha1-96)
+Principal: test/principal2
+Realm: TESTREALM
+
+3XpVlkzCS2gGYbaShDQktrmYVkcqvMIMuJKLxq9a6oU=
+-----END SHISHI KEY-----
+Adding key to \`test/principal2@TESTREALM'...done"
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Dump database.
+out=`$SHISA -c $CONF -d`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="TESTREALM
+	test/principal
+		Account is enabled.
+		Current key version 0 (0x0).
+		Key 0 (0x0).
+			Etype aes256-cts-hmac-sha1-96 (0x12, 18).
+	test/principal2
+		Account is enabled.
+		Current key version 0 (0x0).
+		Key 0 (0x0).
+			Etype des-cbc-md5 (0x3, 3).
+		Key 1 (0x1).
+			Etype aes256-cts-hmac-sha1-96 (0x12, 18).
+	test/principal3
+		Account is enabled.
+		Current key version 0 (0x0).
+		Key 0 (0x0).
+			Etype aes256-cts-hmac-sha1-96 (0x12, 18)."
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Add 3des key with password to principal.
+out=`$SHISA -c $CONF -n TESTREALM test/principal2 -E des3 --password=foo --keys`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="Adding key to \`test/principal2@TESTREALM'...
+-----BEGIN SHISHI KEY-----
+Keytype: 16 (des3-cbc-sha1-kd)
+Principal: test/principal2
+Realm: TESTREALM
+
+nXV/NLyMwgSunRZATGitesFP466wyGfZ
+-----END SHISHI KEY-----
+Adding key to \`test/principal2@TESTREALM'...done"
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Dump database.
+out=`$SHISA -c $CONF -d`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="TESTREALM
+	test/principal
+		Account is enabled.
+		Current key version 0 (0x0).
+		Key 0 (0x0).
+			Etype aes256-cts-hmac-sha1-96 (0x12, 18).
+	test/principal2
+		Account is enabled.
+		Current key version 0 (0x0).
+		Key 0 (0x0).
+			Etype des-cbc-md5 (0x3, 3).
+		Key 1 (0x1).
+			Etype aes256-cts-hmac-sha1-96 (0x12, 18).
+		Key 2 (0x2).
+			Etype des3-cbc-sha1-kd (0x10, 16).
+	test/principal3
+		Account is enabled.
+		Current key version 0 (0x0).
+		Key 0 (0x0).
+			Etype aes256-cts-hmac-sha1-96 (0x12, 18)."
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Remove first principal.
+out=`$SHISA -c $CONF -r TESTREALM test/principal`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="Removing principal \`test/principal@TESTREALM'...
+Removing principal \`test/principal@TESTREALM'...done"
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Remove third principal.
+out=`$SHISA -c $CONF -r TESTREALM test/principal3`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="Removing principal \`test/principal3@TESTREALM'...
+Removing principal \`test/principal3@TESTREALM'...done"
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Remove aes key on second principal.
+out=`$SHISA -c $CONF --key-remove TESTREALM test/principal2 -E aes`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="Removing key from \`test/principal2@TESTREALM'...
+Removing key from \`test/principal2@TESTREALM'...done"
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Dump database.
+out=`$SHISA -c $CONF -d`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="TESTREALM
+	test/principal2
+		Account is enabled.
+		Current key version 0 (0x0).
+		Key 0 (0x0).
+			Etype des-cbc-md5 (0x3, 3).
+		Key 1 (0x1).
+			Etype des3-cbc-sha1-kd (0x10, 16)."
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Add 3des key with password to principal.
+out=`$SHISA -c $CONF -n TESTREALM test/principal2 -E des3 --password=bar --keys`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="Adding key to \`test/principal2@TESTREALM'...
+-----BEGIN SHISHI KEY-----
+Keytype: 16 (des3-cbc-sha1-kd)
+Principal: test/principal2
+Realm: TESTREALM
+
+wb9SbVsgCEmttWiFikwvGQLj5YZ2NFja
+-----END SHISHI KEY-----
+Adding key to \`test/principal2@TESTREALM'...done"
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Dump database.
+out=`$SHISA -c $CONF -d --keys`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="TESTREALM
+	test/principal2
+		Account is enabled.
+		Current key version 0 (0x0).
+		Key 0 (0x0).
+			Etype des-cbc-md5 (0x3, 3).
+-----BEGIN SHISHI KEY-----
+Keytype: 3 (des-cbc-md5)
+Principal: test/principal2
+Realm: TESTREALM
+
+s3WXrcITWPE=
+-----END SHISHI KEY-----
+			Password foo.
+		Key 1 (0x1).
+			Etype des3-cbc-sha1-kd (0x10, 16).
+-----BEGIN SHISHI KEY-----
+Keytype: 16 (des3-cbc-sha1-kd)
+Principal: test/principal2
+Realm: TESTREALM
+
+wb9SbVsgCEmttWiFikwvGQLj5YZ2NFja
+-----END SHISHI KEY-----
+			Password bar.
+		Key 2 (0x2).
+			Etype des3-cbc-sha1-kd (0x10, 16).
+-----BEGIN SHISHI KEY-----
+Keytype: 16 (des3-cbc-sha1-kd)
+Principal: test/principal2
+Realm: TESTREALM
+
+nXV/NLyMwgSunRZATGitesFP466wyGfZ
+-----END SHISHI KEY-----
+			Password foo."
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Remove 3des key with password 'bar' on second principal.
+out=`$SHISA -c $CONF --key-remove TESTREALM test/principal2 -E des3 --password=bar`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="Removing key from \`test/principal2@TESTREALM'...
+Removing key from \`test/principal2@TESTREALM'...done"
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Remove 3des key with password 'foo' on second principal.
+out=`$SHISA -c $CONF --key-remove TESTREALM test/principal2 -E des3 --password=foo`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="Removing key from \`test/principal2@TESTREALM'...
+Removing key from \`test/principal2@TESTREALM'...done"
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
+    exit 1
+fi
+
+echo Dump database.
+out=`$SHISA -c $CONF -d`
+if test $? != 0; then
+    echo rc $?
+    exit 1
+fi
+expectout="TESTREALM
+	test/principal2
+		Account is enabled.
+		Current key version 0 (0x0).
+		Key 0 (0x0).
+			Etype des-cbc-md5 (0x3, 3)."
+if test "$out" != "$expectout"; then
+    echo expected: $expectout >&2
+    echo -----got: $out >&2
     exit 1
 fi
 
