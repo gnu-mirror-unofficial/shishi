@@ -110,6 +110,8 @@
 #include <locale.h>
 #endif
 
+#include "getdate.h"
+
 #include <argp.h>
 #include <gettext.h>
 #include <shishi.h>
@@ -157,7 +159,15 @@ enum
     OPTION_VERBOSE_LIBRARY,
     OPTION_LIST,
     OPTION_DESTROY,
-    OPTION_CRYPTO
+    OPTION_CRYPTO,
+    OPTION_RENEW,
+    OPTION_RENEWABLE,
+    OPTION_STARTTIME,
+    OPTION_ENDTIME,
+    OPTION_RENEW_TILL,
+    OPTION_CFG_SYSTEM,
+    OPTION_CFG_USER,
+    OPTION_WRITE_TICKET_FILE
   };
 
 #define TYPE_TEXT_NAME "text"
@@ -184,6 +194,13 @@ struct arguments
   int forceas_p;
   int forcetgs_p;
   char *servername;
+  int renew;
+  int renewable;
+  time_t starttime;
+  char *endtime_str;
+  time_t endtime;
+  char *renew_till_str;
+  time_t renew_till;
   /* crypto */
   int algorithm;
   int encrypt_p;
@@ -481,27 +498,25 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->lib_options = arg;
       break;
 
-    case 'w':
+    case OPTION_WRITE_TICKET_FILE:
       arguments->ticketwritefile = strdup (arg);
       break;
 
-    case 'e':
+    case 'E':
       arguments->etypes = strdup (arg);
       break;
 
-    case 's':
+    case OPTION_CFG_SYSTEM:
       arguments->systemcfgfile = strdup (arg);
       break;
 
-    case 'c':
+    case OPTION_CFG_USER:
       arguments->usercfgfile = strdup (arg);
       break;
 
-    case 't':
+    case 'c':
       arguments->ticketfile = strdup (arg);
       break;
-
-      /* Crypto */
 
     case OPTION_CRYPTO_ALGORITHM:
       if (arguments->command != OPTION_CRYPTO)
@@ -531,11 +546,22 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->decrypt_p = 1;
       break;
 
-    case OPTION_CRYPTO_SALT:
+    case OPTION_CRYPTO_KEY_VALUE:
+      arguments->keyvalue = strdup (arg);
+      break;
+
+    case OPTION_CRYPTO_KEY_USAGE:
       if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
-      arguments->salt = strdup (arg);
+      arguments->keyusage = atoi (arg);
+      break;
+
+    case OPTION_CRYPTO_KEY_VERSION:
+      if (arguments->command != OPTION_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->kvno = atoi (arg);
       break;
 
     case OPTION_CRYPTO_PARAMETER:
@@ -566,6 +592,20 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	arguments->inputtype = SHISHI_FILETYPE_BINARY;
       break;
 
+    case OPTION_CRYPTO_READ_KEY_FILE:
+      if (arguments->command != OPTION_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->readkeyfile = strdup (arg);
+      break;
+
+    case OPTION_CRYPTO_SALT:
+      if (arguments->command != OPTION_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->salt = strdup (arg);
+      break;
+
     case OPTION_CRYPTO_WRITE_DATA_FILE:
       if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
@@ -574,13 +614,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
       if (arguments->outputtype == SHISHI_FILETYPE_TEXT ||
 	  arguments->outputtype == SHISHI_FILETYPE_DER)
 	arguments->outputtype = SHISHI_FILETYPE_BINARY;
-      break;
-
-    case OPTION_CRYPTO_READ_KEY_FILE:
-      if (arguments->command != OPTION_CRYPTO)
-	argp_error (state, _("Option `%s' only valid with CRYPTO."),
-		    state->argv[state->next - 1]);
-      arguments->readkeyfile = strdup (arg);
       break;
 
     case OPTION_CRYPTO_WRITE_KEY_FILE:
@@ -594,27 +627,33 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->cname = strdup (arg);
       break;
 
-    case 'r':
+    case 'e':
+    case OPTION_ENDTIME:
+      arguments->endtime_str = strdup (arg);
+      break;
+
     case OPTION_REALM:
       arguments->realm = strdup (arg);
       break;
 
-    case OPTION_CRYPTO_KEY_VALUE:
-      arguments->keyvalue = strdup (arg);
+    case 'R':
+    case OPTION_RENEW:
+      arguments->renew = 1;
       break;
 
-    case OPTION_CRYPTO_KEY_USAGE:
-      if (arguments->command != OPTION_CRYPTO)
-	argp_error (state, _("Option `%s' only valid with CRYPTO."),
-		    state->argv[state->next - 1]);
-      arguments->keyusage = atoi (arg);
+    case OPTION_RENEW_TILL:
+      arguments->renew_till_str = strdup (arg);
+      /* fall through */
+
+    case OPTION_RENEWABLE:
+      arguments->renewable = 1;
       break;
 
-    case OPTION_CRYPTO_KEY_VERSION:
-      if (arguments->command != OPTION_CRYPTO)
-	argp_error (state, _("Option `%s' only valid with CRYPTO."),
-		    state->argv[state->next - 1]);
-      arguments->kvno = atoi (arg);
+    case 's':
+    case OPTION_STARTTIME:
+      arguments->starttime = get_date (arg, NULL);
+      if (arguments->starttime == -1)
+	argp_error (state, _("invalid --starttime date `%s'"), arg);
       break;
 
     case OPTION_SERVER_NAME:
@@ -637,10 +676,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->command = OPTION_CRYPTO;
       break;
 
+    case 'l':
     case OPTION_LIST:
       arguments->command = OPTION_LIST;
       break;
 
+    case 'd':
     case OPTION_DESTROY:
       arguments->command = OPTION_DESTROY;
       break;
@@ -667,10 +708,10 @@ static struct argp_option options[] = {
   {"client-name", OPTION_CLIENT_NAME, "NAME", 0,
    "Client name. Default is login username. Only for AS.", 10},
 
-  {"destroy", OPTION_DESTROY, 0, 0,
+  {"destroy", 'd', 0, 0,
    "Destroy tickets in local cache, subject to --server-name limiting."},
 
-  {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
+  {"encryption-type", 'E', "ETYPE,[ETYPE...]", 0,
    "Encryption types to use.  ETYPE is either registered name or integer."},
 
   {"force-as", OPTION_FORCE_AS, 0, 0,
@@ -679,19 +720,42 @@ static struct argp_option options[] = {
   {"force-tgs", OPTION_FORCE_TGS, 0, 0,
    "Force TGS mode. Default is to use TGS iff a TGT is found."},
 
-  {"list", OPTION_LIST, 0, 0,
+  {"endtime", 'e', "STRING", 0,
+   "Specify when ticket validity should expire.  The time syntax may be "
+   "relative (to the start time), such as \"20 hours\", or absolute, "
+   "such as \"2001-02-03 04:05:06 CET\". The default is 8 hours after "
+   "the start time."},
+
+  {"list", 'l', 0, 0,
    "List tickets in local cache, subject to --server-name limiting."},
 
-  {"realm", 'r', "REALM", 0,
+  {"renew", 'R', 0, 0,
+   "Renew ticket.  Use --server-name to specify ticket, default is the "
+   "most recent renewable ticket granting ticket for the default realm."},
+
+  {"renewable", OPTION_RENEWABLE, 0, 0,
+   "Get a renewable ticket."},
+
+  {"renew-till", OPTION_RENEW_TILL, "STRING", 0,
+   "Specify renewable life of ticket.  Implies --renewable.  Accepts same "
+   "time syntax as --endtime.  If --renewable is specified, the default is 1 "
+   "week after the start time."},
+
+  {"realm", OPTION_REALM, "REALM", 0,
    "Realm of server. Default is DNS domain of local host. For AS, this also "
    "indicates realm of client."},
 
-  {"server", OPTION_SERVER, "HOST", 0,
-   "Send request to HOST. Default uses address from configuration file."},
+  {"server", OPTION_SERVER, "[FAMILY:]ADDRESS:SERVICE/TYPE", 0,
+   "Send all requests to HOST instead of using normal logic to locate "
+   "KDC addresses (discouraged)."},
 
   {"server-name", OPTION_SERVER_NAME, "NAME", 0,
    "Server name. Default is \"krbtgt/REALM\" where REALM is server "
    "realm (see --realm)."},
+
+  {"starttime", 's', "STRING", 0,
+   "Specify when ticket should start to be valid.  Accepts same time syntax "
+   "as --endtime. The default is to become valid immediately."},
 
   {"ticket-granter", OPTION_TICKET_GRANTER, "NAME", 0,
    "Service name in ticket to use for authenticating request. Only for TGS. "
@@ -723,8 +787,8 @@ static struct argp_option options[] = {
    "Encrypt data."},
 
   {"key-usage", OPTION_CRYPTO_KEY_USAGE, "KEYUSAGE", 0,
-   "Encrypt or decrypt using specified key usage.  Default is 0, which means no "
-   "key derivation are performed."},
+   "Encrypt or decrypt using specified key usage.  Default is 0, which "
+   "means no key derivation are performed."},
 
   {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
    "Base64 encoded key value."},
@@ -745,7 +809,7 @@ static struct argp_option options[] = {
   {"read-data-file", OPTION_CRYPTO_READ_DATA_FILE, "[TYPE,]FILE", 0,
    "Read data from FILE in TYPE, BASE64, HEX or BINARY (default)."},
 
-  {"realm", 'r', "REALM", 0,
+  {"realm", OPTION_REALM, "REALM", 0,
    "Realm of principal. Defaults to DNS domain of local host. "},
 
   {"salt", OPTION_CRYPTO_SALT, "SALT", 0,
@@ -777,20 +841,20 @@ static struct argp_option options[] = {
 
   {"silent", 0, 0, OPTION_ALIAS},
 
-  {"system-configuration-file", 's', "FILE", 0,
+  {"system-configuration-file", OPTION_CFG_SYSTEM, "FILE", 0,
    "Read system wide configuration from file.  Default is " SYSTEMCFGFILE
    "."},
 
-  {"configuration-file", 'c', "FILE", 0,
+  {"configuration-file", OPTION_CFG_USER, "FILE", 0,
    "Read user configuration from file.  Default is ~/.shishi/config."},
 
   {"library-options", 'o', "STRING", 0,
    "Parse STRING as a configuration file statement."},
 
-  {"ticket-file", 't', "FILE", 0,
+  {"ticket-file", 'c', "FILE", 0,
    "Read tickets from FILE. Default is $HOME/.shishi/tickets."},
 
-  {"ticket-write-file", 'w', "FILE", 0,
+  {"ticket-write-file", OPTION_WRITE_TICKET_FILE, "FILE", 0,
    "Write tickets to FILE.  Default is to write them back to ticket file."},
 
   {"NAME", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
@@ -871,13 +935,30 @@ main (int argc, char *argv[])
 	       shishi_strerror (rc));
     }
 
-  if (arg.cname != NULL)
+  if (!arg.starttime)
+    arg.starttime = time(NULL);
+
+  if (arg.endtime_str)
+    {
+      arg.endtime = get_date (arg.endtime_str, &arg.starttime);
+      if (arg.endtime == -1)
+	error (1, 0, _("invalid --endtime date `%s'"), arg.endtime_str);
+    }
+
+  if (arg.renew_till_str)
+    {
+      arg.renew_till = get_date (arg.renew_till_str, &arg.starttime);
+      if (arg.renew_till == -1)
+	error (1, 0, _("invalid --renew-till date `%s'"), arg.renew_till_str);
+    }
+
+  if (arg.cname)
     shishi_principal_default_set (handle, arg.cname);
 
-  if (arg.realm != NULL)
+  if (arg.realm)
     shishi_realm_default_set (handle, arg.realm);
 
-  if (arg.tgtname == NULL)
+  if (!arg.tgtname)
     {
       asprintf (&arg.tgtname, "krbtgt/%s", shishi_realm_default (handle));
       if (arg.tgtname == NULL)
@@ -949,6 +1030,10 @@ main (int argc, char *argv[])
 	memset (&hint, 0, sizeof (hint));
 	hint.client = (char *) arg.cname;
 	hint.server = (char *) (arg.sname ? arg.sname : arg.tgtname);
+	hint.starttime = arg.starttime;
+	hint.starttime = arg.endtime;
+	hint.renew_till = arg.renew_till;
+	hint.renewable = arg.renewable;
 
 	tkt = shishi_tkts_get (shishi_tkts_default (handle), &hint);
 	if (!tkt)
