@@ -392,7 +392,7 @@ uint32link (const char *file)
 {
   char *linkname;
 
-  linkname = xreadlink (file);
+  linkname = xreadlink (file, 15);
   if (linkname == NULL)
     return 0;
 
