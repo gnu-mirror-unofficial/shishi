@@ -351,12 +351,13 @@ bit keys (effective key size 112 bits) and 8 byte blocks in CBC
 mode. The keys can be derived from passwords by a algorithm based on
 the paper "A Better Key Schedule For DES-like Ciphers"
 @footnote{@url{http://www.research.att.com/~smb/papers/ides.pdf}} by
-Uri Blumenthal and Steven M. Bellovin (it is not clear to the author
-if the algorithm, and the way it is used, is used by any other
-applications, although it seems unlikely).  Data is integrity
-protected with a keyed (HMAC) SHA1 hash.  It has no security proof,
-but is widely assumed to provide adequate security.  It is associated
-with the @code{hmac-sha1-des3-kd} checksum.
+Uri Blumenthal and Steven M. Bellovin (it is not clear if the
+algorithm, and the way it is used, is used by any other protocols,
+although it seems unlikely).  Data is integrity protected with a keyed
+(HMAC) SHA1 hash.  It has no security proof, and is assumed to provide
+adequate security in the sense that knowledge on how to crack it is
+not known to the public.  It is associated with the
+@code{hmac-sha1-des3-kd} checksum.
 
 @item aes128-cts-hmac-sha1-96
 @item aes256-cts-hmac-sha1-96.
@@ -369,11 +370,11 @@ preserved (pure CBC add up to 7 pad characters).  The keys can be
 derived from passwords with RSA Laboratories PKCS#5 Password Based Key
 Derivation Function
 2@footnote{@url{http://www.rsasecurity.com/rsalabs/pkcs/pkcs-5/}},
-which is provably secure in a random oracle model.  Data is integrity
-protected with a keyed (HMAC) SHA1 hash truncated to 96 bits.  There
-is no security proof, but the schemes are widely assumed to provide
-good security, but has, as AES itself, yet to receive the test of
-time.  It is associated with the @code{hmac-sha1-96-aes128} and
+which is allegedly provably secure in a random oracle model.  Data is
+integrity protected with a keyed (HMAC) SHA1 hash truncated to 96
+bits.  There is no security proof, but the schemes are assumed to
+provide good security, but has, as AES itself, yet to receive the test
+of time.  It is associated with the @code{hmac-sha1-96-aes128} and
 @code{hmac-sha1-96-aes256} checksums, respectively.
 
 @end table
@@ -408,7 +409,7 @@ mechanisms.
 @code{rsa-md5-des} is a DES CBC encryption of one block of random data
 and a unkeyed MD5 hash computed over the random data and the message
 to integrity protect.  The key used is derived from the base protocol
-key by XOR with a constant.  It is weak. It is compatible with the
+key by XOR with a constant.  It is weak.  It is compatible with the
 @code{des-cbc-crc}, @code{des-cbc-md4}, @code{des-cbc-md5} encryption
 mechanisms.
 
@@ -418,7 +419,7 @@ mechanisms.
 message.  The key is derived from the base protocol by the simplified
 key derivation function (similar to the password key derivation
 functions of @code{des3-cbc-sha1-kd}).  It has no security proof, but
-is widely assumed to provide good security.  It is compatible with the
+is assumed to provide good security.  It is compatible with the
 @code{des3-cbc-sha1-kd} encryption mechanism.
 
 @item hmac-sha1-96-aes128
@@ -428,9 +429,8 @@ is widely assumed to provide good security.  It is compatible with the
 the message and then truncated to 96 bits.  The key is derived from
 the base protocol by the simplified key derivation function (similar
 to the password key derivation functions of @code{des3-cbc-sha1-kd}).
-It has no security proof, but is widely assumed to provide good
-security. It is compatible with the @code{des3-cbc-sha1-kd} encryption
-mechanism.
+It has no security proof, but is assumed to provide good security.  It
+is compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
 
 @end table
 
