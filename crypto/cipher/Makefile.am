@@ -51,6 +51,8 @@ rijndael.c \
 rmd160.c \
 rndegd.c \
 rndlinux.c \
+rndunix.c \
+rndw32.c \
 rsa.c \
 sha1.c \
 sha256.c \

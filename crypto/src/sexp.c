@@ -1210,9 +1210,14 @@ gcry_sexp_build_array (gcry_sexp_t *retsexp, size_t *erroff,
 {
   
   gpg_error_t rc;
+  /* We don't need the va_list because it is controlled by the
+     following flag, however we have to pass it but can't initialize
+     it as there is no portable way to do so.  volatile is needed to
+     suppress the compiler warning */
+  volatile va_list dummy_arg_ptr;
 
   rc = sexp_sscan (retsexp, erroff, format, strlen(format), 1,
-		   NULL, arg_list);
+		   dummy_arg_ptr, arg_list);
 
   return rc;
 }

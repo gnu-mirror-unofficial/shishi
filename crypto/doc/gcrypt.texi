@@ -772,7 +772,7 @@ Compute CBC-MAC keyed checksums.  This is the same as CBC mode, but
 only output the last block.  Cannot be used simultaneous as
 GCRY_CIPHER_CBC_CTS.
 @end table
-@item
+
 @end deftypefun 
 
 Use the following function to release an existing handle:
