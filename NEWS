@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.14 (unreleased)
+* Version 0.0.14 (released 2004-01-22)
 
 ** High-level AP interface now support setting raw checksum field values.
 This is needed for certain applications that, like GSS-API, put
