@@ -43,7 +43,7 @@ ps_TEXINFOS = shishi.texi
 pdf_TEXINFOS = shishi.texi
 shishi_TEXINFOS = gpl.texi fdl.texi $(shishi_texi_auto_deps)
 
-shishi-api-init.texi: $(top_srcdir)/lib/init.c $(top_srcdir)/lib/done.c $(top_srcdir)/lib/cfg.c
+shishi-api-init.texi: $(top_srcdir)/lib/init.c $(top_srcdir)/lib/cfg.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-utility.texi: $(top_srcdir)/lib/realm.c $(top_srcdir)/lib/principal.c
