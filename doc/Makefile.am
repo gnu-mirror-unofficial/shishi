@@ -26,7 +26,7 @@ EXTRA_DIST = gdoc shishi.html shishi.pdf shishi.ps texinfo.css \
 	components.dia components.png
 
 components.png: components.dia
-	dia --export=$@ --export-to-format=png $<
+	dia --export=$@ --export-to-format=png-libart $<
 
 info_TEXINFOS = shishi.texi
 shishi_TEXINFOS = gpl.texi fdl.texi $(gdoc_TEXINFOS) \
