@@ -876,7 +876,21 @@ main (int argc, char *argv[])
 	die ("Could not make library verbose: %s\n", shishi_strerror (rc));
     }
 
+  if (arg.cname != NULL)
+    shishi_principal_default_set (handle, arg.cname);
+
+  if (arg.realm != NULL)
+    shishi_realm_default_set (handle, arg.realm);
+
+  if (arg.tgtname == NULL)
+    {
+      asprintf(&arg.tgtname, "krbtgt/%s", shishi_realm_default (handle));
+      if (arg.tgtname == NULL)
+	return SHISHI_MALLOC_ERROR;
+    }
+
   rc = 1;
+
  again:
   switch (arg.command)
     {
@@ -884,12 +898,6 @@ main (int argc, char *argv[])
       {
 	Shishi_as *as;
 	Shishi_ticket *tkt;
-
-	if (arg.cname != NULL)
-	  shishi_principal_default_set (handle, arg.cname);
-
-	if (arg.realm != NULL)
-	  shishi_realm_default_set (handle, arg.realm);
 
 	rc = shishi_as (handle, arg.password, &as);
 	if (rc != SHISHI_OK)
@@ -924,22 +932,6 @@ main (int argc, char *argv[])
 	Shishi_tgs *tgs;
 	Shishi_ticket *tgt;
 	Shishi_ticket *tkt;
-
-	if (arg.cname != NULL)
-	  shishi_principal_default_set (handle, arg.cname);
-
-	if (arg.realm != NULL)
-	  shishi_realm_default_set (handle, arg.realm);
-
-	if (arg.tgtname == NULL)
-	  {
-	    const char *realm = shishi_realm_default (handle);
-	    int len = strlen ("krbtgt/") + strlen (realm) + 1;
-	    arg.tgtname = malloc (len);
-	    if (arg.tgtname == NULL)
-	      return SHISHI_MALLOC_ERROR;
-	    sprintf (arg.tgtname, "krbtgt/%s", realm);
-	  }
 
 	tgt = shishi_ticketset_find_ticket_for_clientserver
 	  (handle, NULL, shishi_principal_default (handle),
@@ -1056,29 +1048,10 @@ main (int argc, char *argv[])
 
     default:
       {
-	Shishi_tgs *tgs;
 	Shishi_ticket *tgt;
-	Shishi_ticket *tkt;
-
-	if (arg.cname != NULL)
-	  shishi_principal_default_set (handle, arg.cname);
-
-	if (arg.realm != NULL)
-	  shishi_realm_default_set (handle, arg.realm);
-
-	if (arg.tgtname == NULL)
-	  {
-	    const char *realm = shishi_realm_default (handle);
-	    int len = strlen ("krbtgt/") + strlen (realm) + 1;
-	    arg.tgtname = malloc (len);
-	    if (arg.tgtname == NULL)
-	      return SHISHI_MALLOC_ERROR;
-	    sprintf (arg.tgtname, "krbtgt/%s", realm);
-	  }
 
 	tgt = shishi_ticketset_find_ticket_for_clientserver
-	  (handle, NULL, shishi_principal_default (handle),
-	   arg.tgtname);
+	  (handle, NULL, shishi_principal_default (handle), arg.tgtname);
 	if (tgt == NULL)
 	  arg.command = COMMAND_AS;
 	else
@@ -1088,15 +1061,8 @@ main (int argc, char *argv[])
       break;
     }
 
-  if (rc == SHISHI_OK)
-    {
-      rc = shishi_ticketset_to_file (handle, NULL,
-				     arg.ticketwritefile ?
-				     arg.ticketwritefile :
-				     shishi_ticketset_default_file (handle));
-      if (rc != SHISHI_OK)
-	printf ("Could not write tickets: %s\n", shishi_strerror (rc));
-    }
+  if (arg.ticketwritefile)
+    shishi_ticketset_default_file_set (handle, arg.ticketwritefile);
 
   shishi_done (handle);
 
