@@ -370,33 +370,25 @@ shishi_principal_set (Shishi * handle,
   int res;
   int i;
 
-  tmpname = strdup (name);
-  if (tmpname == NULL)
-    return SHISHI_MALLOC_ERROR;
-
-  namebuf = malloc (sizeof (*namebuf));
-  if (namebuf == NULL)
-    return SHISHI_MALLOC_ERROR;
+  tmpname = xstrdup (name);
+  namebuf = xmalloc (sizeof (*namebuf));
 
   for (i = 0;
        (namebuf[i] = strtok_r (i == 0 ? tmpname : NULL, "/", &tokptr)); i++)
     {
-      namebuf = realloc (namebuf, (i + 2) * sizeof (*namebuf));
-      if (namebuf == NULL)
-	return SHISHI_MALLOC_ERROR;
+      namebuf = xrealloc (namebuf, (i + 2) * sizeof (*namebuf));
     }
 
   res = shishi_principal_name_set (handle, namenode, namefield,
 				   SHISHI_NT_UNKNOWN, namebuf);
+  free (namebuf);
+  free (tmpname);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, _("Could not set principal name: %s\n"),
 			   shishi_strerror (res));
       return res;
     }
-
-  free (namebuf);
-  free (tmpname);
 
   return SHISHI_OK;
 }
