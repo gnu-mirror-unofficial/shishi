@@ -131,6 +131,16 @@ shishi_strerror (int err)
 	    "application error.");
       break;
 
+    case SHISHI_TICKET_BAD_KEYTYPE:
+      p = _("Keytype used to encrypt ticket doesn't match provided key. "
+	    "This usually indicates an internal application error.");
+      break;
+
+    case SHISHI_APREQ_DECRYPT_FAILED:
+      p = _("Could not decrypt AP-REQ using provided key. "
+	    "This usually indicates an internal application error.");
+      break;
+
     default:
       shishi_asprintf (&p, _("Unknown shishi error (%d)"), err);
       break;
