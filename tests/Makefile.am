@@ -22,7 +22,6 @@ TESTS = crypto
 EXTRA_DIST = 
 
 INCLUDES = -I$(top_srcdir)/lib
-LDADD = @LIBARGP@ @LTLIBINTL@ \
-	../lib/libshishi.la ../asn1/lib/libtasn1.la @LIBGCRYPT@
+LDADD = @LIBARGP@ @LTLIBINTL@ ../lib/libshishi.la
 
 noinst_PROGRAMS = $(TESTS)
