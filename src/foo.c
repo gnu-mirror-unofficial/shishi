@@ -424,3 +424,75 @@ if (rc != SHISHI_OK)
   fprintf (stderr, "Operation failed:\n%s\n%s\n",
 	   shishi_strerror (rc), shishi_error (handle));
 break;
+
+{
+  else if (args.list_flag)
+    {
+      Shishi_tkt *tkt;
+      Shishi_tkts_hint hint;
+      Shishi_tgs *tgs;
+#if 0
+      /* This doesn't work */
+
+      memset (&hint, 0, sizeof (hint));
+      hint.client = cname;
+      hint.server = (sname ? sname : args.args.ticket_granter_arg);
+      hint.starttime = starttime;
+      hint.endtime = endtime;
+      hint.renew_till = renew_till;
+
+      tkt = shishi_tkts_find (shishi_tkts_default (sh), &hint);
+      if (!tkt)
+	{
+	  fprintf (stderr, "Could not get ticket for `%s'.\n", hint.server);
+	  rc = !SHISHI_OK;
+	}
+      else
+	shishi_tkt_pretty_print (tkt, stdout);
+
+      /* Get ticket using TGT ... */
+      rc = shishi_tgs (sh, &tgs);
+      shishi_tgs_tgtkt_set (tgs, tkt);
+      if (rc == SHISHI_OK)
+	rc = shishi_tgs_set_server (tgs, hint.server);
+      rc = shishi_kdcreq_options_add (sh, shishi_tgs_req (tgs),
+				      SHISHI_KDCOPTIONS_RENEWABLE |
+				      SHISHI_KDCOPTIONS_RENEW);
+      if (rc == SHISHI_OK)
+	rc = shishi_asn1_write (sh, shishi_tgs_req (tgs),
+				"req-body.rtime",
+				shishi_generalize_time
+				(sh, hint.renew_till), 0);
+      if (rc == SHISHI_OK)
+	rc = shishi_tgs_req_build (tgs);
+      if (rc == SHISHI_OK)
+	rc = shishi_tgs_sendrecv (tgs);
+      if (rc == SHISHI_OK)
+	rc = shishi_tgs_rep_process (tgs);
+      if (rc != SHISHI_OK)
+	{
+	  fprintf (stderr, "TGS exchange failed: %s\n%s\n",
+		   shishi_strerror (rc), shishi_error (sh));
+	  if (rc == SHISHI_GOT_KRBERROR)
+	    shishi_krberror_pretty_print (sh, stdout,
+					  shishi_tgs_krberror (tgs));
+	  break;
+	}
+
+      tkt = shishi_tgs_tkt (tgs);
+      if (!tkt)
+	{
+	  fprintf (stderr, "No ticket in TGS-REP?!: %s\n",
+		   shishi_error (sh));
+	  break;
+	}
+
+      shishi_tkt_pretty_print (tkt, stdout);
+
+      rc = shishi_tkts_add (shishi_tkts_default (sh), tkt);
+      if (rc != SHISHI_OK)
+	fprintf (stderr, "Could not add ticket: %s", shishi_strerror (rc));
+#endif
+    }
+
+}
