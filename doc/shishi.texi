@@ -90,6 +90,7 @@ system.
 * Getting Started::             
 * Features::                    
 * Kerberos Overview::                    
+* Kerberos Cryptographic Overview::                    
 @end menu
 
 @node Getting Started
@@ -135,6 +136,15 @@ It should work on all Unix like operating systems, including Windows.
 
 @end table
 
+The following table summarize what is currently implemented.
+
+@table @asis
+
+@item Encryption suites: NULL, des-cbc-crc, des-cbc-md4 des-cbc-md5, des3-cbc-sha1-kd, aes128-cts-hmac-sha1-96, aes256-cts-hmac-sha1-96.
+
+@item Checksum suites (all of the required checksums associated in the supported encryption suites): rsa-md4-des, rsa-md5-des, hmac-sha1-des3-kd, hmac-sha1-96-aes128, hmac-sha1-96-aes256.
+
+@end table
 
 @node Kerberos Overview
 @section Kerberos Overview
@@ -228,6 +238,137 @@ between principals can be secured by encrypting the data to be passed
 using the session key passed in the ticket, and contained in the
 credentials.
 
+@node Kerberos Cryptographic Overview
+@section Kerberos Cryptographic Overview
+
+Shishi implements several of the standard kerberos cryptographic
+primitives.  Here are the names of the supported encryption suites,
+with some notes on their status and there associated checksum suite.
+They are ordered by increased security as perceived by the author.
+
+@table @code
+
+@item NULL
+
+@code{NULL} is a dummy encryption suite for debugging.  Encryption and
+decryption are identity functions.  No integrity protection.  It is
+weak.  It is associated with the @code{NULL} checksum.
+
+@item des-cbc-crc
+
+@code{des-cbc-crc} is DES encryption and decryption with 56 bit keys
+and 8 byte blocks in CBC mode. The keys can be derived from passwords
+by an obscure kerberos specific algorithm. Data is integrity protected
+with an unkeyed but encrypted @code{CRC32}-like checksum.  It is
+weak. It is associated with the @code{rsa-md5-des} checksum.
+
+@item des-cbc-md4
+
+@code{des-cbc-md4} is DES encryption and decryption with 56 bit keys
+and 8 byte blocks in CBC mode. The keys can be derived from passwords
+by an obscure kerberos specific algorithm. Data is integrity protected
+with an unkeyed but encrypted MD4 hash.  It is weak. It is associated
+with the @code{rsa-md4-des} checksum.
+
+@item des-cbc-md5
+
+@code{des-cbc-md5} is DES encryption and decryption with 56 bit keys
+and 8 byte blocks in CBC mode.  The keys can be derived from passwords
+by an obscure kerberos specific algorithm. Data is integrity protected
+with an unkeyed but encrypted MD5 hash.  It is weak.  It is associated
+with the @code{rsa-md5-des} checksum.  This is the strongest RFC 1510
+interoperable mechanism.
+
+@item des3-cbc-sha1-kd
+
+@code{des3-cbc-sha1-kd} is DES encryption and decryption with three 56
+bit keys (effective key size 112 bits) and 8 byte blocks in CBC
+mode. The keys can be derived from passwords by a algorithm based on
+the paper "A Better Key Schedule For DES-like Ciphers"
+@footnote{@url{http://www.research.att.com/~smb/papers/ides.pdf}} by
+Uri Blumenthal and Steven M. Bellovin (it is not clear to the author
+if the algorithm, and the way it is used in kerberos, is used by any
+other applications, although it seems unlikely).  Data is integrity
+protected with a keyed (HMAC) SHA1 hash.  It has no security proof,
+but is widely assumed to provide adequate security.  It is associated
+with the @code{hmac-sha1-des3-kd} checksum.
+
+@item aes128-cts-hmac-sha1-96
+@item aes256-cts-hmac-sha1-96.
+
+@code{aes128-cts-hmac-sha1-96} and @code{aes256-cts-hmac-sha1-96} is
+AES encryption and decryption with 128 bit and 256 bit key,
+respectively, and 16 byte blocks in CBC mode with Cipher Text
+Stealing.  Cipher Text Stealing means data length of encrypted data is
+preserved (earlier schemes above added up to 7 pad characters).  The
+keys can be derived from passwords with RSA Laboratories PKCS#5
+Password Based Key Derivation Function
+2@footnote{@url{http://www.rsasecurity.com/rsalabs/pkcs/pkcs-5/}},
+which is provably secure in a random oracle model.  Data is integrity
+protected with a keyed (HMAC) SHA1 hash truncated to 96 bits.  There
+is no security proof, but the schemes are widely assumed to provide
+good security although it is still young and, as AES itself, yet to
+receive the test of time.  It is associated with the
+@code{hmac-sha1-96-aes128} and @code{hmac-sha1-96-aes256} checksums,
+respectively.
+
+@end table
+
+Kerberos do not include any way to negotiate which checksum mechanisms
+to use, so in most cases the associated checksum will be used.
+However, checksum mechanisms can be used with other encryption
+mechanisms, as long as they are compatible in terms of key format etc.
+Here are the names of the supported checksum mechanisms, with some
+notes on their status and the compatible encryption mechanisms. They
+are ordered by increased security as perceived by the author.
+
+@table @code
+
+@item NULL
+
+@code{NULL} is a dummy checksum suite for debugging.  It provides no
+integrity.  It is weak.  It is compatible with the @code{NULL}
+encryption mechanism.
+
+@item rsa-md4-des
+
+@code{rsa-md4-des} is a DES CBC encryption of one block of random data
+and a unkeyed MD4 hash computed over the random data and the message
+to integrity protect.  The key used is derived from the base protocol
+key by XOR with a constant.  It is weak. It is compatible with the
+@code{des-cbc-crc}, @code{des-cbc-md4}, @code{des-cbc-md5} encryption
+mechanisms.
+
+@item rsa-md5-des
+
+@code{rsa-md5-des} is a DES CBC encryption of one block of random data
+and a unkeyed MD5 hash computed over the random data and the message
+to integrity protect.  The key used is derived from the base protocol
+key by XOR with a constant.  It is weak. It is compatible with the
+@code{des-cbc-crc}, @code{des-cbc-md4}, @code{des-cbc-md5} encryption
+mechanisms.
+
+@item hmac-sha1-des3-kd
+
+@code{hmac-sha1-des3-kd} is a keyed (HMAC) SHA1 hash computed over the
+message.  The key is derived from the base protocol by the key
+simplified key derivation function (similar to the password key
+derivation functions of @code{des3-cbc-sha1-kd}).  It has no security
+proof, but is widely assumed to provide good security.  It is
+compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
+
+@item hmac-sha1-96-aes128
+@item hmac-sha1-96-aes256
+
+@code{hmac-sha1-des3-kd} is a keyed (HMAC) SHA1 hash computed over the
+message, truncated to 96 bits.  The key is derived from the base
+protocol by the key simplified key derivation function (similar to the
+password key derivation functions of @code{des3-cbc-sha1-kd}).  It has
+no security proof, but is widely assumed to provide good security. It
+is compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
+
+@end table
+
 
 @c **********************************************************
 @c *****************  Programming API  **********************
@@ -241,14 +382,14 @@ library.
 @menu
 * Preparation::                 What you should do before using the library.
 * Global Functions::            Functions for use in the global context.
-* Ticket Functions::            Low-level ticket manipulation functions.
 * Ticket Set Functions::        High-level ticket management functions.
-* AS Functions::                High-level initial authentication functions.
-* TGS Functions::               High-level subsequent authentication functions.
-* AS/TGS Functions::            Low-level KDC functions; AS and TGS.
 * AP-REQ and AP-REP Functions:: Client/Server functions.
-* Cryptographic Functions::     Low-level cryptographic functions.
+* Ticket Functions::            Medium-level ticket manipulation functions.
+* AS Functions::                Medium-level initial authentication functions.
+* TGS Functions::               Medium-level authentication functions.
+* AS/TGS Functions::            Low-level KDC functions; AS and TGS.
 * Authenticator Functions::     Low-level authenticator functions.
+* Cryptographic Functions::     Low-level cryptographic functions.
 * Error Handling::              Error codes and such.
 * Examples::                    Example code.
 @end menu
@@ -367,11 +508,6 @@ gcc -o foo foo.c `pkg-config shishi --cflags --libs`
 
 @include shishi-api-global.texi
 
-@node Ticket Functions
-@section Ticket Functions
-
-@include shishi-api-ticket.texi
-
 @node Ticket Set Functions
 @section Ticket Set Functions
 
@@ -379,9 +515,55 @@ A ``ticket set'' is, as the name implies, a collection of tickets.
 Functions are provided to read tickets from file into a ticket set, to
 query number of tickets in the set, to extract a given ticket from the
 set, to search the ticket set for tickets matching certain criterium,
-to write the ticket set to a file, etc.
+to write the ticket set to a file, etc.  High level functions for
+performing a initial authentication (@pxref{AS Functions}) or
+subsequent authentication (@pxref{TGS Functions}) and storing the new
+ticket in the ticket set are also provided.
 
 @include shishi-api-ticketset.texi
+
+@node AP-REQ and AP-REP Functions
+@section AP-REQ and AP-REP Functions
+
+The ``AP-REQ'' and ``AP-REP'' are ASN.1 structures used by application
+client and servers to prove to each other who they are.  The
+structures contain auxilliary information, together with an
+authenticator (@pxref{Authenticator Functions}) which is the real
+cryptographic proof.  The following illustrates the AP-REQ and AP-REP
+ASN.1 structures.
+
+@verbatim
+AP-REQ		::= [APPLICATION 14] SEQUENCE {
+	pvno		[0] INTEGER (5),
+	msg-type	[1] INTEGER (14),
+	ap-options	[2] APOptions,
+	ticket		[3] Ticket,
+	authenticator	[4] EncryptedData {Authenticator,
+				{ keyuse-pa-TGSReq-authenticator
+				  | keyuse-APReq-authenticator }}
+}
+
+AP-REP		::= [APPLICATION 15] SEQUENCE {
+	pvno		[0] INTEGER (5),
+	msg-type	[1] INTEGER (15),
+	enc-part	[2] EncryptedData {EncAPRepPart,
+				{ keyuse-EncAPRepPart }}
+}
+
+EncAPRepPart	::= [APPLICATION 27] SEQUENCE {
+	ctime		[0] KerberosTime,
+	cusec		[1] Microseconds,
+	subkey		[2] EncryptionKey OPTIONAL,
+	seq-number	[3] UInt32 OPTIONAL
+}
+@end verbatim
+
+@include shishi-api-ap.texi
+
+@node Ticket Functions
+@section Ticket Functions
+
+@include shishi-api-ticket.texi
 
 @node AS Functions
 @section AS Functions
@@ -552,7 +734,11 @@ The following illustrates the AS-REQ, TGS-REQ and AS-REP, TGS-REP
 ASN.1 structures.  Most of the functions use the mnemonic ``KDC''
 instead of either AS or TGS, which means the function operates on both
 AS and TGS types.  Only where the distinction between AS and TGS is
-important are the AS and TGS names used.
+important are the AS and TGS names used.  Remember, these are
+low-level functions, and normal applications will likely be satisfied
+with the AS (@pxref{AS Functions}) and TGS (@pxref{TGS Functions})
+interfaces, or the even more high-level Ticket Set (@pxref{Ticket Set
+Functions}) interface.
 
 @verbatim
 -- Request --
@@ -630,56 +816,14 @@ EncKDCRepPart	::= SEQUENCE {
 
 @include shishi-api-kdc.texi
 
-@node AP-REQ and AP-REP Functions
-@section AP-REQ and AP-REP Functions
-
-The ``AP-REQ'' and ``AP-REP'' are ASN.1 structures used by application
-client and servers to prove to each other who they are.  The
-structures contain auxilliary information, together with an
-authenticator (@pxref{Authenticator Functions}) which is the real
-cryptographic proof.  The following illustrates the AP-REQ and AP-REP
-ASN.1 structures.
-
-@verbatim
-AP-REQ		::= [APPLICATION 14] SEQUENCE {
-	pvno		[0] INTEGER (5),
-	msg-type	[1] INTEGER (14),
-	ap-options	[2] APOptions,
-	ticket		[3] Ticket,
-	authenticator	[4] EncryptedData {Authenticator,
-				{ keyuse-pa-TGSReq-authenticator
-				  | keyuse-APReq-authenticator }}
-}
-
-AP-REP		::= [APPLICATION 15] SEQUENCE {
-	pvno		[0] INTEGER (5),
-	msg-type	[1] INTEGER (15),
-	enc-part	[2] EncryptedData {EncAPRepPart,
-				{ keyuse-EncAPRepPart }}
-}
-
-EncAPRepPart	::= [APPLICATION 27] SEQUENCE {
-	ctime		[0] KerberosTime,
-	cusec		[1] Microseconds,
-	subkey		[2] EncryptionKey OPTIONAL,
-	seq-number	[3] UInt32 OPTIONAL
-}
-@end verbatim
-
-@include shishi-api-ap.texi
-
-@node Cryptographic Functions
-@section Cryptographic Functions
-
-@include shishi-api-crypto.texi
-
 @node Authenticator Functions
 @section Authenticator Functions
 
 An ``Authenticator'' is a ASN.1 structure that work as a proof that an
 entity owns a ticket.  It is usually embedded in the AP-REQ structure
-(@pxref{AP-REQ and AP-REP Functions}).  The following illustrates the
-Authenticator ASN.1 structure.
+(@pxref{AP-REQ and AP-REP Functions}), and you most likely want to use
+an AP-REQ instead of a Authenticator in normal applications.  The
+following illustrates the Authenticator ASN.1 structure.
 
 @verbatim
 Authenticator	::= [APPLICATION 2] SEQUENCE  {
@@ -696,6 +840,11 @@ Authenticator	::= [APPLICATION 2] SEQUENCE  {
 @end verbatim
 
 @include shishi-api-authenticator.texi
+
+@node Cryptographic Functions
+@section Cryptographic Functions
+
+@include shishi-api-crypto.texi
 
 @node Error Handling
 @section Error Handling
