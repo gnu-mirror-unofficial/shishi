@@ -1220,7 +1220,6 @@ init (struct arguments *arg)
   fflush (stdout);
   gnutls_global_init ();
   gnutls_dh_params_init (&dh_params);
-  gnutls_dh_params_generate2 (dh_params, DH_BITS);
   if (!arg->silent)
     printf ("Initializing GNUTLS...done\n");
   fflush (stdout);
