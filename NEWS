@@ -2,6 +2,8 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004 Simon Josefsson
 See the end for copying conditions.
 
+* Version 0.0.21 (unreleased)
+
 * Version 0.0.20 (released 2004-11-21)
 
 ** Fix formatting of man pages, based on warnings from Doclifter.
