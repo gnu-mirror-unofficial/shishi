@@ -179,6 +179,20 @@ if test "$enable_ipv6" != "no"; then
   #include <netinet/in6.h>
   #endif
   ])
+  AC_CHECK_FUNCS([in6addr_any],,enable_ipv6=no,[
+  #ifdef HAVE_SYS_TYPES_H
+  #include <sys/types.h>
+  #endif
+  #ifdef HAVE_SYS_SOCKET_H
+  #include <sys/socket.h>
+  #endif
+  #ifdef HAVE_NETINET_IN_H
+  #include <netinet/in.h>
+  #endif
+  #ifdef HAVE_NETINET_IN6_H
+  #include <netinet/in6.h>
+  #endif
+  ])
 fi
 if test "$enable_ipv6" != "no"; then
   AC_DEFINE(WITH_IPV6, 1, [Define to 1 if you want IPv6.])
