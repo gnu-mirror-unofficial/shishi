@@ -2617,7 +2617,7 @@ with the telnet encryption option (RFC 2946).
 @verbatim
 Encryption Type
 
-      AES_CCM          TBD
+      AES_CCM             12
 
 Suboption Commands
 
