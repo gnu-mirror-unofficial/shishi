@@ -272,10 +272,16 @@ int
 shishi_ticketset_read (Shishi * handle,
 		       Shishi_ticketset * ticketset, FILE * fh)
 {
+  char *user;
   int res;
 
   if (!ticketset && !(ticketset = shishi_ticketset (handle)))
     return SHISHI_INVALID_TICKETSET;
+
+  asprintf(&user, "%s@%s", shishi_principal_default (handle),
+	   shishi_realm_default (handle));
+  if (user == NULL)
+    return SHISHI_MALLOC_ERROR;
 
   res = SHISHI_OK;
   while (!feof (fh))
@@ -294,7 +300,7 @@ shishi_ticketset_read (Shishi * handle,
       if (res != SHISHI_OK)
 	break;
 
-      res = shishi_ticketset_new (handle, ticketset, "jas@JOSEFSSON.ORG",
+      res = shishi_ticketset_new (handle, ticketset, user,
 				  ticket, enckdcreppart);
       if (res != SHISHI_OK)
 	break;
@@ -306,6 +312,8 @@ shishi_ticketset_read (Shishi * handle,
 	  shishi_asn1ticket_print (handle, stdout, ticket);
 	}
     }
+
+  free(user);
 
   return res;
 }
