@@ -88,3 +88,5 @@ libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
 libfoo_la_SOURCES += xstrndup.h xstrndup.c
 
 libfoo_la_SOURCES += strndup.h
+
+libfoo_la_SOURCES += base64.c base64.h

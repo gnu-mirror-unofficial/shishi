@@ -127,12 +127,15 @@
 #include <resolv.h>
 #endif
 
+#include "gettext.h"
+
 #include "setenv.h"
 #include "vasprintf.h"
-#include "gettext.h"
 #include "xalloc.h"
 #include "xstrndup.h"
 #include "getdate.h"
+#include "base64.h"
+
 #include "shishi.h"
 
 #define _(String) dgettext (PACKAGE, String)

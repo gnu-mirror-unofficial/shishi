@@ -326,7 +326,7 @@ shishi_key_from_base64 (Shishi * handle,
       if (!buf)
 	return SHISHI_MALLOC_ERROR;
 
-      len = shishi_from_base64 (buf, value);
+      len = base64_from (buf, value);
 
       if (len != shishi_key_length (*key))
 	{

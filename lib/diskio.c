@@ -56,7 +56,7 @@ _shishi_print_armored_data (Shishi * handle,
       return !SHISHI_OK;
     }
 
-  shishi_to_base64 (b64der, der, derlen, sizeof (b64der));
+  base64_to (b64der, der, derlen, sizeof (b64der));
 
   fprintf (fh, HEADERBEG "\n", asn1type);
 
@@ -224,7 +224,7 @@ _shishi_ticket_input (Shishi * handle,
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -279,7 +279,7 @@ _shishi_enckdcreppart_input (Shishi * handle,
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -356,7 +356,7 @@ _shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq,
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -417,7 +417,7 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep,
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -477,7 +477,7 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -524,7 +524,7 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep,
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -573,7 +573,7 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -621,7 +621,7 @@ _shishi_authenticator_input (Shishi * handle,
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -669,7 +669,7 @@ _shishi_krberror_input (Shishi * handle,
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -716,7 +716,7 @@ _shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe, int type)
 	  return res;
 	}
 
-      derlen = shishi_from_base64 (&der[0], b64der);
+      derlen = base64_from (&der[0], b64der);
     }
   else
     {
@@ -791,7 +791,7 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 
       if (in_body)
 	{
-	  buflen = shishi_from_base64 (buffer, line);
+	  buflen = base64_from (buffer, line);
 	  shishi_key_value_set (lkey, buffer);
 	}
       else
@@ -857,7 +857,7 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
   char b64key[BUFSIZ];
   size_t i;
 
-  shishi_to_base64 (b64key, shishi_key_value (key),
+  base64_to (b64key, shishi_key_value (key),
 		    shishi_key_length (key), sizeof (b64key));
 
   fprintf (fh, HEADERBEG "\n", "KEY");

@@ -32,7 +32,8 @@
  *
  */
 
-#include "internal.h"
+#include <string.h>
+#include <ctype.h>
 
 static char B64Chars[64] = {
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
@@ -64,8 +65,7 @@ static const char base64val[] = {
 
 /* raw bytes to null-terminated base 64 string */
 void
-shishi_to_base64 (unsigned char *out, const unsigned char *in, int len,
-		  int olen)
+base64_to (unsigned char *out, const unsigned char *in, int len, int olen)
 {
   while (len >= 3 && olen > 10)
     {
@@ -97,7 +97,7 @@ shishi_to_base64 (unsigned char *out, const unsigned char *in, int len,
 /* Convert '\0'-terminated base 64 string to raw bytes.
  * Returns length of returned buffer, or -1 on error */
 int
-shishi_from_base64 (unsigned char *out, const unsigned char *in)
+base64_from (unsigned char *out, const unsigned char *in)
 {
   int len = 0;
   register unsigned char digit1, digit2, digit3, digit4;
