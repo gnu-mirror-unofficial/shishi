@@ -432,11 +432,11 @@ the @code{NULL} checksum.
 @item des-cbc-crc
 
 @code{des-cbc-crc} is DES encryption and decryption with 56 bit keys
-and 8 byte blocks in CBC mode, using the key as IV.  The keys can be
-derived from passwords by an obscure application specific algorithm.
-Data is integrity protected with an unkeyed but encrypted
-@code{CRC32}-like checksum.  It is weak. It is associated with the
-@code{rsa-md5-des} checksum.
+and 8 byte blocks in CBC mode, using the key as IV (@pxref{Key as
+initialization vector}).  The keys can be derived from passwords by an
+obscure application specific algorithm.  Data is integrity protected
+with an unkeyed but encrypted @code{CRC32}-like checksum.  It is
+weak. It is associated with the @code{rsa-md5-des} checksum.
 
 @item des-cbc-md4
 
@@ -5052,10 +5052,10 @@ by user2 or root and user1 name is present in this file.
 @node Key as initialization vector
 @section Key as initialization vector
 
-The @code{des-cbc-crc} uses the @acronym{DES} key as the
-initialization vector.  This is problematic in general (see
-below@footnote{The post is copyrighted by David Wagner, included here
-with permission, the canonical location is
+The @code{des-cbc-crc} algorithm (@pxref{Cryptographic Overview}) uses
+the @acronym{DES} key as the initialization vector.  This is
+problematic in general (see below@footnote{The post is copyrighted by
+David Wagner, included here with permission, the canonical location is
 @url{http://www.cs.berkeley.edu/~daw/my-posts/key-as-iv-broken}}), but
 may be mitigated in Kerberos by the CRC checksum that is also
 included.
