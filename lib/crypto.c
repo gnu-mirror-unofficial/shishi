@@ -222,51 +222,10 @@ simplified_hmac (Shishi * handle,
 		 const char *in, size_t inlen,
 		 char **outhash, size_t * outhashlen)
 {
-#if USE_GCRYPT
-  gcry_md_hd_t mdh;
-  int halg = GCRY_MD_SHA1;
-  size_t hlen = gcry_md_get_algo_dlen (halg);
-  unsigned char *hash;
-  gpg_error_t err;
-
-  err = gcry_md_open (&mdh, halg, GCRY_MD_FLAG_HMAC);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "Libgcrypt md open failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  err = gcry_md_setkey (mdh, shishi_key_value (key), shishi_key_length (key));
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "Libgcrypt md setkey failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  gcry_md_write (mdh, in, inlen);
-
-  hash = gcry_md_read (mdh, halg);
-  if (hash == NULL)
-    {
-      shishi_error_printf (handle, "Libgcrypt failed to compute hash");
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  *outhashlen = hlen;
-  *outhash = xmemdup (*outhash, hash, *outhashlen);
-
-  gcry_md_close (mdh);
-#else
-  struct hmac_sha1_ctx ctx;
-  hmac_sha1_set_key (&ctx, shishi_key_length (key), shishi_key_value (key));
-  hmac_sha1_update (&ctx, inlen, in);
-  *outhashlen = SHA1_DIGEST_SIZE;
-  *outhash = xmalloc (*outhashlen);
-  hmac_sha1_digest (&ctx, *outhashlen, *outhash);
-#endif
-  return SHISHI_OK;
+  return shishi_hmac_sha1 (handle,
+			   shishi_key_value (key), shishi_key_length (key),
+			   in, inlen,
+			   outhash, outhashlen);
 }
 
 static int
@@ -372,174 +331,45 @@ simplified_dencrypt (Shishi * handle,
 		     const char *in, size_t inlen,
 		     char **out, size_t * outlen, int decryptp)
 {
-#ifdef USE_GCRYPT
-  gcry_cipher_hd_t ch;
-  gpg_error_t err;
-  int alg = 0;
-  int mode = GCRY_CIPHER_MODE_CBC;
-  int flags = 0;
-
-  switch (shishi_key_type (key))
-    {
-    case SHISHI_DES_CBC_CRC:
-    case SHISHI_DES_CBC_MD4:
-    case SHISHI_DES_CBC_MD5:
-      alg = GCRY_CIPHER_DES;
-      *outlen = inlen;
-      break;
-
-    case SHISHI_DES3_CBC_HMAC_SHA1_KD:
-      alg = GCRY_CIPHER_3DES;
-      *outlen = inlen;
-      break;
-
-    case SHISHI_AES128_CTS_HMAC_SHA1_96:
-    case SHISHI_AES256_CTS_HMAC_SHA1_96:
-      alg = GCRY_CIPHER_AES;
-      flags |= GCRY_CIPHER_CBC_CTS;
-      *outlen = inlen;
-      break;
-    }
-
-  err = gcry_cipher_open (&ch, alg, mode, flags);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "Libgcrypt cipher open failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  err = gcry_cipher_setkey (ch, shishi_key_value (key),
-			    shishi_key_length (key));
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "Libgcrypt setkey failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  err = gcry_cipher_setiv (ch, iv, ivlen);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "Libgcrypt setiv failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  *out = xmalloc (*outlen);
-
-  if (decryptp)
-    err = gcry_cipher_decrypt (ch, (unsigned char *) *out, *outlen,
-			       (const unsigned char *) in, inlen);
-  else
-    err = gcry_cipher_encrypt (ch, (unsigned char *) *out, *outlen,
-			       (const unsigned char *) in, inlen);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  if (ivout && ivoutlen)
-    {
-      *ivoutlen = gcry_cipher_get_algo_blklen (alg);
-      *ivout = xmalloc (*ivoutlen);
-      if (decryptp)
-	memcpy (*ivout, in + inlen - *ivoutlen, *ivoutlen);
-      else
-	/* XXX what is the output iv for CBC-CTS mode?
-	   but is this value useful at all for that mode anyway?
-	   Mostly it is DES apps that want the updated iv, so this is ok. */
-	memcpy (*ivout, *out + *outlen - *ivoutlen, *ivoutlen);
-    }
-
-  gcry_cipher_close (ch);
-#else
-  struct CBC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
-  struct CBC_CTX (struct des3_ctx, DES3_BLOCK_SIZE) des3;
-  struct CBC_CTS_CTX (struct aes_ctx, AES_BLOCK_SIZE) aes;
   int rc;
 
-  *outlen = inlen;
-  *out = xmalloc (*outlen);
-
   switch (shishi_key_type (key))
     {
     case SHISHI_DES_CBC_CRC:
     case SHISHI_DES_CBC_MD4:
     case SHISHI_DES_CBC_MD5:
-      rc = des_set_key (&des.ctx, shishi_key_value (key));
-      if (!rc)
-	{
-	  shishi_error_printf (handle, "Nettle setkey failed");
-	  return SHISHI_CRYPTO_INTERNAL_ERROR;
-	}
-      memset (des.iv, 0, sizeof (des.iv));
-      /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
-      memcpy (des.iv, iv, ivlen < sizeof (des.iv) ? ivlen : sizeof (des.iv));
-      if (decryptp)
-	CBC_DECRYPT (&des, des_decrypt, inlen, *out, in);
-      else
-	CBC_ENCRYPT (&des, des_encrypt, inlen, *out, in);
-      if (ivout && ivoutlen)
-	{
-	  *ivoutlen = sizeof (des.iv);
-	  /* XXX see above */
-	  *ivout = xmemdup (*ivout, des.iv, *ivoutlen);
-	}
+      rc = shishi_des (handle, decryptp,
+		       shishi_key_value (key), shishi_key_length (key),
+		       iv, ivlen,
+		       ivout, ivoutlen,
+		       in, inlen,
+		       out, outlen);
       break;
 
     case SHISHI_DES3_CBC_HMAC_SHA1_KD:
-      rc = des3_set_key (&des3.ctx, shishi_key_value (key));
-      if (!rc)
-	{
-	  shishi_error_printf (handle, "Nettle setkey failed");
-	  return SHISHI_CRYPTO_INTERNAL_ERROR;
-	}
-      memset (des3.iv, 0, sizeof (des3.iv));
-      /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
-      memcpy (des3.iv, iv,
-	      ivlen < sizeof (des3.iv) ? ivlen : sizeof (des3.iv));
-      if (decryptp)
-	CBC_DECRYPT (&des3, des3_decrypt, inlen, *out, in);
-      else
-	CBC_ENCRYPT (&des3, des3_encrypt, inlen, *out, in);
-      if (ivout && ivoutlen)
-	{
-	  *ivoutlen = sizeof (des3.iv);
-	  /* XXX see above */
-	  *ivout = xmemdup (*ivout, des3.iv, *ivoutlen);
-	}
+      rc = shishi_3des (handle, decryptp,
+			shishi_key_value (key), shishi_key_length (key),
+			iv, ivlen,
+			ivout, ivoutlen,
+			in, inlen,
+			out, outlen);
       break;
 
     case SHISHI_AES128_CTS_HMAC_SHA1_96:
     case SHISHI_AES256_CTS_HMAC_SHA1_96:
-      memset (aes.iv, 0, sizeof (aes.iv));
-      /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
-      memcpy (aes.iv, iv, ivlen < sizeof (aes.iv) ? ivlen : sizeof (aes.iv));
-      if (decryptp)
-	{
-	  aes_set_decrypt_key (&aes.ctx, shishi_key_length (key),
-			       shishi_key_value (key));
-	  CBC_CTS_DECRYPT (&aes, aes_decrypt, inlen, *out, in);
-	}
-      else
-	{
-	  aes_set_encrypt_key (&aes.ctx, shishi_key_length (key),
-			       shishi_key_value (key));
-	  CBC_CTS_ENCRYPT (&aes, aes_encrypt, inlen, *out, in);
-	}
-      if (ivout && ivoutlen)
-	{
-	  *ivoutlen = sizeof (aes.iv);
-	  /* XXX see above */
-	  *ivout = xmemdup (*ivout, aes.iv, *ivoutlen);
-	}
+      rc = shishi_aes (handle, decryptp,
+		       shishi_key_value (key), shishi_key_length (key),
+		       iv, ivlen,
+		       ivout, ivoutlen,
+		       in, inlen,
+		       out, outlen);
       break;
-    }
-#endif
 
-  return SHISHI_OK;
+    default:
+      rc = SHISHI_CRYPTO_ERROR;
+    }
+
+  return rc;
 }
 
 static int
@@ -709,25 +539,6 @@ simplified_checksum (Shishi * handle,
     return res;
 
   *outlen = cksumlen;
-
-  return SHISHI_OK;
-}
-
-int
-_shishi_cipher_init (void)
-{
-#ifdef USE_GCRYPT
-  if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
-    {
-      if (gcry_check_version (GCRYPT_VERSION) == NULL)
-	return SHISHI_CRYPTO_INTERNAL_ERROR;
-      if (gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0) != GPG_ERR_NO_ERROR)
-	return SHISHI_CRYPTO_INTERNAL_ERROR;
-      if (gcry_control (GCRYCTL_INITIALIZATION_FINISHED,
-			NULL, 0) != GPG_ERR_NO_ERROR)
-	return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-#endif
 
   return SHISHI_OK;
 }

@@ -42,8 +42,11 @@ shishi (void)
   handle = (Shishi *) xmalloc (sizeof (*handle));
   memset ((void *) handle, 0, sizeof (*handle));
 
-  if (_shishi_cipher_init () != SHISHI_OK)
-    return NULL;
+  if (shishi_crypto_init () != SHISHI_OK)
+    {
+      shishi_warn (handle, "Cannot initialize crypto library");
+      return NULL;
+    }
 
   handle->asn1 = _shishi_asn1_read ();
   if (handle->asn1 == NULL)

@@ -40,6 +40,14 @@ libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
 	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
+if NETTLE
+libshishi_la_SOURCES += nettle.c
+endif
+
+if LIBGCRYPT
+libshishi_la_SOURCES += libgcrypt.c
+endif
+
 INCLUDES = -I$(top_srcdir)/gl -I$(top_srcdir)/asn1 \
 	@LIBGCRYPT_CFLAGS@ @CRYPTO_CFLAGS@ @LIBIDN_CFLAGS@ @LIBGNUTLS_CFLAGS@
 

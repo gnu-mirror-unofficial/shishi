@@ -1240,6 +1240,31 @@ extern time_t shishi_generalize_ctime (Shishi * handle, const char *t);
 extern int shishi_time (Shishi * handle, Shishi_asn1 node,
 			const char *field, char **time);
 
+/* crypto wrappers (nettle.c, libgcrypt.c, ...) */
+extern int shishi_crypto_init (void);
+extern int shishi_hmac_sha1 (Shishi * handle,
+			     const char *key, size_t keylen,
+			     const char *in, size_t inlen,
+			     char **outhash, size_t * outhashlen);
+extern int shishi_des (Shishi * handle, int decryptp,
+		       const char *key, size_t keylen,
+		       const char *iv, size_t ivlen,
+		       char **ivout, size_t * ivoutlen,
+		       const char *in, size_t inlen,
+		       char **out, size_t * outlen);
+extern int shishi_3des (Shishi * handle, int decryptp,
+			const char *key, size_t keylen,
+			const char *iv, size_t ivlen,
+			char **ivout, size_t * ivoutlen,
+			const char *in, size_t inlen,
+			char **out, size_t * outlen);
+extern int shishi_aes (Shishi * handle, int decryptp,
+		       const char *key, size_t keylen,
+		       const char *iv, size_t ivlen,
+		       char **ivout, size_t * ivoutlen,
+		       const char *in, size_t inlen,
+		       char **out, size_t * outlen);
+
 /* crypto.c */
 extern int shishi_cipher_supported_p (int type);
 extern const char *shishi_cipher_name (int type);
