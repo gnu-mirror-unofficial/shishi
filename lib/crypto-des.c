@@ -360,7 +360,7 @@ des_set_odd_key_parity (char key[8])
   return SHISHI_OK;
 }
 
-char weak_des_keys[16][8] = {
+static char weak_des_keys[16][8] = {
   /* Weak keys */
   "\x01\x01\x01\x01\x01\x01\x01\x01",
   "\x1F\x1F\x1F\x1F\x0E\x0E\x0E\x0E",
@@ -382,13 +382,15 @@ char weak_des_keys[16][8] = {
 };
 
 static int
-des_key_correction (Shishi * handle, char *key)
+des_key_correction (Shishi * handle, char key[8])
 {
   size_t i;
 
   /* fixparity(key); */
   des_set_odd_key_parity (key);
 
+  /* This loop could be replaced by optimized code (compare nettle),
+     but let's not do that. */
   for (i = 0; i < 16; i++)
     if (memcmp (key, weak_des_keys[i], 8) == 0)
       {
@@ -712,12 +714,10 @@ gss_des_checksum (Shishi * handle,
 }
 
 static int
-des_md5_verify (Shishi * handle,
-		Shishi_key * key,
-		int keyusage,
-		int cksumtype,
-		const char *in, size_t inlen,
-		const char *cksum, size_t cksumlen)
+des_verify (Shishi * handle, int algo,
+	    const char key[8],
+	    const char *in, size_t inlen,
+	    const char *cksum, size_t cksumlen)
 {
   char *out;
   size_t outlen;
@@ -738,16 +738,14 @@ des_md5_verify (Shishi * handle,
    * verify_mic                decrypt and verify rsa-md5 checksum
    */
 
-  keyp = shishi_key_value (key);
-
+  keyp = xmemdup (key, 8);
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
 
   res = simplified_decrypt (handle, key, 0, NULL, 0, NULL, NULL,
 			    cksum, cksumlen, &out, &outlen);
 
-  for (i = 0; i < 8; i++)
-    keyp[i] ^= 0xF0;
+  free (keyp);
 
   if (res != SHISHI_OK)
     {
@@ -760,10 +758,23 @@ des_md5_verify (Shishi * handle,
   memcpy (tmp, out, 8);
   memcpy (tmp + 8, in, inlen);
 
-  res = shishi_md5 (handle, tmp, tmplen, &md, &mdlen);
+  switch (algo)
+    {
+    case SHISHI_RSA_MD4_DES:
+      res = shishi_md4 (handle, tmp, tmplen, &md, &mdlen);
+      break;
+
+    case SHISHI_RSA_MD5_DES:
+      res = shishi_md5 (handle, tmp, tmplen, &md, &mdlen);
+      break;
+
+    default:
+      res = SHISHI_CRYPTO_ERROR;
+    }
+
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "DES-MD5 verify MD5 error");
+      shishi_error_printf (handle, "DES verify MD error");
       return res;
     }
 
@@ -771,4 +782,28 @@ des_md5_verify (Shishi * handle,
     return SHISHI_VERIFY_FAILED;
 
   return SHISHI_OK;
+}
+
+static int
+des_md4_verify (Shishi * handle,
+		Shishi_key * key,
+		int keyusage,
+		int cksumtype,
+		const char *in, size_t inlen,
+		const char *cksum, size_t cksumlen)
+{
+  return des_verify (handle, SHISHI_RSA_MD4_DES, shishi_key_value (key),
+		     in, inlen, cksum, cksumlen);
+}
+
+static int
+des_md5_verify (Shishi * handle,
+		Shishi_key * key,
+		int keyusage,
+		int cksumtype,
+		const char *in, size_t inlen,
+		const char *cksum, size_t cksumlen)
+{
+  return des_verify (handle, SHISHI_RSA_MD5_DES, shishi_key_value (key),
+		     in, inlen, cksum, cksumlen);
 }

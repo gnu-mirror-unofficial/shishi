@@ -1027,7 +1027,8 @@ static checksuminfo md4_des_info = {
   SHISHI_RSA_MD4_DES,
   "rsa-md4-des",
   24,
-  des_md4_checksum
+  des_md4_checksum,
+  des_md4_verify
 };
 
 static checksuminfo md5_info = {
