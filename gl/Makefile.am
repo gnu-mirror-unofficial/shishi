@@ -1,10 +1,11 @@
-# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm
+# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm linebuffer
 # + base64 (x)memdup
 
-# s/#libfoo_la_LIBADD = @LIBOBJS@/libfoo_la_LIBADD = @LTLIBOBJS@/g
 # s/libfoo_a/libfoo_la/g
 # s/libfoo.a/libfoo.la/
-# s/EXTRA_DIST =/EXTRA_DIST = README/
+# s/libfoo_a_LIBADD = @LIBOBJS@//g
+# s/#libfoo_la_LIBADD/libfoo_la_LIBADD/g
+# s/@LIBOBJS@/@LTLIBOBJS@/g
 # s/noinst_LIBRARIES/noinst_LTLIBRARIES/g
 
 SUBDIRS = m4
@@ -16,9 +17,8 @@ AUTOMAKE_OPTIONS = 1.5 gnits no-dependencies
 noinst_LTLIBRARIES = libfoo.la
 
 libfoo_la_SOURCES =
-#libfoo_a_LIBADD = @LIBOBJS@
 libfoo_la_LIBADD = @LTLIBOBJS@
-EXTRA_DIST = README
+EXTRA_DIST =
 BUILT_SOURCES =
 SUFFIXES =
 MOSTLYCLEANFILES =
@@ -56,6 +56,8 @@ MAINTAINERCLEANFILES += getdate.c
 libfoo_la_SOURCES += getopt.h getopt.c getopt1.c
 
 libfoo_la_SOURCES += gettext.h
+
+libfoo_la_SOURCES += linebuffer.h linebuffer.c
 
 
 
@@ -100,6 +102,9 @@ libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
 libfoo_la_SOURCES += xstrndup.h xstrndup.c
 
 
+# Local changes
+
 libfoo_la_SOURCES += base64.c base64.h
 libfoo_la_SOURCES += memdup.h memdup.c
 libfoo_la_SOURCES += xmemdup.h xmemdup.c
+EXTRA_DIST += README
