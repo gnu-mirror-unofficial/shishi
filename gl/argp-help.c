@@ -70,6 +70,18 @@ char *alloca ();
 # endif
 #endif
 
+#ifndef __strchrnul
+# define __strchrnul strchrnul
+#endif
+
+#ifndef __flockfile
+#define __flockfile(S) /* nothing */
+#endif
+
+#ifndef __funlockfile
+#define __funlockfile(S) /* nothing */
+#endif
+
 #include "argp.h"
 #include "argp-fmtstream.h"
 #include "argp-namefrob.h"
