@@ -60,8 +60,7 @@ shishi_asn1_done (Shishi * handle, Shishi_asn1 node)
 
 int
 shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
-		   const char *field,
-		   const char *data, size_t datalen)
+		   const char *field, const char *data, size_t datalen)
 {
   int rc;
 
@@ -77,8 +76,7 @@ shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 
 int
 shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
-		  const char *field,
-		  const char *data, size_t * datalen)
+		  const char *field, const char *data, size_t * datalen)
 {
   int rc;
 
@@ -97,8 +95,7 @@ shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 
 int
 shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
-				const char *field,
-				int *n)
+				const char *field, int *n)
 {
   int rc;
 
@@ -115,7 +112,8 @@ shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
 
 int
 shishi_asn1_field (Shishi * handle,
-		   Shishi_asn1 node, char *data, size_t * datalen, char *field)
+		   Shishi_asn1 node, char *data, size_t * datalen,
+		   char *field)
 {
   int rc;
 
@@ -271,6 +269,12 @@ Shishi_asn1
 shishi_asn1_aprep (Shishi * handle)
 {
   return shishi_asn1_new (handle, "Kerberos5.AP-REP", "AP-REP");
+}
+
+Shishi_asn1
+shishi_asn1_encapreppart (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.EncAPRepPart", "EncAPRepPart");
 }
 
 Shishi_asn1
