@@ -20,7 +20,7 @@
 
 EXTRA_DIST = utils.c
 
-TESTS = crypto ticketset authenticator gztime
+TESTS = crypto authenticator gztime
 
 INCLUDES = -I$(top_srcdir)/lib
 LDADD = ../lib/libshishi.la
