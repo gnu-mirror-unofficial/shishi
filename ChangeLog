@@ -1,3 +1,215 @@
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.11.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/pki.c: Doc fix.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix shishid --help.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add X.509 guide.  Fix.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* src/starttls.c: Log client certificate verification status.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* src/starttls.c: Log client certificate details to syslog.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/internal.h, lib/pki.c, lib/shishi.h.in,
+	lib/starttls.c, lib/tkts.c: Add pki.c, tracks client certificates
+	in library.  Send client certificates in TLS exchange.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c, lib/cfg.c, lib/internal.h, lib/kdc.c, lib/netio.c,
+	lib/shishi.h.in, lib/starttls.c, lib/tgs.c, lib/tkts.c: Add.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* db/file.c, db/fileutil.h, db/internal.h: Fix warnings.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Dist kdc.h.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* db/cfg.c, db/internal.h, gl/Makefile.am, gl/linebuffer.c,
+	gl/linebuffer.h, lib/cfg.c, lib/internal.h: Replace linebuffer with
+	getline.
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/memmove.c, gl/memset.c,
+	gl/strerror.c, gl/m4/memmove.m4, gl/m4/memset.m4,
+	gl/m4/strerror.m4: Remove memset, memmove, strerror (we assume
+	C89).
+
+2003-12-21  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/memdup.c, gl/memdup.h, gl/xmemdup.c,
+	gl/xmemdup.h, gl/m4/memdup.m4, gl/m4/xmemdup.m4, lib/crypto-ctx.c,
+	lib/crypto.c, lib/internal.h, lib/libgcrypt.c, lib/nettle.c:
+	Replace memdup with xclone.
+
+2003-12-20  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.h, src/shishid.c, src/shishid.ggo, src/starttls.c:
+	Support X.509 authentication in shishid.
+
+2003-12-20  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c: Add.
+
+2003-12-20  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am, src/kdc.h, src/server.c, src/starttls.c: Move
+	TLS negotiation to starttls.c.
+
+2003-12-20  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Use program_name for syslog.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Fix.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c: Fix.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* db/core.c, db/error.c, db/file.c, db/fileutil.c, db/shisa.h,
+	src/kdc.c, src/server.c, src/shisa.c, src/shishid.c,
+	tests/Makefile.am, tests/crypto-ctx.c, tests/low-crypto.c,
+	tests/utils.c: Fix warnings.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-rc4.c, lib/internal.h, lib/libgcrypt.c, lib/realm.c:
+	Fix warnings.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c, src/shishid.c: Fix.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/starttls.c: Fix return code.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/starttls.c: Cleanup, handle errors better.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/starttls.c: Fix warning.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c, lib/internal.h, lib/starttls.c: Move TLS
+	initialization to init.c.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Fix warnings.
+
+2003-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c, lib/shishi.h.in, lib/crypto.c: Fix prototype.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: STARTTLS fixes.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c, src/kdc.c, src/kdc.h: Cleanup.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c: Fixes.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Remove unused listenspecs.  Cleanup.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c, src/kdc.h, src/server.c, src/shishid.c: Cleanup.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am, src/server.c, src/shishid.c: Move session
+	specific KDC functions to server.c.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Cleanups.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am, src/kdc.c, src/shishid.c: Move AS/TGS
+	functionality from shishid.c to kdc.c.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Cleanup.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: More of the same.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: TLS fixes.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Network I/O cleanup.
+
+2003-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: GNUTLS cleanups.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2003-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
 2003-12-16  Simon Josefsson <simon@josefsson.org>
 
 	* po/shishi.pot, po/sv.po: Generated.
