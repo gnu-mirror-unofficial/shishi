@@ -3917,7 +3917,7 @@ EncKDCRepPart	::= SEQUENCE {
 @section Ticket (ASN.1) Functions
 
 @xref{Ticket Functions}, for an high-level overview of tickets.  The
-following illustrates the Ticket and EncTicketPart ASN.1 structure.
+following illustrates the Ticket and EncTicketPart ASN.1 structures.
 
 @verbatim
 Ticket          ::= [APPLICATION 1] SEQUENCE {
