@@ -1030,6 +1030,7 @@ shishi_cipher_name (int type)
     }
 
   shishi_asprintf (&p, "unknown cipher %d", type);
+  return p;
 }
 
 int
