@@ -384,7 +384,7 @@ shishi_authenticator_cusec_get (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  return res;
+  return SHISHI_OK;
 }
 
 /**
