@@ -252,7 +252,10 @@ main (int argc, char *argv[])
   /* shishi_ticketset_get () */
   t1 = shishi_ticketset_get (tktset, 0);
   if (debug)
-    shishi_ticket_pretty_print(t1, stdout);
+    {
+      shishi_ticket_pretty_print(t1, stdout);
+      printf("t1=%p\n", t1);
+    }
   if (t1)
     success("shishi_ticketset_get() OK\n");
   else
@@ -338,7 +341,10 @@ main (int argc, char *argv[])
   /* shishi_ticketset_get () */
   t2 = shishi_ticketset_get (tktset, 1);
   if (debug)
-    shishi_ticket_pretty_print(t2, stdout);
+    {
+      shishi_ticket_pretty_print(t2, stdout);
+      printf("t2=%p\n", t2);
+    }
   if (t2)
     success("shishi_ticketset_get() OK\n");
   else
@@ -347,6 +353,8 @@ main (int argc, char *argv[])
   /* shishi_ticketset_find_for_server_all () */
   t3 = shishi_ticketset_find_for_server_all (tktset,
 					     "host/latte.josefsson.org");
+  if (debug)
+    printf("t3=%p\n", t3);
   if (t3 == t2)
     success("shishi_ticketset_find_ticket_for_server() OK\n");
   else
