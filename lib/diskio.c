@@ -41,32 +41,29 @@ _shishi_print_armored_data (Shishi * handle,
 {
   char *der;
   size_t derlen;
-  char b64der[BUFSIZ];
-  int res;
+  char *b64der;
   size_t i;
+  int res;
 
-  if (asn1 == NULL)
-    return !SHISHI_OK;
+  if (!asn1)
+    return SHISHI_OK;
+
+  res = shishi_asn1_to_der (handle, asn1, &der, &derlen);
+  if (res != SHISHI_OK)
+    return res;
 
   asn1_print_structure (fh, asn1, "", ASN1_PRINT_NAME_TYPE_VALUE);
 
-  res = shishi_asn1_to_der (handle, asn1, &der, &derlen);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_printf (handle, "Could not DER encode %s: %s\n",
-			   asn1type, shishi_strerror (res));
-      return !SHISHI_OK;
-    }
-
-  base64_to (b64der, der, derlen, sizeof (b64der));
+  i = base64_encode_alloc (der, derlen, &b64der);
+  if (b64der == NULL && i == 0 && derlen != 0)
+    return SHISHI_BASE64_ERROR;
+  if (b64der == NULL)
+    return SHISHI_MALLOC_ERROR;
 
   fprintf (fh, HEADERBEG "\n", asn1type);
 
   if (headers)
-    {
-      fprintf (fh, "%s", headers);
-      fprintf (fh, "\n");
-    }
+    fprintf (fh, "%s\n", headers);
 
   for (i = 0; i < strlen (b64der); i++)
     {
@@ -76,6 +73,8 @@ _shishi_print_armored_data (Shishi * handle,
     }
   if ((i + 1) % 64 != 0)
     fprintf (fh, "\n");
+
+  free (b64der);
 
   fprintf (fh, HEADEREND "\n", asn1type);
 
