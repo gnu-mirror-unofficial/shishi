@@ -30,7 +30,7 @@ asreq1 (Shishi_as * as)
   Shishi_tkt *tkt;
   Shishi_key *serverkey = NULL, *sessionkey = NULL, *userkey = NULL;
   Shisa_key *serverdbkey = NULL, *userdbkey = NULL;
-  Shisa_key **serverkeys, **userkeys;
+  Shisa_key **serverkeys = NULL, **userkeys = NULL;
   size_t nserverkeys, nuserkeys;
   int err;
   char *username = NULL, *servername = NULL, *realm = NULL;
@@ -91,6 +91,18 @@ asreq1 (Shishi_as * as)
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
 
+  err = shisa_keys_find (dbh, realm, username, NULL, &userkeys, &nuserkeys);
+  if (err != SHISA_OK)
+    {
+      syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
+	      username, realm, err, shisa_strerror (err));
+      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+					   SHISHI_KDC_ERR_C_PRINCIPAL_UNKNOWN);
+      if (err != SHISHI_OK)
+	goto fatal;
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
+
   /* Find the server, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
 
   err = shisa_principal_find (dbh, realm, servername, &krbtgt);
@@ -111,50 +123,101 @@ asreq1 (Shishi_as * as)
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
 
-  syslog (LOG_INFO, "AS-REQ from %s@%s for %s@%s", username, realm,
-	  servername, realm);
-
-  /* Enumerate keys for user and server. */
-
   err = shisa_keys_find (dbh, realm, servername, NULL,
 			 &serverkeys, &nserverkeys);
   if (err != SHISA_OK)
     {
-      printf ("Error getting keys for %s@%s\n", servername, realm);
+      syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
+	      servername, realm, err, shisa_strerror (err));
+      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+					   SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN);
+      if (err != SHISHI_OK)
+	goto fatal;
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
-  printf ("Found keys for server %s@%s...\n", servername, realm);
 
-  err = shisa_keys_find (dbh, realm, username, NULL, &userkeys, &nuserkeys);
-  if (err != SHISA_OK)
-    {
-      printf ("Error getting keys for %s@%s\n", username, realm);
-      return SHISHI_INVALID_PRINCIPAL_NAME;
-    }
-  printf ("Found keys for user %s@%s...\n", username, realm);
+  syslog (LOG_INFO, "AS-REQ from %s@%s for %s@%s", username, realm,
+	  servername, realm);
 
-  /* Select keys in database that match supplied encryption type. */
+  /*
+   * If required, the server pre-authenticates the request, and if the
+   * pre-authentication check fails, an error message with the code
+   * KDC_ERR_PREAUTH_FAILED is returned. If pre-authentication is
+   * required, but was not present in the request, an error message with
+   * the code KDC_ERR_PREAUTH_REQUIRED is returned and a METHOD-DATA
+   * object will be stored in the e-data field of the KRB-ERROR message to
+   * specify which pre-authentication mechanisms are acceptable.  Usually
+   * this will include PA-ETYPE-INFO and/or PA-ETYPE-INFO2 elements as
+   * described below. If the server cannot accommodate any encryption type
+   * requested by the client, an error message with code
+   * KDC_ERR_ETYPE_NOSUPP is returned. Otherwise the KDC generates a
+   *  'random' session key[7].
+   */
+
+  /* XXX support pre-auth. */
+
+  /*
+   * When responding to an AS request, if there are multiple encryption
+   * keys registered for a client in the Kerberos database, then the etype
+   * field from the AS request is used by the KDC to select the encryption
+   * method to be used to protect the encrypted part of the KRB_AS_REP
+   * message which is sent to the client. If there is more than one
+   * supported strong encryption type in the etype list, the KDC SHOULD
+   * use the first valid strong etype for which an encryption key is
+   * available.
+   *
+   * When the user's key is generated from a password or pass phrase, the
+   * string-to-key function for the particular encryption key type is
+   * used, as specified in [@KCRYPTO]. The salt value and additional
+   * parameters for the string-to-key function have default values
+   * (specified by section 4 and by the encryption mechanism
+   * specification, respectively) that may be overridden by pre-
+   * authentication data (PA-PW-SALT, PA-AFS3-SALT, PA-ETYPE-INFO, PA-
+   * ETYPE-INFO2, etc). Since the KDC is presumed to store a copy of the
+   * resulting key only, these values should not be changed for password-
+   * based keys except when changing the principal's key.
+   *
+   * When the AS server is to include pre-authentication data in a KRB-
+   * ERROR or in an AS-REP, it MUST use PA-ETYPE-INFO2, not PA-ETYPE-INFO,
+   * if the etype field of the client's AS-REQ lists at least one "newer"
+   * encryption type.  Otherwise (when the etype field of the client's AS-
+   * REQ does not list any "newer" encryption types) it MUST send both,
+   * PA-ETYPE-INFO2 and PA-ETYPE-INFO (both with an entry for each
+   * enctype).  A "newer" enctype is any enctype first officially
+   * specified concurrently with or subsequent to the issue of this RFC.
+   * The enctypes DES, 3DES or RC4 and any defined in [RFC1510] are not
+   * newer enctypes.
+   *
+   * It is not possible to reliably generate a user's key given a pass
+   * phrase without contacting the KDC, since it will not be known whether
+   * alternate salt or parameter values are required.
+   *
+   */
 
   for (i = 1; (err = shishi_kdcreq_etype (handle, shishi_as_req (as),
 					  &etype, i)) == SHISHI_OK; i++)
     {
       size_t j;
-      printf ("Trying etype %d...\n", etype);
+
       if (!shishi_cipher_supported_p (etype))
 	continue;
+
       if (serverdbkey == NULL)
 	for (j = 0; j < nserverkeys; j++)
 	  {
-	    printf ("Matching against server etype %d...\n",
-		    serverkeys[j]->etype);
+	    syslog (LOG_DEBUG,
+		    "Matching client etype %d against server key etype %d",
+		    etype, serverkeys[j]->etype);
 	    if (serverkeys[j]->etype == etype)
 	      serverdbkey = serverkeys[j];
 	  }
+
       if (userdbkey == NULL)
 	for (j = 0; j < nuserkeys; j++)
 	  {
-	    printf ("Matching against user etype %d...\n",
-		    userkeys[j]->etype);
+	    syslog (LOG_DEBUG,
+		    "Matching client etype %d against user key etype %d",
+		    etype, userkeys[j]->etype);
 	    if (userkeys[j]->etype == etype)
 	      userdbkey = userkeys[j];
 	  }
@@ -162,36 +225,140 @@ asreq1 (Shishi_as * as)
 
   if (userdbkey == NULL)
     {
-      printf ("No key found for %s@%s\n", username, realm);
+      syslog (LOG_NOTICE, "No matching client keys for %s@%s",
+	      username, realm);
+      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+					   SHISHI_KDC_ERR_ETYPE_NOSUPP);
+      if (err != SHISHI_OK)
+	goto fatal;
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
 
   if (serverdbkey == NULL)
     {
-      printf ("No key found for %s@%s\n", servername, realm);
+      syslog (LOG_NOTICE, "No matching server keys for %s@%s",
+	      servername, realm);
+      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+					   SHISHI_KDC_ERR_ETYPE_NOSUPP);
+      if (err != SHISHI_OK)
+	goto fatal;
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
 
   err = shishi_key_from_value (handle, userdbkey->etype,
 			       userdbkey->key, &userkey);
   if (err != SHISHI_OK)
-    return err;
+    {
+      syslog (LOG_ERR, "shishi_key_from_value (user) failed (%d): %s",
+	      err, shishi_strerror (err));
+      goto fatal;
+    }
 
   err = shishi_key_from_value (handle, serverdbkey->etype,
 			       serverdbkey->key, &serverkey);
   if (err != SHISHI_OK)
-    return err;
+    {
+      syslog (LOG_ERR, "shishi_key_from_value (server) failed (%d): %s",
+	      err, shishi_strerror (err));
+      goto fatal;
+    }
 
-  /* Generate session key of same key type as the selected long-term
-     server key. */
+  /*
+   * The KDC will attempt to assign the type of the random session key
+   * from the list of methods in the etype field. The KDC will select the
+   * appropriate type using the list of methods provided together with
+   * information from the Kerberos database indicating acceptable
+   * encryption methods for the application server. The KDC will not issue
+   * tickets with a weak session key encryption type.
+   */
 
   err = shishi_key_random (handle, shishi_key_type (serverkey), &sessionkey);
-  if (err)
-    return err;
+  if (err != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "shishi_key_random (session key) failed (%d): %s",
+	      err, shishi_strerror (err));
+      goto fatal;
+    }
 
-  /* Build Ticket and AS-REP. */
+  /*
+   * If the requested start time is absent, indicates a time in the past,
+   * or is within the window of acceptable clock skew for the KDC and the
+   * POSTDATE option has not been specified, then the start time of the
+   * ticket is set to the authentication server's current time. If it
+   * indicates a time in the future beyond the acceptable clock skew, but
+   * the POSTDATED option has not been specified then the error
+   * KDC_ERR_CANNOT_POSTDATE is returned. Otherwise the requested start
+   * time is checked against the policy of the local realm (the
+   * administrator might decide to prohibit certain types or ranges of
+   * postdated tickets), and if acceptable, the ticket's start time is set
+   * as requested and the INVALID flag is set in the new ticket. The
+   * postdated ticket MUST be validated before use by presenting it to the
+   * KDC after the start time has been reached.
+   *
+   * The expiration time of the ticket will be set to the earlier of the
+   * requested endtime and a time determined by local policy, possibly
+   * determined using realm or principal specific factors. For example,
+   * the expiration time MAY be set to the earliest of the following:
+   *
+   *   * The expiration time (endtime) requested in the KRB_AS_REQ
+   * message.
+   *
+   *   * The ticket's start time plus the maximum allowable lifetime
+   * associated with the client principal from the authentication
+   * server's database.
+   *
+   *   * The ticket's start time plus the maximum allowable lifetime
+   * associated with the server principal.
+   *
+   *   * The ticket's start time plus the maximum lifetime set by the
+   * policy of the local realm.
+   *
+   * If the requested expiration time minus the start time (as determined
+   * above) is less than a site-determined minimum lifetime, an error
+   * message with code KDC_ERR_NEVER_VALID is returned. If the requested
+   * expiration time for the ticket exceeds what was determined as above,
+   * and if the 'RENEWABLE-OK' option was requested, then the 'RENEWABLE'
+   * flag is set in the new ticket, and the renew-till value is set as if
+   * the 'RENEWABLE' option were requested (the field and option names are
+   * described fully in section 5.4.1).
+   *
+   * If the RENEWABLE option has been requested or if the RENEWABLE-OK
+   * option has been set and a renewable ticket is to be issued, then the
+   * renew-till field MAY be set to the earliest of:
+   *
+   *   * Its requested value.
+   *
+   *   * The start time of the ticket plus the minimum of the two
+   * maximum renewable lifetimes associated with the principals'
+   * database entries.
+   *
+   *   * The start time of the ticket plus the maximum renewable
+   * lifetime set by the policy of the local realm.
+   *
+   * The flags field of the new ticket will have the following options set
+   * if they have been requested and if the policy of the local realm
+   * allows: FORWARDABLE, MAY-POSTDATE, POSTDATED, PROXIABLE, RENEWABLE.
+   * If the new ticket is postdated (the start time is in the future), its
+   * INVALID flag will also be set.
+   */
 
   tkt = shishi_as_tkt (as);
+
+  /* XXX */
+
+  /*
+   * If all of the above succeed, the server will encrypt the ciphertext
+   * part of the ticket using the encryption key extracted from the server
+   * principal's record in the Kerberos database using the encryption type
+   * associated with the server principal's key (this choice is NOT
+   * affected by the etype field in the request). It then formats a
+   * KRB_AS_REP message (see section 5.4.2), copying the addresses in the
+   * request into the caddr of the response, placing any required pre-
+   * authentication data into the padata of the response, and encrypts the
+   * ciphertext part in the client's key using an acceptable encryption
+   * method requested in the etype field of the request, or in some key
+   * specified by pre-authentication mechanisms being used.
+   */
 
   err = shishi_tkt_key_set (tkt, sessionkey);
   if (err)
@@ -205,6 +372,7 @@ asreq1 (Shishi_as * as)
   if (err)
     return err;
 
+  /* XXX Use "best" server key, not the one chosen by client (see above). */
   err = shishi_tkt_build (tkt, serverkey);
   if (err)
     return err;
@@ -227,12 +395,24 @@ asreq1 (Shishi_as * as)
   err = SHISHI_OK;
 
  fatal:
+  if (err != SHISHI_OK)
+    syslog (LOG_ERR, "AS-REQ failed (%d): %s", err, shishi_strerror (err));
   if (realm)
     free (realm);
   if (username)
     free (username);
   if (servername)
     free (servername);
+  if (userkeys)
+    shisa_keys_free (dbh, userkeys, nuserkeys);
+  if (serverkeys)
+    shisa_keys_free (dbh, serverkeys, nserverkeys);
+  if (userkey)
+    shishi_key_done (userkey);
+  if (serverkey)
+    shishi_key_done (serverkey);
+  if (sessionkey)
+    shishi_key_done (sessionkey);
 
   return err;
 }
@@ -251,7 +431,24 @@ tgsreq1 (Shishi_tgs * tgs)
   Shisa_key **serverkeys;
   size_t nserverkeys;
 
-  /* Extract pa-data and populate tgs->ap. */
+  /*
+   * The KRB_TGS_REQ message is processed in a manner similar to the
+   * KRB_AS_REQ message, but there are many additional checks to be
+   * performed. First, the Kerberos server MUST determine which server the
+   * accompanying ticket is for and it MUST select the appropriate key to
+   * decrypt it. For a normal KRB_TGS_REQ message, it will be for the
+   * ticket granting service, and the TGS's key will be used. If the TGT
+   * was issued by another realm, then the appropriate inter-realm key
+   * MUST be used. If the accompanying ticket is not a ticket-granting
+   * ticket for the current realm, but is for an application server in the
+   * current realm, the RENEW, VALIDATE, or PROXY options are specified in
+   * the request, and the server for which a ticket is requested is the
+   * server named in the accompanying ticket, then the KDC will decrypt
+   * the ticket in the authentication header using the key of the server
+   * for which it was issued. If no ticket can be found in the padata
+   * field, the KDC_ERR_PADATA_TYPE_NOSUPP error is returned.
+   */
+
   rc = shishi_tgs_req_process (tgs);
   if (rc != SHISHI_OK)
     return rc;
