@@ -808,8 +808,8 @@ case "$host" in
   ;;
 esac
 
-AC_CONFIG_FILES([Makefile libtelnet/Makefile telnet/Makefile telnetd/Makefile])
-#libinetutils/Makefile glob/Makefile 
+AC_CONFIG_FILES([Makefile libinetutils/Makefile libtelnet/Makefile telnet/Makefile telnetd/Makefile])
+#glob/Makefile 
 #libicmp/Makefile ping/Makefile ftp/Makefile ftpd/Makefile inetd/Makefile
 #rcp/Makefile
 #rexecd/Makefile rlogin/Makefile rlogind/Makefile rsh/Makefile

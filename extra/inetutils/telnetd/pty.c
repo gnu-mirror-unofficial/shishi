@@ -129,6 +129,10 @@ start_login (char *host, int autologin, char *name)
   fatalperror (net, cmd);
 }
 
+#ifndef PATH_DEV
+#define PATH_DEV "/dev/"
+#endif
+
 void
 cleanup (int sig)
 {
