@@ -1,5 +1,5 @@
 -- kerberos.asn1   Kerberos ASN.1 Module
--- Copyright (C) 2002, 2003  Simon Josefsson
+-- Copyright (C) 2002, 2003, 2004  Simon Josefsson
 --
 -- This file is part of Shishi.
 --
@@ -16,11 +16,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with Shishi; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
---
 
--- This module is based on the one given in appendix A of RFC1510bis
--- (draft-ietf-krb-wg-kerberos-clarifications-04.txt) which exhibits
--- no copyright notice, but is presumable owned by ISOC via IETF.
+
+
+-- This module is based on the one given in appendix A of RFC1510bis,
+-- draft-ietf-krb-wg-kerberos-clarifications-06.txt, which exhibits
+-- the following copyright notice:
+
+-- Copyright (C) The Internet Society (2004).  This document is
+-- subject to the rights, licenses and restrictions contained in BCP
+-- 78 and except as set forth therein, the authors retain all their
+-- rights.
 
 -- The modifications are to make libtasn1's parser accept it.
 
@@ -179,7 +185,7 @@ KDC-REQ-BODY    ::= SEQUENCE {
                                     -- in preference order --,
         addresses               [9] HostAddresses OPTIONAL,
         enc-authorization-data  [10] EncryptedData OPTIONAL
-                                     -- AuthorizationData --,
+                                    -- AuthorizationData --,
         additional-tickets      [11] SEQUENCE OF Ticket OPTIONAL
                                         -- NOTE: not empty
 }
