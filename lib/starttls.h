@@ -1,4 +1,4 @@
-/* starttls.h --- Network I/O prototypes to transport Kerberos over TLS.
+/* starttls.h --- Network I/O functions for Shishi over TLS.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.

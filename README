@@ -2,8 +2,8 @@ Shishi README -- Important introductory notes.
 Copyright (C) 2002, 2003, 2004 Simon Josefsson
 See the end for copying conditions.
 
-This directory holds Shishi, an implementation of Kerberos 5.  Shishi
-is part of a GNU system.
+This directory holds Shishi, an implementation of the RFC 1510(bis)
+network authentication system.  Shishi is part of a GNU system.
 
 See doc/shishi.{info,ps,pdf} for the manual.  Installation
 instructions are found in the INSTALL file in this directory.

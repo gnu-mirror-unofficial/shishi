@@ -20,7 +20,7 @@
 
 package "shishid"
 
-purpose "Network daemon for issuing Kerberos 5 tickets."
+purpose "Shishi Key Distribution Center server."
 
 section "Commands"
 

@@ -106,8 +106,8 @@ against CA certificates, if those are available.
 
 * Version 0.0.9 (released 2003-12-12)
 
-** A Kerberos 5 information storage system added, called Shisa.
-Shisa is used by Kerberos 5 servers (KDCs) to find information about
+** An information storage system added, called Shisa.
+Shisa is used by KDCs (e.g., Shishid) to find information about
 principals.  Shisa can be extended to support various backends, such
 as LDAP and SQL databases, but currently only a file system based
 database is supported.  Shisa consists of two parts, a library
@@ -122,7 +122,7 @@ There is now a step-by-step walk-through on creating the database for
 a new realm, adding a few principals, starting the server and testing
 it by getting tickets.
 
-** Shishid (the Kerberos server) now read keys via the Shisa database.
+** Shishid (the KDC server) now read keys via the Shisa database.
 The old hostkeys-alike file based "database" is no longer supported.
 
 ** A sample Shisa database and host keys are created during installation.
@@ -139,8 +139,8 @@ Those encryption algorithms are needed by GSS Wrap/Unwrap, but was
 accidently removed from Shishi during an earlier cleanup.
 
 ** When Libgcrypt is used, ARCFOUR now handle streamed operations.
-This is needed for, e.g., Kerberos rsh in the Shishi patched version
-of GNU InetUtils.
+This is needed for, e.g., rsh in the Shishi patched version of GNU
+InetUtils.
 
 ** Paths to configurations files and host keys changed.
 The configuration files and host keys are now stored (by default, but
@@ -169,7 +169,7 @@ specific keys) and the Shisa database root, respectively.
 
 ** Documentation additions.
 Protocol descriptions for STARTTLS, AES-CCM encrypted telnet, and
-Kerberos rsh/rlogin.
+Shishi rsh/rlogin.
 
 ** Support for upgrading TCP connections to KDC to TLS supported (STARTTLS).
 STARTTLS support will be compiled in automatically, if you have GNUTLS

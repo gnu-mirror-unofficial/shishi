@@ -1,4 +1,4 @@
-/* starttls.c --- Network I/O functions to transport Kerberos over TLS.
+/* starttls.c --- Network I/O functions for Shishi over TLS.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -65,7 +65,7 @@ _shishi_tls_done (Shishi * handle)
  * Also need to add code to map client certificate X.509 into pre
  * authenticated principal?
  *
- * Derive Kerberos EncKDCRepPart key from TLS PRF?  Hm.
+ * Derive EncKDCRepPart key from TLS PRF?  Hm.
  *
  */
 
@@ -73,8 +73,7 @@ _shishi_tls_done (Shishi * handle)
 #define STARTTLS_SERVER_ACCEPT "\x70\x00\x00\x02"
 #define STARTTLS_LEN 4
 
-/* Negotiate TLS and send and receive Kerberos packets on an open
-   socket. */
+/* Negotiate TLS and send and receive packets on an open socket. */
 static int
 _shishi_sendrecv_tls1 (Shishi * handle,
 		       int sockfd,
@@ -176,7 +175,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
   return SHISHI_OK;
 }
 
-/* Send Kerberos request to KDC over TLS, receive reply, and disconnect. */
+/* Send request to KDC over TLS, receive reply, and disconnect. */
 int
 _shishi_sendrecv_tls (Shishi * handle,
 		      struct sockaddr *addr,

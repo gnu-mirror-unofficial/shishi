@@ -1,5 +1,5 @@
 # shisa.conf --- Database configuration file for Shishi.             -*- sh -*-
-# Copyright 2002, 2003  Simon Josefsson
+# Copyright 2002, 2003, 2004  Simon Josefsson
 # 
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
@@ -12,12 +12,12 @@
 
 # db [OPTIONS] <TYPE> [LOCATION] [PARAMETERS ...]
 
-# Specify the data sources for Kerberos 5 data.  Multiple entries,
-# even of the same data source type, are allowed.  The data sources
-# are accessed in the same sequence as they are defined here.  If an
-# entry is found in one data source, it will be used for the
-# operations, without searching the remaining data sources.  Valid
-# OPTIONS include:
+# Specify the data sources for Shisa data.  Multiple entries, even of
+# the same data source type, are allowed.  The data sources are
+# accessed in the same sequence as they are defined here.  If an entry
+# is found in one data source, it will be used for the operations,
+# without searching the remaining data sources.  Valid OPTIONS
+# include:
 
 # --read-only       No data is written to this data source.
 # --ignore-errors   Ignore failures in this backend.

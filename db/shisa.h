@@ -1,5 +1,5 @@
-/* shisa.h --- Header file for concurrent write-safe Kerberos database library.
- * Copyright (C) 2003  Simon Josefsson
+/* shisa.h --- Header file for concurrent write-safe user information database.
+ * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *

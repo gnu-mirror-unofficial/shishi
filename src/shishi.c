@@ -1,4 +1,4 @@
-/* shishi.c --- Kerberos 5 Command line tool.
+/* shishi.c --- Shishi command line interface.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.

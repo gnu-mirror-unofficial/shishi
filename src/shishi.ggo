@@ -20,10 +20,10 @@
 
 package "shishi"
 
-purpose "Kerberos 5 client.  If no command is given, Shishi acquire or
-list a valid ticket for you, identified by CLIENT (if empty, default
-username in default realm), for the service SERVER (if empty, ticket
-granting ticket for client realm)."
+purpose "Shishi command line client.  If no command is given, Shishi
+acquire or list a valid ticket for you, identified by CLIENT (if
+empty, default username in default realm), for the service SERVER (if
+empty, ticket granting ticket for client realm)."
 
 section "Commands"
 

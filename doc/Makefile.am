@@ -36,20 +36,20 @@ MAINTAINERCLEANFILES = $(dist_man_MANS)
 shishi.1: $(top_srcdir)/src/shishi.c $(top_srcdir)/src/shishi.ggo \
 		$(top_srcdir)/configure.ac
 	$(HELP2MAN) \
-		--name="kerberos 5 client tool" \
+		--name="Shishi client tool" \
 		--output=$@ $(top_builddir)/src/shishi
 
 shisa.1: $(top_srcdir)/src/shisa.c $(top_srcdir)/src/shisa.ggo \
 		$(top_srcdir)/configure.ac
 	$(HELP2MAN) \
-		--name="kerberos 5 database interface" \
+		--name="Shishi database interface" \
 		--info-page=shishi \
 		--output=$@ $(top_builddir)/src/shisa
 
 shishid.1: $(top_srcdir)/src/shishid.c $(top_srcdir)/src/shishid.ggo \
 		$(top_srcdir)/configure.ac
 	$(HELP2MAN) \
-		--name="kerberos 5 server" \
+		--name="Shishi KDC server" \
 		--output=$@ $(top_builddir)/src/shishid
 
 GDOC_SRC = $(top_srcdir)/lib/*.c $(top_srcdir)/db/*.c

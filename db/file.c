@@ -1,4 +1,4 @@
-/* file.c --- File based Kerberos database.
+/* file.c --- File based Shisa database.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -41,7 +41,7 @@
  *
  * LOCATION/EXAMPLE.ORG
  * LOCATION/EXAMPLE.ORG/krbtgt%2fEXAMPLE.ORG
- * LOCATION/EXAMPLE.ORG/host%2fkerberos.example.org
+ * LOCATION/EXAMPLE.ORG/host%2fwww.example.org
  * LOCATION/EXAMPLE.NET
  * LOCATION/EXAMPLE.NET/krbtgt%2fEXAMPLE.NET
  *

@@ -1136,7 +1136,7 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
   if (shishi_krberror_errorcode_fast (handle, krberror) ==
       SHISHI_KRB_ERR_GENERIC)
     {
-      fprintf (fh, "Generic Kerberos error from server:\n");
+      fprintf (fh, "Generic error from server:\n");
 
       res = shishi_krberror_etext (handle, krberror, &buf, &len);
       buf[len] = '\0';
@@ -1145,14 +1145,14 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
     }
   else
     {
-      fprintf (fh, "Kerberos error code from server:\n%s\n",
+      fprintf (fh, "Error code from server:\n%s\n",
 	       shishi_krberror_message (handle, krberror));
 
       res = shishi_krberror_etext (handle, krberror, &buf, &len);
       if (res == SHISHI_OK && len > 0)
 	{
 	  buf[len] = '\0';
-	  fprintf (fh, "Additional Kerberos error message from server:\n%s\n",
+	  fprintf (fh, "Additional error message from server:\n%s\n",
 		   buf);
 	}
     }
@@ -1178,9 +1178,9 @@ struct krb_error_msgs _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
   {SHISHI_KDC_ERR_S_OLD_MAST_KVNO,
    "Server's key encrypted in old master key"},
   {SHISHI_KDC_ERR_C_PRINCIPAL_UNKNOWN,
-   "Client not found in Kerberos database"},
+   "Client not found in database"},
   {SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN,
-   "Server not found in Kerberos database"},
+   "Server not found in database"},
   {SHISHI_KDC_ERR_PRINCIPAL_NOT_UNIQUE,
    "Multiple principal entries in database"},
   {SHISHI_KDC_ERR_NULL_KEY, "The client or server has a null key"},

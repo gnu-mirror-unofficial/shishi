@@ -897,10 +897,10 @@ shishi_tkt_hw_authent_p (Shishi_tkt * tkt)
  *
  * Determine if ticket has been policy checked for transit.
  *
- * In Kerberos, the application server is ultimately responsible for
- * accepting or rejecting authentication and SHOULD check that only
- * suitably trusted KDCs are relied upon to authenticate a principal.
- * The transited field in the ticket identifies which realms (and thus
+ * The application server is ultimately responsible for accepting or
+ * rejecting authentication and SHOULD check that only suitably
+ * trusted KDCs are relied upon to authenticate a principal.  The
+ * transited field in the ticket identifies which realms (and thus
  * which KDCs) were involved in the authentication process and an
  * application server would normally check this field. If any of these
  * are untrusted to authenticate the indicated client principal
