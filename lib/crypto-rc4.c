@@ -214,7 +214,7 @@ arcfour_hmac_encrypt (Shishi * handle,
   memcpy (*out + 16, ct, ptlen);
 
   if (ivoutlen)
-    /* size = sbox[256] + int32_t i + int32_t j */
+    /* size = sbox[256] + int8_t i + int8_t j */
     *ivoutlen = 256 + 2*8;
 
   err = SHISHI_OK;
@@ -332,7 +332,7 @@ arcfour_hmac_decrypt (Shishi * handle,
   memcpy (*out, pt + 8, inlen - 16 - 8);
 
   if (ivoutlen)
-    /* size = sbox[256] + int32_t i + int32_t j */
+    /* size = sbox[256] + int8_t i + int8_t j */
     *ivoutlen = 256 + 2*8;
 
   err = SHISHI_OK;

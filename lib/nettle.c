@@ -397,13 +397,20 @@ shishi_des_cbc_mac (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
  * @key: input character array with key to use.
- * @keylen
+ * @keylen: length of input key array.
+ * @iv: input character array with initialization vector to use, or NULL.
+ * @ivout: output character array with updated initialization vector, or NULL.
  * @in: input character array of data to encrypt/decrypt.
  * @inlen: length of input character array of data to encrypt/decrypt.
  * @out: newly allocated character array with encrypted/decrypted data.
  *
  * Encrypt or decrypt data (depending on @decryptp) using ARCFOUR.
  * The @out buffer must be deallocated by the caller.
+ *
+ * The "initialization vector" used here is the concatenation of the
+ * sbox and i and j, and is thus always of size 256 + 1 + 1.  This is
+ * a slight abuse of terminology, and assumes you know what you are
+ * doing.  Don't use it if you can avoid to.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
