@@ -388,3 +388,22 @@ shishi_principal_set (Shishi * handle,
 
   return SHISHI_OK;
 }
+
+char *
+shishi_server_for_local_service (Shishi * handle, const char *service)
+{
+  char buf[HOST_NAME_MAX];
+  int ret;
+
+  strcpy (buf, service);
+  strcat (buf, "/");
+
+  ret = gethostname (&buf[strlen (service) + 1],
+		     sizeof (buf) - strlen (service) - 1);
+  buf[sizeof (buf) - 1] = '\0';
+
+  if (ret != 0)
+    strcpy (&buf[strlen (service) + 1], "localhost");
+
+  return xstrdup(buf);
+}

@@ -383,6 +383,8 @@ extern int shishi_principal_set (Shishi * handle,
 				 const char *namefield, const char *name);
 extern int shishi_parse_name (Shishi * handle, const char *name,
 			      char **principal, char **realm);
+extern char *shishi_server_for_local_service (Shishi * handle,
+					      const char *service);
 
 /* ticket.c */
 extern int shishi_ticket_sname_get (Shishi * handle,
