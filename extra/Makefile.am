@@ -20,9 +20,9 @@
 
 EXTRA_DIST = inetutils.diff mailutils.diff
 
-DIST_SUBDIRS = pam_shishi
+DIST_SUBDIRS = pam_shishi rsh-redone
 
-SUBDIRS = @PAM_SHISHI@
+SUBDIRS = @PAM_SHISHI@ rsh-redone
 
 indent:
 	(cd pam_shishi && make indent)

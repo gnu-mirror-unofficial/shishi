@@ -294,7 +294,8 @@ AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
 AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile \
 	asn1/Makefile crypto/Makefile examples/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
-	doc/reference/Makefile extra/Makefile extra/pam_shishi/Makefile \
+	doc/reference/Makefile \
+	extra/Makefile extra/pam_shishi/Makefile extra/rsh-redone/Makefile \
 	gl/Makefile gl/m4/Makefile shishi.pc shishi.conf shishi.skel)
 
 # We are done
