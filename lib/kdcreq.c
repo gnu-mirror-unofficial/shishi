@@ -670,7 +670,7 @@ shishi_kdcreq_get_padata (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      if (patype == padatatype)
+      if (patype == (int32_t)padatatype)
 	{
 	  asprintf (&format, "padata.?%d.padata-value", i);
 	  res = shishi_asn1_read2 (handle, kdcreq, format, out, outlen);

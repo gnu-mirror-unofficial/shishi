@@ -139,8 +139,8 @@ _shishi_resolv (const char *zone, unsigned int query_type)
     }
 
   /* do the actual query */
-  if ((len = res_query (zone, C_IN, query_type, packet.buf, MAX_PACKET)) == -1
-      || len < sizeof (HEADER))
+  if ((len = res_query (zone, C_IN, query_type, packet.buf, MAX_PACKET)) < 0
+      || len < (int)sizeof (HEADER))
     return NULL;
 
   /* we got a valid result, containing two types of records - packet
