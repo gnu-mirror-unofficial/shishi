@@ -34,8 +34,7 @@ asreq1 (Shishi_as * as)
   size_t nserverkeys, nuserkeys;
   int err;
   char *username = NULL, *servername = NULL, *realm = NULL;
-  Shisa_principal krbtgt;
-  Shisa_principal user;
+  Shisa_principal server, user;
   uint32_t etype;
   int i;
 
@@ -101,7 +100,7 @@ asreq1 (Shishi_as * as)
 
   /* Find the server, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
 
-  err = shisa_principal_find (dbh, realm, servername, &krbtgt);
+  err = shisa_principal_find (dbh, realm, servername, &server);
   if (err != SHISA_OK && err != SHISA_NO_PRINCIPAL)
     {
       syslog (LOG_ERR, "shisa_principal_find failed (%d): %s",
@@ -494,6 +493,14 @@ tgsreq1 (Shishi_tgs * tgs)
 
   syslog (LOG_DEBUG, "TGS-REQ uses ticket granter %s@%s", tgname, tgrealm);
 
+  rc = shisa_principal_find (dbh, tgrealm, tgname, &krbtgt);
+  if (rc != SHISA_OK && rc != SHISA_NO_PRINCIPAL)
+    {
+      syslog (LOG_ERR, "shisa_principal_find(%s@%s) failed (%d): %s",
+	      tgname, tgrealm, rc, shisa_strerror (rc));
+      goto fatal;
+    }
+
   rc = shisa_keys_find (dbh, tgrealm, tgname, NULL, &tgkeys, &ntgkeys);
   if (rc != SHISA_OK)
     {
@@ -561,7 +568,7 @@ tgsreq1 (Shishi_tgs * tgs)
 
   /* XXX check that checksum in authenticator match tgsreq.req-body */
 
-  syslog (LOG_DEBUG, "TGS-REQ authenticated using %s@%s", tgname, tgrealm);
+  syslog (LOG_DEBUG, "TGS-REQ authentication OK using %s@%s", tgname, tgrealm);
 
   /*
    * As discussed in section 3.1.2, the KDC MUST send a valid KRB_TGS_REP
