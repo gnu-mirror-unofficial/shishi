@@ -179,6 +179,88 @@ shishi_parse_name (Shishi * handle, const char *name,
   conventions described in (1a), (1b), and (1c) above.
 */
 
+/**
+ * shishi_principal_name:
+ * @handle: Shishi library handle create by shishi_init().
+ * @namenode: ASN.1 structure with principal in @namefield.
+ * @namefield: name of field in @namenode containing principal name.
+ * @out: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @outlen).
+ * @outlen: pointer to length of @out on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @out).
+ *
+ * Represent principal name in ASN.1 structure as zero-terminated
+ * string.  The string is allocate by this function, and it is the
+ * responsibility of the caller to deallocate it.  Note that the
+ * output length @outlen does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_principal_name (Shishi * handle,
+		       Shishi_asn1 namenode,
+		       const char *namefield,
+		       char **out, size_t * outlen)
+{
+  char *format;
+  int i, j, n;
+  char *name = NULL;
+  size_t namelen = 0;
+  int res;
+
+  asprintf (&format, "%s.name-string", namefield);
+  res = shishi_asn1_number_of_elements (handle, namenode, format, &n);
+  free (format);
+  if (res != SHISHI_OK)
+    return res;
+
+  for (i = 1; i <= n; i++)
+    {
+      char *tmp;
+      size_t tmplen;
+      size_t safetmplen;
+
+      asprintf (&format, "%s.name-string.?%d", namefield, i);
+      res = shishi_asn1_read2 (handle, namenode, format, &tmp, &tmplen);
+      free (format);
+      if (res != SHISHI_OK)
+	return res;
+
+      safetmplen = tmplen;
+      for (j = 0; j < tmplen; j++)
+	if (tmp[j] == '@' || tmp[j] == '/' || tmp[j] == '\\')
+	  safetmplen++;
+      if (i < n)
+	safetmplen++;
+
+      name = xrealloc (name, namelen + safetmplen);
+
+      for (j = 0; j < tmplen; j++)
+	{
+	  if (tmp[j] == '@' || tmp[j] == '/' || tmp[j] == '\\')
+	    name[namelen++] = '\\';
+	  name[namelen++] = tmp[j];
+	}
+
+      if (i < n)
+	name[namelen++] = '/';
+
+      free (tmp);
+    }
+
+  name = xrealloc (name, namelen + 1);
+  name[namelen] = '\0';
+
+  if (out)
+    *out = name;
+  else
+    free (name);
+  if (outlen)
+    *outlen = namelen;
+
+  return SHISHI_OK;
+}
+
 int
 shishi_principal_name_get (Shishi * handle,
 			   Shishi_asn1 namenode,
