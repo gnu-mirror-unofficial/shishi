@@ -243,6 +243,7 @@ struct Shishi
   char *gztime_buf[40];
   char *usercfgfile;
   char *ticketsetfile;
+  char *stringprocess;
   Shishi_ticketset *ticketset;
   /* XXX remove these: */
   ASN1_TYPE lastauthenticator;

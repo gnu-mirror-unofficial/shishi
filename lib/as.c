@@ -223,9 +223,9 @@ shishi_as_cnamerealmsname (Shishi * handle,
     {
       char password[BUFSIZ];
 
-      res = shishi_prompt_password (stdin, password, BUFSIZ,
-				    stdout,
-				    "Enter password for `%s@%s': ",
+      res = shishi_prompt_password (handle,
+				    stdin, password, BUFSIZ,
+				    stdout, "Enter password for `%s@%s': ",
 				    shishi_principal_default_get (handle),
 				    shishi_realm_default_get (handle));
       if (res != SHISHI_OK)

@@ -512,7 +512,11 @@ extern const char *shishi_check_version (const char *req_version);
 /* password.c */
 extern int shishi_read_password (FILE * fh, char *s, int size);
 extern int
-shishi_prompt_password (FILE * in, char *s, int size,
+shishi_prompt_password_raw (FILE * in, char *s, int size,
+			    FILE * out, char *format, ...);
+extern int
+shishi_prompt_password (Shishi *handle,
+			FILE * in, char *s, int size,
 			FILE * out, char *format, ...);
 
 /* asn1.c */

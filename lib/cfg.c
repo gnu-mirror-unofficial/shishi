@@ -69,6 +69,7 @@ enum
   DEBUG_CRYPTO_OPTION,
   DEBUG_ASN1_OPTION,
   DEBUG_OPTION,
+  STRINGPROCESS_OPTION,
   THE_END
 };
 
@@ -84,6 +85,7 @@ static const char *_shishi_opts[] = {
   /* [DEBUG_CRYPTO_OPTION] =      */ "debug-crypto",
   /* [DEBUG_ASN1_OPTION] =        */ "debug-asn1",
   /* [DEBUG_OPTION] =             */ "debug",
+  /* [STRINGPROCESS_OPTION] =     */ "stringprocess",
   /* [THE_END] =                  */ NULL
 };
 
@@ -168,8 +170,12 @@ shishi_cfg (Shishi * handle, char *option)
 	case SILENT_OPTION:
 	  handle->silent = 1;
 	  break;
+	case STRINGPROCESS_OPTION:
+	  handle->stringprocess = strdup (value);
+	  break;
 	case DEBUG_OPTION:
-	  handle->debugmask = value && atoi (value) ? atoi (value) : ~0;
+	  handle->debugmask = value && atoi (value) ? atoi (value) :
+	    ~0 & ~SHISHI_DEBUG_CRYPTO & ~SHISHI_DEBUG_ASN1;
 	  break;
 	case DEBUG_CRYPTO_OPTION:
 	  handle->debugmask |= SHISHI_DEBUG_CRYPTO;

@@ -19,7 +19,12 @@
  *
  */
 
+/* XXX? zeroize password */
+
 #include "internal.h"
+
+#include "stringprep.h"
+#include "stringprep_kerberos5.h"
 
 #if defined (HAVE_TERMIOS_H)
 
@@ -92,17 +97,101 @@ shishi_read_password (FILE * fh, char *s, int size)
 }
 
 int
-shishi_prompt_password (FILE * in, char *s, int size,
-			FILE * out, char *format, ...)
+shishi_prompt_password_raw (FILE * in, char *s, int size,
+			    FILE * out, char *format, ...)
 {
   va_list ap;
   int rc;
 
   va_start (ap, format);
-  vfprintf (out, format, ap);
-  fflush (out);
+  vfprintf (out, format, ap); fflush (out);
+  va_end (ap);
+
   rc = shishi_read_password (in, s, size);
+
   fprintf (out, "\n");
 
   return rc;
+}
+
+int
+shishi_prompt_password (Shishi *handle,
+			FILE * in, char *s, int size,
+			FILE * out, char *format, ...)
+{
+  char *p;
+  va_list ap;
+  int rc;
+
+  if (DEBUG(handle))
+    {
+      printf("Libstringprep thinks your locale is `%s'.\n",
+	     stringprep_locale_charset());
+    }
+
+  va_start (ap, format);
+  vfprintf (out, format, ap); fflush (out);
+  va_end (ap);
+
+  rc = shishi_read_password (in, s, size);
+
+  fprintf (out, "\n");
+
+  if (rc != SHISHI_OK)
+    return rc;
+
+  if (DEBUG(handle))
+    {
+      int i;
+      printf("Read password (length %d): ", strlen(s));
+      for (i=0; i < strlen(s); i++)
+	printf("%02x ", s[i] & 0xFF);
+      printf("\n");
+    }
+
+  if (handle->stringprocess && strcasecmp(handle->stringprocess, "none") != 0)
+    {
+      if (strcasecmp(handle->stringprocess, "stringprep") == 0)
+	p = stringprep_locale_to_utf8 (s);
+      else
+	p = stringprep_convert (s, handle->stringprocess,
+				stringprep_locale_charset ());
+
+      if (p)
+	{
+	  strncpy(s, p, size);
+	  s[size-1] = '\0';
+	  free(p);
+	}
+
+      if (DEBUG(handle))
+	{
+	  int i;
+	  printf("Password converted to %s (length %d): ",
+		 strcasecmp(handle->stringprocess, "stringprep") == 0 ?
+		 "UTF-8" : handle->stringprocess, strlen(s));
+	  for (i=0; i < strlen(s); i++)
+	    printf("%02x ", s[i] & 0xFF);
+	  printf("\n");
+	}
+
+      if (strcasecmp(handle->stringprocess, "stringprep") == 0)
+	{
+	  rc = stringprep_kerberos5(s, size);
+	  if (rc != SHISHI_OK)
+	    return rc;
+
+	  if (DEBUG(handle))
+	    {
+	      int i;
+	      printf("Stringprep'ed password (length %d): ", strlen(s));
+	      for (i=0; i < strlen(s); i++)
+		printf("%02x ", s[i] & 0xFF);
+	      printf("\n");
+	    }
+
+	}
+    }
+
+  return SHISHI_OK;
 }
