@@ -20,6 +20,7 @@
  */
 
 #include "internal.h"
+#include <gcrypt.h>
 
 #if ENABLE_NLS
 char *
@@ -70,7 +71,7 @@ read_asn1 ()
  * Return Value: Returns Shishi library handle, or %NULL on error.
  **/
 Shishi *
-shishi_init ()
+shishi (void)
 {
   Shishi *handle;
   char *value;
@@ -79,6 +80,10 @@ shishi_init ()
 
   handle = (Shishi *) malloc (sizeof (*handle));
   if (handle == NULL)
+    return NULL;
+
+  res = gcry_control (GCRYCTL_INIT_SECMEM, 512, 0);
+  if (res != GCRYERR_SUCCESS)
     return NULL;
 
   memset ((void *) handle, 0, sizeof (*handle));
@@ -108,6 +113,75 @@ shishi_init ()
 
   return handle;
 }
+
+int
+_shishi_init_read (Shishi *handle,
+		   const char *ticketsetfile,
+		   const char *systemcfgfile, 
+		   const char *usercfgfile)
+{
+  int rc = SHISHI_OK;
+
+  if (!ticketsetfile)
+    ticketsetfile = shishi_ticketset_default_file (handle);
+
+  if (!systemcfgfile)
+    systemcfgfile = shishi_cfg_default_systemfile (handle);
+
+  if (!usercfgfile)
+    usercfgfile = shishi_cfg_default_userfile (handle);
+
+  if (!handle->ticketset)
+    rc = shishi_ticketset_init (handle, &handle->ticketset);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  if (*ticketsetfile)
+    rc = shishi_ticketset_from_file (handle, handle->ticketset, ticketsetfile);
+  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
+    return rc;
+
+  if (*systemcfgfile)
+    rc = shishi_cfg_from_file (handle, systemcfgfile);
+  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
+    return rc;
+
+  if (*usercfgfile)
+    rc = shishi_cfg_from_file (handle, usercfgfile);
+  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
+    return rc;
+
+  if (DEBUG(handle))
+    shishi_cfg_print (handle, stdout);
+
+  return SHISHI_OK;
+}
+
+int
+shishi_init_with_paths (Shishi **handle,
+			const char *ticketsetfile,
+			const char *systemcfgfile, 
+			const char *usercfgfile)
+{
+  if (!handle || !(*handle = shishi()))
+    return SHISHI_HANDLE_ERROR;
+
+  return _shishi_init_read (*handle, ticketsetfile, 
+			    systemcfgfile, usercfgfile);
+}
+
+int
+shishi_init (Shishi **handle)
+{
+  if (!handle || !(*handle = shishi()))
+    return SHISHI_HANDLE_ERROR;
+
+  return _shishi_init_read (*handle, shishi_ticketset_default_file (*handle),
+			    shishi_cfg_default_systemfile (*handle),
+			    shishi_cfg_default_userfile (*handle));
+}
+
+/* XXX remove these: */
 
 ASN1_TYPE
 shishi_last_authenticator (Shishi * handle)
