@@ -217,6 +217,49 @@ shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
   return rc;
 }
 
+static int
+shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
+			    const char *indata, size_t inlen,
+			    char *outdata, size_t * outlen)
+{
+  struct servent *se;
+  struct addrinfo hints;
+  struct addrinfo *ai;
+  char *port;
+  int rc;
+
+  se = getservbyname ("kerberos", NULL);
+  if (se)
+    asprintf (&port, "%d", ntohs(se->s_port));
+  else
+    asprintf (&port, "%d", 88);
+
+  memset (&hints, 0, sizeof(hints));
+  hints.ai_socktype = SOCK_DGRAM;
+  rc = getaddrinfo (realm, port, &hints, &ai);
+
+  free (port);
+
+  if (rc != 0)
+    {
+      shishi_warn (handle, "Unknown KDC host `%s' (gai rc %d)", realm, rc);
+      rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
+      goto done;
+    }
+
+  if (VERBOSE (handle))
+    printf ("Sending to %s:%s (%s)...\n", realm, port,
+	    inet_ntoa (((struct sockaddr_in *)ai->ai_addr)->sin_addr));
+
+  rc = shishi_sendrecv_udp (handle, ai->ai_addr,
+			    indata, inlen, outdata, outlen,
+			    handle->kdctimeout);
+
+ done:
+  freeaddrinfo (ai);
+  return rc;
+}
+
 int
 shishi_kdc_sendrecv (Shishi * handle, char *realm,
 		     const char *indata, size_t inlen,
@@ -230,6 +273,9 @@ shishi_kdc_sendrecv (Shishi * handle, char *realm,
   if (rc == SHISHI_KDC_TIMEOUT || rc == SHISHI_KDC_NOT_KNOWN_FOR_REALM)
     rc = shishi_kdc_sendrecv_srv (handle, realm,
 				  indata, inlen, outdata, outlen);
+  if (rc == SHISHI_KDC_TIMEOUT || rc == SHISHI_KDC_NOT_KNOWN_FOR_REALM)
+    rc = shishi_kdc_sendrecv_direct (handle, realm,
+				     indata, inlen, outdata, outlen);
 
   return rc;
 }
