@@ -285,7 +285,7 @@ if test "$enable_encryption" = yes -o "$enable_authentication" = yes; then
 
   if test "$with_shishi" = "yes"; then
     LIBAUTH="$LIBAUTH \$(top_builddir)/../../lib/libshishi.la"
-    INCAUTH="$INCAUTH -I\$(top_srcdir)/lib"
+    INCAUTH="$INCAUTH -I\$(top_srcdir)/../../lib -I\$(top_srcdir)/../../asn1/lib"
     AC_DEFINE(SHISHI)
   fi
 
