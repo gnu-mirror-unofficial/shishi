@@ -110,13 +110,14 @@ int
 shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 			Shishi_asn1 * kdcrep)
 {
-  char der[BUFSIZ];		/* XXX dynamically allocate this */
+  char *der;
   int der_len, out_len;
+  char buffer[BUFSIZ];		/* XXX dynamically allocate this? */
   char realm[BUFSIZ];		/* XXX dynamically allocate this */
   int realmlen;
   int res;
 
-  res = shishi_a2d (handle, kdcreq, der, &der_len);
+  res = shishi_new_a2d (handle, kdcreq, &der, &der_len);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode AS-REQ: %s\n",
@@ -135,29 +136,29 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
     }
   realm[realmlen] = '\0';
 
-  out_len = BUFSIZ;
-  res = shishi_kdc_sendrecv (handle, realm, der, der_len, der, &out_len);
+  out_len = sizeof(buffer);
+  res = shishi_kdc_sendrecv (handle, realm, der, der_len, buffer, &out_len);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not send to KDC: %s\n",
 			   shishi_strerror_details (handle));
       return res;
     }
-  der_len = out_len;
+  free(der);
 
   if (VERBOSEASN1 (handle))
-    printf ("received %d bytes\n", der_len);
+    printf ("received %d bytes\n", out_len);
 
-  *kdcrep = shishi_der2asn1_asrep (handle, der, der_len);
+  *kdcrep = shishi_der2asn1_asrep (handle, buffer, out_len);
   if (*kdcrep == NULL)
     {
-      *kdcrep = shishi_der2asn1_tgsrep (handle, der, der_len);
+      *kdcrep = shishi_der2asn1_tgsrep (handle, buffer, out_len);
       if (*kdcrep == NULL)
 	{
-	  *kdcrep = shishi_der2asn1_kdcrep (handle, der, der_len);
+	  *kdcrep = shishi_der2asn1_kdcrep (handle, buffer, out_len);
 	  if (*kdcrep == NULL)
 	    {
-	      *kdcrep = shishi_der2asn1_krberror (handle, der, der_len);
+	      *kdcrep = shishi_der2asn1_krberror (handle, buffer, out_len);
 	      if (*kdcrep == NULL)
 		{
 		  shishi_error_printf

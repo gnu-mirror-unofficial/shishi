@@ -931,6 +931,10 @@ extern int shishi_a2d_field (Shishi * handle,
 			     const char *field, char *der, int *len);
 extern int shishi_a2d (Shishi * handle, Shishi_asn1 node,
 		       char *der, int *len);
+extern int shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
+				 const char *field, char **der, int *len);
+extern int shishi_new_a2d (Shishi * handle, Shishi_asn1 node,
+			   char **der, int *len);
 extern int shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
 extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 			     const char *field, char *data, size_t * datalen);

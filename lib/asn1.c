@@ -95,6 +95,35 @@ shishi_a2d (Shishi * handle, Shishi_asn1 node, char *der, int *len)
 }
 
 int
+shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
+		      const char *field, char **der, int *len)
+{
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
+  int rc;
+
+  *len = 0;
+  rc = asn1_der_coding (node, field, NULL, len, errorDescription);
+  if (rc != ASN1_MEM_ERROR)
+    return SHISHI_ASN1_ERROR;
+
+  *der = malloc(*len);
+  if (!*der)
+    return SHISHI_MALLOC_ERROR;
+
+  rc = asn1_der_coding (node, field, *der, len, errorDescription);
+  if (rc != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+int
+shishi_new_a2d (Shishi * handle, Shishi_asn1 node, char **der, int *len)
+{
+  return shishi_a2d_new_field (handle, node, "", der, len);
+}
+
+int
 shishi_asn1_done (Shishi * handle, Shishi_asn1 node)
 {
 
