@@ -27,7 +27,7 @@ struct Shishi_as
   ASN1_TYPE asreq;
   ASN1_TYPE asrep;
   ASN1_TYPE krberror;
-  Shishi_ticket *ticket;
+  Shishi_tkt *tkt;
 };
 
 /**
@@ -77,11 +77,11 @@ shishi_as (Shishi * handle, Shishi_as ** as)
       return SHISHI_ASN1_ERROR;
     }
 
-  res = shishi_ticket2 (handle, &las->ticket);
+  res = shishi_tkt (handle, &las->tkt);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_ticket_flags_set (las->ticket, SHISHI_TICKETFLAGS_INITIAL);
+  res = shishi_tkt_flags_set (las->tkt, SHISHI_TICKETFLAGS_INITIAL);
   if (res != SHISHI_OK)
     return res;
 
@@ -264,10 +264,10 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char *password)
     printf ("Got Ticket...\n");
 
   if (VERBOSEASN1 (as->handle))
-    shishi_asn1ticket_print (as->handle, stdout, ticket);
+    shishi_ticket_print (as->handle, stdout, ticket);
 
-  as->ticket = shishi_ticket (as->handle, ticket, kdcreppart, as->asrep);
-  if (as->ticket == NULL)
+  as->tkt = shishi_tkt2 (as->handle, ticket, kdcreppart, as->asrep);
+  if (as->tkt == NULL)
     {
       shishi_error_printf (as->handle, "Could not create ticket");
       return SHISHI_MALLOC_ERROR;
@@ -285,7 +285,7 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char *password)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_as_rep_build (Shishi_as * as, Shishi_key *key)
+shishi_as_rep_build (Shishi_as * as, Shishi_key * key)
 {
   int rc;
 
@@ -295,13 +295,13 @@ shishi_as_rep_build (Shishi_as * as, Shishi_key *key)
     return rc;
 
   rc = shishi_enckdcreppart_populate_encticketpart
-    (as->handle, shishi_ticket_enckdcreppart (as->ticket),
-     shishi_ticket_encticketpart (as->ticket));
+    (as->handle, shishi_tkt_enckdcreppart (as->tkt),
+     shishi_tkt_encticketpart (as->tkt));
   if (rc != SHISHI_OK)
     return rc;
 
   rc = shishi_kdc_copy_nonce (as->handle, as->asreq,
-			      shishi_ticket_enckdcreppart(as->ticket));
+			      shishi_tkt_enckdcreppart (as->tkt));
   if (rc != SHISHI_OK)
     return rc;
 
@@ -309,22 +309,22 @@ shishi_as_rep_build (Shishi_as * as, Shishi_key *key)
 				   as->asrep,
 				   key,
 				   SHISHI_KEYUSAGE_ENCASREPPART,
-				   shishi_ticket_enckdcreppart (as->ticket));
+				   shishi_tkt_enckdcreppart (as->tkt));
   if (rc != SHISHI_OK)
     return rc;
 
   rc = shishi_kdcrep_set_ticket (as->handle, as->asrep,
-				 shishi_ticket_ticket(as->ticket));
+				 shishi_tkt_ticket (as->tkt));
   if (rc != SHISHI_OK)
     return rc;
 
   rc = shishi_kdc_copy_crealm (as->handle, as->asrep,
-			       shishi_ticket_encticketpart(as->ticket));
+			       shishi_tkt_encticketpart (as->tkt));
   if (rc != SHISHI_OK)
     return rc;
 
   rc = shishi_kdc_copy_cname (as->handle, as->asrep,
-			      shishi_ticket_encticketpart(as->ticket));
+			      shishi_tkt_encticketpart (as->tkt));
   if (rc != SHISHI_OK)
     return rc;
 
@@ -423,29 +423,29 @@ shishi_as_krberror_set (Shishi_as * as, ASN1_TYPE krberror)
 }
 
 /**
- * shishi_as_get_ticket:
+ * shishi_as_get_tkt:
  * @as: structure that holds information about AS exchange
  *
- * Return value: Returns the newly aquired ticket from the AS
+ * Return value: Returns the newly aquired tkt from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
-Shishi_ticket *
-shishi_as_ticket (Shishi_as * as)
+Shishi_tkt *
+shishi_as_tkt (Shishi_as * as)
 {
-  return as->ticket;
+  return as->tkt;
 }
 
 /**
- * shishi_as_ticket_set:
+ * shishi_as_tkt_set:
  * @as: structure that holds information about AS exchange
- * @ticket: ticket to store in AS.
+ * @tkt: tkt to store in AS.
  *
- * Set the Ticket in the AP exchange.
+ * Set the Tkt in the AP exchange.
  **/
 void
-shishi_as_ticket_set (Shishi_as * as, Shishi_ticket * ticket)
+shishi_as_tkt_set (Shishi_as * as, Shishi_tkt * tkt)
 {
-  as->ticket = ticket;
+  as->tkt = tkt;
 }
 
 /**

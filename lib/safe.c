@@ -61,7 +61,7 @@ shishi_krbsafe (Shishi * handle)
 
   return node;
 
- error:
+error:
   shishi_error_set (handle, libtasn1_strerror (res));
   if (node != ASN1_TYPE_EMPTY)
     asn1_delete_structure (&node);
@@ -87,7 +87,7 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
   if (*safe == NULL)
     return SHISHI_MALLOC_ERROR;
   lsafe = *safe;
-  memset(lsafe, 0, sizeof(*lsafe));
+  memset (lsafe, 0, sizeof (*lsafe));
 
   lsafe->handle = handle;
   rc = shishi_key (handle, &lsafe->key);
@@ -124,7 +124,7 @@ shishi_safe_key (Shishi_safe * safe)
 void
 shishi_safe_key_set (Shishi_safe * safe, Shishi_key * key)
 {
-  shishi_key_copy(safe->key, key);
+  shishi_key_copy (safe->key, key);
 }
 
 /**
@@ -174,7 +174,7 @@ shishi_safe_save (Shishi * handle, FILE * fh, ASN1_TYPE safe)
  **/
 int
 shishi_safe_to_file (Shishi * handle, ASN1_TYPE safe,
-		      int filetype, char *filename)
+		     int filetype, char *filename)
 {
   FILE *fh;
   int res;
@@ -254,7 +254,7 @@ shishi_safe_read (Shishi * handle, FILE * fh, ASN1_TYPE * safe)
  **/
 int
 shishi_safe_from_file (Shishi * handle, ASN1_TYPE * safe,
-			int filetype, char *filename)
+		       int filetype, char *filename)
 {
   int res;
   FILE *fh;
@@ -286,4 +286,3 @@ shishi_safe_from_file (Shishi * handle, ASN1_TYPE * safe,
 
   return SHISHI_OK;
 }
-

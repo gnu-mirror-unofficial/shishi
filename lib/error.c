@@ -1,5 +1,5 @@
 /* error.c	error handling functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -127,7 +127,7 @@ shishi_strerror (int err)
       p = _("Server replied with an error message to request.");
       break;
 
-    case SHISHI_INVALID_TICKETSET:
+    case SHISHI_INVALID_TKTS:
       p = _("Ticketset not initialized.  This usually indicates an internal "
 	    "application error.");
       break;

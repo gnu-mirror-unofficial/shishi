@@ -1,5 +1,5 @@
 /* server.c	sample network server using shishi
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -146,14 +146,14 @@ server (Shishi * handle, struct arguments arg)
 
   cnamerealmlen = sizeof (cnamerealm);
   res = shishi_encticketpart_cnamerealm_get
-    (handle, shishi_ticket_encticketpart (shishi_ap_ticket (ap)),
+    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (ap)),
      cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Client name (from encticketpart): %s\n", cnamerealm);
 
   cnamerealmlen = sizeof (cnamerealm);
   res = shishi_ticket_snamerealm_get
-    (handle, shishi_ticket_ticket (shishi_ap_ticket (ap)),
+    (handle, shishi_tkt_ticket (shishi_ap_tkt (ap)),
      cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Server name (from ticket): %s\n", cnamerealm);

@@ -1,5 +1,5 @@
 /* shishi.c	command line interface to shishi
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -908,7 +908,7 @@ again:
     case COMMAND_AS:
       {
 	Shishi_as *as;
-	Shishi_ticket *tkt;
+	Shishi_tkt *tkt;
 
 	rc = shishi_as (handle, &as);
 	if (rc == SHISHI_OK)
@@ -930,19 +930,18 @@ again:
 	    shishi_kdcreq_print (handle, stdout, shishi_as_req (as));
 	    shishi_kdcrep_print (handle, stdout, shishi_as_rep (as));
 	    shishi_enckdcreppart_print
-	      (handle, stdout, shishi_ticket_enckdcreppart
-	       (shishi_as_ticket (as)));
+	      (handle, stdout, shishi_tkt_enckdcreppart (shishi_as_tkt (as)));
 	  }
 
-	tkt = shishi_as_ticket (as);
+	tkt = shishi_as_tkt (as);
 
 	if (!arg.silent)
 	  {
-	    shishi_ticket_pretty_print (tkt, stdout);
-	    shishi_ticket_lastreq_pretty_print (tkt, stdout);
+	    shishi_tkt_pretty_print (tkt, stdout);
+	    shishi_tkt_lastreq_pretty_print (tkt, stdout);
 	  }
 
-	rc = shishi_ticketset_add (shishi_ticketset_default (handle), tkt);
+	rc = shishi_tkts_add (shishi_tkts_default (handle), tkt);
 	if (rc != SHISHI_OK)
 	  printf ("Could not add ticket: %s", shishi_strerror (rc));
       }
@@ -951,11 +950,11 @@ again:
     case COMMAND_TGS:
       {
 	Shishi_tgs *tgs;
-	Shishi_ticket *tgt;
-	Shishi_ticket *tkt;
+	Shishi_tkt *tgt;
+	Shishi_tkt *tkt;
 
-	tgt = shishi_ticketset_find_for_clientserver
-	  (shishi_ticketset_default (handle),
+	tgt = shishi_tkts_find_for_clientserver
+	  (shishi_tkts_default (handle),
 	   shishi_principal_default (handle), arg.tgtname);
 	if (tgt == NULL)
 	  {
@@ -965,7 +964,7 @@ again:
 	  }
 
 	rc = shishi_tgs (handle, &tgs);
-	shishi_tgs_tgticket_set (tgs, tgt);
+	shishi_tgs_tgtkt_set (tgs, tgt);
 	if (rc == SHISHI_OK)
 	  rc = shishi_tgs_set_server (tgs, arg.sname ?
 				      arg.sname : arg.tgtname);
@@ -995,15 +994,15 @@ again:
 	    shishi_kdcrep_print (handle, stdout, shishi_tgs_rep (tgs));
 	  }
 
-	tkt = shishi_tgs_ticket (tgs);
+	tkt = shishi_tgs_tkt (tgs);
 
 	if (!arg.silent)
 	  {
-	    shishi_ticket_lastreq_pretty_print (tkt, stdout);
-	    shishi_ticket_pretty_print (tkt, stdout);
+	    shishi_tkt_lastreq_pretty_print (tkt, stdout);
+	    shishi_tkt_pretty_print (tkt, stdout);
 	  }
 
-	rc = shishi_ticketset_add (shishi_ticketset_default (handle), tkt);
+	rc = shishi_tkts_add (shishi_tkts_default (handle), tkt);
 	if (rc != SHISHI_OK)
 	  printf ("Could not add ticket: %s", shishi_strerror (rc));
       }
@@ -1011,12 +1010,11 @@ again:
 
     case COMMAND_LIST:
       if (!arg.silent)
-	printf (_("Tickets in `%s':\n"),
-		shishi_ticketset_default_file (handle));
+	printf (_("Tickets in `%s':\n"), shishi_tkts_default_file (handle));
 
       rc =
-	shishi_ticketset_print_for_service (shishi_ticketset_default (handle),
-					    stdout, arg.sname);
+	shishi_tkts_print_for_service (shishi_tkts_default (handle),
+				       stdout, arg.sname);
       if (rc != SHISHI_OK)
 	fprintf (stderr, "Could not list tickets: %s", shishi_strerror (rc));
       break;
@@ -1024,26 +1022,23 @@ again:
     case COMMAND_DESTROY:
       {
 	int i, removed = 0;
-	for (i = 0;
-	     i < shishi_ticketset_size (shishi_ticketset_default (handle));
-	     i++)
+	for (i = 0; i < shishi_tkts_size (shishi_tkts_default (handle)); i++)
 	  {
 	    if (arg.sname &&
-		!shishi_ticket_server_p (shishi_ticketset_get
-					 (shishi_ticketset_default (handle),
-					  i), arg.sname))
+		!shishi_tkt_server_p (shishi_tkts_get
+				      (shishi_tkts_default (handle),
+				       i), arg.sname))
 	      continue;
 
 	    if (arg.verbose)
 	      {
 		printf ("Removing ticket:\n");
-		shishi_ticket_pretty_print (shishi_ticketset_get
-					    (shishi_ticketset_default
-					     (handle), i), stdout);
+		shishi_tkt_pretty_print (shishi_tkts_get
+					 (shishi_tkts_default
+					  (handle), i), stdout);
 	      }
 
-	    rc =
-	      shishi_ticketset_remove (shishi_ticketset_default (handle), i);
+	    rc = shishi_tkts_remove (shishi_tkts_default (handle), i);
 	    if (rc != SHISHI_OK)
 	      fprintf (stderr, "Could not destroy ticket %d:\n%s\n", i,
 		       shishi_strerror (rc));
@@ -1085,10 +1080,10 @@ again:
 
     default:
       {
-	Shishi_ticket *tgt;
+	Shishi_tkt *tgt;
 
-	tgt = shishi_ticketset_find_for_clientserver
-	  (shishi_ticketset_default (handle),
+	tgt = shishi_tkts_find_for_clientserver
+	  (shishi_tkts_default (handle),
 	   shishi_principal_default (handle), arg.tgtname);
 	if (tgt == NULL)
 	  arg.command = COMMAND_AS;
@@ -1099,10 +1094,10 @@ again:
       break;
     }
 
-  shishi_ticketset_expire (shishi_ticketset_default (handle));
+  shishi_tkts_expire (shishi_tkts_default (handle));
 
   if (arg.ticketwritefile)
-    shishi_ticketset_default_file_set (handle, arg.ticketwritefile);
+    shishi_tkts_default_file_set (handle, arg.ticketwritefile);
 
   shishi_done (handle);
 

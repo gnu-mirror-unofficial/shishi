@@ -128,7 +128,7 @@ shishi_ticket_save (Shishi * handle, FILE * fh, ASN1_TYPE ticket)
 }
 
 int
-shishi_asn1ticket_print (Shishi * handle, FILE * fh, ASN1_TYPE ticket)
+shishi_ticket_print (Shishi * handle, FILE * fh, ASN1_TYPE ticket)
 {
   return _shishi_print_armored_data (handle, fh, ticket, "Ticket", NULL);
 }

@@ -107,8 +107,7 @@ shishi_enckdcreppart_key_set (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_nonce_set (Shishi * handle,
-				ASN1_TYPE enckdcreppart,
-				unsigned long nonce)
+				ASN1_TYPE enckdcreppart, unsigned long nonce)
 {
   int res;
   char buf[BUFSIZ];
@@ -133,8 +132,7 @@ shishi_enckdcreppart_nonce_set (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_flags_set (Shishi * handle,
-				ASN1_TYPE enckdcreppart,
-				int flags)
+				ASN1_TYPE enckdcreppart, int flags)
 {
   int res;
   char buf[BUFSIZ];
@@ -195,7 +193,8 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
     return SHISHI_ASN1_ERROR;
 
   if (res == ASN1_ELEMENT_NOT_FOUND)
-    res = asn1_write_value (enckdcreppart, "EncKDCRepPart.starttime", NULL, 0);
+    res =
+      asn1_write_value (enckdcreppart, "EncKDCRepPart.starttime", NULL, 0);
   else
     res = asn1_write_value (enckdcreppart, "EncKDCRepPart.starttime",
 			    buf, buflen);
@@ -203,11 +202,13 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (encticketpart, "EncTicketPart.endtime", buf, &buflen);
+  res =
+    asn1_read_value (encticketpart, "EncTicketPart.endtime", buf, &buflen);
   if (res != ASN1_SUCCESS)
     return SHISHI_ASN1_ERROR;
 
-  res = asn1_write_value (enckdcreppart, "EncKDCRepPart.endtime", buf, buflen);
+  res =
+    asn1_write_value (enckdcreppart, "EncKDCRepPart.endtime", buf, buflen);
   if (res != ASN1_SUCCESS)
     return SHISHI_ASN1_ERROR;
 
@@ -243,8 +244,7 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_srealm_set (Shishi * handle,
-				 ASN1_TYPE enckdcreppart,
-				 const char *srealm)
+				 ASN1_TYPE enckdcreppart, const char *srealm)
 {
   int res = ASN1_SUCCESS;
 
@@ -302,8 +302,9 @@ shishi_enckdcreppart_sname_set (Shishi * handle,
   i = 1;
   while (sname[i - 1])
     {
-      res = asn1_write_value (enckdcreppart, "EncKDCRepPart.sname.name-string",
-			      "NEW", 1);
+      res =
+	asn1_write_value (enckdcreppart, "EncKDCRepPart.sname.name-string",
+			  "NEW", 1);
       if (res != ASN1_SUCCESS)
 	{
 	  shishi_error_set (handle, libtasn1_strerror (res));
@@ -326,8 +327,7 @@ shishi_enckdcreppart_sname_set (Shishi * handle,
 
 int
 shishi_enckdcreppart_server_set (Shishi * handle,
-				 ASN1_TYPE enckdcreppart,
-				 const char *server)
+				 ASN1_TYPE enckdcreppart, const char *server)
 {
   char *tmpserver;
   char **serverbuf;
@@ -365,8 +365,7 @@ shishi_enckdcreppart_server_set (Shishi * handle,
 int
 shishi_enckdcreppart_srealmserver_set (Shishi * handle,
 				       ASN1_TYPE enckdcreppart,
-				       const char *srealm,
-				       const char *server)
+				       const char *srealm, const char *server)
 {
   int res;
 
@@ -430,7 +429,7 @@ shishi_encasreppart (Shishi * handle)
 
   return node;
 
- error:
+error:
   shishi_error_set (handle, libtasn1_strerror (res));
   if (node != ASN1_TYPE_EMPTY)
     asn1_delete_structure (&node);

@@ -1,5 +1,5 @@
 /* internal.h	internal header file for shishi
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of shishi.
  *
@@ -42,7 +42,7 @@
 #endif
 
 #if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
-extern int h_errno;
+//extern int h_errno;
 #endif
 
 #ifdef HAVE_PWD_H
@@ -173,10 +173,10 @@ struct Shishi
   char error[1024];
   char gztime_buf[40];
   char *usercfgfile;
-  char *ticketsetdefaultfile;
+  char *tktsdefaultfile;
   char *hostkeysdefaultfile;
   char *stringprocess;
-  Shishi_ticketset *ticketset;
+  Shishi_tkts *tkts;
 };
 
 #define BASE_DIR "/.shishi"

@@ -1,5 +1,5 @@
 /* tgs.c	High level client TGS functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -28,11 +28,11 @@ struct Shishi_tgs
 {
   Shishi *handle;
   ASN1_TYPE tgsreq;
-  Shishi_ticket *tgticket;
+  Shishi_tkt *tgtkt;
   Shishi_ap *ap;
   ASN1_TYPE tgsrep;
   ASN1_TYPE krberror;
-  Shishi_ticket *ticket;
+  Shishi_tkt *tkt;
 };
 
 /**
@@ -90,29 +90,29 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
 }
 
 /**
- * shishi_tgs_tgticket:
+ * shishi_tgs_tgtkt:
  * @tgs: structure that holds information about TGS exchange
  *
  * Return value: Returns the ticket-granting-ticket used in the TGS
  *               exchange, or NULL if not yet set or an error occured.
  **/
-Shishi_ticket *
-shishi_tgs_tgticket (Shishi_tgs * tgs)
+Shishi_tkt *
+shishi_tgs_tgtkt (Shishi_tgs * tgs)
 {
-  return tgs->tgticket;
+  return tgs->tgtkt;
 }
 
 /**
- * shishi_tgs_tgticket_set:
+ * shishi_tgs_tgtkt_set:
  * @tgs: structure that holds information about TGS exchange
- * @tgticket: ticket granting ticket to store in TGS.
+ * @tgtkt: ticket granting ticket to store in TGS.
  *
  * Set the Ticket in the AP exchange.
  **/
 void
-shishi_tgs_tgticket_set (Shishi_tgs * tgs, Shishi_ticket * tgticket)
+shishi_tgs_tgtkt_set (Shishi_tgs * tgs, Shishi_tkt * tgtkt)
 {
-  tgs->tgticket = tgticket;
+  tgs->tgtkt = tgtkt;
 }
 
 /**
@@ -171,7 +171,7 @@ shishi_tgs_req_build (Shishi_tgs * tgs)
     }
 
   res = shishi_ap_set_tktoptionsasn1usage
-    (tgs->ap, tgs->tgticket, apoptions, tgs->tgsreq, "KDC-REQ.req-body",
+    (tgs->ap, tgs->tgtkt, apoptions, tgs->tgsreq, "KDC-REQ.req-body",
      SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
      SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
   if (res == SHISHI_OK)
@@ -234,7 +234,7 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
     printf ("Processing TGS-REQ and TGS-REP...\n");
 
   res = shishi_tgs_process (tgs->handle, tgs->tgsreq, tgs->tgsrep,
-			    shishi_ticket_enckdcreppart (tgs->tgticket),
+			    shishi_tkt_enckdcreppart (tgs->tgtkt),
 			    &kdcreppart);
   if (res != SHISHI_OK)
     {
@@ -262,10 +262,10 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
     printf ("Got Ticket...\n");
 
   if (VERBOSEASN1 (tgs->handle))
-    shishi_asn1ticket_print (tgs->handle, stdout, ticket);
+    shishi_ticket_print (tgs->handle, stdout, ticket);
 
-  tgs->ticket = shishi_ticket (tgs->handle, ticket, kdcreppart, tgs->tgsrep);
-  if (tgs->ticket == NULL)
+  tgs->tkt = shishi_tkt2 (tgs->handle, ticket, kdcreppart, tgs->tgsrep);
+  if (tgs->tkt == NULL)
     {
       shishi_error_printf (tgs->handle, "Could not create ticket");
       return SHISHI_MALLOC_ERROR;
@@ -288,29 +288,29 @@ shishi_tgs_krberror (Shishi_tgs * tgs)
 }
 
 /**
- * shishi_tgs_ticket:
+ * shishi_tgs_tkt:
  * @tgs: structure that holds information about TGS exchange
  *
  * Return value: Returns the newly aquired ticket from the TGS
  *               exchange, or NULL if not yet set or an error occured.
  **/
-Shishi_ticket *
-shishi_tgs_ticket (Shishi_tgs * tgs)
+Shishi_tkt *
+shishi_tgs_tkt (Shishi_tgs * tgs)
 {
-  return tgs->ticket;
+  return tgs->tkt;
 }
 
 /**
- * shishi_tgs_ticket_set:
+ * shishi_tgs_tkt_set:
  * @tgs: structure that holds information about TGS exchange
- * @ticket: ticket to store in TGS.
+ * @tkt: ticket to store in TGS.
  *
  * Set the Ticket in the AP exchange.
  **/
 void
-shishi_tgs_ticket_set (Shishi_tgs * tgs, Shishi_ticket * ticket)
+shishi_tgs_tkt_set (Shishi_tgs * tgs, Shishi_tkt * tkt)
 {
-  tgs->ticket = ticket;
+  tgs->tkt = tkt;
 }
 
 /**

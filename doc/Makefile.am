@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002 Simon Josefsson.
+# Copyright (C) 2002, 2003 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -21,7 +21,7 @@
 SUBDIRS = reference
 
 shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
-	shishi-api-ticket.texi shishi-api-ticketset.texi \
+	shishi-api-ticket.texi shishi-api-tkt.texi shishi-api-tkts.texi \
 	shishi-api-as.texi shishi-api-tgs.texi \
 	shishi-api-kdc.texi shishi-api-authenticator.texi shishi-api-ap.texi \
 	shishi-api-key.texi shishi-api-hostkeys.texi shishi-api-crypto.texi \
@@ -52,7 +52,10 @@ shishi-api-utility.texi: $(top_srcdir)/lib/realm.c $(top_srcdir)/lib/principal.c
 shishi-api-ticket.texi: $(top_srcdir)/lib/ticket.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
-shishi-api-ticketset.texi: $(top_srcdir)/lib/ticketset.c
+shishi-api-tkt.texi: $(top_srcdir)/lib/tkt.c
+	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
+
+shishi-api-tkts.texi: $(top_srcdir)/lib/tkts.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-as.texi: $(top_srcdir)/lib/as.c

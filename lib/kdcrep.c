@@ -274,8 +274,7 @@ shishi_kdcrep_from_file (Shishi * handle, ASN1_TYPE * kdcrep,
  **/
 int
 shishi_kdcrep_crealm_set (Shishi * handle,
-			  ASN1_TYPE kdcrep,
-			  const char *crealm)
+			  ASN1_TYPE kdcrep, const char *crealm)
 {
   int res = ASN1_SUCCESS;
 
@@ -312,17 +311,14 @@ shishi_kdcrep_cname_set (Shishi * handle,
 
   sprintf (buf, "%d", name_type);
 
-  res = asn1_write_value (kdcrep,
-			  "KDC-REP.cname.name-type", buf, 0);
+  res = asn1_write_value (kdcrep, "KDC-REP.cname.name-type", buf, 0);
   if (res != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (res));
       return !SHISHI_OK;
     }
 
-  res =
-    asn1_write_value (kdcrep,
-		      "KDC-REP.cname.name-string", NULL, 0);
+  res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string", NULL, 0);
   if (res != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (res));
@@ -332,8 +328,7 @@ shishi_kdcrep_cname_set (Shishi * handle,
   i = 1;
   while (cname[i - 1])
     {
-      res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string",
-			      "NEW", 1);
+      res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string", "NEW", 1);
       if (res != ASN1_SUCCESS)
 	{
 	  shishi_error_set (handle, libtasn1_strerror (res));
@@ -356,8 +351,7 @@ shishi_kdcrep_cname_set (Shishi * handle,
 
 int
 shishi_kdcrep_client_set (Shishi * handle,
-			  ASN1_TYPE kdcrep,
-			  const char *client)
+			  ASN1_TYPE kdcrep, const char *client)
 {
   char *tmpclient;
   char **clientbuf;
@@ -395,8 +389,7 @@ shishi_kdcrep_client_set (Shishi * handle,
 int
 shishi_kdcrep_crealmserver_set (Shishi * handle,
 				ASN1_TYPE kdcrep,
-				const char *crealm,
-				const char *client)
+				const char *crealm, const char *client)
 {
   int res;
 
@@ -716,7 +709,7 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
 
   return SHISHI_OK;
 
- error:
+error:
   shishi_error_set (handle, libtasn1_strerror (res));
   return SHISHI_ASN1_ERROR;
 }
@@ -740,8 +733,7 @@ int
 shishi_kdcrep_add_enc_part (Shishi * handle,
 			    ASN1_TYPE kdcrep,
 			    Shishi_key * key,
-			    int keyusage,
-			    ASN1_TYPE enckdcreppart)
+			    int keyusage, ASN1_TYPE enckdcreppart)
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];
@@ -849,8 +841,7 @@ shishi_kdcrep_decrypt (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_kdcrep_clear_padata (Shishi * handle,
-			    ASN1_TYPE kdcrep)
+shishi_kdcrep_clear_padata (Shishi * handle, ASN1_TYPE kdcrep)
 {
   int res;
 

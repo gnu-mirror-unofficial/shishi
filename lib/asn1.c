@@ -118,7 +118,7 @@ shishi_asn1_integer_field (Shishi * handle,
 
 int
 shishi_asn1_integer2_field (Shishi * handle,
-			   ASN1_TYPE node, unsigned long *i, char *field)
+			    ASN1_TYPE node, unsigned long *i, char *field)
 {
   unsigned char buf[4];
   int buflen;

@@ -546,7 +546,7 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
 
   return SHISHI_OK;
 
- error:
+error:
   shishi_error_set (handle, libtasn1_strerror (res));
   return SHISHI_ASN1_ERROR;
 }
@@ -570,8 +570,7 @@ int
 shishi_authenticator_authorizationdata (Shishi * handle,
 					ASN1_TYPE authenticator,
 					int *adtype,
-					char *addata, int *addatalen,
-					int nth)
+					char *addata, int *addatalen, int nth)
 {
   char format[BUFSIZ];
   char buf[BUFSIZ];

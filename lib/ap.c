@@ -24,7 +24,7 @@
 struct Shishi_ap
 {
   Shishi *handle;
-  Shishi_ticket *ticket;
+  Shishi_tkt *tkt;
   ASN1_TYPE authenticator;
   ASN1_TYPE apreq;
   ASN1_TYPE aprep;
@@ -97,20 +97,20 @@ shishi_ap (Shishi * handle, Shishi_ap ** ap)
 /**
  * shishi_ap_set_tktoptions:
  * @ap: structure that holds information about AP exchange
- * @ticket: ticket to set in AP.
+ * @tkt: ticket to set in AP.
  * @options: AP-REQ options to set in AP.
  *
- * Set the ticket (see shishi_ap_ticket_set()) and set the AP-REQ
+ * Set the ticket (see shishi_ap_tkt_set()) and set the AP-REQ
  * apoptions (see shishi_apreq_options_set()).
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ap_set_tktoptions (Shishi_ap * ap, Shishi_ticket * ticket, int options)
+shishi_ap_set_tktoptions (Shishi_ap * ap, Shishi_tkt * tkt, int options)
 {
   int rc;
 
-  shishi_ap_ticket_set (ap, ticket);
+  shishi_ap_tkt_set (ap, tkt);
 
   rc = shishi_apreq_options_set (ap->handle, shishi_ap_req (ap), options);
   if (rc != SHISHI_OK)
@@ -125,12 +125,12 @@ shishi_ap_set_tktoptions (Shishi_ap * ap, Shishi_ticket * ticket, int options)
 /**
  * shishi_ap_set_tktoptionsdata:
  * @ap: structure that holds information about AP exchange
- * @ticket: ticket to set in AP.
+ * @tkt: ticket to set in AP.
  * @options: AP-REQ options to set in AP.
  * @data: input array with data to checksum in Authenticator.
  * @len: length of input array with data to checksum in Authenticator.
  *
- * Set the ticket (see shishi_ap_ticket_set()) and set the AP-REQ
+ * Set the ticket (see shishi_ap_tkt_set()) and set the AP-REQ
  * apoptions (see shishi_apreq_options_set()) and set the
  * Authenticator checksum data.
  *
@@ -138,12 +138,12 @@ shishi_ap_set_tktoptions (Shishi_ap * ap, Shishi_ticket * ticket, int options)
  **/
 int
 shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
-			      Shishi_ticket * ticket,
+			      Shishi_tkt * tkt,
 			      int options, char *data, int len)
 {
   int rc;
 
-  shishi_ap_ticket_set (ap, ticket);
+  shishi_ap_tkt_set (ap, tkt);
 
   rc = shishi_apreq_options_set (ap->handle, shishi_ap_req (ap), options);
   if (rc != SHISHI_OK)
@@ -160,7 +160,7 @@ shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
 /**
  * shishi_ap_set_tktoptionsasn1:
  * @ap: structure that holds information about AP exchange
- * @ticket: ticket to set in AP.
+ * @tkt: ticket to set in AP.
  * @options: AP-REQ options to set in AP.
  * @node: input ASN.1 structure to store as authenticator checksum data.
  *
@@ -172,7 +172,7 @@ shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
  **/
 int
 shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
-				   Shishi_ticket * ticket,
+				   Shishi_tkt * tkt,
 				   int options,
 				   ASN1_TYPE node,
 				   char *field,
@@ -194,7 +194,7 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
   memmove (buf, buf + 2, buflen - 2);
   buflen -= 2;
 
-  res = shishi_ap_set_tktoptionsdata (ap, ticket, options, buf, buflen);
+  res = shishi_ap_set_tktoptionsdata (ap, tkt, options, buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -208,7 +208,7 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
  * shishi_ap_tktoptions:
  * @handle: shishi handle as allocated by shishi_init().
  * @ap: pointer to new structure that holds information about AP exchange
- * @ticket: ticket to set in newly created AP.
+ * @tkt: ticket to set in newly created AP.
  * @options: AP-REQ options to set in newly created AP.
  *
  * Create a new AP exchange using shishi_ap(), and set the ticket and
@@ -218,7 +218,7 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
  **/
 int
 shishi_ap_tktoptions (Shishi * handle,
-		      Shishi_ap ** ap, Shishi_ticket * ticket, int options)
+		      Shishi_ap ** ap, Shishi_tkt * tkt, int options)
 {
   int rc;
 
@@ -226,7 +226,7 @@ shishi_ap_tktoptions (Shishi * handle,
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_ap_set_tktoptions (*ap, ticket, options);
+  rc = shishi_ap_set_tktoptions (*ap, tkt, options);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -237,7 +237,7 @@ shishi_ap_tktoptions (Shishi * handle,
  * shishi_ap_tktoptionsdata:
  * @handle: shishi handle as allocated by shishi_init().
  * @ap: pointer to new structure that holds information about AP exchange
- * @ticket: ticket to set in newly created AP.
+ * @tkt: ticket to set in newly created AP.
  * @options: AP-REQ options to set in newly created AP.
  * @data: input array with data to checksum in Authenticator.
  * @len: length of input array with data to checksum in Authenticator.
@@ -251,8 +251,7 @@ shishi_ap_tktoptions (Shishi * handle,
 int
 shishi_ap_tktoptionsdata (Shishi * handle,
 			  Shishi_ap ** ap,
-			  Shishi_ticket * ticket,
-			  int options, char *data, int len)
+			  Shishi_tkt * tkt, int options, char *data, int len)
 {
   int rc;
 
@@ -260,7 +259,7 @@ shishi_ap_tktoptionsdata (Shishi * handle,
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_ap_set_tktoptionsdata (*ap, ticket, options, data, len);
+  rc = shishi_ap_set_tktoptionsdata (*ap, tkt, options, data, len);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -271,7 +270,7 @@ shishi_ap_tktoptionsdata (Shishi * handle,
  * shishi_ap_tktoptionsasn1:
  * @handle: shishi handle as allocated by shishi_init().
  * @ap: pointer to new structure that holds information about AP exchange
- * @ticket: ticket to set in newly created AP.
+ * @tkt: ticket to set in newly created AP.
  * @options: AP-REQ options to set in newly created AP.
  * @node: input ASN.1 structure to store as authenticator checksum data.
  *
@@ -284,7 +283,7 @@ shishi_ap_tktoptionsdata (Shishi * handle,
 int
 shishi_ap_tktoptionsasn1usage (Shishi * handle,
 			       Shishi_ap ** ap,
-			       Shishi_ticket * ticket,
+			       Shishi_tkt * tkt,
 			       int options,
 			       ASN1_TYPE node,
 			       char *field,
@@ -297,7 +296,7 @@ shishi_ap_tktoptionsasn1usage (Shishi * handle,
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_ap_set_tktoptionsasn1usage (*ap, ticket, options,
+  rc = shishi_ap_set_tktoptionsasn1usage (*ap, tkt, options,
 					  node, field,
 					  authenticatorcksumkeyusage,
 					  authenticatorkeyusage);
@@ -308,29 +307,29 @@ shishi_ap_tktoptionsasn1usage (Shishi * handle,
 }
 
 /**
- * shishi_ap_ticket:
+ * shishi_ap_tkt:
  * @ap: structure that holds information about AP exchange
  *
  * Return value: Returns the ticket from the AP exchange, or NULL if
  *               not yet set or an error occured.
  **/
-Shishi_ticket *
-shishi_ap_ticket (Shishi_ap * ap)
+Shishi_tkt *
+shishi_ap_tkt (Shishi_ap * ap)
 {
-  return ap->ticket;
+  return ap->tkt;
 }
 
 /**
- * shishi_ap_ticket_set:
+ * shishi_ap_tkt_set:
  * @ap: structure that holds information about AP exchange
- * @ticket: ticket to store in AP.
+ * @tkt: ticket to store in AP.
  *
  * Set the Ticket in the AP exchange.
  **/
 void
-shishi_ap_ticket_set (Shishi_ap * ap, Shishi_ticket * ticket)
+shishi_ap_tkt_set (Shishi_ap * ap, Shishi_tkt * tkt)
 {
-  ap->ticket = ticket;
+  ap->tkt = tkt;
 }
 
 /**
@@ -494,7 +493,7 @@ shishi_ap_req_build (Shishi_ap * ap)
     printf ("Building AP-REQ...\n");
 
   res = shishi_apreq_set_ticket (ap->handle, ap->apreq,
-				 shishi_ticket_ticket (ap->ticket));
+				 shishi_tkt_ticket (ap->tkt));
   if (res != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Could not set ticket in AP-REQ: %s\n",
@@ -503,7 +502,7 @@ shishi_ap_req_build (Shishi_ap * ap)
     }
 
   res = shishi_authenticator_add_cksum (ap->handle, ap->authenticator,
-					shishi_ticket_key (ap->ticket),
+					shishi_tkt_key (ap->tkt),
 					ap->authenticatorcksumkeyusage,
 					ap->authenticatorcksumdata,
 					ap->authenticatorcksumdatalen);
@@ -522,7 +521,7 @@ shishi_ap_req_build (Shishi_ap * ap)
     shishi_authenticator_print (ap->handle, stdout, ap->authenticator);
 
   res = shishi_apreq_add_authenticator (ap->handle, ap->apreq,
-					shishi_ticket_key (ap->ticket),
+					shishi_tkt_key (ap->tkt),
 					ap->authenticatorkeyusage,
 					ap->authenticator);
   if (res != SHISHI_OK)
@@ -552,7 +551,7 @@ int
 shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
 {
   ASN1_TYPE ticket, authenticator;
-  Shishi_ticket *tkt;
+  Shishi_tkt *tkt;
   Shishi_key *tktkey;
   int rc;
 
@@ -565,9 +564,9 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
       return rc;
     }
 
-  tkt = shishi_ticket (ap->handle, ticket, NULL, NULL);
+  tkt = shishi_tkt2 (ap->handle, ticket, NULL, NULL);
 
-  rc = shishi_ticket_decrypt (tkt, key);
+  rc = shishi_tkt_decrypt (tkt, key);
   if (rc != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Error decrypting ticket: %s\n",
@@ -576,8 +575,7 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
     }
 
   rc = shishi_encticketpart_get_key (ap->handle,
-				     shishi_ticket_encticketpart (tkt),
-				     &tktkey);
+				     shishi_tkt_encticketpart (tkt), &tktkey);
   if (rc != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Could not get key from ticket: %s\n",
@@ -594,7 +592,7 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
       return rc;
     }
 
-  ap->ticket = tkt;
+  ap->tkt = tkt;
   ap->authenticator = authenticator;
 
   return SHISHI_OK;
@@ -723,7 +721,7 @@ shishi_ap_rep_build (Shishi_ap * ap)
 
   aprep = shishi_aprep (ap->handle);
   rc = shishi_aprep_enc_part_make (ap->handle, aprep, ap->authenticator,
-				   shishi_ticket_encticketpart (ap->ticket));
+				   shishi_tkt_encticketpart (ap->tkt));
   if (rc != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Error creating AP-REP: %s\n",
@@ -783,7 +781,7 @@ shishi_ap_rep_verify (Shishi_ap * ap)
     shishi_aprep_print (ap->handle, stdout, ap->aprep);
 
   res = shishi_aprep_decrypt (ap->handle, ap->aprep,
-			      shishi_ticket_key (ap->ticket),
+			      shishi_tkt_key (ap->tkt),
 			      SHISHI_KEYUSAGE_ENCAPREPPART,
 			      &ap->encapreppart);
   if (res != SHISHI_OK)

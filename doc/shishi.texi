@@ -1,5 +1,5 @@
 \input texinfo                  @c -*- Texinfo -*-
-@c Copyright (C) 2002 Simon Josefsson
+@c Copyright (C) 2002, 2003 Simon Josefsson
 @c
 @c This file is part of the shishi
 @c Permission is granted to copy, distribute and/or modify this document
@@ -975,6 +975,7 @@ library.
 * Ticket Functions::            Medium-level ticket manipulation functions.
 * AS Functions::                Medium-level initial authentication functions.
 * TGS Functions::               Medium-level authentication functions.
+* Ticket (ASN.1) Functions::    Low-level Ticket functions.
 * AS/TGS Functions::            Low-level KDC functions; AS and TGS.
 * Authenticator Functions::     Low-level authenticator functions.
 * Cryptographic Functions::     Low-level cryptographic functions.
@@ -1115,7 +1116,10 @@ performing a initial authentication (@pxref{AS Functions}) or
 subsequent authentication (@pxref{TGS Functions}) and storing the new
 ticket in the ticket set are also provided.
 
-@include shishi-api-ticketset.texi
+To manipulate each individual ticket, @xref{Ticket Functions}.  For
+low-level ASN.1 manipulation see @xref{Ticket (ASN.1) Functions}.
+
+@include shishi-api-tkts.texi
 
 
 @node AP-REQ and AP-REP Functions
@@ -1160,7 +1164,7 @@ EncAPRepPart	::= [APPLICATION 27] SEQUENCE {
 @node Ticket Functions
 @section Ticket Functions
 
-@include shishi-api-ticket.texi
+@include shishi-api-tkt.texi
 
 
 @node AS Functions
@@ -1322,6 +1326,11 @@ EncKDCRepPart	::= SEQUENCE {
 
 @include shishi-api-tgs.texi
 
+
+@node Ticket (ASN.1) Functions
+@section Ticket (ASN.1) Functions
+
+@include shishi-api-ticket.texi
 
 @node AS/TGS Functions
 @section AS/TGS Functions

@@ -1,5 +1,5 @@
 /* client.c	sample network client using shishi
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -24,7 +24,7 @@
 int
 client (Shishi * handle, struct arguments arg)
 {
-  Shishi_ticket *tkt;
+  Shishi_tkt *tkt;
   Shishi_ap *ap;
   Shishi_safe *safe;
   int res;
@@ -49,8 +49,7 @@ client (Shishi * handle, struct arguments arg)
       printf ("Service name: `%s'\n", arg.sname);
     }
 
-  tkt = shishi_ticketset_get_for_server
-    (shishi_ticketset_default (handle), arg.sname);
+  tkt = shishi_tkts_get_for_server (shishi_tkts_default (handle), arg.sname);
   if (tkt == NULL)
     {
       printf ("Cannot get ticket for server `%s'.\n", arg.sname);

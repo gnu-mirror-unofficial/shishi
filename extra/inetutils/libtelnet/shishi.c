@@ -1,4 +1,4 @@
-/* Copyright (C) 2002 Simon Josefsson
+/* Copyright (C) 2002, 2003 Simon Josefsson
 
    This file is not part of GNU Inetutils, but the same permissions apply.
 
@@ -165,7 +165,7 @@ krb5shishi_send (Authenticator *ap)
 {
   int ap_opts;
   char type_check[2];
-  Shishi_ticket *tkt;
+  Shishi_tkt *tkt;
   int rc;
   char *tmp;
   char apreq[4096];
@@ -173,8 +173,8 @@ krb5shishi_send (Authenticator *ap)
 
   tmp = malloc(strlen("host/") + strlen(RemoteHostName) + 1);
   sprintf(tmp, "host/%s", RemoteHostName);
-  tkt = shishi_ticketset_get_for_serveretype
-    (shishi_ticketset_default(shishi_handle), tmp, SHISHI_DES_CBC_MD5);
+  tkt = shishi_tkts_get_for_serveretype
+    (shishi_tkts_default(shishi_handle), tmp, SHISHI_DES_CBC_MD5);
   free(tmp);
   if (!tkt)
     {
@@ -183,7 +183,7 @@ krb5shishi_send (Authenticator *ap)
     }
 
   if (auth_debug_mode)
-    shishi_ticket_pretty_print (tkt, stdout);
+    shishi_tkt_pretty_print (tkt, stdout);
 
   if (!UserNameRequested)
     {
@@ -435,7 +435,7 @@ krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
 
   cnamerealmlen = sizeof (cnamerealm);
   rc = shishi_encticketpart_cnamerealm_get
-    (shishi_handle, shishi_ticket_encticketpart(shishi_ap_ticket(ap)),
+    (shishi_handle, shishi_tkt_encticketpart(shishi_ap_tkt(ap)),
      cnamerealm, &cnamerealmlen);
   if (rc != SHISHI_OK)
     {

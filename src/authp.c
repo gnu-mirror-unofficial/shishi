@@ -1,5 +1,5 @@
 /* ap.c	authentication header
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -72,12 +72,12 @@ ap (Shishi * handle, struct arguments arg)
     {
       char data[BUFSIZ];
       int datalen;
-      Shishi_ticket *ticket;
+      Shishi_tkt *tkt;
       int res;
 
-      ticket = shishi_ticketset_find_for_clientserver
-	(shishi_ticketset_default (handle), arg.cname, arg.sname);
-      if (ticket == NULL)
+      tkt = shishi_tkts_find_for_clientserver
+	(shishi_tkts_default (handle), arg.cname, arg.sname);
+      if (tkt == NULL)
 	{
 	  fprintf (stderr,
 		   _("Could not find ticket for `%s', use --server-name\n"),
@@ -86,7 +86,7 @@ ap (Shishi * handle, struct arguments arg)
 	}
 
       if (arg.verbose)
-	shishi_ticket_pretty_print (ticket, stdout);
+	shishi_tkt_pretty_print (tkt, stdout);
 
       if (arg.authenticatordata)
 	{
@@ -106,7 +106,7 @@ ap (Shishi * handle, struct arguments arg)
       else
 	datalen = 0;
 
-      res = shishi_ap_tktoptionsdata (handle, &ap, ticket, 0, data, datalen);
+      res = shishi_ap_tktoptionsdata (handle, &ap, tkt, 0, data, datalen);
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, _("Could not make AP-REQ: %s\n"),

@@ -490,7 +490,8 @@ shishi_apreq_set_ticket (Shishi * handle, ASN1_TYPE apreq, ASN1_TYPE ticket)
   if (res == ASN1_ELEMENT_NOT_FOUND)
     res = asn1_write_value (apreq, "AP-REQ.ticket.enc-part.kvno", NULL, 0);
   else
-    res = asn1_write_value (apreq, "AP-REQ.ticket.enc-part.kvno", buf, buflen);
+    res =
+      asn1_write_value (apreq, "AP-REQ.ticket.enc-part.kvno", buf, buflen);
   if (res != ASN1_SUCCESS)
     goto error;
 

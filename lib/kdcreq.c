@@ -347,9 +347,7 @@ shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
 }
 
 int
-shishi_kdcreq_nonce (Shishi * handle,
-		     ASN1_TYPE kdcreq,
-		     unsigned long *nonce)
+shishi_kdcreq_nonce (Shishi * handle, ASN1_TYPE kdcreq, unsigned long *nonce)
 {
   int res;
 
@@ -418,8 +416,7 @@ shishi_kdcreq_set_cname (Shishi * handle,
 
 int
 shishi_kdcreq_cname_get (Shishi * handle,
-			 ASN1_TYPE kdcreq,
-			 char *cname, size_t * cnamelen)
+			 ASN1_TYPE kdcreq, char *cname, size_t * cnamelen)
 {
   return shishi_principal_name_get (handle, kdcreq,
 				    "KDC-REQ.req-body.cname",
@@ -439,7 +436,7 @@ shishi_kdcreq_cnamerealm_get (Shishi * handle,
 
 int
 shishi_kdcreq_realm_get (Shishi * handle, ASN1_TYPE kdcreq,
-			  char *realm, int *realmlen)
+			 char *realm, int *realmlen)
 {
   return shishi_asn1_optional_field (handle, kdcreq, realm, realmlen,
 				     "KDC-REQ.req-body.realm");
@@ -484,8 +481,7 @@ shishi_kdcreq_set_realm (Shishi * handle, ASN1_TYPE kdcreq, const char *realm)
  **/
 int
 shishi_kdcreq_etype (Shishi * handle,
-		     ASN1_TYPE kdcreq,
-		     int *etype, int netype)
+		     ASN1_TYPE kdcreq, int *etype, int netype)
 {
   char buf[BUFSIZ];
   int res;
@@ -673,8 +669,7 @@ shishi_kdcreq_set_realmserver (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_kdcreq_clear_padata (Shishi * handle,
-			    ASN1_TYPE kdcreq)
+shishi_kdcreq_clear_padata (Shishi * handle, ASN1_TYPE kdcreq)
 {
   int res;
 

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002 Simon Josefsson.
+# Copyright (C) 2002, 2003 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -31,7 +31,7 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	authenticator.c \
 	kdc.c kdcreq.c kdcrep.c enckdcreppart.c as.c tgs.c \
 	ap.c apreq.c aprep.c encapreppart.c safe.c \
-	ticketset.c ticket.c encticketpart.c \
+	ticket.c encticketpart.c tkt.c tkts.c \
 	netio.c hostkeys.c key.c crypto.c pkcs5.h pkcs5.c \
 	rfc1510_asn1_tab.c asn1.c \
 	version.c password.c \
@@ -59,4 +59,4 @@ rfc1510_asn1_tab.c: $(srcdir)/rfc1510.asn1
 	../asn1/src/asn1Parser -o $@ -n shishi_asn1_tab $<
 
 indent:
-	indent $(SOURCES)
+	indent $(SOURCES) shishi.h.in

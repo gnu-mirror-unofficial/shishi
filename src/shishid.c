@@ -1,5 +1,5 @@
 /* shishid.c	Shishi Key Distribution Center daemon.
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -359,7 +359,7 @@ process (Shishi * handle,
   ticket = shishi_asn1_ticket (handle);
   puts ("o");
 
-  //shishi_asn1ticket_print (handle, stdout, ticket);
+  //shishi_ticket_print (handle, stdout, ticket);
 
   encticketpart = shishi_asn1_encticketpart (handle);
   puts ("o");

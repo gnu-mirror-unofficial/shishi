@@ -137,13 +137,13 @@ shishi (void)
 
 static int
 _shishi_init_read (Shishi * handle,
-		   const char *ticketsetfile,
+		   const char *tktsfile,
 		   const char *systemcfgfile, const char *usercfgfile)
 {
   int rc = SHISHI_OK;
 
-  if (!ticketsetfile)
-    ticketsetfile = shishi_ticketset_default_file (handle);
+  if (!tktsfile)
+    tktsfile = shishi_tkts_default_file (handle);
 
   if (!systemcfgfile)
     systemcfgfile = shishi_cfg_default_systemfile (handle);
@@ -151,15 +151,15 @@ _shishi_init_read (Shishi * handle,
   if (!usercfgfile)
     usercfgfile = shishi_cfg_default_userfile (handle);
 
-  if (!handle->ticketset)
-    rc = shishi_ticketset (handle, &handle->ticketset);
+  if (!handle->tkts)
+    rc = shishi_tkts (handle, &handle->tkts);
   if (rc != SHISHI_OK)
     return rc;
 
-  if (*ticketsetfile)
-    rc = shishi_ticketset_from_file (handle->ticketset, ticketsetfile);
+  if (*tktsfile)
+    rc = shishi_tkts_from_file (handle->tkts, tktsfile);
   if (rc == SHISHI_FOPEN_ERROR)
-    fprintf (stderr, WARNSTR "%s: %s\n", ticketsetfile, strerror (errno));
+    fprintf (stderr, WARNSTR "%s: %s\n", tktsfile, strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
@@ -205,7 +205,7 @@ shishi_init (Shishi ** handle)
   if (!handle || !(*handle = shishi ()))
     return SHISHI_HANDLE_ERROR;
 
-  return _shishi_init_read (*handle, shishi_ticketset_default_file (*handle),
+  return _shishi_init_read (*handle, shishi_tkts_default_file (*handle),
 			    shishi_cfg_default_systemfile (*handle),
 			    shishi_cfg_default_userfile (*handle));
 }
@@ -213,7 +213,7 @@ shishi_init (Shishi ** handle)
 /**
  * shishi_init_with_paths:
  * @handle: pointer to handle to be created.
- * @ticketsetfile: Filename of ticket file, or NULL.
+ * @tktsfile: Filename of ticket file, or NULL.
  * @systemcfgfile: Filename of system configuration, or NULL.
  * @usercfgfile: Filename of user configuration, or NULL.
  *
@@ -226,16 +226,15 @@ shishi_init (Shishi ** handle)
  **/
 int
 shishi_init_with_paths (Shishi ** handle,
-			const char *ticketsetfile,
+			const char *tktsfile,
 			const char *systemcfgfile, const char *usercfgfile)
 {
   if (!handle || !(*handle = shishi ()))
     return SHISHI_HANDLE_ERROR;
 
-  shishi_ticketset_default_file_set (*handle, ticketsetfile);
+  shishi_tkts_default_file_set (*handle, tktsfile);
 
-  return _shishi_init_read (*handle, ticketsetfile,
-			    systemcfgfile, usercfgfile);
+  return _shishi_init_read (*handle, tktsfile, systemcfgfile, usercfgfile);
 }
 
 /**

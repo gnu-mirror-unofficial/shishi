@@ -208,15 +208,14 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
  **/
 int
 shishi_kdc_copy_crealm (Shishi * handle,
-			ASN1_TYPE kdcrep,
-			ASN1_TYPE encticketpart)
+			ASN1_TYPE kdcrep, ASN1_TYPE encticketpart)
 {
   unsigned char buf[BUFSIZ];
   int buflen;
   int res;
 
-  buf[0] = '\0'; /* XXX if crealm is empty, buflen == 0 which
-		    causes libtasn1 to strlen(buf)... */
+  buf[0] = '\0';		/* XXX if crealm is empty, buflen == 0 which
+				   causes libtasn1 to strlen(buf)... */
   buflen = BUFSIZ;
   res = shishi_asn1_field (handle, encticketpart, buf, &buflen,
 			   "EncTicketPart.crealm");
@@ -294,8 +293,7 @@ shishi_as_check_crealm (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
  **/
 int
 shishi_kdc_copy_cname (Shishi * handle,
-		       ASN1_TYPE kdcrep,
-		       ASN1_TYPE encticketpart)
+		       ASN1_TYPE kdcrep, ASN1_TYPE encticketpart)
 {
   unsigned char buf[BUFSIZ];
   char format[BUFSIZ];
@@ -436,8 +434,7 @@ shishi_as_check_cname (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
  **/
 int
 shishi_kdc_copy_nonce (Shishi * handle,
-		       ASN1_TYPE kdcreq,
-		       ASN1_TYPE enckdcreppart)
+		       ASN1_TYPE kdcreq, ASN1_TYPE enckdcreppart)
 {
   int res;
   unsigned long nonce;
@@ -627,7 +624,7 @@ shishi_as_process (Shishi * handle,
     return res;
 
   if (VERBOSENOICE (handle))
-    shishi_key_print(handle, stderr, key);
+    shishi_key_print (handle, stderr, key);
 
   res = shishi_kdc_process (handle, asreq, asrep, key,
 			    SHISHI_KEYUSAGE_ENCASREPPART, enckdcreppart);
