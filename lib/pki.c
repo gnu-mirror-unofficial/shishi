@@ -40,8 +40,8 @@ shishi_x509cert_default_file_guess (Shishi * handle)
 /**
  * shishi_x509cert_default_file_set:
  * @handle: Shishi library handle create by shishi_init().
- * @tktsfile: string with new default x509 client certificate file name, or
- *   NULL to reset to default.
+ * @x509certfile: string with new default x509 client certificate file name,
+ *   or NULL to reset to default.
  *
  * Set the default X.509 client certificate filename used in the
  * library.  The certificate is used during TLS connections with the
