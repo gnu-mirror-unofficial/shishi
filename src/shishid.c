@@ -42,7 +42,7 @@ gnutls_anon_server_credentials anoncred;
 
 /* Listen to all listenspec's, removing entries that fail. */
 static void
-kdc_listen ()
+kdc_listen (void)
 {
   struct listenspec *ls, **last;
   int maxfd = 0;

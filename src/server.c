@@ -49,21 +49,13 @@ kdc_accept (struct listenspec *ls)
 /* Destroy listenspec element and return pointer to element before the
    removed element, or NULL if the first element was removed (or the
    destroyed list element wasn't in the list). */
-struct listenspec *
+static struct listenspec *
 kdc_close (struct listenspec *ls)
 {
   struct listenspec *tmp;
   int rc;
 
   syslog (LOG_INFO, "Closing %s socket %d", ls->str, ls->sockfd);
-
-  if (ls->sockfd)
-    {
-      rc = close (ls->sockfd);
-      if (rc != 0)
-	syslog (LOG_ERR, "Close failed to %s on socket %d (%d): %s",
-		ls->str, ls->sockfd, rc, strerror (rc));
-    }
 
 #ifdef USE_STARTTLS
   if (ls->usetls)
@@ -80,6 +72,14 @@ kdc_close (struct listenspec *ls)
     }
 #endif
 
+  if (ls->sockfd)
+    {
+      rc = close (ls->sockfd);
+      if (rc != 0)
+	syslog (LOG_ERR, "Close failed to %s on socket %d (%d): %s",
+		ls->str, ls->sockfd, rc, strerror (rc));
+    }
+
   if (ls->str)
     free (ls->str);
 
@@ -94,7 +94,7 @@ kdc_close (struct listenspec *ls)
 }
 
 /* Send string to peer, via UDP/TCP/TLS, reporting any errors. */
-void
+static void
 kdc_send1 (struct listenspec *ls)
 {
   ssize_t sent_bytes, read_bytes;
