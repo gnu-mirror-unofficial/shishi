@@ -18,8 +18,23 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-EXTRA_DIST = kerberos5.asn1
+INCLUDES = -I$(top_srcdir)/gl -I$(top_srcdir)/asn1 \
+	@LIBGCRYPT_CFLAGS@ @CRYPTO_CFLAGS@ @LIBIDN_CFLAGS@ @LIBGNUTLS_CFLAGS@
 
+DEFS = -DLOCALEDIR=\"$(localedir)\" \
+	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
+	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
+	-DHOSTKEYSFILE=\"$(sysconfdir)/shishi.keys\" \
+	-DDMALLOC_FUNC_CHECK \
+	@DEFS@
+
+shishi_int = shishi-int.h
+BUILT_SOURCES = shishi-int.h kerberos5.c
+DISTCLEANFILES = shishi-int.h
+MAINTAINERCLEANFILES = kerberos5.c
+nodist_include_HEADERS = shishi-int.h
+
+include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = internal.h gettext.h \
 	init.c cfg.c realm.c principal.c error.c krberror.c \
@@ -30,64 +45,39 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	safe.c priv.c \
 	ticket.c encticketpart.c tkt.c tkts.c \
 	netio.c key.c keys.c hostkeys.c crypto.c crypto.h \
-	asn1.c kerberos5.c \
+	asn1.c kerberos5.asn1 \
 	version.c password.c \
 	utils.c resolv.c
-libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
-	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@
-libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-
 if NULL
 libshishi_la_SOURCES += crypto-null.c
 endif
-
 if MD
 libshishi_la_SOURCES += crypto-md.c
 endif
-
 if DES
 libshishi_la_SOURCES += crypto-des.c
 endif
-
 if DES3
 libshishi_la_SOURCES += crypto-3des.c
 endif
-
 if AES
 libshishi_la_SOURCES += crypto-aes.c
 endif
-
 if ARCFOUR
 libshishi_la_SOURCES += crypto-rc4.c
 endif
-
 if NETTLE
 libshishi_la_SOURCES += nettle.c
 endif
-
 if LIBGCRYPT
 libshishi_la_SOURCES += libgcrypt.c
 endif
-
-INCLUDES = -I$(top_srcdir)/gl -I$(top_srcdir)/asn1 \
-	@LIBGCRYPT_CFLAGS@ @CRYPTO_CFLAGS@ @LIBIDN_CFLAGS@ @LIBGNUTLS_CFLAGS@
-
-include_HEADERS = shishi.h
-
-DEFS = -DLOCALEDIR=\"$(localedir)\" \
-	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
-	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
-	-DHOSTKEYSFILE=\"$(sysconfdir)/shishi.keys\" \
-	-DDMALLOC_FUNC_CHECK \
-	@DEFS@
-
-shishi_int = shishi-int.h
-BUILT_SOURCES = $(shishi_int)
-DISTCLEANFILES = $(shishi_int)
-nodist_include_HEADERS = $(shishi_int)
+libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
+	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@
+libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 kerberos5.c: $(srcdir)/kerberos5.asn1
 	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $^
 
 indent:
-	indent $(SOURCES) $(CRYPTO_INCLUDES) shishi.h.in
+	indent $(SOURCES) crypto-*.c nettle.c libgcrypt.c shishi.h.in
