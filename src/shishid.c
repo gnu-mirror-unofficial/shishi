@@ -173,7 +173,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case 'v':
-      arguments->verbose = 1;
+      arguments->verbose++;
       break;
 
     case 'c':
@@ -1152,6 +1152,18 @@ init (struct arguments *arg)
       syslog (LOG_ERR, "Aborting due to library initialization failure\n");
       return 1;
     }
+
+  if (arg->verbose > 1)
+    shishi_cfg (handle, "verbose");
+
+  if (arg->verbose > 2)
+    shishi_cfg (handle, "verbose-noice");
+
+  if (arg->verbose > 3)
+    shishi_cfg (handle, "verbose-asn1");
+
+  if (arg->verbose > 4)
+    shishi_cfg (handle, "verbose-crypto");
 
   rc = setup (handle, arg);
 
