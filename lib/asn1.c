@@ -60,8 +60,10 @@ shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
 				const char *field, size_t * n)
 {
   int rc;
+  int tmp;
 
-  rc = asn1_number_of_elements (node, field, (int *) n);
+  rc = asn1_number_of_elements (node, field, &tmp);
+  *n = tmp;
   if (rc != ASN1_SUCCESS)
     {
       if (rc == ASN1_ELEMENT_NOT_FOUND)
