@@ -220,24 +220,24 @@ main (int argc, char *argv[])
   /* create ticket */
   n = base64_from (buffer, tkt1ticketb64);
   if (n == -1)
-    die ("base64_from() failed\n");
+    fail ("base64_from() failed\n");
   n1 = shishi_der2asn1_ticket (handle, buffer, n);
   if (!n1)
-    die ("shishi_der2asn1_ticket() failed\n");
+    fail ("shishi_der2asn1_ticket() failed\n");
 
   n = base64_from (buffer, tkt1enckdcreppartb64);
   if (n == -1)
-    die ("base64_from() failed\n");
+    fail ("base64_from() failed\n");
   n2 = shishi_der2asn1_encasreppart (handle, buffer, n);
   if (!n2)
-    die ("shishi_der2asn1_encasreppart() failed\n");
+    fail ("shishi_der2asn1_encasreppart() failed\n");
 
   n = base64_from (buffer, tkt1kdcrepb64);
   if (n == -1)
-    die ("base64_from() failed\n");
+    fail ("base64_from() failed\n");
   n3 = shishi_der2asn1_asrep (handle, buffer, n);
   if (!n3)
-    die ("shishi_der2asn1_asrep() failed\n");
+    fail ("shishi_der2asn1_asrep() failed\n");
 
   /* shishi_tkts_new() */
   res = shishi_tkts_new (tktset, n1, n2, n3);
@@ -309,24 +309,24 @@ main (int argc, char *argv[])
   /* create ticket */
   n = base64_from (buffer, tkt2ticketb64);
   if (n == -1)
-    die ("base64_from() failed\n");
+    fail ("base64_from() failed\n");
   n1 = shishi_der2asn1_ticket (handle, buffer, n);
   if (!n1)
-    die ("shishi_der2asn1_ticket() failed\n");
+    fail ("shishi_der2asn1_ticket() failed\n");
 
   n = base64_from (buffer, tkt2enckdcreppartb64);
   if (n == -1)
-    die ("base64_from() failed\n");
+    fail ("base64_from() failed\n");
   n2 = shishi_der2asn1_enctgsreppart (handle, buffer, n);
   if (!n2)
-    die ("shishi_der2asn1_enctgsreppart() failed\n");
+    fail ("shishi_der2asn1_enctgsreppart() failed\n");
 
   n = base64_from (buffer, tkt2kdcrepb64);
   if (n == -1)
-    die ("base64_from() failed\n");
+    fail ("base64_from() failed\n");
   n3 = shishi_der2asn1_tgsrep (handle, buffer, n);
   if (!n3)
-    die ("shishi_der2asn1_kdcrep() failed\n");
+    fail ("shishi_der2asn1_kdcrep() failed\n");
 
   /* shishi_tkts_new() */
   res = shishi_tkts_new (tktset, n1, n2, n3);
@@ -531,6 +531,7 @@ main (int argc, char *argv[])
     fail ("shishi_tkts_nth() failed\n");
 
   /* DER encode and compare tkt1 ticket */
+  n = sizeof (buffer);
   res = shishi_a2d (handle, shishi_tkt_ticket (t1), buffer, &n);
   if (res == SHISHI_OK)
     success ("shishi_a2d() OK\n");
@@ -545,6 +546,7 @@ main (int argc, char *argv[])
     fail ("Ticket read failed\n");
 
   /* DER encode and compare tkt1 enckdcreppart */
+  n = sizeof (buffer);
   res = shishi_a2d (handle, shishi_tkt_enckdcreppart (t1), buffer, &n);
   if (res == SHISHI_OK)
     success ("shishi_a2d() OK\n");
@@ -560,6 +562,7 @@ main (int argc, char *argv[])
     fail ("EncKDCRepPart read failed\n");
 
   /* DER encode and compare tkt1 kdcrep */
+  n = sizeof (buffer);
   res = shishi_a2d (handle, shishi_tkt_kdcrep (t1), buffer, &n);
   if (res == SHISHI_OK)
     success ("shishi_a2d() OK\n");
@@ -574,6 +577,7 @@ main (int argc, char *argv[])
     fail ("KDC-REP read failed\n");
 
   /* DER encode and compare tkt2 ticket */
+  n = sizeof (buffer);
   res = shishi_a2d (handle, shishi_tkt_ticket (t2), buffer, &n);
   if (res == SHISHI_OK)
     success ("shishi_a2d() OK\n");
@@ -588,6 +592,7 @@ main (int argc, char *argv[])
     fail ("Ticket 2 read failed\n");
 
   /* DER encode and compare tkt2 enckdcreppart */
+  n = sizeof (buffer);
   res = shishi_a2d (handle, shishi_tkt_enckdcreppart (t2), buffer, &n);
   if (res == SHISHI_OK)
     success ("shishi_a2d() OK\n");
@@ -603,6 +608,7 @@ main (int argc, char *argv[])
     fail ("EncKDCRepPart 2 read failed\n");
 
   /* DER encode and compare tkt2 kdcrep */
+  n = sizeof (buffer);
   res = shishi_a2d (handle, shishi_tkt_kdcrep (t2), buffer, &n);
   if (res == SHISHI_OK)
     success ("shishi_a2d() OK\n");
