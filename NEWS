@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.9 (unreleased)
+* Version 0.0.9 (released 2003-12-12)
 
 ** A Kerberos 5 information storage system added, called Shisa.
 Shisa is used by Kerberos 5 servers (KDCs) to find information about
