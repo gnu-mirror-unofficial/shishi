@@ -875,10 +875,10 @@ extern int shishi_authenticator_ctime_set (Shishi * handle,
 					   const char *t);
 extern int shishi_authenticator_cusec_get (Shishi * handle,
 					   Shishi_asn1 authenticator,
-					   int *cusec);
+					   uint32_t *cusec);
 extern int shishi_authenticator_cusec_set (Shishi * handle,
 					   Shishi_asn1 authenticator,
-					   int cusec);
+					   uint32_t cusec);
 extern int shishi_authenticator_seqnumber_get (Shishi * handle,
 					       Shishi_asn1 authenticator,
 					       uint32_t * seqnumber);
@@ -1288,9 +1288,9 @@ extern int shishi_krberror_ctime_set (Shishi * handle,
 extern int shishi_krberror_remove_ctime (Shishi * handle,
 					 Shishi_asn1 krberror);
 extern int shishi_krberror_cusec (Shishi * handle, Shishi_asn1 krberror,
-				  int *cusec);
+				  uint32_t *cusec);
 extern int shishi_krberror_cusec_set (Shishi * handle, Shishi_asn1 krberror,
-				      int cusec);
+				      uint32_t cusec);
 extern int shishi_krberror_remove_cusec (Shishi * handle,
 					 Shishi_asn1 krberror);
 extern int shishi_krberror_stime (Shishi * handle, Shishi_asn1 krberror,
@@ -1298,9 +1298,9 @@ extern int shishi_krberror_stime (Shishi * handle, Shishi_asn1 krberror,
 extern int shishi_krberror_stime_set (Shishi * handle, Shishi_asn1 krberror,
 				      const char *t);
 extern int shishi_krberror_susec (Shishi * handle, Shishi_asn1 krberror,
-				  int *susec);
+				  uint32_t *susec);
 extern int shishi_krberror_susec_set (Shishi * handle, Shishi_asn1 krberror,
-				      int susec);
+				      uint32_t susec);
 extern int shishi_krberror_errorcode_set (Shishi * handle,
 					  Shishi_asn1 krberror,
 					  int errorcode);
@@ -1816,10 +1816,10 @@ extern int shishi_encapreppart_ctime_set (Shishi * handle,
 					  const char *t);
 extern int shishi_encapreppart_cusec_get (Shishi * handle,
 					  Shishi_asn1 encapreppart,
-					  int *cusec);
+					  uint32_t *cusec);
 extern int shishi_encapreppart_cusec_set (Shishi * handle,
 					  Shishi_asn1 encapreppart,
-					  int cusec);
+					  uint32_t cusec);
 extern int shishi_encapreppart_print (Shishi * handle, FILE * fh,
 				      Shishi_asn1 encapreppart);
 extern int shishi_encapreppart_save (Shishi * handle, FILE * fh,
