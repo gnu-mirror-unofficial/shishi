@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-12-12 01:59+0100\n"
+"POT-Creation-Date: 2003-12-16 07:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -325,90 +325,7 @@ msgstr ""
 msgid "Ticket flags:\t"
 msgstr ""
 
-#: src/shishi.c:269
-#, c-format
-msgid "Cannot create key: %s"
-msgstr ""
-
-#: src/shishi.c:288
-msgid "Error in string2key"
-msgstr ""
-
-#: src/shishi.c:298
-#, c-format
-msgid "Could not create key: %s\n"
-msgstr ""
-
-#: src/shishi.c:327
-#, c-format
-msgid "Could not find key: %s\n"
-msgstr ""
-
-#: src/shishi.c:353 src/shishi.c:366 src/shishi.c:422 src/shishi.c:433
-#, c-format
-msgid "`%s': %s\n"
-msgstr ""
-
-#: src/shishi.c:378
-#, c-format
-msgid "Error reading `%s'\n"
-msgstr ""
-
-#: src/shishi.c:382
-#, c-format
-msgid "Read %d bytes...\n"
-msgstr ""
-
-#: src/shishi.c:392
-msgid "Error ciphering\n"
-msgstr ""
-
-#: src/shishi.c:411
-#, c-format
-msgid "Short write (%d < %d)...\n"
-msgstr ""
-
-#: src/shishi.c:414
-#, c-format
-msgid "Wrote %d bytes...\n"
-msgstr ""
-
-#: src/shishi.c:528 src/shishi.c:535
-msgid "Cannot both encrypt and decrypt."
-msgstr ""
-
-#: src/shishi.c:545 src/shishi.c:552 src/shishi.c:559 src/shishi.c:570
-#: src/shishi.c:577 src/shishi.c:587 src/shishi.c:594 src/shishi.c:611
-#: src/shishi.c:621
-#, c-format
-msgid "Option `%s' only valid with CRYPTO."
-msgstr ""
-
-#: src/shishi.c:604
-msgid "Password specified twice."
-msgstr ""
-
-#: src/shishi.c:672
-#, c-format
-msgid "invalid --starttime date `%s'"
-msgstr ""
-
-#: src/shishi.c:703
-#, c-format
-msgid "Too many arguments: `%s'"
-msgstr ""
-
-#: src/shishi.c:1026
-#, c-format
-msgid "invalid --endtime date `%s'"
-msgstr ""
-
-#: src/shishi.c:1033
-#, c-format
-msgid "invalid --renew-till date `%s'"
-msgstr ""
-
-#: src/shishi.c:1055
+#: src/shishi.c:186
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""
