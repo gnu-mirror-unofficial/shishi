@@ -1,5 +1,5 @@
-/* client.c	sample network client using shishi
- * Copyright (C) 2002, 2003  Simon Josefsson
+/* client.c	sample kerberos authenticated client
+ * Copyright (C) 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -19,89 +19,20 @@
  *
  */
 
-#include "data.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <shishi.h>
+
+#define SERVICE "sample"
 
 int
-client (Shishi * handle, struct arguments arg)
+doit (Shishi * h, int verbose)
 {
-  Shishi_tkt *tkt;
-  Shishi_key *key;
-  Shishi_ap *ap;
-  Shishi_safe *safe;
-  int res;
+  char line[BUFSIZ];
 
-  if (arg.cname == NULL)
-    arg.cname = shishi_principal_default (handle);
-
-  if (arg.realm == NULL)
-    arg.realm = shishi_realm_default (handle);
-
-  if (arg.sname == NULL)
-    {
-      char *p;
-      asprintf (&p, "host/www");
-      arg.sname = p;
-      if (arg.sname == NULL)
-	error (1, 0, "Could not allocate server name.");
-    }
-
-  if (arg.verbose)
-    {
-      printf ("Client name: `%s'\n", arg.cname);
-      printf ("Realm: `%s'\n", arg.realm);
-      printf ("Service name: `%s'\n", arg.sname);
-    }
-
-  tkt = shishi_tkts_get_for_server (shishi_tkts_default (handle), arg.sname);
-  if (tkt == NULL)
-    {
-      printf ("Cannot get ticket for server `%s'.\n", arg.sname);
-      return !SHISHI_OK;
-    }
-
-  key = shishi_tkt_key (tkt);
-  if (key == NULL)
-    {
-      printf ("Cannot get key for ticket for server `%s'.\n", arg.sname);
-      return !SHISHI_OK;
-    }
-
-  res = shishi_ap_tktoptions (handle, &ap, tkt, arg.apoptions);
-  if (res != SHISHI_OK)
-    {
-      printf ("Could not create AP: %s\n", shishi_strerror (res));
-      return res;
-    }
-
-  res = shishi_ap_req_build (ap);
-  if (res != SHISHI_OK)
-    {
-      printf ("Could not build AP-REQ: %s\n", shishi_strerror (res));
-      return res;
-    }
-
-  if (arg.verbose)
-    shishi_authenticator_print (handle, stdout, shishi_ap_authenticator (ap));
-
-  shishi_apreq_print (handle, stdout, shishi_ap_req (ap));
-
-  if (shishi_apreq_mutual_required_p (handle, shishi_ap_req (ap)))
-    {
-      ASN1_TYPE aprep;
-
-      printf ("Waiting for AP-REP from server...\n");
-
-      res = shishi_aprep_parse (handle, stdin, &aprep);
-
-      res = shishi_ap_rep_verify_asn1 (ap, aprep);
-      if (res == SHISHI_APREP_VERIFY_FAILED)
-	printf ("AP-REP verification failed...\n");
-      else if (res == SHISHI_OK)
-	printf ("AP-REP verification OK...\n");
-      else
-	printf ("AP-REP verification error: %s\n", shishi_strerror (res));
-    }
-
+#if 0
+  /* XXX Unfinished application-level security */
   res = shishi_safe (handle, &safe);
   if (res != SHISHI_OK)
     {
@@ -131,6 +62,155 @@ client (Shishi * handle, struct arguments arg)
       printf ("Could not print SAFE: %s\n", shishi_strerror (res));
       return res;
     }
+#endif
 
-  return SHISHI_OK;
+  printf("Application exchange start.  Press ^D to finish.\n");
+
+  while (fgets (line, sizeof(line), stdin))
+    {
+      printf("read: %s", line);
+    }
+
+  if (ferror (stdin))
+    {
+      printf ("error reading stdin\n");
+      return 1;
+    }
+
+  return 0;
+}
+
+int
+auth (Shishi * h, int verbose, const char *cname, const char *sname)
+{
+  Shishi_ap *ap;
+  Shishi_tkt *tkt;
+  Shishi_tkts_hint hint;
+  Shishi_key *key;
+  Shishi_safe *safe;
+  int rc;
+
+  printf ("Client: %s\n", cname);
+  printf ("Server: %s\n", sname);
+
+  /* Get a ticket for the server. */
+
+  memset (&hint, 0, sizeof(hint));
+  hint.client = (char*) cname;
+  hint.server = (char*) sname;
+  tkt = shishi_tkts_get (shishi_tkts_default (h), &hint);
+  if (!tkt)
+    {
+      printf ("cannot find ticket for \"%s\"\n", sname);
+      return 1;
+    }
+
+  if (verbose)
+    shishi_tkt_pretty_print (tkt, stderr);
+
+  /* Create Authentication context */
+
+  rc = shishi_ap_tktoptions (h, &ap, tkt, SHISHI_APOPTIONS_MUTUAL_REQUIRED);
+  if (rc != SHISHI_OK)
+    {
+      printf ("cannot create authentication context\n");
+      return 1;
+    }
+
+  /* Build Authentication request */
+
+  rc = shishi_ap_req_build (ap);
+  if (rc != SHISHI_OK)
+    {
+      printf ("cannot build authentication request: %s\n",
+	      shishi_strerror (rc));
+      return 1;
+    }
+
+  if (verbose)
+    shishi_authenticator_print (h, stderr, shishi_ap_authenticator (ap));
+
+  /* Authentication ourself to server */
+
+  shishi_apreq_print (h, stdout, shishi_ap_req (ap));
+  /* Note: to get the binary blob to send, use:
+   *
+   * char *out; int outlen;
+   * ...
+   * rc = shishi_ap_req_der_new (ap, &out, &outlen);
+   * ...
+   * write(fd, out, outlen);
+   */
+
+  /* For mutual authentication, wait for server reply. */
+
+  if (shishi_apreq_mutual_required_p (h, shishi_ap_req (ap)))
+    {
+      Shishi_asn1 aprep;
+
+      printf ("Waiting for server to authenticate itself...\n");
+
+      rc = shishi_aprep_parse (h, stdin, &aprep);
+      if (rc != SHISHI_OK)
+	{
+	  printf ("Cannot parse AP-REP from server: %s\n",
+		  shishi_strerror (rc));
+	  return 1;
+	}
+
+      rc = shishi_ap_rep_verify_asn1 (ap, aprep);
+      if (rc == SHISHI_OK)
+	printf ("AP-REP verification OK...\n");
+      else
+	{
+	  if (rc == SHISHI_APREP_VERIFY_FAILED)
+	    printf ("AP-REP verification failed...\n");
+	  else
+	    printf ("AP-REP verification error: %s\n", shishi_strerror (rc));
+	  return 1;
+	}
+
+      /* The server is authenticated. */
+      printf ("Server authenticated.\n");
+    }
+
+  /* We are now authenticated. */
+  printf ("User authenticated.\n");
+
+  return doit (h, verbose);
+}
+
+int
+main (int argc, char *argv[])
+{
+  Shishi *h;
+  char *sname;
+  int rc;
+
+  printf ("sample-client (shishi " SHISHI_VERSION ")\n");
+
+  if (!shishi_check_version (SHISHI_VERSION))
+    {
+      printf ("shishi_check_version() failed:\n"
+	      "Header file incompatible with shared library.\n");
+      return 1;
+    }
+
+  rc = shishi_init (&h);
+  if (rc != SHISHI_OK)
+    {
+      printf ("error initializing shishi: %s\n", shishi_strerror (rc));
+      return 1;
+    }
+
+  if (argc > 1)
+    sname = argv[1];
+  else
+    sname = shishi_server_for_local_service (h, SERVICE);
+
+  auth (h, 1, shishi_principal_default (h), sname);
+
+  shishi_done (h);
+
+  return 0;
 }

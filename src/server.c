@@ -1,5 +1,5 @@
-/* server.c	sample network server using shishi
- * Copyright (C) 2002, 2003  Simon Josefsson
+/* server.c	sample kerberos authenticated server
+ * Copyright (C) 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -19,174 +19,19 @@
  *
  */
 
-#include "data.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <shishi.h>
+
+#define SERVICE "sample"
 
 int
-server (Shishi * handle, struct arguments arg)
+doit (Shishi * h, int verbose)
 {
-  Shishi_ap *ap;
-  ASN1_TYPE apreq, asn1safe;
-  Shishi_safe *safe;
-  Shishi_key *key, *tktkey;
-  char salt[BUFSIZ];
-  int res;
-  char cnamerealm[BUFSIZ];
-  int cnamerealmlen;
-  char userdata[BUFSIZ];
-  int userdatalen;
+  char line[BUFSIZ];
 
-  if (arg.cname == NULL)
-    arg.cname = shishi_principal_default (handle);
-
-  if (arg.realm == NULL)
-    arg.realm = shishi_realm_default (handle);
-
-  if (arg.sname == NULL)
-    {
-      char *p;
-      asprintf (&p, "host/www");
-      arg.sname = p;
-      if (arg.sname == NULL)
-	error (1, 0, "Could not allocate server name.");
-    }
-
-  if (arg.verbose)
-    {
-      printf ("Client name: `%s'\n", arg.cname);
-      printf ("Realm: `%s'\n", arg.realm);
-      printf ("Ticket granter: `%s'\n", arg.tgtname);
-      printf ("Service name: `%s'\n", arg.sname);
-    }
-
-  if (arg.password)
-    {
-      if (strlen (arg.realm) + strlen (arg.sname) > sizeof (salt))
-	{
-	  fprintf (stderr, _("Too long realm/principal...\n"));
-	  return 1;
-	}
-      strcpy (salt, arg.realm);
-      strcat (salt, arg.sname);
-
-      res = shishi_key_from_string (handle,
-				    arg.algorithm,
-				    arg.password,
-				    strlen (arg.password),
-				    salt, strlen (salt), arg.parameter, &key);
-      if (res != SHISHI_OK)
-	{
-	  fprintf (stderr, _("Error in string2key: %s\n"),
-		   shishi_strerror_details (handle));
-	  return 1;
-	}
-
-    }
-  else if (arg.keyvalue)
-    {
-      res =
-	shishi_key_from_base64 (handle, arg.algorithm, arg.keyvalue, &key);
-      if (res != SHISHI_OK)
-	{
-	  fprintf (stderr, _("Could not create key: %s\n"),
-		   shishi_strerror (res));
-	  return res;
-	}
-    }
-  else
-    {
-      key = shishi_hostkeys_for_server (handle, arg.sname);
-      if (key == NULL)
-	{
-	  fprintf (stderr, "Could not find key: %s\n",
-		   shishi_strerror_details (handle));
-	  return 1;
-	}
-    }
-
-  if (shishi_key_type (key) == SHISHI_NULL && !arg.silent)
-    fprintf (stderr,
-	     "warning: using %s is silly, consider using --algorithm.\n",
-	     shishi_cipher_name (arg.algorithm));
-
-  if (arg.verbose)
-    shishi_key_print (handle, stdout, key);
-
-  printf ("Waiting for AP-REQ from client...\n");
-
-  res = shishi_apreq_parse (handle, stdin, &apreq);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not read AP-REQ:\n%s\n%s\n"),
-	       shishi_strerror (res), shishi_strerror_details (handle));
-      return 1;
-    }
-
-  res = shishi_ap (handle, &ap);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not create AP: %s\n"), shishi_strerror (res));
-      return 1;
-    }
-
-  shishi_ap_req_set (ap, apreq);
-
-  res = shishi_ap_req_process (ap, key);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, "Could not process AP-REQ: %s\n",
-	       shishi_strerror (res));
-      return 1;
-    }
-
-
-  if (arg.verbose)
-    shishi_authenticator_print (handle, stdout, shishi_ap_authenticator (ap));
-
-  cnamerealmlen = sizeof (cnamerealm);
-  res = shishi_authenticator_cnamerealm_get (handle,
-					     shishi_ap_authenticator (ap),
-					     cnamerealm, &cnamerealmlen);
-  cnamerealm[cnamerealmlen] = '\0';
-  printf ("Client name (from authenticator): %s\n", cnamerealm);
-
-  cnamerealmlen = sizeof (cnamerealm);
-  res = shishi_encticketpart_cnamerealm_get
-    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (ap)),
-     cnamerealm, &cnamerealmlen);
-  cnamerealm[cnamerealmlen] = '\0';
-  printf ("Client name (from encticketpart): %s\n", cnamerealm);
-
-  cnamerealmlen = sizeof (cnamerealm);
-  res = shishi_ticket_snamerealm_get
-    (handle, shishi_tkt_ticket (shishi_ap_tkt (ap)),
-     cnamerealm, &cnamerealmlen);
-  cnamerealm[cnamerealmlen] = '\0';
-  printf ("Server name (from ticket): %s\n", cnamerealm);
-
-  printf ("User authenticated.\n");
-
-  if (shishi_apreq_mutual_required_p (handle, apreq))
-    {
-      ASN1_TYPE aprep;
-
-      printf ("Mutual authentication required.\n");
-
-      res = shishi_ap_rep_asn1 (ap, &aprep);
-      if (res != SHISHI_OK)
-	{
-	  fprintf (stderr, "Error creating AP-REP: %s\n",
-		   shishi_strerror (res));
-	  return 1;
-	}
-
-      if (arg.verbose)
-	shishi_encapreppart_print (handle, stdout,
-				   shishi_ap_encapreppart (ap));
-      shishi_aprep_print (handle, stdout, aprep);
-    }
-
-  printf ("Waiting for SAFE from client...\n");
-
+#if 0
   res = shishi_encticketpart_get_key
     (handle, shishi_tkt_encticketpart (shishi_ap_tkt (ap)), &tktkey);
   if (res != SHISHI_OK)
@@ -234,6 +79,163 @@ server (Shishi * handle, struct arguments arg)
     }
   userdata[userdatalen] = '\0';
   printf("user data: `%s'\n", userdata);
+#endif
 
-  return SHISHI_OK;
+  printf("Application exchange start.  Press ^D to finish.\n");
+
+  while (fgets (line, sizeof(line), stdin))
+    {
+      printf("read: %s", line);
+    }
+
+  if (ferror (stdin))
+    {
+      printf ("error reading stdin\n");
+      return 1;
+    }
+
+  return 0;
+}
+
+int
+auth (Shishi * h, int verbose, const char *cname, const char *sname)
+{
+  Shishi_key *key;
+  Shishi_ap *ap;
+  Shishi_asn1 apreq;
+  char buf[BUFSIZ];
+  int buflen;
+  int rc;
+
+  printf ("Client: %s\n", cname);
+  printf ("Server: %s\n", sname);
+
+  /* Get key for the server. */
+
+  key = shishi_hostkeys_for_server (h, sname);
+  if (!key)
+    {
+      printf ("could not find key: %s\n", shishi_strerror_details (h));
+      return 1;
+    }
+
+  if (verbose)
+    shishi_key_print (h, stderr, key);
+
+  /* Read Authentication request from client */
+
+  rc = shishi_apreq_parse (h, stdin, &apreq);
+  if (rc != SHISHI_OK)
+    {
+      printf ("could not read AP-REQ: %s\n", shishi_strerror (rc));
+      return 1;
+    }
+
+  /* Create Authentication context */
+
+  rc = shishi_ap (h, &ap);
+  if (rc != SHISHI_OK)
+    {
+      printf ("Could not create AP: %s\n", shishi_strerror (rc));
+      return 1;
+    }
+
+  /* Store request in context */
+
+  shishi_ap_req_set (ap, apreq);
+
+  /* Process authentication request */
+
+  rc = shishi_ap_req_process (ap, key);
+  if (rc != SHISHI_OK)
+    {
+      printf ("Could not process AP-REQ: %s\n", shishi_strerror (rc));
+      return 1;
+    }
+
+  if (verbose)
+    shishi_authenticator_print (h, stderr, shishi_ap_authenticator (ap));
+
+  buflen = sizeof (buf);
+  rc = shishi_authenticator_cnamerealm_get (h, shishi_ap_authenticator (ap),
+					    buf, &buflen);
+  buf[buflen] = '\0';
+  printf ("Client name (from authenticator): %s\n", buf);
+
+  buflen = sizeof (buf);
+  rc = shishi_encticketpart_cnamerealm_get
+    (h, shishi_tkt_encticketpart (shishi_ap_tkt (ap)),
+     buf, &buflen);
+  buf[buflen] = '\0';
+  printf ("Client name (from encticketpart): %s\n", buf);
+
+  buflen = sizeof (buf);
+  rc = shishi_ticket_snamerealm_get (h, shishi_tkt_ticket (shishi_ap_tkt (ap)),
+				     buf, &buflen);
+  buf[buflen] = '\0';
+  printf ("Server name (from ticket): %s\n", buf);
+
+  /* User is authenticated. */
+
+  printf ("User authenticated.\n");
+
+  /* Authenticate ourself to client, if request */
+
+  if (shishi_apreq_mutual_required_p (h, apreq))
+    {
+      Shishi_asn1 aprep;
+
+      printf ("Mutual authentication required.\n");
+
+      rc = shishi_ap_rep_asn1 (ap, &aprep);
+      if (rc != SHISHI_OK)
+	{
+	  printf ("Error creating AP-REP: %s\n", shishi_strerror (rc));
+	  return 1;
+	}
+
+      if (verbose)
+	shishi_encapreppart_print (h, stderr, shishi_ap_encapreppart (ap));
+
+      shishi_aprep_print (h, stdout, aprep);
+
+      /* We are authenticated to client */
+    }
+
+  return doit (h, verbose);
+}
+
+int
+main (int argc, char *argv[])
+{
+  Shishi *h;
+  char *sname;
+  int rc;
+
+  printf ("sample-server (shishi " SHISHI_VERSION ")\n");
+
+  if (!shishi_check_version (SHISHI_VERSION))
+    {
+      printf ("shishi_check_version() failed:\n"
+	      "Header file incompatible with shared library.\n");
+      return 1;
+    }
+
+  rc = shishi_init_server (&h);
+  if (rc != SHISHI_OK)
+    {
+      printf ("error initializing shishi: %s\n", shishi_strerror (rc));
+      return 1;
+    }
+
+  if (argc > 1)
+    sname = argv[1];
+  else
+    sname = shishi_server_for_local_service (h, SERVICE);
+
+  auth (h, 1, shishi_principal_default (h), sname);
+
+  shishi_done (h);
+
+  return 0;
 }
