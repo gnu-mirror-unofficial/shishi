@@ -633,8 +633,8 @@ shishi_kdcreq_clear_padata (Shishi * handle, Shishi_asn1 kdcreq)
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ to get PA-DATA from.
  * @padatatype: type of PA-DATA, see Shishi_padata_type.
- * @data: output array with newly allocated PA-DATA value.
- * @datalen: size of output array with PA-DATA value.
+ * @out: output array with newly allocated PA-DATA value.
+ * @outlen: size of output array with PA-DATA value.
  *
  * Get pre authentication data (PA-DATA) from KDC-REQ.  Pre
  * authentication data is used to pass various information to KDC,

@@ -727,7 +727,6 @@ shishi_krberror_server_set (Shishi * handle,
  * shishi_krberror_ctime_get:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: Krberror to set client name field in.
- * @client: zero-terminated string with principal name on RFC 1964 form.
  * @ctime: output array, must have room for at least
  *   GENERALIZEDTIME_TIME_LEN characters.
  *
@@ -868,7 +867,6 @@ shishi_krberror_remove_cusec (Shishi * handle, Shishi_asn1 krberror)
  * shishi_krberror_stime_get:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: Krberror to set client name field in.
- * @client: zero-terminated string with principal name on RFC 1964 form.
  * @stime: output array, must have room for at least
  *   GENERALIZEDTIME_TIME_LEN characters.
  *
