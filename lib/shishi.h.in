@@ -484,7 +484,7 @@ typedef enum
   SHISHI_KDC_ERR_KDC_NAME_MISMATCH = 76,
   SHISHI_LAST_ERROR_CODE = 76
 }
-Shishi_error_code;
+Shishi_krberror;
 
 typedef enum
 {
