@@ -532,6 +532,9 @@ shishi_ap_req_build (Shishi_ap * ap)
       return res;
     }
 
+  if (VERBOSEASN1 (ap->handle))
+    shishi_apreq_print (ap->handle, stdout, ap->apreq);
+
   return SHISHI_OK;
 }
 
@@ -728,6 +731,9 @@ shishi_ap_rep_build (Shishi_ap * ap)
       return rc;
     }
 
+  if (VERBOSEASN1 (ap->handle))
+    shishi_aprep_print (ap->handle, stdout, aprep);
+
   shishi_ap_rep_set (ap, aprep);
 
   return SHISHI_OK;
@@ -770,12 +776,18 @@ shishi_ap_rep_verify (Shishi_ap * ap)
 {
   int res;
 
+  if (VERBOSE (ap->handle))
+    printf ("Decrypting AP-REP...\n");
+
   res = shishi_aprep_decrypt (ap->handle, ap->aprep,
 			      shishi_ticket_key (ap->ticket),
 			      SHISHI_KEYUSAGE_ENCAPREPPART,
 			      &ap->encapreppart);
   if (res != SHISHI_OK)
     return res;
+
+  if (VERBOSEASN1 (ap->handle))
+    shishi_encapreppart_print (ap->handle, stdout, ap->encapreppart);
 
   res = shishi_aprep_verify (ap->handle, ap->authenticator, ap->encapreppart);
   if (res != SHISHI_OK)
