@@ -185,7 +185,7 @@ int
 shishi_hmac_sha1 (Shishi * handle,
 		  const char *key, size_t keylen,
 		  const char *in, size_t inlen,
-		  char *outhash[16])
+		  char *outhash[20])
 {
   gcry_md_hd_t mdh;
   size_t hlen = gcry_md_get_algo_dlen (GCRY_MD_SHA1);
