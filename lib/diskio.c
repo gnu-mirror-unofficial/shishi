@@ -239,15 +239,9 @@ _shishi_ticket_input (Shishi * handle,
 	}
     }
 
-  *ticket = shishi_der2asn1_ticket (handle->asn1, der,
-				    derlen, errorDescription);
+  *ticket = shishi_d2a_ticket (handle, der, derlen);
   if (*ticket == ASN1_TYPE_EMPTY)
-    {
-      shishi_error_printf (handle, "Could not DER decode Ticket: %s",
-			   errorDescription);
-
-      return !SHISHI_OK;
-    }
+    return SHISHI_ASN1_ERROR;
 
   return SHISHI_OK;
 }
@@ -301,12 +295,11 @@ _shishi_enckdcreppart_input (Shishi * handle,
 	}
     }
 
-  *enckdcreppart = shishi_der2asn1_encasreppart (handle->asn1, der,
-						 derlen, errorDescription);
+  *enckdcreppart = shishi_d2a_encasreppart (handle, der, derlen);
   if (*enckdcreppart == ASN1_TYPE_EMPTY)
     {
       shishi_error_printf (handle, "Could not DER decode Encasreppart: %s",
-			   errorDescription);
+			   shishi_strerror_details(handle));
 
       *enckdcreppart = shishi_der2asn1_enctgsreppart (handle->asn1, der,
 						      derlen,
@@ -317,14 +310,12 @@ _shishi_enckdcreppart_input (Shishi * handle,
 			       "Could not DER decode Enctgsreppart: %s",
 			       errorDescription);
 
-	  *enckdcreppart = shishi_der2asn1_enckdcreppart (handle->asn1, der,
-							  derlen,
-							  errorDescription);
+	  *enckdcreppart = shishi_d2a_enckdcreppart (handle, der, derlen);
 	  if (*enckdcreppart == ASN1_TYPE_EMPTY)
 	    {
 	      shishi_error_printf (handle,
 				   "Could not DER decode Enckdcreppart: %s",
-				   errorDescription);
+				   shishi_strerror_details(handle));
 	      return !SHISHI_OK;
 	    }
 	}

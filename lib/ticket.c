@@ -200,6 +200,14 @@ shishi_ticket (Shishi * handle,
   return tkt;
 }
 
+void
+shishi_ticket_done (Shishi_ticket *ticket)
+{
+  if (ticket->key)
+    shishi_key_done(&ticket->key);
+  free(ticket);
+}
+
 int
 shishi_ticket_flags (Shishi_ticket * ticket, int *flags)
 {

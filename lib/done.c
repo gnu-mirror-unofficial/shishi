@@ -52,6 +52,8 @@ shishi_done (Shishi * handle)
     free (handle->ticketsetdefaultfile);
   if (handle->hostkeysdefaultfile)
     free (handle->hostkeysdefaultfile);
+  if (handle->clientkdcetypes)
+    free (handle->clientkdcetypes);
 
   if (handle->asn1)
     asn1_delete_structure (&handle->asn1);

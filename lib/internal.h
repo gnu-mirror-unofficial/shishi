@@ -196,7 +196,15 @@ _shishi_a2d_field (Shishi *handle,
 		   char *der, int *len);
 
 ASN1_TYPE
+shishi_d2a_enckdcreppart (Shishi * handle, char *der, int der_len);
+ASN1_TYPE
 shishi_d2a_enctgsreppart (Shishi * handle, char *der, int der_len);
+ASN1_TYPE
+shishi_d2a_kdcrep (Shishi * handle, char *der, int der_len);
+
+ASN1_TYPE
+shishi_d2a_ticket (Shishi *handle, char *der, int der_len);
+
 int
 _shishi_asn1_done (Shishi * handle, ASN1_TYPE node);
 
@@ -214,9 +222,6 @@ int
 shishi_principal_name_get (Shishi * handle,
 			   ASN1_TYPE namenode,
 			   char *namefield, char *out, int *outlen);
-extern ASN1_TYPE
-shishi_der2asn1_ticket (ASN1_TYPE definitions,
-			char *der, int der_len, char *errorDescription);
 
 int
 shishi_format_principal_name (Shishi * handle,

@@ -167,8 +167,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
   if (VERBOSEASN1 (handle))
     printf ("received %d bytes\n", der_len);
 
-  *kdcrep = shishi_der2asn1_as_rep (handle->asn1, der,
-				    der_len, errorDescription);
+  *kdcrep = shishi_d2a_asrep (handle, der, der_len);
   if (*kdcrep == ASN1_TYPE_EMPTY)
     {
       *kdcrep = shishi_der2asn1_tgs_rep (handle->asn1, der,

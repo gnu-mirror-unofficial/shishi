@@ -161,6 +161,9 @@ int
 shishi_ticketset_remove (Shishi_ticketset * ticketset,
 			 int ticketno)
 {
+  if (!ticketset)
+    return SHISHI_INVALID_TICKETSET;
+
   if (ticketno >= ticketset->ntickets)
     return SHISHI_OK;
 
@@ -180,7 +183,11 @@ shishi_ticketset_remove (Shishi_ticketset * ticketset,
 	return SHISHI_MALLOC_ERROR;
     }
   else
-    ticketset->tickets == NULL;
+    {
+      if (ticketset->tickets)
+	free(ticketset->tickets);
+      ticketset->tickets == NULL;
+    }
 
   return SHISHI_OK;
 }
@@ -195,9 +202,15 @@ shishi_ticketset_remove (Shishi_ticketset * ticketset,
 int
 shishi_ticketset_add (Shishi_ticketset * ticketset, Shishi_ticket * ticket)
 {
-  ticketset->tickets = realloc (ticketset->tickets,
-				sizeof (*ticketset->tickets) *
-				++ticketset->ntickets);
+  if (!ticket)
+    return SHISHI_INVALID_TICKET;
+
+  if (ticketset->ntickets++ == 0)
+    ticketset->tickets = malloc (sizeof (*ticketset->tickets));
+  else
+    ticketset->tickets = realloc (ticketset->tickets,
+				  sizeof (*ticketset->tickets) *
+				  ticketset->ntickets);
   if (ticketset->tickets == NULL)
     return SHISHI_MALLOC_ERROR;
 
@@ -485,7 +498,7 @@ shishi_ticketset_print_for_service (Shishi_ticketset * ticketset,
 
       printf ("\n");
       res = shishi_ticket_pretty_print (shishi_ticketset_get (ticketset, i),
-					stdout);
+					fh);
       if (res != SHISHI_OK)
 	goto done;
 
@@ -529,10 +542,11 @@ shishi_ticketset_print (Shishi_ticketset * ticketset, FILE * fh)
 }
 
 Shishi_ticket *
-shishi_ticketset_find_ticket_for_clientserveretype (Shishi_ticketset * ticketset,
-						    const char *client,
-						    const char *server,
-						    int etype)
+shishi_ticketset_find_for_clientserveretypevalid (Shishi_ticketset * ticketset,
+						  const char *client,
+						  const char *server,
+						  int etype,
+						  int valid)
 {
   int i;
 
@@ -545,8 +559,9 @@ shishi_ticketset_find_ticket_for_clientserveretype (Shishi_ticketset * ticketset
       if (!shishi_ticket_server_p (ticketset->tickets[i], server))
 	continue;
 
-      if (!shishi_ticket_valid_now_p (ticketset->tickets[i]))
-	continue;
+      if (valid)
+	if (!shishi_ticket_valid_now_p (ticketset->tickets[i]))
+	  continue;
 
       if (etype != -1 &&
 	  !shishi_ticket_keytype_p (ticketset->tickets[i], etype))
@@ -559,36 +574,54 @@ shishi_ticketset_find_ticket_for_clientserveretype (Shishi_ticketset * ticketset
 }
 
 Shishi_ticket *
-shishi_ticketset_find_ticket_for_clientserver (Shishi_ticketset * ticketset,
-					       const char *client,
-					       const char *server)
+shishi_ticketset_find_for_clientserver (Shishi_ticketset * ticketset,
+					const char *client,
+					const char *server)
 {
-  return shishi_ticketset_find_ticket_for_clientserveretype
-    (ticketset, shishi_principal_default (ticketset->handle), server, -1);
+  return shishi_ticketset_find_for_clientserveretypevalid
+    (ticketset, shishi_principal_default (ticketset->handle), server, -1, 1);
 }
 
 Shishi_ticket *
-shishi_ticketset_find_ticket_for_serveretype (Shishi_ticketset * ticketset,
-					      const char *server,
-					      int etype)
+shishi_ticketset_find_for_clientserver_all (Shishi_ticketset * ticketset,
+					    const char *client,
+					    const char *server)
 {
-  return shishi_ticketset_find_ticket_for_clientserveretype
-    (ticketset, shishi_principal_default (ticketset->handle), server, etype);
+  return shishi_ticketset_find_for_clientserveretypevalid
+    (ticketset, shishi_principal_default (ticketset->handle), server, -1, 0);
 }
 
 Shishi_ticket *
-shishi_ticketset_find_ticket_for_server (Shishi_ticketset * ticketset,
-					 const char *server)
+shishi_ticketset_find_for_serveretype (Shishi_ticketset * ticketset,
+				       const char *server,
+				       int etype)
 {
-  return shishi_ticketset_find_ticket_for_clientserver
+  return shishi_ticketset_find_for_clientserveretypevalid
+    (ticketset, shishi_principal_default (ticketset->handle),
+     server, etype, 1);
+}
+
+Shishi_ticket *
+shishi_ticketset_find_for_server (Shishi_ticketset * ticketset,
+				  const char *server)
+{
+  return shishi_ticketset_find_for_clientserver
     (ticketset, shishi_principal_default (ticketset->handle), server);
 }
 
 Shishi_ticket *
-shishi_ticketset_get_ticket_for_clientserveretype (Shishi_ticketset * ticketset,
-						   const char *client,
-						   const char *server,
-						   int etype)
+shishi_ticketset_find_for_server_all (Shishi_ticketset * ticketset,
+				      const char *server)
+{
+  return shishi_ticketset_find_for_clientserver_all
+    (ticketset, shishi_principal_default (ticketset->handle), server);
+}
+
+Shishi_ticket *
+shishi_ticketset_get_for_clientserveretype (Shishi_ticketset * ticketset,
+					    const char *client,
+					    const char *server,
+					    int etype)
 {
   Shishi_tgs *tgs;
   Shishi_ticket *tgt;
@@ -596,15 +629,16 @@ shishi_ticketset_get_ticket_for_clientserveretype (Shishi_ticketset * ticketset,
   char *tgtname;
   int rc;
 
-  tkt = shishi_ticketset_find_ticket_for_clientserveretype (ticketset,
-							    client, server,
-							    etype);
+  tkt = shishi_ticketset_find_for_clientserveretypevalid (ticketset,
+							  client, server,
+							  etype, 1);
   if (tkt)
     return tkt;
 
-  asprintf(&tgtname, "krbtgt/%s", shishi_realm_default (ticketset->handle));
+  shishi_asprintf(&tgtname, "krbtgt/%s",
+		  shishi_realm_default (ticketset->handle));
 
-  tgt = shishi_ticketset_find_ticket_for_clientserver (ticketset,
+  tgt = shishi_ticketset_find_for_clientserver (ticketset,
 						       client, tgtname);
   if (tgt == NULL)
     {
@@ -684,28 +718,28 @@ shishi_ticketset_get_ticket_for_clientserveretype (Shishi_ticketset * ticketset,
 }
 
 Shishi_ticket *
-shishi_ticketset_get_ticket_for_clientserver (Shishi_ticketset * ticketset,
-					      const char *client,
-					      const char *server)
+shishi_ticketset_get_for_clientserver (Shishi_ticketset * ticketset,
+				       const char *client,
+				       const char *server)
 {
-  return shishi_ticketset_get_ticket_for_clientserveretype
+  return shishi_ticketset_get_for_clientserveretype
     (ticketset, shishi_principal_default (ticketset->handle), server, -1);
 }
 
 Shishi_ticket *
-shishi_ticketset_get_ticket_for_server (Shishi_ticketset * ticketset,
-					const char *server)
+shishi_ticketset_get_for_server (Shishi_ticketset * ticketset,
+				 const char *server)
 {
-  return shishi_ticketset_get_ticket_for_clientserver
+  return shishi_ticketset_get_for_clientserver
     (ticketset, shishi_principal_default (ticketset->handle), server);
 }
 
 Shishi_ticket *
-shishi_ticketset_get_ticket_for_serveretype (Shishi_ticketset * ticketset,
-					     const char *server,
-					     int etype)
+shishi_ticketset_get_for_serveretype (Shishi_ticketset * ticketset,
+				      const char *server,
+				      int etype)
 {
-  return shishi_ticketset_get_ticket_for_clientserveretype
+  return shishi_ticketset_get_for_clientserveretype
     (ticketset, shishi_principal_default (ticketset->handle), server, etype);
 }
 
