@@ -393,7 +393,7 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
   Shishi_key *sessionkey, *userkey;
   int etype, i;
   char buf[BUFSIZ];
-  int buflen;
+  size_t buflen;
   int err;
   char *username, *servername, *realm;
 
