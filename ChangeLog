@@ -1,3 +1,118 @@
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.21.
+
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getdate.y, gl/mktime.c, gl/m4/strdup.m4, doc/getdate.texi:
+	Update.
+
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS: Add.  Reorder.
+
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/Makefile.am: Fix srcdir != objdir, tiny patch from Mike
+	Castle <dalgoda@ix.netcom.com>.
+
+2004-12-16  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/coding.c, asn1/decoding.c, asn1/element.c, asn1/errors.c,
+	asn1/int.h, asn1/libtasn1.h, asn1/parser_aux.c, asn1/structure.c:
+	Update.
+
+2004-12-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-aes.c, lib/cfg.c: Use constant.
+
+2004-12-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-3des.c: Fix mem leak.  Don't hard code constant.
+
+2004-12-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.h: Add.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* tests/ticketset.c: Use new b64 API.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Fix.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h, gl/Makefile.am, gl/b64.c, gl/b64.h: Remove.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c: Cleanups.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/xasprintf.c, gl/xvasprintf.c,
+	gl/xvasprintf.h, gl/m4/gnulib.m4, lib/internal.h: Add.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/aprep.c, lib/apreq.c, lib/authenticator.c, lib/cfg.c,
+	lib/diskio.c, lib/encapreppart.c, lib/error.c, lib/kdcrep.c,
+	lib/kdcreq.c, lib/krberror.c, lib/priv.c, lib/safe.c,
+	lib/shishi.h.in, lib/tkts.c: Rename SHISHI_FCLOSE_ERROR to
+	SHISHI_IO_ERROR, and alter semantics slightly.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c: Use new b64 API.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: For old b64 API.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/b64.c, gl/b64.h: Add.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c: Use new base64 API.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* tests/key.c, tests/Makefile.am: Add.
+
+2004-12-02  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/base64.c, gl/base64.h,
+	gl/m4/base64.m4, gl/m4/gnulib.m4, gl/m4/restrict.m4: Add base64
+	gnulib module.
+
+2004-11-29  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getopt_.h, gl/m4/getopt.m4: Update.
+
+2004-11-22  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po: Fix, from Jakub Bogusz <qboosh@pld-linux.org>.
+
 2004-11-21  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po, po/sv.po: Generated.
