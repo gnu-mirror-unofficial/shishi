@@ -718,17 +718,40 @@ $
 @end cartouche
 @end example
 
+Since the @samp{--server-name} parameter takes a long to type, it is
+possible to type the server name directly, after the client name.  The
+following example demonstrate a AS-REQ followed by a TGS-REQ for a
+specific server (assuming you did not have any tickets from the
+start).
+
+@example
+@cartouche
+$ src/shishi simon@@latte.josefsson.org imap/latte.josefsson.org
+Enter password for `simon@@latte.josefsson.org':
+simon@@latte.josefsson.org:
+Acquired:       Wed Aug 27 17:21:06 2003
+Expires:        Wed Aug 27 17:37:46 2003
+Server:         imap/latte.josefsson.org key aes256-cts-hmac-sha1-96 (18)
+Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
+Ticket flags:   FORWARDED PROXIABLE (12)
+$
+@end cartouche
+@end example
+
 Below follows a list of all parameters.
+
+If no command is given, Shishi try to make sure you have a ticket
+granting ticket for the default realm, and then display it.
 
 Mandatory or optional arguments to long options are also mandatory or optional
 for any corresponding short options.
 
 @example
-Usage: shishi [OPTION...] [NAME] [OPTION...]
-  or:  shishi [OPTION...] --list [--server-name=NAME]
-  or:  shishi [OPTION...] --destroy [--server-name=NAME]
-  or:  shishi [OPTION...] --crypto [CRYPTO-OPTION...]
-  or:  shishi [OPTION...]
+Usage: lt-shishi [OPTION...] [CLIENT [SERVER]] [OPTION...]
+  or:  lt-shishi [OPTION...] --list [CLIENT [SERVER]]
+  or:  lt-shishi [OPTION...] --destroy [CLIENT [SERVER]]
+  or:  lt-shishi [OPTION...] --string-to-key
+  or:  lt-shishi [OPTION...]
 
       --client-name=NAME     Client name. Default is login username. Only for
                              AS.
@@ -749,11 +772,9 @@ Usage: shishi [OPTION...] [NAME] [OPTION...]
       --key-value=KEY        Cipher key to decrypt response (discouraged).
   -l, --list                 List tickets in local cache, subject to
                              --server-name limiting.
-      --password=PASSWORD    Password to decrypt response (discouraged).  Only
-                             for AS.
       --realm=REALM          Realm of server. Default is DNS domain of local
-                             host. For AS, this also indicates realm of client.
-                             
+                             host. For AS, this also indicates realm of
+                             client.
       --renew-till=STRING    Specify renewable life of ticket.  Implies
                              --renewable.  Accepts same time syntax as
                              --endtime.  If --renewable is specified, the
@@ -774,38 +795,27 @@ Usage: shishi [OPTION...] [NAME] [OPTION...]
                              request. Only for TGS. Defaults to
                              "krbtgt/REALM@@REALM" where REALM is server realm
                              (see --realm).
- 
+
  Options for low-level cryptography (CRYPTO-OPTIONS):
-      --algorithm=ALGORITHM  Cipher algorithm, expressed either as the etype
-                             integer or the registered name.
       --client-name=NAME     Username. Default is login name.
-      --decrypt              Decrypt data.
-      --encrypt              Encrypt data.
-      --key-usage=KEYUSAGE   Encrypt or decrypt using specified key usage.
-                             Default is 0, which means no key derivation are
-                             performed.
       --key-value=KEY        Base64 encoded key value.
       --key-version=INTEGER  Version number of key.
       --parameter=STRING     String-to-key parameter to use when --password is
                              specified. This data is specific for each
                              encryption algorithm and rarely needed.
-      --password=PASSWORD    Password used to generate key.  --client-name and
-                             --realm also modify the computed key value.
+      --password=PASSWORD    Password used to generate key (discouraged).
       --random               Generate key from random data.
-      --read-data-file=[TYPE,]FILE
-                             Read data from FILE in TYPE, BASE64, HEX or BINARY
-                             (default).
-      --read-key-file=FILE   Read cipher key from FILE
       --realm=REALM          Realm of principal. Defaults to DNS domain of
                              local host.
-      --salt=SALT            Salt to use when --password is specified. Defaults
-                             to using theusername (--client-name) and realm
-                             (--realm).
-      --write-data-file=[TYPE,]FILE
-                             Write data to FILE in TYPE, BASE64, HEX or BINARY
-                             (default).
+      --salt=SALT            Salt to use for --string-to-key. Defaults to
+                             concatenation of realm and (unwrapped) client
+                             name.
+      --string-to-key[=[PASSWORD]]
+                             Convert password into Kerberos key.  Note that
+                             --client-name, --realm, and --salt influence the
+                             generated key.
       --write-key-file=FILE  Append cipher key to FILE
- 
+
  Other options:
       --configuration-file=FILE   Read user configuration from file.  Default
                              is ~/.shishi/config.
@@ -821,9 +831,13 @@ Usage: shishi [OPTION...] [NAME] [OPTION...]
                              them back to ticket file.
   -v, --verbose              Produce verbose output.
       --verbose-library      Produce verbose output in the library.
-  NAME                       Set client name and realm from NAME.  The
-                             --client-name and --realm can be used to override
-                             part of NAME.
+  CLIENT                     Set client name and realm from NAME.  The
+                             --client-name and --realm parameters can be used
+                             to override part of NAME.
+  SERVER                     Set server name and realm from NAME.  The
+                             --server-name and --server-realm parameters can be
+                             used to override part of SERVER.
+
   -?, --help                 Give this help list
       --usage                Give a short usage message
   -V, --version              Print program version
@@ -835,13 +849,14 @@ Usage: shishi [OPTION...] [NAME] [OPTION...]
 @node Administration Manual
 @chapter Administration Manual
 
-The Shishi KDC currently only answer AS-REQs.  This section describe
-how you get the server up and running to answer queries from clients.
+This section describe how you get the KDC server up and running to
+answer queries from clients.
 
 First you must create a user database.  Currently this is rather
-simplistic, use the @samp{shishi --string-to-key} command to generate
-keys, and store them in the @file{shishid.keys} file.  The file path
-is @file{/usr/local/etc/shishid.keys} by default, although you can use
+simplistic, and the database only contains cryptographic keys.  Use
+the @samp{shishi --string-to-key} command to generate keys, and store
+them in the @file{shishid.keys} file.  The file path is
+@file{/usr/local/etc/shishid.keys} by default, although you can use
 @samp{shishid -k} to specify another location.
 
 Create a random key for the Kerberos Ticket Granting Service for your
@@ -912,16 +927,18 @@ $ shishid
 @end example
 
 Then you can use @samp{shishi} as usual to acquire tickets
-(@pxref{User Manual}).
+(@pxref{User Manual}).  The following example demonstrate a AS-REQ for
+@samp{krbtgt/latte.josefsson.org} followed by a TGS-REQ for
+@samp{imap/latte.josefsson.org}.
 
 @example
 @cartouche
-$ shishi simon@@latte.josefsson.org
+$ shishi simon@@latte.josefsson.org imap/latte.josefsson.org
 Enter password for `simon@@latte.josefsson.org':
 simon@@latte.josefsson.org:
-Acquired:       Tue Aug 26 07:22:35 2003
-Expires:        Tue Aug 26 07:39:15 2003
-Server:         krbtgt/latte.josefsson.org key aes256-cts-hmac-sha1-96 (18)
+Acquired:       Wed Aug 27 17:16:37 2003
+Expires:        Wed Aug 27 17:33:17 2003
+Server:         imap/latte.josefsson.org key aes256-cts-hmac-sha1-96 (18)
 Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
 Ticket flags:   FORWARDED PROXIABLE (12)
 $

@@ -4,8 +4,9 @@ See the end for copying conditions.
 
 * Version 0.0.4 (unreleased)
 
-** Simplistic key distribution center (KDC) ready, currently only AS-REQs.
-See the Administration Manual on how to get it up and running.
+** Simplistic key distribution center (KDC) is working.
+See the Administration Manual for a walk through on how to get it up
+and running.
 
 * Version 0.0.3 (released 2003-08-22)
 
