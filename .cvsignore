@@ -25,6 +25,7 @@ missing
 mkinstalldirs
 po
 shishi-*
+shisa.conf
 shishi.conf
 shishi.pc
 shishi.skel
