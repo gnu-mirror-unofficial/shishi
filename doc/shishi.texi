@@ -4422,8 +4422,8 @@ This manual borrows text from the Kerberos 5 specification.
 The intention with this section is to discuss various problems with
 Kerberos 5, so you can form a conscious decision how to deploy and use
 Shishi correctly in your organization.  Currently the issues below are
-very condensed, and is mostly useful as a reminder for the author
-until they can be elaborated.
+condensed, and mostly serve as a reminder for the author to elaborate
+on them.
 
 No encryption scheme with security proof.
 
