@@ -186,7 +186,7 @@ int
 shisa_keys_find (Shisa * dbh,
 		 const char *realm,
 		 const char *principal,
-		 Shisa_key *hint,
+		 const Shisa_key *hint,
 		 Shisa_key ***keys,
 		 size_t * nkeys)
 {
@@ -259,7 +259,18 @@ shisa_key_remove (Shisa * dbh,
 		  const char *principal,
 		  const Shisa_key * key)
 {
-  return SHISA_NO_KEY;
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      rc = db->backend->key_remove (dbh, db->state, realm, principal, key);
+      if (rc != SHISA_OK)
+	return rc;
+    }
+
+  return SHISA_OK;
 }
 
 void

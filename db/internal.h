@@ -85,7 +85,7 @@ typedef int (*_Shisa_db_keys_find) (Shisa * dbh,
 				    void *state,
 				    const char *realm,
 				    const char *principal,
-				    Shisa_key *hint,
+				    const Shisa_key *hint,
 				    Shisa_key ***keys, size_t * nkeys);
 typedef int (*_Shisa_db_key_add) (Shisa * dbh,
 				  void *state,

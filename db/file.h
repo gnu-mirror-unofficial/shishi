@@ -92,7 +92,8 @@ shisa_file_keys_find (Shisa * dbh,
 		      void *state,
 		      const char *realm,
 		      const char *principal,
-		      Shisa_key * hint, Shisa_key *** keys, size_t * nkeys);
+		      const Shisa_key * hint,
+		      Shisa_key *** keys, size_t * nkeys);
 
 /* Add key for PRINCIPAL@REALM. */
 extern int

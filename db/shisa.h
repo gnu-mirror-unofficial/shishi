@@ -53,7 +53,8 @@ enum Shisa_rc
   SHISA_REMOVE_PRINCIPAL_NONEMPTY = 18,
   SHISA_REMOVE_PRINCIPAL_ERROR = 19,
   SHISA_ADD_KEY_ERROR = 20,
-  SHISA_REMOVE_KEY_ERROR = 21
+  SHISA_REMOVE_KEY_ERROR = 21,
+  SHISA_MULTIPLE_KEY_MATCH = 22
 };
 typedef enum Shisa_rc Shisa_rc;
 
@@ -157,7 +158,7 @@ extern int shisa_principal_remove (Shisa * dbh,
 extern int shisa_keys_find (Shisa * dbh,
 			    const char *realm,
 			    const char *principal,
-			    Shisa_key * hint,
+			    const Shisa_key * hint,
 			    Shisa_key *** keys, size_t * nkeys);
 
 /* Add key for PRINCIPAL@REALM. */

@@ -39,7 +39,7 @@ static struct shisa_error_msgs _shisa_error_messages[] = {
    "Error enumerating principals in database."},
   {SHISA_NO_REALM, "Supplied realm does not exist."},
   {SHISA_NO_PRINCIPAL, "Supplied principal does not exist."},
-  {SHISA_NO_KEY, "Principal is not associated with any key."},
+  {SHISA_NO_KEY, "Principal is not associated with any matching key."},
   {SHISA_FIND_ERROR, "Error finding principal."},
   {SHISA_ADD_REALM_EXISTS, "Tried to add a realm that already exist."},
   {SHISA_ADD_REALM_ERROR, "Error adding realm to database."},
@@ -49,6 +49,9 @@ static struct shisa_error_msgs _shisa_error_messages[] = {
    "Tried to add a principal that already exist."},
   {SHISA_ADD_PRINCIPAL_ERROR, "Error adding principal to database."},
   {SHISA_REMOVE_PRINCIPAL_ERROR, "Error removing principal from database."},
+  {SHISA_ADD_KEY_ERROR, "Error adding key to principal."},
+  {SHISA_REMOVE_KEY_ERROR, "Error removing key from principal."},
+  {SHISA_MULTIPLE_KEY_MATCH, "More than one key match given search criteria."}
 };
 
 /**
