@@ -31,7 +31,7 @@
 const char *program_name = "client";
 
 static int
-doit (Shishi * handle, Shishi_ap *ap, int verbose)
+doit (Shishi * handle, Shishi_ap * ap, int verbose)
 {
   char line[BUFSIZ];
 
@@ -44,8 +44,7 @@ doit (Shishi * handle, Shishi_ap *ap, int verbose)
       return res;
     }
 
-  res = shishi_safe_set_user_data (handle, shishi_safe_safe (safe),
-				   "foo", 0);
+  res = shishi_safe_set_user_data (handle, shishi_safe_safe (safe), "foo", 0);
   if (res != SHISHI_OK)
     {
       printf ("Could not set application data in SAFE: %s\n",
@@ -60,7 +59,7 @@ doit (Shishi * handle, Shishi_ap *ap, int verbose)
       return res;
     }
 
-  res = shishi_safe_print (handle, stdout, shishi_safe_safe(safe));
+  res = shishi_safe_print (handle, stdout, shishi_safe_safe (safe));
   if (res != SHISHI_OK)
     {
       printf ("Could not print SAFE: %s\n", shishi_strerror (res));
@@ -68,11 +67,11 @@ doit (Shishi * handle, Shishi_ap *ap, int verbose)
     }
 #endif
 
-  printf("Application exchange start.  Press ^D to finish.\n");
+  printf ("Application exchange start.  Press ^D to finish.\n");
 
-  while (fgets (line, sizeof(line), stdin))
+  while (fgets (line, sizeof (line), stdin))
     {
-      printf("read: %s", line);
+      printf ("read: %s", line);
     }
 
   if (ferror (stdin))
@@ -97,9 +96,9 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
 
   /* Get a ticket for the server. */
 
-  memset (&hint, 0, sizeof(hint));
-  hint.client = (char*) cname;
-  hint.server = (char*) sname;
+  memset (&hint, 0, sizeof (hint));
+  hint.client = (char *) cname;
+  hint.server = (char *) sname;
   tkt = shishi_tkts_get (shishi_tkts_default (h), &hint);
   if (!tkt)
     {

@@ -35,8 +35,7 @@
 Shishi_key *
 shishi_keys_for_serverrealm_in_file (Shishi * handle,
 				     const char *filename,
-				     const char *server,
-				     const char *realm)
+				     const char *server, const char *realm)
 {
   Shishi_key *key = NULL;
   FILE *fh;
@@ -94,8 +93,7 @@ shishi_keys_for_serverrealm_in_file (Shishi * handle,
  **/
 Shishi_key *
 shishi_keys_for_server_in_file (Shishi * handle,
-				const char *filename,
-				const char *server)
+				const char *filename, const char *server)
 {
   return shishi_keys_for_serverrealm_in_file (handle, filename, server, NULL);
 }
@@ -132,5 +130,6 @@ shishi_keys_for_localservicerealm_in_file (Shishi * handle,
   if (ret != 0)
     strcpy (&server[strlen (service) + 1], "localhost");
 
-  return shishi_keys_for_serverrealm_in_file (handle, filename, server, realm);
+  return shishi_keys_for_serverrealm_in_file (handle, filename, server,
+					      realm);
 }

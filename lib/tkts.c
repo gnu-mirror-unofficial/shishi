@@ -773,7 +773,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   if (tgt == NULL)
     {
       Shishi_as *as;
-      time_t starttime = hint->starttime ? hint->starttime : time(NULL);
+      time_t starttime = hint->starttime ? hint->starttime : time (NULL);
       time_t endtime = hint->endtime ? hint->endtime :
 	starttime + tkts->handle->ticketlife;
       time_t renew_till = hint->renew_till ? hint->renew_till :
@@ -791,11 +791,10 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 
       if (hint->starttime)
 	{
-	  rc = shishi_asn1_write (tkts->handle, shishi_as_req(as),
+	  rc = shishi_asn1_write (tkts->handle, shishi_as_req (as),
 				  "req-body.from",
 				  shishi_generalize_time (tkts->handle,
-							  starttime),
-				  0);
+							  starttime), 0);
 	  if (rc != SHISHI_OK)
 	    {
 	      shishi_error_printf (tkts->handle, "Cannot set starttime: %s",
@@ -806,11 +805,10 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 
       if (hint->endtime)
 	{
-	  rc = shishi_asn1_write (tkts->handle, shishi_as_req(as),
+	  rc = shishi_asn1_write (tkts->handle, shishi_as_req (as),
 				  "req-body.till",
 				  shishi_generalize_time (tkts->handle,
-							  endtime),
-				  0);
+							  endtime), 0);
 	  if (rc != SHISHI_OK)
 	    {
 	      shishi_error_printf (tkts->handle, "Cannot set starttime: %s",
@@ -821,7 +819,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 
       if (hint->renewable)
 	{
-	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req(as),
+	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req (as),
 					  SHISHI_KDCOPTIONS_RENEWABLE);
 	  if (rc != SHISHI_OK)
 	    {
@@ -830,11 +828,10 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 	      return NULL;
 	    }
 
-	  rc = shishi_asn1_write (tkts->handle, shishi_as_req(as),
+	  rc = shishi_asn1_write (tkts->handle, shishi_as_req (as),
 				  "req-body.rtime",
 				  shishi_generalize_time
-				  (tkts->handle, renew_till),
-				  0);
+				  (tkts->handle, renew_till), 0);
 	  if (rc != SHISHI_OK)
 	    {
 	      shishi_error_printf (tkts->handle, "Cannot set KDC Options: %s",

@@ -357,7 +357,7 @@ shishi_encapreppart_cusec_set (Shishi * handle,
 int
 shishi_encapreppart_seqnumber_get (Shishi * handle,
 				   Shishi_asn1 encapreppart,
-				   uint32_t *seqnumber)
+				   uint32_t * seqnumber)
 {
   int res;
 

@@ -821,7 +821,7 @@ main (int argc, char *argv[])
   int rc;
 
 #ifdef LOG_PERROR
-  openlog (PACKAGE, LOG_CONS|LOG_PERROR, LOG_DAEMON);
+  openlog (PACKAGE, LOG_CONS | LOG_PERROR, LOG_DAEMON);
 #else
   openlog (PACKAGE, LOG_CONS, LOG_DAEMON);
 #endif

@@ -203,7 +203,7 @@ typedef enum
   SHISHI_RSA_MD4_DES_K = 6,
   SHISHI_RSA_MD5 = 7,
   SHISHI_RSA_MD5_DES = 8,
-  SHISHI_RSA_MD5_DES_GSS = 9,  /* XXX */
+  SHISHI_RSA_MD5_DES_GSS = 9,	/* XXX */
   SHISHI_HMAC_SHA1_96_AES128 = 10,
   SHISHI_HMAC_SHA1_96_AES256 = 11,
   SHISHI_HMAC_SHA1_DES3_KD = 12
@@ -935,7 +935,7 @@ extern int shishi_encrypt_ivupdate_etype (Shishi * handle,
 					  int keyusage,
 					  int32_t etype,
 					  const char *iv, size_t ivlen,
-					  char **ivout, size_t *ivoutlen,
+					  char **ivout, size_t * ivoutlen,
 					  const char *in, size_t inlen,
 					  char **out, size_t * outlen);
 extern int shishi_encrypt_iv_etype (Shishi * handle,
@@ -956,7 +956,7 @@ extern int shishi_encrypt_ivupdate (Shishi * handle,
 				    Shishi_key * key,
 				    int keyusage,
 				    const char *iv, size_t ivlen,
-				    char **ivout, size_t *ivoutlen,
+				    char **ivout, size_t * ivoutlen,
 				    const char *in, size_t inlen,
 				    char **out, size_t * outlen);
 extern int shishi_encrypt_iv (Shishi * handle,
@@ -975,7 +975,7 @@ extern int shishi_decrypt_ivupdate_etype (Shishi * handle,
 					  int keyusage,
 					  int32_t etype,
 					  const char *iv, size_t ivlen,
-					  char **ivout, size_t *ivoutlen,
+					  char **ivout, size_t * ivoutlen,
 					  const char *in, size_t inlen,
 					  char **out, size_t * outlen);
 extern int shishi_decrypt_iv_etype (Shishi * handle,
@@ -996,7 +996,7 @@ extern int shishi_decrypt_ivupdate (Shishi * handle,
 				    int keyusage,
 				    int32_t etype,
 				    const char *iv, size_t ivlen,
-				    char **ivout, size_t *ivoutlen,
+				    char **ivout, size_t * ivoutlen,
 				    const char *in, size_t inlen,
 				    char **out, size_t * outlen);
 extern int shishi_decrypt_iv (Shishi * handle,
@@ -1029,9 +1029,7 @@ extern int shishi_n_fold (Shishi * handle, char *in, size_t inlen,
 			  char *out, size_t outlen);
 extern int shishi_pbkdf2_sha1 (const char *P, size_t Plen,
 			       const char *S, size_t Slen,
-			       unsigned int c,
-			       unsigned int dkLen,
-			       char *DK);
+			       unsigned int c, unsigned int dkLen, char *DK);
 
 /* version.c */
 extern const char *shishi_check_version (const char *req_version);
@@ -1263,20 +1261,20 @@ extern int shishi_key_from_string (Shishi * handle,
 				   Shishi_key ** outkey);
 
 /* keys.c */
-extern Shishi_key *
-shishi_keys_for_serverrealm_in_file (Shishi * handle,
-				     const char *filename,
-				     const char *server,
-				     const char *realm);
-extern Shishi_key *
-shishi_keys_for_server_in_file (Shishi * handle,
-				const char *filename,
-				const char *server);
-extern Shishi_key *
-shishi_keys_for_localservicerealm_in_file (Shishi * handle,
-					   const char *filename,
-					   const char *service,
-					   const char *realm);
+extern Shishi_key *shishi_keys_for_serverrealm_in_file (Shishi * handle,
+							const char *filename,
+							const char *server,
+							const char *realm);
+extern Shishi_key *shishi_keys_for_server_in_file (Shishi * handle,
+						   const char *filename,
+						   const char *server);
+extern Shishi_key *shishi_keys_for_localservicerealm_in_file (Shishi * handle,
+							      const char
+							      *filename,
+							      const char
+							      *service,
+							      const char
+							      *realm);
 
 /* hostkeys.c */
 extern const char *shishi_hostkeys_default_file (Shishi * handle);
@@ -1331,7 +1329,7 @@ extern int shishi_encapreppart_get_key (Shishi * handle,
 					size_t * keyvalue_len);
 extern int shishi_encapreppart_seqnumber_get (Shishi * handle,
 					      Shishi_asn1 encapreppart,
-					      uint32_t *seqnumber);
+					      uint32_t * seqnumber);
 
 /* apreq.c */
 extern Shishi_asn1 shishi_apreq (Shishi * handle);

@@ -371,7 +371,7 @@ static int
 simplified_dencrypt (Shishi * handle,
 		     Shishi_key * key,
 		     const char *iv, size_t ivlen,
-		     char **ivout, size_t *ivoutlen,
+		     char **ivout, size_t * ivoutlen,
 		     const char *in, size_t inlen,
 		     char **out, size_t * outlen, int decryptp)
 {
@@ -458,9 +458,9 @@ simplified_dencrypt (Shishi * handle,
 
   gcry_cipher_close (ch);
 #else
-  struct CBC_CTX(struct des_ctx, DES_BLOCK_SIZE) des;
-  struct CBC_CTX(struct des3_ctx, DES3_BLOCK_SIZE) des3;
-  struct CBC_CTS_CTX(struct aes_ctx, AES_BLOCK_SIZE) aes;
+  struct CBC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
+  struct CBC_CTX (struct des3_ctx, DES3_BLOCK_SIZE) des3;
+  struct CBC_CTS_CTX (struct aes_ctx, AES_BLOCK_SIZE) aes;
   int rc;
 
   *outlen = inlen;
@@ -477,9 +477,9 @@ simplified_dencrypt (Shishi * handle,
 	  shishi_error_printf (handle, "Nettle setkey failed");
 	  return SHISHI_CRYPTO_INTERNAL_ERROR;
 	}
-      memset(des.iv, 0, sizeof(des.iv));
+      memset (des.iv, 0, sizeof (des.iv));
       /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
-      memcpy(des.iv, iv, ivlen < sizeof(des.iv) ? ivlen : sizeof(des.iv));
+      memcpy (des.iv, iv, ivlen < sizeof (des.iv) ? ivlen : sizeof (des.iv));
       if (decryptp)
 	CBC_DECRYPT (&des, des_decrypt, inlen, *out, in);
       else
@@ -500,9 +500,10 @@ simplified_dencrypt (Shishi * handle,
 	  shishi_error_printf (handle, "Nettle setkey failed");
 	  return SHISHI_CRYPTO_INTERNAL_ERROR;
 	}
-      memset(des3.iv, 0, sizeof(des3.iv));
+      memset (des3.iv, 0, sizeof (des3.iv));
       /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
-      memcpy(des3.iv, iv, ivlen < sizeof(des3.iv) ? ivlen : sizeof(des3.iv));
+      memcpy (des3.iv, iv,
+	      ivlen < sizeof (des3.iv) ? ivlen : sizeof (des3.iv));
       if (decryptp)
 	CBC_DECRYPT (&des3, des3_decrypt, inlen, *out, in);
       else
@@ -518,9 +519,9 @@ simplified_dencrypt (Shishi * handle,
 
     case SHISHI_AES128_CTS_HMAC_SHA1_96:
     case SHISHI_AES256_CTS_HMAC_SHA1_96:
-      memset(aes.iv, 0, sizeof(aes.iv));
+      memset (aes.iv, 0, sizeof (aes.iv));
       /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
-      memcpy(aes.iv, iv, ivlen < sizeof(aes.iv) ? ivlen : sizeof(aes.iv));
+      memcpy (aes.iv, iv, ivlen < sizeof (aes.iv) ? ivlen : sizeof (aes.iv));
       if (decryptp)
 	{
 	  aes_set_decrypt_key (&aes.ctx, shishi_key_length (key),
@@ -552,7 +553,7 @@ simplified_encrypt (Shishi * handle,
 		    Shishi_key * key,
 		    int keyusage,
 		    const char *iv, size_t ivlen,
-		    char **ivout, size_t *ivoutlen,
+		    char **ivout, size_t * ivoutlen,
 		    const char *in, size_t inlen, char **out, size_t * outlen)
 {
   int res;
@@ -587,8 +588,9 @@ simplified_encrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	goto done;
 
-      res = simplified_dencrypt (handle, privacykey, iv, ivlen, ivout, ivoutlen,
-				 pt, ptlen, &ct, &ctlen, 0);
+      res =
+	simplified_dencrypt (handle, privacykey, iv, ivlen, ivout, ivoutlen,
+			     pt, ptlen, &ct, &ctlen, 0);
       if (res != SHISHI_OK)
 	goto done;
 
@@ -635,7 +637,7 @@ simplified_decrypt (Shishi * handle,
 		    Shishi_key * key,
 		    int keyusage,
 		    const char *iv, size_t ivlen,
-		    char **ivout, size_t *ivoutlen,
+		    char **ivout, size_t * ivoutlen,
 		    const char *in, size_t inlen, char **out, size_t * outlen)
 {
   int res;
@@ -644,15 +646,16 @@ simplified_decrypt (Shishi * handle,
     {
       Shishi_key *privacykey = NULL, *integritykey = NULL;
       int blen = shishi_cipher_blocksize (shishi_key_type (key));
-      size_t hlen = 20; /* XXX only works for SHA-1 */
+      size_t hlen = 20;		/* XXX only works for SHA-1 */
 
       res = simplified_derivekey (handle, key, keyusage,
 				  SHISHI_DERIVEKEYMODE_PRIVACY, &privacykey);
       if (res != SHISHI_OK)
 	goto done;
 
-      res = simplified_dencrypt (handle, privacykey, iv, ivlen, ivout, ivoutlen,
-				 in, inlen - hlen, out, outlen, 1);
+      res =
+	simplified_dencrypt (handle, privacykey, iv, ivlen, ivout, ivoutlen,
+			     in, inlen - hlen, out, outlen, 1);
       if (res != SHISHI_OK)
 	goto done;
 
@@ -751,7 +754,7 @@ typedef int (*Shishi_encrypt_function) (Shishi * handle,
 					Shishi_key * key,
 					int keyusage,
 					const char *iv, size_t ivlen,
-					char **ivout, size_t *ivoutlen,
+					char **ivout, size_t * ivoutlen,
 					const char *in, size_t inlen,
 					char **out, size_t * outlen);
 
@@ -759,7 +762,7 @@ typedef int (*Shishi_decrypt_function) (Shishi * handle,
 					Shishi_key * key,
 					int keyusage,
 					const char *iv, size_t ivlen,
-					char **ivout, size_t *ivoutlen,
+					char **ivout, size_t * ivoutlen,
 					const char *in, size_t inlen,
 					char **out, size_t * outlen);
 
@@ -1498,7 +1501,8 @@ shishi_checksum (Shishi * handle,
       return SHISHI_CRYPTO_ERROR;
     }
 
-  res = (*checksum) (handle, key, keyusage, cksumtype, in, inlen, out, outlen);
+  res =
+    (*checksum) (handle, key, keyusage, cksumtype, in, inlen, out, outlen);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -1540,7 +1544,7 @@ shishi_encrypt_ivupdate_etype (Shishi * handle,
 			       int keyusage,
 			       int32_t etype,
 			       const char *iv, size_t ivlen,
-			       char **ivout, size_t *ivoutlen,
+			       char **ivout, size_t * ivoutlen,
 			       const char *in, size_t inlen,
 			       char **out, size_t * outlen)
 {
@@ -1576,8 +1580,7 @@ shishi_encrypt_ivupdate_etype (Shishi * handle,
     }
 
   res = (*encrypt) (handle, key, keyusage,
-		    iv, ivlen, ivout, ivoutlen,
-		    in, inlen, out, outlen);
+		    iv, ivlen, ivout, ivoutlen, in, inlen, out, outlen);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -1694,7 +1697,7 @@ shishi_encrypt_ivupdate (Shishi * handle,
 			 Shishi_key * key,
 			 int keyusage,
 			 const char *iv, size_t ivlen,
-			 char **ivout, size_t *ivoutlen,
+			 char **ivout, size_t * ivoutlen,
 			 const char *in, size_t inlen,
 			 char **out, size_t * outlen)
 {
@@ -1729,8 +1732,7 @@ shishi_encrypt_iv (Shishi * handle,
 		   Shishi_key * key,
 		   int keyusage,
 		   const char *iv, size_t ivlen,
-		   const char *in, size_t inlen,
-		   char **out, size_t * outlen)
+		   const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return shishi_encrypt_ivupdate_etype (handle, key, keyusage,
 					shishi_key_type (key),
@@ -1797,7 +1799,7 @@ shishi_decrypt_ivupdate_etype (Shishi * handle,
 			       int keyusage,
 			       int32_t etype,
 			       const char *iv, size_t ivlen,
-			       char **ivout, size_t *ivoutlen,
+			       char **ivout, size_t * ivoutlen,
 			       const char *in, size_t inlen,
 			       char **out, size_t * outlen)
 {
@@ -1826,8 +1828,7 @@ shishi_decrypt_ivupdate_etype (Shishi * handle,
     }
 
   res = (*decrypt) (handle, key, keyusage,
-		    iv, ivlen, ivout, ivoutlen,
-		    in, inlen, out, outlen);
+		    iv, ivlen, ivout, ivoutlen, in, inlen, out, outlen);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -1937,7 +1938,7 @@ shishi_decrypt_ivupdate (Shishi * handle,
 			 int keyusage,
 			 int32_t etype,
 			 const char *iv, size_t ivlen,
-			 char **ivout, size_t *ivoutlen,
+			 char **ivout, size_t * ivoutlen,
 			 const char *in, size_t inlen,
 			 char **out, size_t * outlen)
 {
@@ -1973,8 +1974,7 @@ shishi_decrypt_iv (Shishi * handle,
 		   Shishi_key * key,
 		   int keyusage,
 		   const char *iv, size_t ivlen,
-		   const char *in, size_t inlen,
-		   char **out, size_t * outlen)
+		   const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return shishi_decrypt_ivupdate_etype (handle, key, keyusage,
 					shishi_key_type (key),
@@ -2004,8 +2004,7 @@ int
 shishi_decrypt (Shishi * handle,
 		Shishi_key * key,
 		int keyusage,
-		const char *in, size_t inlen,
-		char **out, size_t * outlen)
+		const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return shishi_decrypt_ivupdate_etype (handle, key, keyusage,
 					shishi_key_type (key),
@@ -2038,8 +2037,8 @@ shishi_randomize (Shishi * handle, char *data, size_t datalen)
   fd = open (device, O_RDONLY);
   if (fd < 0)
     {
-      shishi_error_printf(handle, "Could not open random device: %s\n",
-			  strerror (errno));
+      shishi_error_printf (handle, "Could not open random device: %s\n",
+			   strerror (errno));
       return SHISHI_FOPEN_ERROR;
     }
   else

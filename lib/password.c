@@ -199,8 +199,8 @@ shishi_prompt_password (Shishi * handle,
 	}
     }
 #else
-  shishi_warn (handle, "Password string processing (%s) disabled",
-	       handle->stringprocess);
+    shishi_warn (handle, "Password string processing (%s) disabled",
+		 handle->stringprocess);
 #endif
 
   return SHISHI_OK;

@@ -113,7 +113,7 @@ _shishi_maybe_install_usercfg (Shishi * handle)
   rc = stat (userdir, &buf);
   if (rc == -1 && errno == ENOENT)
     {
-      rc = mkdir (userdir, S_IRUSR|S_IWUSR|S_IXUSR);
+      rc = mkdir (userdir, S_IRUSR | S_IWUSR | S_IXUSR);
       if (rc != 0)
 	shishi_info (handle, "mkdir %s: %s", userdir, strerror (errno));
     }
@@ -135,7 +135,7 @@ _shishi_maybe_install_usercfg (Shishi * handle)
       return;
     }
 
-  while ((c = getc(src)) != EOF )
+  while ((c = getc (src)) != EOF)
     putc (c, dst);
 
   fclose (dst);

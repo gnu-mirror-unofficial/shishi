@@ -29,8 +29,8 @@ shishi_sendrecv_udp (Shishi * handle,
 {
   struct sockaddr lsa;
   struct sockaddr_in *lsa_inp = (struct sockaddr_in *) &lsa;
-  char tmpbuf[BUFSIZ]; /* XXX can we do without it?
-			  MSG_PEEK|MSG_TRUNC doesn't work for udp.. */
+  char tmpbuf[BUFSIZ];		/* XXX can we do without it?
+				   MSG_PEEK|MSG_TRUNC doesn't work for udp.. */
   int sockfd;
   int bytes_sent;
   struct sockaddr_storage from_sa;
@@ -78,7 +78,7 @@ shishi_sendrecv_udp (Shishi * handle,
       return SHISHI_KDC_TIMEOUT;
     }
 
-  *outlen = sizeof(tmpbuf);
+  *outlen = sizeof (tmpbuf);
   *outlen = recvfrom (sockfd, tmpbuf, *outlen, 0,
 		      (struct sockaddr *) &from_sa, &length);
 
@@ -142,8 +142,7 @@ shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
 static int
 shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 			   const char *indata, size_t inlen,
-			   char **outdata, size_t * outlen,
-			   dnshost_t rrs)
+			   char **outdata, size_t * outlen, dnshost_t rrs)
 {
   int rc;
 
@@ -162,7 +161,7 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
       if (VERBOSE (handle))
 	printf ("Located SRV RRs server %s:%d...\n", srv->name, srv->port);
 
-      memset (&hints, 0, sizeof(hints));
+      memset (&hints, 0, sizeof (hints));
       hints.ai_socktype = SOCK_DGRAM;
       asprintf (&port, "%d", srv->port);
       rc = getaddrinfo (srv->name, port, &hints, &ai);
@@ -178,7 +177,7 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 
       if (VERBOSE (handle))
 	printf ("Sending to %s:%d (%s)...\n", srv->name, srv->port,
-		inet_ntoa (((struct sockaddr_in *)ai->ai_addr)->sin_addr));
+		inet_ntoa (((struct sockaddr_in *) ai->ai_addr)->sin_addr));
 
       rc = shishi_sendrecv_udp (handle, ai->ai_addr,
 				indata, inlen, outdata, outlen,
@@ -206,7 +205,7 @@ shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
     printf ("Finding SRV RRs for %s...\n", realm);
 
   asprintf (&tmp, "_kerberos._udp.%s", realm);
-  rrs = _shishi_resolv(tmp, T_SRV);
+  rrs = _shishi_resolv (tmp, T_SRV);
   free (tmp);
 
   if (rrs)
@@ -239,11 +238,11 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
 
   se = getservbyname ("kerberos", NULL);
   if (se)
-    asprintf (&port, "%d", ntohs(se->s_port));
+    asprintf (&port, "%d", ntohs (se->s_port));
   else
     asprintf (&port, "%d", 88);
 
-  memset (&hints, 0, sizeof(hints));
+  memset (&hints, 0, sizeof (hints));
   hints.ai_socktype = SOCK_DGRAM;
   rc = getaddrinfo (realm, port, &hints, &ai);
 
@@ -251,13 +250,14 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
 
   if (rc != 0)
     {
-      shishi_error_printf (handle, "No direct realm host for realm %s", realm);
+      shishi_error_printf (handle, "No direct realm host for realm %s",
+			   realm);
       return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
     }
 
   if (VERBOSE (handle))
     printf ("Sending to %s:%s (%s)...\n", realm, port,
-	    inet_ntoa (((struct sockaddr_in *)ai->ai_addr)->sin_addr));
+	    inet_ntoa (((struct sockaddr_in *) ai->ai_addr)->sin_addr));
 
   rc = shishi_sendrecv_udp (handle, ai->ai_addr,
 			    indata, inlen, outdata, outlen,

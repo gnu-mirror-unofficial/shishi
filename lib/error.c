@@ -179,13 +179,13 @@ void
 shishi_error_printf (Shishi * handle, char *format, ...)
 {
   va_list ap;
-  char * s;
+  char *s;
 
   va_start (ap, format);
 
   vasprintf (&s, format, ap);
   strncpy (handle->error, s, sizeof (handle->error));
-  handle->error[sizeof(handle->error)-1] = '\0';
+  handle->error[sizeof (handle->error) - 1] = '\0';
   free (s);
 
   if (VERBOSE (handle))

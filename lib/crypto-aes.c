@@ -26,11 +26,11 @@ aes128_encrypt (Shishi * handle,
 		Shishi_key * key,
 		int keyusage,
 		const char *iv, size_t ivlen,
-		char **ivout, size_t *ivoutlen,
+		char **ivout, size_t * ivoutlen,
 		const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
-			     in, inlen, out, outlen);
+  return simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout,
+			     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -38,11 +38,11 @@ aes128_decrypt (Shishi * handle,
 		Shishi_key * key,
 		int keyusage,
 		const char *iv, size_t ivlen,
-		char **ivout, size_t *ivoutlen,
+		char **ivout, size_t * ivoutlen,
 		const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
-			     in, inlen, out, outlen);
+  return simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout,
+			     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -50,11 +50,11 @@ aes256_encrypt (Shishi * handle,
 		Shishi_key * key,
 		int keyusage,
 		const char *iv, size_t ivlen,
-		char **ivout, size_t *ivoutlen,
+		char **ivout, size_t * ivoutlen,
 		const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
-			     in, inlen, out, outlen);
+  return simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout,
+			     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -62,11 +62,11 @@ aes256_decrypt (Shishi * handle,
 		Shishi_key * key,
 		int keyusage,
 		const char *iv, size_t ivlen,
-		char **ivout, size_t *ivoutlen,
+		char **ivout, size_t * ivoutlen,
 		const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
-			     in, inlen, out, outlen);
+  return simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout,
+			     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -192,8 +192,7 @@ aes128_checksum (Shishi * handle,
 		 Shishi_key * key,
 		 int keyusage,
 		 int cksumtype,
-		 char *in, size_t inlen,
-		 char **out, size_t * outlen)
+		 char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_checksum (handle, key, keyusage, cksumtype,
 			      in, inlen, out, outlen);
@@ -204,8 +203,7 @@ aes256_checksum (Shishi * handle,
 		 Shishi_key * key,
 		 int keyusage,
 		 int cksumtype,
-		 char *in, size_t inlen,
-		 char **out, size_t * outlen)
+		 char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_checksum (handle, key, keyusage, cksumtype,
 			      in, inlen, out, outlen);

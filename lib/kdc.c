@@ -196,8 +196,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
  **/
 int
 shishi_kdc_copy_crealm (Shishi * handle,
-			Shishi_asn1 kdcrep,
-			Shishi_asn1 encticketpart)
+			Shishi_asn1 kdcrep, Shishi_asn1 encticketpart)
 {
   char *buf;
   size_t buflen;
@@ -297,7 +296,7 @@ shishi_kdc_copy_cname (Shishi * handle,
   int i, n;
 
   res = shishi_asn1_read2 (handle, encticketpart,
-			  "cname.name-type", &buf, &buflen);
+			   "cname.name-type", &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -378,13 +377,15 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   for (i = 1; i <= j; i++)
     {
       asprintf (&format, "req-body.cname.name-string.?%d", i);
-      res = shishi_asn1_read2 (handle, asreq, format, &reqcname, &reqcnamelen);
+      res =
+	shishi_asn1_read2 (handle, asreq, format, &reqcname, &reqcnamelen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
 
       asprintf (&format, "cname.name-string.?%d", i);
-      res = shishi_asn1_read2 (handle, asrep, format, &repcname, &repcnamelen);
+      res =
+	shishi_asn1_read2 (handle, asrep, format, &repcname, &repcnamelen);
       free (format);
       if (res != SHISHI_OK)
 	return res;

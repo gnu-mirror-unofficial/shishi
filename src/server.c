@@ -72,7 +72,7 @@ doit (Shishi * h, Shishi_ap * ap, int verbose)
 
   printf ("Verified SAFE successfully...\n");
 
-  userdatalen = sizeof(userdata);
+  userdatalen = sizeof (userdata);
   res = shishi_safe_user_data (handle, asn1safe, userdata, &userdatalen);
   if (res != SHISHI_OK)
     {
@@ -81,14 +81,14 @@ doit (Shishi * h, Shishi_ap * ap, int verbose)
       return 1;
     }
   userdata[userdatalen] = '\0';
-  printf("user data: `%s'\n", userdata);
+  printf ("user data: `%s'\n", userdata);
 #endif
 
-  printf("Application exchange start.  Press ^D to finish.\n");
+  printf ("Application exchange start.  Press ^D to finish.\n");
 
-  while (fgets (line, sizeof(line), stdin))
+  while (fgets (line, sizeof (line), stdin))
     {
-      printf("read: %s", line);
+      printf ("read: %s", line);
     }
 
   if (ferror (stdin))
@@ -167,14 +167,14 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
 
   buflen = sizeof (buf);
   rc = shishi_encticketpart_cnamerealm_get
-    (h, shishi_tkt_encticketpart (shishi_ap_tkt (ap)),
-     buf, &buflen);
+    (h, shishi_tkt_encticketpart (shishi_ap_tkt (ap)), buf, &buflen);
   buf[buflen] = '\0';
   printf ("Client name (from encticketpart): %s\n", buf);
 
   buflen = sizeof (buf);
-  rc = shishi_ticket_snamerealm_get (h, shishi_tkt_ticket (shishi_ap_tkt (ap)),
-				     buf, &buflen);
+  rc =
+    shishi_ticket_snamerealm_get (h, shishi_tkt_ticket (shishi_ap_tkt (ap)),
+				  buf, &buflen);
   buf[buflen] = '\0';
   printf ("Server name (from ticket): %s\n", buf);
 

@@ -71,8 +71,8 @@ Shishi_key *
 shishi_hostkeys_for_server (Shishi * handle, const char *server)
 {
   return shishi_keys_for_server_in_file (handle,
-					 shishi_hostkeys_default_file (handle),
-					 server);
+					 shishi_hostkeys_default_file
+					 (handle), server);
 }
 
 /**
@@ -108,8 +108,7 @@ shishi_hostkeys_for_serverrealm (Shishi * handle,
  **/
 Shishi_key *
 shishi_hostkeys_for_localservicerealm (Shishi * handle,
-				       const char *service,
-				       const char *realm)
+				       const char *service, const char *realm)
 {
   return shishi_keys_for_localservicerealm_in_file
     (handle, shishi_hostkeys_default_file (handle), service, realm);

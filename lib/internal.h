@@ -205,8 +205,8 @@ struct Shishi
 #define TICKET_FILE BASE_DIR "/tickets"
 #define USERCFG_FILE BASE_DIR "/shishi.conf"
 
-#define TICKETLIFE (60*60*8)   /* Work day */
-#define RENEWLIFE (60*60*24*7) /* Week */
+#define TICKETLIFE (60*60*8)	/* Work day */
+#define RENEWLIFE (60*60*24*7)	/* Week */
 
 int
 _shishi_print_armored_data (Shishi * handle,
@@ -255,23 +255,23 @@ shishi_asn1_integer2_field (Shishi * handle,
 
 typedef struct dnshost_st
 {
-  struct dnshost_st   *next;
+  struct dnshost_st *next;
 
-  unsigned int        type;
-  unsigned int        class;
-  unsigned int        ttl;
+  unsigned int type;
+  unsigned int class;
+  unsigned int ttl;
 
-  void                *rr;
+  void *rr;
 } *dnshost_t;
 
 typedef struct dns_srv_st
 {
-  unsigned int        priority;
-  unsigned int        weight;
-  unsigned int        port;
-  unsigned int        rweight;
+  unsigned int priority;
+  unsigned int weight;
+  unsigned int port;
+  unsigned int rweight;
 
-  char                name[256];
+  char name[256];
 } *dns_srv_t;
 
 dnshost_t _shishi_resolv (const char *zone, unsigned int type);

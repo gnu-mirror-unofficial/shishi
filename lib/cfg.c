@@ -101,15 +101,15 @@ shishi_cfg (Shishi * handle, char *option)
 
 	case TICKET_LIFE_OPTION:
 	  {
-	    time_t now = time(NULL);
+	    time_t now = time (NULL);
 	    time_t then = get_date (value, &now);
 	    int diff = (int) difftime (then, now);
 
 	    if (value && then != -1 && diff > 0)
 	      handle->ticketlife = diff;
-	    else if (diff <= 0 && diff + 60*60*24 > 0)
+	    else if (diff <= 0 && diff + 60 * 60 * 24 > 0)
 	      /* Hack to support "17:00" as always meaning the next 17:00. */
-	      handle->ticketlife = 60*60*24 + diff;
+	      handle->ticketlife = 60 * 60 * 24 + diff;
 	    else if (diff <= 0)
 	      shishi_warn (handle, "Negative ticket life date: `%s'", value);
 	    else if (then == -1)
@@ -121,7 +121,7 @@ shishi_cfg (Shishi * handle, char *option)
 
 	case RENEW_LIFE_OPTION:
 	  {
-	    time_t now = time(NULL);
+	    time_t now = time (NULL);
 	    time_t then = get_date (value, &now);
 	    int diff = (int) difftime (then, now);
 
@@ -313,7 +313,7 @@ int
 shishi_cfg_print (Shishi * handle, FILE * fh)
 {
   int i, j;
-  time_t tmp, now = time(NULL);
+  time_t tmp, now = time (NULL);
 
   fprintf (fh, "Shishi initial library configuration:\n");
   fprintf (fh, "\tDefault realm: %s\n",
@@ -328,10 +328,10 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
   fprintf (fh, "\tVerbose: %d\n", handle->verbose);
   tmp = now + handle->ticketlife;
   fprintf (fh, "\tTicket life: %d seconds. %s",
-	   handle->ticketlife, ctime(&tmp));
+	   handle->ticketlife, ctime (&tmp));
   tmp = now + handle->renewlife;
   fprintf (fh, "\tRenew life: %d seconds. %s",
-	   handle->renewlife, ctime(&tmp));
+	   handle->renewlife, ctime (&tmp));
   for (i = 0; i < handle->nrealminfos; i++)
     {
       fprintf (fh, "\tRealm %s's KDCs:", handle->realminfos[i].name);

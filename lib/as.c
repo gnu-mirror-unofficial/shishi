@@ -125,7 +125,7 @@ shishi_as_req_build (Shishi_as * as)
 
   res = shishi_kdcreq_build (as->handle, as->asreq);
   if (res != SHISHI_OK)
-      return res;
+    return res;
 
   return SHISHI_OK;
 }

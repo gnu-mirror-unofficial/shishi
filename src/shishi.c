@@ -123,53 +123,53 @@
 
 /* Long parameters only */
 enum
-  {
-    OPTION_REQUEST = 300,
-    OPTION_SENDRECV,
-    OPTION_RESPONSE,
-    OPTION_WRITE_AP_REQUEST_FILE,
-    OPTION_WRITE_AUTHENTICATOR_FILE,
-    OPTION_WRITE_REQUEST_FILE,
-    OPTION_WRITE_RESPONSE_FILE,
-    OPTION_READ_REQUEST_FILE,
-    OPTION_READ_RESPONSE_FILE,
-    OPTION_SERVER,
-    OPTION_CLIENT,
-    OPTION_CLIENT_NAME,
-    OPTION_REALM,
-    OPTION_SERVER_NAME,
-    OPTION_TICKET_GRANTER,
-    OPTION_FORCE_AS,
-    OPTION_FORCE_TGS,
-    OPTION_CRYPTO_ENCRYPT,
-    OPTION_CRYPTO_DECRYPT,
-    OPTION_CRYPTO_ALGORITHM,
-    OPTION_CRYPTO_KEY_VERSION,
-    OPTION_CRYPTO_KEY_USAGE,
-    OPTION_CRYPTO_KEY_VALUE,
-    OPTION_CRYPTO_READ_KEY_FILE,
-    OPTION_CRYPTO_WRITE_KEY_FILE,
-    OPTION_CRYPTO_READ_DATA_FILE,
-    OPTION_CRYPTO_WRITE_DATA_FILE,
-    OPTION_CRYPTO_RANDOM,
-    OPTION_CRYPTO_PARAMETER,
-    OPTION_CRYPTO_PASSWORD,
-    OPTION_CRYPTO_SALT,
-    OPTION_CRYPTO_DEBUG,
-    OPTION_CRYPTO_GENERATE_KEY,
-    OPTION_VERBOSE_LIBRARY,
-    OPTION_LIST,
-    OPTION_DESTROY,
-    OPTION_CRYPTO,
-    OPTION_RENEW,
-    OPTION_RENEWABLE,
-    OPTION_STARTTIME,
-    OPTION_ENDTIME,
-    OPTION_RENEW_TILL,
-    OPTION_CFG_SYSTEM,
-    OPTION_CFG_USER,
-    OPTION_WRITE_TICKET_FILE
-  };
+{
+  OPTION_REQUEST = 300,
+  OPTION_SENDRECV,
+  OPTION_RESPONSE,
+  OPTION_WRITE_AP_REQUEST_FILE,
+  OPTION_WRITE_AUTHENTICATOR_FILE,
+  OPTION_WRITE_REQUEST_FILE,
+  OPTION_WRITE_RESPONSE_FILE,
+  OPTION_READ_REQUEST_FILE,
+  OPTION_READ_RESPONSE_FILE,
+  OPTION_SERVER,
+  OPTION_CLIENT,
+  OPTION_CLIENT_NAME,
+  OPTION_REALM,
+  OPTION_SERVER_NAME,
+  OPTION_TICKET_GRANTER,
+  OPTION_FORCE_AS,
+  OPTION_FORCE_TGS,
+  OPTION_CRYPTO_ENCRYPT,
+  OPTION_CRYPTO_DECRYPT,
+  OPTION_CRYPTO_ALGORITHM,
+  OPTION_CRYPTO_KEY_VERSION,
+  OPTION_CRYPTO_KEY_USAGE,
+  OPTION_CRYPTO_KEY_VALUE,
+  OPTION_CRYPTO_READ_KEY_FILE,
+  OPTION_CRYPTO_WRITE_KEY_FILE,
+  OPTION_CRYPTO_READ_DATA_FILE,
+  OPTION_CRYPTO_WRITE_DATA_FILE,
+  OPTION_CRYPTO_RANDOM,
+  OPTION_CRYPTO_PARAMETER,
+  OPTION_CRYPTO_PASSWORD,
+  OPTION_CRYPTO_SALT,
+  OPTION_CRYPTO_DEBUG,
+  OPTION_CRYPTO_GENERATE_KEY,
+  OPTION_VERBOSE_LIBRARY,
+  OPTION_LIST,
+  OPTION_DESTROY,
+  OPTION_CRYPTO,
+  OPTION_RENEW,
+  OPTION_RENEWABLE,
+  OPTION_STARTTIME,
+  OPTION_ENDTIME,
+  OPTION_RENEW_TILL,
+  OPTION_CFG_SYSTEM,
+  OPTION_CFG_USER,
+  OPTION_WRITE_TICKET_FILE
+};
 
 #define TYPE_TEXT_NAME "text"
 #define TYPE_DER_NAME "der"
@@ -330,100 +330,99 @@ crypto (Shishi * handle, struct arguments arg)
     }
 
 #if 0
-  currently broken
-    if (arg.encrypt_p || arg.decrypt_p)
-      {
-	if (arg.inputfile)
-	  {
-	    infh = fopen (arg.inputfile, "r");
-	    if (infh == NULL)
-	      {
-		shishi_error_printf (handle, _("`%s': %s\n"),
-				     arg.inputfile, strerror (errno));
-		return SHISHI_FOPEN_ERROR;
-	      }
-	  }
-	else
-	  infh = stdin;
+  currently broken if (arg.encrypt_p || arg.decrypt_p)
+    {
+      if (arg.inputfile)
+	{
+	  infh = fopen (arg.inputfile, "r");
+	  if (infh == NULL)
+	    {
+	      shishi_error_printf (handle, _("`%s': %s\n"),
+				   arg.inputfile, strerror (errno));
+	      return SHISHI_FOPEN_ERROR;
+	    }
+	}
+      else
+	infh = stdin;
 
-	if (arg.outputfile)
-	  {
-	    outfh = fopen (arg.outputfile, "w");
-	    if (outfh == NULL)
-	      {
-		shishi_error_printf (handle, _("`%s': %s\n"),
-				     arg.inputfile, strerror (errno));
-		return SHISHI_FOPEN_ERROR;
-	      }
-	  }
-	else
-	  outfh = stdout;
+      if (arg.outputfile)
+	{
+	  outfh = fopen (arg.outputfile, "w");
+	  if (outfh == NULL)
+	    {
+	      shishi_error_printf (handle, _("`%s': %s\n"),
+				   arg.inputfile, strerror (errno));
+	      return SHISHI_FOPEN_ERROR;
+	    }
+	}
+      else
+	outfh = stdout;
 
-	outlen = fread (out, sizeof (out[0]),
-			sizeof (out) / sizeof (out[0]), infh);
-	if (outlen == 0)
-	  {
-	    fprintf (stderr, _("Error reading `%s'\n"), arg.inputfile);
-	    return !SHISHI_OK;
-	  }
-	if (arg.verbose)
-	  printf (_("Read %d bytes...\n"), outlen);
+      outlen = fread (out, sizeof (out[0]),
+		      sizeof (out) / sizeof (out[0]), infh);
+      if (outlen == 0)
+	{
+	  fprintf (stderr, _("Error reading `%s'\n"), arg.inputfile);
+	  return !SHISHI_OK;
+	}
+      if (arg.verbose)
+	printf (_("Read %d bytes...\n"), outlen);
 
-	if (arg.encrypt_p)
-	  rc = shishi_encrypt (handle, key, arg.keyusage,
-			       out, outlen, &in, &inlen);
-	else
-	  rc = shishi_decrypt (handle, key, arg.keyusage,
-			       in, inlen, &out, &outlen);
-	if (rc != SHISHI_OK)
-	  {
-	    shishi_error_printf (handle, _("Error ciphering\n"));
-	    return rc;
-	  }
+      if (arg.encrypt_p)
+	rc = shishi_encrypt (handle, key, arg.keyusage,
+			     out, outlen, &in, &inlen);
+      else
+	rc = shishi_decrypt (handle, key, arg.keyusage,
+			     in, inlen, &out, &outlen);
+      if (rc != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, _("Error ciphering\n"));
+	  return rc;
+	}
 
-	if (arg.outputtype == SHISHI_FILETYPE_HEX)
-	  {
-	    for (i = 0; i < inlen; i++)
-	      {
-		if ((i % 16) == 0)
-		  fprintf (outfh, "\n");
-		fprintf (outfh, "%02x ", in[i]);
-	      }
-	    fprintf (outfh, "\n");
-	  }
-	else if (arg.outputtype == SHISHI_FILETYPE_BINARY)
-	  {
-	    i = fwrite (in, sizeof (in[0]), inlen, outfh);
-	    if (i != inlen)
-	      {
-		fprintf (stderr, _("Short write (%d < %d)...\n"), i, inlen);
-		return 1;
-	      }
-	    printf (_("Wrote %d bytes...\n"), inlen);
-	  }
+      if (arg.outputtype == SHISHI_FILETYPE_HEX)
+	{
+	  for (i = 0; i < inlen; i++)
+	    {
+	      if ((i % 16) == 0)
+		fprintf (outfh, "\n");
+	      fprintf (outfh, "%02x ", in[i]);
+	    }
+	  fprintf (outfh, "\n");
+	}
+      else if (arg.outputtype == SHISHI_FILETYPE_BINARY)
+	{
+	  i = fwrite (in, sizeof (in[0]), inlen, outfh);
+	  if (i != inlen)
+	    {
+	      fprintf (stderr, _("Short write (%d < %d)...\n"), i, inlen);
+	      return 1;
+	    }
+	  printf (_("Wrote %d bytes...\n"), inlen);
+	}
 
-	if (arg.outputfile)
-	  {
-	    rc = fclose (outfh);
-	    if (rc != 0)
-	      {
-		shishi_error_printf (handle, _("`%s': %s\n"),
-				     arg.outputfile, strerror (errno));
-		return SHISHI_FCLOSE_ERROR;
-	      }
-	  }
+      if (arg.outputfile)
+	{
+	  rc = fclose (outfh);
+	  if (rc != 0)
+	    {
+	      shishi_error_printf (handle, _("`%s': %s\n"),
+				   arg.outputfile, strerror (errno));
+	      return SHISHI_FCLOSE_ERROR;
+	    }
+	}
 
-	if (arg.inputfile)
-	  {
-	    rc = fclose (infh);
-	    if (rc != 0)
-	      {
-		shishi_error_printf (handle, _("`%s': %s\n"),
-				     arg.inputfile, strerror (errno));
-		return SHISHI_FCLOSE_ERROR;
-	      }
-	  }
-      }
+      if (arg.inputfile)
+	{
+	  rc = fclose (infh);
+	  if (rc != 0)
+	    {
+	      shishi_error_printf (handle, _("`%s': %s\n"),
+				   arg.inputfile, strerror (errno));
+	      return SHISHI_FCLOSE_ERROR;
+	    }
+	}
+    }
 #endif
 
   if (arg.writekeyfile)
@@ -879,9 +878,8 @@ static struct argp argp = {
   options,
   parse_opt,
   "[NAME] [OPTION...]\n"
-  "--list [--server-name=NAME]\n"
-  "--destroy [--server-name=NAME]\n"
-  "--crypto [CRYPTO-OPTION...]\n",
+    "--list [--server-name=NAME]\n"
+    "--destroy [--server-name=NAME]\n" "--crypto [CRYPTO-OPTION...]\n",
   "Shishi -- A Kerberos 5 implementation"
 };
 
@@ -906,7 +904,8 @@ main (int argc, char *argv[])
 
   rc = shishi_cfg_clientkdcetype_set (handle, arg.etypes);
   if (rc != SHISHI_OK)
-    error (1, 0, "Could not set encryption types: %s\n", shishi_strerror (rc));
+    error (1, 0, "Could not set encryption types: %s\n",
+	   shishi_strerror (rc));
 
   if (arg.client)
     {
@@ -921,7 +920,8 @@ main (int argc, char *argv[])
 
   rc = shishi_cfg (handle, arg.lib_options);
   if (rc != SHISHI_OK)
-    error (1, 0, "Could not read library options: %s\n", shishi_strerror (rc));
+    error (1, 0, "Could not read library options: %s\n",
+	   shishi_strerror (rc));
 
   if (arg.verbose_library)
     {
@@ -932,7 +932,7 @@ main (int argc, char *argv[])
     }
 
   if (!arg.starttime)
-    arg.starttime = time(NULL);
+    arg.starttime = time (NULL);
 
   if (arg.endtime_str)
     {
@@ -1045,7 +1045,8 @@ main (int argc, char *argv[])
 	    rc = shishi_tkt_pretty_print (tkt, stdout);
 	    if (rc != SHISHI_OK)
 	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
-		       shishi_strerror (rc), shishi_strerror_details (handle));
+		       shishi_strerror (rc),
+		       shishi_strerror_details (handle));
 	  }
 
 	/* Get ticket using TGT ... */
@@ -1053,15 +1054,14 @@ main (int argc, char *argv[])
 	shishi_tgs_tgtkt_set (tgs, tkt);
 	if (rc == SHISHI_OK)
 	  rc = shishi_tgs_set_server (tgs, hint.server);
-	rc = shishi_kdcreq_options_add (handle, shishi_tgs_req(tgs),
-					SHISHI_KDCOPTIONS_RENEWABLE|
+	rc = shishi_kdcreq_options_add (handle, shishi_tgs_req (tgs),
+					SHISHI_KDCOPTIONS_RENEWABLE |
 					SHISHI_KDCOPTIONS_RENEW);
 	if (rc == SHISHI_OK)
-	  rc = shishi_asn1_write (handle, shishi_tgs_req(tgs),
+	  rc = shishi_asn1_write (handle, shishi_tgs_req (tgs),
 				  "req-body.rtime",
 				  shishi_generalize_time
-				  (handle, hint.renew_till),
-				  0);
+				  (handle, hint.renew_till), 0);
 	if (rc == SHISHI_OK)
 	  rc = shishi_tgs_req_build (tgs);
 	if (rc == SHISHI_OK)
@@ -1119,7 +1119,8 @@ main (int argc, char *argv[])
 	    rc = shishi_tkt_pretty_print (tkt, stdout);
 	    if (rc != SHISHI_OK)
 	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
-		       shishi_strerror (rc), shishi_strerror_details (handle));
+		       shishi_strerror (rc),
+		       shishi_strerror_details (handle));
 	  }
       }
       break;

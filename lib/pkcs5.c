@@ -56,10 +56,7 @@ int
 shishi_pbkdf2_sha1 (const char *P,
 		    size_t Plen,
 		    const char *S,
-		    size_t Slen,
-		    unsigned int c,
-		    unsigned int dkLen,
-		    char *DK)
+		    size_t Slen, unsigned int c, unsigned int dkLen, char *DK)
 {
 #ifdef USE_GCRYPT
   int PRF = GCRY_MD_SHA1;

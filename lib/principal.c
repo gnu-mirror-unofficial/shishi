@@ -128,7 +128,7 @@ shishi_parse_name (Shishi * handle, const char *name,
 	*realm = xstrdup (p);
     }
   else if (realm)
-    *realm = strdup(shishi_realm_default (handle));
+    *realm = strdup (shishi_realm_default (handle));
 
   return SHISHI_OK;
 }
@@ -411,5 +411,5 @@ shishi_server_for_local_service (Shishi * handle, const char *service)
   if (ret != 0)
     strcpy (&buf[strlen (service) + 1], "localhost");
 
-  return xstrdup(buf);
+  return xstrdup (buf);
 }
