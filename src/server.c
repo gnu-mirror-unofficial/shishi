@@ -19,249 +19,12 @@
  *
  */
 
+/* Note: only use syslog to report errors in this file. */
+
 /* Get Shishid stuff. */
 #include "kdc.h"
 
-/* Destroy listenspec element and return pointer to element before the
-   removed element, or NULL if the first element was removed (or the
-   destroyed list element wasn't in the list). */
-struct listenspec *
-kdc_close (struct listenspec *ls)
-{
-  struct listenspec *tmp;
-  int rc;
-
-  if (ls->sockfd)
-    {
-      if (!arg.quiet_flag)
-	syslog (LOG_INFO, "Closing %s...\n", ls->str);
-      rc = close (ls->sockfd);
-      if (rc != 0)
-	syslog (LOG_ERR, "Could not close connection to %s on socket %d",
-		ls->str, ls->sockfd);
-    }
-
-  if (ls->usetls)
-    {
-      gnutls_bye (ls->session, GNUTLS_SHUT_WR);
-      gnutls_deinit (ls->session);
-    }
-
-  if (ls->str)
-    free (ls->str);
-
-  for (tmp = listenspec; tmp && tmp->next != ls; tmp = tmp->next)
-    ;
-  if (tmp)
-    tmp->next = ls->next;
-
-  free (ls);
-
-  return tmp;
-}
-
-static int
-kdc_extension (struct listenspec *ls)
-{
-  ssize_t sent_bytes, read_bytes;
-  int rc;
-
-#ifdef USE_STARTTLS
-  if (!ls->usetls &&
-      ls->type == SOCK_STREAM &&
-      ls->bufpos == 4 &&
-      memcmp (ls->buf, "\x70\x00\x00\x01", 4) == 0)
-    {
-      const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
-
-      if (!arg.quiet_flag)
-	syslog (LOG_INFO, "Trying to upgrade to TLS...");
-
-      sent_bytes = sendto (ls->sockfd, "\x70\x00\x00\x02", 4,
-			   0, &ls->addr, ls->addrlen);
-
-      rc = gnutls_init (&ls->session, GNUTLS_SERVER);
-      if (rc != GNUTLS_E_SUCCESS)
-	error (EXIT_FAILURE, 0, "gnutls_init %d", rc);
-      rc = gnutls_set_default_priority (ls->session);
-      if (rc != GNUTLS_E_SUCCESS)
-	error (EXIT_FAILURE, 0, "gnutls_sdp %d", rc);
-      rc = gnutls_kx_set_priority (ls->session, kx_prio);
-      if (rc != GNUTLS_E_SUCCESS)
-	error (EXIT_FAILURE, 0, "gnutls_ksp %d", rc);
-      rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_ANON,
-				   anoncred);
-      if (rc != GNUTLS_E_SUCCESS)
-	error (EXIT_FAILURE, 0, "gnutls_cs %d", rc);
-      gnutls_dh_set_prime_bits (ls->session, DH_BITS);
-      gnutls_transport_set_ptr (ls->session,
-				(gnutls_transport_ptr)
-				ls->sockfd);
-
-      rc = gnutls_handshake (ls->session);
-      if (rc < 0)
-	{
-	  printf ("Handshake has failed %d: %s\n",
-		  rc, gnutls_strerror (rc));
-	  return -1;
-	}
-
-      if (!arg.quiet_flag)
-	printf ("TLS successful\n");
-
-      ls->bufpos = 0;
-      ls->usetls = 1;
-    }
-#endif
-
-  return 0;
-}
-
-static void
-kdc_process (struct listenspec *ls)
-{
-  ssize_t sent_bytes, read_bytes;
-  int rc;
-  char *p;
-  size_t plen;
-
-#ifdef USE_STARTTLS
-  if (ls->usetls)
-    {
-      plen = process (ls->buf, ls->bufpos, &p);
-      printf ("TLS process %d sending %d\n", ls->bufpos, plen);
-    }
-  else
-#endif
-    {
-      if (ls->type == SOCK_STREAM)
-	plen = process (ls->buf + 4, ls->bufpos - 4, &p);
-      else
-	plen = process (ls->buf, ls->bufpos, &p);
-    }
-
-  printf ("Process yielded %d bytes\n", plen);
-
-  if (plen <= 0)
-    {
-      memcpy (ls->buf, fatal_krberror, fatal_krberror_len);
-      ls->bufpos = fatal_krberror_len;
-    }
-  else
-    {
-      memcpy (ls->buf, p, plen);
-      ls->bufpos = plen;
-      free (p);
-    }
-}
-
-static void
-kdc_send (struct listenspec *ls)
-{
-  ssize_t sent_bytes, read_bytes;
-  int rc;
-
-  printf ("Sending %d bytes on socket %d\n", ls->bufpos, ls->sockfd);
-
-#ifdef USE_STARTTLS
-  if (ls->usetls)
-    {
-      printf ("TLS sending %d\n", ls->bufpos);
-
-      sent_bytes = gnutls_record_send (ls->session, ls->buf, ls->bufpos);
-    }
-  else
-#endif
-    {
-      if (ls->type == SOCK_STREAM)
-	{
-	  uint32_t len = htonl (ls->bufpos) + 4;
-
-	  do
-	    sent_bytes = sendto (ls->sockfd, &len, 4,
-				 0, &ls->addr, ls->addrlen);
-	  while (sent_bytes == -1 && errno == EAGAIN);
-	}
-
-      do
-	sent_bytes = sendto (ls->sockfd, ls->buf, ls->bufpos,
-			     0, &ls->addr, ls->addrlen);
-      while (sent_bytes == -1 && errno == EAGAIN);
-
-      printf ("sent %d\n", sent_bytes);
-
-      if (sent_bytes < 0)
-	perror ("write");
-      else if ((size_t) sent_bytes > ls->bufpos)
-	fprintf (stderr, "wrote %db but buffer only %db",
-		 sent_bytes, ls->bufpos);
-      else if ((size_t) sent_bytes < ls->bufpos)
-	fprintf (stderr,
-		 "short write (%db) writing %d bytes\n",
-		 sent_bytes, ls->bufpos);
-    }
-
-  ls->bufpos = 0;
-}
-
-static int
-kdc_ready (struct listenspec *ls)
-{
-  ssize_t sent_bytes, read_bytes;
-  int rc;
-
-#ifdef USE_STARTTLS
-  if (ls->usetls && ls->bufpos > 0)
-    return 1;
-  else
-#endif
-    if (ls->type == SOCK_DGRAM)
-      return 1;
-    else if (ls->bufpos > 4 && ntohl (*(int *) ls->buf) + 4 == ls->bufpos)
-      return 1;
-
-  return 0;
-}
-
-static int
-kdc_read (struct listenspec *ls)
-{
-  ssize_t read_bytes;
-
-  ls->addrlen = sizeof (ls->addr);
-  if (ls->usetls)
-    read_bytes = gnutls_record_recv (ls->session, ls->buf,
-				     sizeof (ls->buf));
-  else
-    read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
-			   sizeof(ls->buf) - ls->bufpos, 0,
-			   &ls->addr, &ls->addrlen);
-  if (read_bytes < 0)
-    {
-      if (ls->usetls)
-	error (0, 0, "Corrupted TLS data (%d): %s\n", read_bytes,
-	       gnutls_strerror (read_bytes));
-      else
-	error (0, errno, "Error from recvfrom (%d)", read_bytes);
-      return -1;
-    }
-
-  if (read_bytes == 0 && ls->type == SOCK_STREAM)
-    {
-      if (!arg.quiet_flag)
-	printf ("Peer %s disconnected\n", ls->str);
-      return -1;
-    }
-
-  ls->bufpos += read_bytes;
-
-  if (!arg.quiet_flag)
-    printf ("Has %d bytes from %s on socket %d\n",
-	    ls->bufpos, ls->str, ls->sockfd);
-
-  return 0;
-}
-
+/* Accept new TCP connection in a new listenspec entry. */
 static void
 kdc_accept (struct listenspec *ls)
 {
@@ -279,9 +42,279 @@ kdc_accept (struct listenspec *ls)
   asprintf (&newls->str, "%s peer %s", ls->str,
 	    inet_ntoa (newls->sin->sin_addr));
 
-  if (!arg.quiet_flag)
-    printf ("Accepted socket %d from socket %d as %s\n",
-	    newls->sockfd, ls->sockfd, newls->str);
+  syslog (LOG_DEBUG, "Accepted socket %d from socket %d as %s",
+	  newls->sockfd, ls->sockfd, newls->str);
+}
+
+/* Destroy listenspec element and return pointer to element before the
+   removed element, or NULL if the first element was removed (or the
+   destroyed list element wasn't in the list). */
+struct listenspec *
+kdc_close (struct listenspec *ls)
+{
+  struct listenspec *tmp;
+  int rc;
+
+  syslog (LOG_INFO, "Closing %s socket %d", ls->str, ls->sockfd);
+
+  if (ls->sockfd)
+    {
+      rc = close (ls->sockfd);
+      if (rc != 0)
+	syslog (LOG_ERR, "Close failed to %s on socket %d (%d): %s",
+		ls->str, ls->sockfd, rc, strerror (rc));
+    }
+
+#ifdef USE_STARTTLS
+  if (ls->usetls)
+    {
+      do
+	rc = gnutls_bye (ls->session, GNUTLS_SHUT_RDWR);
+      while (rc == GNUTLS_E_AGAIN || rc == GNUTLS_E_INTERRUPTED);
+
+      if (rc != GNUTLS_E_SUCCESS)
+	syslog (LOG_ERR, "TLS terminate failed to %s on socket %d (%d): %s",
+		ls->str, ls->sockfd, rc, gnutls_strerror (rc));
+
+      gnutls_deinit (ls->session);
+    }
+#endif
+
+  if (ls->str)
+    free (ls->str);
+
+  for (tmp = listenspec; tmp && tmp->next != ls; tmp = tmp->next)
+    ;
+  if (tmp)
+    tmp->next = ls->next;
+
+  free (ls);
+
+  return tmp;
+}
+
+/* Send string to peer, via UDP/TCP/TLS, reporting any errors. */
+void
+kdc_send1 (struct listenspec *ls)
+{
+  ssize_t sent_bytes, read_bytes;
+
+  do
+#ifdef USE_STARTTLS
+    if (ls->usetls)
+      sent_bytes = gnutls_record_send (ls->session, ls->buf, ls->bufpos);
+    else
+#endif
+      sent_bytes = sendto (ls->sockfd, ls->buf, ls->bufpos,
+			   0, &ls->addr, ls->addrlen);
+  while (sent_bytes == -1 && errno == EAGAIN);
+
+  if (sent_bytes < 0)
+    syslog (LOG_ERR, "Error writing %d bytes to %s on socket %d: %s",
+	    ls->bufpos, ls->str, ls->sockfd, strerror (errno));
+  else if ((size_t) sent_bytes > ls->bufpos)
+    syslog (LOG_ERR, "Overlong write (%d > %d) to %s on socket %d",
+	    sent_bytes, ls->bufpos);
+  else if ((size_t) sent_bytes < ls->bufpos)
+    syslog (LOG_ERR, "Short write (%d < %d) to %s on socket %d",
+	    sent_bytes, ls->bufpos);
+}
+
+/* Format response and send it to peer, via UDP/TCP/TLS, reporting any
+   errors. */
+static void
+kdc_send (struct listenspec *ls)
+{
+  if (ls->usetls)
+    syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via TLS",
+	    ls->bufpos, ls->str, ls->sockfd);
+  else if (ls->type == SOCK_STREAM)
+    {
+      uint32_t len = htonl (ls->bufpos) + 4;
+
+      syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via TCP",
+	      ls->bufpos, ls->str, ls->sockfd);
+
+      if (ls->bufpos + 4 >= sizeof (ls->buf))
+	ls->bufpos = sizeof(ls->buf) - 4;
+
+      memmove (ls->buf + 4, ls->buf, ls->bufpos);
+      memcpy (ls->buf, &len, 4);
+      ls->bufpos += 4;
+    }
+  else
+    syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via UDP",
+	    ls->bufpos, ls->str, ls->sockfd);
+
+  kdc_send1 (ls);
+
+  ls->bufpos = 0;
+}
+
+#define STARTTLS_CLIENT_REQUEST "\x70\x00\x00\x01"
+#define STARTTLS_SERVER_ACCEPT "\x70\x00\x00\x02"
+#define STARTTLS_LEN 4
+
+/* Handle the high TCP length bit, currently only used for STARTTLS. */
+static int
+kdc_extension (struct listenspec *ls)
+{
+  ssize_t sent_bytes, read_bytes;
+  int rc;
+
+#ifdef USE_STARTTLS
+  if (!ls->usetls && ls->type == SOCK_STREAM && ls->bufpos == 4 &&
+      memcmp (ls->buf, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN) == 0)
+    {
+      const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
+
+      syslog (LOG_INFO, "Trying STARTTLS");
+
+      memcpy (ls->buf, STARTTLS_SERVER_ACCEPT, STARTTLS_LEN);
+      ls->bufpos = STARTTLS_LEN;
+
+      kdc_send1 (ls);
+
+      rc = gnutls_init (&ls->session, GNUTLS_SERVER);
+      if (rc != GNUTLS_E_SUCCESS)
+	{
+	  syslog (LOG_ERR, "TLS initialization failed (%d): %s", rc,
+		  gnutls_strerror (rc));
+	  return -1;
+	}
+
+      rc = gnutls_set_default_priority (ls->session);
+      if (rc != GNUTLS_E_SUCCESS)
+	{
+	  syslog (LOG_ERR, "TLS failed, gnutls_sdp %d: %s", rc,
+		  gnutls_strerror (rc));
+	  return -1;
+	}
+
+      rc = gnutls_kx_set_priority (ls->session, kx_prio);
+      if (rc != GNUTLS_E_SUCCESS)
+	{
+	  syslog (LOG_ERR, "TLS failed, gnutls_ksp %d: %s", rc,
+		  gnutls_strerror (rc));
+	  return -1;
+	}
+
+      rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_ANON,
+				   anoncred);
+      if (rc != GNUTLS_E_SUCCESS)
+	{
+	  syslog (LOG_ERR, "TLS failed, gnutls_cs %d: %s", rc,
+		  gnutls_strerror (rc));
+	  return -1;
+	}
+
+      gnutls_dh_set_prime_bits (ls->session, DH_BITS);
+      gnutls_transport_set_ptr (ls->session,
+				(gnutls_transport_ptr) ls->sockfd);
+
+      rc = gnutls_handshake (ls->session);
+      if (rc < 0)
+	{
+	  syslog (LOG_ERR, "TLS handshake failed (%d): %s\n",
+		  rc, gnutls_strerror (rc));
+	  return -1;
+	}
+
+      syslog (LOG_INFO, "TLS successful");
+
+      ls->bufpos = 0;
+      ls->usetls = 1;
+    }
+#endif
+
+  return 0;
+}
+
+/* Read data from peer, reporting any errors. */
+static int
+kdc_read (struct listenspec *ls)
+{
+  ssize_t read_bytes;
+
+  ls->addrlen = sizeof (ls->addr);
+  if (ls->usetls)
+    read_bytes = gnutls_record_recv (ls->session, ls->buf,
+				     sizeof (ls->buf));
+  else
+    read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
+			   sizeof(ls->buf) - ls->bufpos, 0,
+			   &ls->addr, &ls->addrlen);
+  if (read_bytes < 0)
+    {
+      if (ls->usetls)
+	syslog (LOG_ERR, "Corrupt TLS data from %s on socket %d (%d): %s",
+		ls->str, ls->sockfd, read_bytes, gnutls_strerror (read_bytes));
+      else
+	syslog (LOG_ERR, "Error reading from %s on socket %d (%d): %s",
+		ls->str, ls->sockfd, read_bytes, strerror (read_bytes));
+      return -1;
+    }
+
+  if (read_bytes == 0 && ls->type == SOCK_STREAM)
+    {
+      syslog (LOG_DEBUG, "Peer %s disconnected on socket %d\n",
+	      ls->str, ls->sockfd);
+      return -1;
+    }
+
+  ls->bufpos += read_bytes;
+
+  syslog (LOG_DEBUG, "Has %d bytes from %s on socket %d\n",
+	  ls->bufpos, ls->str, ls->sockfd);
+
+  return 0;
+}
+
+/* Have we read an entire request? */
+static int
+kdc_ready (struct listenspec *ls)
+{
+  if ((ls->usetls || ls->type == SOCK_DGRAM) && ls->bufpos > 0)
+    return 1;
+  else if (ls->bufpos > 4 && ntohl (*(int *) ls->buf) + 4 == ls->bufpos)
+    return 1;
+
+  return 0;
+}
+
+/* Process a request and store reply in same buffer. */
+static void
+kdc_process (struct listenspec *ls)
+{
+  ssize_t sent_bytes, read_bytes;
+  int rc;
+  char *p;
+  size_t plen;
+
+  syslog (LOG_DEBUG, "Processing %d from %s on socket %d",
+	  ls->bufpos, ls->str, ls->sockfd);
+
+  if (ls->usetls || ls->type == SOCK_DGRAM)
+    plen = process (ls->buf, ls->bufpos, &p);
+  else
+    plen = process (ls->buf + 4, ls->bufpos - 4, &p);
+
+  if (plen <= 0)
+    {
+      syslog (LOG_ERR, "Processing request failed for %s on socket %d (%d)",
+	      ls->str, ls->sockfd, plen);
+      memcpy (ls->buf, fatal_krberror, fatal_krberror_len);
+      ls->bufpos = fatal_krberror_len;
+    }
+  else
+    {
+      memcpy (ls->buf, p, plen);
+      ls->bufpos = plen;
+      free (p);
+    }
+
+  syslog (LOG_DEBUG, "Have %d bytes for %s on socket %d",
+	  ls->bufpos, ls->str, ls->sockfd);
 }
 
 int quit = 0;
@@ -294,6 +327,9 @@ ctrlc (int signum)
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
+/* Main KDC logic, loop around select and call kdc_accept, kdc_read,
+   kdc_extension, kdc_process and kdc_send.  This return when the
+   SIGINT or SIGTERM signals are received. */
 void
 kdc_loop (void)
 {
@@ -315,7 +351,8 @@ kdc_loop (void)
 	    {
 	      maxfd = MAX(maxfd, ls->sockfd + 1);
 	      if (!arg.quiet_flag)
-		printf ("Listening on socket %d\n", ls->sockfd);
+		syslog (LOG_DEBUG, "Listening on %s socket %d\n",
+			ls->str, ls->sockfd);
 	      FD_SET (ls->sockfd, &readfds);
 	    }
 	}
