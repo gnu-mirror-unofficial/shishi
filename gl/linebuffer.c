@@ -93,5 +93,4 @@ void
 freebuffer (struct linebuffer *linebuffer)
 {
   free (linebuffer->buffer);
-  free (linebuffer);
 }
