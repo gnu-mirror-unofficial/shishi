@@ -770,6 +770,7 @@ typedef int (*Shishi_checksum_function) (Shishi * handle,
 					 char **out, size_t * outlen);
 
 #include "crypto-null.c"
+#include "crypto-md.c"
 #include "crypto-des.c"
 #include "crypto-3des.c"
 #include "crypto-aes.c"
@@ -1175,6 +1176,13 @@ struct checksuminfo
 typedef struct checksuminfo checksuminfo;
 
 static checksuminfo md4_info = {
+  SHISHI_RSA_MD4,
+  "rsa-md4",
+  16,
+  md4_checksum
+};
+
+static checksuminfo md4_des_info = {
   SHISHI_RSA_MD4_DES,
   "rsa-md4-des",
   24,
@@ -1182,6 +1190,13 @@ static checksuminfo md4_info = {
 };
 
 static checksuminfo md5_info = {
+  SHISHI_RSA_MD5,
+  "rsa-md5",
+  16,
+  md5_checksum
+};
+
+static checksuminfo md5_des_info = {
   SHISHI_RSA_MD5_DES,
   "rsa-md5-des",
   24,
@@ -1218,7 +1233,9 @@ static checksuminfo hmac_sha1_96_aes256_info = {
 
 static checksuminfo *checksums[] = {
   &md4_info,
+  &md4_des_info,
   &md5_info,
+  &md5_des_info,
   &md5_gss_info,
   &hmac_sha1_des3_kd_info,
   &hmac_sha1_96_aes128_info,

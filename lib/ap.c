@@ -32,6 +32,7 @@ struct Shishi_ap
   Shishi_asn1 encapreppart;
   int authenticatorcksumkeyusage;
   int authenticatorkeyusage;
+  int authenticatorcksumtype;
   char *authenticatorcksumdata;
   int authenticatorcksumdatalen;
 };
@@ -87,6 +88,7 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
   lap = *ap;
 
   lap->handle = handle;
+  lap->authenticatorcksumtype = SHISHI_NO_CKSUMTYPE;
   lap->authenticatorcksumkeyusage = SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR_CKSUM;
   lap->authenticatorkeyusage = SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR;
 
@@ -402,12 +404,41 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 }
 
 /**
+ * shishi_ap_authenticatorcksumtype:
+ * @ap: structure that holds information about AP exchange
+ * @cksumtype: ouput authenticator checksum type.
+ *
+ * Get the Authenticator Checksum Type in the AP exchange.
+ **/
+void
+shishi_ap_authenticator_cksumtype (Shishi_ap * ap, int *cksumtype)
+{
+  *cksumtype = ap->authenticatorcksumtype;
+}
+
+/**
+ * shishi_ap_authenticator_cksumtype_set:
+ * @ap: structure that holds information about AP exchange
+ * @authenticatorcksumtype: input int with authenticator checksum
+ * type to use in AP.
+ *
+ * Set the Authenticator Checksum Type in the AP exchange.
+ **/
+void
+shishi_ap_authenticator_cksumtype_set (Shishi_ap * ap,
+				       int cksumtype)
+{
+  ap->authenticatorcksumtype = cksumtype;
+}
+
+/**
  * shishi_ap_authenticator:
  * @ap: structure that holds information about AP exchange
  *
  * Return value: Returns the Authenticator from the AP exchange, or
  *               NULL if not yet set or an error occured.
  **/
+
 Shishi_asn1
 shishi_ap_authenticator (Shishi_ap * ap)
 {
@@ -521,6 +552,7 @@ int
 shishi_ap_req_build (Shishi_ap * ap)
 {
   int res;
+  int cksumtype;
 
   if (VERBOSE (ap->handle))
     printf ("Building AP-REQ...\n");
@@ -534,11 +566,20 @@ shishi_ap_req_build (Shishi_ap * ap)
       return res;
     }
 
-  res = shishi_authenticator_add_cksum (ap->handle, ap->authenticator,
-					shishi_tkt_key (ap->tkt),
-					ap->authenticatorcksumkeyusage,
-					ap->authenticatorcksumdata,
-					ap->authenticatorcksumdatalen);
+  shishi_ap_authenticator_cksumtype (ap, &cksumtype);
+  if (cksumtype == SHISHI_NO_CKSUMTYPE)
+    res = shishi_authenticator_add_cksum (ap->handle, ap->authenticator,
+					  shishi_tkt_key (ap->tkt),
+					  ap->authenticatorcksumkeyusage,
+					  ap->authenticatorcksumdata,
+					  ap->authenticatorcksumdatalen);
+  else
+    res = shishi_authenticator_add_cksum_type (ap->handle, ap->authenticator,
+					       shishi_tkt_key (ap->tkt),
+					       ap->authenticatorcksumkeyusage,
+					       cksumtype,
+					       ap->authenticatorcksumdata,
+					       ap->authenticatorcksumdatalen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (ap->handle,

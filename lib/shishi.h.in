@@ -278,7 +278,9 @@ typedef enum
   SHISHI_RSA_MD5_DES_GSS = 9,	/* XXX */
   SHISHI_HMAC_SHA1_DES3_KD = 12,
   SHISHI_HMAC_SHA1_96_AES128 = 15,
-  SHISHI_HMAC_SHA1_96_AES256 = 16
+  SHISHI_HMAC_SHA1_96_AES256 = 16,
+
+  SHISHI_NO_CKSUMTYPE = -1
 }
 Shishi_cksumtype;
 
@@ -840,6 +842,11 @@ extern int shishi_authenticator_add_cksum (Shishi * handle,
 					   Shishi_key * key,
 					   int keyusage,
 					   char *data, int datalen);
+extern int
+shishi_authenticator_add_cksum_type (Shishi * handle,
+				     Shishi_asn1 authenticator,
+				     Shishi_key * key,
+				     int keyusage, int cksumtype, char *data, int datalen);
 extern int
 shishi_authenticator_remove_subkey (Shishi * handle,
 				    Shishi_asn1 authenticator);
@@ -1523,6 +1530,10 @@ extern void
 shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 				       char *authenticatorcksumdata,
 				       int authenticatorcksumdatalen);
+extern void shishi_ap_authenticator_cksumtype (Shishi_ap * ap,
+					       int *cksumtype);
+extern void shishi_ap_authenticator_cksumtype_set (Shishi_ap * ap,
+						   int cksumtype);
 
 extern Shishi_asn1 shishi_ap_authenticator (Shishi_ap * ap);
 extern void shishi_ap_authenticator_set (Shishi_ap * ap,

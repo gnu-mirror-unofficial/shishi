@@ -583,6 +583,48 @@ shishi_authenticator_add_cksum (Shishi * handle,
 }
 
 /**
+ * shishi_authenticator_add_cksum_type:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @key: key to to use for encryption.
+ * @keyusage: kerberos key usage value to use in encryption.
+ * @cksumtype: checksum to type to calculate checksum.
+ * @data: input array with data to calculate checksum on.
+ * @datalen: size of input array with data to calculate checksum on.
+ *
+ * Calculate checksum for data and store it in the authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_add_cksum_type (Shishi * handle,
+				     Shishi_asn1 authenticator,
+				     Shishi_key * key,
+				     int keyusage, int cksumtype, char *data, int datalen)
+{
+  int res;
+
+  if (data && datalen > 0)
+    {
+      char *cksum;
+      int cksumlen;
+
+      res = shishi_checksum (handle, key, keyusage, cksumtype,
+			     data, datalen, &cksum, &cksumlen);
+      if (res != SHISHI_OK)
+	return res;
+
+      res = shishi_authenticator_set_cksum (handle, authenticator,
+					    cksumtype, cksum, cksumlen);
+      free (cksum);
+    }
+  else
+    res = shishi_authenticator_remove_cksum (handle, authenticator);
+
+  return res;
+}
+
+/**
  * shishi_authenticator_clear_authorizationdata:
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: Authenticator as allocated by shishi_authenticator().
