@@ -4369,16 +4369,14 @@ should contain.
 
 RFC 1510/1510bis incompatibilities.  NULL enctype removed without
 discussion, and it is still used by some 1964 GSSAPI implementations.
-KRB_SAFE text (3.4.1) now says the checksum is generated using the
-session or sub-session key, which contradicts itself (3.2.6) and 1510
-which both allow the application to define the key.  Verification of
-KRB_SAFE now require the key to be compatible with the (sub-)session
-key, in 1510 the only requirement was that it was collision proof.
+KRB_SAFE text (3.4.1) says the checksum is generated using the session
+or sub-session key, which contradicts itself (compare section 3.2.6)
+and also RFC 1510, which both allow the application to define the key.
+Verification of KRB_SAFE now require the key to be compatible with the
+(sub-)session key, in 1510 the only requirement was that it was
+collision proof.
 
-Errors in clarifications.  Incorrectly remove the OPTIONAL flag on the
-KDC-REQ-BODY.enc-authorization-data field.
-
-Problems with clarifications.  Uses bignum INTEGER for TYPED-DATA and
+Problems with RFC 1510bis.  Uses bignum INTEGER for TYPED-DATA and
 AD-AND-OR.
 
 Problems with crypto specification.  It uses the word ``random'' many
