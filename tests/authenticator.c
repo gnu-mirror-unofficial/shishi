@@ -55,7 +55,7 @@ test (Shishi * handle)
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
   char *p;
-  int res;
+  int res, t;
   size_t n, m;
   uint32_t seq;
 
@@ -172,17 +172,17 @@ test (Shishi * handle)
 
   /* shishi_authenticator_authorizationdata */
   m = sizeof (buffer);
-  res = shishi_authenticator_authorizationdata (handle, a, &n, buffer, &m, 1);
+  res = shishi_authenticator_authorizationdata (handle, a, &t, buffer, &m, 1);
   if (debug)
     escapeprint (buffer, m);
-  if (res == SHISHI_OK && n == 42 && m == 3 && memcmp (buffer, "baz", 3) == 0)
+  if (res == SHISHI_OK && t == 42 && m == 3 && memcmp (buffer, "baz", 3) == 0)
     success ("shishi_authenticator_authorizationdata() OK\n");
   else
     fail ("shishi_authenticator_authorizationdata() failed\n");
 
   /* shishi_authenticator_authorizationdata */
   m = sizeof (buffer);
-  res = shishi_authenticator_authorizationdata (handle, a, &n, buffer, &m, 2);
+  res = shishi_authenticator_authorizationdata (handle, a, &t, buffer, &m, 2);
   if (res == SHISHI_OUT_OF_RANGE)
     success ("shishi_authenticator_authorizationdata() OK\n");
   else
@@ -257,10 +257,10 @@ test (Shishi * handle)
     fail ("shishi_authenticator_cusec_set() failed\n");
 
   /* shishi_authenticator_cusec_get */
-  res = shishi_authenticator_cusec_get (handle, a, &n);
+  res = shishi_authenticator_cusec_get (handle, a, &t);
   if (debug)
-    printf ("shishi_authenticator_cusec_get () => `%d'.\n", n);
-  if (res == SHISHI_OK && n == 4711)
+    printf ("shishi_authenticator_cusec_get () => `%d'.\n", t);
+  if (res == SHISHI_OK && t == 4711)
     success ("shishi_authenticator_cusec_get() OK\n");
   else
     fail ("shishi_authenticator_cusec_get() failed\n");
