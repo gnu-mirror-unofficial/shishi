@@ -64,8 +64,8 @@ static const char base64val[] = {
 
 /* raw bytes to null-terminated base 64 string */
 void
-shishi_to_base64 (unsigned char *out, const unsigned char *in, size_t len,
-		  size_t olen)
+shishi_to_base64 (unsigned char *out, const unsigned char *in, int len,
+		  int olen)
 {
   while (len >= 3 && olen > 10)
     {
