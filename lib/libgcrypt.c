@@ -359,7 +359,6 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int mode,
 
   if (ivout)
     {
-
       *ivout = xmalloc (ivlen);
 
       if (decryptp)

@@ -568,7 +568,6 @@ shishi_aes_cts (Shishi * handle, int decryptp,
 
   *out = xmalloc (inlen);
 
-
   if (iv)
     CBC_SET_IV (&aes, iv);
   else
