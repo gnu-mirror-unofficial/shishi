@@ -360,20 +360,20 @@ shishi_ticket_realm (Shishi_ticket * ticket, char *realm, int *realmlen)
 
 int
 shishi_ticket_server (Shishi_ticket * ticket,
-		      const char *service, int *servicelen)
+		      const char *server, int *serverlen)
 {
   return shishi_ticket_sname_get (ticket->handle, ticket->ticket,
-				  service, servicelen);
+				  server, serverlen);
 }
 
 int
-shishi_ticket_server_p (Shishi_ticket * ticket, const char *service)
+shishi_ticket_server_p (Shishi_ticket * ticket, const char *server)
 {
   char *buf;
   int buflen;
   int res;
 
-  buflen = strlen (service) + 1;
+  buflen = strlen (server) + 1;
   buf = malloc (buflen);
   if (buf == NULL)
     return 0;
@@ -386,7 +386,7 @@ shishi_ticket_server_p (Shishi_ticket * ticket, const char *service)
     }
   buf[buflen] = '\0';
 
-  if (strcmp (service, buf) != 0)
+  if (strcmp (server, buf) != 0)
     {
       free (buf);
       return 0;
@@ -399,10 +399,10 @@ shishi_ticket_server_p (Shishi_ticket * ticket, const char *service)
 
 int
 shishi_ticket_server_realm (Shishi_ticket * ticket,
-			    char *servicerealm, int *servicerealmlen)
+			    char *serverrealm, int *serverrealmlen)
 {
   return shishi_ticket_snamerealm_get (ticket->handle, ticket->ticket,
-				       servicerealm, servicerealmlen);
+				       serverrealm, serverrealmlen);
 }
 
 int
@@ -698,7 +698,7 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
 					      ticket->ticket, &keytype);
   if (res != SHISHI_OK)
     return res;
-  printf (_("Service:\t%s with server key %s (%d)\n"), buf,
+  printf (_("Server:\t%s using key %s (%d)\n"), buf,
 	  shishi_cipher_name (keytype), keytype);
 
   res = shishi_ticket_keytype (ticket, &keytype);
