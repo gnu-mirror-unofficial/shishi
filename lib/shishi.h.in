@@ -598,6 +598,7 @@ extern const char *shishi_cfg_default_systemfile (Shishi * handle);
 extern const char *shishi_cfg_default_userdirectory (Shishi * handle);
 extern const char *shishi_cfg_default_userfile (Shishi * handle);
 extern int shishi_cfg_clientkdcetype (Shishi * handle, int32_t ** etypes);
+extern int32_t shishi_cfg_clientkdcetype_fast (Shishi * handle);
 extern int shishi_cfg_clientkdcetype_set (Shishi * handle, char *value);
 extern int shishi_cfg_authorizationtype_set (Shishi * handle, char *value);
 

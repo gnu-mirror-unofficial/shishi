@@ -502,6 +502,23 @@ shishi_cfg_clientkdcetype (Shishi * handle, int32_t ** etypes)
 }
 
 /**
+ * shishi_cfg_clientkdcetype_fast:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Extract the default etype from the list of preferred client etypes.
+ *
+ * Return value: Return the default encryption types.
+ **/
+int32_t
+shishi_cfg_clientkdcetype_fast (Shishi * handle)
+{
+  if (handle->nclientkdcetypes > 0)
+    return handle->clientkdcetypes[0];
+  else
+    return SHISHI_AES256_CTS_HMAC_SHA1_96;
+}
+
+/**
  * shishi_cfg_clientkdcetype_set:
  * @handle: Shishi library handle create by shishi_init().
  * @value: string with encryption types.
