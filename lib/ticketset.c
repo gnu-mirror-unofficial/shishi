@@ -187,7 +187,7 @@ shishi_ticketset_remove (Shishi_ticketset * ticketset,
     {
       if (ticketset->tickets)
 	free(ticketset->tickets);
-      ticketset->tickets == NULL;
+      ticketset->tickets = NULL;
     }
 
   return SHISHI_OK;
@@ -241,6 +241,8 @@ shishi_ticketset_new (Shishi_ticketset * ticketset,
   int res;
 
   tkt = shishi_ticket (ticketset->handle, ticket, enckdcreppart, kdcrep);
+  if (tkt == NULL)
+    return SHISHI_MALLOC_ERROR;
 
   res = shishi_ticketset_add (ticketset, tkt);
   if (res != SHISHI_OK)
@@ -353,18 +355,11 @@ int
 shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
 {
   Shishi_ticket *ticket;
-  int warn = 0;
   int res;
   int i;
 
   for (i = 0; i < ticketset->ntickets; i++)
     {
-      if (!shishi_ticket_valid_now_p (ticketset->tickets[i]))
-	{
-	  warn++;
-	  continue;
-	}
-
       res = shishi_kdcrep_print
 	(ticketset->handle, fh, shishi_ticket_kdcrep(ticketset->tickets[i]));
       if (res != SHISHI_OK)
@@ -399,7 +394,37 @@ shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
       fprintf (fh, "\n\n");
     }
 
-  if (warn)
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_ticketset_expire:
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
+ *
+ * Remove expired tickets from ticket set.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_ticketset_expire (Shishi_ticketset * ticketset)
+{
+  Shishi_ticket *ticket;
+  int warn = 0;
+  int res;
+  int i = 0;
+
+  while (i < ticketset->ntickets)
+    {
+      if (!shishi_ticket_valid_now_p (ticketset->tickets[i]))
+	{
+	  warn++;
+	  shishi_ticketset_remove (ticketset, i);
+	}
+      else
+	i++;
+    }
+
+  if (VERBOSE(ticketset->handle) && warn)
     shishi_warn (ticketset->handle,
 		 ngettext ("removed %d expired ticket\n",
 			   "removed %d expired tickets\n", warn), warn);
@@ -763,8 +788,8 @@ shishi_ticketset_done (Shishi_ticketset ** ticketset)
 
   tset = *ticketset;
 
-  for (i = 0; i < tset->ntickets; i++)
-    free (tset->tickets[i]);
+  if (tset->tickets)
+    free (tset->tickets);
   free (tset);
 
   return;
