@@ -33,6 +33,7 @@ struct drdk
 }
 drdk[] =
 {
+#if WITH_3DES
   {
   SHISHI_DES3_CBC_HMAC_SHA1_KD,
       "\xd3\xf8\x29\x8c\xcb\x16\x64\x38\xdc\xb9\xb9\x3e"
@@ -131,6 +132,7 @@ drdk[] =
       "\xfd\x25\x2c\xf8\xfe\x59\xf7\xd5\xba\x37\xec",
       "\xf4\x8f\xfd\x6e\x83\xf8\x3e\x73\x54\xe6\x94\xfd"
       "\x25\x2c\xf8\x3b\xfe\x58\xf7\xd5\xba\x37\xec\x5d",}
+#endif
 };
 
 struct nfold
@@ -213,6 +215,7 @@ str2key[] =
 #define S_CARON "\xC5\xA1"
 #define C_ACUTE "\xC4\x87"
 #define G_CLEF "\xF0\x9D\x84\x9E"
+#if WITH_DES
   {
   "password",
       "ATHENA.MIT.EDUraeburn",
@@ -241,6 +244,8 @@ str2key[] =
   "NNNN6666",
       "FFFFAAAA", "\xC4\xBF\x6B\x25\xAD\xF7\xA4\xF8", SHISHI_DES_CBC_MD5}
   ,
+#endif
+#if WITH_3DES
   {
   "password",
       "ATHENA.MIT.EDUraeburn",
@@ -274,8 +279,9 @@ str2key[] =
       "EXAMPLE.COMpianist",
       "\x85\x76\x37\x26\x58\x5d\xbc\x1c\xce\x6e\xc4\x3e"
       "\x1f\x75\x1f\x07\xf1\xc4\xcb\xb0\x98\xf4\x0b\x19",
-      SHISHI_DES3_CBC_HMAC_SHA1_KD}
-  ,
+  SHISHI_DES3_CBC_HMAC_SHA1_KD},
+#endif
+#if WITH_AES
   {
   "password",
       "ATHENA.MIT.EDUraeburn",
@@ -367,10 +373,13 @@ str2key[] =
       "\x57\x18\x48\xb7\x84\xa3\xd6\xbd\xc3\x46\x58\x9a\x3e\x39\x3f\x9e",
       SHISHI_AES256_CTS_HMAC_SHA1_96, "\x00\x00\x00\x32"}
   ,
+#endif
+#if WITH_ARCFOUR
   {
   "foo", "",
       "\xac\x8e\x65\x7f\x83\xdf\x82\xbe\xea\x5d\x43\xbd\xaf\x78\x00\xcc",
       SHISHI_RC4_HMAC}
+#endif
 };
 
 struct pkcs5
