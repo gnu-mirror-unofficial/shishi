@@ -109,7 +109,7 @@ shisa_cfg (Shisa * dbh, char *option)
   if (!option)
     return SHISA_OK;
 
-  if (strncmp (option, "db ", 3) != 0)
+  if (strncmp (option, "db=", 3) != 0 && strncmp (option, "db ", 3) != 0)
     {
       shisa_info (dbh, "Unknown option: `%s'.", option);
       return SHISA_CFG_SYNTAX_ERROR;
@@ -137,6 +137,7 @@ shisa_cfg_from_file (Shisa * dbh, const char *cfg)
   char *line = NULL;
   size_t len = 0;
   FILE *fh;
+  int rc = SHISA_OK;
 
   if (cfg == NULL)
     return SHISA_OK;
@@ -172,19 +173,23 @@ shisa_cfg_from_file (Shisa * dbh, const char *cfg)
       if (q && (strchr (p, '=') == NULL || q < strchr (p, '=')))
 	*q = '=';
 
-      shisa_cfg (dbh, p);
+      rc = shisa_cfg (dbh, p);
+      if (rc != SHISA_OK)
+	break;
     }
 
   if (line)
     free (line);
 
   if (ferror (fh))
-    return SHISA_CFG_IO_ERROR;
+    if (rc == SHISA_OK)
+      return SHISA_CFG_IO_ERROR;
 
   if (fclose (fh) != 0)
-    return SHISA_CFG_IO_ERROR;
+    if (rc == SHISA_OK)
+      return SHISA_CFG_IO_ERROR;
 
-  return SHISA_OK;
+  return rc;
 }
 
 /**
