@@ -30,13 +30,12 @@ shishi_TEXINFOS = gpl.texi fdl.texi $(gdoc_TEXINFOS) \
 
 AM_MAKEINFOHTMLFLAGS = --no-split --number-sections
 
-dist_man_MANS = shishi.1 shisa.1 $(gdoc_MANS)
+dist_man_MANS = shishi.1 shisa.1 shishid.1 $(gdoc_MANS)
 DISTCLEANFILES = $(dist_man_MANS)
 
 shishi.1: $(top_srcdir)/src/shishi.c $(top_builddir)/src/shishi
 	$(HELP2MAN) \
-		--name="kerberos 5 implementation" \
-		--help-option="--program-name shishi --help" \
+		--name="kerberos 5 client tool" \
 		--output=$@ $(top_builddir)/src/shishi
 
 shisa.1: $(top_srcdir)/src/shisa.c $(top_builddir)/src/shisa
@@ -44,6 +43,11 @@ shisa.1: $(top_srcdir)/src/shisa.c $(top_builddir)/src/shisa
 		--name="kerberos 5 database interface" \
 		--info-page=shishi \
 		--output=$@ $(top_builddir)/src/shisa
+
+shishid.1: $(top_srcdir)/src/shishid.c $(top_builddir)/src/shishid
+	$(HELP2MAN) \
+		--name="kerberos 5 server" \
+		--output=$@ $(top_builddir)/src/shishid
 
 GDOC_SRC = $(top_srcdir)/lib/*.c
 GDOC_TEXI_PREFIX = texi/
