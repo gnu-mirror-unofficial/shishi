@@ -30,7 +30,7 @@ shishi_sendrecv_udp (Shishi *handle,
 		     int * outlen,
 		     int timeout)
 {
-  struct sockaddr_storage lsa;
+  struct sockaddr lsa;
   struct hostent* he;
   struct sockaddr_in* lsa_inp = (struct sockaddr_in*) &lsa;
   struct protoent *proto;
