@@ -1852,7 +1852,7 @@ integrity and privacy protected, and that users can use OpenPGP, X.509
 or SRP (i.e., any mechanism supported by TLS) to authenticate
 themselves to the Kerberos server.
 
-@section Setting up Anonymous TLS
+@subsection Setting up Anonymous TLS
 @cindex anonymous tls
 @cindex Diffie Hellman key exchange
 
@@ -4011,7 +4011,9 @@ then invoke a TLS negotiation.
 If the TLS negotiation ended successfully, possibly also considering
 client or server policies, the exchange within the TLS protected
 stream is performed like normal UDP Kerberos 5 exchanges, i.e., there
-is no TCP 4 octet length field before each packet.
+is no TCP 4 octet length field before each packet.  Instead each
+Kerberos packet MUST be sent within one TLS record, so the application
+can use the TLS record length as the Kerberos 5 packet length.
 
 The server MAY consider the authentication performed by the TLS
 exchange as sufficient to issue Kerberos 5 tickets to the client,
