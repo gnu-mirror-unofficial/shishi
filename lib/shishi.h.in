@@ -945,14 +945,14 @@ shishi_authenticator_clear_authorizationdata (Shishi * handle,
 extern int
 shishi_authenticator_add_authorizationdata (Shishi * handle,
 					    Shishi_asn1 authenticator,
-					    int adtype,
+					    int32_t adtype,
 					    char *addata, size_t addatalen);
 extern int
 shishi_authenticator_authorizationdata (Shishi * handle,
 					Shishi_asn1 authenticator,
-					int *adtype,
+					int32_t *adtype,
 					char *addata, size_t * addatalen,
-					int nth);
+					size_t nth);
 extern int shishi_authenticator_read (Shishi * handle, FILE * fh,
 				      Shishi_asn1 * authenticator);
 extern int shishi_authenticator_parse (Shishi * handle, FILE * fh,
