@@ -31,35 +31,6 @@
 
 #include "rmd.h"
 
-static struct {
-  const char *oidstring;
-  int algo;
-} oid_table[] = {
-  /* iso.member-body.us.rsadsi.pkcs.pkcs-1.5 (sha1WithRSAEncryption) */
-  { "1.2.840.113549.1.1.5",  GCRY_MD_SHA1 },
-  /* iso.member-body.us.rsadsi.pkcs.pkcs-1.4 (md5WithRSAEncryption) */
-  { "1.2.840.113549.1.1.4",  GCRY_MD_MD5 },
-  /* iso.member-body.us.x9-57.x9cm.3 (dsaWithSha1)*/
-  { "1.2.840.10040.4.3",     GCRY_MD_SHA1 },
-  /* from NIST's OIW  (sha1) */
-  { "1.3.14.3.2.26",         GCRY_MD_SHA1 },
-  /* rsaSignatureWithripemd160 */
-  { "1.3.36.3.3.1.2",       GCRY_MD_RMD160 },
-  /* RSADSI digestAlgorithm MD5 */
-  { "1.2.840.113549.2.5",   GCRY_MD_MD5 },
-  /* GNU.digestAlgorithm TIGER */
-  { "1.3.6.1.4.1.11591.12.2", GCRY_MD_TIGER },
-  /* iso.member-body.us.rsadsi.digestAlgorithm.md4 */
-  { "1.2.840.113549.2.4", GCRY_MD_MD4 },
-  /* from NIST OIW (sha-1WithRSAEncryption) */
-  { "1.3.14.3.2.29", GCRY_MD_SHA1 },
-  /* According to the OpenPGG draft rfc2440-bis06 */
-  { "2.16.840.1.101.3.4.2.1", GCRY_MD_SHA256 }, 
-  { "2.16.840.1.101.3.4.2.2", GCRY_MD_SHA384 }, 
-  { "2.16.840.1.101.3.4.2.3", GCRY_MD_SHA512 }, 
-  {NULL}
-};
-
 static struct digest_table_entry
 {
   gcry_md_spec_t *digest;
@@ -125,7 +96,7 @@ static int default_digests_registered;
 static void
 gcry_md_register_default (void)
 {
-  gpg_err_code_t err = 0;
+  gcry_err_code_t err = 0;
   int i;
   
   for (i = 0; (! err) && digest_table[i].digest; i++)
@@ -148,6 +119,25 @@ gcry_md_lookup_func_name (void *spec, void *data)
   return (! stricmp (digest->name, name));
 }
 
+/* Internal callback function.  Used via _gcry_module_lookup.  */
+static int
+gcry_md_lookup_func_oid (void *spec, void *data)
+{
+  gcry_md_spec_t *digest = (gcry_md_spec_t *) spec;
+  char *oid = (char *) data;
+  gcry_md_oid_spec_t *oid_specs = digest->oids;
+  int ret = 0, i;
+
+  if (oid_specs)
+    {
+      for (i = 0; oid_specs[i].oidstring && (! ret); i++)
+        if (! stricmp (oid, oid_specs[i].oidstring))
+          ret = 1;
+    }
+
+  return ret;
+}
+
 /* Internal function.  Lookup a digest entry by it's name.  */
 static gcry_module_t 
 gcry_md_lookup_name (const char *name)
@@ -160,15 +150,27 @@ gcry_md_lookup_name (const char *name)
   return digest;
 }
 
+/* Internal function.  Lookup a cipher entry by it's oid.  */
+static gcry_module_t
+gcry_md_lookup_oid (const char *oid)
+{
+  gcry_module_t digest;
+
+  digest = _gcry_module_lookup (digests_registered, (void *) oid,
+				gcry_md_lookup_func_oid);
+
+  return digest;
+}
+
 /* Register a new digest module whose specification can be found in
    DIGEST.  On success, a new algorithm ID is stored in ALGORITHM_ID
    and a pointer representhing this module is stored in MODULE.  */
-gpg_error_t
+gcry_error_t
 gcry_md_register (gcry_md_spec_t *digest,
 		  unsigned int *algorithm_id,
 		  gcry_module_t *module)
 {
-  gpg_err_code_t err = 0;
+  gcry_err_code_t err = 0;
   gcry_module_t mod;
 
   ath_mutex_lock (&digests_registered_lock);
@@ -182,7 +184,7 @@ gcry_md_register (gcry_md_spec_t *digest,
       *algorithm_id = mod->mod_id;
     }
 
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
 /* Unregister the digest identified by ID, which must have been
@@ -219,10 +221,10 @@ struct gcry_md_context
 #define CTX_MAGIC_SECURE 0x16917011
 
 static const char * digest_algo_to_string( int algo );
-static gpg_err_code_t check_digest_algo (int algo);
-static gpg_err_code_t md_open (gcry_md_hd_t *h, int algo, int secure, int hmac);
-static gpg_err_code_t md_enable (gcry_md_hd_t hd, int algo);
-static gpg_err_code_t md_copy (gcry_md_hd_t a, gcry_md_hd_t *b);
+static gcry_err_code_t check_digest_algo (int algo);
+static gcry_err_code_t md_open (gcry_md_hd_t *h, int algo, int secure, int hmac);
+static gcry_err_code_t md_enable (gcry_md_hd_t hd, int algo);
+static gcry_err_code_t md_copy (gcry_md_hd_t a, gcry_md_hd_t *b);
 static void md_close (gcry_md_hd_t a);
 static void md_write (gcry_md_hd_t a, byte *inbuf, size_t inlen);
 static void md_final(gcry_md_hd_t a);
@@ -233,6 +235,37 @@ static const byte *md_asn_oid( int algo, size_t *asnlen, size_t *mdlen );
 static void md_start_debug( gcry_md_hd_t a, const char *suffix );
 static void md_stop_debug( gcry_md_hd_t a );
 
+static int 
+search_oid (const char *oid, int *algorithm, gcry_md_oid_spec_t *oid_spec)
+{
+  gcry_module_t module;
+  int ret = 0;
+
+  if (oid && ((! strncmp (oid, "oid.", 4))
+	      || (! strncmp (oid, "OID.", 4))))
+    oid += 4;
+
+  module = gcry_md_lookup_oid (oid);
+  if (module)
+    {
+      gcry_md_spec_t *digest = module->spec;
+      int i;
+
+      for (i = 0; digest->oids[i].oidstring && (! ret); i++)
+	if (! stricmp (oid, digest->oids[i].oidstring))
+	  {
+	    if (algorithm)
+	      *algorithm = module->mod_id;
+	    if (oid_spec)
+	      *oid_spec = digest->oids[i];
+	    ret = 1;
+	  }
+      _gcry_module_release (module);
+    }
+
+  return ret;
+}
+
 /****************
  * Map a string to the digest algo
  */
@@ -240,37 +273,29 @@ int
 gcry_md_map_name (const char *string)
 {
   gcry_module_t digest;
-  int algorithm = 0;
+  int ret, algorithm = 0;
 
-  if (!string)
+  if (! string)
     return 0;
+
+  REGISTER_DEFAULT_DIGESTS;
 
   /* If the string starts with a digit (optionally prefixed with
      either "OID." or "oid."), we first look into our table of ASN.1
      object identifiers to figure out the algorithm */
-  if (digitp (string)
-      || !strncmp (string, "oid.", 4) 
-      || !strncmp (string, "OID.", 4) )
-    {
-      int i;
-      const char *s =  digitp(string)? string : (string+4);
-
-      for (i=0; oid_table[i].oidstring; i++)
-	{
-	  if (!strcmp (s, oid_table[i].oidstring))
-	    return oid_table[i].algo;
-	}
-    }
-
-
-  REGISTER_DEFAULT_DIGESTS;
 
   ath_mutex_lock (&digests_registered_lock);
-  digest = gcry_md_lookup_name (string);
-  if (digest)
+
+  ret = search_oid (string, &algorithm, NULL);
+  if (! ret)
     {
-      algorithm = digest->mod_id;
-      _gcry_module_release (digest);
+      /* Not found, search for an acording diget name.  */
+      digest = gcry_md_lookup_name (string);
+      if (digest)
+	{
+	  algorithm = digest->mod_id;
+	  _gcry_module_release (digest);
+	}
     }
   ath_mutex_unlock (&digests_registered_lock);
 
@@ -315,10 +340,10 @@ gcry_md_algo_name (int algorithm)
 }
 
 
-static gpg_err_code_t
+static gcry_err_code_t
 check_digest_algo (int algorithm)
 {
-  gpg_err_code_t rc = 0;
+  gcry_err_code_t rc = 0;
   gcry_module_t digest;
 
   REGISTER_DEFAULT_DIGESTS;
@@ -341,10 +366,10 @@ check_digest_algo (int algorithm)
  * More algorithms may be added by md_enable(). The initial algorithm
  * may be 0.
  */
-static gpg_err_code_t
+static gcry_err_code_t
 md_open (gcry_md_hd_t *h, int algo, int secure, int hmac)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
   int bufsize = secure ? 512 : 1024;
   struct gcry_md_context *ctx;
   gcry_md_hd_t hd;
@@ -424,10 +449,10 @@ md_open (gcry_md_hd_t *h, int algo, int secure, int hmac)
    given as 0 if the algorithms to be used are later set using
    gcry_md_enable. H is guaranteed to be a valid handle or NULL on
    error.  */
-gpg_error_t
+gcry_error_t
 gcry_md_open (gcry_md_hd_t *h, int algo, unsigned int flags)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
   gcry_md_hd_t hd;
 
   if ((flags & ~(GCRY_MD_FLAG_SECURE | GCRY_MD_FLAG_HMAC)))
@@ -439,19 +464,19 @@ gcry_md_open (gcry_md_hd_t *h, int algo, unsigned int flags)
     }
 
   *h = err? NULL : hd;
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
 
 
-static gpg_err_code_t
+static gcry_err_code_t
 md_enable (gcry_md_hd_t hd, int algorithm)
 {
   struct gcry_md_context *h = hd->ctx;
   gcry_md_spec_t *digest = NULL;
   GcryDigestEntry *entry;
   gcry_module_t module;
-  gpg_err_code_t err = 0;
+  gcry_err_code_t err = 0;
 
   for (entry = h->list; entry; entry = entry->next)
     if (entry->module->mod_id == algorithm)
@@ -510,17 +535,17 @@ md_enable (gcry_md_hd_t hd, int algorithm)
 }
 
 
-gpg_error_t
+gcry_error_t
 gcry_md_enable (gcry_md_hd_t hd, int algorithm)
 {
-  gpg_err_code_t err = md_enable (hd, algorithm);
-  return gpg_error (err);
+  gcry_err_code_t err = md_enable (hd, algorithm);
+  return gcry_error (err);
 }
 
-static gpg_err_code_t
+static gcry_err_code_t
 md_copy (gcry_md_hd_t ahd, gcry_md_hd_t *b_hd)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
   struct gcry_md_context *a = ahd->ctx;
   struct gcry_md_context *b;
   GcryDigestEntry *ar, *br;
@@ -597,13 +622,13 @@ md_copy (gcry_md_hd_t ahd, gcry_md_hd_t *b_hd)
   return err;
 }
 
-gpg_error_t
+gcry_error_t
 gcry_md_copy (gcry_md_hd_t *handle, gcry_md_hd_t hd)
 {
-  gpg_err_code_t err = md_copy (hd, handle);
+  gcry_err_code_t err = md_copy (hd, handle);
   if (err)
     *handle = NULL;
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
 /****************
@@ -704,7 +729,7 @@ md_final (gcry_md_hd_t a)
       byte *p = md_read (a, algo);
       size_t dlen = md_digest_length (algo);
       gcry_md_hd_t om;
-      gpg_err_code_t err = md_open (&om, algo, a->ctx->secure, 0);
+      gcry_err_code_t err = md_open (&om, algo, a->ctx->secure, 0);
 
       if (err)
 	_gcry_fatal_error (err, NULL);
@@ -717,7 +742,7 @@ md_final (gcry_md_hd_t a)
     }
 }
 
-static gpg_err_code_t
+static gcry_err_code_t
 prepare_macpads( gcry_md_hd_t hd, const byte *key, size_t keylen)
 {
   int i;
@@ -752,10 +777,10 @@ prepare_macpads( gcry_md_hd_t hd, const byte *key, size_t keylen)
   return GPG_ERR_NO_ERROR;
 }
 
-gpg_error_t
+gcry_error_t
 gcry_md_ctl (gcry_md_hd_t hd, int cmd, byte *buffer, size_t buflen)
 {
-  gpg_err_code_t rc = 0;
+  gcry_err_code_t rc = 0;
   
   switch (cmd)
     {
@@ -763,7 +788,7 @@ gcry_md_ctl (gcry_md_hd_t hd, int cmd, byte *buffer, size_t buflen)
       md_final (hd);
       break;
     case GCRYCTL_SET_KEY:
-      rc = gpg_err_code (gcry_md_setkey (hd, buffer, buflen));
+      rc = gcry_err_code (gcry_md_setkey (hd, buffer, buflen));
       break;
     case GCRYCTL_START_DUMP:
       md_start_debug (hd, buffer);
@@ -774,13 +799,13 @@ gcry_md_ctl (gcry_md_hd_t hd, int cmd, byte *buffer, size_t buflen)
     default:
       rc = GPG_ERR_INV_OP;
     }
-  return gpg_error (rc);
+  return gcry_error (rc);
 }
 
-gpg_error_t
+gcry_error_t
 gcry_md_setkey (gcry_md_hd_t hd, const void *key, size_t keylen)
 {
-  gpg_err_code_t rc = GPG_ERR_NO_ERROR;
+  gcry_err_code_t rc = GPG_ERR_NO_ERROR;
 
   if (! hd->ctx->macpads)
     rc = GPG_ERR_CONFLICT;
@@ -791,7 +816,7 @@ gcry_md_setkey (gcry_md_hd_t hd, const void *key, size_t keylen)
 	gcry_md_reset (hd);
     }
 
-  return gpg_error (rc);
+  return gcry_error (rc);
 }
 
 
@@ -886,7 +911,7 @@ md_digest( gcry_md_hd_t a, int algo, byte *buffer, int buflen )
 /****************
  * Read out an intermediate digest.
  */
-gpg_err_code_t
+gcry_err_code_t
 gcry_md_get (gcry_md_hd_t hd, int algo, byte *buffer, int buflen)
 {
   /*md_digest ... */
@@ -895,25 +920,26 @@ gcry_md_get (gcry_md_hd_t hd, int algo, byte *buffer, int buflen)
 
 
 /****************
- * Shortcut function to hash a buffer with a given algo. The only supported
- * algorithm is RIPE-MD. The supplied digest buffer must be large enough
- * to store the resulting hash.  No error is returned, the function will
- * abort on an invalid algo.  DISABLED_ALGOS are ignored here.
- */
+ * Shortcut function to hash a buffer with a given algo. The only
+ * guarnteed supported algorithm is RIPE-MD. The supplied digest
+ * buffer must be large enough to store the resulting hash.  No error
+ * is returned, the function will abort on an invalid algo.
+ * DISABLED_ALGOS are ignored here.  */
 void
-gcry_md_hash_buffer (int algo, void *digest, const void *buffer, size_t length)
+gcry_md_hash_buffer (int algo, void *digest,
+                     const void *buffer, size_t length)
 {
   if (algo == GCRY_MD_RMD160)
     _gcry_rmd160_hash_buffer (digest, buffer, length);
   else
     {
-      /* for the others we do not have a fast function, so we use the
+      /* For the others we do not have a fast function, so we use the
 	 normal functions to do it */
       gcry_md_hd_t h;
       gpg_err_code_t err = md_open (&h, algo, 0, 0);
       if (err)
-	/* FIXME?  */
-	BUG(); /* algo not available */
+	log_bug ("gcry_md_open failed for algo %d: %s",
+                 algo, gpg_strerror (gcry_error(err)));
       md_write (h, (byte *) buffer, length);
       md_final (h);
       memcpy (digest, md_read (h, algo), md_digest_length (algo));
@@ -1018,10 +1044,10 @@ md_asn_oid (int algorithm, size_t *asnlen, size_t *mdlen)
  * and thereby detecting whether a error occured or not (i.e. while checking
  * the block size)
  */
-gpg_error_t
+gcry_error_t
 gcry_md_algo_info (int algo, int what, void *buffer, size_t *nbytes)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
 
   switch (what)
     {
@@ -1034,8 +1060,10 @@ gcry_md_algo_info (int algo, int what, void *buffer, size_t *nbytes)
 
     case GCRYCTL_GET_ASNOID:
       {
+	const char unsigned *asn;
 	size_t asnlen;
-	const char *asn = md_asn_oid (algo, &asnlen, NULL);
+
+	asn = md_asn_oid (algo, &asnlen, NULL);
 	if (buffer && (*nbytes >= asnlen))
 	  {
 	    memcpy (buffer, asn, asnlen);
@@ -1057,7 +1085,7 @@ gcry_md_algo_info (int algo, int what, void *buffer, size_t *nbytes)
     err = GPG_ERR_INV_OP;
   }
 
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
 
@@ -1108,10 +1136,10 @@ md_stop_debug( gcry_md_hd_t md )
  *     Returns 1 if the algo is enanled for that handle.
  *     The algo must be passed as the address of an int.
  */
-gpg_error_t
+gcry_error_t
 gcry_md_info (gcry_md_hd_t h, int cmd, void *buffer, size_t *nbytes)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
 
   switch (cmd)
     {
@@ -1146,13 +1174,13 @@ gcry_md_info (gcry_md_hd_t h, int cmd, void *buffer, size_t *nbytes)
     err = GPG_ERR_INV_OP;
   }
 
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
-gpg_err_code_t
+gcry_err_code_t
 _gcry_md_init (void)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
 
   REGISTER_DEFAULT_DIGESTS;
 
@@ -1177,6 +1205,7 @@ gcry_md_is_enabled (gcry_md_hd_t a, int algo)
 {
   size_t value;
 
+  value = sizeof algo;
   if (gcry_md_info (a, GCRYCTL_IS_ALGO_ENABLED, &algo, &value))
     value = 0;
   return value;
@@ -1189,10 +1218,10 @@ gcry_md_is_enabled (gcry_md_hd_t a, int algo)
    of according size.  In case there are less message digest modules
    than *LIST_LENGTH, *LIST_LENGTH is updated to the correct
    number.  */
-gpg_error_t
+gcry_error_t
 gcry_md_list (int *list, int *list_length)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
 
   ath_mutex_lock (&digests_registered_lock);
   err = _gcry_module_list (digests_registered, list, list_length);

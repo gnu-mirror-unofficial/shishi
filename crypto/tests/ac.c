@@ -40,14 +40,26 @@ die (const char *format, ...)
 }
 
 void
-check_run (void)
+key_copy (gcry_ac_handle_t handle,
+	  gcry_ac_key_type_t type,
+	  gcry_ac_key_t *key_cp, gcry_ac_key_t key)
+{
+  gcry_error_t err = 0;
+
+  err = gcry_ac_key_init (key_cp, handle, type,
+			  gcry_ac_key_data_get (key));
+
+  assert (! err);
+}
+
+void
+check_one (gcry_mpi_t x)
 {
   gcry_ac_handle_t handle;
   gcry_ac_key_pair_t key_pair;
-  gcry_ac_key_t key_sec, key_pub;
-  gpg_error_t err = 0;
-  unsigned int a = 0x4223;
-  gcry_mpi_t x, x2;
+  gcry_ac_key_t key_sec, key_sec_cp, key_pub, key_pub_cp;
+  gcry_error_t err = 0;
+  gcry_mpi_t x2;
   gcry_ac_data_t data, data2;
   gcry_ac_key_spec_rsa_t rsa_spec;
 
@@ -57,21 +69,21 @@ check_run (void)
   err = gcry_ac_open (&handle, GCRY_AC_RSA, 0);
   assert (! err);
 
-  x = gcry_mpi_new (0);
-  gcry_mpi_set_ui (x, a);
-
   err = gcry_ac_key_pair_generate (handle, &key_pair, 1024, (void *) &rsa_spec);
   assert (! err);
 
   key_sec = gcry_ac_key_pair_extract (key_pair, GCRY_AC_KEY_SECRET);
+  key_copy (handle, GCRY_AC_KEY_SECRET, &key_sec_cp, key_sec);
+
   key_pub = gcry_ac_key_pair_extract (key_pair, GCRY_AC_KEY_PUBLIC);
+  key_copy (handle, GCRY_AC_KEY_PUBLIC, &key_pub_cp, key_pub);
 
   err = gcry_ac_data_encrypt (handle, GCRY_AC_FLAG_DATA_NO_BLINDING,
-			      key_pub, x, &data);
+			      key_pub_cp, x, &data);
   assert (! err);
 
   err = gcry_ac_data_decrypt (handle, GCRY_AC_FLAG_DATA_NO_BLINDING,
-			      key_sec, &x2, data);
+			      key_sec_cp, &x2, data);
   assert (! err);
 
   assert (! gcry_mpi_cmp (x, x2));
@@ -106,10 +118,23 @@ check_run (void)
     assert (! err);
 
     err = gcry_ac_data_verify (handle, key_pub, x, data);
-    assert (gpg_err_code (err) == GPG_ERR_BAD_SIGNATURE);
+    assert (gcry_err_code (err) == GPG_ERR_BAD_SIGNATURE);
   }
 
   gcry_ac_close (handle);
+}
+
+void
+check_run (void)
+{
+  const char *s = "All Hail Discordia.";
+  unsigned int a = 0x4223;
+  gcry_mpi_t x;
+
+  x = gcry_mpi_new (0);
+  gcry_mpi_set_ui (x, a);
+  check_one (x);
+  gcry_mpi_release (x);
 }
 
 int

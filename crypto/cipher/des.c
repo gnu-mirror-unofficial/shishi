@@ -991,7 +991,7 @@ selftest (void)
 }
 
 
-static gpg_err_code_t
+static gcry_err_code_t
 do_tripledes_setkey ( void *context, const byte *key, unsigned keylen )
 {
   struct _tripledes_ctx *ctx = (struct _tripledes_ctx *) context;
@@ -1028,7 +1028,7 @@ do_tripledes_decrypt( void *context, byte *outbuf, const byte *inbuf )
   _gcry_burn_stack (32);
 }
 
-static gpg_err_code_t
+static gcry_err_code_t
 do_des_setkey (void *context, const byte *key, unsigned keylen)
 {
   struct _des_ctx *ctx = (struct _des_ctx *) context;
@@ -1068,12 +1068,20 @@ do_des_decrypt( void *context, byte *outbuf, const byte *inbuf )
 
 gcry_cipher_spec_t cipher_spec_des =
   {
-    "DES", 8, 64, sizeof (struct _des_ctx),
+    "DES", NULL, NULL, 8, 64, sizeof (struct _des_ctx),
     do_des_setkey, do_des_encrypt, do_des_decrypt
+  };
+
+static gcry_cipher_oid_spec_t oids_tripledes[] =
+  {
+    { "1.2.840.113549.3.7", GCRY_CIPHER_MODE_CBC },
+    /* Teletrust specific OID for 3DES. */
+    { "1.3.36.3.1.3.2.1",   GCRY_CIPHER_MODE_CBC },
+    { NULL }
   };
 
 gcry_cipher_spec_t cipher_spec_tripledes =
   {
-    "3DES", 8, 192, sizeof (struct _tripledes_ctx),
+    "3DES", NULL, oids_tripledes, 8, 192, sizeof (struct _tripledes_ctx),
     do_tripledes_setkey, do_tripledes_encrypt, do_tripledes_decrypt
   };

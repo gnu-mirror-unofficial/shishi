@@ -33,14 +33,7 @@ bin_SCRIPTS = libgcrypt-config
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libgcrypt.m4
 
-noinst_PROGRAMS = testapi benchmark
-testapi_SOURCES = testapi.c
-testapi_LDADD = libgcrypt.la
-
-benchmark_SOURCES = benchmark.c
-benchmark_LDADD = libgcrypt.la
-
-include_HEADERS = gcrypt.h
+include_HEADERS = gcrypt.h gcrypt-module.h
 
 if HAVE_PTHREAD
 ath_components_pthread = ath-pthread.c

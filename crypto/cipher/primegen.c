@@ -343,11 +343,9 @@ _gcry_generate_elg_prime( int mode, unsigned pbits, unsigned qbits,
 	do {
 	    mpi_add_ui(g, g, 1);
 	    if( DBG_CIPHER ) {
-		log_debug("checking g: ");
-		/*mpi_print( stderr, g, 1 );*/
-#if __GNUC__ >= 2
-#warning we need an internal mpi_print for debugging
-#endif
+		log_debug ("checking g:");
+                gcry_mpi_dump (g);
+                log_debug ("\n");
 	    }
 	    else
 		progress('^');
@@ -456,7 +454,7 @@ gen_prime (unsigned int nbits, int secret, int randomlevel,
 			break; /* stop loop, continue with a new prime */
                       }
 
-                    if (extra_check && extra_check (ptest, extra_check_arg))
+                    if (extra_check && extra_check (extra_check_arg, ptest))
                       { /* The extra check told us that this prime is
                            not of the caller's taste. */
                         progress ('/');

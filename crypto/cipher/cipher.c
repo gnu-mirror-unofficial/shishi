@@ -34,35 +34,6 @@
 #define CTX_MAGIC_NORMAL 0x24091964
 #define CTX_MAGIC_SECURE 0x46919042
 
-static struct
-{
-  const char *oidstring;
-  int algo;
-  int mode;
-} oid_table[] =
-  {
-    { "1.2.840.113549.3.7",      GCRY_CIPHER_3DES,   GCRY_CIPHER_MODE_CBC },
-
-    /* OIDs from NIST. See http://csrc.nist.gov.csor/ */
-    { "2.16.840.1.101.3.4.1.1",  GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_ECB },
-    { "2.16.840.1.101.3.4.1.2",  GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CBC },
-    { "2.16.840.1.101.3.4.1.3",  GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_OFB },
-    { "2.16.840.1.101.3.4.1.4",  GCRY_CIPHER_AES128, GCRY_CIPHER_MODE_CFB },
-    { "2.16.840.1.101.3.4.1.21", GCRY_CIPHER_AES192, GCRY_CIPHER_MODE_ECB },
-    { "2.16.840.1.101.3.4.1.22", GCRY_CIPHER_AES192, GCRY_CIPHER_MODE_CBC },
-    { "2.16.840.1.101.3.4.1.23", GCRY_CIPHER_AES192, GCRY_CIPHER_MODE_OFB },
-    { "2.16.840.1.101.3.4.1.24", GCRY_CIPHER_AES192, GCRY_CIPHER_MODE_CFB },
-    { "2.16.840.1.101.3.4.1.41", GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_ECB },
-    { "2.16.840.1.101.3.4.1.42", GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_CBC },
-    { "2.16.840.1.101.3.4.1.43", GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_OFB },
-    { "2.16.840.1.101.3.4.1.44", GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_CFB },
-
-    /* Teletrust specific OID for 3DES. */
-    { "1.3.36.3.1.3.2.1",        GCRY_CIPHER_3DES,   GCRY_CIPHER_MODE_CBC },
-
-    { NULL }
-  };
-
 /* This is the list of the default ciphers, which are included in
    libgcrypt.  */
 static struct cipher_table_entry
@@ -91,7 +62,7 @@ static struct cipher_table_entry
 #endif
 #if USE_TWOFISH
     { &cipher_spec_twofish,    GCRY_CIPHER_TWOFISH },
-    //    { &cipher_spec_twofish128, GCRY_CIPHER_TWOFISH128 },
+    { &cipher_spec_twofish128, GCRY_CIPHER_TWOFISH128 },
 #endif
     { NULL                    },
   };
@@ -120,11 +91,25 @@ static int default_ciphers_registered;
     }                                              \
   while (0)
 
+/* The handle structure.  */
+struct gcry_cipher_handle
+{
+  int magic;
+  gcry_cipher_spec_t *cipher;
+  gcry_module_t module;
+  int mode;
+  unsigned int flags;
+  byte iv[MAX_BLOCKSIZE];	/* (this should be ulong aligned) */
+  byte lastiv[MAX_BLOCKSIZE];
+  int unused;  /* in IV */
+  byte ctr[MAX_BLOCKSIZE];    /* for Counter (CTR) mode */
+  PROPERLY_ALIGNED_TYPE context;
+};
 
 /* These dummy functions are used in case a cipher implementation
    refuses to provide it's own functions.  */
 
-static gpg_err_code_t
+static gcry_err_code_t
 dummy_setkey (void *c, const unsigned char *key, unsigned keylen)
 {
   return GPG_ERR_NO_ERROR;
@@ -165,7 +150,7 @@ dummy_decrypt_stream (void *c,
 static void
 gcry_cipher_register_default (void)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
   int i;
   
   for (i = 0; (! err) && cipher_table[i].cipher; i++)
@@ -197,8 +182,31 @@ gcry_cipher_lookup_func_name (void *spec, void *data)
 {
   gcry_cipher_spec_t *cipher = (gcry_cipher_spec_t *) spec;
   char *name = (char *) data;
+  const char **aliases = cipher->aliases;
+  int i, ret = ! stricmp (name, cipher->name);
 
-  return (! stricmp (cipher->name, name));
+  if (aliases)
+    for (i = 0; aliases[i] && (! ret); i++)
+      ret = ! stricmp (name, aliases[i]);
+
+  return ret;
+}
+
+/* Internal callback function.  Used via _gcry_module_lookup.  */
+static int
+gcry_cipher_lookup_func_oid (void *spec, void *data)
+{
+  gcry_cipher_spec_t *cipher = (gcry_cipher_spec_t *) spec;
+  char *oid = (char *) data;
+  gcry_cipher_oid_spec_t *oid_specs = cipher->oids;
+  int ret = 0, i;
+
+  if (oid_specs)
+    for (i = 0; oid_specs[i].oid && (! ret); i++)
+      if (! stricmp (oid, oid_specs[i].oid))
+	ret = 1;
+
+  return ret;
 }
 
 /* Internal function.  Lookup a cipher entry by it's name.  */
@@ -213,15 +221,27 @@ gcry_cipher_lookup_name (const char *name)
   return cipher;
 }
 
+/* Internal function.  Lookup a cipher entry by it's oid.  */
+static gcry_module_t
+gcry_cipher_lookup_oid (const char *oid)
+{
+  gcry_module_t cipher;
+
+  cipher = _gcry_module_lookup (ciphers_registered, (void *) oid,
+				gcry_cipher_lookup_func_oid);
+
+  return cipher;
+}
+
 /* Register a new cipher module whose specification can be found in
    CIPHER.  On success, a new algorithm ID is stored in ALGORITHM_ID
    and a pointer representhing this module is stored in MODULE.  */
-gpg_error_t
+gcry_error_t
 gcry_cipher_register (gcry_cipher_spec_t *cipher,
 		      unsigned int *algorithm_id,
 		      gcry_module_t *module)
 {
-  gpg_err_code_t err = 0;
+  gcry_err_code_t err = 0;
   gcry_module_t mod;
 
   ath_mutex_lock (&ciphers_registered_lock);
@@ -235,7 +255,7 @@ gcry_cipher_register (gcry_cipher_spec_t *cipher,
       *algorithm_id = mod->mod_id;
     }
 
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
 /* Unregister the cipher identified by MODULE, which must have been
@@ -248,42 +268,37 @@ gcry_cipher_unregister (gcry_module_t module)
   ath_mutex_unlock (&ciphers_registered_lock);
 }
 
-/* The handle structure.  */
-struct gcry_cipher_handle
-{
-  int magic;
-  gcry_cipher_spec_t *cipher;
-  gcry_module_t module;
-  int  mode;
-  unsigned int flags;
-  byte iv[MAX_BLOCKSIZE];	/* (this should be ulong aligned) */
-  byte lastiv[MAX_BLOCKSIZE];
-  int  unused;  /* in IV */
-  byte ctr[MAX_BLOCKSIZE];    /* for Counter (CTR) mode */
-  PROPERLY_ALIGNED_TYPE context;
-};
-
 /* locate the OID in the oid table and return the index or -1 when not
    found */
 static int 
-search_oid (const char *string)
+search_oid (const char *oid, int *algorithm, gcry_cipher_oid_spec_t *oid_spec)
 {
-  const char *s;
-  int i;
+  gcry_module_t module;
+  int ret = 0;
 
-  if (string && (digitp (string)
-                 || !strncmp (string, "oid.", 4) 
-                 || !strncmp (string, "OID.", 4) ))
+  if (oid && ((! strncmp (oid, "oid.", 4))
+	      || (! strncmp (oid, "OID.", 4))))
+    oid += 4;
+
+  module = gcry_cipher_lookup_oid (oid);
+  if (module)
     {
-      s =  digitp(string)? string : (string+4);
+      gcry_cipher_spec_t *cipher = module->spec;
+      int i;
 
-      for (i=0; oid_table[i].oidstring; i++)
-        {
-          if (!strcmp (s, oid_table[i].oidstring))
-            return i;
-        }
+      for (i = 0; cipher->oids[i].oid && (! ret); i++)
+	if (! stricmp (oid, cipher->oids[i].oid))
+	  {
+	    if (algorithm)
+	      *algorithm = module->mod_id;
+	    if (oid_spec)
+	      *oid_spec = cipher->oids[i];
+	    ret = 1;
+	  }
+      _gcry_module_release (module);
     }
-  return -1;
+
+  return ret;
 }
 
 /****************
@@ -292,41 +307,33 @@ search_oid (const char *string)
  *	    0 if the name is not known.
  */
 int
-gcry_cipher_map_name( const char *string )
+gcry_cipher_map_name (const char *string)
 {
   gcry_module_t cipher;
-  int i, algorithm = 0;
-  
-  if (!string)
+  int ret, algorithm = 0;
+
+  if (! string)
     return 0;
 
-  /* kludge to alias RIJNDAEL to AES */
-  if ( *string == 'R' || *string == 'r')
-    {
-      if (!strcasecmp (string, "RIJNDAEL"))
-        string = "AES";
-      else if (!strcasecmp (string, "RIJNDAEL192"))
-        string = "AES192";
-      else if (!strcasecmp (string, "RIJNDAEL256"))
-        string = "AES256";
-    }
+  REGISTER_DEFAULT_CIPHERS;
 
   /* If the string starts with a digit (optionally prefixed with
      either "OID." or "oid."), we first look into our table of ASN.1
      object identifiers to figure out the algorithm */
-  i = search_oid (string);
-  if (i != -1)
-    return oid_table[i].algo;
-
-  REGISTER_DEFAULT_CIPHERS;
 
   ath_mutex_lock (&ciphers_registered_lock);
-  cipher = gcry_cipher_lookup_name (string);
-  if (cipher)
+
+  ret = search_oid (string, &algorithm, NULL);
+  if (! ret)
     {
-      algorithm = cipher->mod_id;
-      _gcry_module_release (cipher);
+      cipher = gcry_cipher_lookup_name (string);
+      if (cipher)
+	{
+	  algorithm = cipher->mod_id;
+	  _gcry_module_release (cipher);
+	}
     }
+
   ath_mutex_unlock (&ciphers_registered_lock);
   
   return algorithm;
@@ -335,10 +342,16 @@ gcry_cipher_map_name( const char *string )
 int
 gcry_cipher_mode_from_oid (const char *string)
 {
-  int i;
+  gcry_cipher_oid_spec_t oid_spec;
+  int ret = 0, mode = 0;
 
-  i = search_oid (string);
-  return i == -1? 0 : oid_table[i].mode;
+  ath_mutex_lock (&ciphers_registered_lock);
+  ret = search_oid (string, NULL, &oid_spec);
+  if (ret)
+    mode = oid_spec.mode;
+  ath_mutex_unlock (&ciphers_registered_lock);
+
+  return mode;
 }
 
 
@@ -400,10 +413,10 @@ disable_cipher_algo (int algorithm)
  * Return 0 if the cipher algo is available.
  */
 
-static gpg_err_code_t
+static gcry_err_code_t
 check_cipher_algo (int algorithm)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
   gcry_module_t cipher;
 
   REGISTER_DEFAULT_CIPHERS;
@@ -477,7 +490,7 @@ cipher_get_blocksize (int algorithm)
  * return the handle.  Put NULL into HANDLER and return and error code
  * if something goes wrong.  */
 
-gpg_error_t
+gcry_error_t
 gcry_cipher_open (gcry_cipher_hd_t *handle,
 		  int algo, int mode, unsigned int flags)
 {
@@ -485,7 +498,7 @@ gcry_cipher_open (gcry_cipher_hd_t *handle,
   gcry_cipher_spec_t *cipher = NULL;
   gcry_module_t module = NULL;
   gcry_cipher_hd_t h = NULL;
-  gpg_err_code_t err = 0;
+  gcry_err_code_t err = 0;
 
   _gcry_fast_random_poll();
   
@@ -590,7 +603,7 @@ gcry_cipher_open (gcry_cipher_hd_t *handle,
 
   *handle = err ? NULL : h;
 
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
 
@@ -599,6 +612,7 @@ gcry_cipher_close (gcry_cipher_hd_t h)
 {
   if (! h)
     return;
+
   if ((h->magic != CTX_MAGIC_SECURE)
       && (h->magic != CTX_MAGIC_NORMAL))
     _gcry_fatal_error(GPG_ERR_INTERNAL,
@@ -615,10 +629,10 @@ gcry_cipher_close (gcry_cipher_hd_t h)
 }
 
 
-static gpg_error_t
+static gcry_error_t
 cipher_setkey (gcry_cipher_hd_t c, byte *key, unsigned keylen)
 {
-  gpg_err_code_t ret;
+  gcry_err_code_t ret;
 
   ret = (*c->cipher->setkey) (&c->context.c, key, keylen);
   if (! ret)
@@ -627,7 +641,7 @@ cipher_setkey (gcry_cipher_hd_t c, byte *key, unsigned keylen)
 	    (void *) &c->context.c,
 	    c->cipher->contextsize);
 
-  return gpg_error (ret);
+  return gcry_error (ret);
 }
 
 
@@ -929,11 +943,11 @@ do_ctr_decrypt( gcry_cipher_hd_t c, byte *outbuf, const byte *inbuf, unsigned nb
  * inbuf and outbuf may overlap or be the same.
  * Depending on the mode some contraints apply to NBYTES.
  */
-static gpg_err_code_t
+static gcry_err_code_t
 cipher_encrypt (gcry_cipher_hd_t c, byte *outbuf,
 		const byte *inbuf, unsigned int nbytes)
 {
-    gpg_err_code_t rc = GPG_ERR_NO_ERROR;
+    gcry_err_code_t rc = GPG_ERR_NO_ERROR;
 
     switch( c->mode ) {
       case GCRY_CIPHER_MODE_ECB:
@@ -976,11 +990,11 @@ cipher_encrypt (gcry_cipher_hd_t c, byte *outbuf,
  * Encrypt IN and write it to OUT.  If IN is NULL, in-place encryption has
  * been requested,
  */
-gpg_error_t
+gcry_error_t
 gcry_cipher_encrypt (gcry_cipher_hd_t h, byte *out, size_t outsize,
                      const byte  *in, size_t inlen)
 {
-  gpg_err_code_t err;
+  gcry_err_code_t err;
 
   if (!in)
     /* caller requested in-place encryption */
@@ -1003,7 +1017,7 @@ gcry_cipher_encrypt (gcry_cipher_hd_t h, byte *out, size_t outsize,
                                     plaintext will never make it into
                                     OUT. */
 
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
 
@@ -1013,11 +1027,11 @@ gcry_cipher_encrypt (gcry_cipher_hd_t h, byte *out, size_t outsize,
  * inbuf and outbuf may overlap or be the same.
  * Depending on the mode some some contraints apply to NBYTES.
  */
-static gpg_err_code_t
+static gcry_err_code_t
 cipher_decrypt (gcry_cipher_hd_t c, byte *outbuf, const byte *inbuf,
 		unsigned nbytes)
 {
-    gpg_err_code_t rc = GPG_ERR_NO_ERROR;
+    gcry_err_code_t rc = GPG_ERR_NO_ERROR;
 
     switch( c->mode ) {
       case GCRY_CIPHER_MODE_ECB:
@@ -1056,11 +1070,11 @@ cipher_decrypt (gcry_cipher_hd_t c, byte *outbuf, const byte *inbuf,
 }
 
 
-gpg_error_t
+gcry_error_t
 gcry_cipher_decrypt (gcry_cipher_hd_t h, byte *out, size_t outsize,
 		     const byte  *in, size_t inlen)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
 
   if (! in)
     /* caller requested in-place encryption */
@@ -1078,7 +1092,7 @@ gcry_cipher_decrypt (gcry_cipher_hd_t h, byte *out, size_t outsize,
   else
     err = cipher_decrypt (h, out, in, inlen);
 
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
 
@@ -1098,10 +1112,10 @@ cipher_sync( gcry_cipher_hd_t c )
 }
 
 
-gpg_error_t
+gcry_error_t
 gcry_cipher_ctl( gcry_cipher_hd_t h, int cmd, void *buffer, size_t buflen)
 {
-  gpg_err_code_t rc = GPG_ERR_NO_ERROR;
+  gcry_err_code_t rc = GPG_ERR_NO_ERROR;
 
   switch (cmd)
     {
@@ -1140,7 +1154,7 @@ gcry_cipher_ctl( gcry_cipher_hd_t h, int cmd, void *buffer, size_t buflen)
        * integer with the algo number.
        */
       if( h || !buffer || buflen != sizeof(int) )
-        return gpg_error (GPG_ERR_CIPHER_ALGO);
+	return gcry_error (GPG_ERR_CIPHER_ALGO);
       disable_cipher_algo( *(int*)buffer );
       break;
     case GCRYCTL_SET_CTR:
@@ -1155,25 +1169,26 @@ gcry_cipher_ctl( gcry_cipher_hd_t h, int cmd, void *buffer, size_t buflen)
     default:
       rc = GPG_ERR_INV_OP;
     }
-  return gpg_error (rc);
+
+  return gcry_error (rc);
 }
 
 
 /****************
  * Return information about the cipher handle.
  */
-gpg_error_t
+gcry_error_t
 gcry_cipher_info( gcry_cipher_hd_t h, int cmd, void *buffer, size_t *nbytes)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
 
   switch (cmd)
     {
     default:
       err = GPG_ERR_INV_OP;
     }
-  
-  return gpg_error (err);
+
+  return gcry_error (err);
 }
 
 /****************
@@ -1198,10 +1213,10 @@ gcry_cipher_info( gcry_cipher_hd_t h, int cmd, void *buffer, size_t *nbytes)
  * and thereby detecting whether a error occured or not (i.e. while checking
  * the block size)
  */
-gpg_error_t
+gcry_error_t
 gcry_cipher_algo_info (int algo, int what, void *buffer, size_t *nbytes)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
   unsigned int ui;
 
   switch (what)
@@ -1247,7 +1262,7 @@ gcry_cipher_algo_info (int algo, int what, void *buffer, size_t *nbytes)
 	err = GPG_ERR_INV_OP;
     }
 
-  return gpg_error (err);
+  return gcry_error (err);
 }
 
 
@@ -1273,10 +1288,10 @@ gcry_cipher_get_algo_blklen (int algo)
 }
 
 
-gpg_err_code_t
+gcry_err_code_t
 _gcry_cipher_init (void)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
 
   REGISTER_DEFAULT_CIPHERS;
 
@@ -1289,10 +1304,10 @@ _gcry_cipher_init (void)
    *LIST_LENGTH algorithm IDs are stored in LIST, which must be of
    according size.  In case there are less cipher modules than
    *LIST_LENGTH, *LIST_LENGTH is updated to the correct number.  */
-gpg_error_t
+gcry_error_t
 gcry_cipher_list (int *list, int *list_length)
 {
-  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  gcry_err_code_t err = GPG_ERR_NO_ERROR;
 
   ath_mutex_lock (&ciphers_registered_lock);
   err = _gcry_module_list (ciphers_registered, list, list_length);
