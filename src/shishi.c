@@ -1011,9 +1011,8 @@ main (int argc, char *argv[])
       if (!arg.silent)
 	printf (_("Tickets in `%s':\n"), shishi_tkts_default_file (handle));
 
-      rc =
-	shishi_tkts_print_for_service (shishi_tkts_default (handle),
-				       stdout, arg.sname);
+      rc = shishi_tkts_print_for_service (shishi_tkts_default (handle),
+					  stdout, arg.sname);
       if (rc != SHISHI_OK)
 	fprintf (stderr, "Could not list tickets: %s", shishi_strerror (rc));
       break;

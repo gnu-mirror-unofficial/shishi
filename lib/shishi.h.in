@@ -281,8 +281,8 @@ struct Shishi_tkts_hint
   const char *serverrealm;
   const char *client;
   const char *clientrealm;
-  const int flags;
-  const int etype;
+  int flags;
+  int etype;
   const char *passwd;
 };
 typedef struct Shishi_tkts_hint Shishi_tkts_hint;

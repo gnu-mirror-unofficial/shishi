@@ -370,13 +370,13 @@ asreq1 (Shishi * handle, Shishi_as * as)
     return SHISHI_MALLOC_ERROR;
 
   i = 1;
-  do {
-    err = shishi_kdcreq_etype (handle,
-			       shishi_as_req(as),
-			       &etype, i);
-    if (err == SHISHI_OK && shishi_cipher_supported_p (etype))
-      break;
-  } while (err == SHISHI_OK);
+  do
+    {
+      err = shishi_kdcreq_etype (handle, shishi_as_req (as), &etype, i);
+      if (err == SHISHI_OK && shishi_cipher_supported_p (etype))
+	break;
+    }
+  while (err == SHISHI_OK);
   if (err != SHISHI_OK)
     return err;
 
@@ -393,28 +393,28 @@ asreq1 (Shishi * handle, Shishi_as * as)
     return err;
 
   buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_cname_get (handle, shishi_as_req(as), buf, &buflen);
+  err = shishi_kdcreq_cname_get (handle, shishi_as_req (as), buf, &buflen);
   if (err != SHISHI_OK)
     return err;
   buf[buflen] = '\0';
-  username = strdup(buf);
-  printf("username %s\n", username);
+  username = strdup (buf);
+  printf ("username %s\n", username);
 
   buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_sname_get (handle, shishi_as_req(as), buf, &buflen);
+  err = shishi_kdcreq_sname_get (handle, shishi_as_req (as), buf, &buflen);
   if (err != SHISHI_OK)
     return err;
   buf[buflen] = '\0';
-  servername = strdup(buf);
-  printf("servername %s\n", servername);
+  servername = strdup (buf);
+  printf ("servername %s\n", servername);
 
   buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_realm_get (handle, shishi_as_req(as), buf, &buflen);
+  err = shishi_kdcreq_realm_get (handle, shishi_as_req (as), buf, &buflen);
   if (err != SHISHI_OK)
     return err;
   buf[buflen] = '\0';
-  serverrealm = strdup(buf);
-  printf("serverrealm %s\n", serverrealm);
+  serverrealm = strdup (buf);
+  printf ("serverrealm %s\n", serverrealm);
 
   password = "foo";
 
@@ -427,7 +427,7 @@ asreq1 (Shishi * handle, Shishi_as * as)
     return err;
 
   buflen = sizeof (buf);
-  err = shishi_as_derive_salt (handle, shishi_as_req(as), shishi_as_rep(as),
+  err = shishi_as_derive_salt (handle, shishi_as_req (as), shishi_as_rep (as),
 			       buf, &buflen);
   if (err != SHISHI_OK)
     return err;
@@ -435,9 +435,8 @@ asreq1 (Shishi * handle, Shishi_as * as)
   err = shishi_key_from_string (handle,
 				etype,
 				password,
-				strlen(password),
-				buf, buflen,
-				NULL, &userkey);
+				strlen (password),
+				buf, buflen, NULL, &userkey);
   if (err != SHISHI_OK)
     return err;
 
@@ -451,13 +450,13 @@ asreq1 (Shishi * handle, Shishi_as * as)
 
   if (arg.verbose)
     {
-      shishi_kdcreq_print (handle, stderr, shishi_as_req(as));
+      shishi_kdcreq_print (handle, stderr, shishi_as_req (as));
       shishi_encticketpart_print (handle, stderr,
 				  shishi_tkt_encticketpart (tkt));
       shishi_ticket_print (handle, stderr, shishi_tkt_ticket (tkt));
       shishi_enckdcreppart_print (handle, stderr,
 				  shishi_tkt_enckdcreppart (tkt));
-      shishi_kdcrep_print (handle, stderr, shishi_as_rep(as));
+      shishi_kdcrep_print (handle, stderr, shishi_as_rep (as));
     }
 
   return SHISHI_OK;
@@ -472,20 +471,20 @@ asreq (Shishi * handle, Shishi_asn1 kdcreq, char **out, int *outlen)
   rc = shishi_as (handle, &as);
   if (rc != SHISHI_OK)
     {
-      syslog(LOG_ERR, "Incoming request failed: Cannot create AS: %s\n",
-	     shishi_strerror(rc));
+      syslog (LOG_ERR, "Incoming request failed: Cannot create AS: %s\n",
+	      shishi_strerror (rc));
       /* XXX hard coded KRB-ERROR? */
-      *out = strdup("foo");
-      *outlen = strlen(*out);
+      *out = strdup ("foo");
+      *outlen = strlen (*out);
       return;
     }
 
   shishi_as_req_set (as, kdcreq);
 
-  *out = malloc(BUFSIZ);
+  *out = malloc (BUFSIZ);
   if (*out == NULL)
     {
-      syslog(LOG_ERR, "Incoming request failed: Cannot allocate memory\n");
+      syslog (LOG_ERR, "Incoming request failed: Cannot allocate memory\n");
       /* XXX hard coded KRB-ERROR? */
       *out = NULL;
       *outlen = 0;
@@ -496,20 +495,21 @@ asreq (Shishi * handle, Shishi_asn1 kdcreq, char **out, int *outlen)
   rc = asreq1 (handle, as);
   if (rc != SHISHI_OK)
     {
-      syslog(LOG_NOTICE, "Could not answer request: %s: %s\n",
-	     shishi_strerror(rc),
-	     shishi_krberror_message (handle, shishi_as_krberror(as)));
+      syslog (LOG_NOTICE, "Could not answer request: %s: %s\n",
+	      shishi_strerror (rc),
+	      shishi_krberror_message (handle, shishi_as_krberror (as)));
       rc = shishi_as_krberror_der (as, *out, outlen);
     }
   else
     rc = shishi_as_rep_der (as, *out, outlen);
   if (rc != SHISHI_OK)
     {
-      syslog(LOG_ERR, "Incoming request failed: Cannot DER encode reply: %s\n",
-	     shishi_strerror(rc));
+      syslog (LOG_ERR,
+	      "Incoming request failed: Cannot DER encode reply: %s\n",
+	      shishi_strerror (rc));
       /* XXX hard coded KRB-ERROR? */
-      *out = strdup("aaaaaa");
-      *outlen = strlen(*out);
+      *out = strdup ("aaaaaa");
+      *outlen = strlen (*out);
       return;
     }
 
@@ -517,9 +517,7 @@ asreq (Shishi * handle, Shishi_asn1 kdcreq, char **out, int *outlen)
 }
 
 static void
-process (Shishi * handle,
-	 char *in, int inlen,
-	 char **out, int *outlen)
+process (Shishi * handle, char *in, int inlen, char **out, int *outlen)
 {
   Shishi_asn1 kdcreq;
 
@@ -528,14 +526,14 @@ process (Shishi * handle,
   kdcreq = shishi_der2asn1_asreq (handle, in, inlen);
   if (!kdcreq)
     {
-      asreq(handle, kdcreq, out, outlen);
+      asreq (handle, kdcreq, out, outlen);
       return;
     }
 
   kdcreq = shishi_der2asn1_tgsreq (handle, in, inlen);
   if (!kdcreq)
     {
-      fprintf(stderr, "tgs-req...\n");
+      fprintf (stderr, "tgs-req...\n");
     }
 
   *out = NULL;
@@ -632,17 +630,17 @@ doit (Shishi * handle, struct arguments arg)
     {
       struct passwd *passwd;
 
-      passwd = getpwnam(arg.setuid);
+      passwd = getpwnam (arg.setuid);
       if (passwd == NULL)
 	{
-	  perror("setuid: getpwnam");
+	  perror ("setuid: getpwnam");
 	  return 1;
 	}
 
-      rc = setuid(passwd->pw_uid);
+      rc = setuid (passwd->pw_uid);
       if (rc == -1)
 	{
-	  perror("setuid");
+	  perror ("setuid");
 	  return 1;
 	}
 
@@ -736,7 +734,8 @@ doit (Shishi * handle, struct arguments arg)
 		printf ("Has %d bytes from %s\n", ls->bufpos, ls->str);
 
 		if (arg.listenspec[i].type == SOCK_DGRAM ||
-		    (ls->bufpos > 4 && ntohl (*(int *) ls->buf) == ls->bufpos))
+		    (ls->bufpos > 4
+		     && ntohl (*(int *) ls->buf) == ls->bufpos))
 		  {
 		    char *p;
 		    int plen;
@@ -746,21 +745,21 @@ doit (Shishi * handle, struct arguments arg)
 		    if (p && plen > 0)
 		      {
 			do
-			  sent_bytes = sendto(ls->sockfd, p, plen,
-					      0, &addr, length);
+			  sent_bytes = sendto (ls->sockfd, p, plen,
+					       0, &addr, length);
 			while (sent_bytes == -1 && errno == EAGAIN);
 
 			if (sent_bytes == -1)
-			  perror("write");
+			  perror ("write");
 			else if (sent_bytes > plen)
-			  fprintf(stderr, "wrote %db but buffer only %db",
-				  sent_bytes, plen);
+			  fprintf (stderr, "wrote %db but buffer only %db",
+				   sent_bytes, plen);
 			else if (sent_bytes < plen)
-			  fprintf(stderr,
-				  "short write (%db) writing %d bytes\n",
-				  sent_bytes, plen);
+			  fprintf (stderr,
+				   "short write (%db) writing %d bytes\n",
+				   sent_bytes, plen);
 
-			free(p);
+			free (p);
 		      }
 
 		    ls->bufpos = 0;
@@ -794,21 +793,21 @@ main (int argc, char *argv[])
   Shishi *handle;
   int rc;
 
-  openlog(PACKAGE, LOG_PERROR, LOG_AUTHPRIV);
+  openlog (PACKAGE, LOG_PERROR, LOG_AUTHPRIV);
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
   rc = shishi_init_server_with_paths (&handle, arg.cfgfile);
   if (rc != SHISHI_OK)
     {
-      syslog(LOG_ERR, "Aborting due to library initialization failure\n");
+      syslog (LOG_ERR, "Aborting due to library initialization failure\n");
       return 1;
     }
 
   rc = doit (handle, arg);
 
   shishi_done (handle);
-  closelog();
+  closelog ();
 
   return rc;
 }

@@ -55,7 +55,7 @@ client (Shishi * handle, struct arguments arg)
   if (tkt == NULL)
     {
       printf ("Cannot get ticket for server `%s'.\n", arg.sname);
-      return res;
+      return !SHISHI_OK;
     }
 
   res = shishi_ap_tktoptions (handle, &ap, tkt, arg.apoptions);

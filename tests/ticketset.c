@@ -89,7 +89,7 @@ main (int argc, char *argv[])
   Shishi_asn1 n1, n2, n3;
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
-  const char *p, *q;
+  char *p, *q;
   int n, res;
 
   do
@@ -122,36 +122,41 @@ main (int argc, char *argv[])
   if (debug)
     shishi_cfg (handle, strdup ("verbose"));
 
+  escapeprint(NULL, 0);
+  hexprint(NULL, 0);
+  binprint(NULL, 0);
+
   /* shishi_tkts_default_file() */
-  p = shishi_tkts_default_file (handle);
+  p = strdup(shishi_tkts_default_file (handle));
   if (debug)
     printf ("shishi_tkts_default_file () => `%s'.\n", p ? p : "<null>");
   if (p)
     success ("shishi_tkts_default_file() OK\n");
   else
     fail ("shishi_tkts_default_file() failed\n");
-  p = strdup (p);
 
   /* shishi_tkts_default_file_set() */
   shishi_tkts_default_file_set (handle, "foo");
-  q = shishi_tkts_default_file (handle);
+  q = strdup(shishi_tkts_default_file (handle));
   if (debug)
     printf ("shishi_tkts_default_file () => `%s'.\n", q ? q : "<null>");
   if (q && strcmp (q, "foo") == 0)
     success ("shishi_tkts_default_file_set() OK\n");
   else
     fail ("shishi_tkts_default_file_set() failed\n");
+  free (q);
 
   /* shishi_tkts_default_file_set() */
   shishi_tkts_default_file_set (handle, NULL);
-  q = shishi_tkts_default_file (handle);
+  q = strdup(shishi_tkts_default_file (handle));
   if (debug)
     printf ("shishi_tkts_default_file () => `%s'.\n", q ? q : "<null>");
   if (p && q && strcmp (p, q) == 0)
     success ("shishi_tkts_default_file_set() OK\n");
   else
     fail ("shishi_tkts_default_file_set() failed\n");
-  free ((char*)p);
+  free (q);
+  free (p);
 
   /* shishi_tkts () */
   res = shishi_tkts (handle, &tktset);

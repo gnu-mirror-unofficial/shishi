@@ -501,7 +501,8 @@ shishi_tkts_to_file (Shishi_tkts * tkts, const char *filename)
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int
-shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh, char *service)
+shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh,
+			       const char *service)
 {
   int res;
   int found;

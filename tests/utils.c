@@ -1,5 +1,5 @@
 /* utils.c	Shishi self tests utilities.
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -39,7 +39,7 @@
 #endif
 
 #if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
-extern int h_errno;
+/* extern int h_errno; */
 #endif
 
 #ifdef HAVE_PWD_H
@@ -113,7 +113,10 @@ static int debug = 0;
 static int error_count = 0;
 static int break_on_error = 0;
 
-static void
+typedef void diefn (const char *fmt, ...);
+volatile diefn die;
+
+void
 die (const char *format, ...)
 {
   va_list arg_ptr;
@@ -153,6 +156,9 @@ escapeprint (unsigned char *str, int len)
 {
   int i;
 
+  if (!str || !len)
+    return;
+
   printf ("\t ;; `");
   for (i = 0; i < len; i++)
     if ((str[i] >= 'A' && str[i] <= 'Z') ||
@@ -168,6 +174,9 @@ static void
 hexprint (unsigned char *str, int len)
 {
   int i;
+
+  if (!str || !len)
+    return;
 
   printf ("\t ;; ");
   for (i = 0; i < len; i++)
@@ -185,33 +194,14 @@ binprint (unsigned char *str, int len)
 {
   int i;
 
+  if (!str || !len)
+    return;
+
   printf ("\t ;; ");
   for (i = 0; i < len; i++)
     {
       printf ("%d%d%d%d%d%d%d%d ",
 	      str[i] & 0x80 ? 1 : 0,
-	      str[i] & 0x40 ? 1 : 0,
-	      str[i] & 0x20 ? 1 : 0,
-	      str[i] & 0x10 ? 1 : 0,
-	      str[i] & 0x08 ? 1 : 0,
-	      str[i] & 0x04 ? 1 : 0,
-	      str[i] & 0x02 ? 1 : 0, str[i] & 0x01 ? 1 : 0);
-      if ((i + 1) % 3 == 0)
-	printf (" ");
-      if ((i + 1) % 6 == 0 && i + 1 < len)
-	printf ("\n\t ;; ");
-    }
-}
-
-static void
-bin7print (unsigned char *str, int len)
-{
-  int i;
-
-  printf ("\t ;; ");
-  for (i = 0; i < len; i++)
-    {
-      printf ("%d%d%d%d%d%d%d ",
 	      str[i] & 0x40 ? 1 : 0,
 	      str[i] & 0x20 ? 1 : 0,
 	      str[i] & 0x10 ? 1 : 0,

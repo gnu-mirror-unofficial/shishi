@@ -1,5 +1,5 @@
 /* data.h	global data structures for shishi application
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -42,7 +42,7 @@
 #endif
 
 #if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
-extern int h_errno;
+/* extern int h_errno; */
 #endif
 
 #ifdef HAVE_PWD_H
@@ -217,7 +217,7 @@ struct arguments
   int command;
   char *ticketfile;
   char *ticketwritefile;
-  char *realm;
+  const char *realm;
   char *systemcfgfile;
   char *usercfgfile;
   /* kdc/as/tgs and ap */
@@ -226,8 +226,8 @@ struct arguments
   char *apreqwritefile;
   int apreqwritetype;
   /* kdc/as/tgs */
-  char *cname;
-  char *sname;
+  const char *cname;
+  const char *sname;
   char *tgtname;
   int forceas_p;
   int forcetgs_p;
@@ -272,7 +272,8 @@ struct arguments
   int apoptions;
 };
 
-extern void die (char *fmt, ...);
+typedef void diefn (char *fmt, ...);
+volatile diefn die;
 
 extern int ap (Shishi * handle, struct arguments arg);
 

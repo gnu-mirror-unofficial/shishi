@@ -1,5 +1,5 @@
 /* crypto.c	Shishi crypto self tests.
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -454,7 +454,7 @@ main (int argc, char *argv[])
   Shishi *handle;
   Shishi_key *key, *key2;
   unsigned char out[BUFSIZ];
-  int i;
+  size_t i;
   int res;
 
   do
@@ -547,7 +547,7 @@ main (int argc, char *argv[])
 	    printf ("ERROR\n");
 	}
       else if (verbose)
-	printf ("OK\n");
+	success ("OK\n");
 
       res = shishi_key_from_value (handle, drdk[i].type, drdk[i].key, &key);
 
@@ -608,7 +608,7 @@ main (int argc, char *argv[])
 	    printf ("ERROR\n");
 	}
       else if (verbose)
-	printf ("OK\n");
+	success ("OK\n");
     }
 
   for (i = 0; i < sizeof (nfold) / sizeof (nfold[0]); i++)
@@ -657,7 +657,7 @@ main (int argc, char *argv[])
 	    printf ("ERROR\n");
 	}
       else if (verbose)
-	printf ("OK\n");
+	success ("OK\n");
     }
 
   for (i = 0; i < sizeof (str2key) / sizeof (str2key[0]); i++)
@@ -721,7 +721,7 @@ main (int argc, char *argv[])
 	    printf ("ERROR\n");
 	}
       else if (verbose)
-	printf ("OK\n");
+	success ("OK\n");
     }
 
   for (i = 0; i < sizeof (pkcs5) / sizeof (pkcs5[0]); i++)
@@ -780,7 +780,7 @@ main (int argc, char *argv[])
 	    printf ("ERROR\n");
 	}
       else if (verbose)
-	printf ("OK\n");
+	success ("OK\n");
     }
 
   if (verbose)
