@@ -169,7 +169,7 @@ shishi_cfg (Shishi * handle, char *option)
 	  break;
 
 	case REALM_KDC_OPTION:
-	  realm = strdup (value);
+	  realm = xstrdup (value);
 	  for (i = 0; i < handle->nrealminfos; i++)
 	    if (strcmp (realm, handle->realminfos[i].name) == 0)
 	      {
@@ -183,11 +183,9 @@ shishi_cfg (Shishi * handle, char *option)
 		  }
 		break;
 	      }
-	  handle->realminfos = realloc (handle->realminfos,
-					(handle->nrealminfos + 1) *
-					sizeof (*handle->realminfos));
-	  if (handle->realminfos == NULL)
-	    return SHISHI_MALLOC_ERROR;
+	  handle->realminfos = xrealloc (handle->realminfos,
+					 (handle->nrealminfos + 1) *
+					 sizeof (*handle->realminfos));
 	  handle->realminfos[handle->nrealminfos].name = realm;
 	  handle->realminfos[handle->nrealminfos].kdcaddresses = NULL;
 	  handle->realminfos[handle->nrealminfos].nkdcaddresses = 0;
@@ -201,16 +199,16 @@ shishi_cfg (Shishi * handle, char *option)
 	    ri->serverwildcards = xrealloc (ri->serverwildcards,
 					    ++ri->nserverwildcards *
 					    sizeof(*ri->serverwildcards));
-	    ri->serverwildcards[ri->nserverwildcards - 1] = strdup (value);
+	    ri->serverwildcards[ri->nserverwildcards - 1] = xstrdup (value);
 	  }
 	  break;
 
 	case DEFAULT_REALM_OPTION:
-	  handle->default_realm = strdup (value);
+	  handle->default_realm = xstrdup (value);
 	  break;
 
 	case DEFAULT_PRINCIPAL_OPTION:
-	  handle->default_principal = strdup (value);
+	  handle->default_principal = xstrdup (value);
 	  break;
 
 	case CLIENT_KDC_ETYPES_OPTION:
@@ -220,7 +218,7 @@ shishi_cfg (Shishi * handle, char *option)
 	  break;
 
 	case STRINGPROCESS_OPTION:
-	  handle->stringprocess = strdup (value);
+	  handle->stringprocess = xstrdup (value);
 	  break;
 
 	case VERBOSE_OPTION:
@@ -281,7 +279,7 @@ shishi_cfg (Shishi * handle, char *option)
 		ri->kdcaddresses = xrealloc (ri->kdcaddresses,
 					     (ri->nkdcaddresses + 1) *
 					     sizeof (*ri->kdcaddresses));
-		ri->kdcaddresses[ri->nkdcaddresses].name = strdup (value);
+		ri->kdcaddresses[ri->nkdcaddresses].name = xstrdup (value);
 		ri->kdcaddresses[ri->nkdcaddresses].protocol = protocol;
 		sinaddr = (struct sockaddr_in *)
 		  &ri->kdcaddresses[ri->nkdcaddresses].sockaddress;
@@ -521,10 +519,8 @@ shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
 	  int *new;
 
 	  tot++;
-	  new = realloc (handle->clientkdcetypes,
-			 tot * sizeof (*handle->clientkdcetypes));
-	  if (handle->clientkdcetypes == NULL)
-	    return SHISHI_MALLOC_ERROR;
+	  new = xrealloc (handle->clientkdcetypes,
+			  tot * sizeof (*handle->clientkdcetypes));
 	  handle->clientkdcetypes = new;
 	  handle->clientkdcetypes[tot - 1] = etype;
 	  handle->nclientkdcetypes = tot;
