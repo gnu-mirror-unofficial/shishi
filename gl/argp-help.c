@@ -1541,7 +1541,9 @@ _help (const struct argp *argp, const struct argp_state *state, FILE *stream,
   if (! stream)
     return;
 
+#if _LIBC || (HAVE_FLOCKFILE && HAVE_FUNLOCKFILE)
   __flockfile (stream);
+#endif
 
   if (! uparams.valid)
     fill_in_uparams (state);
@@ -1549,7 +1551,9 @@ _help (const struct argp *argp, const struct argp_state *state, FILE *stream,
   fs = __argp_make_fmtstream (stream, 0, uparams.rmargin, 0);
   if (! fs)
     {
+#if _LIBC || (HAVE_FLOCKFILE && HAVE_FUNLOCKFILE)
       __funlockfile (stream);
+#endif
       return;
     }
 
@@ -1657,7 +1661,9 @@ Try `%s --help' or `%s --usage' for more information.\n"),
       anything = 1;
     }
 
+#if _LIBC || (HAVE_FLOCKFILE && HAVE_FUNLOCKFILE)
   __funlockfile (stream);
+#endif
 
   if (hol)
     hol_free (hol);
@@ -1742,7 +1748,9 @@ __argp_error (const struct argp_state *state, const char *fmt, ...)
 	{
 	  va_list ap;
 
+#if _LIBC || (HAVE_FLOCKFILE && HAVE_FUNLOCKFILE)
 	  __flockfile (stream);
+#endif
 
 	  va_start (ap, fmt);
 
@@ -1777,7 +1785,9 @@ __argp_error (const struct argp_state *state, const char *fmt, ...)
 
 	  va_end (ap);
 
+#if _LIBC || (HAVE_FLOCKFILE && HAVE_FUNLOCKFILE)
 	  __funlockfile (stream);
+#endif
 	}
     }
 }
@@ -1803,7 +1813,9 @@ __argp_failure (const struct argp_state *state, int status, int errnum,
 
       if (stream)
 	{
+#if _LIBC || (HAVE_FLOCKFILE && HAVE_FUNLOCKFILE)
 	  __flockfile (stream);
+#endif
 
 #ifdef USE_IN_LIBIO
 	  if (_IO_fwide (stream, 0) > 0)
@@ -1871,7 +1883,9 @@ __argp_failure (const struct argp_state *state, int status, int errnum,
 #endif
 	    putc_unlocked ('\n', stream);
 
+#if _LIBC || (HAVE_FLOCKFILE && HAVE_FUNLOCKFILE)
 	  __funlockfile (stream);
+#endif
 
 	  if (status && (!state || !(state->flags & ARGP_NO_EXIT)))
 	    exit (status);
