@@ -1,7 +1,7 @@
-<!doctype book PUBLIC "-//Davenport//DTD DocBook V3.0//EN" [
-<!ENTITY shishi-shishi SYSTEM "shishi.sgml">
-]>
-<book id="index">
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
     <title>Shishi API Reference Manual</title>
   </bookinfo>
@@ -14,6 +14,7 @@ Shishi is a (still incomplete) implementation of the RFC 1510 and RFC
 1510bis network authentication system.  RFC 1510 can be used to
 authenticate users in distributed systems.
     </para>
+
     <para>
 Shishi contains a library ('libshishi') that can be used by
 application developers to add support for RFC 1510.  Shishi contains a
@@ -24,6 +25,7 @@ remote network login, and a PAM module for host security.  Of course,
 a manual documenting user aspects as well as the programming API is
 included.
     </para>
+
     <para>
 Shishi currently supports AS/TGS exchanges for acquiring tickets, and
 the AP exchange for performing client and server authentication.
@@ -37,6 +39,6 @@ and the rsa-md4-des, rsa-md5-des, hmac-sha1-des3-kd,
 hmac-sha1-96-aes128, hmac-sha1-96-aes256 checksum types are supported.
     </para>
 
-    &shishi-shishi;
+    <xi:include href="xml/shishi.xml"/>
   </chapter>
 </book>
