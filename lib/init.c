@@ -238,6 +238,37 @@ shishi_init_with_paths (Shishi ** handle,
 }
 
 /**
+ * shishi_init_server:
+ * @handle: pointer to handle to be created.
+ *
+ * Like shishi_init() but only read the system configuration file.
+ * Like shishi_init(), the handle is allocated regardless of return
+ * values, except for SHISHI_HANDLE_ERROR which indicates a problem
+ * allocating the handle.  (The other error conditions comes from
+ * reading the configuration file.)
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_init_server (Shishi ** handle)
+{
+  int rc;
+
+  if (!handle || !(*handle = shishi ()))
+    return SHISHI_HANDLE_ERROR;
+
+  rc =
+    shishi_cfg_from_file (*handle, shishi_cfg_default_systemfile (*handle));
+  if (rc == SHISHI_FOPEN_ERROR)
+    shishi_warn (*handle, "%s: %s", shishi_cfg_default_systemfile (*handle),
+		 strerror (errno));
+  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_init_server_with_paths:
  * @handle: pointer to handle to be created.
  * @systemcfgfile: Filename of system configuration, or NULL.
@@ -264,37 +295,6 @@ shishi_init_server_with_paths (Shishi ** handle, const char *systemcfgfile)
   rc = shishi_cfg_from_file (*handle, systemcfgfile);
   if (rc == SHISHI_FOPEN_ERROR)
     shishi_warn (*handle, "%s: %s", systemcfgfile, strerror (errno));
-  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
-    return rc;
-
-  return SHISHI_OK;
-}
-
-/**
- * shishi_init_server:
- * @handle: pointer to handle to be created.
- *
- * Like shishi_init() but only read the system configuration file.
- * Like shishi_init(), the handle is allocated regardless of return
- * values, except for SHISHI_HANDLE_ERROR which indicates a problem
- * allocating the handle.  (The other error conditions comes from
- * reading the configuration file.)
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_init_server (Shishi ** handle)
-{
-  int rc;
-
-  if (!handle || !(*handle = shishi ()))
-    return SHISHI_HANDLE_ERROR;
-
-  rc =
-    shishi_cfg_from_file (*handle, shishi_cfg_default_systemfile (*handle));
-  if (rc == SHISHI_FOPEN_ERROR)
-    shishi_warn (*handle, "%s: %s", shishi_cfg_default_systemfile (*handle),
-		 strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
