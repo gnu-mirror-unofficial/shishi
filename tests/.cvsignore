@@ -8,5 +8,6 @@ crypto-ctx
 gztime
 low-crypto
 priv
+rijndael
 safe
 ticketset
