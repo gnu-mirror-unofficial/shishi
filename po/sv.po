@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-08-28 14:31+0200\n"
+"POT-Creation-Date: 2003-08-31 14:31+0200\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -252,7 +252,7 @@ msgstr ""
 msgid "Unknown KRB-ERROR error code %d."
 msgstr ""
 
-#: lib/principal.c:391
+#: lib/principal.c:386
 #, c-format
 msgid "Could not set principal name: %s\n"
 msgstr ""
