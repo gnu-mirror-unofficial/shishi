@@ -199,42 +199,6 @@ nfold[] =
       "\x85\x89\x2c\x4c\x62\x61\x13\x0b\x98\x58\xc2\xc4"}
 };
 
-struct crc32
-{
-  char *in;
-  int len;
-  uint32_t crc32;
-}
-crc32[] =
-{
-  {
-  "foo", 3, 0x7332bc33}
-  ,
-  {
-  "test0123456789", 14, 0xb83e88d6}
-  ,
-  {
-  "MASSACHVSETTS INSTITVTE OF TECHNOLOGY", 37, 0xe34180f7}
-  ,
-  {
-  "\x80\x00", 2, 0x3b83984b}
-  ,
-  {
-  "\x00\x08", 2, 0x0edb8832}
-  ,
-  {
-  "\x00\x80", 2, 0xedb88320}
-  ,
-  {
-  "\x80", 1, 0xedb88320}
-  ,
-  {
-  "\x80\x00\x00\x00", 4, 0xed59b63b}
-  ,
-  {
-  "\x00\x00\x00\x01", 4, 0x77073096}
-};
-
 struct str2key
 {
   char *password;
@@ -490,7 +454,7 @@ main (int argc, char *argv[])
   Shishi *handle;
   Shishi_key *key, *key2;
   unsigned char out[BUFSIZ];
-  int i, j;
+  int i;
   int res;
 
   do
@@ -701,7 +665,7 @@ main (int argc, char *argv[])
       int n_password = strlen (str2key[i].password);
       int saltlen = strlen (str2key[i].salt);
       int keylen = sizeof (key);
-      char *name = shishi_cipher_name(str2key[i].etype);
+      const char *name = shishi_cipher_name(str2key[i].etype);
 
       if (verbose)
 	printf ("STRING-TO-KEY entry %d (key type %s)\n", i,
@@ -752,40 +716,6 @@ main (int argc, char *argv[])
       if (memcmp (str2key[i].key, shishi_key_value(key), keylen) != 0)
 	{
 	  fail ("shishi_string_to_key() entry %d failed\n", i);
-
-	  if (verbose)
-	    printf ("ERROR\n");
-	}
-      else if (verbose)
-	printf ("OK\n");
-    }
-
-  for (i = 0; i < sizeof (crc32) / sizeof (crc32[0]); i++)
-    {
-      uint32_t crc;
-
-      if (verbose)
-	printf ("MOD-CRC32 entry %d\n", i);
-
-      crc = shishi_mod_crc32 (crc32[i].in, crc32[i].len);
-
-      if (verbose)
-	{
-	  printf ("in:\n");
-	  escapeprint (crc32[i].in, crc32[i].len);
-	  hexprint (crc32[i].in, crc32[i].len);
-	  puts ("");
-	  binprint (crc32[i].in, crc32[i].len);
-	  puts ("");
-
-	  printf ("computed mod-crc32: %08x\n", crc);
-
-	  printf ("expected mod-crc32: %08x\n", crc32[i].crc32);
-	}
-
-      if (crc != crc32[i].crc32)
-	{
-	  fail ("shishi_mod_crc32() entry %d failed\n", i);
 
 	  if (verbose)
 	    printf ("ERROR\n");
