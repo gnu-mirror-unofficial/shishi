@@ -2971,13 +2971,13 @@ includes aes256-cts-hmac-sha1-96, as suggested by RFC1510bis.  E.g.,
 client-kdc-etypes=aes256-cts-hmac-sha1-96 des3-cbc-sha1-kd des-cbc-md5
 @end example
 
-@subsection @samp{verbose}, @samp{verbose-asn1}, @samp{verbose-noice}, @samp{verbose-crypto}
+@subsection @samp{verbose}, @samp{verbose-asn1}, @samp{verbose-noise}, @samp{verbose-crypto}, @samp{verbose-crypto-noise}
 
 Enable verbose library messages.  E.g.,
 
 @example
 verbose
-verbose-noice
+verbose-noise
 @end example
 
 @subsection @samp{realm-kdc}
