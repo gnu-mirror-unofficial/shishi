@@ -361,7 +361,7 @@ shishi_principal_name_realm (Shishi * handle,
   size_t tmplen;
   int rc;
 
-  rc = shishi_principal_name (handle, namenode, namefield, tmp, &tmplen);
+  rc = shishi_principal_name (handle, namenode, namefield, &tmp, &tmplen);
   if (rc != SHISHI_OK)
     return rc;
 
