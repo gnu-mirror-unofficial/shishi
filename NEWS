@@ -19,6 +19,19 @@ Earlier newly acquired tickets were discarded if they were not yet
 valid when you acquire them.  Now tickets are only discarded when
 their end time is in the past.
 
+** Paths to configurations files and host keys changed.
+The configuration files and host keys are now stored in
+$prefix/etc/shishi/, instead of, as it was before, in $prefix/etc (for
+configuration and host keys) and $prefix/share/shishi (configuration
+template).
+
+** Paths to configurations, host keys and the database root now configurable.
+The configure parameters --with-conf-dir, --with-skel-dir,
+--with-key-dir, and --with-db-dir can be used to specify the location
+of shishi.conf and shisa.conf (system configuration files),
+shishi.skel (user configuration file template), shishi.keys (host
+specific keys) and the Shisa database root, respectively.
+
 * Version 0.0.8 (released 2003-10-16)
 
 ** Passwords are processed with SASLprep instead of KRBprep.
