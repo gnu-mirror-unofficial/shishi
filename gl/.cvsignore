@@ -1,6 +1,7 @@
 Makefile
 Makefile.in
 alloca.h
+getopt.h
 sysexits.h
 *.lo
 *.la
