@@ -1,5 +1,5 @@
 /* shishi.c --- Kerberos 5 Command line tool.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -132,13 +132,16 @@ main (int argc, char *argv[])
     error (1, 0, "Could not read library options: %s\n",
 	   shishi_strerror (rc));
 
-  if (args.verbose_flag)
-    {
-      rc = shishi_cfg (sh, "verbose");
-      if (rc != SHISHI_OK)
-	error (EXIT_FAILURE, 0, "Could not make library verbose: %s\n",
-	       shishi_strerror (rc));
-    }
+  if (args.verbose_given > 0)
+    shishi_cfg (sh, "verbose");
+  if (args.verbose_given > 1)
+    shishi_cfg (sh, "verbose-noise");
+  if (args.verbose_given > 2)
+    shishi_cfg (sh, "verbose-asn1");
+  if (args.verbose_given > 3)
+    shishi_cfg (sh, "verbose-crypto");
+  if (args.verbose_given > 4)
+    shishi_cfg (sh, "verbose-crypto-noise");
 
   if (args.starttime_arg)
     {
@@ -203,7 +206,7 @@ main (int argc, char *argv[])
 				    args.server_name_arg))
 	    continue;
 
-	  if (args.verbose_flag)
+	  if (args.verbose_given)
 	    {
 	      printf ("Removing ticket:\n");
 	      shishi_tkt_pretty_print (shishi_tkts_nth
