@@ -25,7 +25,7 @@ pam_shishi_la_LIBADD = ../../lib/libshishi.la
 # XXX add -Wl,-x too?  PAM documentation suggests it.
 pam_shishi_la_LDFLAGS = -module
 
-INCLUDES = -I../asn1/lib -I../lib
+INCLUDES = -I../../asn1/lib -I../../lib
 
 # -DDEBUG_PAM
 DEFS = @DEFS@

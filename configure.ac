@@ -80,7 +80,14 @@ AC_CHECK_TYPE([socklen_t],, [AC_DEFINE([socklen_t], [size_t],
 AC_ARG_ENABLE(pam,
   AC_HELP_STRING([--disable-pam], [Don't use PAM even if available]))
 if test "$enable_pam" != "no"; then
-  AC_CHECK_HEADERS(security/pam_modules.h security/_pam_macros.h)
+	AC_CHECK_HEADERS(security/pam_appl.h)
+	AC_CHECK_HEADERS(security/pam_modules.h, [], [],
+	[
+#if HAVE_SECURITY_PAM_APPL_H
+#include <security/pam_appl.h>
+#endif
+])
+  AC_CHECK_HEADERS(security/_pam_macros.h)
   enable_pam=$ac_cv_header_security_pam_modules_h
 fi
 if test "$enable_pam" != "no"; then

@@ -38,6 +38,9 @@
 #define PAM_SM_SESSION
 #define PAM_SM_PASSWORD
 
+#ifdef HAVE_SECURITY_PAM_APPL_H
+#include <security/pam_appl.h>
+#endif
 #ifdef HAVE_SECURITY_PAM_MODULES_H
 #include <security/pam_modules.h>
 #endif
@@ -47,6 +50,14 @@
 #include <security/_pam_macros.h>
 #else
 #define D(x) /* nothing */
+#endif
+
+#ifndef PAM_EXTERN
+#ifdef PAM_STATIC
+#define PAM_EXTERN static
+#else
+#define PAM_EXTERN extern
+#endif
 #endif
 
 PAM_EXTERN int
@@ -86,6 +97,8 @@ pam_sm_authenticate (pam_handle_t * pamh,
       goto done;
     }
   D (("get user returned: %s", user));
+
+  shishi_principal_default_set(h, user);
 
   retval = pam_get_item(pamh, PAM_AUTHTOK, (const void **)&password);
   if (retval != PAM_SUCCESS)
