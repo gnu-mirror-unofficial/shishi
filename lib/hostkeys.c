@@ -1,5 +1,5 @@
 /* hostkeys.c	Functions for managing hostkeys stored in files.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -31,6 +31,12 @@
 const char *
 shishi_hostkeys_default_file (Shishi * handle)
 {
+  char *envfile;
+
+  envfile = getenv ("SHISHI_KEYS");
+  if (envfile)
+    return xstrdup (envfile);
+
   if (!handle->hostkeysdefaultfile)
     handle->hostkeysdefaultfile = xstrdup (HOSTKEYSFILE);
 
