@@ -757,9 +757,10 @@ static struct argp_option options[] = {
    "Service name in ticket to use for authenticating request. Only for TGS. "
    "Defaults to \"krbtgt/REALM@REALM\" where REALM is server "
    "realm (see --realm).", 0},
-
+#if 0
   {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
    "Cipher key to decrypt response (discouraged).", 0},
+#endif
 
   /************** CRYPTO */
 
@@ -778,15 +779,12 @@ static struct argp_option options[] = {
   {"key-usage", OPTION_CRYPTO_KEY_USAGE, "KEYUSAGE", 0,
    "Encrypt or decrypt using specified key usage.  Default is 0, which "
    "means no key derivation are performed.", 0},
-#endif
+
   {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
    "Base64 encoded key value.", 0},
-
+#endif
   {"key-version", OPTION_CRYPTO_KEY_VERSION, "INTEGER", 0,
-   "Version number of key.", 0},
-
-  {"password", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
-   "Password used to generate key (discouraged).", 0},
+   "Version number of key. Default is 0.", 0},
 
   {"random", OPTION_CRYPTO_RANDOM, 0, 0,
    "Generate key from random data.", 0},
@@ -809,12 +807,12 @@ static struct argp_option options[] = {
    "and --salt influence the generated key.", 0},
 
   {"parameter", OPTION_CRYPTO_PARAMETER, "STRING", 0,
-   "String-to-key parameter to use when --password is specified. This data "
-   "is specific for each encryption algorithm and rarely needed.", 0},
-
+   "String-to-key parameter. This data is specific for each encryption "
+   "algorithm and rarely needed.", 0},
+#if 0
   {"write-key-file", OPTION_CRYPTO_WRITE_KEY_FILE, "FILE", 0,
    "Append cipher key to FILE", 0},
-#if 0
+
   {"write-data-file", OPTION_CRYPTO_WRITE_DATA_FILE, "[TYPE,]FILE", 0,
    "Write data to FILE in TYPE, BASE64, HEX or BINARY (default).", 0},
 #endif
