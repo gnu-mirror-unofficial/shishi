@@ -583,6 +583,9 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
   Shishi_key *tktkey;
   int rc;
 
+  if (VERBOSEASN1 (ap->handle))
+    shishi_apreq_print (ap->handle, stdout, ap->apreq);
+
   rc = shishi_apreq_get_ticket (ap->handle, ap->apreq, &ticket);
   if (rc != SHISHI_OK)
     {
@@ -611,6 +614,10 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
       return rc;
     }
 
+  if (VERBOSEASN1 (ap->handle))
+    shishi_encticketpart_print (ap->handle, stdout,
+				shishi_tkt_encticketpart (tkt));
+
   rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey,
 			     SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR, /* XXX */
 			     &authenticator);
@@ -620,6 +627,9 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
 			   shishi_strerror (rc));
       return rc;
     }
+
+  if (VERBOSEASN1 (ap->handle))
+    shishi_authenticator_print (ap->handle, stdout, ap->authenticator);
 
   ap->tkt = tkt;
   ap->authenticator = authenticator;
