@@ -93,10 +93,11 @@ shishi (void)
   handle->kdctimeout = 5;
   handle->kdcretries = 3;
 
-  handle->clientkdcetypes = malloc (sizeof (*handle->clientkdcetypes) * 2);
-  handle->clientkdcetypes[0] = SHISHI_DES3_CBC_HMAC_SHA1_KD;
-  handle->clientkdcetypes[1] = SHISHI_DES_CBC_MD5;
-  handle->nclientkdcetypes = 2;
+  handle->clientkdcetypes = malloc (sizeof (*handle->clientkdcetypes) * 3);
+  handle->clientkdcetypes[0] = SHISHI_AES256_CTS_HMAC_SHA1_96;
+  handle->clientkdcetypes[1] = SHISHI_AES128_CTS_HMAC_SHA1_96;
+  handle->clientkdcetypes[2] = SHISHI_DES3_CBC_HMAC_SHA1_KD;
+  handle->nclientkdcetypes = 3;
 
   tmp = shishi_realm_default_guess ();
   shishi_realm_default_set (handle, tmp);
