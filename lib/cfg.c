@@ -80,18 +80,18 @@ shishi_cfg (Shishi * handle, char *option)
 	  if (value && atoi (value) > 0)
 	    handle->kdctimeout = atoi (value);
 	  else if (value)
-	    shishi_warn (handle, "Invalid KDC timeout value: `%s'\n", value);
+	    shishi_warn (handle, "Invalid KDC timeout value: `%s'", value);
 	  else
-	    shishi_warn (handle, "Missing KDC timeout value.\n");
+	    shishi_warn (handle, "Missing KDC timeout value");
 	  break;
 
 	case KDC_RETRIES_OPTION:
 	  if (value && atoi (value) > 0)
 	    handle->kdcretries = atoi (value);
 	  else if (value)
-	    shishi_warn (handle, "Invalid KDC retries value: `%s'\n", value);
+	    shishi_warn (handle, "Invalid KDC retries value: `%s'", value);
 	  else
-	    shishi_warn (handle, "Missing KDC retries value.\n");
+	    shishi_warn (handle, "Missing KDC retries value");
 	  break;
 
 	case REALM_KDC_OPTION:
@@ -165,7 +165,7 @@ shishi_cfg (Shishi * handle, char *option)
 		    he->h_addr_list[0] == NULL || he->h_addrtype != AF_INET)
 		  {
 		    shishi_warn (handle,
-				 "Unknown KDC host `%s' (h_errno %d)\n",
+				 "Unknown KDC host `%s' (h_errno %d)",
 				 value, h_errno);
 		    break;
 		  }
@@ -194,7 +194,7 @@ shishi_cfg (Shishi * handle, char *option)
 	  /* fall through */
 
 	default:
-	  shishi_warn (handle, "Unknown option: `%s'\n", value);
+	  shishi_warn (handle, "Unknown option: `%s'", value);
 	  break;
 	}
     }
@@ -254,9 +254,6 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
   if (fclose (fh) != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (VERBOSE (handle))
-    shishi_cfg_print (handle, stdout);
-
   return SHISHI_OK;
 }
 
@@ -308,6 +305,30 @@ const char *
 shishi_cfg_default_systemfile (Shishi * handle)
 {
   return SYSTEMCFGFILE;
+}
+
+/**
+ * shishi_cfg_default_userdirectory:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Return value: Return directory with configuration files etc.
+ **/
+const char *
+shishi_cfg_default_userdirectory (Shishi * handle)
+{
+  char *home;
+
+  if (!handle->userdirectory)
+    {
+      home = getenv ("HOME");
+
+      if (home == NULL)
+	home = "";
+
+      asprintf (&handle->userdirectory, "%s%s", home, BASE_DIR);
+    }
+
+  return handle->userdirectory;
 }
 
 /**
@@ -379,7 +400,7 @@ shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
       int etype = shishi_cipher_parse (val);
 
       if (etype == -1)
-	shishi_warn (handle, "Ignoring unknown encryption type: `%s'\n", val);
+	shishi_warn (handle, "Ignoring unknown encryption type: `%s'", val);
       else
 	{
 	  int *new;
