@@ -429,6 +429,28 @@ shishi_krberror_crealm (Shishi * handle,
 }
 
 /**
+ * shishi_krberror_remove_crealm:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ *
+ * Remove client realm field in KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_remove_crealm (Shishi * handle,
+			       Shishi_asn1 krberror)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "crealm", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_krberror_set_crealm:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: krberror as allocated by shishi_krberror().
@@ -446,28 +468,6 @@ shishi_krberror_set_crealm (Shishi * handle,
   int res;
 
   res = shishi_asn1_write (handle, krberror, "crealm", crealm, 0);
-  if (res != SHISHI_OK)
-    return res;
-
-  return SHISHI_OK;
-}
-
-/**
- * shishi_krberror_remove_crealm:
- * @handle: shishi handle as allocated by shishi_init().
- * @krberror: krberror as allocated by shishi_krberror().
- *
- * Remove client realm field in KRB-ERROR.
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_krberror_remove_crealm (Shishi * handle,
-			       Shishi_asn1 krberror)
-{
-  int res;
-
-  res = shishi_asn1_write (handle, krberror, "crealm", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
