@@ -1,5 +1,5 @@
 /* diskio.c	read and write data structures from disk
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -50,7 +50,7 @@ _shishi_print_armored_data (Shishi * handle,
   if (res != ASN1_SUCCESS)
     {
       shishi_error_printf (handle, "Could not DER encode %s: %s\n",
-			   asn1type, shishi_strerror(res));
+			   asn1type, shishi_strerror (res));
       return !SHISHI_OK;
     }
 
@@ -91,7 +91,7 @@ _shishi_save_data (Shishi * handle, FILE * fh, ASN1_TYPE asn1, char *asn1type)
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode %s: %s\n",
-			   asn1type, shishi_strerror(res));
+			   asn1type, shishi_strerror (res));
       return !SHISHI_OK;
     }
 
@@ -295,21 +295,21 @@ _shishi_enckdcreppart_input (Shishi * handle,
   if (*enckdcreppart == ASN1_TYPE_EMPTY)
     {
       shishi_error_printf (handle, "Could not DER decode Encasreppart: %s",
-			   shishi_strerror_details(handle));
+			   shishi_strerror_details (handle));
 
       *enckdcreppart = shishi_d2a_enctgsreppart (handle, der, derlen);
       if (*enckdcreppart == ASN1_TYPE_EMPTY)
 	{
 	  shishi_error_printf (handle,
 			       "Could not DER decode Enctgsreppart: %s",
-			       shishi_strerror_details(handle));
+			       shishi_strerror_details (handle));
 
 	  *enckdcreppart = shishi_d2a_enckdcreppart (handle, der, derlen);
 	  if (*enckdcreppart == ASN1_TYPE_EMPTY)
 	    {
 	      shishi_error_printf (handle,
 				   "Could not DER decode Enckdcreppart: %s",
-				   shishi_strerror_details(handle));
+				   shishi_strerror_details (handle));
 	      return !SHISHI_OK;
 	    }
 	}
@@ -433,14 +433,14 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, ASN1_TYPE * asrep, int type)
       if (*asrep == ASN1_TYPE_EMPTY)
 	{
 	  printf ("Could not DER decode KDC-REP: %s\n",
-		  shishi_strerror_details(handle));
+		  shishi_strerror_details (handle));
 	  printf ("Parsing AS/TGS-REP as KDC-REP (bug work around)\n");
 
 	  *asrep = shishi_d2a_kdcrep (handle, der, derlen);
 	  if (*asrep == ASN1_TYPE_EMPTY)
 	    {
 	      fprintf (stderr, "Could not DER decode KDC-REP: %s\n",
-		       shishi_strerror_details(handle));
+		       shishi_strerror_details (handle));
 	      return !SHISHI_OK;
 	    }
 
@@ -488,7 +488,7 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * apreq, int type)
   *apreq = shishi_d2a_apreq (handle, der, derlen);
   if (*apreq == ASN1_TYPE_EMPTY)
     {
-      printf ("bad magic %s\n", shishi_strerror_details(handle));
+      printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
 
       return !SHISHI_OK;
@@ -534,7 +534,7 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type)
   *aprep = shishi_d2a_aprep (handle, der, derlen);
   if (*aprep == ASN1_TYPE_EMPTY)
     {
-      printf ("bad magic %s\n", shishi_strerror_details(handle));
+      printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REP\n");
 
       return !SHISHI_OK;
@@ -583,7 +583,7 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
   *encapreppart = shishi_d2a_encapreppart (handle, der, derlen);
   if (*encapreppart == ASN1_TYPE_EMPTY)
     {
-      printf ("bad magic %s\n", shishi_strerror_details(handle));
+      printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode EncAPRepPart\n");
 
       return !SHISHI_OK;
@@ -631,7 +631,7 @@ _shishi_authenticator_input (Shishi * handle,
   *authenticator = shishi_d2a_authenticator (handle, der, derlen);
   if (*authenticator == ASN1_TYPE_EMPTY)
     {
-      printf ("bad magic %s\n", shishi_strerror_details(handle));
+      printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
 
       return !SHISHI_OK;
@@ -679,7 +679,7 @@ _shishi_krberror_input (Shishi * handle,
   *krberror = shishi_d2a_krberror (handle, der, derlen);
   if (*krberror == ASN1_TYPE_EMPTY)
     {
-      printf ("bad magic %s\n", shishi_strerror_details(handle));
+      printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
 
       return !SHISHI_OK;
@@ -726,7 +726,7 @@ _shishi_safe_input (Shishi * handle, FILE * fh, ASN1_TYPE * safe, int type)
   *safe = shishi_d2a_krberror (handle, der, derlen);
   if (*safe == ASN1_TYPE_EMPTY)
     {
-      printf ("bad magic %s\n", shishi_strerror_details(handle));
+      printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
 
       return !SHISHI_OK;
@@ -784,33 +784,33 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
       if (in_body)
 	{
 	  buflen = shishi_from_base64 (buffer, line);
-	  shishi_key_value_set(lkey, buffer);
+	  shishi_key_value_set (lkey, buffer);
 	}
       else
 	{
 	  if (in_body == 0 && strcmp (line, "") == 0)
 	    in_body = 1;
 
-	  if (strncmp(line, "Keytype: ", strlen("Keytype: ")) == 0)
+	  if (strncmp (line, "Keytype: ", strlen ("Keytype: ")) == 0)
 	    {
 	      int type;
-	      if (sscanf(line, "Keytype: %d (", &type) == 1)
-		shishi_key_type_set(lkey, type);
+	      if (sscanf (line, "Keytype: %d (", &type) == 1)
+		shishi_key_type_set (lkey, type);
 	    }
-	  else if (strncmp(line, "Key-Version-Number: ",
-			   strlen("Key-Version-Number: ")) == 0)
+	  else if (strncmp (line, "Key-Version-Number: ",
+			    strlen ("Key-Version-Number: ")) == 0)
 	    {
 	      int type;
-	      if (sscanf(line, "Key-Version-Number: %d", &type) == 1)
-		shishi_key_version_set(lkey, type);
+	      if (sscanf (line, "Key-Version-Number: %d", &type) == 1)
+		shishi_key_version_set (lkey, type);
 	    }
-	  else if (strncmp(line, "Realm: ", strlen("Realm: ")) == 0)
+	  else if (strncmp (line, "Realm: ", strlen ("Realm: ")) == 0)
 	    {
-	      shishi_key_realm_set(lkey, line + strlen("Realm: "));
+	      shishi_key_realm_set (lkey, line + strlen ("Realm: "));
 	    }
-	  else if (strncmp(line, "Principal: ", strlen("Principal: ")) == 0)
+	  else if (strncmp (line, "Principal: ", strlen ("Principal: ")) == 0)
 	    {
-	      shishi_key_principal_set(lkey, line + strlen("Principal: "));
+	      shishi_key_principal_set (lkey, line + strlen ("Principal: "));
 	    }
 	}
     }
@@ -844,24 +844,24 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_key_print (Shishi * handle, FILE * fh, Shishi_key *key)
+shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
 {
   char b64key[BUFSIZ];
   size_t i;
 
-  shishi_to_base64 (b64key, shishi_key_value(key),
-		    shishi_key_length(key), sizeof (b64key));
+  shishi_to_base64 (b64key, shishi_key_value (key),
+		    shishi_key_length (key), sizeof (b64key));
 
   fprintf (fh, HEADERBEG "\n", "KEY");
 
-  fprintf (fh, "Keytype: %d (%s)\n", shishi_key_type(key),
-	   shishi_cipher_name (shishi_key_type(key)));
-  if (shishi_key_principal(key))
-    fprintf (fh, "Principal: %s\n", shishi_key_principal(key));
-  if (shishi_key_realm(key))
-    fprintf (fh, "Realm: %s\n", shishi_key_realm(key));
-  if (shishi_key_version(key))
-    fprintf (fh, "Key-Version-Number: %d\n", shishi_key_version(key));
+  fprintf (fh, "Keytype: %d (%s)\n", shishi_key_type (key),
+	   shishi_cipher_name (shishi_key_type (key)));
+  if (shishi_key_principal (key))
+    fprintf (fh, "Principal: %s\n", shishi_key_principal (key));
+  if (shishi_key_realm (key))
+    fprintf (fh, "Realm: %s\n", shishi_key_realm (key));
+  if (shishi_key_version (key))
+    fprintf (fh, "Key-Version-Number: %d\n", shishi_key_version (key));
   fprintf (fh, "\n");
 
   for (i = 0; i < strlen (b64key); i++)
@@ -872,6 +872,12 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key *key)
     }
   if ((i + 1) % 64 != 0)
     fprintf (fh, "\n");
+
+#if 0
+  for (i = 0; i < shishi_key_length (key); i++)
+    fprintf (fh, "%02x", shishi_key_value (key)[i] & 0xFF);
+  fprintf (fh, "\n");
+#endif
 
   fprintf (fh, HEADEREND "\n", "KEY");
 
@@ -891,7 +897,7 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key *key)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_key_to_file (Shishi * handle, const char *filename, Shishi_key *key)
+shishi_key_to_file (Shishi * handle, const char *filename, Shishi_key * key)
 {
   FILE *fh;
   int res;
