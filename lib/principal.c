@@ -190,6 +190,8 @@ shishi_principal_name_get (Shishi * handle,
   int len;
   int i, j, n;
 
+  /* FIXME: allocate output instead of writing inline */
+
   sprintf (format, "%s.name-string", namefield);
   res = shishi_asn1_number_of_elements (handle, namenode, format, &n);
   if (res != SHISHI_OK)
@@ -244,6 +246,8 @@ shishi_principal_name_realm_get (Shishi * handle,
   int res;
   size_t totlen = 0;
   int len;
+
+  /* FIXME: allocate output instead of writing inline */
 
   totlen = *outlen;
   res = shishi_principal_name_get (handle, namenode, namefield, out, &totlen);
