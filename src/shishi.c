@@ -22,6 +22,7 @@
 #include "data.h"
 #include <argp.h>
 
+const char *program_name = PACKAGE;
 const char *argp_program_version = PACKAGE_STRING;
 const char *argp_program_bug_address = PACKAGE_BUGREPORT;
 
