@@ -579,6 +579,9 @@ shishi_ticketset_find_for_clientserveretypevalid (Shishi_ticketset * ticketset,
       if (!shishi_ticket_server_p (ticketset->tickets[i], server))
 	continue;
 
+      if (!shishi_ticket_cnamerealm_p (ticketset->tickets[i], client))
+	continue;
+
       if (valid)
 	if (!shishi_ticket_valid_now_p (ticketset->tickets[i]))
 	  continue;

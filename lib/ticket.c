@@ -98,6 +98,37 @@ shishi_ticket_cnamerealm (Shishi_ticket * ticket,
 					  cnamerealm, cnamerealmlen);
 }
 
+int
+shishi_ticket_cnamerealm_p (Shishi_ticket * ticket, const char *client)
+{
+  char *buf;
+  int buflen;
+  int res;
+
+  buflen = strlen (client) + 1;
+  buf = malloc (buflen);
+  if (buf == NULL)
+    return 0;
+
+  res = shishi_ticket_cnamerealm (ticket, buf, &buflen);
+  if (res != SHISHI_OK)
+    {
+      free (buf);
+      return 0;
+    }
+  buf[buflen] = '\0';
+
+  if (strcmp (client, buf) != 0)
+    {
+      free (buf);
+      return 0;
+    }
+
+  free (buf);
+
+  return 1;
+}
+
 /**
  * shishi_ticket_ticket:
  * @ticket: input variable with ticket info.
