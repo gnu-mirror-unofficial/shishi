@@ -1221,6 +1221,23 @@ shishi_tkt_valid_now_p (Shishi_tkt * tkt)
 }
 
 /**
+ * shishi_tkt_expired_p:
+ * @tkt: input variable with ticket info.
+ *
+ * Determine if ticket has expired (i.e., endtime is in the past).
+ *
+ * Return value: Returns 0 iff ticket has expired.
+ **/
+int
+shishi_tkt_expired_p (Shishi_tkt * tkt)
+{
+  time_t endtime = shishi_tkt_endctime (tkt);
+  time_t now = time (NULL);
+
+  return endtime < now;
+}
+
+/**
  * shishi_tkt_lastreq_pretty_print:
  * @tkt: input variable with ticket info.
  * @fh: file handle open for writing.
@@ -1273,6 +1290,7 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
   int keytype, etype, flags;
   int res;
   time_t t;
+  time_t now = time (NULL);
 
   buflen = sizeof (buf);
   buf[0] = '\0';
@@ -1285,15 +1303,25 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
 
   t = shishi_tkt_startctime (tkt);
   if (t != (time_t) - 1)
-    fprintf (fh, _("Starttime:\t%s"), ctime (&t));
+    {
+      p = ctime (&t);
+      p[strlen (p) - 1] = '\0';
+      fprintf (fh, _("Starttime:\t%s"), p);
+      if (t > now)
+	fprintf (fh, " NOT YET VALID");
+      fprintf (fh, "\n");
+    }
 
   t = shishi_tkt_endctime (tkt);
-  p = ctime (&t);
-  p[strlen (p) - 1] = '\0';
-  fprintf (fh, _("Endtime:\t%s"), p);
-  if (!shishi_tkt_valid_now_p (tkt))
-    fprintf (fh, " (EXPIRED)");
-  fprintf (fh, "\n");
+  if (t != (time_t) - 1)
+    {
+      p = ctime (&t);
+      p[strlen (p) - 1] = '\0';
+      fprintf (fh, _("Endtime:\t%s"), p);
+      if (t < now)
+	fprintf (fh, " EXPIRED");
+      fprintf (fh, "\n");
+    }
 
   t = shishi_tkt_renew_tillc (tkt);
   if (t != (time_t) - 1)
