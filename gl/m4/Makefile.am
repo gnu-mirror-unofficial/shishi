@@ -47,3 +47,6 @@ EXTRA_DIST += vasprintf.m4
 EXTRA_DIST += wchar_t.m4
 EXTRA_DIST += wint_t.m4
 EXTRA_DIST += xalloc.m4
+EXTRA_DIST += mempcpy.m4
+EXTRA_DIST += strndup.m4
+EXTRA_DIST += strnlen.m4
