@@ -30,6 +30,7 @@
 #include <libtasn1.h>
 #include <malloc.h>
 #include <config.h>
+
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -83,7 +84,7 @@ main(int argc,char *argv[])
     {"name",    required_argument, 0, 'n'},
     {0, 0, 0, 0}
   };
- int option_index = 0;
+  int option_index = 0;
 #endif
 
  int option_result;

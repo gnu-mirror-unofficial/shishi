@@ -45,10 +45,12 @@ void
 _asn1_error_description_value_not_found(node_asn *node,char *ErrorDescription)
 {
 
-  strcpy(ErrorDescription,":: value of element '");
+  if (ErrorDescription == NULL) return;
+
+  Estrcpy(ErrorDescription,":: value of element '");
   _asn1_hierarchical_name(node,ErrorDescription+strlen(ErrorDescription),
 			  MAX_ERROR_DESCRIPTION_SIZE-40);
-  strcat(ErrorDescription,"' not found");
+  Estrcat(ErrorDescription,"' not found");
 
 }
 
@@ -231,11 +233,11 @@ _asn1_objectid_der(unsigned char *str,unsigned char *der,int *der_len)
   temp=(char *) malloc(strlen(str)+2);
 
   strcpy(temp, str);
-  strcat(temp, " ");
+  strcat(temp, ".");
 
   counter=0;
   n_start=temp;
-  while((n_end=strchr(n_start,' '))){
+  while((n_end=strchr(n_start,'.'))){
     *n_end=0;
     val=strtoul(n_start,NULL,10);
     counter++;
@@ -270,7 +272,7 @@ _asn1_objectid_der(unsigned char *str,unsigned char *der,int *der_len)
 }
 
 
-static char bit_mask[]={0xFF,0xFE,0xFC,0xF8,0xF0,0xE0,0xC0,0x80};
+char bit_mask[]={0xFF,0xFE,0xFC,0xF8,0xF0,0xE0,0xC0,0x80};
 
 /******************************************************/
 /* Function : _asn1_bit_der                           */

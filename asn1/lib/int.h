@@ -30,6 +30,7 @@
 #define LIBTASN1_DEBUG_INTEGER
 */
 
+#include <mem.h>
 
 #define MAX32 4294967295
 #define MAX24 16777215
@@ -37,7 +38,7 @@
 
 #define MAX_LOG_SIZE 1024 /* maximum number of characters of a log message */
 #define MAX_NAME_SIZE 128 /* maximum number of characters of a name inside an ASN1 file definitons */
-#define MAX_ERROR_DESCRIPTION_SIZE 1024 /* maximum number of characters of a description message */
+#define MAX_ERROR_DESCRIPTION_SIZE 128 /* maximum number of characters of a description message */
 
 
 /* define used for visiting trees */
@@ -149,7 +150,7 @@ typedef struct static_struct_asn ASN1_ARRAY_TYPE;
 asn1_retCode asn1_delete_structure(ASN1_TYPE *structure);
 
 asn1_retCode asn1_create_element(ASN1_TYPE definitions,const char *source_name,
-                                 ASN1_TYPE *element,const  char *dest_name);
+                                 ASN1_TYPE *element);
 
 asn1_retCode asn1_read_value(ASN1_TYPE element,const char *name,
 			     unsigned char *value,int *len);
@@ -157,6 +158,13 @@ asn1_retCode asn1_read_value(ASN1_TYPE element,const char *name,
 asn1_retCode
 asn1_expand_octet_string(ASN1_TYPE definitions,ASN1_TYPE *element,
                          const char *octetName,const char *objectName);
+
+asn1_retCode
+asn1_expand_any_defined_by(ASN1_TYPE definitions,ASN1_TYPE *element);
+
+asn1_retCode
+asn1_der_decoding(ASN1_TYPE *element,const unsigned char *der,int len,
+		  char *errorDescription);
 
 
 #endif /* INT_H */

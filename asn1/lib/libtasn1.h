@@ -28,14 +28,14 @@
 extern "C" {
 #endif
 
-#define LIBASN1_VERSION "0.1.1"
+#define LIBASN1_VERSION "0.2.0"
 
 #include <sys/types.h>
 #include <time.h>
 
 #define MAX_NAME_SIZE 128 /* maximum number of characters of a name */ 
 			  /* inside a file with ASN1 definitons     */
-#define MAX_ERROR_DESCRIPTION_SIZE 1024 /* maximum number of characters */ 
+#define MAX_ERROR_DESCRIPTION_SIZE 128 /* maximum number of characters */ 
                                         /* of a description message     */
                                         /* (null character included)    */
 
@@ -115,7 +115,7 @@ asn1_retCode asn1_array2tree(const ASN1_ARRAY_TYPE *array,
 void asn1_print_structure(FILE *out,ASN1_TYPE structure,const char *name,int mode);
 
 asn1_retCode asn1_create_element(ASN1_TYPE definitions,const char *source_name,
-                                 ASN1_TYPE *element,const char *dest_name);
+                                 ASN1_TYPE *element);
 
 asn1_retCode asn1_delete_structure(ASN1_TYPE *structure);
 
