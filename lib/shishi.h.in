@@ -1067,6 +1067,7 @@ extern Shishi_asn1 shishi_ap_req (Shishi_ap * ap);
 extern void shishi_ap_req_set (Shishi_ap * ap, Shishi_asn1 apreq);
 extern int shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen);
 extern int shishi_ap_req_der_set (Shishi_ap * ap, char *der, int derlen);
+extern int shishi_ap_req_der_new (Shishi_ap * ap, char **out, int *outlen);
 extern int shishi_ap_req_build (Shishi_ap * ap);
 extern int shishi_ap_req_asn1 (Shishi_ap * ap, Shishi_asn1 * apreq);
 extern int shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key);

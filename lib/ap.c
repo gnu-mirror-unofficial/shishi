@@ -457,6 +457,34 @@ shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen)
 }
 
 /**
+ * shishi_ap_req_der_new:
+ * @ap: structure that holds information about AP exchange
+ * @out: pointer to output array with der encoding of AP-REQ.
+ * @outlen: pointer to length of output array with der encoding of AP-REQ.
+ *
+ * Build AP-REQ using shishi_ap_req_build() and DER encode it.  @out
+ * is allocated by this function, and it is the responsibility of
+ * caller to deallocate it.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_req_der_new (Shishi_ap * ap, char **out, int *outlen)
+{
+  int rc;
+
+  rc = shishi_ap_req_build (ap);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_new_a2d (ap->handle, ap->apreq, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_ap_req_der_set:
  * @ap: structure that holds information about AP exchange
  * @der: input array with DER encoded AP-REQ.
