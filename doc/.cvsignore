@@ -1,6 +1,7 @@
 Makefile
 Makefile.gdoc
 Makefile.in
+man
 mdate-sh
 shishi-api-error-labels.texi
 shishi.1
@@ -22,5 +23,6 @@ shishi.tp
 shishi.txt
 shishi.vr
 stamp-vti
+texi
 texinfo.tex
 version.texi
