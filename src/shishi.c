@@ -45,9 +45,6 @@
 /* Get set_program_name and program_name. */
 #include "progname.h"
 
-/* Get get_date. */
-#include "getdate.h"
-
 /* Get asprintf. */
 #include "vasprintf.h"
 
@@ -145,7 +142,7 @@ main (int argc, char *argv[])
 
   if (args.starttime_arg)
     {
-      starttime = get_date (args.starttime_arg, NULL);
+      starttime = shishi_get_date (args.starttime_arg, NULL);
       if (starttime == -1)
 	error (EXIT_FAILURE, 0, "Invalid --starttime date `%s'",
 	       args.starttime_arg);
@@ -155,7 +152,7 @@ main (int argc, char *argv[])
 
   if (args.endtime_arg)
     {
-      endtime = get_date (args.endtime_arg, &starttime);
+      endtime = shishi_get_date (args.endtime_arg, &starttime);
       if (endtime == -1)
 	error (EXIT_FAILURE, 0, "Invalid --endtime date `%s'",
 	       args.starttime_arg);
@@ -165,7 +162,7 @@ main (int argc, char *argv[])
 
   if (args.renew_till_arg)
     {
-      renew_till = get_date (args.renew_till_arg, &starttime);
+      renew_till = shishi_get_date (args.renew_till_arg, &starttime);
       if (renew_till == -1)
 	error (EXIT_FAILURE, 0, "Invalid --renew-till date `%s'",
 	       args.renew_till_arg);
