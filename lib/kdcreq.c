@@ -864,7 +864,7 @@ shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
   if (VERBOSE (handle))
     printf ("Building KDC-REQ...\n");
 
-  if (shishi_asn1_read_empty_p (handle, kdcreq, "req-body.rtime"))
+  if (shishi_asn1_empty_p (handle, kdcreq, "req-body.rtime"))
     {
       res = shishi_asn1_write (handle, kdcreq, "req-body.rtime", NULL, 0);
       if (res != SHISHI_OK)
@@ -874,7 +874,7 @@ shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
 	}
     }
 
-  if (shishi_asn1_read_empty_p (handle, kdcreq, "req-body.from"))
+  if (shishi_asn1_empty_p (handle, kdcreq, "req-body.from"))
     {
       res = shishi_asn1_write (handle, kdcreq, "req-body.from", NULL, 0);
       if (res != SHISHI_OK)
