@@ -452,8 +452,8 @@ shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
 
   if (!handle->silent)
     fprintf (stderr,
-	     "Searching tickets for client `%s' and server `%s' %d\n",
-	     client, server, ticketset);
+	     "Searching tickets for client `%s' and server `%s'\n",
+	     client, server);
 
   for (i = 0; i < ticketset->ntickets; i++)
     {

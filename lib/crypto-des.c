@@ -1023,4 +1023,3 @@ checksum_md5 (Shishi * handle,
 
   return SHISHI_OK;
 }
-
