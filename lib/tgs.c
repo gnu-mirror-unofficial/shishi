@@ -254,6 +254,10 @@ shishi_tgs_req_process (Shishi_tgs * tgs)
 
   shishi_ap_req_set (tgs->ap, apreq);
 
+  rc = shishi_ap_req_decode (tgs->ap);
+  if (rc != SHISHI_OK)
+    return rc;
+
   return SHISHI_OK;
 }
 

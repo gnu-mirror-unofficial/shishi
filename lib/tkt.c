@@ -182,7 +182,7 @@ shishi_tkt_ticket (Shishi_tkt * tkt)
  * @tkt: input variable with ticket info.
  * @ticket: ASN.1 Ticket to store in ticket.
  *
- * Set the EncKDCRepPart in the Ticket.
+ * Set the ASN.1 Ticket in the Ticket.
  **/
 void
 shishi_tkt_ticket_set (Shishi_tkt * tkt, Shishi_asn1 ticket)

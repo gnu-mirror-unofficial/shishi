@@ -456,10 +456,7 @@ tgsreq1 (Shishi_tgs * tgs)
     return rc;
 
   /* Get ticket used to authenticate request. */
-  rc = shishi_apreq_get_ticket (handle, shishi_ap_req (shishi_tgs_ap (tgs)),
-				&reqapticket);
-  if (rc != SHISHI_OK)
-    return rc;
+  reqapticket = shishi_tkt_ticket (shishi_ap_tkt (shishi_tgs_ap (tgs)));
 
   /* Find name of ticket granter, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
 
