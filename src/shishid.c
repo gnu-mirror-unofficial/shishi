@@ -468,7 +468,7 @@ kdc_read (struct listenspec *ls)
 }
 
 static void
-kdc_accept (struct listenspec *ls, struct listenspec *last)
+kdc_accept (struct listenspec *ls)
 {
   struct listenspec *newls;
 
@@ -536,7 +536,7 @@ kdc_loop (void)
       for (ls = listenspec, last = NULL; ls; last = ls, ls = ls->next)
 	if (FD_ISSET (ls->sockfd, &readfds))
 	  if (ls->type == SOCK_STREAM && ls->listening)
-	    kdc_accept (ls, last);
+	    kdc_accept (ls);
 	  else if (kdc_read (ls) < 0)
 	    last->next = kdc_close (ls);
 	  else
