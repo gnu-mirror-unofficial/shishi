@@ -18,21 +18,11 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-# INCLUDES = -I$(top_srcdir)/gl -I../lib
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I../lib
 
-# localedir = $(datadir)/locale
-
-# DEFS = -DLOCALEDIR=\"$(localedir)\" \
-# 	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
-# 	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
-# 	-DHOSTKEYSFILE=\"$(sysconfdir)/shishi.keys\" \
-# 	-DKDCKEYFILE=\"$(sysconfdir)/shishid.keys\" \
-# 	@DEFS@
-
-# include_HEADERS = shishi-db.h
-# lib_LTLIBRARIES = libshishi-db.la
-# libshishi_db_la_SOURCES = shishi-db.h db.c
-# libshishi_db_la_LIBADD = ../gl/libfoo.la ../lib/libshishi.la 
-# # XXX use different libtool version for this library?
-# libshishi_db_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
-EXTRA_DIST = shishi-db.h db.c
+include_HEADERS = shisa.h
+lib_LTLIBRARIES = libshisa.la
+libshisa_la_SOURCES = shisa.h db.c
+libshisa_la_LIBADD = ../gl/libfoo.la ../lib/libshishi.la 
+# XXX use different libtool version for this library?
+libshisa_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)

@@ -367,7 +367,8 @@ AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile \
 	lib/Makefile lib/shishi.h db/Makefile src/Makefile tests/Makefile \
 	doc/Makefile doc/reference/Makefile \
 	extra/Makefile extra/pam_shishi/Makefile extra/rsh-redone/Makefile \
-	gl/Makefile gl/m4/Makefile shishi.pc shishi.conf shishi.skel)
+	gl/Makefile gl/m4/Makefile shishi.pc \
+	shishi.conf shishi.skel shisa.conf)
 
 # We are done
 AC_OUTPUT

@@ -38,7 +38,7 @@ ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = shishi.pc
 
-sysconf_DATA = shishi.conf
+sysconf_DATA = shishi.conf shisa.conf
 pkgdata_DATA = shishi.skel
 
 # Maintainer targets
