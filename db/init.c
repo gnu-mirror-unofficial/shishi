@@ -71,7 +71,7 @@ shisa_done (Shisa * dbh)
  * ($sysconfdir/shisa.conf).
  *
  * The handle is allocated regardless of return values, except for
- * SHISA_HANDLE_ERROR which indicates a problem allocating the handle.
+ * SHISA_INIT_ERROR which indicates a problem allocating the handle.
  * (The other error conditions comes from reading the files.)
  *
  * Return value: Returns %SHISA_OK iff successful.
@@ -93,7 +93,7 @@ shisa_init (Shisa ** dbh)
  * decided at compile time ($sysconfdir/shisa.conf).
  *
  * The handle is allocated regardless of return values, except for
- * SHISA_HANDLE_ERROR which indicates a problem allocating the handle.
+ * SHISA_INIT_ERROR which indicates a problem allocating the handle.
  * (The other error conditions comes from reading the files.)
  *
  * Return value: Returns %SHISA_OK iff successful.
@@ -104,13 +104,13 @@ shisa_init_with_paths (Shisa ** dbh, const char *file)
   int rc;
 
   if (!dbh || !(*dbh = shisa ()))
-    return SHISA_HANDLE_ERROR;
+    return SHISA_INIT_ERROR;
 
   if (!file)
     file = shisa_cfg_default_systemfile (*dbh);
 
   rc = shisa_cfg_from_file (*dbh, file);
-  if (rc != SHISA_OK && rc != SHISA_FOPEN_ERROR)
+  if (rc != SHISA_OK && rc != SHISA_CFG_NO_FILE)
     return rc;
 
   if ((*dbh)->ndbs == 0)

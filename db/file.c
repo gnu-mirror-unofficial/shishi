@@ -66,7 +66,8 @@ shisa_file_cfg (Shisa *dbh,
 	  break;
 
 	default:
-	  fprintf (stderr, "Unknown option for file database: `%s'\n", value);
+	  shisa_info (dbh, "Unknown file database option: `%s'.", value);
+	  return SHISA_CFG_SYNTAX_ERROR;
 	  break;
 	}
     }
@@ -97,12 +98,16 @@ shisa_file_init (Shisa *dbh,
   else
     info->fh = fopen (location, "r+");
   if (info->fh == NULL && info->allowcreate)
-    info->fh = fopen (location, "w+");
+    {
+      info->fh = fopen (location, "w+");
+      if (info->fh != NULL)
+	shisa_info (dbh, "Created file database: `%s'.", location);
+    }
   if (info->fh == NULL)
     {
       free (info);
       perror(location);
-      return SHISA_FOPEN_ERROR;
+      return SHISA_DB_OPEN_ERROR;
     }
 
   info->path = xstrdup (location);

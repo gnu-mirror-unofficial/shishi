@@ -30,18 +30,17 @@
 enum Shisa_rc
 {
   SHISA_OK = 0,
-  SHISA_CFG_ERROR,
-  SHISA_FOPEN_ERROR,
-  SHISA_IO_ERROR,
-  SHISA_HANDLE_ERROR
+  SHISA_INIT_ERROR,
+  SHISA_CFG_NO_FILE,
+  SHISA_CFG_IO_ERROR,
+  SHISA_CFG_SYNTAX_ERROR,
+  SHISA_DB_OPEN_ERROR
 };
 typedef enum Shisa_rc Shisa_rc;
 
 typedef struct Shisa		Shisa;
-typedef struct Shisa_principal	Shisa_principal;
-typedef struct Shisa_key	Shisa_key;
 
-struct Shisa_principal_info
+struct Shisa_principal
 {
   const char *name;
   const char *realm;
@@ -50,9 +49,9 @@ struct Shisa_principal_info
   int isdisabled;
   int32_t kvno;
 };
-typedef struct Shisa_principal_info Shisa_principal_info;
+typedef struct Shisa_principal Shisa_principal;
 
-struct Shisa_key_info
+struct Shisa_key
 {
   int32_t etype;
   const char *value;
@@ -66,7 +65,7 @@ struct Shisa_key_info
   time_t notusedbefore;
   int isdisabled;
 };
-typedef struct Shisa_key_info Shisa_key_info;
+typedef struct Shisa_key Shisa_key;
 
 /* init.c */
 extern Shisa *shisa (void);
@@ -78,36 +77,39 @@ extern int shisa_init_with_paths (Shisa ** dbh, const char *file);
 extern int shisa_cfg (Shisa * dbh, char *option);
 extern int shisa_cfg_db (Shisa * dbh, char *value);
 extern int shisa_cfg_from_file (Shisa * dbh, const char *cfg);
-extern void shisa_cfg_print (Shisa * dbh, FILE * fh);
 extern const char *shisa_cfg_default_systemfile (Shisa * dbh);
 
 /* Core API. */
-extern int shisa_principal_find (Shisa * dbh,
-				 const char *name,
-				 const char *realm,
-				 Shisa_principal **ph);
+extern int shisa_enumerate_realms (Shisa *dbh,
+				   char ***realms,
+				   size_t *nrealms);
 extern int shisa_enumerate_principals (Shisa *dbh,
+				       const char *realm,
 				       char ***principals,
 				       size_t *nprincipals);
-extern int shisa_principal_create (Shisa * dbh,
-				   const char *name,
-				   const char *realm,
-				   Shisa_principal **ph);
-extern int shisa_principal_info_get (Shisa_principal * ph,
-				     Shisa_principal_info *info);
-extern int shisa_principal_info_free (Shisa_principal * ph,
-				      const Shisa_principal_info *info);
-extern int shisa_principal_info_set (Shisa_principal * ph,
-				     const Shisa_principal_info *info);
-extern int shisa_principal_key_get (Shisa_principal * ph,
-				    Shisa_key_info **keyinfo);
-extern int shisa_principal_key_get_version (Shisa_principal * ph,
-					    uint32_t kvno,
-					    Shisa_key_info **keyinfo);
-extern int shisa_principal_key_add (Shisa_principal * ph,
-				    const Shisa_key_info *keyinfo);
+
+extern int shisa_principal_find (Shisa * dbh,
+				 const char *client,
+				 const char *realm,
+				 Shisa_principal **ph);
+extern int shisa_principal_free (Shisa_principal *ph);
+extern int shisa_principal_set (Shisa * dbh, const Shisa_principal * ph);
+extern int shisa_principal_add (Shisa * dbh, const Shisa_principal * ph,
+				const Shisa_key *key);
+extern int shisa_principal_remove (Shisa * dbh, const Shisa_principal * ph);
+
+extern int shisa_key_find (Shisa * dbh, const Shisa_principal * ph,
+			  Shisa_key **key);
+extern int shisa_key_free (Shisa_key **key);
+extern int shisa_key_set (Shisa * dbh, const Shisa_principal * ph,
+			  const Shisa_key *key);
+extern int shisa_key_add (Shisa * dbh, const Shisa_principal * ph,
+			  const Shisa_key *key);
+extern int shisa_key_remove (Shisa * dbh, const Shisa_principal * ph,
+			     const Shisa_key *key);
 
 /* Utility API. */
-extern int shisa_setpasswd (Shisa_principal * principal, const char *passwd);
+extern int shisa_addpasswd (Shisa * dbh, Shisa_principal * ph,
+			    const char *passwd);
 
 #endif /* SHISA_H */

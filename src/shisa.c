@@ -59,12 +59,12 @@ main (int argc, char *argv[])
 
   rc = shisa_init_with_paths (&dbh, args_info.configuration_file_arg);
   if (rc != SHISA_OK)
-    error (1, 0, "Initialization failed");
+    error (1, 0, "Initialization failed: %s", shisa_strerror (rc));
 
   rc = shisa_cfg (dbh, args_info.library_options_arg);
   if (rc != SHISA_OK)
-    error (1, 0, "Could not read library options: %s\n",
-	   args_info.library_options_arg);
+    error (1, 0, "Could not read library options `%s': %s",
+	   args_info.library_options_arg, shisa_strerror (rc));
 
   shisa_done (dbh);
 

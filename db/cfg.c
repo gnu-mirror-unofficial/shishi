@@ -34,7 +34,7 @@ static char *const _shisa_opts[] = {
 
 /**
  * shisa_cfg_db:
- * @handle: Shisa library handle created by shishi().
+ * @dbh: Shisa library handle created by shisa().
  * @value: string with database definition.
  *
  * Setup and open a new database.  The syntax of the @value parameter
@@ -72,14 +72,14 @@ shisa_cfg_db (Shisa * dbh, char *value)
   backend = _shisa_find_backend (db);
   if (backend == NULL)
     {
-      fprintf (stderr, "Unknown database type: `%s'\n", db);
-      return SHISA_CFG_ERROR;
+      shisa_info (dbh, "Unknown database type: `%s'.", db);
+      return SHISA_CFG_SYNTAX_ERROR;
     }
 
   rc = backend->init (dbh, location, options, &state);
   if (rc != SHISA_OK)
     {
-      fprintf (stderr, "Cannot initialize `%s' database backend\n", db);
+      shisa_info (dbh, "Cannot initialize `%s' database backend.", db);
       return rc;
     }
 
@@ -92,7 +92,7 @@ shisa_cfg_db (Shisa * dbh, char *value)
 
 /**
  * shisa_cfg:
- * @handle: Shisa library handle created by shishi().
+ * @dbh: Shisa library handle created by shisa().
  * @option: string with shisa library option.
  *
  * Configure shisa library with given option.
@@ -116,7 +116,8 @@ shisa_cfg (Shisa * dbh, char *option)
 	  break;
 
 	default:
-	  fprintf (stderr, "Unknown option: `%s'\n", value);
+	  shisa_info (dbh, "Unknown option: `%s'.", value);
+	  return SHISA_CFG_SYNTAX_ERROR;
 	  break;
 	}
     }
@@ -126,12 +127,12 @@ shisa_cfg (Shisa * dbh, char *option)
 
 /**
  * shisa_cfg_from_file:
- * @handle: Shishi library handle create by shishi_init().
+ * @dbh: Shisa library handle created by shisa().
  * @cfg: filename to read configuration from.
  *
- * Configure shishi library using configuration file.
+ * Configure shisa library using configuration file.
  *
- * Return Value: Returns SHISHI_OK iff succesful.
+ * Return Value: Returns %SHISA_OK iff succesful.
  **/
 int
 shisa_cfg_from_file (Shisa * dbh, const char *cfg)
@@ -146,7 +147,7 @@ shisa_cfg_from_file (Shisa * dbh, const char *cfg)
   if (fh == NULL)
     {
       perror (cfg);
-      return SHISA_FOPEN_ERROR;
+      return SHISA_CFG_NO_FILE;
     }
 
   initbuffer (&lb);
@@ -174,27 +175,12 @@ shisa_cfg_from_file (Shisa * dbh, const char *cfg)
   freebuffer (&lb);
 
   if (ferror (fh))
-    return SHISA_IO_ERROR;
+    return SHISA_CFG_IO_ERROR;
 
   if (fclose (fh) != 0)
-    return SHISA_IO_ERROR;
+    return SHISA_CFG_IO_ERROR;
 
   return SHISA_OK;
-}
-
-/**
- * shisa_cfg_print:
- * @dbh: Shisa library handle created by shisa().
- * @fh: file descriptor open for writing.
- *
- * Print library configuration status, mostly for debugging purposes.
- *
- * Return Value: Returns %SHISA_OK.
- **/
-void
-shisa_cfg_print (Shisa * dbh, FILE * fh)
-{
-  fprintf (fh, "Shisa initial library configuration:\n");
 }
 
 /**
