@@ -4,6 +4,12 @@ See the end for copying conditions.
 
 * Version 0.0.12 (unreleased)
 
+** The user database library Shisa has been improved.
+Shisa now support multiple keys for users, and can selectively add and
+remove new keys via the command line interface.
+
+** The Shisa programming API is documented in the manual.
+
 * Version 0.0.11 (released 2003-12-21)
 
 ** The Shishi library now support X.509 authenticated KDC connections via TLS.
