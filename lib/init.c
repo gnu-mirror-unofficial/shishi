@@ -64,6 +64,9 @@ shishi (void)
   handle->kdctimeout = 5;
   handle->kdcretries = 3;
 
+  handle->ticketlife = TICKETLIFE;
+  handle->renewlife = RENEWLIFE;
+
   handle->nclientkdcetypes = 1;
   handle->clientkdcetypes = malloc (sizeof (*handle->clientkdcetypes) *
 				    handle->nclientkdcetypes);
