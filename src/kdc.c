@@ -32,7 +32,7 @@ asreq1 (Shishi_as * as)
   Shisa_key *serverdbkey = NULL, *userdbkey = NULL;
   Shisa_key **serverkeys = NULL, **userkeys = NULL;
   size_t nserverkeys, nuserkeys;
-  int err;
+  int rc;
   char *username = NULL, *servername = NULL, *realm = NULL;
   Shisa_principal server, user;
   uint32_t etype;
@@ -46,90 +46,90 @@ asreq1 (Shishi_as * as)
    * an error message with a KDC_ERR_C_PRINCIPAL_UNKNOWN is returned.
    */
 
-  err = shishi_kdcreq_realm (handle, shishi_as_req (as), &realm, NULL);
-  if (err != SHISHI_OK)
+  rc = shishi_kdcreq_realm (handle, shishi_as_req (as), &realm, NULL);
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_kdcreq_realm failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
-  err = shishi_kdcreq_client (handle, shishi_as_req (as), &username, NULL);
-  if (err != SHISHI_OK)
+  rc = shishi_kdcreq_client (handle, shishi_as_req (as), &username, NULL);
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_kdcreq_client failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
-  err = shishi_kdcreq_server (handle, shishi_as_req (as), &servername, NULL);
-  if (err != SHISHI_OK)
+  rc = shishi_kdcreq_server (handle, shishi_as_req (as), &servername, NULL);
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_kdcreq_server failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
   /* Find the client, e.g., simon@JOSEFSSON.ORG. */
 
-  err = shisa_principal_find (dbh, realm, username, &user);
-  if (err != SHISA_OK && err != SHISA_NO_PRINCIPAL)
+  rc = shisa_principal_find (dbh, realm, username, &user);
+  if (rc != SHISA_OK && rc != SHISA_NO_PRINCIPAL)
     {
       syslog (LOG_ERR, "shisa_principal_find failed (%d): %s",
-	      err, shisa_strerror (err));
-      err = SHISHI_INVALID_PRINCIPAL_NAME;
+	      rc, shisa_strerror (rc));
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
-  if (err == SHISA_NO_PRINCIPAL)
+  if (rc == SHISA_NO_PRINCIPAL)
     {
       syslog (LOG_NOTICE, "AS-REQ from %s@%s for %s@%s failed: no such user",
 	      username, realm, servername, realm);
-      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+      rc = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
 					   SHISHI_KDC_ERR_C_PRINCIPAL_UNKNOWN);
-      if (err != SHISHI_OK)
+      if (rc != SHISHI_OK)
 	goto fatal;
-      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
 
-  err = shisa_keys_find (dbh, realm, username, NULL, &userkeys, &nuserkeys);
-  if (err != SHISA_OK)
+  rc = shisa_keys_find (dbh, realm, username, NULL, &userkeys, &nuserkeys);
+  if (rc != SHISA_OK)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
-	      username, realm, err, shisa_strerror (err));
-      err = SHISHI_INVALID_PRINCIPAL_NAME;
+	      username, realm, rc, shisa_strerror (rc));
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
 
   /* Find the server, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
 
-  err = shisa_principal_find (dbh, realm, servername, &server);
-  if (err != SHISA_OK && err != SHISA_NO_PRINCIPAL)
+  rc = shisa_principal_find (dbh, realm, servername, &server);
+  if (rc != SHISA_OK && rc != SHISA_NO_PRINCIPAL)
     {
       syslog (LOG_ERR, "shisa_principal_find failed (%d): %s",
-	      err, shisa_strerror (err));
-      err = SHISHI_INVALID_PRINCIPAL_NAME;
+	      rc, shisa_strerror (rc));
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
-  if (err == SHISA_NO_PRINCIPAL)
+  if (rc == SHISA_NO_PRINCIPAL)
     {
       syslog (LOG_NOTICE, "AS-REQ from %s@%s for %s@%s failed: no such server",
 	      username, realm, servername, realm);
-      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+      rc = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
 					   SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN);
-      if (err != SHISHI_OK)
+      if (rc != SHISHI_OK)
 	goto fatal;
-      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
 
-  err = shisa_keys_find (dbh, realm, servername, NULL,
+  rc = shisa_keys_find (dbh, realm, servername, NULL,
 			 &serverkeys, &nserverkeys);
-  if (err != SHISA_OK)
+  if (rc != SHISA_OK)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
-	      servername, realm, err, shisa_strerror (err));
-      err = SHISHI_INVALID_PRINCIPAL_NAME;
+	      servername, realm, rc, shisa_strerror (rc));
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
 
@@ -164,7 +164,7 @@ asreq1 (Shishi_as * as)
    * available.
    */
 
-  for (i = 1; (err = shishi_kdcreq_etype (handle, shishi_as_req (as),
+  for (i = 1; (rc = shishi_kdcreq_etype (handle, shishi_as_req (as),
 					  &etype, i)) == SHISHI_OK; i++)
     {
       size_t j;
@@ -197,11 +197,11 @@ asreq1 (Shishi_as * as)
     {
       syslog (LOG_NOTICE, "No matching client keys for %s@%s",
 	      username, realm);
-      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+      rc = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
 					   SHISHI_KDC_ERR_ETYPE_NOSUPP);
-      if (err != SHISHI_OK)
+      if (rc != SHISHI_OK)
 	goto fatal;
-      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
 
@@ -209,29 +209,29 @@ asreq1 (Shishi_as * as)
     {
       syslog (LOG_NOTICE, "No matching server keys for %s@%s",
 	      servername, realm);
-      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+      rc = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
 					   SHISHI_KDC_ERR_ETYPE_NOSUPP);
-      if (err != SHISHI_OK)
+      if (rc != SHISHI_OK)
 	goto fatal;
-      err = SHISHI_INVALID_PRINCIPAL_NAME;
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
 
-  err = shishi_key_from_value (handle, userdbkey->etype,
+  rc = shishi_key_from_value (handle, userdbkey->etype,
 			       userdbkey->key, &userkey);
-  if (err != SHISHI_OK)
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_key_from_value (user) failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
-  err = shishi_key_from_value (handle, serverdbkey->etype,
+  rc = shishi_key_from_value (handle, serverdbkey->etype,
 			       serverdbkey->key, &serverkey);
-  if (err != SHISHI_OK)
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_key_from_value (server) failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
   /*
@@ -274,11 +274,11 @@ asreq1 (Shishi_as * as)
    * tickets with a weak session key encryption type.
    */
 
-  err = shishi_key_random (handle, shishi_key_type (serverkey), &sessionkey);
-  if (err != SHISHI_OK)
+  rc = shishi_key_random (handle, shishi_key_type (serverkey), &sessionkey);
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_key_random (session key) failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
@@ -367,44 +367,44 @@ asreq1 (Shishi_as * as)
    * specified by pre-authentication mechanisms being used.
    */
 
-  err = shishi_tkt_key_set (tkt, sessionkey);
-  if (err != SHISHI_OK)
+  rc = shishi_tkt_key_set (tkt, sessionkey);
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_tkt_key_set failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
-  err = shishi_tkt_clientrealm_set (tkt, realm, username);
-  if (err != SHISHI_OK)
+  rc = shishi_tkt_clientrealm_set (tkt, realm, username);
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_tkt_clientrealm_set failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
-  err = shishi_tkt_serverrealm_set (tkt, realm, servername);
-  if (err != SHISHI_OK)
+  rc = shishi_tkt_serverrealm_set (tkt, realm, servername);
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_tkt_serverrealm_set failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
   /* XXX Use "best" server key, not the one chosen by client (see above). */
-  err = shishi_tkt_build (tkt, serverkey);
-  if (err != SHISHI_OK)
+  rc = shishi_tkt_build (tkt, serverkey);
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_tkt_build failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
-  err = shishi_as_rep_build (as, userkey);
-  if (err != SHISHI_OK)
+  rc = shishi_as_rep_build (as, userkey);
+  if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_as_rep_build failed (%d): %s",
-	      err, shishi_strerror (err));
+	      rc, shishi_strerror (rc));
       goto fatal;
     }
 
@@ -419,11 +419,11 @@ asreq1 (Shishi_as * as)
       shishi_kdcrep_print (handle, stderr, shishi_as_rep (as));
     }
 
-  err = SHISHI_OK;
+  rc = SHISHI_OK;
 
  fatal:
-  if (err != SHISHI_OK)
-    syslog (LOG_ERR, "AS-REQ failed (%d): %s", err, shishi_strerror (err));
+  if (rc != SHISHI_OK)
+    syslog (LOG_ERR, "AS-REQ failed (%d): %s", rc, shishi_strerror (rc));
   if (realm)
     free (realm);
   if (username)
@@ -441,7 +441,7 @@ asreq1 (Shishi_as * as)
   if (sessionkey)
     shishi_key_done (sessionkey);
 
-  return err;
+  return rc;
 }
 
 static int
