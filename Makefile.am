@@ -32,7 +32,7 @@ endif
 
 SUBDIRS += lib src tests doc
 
-DIST_SUBDIRS = $(SUBDIRS) examples extra
+DIST_SUBDIRS = m4 po gl asn1 crypto lib src tests doc examples extra
 
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 
