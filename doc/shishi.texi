@@ -4374,6 +4374,7 @@ is experimental.  Comments and feedback is appreciated.
 * STARTTLS protected KDC exchanges::	How Shishi talks to KDC protected by TLS.
 * Telnet encryption with AES-CCM::      Integrity and privacy protected telnet.
 * Kerberized rsh and rlogin::           Description of KCMD protocol.
+* Key as initialization vector::        Some cryptography discussion.
 @end menu
 
 @node STARTTLS protected KDC exchanges
@@ -5041,6 +5042,64 @@ user name (that can be the same as principal).
 So someone (for example user "user1") can remote log into "user2"
 account if .k5login is present in user2 home dir and this file is owned
 by user2 or root and user1 name is present in this file.
+
+@node Key as initialization vector
+@section Key as initialization vector
+
+The @code{des-cbc-crc} uses the @acronym{DES} key as the
+initialization vector.  This is problematic in general (see
+below@footnote{The post is copyrighted by David Wagner, included here
+with permission, the canonical location is
+@url{http://www.cs.berkeley.edu/~daw/my-posts/key-as-iv-broken}}), but
+may be mitigated in Kerberos by the CRC checksum that is also
+included.
+
+@verbatim
+From daw@espresso.CS.Berkeley.EDU Fri Mar  1 13:32:34 PST 1996
+Article: 50440 of sci.crypt
+Path: agate!daw
+From: daw@espresso.CS.Berkeley.EDU (David A Wagner)
+Newsgroups: sci.crypt
+Subject: Re: DES-CBC and Initialization Vectors
+Date: 29 Feb 1996 21:48:16 GMT
+Organization: University of California, Berkeley
+Lines: 31
+Message-ID: <4h56v0$3no@agate.berkeley.edu>
+References: <4h39li$33o@gaia.ns.utk.edu>
+NNTP-Posting-Host: espresso.cs.berkeley.edu
+
+In article <4h39li$33o@gaia.ns.utk.edu>,
+Nair Venugopal <venu@mars.utcc.utk.edu> wrote:
+> Is there anything wrong in using the key as the I.V. in DES-CBC mode?
+
+Yes, you're open to a chosen-ciphertext attack which recovers the key.
+
+Alice is sending stuff DES-CBC encrypted with key K to Bob.  Mary is an
+active adversary in the middle.  Suppose Alice encrypts some plaintext
+blocks P_1, P_2, P_3, ... in DES-CBC mode with K as the IV, and sends off
+the resulting ciphertext
+	A->B: C_1, C_2, C_3, ...
+where each C_j is a 8-byte DES ciphertext block.  Mary wants to discover
+the key K, but doesn't even know any of the P_j's.  She replaces the above
+message by
+	M->B: C_1, 0, C_1
+where 0 is the 8-byte all-zeros block.  Bob will decrypt under DES-CBC,
+recovering the blocks
+	Q_1, Q_2, Q_3
+where
+	Q_1 = DES-decrypt(K, C_1) xor K = P_1
+	Q_2 = DES-decrypt(K, C_2) xor C_1 = (some unimportant junk)
+	Q_3 = DES-decrypt(K, C_1) xor 0 = P_1 xor K
+Bob gets this garbage-looking message Q_1,Q_2,Q_3 which Mary recovers
+(under the chosen-ciphertext assumption: this is like a known-plaintext
+attack, which isn't too implausible).  Notice that Mary can recover K by
+	K = Q_1 xor Q_3;
+so after this one simple active attack, Mary gets the key back!
+
+So, if you must use a fixed IV, don't use the key-- use 0 or something
+like that.  Even better, don't use a fixed IV-- use the DES encryption
+of a counter, or something like that.
+@end verbatim
 
 @node Copying This Manual
 @appendix Copying This Manual
