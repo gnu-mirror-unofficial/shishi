@@ -183,9 +183,9 @@ shishi_ap_tktoptionsdata (Shishi * handle,
  * @options: AP-REQ options to set in newly created AP.
  * @node: input ASN.1 structure to store as authenticator checksum data.
  *
- * DER decode ASN.1 structure and allocate new AP exchange and set
- * ticket, options and authenticator checksum data using
- * shishi_ap_tktoptionsdata().
+ * Create a new AP exchange, and set ticket, options and authenticator
+ * checksum data using shishi_ap_tktoptionsdata().  The authenticator
+ * checksum data is the DER encoding of the ASN.1 structure provided.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
