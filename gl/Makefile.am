@@ -69,3 +69,7 @@ libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
 libfoo_la_SOURCES += mempcpy.h
 
 libfoo_la_SOURCES += strchrnul.h
+
+libfoo_la_SOURCES += getdate.h getdate.y
+BUILT_SOURCES += getdate.c
+MAINTAINERCLEANFILES += getdate.c
