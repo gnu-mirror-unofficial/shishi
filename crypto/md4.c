@@ -23,7 +23,23 @@
  * MA 02111-1307, USA.
  */
 
-/* Based on public domain code hacked by Simon Josefsson. */
+/* Based on md5.c in nettle, but hacked by Simon Josefsson to compute
+ * md4 checksums using a public domain md4 implementation with the
+ * following comments:
+ *
+ * Modified by Wei Dai from Andrew M. Kuchling's md4.c
+ * The original code and all modifications are in the public domain.
+ *
+ * This is the original introductory comment:
+ *
+ *  md4.c : MD4 hash algorithm.
+ *
+ * Part of the Python Cryptography Toolkit, version 1.1
+ *
+ * Distribute and use freely; there are no restrictions on further
+ * dissemination and usage except those imposed by the laws of your
+ * country of residence.
+ */
 
 #include "md4.h"
 
