@@ -37,6 +37,15 @@
 #include "getdate.h"
 
 #include <alloca.h>
+/* Tell the bison-generated code when alloca() should be used and, if so,
+   what is the maximum safe argument to alloca().  */
+#if HAVE_ALLOCA
+# define YYSTACK_USE_ALLOCA 1
+# define YYMAXDEPTH							\
+  ((4032 - sizeof (YYSTYPE)) / (sizeof (short) + sizeof (YYSTYPE)))
+#else
+# define YYSTACK_USE_ALLOCA 0
+#endif
 
 /* Since the code of getdate.y is not included in the Emacs executable
    itself, there is no need to #define static in this file.  Even if
