@@ -320,7 +320,7 @@ extern int shishi_cfg_from_file (Shishi * handle, const char *cfg);
 extern int shishi_cfg_print (Shishi * handle, FILE * fh);
 extern const char *shishi_cfg_default_systemfile (Shishi * handle);
 extern const char *shishi_cfg_default_userfile (Shishi * handle);
-extern int shishi_cfg_clientkdcetype (Shishi * handle, int ***etypes);
+extern int shishi_cfg_clientkdcetype (Shishi * handle, int **etypes);
 extern int shishi_cfg_clientkdcetype_set (Shishi * handle, char *value);
 
 /* error.c */
