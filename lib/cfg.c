@@ -54,6 +54,9 @@ static const char *_shishi_opts[] = {
   /* [THE_END] =                  */ NULL
 };
 
+int getsubopt(char **optionp, char  *  const  *tokens,  char
+	      **valuep);
+
 /**
  * shishi_cfg:
  * @option: string with shishi library option.
