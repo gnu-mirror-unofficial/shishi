@@ -668,7 +668,10 @@ shisa_file_key_remove (Shisa * dbh,
 	  if (key == NULL || key_match (key, tmpkey))
 	    {
 	      if (found)
-		rc = SHISA_MULTIPLE_KEY_MATCH;
+		{
+		  free (found);
+		  rc = SHISA_MULTIPLE_KEY_MATCH;
+		}
 	      else
 		found = xstrdup (files[i]);
 	    }
@@ -680,14 +683,13 @@ shisa_file_key_remove (Shisa * dbh,
   if (nfiles > 0)
     free (files);
 
-  if (rc == SHISA_OK)
-    if (found)
-      {
-	rc = _shisa_rm5 (info->path, realm, principal, "keys", found);
-	free (found);
-      }
-    else
-      rc = SHISA_NO_KEY;
+  if (rc != SHISA_OK)
+    return rc;
 
+  if (!found)
+    return SHISA_NO_KEY;
+
+  rc = _shisa_rm5 (info->path, realm, principal, "keys", found);
+  free (found);
   return rc;
 }
