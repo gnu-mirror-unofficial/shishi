@@ -74,6 +74,10 @@ extern int h_errno;
 # include <strings.h>
 #endif
 
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
+
 #include "libtasn1.h"
 
 #include "gettext.h"
@@ -177,11 +181,31 @@ struct Shishi_realminfo
 #define SHISHI_DEBUG_CRYPTO (1<<1)
 #define SHISHI_DEBUG_ASN1   (1<<2)
 
+#define KRBTGT "krbtgt"
+#define PRINCIPAL_DELIMITER "/"
+
 #define DEBUGASN1(h) (h->debugmask & SHISHI_DEBUG_ASN1)
 #define DEBUGCRYPTO(h) (h->debugmask & SHISHI_DEBUG_CRYPTO)
 #define DEBUG(h) (h->debugmask & ~SHISHI_DEBUG_ASN1 & ~SHISHI_DEBUG_CRYPTO)
 
 #define SILENT(h) (h->silent)
+
+struct Shishi_as
+{
+  ASN1_TYPE asreq;
+  ASN1_TYPE asrep;
+  Shishi_ticket * ticket;
+};
+
+struct Shishi_tgs
+{
+  ASN1_TYPE tgsreq;
+  Shishi_ticket * tgticket;
+  ASN1_TYPE authenticator;
+  ASN1_TYPE apreq;
+  ASN1_TYPE tgsrep;
+  Shishi_ticket * ticket;
+};
 
 struct Shishi
 {
@@ -190,6 +214,8 @@ struct Shishi
   int silent;
   char *default_realm;
   char *default_principal;
+  int kdctimeout;
+  int kdcretries;
   int *clientkdcetypes;
   int nclientkdcetypes;
   struct Shishi_realminfo *realminfos;

@@ -84,28 +84,28 @@ shishi_kdc_sendrecv (Shishi * handle,
 		     char *indata,
 		     int inlen, char *outdata, int * outlen)
 {
-  int i,j;
+  int i,j,k;
   int rc;
 
   for (i=0; i < handle->nrealminfos; i++)
     if (realm && strcmp(handle->realminfos[i].name, realm) == 0)
       {
-	for (j=0; j < handle->realminfos[i].nkdcaddresses; j++)
-	  {
-	    struct Shishi_kdcinfo *ki = &handle->realminfos[i].kdcaddresses[j];
+	for (j=0; j < handle->kdcretries; j++)
+	  for (k=0; k < handle->realminfos[i].nkdcaddresses; k++)
+	    {
+	      struct Shishi_kdcinfo *ki = 
+		&handle->realminfos[i].kdcaddresses[k];
+	      
+	      printf("Sending to %s (%s)...\n", ki->name,
+		     inet_ntoa(((struct sockaddr_in*)
+				&ki->sockaddress)->sin_addr));
+	      rc = shishi_sendrecv_udp (handle, &ki->sockaddress,
+					indata, inlen, outdata, outlen, 
+					handle->kdctimeout);
+	      if (rc != SHISHI_TIMEOUT)
+		return rc;
+	    }
 
-	    printf("Sending to %s (%s)...\n", ki->name,
-		   inet_ntoa(((struct sockaddr_in*)
-			      &ki->sockaddress)->sin_addr));
-	    rc = shishi_sendrecv_udp (handle, &ki->sockaddress,
-				      indata, inlen, outdata, outlen, 5);
-	    if (rc == SHISHI_TIMEOUT)
-	      {
-		printf("No data received, continuing...\n");
-	      }
-	    else
-	      return rc;
-	  }
 	printf("All KDCs timed out...\n");
 	return !SHISHI_OK;
       }

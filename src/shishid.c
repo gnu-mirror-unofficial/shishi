@@ -300,7 +300,7 @@ process (Shishi *handle,
 	 int sockfd)
 {
   ASN1_TYPE kdcreq;
-  ASN1_TYPE kdcrep;
+  ASN1_TYPE kdcrep, ticket, encticketpart;
 
   printf("Processing %d bytes: %s\n", datalen, data);
 
@@ -312,7 +312,15 @@ process (Shishi *handle,
 
   kdcrep = shishi_as_rep(handle);
 
-  shishi_kdcrep_print(handle, stdout, kdcrep);
+  //shishi_kdcrep_print(handle, stdout, kdcrep);
+
+  ticket = shishi_asn1_ticket (handle);
+
+  //shishi_asn1ticket_print (handle, stdout, ticket);
+
+  encticketpart = shishi_asn1_encticketpart (handle);
+
+  shishi_encticketpart_print (handle, stdout, encticketpart);
 
 }
 
@@ -532,7 +540,7 @@ main (int argc, char *argv[])
 
   if (arg.cfgfile == NULL)
     arg.cfgfile = SYSTEMCFGFILE;
-  rc = shishi_readcfg (handle, arg.cfgfile);
+  rc = shishi_cfg_from_file (handle, arg.cfgfile);
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     {
       fprintf(stderr, "Could not read configuration file `%s': %s\n", 

@@ -150,6 +150,8 @@ typedef enum {
 typedef struct Shishi Shishi;
 typedef struct Shishi_ticket Shishi_ticket;
 typedef struct Shishi_ticketset Shishi_ticketset;
+typedef struct Shishi_as Shishi_as;
+typedef struct Shishi_tgs Shishi_tgs;
 
 /* init.c */
 extern Shishi* shishi_init ();
@@ -161,9 +163,11 @@ extern int shishi_debug (Shishi *handle);
 extern int
 shishi_cfg (Shishi * handle, char *option);
 extern int
-shishi_readcfg (Shishi * handle, char *cfg);
+shishi_cfg_from_file (Shishi * handle, char *cfg);
 extern int
-shishi_dumpcfg (Shishi * handle);
+shishi_cfg_print (Shishi * handle, FILE *fh);
+extern int
+shishi_cfg_clientkdcetype_set (Shishi *handle, char *value);
 
 /* error.c */
 extern const char *shishi_strerror (int err);
@@ -535,6 +539,9 @@ shishi_check_version (const char *req_version);
 
 /* password.c */
 extern int
-shishi_read_password (char * s, int size);
+shishi_read_password (FILE *fh, char * s, int size);
+extern int
+shishi_prompt_password (FILE *in, char * s, int size, 
+			FILE *out, char *format, ...);
 
 #endif

@@ -23,6 +23,8 @@
 # Read MIT or Heimdal configuration file for the following parameters:
 #   default-realm
 #   realm-kdc
+#   kdc-timeout
+#   kdc-retries
 # You can override these values by specifying alternate values below.
 read-krb5conf=/etc/krb5.conf
 
@@ -41,7 +43,7 @@ read-krb5conf=/etc/krb5.conf
 # so a man in the middle can modify the order without being detected.
 # Thus, only specify encryption types you trust completely here.  If
 # this is not specified, des3-cbc-sha1-kd and des-cbc-md5 is used.
-# client-kdc-etypes des-cbc-md5
+#client-kdc-etypes=des-cbc-md5
 
 # Enable verbose library messages.
 #verbose
@@ -54,4 +56,10 @@ read-krb5conf=/etc/krb5.conf
 # KDCADDRESS is the hostname or IP address of KDC
 realm-kdc=lab.josefsson.org,latte.josefsson.org
 
-kdc localhost
+# How long shishi waits for a response from a KDC before continuing
+# to next KDC for realm.  The default is 5 seconds.
+#kdc-timeout=5
+
+# How many times shishi sends a request to a KDC before giving up.
+# The default is 3 times.
+#kdc-retries=3

@@ -302,6 +302,39 @@ shishi_ticket_server (Shishi * handle,
 }
 
 int
+shishi_ticket_server_p (Shishi * handle,
+			Shishi_ticket * ticket,
+			char *service)
+{
+  char *buf;
+  int buflen;
+  int res;
+
+  buflen = strlen (service) + 1;
+  buf = malloc (buflen);
+  if (buf == NULL)
+    return 0;
+
+  res = shishi_ticket_server (handle, ticket, buf, &buflen);
+  if (res != SHISHI_OK)
+    {
+      free (buf);
+      return 0;
+    }
+  buf[buflen] = '\0';
+
+  if (strcmp (service, buf) != 0)
+    {
+      free (buf);
+      return 0;
+    }
+  
+  free(buf);
+
+  return 1;
+}
+
+int
 shishi_ticket_server_realm (Shishi * handle,
 			    Shishi_ticket * ticket,
 			    char *servicerealm, int *servicerealmlen)
@@ -677,6 +710,15 @@ shishi_ticket_apreq (Shishi * handle,
   return res;
 }
 
+int
+shishi_ticket_tgsreq (Shishi * handle,
+		      Shishi_ticket * ticket,
+		      char *realm, char *server,
+		      ASN1_TYPE * tgsreq)
+{
+  *tgsreq = shishi_tgsreq (handle, realm, server, ticket);
+  
+}
 int
 shishi_ticket_decrypt (Shishi * handle,
 		       ASN1_TYPE ticket,

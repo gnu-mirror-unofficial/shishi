@@ -20,8 +20,8 @@
 bin_PROGRAMS = shishi
 sbin_PROGRAMS = shishid
 
-shishi_SOURCES = data.h gettext.h shishi.c kdc.c authp.c crypto.c \
-	list.c client.c server.c
+shishi_SOURCES = shishi.c data.h gettext.h \
+	kdc.c authp.c crypto.c client.c server.c
 shishi_LDADD = @LIBARGP@ @LTLIBINTL@ @LIBGCRYPT@ \
 	../lib/libshishi.la ../asn1/lib/libtasn1.la
 

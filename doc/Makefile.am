@@ -19,6 +19,7 @@
 
 shishi_texi_auto_deps = shishi-api-global.texi \
 	shishi-api-ticket.texi shishi-api-ticketset.texi \
+	shishi-api-as.texi shishi-api-tgs.texi \
 	shishi-api-kdc.texi shishi-api-authenticator.texi shishi-api-ap.texi \
 	shishi-api-crypto.texi shishi-api-error.texi shishi-api-version.texi
 
@@ -44,6 +45,12 @@ shishi-api-ticket.texi: $(top_srcdir)/lib/ticket.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-ticketset.texi: $(top_srcdir)/lib/ticketset.c
+	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
+
+shishi-api-as.texi: $(top_srcdir)/lib/as.c
+	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
+
+shishi-api-tgs.texi: $(top_srcdir)/lib/tgs.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-kdc.texi: $(top_srcdir)/lib/kdc.c $(top_srcdir)/lib/kdcreq.c $(top_srcdir)/lib/kdcrep.c $(top_srcdir)/lib/enckdcreppart.c

@@ -83,6 +83,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->ticketwritefile = strdup(arg);
       break;
 
+    case 'e':
+      arguments->etypes = strdup(arg);
+      break;
+
     case 's':
       arguments->systemcfgfile = strdup(arg);
       break;
@@ -146,10 +150,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->decrypt_p = 1;
       break;
 
+    case OPTION_AS_STRING_TO_KEY:
     case OPTION_CRYPTO_STRING_TO_KEY:
     case OPTION_KDC_STRING_TO_KEY:
     case OPTION_SERVER_STRING_TO_KEY:
       if (arguments->command != COMMAND_CRYPTO &&
+	  arguments->command != COMMAND_AS &&
 	  arguments->command != COMMAND_KDC &&
 	  arguments->command != COMMAND_SERVER)
 	argp_error 
@@ -209,10 +215,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	arguments->authenticatordatareadtype == SHISHI_FILETYPE_BINARY;
       break;
 
+    case OPTION_AS_CLIENT_NAME:
     case OPTION_CRYPTO_CLIENT_NAME:
     case OPTION_KDC_CLIENT_NAME:
     case OPTION_SERVER_CLIENT_NAME:
       if (arguments->command != COMMAND_CRYPTO &&
+	  arguments->command != COMMAND_AS &&
 	  arguments->command != COMMAND_KDC &&
 	  arguments->command != COMMAND_SERVER)
 	argp_error (state,
@@ -221,16 +229,21 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->cname = strdup (arg);
       break;
 
+    case 'r':
     case OPTION_AP_REALM:
+    case OPTION_AS_REALM:
     case OPTION_CLIENT_REALM:
     case OPTION_CRYPTO_REALM:
     case OPTION_KDC_REALM:
+    case OPTION_TGS_REALM:
       if (arguments->command != COMMAND_AP &&
 	  arguments->command != COMMAND_CLIENT &&
 	  arguments->command != COMMAND_CRYPTO &&
-	  arguments->command != COMMAND_KDC)
-	argp_error (state,
-    _("Option `%s' only valid with AP, CLIENT, CRYPTO and KDC/AS/TGS."),
+	  arguments->command != COMMAND_AS &&
+	  arguments->command != COMMAND_KDC &&
+	  arguments->command != COMMAND_TGS)
+	argp_error (state, _("Option `%s' only valid with AP, CLIENT, CRYPTO "
+			     "and KDC/AS/TGS."),
 		    state->argv[state->next - 1]);
       arguments->realm = strdup (arg);
       break;
@@ -255,9 +268,25 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->sname = strdup (arg);
       break;
 
-    case OPTION_KDC_TICKET_GRANTER:
+    case OPTION_KDC_FORCE_AS:
       if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
+	argp_error (state, _("Option `%s' only valid with KDC."),
+		    state->argv[state->next - 1]);
+      arguments->forceas_p = 1;
+      break;
+
+    case OPTION_KDC_FORCE_TGS:
+      if (arguments->command != COMMAND_KDC)
+	argp_error (state, _("Option `%s' only valid with KDC."),
+		    state->argv[state->next - 1]);
+      arguments->forcetgs_p = 1;
+      break;
+
+    case OPTION_KDC_TICKET_GRANTER:
+    case OPTION_TGS_TICKET_GRANTER:
+      if (arguments->command != COMMAND_KDC &&
+	  arguments->command != COMMAND_TGS)
+	argp_error (state, _("Option `%s' only valid with KDC/TGS."),
 		    state->argv[state->next - 1]);
       arguments->tgtname = strdup (arg);
       break;
@@ -365,13 +394,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	    }
 	  else if (strcmp (arg, "as") == 0)
 	    {
-	      arguments->command = COMMAND_KDC;
-	      arguments->forceas_p = 1;
+	      arguments->command = COMMAND_AS;
 	    }
 	  else if (strcmp (arg, "tgs") == 0)
 	    {
-	      arguments->command = COMMAND_KDC;
-	      arguments->forcetgs_p = 1;
+	      arguments->command = COMMAND_TGS;
 	    }
 	  else if (strcmp (arg, "list") == 0)
 	    {
@@ -404,26 +431,119 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
 static struct argp_option options[] = {
 
-  {0, 0, 0, 0, "Available commands:"},
+  {0, 0, 0, 0, "Authentication commands:", 10},
 
-  {"ap", 0, 0, OPTION_DOC, "Low-level client/server authentication"},
+  {"as", 0, 0, OPTION_DOC, 
+   "Acquire ticket granting ticket using password and the Authentication "
+   "Service (AS) exchange."},
 
-  {"crypto", 0, 0, OPTION_DOC, "Low-level cryptographic functions"},
+  {"list", 0, 0, OPTION_DOC, 
+   "List tickets."},
 
-  {"client", 0, 0, OPTION_DOC, "Kerberos client"},
+  {"tgs", 0, 0, OPTION_DOC,
+   "Acquire ticket using the ticket granting ticket and the Ticket-Granting "
+   "Service (TGS) exchange."},
 
-  {"kdc", 0, 0, OPTION_DOC, "Key Distribution Center Services; "
-   "Authentication Service (as) and Ticket-Granting Service (tgs)"},
-  {"as", 0, 0, OPTION_DOC | OPTION_ALIAS},
-  {"tgs", 0, 0, OPTION_DOC | OPTION_ALIAS},
+  {0, 0, 0, 0, "Utility commands:", 20},
 
-  {"list", 0, 0, OPTION_DOC, "List tickets"},
+  {"client", 0, 0, OPTION_DOC, 
+   "Kerberos client."},
 
-  {"server", 0, 0, OPTION_DOC, "Kerberos server"},
+  {"server", 0, 0, OPTION_DOC, 
+   "Kerberos server."},
+
+  {0, 0, 0, 0, "Low-level commands:", 30},
+
+  {"ap", 0, 0, OPTION_DOC, 
+   "Kerberos Client/Server Authentication (AP-REQ and AP-REP)."},
+
+  {"crypto", 0, 0, OPTION_DOC, 
+   "Cryptographic functions."},
+
+  {"kdc", 0, 0, OPTION_DOC, 
+   "Key Distribution Center Services; Authentication Service (AS) "
+   "and Ticket-Granting Service (TGS)."},
+
+  /************** AS */
+
+  {0, 0, 0, 0, "Options for Authentication Service (AS-OPTIONS):", 100},
+ 
+  {"client-name", OPTION_AS_CLIENT_NAME, "NAME", 0,
+   "Client name. Default is login username."},
+
+  {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
+   "Encryption types to use.  ETYPE is either registered name or integer."},
+
+  {"realm", 'r', "REALM", 0,
+   "Realm of client and server. Default is DNS domain of local host."},
+
+  {"string-to-key", OPTION_AS_STRING_TO_KEY, "PASSWORD", 0,
+   "Password to decrypt response (discouraged). Default is to prompt user."},
+
+  /************** LIST */
+
+  {0, 0, 0, 0, "Options for the List command (LIST-OPTIONS):", 200},
+
+  {"server-name", OPTION_LIST_SERVER_NAME, "NAME", 0,
+   "Restrict list to tickets for specified server."},
+
+  /************** TGS */
+
+  {0, 0, 0, 0, "Options for Ticket Granting Service (TGS-OPTIONS):", 300},
+ 
+  {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
+   "Encryption types to use.  ETYPE is either registered name or integer."},
+
+  {"ticket-granter", OPTION_KDC_TICKET_GRANTER, "NAME", 0,
+   "Name of server field in the ticket to use as the ticket granter. "
+   "Defaults to \"krbtgt/REALM@REALM\" where REALM is server "
+   "realm (see --realm)."},
+
+  {"realm", 'r', "REALM", 0,
+   "Realm of server. Default is DNS domain of local host."},
+
+ /************** CLIENT */
+
+  {0, 0, 0, 0, "Options for Network Client (CLIENT-OPTIONS):", 400},
+
+  {"options", OPTION_CLIENT_AP_OPTIONS, "OPTION[,OPTION...]", 0,
+   "Indicate AP-OPTIONS separated by comma (,) or whitespace. "
+   "Options are integers (ORed together) or the pre-defined strings "
+   "\"use-session-key\" indicating that the ticket is encrypted in the "
+   "server's TGT key rather than its own key (not implemented) or "
+   "\"mutual-required\" indicating that mutual authentication is required."},
+
+  {"realm", 'r', "REALM", 0,
+   "Realm of server. Defaults to DNS domain of local host."},
+
+  {"server-name", OPTION_CLIENT_SERVER_NAME, "NAME", 0,
+   "Name of server. Defaults to \"sample/REALM\" where REALM "
+   "is realm of server (see --realm)."},
+
+  /************** SERVER */
+
+  {0, 0, 0, 0, "Options for Network Server (SERVER-OPTIONS):", 500},
+
+  {"client-name", OPTION_KDC_CLIENT_NAME, "NAME", 0,
+   "Client name. Default is login username."},
+
+  {"key-value", OPTION_SERVER_KEY_VALUE, "KEY", 0,
+   "Cipher key of server."},
+
+  {"realm", 'r', "REALM", 0,
+   "Realm of server. Defaults to DNS domain of local host."},
+
+  {"server-name", OPTION_SERVER_SERVER_NAME, "NAME", 0,
+   "Name of server. Defaults to \"sample/REALM\" where REALM "
+   "is realm of server (see --realm)."},
+
+  {"string-to-key", OPTION_SERVER_STRING_TO_KEY, "PASSWORD", 0,
+   "Password to decrypt response (discouraged)."},
 
   /************** AP */
 
-  {0, 0, 0, 0, "Options for Client/Server Authentication (AP-OPTIONS):", 100},
+  {0, 0, 0, 0, 
+   "Options for low-level Client/Server Authentication (AP-OPTIONS):", 600},
 
   {"data", OPTION_AP_AUTHENTICATOR_DATA, "B64STRING", 0,
    "Base64 encoded data to checksum in generated authenticator. "
@@ -438,7 +558,7 @@ static struct argp_option options[] = {
    "TYPE, BASE64, HEX or BINARY (default). "
    "By default checksum is omitted (indicating no application payload)."},
 
-  {"realm", OPTION_AP_REALM, "REALM", 0,
+  {"realm", 'r', "REALM", 0,
    "Realm of server. Defaults to DNS domain of local host. Used for "
    "locating the ticket to use."},
 
@@ -455,29 +575,10 @@ static struct argp_option options[] = {
    "Write AP-REQ to FILE in format TYPE; TEXT (default) or DER.  "
    "Default is stdout."},
 
-  /************** CLIENT */
-
-  {0, 0, 0, 0,
-   "Options for Kerberos Client (CLIENT-OPTIONS):", 200},
-
-  {"options", OPTION_CLIENT_AP_OPTIONS, "OPTION[,OPTION...]", 0,
-   "Indicate AP-OPTIONS separated by comma (,) or whitespace. "
-   "Options are integers (ORed together) or the pre-defined strings "
-   "\"use-session-key\" indicating that the ticket is encrypted in the "
-   "server's TGT key rather than its own key (not implemented) or "
-   "\"mutual-required\" indicating that mutual authentication is required."},
-
-  {"realm", OPTION_CLIENT_REALM, "REALM", 0,
-   "Realm of server. Defaults to DNS domain of local host."},
-
-  {"server-name", OPTION_CLIENT_SERVER_NAME, "NAME", 0,
-   "Name of server. Defaults to \"sample/REALM\" where REALM "
-   "is realm of server (see --realm)."},
-
   /************** CRYPTO */
 
   {0, 0, 0, 0,
-   "Options for low-level cryptographic functions (CRYPTO-OPTIONS):", 300},
+   "Options for low-level cryptography (CRYPTO-OPTIONS):", 700},
 
   {"algorithm", OPTION_CRYPTO_ALGORITHM, "ALGORITHM", 0,
    "Use ciphering algorithm, expressed either as the etype integer or "
@@ -504,7 +605,7 @@ static struct argp_option options[] = {
   {"output-file", OPTION_CRYPTO_OUTPUT_FILE, "[TYPE,]FILE", 0,
    "Write data to FILE in TYPE, BASE64, HEX or BINARY (default)."},
 
-  {"realm", OPTION_CRYPTO_REALM, "REALM", 0,
+  {"realm", 'r', "REALM", 0,
    "Realm of principal. Defaults to DNS domain of local host. "
    "Used for generating cipher key."},
 
@@ -514,12 +615,21 @@ static struct argp_option options[] = {
   /************** KDC */
 
   {0, 0, 0, 0,
-   "Options for the Key Distribution Services command (KDC-OPTIONS):", 400},
+   "Options for low-level Key Distribution Services (KDC-OPTIONS):", 800},
 
   {"client-name", OPTION_KDC_CLIENT_NAME, "NAME", 0,
    "Client name. Default is login username. Only for AS."},
 
-  {"realm", OPTION_KDC_REALM, "REALM", 0,
+  {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
+   "Encryption types to use.  ETYPE is either registered name or integer."},
+
+  {"force-as", OPTION_KDC_FORCE_AS, 0, 0,
+   "Force AS mode. Default is to use TGS iff a TGT is found."},
+
+  {"force-tgs", OPTION_KDC_FORCE_TGS, 0, 0,
+   "Force TGS mode. Default is to use TGS iff a TGT is found."},
+
+  {"realm", 'r', "REALM", 0,
    "Realm of server. Default is DNS domain of local host. For AS, this also indicates realm of client."},
 
   {"server", OPTION_KDC_SERVER, "HOST", 0,
@@ -536,11 +646,6 @@ static struct argp_option options[] = {
    "Service name in ticket to use for authenticating request. Only for TGS. "
    "Defaults to \"krbtgt/REALM@REALM\" where REALM is server "
    "realm (see --realm)."},
-
-  /************** KDC esoteric */
-
-  {0, 0, 0, 0,
-   "Esoteric options for the Key Distribution Services command (KDC-OPTIONS):", 450},
 
   {"key-value", OPTION_KDC_KEY_VALUE, "KEY", 0,
    "Cipher key to decrypt response (discouraged)."},
@@ -582,34 +687,6 @@ static struct argp_option options[] = {
    "Write KDC-REP to FILE in format TYPE; TEXT (default) or DER. "
    "Not written by default."},
 
-  /************** LIST */
-
-  {0, 0, 0, 0, "Options for the List command (LIST-OPTIONS):", 500},
-
-  {"server-name", OPTION_LIST_SERVER_NAME, "NAME", 0,
-   "Restrict list to tickets for specified server."},
-
-  /************** SERVER */
-
-  {0, 0, 0, 0,
-   "Options for Kerberos Server (SERVER-OPTIONS):", 600},
-
-  {"client-name", OPTION_KDC_CLIENT_NAME, "NAME", 0,
-   "Client name. Default is login username."},
-
-  {"key-value", OPTION_SERVER_KEY_VALUE, "KEY", 0,
-   "Cipher key of server."},
-
-  {"realm", OPTION_SERVER_REALM, "REALM", 0,
-   "Realm of server. Defaults to DNS domain of local host."},
-
-  {"server-name", OPTION_SERVER_SERVER_NAME, "NAME", 0,
-   "Name of server. Defaults to \"sample/REALM\" where REALM "
-   "is realm of server (see --realm)."},
-
-  {"string-to-key", OPTION_SERVER_STRING_TO_KEY, "PASSWORD", 0,
-   "Password to decrypt response (discouraged)."},
-
   /************** OTHER */
 
   {0, 0, 0, 0, "Other options:", 1000},
@@ -627,6 +704,9 @@ static struct argp_option options[] = {
 
   {"configuration-file", 'c', "FILE", 0,
    "Read user configuration from file.  Default is ~/.shishi/config."},
+
+  {"library-options", 'o', "STRING", 0,
+   "Parse STRING as a configuration file statement."},
 
   {"ticket-file", 't', "FILE", 0,
    "Read tickets from FILE. Default is $HOME/.shishi/tickets."},
@@ -657,11 +737,13 @@ static struct argp argp = {
   parse_opt,
   "COMMAND [COMMAND-OPTION...]\n"
   "ap [AP-OPTION...]\n"
+  "as [AS-OPTION...]\n"
   "client [CLIENT-OPTION...]\n"
   "crypto [CRYPTO-OPTION...]\n"
   "kdc [KDC-OPTION...]\n" 
   "list [LIST-OPTION...]\n"
-  "server [SERVER-OPTION...]",
+  "server [SERVER-OPTION...]\n"
+  "tgs [TGS-OPTION...]",
   "Shishi -- An implementation of Kerberos 5"
 };
 
@@ -703,7 +785,7 @@ main (int argc, char *argv[])
   if (arg.systemcfgfile == NULL)
     arg.systemcfgfile = SYSTEMCFGFILE;
 
-  rc = shishi_readcfg (handle, arg.systemcfgfile);
+  rc = shishi_cfg_from_file (handle, arg.systemcfgfile);
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     die("Could not read system config: %s\n", shishi_strerror (rc));
 
@@ -712,9 +794,17 @@ main (int argc, char *argv[])
   if (arg.usercfgfile == NULL)
     arg.usercfgfile = usercfgfile;
 
-  rc = shishi_readcfg (handle, arg.usercfgfile);
+  rc = shishi_cfg_from_file (handle, arg.usercfgfile);
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     die("Could not read user config: %s\n", shishi_strerror (rc));
+
+  rc = shishi_cfg_clientkdcetype_set (handle, arg.etypes);
+  if (rc != SHISHI_OK)
+    die("Could not set encryption types: %s\n", shishi_strerror (rc));
+
+  rc = shishi_cfg (handle, arg.lib_options);
+  if (rc != SHISHI_OK)
+    die("Could not read library options: %s\n", shishi_strerror (rc));
 
   rc = shishi_ticketset_init (handle, &ticketset);
   if (rc != SHISHI_OK)
@@ -728,12 +818,49 @@ main (int argc, char *argv[])
   rc = shishi_ticketset_from_file (handle, ticketset, arg.ticketfile);
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     die("Could not read tickets: %s\n", shishi_strerror (rc));
-  shishi_dumpcfg(handle);
+
   rc = 1;
   switch (arg.command)
     {
     case COMMAND_AP:
       rc = ap (handle, ticketset, arg);
+      break;
+
+    case COMMAND_AS:
+      {
+	Shishi_as * as;
+	Shishi_ticket * tkt;
+	char password[BUFSIZ];
+
+	if (arg.cname != NULL)
+	  shishi_principal_default_set (handle, arg.cname);
+
+	if (arg.realm != NULL)
+	  shishi_realm_default_set (handle, arg.realm);
+
+	rc = shishi_as (handle, arg.stringtokey, &as);
+	if (rc != SHISHI_OK)
+	  {
+	    printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
+		    shishi_strerror_details (handle));
+	    break;
+	  }
+
+	if (arg.verbose)
+	  {
+	    shishi_kdcreq_print (handle, stdout, shishi_as_get_asreq(as));
+	    shishi_kdcrep_print (handle, stdout, shishi_as_get_asrep(as));
+	  }
+
+	tkt = shishi_as_get_ticket(as);
+
+	if (!arg.silent)
+	  shishi_ticket_print (handle, tkt, stdout);
+
+	rc = shishi_ticketset_add (handle, ticketset, tkt);
+	if (rc != SHISHI_OK)
+	  printf ("Could not add ticket: %s", shishi_strerror (rc));
+      }
       break;
 
     case COMMAND_CLIENT:
@@ -749,11 +876,79 @@ main (int argc, char *argv[])
       break;
 
     case COMMAND_LIST:
-      rc = list (handle, ticketset, arg);
+      if (!arg.silent)
+	printf (_("Tickets in `%s':\n"), arg.ticketfile);
+
+      rc = shishi_ticketset_print_for_service (handle, ticketset, 
+					       stdout, arg.sname);
+      if (rc != SHISHI_OK)
+	fprintf (stderr, "Could not list tickets: %s", shishi_strerror (rc));
       break;
+
+
 
     case COMMAND_SERVER:
       rc = server (handle, ticketset, arg);
+      break;
+
+    case COMMAND_TGS:
+      {
+	Shishi_tgs * tgs;
+	Shishi_ticket * tgt;
+	Shishi_ticket * tkt;
+
+	if (arg.cname != NULL)
+	  shishi_principal_default_set (handle, arg.cname);
+
+	if (arg.realm != NULL)
+	  shishi_realm_default_set (handle, arg.realm);
+
+	if (arg.tgtname == NULL)
+	  {
+	    char *realm = shishi_realm_default_get (handle);
+	    int len = strlen ("krbtgt/") +  strlen (realm) + 1;
+	    arg.tgtname = malloc (len);
+	    if (arg.tgtname == NULL)
+	      return SHISHI_MALLOC_ERROR;
+	    sprintf (arg.tgtname, "krbtgt/%s", realm);
+	  }
+
+	tgt = shishi_ticketset_find_ticket_for_clientserver
+	  (handle,  ticketset, shishi_principal_default_get (handle),
+	   arg.tgtname);
+	if (tgt == NULL)
+	  {
+	    printf ("TGT not found.  Please use the AS command first.\n");
+	    rc = !SHISHI_OK;
+	    break;
+	  }
+
+	rc = shishi_tgs (handle, tgt, &tgs, arg.tgtname);
+	if (rc != SHISHI_OK)
+	  {
+	    printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
+		    shishi_strerror_details (handle));
+	    break;
+	  }
+
+	if (arg.verbose)
+	  {
+	    shishi_authenticator_print (handle, stdout, 
+					shishi_tgs_get_authenticator(tgs));
+	    shishi_apreq_print (handle, stdout, shishi_tgs_get_apreq(tgs));
+	    shishi_kdcreq_print (handle, stdout, shishi_tgs_get_tgsreq(tgs));
+	    shishi_kdcrep_print (handle, stdout, shishi_tgs_get_tgsrep(tgs));
+	  }
+
+	tkt = shishi_tgs_get_ticket(tgs);
+
+	if (!arg.silent)
+	  shishi_ticket_print (handle, tkt, stdout);
+
+	rc = shishi_ticketset_add (handle, ticketset, tkt);
+	if (rc != SHISHI_OK)
+	  printf ("Could not add ticket: %s", shishi_strerror (rc));
+      }
       break;
 
     default:
@@ -766,7 +961,7 @@ main (int argc, char *argv[])
       rc = shishi_ticketset_to_file (handle, ticketset, arg.ticketwritefile ? 
 				     arg.ticketwritefile : arg.ticketfile);
       if (rc != SHISHI_OK)
-	die("Could not write tickets: %s\n", shishi_strerror (rc));
+	printf ("Could not write tickets: %s\n", shishi_strerror (rc));
     }
 
   shishi_ticketset_done(handle, ticketset);

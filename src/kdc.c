@@ -1,4 +1,4 @@
-/* kdc.c	authentication services
+/* kdc.c	low-level authentication (AS and TGS) services
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -134,9 +134,8 @@ kdc_response (Shishi * handle,
       shishi_kdcreq_cnamerealm_get (handle, req, user, &userlen);
       user[userlen] = '\0';
 
-      printf("Enter password for `%s': ", user); fflush(stdout);
-      res = shishi_read_password (password, BUFSIZ);
-      printf("\n");
+      res = shishi_prompt_password (stdin, password, BUFSIZ,
+				    stdout, "Enter password for `%s': ", user);
 
       if (res == SHISHI_OK)
 	res = shishi_as_process (handle, req, rep, password, &kdcreppart);
@@ -183,6 +182,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
   Shishi_ticket *oldtkt;
   Shishi_ticket *newtkt;
   int res;
+  Shishi_as * as;
 
   if (arg.cname == NULL)
     arg.cname = shishi_principal_default_get (handle);
@@ -231,9 +231,10 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     }
   else
     {
-      oldtkt = shishi_ticketset_find_ticket_for_service (handle, ticketset,
-							 arg.cname, 
-							 arg.tgtname);
+      oldtkt = shishi_ticketset_find_ticket_for_clientserver (handle, 
+							      ticketset,
+							      arg.cname, 
+							      arg.tgtname);
       if (arg.forcetgs_p && oldtkt == NULL)
 	{
 	  printf ("Could not find ticket for TGS\n");

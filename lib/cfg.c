@@ -21,6 +21,41 @@
 
 #include "internal.h"
 
+int
+shishi_cfg_clientkdcetype_set (Shishi *handle, char *value)
+{
+  char *ptrptr;
+  char *val;
+  int i;
+  int tot = 0;
+
+  if (value == NULL || *value == '\0')
+    return SHISHI_OK;
+
+  for (i = 0;  val = strtok_r(i == 0 ? value : NULL, ", \t", &ptrptr);  i++)
+    {
+      int etype = shishi_etype_parse (val);
+
+      if (etype == -1)
+	fprintf(stderr, "Ignoring unknown encryption type: `%s'\n",  val);
+      else
+	{
+	  int *new;
+
+	  tot++;
+	  new = realloc(handle->clientkdcetypes, 
+			tot * sizeof(*handle->clientkdcetypes));
+	  if (handle->clientkdcetypes == NULL)
+	    return SHISHI_MALLOC_ERROR;
+	  handle->clientkdcetypes = new;
+	  handle->clientkdcetypes[tot-1] = etype;
+	  handle->nclientkdcetypes = tot;
+	}
+    }
+
+  return SHISHI_OK;
+}
+
 enum
 {
   DEFAULT_REALM_OPTION = 0,
@@ -28,6 +63,8 @@ enum
   CLIENT_KDC_ETYPES_OPTION,
   REALM_KDC_OPTION,
   KDC_OPTION,
+  KDC_TIMEOUT_OPTION,
+  KDC_RETRIES_OPTION,
   SILENT_OPTION,
   DEBUG_CRYPTO_OPTION,
   DEBUG_ASN1_OPTION,
@@ -41,7 +78,9 @@ static const char *_shishi_opts[] = {
   /* [CLIENT_KDC_ETYPES_OPTION] = */ "client-kdc-etypes",
   /* [REALM_KDC_OPTION] =         */ "realm-kdc",
   /* [KDC_OPTION] =               */ "kdc",
-  /* [SILENT_OPTION] =           */ "silent",
+  /* [KDC_TIMEOUT_OPTION] =       */ "kdc-timeout",
+  /* [KDC_RETRIES_OPTION] =       */ "kdc-retries",
+  /* [SILENT_OPTION] =            */ "silent",
   /* [DEBUG_CRYPTO_OPTION] =      */ "debug-crypto",
   /* [DEBUG_ASN1_OPTION] =        */ "debug-asn1",
   /* [DEBUG_OPTION] =             */ "debug",
@@ -69,6 +108,24 @@ shishi_cfg (Shishi * handle, char *option)
     {
       switch (getsubopt (&option, _shishi_opts, &value))
 	{
+	case KDC_TIMEOUT_OPTION:
+	  if (value && atoi (value) > 0)
+	    handle->kdctimeout = atoi (value);
+	  else if (value)
+	    fprintf (stderr, "Invalid KDC timeout value: `%s'\n", value);
+	  else
+	    fprintf (stderr, "Missing KDC timeout value.\n");
+	  break;
+
+	case KDC_RETRIES_OPTION:
+	  if (value && atoi (value) > 0)
+	    handle->kdcretries = atoi (value);
+	  else if (value)
+	    fprintf (stderr, "Invalid KDC retries value: `%s'\n", value);
+	  else
+	    fprintf (stderr, "Missing KDC retries value.\n");
+	  break;
+
 	case REALM_KDC_OPTION:
 	  realm = strdup(value);
 	  for (i=0; i < handle->nrealminfos; i++)
@@ -101,36 +158,9 @@ shishi_cfg (Shishi * handle, char *option)
 	  handle->default_principal = strdup(value);
 	  break;
 	case CLIENT_KDC_ETYPES_OPTION:
-	  {
-	    char *ptrptr;
-	    char *val;
-	    int i;
-	    int tot = 0;
-
-	    for (i = 0; 
-		 val = strtok_r(i == 0 ? value : NULL, ", \t\n\r", &ptrptr); 
-		 i++)
-	      {
-		int etype = shishi_etype_parse (val);
-
-		if (etype == -1)
-		  fprintf(stderr, "Ignoring unknown encryption type: `%s'\n", 
-			  val);
-		else
-		  {
-		    int *new;
-
-		    tot++;
-		    new = realloc(handle->clientkdcetypes, 
-				  tot * sizeof(*handle->clientkdcetypes));
-		    if (handle->clientkdcetypes == NULL)
-		      return SHISHI_MALLOC_ERROR;
-		    handle->clientkdcetypes = new;
-		    handle->clientkdcetypes[tot-1] = etype;
-		    handle->nclientkdcetypes = tot;
-		  }
-	      }
-	  }
+	  res = shishi_cfg_clientkdcetype_set (handle, value);
+	  if (res != SHISHI_OK)
+	    return res;
 	  break;
 	case KDC_OPTION:
 	  handle->kdc = strdup(value);
@@ -182,8 +212,8 @@ shishi_cfg (Shishi * handle, char *option)
 		se = getservbyname ("kerberos", NULL);
 		if (se)
 		  sinaddr->sin_port = se->s_port;
-		// else
-		  sinaddr->sin_port = htons(8888);
+		else
+		  sinaddr->sin_port = htons(88);
 	      }
 	  if (realm)
 	    break;
@@ -204,10 +234,10 @@ shishi_cfg (Shishi * handle, char *option)
  *
  * Configure shishi library using configuration file.
  * 
- * Return Value: Returns SHISHI_OK.
+ * Return Value: Returns SHISHI_OK iff succesful.
  **/
 int
-shishi_readcfg (Shishi * handle, char *cfg)
+shishi_cfg_from_file (Shishi * handle, char *cfg)
 {
   char line[BUFSIZ];
   char *value;
@@ -251,43 +281,44 @@ shishi_readcfg (Shishi * handle, char *cfg)
    return SHISHI_FCLOSE_ERROR;
 
   if (DEBUG(handle))
-    shishi_dumpcfg(handle);
+    shishi_cfg_print(handle, stdout);
 
   return SHISHI_OK;
 }
 
 /**
- * shishi_dumpcfg: 
+ * shishi_cfg_print: 
  * @handle: Shishi library handle create by shishi_init().
+ * @fh: file descriptor to print debug configuration information.
  * 
  * Return Value: Returns SHISHI_OK.
  **/
 int
-shishi_dumpcfg (Shishi * handle)
+shishi_cfg_print (Shishi * handle, FILE *fh)
 {
   int i,j;
 
-  printf ("Shishi initial library configuration:\n");
-  printf ("\tDefault realm: %s\n",
+  fprintf (fh, "Shishi initial library configuration:\n");
+  fprintf (fh, "\tDefault realm: %s\n",
 	  handle->default_realm ? handle->default_realm : "(NULL)");
-  printf ("\tDefault principal: %s\n",
+  fprintf (fh, "\tDefault principal: %s\n",
 	  handle->default_principal ? handle->
 	  default_principal : "(NULL)");
-  printf("\tClient KDC etypes:");
+  fprintf (fh, "\tClient KDC etypes:");
   for (i=0; i < handle->nclientkdcetypes; i++)
-    printf(" %s", shishi_cipher_name(handle->clientkdcetypes[i]));
-  printf("\n");
-  printf ("\tKDC: %s\n", handle->kdc ? handle->kdc : "(NULL)");
-  printf ("\tSilent: %d\n", handle->silent);
-  printf ("\tDebug: %d\n", handle->debugmask);
+    fprintf(fh, " %s", shishi_cipher_name(handle->clientkdcetypes[i]));
+  fprintf(fh, "\n");
+  fprintf (fh, "\tKDC: %s\n", handle->kdc ? handle->kdc : "(NULL)");
+  fprintf (fh, "\tSilent: %d\n", handle->silent);
+  fprintf (fh, "\tDebug: %d\n", handle->debugmask);
   for (i=0; i < handle->nrealminfos; i++)
     {
-      printf("\tRealm %s's KDCs:", handle->realminfos[i].name);
+      fprintf(fh, "\tRealm %s's KDCs:", handle->realminfos[i].name);
       for (j=0; j < handle->realminfos[i].nkdcaddresses; j++)
-	printf(" %s (%s)", handle->realminfos[i].kdcaddresses[j].name,
+	fprintf(fh, " %s (%s)", handle->realminfos[i].kdcaddresses[j].name,
 	       inet_ntoa(((struct sockaddr_in*)&handle->realminfos[i].
 			  kdcaddresses[j].sockaddress)->sin_addr));
-      printf("\n");
+      fprintf(fh, "\n");
     }
 
   return SHISHI_OK;

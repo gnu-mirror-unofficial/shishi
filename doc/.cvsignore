@@ -1,6 +1,7 @@
 Makefile
 Makefile.in
 shishi-api-ap.texi
+shishi-api-as.texi
 shishi-api-authenticator.texi
 shishi-api-crypto.texi
 shishi-api-error.texi
@@ -8,6 +9,7 @@ shishi-api-global.texi
 shishi-api-kdc.texi
 shishi-api-ticket.texi
 shishi-api-ticketset.texi
+shishi-api-tgs.texi
 shishi-api-version.texi
 shishi.1
 shishi.info

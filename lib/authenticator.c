@@ -482,14 +482,20 @@ shishi_authenticator_add_cksum (Shishi * handle,
       int cksumlen;
 
       cksumlen = sizeof (cksum);
-      res = shishi_derive_checksum (handle, SHISHI_RSA_MD5_DES, keyusage,
+      res = shishi_derive_checksum (handle, 
+				    SHISHI_RSA_MD4_DES, 
+				    //SHISHI_RSA_MD5_DES, 
+				    //SHISHI_HMAC_SHA1_DES3_KD,
+				    keyusage,
 				    cksum, &cksumlen, data, datalen, 
 				    key, keylen);
       if (res != SHISHI_OK)
 	return res;
 
       res = shishi_authenticator_set_cksum (handle, authenticator,
-					    SHISHI_RSA_MD5_DES,
+					    //SHISHI_HMAC_SHA1_DES3_KD,
+					    SHISHI_RSA_MD4_DES,
+					    //SHISHI_RSA_MD5_DES,
 					    cksum, cksumlen);
     }
   else

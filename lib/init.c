@@ -87,6 +87,9 @@ shishi_init ()
 
   handle->shortnonceworkaround = 1;
 
+  handle->kdctimeout = 5;
+  handle->kdcretries = 3;
+
   handle->clientkdcetypes = malloc(sizeof(*handle->clientkdcetypes)*2);
   handle->clientkdcetypes[0] = SHISHI_DES3_CBC_HMAC_SHA1_KD;
   handle->clientkdcetypes[1] = SHISHI_DES_CBC_MD5;

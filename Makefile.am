@@ -19,7 +19,7 @@
 
 MOST_SUBDIRS = intl m4 po asn1 lib src test doc
 
-DIST_SUBDIRS = crypto argp $(MOST_SUBDIRS)
+DIST_SUBDIRS = crypto argp gdbm $(MOST_SUBDIRS)
 
 SUBDIRS = @CRYPTO@ @ARGP@ @GDBM@ $(MOST_SUBDIRS)
 

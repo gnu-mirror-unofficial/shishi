@@ -3,6 +3,7 @@
 Makefile
 Makefile.in
 ap.lo
+as.lo
 aprep.lo
 apreq.lo
 asn1.lo
@@ -31,4 +32,5 @@ rfc1510_asn1_tab.lo
 shishi.h
 ticket.lo
 ticketset.lo
+tgs.lo
 version.lo

@@ -63,14 +63,15 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     }
 
 
-  tkt = shishi_ticketset_find_ticket_for_service (handle, ticketset,
-						  arg.cname, arg.sname);
+  tkt = shishi_ticketset_find_ticket_for_clientserver (handle, ticketset,
+						       arg.cname, arg.sname);
   if (tkt == NULL)
     {
       ASN1_TYPE req, rep;
 
-      tkt = shishi_ticketset_find_ticket_for_service (handle, ticketset,
-						      arg.cname, arg.tgtname);
+      tkt = shishi_ticketset_find_ticket_for_clientserver (handle, ticketset,
+							   arg.cname, 
+							   arg.tgtname);
       if (tkt == NULL)
 	req = shishi_asreq (handle, arg.realm, arg.sname, arg.cname);
       else

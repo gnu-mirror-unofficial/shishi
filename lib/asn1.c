@@ -55,6 +55,55 @@ _shishi_asn1_optional_field (Shishi * handle,
   return SHISHI_OK;
 }
 
+#define SHISHI_TICKET_DEFAULT_TKTVNO "5"
+#define SHISHI_TICKET_DEFAULT_TKTVNO_LEN 0
+
+ASN1_TYPE
+shishi_asn1_ticket (Shishi * handle)
+{
+  int res = ASN1_SUCCESS;
+  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+
+  res = asn1_create_element (handle->asn1, "Kerberos5.Ticket", 
+			     &node, "Ticket");
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  res = asn1_write_value (node, "Ticket.tkt-vno",
+			  SHISHI_TICKET_DEFAULT_TKTVNO,
+			  SHISHI_TICKET_DEFAULT_TKTVNO_LEN);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  return node;
+
+error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  if (node != ASN1_TYPE_EMPTY)
+    asn1_delete_structure (&node);
+  return NULL;
+}
+
+ASN1_TYPE
+shishi_asn1_encticketpart (Shishi * handle)
+{
+  int res = ASN1_SUCCESS;
+  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+
+  res = asn1_create_element (handle->asn1, "Kerberos5.EncTicketPart", 
+			     &node, "EncTicketPart");
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  return node;
+
+error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  if (node != ASN1_TYPE_EMPTY)
+    asn1_delete_structure (&node);
+  return NULL;
+}
+
 /** shishi_der2asn1_ticket
 
 name:Ticket  type:SEQUENCE

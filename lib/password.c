@@ -21,10 +21,6 @@
 
 #include "internal.h"
 
-#ifdef HAVE_SIGNAL_H
-#include <signal.h>
-#endif
-
 #if defined (HAVE_TERMIOS_H)
 
 #include <termios.h>
@@ -69,7 +65,7 @@ tty_noecho (int signum)
 }
 
 int
-shishi_read_password (char * s, int size)
+shishi_read_password (FILE *fh, char * s, int size)
 {
   int rc;
 
@@ -82,7 +78,7 @@ shishi_read_password (char * s, int size)
   signal(SIGCONT, tty_noecho);
 #endif
 
-  fgets (s, size, stdin);
+  fgets (s, size, fh);
   s[strlen(s)-1] = '\0';
 
 #ifdef HAVE_SIGNAL
@@ -97,3 +93,18 @@ shishi_read_password (char * s, int size)
   return SHISHI_OK;
 }
 
+int
+shishi_prompt_password (FILE *in, char * s, int size, 
+			FILE *out, char *format, ...)
+{
+  va_list ap;
+  int rc;
+
+  va_start (ap, format);
+  vfprintf(out, format, ap);
+  fflush(out);
+  rc = shishi_read_password (in, s, size);
+  fprintf(out, "\n");
+
+  return rc;
+}

@@ -61,8 +61,10 @@ ap (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       Shishi_ticket *ticket;
       int res;
 
-      ticket = shishi_ticketset_find_ticket_for_service (handle, ticketset,
-							 arg.cname, arg.sname);
+      ticket = shishi_ticketset_find_ticket_for_clientserver (handle, 
+							      ticketset,
+							      arg.cname, 
+							      arg.sname);
       if (ticket == NULL)
 	{
 	  fprintf (stderr, _("Could not find ticket for `%s' `%s': %s\n"),

@@ -18,13 +18,15 @@ no guarantees.
 Things left to do below.  If you like to start working on anything,
 please let me know so work duplication can be avoided.
 
-  * Cross-realm operation
+  * Cross-realm operation.
   + PKINIT?
-  + Documentation
-  + I18n
-  - Port more applications to use shishi
+  + Documentation.
+  + I18n.
+  - Port more applications to use shishi.
   - Port to Cyclone?
-  - Handle too small buffers in some places?
+  - Fix the BUFSIZ stuff.
+  - Replace ASN1_TYPE with Shishi_asn1 and isolate the libtasn1 calls
+    into lib/asn1.c to make it easy to replace the ASN1 library.
 
 Shishi will not contain a GSSAPI library, but a separate project to
 create a GSSAPI library is being considered and would contain a Shishi

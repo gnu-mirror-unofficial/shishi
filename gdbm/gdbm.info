@@ -1,5 +1,4 @@
-This is gdbm.info, produced by makeinfo version 4.2 from
-../gdbm.texinfo.
+This is gdbm.info, produced by makeinfo version 4.2 from ./gdbm.texinfo.
 
 INFO-DIR-SECTION Programming & development tools
 START-INFO-DIR-ENTRY
@@ -733,24 +732,24 @@ features, please report them too.
 
 
 Tag Table:
-Node: Top884
-Node: Copying2359
-Node: Intro4141
-Node: List5557
-Node: Open6509
-Node: Close9380
-Node: Store9815
-Node: Fetch11610
-Node: Delete12859
-Node: Sequential13525
-Node: Reorganization15208
-Node: Sync16163
-Node: Errors17129
-Node: Options17489
-Node: Locking19838
-Node: Variables20426
-Node: Compatibility20850
-Node: Conversion23237
-Node: Bugs24051
+Node: Top883
+Node: Copying2358
+Node: Intro4140
+Node: List5556
+Node: Open6508
+Node: Close9379
+Node: Store9814
+Node: Fetch11609
+Node: Delete12858
+Node: Sequential13524
+Node: Reorganization15207
+Node: Sync16162
+Node: Errors17128
+Node: Options17488
+Node: Locking19837
+Node: Variables20425
+Node: Compatibility20849
+Node: Conversion23236
+Node: Bugs24050
 
 End Tag Table

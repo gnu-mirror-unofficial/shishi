@@ -133,6 +133,13 @@ shishi_asn1ticket_print (Shishi * handle, FILE * fh, ASN1_TYPE ticket)
   return _shishi_print_armored_data (handle, fh, ticket, "Ticket", NULL);
 }
 
+int
+shishi_encticketpart_print (Shishi * handle, FILE * fh, ASN1_TYPE encticketpart)
+{
+  return _shishi_print_armored_data (handle, fh, encticketpart, 
+				     "EncTicketPart", NULL);
+}
+
 static int
 _shishi_read_armored_data (Shishi * handle,
 			   FILE * fh, char *buffer, int len, char *tag)

@@ -118,13 +118,7 @@ shishi_ticketset_new (Shishi * handle,
   Shishi_ticket *tkt;
   int res;
 
-  tkt = malloc (sizeof (*tkt));
-  if (tkt == NULL)
-    return SHISHI_MALLOC_ERROR;
-  
-  tkt->principal = principal;
-  tkt->ticket = ticket;
-  tkt->enckdcreppart = enckdcreppart;
+  tkt = shishi_ticket (handle, principal, ticket, enckdcreppart);
 
   res = shishi_ticketset_add (handle, ticketset, tkt);
   if (res != SHISHI_OK)
@@ -136,55 +130,13 @@ shishi_ticketset_new (Shishi * handle,
   return SHISHI_OK;  
 }
 
-Shishi_ticket *
-shishi_ticketset_find_ticket_for_service (Shishi * handle,
-					  Shishi_ticketset * ticketset,
-					  char *principal, char *service)
-{
-  char *buf;
-  int buflen, len;
-  int i;
-  int res;
-
-  if (!handle->silent)
-    fprintf (stderr,
-	     "Searching tickets for principal `%s' and service `%s'\n",
-	     principal, service);
-
-  buflen = strlen (service) + 1;
-  buf = malloc (buflen);
-      
-  for (i = 0; i < ticketset->ntickets; i++)
-    {
-      /*if (strcmp (shishi_ticket_principal (handle,
-         ticketset->tickets[i]),
-         principal) != 0)
-         continue; */
-
-      len = buflen;
-      res = shishi_ticket_server (handle, ticketset->tickets[i], buf, &len);
-      if (res != SHISHI_OK)
-	continue;
-      buf[len] = '\0';
-      if (strcmp (buf, service) != 0)
-	continue;
-
-      if (!shishi_ticket_valid_now_p (handle, ticketset->tickets[i]))
-	continue;
-
-      return ticketset->tickets[i];
-    }
-
-  return NULL;
-}
-
 /**
  * shishi_ticketset_read:
  * @handle: shishi handle as allocated by shishi_init().
  * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
  * @fh: file descriptor to read from.
  * 
- * Read tickets from file and add them to the ticket set.
+ * Read tickets from file descriptor and add them to the ticket set.
  * 
  * Return value: Returns SHISHI_OK iff succesful.
  **/
@@ -269,7 +221,7 @@ shishi_ticketset_from_file (Shishi * handle,
  * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
  * @filename: filename to write tickets to.
  * 
- * Write tickets in set to file.
+ * Write tickets in set to file descriptor.
  * 
  * Return value: Returns SHISHI_OK iff succesful.
  **/
@@ -412,19 +364,18 @@ shishi_ticketset_print_for_service (Shishi * handle,
 	}
 
       printf ("\n");
-      res = shishi_ticket_print (handle,
-				     shishi_ticketset_get (handle, ticketset,
-							   i), stdout);
+      res = shishi_ticket_print
+	(handle, shishi_ticketset_get (handle, ticketset, i), stdout);
       if (res != SHISHI_OK)
 	goto done;
 
-      found = 1;
+      found++;
     }
 
   if (found)
     {
-      int n = shishi_ticketset_size (handle, ticketset);
-      printf (_N("\n%d ticket found.\n", "\n%d tickets found.\n", n), n);
+      printf (_N("\n%d ticket found.\n", "\n%d tickets found.\n", 
+		 found), found);
     }
   else
     {
@@ -458,6 +409,60 @@ shishi_ticketset_print (Shishi * handle,
 			FILE *fh)
 {
   return shishi_ticketset_print_for_service (handle, ticketset, fh, NULL);
+}
+
+Shishi_ticket *
+shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
+					       Shishi_ticketset * ticketset,
+					       char *client, char *server)
+{
+  int i;
+
+  if (!handle->silent)
+    fprintf (stderr,
+	     "Searching tickets for client `%s' and server `%s'\n",
+	     client, server);
+
+  for (i = 0; i < ticketset->ntickets; i++)
+    {
+      if (!shishi_ticket_server_p (handle, ticketset->tickets[i], server))
+	continue;
+
+      if (!shishi_ticket_valid_now_p (handle, ticketset->tickets[i]))
+	continue;
+
+      return ticketset->tickets[i];
+    }
+
+  return NULL;
+}
+
+Shishi_ticket *
+shishi_ticketset_find_ticket_for_server (Shishi * handle,
+					 Shishi_ticketset * ticketset,
+					 char *server)
+{
+  return shishi_ticketset_find_ticket_for_clientserver
+    (handle, ticketset, NULL, server);
+}
+
+int
+shishi_ticketset_get_ticket_for_clientserver (Shishi * handle,
+					      Shishi_ticketset * ticketset,
+					      char *client, char *service)
+{
+  Shishi_ticket *tkt;
+
+  return 0;
+}
+
+int
+shishi_ticketset_get_ticket_for_server (Shishi * handle,
+					Shishi_ticketset * ticketset,
+					char *server)
+{
+  return shishi_ticketset_find_ticket_for_clientserver
+    (handle, ticketset, shishi_principal_default_get (handle), server);
 }
 
 /**
