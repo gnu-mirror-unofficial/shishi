@@ -74,8 +74,7 @@ shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
 }
 
 int
-shishi_asn1_empty_p (Shishi * handle,
-		     Shishi_asn1 node, const char *field)
+shishi_asn1_empty_p (Shishi * handle, Shishi_asn1 node, const char *field)
 {
   int rc;
   int datalen;
@@ -182,7 +181,7 @@ shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
 
 int
 shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
-			    const char *field, uint32_t *flags)
+			    const char *field, uint32_t * flags)
 {
   char *buf;
   size_t buflen;
@@ -205,8 +204,7 @@ shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
 		 ((buf[i] >> 1) & 0x08) |
 		 ((buf[i] << 1) & 0x10) |
 		 ((buf[i] << 3) & 0x20) |
-		 ((buf[i] << 5) & 0x40) |
-		 ((buf[i] << 7) & 0x80)) << (8 * i);
+		 ((buf[i] << 5) & 0x40) | ((buf[i] << 7) & 0x80)) << (8 * i);
     }
 
   return SHISHI_OK;
@@ -485,7 +483,7 @@ shishi_asn1_ticket (Shishi * handle)
 
   return (Shishi_asn1) node;
 
- error:
+error:
   shishi_error_set (handle, libtasn1_strerror (res));
   if (node != NULL)
     asn1_delete_structure (&node);
@@ -668,9 +666,9 @@ shishi_new_a2d (Shishi * handle, Shishi_asn1 node, char **der, size_t * len)
 }
 
 static Shishi_asn1
-shishi_der2asn1 (Shishi * handle,
-		 const char *fieldname,
-		 const char *nodename, const char *der, size_t derlen)
+der2asn1 (Shishi * handle,
+	  const char *fieldname,
+	  const char *nodename, const char *der, size_t derlen)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
   Shishi_asn1 structure = NULL;
@@ -696,6 +694,118 @@ shishi_der2asn1 (Shishi * handle,
 }
 
 /**
+ * shishi_asn1_msgtype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @node: ASN.1 type to get msg type for.
+ *
+ * Determine msg-type of ASN.1 type of a Kerberos Protocol
+ * packet. Currently this uses the msg-type field instead of the
+ * APPLICATION tag, but this may be changed in the future.
+ *
+ * Return value: Returns msg-type of ASN.1 type, 0 on failure.
+ **/
+Shishi_msgtype
+shishi_asn1_msgtype (Shishi * handle, Shishi_asn1 node)
+{
+  asn1_retCode rc;
+  uint32_t msgtype;
+
+  /* XXX Use APPLICATION tag instead. */
+  rc = shishi_asn1_read_uint32 (handle, node, "msg-type", &msgtype);
+  if (rc != SHISHI_OK)
+    return 0;
+
+  return msgtype;
+}
+
+/**
+ * shishi_der_msgtype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @der: input character array with DER encoding.
+ * @derlen: length of input character array with DER encoding.
+ *
+ * Determine msg-type of DER coded data of a Kerberos Protocol packet.
+ *
+ * Return value: Returns msg-type of DER data, 0 on failure.
+ **/
+Shishi_msgtype
+shishi_der_msgtype (Shishi * handle, const char *der, size_t derlen)
+{
+  /* XXX Doesn't handle APPLICATION TAGS > 31. */
+  if (derlen > 1 && *der >= 0x60 && (unsigned char) *der <= 0x7F)
+    return *der - 0x60;
+  else
+    return 0;
+}
+
+/**
+ * shishi_der2asn1:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @der: input character array with DER encoding.
+ * @derlen: length of input character array with DER encoding.
+ *
+ * Convert arbitrary DER data of a Kerberos Protocol packet to a
+ * Kerberos ASN.1 type.
+ *
+ * Return value: Returns newly allocate ASN.1 corresponding to DER
+ *   data, or %NULL on failure.
+ **/
+Shishi_asn1
+shishi_der2asn1 (Shishi * handle, const char *der, size_t derlen)
+{
+  Shishi_asn1 node;
+
+  switch (shishi_der_msgtype (handle, der, derlen))
+    {
+    case SHISHI_MSGTYPE_AS_REQ:
+      node = shishi_der2asn1_asreq (handle, der, derlen);
+      break;
+
+    case SHISHI_MSGTYPE_AS_REP:
+      node = shishi_der2asn1_asrep (handle, der, derlen);
+      break;
+
+    case SHISHI_MSGTYPE_TGS_REQ:
+      node = shishi_der2asn1_tgsreq (handle, der, derlen);
+      break;
+
+    case SHISHI_MSGTYPE_TGS_REP:
+      node = shishi_der2asn1_tgsrep (handle, der, derlen);
+      break;
+
+    case SHISHI_MSGTYPE_AP_REQ:
+      node = shishi_der2asn1_apreq (handle, der, derlen);
+      break;
+
+    case SHISHI_MSGTYPE_AP_REP:
+      node = shishi_der2asn1_aprep (handle, der, derlen);
+      break;
+
+    case SHISHI_MSGTYPE_SAFE:
+      node = shishi_der2asn1_krbsafe (handle, der, derlen);
+      break;
+
+    case SHISHI_MSGTYPE_PRIV:
+      node = shishi_der2asn1_priv (handle, der, derlen);
+      break;
+
+    case SHISHI_MSGTYPE_CRED:
+      /* node = shishi_der2asn1_cred (handle, der, derlen); */
+      break;
+
+    case SHISHI_MSGTYPE_ERROR:
+      node = shishi_der2asn1_krberror (handle, der, derlen);
+      break;
+
+    default:
+      node = NULL;
+      break;
+    }
+
+  return node;
+}
+
+/**
  * shishi_der2asn1_ticket:
  * @handle: shishi handle as allocated by shishi_init().
  * @der: input character array with DER encoding.
@@ -708,7 +818,7 @@ shishi_der2asn1 (Shishi * handle,
 Shishi_asn1
 shishi_der2asn1_ticket (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.Ticket", "Ticket", der, derlen);
+  return der2asn1 (handle, "Kerberos5.Ticket", "Ticket", der, derlen);
 }
 
 /**
@@ -725,8 +835,8 @@ Shishi_asn1
 shishi_der2asn1_encticketpart (Shishi * handle, const char *der,
 			       size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.EncTicketPart", "EncTicketPart",
-			  der, derlen);
+  return der2asn1 (handle, "Kerberos5.EncTicketPart", "EncTicketPart",
+		   der, derlen);
 }
 
 /**
@@ -742,7 +852,7 @@ shishi_der2asn1_encticketpart (Shishi * handle, const char *der,
 Shishi_asn1
 shishi_der2asn1_asreq (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.AS-REQ", "KDC-REQ", der, derlen);
+  return der2asn1 (handle, "Kerberos5.AS-REQ", "KDC-REQ", der, derlen);
 }
 
 /**
@@ -758,8 +868,7 @@ shishi_der2asn1_asreq (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_tgsreq (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.TGS-REQ", "KDC-REQ", der,
-			  derlen);
+  return der2asn1 (handle, "Kerberos5.TGS-REQ", "KDC-REQ", der, derlen);
 }
 
 /**
@@ -775,7 +884,7 @@ shishi_der2asn1_tgsreq (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_asrep (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.AS-REP", "KDC-REP", der, derlen);
+  return der2asn1 (handle, "Kerberos5.AS-REP", "KDC-REP", der, derlen);
 }
 
 /**
@@ -791,8 +900,7 @@ shishi_der2asn1_asrep (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_tgsrep (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.TGS-REP", "KDC-REP", der,
-			  derlen);
+  return der2asn1 (handle, "Kerberos5.TGS-REP", "KDC-REP", der, derlen);
 }
 
 /**
@@ -808,8 +916,7 @@ shishi_der2asn1_tgsrep (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_kdcrep (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.KDC-REP", "KDC-REP", der,
-			  derlen);
+  return der2asn1 (handle, "Kerberos5.KDC-REP", "KDC-REP", der, derlen);
 }
 
 /**
@@ -825,8 +932,8 @@ shishi_der2asn1_kdcrep (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_encasreppart (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.EncASRepPart", "EncKDCRepPart",
-			  der, derlen);
+  return der2asn1 (handle, "Kerberos5.EncASRepPart", "EncKDCRepPart",
+		   der, derlen);
 }
 
 /**
@@ -843,8 +950,8 @@ Shishi_asn1
 shishi_der2asn1_enctgsreppart (Shishi * handle, const char *der,
 			       size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.EncTGSRepPart", "EncKDCRepPart",
-			  der, derlen);
+  return der2asn1 (handle, "Kerberos5.EncTGSRepPart", "EncKDCRepPart",
+		   der, derlen);
 }
 
 /**
@@ -861,8 +968,8 @@ Shishi_asn1
 shishi_der2asn1_enckdcreppart (Shishi * handle, const char *der,
 			       size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.EncKDCRepPart", "EncKDCRepPart",
-			  der, derlen);
+  return der2asn1 (handle, "Kerberos5.EncKDCRepPart", "EncKDCRepPart",
+		   der, derlen);
 }
 
 /**
@@ -879,8 +986,8 @@ Shishi_asn1
 shishi_der2asn1_authenticator (Shishi * handle, const char *der,
 			       size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.Authenticator", "Authenticator",
-			  der, derlen);
+  return der2asn1 (handle, "Kerberos5.Authenticator", "Authenticator",
+		   der, derlen);
 }
 
 /**
@@ -896,8 +1003,7 @@ shishi_der2asn1_authenticator (Shishi * handle, const char *der,
 Shishi_asn1
 shishi_der2asn1_krberror (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.KRB-ERROR", "KRB-ERROR", der,
-			  derlen);
+  return der2asn1 (handle, "Kerberos5.KRB-ERROR", "KRB-ERROR", der, derlen);
 }
 
 /**
@@ -913,8 +1019,7 @@ shishi_der2asn1_krberror (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_krbsafe (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.KRB-SAFE", "KRB-SAFE",
-			  der, derlen);
+  return der2asn1 (handle, "Kerberos5.KRB-SAFE", "KRB-SAFE", der, derlen);
 }
 
 /**
@@ -930,8 +1035,7 @@ shishi_der2asn1_krbsafe (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_priv (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.KRB-PRIV", "KRB-PRIV",
-			  der, derlen);
+  return der2asn1 (handle, "Kerberos5.KRB-PRIV", "KRB-PRIV", der, derlen);
 }
 
 /**
@@ -947,8 +1051,8 @@ shishi_der2asn1_priv (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_encprivpart (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.EncKrbPrivPart", "EncKrbPrivPart",
-			  der, derlen);
+  return der2asn1 (handle, "Kerberos5.EncKrbPrivPart", "EncKrbPrivPart",
+		   der, derlen);
 }
 
 /**
@@ -964,7 +1068,7 @@ shishi_der2asn1_encprivpart (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_apreq (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.AP-REQ", "AP-REQ", der, derlen);
+  return der2asn1 (handle, "Kerberos5.AP-REQ", "AP-REQ", der, derlen);
 }
 
 /**
@@ -980,7 +1084,7 @@ shishi_der2asn1_apreq (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_aprep (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.AP-REP", "AP-REP", der, derlen);
+  return der2asn1 (handle, "Kerberos5.AP-REP", "AP-REP", der, derlen);
 }
 
 /**
@@ -996,8 +1100,8 @@ shishi_der2asn1_aprep (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_encapreppart (Shishi * handle, const char *der, size_t derlen)
 {
-  return shishi_der2asn1 (handle, "Kerberos5.EncAPRepPart", "EncAPRepPart",
-			  der, derlen);
+  return der2asn1 (handle, "Kerberos5.EncAPRepPart", "EncAPRepPart",
+		   der, derlen);
 }
 
 /**

@@ -1488,9 +1488,11 @@ extern Shishi_asn1 shishi_asn1_krbsafe (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_priv (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_encprivpart (Shishi * handle);
 
+extern Shishi_msgtype shishi_asn1_msgtype (Shishi * handle, Shishi_asn1 node);
+extern Shishi_msgtype shishi_der_msgtype (Shishi * handle,
+					  const char *der, size_t derlen);
+
 extern Shishi_asn1 shishi_der2asn1 (Shishi * handle,
-				    const char *fieldname,
-				    const char *nodename,
 				    const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_ticket (Shishi * handle,
 					   const char *der, size_t derlen);
