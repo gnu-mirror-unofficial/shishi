@@ -75,7 +75,7 @@ printuint32field (const char *fieldname, uint32_t num)
 }
 
 int
-dumplist_realm_principal (const char *principal, const char *realm)
+dumplist_realm_principal (const char *realm, const char *principal)
 {
   Shisa_principal ph;
   int rc;
@@ -84,7 +84,7 @@ dumplist_realm_principal (const char *principal, const char *realm)
       args_info.enabled_flag ||
       args_info.disabled_flag)
     {
-      rc = shisa_principal_find (dbh, principal, realm, &ph);
+      rc = shisa_principal_find (dbh, realm, principal, &ph);
       if (rc != SHISA_OK)
 	return rc;
     }
@@ -137,7 +137,7 @@ dumplist_realm (const char *realm)
   for (i = 0; i < nprincipals; i++)
     {
       if (rc == SHISA_OK)
-	rc = dumplist_realm_principal (principals[i], realm);
+	rc = dumplist_realm_principal (realm, principals[i]);
       free (principals[i]);
     }
   if (nprincipals > 0)
@@ -158,7 +158,7 @@ dumplist (void)
       char *realm = args_info.inputs[0];
       char *principal = args_info.inputs[1];
       printf ("%s\n", realm);
-      rc = dumplist_realm_principal (principal, realm);
+      rc = dumplist_realm_principal (realm, principal);
     }
   else
     {
@@ -184,12 +184,12 @@ dumplist (void)
 }
 
 int
-modify_realm_principal (const char *principal, const char *realm)
+modify_principal (const char *realm, const char *principal)
 {
   Shisa_principal ph;
   int rc;
 
-  printf ("Modifying principal `%s@%s'...", realm, principal); fflush (stdout);
+  printf ("Modifying principal `%s@%s'...", principal, realm); fflush (stdout);
 
   rc = shisa_principal_update (dbh, realm, principal, &ph);
   if (rc != SHISA_OK)
@@ -209,7 +209,7 @@ modify (void)
   int rc;
 
   if (args_info.inputs_num == 2)
-    rc = modify_realm_principal (args_info.inputs[1], args_info.inputs[0]);
+    rc = modify_principal (args_info.inputs[0], args_info.inputs[1]);
   else
     {
       error (0, 0, "too few arguments");
@@ -221,34 +221,20 @@ modify (void)
 }
 
 int
-add_realm_principal (const char *principal, const char *realm)
+add_principal (const char *realm, const char *principal)
 {
   Shisa_principal ph;
   Shisa_key key;
   int rc;
 
-  printf ("Adding principal `%s@%s'...", realm, principal); fflush (stdout);
+  if (principal == NULL)
+    printf ("Adding realm `%s'...", realm);
+  else
+    printf ("Adding principal `%s@%s'...", principal, realm);
+
+  fflush (stdout);
 
   rc = shisa_principal_add (dbh, realm, principal, &ph, &key);
-  if (rc != SHISA_OK)
-    {
-      printf ("failure: %s\n", shisa_strerror (rc));
-      return EXIT_FAILURE;
-    }
-
-  printf ("done\n");
-
-  return EXIT_SUCCESS;
-}
-
-int
-add_realm (const char *realm)
-{
-  int rc;
-
-  printf ("Adding realm `%s'...", realm); fflush (stdout);
-
-  rc = shisa_realm_add (dbh, realm);
   if (rc != SHISA_OK)
     {
       printf ("failure: %s\n", shisa_strerror (rc));
@@ -266,9 +252,9 @@ add (void)
   int rc;
 
   if (args_info.inputs_num == 1)
-    rc = add_realm (args_info.inputs[0]);
+    rc = add_principal (args_info.inputs[0], NULL);
   else if (args_info.inputs_num == 2)
-    rc = add_realm_principal (args_info.inputs[1], args_info.inputs[0]);
+    rc = add_principal (args_info.inputs[0], args_info.inputs[1]);
   else
     {
       error (0, 0, "too few arguments");
@@ -280,13 +266,17 @@ add (void)
 }
 
 int
-delete_realm_principal (const char *realm, const char *principal)
+delete_principal (const char *realm, const char *principal)
 {
   int rc;
 
-  printf ("Removing principal `%s@%s'...", realm, principal); fflush (stdout);
+  if (principal == NULL)
+    printf ("Removing realm `%s'...", realm);
+  else
+    printf ("Removing principal `%s@%s'...", principal, realm);
+  fflush (stdout);
 
-  rc = shisa_principal_remove (dbh, principal, realm);
+  rc = shisa_principal_remove (dbh, realm, principal);
   if (rc != SHISA_OK)
     {
       printf ("failure: %s\n", shisa_strerror (rc));
@@ -299,34 +289,14 @@ delete_realm_principal (const char *realm, const char *principal)
 }
 
 int
-delete_realm (const char *realm)
-{
-  int rc;
-
-  printf ("Removing realm `%s'...", realm); fflush (stdout);
-
-  rc = shisa_realm_remove (dbh, realm);
-  if (rc != SHISA_OK)
-    {
-      printf ("failure: %s\n", shisa_strerror (rc));
-      return EXIT_FAILURE;
-    }
-
-  printf ("done\n", realm);
-
-  return EXIT_SUCCESS;
-
-}
-
-int
 delete (void)
 {
   int rc;
 
   if (args_info.inputs_num == 1)
-    rc = delete_realm (args_info.inputs[0]);
+    rc = delete_principal (args_info.inputs[0], NULL);
   else if (args_info.inputs_num == 2)
-    rc = delete_realm_principal (args_info.inputs[1], args_info.inputs[0]);
+    rc = delete_principal (args_info.inputs[0], args_info.inputs[1]);
   else
     {
       error (0, 0, "too few arguments");

@@ -55,26 +55,20 @@ typedef int (*_Shisa_db_enumerate_principals) (Shisa *dbh,
 					       const char *realm,
 					       char ***principals,
 					       size_t *nprincipals);
-typedef int (*_Shisa_db_realm_add) (Shisa * dbh,
-				    void *state,
-				    const char *realm);
-typedef int (*_Shisa_db_realm_remove) (Shisa * dbh,
-				       void *state,
-				       const char *realm);
 typedef int (*_Shisa_db_principal_find) (Shisa * dbh,
 					 void *state,
-					 const char *client,
 					 const char *realm,
+					 const char *principal,
 					 Shisa_principal *ph);
 typedef int (*_Shisa_db_principal_update) (Shisa * dbh,
 					   void *state,
-					   const char *client,
 					   const char *realm,
+					   const char *principal,
 					   const Shisa_principal * ph);
 typedef int (*_Shisa_db_principal_add) (Shisa * dbh,
 					void *state,
-					const char *client,
 					const char *realm,
+					const char *principal,
 					const Shisa_principal * ph,
 					const Shisa_key * key);
 typedef int (*_Shisa_db_principal_remove) (Shisa * dbh,
@@ -89,8 +83,6 @@ struct _Shisa_backend
   _Shisa_db_init init;
   _Shisa_db_enumerate_realms enumerate_realms;
   _Shisa_db_enumerate_principals enumerate_principals;
-  _Shisa_db_realm_add realm_add;
-  _Shisa_db_realm_remove realm_remove;
   _Shisa_db_principal_find principal_find;
   _Shisa_db_principal_update principal_update;
   _Shisa_db_principal_add principal_add;
@@ -131,26 +123,20 @@ extern int shisa_file_enumerate_principals (Shisa *dbh,
 					    const char *realm,
 					    char ***principals,
 					    size_t *nprincipals);
-extern int shisa_file_realm_add (Shisa * dbh,
-				 void *state,
-				 const char *realm);
-extern int shisa_file_realm_remove (Shisa * dbh,
-				    void *state,
-				    const char *realm);
 extern int shisa_file_principal_find (Shisa * dbh,
 				      void *state,
-				      const char *client,
 				      const char *realm,
+				      const char *principal,
 				      Shisa_principal *ph);
 extern int shisa_file_principal_update (Shisa * dbh,
 					void *state,
-					const char *client,
 					const char *realm,
+					const char *principal,
 					const Shisa_principal * ph);
 extern int shisa_file_principal_add (Shisa * dbh,
 				     void *state,
-				     const char *client,
 				     const char *realm,
+				     const char *principal,
 				     const Shisa_principal * ph,
 				     const Shisa_key * key);
 extern int shisa_file_principal_remove (Shisa * dbh,

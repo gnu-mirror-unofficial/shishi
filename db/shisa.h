@@ -107,20 +107,17 @@ extern int shisa_enumerate_principals (Shisa * dbh,
 				       char ***principals,
 				       size_t * nprincipals);
 
-extern int shisa_realm_add (Shisa * dbh, const char *realm);
-extern int shisa_realm_remove (Shisa * dbh, const char *realm);
-
 extern int shisa_principal_find (Shisa * dbh,
-				 const char *client,
 				 const char *realm,
+				 const char *principal,
 				 Shisa_principal * ph);
 extern int shisa_principal_update (Shisa * dbh,
-				   const char *client,
 				   const char *realm,
+				   const char *principal,
 				   const Shisa_principal * ph);
 extern int shisa_principal_add (Shisa * dbh,
-				const char *client,
 				const char *realm,
+				const char *principal,
 				const Shisa_principal * ph,
 				const Shisa_key * key);
 extern int shisa_principal_remove (Shisa * dbh,

@@ -9,10 +9,10 @@ See ANNOUNCE for an overview, and doc/shishi.{info,ps,pdf} for the
 manual.  Installation instructions are found in the INSTALL file in
 this directory.
 
-The library and applications (lib/, db/, src/) are licensed under the
-GNU General Public License license (see COPYING), and the
-documentation (doc/) is licensed under the GNU Free Documentation
-License (see COPYING.DOC).
+The library, applications and self tests (lib/, db/, src/, tests/) are
+licensed under the GNU General Public License license (see COPYING),
+and the documentation (doc/) is licensed under the GNU Free
+Documentation License (see COPYING.DOC).
 
 Third party packages (asn1/, crypto/, and gl/) are distributed here
 for convenience, and they have their own respective licenses.

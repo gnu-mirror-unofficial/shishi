@@ -33,7 +33,7 @@ shisa_LDADD = ../db/libshisa.la ../lib/libshishi.la
 
 $(BUILT_SOURCES): shisa.ggo
 	gengetopt --unamed-opts --input $< --file-name shisa_cmd
-	perl -pi -e 's/\[FILES\]/\[REALM \[CLIENT\]\]/g' shisa_cmd.c
+	perl -pi -e 's/\[FILES\]/\[REALM \[PRINCIPAL\]\]/g' shisa_cmd.c
 
 sbin_PROGRAMS = shishid
 shishid_SOURCES = shishid.c

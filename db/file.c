@@ -183,9 +183,51 @@ shisa_file_enumerate_principals (Shisa *dbh,
 }
 
 int
-shisa_file_realm_add (Shisa * dbh,
-		      void *state,
-		      const char *realm)
+shisa_file_principal_find (Shisa * dbh,
+			   void *state,
+			   const char *realm,
+			   const char *principal,
+			   Shisa_principal *ph)
+{
+  Shisa_file *info = state;
+
+  if (!_shisa_isdir3 (info->path, realm, principal))
+    return SHISA_NO_PRINCIPAL;
+
+  ph->notusedbefore =
+    _shisa_mtime4 (info->path, realm, principal, "validfrom.stamp");
+  ph->isdisabled =
+    _shisa_isfile4 (info->path, realm, principal, "disabled.flag");
+  ph->kvno = _shisa_uint32link4 (info->path, realm, principal, "latest.key");
+  ph->lastinitialtgt =
+    _shisa_mtime4 (info->path, realm, principal, "lastinitaltgt.stamp");
+  ph->lastinitialrequest =
+    _shisa_mtime4 (info->path, realm, principal, "lastinitial.stamp");
+  ph->lasttgt = _shisa_mtime4 (info->path, realm, principal, "lasttgt.stamp");
+  ph->lastrenewal =
+    _shisa_mtime4 (info->path, realm, principal, "lastrenewal.stamp");
+  ph->passwordexpire =
+    _shisa_mtime4 (info->path, realm, principal, "passwordexpire.stamp");
+  ph->accountexpire =
+    _shisa_mtime4 (info->path, realm, principal, "accountexpire.stamp");
+
+  return SHISA_OK;
+}
+
+int
+shisa_file_principal_update (Shisa * dbh,
+			     void *state,
+			     const char *realm,
+			     const char *principal,
+			     const Shisa_principal * ph)
+{
+  Shisa_file *info = state;
+
+  return SHISA_OK;
+}
+
+static int
+realm_add (Shisa * dbh, void *state, const char *realm)
 {
   Shisa_file *info = state;
 
@@ -199,82 +241,13 @@ shisa_file_realm_add (Shisa * dbh,
 
 }
 
-int
-shisa_file_realm_remove (Shisa * dbh,
-			 void *state,
-			 const char *realm)
-{
-  Shisa_file *info = state;
-  size_t nprincipals = 0;
-  int rc;
-
-  if (!_shisa_isdir2 (info->path, realm))
-    return SHISA_NO_REALM;
-
-  rc = shisa_file_enumerate_principals (dbh, state, realm, NULL, &nprincipals);
-  if (rc != SHISA_OK)
-    return rc;
-
-  if (nprincipals > 0)
-    return SHISA_REMOVE_REALM_NONEMPTY;
-
-  if (_shisa_rmdir2 (info->path, realm) != 0)
-    return SHISA_REMOVE_REALM_ERROR;
-
-  return SHISA_OK;
-}
-
-int
-shisa_file_principal_find (Shisa * dbh,
-			   void *state,
-			   const char *client,
-			   const char *realm,
-			   Shisa_principal *ph)
-{
-  Shisa_file *info = state;
-
-  if (!_shisa_isdir3 (info->path, realm, client))
-    return SHISA_NO_PRINCIPAL;
-
-  ph->notusedbefore =
-    _shisa_mtime4 (info->path, realm, client, "validfrom.stamp");
-  ph->isdisabled =
-    _shisa_isfile4 (info->path, realm, client, "disabled.flag");
-  ph->kvno = _shisa_uint32link4 (info->path, realm, client, "latest.key");
-  ph->lastinitialtgt =
-    _shisa_mtime4 (info->path, realm, client, "lastinitaltgt.stamp");
-  ph->lastinitialrequest =
-    _shisa_mtime4 (info->path, realm, client, "lastinitial.stamp");
-  ph->lasttgt = _shisa_mtime4 (info->path, realm, client, "lasttgt.stamp");
-  ph->lastrenewal =
-    _shisa_mtime4 (info->path, realm, client, "lastrenewal.stamp");
-  ph->passwordexpire =
-    _shisa_mtime4 (info->path, realm, client, "passwordexpire.stamp");
-  ph->accountexpire =
-    _shisa_mtime4 (info->path, realm, client, "accountexpire.stamp");
-
-  return SHISA_OK;
-}
-
-int
-shisa_file_principal_update (Shisa * dbh,
-			     void *state,
-			     const char *client,
-			     const char *realm,
-			     const Shisa_principal * ph)
-{
-  Shisa_file *info = state;
-
-  return SHISA_OK;
-}
-
-int
-shisa_file_principal_add (Shisa * dbh,
-			  void *state,
-			  const char *realm,
-			  const char *principal,
-			  const Shisa_principal * ph,
-			  const Shisa_key * key)
+static int
+principal_add (Shisa * dbh,
+	       void *state,
+	       const char *realm,
+	       const char *principal,
+	       const Shisa_principal * ph,
+	       const Shisa_key * key)
 {
   Shisa_file *info = state;
 
@@ -296,10 +269,51 @@ shisa_file_principal_add (Shisa * dbh,
 }
 
 int
-shisa_file_principal_remove (Shisa * dbh,
-			     void *state,
-			     const char *realm,
-			     const char *principal)
+shisa_file_principal_add (Shisa * dbh,
+			  void *state,
+			  const char *realm,
+			  const char *principal,
+			  const Shisa_principal * ph,
+			  const Shisa_key * key)
+{
+  int rc;
+
+  if (principal == NULL)
+    rc = realm_add (dbh, state, realm);
+  else
+    rc = principal_add (dbh, state, realm, principal, ph, key);
+
+  return rc;
+}
+
+static int
+realm_remove (Shisa * dbh, void *state, const char *realm)
+{
+  Shisa_file *info = state;
+  size_t nprincipals = 0;
+  int rc;
+
+  if (!_shisa_isdir2 (info->path, realm))
+    return SHISA_NO_REALM;
+
+  rc = shisa_file_enumerate_principals (dbh, state, realm, NULL, &nprincipals);
+  if (rc != SHISA_OK)
+    return rc;
+
+  if (nprincipals > 0)
+    return SHISA_REMOVE_REALM_NONEMPTY;
+
+  if (_shisa_rmdir2 (info->path, realm) != 0)
+    return SHISA_REMOVE_REALM_ERROR;
+
+  return SHISA_OK;
+}
+
+static int
+principal_remove (Shisa * dbh,
+		  void *state,
+		  const char *realm,
+		  const char *principal)
 {
   Shisa_file *info = state;
   size_t nprincipals = 0;
@@ -315,6 +329,22 @@ shisa_file_principal_remove (Shisa * dbh,
     return SHISA_REMOVE_PRINCIPAL_ERROR;
 
   return SHISA_OK;
+}
+
+int
+shisa_file_principal_remove (Shisa * dbh,
+			     void *state,
+			     const char *realm,
+			     const char *principal)
+{
+  int rc;
+
+  if (principal == NULL)
+    rc = realm_remove (dbh, state, realm);
+  else
+    rc = principal_remove (dbh, state, realm, principal);
+
+  return rc;
 }
 
 void

@@ -26,8 +26,6 @@ static _Shisa_backend _shisa_backends[] = {
     shisa_file_init,
     shisa_file_enumerate_realms,
     shisa_file_enumerate_principals,
-    shisa_file_realm_add,
-    shisa_file_realm_remove,
     shisa_file_principal_find,
     shisa_file_principal_update,
     shisa_file_principal_add,
