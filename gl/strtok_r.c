@@ -44,10 +44,7 @@
 		// s = "abc\0-def\0"
 */
 char *
-__strtok_r (s, delim, save_ptr)
-     char *s;
-     const char *delim;
-     char **save_ptr;
+__strtok_r (char *s, const char *delim, char **save_ptr)
 {
   char *token;
 
