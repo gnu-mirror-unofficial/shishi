@@ -204,7 +204,8 @@ shishi_ticket_set_server (Shishi * handle,
 
 int
 shishi_ticket_srealmserver_set (Shishi * handle,
-				Shishi_asn1 ticket, char *realm, char *server)
+				Shishi_asn1 ticket,
+				const char *realm, const char *server)
 {
   int res;
 
