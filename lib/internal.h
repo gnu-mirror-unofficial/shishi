@@ -65,6 +65,10 @@
 #include <sys/ioctl.h>
 #endif
 
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
@@ -178,6 +182,7 @@ struct Shishi
   char *kdc;
   char error[1024];
   char gztime_buf[40];
+  char *userdirectory;
   char *usercfgfile;
   char *tktsdefaultfile;
   char *hostkeysdefaultfile;
@@ -187,7 +192,7 @@ struct Shishi
 
 #define BASE_DIR "/.shishi"
 #define TICKET_FILE BASE_DIR "/tickets"
-#define USERCFG_FILE BASE_DIR "/config"
+#define USERCFG_FILE BASE_DIR "/shishi.conf"
 
 int
 _shishi_print_armored_data (Shishi * handle,
