@@ -1,3 +1,107 @@
+2003-01-24  Werner Koch  <wk@gnupg.org>
+
+	* random.c (_gcry_register_random_progress): New.
+	(_gcry_random_progress): New.
+
+	* rndlinux.c (gather_random): Call the random progress function. 
+
+2003-01-23  Werner Koch  <wk@gnupg.org>
+
+	* rsa.c (generate): New arg USE_E to request a specific public
+	exponent.
+	(_gcry_rsa_generate): Ditto.
+	* elgamal.c (_gcry_elg_generate): Must add an dummy argument
+	instead of USE_E.
+	* dsa.c (_gcry_dsa_generate): Ditto.
+	* pubkey.c (dummy_generate): Ditto.
+	(pubkey_generate): Add USE_E arg and pass it down.
+	(gcry_pk_genkey): Detect "rsa-use-e" parameter and pass it to generate.
+
+	* pubkey.c (sexp_to_enc): New arg RET_MODERN.
+	(gcry_pk_decrypt): Make use of it to return a real S-expression.
+	Return better error codes.
+	(gcry_pk_verify): Return better error codes.
+
+2003-01-21  Werner Koch  <wk@gnupg.org>
+
+	* random.c (gcry_random_add_bytes): Add QUALITY argument, let
+	function return an error code and disable its core for now.
+
+2003-01-21  Timo Schulz  <twoaday@freakmail.de>
+
+	* random.c (gcry_random_add_bytes): New. Function to add external
+	random to the pool.
+	
+2003-01-20  Simon Josefsson  <jas@extundo.com>
+
+	* crc.c: New.
+	* Makefile.am (EXTRA_PROGRAMS, EXTRA_crc_SOURCES): Add crc.c.
+	* md.c (gcry_md_get_algo_dlen): Add values for CRC.
+
+2003-01-20  Werner Koch  <wk@gnupg.org>
+
+	* sha256.c: New.
+	* bithelp.h (ror): New.
+	* Makfile.am: Add sha256.c.
+	* md.c (oid_table): Add values for SHA256 et al.
+	(gcry_md_get_algo_dlen): Likewise
+
+2003-01-20  Werner Koch  <wk@gnupg.org>
+
+	* pubkey.c (gcry_pk_get_keygrip): Implemented keygrips for DSA
+	and ElGamal.
+
+2003-01-17  Werner Koch  <wk@gnupg.org>
+
+	* cipher.c (gcry_cipher_encrypt): Reworked so that the output will
+	never contain the plaintext even if the caller did not checked the
+	return value.
+
+	* md.c (gcry_md_get_algo): Changed error code to GCRYERR_GENERAL
+	because we don't have an invalid md algo but no algorithm enabled.
+
+	* pubkey.c (gcry_pk_genkey): Changed error code for bounds check
+	of table parameters to GCRYERR_INTERNAL.
+
+	* md.c (gcry_md_open): Partly reverted Timo's change from
+	2002-10-10 by removing the check for the algorithm.  An algorithm
+	of 0 is allowed and anyway we should not double check it or check
+	it using a different function.  Also fixed the flags check.
+
+	* pubkey.c (gcry_pk_encrypt): Make sure that R_CIPH points to NULL
+	on error.
+	(gcry_pk_decrypt): Ditto for R_PLAIN.
+	(gcry_pk_sign): Ditto for R_SIG.
+	(gcry_pk_genkey): Ditto for R_KEY.
+
+2003-01-16  Werner Koch  <wk@gnupg.org>
+
+	* md.c (gcry_md_write): Changed 2nd argument type to void*.
+	(gcry_md_hash_buffer): Changed type of boths buffers to void*.
+	(gcry_md_setkey): Changed 2nd argument type to void*.
+
+2003-01-15  Werner Koch  <wk@gnupg.org>
+
+	* pubkey.c (sexp_data_to_mpi): New.  This handles pkcs1 padding.
+	(gcry_pk_sign, gcry_pk_verify): Use it here.
+	(gcry_pk_encrypt): And here.
+	(pubkey_verify): Add debug code.
+	(sexp_to_enc): Handle flags in the input and return the pkcs1 flag
+	in a new parameter.
+	(gcry_pk_decrypt): Prepare for future pkcs1 handling.
+
+2002-12-19  Werner Koch  <wk@gnupg.org>
+
+	* random.c (_gcry_random_initialize): New.
+
+2002-12-16  Werner Koch  <wk@gnupg.org>
+
+	* cipher.c: Added a Tetetrust specific OID for 3DES.
+
+2002-12-12  Werner Koch  <wk@gnupg.org>
+
+	* md.c: Added another oddball OIW OID (sha-1WithRSAEncryption).
+
 2002-11-23  Werner Koch  <wk@gnupg.org>
 
 	* md.c (load_digest_module): Enlarged checked_algos bitmap.
@@ -16,7 +120,7 @@
 
 2002-11-10  Werner Koch  <wk@gnupg.org>
 
-	* md4.c: New. By by Simon Josefsson.
+	* md4.c: New. By Simon Josefsson.
 	* Makefile.am (EXTRA_PROGRAMS): Add md4.c. 
 	* md.c (oid_table,gcry_md_get_algo_dlen): MD4 support. 
 
@@ -1175,7 +1279,7 @@ Mon Feb 16 10:08:47 1998  Werner Koch  (wk@isil.d.shuttle.de)
 	(digest_algo_to_string): New.
 
 
- Copyright 1998,1999,2000,2001 Free Software Foundation, Inc.
+ Copyright 1998,1999,2000,2001,2002,2003 Free Software Foundation, Inc.
 
  This file is free software; as a special exception the author gives
  unlimited permission to copy and/or distribute it, with or without

@@ -1,5 +1,5 @@
 /* random.c  -	random number generator
- * Copyright (C) 1998, 2000, 2001, 2002 Free Software Foundation, Inc.
+ * Copyright (C) 1998, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
  *
  * This file is part of Libgcrypt.
  *
@@ -130,6 +130,9 @@ static struct {
     ulong naddbytes;
 } rndstats;
 
+static void (*progress_cb) (void *,const char*,int,int, int );
+static void *progress_cb_data;
+
 
 /* Note, we assume that this function is used before any concurrent
    access happens */
@@ -152,6 +155,39 @@ initialize(void)
   is_initialized = 1;
   _gcry_cipher_modules_constructor ();
 }
+
+
+/* Used to register a progress callback. */
+void
+_gcry_register_random_progress (void (*cb)(void *,const char*,int,int,int),
+                                void *cb_data )
+{
+  progress_cb = cb;
+  progress_cb_data = cb_data;
+}
+
+
+/* This progress function is currently used by the random modules to give hint
+   on how much more entropy is required. */
+void
+_gcry_random_progress (const char *what, int printchar, int current, int total)
+{
+  if (progress_cb)
+    progress_cb (progress_cb_data, what, printchar, current, total);
+}
+
+
+/* Initialize this random subsystem.  This function memrely calls the
+   initialzies and does not do anything more.  Doing this is not
+   really required but when running in a threaded environment we might
+   get a race condition otherwise. */
+void
+_gcry_random_initialize ()
+{
+  if (!is_initialized)
+    initialize ();
+}
+
 
 static void
 burn_stack (int bytes)
@@ -250,6 +286,28 @@ get_random_bytes( size_t nbytes, int level, int secure )
       log_fatal ("failed to release the pool lock: %s\n", strerror (err));
     return buf;
 }
+
+
+/* Add BUFLEN bytes from BUF to the internal random pool.  QUALITY
+   should be in the range of 0..100 to indicate the goodness of the
+   entropy added, or -1 for goodness not known. 
+
+   Note, that this fucntion currently does nothing.
+*/
+int 
+gcry_random_add_bytes (const void * buf, size_t buflen, int quality)
+{
+  if (!buf || quality < -1 || quality > 100)
+    return GCRYERR_INV_ARG;
+  if (!buflen)
+    return 0; /* Shortcut this dummy case. */
+  /* Before we actuall enbale this code, we need to lock the pool,
+     have a look at the quality and find a way to add them without
+     disturbing the real entropy (we have estimated). */
+  /*add_randomness( buf, buflen, 1 );*/
+  return 0;
+}   
+    
 
 void *
 gcry_random_bytes( size_t nbytes, enum gcry_random_level level )

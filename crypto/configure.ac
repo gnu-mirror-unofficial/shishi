@@ -21,15 +21,16 @@
 AC_REVISION($Revision$)dnl
 
 AC_PREREQ(2.52)
-# Version number: Remember to change it immediately *after* a release.
-AC_INIT(libgcrypt,1.1.11)
+# Version number: Remember to change it immediately *after* a release but
+# remove a "-cvs" prefix right *before* a release and append it soon later.
+AC_INIT(libgcrypt, 1.1.13-cvs, bug-libgcrypt@gnupg.org)
 # LT Version numbers, remember to change them just *before* a release.
 #   (Interfaces removed:    CURRENT++, AGE=0, REVISION=0)
 #   (Interfaces added:      CURRENT++, AGE++, REVISION=0)
 #   (No interfaces changed:                   REVISION++)
-LIBGCRYPT_LT_CURRENT=5
-LIBGCRYPT_LT_AGE=4
-LIBGCRYPT_LT_REVISION=2
+LIBGCRYPT_LT_CURRENT=6
+LIBGCRYPT_LT_AGE=5
+LIBGCRYPT_LT_REVISION=1
 #-----------------------
 
 PACKAGE=$PACKAGE_NAME
@@ -70,7 +71,7 @@ AC_SUBST(VERSION)
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Name of this package])
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version of this package])
 
-static_modules="sha1 md4 md5 rmd160"
+static_modules="sha1 sha256 md4 md5 rmd160 crc"
 static_random_module=""
 
 AC_PROG_AWK
@@ -253,7 +254,9 @@ GNUPG_CHECK_PIC
 #    try_dynload=no
 #fi
 
-
+# For now we hardcode the use of version scripts.  It would be better
+# to write a text for this or even implement this within libtool
+have_ld_version_script=no
 case "${target}" in
     *-*-mingw32*)
         PRINTABLE_OS_NAME="MingW32"
@@ -267,10 +270,12 @@ case "${target}" in
         ;;
     *-linux*)
         PRINTABLE_OS_NAME="GNU/Linux"
+        have_ld_version_script=yes
         ;;
 dnl let that after linux to avoid gnu-linux problems
     *-gnu*)
         PRINTABLE_OS_NAME="GNU/Hurd"
+        have_ld_version_script=yes
         ;;
     *)
         PRINTABLE_OS_NAME=`uname -s || echo "Unknown"`
@@ -278,6 +283,14 @@ dnl let that after linux to avoid gnu-linux problems
 esac
 AC_DEFINE_UNQUOTED(PRINTABLE_OS_NAME, "$PRINTABLE_OS_NAME",
                    [A human readable text with the name of the OS])
+AC_ARG_ENABLE([ld-version-script],
+              AC_HELP_STRING([--enable-ld-version-script],
+                             [enable/disable use of linker version script.
+                              (default is system dependent)]),
+              [have_ld_version_script=$enableval],
+              [ : ] )
+AM_CONDITIONAL(HAVE_LD_VERSION_SCRIPT, test "$have_ld_version_script" = "yes")
+
 
 dnl  Fixme: Are these the best flags for OpenBSD????
 case "${target}" in
@@ -395,6 +408,9 @@ if test "$have_pth" = yes; then
   AC_DEFINE(HAVE_PTH, ,[Define if we have Pth.])
 fi
 AC_CHECK_LIB(pthread,pthread_create,have_pthread=yes)
+if test "$have_pthread" != yes; then
+  AC_CHECK_LIB(c,pthread_create,have_pthread=yes)
+fi
 if test "$have_pthread" = yes; then
   AC_DEFINE(HAVE_PTHREAD, ,[Define if we have pthread.])
 fi

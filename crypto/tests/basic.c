@@ -24,6 +24,42 @@
 #include <stdarg.h>
 #include "../src/gcrypt.h"
 
+
+static const char sample_private_key_1[] =
+"(private-key\n"
+" (rsa\n"
+"  (n #00e0ce96f90b6c9e02f3922beada93fe50a875eac6bcc18bb9a9cf2e84965caa"
+      "2d1ff95a7f542465c6c0c19d276e4526ce048868a7a914fd343cc3a87dd74291"
+      "ffc565506d5bbb25cbac6a0e2dd1f8bcaab0d4a29c2f37c950f363484bf269f7"
+      "891440464baf79827e03a36e70b814938eebdc63e964247be75dc58b014b7ea251#)\n"
+"  (e #010001#)\n"
+"  (d #046129F2489D71579BE0A75FE029BD6CDB574EBF57EA8A5B0FDA942CAB943B11"
+      "7D7BB95E5D28875E0F9FC5FCC06A72F6D502464DABDED78EF6B716177B83D5BD"
+      "C543DC5D3FED932E59F5897E92E6F58A0F33424106A3B6FA2CBF877510E4AC21"
+      "C3EE47851E97D12996222AC3566D4CCB0B83D164074ABF7DE655FC2446DA1781#)\n"
+"  (p #00e861b700e17e8afe6837e7512e35b6ca11d0ae47d8b85161c67baf64377213"
+      "fe52d772f2035b3ca830af41d8a4120e1c1c70d12cc22f00d28d31dd48a8d424f1#)\n"
+"  (q #00f7a7ca5367c661f8e62df34f0d05c10c88e5492348dd7bddc942c9a8f369f9"
+      "35a07785d2db805215ed786e4285df1658eed3ce84f469b81b50d358407b4ad361#)\n"
+"  (u #304559a9ead56d2309d203811a641bb1a09626bc8eb36fffa23c968ec5bd891e"
+      "ebbafc73ae666e01ba7c8990bae06cc2bbe10b75e69fcacb353a6473079d8e9b#)\n"
+" )\n"
+")\n";
+static const char sample_public_key_1[] =
+"(public-key\n"
+" (rsa\n"
+"  (n #00e0ce96f90b6c9e02f3922beada93fe50a875eac6bcc18bb9a9cf2e84965caa"
+      "2d1ff95a7f542465c6c0c19d276e4526ce048868a7a914fd343cc3a87dd74291"
+      "ffc565506d5bbb25cbac6a0e2dd1f8bcaab0d4a29c2f37c950f363484bf269f7"
+      "891440464baf79827e03a36e70b814938eebdc63e964247be75dc58b014b7ea251#)\n"
+"  (e #010001#)\n"
+" )\n"
+")\n";
+static const unsigned char sample_grip_key_1[] =
+"\x32\x10\x0c\x27\x17\x3e\xf6\xe9\xc4\xe9"
+"\xa2\x5d\x3d\x69\xf8\x6d\x37\xa4\xf9\x39";
+
+
 static int verbose;
 static int error_count;
 
@@ -246,12 +282,15 @@ check_ciphers (void)
   /* TODO: add some extra encryption to test the higher level functions */
 }
 
+
+
 static void
 check_one_md (int algo, char *data, int len, char *expect)
 {
     GCRY_MD_HD hd;
     char *p;
     int mdlen;
+    int i;
 
     hd = gcry_md_open (algo, 0);
     if (!hd) {
@@ -265,13 +304,32 @@ check_one_md (int algo, char *data, int len, char *expect)
         fail ("algo %d, grcy_md_get_algo_dlen failed: %d\n", algo, mdlen);
         return;
     }
-    
-    gcry_md_write (hd, data, len);
+
+    if (*data == '!' && !data[1])
+      { /* hash one million times a "a" */
+        char aaa[1000];
+        
+        memset (aaa, 'a', 1000);
+        for (i=0; i < 1000; i++)
+          gcry_md_write (hd, aaa, 1000);
+      }
+    else
+      gcry_md_write (hd, data, len);
 
     p = gcry_md_read (hd, algo);
 
     if ( memcmp (p, expect, mdlen) )
-        fail ("algo %d, digest mismatch\n", algo);
+      {
+	printf("computed: ");
+	for (i=0; i < mdlen; i++)
+	  printf("%02x ", p[i] & 0xFF);
+	printf("\nexpected: ");
+	for (i=0; i < mdlen; i++)
+	  printf("%02x ", expect[i] & 0xFF);
+	printf("\n");
+
+	fail ("algo %d, digest mismatch\n", algo);
+      }
 
     gcry_md_close (hd);
 }
@@ -304,6 +362,18 @@ check_digests ()
     { GCRY_MD_SHA1, "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
       "\x84\x98\x3E\x44\x1C\x3B\xD2\x6E\xBA\xAE"
       "\x4A\xA1\xF9\x51\x29\xE5\xE5\x46\x70\xF1" },
+    { GCRY_MD_SHA1, "!" /* kludge for "a"*1000000 */,
+      "\x34\xAA\x97\x3C\xD4\xC4\xDA\xA4\xF6\x1E"
+      "\xEB\x2B\xDB\xAD\x27\x31\x65\x34\x01\x6F" },
+    { GCRY_MD_SHA256, "abc",
+      "\xba\x78\x16\xbf\x8f\x01\xcf\xea\x41\x41\x40\xde\x5d\xae\x22\x23"
+      "\xb0\x03\x61\xa3\x96\x17\x7a\x9c\xb4\x10\xff\x61\xf2\x00\x15\xad" },
+    { GCRY_MD_SHA256, "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+      "\x24\x8d\x6a\x61\xd2\x06\x38\xb8\xe5\xc0\x26\x93\x0c\x3e\x60\x39"
+      "\xa3\x3c\xe4\x59\x64\xff\x21\x67\xf6\xec\xed\xd4\x19\xdb\x06\xc1" },
+    { GCRY_MD_SHA256, "!",
+      "\xcd\xc7\x6e\x5c\x99\x14\xfb\x92\x81\xa1\xc7\xe2\x84\xd7\x3e\x67" 
+      "\xf1\x80\x9a\x48\xa4\x97\x20\x0e\x04\x6d\x39\xcc\xc7\x11\x2c\xd0" },
     { GCRY_MD_RMD160, "",
       "\x9c\x11\x85\xa5\xc5\xe9\xfc\x54\x61\x28"
       "\x08\x97\x7e\xe8\xf5\x48\xb2\x25\x8d\x31" },
@@ -316,6 +386,38 @@ check_digests ()
     { GCRY_MD_RMD160, "message digest",
       "\x5d\x06\x89\xef\x49\xd2\xfa\xe5\x72\xb8"
       "\x81\xb1\x23\xa8\x5f\xfa\x21\x59\x5f\x36" },
+    { GCRY_MD_CRC32, "",
+      "\x00\x00\x00\x00" },
+    { GCRY_MD_CRC32, "foo",
+      "\x8c\x73\x65\x21" },
+    { GCRY_MD_CRC32_RFC1510, "",
+      "\x00\x00\x00\x00" },
+    { GCRY_MD_CRC32_RFC1510, "foo",
+      "\x73\x32\xbc\x33" }, 
+    { GCRY_MD_CRC32_RFC1510, "test0123456789",
+      "\xb8\x3e\x88\xd6" },
+    { GCRY_MD_CRC32_RFC1510, "MASSACHVSETTS INSTITVTE OF TECHNOLOGY",
+      "\xe3\x41\x80\xf7" },
+#if 0
+    { GCRY_MD_CRC32_RFC1510, "\x80\x00",
+      "\x3b\x83\x98\x4b" },
+    { GCRY_MD_CRC32_RFC1510, "\x00\x08",
+      "\x0e\xdb\x88\x32" },
+    { GCRY_MD_CRC32_RFC1510, "\x00\x80",
+      "\xed\xb8\x83\x20" },
+#endif
+    { GCRY_MD_CRC32_RFC1510, "\x80",
+      "\xed\xb8\x83\x20" },
+#if 0
+    { GCRY_MD_CRC32_RFC1510, "\x80\x00\x00\x00",
+      "\xed\x59\xb6\x3b" },
+    { GCRY_MD_CRC32_RFC1510, "\x00\x00\x00\x01",
+      "\x77\x07\x30\x96" },
+#endif
+    { GCRY_MD_CRC24_RFC2440, "",
+      "\xb7\x04\xce" },
+    { GCRY_MD_CRC24_RFC2440, "foo",
+      "\x4f\xc2\x55" },
 #if 0
     { GCRY_MD_TIGER, "",
       "\x24\xF0\x13\x0C\x63\xAC\x93\x32\x16\x16\x6E\x76"
@@ -365,21 +467,155 @@ check_digests ()
   /* TODO: test HMAC mode */
 }
 
+/* Check that the signature SIG matches the hash HASH. PKEY is the
+   public key used for the verification. BADHASH is a hasvalue which
+   should; result in a bad signature status. */
+static void
+verify_one_signature (GcrySexp pkey, GcrySexp hash,
+                      GcrySexp badhash, GcrySexp sig)
+{
+  int rc;
+
+  rc = gcry_pk_verify (sig, hash, pkey);
+  if (rc)
+    fail ("gcry_pk_verify failed: %s\n", gcry_strerror (rc));
+  rc = gcry_pk_verify (sig, badhash, pkey);
+  if (rc != GCRYERR_BAD_SIGNATURE)
+    fail ("gcry_pk_verify failed to detect a bad signature: %s\n",
+          gcry_strerror (rc));
+}
+
+
+/* Test the public key sign function using the private ket SKEY. PKEY
+   is used for verification. */
+static void
+check_pubkey_sign (GcrySexp skey, GcrySexp pkey)
+{
+  int rc;
+  GcrySexp sig, badhash, hash;
+  int dataidx;
+  static const char baddata[] =
+    "(data\n (flags pkcs1)\n"
+    " (hash sha1 #11223344556677889900AABBCCDDEEFF10203041#))\n";
+  static struct { const char *data; int expected_rc; } datas[] = {
+    { "(data\n (flags pkcs1)\n"
+      " (hash sha1 #11223344556677889900AABBCCDDEEFF10203040#))\n",
+      0 },
+    { "(data\n (flags )\n"
+      " (hash sha1 #11223344556677889900AABBCCDDEEFF10203040#))\n",
+      GCRYERR_CONFLICT },
+
+    { "(data\n (flags pkcs1)\n"
+      " (hash foo #11223344556677889900AABBCCDDEEFF10203040#))\n",
+      GCRYERR_INV_MD_ALGO },
+
+    { "(data\n (flags )\n"
+      " (value #11223344556677889900AA#))\n",
+      0 },
+
+    { "(data\n (flags raw)\n"
+      " (value #11223344556677889900AA#))\n",
+      0 },
+
+    { "(data\n (flags pkcs1)\n"
+      " (value #11223344556677889900AA#))\n",
+      GCRYERR_CONFLICT },
+
+    { "(data\n (flags raw foo)\n"
+      " (value #11223344556677889900AA#))\n",
+      GCRYERR_INV_FLAG },
+    
+    { NULL }
+  };
+
+  rc = gcry_sexp_sscan (&badhash, NULL, baddata, strlen (baddata));
+  if (rc)
+      die ("converting data failed: %s\n", gcry_strerror (rc));
+      
+  for (dataidx=0; datas[dataidx].data; dataidx++)
+    {
+      if (verbose)
+        fprintf (stderr, "signature test %d\n", dataidx);
+
+      rc = gcry_sexp_sscan (&hash, NULL, datas[dataidx].data,
+                            strlen (datas[dataidx].data));
+      if (rc)
+        die ("converting data failed: %s\n", gcry_strerror (rc));
+  
+      rc = gcry_pk_sign (&sig, hash, skey);
+      if (rc != datas[dataidx].expected_rc)
+        fail ("gcry_pk_sign failed: %s\n", gcry_strerror (rc));
+      
+      if (!rc)
+        verify_one_signature (pkey, hash, badhash, sig);
+
+      gcry_sexp_release (sig); sig= NULL;
+      gcry_sexp_release (hash); hash= NULL;
+    }
+
+  gcry_sexp_release (badhash);
+}
+
+/* Run all tests for the public key fucntions. */
+static void
+check_pubkey (void)
+{
+  int rc;
+  GcrySexp skey, pkey;
+  unsigned char grip1[20], grip2[20];
+  
+  rc = gcry_sexp_sscan (&skey, NULL, sample_private_key_1,
+                        strlen (sample_private_key_1));
+  if (!rc)
+    rc = gcry_sexp_sscan (&pkey, NULL, sample_public_key_1,
+                          strlen (sample_public_key_1));
+  if (rc)
+    die ("converting sample key failed: %s\n", gcry_strerror (rc));
+
+  if (!gcry_pk_get_keygrip (pkey, grip1))
+    die ("get keygrip for public RSA key failed\n");
+  if (!gcry_pk_get_keygrip (skey, grip2))
+    die ("get keygrip for private RSA key failed\n");
+  if (memcmp (grip1, grip2, 20))
+    fail ("keygrips for RSA key don't match\n");
+  if (memcmp (grip1, sample_grip_key_1, 20))
+    fail ("wrong keygrip for RSA key\n");
+
+  /* FIXME: we need DSA and ElGamal example keys. */
+
+/*    for (rc=0; rc < 20; rc++) */
+/*      printf ("\\x%02x", grip1[rc]); */
+/*    putchar ('\n'); */
+
+  check_pubkey_sign (skey, pkey);
+
+  gcry_sexp_release (skey);
+  gcry_sexp_release (pkey);
+}
+
+
 
 int
 main (int argc, char **argv)
 {
+  int debug = 0;
+
   if (argc > 1 && !strcmp (argv[1], "--verbose"))
     verbose = 1;
+  else if (argc > 1 && !strcmp (argv[1], "--debug"))
+    verbose = debug = 1;
 
-  /*gcry_control (GCRYCTL_DISABLE_INTERNAL_LOCKING, NULL, 0);*/
+  /*gcry_control (GCRYCTL_DISABLE_INTERNAL_LOCKING,0);*/
+  gcry_control (GCRYCTL_DISABLE_SECMEM, 0);
   if (!gcry_check_version (GCRYPT_VERSION))
     die ("version mismatch\n");
+  gcry_control (GCRYCTL_INITIALIZATION_FINISHED, 0);
+  if (debug)
+    gcry_control (GCRYCTL_SET_DEBUG_FLAGS, 1u , 0);
   check_ciphers ();
   check_aes128_cbc_cts_cipher ();
   check_digests ();
+  check_pubkey ();
   
   return error_count? 1:0;
 }
-
-

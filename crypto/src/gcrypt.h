@@ -1,5 +1,5 @@
 /* gcrypt.h -  GNU cryptographic library interface
- * Copyright (C) 1998,1999,2000,2001,2002 Free Software Foundation, Inc.
+ * Copyright (C) 1998,1999,2000,2001,2002,2003 Free Software Foundation, Inc.
  *
  * This file is part of Libgcrypt.
  *
@@ -37,15 +37,30 @@ extern "C" {
    autoconf (using the AM_PATH_GCRYPT macro) check that this header
    matches the installed library.  Note: Do not edit the next line as
    configure may fix the string here.  */
-#define GCRYPT_VERSION "1.1.11"
+#define GCRYPT_VERSION "1.1.13-cvs"
 
-/* Internal: We can't to use the convenience macros for the multi
+/* Internal: We can't use the convenience macros for the multi
    precision integer functions when building this library. */
 #ifdef _GCRYPT_IN_LIBGCRYPT
 # ifndef GCRYPT_NO_MPI_MACROS
 #   define GCRYPT_NO_MPI_MACROS 1
 # endif
 #endif
+
+/* We want to use gcc attributes when possible.  Warning: Don't use
+   these macros in your progranms: As indicated by the leading
+   underscore they are subject to change without notice. */
+#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96 )
+# define _GCRY_GCC_ATTR_PURE  __attribute__ ((__pure__))
+#else
+# define _GCRY_GCC_ATTR_PURE
+#endif
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 2 )
+# define _GCRY_GCC_ATTR_MALLOC  __attribute__ ((__malloc__))
+#else
+# define _GCRY_GCC_ATTR_MALLOC
+#endif
+
 
 /* The data object used to hold a multi precision integer.  GcryMPI is
    the preferred one. */
@@ -61,35 +76,36 @@ typedef struct gcry_mpi *GcryMPI;
    1.0.  gpg --status-fd may print some of these values. */
 enum
   {
-    GCRYERR_SUCCESS = 0,    /* "no error" */
+    GCRYERR_SUCCESS = 0,    /* "no error" (this is guaranteed to be 0) */
     GCRYERR_GENERAL = 1,    /* catch all the other errors code */
     
-    GCRYERR_INV_PK_ALGO = 4, /* invalid public key algorithm */
-    GCRYERR_INV_MD_ALGO = 5, /* invalid message digest algorithm */
+    GCRYERR_INV_PK_ALGO = 4,    /* invalid public key algorithm */
+    GCRYERR_INV_MD_ALGO = 5,    /* invalid message digest algorithm */
     GCRYERR_BAD_PUBLIC_KEY = 6, /* Bad public key */
     GCRYERR_BAD_SECRET_KEY = 7, /* Bad secret key */
     GCRYERR_BAD_SIGNATURE = 8,	/* Bad signature */
     
     GCRYERR_INV_CIPHER_ALGO = 12, /* invalid cipher algorithm */
-    GCRYERR_BAD_MPI = 30,
-    GCRYERR_WRONG_PK_ALGO = 41, /* wrong public key algorithm */
-    GCRYERR_WEAK_KEY = 43,  /* weak encryption key */
-    GCRYERR_INV_KEYLEN = 44,  /* invalid length of a key*/
-    GCRYERR_INV_ARG = 45,    /* invalid argument */
-    GCRYERR_SELFTEST = 50,	/* selftest failed */
+    GCRYERR_BAD_MPI = 30,         /* problem with an MPI's value*/
+    GCRYERR_WRONG_PK_ALGO = 41,   /* wrong public key algorithm */
+    GCRYERR_WEAK_KEY = 43,        /* weak encryption key */
+    GCRYERR_INV_KEYLEN = 44,      /* invalid length of a key*/
+    GCRYERR_INV_ARG = 45,         /* invalid argument */
+    GCRYERR_SELFTEST = 50,	  /* selftest failed */
 
     /* error codes not used in GnuPG 1.0 */
-    GCRYERR_INV_OP = 61,     /* invalid operation code or ctl command */
-    GCRYERR_NO_MEM = 62,     /* out of core */
-    GCRYERR_INTERNAL = 63,   /* internal error */
-    GCRYERR_EOF = 64,	     /* (-1) is remapped to this value */
-    GCRYERR_INV_OBJ = 65,    /* an object is not valid */
-    GCRYERR_TOO_SHORT = 66,  /* provided buffer too short */
-    GCRYERR_TOO_LARGE = 67,  /* object is too large */
-    GCRYERR_NO_OBJ = 68,     /* Missing item in an object */
-    GCRYERR_NOT_IMPL = 69,   /* Not implemented */
-    GCRYERR_CONFLICT = 70,
-    GCRYERR_INV_CIPHER_MODE = 71,
+    GCRYERR_INV_OP = 61,          /* invalid operation code or ctl command */
+    GCRYERR_NO_MEM = 62,          /* out of core */
+    GCRYERR_INTERNAL = 63,        /* internal error */
+    GCRYERR_EOF = 64,	          /* (-1) is remapped to this value */
+    GCRYERR_INV_OBJ = 65,         /* an object is not valid */
+    GCRYERR_TOO_SHORT = 66,       /* provided buffer/object too short */
+    GCRYERR_TOO_LARGE = 67,       /* object is too large */
+    GCRYERR_NO_OBJ = 68,          /* Missing item in an object */
+    GCRYERR_NOT_IMPL = 69,        /* Not implemented */
+    GCRYERR_CONFLICT = 70,        /* conflicting use of functions/values */
+    GCRYERR_INV_CIPHER_MODE = 71, /* invalid/unsupported cipher mode */ 
+    GCRYERR_INV_FLAG = 72,        /* invalid flag */
 
     /* error codes pertaining to S-expressions */
     GCRYERR_SEXP_INV_LEN_SPEC    = 201,
@@ -111,7 +127,7 @@ enum
 const char *gcry_check_version (const char *req_version);
 
 /* Return the error number for the last failed function call. */
-int gcry_errno(void);
+int gcry_errno(void) _GCRY_GCC_ATTR_PURE;
 
 /* Map an error number to a string. */
 const char *gcry_strerror (int ec);
@@ -158,7 +174,8 @@ enum gcry_ctl_cmds
     GCRYCTL_INITIALIZATION_FINISHED = 38,
     GCRYCTL_INITIALIZATION_FINISHED_P = 39,
     GCRYCTL_ANY_INITIALIZATION_P = 40,
-    GCRYCTL_SET_CBC_CTS = 41
+    GCRYCTL_SET_CBC_CTS = 41,
+    GCRYCTL_ENABLE_QUICK_RANDOM = 42
   };
 
 /* Perform various operations defined by CMD. */
@@ -481,8 +498,8 @@ enum gcry_cipher_algos
     GCRY_CIPHER_AES256      = 9,
     GCRY_CIPHER_TWOFISH     = 10,
     /* other cipher numbers are above 300 for OpenPGP reasons. */
-    GCRY_CIPHER_ARCFOUR     = 301,
-    GCRY_CIPHER_DES         = 302
+    GCRY_CIPHER_ARCFOUR     = 301,  /* fully compatible with RSA's RC4 (tm). */
+    GCRY_CIPHER_DES         = 302   /* Yes, this is single key 56 bit DES. */
   };
 
 /* The Rijndael algorithm is basically AES, so provide some macros. */
@@ -532,16 +549,16 @@ int gcry_cipher_algo_info (int algo, int what, void *buffer, size_t *nbytes);
 /* Map the cipher algorithm id ALGO to a string representation of that
    algorithm name.  For unknown algorithms this functions returns an
    empty string. */
-const char *gcry_cipher_algo_name (int algo);
+const char *gcry_cipher_algo_name (int algo) _GCRY_GCC_ATTR_PURE;
 
 /* Map the algorithm name NAME to an cipher algorithm ID.  Return 0 if
    the algorithm name is not known. */
-int gcry_cipher_map_name (const char *name);
+int gcry_cipher_map_name (const char *name) _GCRY_GCC_ATTR_PURE;
 
 /* Given an ASN.1 object identifier in standard IETF dotted decimal
    format in STING, return the encryption mode associated with that
    OID or 0 if not known or applicable. */
-int gcry_cipher_mode_from_oid (const char *string);
+int gcry_cipher_mode_from_oid (const char *string) _GCRY_GCC_ATTR_PURE;
 
 /* Encrypt the plaintext of size INLEN in IN using the cipher handle H
    into the buffer OUT which has an allocated length of OUTSIZE.  For
@@ -642,15 +659,15 @@ int gcry_pk_algo_info (int algo, int what, void *buffer, size_t *nbytes);
 /* Map the public key algorithm id ALGO to a string representation of the
    algorithm name.  For unknown algorithms this functions returns an
    empty string. */
-const char *gcry_pk_algo_name (int algo);
+const char *gcry_pk_algo_name (int algo) _GCRY_GCC_ATTR_PURE;
 
 /* Map the algorithm NAME to a public key algorithm Id.  Return 0 if
    the algorithm name is not known. */
-int gcry_pk_map_name (const char* name);
+int gcry_pk_map_name (const char* name) _GCRY_GCC_ATTR_PURE;
 
 /* Return what is commonly referred as the key length for the given
    public or private KEY.  */
-unsigned int gcry_pk_get_nbits (GcrySexp key);
+unsigned int gcry_pk_get_nbits (GcrySexp key) _GCRY_GCC_ATTR_PURE;
 
 /* Please note that keygrip is still experimental and should not be
    used without contacting the author. */
@@ -682,7 +699,10 @@ enum gcry_md_algos
     GCRY_MD_SHA256  = 8,
     GCRY_MD_SHA384  = 9,
     GCRY_MD_SHA512  = 10,
-    GCRY_MD_MD4     = 301
+    GCRY_MD_MD4     = 301,
+    GCRY_MD_CRC32		= 302,
+    GCRY_MD_CRC32_RFC1510	= 303,
+    GCRY_MD_CRC24_RFC2440	= 304
   };
 
 /* Flags used with the open function. */
@@ -709,7 +729,7 @@ typedef struct gcry_md_handle *GcryMDHd;
 
 /* Create a message digest object for algorithm ALGO.  FLAGS may be
    given as an bitwise OR of the gcry_md_flags values.  ALGO may be
-   given as 0 if the algorithms to used are later set using
+   given as 0 if the algorithms to be used are later set using
    gcry_md_enable. */
 GcryMDHd gcry_md_open (int algo, unsigned int flags);
 
@@ -731,7 +751,7 @@ int gcry_md_ctl (GcryMDHd hd, int cmd, unsigned char *buffer, size_t buflen);
 /* Pass LENGTH bytes of data in BUFFER to the digest object HD so that
    it can update the digest values.  This is the actual hash
    function. */
-void gcry_md_write (GcryMDHd hd, const unsigned char *buffer, size_t length);
+void gcry_md_write (GcryMDHd hd, const void *buffer, size_t length);
 
 /* Read out the final digest from HD return the digest value for
    algorithm ALGO. */
@@ -739,13 +759,13 @@ unsigned char *gcry_md_read (GcryMDHd hd, int algo);
 
 /* Convenience function to calculate the hash from the data in BUFFER
    of size LENGTH using the algorithm ALGO avoiding the creating of a
-   hash object.  The hash is returned in the caller provied buffer
+   hash object.  The hash is returned in the caller provided buffer
    DIGEST which must be large enough to hold the digest of the given
    algorithm. */
-void gcry_md_hash_buffer (int algo, char *digest,
-			  const char *buffer, size_t length);
+void gcry_md_hash_buffer (int algo, void *digest,
+			  const void *buffer, size_t length);
 
-/* Retrieve the algorithm used with HD.  This does not work relaibale
+/* Retrieve the algorithm used with HD.  This does not work reliable
    if more than one algorithm is enabled in HD. */
 int gcry_md_get_algo (GcryMDHd hd);
 
@@ -753,32 +773,33 @@ int gcry_md_get_algo (GcryMDHd hd);
    ALGO. */
 unsigned int gcry_md_get_algo_dlen (int algo);
 
-/* Retrieve various information about the obhject H. */
+/* Retrieve various information about the object H. */
 int gcry_md_info (GcryMDHd h, int what, void *buffer, size_t *nbytes);
 
-/* Retrieve valrious information about the algorithm ALGO. */
+/* Retrieve various information about the algorithm ALGO. */
 int gcry_md_algo_info( int algo, int what, void *buffer, size_t *nbytes);
 
 /* Map the digest algorithm id ALGO to a string representation of the
    algorithm name.  For unknown algorithms this functions returns an
    empty string. */
-const char *gcry_md_algo_name (int algo);
+const char *gcry_md_algo_name (int algo) _GCRY_GCC_ATTR_PURE;
 
 /* Map the algorithm NAME to a digest algorithm Id.  Return 0 if
    the algorithm name is not known. */
-int gcry_md_map_name (const char* name);
+int gcry_md_map_name (const char* name) _GCRY_GCC_ATTR_PURE;
 
 /* For use with the HMAC feature, the set MAC key to the KEY of
    KEYLEN. */
-int gcry_md_setkey (GcryMDHd hd, const char *key, size_t keylen);
+int gcry_md_setkey (GcryMDHd hd, const void *key, size_t keylen);
 
 /* Update the hash(s) of H with the character C.  This is a buffered
    version of the gcry_md_write function. */
 #define gcry_md_putc(h,c)  \
-	    do {					\
-		if( (h)->bufpos == (h)->bufsize )	\
-		    gcry_md_write( (h), NULL, 0 );	\
-		(h)->buf[(h)->bufpos++] = (c) & 0xff;	\
+	    do {					  \
+                GcryMDHd h__ = (h);                       \
+		if( (h__)->bufpos == (h__)->bufsize )	  \
+		    gcry_md_write( (h__), NULL, 0 );	  \
+		(h__)->buf[(h__)->bufpos++] = (c) & 0xff; \
 	    } while(0)
 
 /* Finalize the digest calculation.  This is not really needed because
@@ -793,6 +814,13 @@ int gcry_md_setkey (GcryMDHd hd, const char *key, size_t keylen);
 /* Return 0 if the algorithm A is available for use. */
 #define gcry_md_test_algo(a) \
 	    gcry_md_algo_info( (a), GCRYCTL_TEST_ALGO, NULL, NULL )
+
+/* Return an DER encoded ASN.1 OID for the algorithm A in buffer B. N
+   must point to size_t variable with the available size of buffer B.
+   After return it will receive the actual size of the returned
+   OID. */
+#define gcry_md_get_asnoid(a,b,n) \
+            gcry_md_algo_info((a), GCRYCTL_GET_ASNOID, (b), (n))
 
 /* Enable debugging for digets object A; i.e. create files named
    dbgmd-<n>.<string> while hashing.  B is a string used as the suffix
@@ -823,19 +851,27 @@ enum gcry_random_level
     GCRY_VERY_STRONG_RANDOM = 2
   };
 
+
 /* Fill BUFFER with LENGTH bytes of random, using random numbers of
    quality LEVEL. */
 void gcry_randomize (unsigned char *buffer, size_t length,
 		     enum gcry_random_level level);
 
-/* Return NBYTES of allocated random suing a radnom numbers of quality
-   LEVEL. */
-void *gcry_random_bytes (size_t nbytes, enum gcry_random_level level);
+/* Add the external random from BUFFER with LENGTH bytes into the
+   pool. QUALITY should either be -1 for unknown or in the range of 0
+   to 100 */
+int gcry_random_add_bytes (const void *buffer, size_t length, int quality);
 
-/* Return NBYTES of allocated random suing a random numbers of quality
+/* Return NBYTES of allocated random using a random numbers of quality
+   LEVEL. */
+void *gcry_random_bytes (size_t nbytes, enum gcry_random_level level)
+                         _GCRY_GCC_ATTR_MALLOC;
+
+/* Return NBYTES of allocated random using a random numbers of quality
    LEVEL.  The random numbers are created returned in "secure"
    memory. */
-void *gcry_random_bytes_secure (size_t nbytes, enum gcry_random_level level);
+void *gcry_random_bytes_secure (size_t nbytes, enum gcry_random_level level)
+                                _GCRY_GCC_ATTR_MALLOC;
 
 
 /* Set the big inetger W to a random value of NBITS using a random
@@ -899,22 +935,22 @@ void gcry_set_log_handler (void (*f)(void*,int, const char*, va_list),
 
 /* Libgcrypt uses its own memory allocation.  It is important to use
    gcry_free () to release memory allocated by libgcrypt. */
-void *gcry_malloc (size_t n);
-void *gcry_calloc (size_t n, size_t m);
-void *gcry_malloc_secure (size_t n);
-void *gcry_calloc_secure (size_t n, size_t m);
+void *gcry_malloc (size_t n) _GCRY_GCC_ATTR_MALLOC;
+void *gcry_calloc (size_t n, size_t m) _GCRY_GCC_ATTR_MALLOC;
+void *gcry_malloc_secure (size_t n) _GCRY_GCC_ATTR_MALLOC;
+void *gcry_calloc_secure (size_t n, size_t m) _GCRY_GCC_ATTR_MALLOC;
 void *gcry_realloc (void *a, size_t n);
-char *gcry_strdup (const char *string);
-void *gcry_xmalloc (size_t n);
-void *gcry_xcalloc (size_t n, size_t m);
-void *gcry_xmalloc_secure (size_t n);
-void *gcry_xcalloc_secure (size_t n, size_t m);
+char *gcry_strdup (const char *string) _GCRY_GCC_ATTR_MALLOC;
+void *gcry_xmalloc (size_t n) _GCRY_GCC_ATTR_MALLOC;
+void *gcry_xcalloc (size_t n, size_t m) _GCRY_GCC_ATTR_MALLOC;
+void *gcry_xmalloc_secure (size_t n) _GCRY_GCC_ATTR_MALLOC;
+void *gcry_xcalloc_secure (size_t n, size_t m) _GCRY_GCC_ATTR_MALLOC;
 void *gcry_xrealloc (void *a, size_t n);
-char *gcry_xstrdup (const char * a);
+char *gcry_xstrdup (const char * a) _GCRY_GCC_ATTR_MALLOC;
 void  gcry_free (void *a);
 
 /* Return true if A is allocated in "secure" memory. */
-int gcry_is_secure (const void *a);
+int gcry_is_secure (const void *a) _GCRY_GCC_ATTR_PURE;
 
 
 #ifndef GCRYPT_NO_MPI_MACROS

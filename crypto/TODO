@@ -11,3 +11,14 @@
 * Allow operation using RSA keys consisting of the OpenSSL list of
   parameters and allow for a third form where the private Exponent
   is not given (saves space).
+
+* Add a warning to the manual, to check that libgcrypt actually has
+  been compiled with thread support when used by a threaded
+  application.
+
+* write an autoconf test to check whether the linker supports a
+  version script.
+
+* Make use of the forthcoming visibility attribute.
+
+* Add attributes to the MPI functions.

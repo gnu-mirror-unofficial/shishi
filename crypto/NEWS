@@ -1,5 +1,47 @@
-Noteworthy changes in version 1.1.11 (unreleased)
+Noteworthy changes in version 1.1.13 (unreleased)
 -------------------------------------------------
+
+ * CRC-32, CRC-32 a'la RFC 1510, CRC-24 a'la RFC 2440 is now
+   supported.
+
+ * SHA-256 is now supported.
+
+ * The public RSA exponent can now be specified in key generation. 
+
+ * Interface changes relative to the 1.1.12 release:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+gcry_pk_decrypt         ENHANCED: Allows flag to return complete S-expression.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Noteworthy changes in version 1.1.12 (2003-01-20)
+-------------------------------------------------
+
+ * gcry_pk_sign, gcry_pk_verify and gcry_pk_encrypt can now handle an
+   optional pkcs1 flags parameter in the S-expression.  A similar flag
+   may be passed to gcry_pk_decrypt but it is only syntactically
+   implemented.
+
+ * New convenience macro gcry_md_get_asnoid.
+
+ * There is now some real stuff in the manual.
+
+
+Noteworthy changes in version 1.1.11 (2002-12-21)
+-------------------------------------------------
+
+ * Don't export internal symbols anymore (currently only for GNU systems)
+
+ * New algorithm: MD4
+
+ * Implemented ciphertext stealing.
+
+ * Smaller bugs fixes and a few new OIDs.
+
+ * Interface changes relative to the 1.1.8 release:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+gcry_cipher_cts                   NEW
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 Noteworthy changes in version 1.1.10 (2002-09-20)
 -------------------------------------------------

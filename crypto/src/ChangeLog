@@ -1,3 +1,75 @@
+2003-01-24  Werner Koch  <wk@gnupg.org>
+
+	* global.c (gcry_set_progress_handler): Register a random progress
+	handler.
+
+2003-01-23  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.h (GCRY_ENABLE_QUICK_RANDOM): New. 
+	* global.c (gcry_control): Make use of it.
+
+2003-01-21  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.h (gcry_random_add_bytes): Add QUALITY argument.
+
+2003-01-21  Timo Schulz  <twoaday@freakmail.de>
+
+	* gcrypt.h (gcry_random_add_bytes): New.
+	
+2003-01-20  Simon Josefsson  <jas@extundo.com>
+
+	* gcrypt.h (gcry_md_algos): Add GCRY_MD_CRC32,
+	GCRY_MD_CRC32_RFC1510, GCRY_MD_CRC24_RFC2440.
+
+2003-01-16  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.h (gcry_md_write): Changed type of 2nd argument to void*.
+	(gcry_md_hash_buffer): Changed type of both buffers to void*.
+	(gcry_md_setkey): Changed type of 2nd argument to void*.
+	(gcry_md_get_asnoid): New.
+
+2003-01-15  Werner Koch  <wk@gnupg.org>
+
+	* sexp.c (gcry_sexp_length): Fixed.  This was seriously broken.
+
+2003-01-14  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.h (GCRYERR_INV_FLAG), global.c (gcry_strerror): New.
+
+2003-01-02  Werner Koch  <wk@gnupg.org>
+
+	* libgcrypt.vers: Temporary export _gcry_generate_elg_prime for
+	use by GNUTLS. 
+
+2002-12-21  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.h: Make use of gcc's pure and malloc attributes 
+	(gcry_md_putc): Use a helper variable to avoid multiple
+	evaluation of H. 
+	* g10lib.h, stdmem.h, secmem.h: Use gcc attributes pure and malloc.
+
+	* stdmem.c (use_m_guard): Don't default to yes.
+
+2002-12-19  Werner Koch  <wk@gnupg.org>
+
+	* global.c (global_init): The meat was never run due to a faulty
+	check. Thanks to Nikos for pointing this out.
+	
+	* global.c (gcry_control): Return 1 and not -1 for the
+	initialization tests.
+
+	* libgcrypt.vers: New.
+	* Makefile.am: Use this instead of the build symbol file.
+
+	* global.c (gcry_control) <initialization>: Call the random module
+	initializer to make sure that the pool lock flag has been
+	initialized.
+
+2002-12-09  Werner Koch  <wk@gnupg.org>
+
+	* global.c (gcry_calloc,gcry_calloc_secure): Check for overflow.
+	Noted by Florian Weimer. 
+
 2002-11-10  Simon Josefsson  <jas@extundo.com>
 
 	* gcrypt.h (gcry_ctl_cmds): New GCRYCTL_SET_CBC_CTS control flag.
@@ -396,7 +468,7 @@ Tue Dec  8 13:15:16 CET 1998  Werner Koch  <wk@isil.d.shuttle.de>
 	* mpiapi.c: New
 
 	
- Copyright 1998,1999,2000,2001,2002 Free Software Foundation, Inc.
+ Copyright 1998,1999,2000,2001,2002,2003 Free Software Foundation, Inc.
 
  This file is free software; as a special exception the author gives
  unlimited permission to copy and/or distribute it, with or without

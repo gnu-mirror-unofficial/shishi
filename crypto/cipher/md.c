@@ -1,5 +1,5 @@
 /* md.c  -  message digest dispatcher
- * Copyright (C) 1998, 1999, 2002 Free Software Foundation, Inc.
+ * Copyright (C) 1998, 1999, 2002, 2003 Free Software Foundation, Inc.
  *
  * This file is part of Libgcrypt.
  *
@@ -51,6 +51,12 @@ static struct {
   { "1.3.6.1.4.1.11591.12.2", GCRY_MD_TIGER },
   /* iso.member-body.us.rsadsi.digestAlgorithm.md4 */
   { "1.2.840.113549.2.4", GCRY_MD_MD4 },
+  /* from NIST OIW (sha-1WithRSAEncryption) */
+  { "1.3.14.3.2.29", GCRY_MD_SHA1 },
+  /* According to the OpenPGG draft rfc2440-bis06 */
+  { "2.16.840.1.101.3.4.2.1", GCRY_MD_SHA256 }, 
+  { "2.16.840.1.101.3.4.2.2", GCRY_MD_SHA384 }, 
+  { "2.16.840.1.101.3.4.2.3", GCRY_MD_SHA512 }, 
   {NULL}
 };
 
@@ -348,18 +354,16 @@ md_open( int algo, int secure, int hmac )
 }
 
 
-GCRY_MD_HD
+/* Create a message digest object for algorithm ALGO.  FLAGS may be
+   given as an bitwise OR of the gcry_md_flags values.  ALGO may be
+   given as 0 if the algorithms to be used are later set using
+   gcry_md_enable. */
+GcryMDHd
 gcry_md_open (int algo, unsigned int flags)
 {
   GCRY_MD_HD hd;
 
-  if (check_digest_algo (algo))
-    {
-      set_lasterr (GCRYERR_INV_MD_ALGO);
-      return NULL;
-    }
-  if ((flags &~ GCRY_MD_FLAG_SECURE) > GCRY_MD_FLAG_SECURE
-      && (flags &~ GCRY_MD_FLAG_HMAC) > GCRY_MD_FLAG_HMAC)
+  if ((flags & ~(GCRY_MD_FLAG_SECURE | GCRY_MD_FLAG_HMAC)))
     {
       set_lasterr (GCRYERR_INV_ARG);
       return NULL;
@@ -535,9 +539,9 @@ md_write( GCRY_MD_HD a, byte *inbuf, size_t inlen)
 
 
 void
-gcry_md_write( GCRY_MD_HD hd, const byte *inbuf, size_t inlen)
+gcry_md_write( GCRY_MD_HD hd, const void *inbuf, size_t inlen)
 {
-    md_write( hd, (byte*)inbuf, inlen );
+    md_write( hd, (unsigned char *)inbuf, inlen );
 }
 
 
@@ -632,7 +636,7 @@ gcry_md_ctl( GCRY_MD_HD hd, int cmd, byte *buffer, size_t buflen)
 
 
 int
-gcry_md_setkey( GCRY_MD_HD hd, const char *key, size_t keylen )
+gcry_md_setkey( GCRY_MD_HD hd, const void *key, size_t keylen )
 {
     int rc = 0;
 
@@ -751,7 +755,7 @@ gcry_md_get( GCRY_MD_HD hd, int algo, byte *buffer, int buflen )
  * abort on an invalid algo.  DISABLED_ALGOS are ignored here.
  */
 void
-gcry_md_hash_buffer( int algo, char *digest, const char *buffer, size_t length)
+gcry_md_hash_buffer( int algo, void *digest, const void *buffer, size_t length)
 {
     if( algo == GCRY_MD_RMD160 )
 	_gcry_rmd160_hash_buffer( digest, buffer, length );
@@ -787,7 +791,7 @@ gcry_md_get_algo (GCRY_MD_HD hd)
   int algo = md_get_algo (hd);
   if (!algo)
     {
-      set_lasterr (GCRYERR_INV_MD_ALGO);
+      set_lasterr (GCRYERR_GENERAL);
       return 0;
     }
   return algo;
@@ -818,19 +822,26 @@ md_digest_length( int algo )
 unsigned int
 gcry_md_get_algo_dlen( int algo )
 {
-    /* we do some very quick checks here */
-    switch( algo )
+  /* we cheat a little bit */
+  switch( algo )
     {
-      case GCRY_MD_MD4:
-      case GCRY_MD_MD5: return 16;
-      case GCRY_MD_SHA1:
-      case GCRY_MD_RMD160: return 20;
-      default: {
-	    int len = md_digest_length( algo );
-	    if( !len )
-		set_lasterr( GCRYERR_INV_MD_ALGO );
-	    return 0;
-	}
+    case GCRY_MD_MD4:
+    case GCRY_MD_MD5: return 16;
+    case GCRY_MD_SHA1:
+    case GCRY_MD_RMD160: return 20;
+    case GCRY_MD_SHA256: return 32;
+    case GCRY_MD_SHA384: return 48;
+    case GCRY_MD_SHA512: return 64;
+    case GCRY_MD_CRC32:
+    case GCRY_MD_CRC32_RFC1510: return 4;
+    case GCRY_MD_CRC24_RFC2440: return 3;
+    default: 
+      {
+        int len = md_digest_length( algo );
+        if( !len )
+          set_lasterr( GCRYERR_INV_MD_ALGO );
+        return 0;
+      }
     }
 }
 
@@ -997,4 +1008,7 @@ gcry_md_info( GCRY_MD_HD h, int cmd, void *buffer, size_t *nbytes)
     }
     return 0;
 }
+
+
+
 

@@ -1,5 +1,5 @@
 /* global.c  -	global control functions
- * Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+ * Copyright (C) 1998,1999,2000,2001,2002,2003 Free Software Foundation, Inc.
  *
  * This file is part of Libgcrypt.
  *
@@ -25,6 +25,8 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <assert.h>
+#include <limits.h>
+#include <errno.h>
 
 #include "g10lib.h"
 #include "cipher.h"
@@ -49,14 +51,14 @@ static void *outofcore_handler_value = NULL;
 static int no_secure_memory = 0;
 static int any_init_done;
 
-/* This is out handmade constructore.  It gets called by any function
+/* This is our handmade constructor.  It gets called by any function
    likely to be called at startup.  The suggested way for an
    application to make sure that this has been called is by using
    gcry_check_version. */
 static void
 global_init (void)
 {
-  if (!any_init_done)
+  if (any_init_done)
     return;
   any_init_done = 1;
   ath_init ();
@@ -143,16 +145,20 @@ gcry_control( enum gcry_ctl_cmds cmd, ... )
 
     va_start( arg_ptr, cmd ) ;
     switch( cmd ) {
-     #if 0
+#if 0
       case GCRYCTL_NO_MEM_IS_FATAL:
 	break;
       case GCRYCTL_SET_FATAL_FNC:
 	break;
-     #endif
+#endif
 
       case GCRYCTL_ENABLE_M_GUARD:
 	_gcry_private_enable_m_guard();
 	break;
+
+      case GCRYCTL_ENABLE_QUICK_RANDOM:
+        _gcry_quick_random_gen (1);
+        break;
 
       case GCRYCTL_DUMP_RANDOM_STATS:
 	_gcry_random_dump_stats();
@@ -217,7 +223,7 @@ gcry_control( enum gcry_ctl_cmds cmd, ... )
 
       case GCRYCTL_DISABLE_INTERNAL_LOCKING:
         global_init ();
-        /* We wase some bytes by doing it this way.  OTOH this
+        /* We waste some bytes by doing it this way.  OTOH this
            function is not anymore required becuase it is done
            automagically. */
         ath_deinit ();
@@ -225,20 +231,21 @@ gcry_control( enum gcry_ctl_cmds cmd, ... )
 
       case GCRYCTL_ANY_INITIALIZATION_P:
         va_end(arg_ptr);
-        return any_init_done? -1 : 0;
+        return any_init_done? 1 : 0;
 
       case GCRYCTL_INITIALIZATION_FINISHED_P:
         va_end(arg_ptr);
-        return init_finished? -1 : 0;
+        return init_finished? 1 : 0;
 
       case GCRYCTL_INITIALIZATION_FINISHED:
         /* This is a hook which should be used by an application after
-           all intialization has been done and right before any
+           all initialization has been done and right before any
            threads are started.  It is not really needed but the only
            way to be really sure that all initialization for
            thread-safety has been done. */
         if (!init_finished) {
             global_init ();
+            _gcry_random_initialize ();
             init_finished = 1;
         }
         break;
@@ -295,6 +302,7 @@ gcry_strerror( int ec )
       X(NOT_IMPL,       N_("not implemented"))
       X(CONFLICT,	N_("conflict"))
       X(INV_CIPHER_MODE,N_("invalid cipher mode"))
+        X(INV_FLAG,     N_("invalid flag"))
 
         X(SEXP_INV_LEN_SPEC   ,N_("invalid length specification")) 
         X(SEXP_STRING_TOO_LONG,N_("string too long")) 
@@ -438,21 +446,41 @@ gcry_free( void *p )
 }
 
 void *
-gcry_calloc( size_t n, size_t m )
+gcry_calloc (size_t n, size_t m)
 {
-    void *p = gcry_malloc( n*m );
-    if( p )
-	memset( p, 0, n*m );
-    return p;
+  size_t bytes;
+  void *p;
+
+  bytes = n * m; /* size_t is unsigned so the behavior on overflow is defined. */
+  if (m && bytes / m != n) 
+    {
+      errno = ENOMEM;
+      return NULL;
+    }
+
+  p = gcry_malloc (bytes);
+  if (p)
+    memset (p, 0, bytes);
+  return p;
 }
 
 void *
-gcry_calloc_secure( size_t n, size_t m )
+gcry_calloc_secure (size_t n, size_t m)
 {
-    void *p = gcry_malloc_secure( n*m );
-    if( p )
-	memset( p, 0, n*m );
-    return p;
+  size_t bytes;
+  void *p;
+
+  bytes = n * m; /* size_t is unsigned so the behavior on overflow is defined. */
+  if (m && bytes / m != n) 
+    {
+      errno = ENOMEM;
+      return NULL;
+    }
+  
+  p = gcry_malloc_secure (bytes);
+  if (p)
+    memset (p, 0, bytes);
+  return p;
 }
 
 
@@ -553,6 +581,29 @@ _gcry_get_debug_flag( unsigned int mask )
    of progress currently done and TOTAL the expected amount of
    progress.  A value of 0 for TOTAL indicates that there is no
    estimation available.
+
+   Defined values for WHAT:
+
+   "need_entropy"  X    0  number-of-bytes-required
+            When running low on entropy
+   "primegen"      '\n'  0 0
+           Prime generated
+                   '!'
+           Need to refresh the prime pool
+                   '<','>'
+           Number of bits adjusted
+                   '^'
+           Looking for a generator
+                   '.'
+           Fermat tests on 10 candidates failed
+                  ':'
+           Restart with a new random value
+                  '+'
+           Rabin Miller test passed          
+   "pk_elg"        '+','-','.','\n'   0  0
+            Only used in debugging mode.
+   "pk_dsa"       
+            Only used in debugging mode.
 */
 void
 gcry_set_progress_handler (void (*cb)(void *,const char*,int, int, int),
@@ -561,4 +612,5 @@ gcry_set_progress_handler (void (*cb)(void *,const char*,int, int, int),
   _gcry_register_pk_dsa_progress (cb, cb_data);
   _gcry_register_pk_elg_progress (cb, cb_data);
   _gcry_register_primegen_progress (cb, cb_data);
+  _gcry_register_random_progress (cb, cb_data);
 }

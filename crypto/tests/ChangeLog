@@ -1,3 +1,27 @@
+2003-01-23  Werner Koch  <wk@gnupg.org>
+
+	* keygen.c: New. 
+
+2003-01-20  Simon Josefsson  <jas@extundo.com>
+
+	* basic.c (check_digests): Add CRC.
+	(check_one_md): Print computed and expected values on error.
+
+2003-01-20  Werner Koch  <wk@gnupg.org>
+
+	* basic.c (check_one_md): Kludge to check a one million "a".
+	(check_digests): Add checks for SHA-256.
+
+2003-01-20  Werner Koch  <wk@gnupg.org>
+
+	* basic.c (check_pubkey): Check the keygrip for the sample key.
+
+2003-01-15  Werner Koch  <wk@gnupg.org>
+
+	* basic.c (verify_one_signature,check_pubkey_sign)
+	(check_pubkey): New.
+	(main): Check public key functions. Add a --debug option.
+
 2002-11-23  Werner Koch  <wk@gnupg.org>
 
 	* basic.c (check_digests): Add another test for MD4.  By Simon
@@ -40,7 +64,7 @@
 	* tsexp.c: New.
 
 	
- Copyright 2001, 2002 Free Software Foundation, Inc.
+ Copyright 2001, 2002, 2003 Free Software Foundation, Inc.
 
  This file is free software; as a special exception the author gives
  unlimited permission to copy and/or distribute it, with or without
@@ -49,5 +73,3 @@
  This file is distributed in the hope that it will be useful, but
  WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-	
-

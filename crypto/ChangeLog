@@ -1,3 +1,31 @@
+2003-01-21  Werner Koch  <wk@gnupg.org>
+
+	* README (Configure options): New. 
+	* configure.ac (have_ld_version_script): New option
+	--enable-ld-version-script.
+
+2003-01-20  Simon Josefsson  <jas@extundo.com>
+
+	* configure.ac (MODULES_IN_CIPHER): Add crc.
+
+2003-01-20  Werner Koch  <wk@gnupg.org>
+
+	Released 1.1.12.
+	
+	* configure.ac (LIBGCRYPT_LT_REVISION): Bumbed up.
+
+2002-12-21  Werner Koch  <wk@gnupg.org>
+
+	Released 1.1.11.
+	
+	* configure.ac (LIBGCRYPT_LT_CURRENT: Bumbed to 6/5/0 due to a new
+	interface
+
+2002-12-19  Werner Koch  <wk@gnupg.org>
+
+	* configure.ac (have_pthread): Check for pthreads in libc.
+	(have_ld_version_script): New.
+
 2002-11-10  Werner Koch  <wk@gnupg.org>
 
 	* configure.ac (MODULES_IN_CIPHER): Add md4.c.  By Simon Josefsson.
