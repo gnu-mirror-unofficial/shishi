@@ -43,7 +43,7 @@ _shishi_kdcreq (Shishi * handle, int as)
   int res;
   Shishi_asn1 node;
   const char *servicebuf[3];
-  char noncebuf[4];
+  uint32_t nonce;
 
   if (as)
     node = shishi_asn1_asreq (handle);
@@ -108,9 +108,8 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (res != SHISHI_OK)
     goto error;
 
-  shishi_randomize (handle, 0, &noncebuf[0], sizeof (noncebuf));
-  res = shishi_asn1_write (handle, node, "req-body.nonce", noncebuf,
-			   sizeof (noncebuf));
+  shishi_randomize (handle, 0, &nonce, sizeof (nonce));
+  res = shishi_kdcreq_nonce_set (handle, node, nonce);
   if (res != SHISHI_OK)
     goto error;
 
@@ -336,6 +335,30 @@ shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq, uint32_t * nonce)
   int res;
 
   res = shishi_asn1_read_uint32 (handle, kdcreq, "req-body.nonce", nonce);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_kdcreq_nonce_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to set client name field in.
+ * @nonce: integer nonce to store in KDC-REQ.
+ *
+ * Store nonce number field in KDC-REQ.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcreq_nonce_set (Shishi * handle,
+			 Shishi_asn1 kdcreq,
+			 uint32_t nonce)
+{
+  int res;
+
+  res = shishi_asn1_write_uint32 (handle, kdcreq, "req-body.nonce", nonce);
   if (res != SHISHI_OK)
     return res;
 
