@@ -103,7 +103,7 @@ shishi_cfg (Shishi * handle, char *option)
 	  {
 	    time_t now = time (NULL);
 	    time_t then = get_date (value, &now);
-	    int diff = (int) difftime (then, now);
+	    int diff = difftime (then, now);
 
 	    if (value && then != -1 && diff > 0)
 	      handle->ticketlife = diff;
@@ -123,7 +123,7 @@ shishi_cfg (Shishi * handle, char *option)
 	  {
 	    time_t now = time (NULL);
 	    time_t then = get_date (value, &now);
-	    int diff = (int) difftime (then, now);
+	    int diff = difftime (then, now);
 
 	    if (value && then != -1 && diff > 0)
 	      handle->renewlife = diff;
