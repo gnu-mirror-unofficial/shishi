@@ -121,31 +121,11 @@ shishi_as_req (Shishi_as * as)
 int
 shishi_as_req_build (Shishi_as * as)
 {
-  char rtime[BUFSIZ];		/* XXX dynamically allocate this */
-  int rtimelen;
   int res;
 
-  if (VERBOSE (as->handle))
-    printf ("Building AS-REQ...\n");
-
-  res = shishi_asn1_empty_field (as->handle, as->asreq, rtime, &rtimelen,
-				 "req-body.rtime");
+  res = shishi_kdcreq_build (as->handle, as->asreq);
   if (res != SHISHI_OK)
-    {
-      shishi_error_printf (as->handle, "Could not read rtime\n");
       return res;
-    }
-
-  if (rtimelen == 0)
-    {
-      res = shishi_asn1_write (as->handle, as->asreq,
-			       "req-body.rtime", NULL, 0);
-      if (res != SHISHI_OK)
-	{
-	  shishi_error_printf (as->handle, "Could not write rtime\n");
-	  return res;
-	}
-    }
 
   return SHISHI_OK;
 }
