@@ -72,7 +72,26 @@ shishi_authenticator (Shishi * handle)
   if (res != SHISHI_OK)
     goto error;
 
+  /*
+   * For sequence numbers to adequately support the detection of
+   * replays they SHOULD be non-repeating, even across connection
+   * boundaries. The initial sequence number SHOULD be random and
+   * uniformly distributed across the full space of possible sequence
+   * numbers, so that it cannot be guessed by an attacker and so that
+   * it and the successive sequence numbers do not repeat other
+   * sequences.
+   */
   shishi_randomize (handle, 0, &seqnr, sizeof(seqnr));
+
+  /*
+   * Implementation note: as noted before, some implementations omit
+   * the optional sequence number when its value would be zero.
+   * Implementations MAY accept an omitted sequence number when
+   * expecting a value of zero, and SHOULD NOT transmit an
+   * Authenticator with a initial sequence number of zero.
+   */
+  if (seqnr == 0)
+    seqnr++;
 
   res = shishi_asn1_write_uint32 (handle, node, "seq-number", seqnr);
   if (res != SHISHI_OK)
