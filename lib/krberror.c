@@ -255,18 +255,18 @@ shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
 int
 shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror)
 {
-  char *time;
-  size_t tmplen = sizeof (time);
+  char *t;
+  size_t tmplen = sizeof (t);
   char *tmp;
   int32_t errc;
   int usec;
   int rc;
 
-  rc = shishi_krberror_ctime (handle, krberror, &time);
+  rc = shishi_krberror_ctime (handle, krberror, &t);
   if (rc != SHISHI_OK &&
       rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
-  free (time);
+  free (t);
   if (rc == SHISHI_ASN1_NO_VALUE)
     {
       rc = shishi_krberror_remove_ctime (handle, krberror);
@@ -298,8 +298,8 @@ shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror)
 	return rc;
     }
 
-  tmplen = sizeof (time);
-  rc = shishi_krberror_cname (handle, krberror, time, &tmplen);
+  tmplen = sizeof (t);
+  rc = shishi_krberror_cname (handle, krberror, t, &tmplen);
   if (rc != SHISHI_OK &&
       rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
@@ -322,8 +322,8 @@ shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror)
 	return rc;
     }
 
-  tmplen = sizeof (time);
-  rc = shishi_krberror_sname (handle, krberror, time, &tmplen);
+  tmplen = sizeof (t);
+  rc = shishi_krberror_sname (handle, krberror, t, &tmplen);
   if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   if (rc == SHISHI_ASN1_NO_VALUE || tmplen == 0)
