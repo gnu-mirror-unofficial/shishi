@@ -553,7 +553,8 @@ shishi_ticketset_print (Shishi * handle,
 Shishi_ticket *
 shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
 					       Shishi_ticketset * ticketset,
-					       char *client, char *server)
+					       const char *client,
+					       const char *server)
 {
   int i;
 
@@ -582,7 +583,7 @@ shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
 Shishi_ticket *
 shishi_ticketset_find_ticket_for_server (Shishi * handle,
 					 Shishi_ticketset * ticketset,
-					 char *server)
+					 const char *server)
 {
   return shishi_ticketset_find_ticket_for_clientserver
     (handle, ticketset, shishi_principal_default (handle), server);

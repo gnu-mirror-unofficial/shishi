@@ -933,7 +933,7 @@ main (int argc, char *argv[])
 
 	if (arg.tgtname == NULL)
 	  {
-	    char *realm = shishi_realm_default (handle);
+	    const char *realm = shishi_realm_default (handle);
 	    int len = strlen ("krbtgt/") + strlen (realm) + 1;
 	    arg.tgtname = malloc (len);
 	    if (arg.tgtname == NULL)
@@ -1068,7 +1068,7 @@ main (int argc, char *argv[])
 
 	if (arg.tgtname == NULL)
 	  {
-	    char *realm = shishi_realm_default (handle);
+	    const char *realm = shishi_realm_default (handle);
 	    int len = strlen ("krbtgt/") + strlen (realm) + 1;
 	    arg.tgtname = malloc (len);
 	    if (arg.tgtname == NULL)

@@ -364,11 +364,12 @@ extern Shishi_ticket *
 shishi_ticketset_find_ticket_for_server (Shishi *
 					 handle,
 					 Shishi_ticketset * ticketset,
-					 char *server);
+					 const char *server);
 extern Shishi_ticket *
 shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
 					       Shishi_ticketset * ticketset,
-					       char *client, char *server);
+					       const char *client,
+					       const char *server);
 
 /* ap.c */
 extern ASN1_TYPE shishi_ap_req (Shishi * handle);

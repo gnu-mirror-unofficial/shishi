@@ -62,14 +62,14 @@ kdc_write_apreq (Shishi * handle, struct arguments arg, ASN1_TYPE req)
 	  if (res != ASN1_SUCCESS)
 	    {
 	      fprintf (stdout, libtasn1_strerror (res));
-	      return ASN1_TYPE_EMPTY;
+	      return SHISHI_ASN1_ERROR;
 	    }
 
 	  apreq = shishi_d2a_apreq (handle, der, derlen, errorDescription);
 	  if (apreq == ASN1_TYPE_EMPTY)
 	    {
 	      fprintf (stdout, "Could not DER deocde AP-REQ\n");
-	      return ASN1_TYPE_EMPTY;
+	      return SHISHI_ASN1_ERROR;
 	    }
 
 	  if (arg.apreqwritefile)
