@@ -485,6 +485,31 @@ read_key (Shisa * dbh,
   return SHISA_OK;
 }
 
+static int
+key_match (const Shisa_key * hint, Shisa_key * key)
+{
+  int ok = 1;
+
+  if (hint->kvno)
+    ok = ok && hint->kvno == key->kvno;
+  if (hint->etype)
+    ok = ok && hint->etype == key->etype;
+  if (hint->keylen)
+    ok = ok && hint->keylen == key->keylen &&
+      memcmp (hint->key, key->key, key->keylen) == 0;
+  if (hint->saltlen)
+    ok = ok && hint->saltlen == key->saltlen &&
+      memcmp (hint->salt, key->salt, key->saltlen) == 0;
+  if (hint->str2keyparamlen)
+    ok = ok && hint->str2keyparamlen == key->str2keyparamlen &&
+      memcmp (hint->str2keyparam, key->str2keyparam,
+	      key->str2keyparamlen) == 0;
+  if (hint->password)
+    ok = ok && strcmp (hint->password, key->password) == 0;
+
+  return ok;
+}
+
 /* Get all keys matching HINT for specified PRINCIPAL@REALM.  The
    caller must deallocate the returned keys.  If HINT is NULL, then
    all keys are returned. */
@@ -493,12 +518,13 @@ shisa_file_keys_find (Shisa * dbh,
 		      void *state,
 		      const char *realm,
 		      const char *principal,
-		      Shisa_key * hint,
+		      const Shisa_key * hint,
 		      Shisa_key *** keys, size_t * nkeys)
 {
   Shisa_file *info = state;
+  Shisa_key *tmpkey;
   char **files;
-  size_t nfiles;
+  size_t nfiles, matched = 0;
   size_t i;
   int rc;
 
@@ -509,23 +535,35 @@ shisa_file_keys_find (Shisa * dbh,
   if (rc != SHISA_OK)
     return rc;
 
-  *nkeys = nfiles;
+  if (nkeys)
+    *nkeys = nfiles;
   if (keys)
     *keys = xmalloc (nfiles * sizeof (**keys));
   for (i = 0; i < nfiles; i++)
     {
-      if (keys && rc == SHISA_OK)
+      if (rc == SHISA_OK &&
+	  (rc = read_key (dbh, info, realm, principal,
+			  files[i], &tmpkey)) == SHISA_OK)
 	{
-	  rc = read_key (dbh, info, realm, principal, files[i], &(*keys)[i]);
-	  if (rc != SHISA_OK)
-	    /* XXX mem leak. */
-	    (*keys)[i] = NULL;
+	  if (hint == NULL || key_match (hint, tmpkey))
+	    {
+	      if (keys)
+		(*keys)[matched] = tmpkey;
+	      matched++;
+	    }
+	  else
+	    shisa_key_free (dbh, tmpkey);
 	}
       free (files[i]);
     }
-  free (files);
 
-  return SHISA_OK;
+  if (nfiles > 0)
+    free (files);
+
+  if (nkeys)
+    *nkeys = matched;
+
+  return rc;
 }
 
 /* Add key for PRINCIPAL@REALM. */
@@ -607,8 +645,49 @@ shisa_file_key_remove (Shisa * dbh,
 		       const Shisa_key * key)
 {
   Shisa_file *info = state;
+  Shisa_key *tmpkey;
+  char **files;
+  size_t nfiles;
+  size_t i;
+  int rc;
+  char *found = NULL;
 
-  puts("fkr");
+  files = NULL;
+  nfiles = 0;
 
-  return SHISA_NO_KEY;
+  rc = _shisa_ls4 (info->path, realm, principal, "keys", &files, &nfiles);
+  if (rc != SHISA_OK)
+    return rc;
+
+  for (i = 0; i < nfiles; i++)
+    {
+      if (rc == SHISA_OK &&
+	  (rc = read_key (dbh, info, realm, principal,
+			  files[i], &tmpkey)) == SHISA_OK)
+	{
+	  if (key == NULL || key_match (key, tmpkey))
+	    {
+	      if (found)
+		rc = SHISA_MULTIPLE_KEY_MATCH;
+	      else
+		found = xstrdup (files[i]);
+	    }
+	  shisa_key_free (dbh, tmpkey);
+	}
+      free (files[i]);
+    }
+
+  if (nfiles > 0)
+    free (files);
+
+  if (rc == SHISA_OK)
+    if (found)
+      {
+	rc = _shisa_rm5 (info->path, realm, principal, "keys", found);
+	free (found);
+      }
+    else
+      rc = SHISA_NO_KEY;
+
+  return rc;
 }
