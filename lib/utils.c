@@ -140,7 +140,8 @@ shishi_get_date (const char *p, const time_t *now)
   struct timespec nowspec = { 0, 0 };
   struct timespec thenspec;
 
-  nowspec.tv_sec = now;
+  if (now)
+    nowspec.tv_sec = *now;
 
   if (!get_date (&thenspec, p, &nowspec))
     {
