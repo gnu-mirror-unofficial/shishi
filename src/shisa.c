@@ -28,6 +28,10 @@
 #include <stdarg.h>
 #include <ctype.h>
 
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
+
 #include <gettext.h>
 
 #include <shisa.h>
@@ -43,6 +47,8 @@ main (int argc, char *argv[])
   textdomain (PACKAGE);
 
   rc = shisa_init (&dbh);
+  if (rc != SHISA_OK)
+    error (1, 0, "Initialization failed");
 
   shisa_done (dbh);
 

@@ -42,15 +42,46 @@
 
 #include "shisa.h"
 
-struct Shisa
+typedef int (*_Shisa_db_init) (Shisa *dbh,
+			       const char *location,
+			       const char *options,
+			       void **state);
+typedef void (*_Shisa_db_done) (Shisa *dbh, void *state);
+
+struct _Shisa_backend
 {
-  int foo;
+  char *name;
+  _Shisa_db_init init;
+  _Shisa_db_done done;
 };
+typedef struct _Shisa_backend _Shisa_backend;
 
 struct Shisa_realm
 {
   Shisa * dbh;
   const char *realm;
 };
+
+struct _Shisa_db
+{
+  _Shisa_backend *backend;
+  void *state;
+};
+typedef struct _Shisa_db _Shisa_db;
+
+struct Shisa
+{
+  _Shisa_db *dbs;
+  size_t ndbs;
+};
+
+extern int shisa_file_init (Shisa *dbh,
+			    const char *location,
+			    const char *options,
+			    void **state);
+extern void shisa_file_done (Shisa *dbh, void *state);
+
+extern _Shisa_backend *_shisa_find_backend (const char *name);
+extern int getsubopt (char **optionp, char *const *tokens, char **valuep);
 
 #endif /* _INTERNAL_H */

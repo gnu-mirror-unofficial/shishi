@@ -1,4 +1,4 @@
-# shisa.conf --- Database configuration file for Shishi
+# shisa.conf --- Database configuration file for Shishi.
 # Copyright 2002, 2003  Simon Josefsson
 # 
 # Copying and distribution of this file, with or without modification,
@@ -12,8 +12,20 @@
 # See the manual for a list of options.
 
 # db <type> [location] [parameters ...]
-# Specifies the data sources to find Kerberos 5 data.
-# Currently only the "file" database type is supported.
+# Specifies the data sources for Kerberos 5 data.  Multiple entries,
+# even of the same data source type, are allowed.
 #
-# Examples (this is also the default if no database is specified):
-# db file /var/shishi/shisa.db
+# Currently only the "file" data source is supported, and denote a
+# standard text file.
+#
+# Valid syntaxes for the "file" database:
+# db file FILENAME
+# db file FILENAME allow-create
+# db file FILENAME read-only
+#
+# Examples:
+# db file /var/shishi/local.db
+# db file /usr/share/shishi/global.db read-only
+#
+# If nothing is specified, the default will be:
+# db file /var/shishi/shisa.db allow-create

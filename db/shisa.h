@@ -30,6 +30,8 @@
 enum Shisa_rc
 {
   SHISA_OK = 0,
+  SHISA_CFG_ERROR,
+  SHISA_FOPEN_ERROR,
   SHISA_IO_ERROR,
   SHISA_HANDLE_ERROR
 };
@@ -70,6 +72,13 @@ extern Shisa *shisa (void);
 extern void shisa_done (Shisa * dbh);
 extern int shisa_init (Shisa ** dbh);
 extern int shisa_init_with_paths (Shisa ** dbh, const char *file);
+
+/* cfg.c */
+extern int shisa_cfg (Shisa * dbh, char *option);
+extern int shisa_cfg_db (Shisa * dbh, char *value);
+extern int shisa_cfg_from_file (Shisa * dbh, const char *cfg);
+extern void shisa_cfg_print (Shisa * dbh, FILE * fh);
+extern const char *shisa_cfg_default_systemfile (Shisa * dbh);
 
 /* */
 extern int shisa_enumerate_realms (Shisa *dbh,

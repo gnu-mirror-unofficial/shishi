@@ -19,26 +19,21 @@
  *
  */
 
-#include <shisa.h>
+#include "internal.h"
 
-struct Shisa
-{
-  int foo;
+static _Shisa_backend _shisa_backends[] = {
+  { "file",
+    shisa_file_init,
+    shisa_file_done }
 };
 
-
-Shisa *
-shisa (void)
+_Shisa_backend *
+_shisa_find_backend (const char *name)
 {
-  Shisa *dbh;
+  size_t i;
+  for (i = 0; i < sizeof (_shisa_backends) / sizeof (_shisa_backends[0]); i++)
+    if (strcmp (name, _shisa_backends[i].name) == 0)
+      return &_shisa_backends[i];
 
-  dbh = xcalloc (1, sizeof (*dbh));
-
-  return dbh;
+  return NULL;
 }
-
-struct Shisa_realm
-{
-  Shisa * dbh;
-  const char *realm;
-};

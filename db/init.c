@@ -52,6 +52,12 @@ shisa (void)
 void
 shisa_done (Shisa * dbh)
 {
+  _Shisa_db *db;
+  size_t i;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    db->backend->done (dbh, db->state);
+
   free (dbh);
 }
 
@@ -95,11 +101,24 @@ shisa_init (Shisa ** dbh)
 int
 shisa_init_with_paths (Shisa ** dbh, const char *file)
 {
+  int rc;
+
   if (!dbh || !(*dbh = shisa ()))
     return SHISA_HANDLE_ERROR;
 
   if (!file)
     file = shisa_cfg_default_systemfile (*dbh);
 
-  return shisa_cfg_from_file (*dbh, file);
+  rc = shisa_cfg_from_file (*dbh, file);
+  if (rc != SHISA_OK && rc != SHISA_FOPEN_ERROR)
+    return rc;
+
+  if ((*dbh)->ndbs == 0)
+    {
+      rc = shisa_cfg_db (*dbh, "file foo allow-create");
+      if (rc != SHISA_OK)
+	return rc;
+    }
+
+  return SHISA_OK;
 }

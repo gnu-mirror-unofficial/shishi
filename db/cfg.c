@@ -32,7 +32,63 @@ static char *const _shisa_opts[] = {
   /* [THE_END] =          */ NULL
 };
 
-int getsubopt (char **optionp, char *const *tokens, char **valuep);
+/**
+ * shisa_cfg_db:
+ * @handle: Shisa library handle created by shishi().
+ * @value: string with database definition.
+ *
+ * Setup and open a new database.  The syntax of the @value parameter
+ * is "TYPE[ LOCATION[ PARAMETER]]", where TYPE is one of the
+ * supported database types (e.g., "file") and LOCATION and PARAMETER
+ * are optional strings passed to the database during initialization.
+ * Neither TYPE nor LOCATION can contain " " (SPC), but PARAMETER may.
+ *
+ * Return Value: Returns %SHISA_OK if database was parsed and open
+ *   successfully.
+ **/
+int
+shisa_cfg_db (Shisa * dbh, char *value)
+{
+  char *p;
+  char *db;
+  char *location = NULL;
+  char *options = NULL;
+  _Shisa_backend *backend;
+  void *state;
+  int rc;
+
+  db = xstrdup (value);
+  if ((p = strchr (db, ' ')))
+    {
+      *p++ = '\0';
+      location = p;
+      if ((p = strchr (p, ' ')))
+	{
+	  *p++ = '\0';
+	  options = p;
+	}
+    }
+
+  backend = _shisa_find_backend (db);
+  if (backend == NULL)
+    {
+      fprintf (stderr, "Unknown database type: `%s'\n", db);
+      return SHISA_CFG_ERROR;
+    }
+
+  rc = backend->init (dbh, location, options, &state);
+  if (rc != SHISA_OK)
+    {
+      fprintf (stderr, "Cannot initialize `%s' database backend\n", db);
+      return rc;
+    }
+
+  dbh->dbs = xrealloc (dbh->dbs, ++dbh->ndbs * sizeof (*dbh->dbs));
+  dbh->dbs->backend = backend;
+  dbh->dbs->state = state;
+
+  return SHISA_OK;
+}
 
 /**
  * shisa_cfg:
@@ -47,13 +103,16 @@ int
 shisa_cfg (Shisa * dbh, char *option)
 {
   char *value;
+  int rc;
 
   while (option != NULL && *option != '\0')
     {
       switch (getsubopt (&option, _shisa_opts, &value))
 	{
 	case DB_OPTION:
-	  printf ("foo %s\n", value);
+	  rc = shisa_cfg_db (dbh, value);
+	  if (rc != SHISA_OK)
+	    return rc;
 	  break;
 
 	default:
@@ -85,7 +144,10 @@ shisa_cfg_from_file (Shisa * dbh, const char *cfg)
 
   fh = fopen (cfg, "r");
   if (fh == NULL)
-    return SHISA_IO_ERROR;
+    {
+      perror (cfg);
+      return SHISA_FOPEN_ERROR;
+    }
 
   initbuffer (&lb);
 
