@@ -143,12 +143,38 @@ shishi_tgs_realmsname (Shishi * handle,
   if (*tgs == NULL)
     return SHISHI_MALLOC_ERROR;
 
-  (*tgs)->tgsreq = shishi_tgsreq (handle, realm, sname, tgticket);
+  (*tgs)->tgsreq = shishi_tgs_req (handle);
   if ((*tgs)->tgsreq == ASN1_TYPE_EMPTY)
-    goto done;
+    return ASN1_TYPE_EMPTY;
+      
+  res = shishi_kdcreq_set_realmserver (handle, (*tgs)->tgsreq, realm, sname);
+  if (res != SHISHI_OK)
+    {
+      fprintf (stderr, _("Could not set realm and server in KDC-REQ: %s\n"),
+	       shishi_strerror (res));
+      goto done;
+    }
+
+  res = shishi_ticket_apreq_asn1_usage
+    (handle, tgticket, SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
+     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR, 
+     (*tgs)->tgsreq, "KDC-REQ.req-body", &(*tgs)->apreq);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not make AP-REQ: %s\n",
+			   shishi_strerror_details (handle));
+      goto done;
+    }
+
+  res = shishi_kdcreq_add_padata_tgs (handle, (*tgs)->tgsreq, (*tgs)->apreq);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not add padata to TGS: %s\n",
+			   shishi_strerror_details (handle));
+      goto done;
+    }
 
   (*tgs)->authenticator = shishi_last_authenticator(handle);
-  (*tgs)->apreq = shishi_last_apreq(handle);
 
   res = shishi_kdcreq_sendrecv (handle, (*tgs)->tgsreq, &(*tgs)->tgsrep);
   if (res != SHISHI_OK)
