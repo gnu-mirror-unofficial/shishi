@@ -19,7 +19,7 @@
 # Boston, MA 02111-1307, USA.
 
 if ENABLE_GTK_DOC
-SUBDIRS = reference
+SUBDIRS = . reference
 endif
 
 EXTRA_DIST = gdoc shishi.html shishi.pdf shishi.ps texinfo.css \
