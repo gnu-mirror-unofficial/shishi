@@ -53,7 +53,7 @@ shishi_ticket_realm_set (Shishi * handle, Shishi_asn1 ticket,
 
 int
 shishi_ticket_sname_get (Shishi * handle,
-			 Shishi_asn1 ticket, char *server, int *serverlen)
+			 Shishi_asn1 ticket, char *server, size_t *serverlen)
 {
   return shishi_principal_name_get (handle, ticket, "sname",
 				    server, serverlen);

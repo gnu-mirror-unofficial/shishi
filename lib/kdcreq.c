@@ -342,8 +342,7 @@ shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq, uint32_t *nonce)
 {
   int res;
 
-  res = shishi_asn1_integer_field (handle, kdcreq,
-				   (int*)nonce, "req-body.nonce");
+  res = shishi_asn1_read_uint32 (handle, kdcreq, "req-body.nonce", nonce);
   if (res != SHISHI_OK)
     return res;
 
@@ -519,13 +518,13 @@ shishi_kdcreq_set_realmserver (Shishi * handle,
  **/
 int
 shishi_kdcreq_etype (Shishi * handle,
-		     Shishi_asn1 kdcreq, int *etype, int netype)
+		     Shishi_asn1 kdcreq, int32_t *etype, int netype)
 {
-  char buf[BUFSIZ];
+  char *buf;
   int res;
 
-  sprintf (buf, "req-body.etype.?%d", netype);
-  res = shishi_asn1_integer_field (handle, kdcreq, etype, buf);
+  asprintf (&buf, "req-body.etype.?%d", netype);
+  res = shishi_asn1_read_int32 (handle, kdcreq, buf, etype);
   if (res != SHISHI_OK)
     return res;
 
@@ -546,11 +545,10 @@ shishi_kdcreq_etype (Shishi * handle,
  **/
 int
 shishi_kdcreq_set_etype (Shishi * handle,
-			 Shishi_asn1 kdcreq, int *etype, int netype)
+			 Shishi_asn1 kdcreq, int32_t *etype, int netype)
 {
   int res;
-  char buf[BUFSIZ];
-  char buf2[BUFSIZ];
+  char *buf;
   int i;
 
   res = shishi_asn1_write (handle, kdcreq, "req-body.etype", NULL, 0);
@@ -564,9 +562,9 @@ shishi_kdcreq_set_etype (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (buf, "req-body.etype.?%d", i);
-      sprintf (buf2, "%d", etype[i - 1]);
-      res = shishi_asn1_write (handle, kdcreq, buf, buf2, 0);
+      asprintf (&buf, "req-body.etype.?%d", i);
+      res = shishi_asn1_write_int32 (handle, kdcreq, buf, etype[i-1]);
+      free (buf);
       if (res != SHISHI_OK)
 	return res;
     }

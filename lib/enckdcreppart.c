@@ -87,10 +87,10 @@ shishi_enckdcreppart_get_key (Shishi * handle,
   int res;
   char buf[BUFSIZ];
   int buflen;
-  int keytype;
+  int32_t keytype;
 
-  res = shishi_asn1_integer_field (handle, enckdcreppart, &keytype,
-				   "key.keytype");
+  res = shishi_asn1_read_int32 (handle, enckdcreppart,
+				"key.keytype", &keytype);
   if (res != SHISHI_OK)
     return res;
 
@@ -154,7 +154,7 @@ shishi_enckdcreppart_nonce_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write_uint32 (handle, enckdcreppart, "nonce", nonce);
+  res = shishi_asn1_write_integer (handle, enckdcreppart, "nonce", nonce);
   if (res != SHISHI_OK)
     return res;
 

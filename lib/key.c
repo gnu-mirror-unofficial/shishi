@@ -117,7 +117,7 @@ shishi_key_type (Shishi_key * key)
  * Set the type of key in key structure.
  **/
 void
-shishi_key_type_set (Shishi_key * key, int type)
+shishi_key_type_set (Shishi_key * key, int32_t type)
 {
   key->type = type;
 }
@@ -274,7 +274,7 @@ shishi_key_copy (Shishi_key * dstkey, Shishi_key * srckey)
  **/
 int
 shishi_key_from_value (Shishi * handle,
-		       int type, char *value, Shishi_key ** key)
+		       int32_t type, char *value, Shishi_key ** key)
 {
   int rc;
 
@@ -307,7 +307,7 @@ shishi_key_from_value (Shishi * handle,
  **/
 int
 shishi_key_from_base64 (Shishi * handle,
-			int type, char *value, Shishi_key ** key)
+			int32_t type, char *value, Shishi_key ** key)
 {
   int rc;
 
@@ -354,7 +354,7 @@ shishi_key_from_base64 (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_key_random (Shishi * handle, int type, Shishi_key ** key)
+shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
 {
   char buf[MAX_RANDOM_LEN];
   int len = shishi_cipher_randomlen (type);
@@ -391,8 +391,9 @@ shishi_key_random (Shishi * handle, int type, Shishi_key ** key)
  **/
 int
 shishi_key_from_random (Shishi * handle,
-			int type,
-			char *random, int randomlen, Shishi_key ** key)
+			int32_t type,
+			char *random, size_t randomlen,
+			Shishi_key ** key)
 {
   int rc;
 
@@ -424,11 +425,10 @@ shishi_key_from_random (Shishi * handle,
  **/
 int
 shishi_key_from_string (Shishi * handle,
-			int type,
-			const char *password,
-			int passwordlen,
-			const char *salt,
-			int saltlen, const char *parameter, Shishi_key ** key)
+			int32_t type,
+			const char *password, size_t passwordlen,
+			const char *salt, size_t saltlen,
+			const char *parameter, Shishi_key ** key)
 {
   int rc;
 

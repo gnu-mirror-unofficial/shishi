@@ -706,8 +706,8 @@ shishi_tkts_find_for_clientserver (Shishi_tkts * tkts,
   Shishi_tkt *tkt;
 
   memset (&hint, 0, sizeof (hint));
-  hint.server = server;
-  hint.client = client;
+  hint.server = (char*) server;
+  hint.client = (char*) client;
 
   tkt = shishi_tkts_find (tkts, &hint);
 
@@ -873,8 +873,8 @@ shishi_tkts_get_for_clientserver (Shishi_tkts * tkts,
   Shishi_tkt *tkt;
 
   memset (&hint, 0, sizeof (hint));
-  hint.client = client;
-  hint.server = server;
+  hint.client = (char*) client;
+  hint.server = (char*) server;
 
   tkt = shishi_tkts_get (tkts, &hint);
 
@@ -918,9 +918,9 @@ shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
     strcpy (&buf[strlen (service) + 1], "localhost");
 
   memset (&hint, 0, sizeof (hint));
-  hint.client = shishi_principal_default (tkts->handle);
+  hint.client = (char*) shishi_principal_default (tkts->handle);
   hint.server = buf;
-  hint.passwd = passwd;
+  hint.passwd = (char*) passwd;
 
   return shishi_tkts_get (tkts, &hint);
 }

@@ -366,11 +366,11 @@ shishi_aprep_enc_part_make (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_get_enc_part_etype (Shishi * handle, Shishi_asn1 aprep,
-				 int *etype)
+shishi_aprep_get_enc_part_etype (Shishi * handle,
+				 Shishi_asn1 aprep,
+				 int32_t *etype)
 {
-  return shishi_asn1_integer_field (handle, aprep, etype,
-				    "enc-part.etype");
+  return shishi_asn1_read_int32 (handle, aprep, "enc-part.etype", etype);
 }
 
 int

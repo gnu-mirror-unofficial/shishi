@@ -345,7 +345,7 @@ shishi_cfg_default_userfile (Shishi * handle)
  *               0 means none.
  **/
 int
-shishi_cfg_clientkdcetype (Shishi * handle, int **etypes)
+shishi_cfg_clientkdcetype (Shishi * handle, int32_t **etypes)
 {
   *etypes = handle->clientkdcetypes;
   return handle->nclientkdcetypes;

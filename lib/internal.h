@@ -171,7 +171,7 @@ struct Shishi
   char *default_principal;
   int kdctimeout;
   int kdcretries;
-  int *clientkdcetypes;
+  int32_t *clientkdcetypes;
   int nclientkdcetypes;
   struct Shishi_realminfo *realminfos;
   int nrealminfos;

@@ -196,7 +196,7 @@ shishi_safe_safe_der (Shishi_safe * safe, char *out, int *outlen)
  * Return value: Returns SHISHI_OK.
  **/
 int
-shishi_safe_safe_der_set (Shishi_safe * safe, char *der, int derlen)
+shishi_safe_safe_der_set (Shishi_safe * safe, char *der, size_t derlen)
 {
   Shishi_asn1 asn1safe;
 
@@ -386,17 +386,16 @@ shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
 int
 shishi_safe_cksum (Shishi * handle,
 		   Shishi_asn1 safe,
-		   int *cksumtype, char *cksum, size_t * cksumlen)
+		   int32_t *cksumtype,
+		   char *cksum, size_t * cksumlen)
 {
   int res;
 
-  res = shishi_asn1_integer_field (handle, safe, cksumtype,
-				   "cksum.cksumtype");
+  res = shishi_asn1_read_int32 (handle, safe, "cksum.cksumtype", cksumtype);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_field (handle, safe, cksum, cksumlen,
-			   "cksum.checksum");
+  res = shishi_asn1_field (handle, safe, cksum, cksumlen, "cksum.checksum");
   if (res != SHISHI_OK)
     return res;
 
@@ -422,7 +421,8 @@ shishi_safe_cksum (Shishi * handle,
 int
 shishi_safe_set_cksum (Shishi * handle,
 		       Shishi_asn1 safe,
-		       int cksumtype, char *cksum, size_t cksumlen)
+		       int32_t cksumtype,
+		       char *cksum, size_t cksumlen)
 {
   int res;
 
@@ -478,7 +478,7 @@ shishi_safe_user_data (Shishi * handle,
 int
 shishi_safe_set_user_data (Shishi * handle,
 			   Shishi_asn1 safe,
-			   char *userdata, int userdatalen)
+			   char *userdata, size_t userdatalen)
 {
   int res;
 

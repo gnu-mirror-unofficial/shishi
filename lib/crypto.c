@@ -631,7 +631,7 @@ typedef int (*Shishi_decrypt_function) (Shishi * handle,
 
 struct cipherinfo
 {
-  int type;
+  int32_t type;
   char *name;
   int blocksize;
   int minpadsize;
@@ -817,7 +817,7 @@ _shishi_cipher_init (void)
  * Return value: Return 0 iff cipher is unsupported.
  **/
 int
-shishi_cipher_supported_p (int type)
+shishi_cipher_supported_p (int32_t type)
 {
   size_t i;
 
@@ -836,7 +836,7 @@ shishi_cipher_supported_p (int type)
  * e.g. "des3-cbc-sha1-kd", as defined in the standards.
  **/
 const char *
-shishi_cipher_name (int type)
+shishi_cipher_name (int32_t type)
 {
   size_t i;
   char *p;
@@ -859,7 +859,7 @@ shishi_cipher_name (int type)
  * the standards.
  **/
 int
-shishi_cipher_blocksize (int type)
+shishi_cipher_blocksize (int32_t type)
 {
   size_t i;
 
@@ -878,7 +878,7 @@ shishi_cipher_blocksize (int type)
  * defined in the standards.
  **/
 int
-shishi_cipher_minpadsize (int type)
+shishi_cipher_minpadsize (int32_t type)
 {
   size_t i;
 
@@ -897,7 +897,7 @@ shishi_cipher_minpadsize (int type)
  * encryption type, as defined in the standards.
  **/
 int
-shishi_cipher_confoundersize (int type)
+shishi_cipher_confoundersize (int32_t type)
 {
   size_t i;
 
@@ -916,7 +916,7 @@ shishi_cipher_confoundersize (int type)
  * defined in the standards.
  **/
 size_t
-shishi_cipher_keylen (int type)
+shishi_cipher_keylen (int32_t type)
 {
   size_t i;
 
@@ -935,7 +935,7 @@ shishi_cipher_keylen (int type)
  * as defined in the standards.
  **/
 size_t
-shishi_cipher_randomlen (int type)
+shishi_cipher_randomlen (int32_t type)
 {
   size_t i;
 
@@ -954,7 +954,7 @@ shishi_cipher_randomlen (int type)
  * encryption type, as defined in the standards.
  **/
 int
-shishi_cipher_defaultcksumtype (int type)
+shishi_cipher_defaultcksumtype (int32_t type)
 {
   size_t i;
 
@@ -990,7 +990,7 @@ shishi_cipher_parse (const char *cipher)
 }
 
 static Shishi_random_to_key_function
-_shishi_cipher_random_to_key (int type)
+_shishi_cipher_random_to_key (int32_t type)
 {
   size_t i;
 
@@ -1002,7 +1002,7 @@ _shishi_cipher_random_to_key (int type)
 }
 
 static Shishi_string_to_key_function
-_shishi_cipher_string_to_key (int type)
+_shishi_cipher_string_to_key (int32_t type)
 {
   size_t i;
 
@@ -1014,7 +1014,7 @@ _shishi_cipher_string_to_key (int type)
 }
 
 static Shishi_encrypt_function
-_shishi_cipher_encrypt (int type)
+_shishi_cipher_encrypt (int32_t type)
 {
   size_t i;
 
@@ -1026,7 +1026,7 @@ _shishi_cipher_encrypt (int type)
 }
 
 static Shishi_decrypt_function
-_shishi_cipher_decrypt (int type)
+_shishi_cipher_decrypt (int32_t type)
 {
   size_t i;
 
@@ -1058,7 +1058,7 @@ _shishi_cipher_decrypt (int type)
  **/
 int
 shishi_string_to_key (Shishi * handle,
-		      int keytype,
+		      int32_t keytype,
 		      const char *password, size_t passwordlen,
 		      const char *salt, size_t saltlen,
 		      const char *parameter,
@@ -1121,7 +1121,7 @@ shishi_string_to_key (Shishi * handle,
  **/
 int
 shishi_random_to_key (Shishi * handle,
-		      int keytype,
+		      int32_t keytype,
 		      char *random, size_t randomlen,
 		      Shishi_key * outkey)
 {
@@ -1386,7 +1386,7 @@ int
 shishi_encrypt_iv_etype (Shishi * handle,
 			 Shishi_key * key,
 			 int keyusage,
-			 int etype,
+			 int32_t etype,
 			 char *iv, size_t ivlen,
 			 char *in, size_t inlen,
 			 char **out, size_t *outlen)
@@ -1515,7 +1515,7 @@ int
 shishi_decrypt_iv_etype (Shishi * handle,
 			 Shishi_key * key,
 			 int keyusage,
-			 int etype,
+			 int32_t etype,
 			 char *iv, size_t ivlen,
 			 char *in, size_t inlen,
 			 char **out, size_t *outlen)

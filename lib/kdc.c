@@ -41,11 +41,11 @@
 int
 shishi_as_derive_salt (Shishi * handle,
 		       Shishi_asn1 asreq,
-		       Shishi_asn1 asrep, char *salt, int *saltlen)
+		       Shishi_asn1 asrep, char *salt, size_t *saltlen)
 {
   int len = *saltlen;
   int tmplen;
-  char format[BUFSIZ];
+  char *format;
   int res;
   int i, n;
 
@@ -59,15 +59,17 @@ shishi_as_derive_salt (Shishi * handle,
     {
       int patype;
 
-      sprintf (format, "padata.?%d.padata-type", i);
-      res = shishi_asn1_integer_field (handle, asrep, &patype, format);
+      asprintf (&format, "padata.?%d.padata-type", i);
+      res = shishi_asn1_read_int32 (handle, asrep, format, &patype);
+      free (format);
       if (res != SHISHI_OK)
 	return res;
 
       if (patype == SHISHI_PA_PW_SALT)
 	{
-	  sprintf (format, "padata.?%d.padata-value", i);
+	  asprintf (&format, "padata.?%d.padata-value", i);
 	  res = shishi_asn1_read (handle, asrep, format, salt, saltlen);
+	  free (format);
 	  if (res != SHISHI_OK)
 	    return res;
 
@@ -76,8 +78,7 @@ shishi_as_derive_salt (Shishi * handle,
     }
 
   len = *saltlen;
-  res =
-    shishi_asn1_read (handle, asreq, "req-body.realm", salt, &len);
+  res = shishi_asn1_read (handle, asreq, "req-body.realm", salt, &len);
   if (res != SHISHI_OK)
     return res;
 
@@ -93,8 +94,9 @@ shishi_as_derive_salt (Shishi * handle,
       if (tmplen < 0)
 	return SHISHI_TOO_SMALL_BUFFER;
 
-      sprintf (format, "req-body.cname.name-string.?%d", i);
+      asprintf (&format, "req-body.cname.name-string.?%d", i);
       res = shishi_asn1_read (handle, asreq, format, salt + len, &tmplen);
+      free (format);
       if (res != SHISHI_OK)
 	return res;
 

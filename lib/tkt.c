@@ -632,20 +632,20 @@ shishi_tkt_server_realm (Shishi_tkt * tkt,
 }
 
 int
-shishi_tkt_keytype (Shishi_tkt * tkt, int *etype)
+shishi_tkt_keytype (Shishi_tkt * tkt, int32_t *etype)
 {
-  return shishi_asn1_read_integer (tkt->handle, tkt->enckdcreppart,
-				   "key.keytype", etype);
+  return shishi_asn1_read_int32 (tkt->handle, tkt->enckdcreppart,
+				 "key.keytype", etype);
 }
 
 int
-shishi_tkt_keytype_p (Shishi_tkt * tkt, int etype)
+shishi_tkt_keytype_p (Shishi_tkt * tkt, int32_t etype)
 {
-  int tktetype;
+  int32_t tktetype;
   int rc;
 
-  rc = shishi_asn1_read_integer (tkt->handle, tkt->enckdcreppart,
-				 "key.keytype", &tktetype);
+  rc = shishi_asn1_read_int32 (tkt->handle, tkt->enckdcreppart,
+			       "key.keytype", &tktetype);
   if (rc != SHISHI_OK)
     return 0;
 

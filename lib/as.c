@@ -159,7 +159,7 @@ shishi_as_req_der (Shishi_as * as, char *out, int *outlen)
  * Return value: Returns SHISHI_OK.
  **/
 int
-shishi_as_req_der_set (Shishi_as * as, char *der, int derlen)
+shishi_as_req_der_set (Shishi_as * as, char *der, size_t derlen)
 {
   Shishi_asn1 asreq;
 
@@ -386,7 +386,7 @@ shishi_as_rep_set (Shishi_as * as, Shishi_asn1 asrep)
  * Return value: Returns SHISHI_OK.
  **/
 int
-shishi_as_rep_der_set (Shishi_as * as, char *der, int derlen)
+shishi_as_rep_der_set (Shishi_as * as, char *der, size_t derlen)
 {
   Shishi_asn1 asrep;
 

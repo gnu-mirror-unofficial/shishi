@@ -240,14 +240,15 @@ shishi_encapreppart_from_file (Shishi * handle, Shishi_asn1 * encapreppart,
 int
 shishi_encapreppart_get_key (Shishi * handle,
 			     Shishi_asn1 encapreppart,
-			     int *keytype,
-			     unsigned char *keyvalue, int *keyvalue_len)
+			     int32_t *keytype,
+			     char *keyvalue,
+			     size_t *keyvalue_len)
 {
   int res;
 
   *keytype = 0;
-  res = shishi_asn1_read_integer (handle, encapreppart,
-				  "subkey.keytype", keytype);
+  res = shishi_asn1_read_int32 (handle, encapreppart,
+				"subkey.keytype", keytype);
   if (res != SHISHI_OK)
     return res;
 

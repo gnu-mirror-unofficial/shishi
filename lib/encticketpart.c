@@ -74,15 +74,12 @@ shishi_encticketpart (Shishi * handle)
 int
 shishi_encticketpart_get_enc_part_etype (Shishi * handle,
 					 Shishi_asn1 encticketpart,
-					 int *etype)
+					 int32_t *etype)
 {
-  int buflen;
   int res;
 
-  *etype = 0;
-  buflen = sizeof (*etype);
-  res = shishi_asn1_field (handle, encticketpart, (char *) etype, &buflen,
-			   "enc-part.etype");
+  res = shishi_asn1_read_int32 (handle, encticketpart,
+				"enc-part.etype", etype);
 
   return res;
 }
@@ -107,10 +104,10 @@ shishi_encticketpart_get_key (Shishi * handle,
   int res;
   char buf[BUFSIZ];
   int buflen;
-  int keytype;
+  int32_t keytype;
 
-  res = shishi_asn1_integer_field (handle, encticketpart, &keytype,
-				   "key.keytype");
+  res = shishi_asn1_read_int32 (handle, encticketpart,
+				"key.keytype", &keytype);
   if (res != SHISHI_OK)
     return res;
 

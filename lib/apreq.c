@@ -330,17 +330,15 @@ shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
 int
 shishi_apreq_set_authenticator (Shishi * handle,
 				Shishi_asn1 apreq,
-				int etype, char *buf, int buflen)
+				int32_t etype, char *buf, int buflen)
 {
   int res;
 
-  res = shishi_asn1_write (handle, apreq, "authenticator.cipher",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, apreq, "authenticator.cipher", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write_integer (handle, apreq, "authenticator.etype",
-				   etype);
+  res = shishi_asn1_write_int32 (handle, apreq, "authenticator.etype", etype);
   if (res != SHISHI_OK)
     return res;
 
@@ -580,10 +578,10 @@ shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq, int option)
  **/
 int
 shishi_apreq_get_authenticator_etype (Shishi * handle,
-				      Shishi_asn1 apreq, int *etype)
+				      Shishi_asn1 apreq,
+				      int32_t *etype)
 {
-  return shishi_asn1_integer_field (handle, apreq, etype,
-				    "authenticator.etype");
+  return shishi_asn1_read_int32 (handle, apreq, "authenticator.etype", etype);
 }
 
 /**

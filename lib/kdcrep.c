@@ -360,10 +360,9 @@ shishi_kdcrep_crealmserver_set (Shishi * handle,
  **/
 int
 shishi_kdcrep_get_enc_part_etype (Shishi * handle,
-				  Shishi_asn1 kdcrep, int *etype)
+				  Shishi_asn1 kdcrep, int32_t *etype)
 {
-  return shishi_asn1_integer_field (handle, kdcrep, etype,
-				    "enc-part.etype");
+  return shishi_asn1_read_int32 (handle, kdcrep, "enc-part.etype", etype);
 }
 
 /**

@@ -493,7 +493,7 @@ shishi_ap_req_der_new (Shishi_ap * ap, char **out, int *outlen)
  * Return value: Returns SHISHI_OK.
  **/
 int
-shishi_ap_req_der_set (Shishi_ap * ap, char *der, int derlen)
+shishi_ap_req_der_set (Shishi_ap * ap, char *der, size_t derlen)
 {
   ap->apreq = shishi_der2asn1_apreq (ap->handle, der, derlen);
 
@@ -699,7 +699,7 @@ shishi_ap_rep_set (Shishi_ap * ap, Shishi_asn1 aprep)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ap_rep_der (Shishi_ap * ap, char *out, int *outlen)
+shishi_ap_rep_der (Shishi_ap * ap, char *out, size_t *outlen)
 {
   int rc;
 
@@ -726,7 +726,7 @@ shishi_ap_rep_der (Shishi_ap * ap, char *out, int *outlen)
  * Return value: Returns SHISHI_OK.
  **/
 int
-shishi_ap_rep_der_set (Shishi_ap * ap, char *der, int derlen)
+shishi_ap_rep_der_set (Shishi_ap * ap, char *der, size_t derlen)
 {
   Shishi_asn1 aprep;
 
@@ -852,7 +852,7 @@ shishi_ap_rep_verify (Shishi_ap * ap)
  * error.
  **/
 int
-shishi_ap_rep_verify_der (Shishi_ap * ap, char *der, int derlen)
+shishi_ap_rep_verify_der (Shishi_ap * ap, char *der, size_t derlen)
 {
   int res;
 
