@@ -1,4 +1,4 @@
-/* diskio.c	read and write kerberos data structures from disk
+/* diskio.c	read and write data structures from disk
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -21,8 +21,8 @@
 
 #include "internal.h"
 
-#define HEADERBEG "-----BEGIN KerberosV5 %s-----"
-#define HEADEREND "-----END KerberosV5 %s-----"
+#define HEADERBEG "-----BEGIN SHISHI %s-----"
+#define HEADEREND "-----END SHISHI %s-----"
 
 /*
  * Note to self: if you change any *print* function, remember to change

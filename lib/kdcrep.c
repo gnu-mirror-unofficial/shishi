@@ -459,8 +459,8 @@ shishi_kdcrep_decrypt (Shishi * handle,
       }
   }
 
-  /* The crypto in kerberos is so 1980; no length indicator. Trim off pad
-     bytes until we can parse it. */
+  /* The crypto is so 1980; no length indicator. Trim off pad bytes
+     until we can parse it. */
   for (i = 0; i < 8; i++)
     {
       if (DEBUG (handle))
