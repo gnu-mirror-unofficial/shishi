@@ -1,5 +1,5 @@
 /* shishi.h	Header file for Shishi library.                       -*- c -*-
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -272,6 +272,7 @@ typedef struct Shishi_safe Shishi_safe;
 /* init.c */
 extern Shishi *shishi (void);
 extern int shishi_init (Shishi ** handle);
+extern int shishi_init_server (Shishi ** handle);
 extern int shishi_init_with_paths (Shishi ** handle,
 				   const char *ticketsetfile,
 				   const char *systemcfgfile,
@@ -956,6 +957,9 @@ extern int shishi_key_print (Shishi * handle, FILE * fh, Shishi_key *key);
 extern int shishi_key_to_file (Shishi * handle,
 			       const char *filename, Shishi_key *key);
 extern int shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key);;
+extern int shishi_key_random (Shishi *handle,
+			      int type,
+			      Shishi_key **key);
 extern int shishi_key_from_value (Shishi *handle,
 				  int type,
 				  char *value,
@@ -1128,6 +1132,7 @@ extern int shishi_kdc_sendrecv (Shishi * handle,
 				size_t *outlen);
 
 /* encticketpart.c */
+extern ASN1_TYPE shishi_encticketpart (Shishi * handle);
 extern int shishi_encticketpart_get_enc_part_etype (Shishi * handle,
 						    ASN1_TYPE encticketpart,
 						    int *etype);
