@@ -1,4 +1,4 @@
-/* ticketset.c	ticket set handling
+/* ticketset.c	Ticket set handling.
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -99,27 +99,28 @@ shishi_ticketset_default_file_set (Shishi * handle, const char *ticketsetfile)
 }
 
 /**
- * shishi_ticketset_init:
+ * shishi_ticketset:
  * @handle: shishi handle as allocated by shishi_init().
  * @ticketset: output pointer to newly allocated ticketset handle.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
-shishi_ticketset_init (Shishi * handle, Shishi_ticketset ** ticketset)
+shishi_ticketset (Shishi * handle, Shishi_ticketset ** ticketset)
 {
   *ticketset = malloc (sizeof (**ticketset));
   if (*ticketset == NULL)
     return SHISHI_MALLOC_ERROR;
+  memset(*ticketset, 0, sizeof(**ticketset));
+
   (*ticketset)->handle = handle;
-  (*ticketset)->tickets = NULL;
-  (*ticketset)->ntickets = 0;
+
   return SHISHI_OK;
 }
 
 /**
  * shishi_ticketset_size:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  *
  * Return value: Returns number of tickets stored in ticket set.
  **/
@@ -131,7 +132,7 @@ shishi_ticketset_size (Shishi_ticketset * ticketset)
 
 /**
  * shishi_ticketset_get:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @ticketno: integer indicating requested ticket in ticket set.
  *
  * Return value: Returns a ticket handle to the ticketno:th ticket in
@@ -150,7 +151,7 @@ shishi_ticketset_get (Shishi_ticketset * ticketset, int ticketno)
 
 /**
  * shishi_ticketset_remove:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @ticketnum: ticket number of ticket in the set to remove.  The
  * first ticket is ticket number 0.
  *
@@ -194,7 +195,7 @@ shishi_ticketset_remove (Shishi_ticketset * ticketset,
 
 /**
  * shishi_ticketset_add:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @ticket: ticket to be added to ticket set.
  *
  * Return value: Returns SHISHI_OK iff succesful.
@@ -221,7 +222,7 @@ shishi_ticketset_add (Shishi_ticketset * ticketset, Shishi_ticket * ticket)
 
 /**
  * shishi_ticketset_new:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @ticket: input ticket variable.
  * @enckdcreppart: input ticket detail variable.
  * @kdcrep: input KDC-REP variable.
@@ -253,7 +254,7 @@ shishi_ticketset_new (Shishi_ticketset * ticketset,
 
 /**
  * shishi_ticketset_read:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @fh: file descriptor to read from.
  *
  * Read tickets from file descriptor and add them to the ticket set.
@@ -307,7 +308,7 @@ shishi_ticketset_read (Shishi_ticketset * ticketset, FILE * fh)
 
 /**
  * shishi_ticketset_from_file:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @filename: filename to read tickets from.
  *
  * Read tickets from file and add them to the ticket set.
@@ -341,7 +342,7 @@ shishi_ticketset_from_file (Shishi_ticketset * ticketset,
 
 /**
  * shishi_ticketset_write:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @filename: filename to write tickets to.
  *
  * Write tickets in set to file descriptor.
@@ -408,7 +409,7 @@ shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
 
 /**
  * shishi_ticketset_to_file:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @filename: filename to write tickets to.
  *
  * Write tickets in set to file.
@@ -442,7 +443,7 @@ shishi_ticketset_to_file (Shishi_ticketset * ticketset,
 
 /**
  * shishi_ticketset_print_for_service:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @fh: file descriptor to print to.
  * @service: service to limit tickets printed to, or NULL.
 
@@ -528,7 +529,7 @@ done:
 
 /**
  * shishi_ticketset_print:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  * @fh: file descriptor to print to.
  *
  * Print description of all tickets to file descriptor.
@@ -745,7 +746,7 @@ shishi_ticketset_get_for_serveretype (Shishi_ticketset * ticketset,
 
 /**
  * shishi_ticketset_done:
- * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
+ * @ticketset: ticket set handle as allocated by shishi_ticketset().
  *
  * Deallocates all resources associated with ticket set.  The ticket
  * set handle must not be used in calls to other shishi_ticketset_*()
@@ -770,10 +771,10 @@ shishi_ticketset_done (Shishi_ticketset ** ticketset)
 }
 
 Shishi_ticketset *
-shishi_ticketset (Shishi * handle)
+shishi_ticketset_default (Shishi * handle)
 {
   if (handle->ticketset == NULL &&
-      (shishi_ticketset_init (handle, &handle->ticketset) != SHISHI_OK))
+      (shishi_ticketset (handle, &handle->ticketset) != SHISHI_OK))
     handle->ticketset = NULL;
 
   return handle->ticketset;

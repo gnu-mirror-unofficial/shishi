@@ -361,8 +361,8 @@ extern char *shishi_ticketset_default_file_guess (void);
 extern const char *shishi_ticketset_default_file (Shishi * handle);
 extern void shishi_ticketset_default_file_set (Shishi * handle,
 					       const char *ticketsetfile);
-extern int shishi_ticketset_init (Shishi * handle,
-				  Shishi_ticketset ** ticketset);
+extern Shishi_ticketset *shishi_ticketset_default (Shishi * handle);
+extern int shishi_ticketset (Shishi * handle, Shishi_ticketset ** ticketset);
 extern Shishi_ticket *shishi_ticketset_get (Shishi_ticketset * ticketset,
 					    int ticketno);
 extern int shishi_ticketset_size (Shishi_ticketset * ticketset);
@@ -378,7 +378,6 @@ extern int shishi_ticketset_to_file (Shishi_ticketset * ticketset,
 extern int shishi_ticketset_from_file (Shishi_ticketset * ticketset,
 				       const char *filename);
 extern void shishi_ticketset_done (Shishi_ticketset ** ticketset);
-extern Shishi_ticketset *shishi_ticketset (Shishi * handle);
 extern Shishi_ticket *
 shishi_ticketset_find_for_server (Shishi_ticketset * ticketset,
 					 const char *server);

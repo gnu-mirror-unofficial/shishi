@@ -153,7 +153,7 @@ _shishi_init_read (Shishi * handle,
     usercfgfile = shishi_cfg_default_userfile (handle);
 
   if (!handle->ticketset)
-    rc = shishi_ticketset_init (handle, &handle->ticketset);
+    rc = shishi_ticketset (handle, &handle->ticketset);
   if (rc != SHISHI_OK)
     return rc;
 
