@@ -428,10 +428,7 @@ shishi_tkt_flags (Shishi_tkt * tkt, int *flags)
   res = shishi_asn1_field (tkt->handle, tkt->enckdcreppart,
 			   buf, &buflen, "EncKDCRepPart.flags");
   if (res != SHISHI_OK)
-    {
-      shishi_error_set (tkt->handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+    return res;
 
   *flags = 0;
   for (i = 0; i < 4; i++)
@@ -675,8 +672,8 @@ int
 shishi_tkt_lastreq (Shishi_tkt * tkt,
 		    char *lrtime, int *lrtimelen, Shihi_lrtype lrtype)
 {
-  unsigned char format[BUFSIZ];
-  Shihi_lrtype tmplrtype;
+  char *format;
+  int tmplrtype;
   int res;
   int i, n;
 
@@ -687,19 +684,19 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
 
   for (i = 1; i <= n; i++)
     {
-      sprintf (format, "EncKDCRepPart.last-req.?%d.lr-type", i);
-
-      res = shishi_asn1_integer_field (tkt->handle, tkt->enckdcreppart,
-				       &tmplrtype, format);
+      shishi_asprintf (&format, "EncKDCRepPart.last-req.?%d.lr-type", i);
+      res = shishi_asn1_read_integer (tkt->handle, tkt->enckdcreppart,
+				      format, &tmplrtype);
+      free(format);
       if (res != SHISHI_OK)
 	return SHISHI_ASN1_ERROR;
 
       if (lrtype == tmplrtype)
 	{
-	  sprintf (format, "EncKDCRepPart.last-req.?%d.lr-value", i);
-
-	  res = shishi_asn1_field (tkt->handle, tkt->enckdcreppart,
-				   lrtime, lrtimelen, format);
+	  shishi_asprintf (&format, "EncKDCRepPart.last-req.?%d.lr-value", i);
+	  res = shishi_asn1_read (tkt->handle, tkt->enckdcreppart,
+				  format, lrtime, lrtimelen);
+	  free(format);
 	  if (res != SHISHI_OK)
 	    return SHISHI_ASN1_ERROR;
 

@@ -544,7 +544,6 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
 			  Shishi_asn1 ticket)
 {
   int res = SHISHI_OK;
-  Shishi_asn1 node = NULL;
   unsigned char format[BUFSIZ];
   unsigned char buf[BUFSIZ];
   int buflen;
@@ -666,7 +665,7 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
 			    Shishi_asn1 kdcrep,
 			    int etype, int kvno, char *buf, int buflen)
 {
-  char format[BUFSIZ];
+  char *format;
   int res = SHISHI_OK;
 
   res = shishi_asn1_write (handle, kdcrep, "KDC-REP.enc-part.cipher",
@@ -674,9 +673,10 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  sprintf (format, "%d", etype);
+  shishi_asprintf (&format, "%d", etype);
   res = shishi_asn1_write (handle, kdcrep, "KDC-REP.enc-part.etype",
 			   format, 0);
+  free(format);
   if (res != SHISHI_OK)
     return res;
 
@@ -692,6 +692,7 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
       shishi_asprintf (&format, "%d", etype);
       res = shishi_asn1_write (handle, kdcrep, "KDC-REP.enc-part.kvno",
 			       format, 0);
+      free(format);
       if (res != SHISHI_OK)
 	return res;
     }

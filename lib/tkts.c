@@ -593,7 +593,7 @@ shishi_tkts_print (Shishi_tkts * tkts, FILE * fh)
  *
  * Return value: Returns 0 iff ticket fails to match given criteria.
  **/
-Shishi_tkt *
+int
 shishi_tkt_match_p (Shishi_tkt * tkt, Shishi_tkts_hint * hint)
 {
   if (hint->server && !shishi_tkt_server_p (tkt, hint->server))
@@ -630,14 +630,23 @@ shishi_tkt_match_p (Shishi_tkt * tkt, Shishi_tkts_hint * hint)
  * Here is how you would typically use this function:
  *
  *   Shishi_tkts_hint  hint;
+ *
  *   Shishi_tkt  tkt;
+ *
  *   ...
+ *
  *   memset(&hint, 0, sizeof(hint));
+ *
  *   hint.server = "imap/mail.example.org";
+ *
  *   tkt = shishi_tkts_find (shishi_tkts_default(handle), &hint);
+ *
  *   if (!tkt)
+ *
  *     printf("No ticket found...\n");
+ *
  *   else
+ *
  *     ...do something  with ticket
  *
  * Return value: Returns a ticket if found, or NULL if no further
@@ -648,7 +657,12 @@ shishi_tkts_find (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 {
   int i;
 
-  fprintf (stderr, "Searching tickets...\n");
+  fprintf (stderr, "Searching tickets... ");
+  if (hint->server)
+    fprintf(stderr, "server=`%s' ", hint->server);
+  if (hint->client)
+    fprintf(stderr, "client=`%s' ", hint->client);
+  fprintf (stderr, "\n");
 
   for (i = hint->startpos; i < tkts->ntkts; i++)
     {
