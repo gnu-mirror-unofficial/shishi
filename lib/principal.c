@@ -137,7 +137,8 @@ shishi_principal_default_set (Shishi * handle, const char *principal)
 int
 shishi_principal_name_get (Shishi * handle,
 			   Shishi_asn1 namenode,
-			   const char *namefield, char *out, size_t * outlen)
+			   const char *namefield,
+			   char *out, size_t * outlen)
 {
   int res;
   char format[BUFSIZ];
@@ -235,6 +236,119 @@ shishi_principal_name_realm_get (Shishi * handle,
     }
 
   *outlen = totlen;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_principal_name_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @namenode: ASN.1 structure with principal in @namefield.
+ * @namefield: name of field in namenode containing principal name.
+ * @name_type: type of principial, see Shishi_name_type, usually
+ *             SHISHI_NT_UNKNOWN.
+ * @sname: zero-terminated input array with principal name.
+ *
+ * Set the given principal name field to given name.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_principal_name_set (Shishi * handle,
+			   Shishi_asn1 namenode,
+			   const char *namefield,
+			   Shishi_name_type name_type,
+			   const char *name[])
+{
+  int res;
+  char *buf, *asn1name;
+  int i;
+
+  shishi_asprintf (&buf, "%d", name_type);
+  shishi_asprintf (&asn1name, "%s.name-type", namefield);
+  res = shishi_asn1_write (handle, namenode, asn1name, buf, 0);
+  free(asn1name);
+  free(buf);
+  if (res != SHISHI_OK)
+    return res;
+
+  shishi_asprintf (&asn1name, "%s.name-string", namefield);
+  res = shishi_asn1_write (handle, namenode, asn1name, NULL, 0);
+  free(asn1name);
+  if (res != SHISHI_OK)
+    return res;
+
+  i = 1;
+  while (name[i - 1])
+    {
+      shishi_asprintf (&asn1name, "%s.name-string", namefield);
+      res = shishi_asn1_write (handle, namenode, asn1name, "NEW", 1);
+      free(asn1name);
+      if (res != SHISHI_OK)
+	return res;
+
+      shishi_asprintf (&asn1name, "%s.name-string.?%d", namefield, i);
+      res = shishi_asn1_write (handle, namenode, asn1name, name[i - 1], 0);
+      free(asn1name);
+      if (res != SHISHI_OK)
+	return res;
+
+      i++;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_principal_set:
+ * @namenode: ASN.1 structure with principal in @namefield.
+ * @namefield: name of field in namenode containing principal name.
+ * @name: zero-terminated string with principal name on RFC 1964 form.
+ *
+ * Set principal name field in ASN.1 structure to given name.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_principal_set (Shishi * handle,
+		      Shishi_asn1 namenode,
+		      const char *namefield,
+		      const char *name)
+{
+  char *tmpname;
+  const char **namebuf;
+  char *tokptr;
+  int res;
+  int i;
+
+  tmpname = strdup (name);
+  if (tmpname == NULL)
+    return SHISHI_MALLOC_ERROR;
+
+  namebuf = malloc (sizeof (*namebuf));
+  if (namebuf == NULL)
+    return SHISHI_MALLOC_ERROR;
+
+  for (i = 0;
+       (namebuf[i] = strtok_r (i == 0 ? tmpname : NULL, "/", &tokptr));
+       i++)
+    {
+      namebuf = realloc (namebuf, (i + 2) * sizeof (*namebuf));
+      if (namebuf == NULL)
+	return SHISHI_MALLOC_ERROR;
+    }
+
+  res = shishi_principal_name_set (handle, namenode, namefield,
+				   SHISHI_NT_UNKNOWN, namebuf);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, _("Could not set principal name: %s\n"),
+			   shishi_strerror (res));
+      return res;
+    }
+
+  free (namebuf);
+  free (tmpname);
 
   return SHISHI_OK;
 }
