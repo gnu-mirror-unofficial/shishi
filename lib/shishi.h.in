@@ -467,8 +467,7 @@ extern int shishi_tkts_to_file (Shishi_tkts * tkts, const char *filename);
 extern int shishi_tkts_read (Shishi_tkts * tkts, FILE * fh);
 extern int shishi_tkts_from_file (Shishi_tkts * tkts, const char *filename);
 extern void shishi_tkts_done (Shishi_tkts ** tkts);
-extern Shishi_tkt *shishi_tkt_match_p (Shishi_tkt * tkt,
-				       Shishi_tkts_hint * hint);
+extern int shishi_tkt_match_p (Shishi_tkt * tkt, Shishi_tkts_hint * hint);
 extern Shishi_tkt *shishi_tkts_find (Shishi_tkts * tkts,
 				     Shishi_tkts_hint * hint);
 extern Shishi_tkt *shishi_tkts_find_for_clientserver (Shishi_tkts * tkts,
@@ -860,6 +859,8 @@ extern int shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
 extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 			     const char *field,
 			     const char *data, size_t * datalen);
+extern int shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
+				     const char *field, int *i);
 extern int shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 			      const char *field,
 			      const char *data, size_t datalen);

@@ -410,7 +410,6 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
 			 Shishi_asn1 ticket)
 {
   int res;
-  Shishi_asn1 node;
   unsigned char format[BUFSIZ];
   unsigned char buf[BUFSIZ];
   int buflen;

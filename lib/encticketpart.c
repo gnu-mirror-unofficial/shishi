@@ -31,20 +31,32 @@ shishi_encticketpart (Shishi * handle)
 
   res = shishi_asn1_write (handle, node, "EncTicketPart.starttime", NULL, 0);
   if (res != SHISHI_OK)
-    return res;
+    {
+      shishi_asn1_done(handle, node);
+      return NULL;
+    }
 
   res = shishi_asn1_write (handle, node, "EncTicketPart.renew-till", NULL, 0);
   if (res != SHISHI_OK)
-    return res;
+    {
+      shishi_asn1_done(handle, node);
+      return NULL;
+    }
 
   res = shishi_asn1_write (handle, node, "EncTicketPart.caddr", NULL, 0);
   if (res != SHISHI_OK)
-    return res;
+    {
+      shishi_asn1_done(handle, node);
+      return NULL;
+    }
 
   res = shishi_asn1_write (handle, node, "EncTicketPart.authorization-data",
 			   NULL, 0);
   if (res != SHISHI_OK)
-    return res;
+    {
+      shishi_asn1_done(handle, node);
+      return NULL;
+    }
 
   return node;
 }
@@ -295,7 +307,8 @@ shishi_encticketpart_transited_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_authtime_set (Shishi * handle,
-				   Shishi_asn1 encticketpart, char *authtime)
+				   Shishi_asn1 encticketpart,
+				   const char *authtime)
 {
   int res;
 
@@ -319,7 +332,8 @@ shishi_encticketpart_authtime_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_endtime_set (Shishi * handle,
-				  Shishi_asn1 encticketpart, char *endtime)
+				  Shishi_asn1 encticketpart,
+				  const char *endtime)
 {
   int res;
 

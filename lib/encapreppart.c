@@ -245,18 +245,16 @@ shishi_encapreppart_get_key (Shishi * handle,
 			     unsigned char *keyvalue, int *keyvalue_len)
 {
   int res;
-  int buflen;
 
   *keytype = 0;
-  buflen = sizeof (*keytype);
-  res = shishi_asn1_read (handle, encapreppart, "EncAPRepPart.subkey.keytype",
-			  keytype, &buflen);
+  res = shishi_asn1_read_integer (handle, encapreppart,
+				  "EncAPRepPart.subkey.keytype", keytype);
   if (res != SHISHI_OK)
     return res;
 
-  res =
-    shishi_asn1_read (handle, encapreppart, "EncAPRepPart.subkey.keyvalue",
-		      keyvalue, keyvalue_len);
+  res = shishi_asn1_read (handle, encapreppart,
+			  "EncAPRepPart.subkey.keyvalue",
+			  keyvalue, keyvalue_len);
   if (res != SHISHI_OK)
     return res;
 

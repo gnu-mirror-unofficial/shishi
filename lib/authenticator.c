@@ -413,7 +413,6 @@ shishi_authenticator_cksum (Shishi * handle,
 			    Shishi_asn1 authenticator,
 			    int *cksumtype, char *cksum, int *cksumlen)
 {
-  char format[BUFSIZ];
   int res;
 
   res = shishi_asn1_integer_field (handle, authenticator, cksumtype,
@@ -562,8 +561,7 @@ shishi_authenticator_authorizationdata (Shishi * handle,
 					int *adtype,
 					char *addata, int *addatalen, int nth)
 {
-  char format[BUFSIZ];
-  char buf[BUFSIZ];
+  char *format;
   int res;
   int i;
 
@@ -576,13 +574,16 @@ shishi_authenticator_authorizationdata (Shishi * handle,
   if (nth > i)
     return SHISHI_OUT_OF_RANGE;
 
-  sprintf (format, "Authenticator.authorization-data.?%d.ad-type", nth);
+  shishi_asprintf (&format, "Authenticator.authorization-data.?%d.ad-type",
+		   nth);
   res = shishi_asn1_integer_field (handle, authenticator, adtype, format);
+  free(format);
   if (res != SHISHI_OK)
     return res;
 
-  sprintf (format, "Authenticator.authorization-data.?%d.ad-data", i);
+  shishi_asprintf (&format, "Authenticator.authorization-data.?%d.ad-data", i);
   res = shishi_asn1_field (handle, authenticator, addata, addatalen, format);
+  free(format);
   if (res != SHISHI_OK)
     return res;
 
