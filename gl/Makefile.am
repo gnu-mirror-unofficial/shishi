@@ -114,6 +114,8 @@ libgnu_la_SOURCES += vasprintf.h
 
 libgnu_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
 
+libgnu_la_SOURCES += xalloc-die.c
+
 libgnu_la_SOURCES += xgetdomainname.h xgetdomainname.c
 
 libgnu_la_SOURCES += xgethostname.h xgethostname.c
@@ -123,7 +125,6 @@ libgnu_la_SOURCES += xreadlink.h xreadlink.c
 libgnu_la_SOURCES += xsize.h
 
 libgnu_la_SOURCES += xstrndup.h xstrndup.c
-
 
 # Local changes
 

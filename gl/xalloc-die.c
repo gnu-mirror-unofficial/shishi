@@ -1,5 +1,7 @@
-/* exit() function.
-   Copyright (C) 1995, 2001 Free Software Foundation, Inc.
+/* Report a memory allocation failure and exit.
+
+   Copyright (C) 1997, 1998, 1999, 2000, 2002, 2003, 2004 Free
+   Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,18 +17,29 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#ifndef _EXIT_H
-#define _EXIT_H
+#if HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-/* Get exit() declaration.  */
+#include "xalloc.h"
+
 #include <stdlib.h>
 
-/* Some systems do not define EXIT_*, even with STDC_HEADERS.  */
-#ifndef EXIT_SUCCESS
-# define EXIT_SUCCESS 0
-#endif
-#ifndef EXIT_FAILURE
-# define EXIT_FAILURE 1
-#endif
+#include "error.h"
+#include "exitfail.h"
 
-#endif /* _EXIT_H */
+#include "gettext.h"
+#define _(msgid) gettext (msgid)
+#define N_(msgid) msgid
+
+void
+xalloc_die (void)
+{
+  error (exit_failure, 0, "%s", _("memory exhausted"));
+
+  /* The `noreturn' cannot be given to error, since it may return if
+     its first argument is 0.  To help compilers understand the
+     xalloc_die does not return, call abort.  Also, the abort is a
+     safety feature if exit_failure is 0 (which shouldn't happen).  */
+  abort ();
+}
