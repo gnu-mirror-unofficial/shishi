@@ -37,16 +37,18 @@ pkgdata_DATA = shishi.skel
 EXTRA_DIST = ANNOUNCE config.rpath mkinstalldirs \
 	shishi.conf.in shishi.skel.in shishi.pc.in
 
-.PHONY: ChangeLog
-ChangeLog:
-	test ! -f .cvsusers || \
-	cvs2cl --FSF --usermap .cvsusers \
- -I "ChangeLog|.cvsignore|.cvsusers|autogen.sh|doc/specification|libstringprep"
+# Maintainer targets
 
 indent:
 	(cd lib && make indent)
 	(cd src && make indent)
 	(cd tests && make indent)
+
+ChangeLog:
+	test ! -f .cvsusers || \
+	(cvs2cl --FSF --usermap .cvsusers \
+	-I "ChangeLog|.cvs|autogen.sh|doc/specification|libstringprep" && \
+	cat .cvscopying >> ChangeLog)
 
 tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
 htmldir = ../www-$(PACKAGE)
@@ -56,12 +58,12 @@ release:
 	if cvs upd -p -r $(tag) NEWS > /dev/null; then false else true; fi
 	rm -f ChangeLog && cvs upd ChangeLog
 	cvs commit
-	$(MAKE) distcheck
+	rm -f ChangeLog
+	$(MAKE) ChangeLog distcheck
 	cvs commit -m "" ChangeLog
 	rm -f $(distdir).tar.gz.asc
 	gpg -a --sign --detach $(distdir).tar.gz
 	gpg --verify $(distdir).tar.gz.asc
-	scp $(distdir).tar.gz* josefsson.org:$(PACKAGE)/
 	test -d $(htmldir) && cp -v doc/$(PACKAGE).{ps,pdf,html} $(htmldir)/
 	test -d $(htmldir) && cd $(htmldir) && cvs commit -m "Update." \
 		$(PACKAGE).{ps,pdf,html}
