@@ -24,9 +24,9 @@
 struct Shishi_as
 {
   Shishi *handle;
-  ASN1_TYPE asreq;
-  ASN1_TYPE asrep;
-  ASN1_TYPE krberror;
+  Shishi_asn1 asreq;
+  Shishi_asn1 asrep;
+  Shishi_asn1 krberror;
   Shishi_tkt *tkt;
 };
 
@@ -104,7 +104,7 @@ shishi_as (Shishi * handle, Shishi_as ** as)
  * Return value: Returns the generated AS-REQ packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_as_req (Shishi_as * as)
 {
   return as->asreq;
@@ -118,7 +118,7 @@ shishi_as_req (Shishi_as * as)
  * Set the AS-REQ in the AP exchange.
  **/
 void
-shishi_as_req_set (Shishi_as * as, ASN1_TYPE asreq)
+shishi_as_req_set (Shishi_as * as, Shishi_asn1 asreq)
 {
   if (as->asreq)
     shishi_asn1_done (as->handle, as->asreq);
@@ -161,11 +161,11 @@ shishi_as_req_der (Shishi_as * as, char *out, int *outlen)
 int
 shishi_as_req_der_set (Shishi_as * as, char *der, int derlen)
 {
-  ASN1_TYPE asreq;
+  Shishi_asn1 asreq;
 
   asreq = shishi_d2a_asreq (as->handle, der, derlen);
 
-  if (asreq == ASN1_TYPE_EMPTY)
+  if (asreq == NULL)
     return SHISHI_ASN1_ERROR;
 
   as->asreq = asreq;
@@ -180,7 +180,7 @@ shishi_as_req_der_set (Shishi_as * as, char *der, int derlen)
  * Return value: Returns the received AS-REP packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_as_rep (Shishi_as * as)
 {
   return as->asrep;
@@ -198,7 +198,7 @@ shishi_as_rep (Shishi_as * as)
 int
 shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char *password)
 {
-  ASN1_TYPE ticket, kdcreppart;
+  Shishi_asn1 ticket, kdcreppart;
   char user[BUFSIZ];
   int userlen;
   int res;
@@ -366,7 +366,7 @@ shishi_as_rep_der (Shishi_as * as, char *out, int *outlen)
  * Set the AS-REP in the AP exchange.
  **/
 void
-shishi_as_rep_set (Shishi_as * as, ASN1_TYPE asrep)
+shishi_as_rep_set (Shishi_as * as, Shishi_asn1 asrep)
 {
   if (as->asrep)
     shishi_asn1_done (as->handle, as->asrep);
@@ -387,11 +387,11 @@ shishi_as_rep_set (Shishi_as * as, ASN1_TYPE asrep)
 int
 shishi_as_rep_der_set (Shishi_as * as, char *der, int derlen)
 {
-  ASN1_TYPE asrep;
+  Shishi_asn1 asrep;
 
   asrep = shishi_d2a_asrep (as->handle, der, derlen);
 
-  if (asrep == ASN1_TYPE_EMPTY)
+  if (asrep == NULL)
     return SHISHI_ASN1_ERROR;
 
   as->asrep = asrep;
@@ -406,7 +406,7 @@ shishi_as_rep_der_set (Shishi_as * as, char *der, int derlen)
  * Return value: Returns the received KRB-ERROR packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_as_krberror (Shishi_as * as)
 {
   return as->krberror;
@@ -442,7 +442,7 @@ shishi_as_krberror_der (Shishi_as * as, char *out, int *outlen)
  * Set the KRB-ERROR in the AP exchange.
  **/
 void
-shishi_as_krberror_set (Shishi_as * as, ASN1_TYPE krberror)
+shishi_as_krberror_set (Shishi_as * as, Shishi_asn1 krberror)
 {
   if (as->krberror)
     shishi_asn1_done (as->handle, as->krberror);

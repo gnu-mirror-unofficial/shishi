@@ -25,10 +25,10 @@ struct Shishi_ap
 {
   Shishi *handle;
   Shishi_tkt *tkt;
-  ASN1_TYPE authenticator;
-  ASN1_TYPE apreq;
-  ASN1_TYPE aprep;
-  ASN1_TYPE encapreppart;
+  Shishi_asn1 authenticator;
+  Shishi_asn1 apreq;
+  Shishi_asn1 aprep;
+  Shishi_asn1 encapreppart;
   int authenticatorcksumkeyusage;
   int authenticatorkeyusage;
   char *authenticatorcksumdata;
@@ -174,7 +174,7 @@ int
 shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
 				   Shishi_tkt * tkt,
 				   int options,
-				   ASN1_TYPE node,
+				   Shishi_asn1 node,
 				   char *field,
 				   int authenticatorcksumkeyusage,
 				   int authenticatorkeyusage)
@@ -285,7 +285,7 @@ shishi_ap_tktoptionsasn1usage (Shishi * handle,
 			       Shishi_ap ** ap,
 			       Shishi_tkt * tkt,
 			       int options,
-			       ASN1_TYPE node,
+			       Shishi_asn1 node,
 			       char *field,
 			       int authenticatorcksumkeyusage,
 			       int authenticatorkeyusage)
@@ -380,7 +380,7 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
  * Return value: Returns the Authenticator from the AP exchange, or
  *               NULL if not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_ap_authenticator (Shishi_ap * ap)
 {
   return ap->authenticator;
@@ -394,7 +394,7 @@ shishi_ap_authenticator (Shishi_ap * ap)
  * Set the Authenticator in the AP exchange.
  **/
 void
-shishi_ap_authenticator_set (Shishi_ap * ap, ASN1_TYPE authenticator)
+shishi_ap_authenticator_set (Shishi_ap * ap, Shishi_asn1 authenticator)
 {
   if (ap->authenticator)
     shishi_asn1_done (ap->handle, ap->authenticator);
@@ -408,7 +408,7 @@ shishi_ap_authenticator_set (Shishi_ap * ap, ASN1_TYPE authenticator)
  * Return value: Returns the AP-REQ from the AP exchange, or NULL if
  *               not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_ap_req (Shishi_ap * ap)
 {
   return ap->apreq;
@@ -423,7 +423,7 @@ shishi_ap_req (Shishi_ap * ap)
  * Set the AP-REQ in the AP exchange.
  **/
 void
-shishi_ap_req_set (Shishi_ap * ap, ASN1_TYPE apreq)
+shishi_ap_req_set (Shishi_ap * ap, Shishi_asn1 apreq)
 {
   if (ap->apreq)
     shishi_asn1_done (ap->handle, ap->apreq);
@@ -550,7 +550,7 @@ shishi_ap_req_build (Shishi_ap * ap)
 int
 shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
 {
-  ASN1_TYPE ticket, authenticator;
+  Shishi_asn1 ticket, authenticator;
   Shishi_tkt *tkt;
   Shishi_key *tktkey;
   int rc;
@@ -608,7 +608,7 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ap_req_asn1 (Shishi_ap * ap, ASN1_TYPE * apreq)
+shishi_ap_req_asn1 (Shishi_ap * ap, Shishi_asn1 * apreq)
 {
   int rc;
 
@@ -628,7 +628,7 @@ shishi_ap_req_asn1 (Shishi_ap * ap, ASN1_TYPE * apreq)
  * Return value: Returns the AP-REP from the AP exchange, or NULL if
  *               not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_ap_rep (Shishi_ap * ap)
 {
   return ap->aprep;
@@ -642,7 +642,7 @@ shishi_ap_rep (Shishi_ap * ap)
  * Set the AP-REP in the AP exchange.
  **/
 void
-shishi_ap_rep_set (Shishi_ap * ap, ASN1_TYPE aprep)
+shishi_ap_rep_set (Shishi_ap * ap, Shishi_asn1 aprep)
 {
   if (ap->aprep)
     shishi_asn1_done (ap->handle, ap->aprep);
@@ -689,11 +689,11 @@ shishi_ap_rep_der (Shishi_ap * ap, char *out, int *outlen)
 int
 shishi_ap_rep_der_set (Shishi_ap * ap, char *der, int derlen)
 {
-  ASN1_TYPE aprep;
+  Shishi_asn1 aprep;
 
   aprep = shishi_d2a_aprep (ap->handle, der, derlen);
 
-  if (aprep == ASN1_TYPE_EMPTY)
+  if (!aprep)
     return SHISHI_ASN1_ERROR;
 
   ap->aprep = aprep;
@@ -713,7 +713,7 @@ shishi_ap_rep_der_set (Shishi_ap * ap, char *der, int derlen)
 int
 shishi_ap_rep_build (Shishi_ap * ap)
 {
-  ASN1_TYPE aprep;
+  Shishi_asn1 aprep;
   int rc;
 
   if (VERBOSE (ap->handle))
@@ -747,7 +747,7 @@ shishi_ap_rep_build (Shishi_ap * ap)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ap_rep_asn1 (Shishi_ap * ap, ASN1_TYPE * aprep)
+shishi_ap_rep_asn1 (Shishi_ap * ap, Shishi_asn1 * aprep)
 {
   int rc;
 
@@ -840,7 +840,7 @@ shishi_ap_rep_verify_der (Shishi_ap * ap, char *der, int derlen)
  * error.
  **/
 int
-shishi_ap_rep_verify_asn1 (Shishi_ap * ap, ASN1_TYPE aprep)
+shishi_ap_rep_verify_asn1 (Shishi_ap * ap, Shishi_asn1 aprep)
 {
   int res;
 
@@ -860,7 +860,7 @@ shishi_ap_rep_verify_asn1 (Shishi_ap * ap, ASN1_TYPE aprep)
  * Return value: Returns the EncAPREPPart from the AP exchange, or
  *               NULL if not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_ap_encapreppart (Shishi_ap * ap)
 {
   return ap->encapreppart;
@@ -874,7 +874,7 @@ shishi_ap_encapreppart (Shishi_ap * ap)
  * Set the EncAPRepPart in the AP exchange.
  **/
 void
-shishi_ap_encapreppart_set (Shishi_ap * ap, ASN1_TYPE encapreppart)
+shishi_ap_encapreppart_set (Shishi_ap * ap, Shishi_asn1 encapreppart)
 {
   if (ap->encapreppart)
     shishi_asn1_done (ap->handle, ap->encapreppart);

@@ -1,5 +1,5 @@
 /* aprep.c	AP-REP functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -39,56 +39,53 @@
  * This function creates a new AP-REP, populated with some default
  * values.
  *
- * Return value: Returns the authenticator or ASN1_TYPE_EMPTY on
+ * Return value: Returns the authenticator or NULL on
  * failure.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_aprep (Shishi * handle)
 {
-  int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  Shishi_asn1 node;
+  int res;
 
-  res =
-    asn1_create_element (handle->asn1, "Kerberos5.AP-REP", &node, "AP-REP");
-  if (res != ASN1_SUCCESS)
-    goto error;
+  node = shishi_asn1_aprep (handle);
+  if (!node)
+    return NULL;
 
-  res = asn1_write_value (node, "AP-REP.pvno",
+  res = shishi_asn1_write (handle, node, "AP-REP.pvno",
 			  SHISHI_APREP_DEFAULT_PVNO,
 			  SHISHI_APREP_DEFAULT_PVNO_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REP.msg-type",
+  res = shishi_asn1_write (handle, node, "AP-REP.msg-type",
 			  SHISHI_APREP_DEFAULT_MSG_TYPE,
 			  SHISHI_APREP_DEFAULT_MSG_TYPE_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REP.enc-part.etype",
+  res = shishi_asn1_write (handle, node, "AP-REP.enc-part.etype",
 			  SHISHI_APREP_DEFAULT_ENC_PART_ETYPE,
 			  SHISHI_APREP_DEFAULT_ENC_PART_ETYPE_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REP.enc-part.kvno",
+  res = shishi_asn1_write (handle, node, "AP-REP.enc-part.kvno",
 			  SHISHI_APREP_DEFAULT_ENC_PART_KVNO,
 			  SHISHI_APREP_DEFAULT_ENC_PART_KVNO_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REP.enc-part.cipher",
+  res = shishi_asn1_write (handle, node, "AP-REP.enc-part.cipher",
 			  SHISHI_APREP_DEFAULT_ENC_PART_CIPHER,
 			  SHISHI_APREP_DEFAULT_ENC_PART_CIPHER_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
   return node;
 
 error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
-    asn1_delete_structure (&node);
+  shishi_asn1_done (handle, node);
   return NULL;
 }
 
@@ -103,7 +100,7 @@ error:
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_print (Shishi * handle, FILE * fh, ASN1_TYPE aprep)
+shishi_aprep_print (Shishi * handle, FILE * fh, Shishi_asn1 aprep)
 {
   return _shishi_print_armored_data (handle, fh, aprep, "AP-REP", NULL);
 }
@@ -119,7 +116,7 @@ shishi_aprep_print (Shishi * handle, FILE * fh, ASN1_TYPE aprep)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_save (Shishi * handle, FILE * fh, ASN1_TYPE aprep)
+shishi_aprep_save (Shishi * handle, FILE * fh, Shishi_asn1 aprep)
 {
   return _shishi_save_data (handle, fh, aprep, "AP-REP");
 }
@@ -138,7 +135,7 @@ shishi_aprep_save (Shishi * handle, FILE * fh, ASN1_TYPE aprep)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_to_file (Shishi * handle, ASN1_TYPE aprep,
+shishi_aprep_to_file (Shishi * handle, Shishi_asn1 aprep,
 		      int filetype, char *filename)
 {
   FILE *fh;
@@ -184,7 +181,7 @@ shishi_aprep_to_file (Shishi * handle, ASN1_TYPE aprep,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_parse (Shishi * handle, FILE * fh, ASN1_TYPE * aprep)
+shishi_aprep_parse (Shishi * handle, FILE * fh, Shishi_asn1 * aprep)
 {
   return _shishi_aprep_input (handle, fh, aprep, 0);
 }
@@ -200,7 +197,7 @@ shishi_aprep_parse (Shishi * handle, FILE * fh, ASN1_TYPE * aprep)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_read (Shishi * handle, FILE * fh, ASN1_TYPE * aprep)
+shishi_aprep_read (Shishi * handle, FILE * fh, Shishi_asn1 * aprep)
 {
   return _shishi_aprep_input (handle, fh, aprep, 1);
 }
@@ -218,7 +215,7 @@ shishi_aprep_read (Shishi * handle, FILE * fh, ASN1_TYPE * aprep)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_from_file (Shishi * handle, ASN1_TYPE * aprep,
+shishi_aprep_from_file (Shishi * handle, Shishi_asn1 * aprep,
 			int filetype, char *filename)
 {
   int res;
@@ -254,33 +251,32 @@ shishi_aprep_from_file (Shishi * handle, ASN1_TYPE * aprep,
 
 int
 shishi_aprep_enc_part_set (Shishi * handle,
-			   ASN1_TYPE aprep, int etype, char *buf, int buflen)
+			   Shishi_asn1 aprep,
+			   int etype,
+			   const char *buf, int buflen)
 {
   char format[BUFSIZ];
-  int res = ASN1_SUCCESS;
+  int res;
 
-  res = asn1_write_value (aprep, "AP-REP.enc-part.cipher", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, aprep, "AP-REP.enc-part.cipher",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   sprintf (format, "%d", etype);
-  res = asn1_write_value (aprep, "AP-REP.enc-part.etype", format, 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, aprep, "AP-REP.enc-part.etype", format, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  return SHISHI_ASN1_ERROR;
 }
 
 int
 shishi_aprep_enc_part_add (Shishi * handle,
-			   ASN1_TYPE aprep,
-			   ASN1_TYPE encticketpart, ASN1_TYPE encapreppart)
+			   Shishi_asn1 aprep,
+			   Shishi_asn1 encticketpart, Shishi_asn1 encapreppart)
 {
-  int res = ASN1_SUCCESS;
+  int res;
   char buf[BUFSIZ];
   size_t buflen;
   char der[BUFSIZ];
@@ -322,10 +318,11 @@ shishi_aprep_enc_part_add (Shishi * handle,
 
 int
 shishi_aprep_enc_part_make (Shishi * handle,
-			    ASN1_TYPE aprep,
-			    ASN1_TYPE authenticator, ASN1_TYPE encticketpart)
+			    Shishi_asn1 aprep,
+			    Shishi_asn1 authenticator,
+			    Shishi_asn1 encticketpart)
 {
-  ASN1_TYPE encapreppart = ASN1_TYPE_EMPTY;
+  Shishi_asn1 encapreppart = NULL;
   int res;
 
   encapreppart = shishi_encapreppart (handle);
@@ -367,7 +364,7 @@ shishi_aprep_enc_part_make (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_aprep_get_enc_part_etype (Shishi * handle, ASN1_TYPE aprep, int *etype)
+shishi_aprep_get_enc_part_etype (Shishi * handle, Shishi_asn1 aprep, int *etype)
 {
   return shishi_asn1_integer_field (handle, aprep, etype,
 				    "AP-REP.enc-part.etype");
@@ -375,9 +372,9 @@ shishi_aprep_get_enc_part_etype (Shishi * handle, ASN1_TYPE aprep, int *etype)
 
 int
 shishi_aprep_decrypt (Shishi * handle,
-		      ASN1_TYPE aprep,
+		      Shishi_asn1 aprep,
 		      Shishi_key * key,
-		      int keyusage, ASN1_TYPE * encapreppart)
+		      int keyusage, Shishi_asn1 * encapreppart)
 {
   int res;
   int i;
@@ -419,11 +416,11 @@ shishi_aprep_decrypt (Shishi * handle,
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
       *encapreppart = shishi_d2a_encapreppart (handle, &buf[0], buflen - i);
-      if (*encapreppart != ASN1_TYPE_EMPTY)
+      if (*encapreppart != NULL)
 	break;
     }
 
-  if (*encapreppart == ASN1_TYPE_EMPTY)
+  if (*encapreppart == NULL)
     {
       shishi_error_printf (handle, "Could not DER decode EncAPRepPart. "
 			   "Password probably correct (decrypt ok) though\n");
@@ -435,7 +432,7 @@ shishi_aprep_decrypt (Shishi * handle,
 
 int
 shishi_aprep_verify (Shishi * handle,
-		     ASN1_TYPE authenticator, ASN1_TYPE encapreppart)
+		     Shishi_asn1 authenticator, Shishi_asn1 encapreppart)
 {
   char authenticatorctime[GENERALIZEDTIME_TIME_LEN + 1];
   char encapreppartctime[GENERALIZEDTIME_TIME_LEN + 1];

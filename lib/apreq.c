@@ -53,103 +53,101 @@
  * This function creates a new AP-REQ, populated with some default
  * values.
  *
- * Return value: Returns the AP-REQ or ASN1_TYPE_EMPTY on failure.
+ * Return value: Returns the AP-REQ or NULL on failure.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_apreq (Shishi * handle)
 {
-  int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  Shishi_asn1 node;
+  int res;
 
-  res =
-    asn1_create_element (handle->asn1, "Kerberos5.AP-REQ", &node, "AP-REQ");
-  if (res != ASN1_SUCCESS)
+  node = shishi_asn1_apreq (handle);
+  if (!node)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.pvno",
+  res = shishi_asn1_write (handle, node, "AP-REQ.pvno",
 			  SHISHI_APREQ_DEFAULT_PVNO,
 			  SHISHI_APREQ_DEFAULT_PVNO_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.msg-type",
+  res = shishi_asn1_write (handle, node, "AP-REQ.msg-type",
 			  SHISHI_APREQ_DEFAULT_MSG_TYPE,
 			  SHISHI_APREQ_DEFAULT_MSG_TYPE_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.ap-options",
+  res = shishi_asn1_write (handle, node, "AP-REQ.ap-options",
 			  SHISHI_APREQ_DEFAULT_AP_OPTIONS,
 			  SHISHI_APREQ_DEFAULT_AP_OPTIONS_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.ticket.tkt-vno",
+  res = shishi_asn1_write (handle, node, "AP-REQ.ticket.tkt-vno",
 			  SHISHI_APREQ_DEFAULT_TICKET_TKT_VNO,
 			  SHISHI_APREQ_DEFAULT_TICKET_TKT_VNO_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.ticket.realm",
+  res = shishi_asn1_write (handle, node, "AP-REQ.ticket.realm",
 			  SHISHI_APREQ_DEFAULT_TICKET_REALM,
 			  SHISHI_APREQ_DEFAULT_TICKET_REALM_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.ticket.realm",
+  res = shishi_asn1_write (handle, node, "AP-REQ.ticket.realm",
 			  SHISHI_APREQ_DEFAULT_TICKET_REALM,
 			  SHISHI_APREQ_DEFAULT_TICKET_REALM_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.ticket.sname.name-type",
+  res = shishi_asn1_write (handle, node, "AP-REQ.ticket.sname.name-type",
 			  SHISHI_APREQ_DEFAULT_TICKET_SNAME_NAME_TYPE,
 			  SHISHI_APREQ_DEFAULT_TICKET_SNAME_NAME_TYPE_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.ticket.enc-part.etype",
+  res = shishi_asn1_write (handle, node, "AP-REQ.ticket.enc-part.etype",
 			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_ETYPE,
 			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_ETYPE_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.ticket.enc-part.kvno",
+  res = shishi_asn1_write (handle, node, "AP-REQ.ticket.enc-part.kvno",
 			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_KVNO,
 			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_KVNO_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.ticket.enc-part.cipher",
+  res = shishi_asn1_write (handle, node, "AP-REQ.ticket.enc-part.cipher",
 			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_CIPHER,
 			  SHISHI_APREQ_DEFAULT_TICKET_ENC_PART_CIPHER_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.authenticator.etype",
+  res = shishi_asn1_write (handle, node, "AP-REQ.authenticator.etype",
 			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_ETYPE,
 			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_ETYPE_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.authenticator.kvno",
+  res = shishi_asn1_write (handle, node, "AP-REQ.authenticator.kvno",
 			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_KVNO,
 			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_KVNO_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "AP-REQ.authenticator.cipher",
+  res = shishi_asn1_write (handle, node, "AP-REQ.authenticator.cipher",
 			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_CIPHER,
 			  SHISHI_APREQ_DEFAULT_AUTHENTICATOR_CIPHER_LEN);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
   return node;
 
 error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
-    asn1_delete_structure (&node);
+  if (node)
+    shishi_asn1_done (handle, node);
   return NULL;
 }
 
@@ -164,7 +162,7 @@ error:
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_print (Shishi * handle, FILE * fh, ASN1_TYPE apreq)
+shishi_apreq_print (Shishi * handle, FILE * fh, Shishi_asn1 apreq)
 {
   return _shishi_print_armored_data (handle, fh, apreq, "AP-REQ", NULL);
 }
@@ -180,7 +178,7 @@ shishi_apreq_print (Shishi * handle, FILE * fh, ASN1_TYPE apreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_save (Shishi * handle, FILE * fh, ASN1_TYPE apreq)
+shishi_apreq_save (Shishi * handle, FILE * fh, Shishi_asn1 apreq)
 {
   return _shishi_save_data (handle, fh, apreq, "AP-REQ");
 }
@@ -199,7 +197,7 @@ shishi_apreq_save (Shishi * handle, FILE * fh, ASN1_TYPE apreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_to_file (Shishi * handle, ASN1_TYPE apreq,
+shishi_apreq_to_file (Shishi * handle, Shishi_asn1 apreq,
 		      int filetype, char *filename)
 {
   FILE *fh;
@@ -245,7 +243,7 @@ shishi_apreq_to_file (Shishi * handle, ASN1_TYPE apreq,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_parse (Shishi * handle, FILE * fh, ASN1_TYPE * apreq)
+shishi_apreq_parse (Shishi * handle, FILE * fh, Shishi_asn1 * apreq)
 {
   return _shishi_apreq_input (handle, fh, apreq, 0);
 }
@@ -261,7 +259,7 @@ shishi_apreq_parse (Shishi * handle, FILE * fh, ASN1_TYPE * apreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_read (Shishi * handle, FILE * fh, ASN1_TYPE * apreq)
+shishi_apreq_read (Shishi * handle, FILE * fh, Shishi_asn1 * apreq)
 {
   return _shishi_apreq_input (handle, fh, apreq, 1);
 }
@@ -279,7 +277,7 @@ shishi_apreq_read (Shishi * handle, FILE * fh, ASN1_TYPE * apreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_from_file (Shishi * handle, ASN1_TYPE * apreq,
+shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
 			int filetype, char *filename)
 {
   int res;
@@ -331,26 +329,24 @@ shishi_apreq_from_file (Shishi * handle, ASN1_TYPE * apreq,
  **/
 int
 shishi_apreq_set_authenticator (Shishi * handle,
-				ASN1_TYPE apreq,
+				Shishi_asn1 apreq,
 				int etype, char *buf, int buflen)
 {
   char format[BUFSIZ];
-  int res = ASN1_SUCCESS;
+  int res;
 
-  res = asn1_write_value (apreq, "AP-REQ.authenticator.cipher", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, apreq, "AP-REQ.authenticator.cipher",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   sprintf (format, "%d", etype);
-  res = asn1_write_value (apreq, "AP-REQ.authenticator.etype", format, 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, apreq, "AP-REQ.authenticator.etype",
+			   format, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  return SHISHI_ASN1_ERROR;
 }
 
 /**
@@ -367,11 +363,11 @@ error:
  **/
 int
 shishi_apreq_add_authenticator (Shishi * handle,
-				ASN1_TYPE apreq,
+				Shishi_asn1 apreq,
 				Shishi_key * key,
-				int keyusage, ASN1_TYPE authenticator)
+				int keyusage, Shishi_asn1 authenticator)
 {
-  int res = ASN1_SUCCESS;
+  int res;
   char buf[BUFSIZ];
   int buflen;
   char der[BUFSIZ];
@@ -382,7 +378,7 @@ shishi_apreq_add_authenticator (Shishi * handle,
     {
       shishi_error_printf (handle, "Could not DER encode authenticator: %s\n",
 			   shishi_strerror (res));
-      return !SHISHI_OK;
+      return res;
     }
 
   buflen = BUFSIZ;
@@ -410,111 +406,112 @@ shishi_apreq_add_authenticator (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_set_ticket (Shishi * handle, ASN1_TYPE apreq, ASN1_TYPE ticket)
+shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq, Shishi_asn1 ticket)
 {
-  int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  int res;
+  Shishi_asn1 node;
   unsigned char format[BUFSIZ];
   unsigned char buf[BUFSIZ];
   int buflen;
   int i, n;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.tkt-vno", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, ticket, "Ticket.tkt-vno", buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (apreq, "AP-REQ.ticket.tkt-vno", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.realm", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  res = asn1_write_value (apreq, "AP-REQ.ticket.realm", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, apreq, "AP-REQ.ticket.tkt-vno",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.sname.name-type", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, ticket, "Ticket.realm", buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res =
-    asn1_write_value (apreq, "AP-REQ.ticket.sname.name-type", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, apreq, "AP-REQ.ticket.realm", buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_number_of_elements (ticket, "Ticket.sname.name-string", &n);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  buflen = BUFSIZ;
+  res = shishi_asn1_read (handle, ticket, "Ticket.sname.name-type",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_write (handle, apreq, "AP-REQ.ticket.sname.name-type",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_number_of_elements (handle, ticket,
+					"Ticket.sname.name-string", &n);
+  if (res != SHISHI_OK)
+    return res;
 
   for (i = 1; i <= n; i++)
     {
-      res = asn1_write_value (apreq, "AP-REQ.ticket.sname.name-string",
+      res = shishi_asn1_write (handle, apreq,
+			       "AP-REQ.ticket.sname.name-string",
 			      "NEW", 1);
-      if (res != ASN1_SUCCESS)
-	goto error;
+      if (res != SHISHI_OK)
+	return res;
 
       sprintf (format, "Ticket.sname.name-string.?%d", i);
-
       buflen = BUFSIZ;
-      res = asn1_read_value (ticket, format, buf, &buflen);
-      if (res != ASN1_SUCCESS)
-	goto error;
+      res = shishi_asn1_read (handle, ticket, format, buf, &buflen);
+      if (res != SHISHI_OK)
+	return res;
 
       sprintf (format, "AP-REQ.ticket.sname.name-string.?%d", i);
-
-      res = asn1_write_value (apreq, format, buf, buflen);
-      if (res != ASN1_SUCCESS)
-	goto error;
+      res = shishi_asn1_write (handle, apreq, format, buf, buflen);
+      if (res != SHISHI_OK)
+	return res;
     }
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.enc-part.etype", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, ticket, "Ticket.enc-part.etype",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (apreq, "AP-REQ.ticket.enc-part.etype", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, apreq, "AP-REQ.ticket.enc-part.etype",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.enc-part.kvno", buf, &buflen);
-  if (res != ASN1_SUCCESS && res != ASN1_ELEMENT_NOT_FOUND)
-    goto error;
+  res = shishi_asn1_read (handle, ticket, "Ticket.enc-part.kvno",
+			  buf, &buflen);
+  if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
+    return res;
 
-  if (res == ASN1_ELEMENT_NOT_FOUND)
-    res = asn1_write_value (apreq, "AP-REQ.ticket.enc-part.kvno", NULL, 0);
+  if (res == SHISHI_ASN1_NO_ELEMENT)
+    res = shishi_asn1_write (handle, apreq, "AP-REQ.ticket.enc-part.kvno",
+			     NULL, 0);
   else
-    res =
-      asn1_write_value (apreq, "AP-REQ.ticket.enc-part.kvno", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+    res = shishi_asn1_write (handle, apreq, "AP-REQ.ticket.enc-part.kvno",
+			     buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (ticket, "Ticket.enc-part.cipher", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, ticket, "Ticket.enc-part.cipher",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res =
-    asn1_write_value (apreq, "AP-REQ.ticket.enc-part.cipher", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, apreq, "AP-REQ.ticket.enc-part.cipher",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
-    asn1_delete_structure (&node);
-  return !SHISHI_OK;
 }
 
 int
-shishi_apreq_options (Shishi * handle, ASN1_TYPE apreq, int *flags)
+shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq, int *flags)
 {
   int len = sizeof (*flags);
   int res;
@@ -525,7 +522,7 @@ shishi_apreq_options (Shishi * handle, ASN1_TYPE apreq, int *flags)
 }
 
 int
-shishi_apreq_use_session_key_p (Shishi * handle, ASN1_TYPE apreq)
+shishi_apreq_use_session_key_p (Shishi * handle, Shishi_asn1 apreq)
 {
   int options = 0;
 
@@ -535,7 +532,7 @@ shishi_apreq_use_session_key_p (Shishi * handle, ASN1_TYPE apreq)
 }
 
 int
-shishi_apreq_mutual_required_p (Shishi * handle, ASN1_TYPE apreq)
+shishi_apreq_mutual_required_p (Shishi * handle, Shishi_asn1 apreq)
 {
   int options = 0;
 
@@ -545,21 +542,21 @@ shishi_apreq_mutual_required_p (Shishi * handle, ASN1_TYPE apreq)
 }
 
 int
-shishi_apreq_options_set (Shishi * handle, ASN1_TYPE apreq, int options)
+shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq, int options)
 {
   int res;
 
-  res = asn1_write_value (apreq, "AP-REQ.ap-options",
+  res = shishi_asn1_write (handle, apreq, "AP-REQ.ap-options",
 			  (char *) &options,
 			  SHISHI_APREQ_DEFAULT_AP_OPTIONS_LEN);
-  if (res != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
 
 int
-shishi_apreq_options_add (Shishi * handle, ASN1_TYPE apreq, int option)
+shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq, int option)
 {
   int options;
   int res;
@@ -589,7 +586,7 @@ shishi_apreq_options_add (Shishi * handle, ASN1_TYPE apreq, int option)
  **/
 int
 shishi_apreq_get_authenticator_etype (Shishi * handle,
-				      ASN1_TYPE apreq, int *etype)
+				      Shishi_asn1 apreq, int *etype)
 {
   return shishi_asn1_integer_field (handle, apreq, etype,
 				    "AP-REQ.authenticator.etype");
@@ -606,7 +603,9 @@ shishi_apreq_get_authenticator_etype (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_get_ticket (Shishi * handle, ASN1_TYPE apreq, ASN1_TYPE * ticket)
+shishi_apreq_get_ticket (Shishi * handle,
+			 Shishi_asn1 apreq,
+			 Shishi_asn1 * ticket)
 {
   unsigned char buf[BUFSIZ];
   unsigned char format[BUFSIZ];
@@ -616,112 +615,112 @@ shishi_apreq_get_ticket (Shishi * handle, ASN1_TYPE apreq, ASN1_TYPE * ticket)
 
   /* there's GOT to be an easier way to do this */
 
-  *ticket = ASN1_TYPE_EMPTY;
-  res = asn1_create_element (handle->asn1, "Kerberos5.Ticket",
-			     ticket, "Ticket");
-  if (res != ASN1_SUCCESS)
-    {
-      *ticket = ASN1_TYPE_EMPTY;
-      goto error;
-    }
+  *ticket = shishi_asn1_ticket (handle);
+  if (!*ticket)
+    return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (apreq, "AP-REQ.ticket.tkt-vno", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, apreq, "AP-REQ.ticket.tkt-vno", buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.tkt-vno", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.tkt-vno", buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (apreq, "AP-REQ.ticket.realm", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, apreq, "AP-REQ.ticket.realm", buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.realm", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.realm", buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   buflen = BUFSIZ;
-  res =
-    asn1_read_value (apreq, "AP-REQ.ticket.sname.name-type", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, apreq, "AP-REQ.ticket.sname.name-type",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.sname.name-type", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.sname.name-type",
+			   buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res =
-    asn1_number_of_elements (apreq, "AP-REQ.ticket.sname.name-string", &n);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_number_of_elements (handle, apreq,
+					"AP-REQ.ticket.sname.name-string", &n);
+  if (res != SHISHI_OK)
     goto error;
 
   for (i = 1; i <= n; i++)
     {
-      res = asn1_write_value (*ticket, "Ticket.sname.name-string", "NEW", 1);
-      if (res != ASN1_SUCCESS)
+      res = shishi_asn1_write (handle, *ticket, "Ticket.sname.name-string",
+			       "NEW", 1);
+      if (res != SHISHI_OK)
 	goto error;
 
       sprintf (format, "AP-REQ.ticket.sname.name-string.?%d", i);
       buflen = BUFSIZ;
-      res = asn1_read_value (apreq, format, buf, &buflen);
-      if (res != ASN1_SUCCESS)
+      res = shishi_asn1_read (handle, apreq, format, buf, &buflen);
+      if (res != SHISHI_OK)
 	goto error;
 
       sprintf (format, "Ticket.sname.name-string.?%d", i);
-      res = asn1_write_value (*ticket, format, buf, buflen);
-      if (res != ASN1_SUCCESS)
+      res = shishi_asn1_write (handle, *ticket, format, buf, buflen);
+      if (res != SHISHI_OK)
 	goto error;
     }
 
   buflen = BUFSIZ;
-  res = asn1_read_value (apreq, "AP-REQ.ticket.enc-part.etype", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, apreq, "AP-REQ.ticket.enc-part.etype",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.enc-part.etype", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.etype",
+			   buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (apreq, "AP-REQ.ticket.enc-part.kvno", buf, &buflen);
-  if (res != ASN1_SUCCESS && res != ASN1_ELEMENT_NOT_FOUND)
+  res = shishi_asn1_read (handle, apreq, "AP-REQ.ticket.enc-part.kvno",
+			  buf, &buflen);
+  if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     goto error;
 
-  if (res == ASN1_ELEMENT_NOT_FOUND)
-    res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", NULL, 0);
+  if (res == SHISHI_ASN1_NO_ELEMENT)
+    res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.kvno",
+			     NULL, 0);
   else
-    res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", buf, buflen);
-  if (res != ASN1_SUCCESS)
+    res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.kvno",
+			     buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   buflen = BUFSIZ;
-  res =
-    asn1_read_value (apreq, "AP-REQ.ticket.enc-part.cipher", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, apreq, "AP-REQ.ticket.enc-part.cipher",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.enc-part.cipher", buf, buflen);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.cipher",
+			   buf, buflen);
+  if (res != SHISHI_OK)
     goto error;
 
   return SHISHI_OK;
 
 error:
-  shishi_error_printf (handle, "shishi_apreq_get_ticket() failure: %s",
-		       libtasn1_strerror (res));
-  if (*ticket != ASN1_TYPE_EMPTY)
-    asn1_delete_structure (ticket);
-  return SHISHI_ASN1_ERROR;
+  shishi_asn1_done (handle, *ticket);
+  return res;
 }
 
 int
 shishi_apreq_decrypt (Shishi * handle,
-		      ASN1_TYPE apreq,
+		      Shishi_asn1 apreq,
 		      Shishi_key * key,
-		      int keyusage, ASN1_TYPE * authenticator)
+		      int keyusage, Shishi_asn1 * authenticator)
 {
   int res;
   int i;
@@ -764,11 +763,11 @@ shishi_apreq_decrypt (Shishi * handle,
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
       *authenticator = shishi_d2a_authenticator (handle, &buf[0], buflen - i);
-      if (*authenticator != ASN1_TYPE_EMPTY)
+      if (*authenticator != NULL)
 	break;
     }
 
-  if (*authenticator == ASN1_TYPE_EMPTY)
+  if (*authenticator == NULL)
     {
       shishi_error_printf (handle, "Could not DER decode Authenticator. "
 			   "Password probably correct (decrypt ok) though\n");

@@ -33,7 +33,7 @@
 int
 _shishi_print_armored_data (Shishi * handle,
 			    FILE * fh,
-			    ASN1_TYPE asn1, char *asn1type, char *headers)
+			    Shishi_asn1 asn1, char *asn1type, char *headers)
 {
   char der[BUFSIZ];
   int derlen = BUFSIZ;
@@ -41,7 +41,7 @@ _shishi_print_armored_data (Shishi * handle,
   int res;
   size_t i;
 
-  if (asn1 == ASN1_TYPE_EMPTY)
+  if (asn1 == NULL)
     return !SHISHI_OK;
 
   asn1_print_structure (fh, asn1, asn1->name, ASN1_PRINT_NAME_TYPE_VALUE);
@@ -79,7 +79,7 @@ _shishi_print_armored_data (Shishi * handle,
 }
 
 int
-_shishi_save_data (Shishi * handle, FILE * fh, ASN1_TYPE asn1, char *asn1type)
+_shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1, char *asn1type)
 {
   char der[BUFSIZ];
   int derlen;
@@ -108,7 +108,7 @@ _shishi_save_data (Shishi * handle, FILE * fh, ASN1_TYPE asn1, char *asn1type)
 
 int
 shishi_enckdcreppart_print (Shishi * handle,
-			    FILE * fh, ASN1_TYPE enckdcreppart)
+			    FILE * fh, Shishi_asn1 enckdcreppart)
 {
   return _shishi_print_armored_data (handle, fh, enckdcreppart,
 				     "EncKDCRepPart", NULL);
@@ -116,26 +116,26 @@ shishi_enckdcreppart_print (Shishi * handle,
 
 int
 shishi_enckdcreppart_save (Shishi * handle,
-			   FILE * fh, ASN1_TYPE enckdcreppart)
+			   FILE * fh, Shishi_asn1 enckdcreppart)
 {
   return _shishi_save_data (handle, fh, enckdcreppart, "EncKDCRepPart");
 }
 
 int
-shishi_ticket_save (Shishi * handle, FILE * fh, ASN1_TYPE ticket)
+shishi_ticket_save (Shishi * handle, FILE * fh, Shishi_asn1 ticket)
 {
   return _shishi_save_data (handle, fh, ticket, "Ticket");
 }
 
 int
-shishi_ticket_print (Shishi * handle, FILE * fh, ASN1_TYPE ticket)
+shishi_ticket_print (Shishi * handle, FILE * fh, Shishi_asn1 ticket)
 {
   return _shishi_print_armored_data (handle, fh, ticket, "Ticket", NULL);
 }
 
 int
 shishi_encticketpart_print (Shishi * handle, FILE * fh,
-			    ASN1_TYPE encticketpart)
+			    Shishi_asn1 encticketpart)
 {
   return _shishi_print_armored_data (handle, fh, encticketpart,
 				     "EncTicketPart", NULL);
@@ -203,7 +203,7 @@ _shishi_read_armored_data (Shishi * handle,
 
 static int
 _shishi_ticket_input (Shishi * handle,
-		      FILE * fh, ASN1_TYPE * ticket, int type)
+		      FILE * fh, Shishi_asn1 * ticket, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -237,27 +237,27 @@ _shishi_ticket_input (Shishi * handle,
     }
 
   *ticket = shishi_d2a_ticket (handle, der, derlen);
-  if (*ticket == ASN1_TYPE_EMPTY)
+  if (*ticket == NULL)
     return SHISHI_ASN1_ERROR;
 
   return SHISHI_OK;
 }
 
 int
-shishi_ticket_parse (Shishi * handle, FILE * fh, ASN1_TYPE * ticket)
+shishi_ticket_parse (Shishi * handle, FILE * fh, Shishi_asn1 * ticket)
 {
   return _shishi_ticket_input (handle, fh, ticket, 0);
 }
 
 int
-shishi_ticket_read (Shishi * handle, FILE * fh, ASN1_TYPE * ticket)
+shishi_ticket_read (Shishi * handle, FILE * fh, Shishi_asn1 * ticket)
 {
   return _shishi_ticket_input (handle, fh, ticket, 1);
 }
 
 static int
 _shishi_enckdcreppart_input (Shishi * handle,
-			     FILE * fh, ASN1_TYPE * enckdcreppart, int type)
+			     FILE * fh, Shishi_asn1 * enckdcreppart, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -292,20 +292,20 @@ _shishi_enckdcreppart_input (Shishi * handle,
     }
 
   *enckdcreppart = shishi_d2a_encasreppart (handle, der, derlen);
-  if (*enckdcreppart == ASN1_TYPE_EMPTY)
+  if (*enckdcreppart == NULL)
     {
       shishi_error_printf (handle, "Could not DER decode Encasreppart: %s",
 			   shishi_strerror_details (handle));
 
       *enckdcreppart = shishi_d2a_enctgsreppart (handle, der, derlen);
-      if (*enckdcreppart == ASN1_TYPE_EMPTY)
+      if (*enckdcreppart == NULL)
 	{
 	  shishi_error_printf (handle,
 			       "Could not DER decode Enctgsreppart: %s",
 			       shishi_strerror_details (handle));
 
 	  *enckdcreppart = shishi_d2a_enckdcreppart (handle, der, derlen);
-	  if (*enckdcreppart == ASN1_TYPE_EMPTY)
+	  if (*enckdcreppart == NULL)
 	    {
 	      shishi_error_printf (handle,
 				   "Could not DER decode Enckdcreppart: %s",
@@ -320,20 +320,20 @@ _shishi_enckdcreppart_input (Shishi * handle,
 
 int
 shishi_enckdcreppart_parse (Shishi * handle,
-			    FILE * fh, ASN1_TYPE * enckdcreppart)
+			    FILE * fh, Shishi_asn1 * enckdcreppart)
 {
   return _shishi_enckdcreppart_input (handle, fh, enckdcreppart, 0);
 }
 
 int
 shishi_enckdcreppart_read (Shishi * handle,
-			   FILE * fh, ASN1_TYPE * enckdcreppart)
+			   FILE * fh, Shishi_asn1 * enckdcreppart)
 {
   return _shishi_enckdcreppart_input (handle, fh, enckdcreppart, 1);
 }
 
 int
-_shishi_kdcreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * asreq, int type)
+_shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -367,19 +367,19 @@ _shishi_kdcreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * asreq, int type)
     }
 
   *asreq = shishi_d2a_asreq (handle, der, derlen);
-  if (*asreq == ASN1_TYPE_EMPTY)
+  if (*asreq == NULL)
     {
       printf ("bad asreq magic\n");
       shishi_error_printf (handle, "Could not DER decode AS-REQ\n");
 
       *asreq = shishi_d2a_tgsreq (handle, der, derlen);
-      if (*asreq == ASN1_TYPE_EMPTY)
+      if (*asreq == NULL)
 	{
 	  printf ("bad tgsreq magic\n");
 	  shishi_error_printf (handle, "Could not DER decode TGS-REQ\n");
 
 	  *asreq = shishi_d2a_kdcreq (handle, der, derlen);
-	  if (*asreq == ASN1_TYPE_EMPTY)
+	  if (*asreq == NULL)
 	    {
 	      printf ("bad kdcreq magic\n");
 	      shishi_error_printf (handle, "Could not DER decode KDC-REQ\n");
@@ -393,7 +393,7 @@ _shishi_kdcreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * asreq, int type)
 }
 
 int
-_shishi_kdcrep_input (Shishi * handle, FILE * fh, ASN1_TYPE * asrep, int type)
+_shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -427,17 +427,17 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, ASN1_TYPE * asrep, int type)
     }
 
   *asrep = shishi_d2a_asrep (handle, der, derlen);
-  if (*asrep == ASN1_TYPE_EMPTY)
+  if (*asrep == NULL)
     {
       *asrep = shishi_d2a_tgsrep (handle, der, derlen);
-      if (*asrep == ASN1_TYPE_EMPTY)
+      if (*asrep == NULL)
 	{
 	  printf ("Could not DER decode KDC-REP: %s\n",
 		  shishi_strerror_details (handle));
 	  printf ("Parsing AS/TGS-REP as KDC-REP (bug work around)\n");
 
 	  *asrep = shishi_d2a_kdcrep (handle, der, derlen);
-	  if (*asrep == ASN1_TYPE_EMPTY)
+	  if (*asrep == NULL)
 	    {
 	      fprintf (stderr, "Could not DER decode KDC-REP: %s\n",
 		       shishi_strerror_details (handle));
@@ -452,7 +452,7 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, ASN1_TYPE * asrep, int type)
 }
 
 int
-_shishi_apreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * apreq, int type)
+_shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -486,7 +486,7 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * apreq, int type)
     }
 
   *apreq = shishi_d2a_apreq (handle, der, derlen);
-  if (*apreq == ASN1_TYPE_EMPTY)
+  if (*apreq == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
@@ -498,7 +498,7 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * apreq, int type)
 }
 
 int
-_shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type)
+_shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -532,7 +532,7 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type)
     }
 
   *aprep = shishi_d2a_aprep (handle, der, derlen);
-  if (*aprep == ASN1_TYPE_EMPTY)
+  if (*aprep == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REP\n");
@@ -545,7 +545,7 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type)
 
 int
 _shishi_encapreppart_input (Shishi * handle, FILE * fh,
-			    ASN1_TYPE * encapreppart, int type)
+			    Shishi_asn1 * encapreppart, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -581,7 +581,7 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
     }
 
   *encapreppart = shishi_d2a_encapreppart (handle, der, derlen);
-  if (*encapreppart == ASN1_TYPE_EMPTY)
+  if (*encapreppart == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode EncAPRepPart\n");
@@ -594,7 +594,7 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 
 int
 _shishi_authenticator_input (Shishi * handle,
-			     FILE * fh, ASN1_TYPE * authenticator, int type)
+			     FILE * fh, Shishi_asn1 * authenticator, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -629,7 +629,7 @@ _shishi_authenticator_input (Shishi * handle,
     }
 
   *authenticator = shishi_d2a_authenticator (handle, der, derlen);
-  if (*authenticator == ASN1_TYPE_EMPTY)
+  if (*authenticator == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
@@ -642,7 +642,7 @@ _shishi_authenticator_input (Shishi * handle,
 
 int
 _shishi_krberror_input (Shishi * handle,
-			FILE * fh, ASN1_TYPE * krberror, int type)
+			FILE * fh, Shishi_asn1 * krberror, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -677,7 +677,7 @@ _shishi_krberror_input (Shishi * handle,
     }
 
   *krberror = shishi_d2a_krberror (handle, der, derlen);
-  if (*krberror == ASN1_TYPE_EMPTY)
+  if (*krberror == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
@@ -689,7 +689,7 @@ _shishi_krberror_input (Shishi * handle,
 }
 
 int
-_shishi_safe_input (Shishi * handle, FILE * fh, ASN1_TYPE * safe, int type)
+_shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe, int type)
 {
   char der[BUFSIZ];
   size_t derlen;
@@ -724,7 +724,7 @@ _shishi_safe_input (Shishi * handle, FILE * fh, ASN1_TYPE * safe, int type)
     }
 
   *safe = shishi_d2a_krberror (handle, der, derlen);
-  if (*safe == ASN1_TYPE_EMPTY)
+  if (*safe == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");

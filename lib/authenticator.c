@@ -29,14 +29,14 @@
  * default values.  It uses the current time as returned by the system
  * for the ctime and cusec fields.
  *
- * Return value: Returns the authenticator or ASN1_TYPE_EMPTY on
+ * Return value: Returns the authenticator or NULL on
  * failure.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_authenticator (Shishi * handle)
 {
   int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  Shishi_asn1 node = NULL;
   struct timeval tv;
   struct timezone tz;
   char usec[BUFSIZ];
@@ -89,9 +89,9 @@ shishi_authenticator (Shishi * handle)
 
 error:
   shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
+  if (node != NULL)
     asn1_delete_structure (&node);
-  return ASN1_TYPE_EMPTY;
+  return NULL;
 }
 
 /**
@@ -106,7 +106,7 @@ error:
  **/
 int
 shishi_authenticator_print (Shishi * handle,
-			    FILE * fh, ASN1_TYPE authenticator)
+			    FILE * fh, Shishi_asn1 authenticator)
 {
   return _shishi_print_armored_data (handle, fh, authenticator,
 				     "Authenticator", NULL);
@@ -124,7 +124,7 @@ shishi_authenticator_print (Shishi * handle,
  **/
 int
 shishi_authenticator_save (Shishi * handle,
-			   FILE * fh, ASN1_TYPE authenticator)
+			   FILE * fh, Shishi_asn1 authenticator)
 {
   return _shishi_save_data (handle, fh, authenticator, "Authenticator");
 }
@@ -143,7 +143,7 @@ shishi_authenticator_save (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_authenticator_to_file (Shishi * handle, ASN1_TYPE authenticator,
+shishi_authenticator_to_file (Shishi * handle, Shishi_asn1 authenticator,
 			      int filetype, char *filename)
 {
   FILE *fh;
@@ -190,7 +190,7 @@ shishi_authenticator_to_file (Shishi * handle, ASN1_TYPE authenticator,
  **/
 int
 shishi_authenticator_parse (Shishi * handle,
-			    FILE * fh, ASN1_TYPE * authenticator)
+			    FILE * fh, Shishi_asn1 * authenticator)
 {
   return _shishi_authenticator_input (handle, fh, authenticator, 0);
 }
@@ -208,7 +208,7 @@ shishi_authenticator_parse (Shishi * handle,
  **/
 int
 shishi_authenticator_read (Shishi * handle,
-			   FILE * fh, ASN1_TYPE * authenticator)
+			   FILE * fh, Shishi_asn1 * authenticator)
 {
   return _shishi_authenticator_input (handle, fh, authenticator, 1);
 }
@@ -226,7 +226,7 @@ shishi_authenticator_read (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_authenticator_from_file (Shishi * handle, ASN1_TYPE * authenticator,
+shishi_authenticator_from_file (Shishi * handle, Shishi_asn1 * authenticator,
 				int filetype, char *filename)
 {
   int res;
@@ -272,7 +272,7 @@ shishi_authenticator_from_file (Shishi * handle, ASN1_TYPE * authenticator,
  **/
 int
 shishi_authenticator_set_crealm (Shishi * handle,
-				 ASN1_TYPE authenticator, const char *crealm)
+				 Shishi_asn1 authenticator, const char *crealm)
 {
   int res = ASN1_SUCCESS;
 
@@ -300,7 +300,7 @@ shishi_authenticator_set_crealm (Shishi * handle,
  **/
 int
 shishi_authenticator_set_cname (Shishi * handle,
-				ASN1_TYPE node,
+				Shishi_asn1 node,
 				Shishi_name_type name_type,
 				const char *principal)
 {
@@ -342,7 +342,7 @@ shishi_authenticator_set_cname (Shishi * handle,
 
 int
 shishi_authenticator_ctime_get (Shishi * handle,
-				ASN1_TYPE authenticator, char *ctime)
+				Shishi_asn1 authenticator, char *ctime)
 {
   int len;
   int res;
@@ -358,7 +358,7 @@ shishi_authenticator_ctime_get (Shishi * handle,
 
 int
 shishi_authenticator_cusec_get (Shishi * handle,
-				ASN1_TYPE authenticator, int *cusec)
+				Shishi_asn1 authenticator, int *cusec)
 {
   int res;
 
@@ -371,7 +371,7 @@ shishi_authenticator_cusec_get (Shishi * handle,
 
 int
 shishi_authenticator_cname_get (Shishi * handle,
-				ASN1_TYPE authenticator,
+				Shishi_asn1 authenticator,
 				char *cname, int *cnamelen)
 {
   return shishi_principal_name_get (handle, authenticator,
@@ -380,7 +380,7 @@ shishi_authenticator_cname_get (Shishi * handle,
 
 int
 shishi_authenticator_cnamerealm_get (Shishi * handle,
-				     ASN1_TYPE authenticator,
+				     Shishi_asn1 authenticator,
 				     char *cnamerealm, int *cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, authenticator,
@@ -391,7 +391,7 @@ shishi_authenticator_cnamerealm_get (Shishi * handle,
 }
 
 int
-shishi_authenticator_remove_cksum (Shishi * handle, ASN1_TYPE authenticator)
+shishi_authenticator_remove_cksum (Shishi * handle, Shishi_asn1 authenticator)
 {
   int res;
 
@@ -420,7 +420,7 @@ shishi_authenticator_remove_cksum (Shishi * handle, ASN1_TYPE authenticator)
  **/
 int
 shishi_authenticator_cksum (Shishi * handle,
-			    ASN1_TYPE authenticator,
+			    Shishi_asn1 authenticator,
 			    int *cksumtype, char *cksum, int *cksumlen)
 {
   char format[BUFSIZ];
@@ -457,7 +457,7 @@ shishi_authenticator_cksum (Shishi * handle,
  **/
 int
 shishi_authenticator_set_cksum (Shishi * handle,
-				ASN1_TYPE authenticator,
+				Shishi_asn1 authenticator,
 				int cksumtype, char *cksum, int cksumlen)
 {
   char format[BUFSIZ];
@@ -488,7 +488,7 @@ shishi_authenticator_set_cksum (Shishi * handle,
  **/
 int
 shishi_authenticator_clear_authorizationdata (Shishi * handle,
-					      ASN1_TYPE authenticator)
+					      Shishi_asn1 authenticator)
 {
   int res;
 
@@ -514,7 +514,7 @@ shishi_authenticator_clear_authorizationdata (Shishi * handle,
  **/
 int
 shishi_authenticator_add_authorizationdata (Shishi * handle,
-					    ASN1_TYPE authenticator,
+					    Shishi_asn1 authenticator,
 					    int adtype,
 					    char *addata, int addatalen)
 {
@@ -568,7 +568,7 @@ error:
  **/
 int
 shishi_authenticator_authorizationdata (Shishi * handle,
-					ASN1_TYPE authenticator,
+					Shishi_asn1 authenticator,
 					int *adtype,
 					char *addata, int *addatalen, int nth)
 {
@@ -612,7 +612,7 @@ shishi_authenticator_authorizationdata (Shishi * handle,
  **/
 int
 shishi_authenticator_add_cksum (Shishi * handle,
-				ASN1_TYPE authenticator,
+				Shishi_asn1 authenticator,
 				Shishi_key * key,
 				int keyusage, char *data, int datalen)
 {
