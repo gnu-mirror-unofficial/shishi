@@ -452,7 +452,12 @@ alphaev68-dec-osf5.1, Tru64 UNIX C compiler, Tru64 Make.
 @cindex Debian
 
 i686-pc-linux-gnu, GCC 2.95.4, GNU Make. This is the main development
-host.
+host. alphaev67-unknown-linux-gnu
+
+@item SuSE 7.1
+@cindex SuSE
+
+alphaev67-unknown-linux-gnu, GCC 2.96, GNU Make.
 
 @item RedHat 8.0
 @cindex RedHat
