@@ -55,8 +55,3 @@ shishid_LDADD = ../gl/libfoo.la ../lib/libshishi.la ../db/libshisa.la \
 shishid_cmd.c shishid_cmd.h: shishid.ggo
 	gengetopt --no-handle-help --no-handle-error \
 		 --input $< --file-name shishid_cmd
-
-# Maintainer targets
-
-indent:
-	indent $(SOURCES)

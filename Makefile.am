@@ -69,12 +69,6 @@ install-data-hook:
 
 # Maintainer targets
 
-indent:
-	(cd lib && make indent)
-	(cd db && make indent)
-	(cd src && make indent)
-	(cd tests && make indent)
-
 .PHONY: extra
 extra:
 	(cd extra && make)

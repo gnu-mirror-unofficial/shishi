@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -81,6 +81,3 @@ libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 kerberos5.c: $(srcdir)/kerberos5.asn1
 	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $^
-
-indent:
-	indent $(am__libshishi_la_SOURCES_DIST)

@@ -28,6 +28,3 @@ LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 check_PROGRAMS = authenticator crypto gztime priv safe \
 	ticketset crypto-ctx low-crypto rijndael
 TESTS = $(check_PROGRAMS)
-
-indent:
-	indent $(SOURCES)
