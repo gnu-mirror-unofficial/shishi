@@ -45,6 +45,7 @@ ChangeLog:
 
 indent:
 	(cd lib && make indent)
+	(cd gss && make indent)
 	(cd src && make indent)
 	(cd tests && make indent)
 
