@@ -72,6 +72,7 @@ shishi_keys_for_serverrealm_in_file (Shishi * handle,
 	break;
 
       shishi_key_done (key);
+      key = NULL;
     }
 
   res = fclose (fh);
