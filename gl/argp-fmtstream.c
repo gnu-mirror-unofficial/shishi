@@ -3,20 +3,19 @@
    This file is part of the GNU C Library.
    Written by Miles Bader <miles@gnu.ai.mit.edu>.
 
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
 
-   The GNU C Library is distributed in the hope that it will be useful,
+   This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA.  */
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 /* This package emulates glibc `line_wrap_stream' semantics for systems that
    don't have that.  */
@@ -94,6 +93,9 @@ weak_alias (__argp_make_fmtstream, argp_make_fmtstream)
 #endif
 #endif
 
+#ifndef weak_alias
+# define __argp_fmtstream_free argp_fmtstream_free
+#endif
 /* Flush FS to its stream, and free it (but don't close the stream).  */
 void
 __argp_fmtstream_free (argp_fmtstream_t fs)
@@ -118,6 +120,9 @@ weak_alias (__argp_fmtstream_free, argp_fmtstream_free)
 #endif
 #endif
 
+#ifndef weak_alias
+# define __argp_fmtstream_update _argp_fmtstream_update
+#endif
 /* Process FS's buffer so that line wrapping is done from POINT_OFFS to the
    end of its buffer.  This code is mostly from glibc stdio/linewrap.c.  */
 void
@@ -348,6 +353,9 @@ __argp_fmtstream_update (argp_fmtstream_t fs)
   fs->point_offs = fs->p - fs->buf;
 }
 
+#ifndef weak_alias
+# define __argp_fmtstream_ensure _argp_fmtstream_ensure
+#endif
 /* Ensure that FS has space for AMOUNT more bytes in its buffer, either by
    growing the buffer, or by flushing it.  True is returned iff we succeed. */
 int

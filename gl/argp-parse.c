@@ -3,20 +3,19 @@
    This file is part of the GNU C Library.
    Written by Miles Bader <miles@gnu.ai.mit.edu>.
 
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
 
-   The GNU C Library is distributed in the hope that it will be useful,
+   This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA.  */
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -119,24 +118,25 @@ argp_default_parser (int key, char *arg, struct argp_state *state)
       break;
 
     case OPT_PROGNAME:		/* Set the program name.  */
+#if HAVE_DECL_PROGRAM_INVOCATION_NAME
       program_invocation_name = arg;
-
+#endif
       /* [Note that some systems only have PROGRAM_INVOCATION_SHORT_NAME (aka
 	 __PROGNAME), in which case, PROGRAM_INVOCATION_NAME is just defined
 	 to be that, so we have to be a bit careful here.]  */
-      arg = strrchr (arg, '/');
-      if (arg)
-	program_invocation_short_name = arg + 1;
-      else
-	program_invocation_short_name = program_invocation_name;
 
       /* Update what we use for messages.  */
-      state->name = program_invocation_short_name;
+
+      state->name = __argp_basename(arg);
+
+#if HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
+      program_invocation_short_name = state->name;
+#endif
 
       if ((state->flags & (ARGP_PARSE_ARGV0 | ARGP_NO_ERRS))
 	  == ARGP_PARSE_ARGV0)
 	/* Update what getopt uses too.  */
-	state->argv[0] = program_invocation_name;
+	state->argv[0] = arg;
 
       break;
 
@@ -599,7 +599,7 @@ parser_init (struct parser *parser, const struct argp *argp,
       parser->state.name = short_name ? short_name + 1 : argv[0];
     }
   else
-    parser->state.name = program_invocation_short_name;
+    parser->state.name = __argp_short_program_name(NULL);
 
   return 0;
 }
@@ -895,6 +895,9 @@ parser_parse_next (struct parser *parser, int *arg_ebadkey)
   return err;
 }
 
+#ifndef weak_alias
+# define __argp_parse argp_parse
+#endif
 /* Parse the options strings in ARGC & ARGV according to the argp in ARGP.
    FLAGS is one of the ARGP_ flags above.  If END_INDEX is non-NULL, the
    index in ARGV of the first unparsed option is returned in it.  If an
