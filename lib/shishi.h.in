@@ -60,7 +60,8 @@ enum
   SHISHI_TTY_ERROR = 26,
   SHISHI_GOT_KRBERROR = 27,
   SHISHI_HANDLE_ERROR = 28,
-  SHISHI_INVALID_TICKETSET = 29
+  SHISHI_INVALID_TICKETSET = 29,
+  SHISHI_TICKET_BAD_KEYTYPE = 30
 };
 
 /* This is not specified in the ASN.1 syntax for some reason. */
@@ -412,25 +413,40 @@ shishi_authenticator_save (Shishi * handle,
 			   FILE * fh, ASN1_TYPE authenticator);
 
 /* authenticator.c */
-extern int
-shishi_authenticator_add_checksum (Shishi * handle,
-				   ASN1_TYPE node,
-				   char *data,
-				   int datalen,
-				   char *key, int keylen, int cksumtype);
-extern
-  int
-shishi_authenticator_set_crealm (Shishi * handle,
-				 ASN1_TYPE node, char *crealm);
-
-extern
-  int
-shishi_authenticator_set_cname (Shishi * handle,
-				ASN1_TYPE node,
-				Shishi_name_type name_type,
-				const char *principal);
-
 extern ASN1_TYPE shishi_authenticator (Shishi * handle);
+extern int shishi_authenticator_set_crealm (Shishi * handle,
+					    ASN1_TYPE node,
+					    char *crealm);
+
+extern int shishi_authenticator_set_cname (Shishi * handle,
+					   ASN1_TYPE node,
+					   Shishi_name_type name_type,
+					   const char *principal);
+extern int shishi_authenticator_ctime_get (Shishi * handle,
+					   ASN1_TYPE authenticator,
+					   char *ctime);
+extern int shishi_authenticator_cusec_get (Shishi * handle,
+					   ASN1_TYPE authenticator,
+					   int *cusec);
+extern int shishi_authenticator_cname_get (Shishi * handle,
+					   ASN1_TYPE authenticator,
+					   char *cname, int *cnamelen);
+extern int shishi_authenticator_cnamerealm_get (Shishi * handle,
+						ASN1_TYPE authenticator,
+						char *cnamerealm,
+						int *cnamerealmlen);
+extern int shishi_authenticator_remove_cksum (Shishi * handle,
+					      ASN1_TYPE authenticator);
+extern int shishi_authenticator_set_cksum (Shishi * handle,
+					   ASN1_TYPE authenticator,
+					   int cksumtype,
+					   char *cksum, int cksumlen);
+extern int shishi_authenticator_add_cksum (Shishi * handle,
+					   ASN1_TYPE authenticator,
+					   Shishi_key *key,
+					   int keyusage,
+					   char *data,
+					   int datalen);
 
 /* as.c */
 extern ASN1_TYPE shishi_as_req (Shishi_as * as);
@@ -588,6 +604,7 @@ extern int shishi_cipher_blocksize (int type);
 extern int shishi_cipher_minpadsize (int type);
 extern int shishi_cipher_confoundersize (int type);
 extern size_t shishi_cipher_keylen (int type);
+extern size_t shishi_cipher_randomlen (int type);
 extern int shishi_cipher_parse (const char *cipher);
 extern int shishi_string_to_key (Shishi * handle,
 				 int keytype,
@@ -688,17 +705,19 @@ extern void shishi_ap_authenticator_set (Shishi_ap * ap,
 					 ASN1_TYPE authenticator);
 
 extern ASN1_TYPE shishi_ap_req (Shishi_ap * ap);
+extern void shishi_ap_req_set (Shishi_ap * ap, ASN1_TYPE apreq);
+extern int shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen);
+extern int shishi_ap_req_der_set (Shishi_ap * ap, char *der, int derlen);
 extern int shishi_ap_req_build (Shishi_ap * ap);
 extern int shishi_ap_req_asn1 (Shishi_ap * ap, ASN1_TYPE * apreq);
-extern int shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen);
-extern void shishi_ap_req_set (Shishi_ap * ap, ASN1_TYPE apreq);
 
 extern ASN1_TYPE shishi_ap_rep (Shishi_ap * ap);
+extern void shishi_ap_rep_set (Shishi_ap * ap, ASN1_TYPE aprep);
+extern int shishi_ap_rep_der (Shishi_ap * ap, char *out, int *outlen);
 extern int shishi_ap_rep_der_set (Shishi_ap * ap, char *der, int derlen);
 extern int shishi_ap_rep_verify (Shishi_ap * ap);
 extern int shishi_ap_rep_verify_der (Shishi_ap * ap, char *der, int derlen);
 extern int shishi_ap_rep_verify_asn1 (Shishi_ap * ap, ASN1_TYPE aprep);
-extern void shishi_ap_rep_set (Shishi_ap * ap, ASN1_TYPE aprep);
 
 extern ASN1_TYPE shishi_ap_encapreppart (Shishi_ap * ap);
 extern void shishi_ap_encapreppart_set (Shishi_ap * ap,
@@ -709,6 +728,15 @@ extern int shishi_key_type (Shishi_key * key);
 extern void shishi_key_type_set (Shishi_key * key, int type);
 extern char *shishi_key_value (Shishi_key * key);
 extern void shishi_key_value_set (Shishi_key * key, char *value);
+extern int shishi_key_value_set_random (Shishi_key * key,
+					char *random,
+					int randomlen);
+extern int shishi_key_value_set_string (Shishi_key * key,
+					char *password,
+					int passwordlen,
+					char *salt,
+					int saltlen,
+					char *parameter);
 extern const char *shishi_key_name (Shishi_key * key);
 extern size_t shishi_key_length (Shishi_key * key);
 extern Shishi_key *shishi_key (int type, char *value);

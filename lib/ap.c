@@ -332,6 +332,67 @@ shishi_ap_req (Shishi_ap * ap)
   return ap->apreq;
 }
 
+
+/**
+ * shishi_ap_req_set:
+ * @ap: structure that holds information about AP exchange
+ * @apreq: apreq to store in AP.
+ *
+ * Set the AP-REQ in the AP exchange.
+ **/
+void
+shishi_ap_req_set (Shishi_ap * ap, ASN1_TYPE apreq)
+{
+  if (ap->apreq)
+    _shishi_asn1_done(ap->handle, ap->apreq);
+  ap->apreq = apreq;
+}
+
+/**
+ * shishi_ap_req_der:
+ * @ap: structure that holds information about AP exchange
+ * @out: output array with der encoding of AP-REQ.
+ * @outlen: length of output array with der encoding of AP-REQ.
+ *
+ * Build AP-REQ using shishi_ap_req_buidl() and DER encode it.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen)
+{
+  int rc;
+
+  rc = shishi_ap_req_build(ap);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = _shishi_a2d (ap->handle, ap->apreq, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_ap_req_der_set:
+ * @ap: structure that holds information about AP exchange
+ * @der: input array with DER encoded AP-REQ.
+ * @derlen: length of input array with DER encoded AP-REQ.
+ *
+ * DER decode AP-REQ and set it AP exchange.  If decoding fails, the
+ * AP-REQ in the AP exchange is lost.
+ *
+ * Return value: Returns SHISHI_OK.
+ **/
+int
+shishi_ap_req_der_set (Shishi_ap * ap, char *der, int derlen)
+{
+  ap->apreq = shishi_d2a_apreq (ap->handle, der, derlen);
+
+  return SHISHI_OK;
+}
+
 /**
  * shishi_ap_req_build:
  * @ap: structure that holds information about AP exchange
@@ -383,32 +444,6 @@ shishi_ap_req_build (Shishi_ap * ap)
 }
 
 /**
- * shishi_ap_req_der:
- * @ap: structure that holds information about AP exchange
- * @out: output array with der encoding of AP-REQ.
- * @outlen: length of output array with der encoding of AP-REQ.
- *
- * Build AP-REQ using shishi_ap_req_buidl() and DER encode it.
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen)
-{
-  int rc;
-
-  rc = shishi_ap_req_build(ap);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = _shishi_a2d (ap->handle, ap->apreq, out, outlen);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  return SHISHI_OK;
-}
-
-/**
  * shishi_ap_req_asn1:
  * @ap: structure that holds information about AP exchange
  * @apreq: output AP-REQ variable.
@@ -430,22 +465,6 @@ shishi_ap_req_asn1 (Shishi_ap * ap, ASN1_TYPE * apreq)
 
   return SHISHI_OK;
 }
-
-/**
- * shishi_ap_req_set:
- * @ap: structure that holds information about AP exchange
- * @apreq: apreq to store in AP.
- *
- * Set the AP-REQ in the AP exchange.
- **/
-void
-shishi_ap_req_set (Shishi_ap * ap, ASN1_TYPE apreq)
-{
-  if (ap->apreq)
-    _shishi_asn1_done(ap->handle, ap->apreq);
-  ap->apreq = apreq;
-}
-
 /**
  * shishi_ap_rep:
  * @ap: structure that holds information about AP exchange
@@ -460,13 +479,28 @@ shishi_ap_rep (Shishi_ap * ap)
 }
 
 /**
+ * shishi_ap_rep_set:
+ * @ap: structure that holds information about AP exchange
+ * @aprep: aprep to store in AP.
+ *
+ * Set the AP-REP in the AP exchange.
+ **/
+void
+shishi_ap_rep_set (Shishi_ap * ap, ASN1_TYPE aprep)
+{
+  if (ap->aprep)
+    _shishi_asn1_done(ap->handle, ap->aprep);
+  ap->aprep = aprep;
+}
+
+/**
  * shishi_ap_rep_der_set:
  * @ap: structure that holds information about AP exchange
  * @der: input array with DER encoded AP-REP.
  * @derlen: length of input array with DER encoded AP-REP.
  *
  * DER decode AP-REP and set it AP exchange.  If decoding fails, the
- * AP-REP in the AP exchange is reset.
+ * AP-REP in the AP exchange is lost.
  *
  * Return value: Returns SHISHI_OK.
  **/
@@ -558,22 +592,6 @@ shishi_ap_rep_verify_asn1 (Shishi_ap * ap, ASN1_TYPE aprep)
 
   return SHISHI_OK;
 }
-
-/**
- * shishi_ap_rep_set:
- * @ap: structure that holds information about AP exchange
- * @aprep: aprep to store in AP.
- *
- * Set the AP-REP in the AP exchange.
- **/
-void
-shishi_ap_rep_set (Shishi_ap * ap, ASN1_TYPE aprep)
-{
-  if (ap->aprep)
-    _shishi_asn1_done(ap->handle, ap->aprep);
-  ap->aprep = aprep;
-}
-
 /**
  * shishi_ap_rep:
  * @ap: structure that holds information about AP exchange

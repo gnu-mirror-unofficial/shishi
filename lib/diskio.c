@@ -464,9 +464,6 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, ASN1_TYPE * asrep, int type)
 				   derlen, errorDescription);
   if (*asrep == ASN1_TYPE_EMPTY)
     {
-      printf ("Could not DER decode AS-REP: %s\n", errorDescription);
-      printf ("Trying TGS-REP...\n");
-
       *asrep = shishi_der2asn1_tgs_rep (handle->asn1, der,
 					derlen, errorDescription);
       if (*asrep == ASN1_TYPE_EMPTY)

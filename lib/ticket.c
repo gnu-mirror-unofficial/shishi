@@ -698,7 +698,7 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
 					      ticket->ticket, &keytype);
   if (res != SHISHI_OK)
     return res;
-  printf (_("Server:\t\t%s using key %s (%d)\n"), buf,
+  printf (_("Server:\t\t%s key %s (%d)\n"), buf,
 	  shishi_cipher_name (keytype), keytype);
 
   res = shishi_ticket_keytype (ticket, &keytype);
@@ -708,7 +708,7 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
 					  ticket->kdcrep, &etype);
   if (res != SHISHI_OK)
     return res;
-  printf (_("Key type:\t%s (%d) protected by %s (%d)\n"),
+  printf (_("Ticket key:\t%s (%d) protected by %s (%d)\n"),
 	  shishi_cipher_name (keytype), keytype,
 	  shishi_cipher_name (etype), etype);
 
@@ -771,7 +771,7 @@ shishi_ticket_decrypt (Shishi * handle,
     return res;
 
   if (etype != shishi_key_type(key))
-    return SHISHI_KDCREP_BAD_KEYTYPE;
+    return SHISHI_TICKET_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
   res = _shishi_asn1_field (handle, ticket, cipher, &cipherlen,
