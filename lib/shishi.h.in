@@ -300,6 +300,10 @@ struct Shishi_tkts_hint
   int flags;
   int32_t etype;
   char *passwd;
+  time_t starttime;
+  time_t endtime;
+  time_t renew_till;
+  int renewable;
 };
 typedef struct Shishi_tkts_hint Shishi_tkts_hint;
 
@@ -640,6 +644,7 @@ extern int shishi_authenticator_save (Shishi * handle, FILE * fh,
 
 /* as.c */
 extern Shishi_asn1 shishi_as_req (Shishi_as * as);
+extern int shishi_as_req_build (Shishi_as * as);
 extern void shishi_as_req_set (Shishi_as * as, Shishi_asn1 asreq);
 extern int shishi_as_req_der (Shishi_as * as, char *out, int *outlen);
 extern int shishi_as_req_der_set (Shishi_as * as, char *der, size_t derlen);
@@ -746,6 +751,13 @@ extern int shishi_kdcreq_etype (Shishi * handle, Shishi_asn1 kdcreq,
 				int32_t * etype, int netype);
 extern int shishi_kdcreq_set_etype (Shishi * handle, Shishi_asn1 kdcreq,
 				    int32_t * etype, int netype);
+extern int shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq,
+				  int *flags);
+extern int shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq,
+				      int options);
+extern int shishi_kdcreq_options_add (Shishi * handle, Shishi_asn1 kdcreq,
+				      int option);
 extern int shishi_kdcreq_clear_padata (Shishi * handle, Shishi_asn1 kdcreq);
 extern int shishi_kdcreq_add_padata (Shishi * handle,
 				     Shishi_asn1 kdcreq,
@@ -1018,6 +1030,10 @@ extern int shishi_asn1_optional_field (Shishi * handle,
 				       Shishi_asn1 node,
 				       char *data, size_t * datalen,
 				       const char *field);
+extern int shishi_asn1_empty_field (Shishi * handle,
+				    Shishi_asn1 node,
+				    char *data, size_t * datalen,
+				    const char *field);
 extern int shishi_asn1_number_of_elements (Shishi * handle,
 					   Shishi_asn1 node,
 					   const char *field, int *n);
