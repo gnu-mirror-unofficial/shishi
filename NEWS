@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.15 (unreleased)
+* Version 0.0.15 (released 2004-04-18)
 
 ** Sequence numbers in Authenticator and EncAPRepPart are now randomized.
 
