@@ -1,5 +1,5 @@
 /* kdcrep.c --- Key distribution (AS/TGS) Reply functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -384,7 +384,7 @@ shishi_kdcrep_get_ticket (Shishi * handle,
   char *format;
   size_t buflen;
   int res;
-  int i, n;
+  size_t i, n;
 
   /* there's GOT to be an easier way to do this */
 
@@ -506,7 +506,7 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
   char *format;
   char *buf;
   size_t buflen;
-  int i, n;
+  size_t i, n;
 
   res = shishi_asn1_read2 (handle, ticket, "tkt-vno", &buf, &buflen);
   if (res != SHISHI_OK)

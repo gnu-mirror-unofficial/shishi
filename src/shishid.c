@@ -168,7 +168,7 @@ kdc_setuid (void)
 /* Create a hard coded error message that can be used in case kdc.c
    fail to produce */
 static int
-setup_fatal_krberror (Shishi * handle)
+setup_fatal_krberror (void)
 {
   Shishi_asn1 krberr;
   int rc;
@@ -220,7 +220,7 @@ doit (void)
     error (EXIT_FAILURE, 0, "Cannot initialize Shisa: %s (%d)",
 	   shisa_strerror (rc), rc);
 
-  rc = setup_fatal_krberror (handle);
+  rc = setup_fatal_krberror ();
   if (rc)
     error (EXIT_FAILURE, 0, "Cannot allocate fatal error packet: %s (%d)",
 	   shisa_strerror (rc), rc);
@@ -356,21 +356,22 @@ doit (void)
 
 /* Parse the --listen parameter, creating listenspec elements. */
 static void
-parse_listen (char *listen)
+parse_listen (char *listenstr)
 {
   char *ptrptr;
   char *val;
   int i;
 
-  for (i = 0; (val = strtok_r (i == 0 ? listen : NULL, ", \t", &ptrptr)); i++)
+  for (i = 0; (val = strtok_r (i == 0 ? listenstr : NULL,
+			       ", \t", &ptrptr)); i++)
     {
       char *service, *proto;
       struct servent *se;
       struct hostent *he;
       struct listenspec *ls;
-      struct sockaddr_in *sin;
+      struct sockaddr_in *sockin;
 #ifdef WITH_IPV6
-      struct sockaddr_in6 *sin6;
+      struct sockaddr_in6 *sockin6;
 #endif
 
       ls = xzalloc (sizeof (*ls));
@@ -380,9 +381,9 @@ parse_listen (char *listen)
       ls->str = strdup (val);
       ls->bufpos = 0;
       ls->listening = 1;
-      sin = (struct sockaddr_in *) &ls->listenaddr;
+      sockin = (struct sockaddr_in *) &ls->listenaddr;
 #ifdef WITH_IPV6
-      sin6 = (struct sockaddr_in6 *) &ls->listenaddr;
+      sockin6 = (struct sockaddr_in6 *) &ls->listenaddr;
 #endif
 
       proto = strrchr (val, '/');
@@ -417,10 +418,10 @@ parse_listen (char *listen)
 
 #ifdef WITH_IPV6
       if (ls->family == AF_INET6)
-	sin6->sin6_port = htons (ls->port);
+	sockin6->sin6_port = htons (ls->port);
       else
 #endif
-	sin->sin_port = htons (ls->port);
+	sockin->sin_port = htons (ls->port);
 
       if (strncmp (val, FAMILY_IPV4 ":", strlen (FAMILY_IPV4 ":")) == 0)
 	{
@@ -441,23 +442,23 @@ parse_listen (char *listen)
 	{
 #ifdef WITH_IPV6
 	  if (ls->family == AF_INET6)
-	    sin6->sin6_addr = in6addr_any;
+	    sockin6->sin6_addr = in6addr_any;
 	  else
 #endif
-	    sin->sin_addr.s_addr = htonl (INADDR_ANY);
+	    sockin->sin_addr.s_addr = htonl (INADDR_ANY);
 	}
       else if ((he = gethostbyname (val)))
 	{
 	  if (he->h_addrtype == AF_INET)
 	    {
-	      sin->sin_family = AF_INET;
-	      memcpy (&sin->sin_addr, he->h_addr_list[0], he->h_length);
+	      sockin->sin_family = AF_INET;
+	      memcpy (&sockin->sin_addr, he->h_addr_list[0], he->h_length);
 	    }
 #ifdef WITH_IPV6
 	  else if (he->h_addrtype == AF_INET6)
 	    {
-	      sin6->sin6_family = AF_INET6;
-	      memcpy (&sin6->sin6_addr, he->h_addr_list[0], he->h_length);
+	      sockin6->sin6_family = AF_INET6;
+	      memcpy (&sockin6->sin6_addr, he->h_addr_list[0], he->h_length);
 	    }
 #endif
 	  else
