@@ -75,6 +75,13 @@ AC_CHECK_TYPE([socklen_t],, [AC_DEFINE([socklen_t], [size_t],
 #endif
 ])
 
+# For libtasn1
+AC_CHECK_SIZEOF(unsigned long long, 8)
+AC_CHECK_SIZEOF(unsigned long int, 4)
+AC_CHECK_SIZEOF(unsigned int, 4)
+AC_CHECK_SIZEOF(unsigned short int, 2)
+AC_CHECK_SIZEOF(unsigned char, 1)
+
 # For gnulib stuff in gl/.
 gl_FUNC_ALLOCA
 gl_ARGP
@@ -211,13 +218,6 @@ fi
 if test "$stringprep" != "no"; then
 	AC_DEFINE(WITH_STRINGPREP, 1, [Define to 1 if you want to use libidn.])
 fi
-
-# For libtasn1
-AC_CHECK_SIZEOF(unsigned long long, 8)
-AC_CHECK_SIZEOF(unsigned long int, 4)
-AC_CHECK_SIZEOF(unsigned int, 4)
-AC_CHECK_SIZEOF(unsigned short int, 2)
-AC_CHECK_SIZEOF(unsigned char, 1)
 
 # Check for libtasn1
 AC_ARG_WITH(system-asn1,
