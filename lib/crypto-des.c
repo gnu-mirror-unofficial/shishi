@@ -236,7 +236,7 @@ des_decrypt (Shishi * handle,
       return res;
     }
 
-  return res;
+  return SHISHI_OK;
 }
 
 static int

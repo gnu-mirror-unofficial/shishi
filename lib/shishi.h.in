@@ -1238,7 +1238,7 @@ extern int shishi_encapreppart_get_key (Shishi * handle,
 					size_t * keyvalue_len);
 extern int shishi_encapreppart_seqnumber_get (Shishi * handle,
 					      Shishi_asn1 encapreppart,
-					      int *seqnumber);
+					      uint32_t *seqnumber);
 
 /* apreq.c */
 extern Shishi_asn1 shishi_apreq (Shishi * handle);

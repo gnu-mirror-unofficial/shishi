@@ -580,7 +580,7 @@ simplified_checksum (Shishi * handle,
   Shishi_key *checksumkey;
   int halg = GCRY_MD_SHA1;	/* XXX hide this in crypto-lowlevel.c */
   int hlen = gcry_md_get_algo_dlen (halg);
-  int cksumlen = shishi_cipher_cksumlen (cksumtype);
+  int cksumlen = shishi_checksum_cksumlen (cksumtype);
   int res;
 
   res = simplified_derivekey (handle, key, keyusage,
@@ -1107,7 +1107,7 @@ checksum_foo (Shishi * handle,
   gcry_md_hd_t hd;
   gcry_cipher_hd_t ch;
   int res;
-  exit(38);
+
   gcry_md_open (&hd, GCRY_MD_MD5, 0);
   if (!hd)
     return SHISHI_GCRYPT_ERROR;
@@ -1139,6 +1139,8 @@ checksum_foo (Shishi * handle,
 
   gcry_cipher_close (ch);
   gcry_md_close (hd);
+
+  return SHISHI_OK;
 }
 
 static checksuminfo foo_info = {

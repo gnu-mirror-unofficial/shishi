@@ -356,12 +356,13 @@ shishi_encapreppart_cusec_set (Shishi * handle,
  **/
 int
 shishi_encapreppart_seqnumber_get (Shishi * handle,
-				   Shishi_asn1 encapreppart, int *seqnumber)
+				   Shishi_asn1 encapreppart,
+				   uint32_t *seqnumber)
 {
   int res;
 
-  res = shishi_asn1_read_integer (handle, encapreppart,
-				  "seq-number", seqnumber);
+  res = shishi_asn1_read_uint32 (handle, encapreppart,
+				 "seq-number", seqnumber);
   if (res != SHISHI_OK)
     return res;
 
