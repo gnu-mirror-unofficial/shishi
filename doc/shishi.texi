@@ -770,8 +770,8 @@ mentioned here, contact the author (@pxref{Bug Reports}).
 
 The package can be downloaded from several places, including
 @url{http://josefsson.org/shishi/releases/}.  The latest version is
-stored in a file, e.g., @samp{shishi-0.0.42.tar.gz} where the
-@samp{0.0.42} indicate the highest version number.
+stored in a file, e.g., @samp{shishi-@value{VERSION}.tar.gz} where the
+@samp{@value{VERSION}} indicate the highest version number.
 
 The package is then extracted, configured and built like many other
 packages that use Autoconf.  For detailed information on configuring
@@ -783,9 +783,9 @@ and install the package.  You will need a few basic tools, such as
 @samp{sh}, @samp{make} and @samp{cc}.
 
 @example
-$ wget -q http://josefsson.org/shishi/releases/shishi-0.0.4.tar.gz
-$ tar xfz shishi-0.0.4.tar.gz
-$ cd shishi-0.0.4/
+$ wget -q http://josefsson.org/shishi/releases/shishi-@value{VERSION}.tar.gz
+$ tar xfz shishi-@value{VERSION}.tar.gz
+$ cd shishi-@value{VERSION}/
 $ ./configure
 ...
 $ make
@@ -797,6 +797,34 @@ $ make install
 After this you should be prepared to continue with the user,
 administration or programming manual, depending on how you want to use
 Shishi.
+
+A few @code{configure} options may be relevant, summarized in the
+table.
+
+@table @code
+
+@item --disable-des
+@itemx --disable-3des
+@itemx --disable-aes
+@itemx --disable-md
+@itemx --disable-null
+@itemx --disable-arcfour
+Disable a cryptographic algorithm at compile time.  Usually it is
+better to disable algorithms during run-time with the configuration
+file, but this allows you to reduce the code size slightly.
+
+@item --disable-starttls
+Disable the experimental TLS support for KDC connections.  If you do
+not use a Shishi KDC, this support is of no use so you could safely
+disable it.
+
+@item --without-stringprep
+Disable internationalized string processing.
+
+@end table
+
+For the complete list, refer to the output from @code{configure
+--help}.
 
 @node Bug Reports
 @section Bug Reports
