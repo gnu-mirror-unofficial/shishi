@@ -693,9 +693,9 @@ main (int argc, char *argv[])
 
 	  printf ("salt:\n");
 	  escapeprint (str2key[i].salt, saltlen);
-	  hexprint (str2key[i].password, saltlen);
+	  hexprint (str2key[i].salt, saltlen);
 	  puts ("");
-	  binprint (str2key[i].password, saltlen);
+	  binprint (str2key[i].salt, saltlen);
 	  puts ("");
 
 	  printf ("computed key:\n");
