@@ -182,15 +182,17 @@ test (Shishi * handle)
     success ("shishi_authenticator_authorizationdata() OK\n");
   else
     fail ("shishi_authenticator_authorizationdata() failed\n");
-  free (buf);
+  if (res == SHISHI_OK)
+    free (buf);
 
   /* shishi_authenticator_authorizationdata */
   res = shishi_authenticator_authorizationdata (handle, a, &t, &buf, &m, 2);
+  if (res == SHISHI_OK)
+    free (buf);
   if (res == SHISHI_OUT_OF_RANGE)
     success ("shishi_authenticator_authorizationdata() OK\n");
   else
     fail ("shishi_authenticator_authorizationdata() failed\n");
-  free (buf);
 
   /* shishi_authenticator_remove_cksum */
   res = shishi_authenticator_remove_cksum (handle, a);
