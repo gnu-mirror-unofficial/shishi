@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in.
 
 # GNULIB modules:
-# alloca error getopt memmove memset realloc setenv strcase strchrnul strnlen strdup strndup xstrndup strerror vasprintf vasnprintf xalloc getdate timegm linebuffer gethostname xgethostname xgetdomainname getline xreadlink progname
+# alloca error getopt realloc setenv strcase strchrnul strnlen strdup strndup xstrndup vasprintf vasnprintf xalloc getdate timegm linebuffer gethostname xgethostname xgetdomainname getline xreadlink progname
 
 # Local not-yet-in-gnulib modules:
 # + base64
