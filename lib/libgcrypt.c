@@ -1,5 +1,5 @@
 /* libgcrypt.c --- Shishi crypto wrappers around Libgcrypt.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -64,7 +64,7 @@ _shishi_crypto_init (Shishi * handle)
 }
 
 int
-shishi_randomize (Shishi * handle, int strong, char *data, size_t datalen)
+shishi_randomize (Shishi * handle, int strong, void *data, size_t datalen)
 {
   if (strong)
     gcry_randomize (data, datalen, GCRY_VERY_STRONG_RANDOM);

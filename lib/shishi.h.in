@@ -1327,7 +1327,7 @@ extern int shishi_time (Shishi * handle, Shishi_asn1 node,
 
 /* nettle.c, libgcrypt.c, ... */
 extern int shishi_randomize (Shishi * handle, int strong,
-			     char *data, size_t datalen);
+			     void *data, size_t datalen);
 extern int shishi_crc (Shishi * handle, const char *in, size_t inlen,
 		       char *out[4]);
 extern int shishi_md4 (Shishi * handle, const char *in, size_t inlen,

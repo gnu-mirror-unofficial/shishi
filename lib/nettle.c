@@ -1,5 +1,5 @@
 /* nettle.c   shishi crypto wrappers around nettle.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -50,7 +50,7 @@ _shishi_crypto_init (Shishi * handle)
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
-shishi_randomize (Shishi * handle, int strong, char *data, size_t datalen)
+shishi_randomize (Shishi * handle, int strong, void *data, size_t datalen)
 {
   int fd;
   char *device;
