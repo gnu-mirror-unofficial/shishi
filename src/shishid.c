@@ -1,5 +1,5 @@
 /* shishid.c --- Shishi Key Distribution Center daemon.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -204,17 +204,16 @@ doit (void)
     error (EXIT_FAILURE, 0, "Cannot initialize Shishi: %s (%d)",
 	   shishi_strerror (rc), rc);
 
-  if (arg.verbose_flag > 1)
+  if (arg.verbose_given > 1)
     shishi_cfg (handle, "verbose");
-
-  if (arg.verbose_flag > 2)
-    shishi_cfg (handle, "verbose-noice");
-
-  if (arg.verbose_flag > 3)
+  if (arg.verbose_given > 2)
+    shishi_cfg (handle, "verbose-noise");
+  if (arg.verbose_given > 3)
     shishi_cfg (handle, "verbose-asn1");
-
-  if (arg.verbose_flag > 4)
+  if (arg.verbose_given > 4)
     shishi_cfg (handle, "verbose-crypto");
+  if (arg.verbose_given > 5)
+    shishi_cfg (handle, "verbose-crypto-noise");
 
   rc = shisa_init (&dbh);
   if (rc)
