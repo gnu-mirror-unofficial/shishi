@@ -106,26 +106,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->ticketfile = strdup (arg);
       break;
 
-      /* Client */
-
-    case OPTION_CLIENT_AP_OPTIONS:
-      {
-	char *ptrptr;
-	char *val;
-	int i;
-
-	arguments->apoptions = 0;
-	for (i = 0;
-	     (val = strtok_r (i == 0 ? arg : NULL, ", \t\n\r", &ptrptr)); i++)
-	  {
-	    int option = shishi_ap_string2option (val);
-	    if (option == 0)
-	      fprintf (stderr, "Ignoring unknown AP option: `%s'\n", val);
-	    arguments->apoptions |= option;
-	  }
-      }
-      break;
-
       /* Crypto */
 
     case OPTION_CRYPTO_ALGORITHM:
@@ -170,17 +150,13 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->parameter = strdup (arg);
       break;
 
-    case OPTION_AS_PASSWORD:
     case OPTION_CRYPTO_PASSWORD:
-    case OPTION_KDC_PASSWORD:
-    case OPTION_SERVER_PASSWORD:
+    case OPTION_GET_PASSWORD:
       if (arguments->command != COMMAND_CRYPTO &&
-	  arguments->command != COMMAND_AS &&
-	  arguments->command != COMMAND_KDC &&
-	  arguments->command != COMMAND_SERVER)
+	  arguments->command != COMMAND_GET)
 	argp_error
 	  (state,
-	   _("Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."),
+	   _("Option `%s' only valid with GET and CRYPTO."),
 	   state->argv[state->next - 1]);
       arguments->password = strdup (arg);
       break;
@@ -254,50 +230,33 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	arguments->authenticatordatareadtype = SHISHI_FILETYPE_BINARY;
       break;
 
-    case OPTION_AS_CLIENT_NAME:
     case OPTION_CRYPTO_CLIENT_NAME:
-    case OPTION_KDC_CLIENT_NAME:
-    case OPTION_SERVER_CLIENT_NAME:
-    case OPTION_TGS_CLIENT_NAME:
+    case OPTION_GET_CLIENT_NAME:
       if (arguments->command != COMMAND_CRYPTO &&
-	  arguments->command != COMMAND_AS &&
-	  arguments->command != COMMAND_KDC &&
-	  arguments->command != COMMAND_TGS &&
-	  arguments->command != COMMAND_SERVER)
-	argp_error (state,
-		    _
-		    ("Option `%s' only valid with CRYPTO, KDC/AS/TGS "
-		     "and SERVER."), state->argv[state->next - 1]);
+	  arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with CRYPTO and GET."),
+		    state->argv[state->next - 1]);
       arguments->cname = strdup (arg);
       break;
 
     case 'r':
     case OPTION_AP_REALM:
-    case OPTION_AS_REALM:
-    case OPTION_CLIENT_REALM:
     case OPTION_CRYPTO_REALM:
-    case OPTION_KDC_REALM:
-    case OPTION_TGS_REALM:
+    case OPTION_GET_REALM:
       if (arguments->command != COMMAND_AP &&
-	  arguments->command != COMMAND_CLIENT &&
 	  arguments->command != COMMAND_CRYPTO &&
-	  arguments->command != COMMAND_AS &&
-	  arguments->command != COMMAND_KDC &&
-	  arguments->command != COMMAND_TGS)
-	argp_error (state, _("Option `%s' only valid with AP, CLIENT, CRYPTO "
-			     "and KDC/AS/TGS."),
+	  arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with AP, CRYPTO and GET."),
 		    state->argv[state->next - 1]);
       arguments->realm = strdup (arg);
       break;
 
     case OPTION_CRYPTO_KEY_VALUE:
-    case OPTION_KDC_KEY_VALUE:
-    case OPTION_SERVER_KEY_VALUE:
+    case OPTION_GET_KEY_VALUE:
       if (arguments->command != COMMAND_CRYPTO &&
-	  arguments->command != COMMAND_KDC &&
-	  arguments->command != COMMAND_SERVER)
+	  arguments->command != COMMAND_GET)
 	argp_error (state,
-		    _("Option `%s' only valid with CRYPTO and KDC/AS/TGS."),
+		    _("Option `%s' only valid with CRYPTO and GET."),
 		    state->argv[state->next - 1]);
       arguments->keyvalue = strdup (arg);
       break;
@@ -317,124 +276,115 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case OPTION_AP_SERVER_NAME:
-    case OPTION_CLIENT_SERVER_NAME:
-    case OPTION_KDC_SERVER_NAME:
     case OPTION_LIST_SERVER_NAME:
-    case OPTION_SERVER_SERVER_NAME:
-    case OPTION_TGS_SERVER_NAME:
+    case OPTION_GET_SERVER_NAME:
       arguments->sname = strdup (arg);
       break;
 
-    case OPTION_KDC_FORCE_AS:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC."),
+    case OPTION_GET_FORCE_AS:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       arguments->forceas_p = 1;
       break;
 
-    case OPTION_KDC_FORCE_TGS:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC."),
+    case OPTION_GET_FORCE_TGS:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       arguments->forcetgs_p = 1;
       break;
 
-    case OPTION_KDC_TICKET_GRANTER:
-    case OPTION_TGS_TICKET_GRANTER:
-      if (arguments->command != COMMAND_KDC &&
-	  arguments->command != COMMAND_TGS)
-	argp_error (state, _("Option `%s' only valid with KDC/TGS."),
+    case OPTION_GET_TICKET_GRANTER:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       arguments->tgtname = strdup (arg);
       break;
 
-    case OPTION_KDC_REQUEST:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
+    case OPTION_GET_REQUEST:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       arguments->request_p = 1;
       break;
 
     case OPTION_AP_REQUEST_WRITE_FILE:
-    case OPTION_KDC_WRITE_AP_REQUEST_FILE:
-      if (arguments->command != COMMAND_KDC &&
+    case OPTION_GET_WRITE_AP_REQUEST_FILE:
+      if (arguments->command != COMMAND_GET &&
 	  arguments->command != COMMAND_AP)
 	argp_error (state,
-		    _("Option `%s' only valid with AP and KDC/AS/TGS."),
+		    _("Option `%s' only valid with AP and GET."),
 		    state->argv[state->next - 1]);
       parse_filename (arg, &arguments->apreqwritetype,
 		      &arguments->apreqwritefile);
       break;
 
     case OPTION_AP_AUTHENTICATOR_WRITE_FILE:
-    case OPTION_KDC_WRITE_AUTHENTICATOR_FILE:
+    case OPTION_GET_WRITE_AUTHENTICATOR_FILE:
       if (arguments->command != COMMAND_AP ||
-	  arguments->command != COMMAND_KDC)
+	  arguments->command != COMMAND_GET)
 	argp_error (state,
-		    _("Option `%s' only valid with AP and KDC/AS/TGS."),
+		    _("Option `%s' only valid with AP and GET."),
 		    state->argv[state->next - 1]);
       parse_filename (arg, &arguments->authenticatorwritetype,
 		      &arguments->authenticatorwritefile);
       break;
 
-    case OPTION_KDC_WRITE_REQUEST_FILE:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
+    case OPTION_GET_WRITE_REQUEST_FILE:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       parse_filename (arg, &arguments->kdcreqwritetype,
 		      &arguments->kdcreqwritefile);
       break;
 
-    case OPTION_KDC_READ_REQUEST_FILE:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
+    case OPTION_GET_READ_REQUEST_FILE:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       parse_filename (arg, &arguments->kdcreqreadtype,
 		      &arguments->kdcreqreadfile);
       break;
 
-    case OPTION_KDC_WRITE_RESPONSE_FILE:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
+    case OPTION_GET_WRITE_RESPONSE_FILE:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       parse_filename (arg, &arguments->kdcrepwritetype,
 		      &arguments->kdcrepwritefile);
       break;
 
-    case OPTION_KDC_READ_RESPONSE_FILE:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
+    case OPTION_GET_READ_RESPONSE_FILE:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       parse_filename (arg, &arguments->kdcrepreadtype,
 		      &arguments->kdcrepreadfile);
       break;
 
-    case OPTION_KDC_SENDRECV:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
+    case OPTION_GET_SENDRECV:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       arguments->sendrecv_p = 1;
       break;
 
-    case OPTION_KDC_RESPONSE:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
+    case OPTION_GET_RESPONSE:
+      if (arguments->command != COMMAND_GET)
+	argp_error (state, _("Option `%s' only valid with GET."),
 		    state->argv[state->next - 1]);
       arguments->response_p = 1;
       break;
 
     case ARGP_KEY_ARG:
-      if (state->arg_num != 0)
+      if (arguments->command && arguments->client)
 	argp_error (state, _("Too many arguments: `%s'"), arg);
       else
 	{
-	  if (strcmp (arg, "as") == 0)
+	  if (strcmp (arg, "get") == 0)
 	    {
-	      arguments->command = COMMAND_AS;
-	    }
-	  else if (strcmp (arg, "tgs") == 0)
-	    {
-	      arguments->command = COMMAND_TGS;
+	      arguments->command = COMMAND_GET;
 	    }
 	  else if (strcmp (arg, "list") == 0)
 	    {
@@ -444,14 +394,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	    {
 	      arguments->command = COMMAND_DESTROY;
 	    }
-	  else if (strcmp (arg, "client") == 0)
-	    {
-	      arguments->command = COMMAND_CLIENT;
-	    }
-	  else if (strcmp (arg, "server") == 0)
-	    {
-	      arguments->command = COMMAND_SERVER;
-	    }
 	  else if (strcmp (arg, "ap") == 0)
 	    {
 	      arguments->command = COMMAND_AP;
@@ -460,13 +402,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	    {
 	      arguments->command = COMMAND_CRYPTO;
 	    }
-	  else if (strcmp (arg, "kdc") == 0)
-	    {
-	      arguments->command = COMMAND_KDC;
-	    }
 	  else
 	    {
-	      argp_error (state, _("Unknown command: '%s'"), arg);
+	      if (!arguments->command)
+		arguments->command = COMMAND_GET;
+	      arguments->client = arg;
 	    }
 	  break;
 	}
@@ -481,31 +421,16 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
 static struct argp_option options[] = {
 
-  {0, 0, 0, 0, "Authentication commands:", 10},
-
-  {"as", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Acquire ticket granting ticket using password via the Authentication "
-   "Service (AS) exchange."},
-
-  {"tgs", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Acquire ticket using the ticket granting ticket via the Ticket-Granting "
-   "Service (TGS) exchange."},
-
   {0, 0, 0, 0, "Ticket management:", 20},
-
-  {"list", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "List tickets."},
 
   {"destroy", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
    "Destroy tickets."},
 
-  {0, 0, 0, 0, "Utilities:", 30},
+  {"get", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
+   "Acquire tickets."},
 
-  {"client", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Simple stdin/stdout client."},
-
-  {"server", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Simple stdin/stdout server."},
+  {"list", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
+   "List tickets."},
 
   {0, 0, 0, 0, "Low-level commands:", 40},
 
@@ -515,102 +440,23 @@ static struct argp_option options[] = {
   {"crypto", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
    "Cryptographic functions."},
 
-  {"kdc", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Key Distribution Center Services (AS and TGS)."},
-
-  {0, 0, 0, 0, "If no command is given, Shishi invokes the AS command "
-   "if no ticket granting ticket is found, otherwise the LIST command "
-   "is invoked.", 50},
-
-  /************** AS */
-
-  {0, 0, 0, 0, "Options for Authentication Service (AS-OPTIONS):", 100},
-
-  {"client-name", OPTION_AS_CLIENT_NAME, "NAME", 0,
-   "Client name. Default is login username."},
-
-  {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
-   "Encryption types to use.  ETYPE is either registered name or integer."},
-
-  {"realm", 'r', "REALM", 0,
-   "Realm of client and server. Default is DNS domain of local host."},
-
-  {"password", OPTION_AS_PASSWORD, "PASSWORD", 0,
-   "Password to decrypt response (discouraged). Default is to prompt user."},
-
-  /************** TGS */
-
-  {0, 0, 0, 0, "Options for Ticket Granting Service (TGS-OPTIONS):", 200},
-
-  {"client-name", OPTION_TGS_CLIENT_NAME, "NAME", 0,
-   "Client name. Default is login username. Used to locate ticket "
-   "granting ticket."},
-
-  {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
-   "Encryption types to use.  ETYPE is either registered name or integer."},
-
-  {"ticket-granter", OPTION_KDC_TICKET_GRANTER, "NAME", 0,
-   "Name of server field in the ticket to use as the ticket granter. "
-   "Defaults to \"krbtgt/REALM@REALM\" where REALM is server "
-   "realm (see --realm)."},
-
-  {"realm", 'r', "REALM", 0,
-   "Realm of server. Default is DNS domain of local host."},
-
-  {"server-name", OPTION_TGS_SERVER_NAME, "NAME", 0,
-   "Name of server."},
+  {0, 0, 0, 0, "If no command is given, Shishi invokes the GET command "
+   "if no ticket granting ticket is found for the default realm, otherwise "
+   " the LIST command is invoked.", 50},
 
   /************** LIST */
 
   {0, 0, 0, 0, "Options for the List command (LIST-OPTIONS):", 300},
 
   {"server-name", OPTION_LIST_SERVER_NAME, "NAME", 0,
-   "List only tickets for specified server."},
+   "List tickets for specified server only."},
 
   /************** DESTROY */
 
   {0, 0, 0, 0, "Options for the Destroy command (DESTROY-OPTIONS):", 400},
 
   {"server-name", OPTION_DESTROY_SERVER_NAME, "NAME", 0,
-   "Destroy only tickets for specified server."},
-
- /************** CLIENT */
-
-  {0, 0, 0, 0, "Options for Network Client (CLIENT-OPTIONS):", 500},
-
-  {"options", OPTION_CLIENT_AP_OPTIONS, "OPTION[,OPTION...]", 0,
-   "Indicate AP-OPTIONS separated by comma (,) or whitespace. "
-   "Options are integers (ORed together) or the pre-defined strings "
-   "\"use-session-key\" indicating that the ticket is encrypted in the "
-   "server's TGT key rather than its own key (not implemented) or "
-   "\"mutual-required\" indicating that mutual authentication is required."},
-
-  {"realm", 'r', "REALM", 0,
-   "Realm of server. Defaults to DNS domain of local host."},
-
-  {"server-name", OPTION_CLIENT_SERVER_NAME, "NAME", 0,
-   "Name of server. Defaults to \"sample/REALM\" where REALM "
-   "is realm of server (see --realm)."},
-
-  /************** SERVER */
-
-  {0, 0, 0, 0, "Options for Network Server (SERVER-OPTIONS):", 600},
-
-  {"client-name", OPTION_KDC_CLIENT_NAME, "NAME", 0,
-   "Client name. Default is login username."},
-
-  {"key-value", OPTION_SERVER_KEY_VALUE, "KEY", 0,
-   "Cipher key of server."},
-
-  {"realm", 'r', "REALM", 0,
-   "Realm of server. Defaults to DNS domain of local host."},
-
-  {"server-name", OPTION_SERVER_SERVER_NAME, "NAME", 0,
-   "Name of server. Defaults to \"sample/REALM\" where REALM "
-   "is realm of server (see --realm)."},
-
-  {"password", OPTION_SERVER_PASSWORD, "PASSWORD", 0,
-   "Password to decrypt response (discouraged)."},
+   "Destroy tickets for specified server only."},
 
   /************** AP */
 
@@ -656,7 +502,7 @@ static struct argp_option options[] = {
    "Cipher algorithm, expressed either as the etype integer or "
    "the registered name."},
 
-  {"client-name", OPTION_KDC_CLIENT_NAME, "NAME", 0,
+  {"client-name", OPTION_GET_CLIENT_NAME, "NAME", 0,
    "Username. Default is login name."},
 
   {"decrypt", OPTION_CRYPTO_DECRYPT, 0, 0,
@@ -705,77 +551,77 @@ static struct argp_option options[] = {
   {"write-data-file", OPTION_CRYPTO_WRITE_DATA_FILE, "[TYPE,]FILE", 0,
    "Write data to FILE in TYPE, BASE64, HEX or BINARY (default)."},
 
-  /************** KDC */
+  /************** GET */
 
   {0, 0, 0, 0,
-   "Options for low-level Key Distribution Services (KDC-OPTIONS):", 900},
+   "Options for ticket acquisition (GET-OPTIONS):", 900},
 
-  {"client-name", OPTION_KDC_CLIENT_NAME, "NAME", 0,
+  {"client-name", OPTION_GET_CLIENT_NAME, "NAME", 0,
    "Client name. Default is login username. Only for AS."},
 
   {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
    "Encryption types to use.  ETYPE is either registered name or integer."},
 
-  {"force-as", OPTION_KDC_FORCE_AS, 0, 0,
+  {"force-as", OPTION_GET_FORCE_AS, 0, 0,
    "Force AS mode. Default is to use TGS iff a TGT is found."},
 
-  {"force-tgs", OPTION_KDC_FORCE_TGS, 0, 0,
+  {"force-tgs", OPTION_GET_FORCE_TGS, 0, 0,
    "Force TGS mode. Default is to use TGS iff a TGT is found."},
 
   {"realm", 'r', "REALM", 0,
    "Realm of server. Default is DNS domain of local host. For AS, this also "
    "indicates realm of client."},
 
-  {"server", OPTION_KDC_SERVER, "HOST", 0,
+  {"server", OPTION_GET_SERVER, "HOST", 0,
    "Send request to HOST. Default uses address from configuration file."},
 
-  {"server-name", OPTION_KDC_SERVER_NAME, "NAME", 0,
+  {"server-name", OPTION_GET_SERVER_NAME, "NAME", 0,
    "Server name. Default is \"krbtgt/REALM\" where REALM is server "
    "realm (see --realm)."},
 
-  {"ticket-granter", OPTION_KDC_TICKET_GRANTER, "NAME", 0,
+  {"ticket-granter", OPTION_GET_TICKET_GRANTER, "NAME", 0,
    "Service name in ticket to use for authenticating request. Only for TGS. "
    "Defaults to \"krbtgt/REALM@REALM\" where REALM is server "
    "realm (see --realm)."},
 
-  {"key-value", OPTION_KDC_KEY_VALUE, "KEY", 0,
+  {"key-value", OPTION_GET_KEY_VALUE, "KEY", 0,
    "Cipher key to decrypt response (discouraged)."},
 
-  {"read-kdc-request-file", OPTION_KDC_READ_REQUEST_FILE, "[TYPE,]FILE", 0,
+  {"read-kdc-request-file", OPTION_GET_READ_REQUEST_FILE, "[TYPE,]FILE", 0,
    "Read KDC-REQ from FILE in format TYPE; TEXT (default) or DER. "
    "Default is to generate it."},
 
-  {"read-kdc-response-file", OPTION_KDC_READ_RESPONSE_FILE, "[TYPE,]FILE", 0,
+  {"read-kdc-response-file", OPTION_GET_READ_RESPONSE_FILE, "[TYPE,]FILE", 0,
    "Read KDC-REP from FILE in format TYPE; TEXT (default) or DER. "
    "Default is to receive it from server."},
 
-  {"request", OPTION_KDC_REQUEST, 0, 0,
+  {"request", OPTION_GET_REQUEST, 0, 0,
    "Only generate the request."},
 
-  {"response", OPTION_KDC_RESPONSE, 0, 0,
+  {"response", OPTION_GET_RESPONSE, 0, 0,
    "Only parse request and response and output ticket."},
 
-  {"sendrecv", OPTION_KDC_SENDRECV, 0, 0,
+  {"sendrecv", OPTION_GET_SENDRECV, 0, 0,
    "Only send request and receive response."},
 
   {"password", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
    "Password to decrypt response (discouraged).  Only for AS."},
 
-  {"write-ap-request-file", OPTION_KDC_WRITE_AP_REQUEST_FILE, "[TYPE,]FILE",
+  {"write-ap-request-file", OPTION_GET_WRITE_AP_REQUEST_FILE, "[TYPE,]FILE",
    0,
    "Write AP-REQ to FILE in TYPE, either TEXT (default) or DER. "
    "Only for TGS. Not written by default."},
 
-  {"write-authenticator-file", OPTION_KDC_WRITE_AUTHENTICATOR_FILE,
+  {"write-authenticator-file", OPTION_GET_WRITE_AUTHENTICATOR_FILE,
    "[TYPE,]FILE", 0,
    "Write Authenticator to FILE in TYPE, either TEXT (default) or DER. "
    "Only for TGS. Not written by default."},
 
-  {"write-kdc-request-file", OPTION_KDC_WRITE_REQUEST_FILE, "[TYPE,]FILE", 0,
+  {"write-kdc-request-file", OPTION_GET_WRITE_REQUEST_FILE, "[TYPE,]FILE", 0,
    "Write KDC-REQ to FILE in format TYPE; TEXT (default) or DER. "
    "Not written by default."},
 
-  {"write-kdc-response-file", OPTION_KDC_WRITE_RESPONSE_FILE, "[TYPE,]FILE",
+  {"write-kdc-response-file", OPTION_GET_WRITE_RESPONSE_FILE, "[TYPE,]FILE",
    0,
    "Write KDC-REP to FILE in format TYPE; TEXT (default) or DER. "
    "Not written by default."},
@@ -811,16 +657,20 @@ static struct argp_option options[] = {
   {"ticket-write-file", 'w', "FILE", 0,
    "Write tickets to FILE.  Default is to write them back to ticket file."},
 
+  {"NAME", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
+   "Set client name and realm from NAME.  The --client-name and --realm can "
+   "be used to override part of NAME."},
+
   /************** EXAMPLES */
 
   {0, 0, 0, 0, "Examples:", 2000},
 
-  {"shishi as", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
+  {"shishi", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
    "Get a ticket granting ticket from the default KDC server for the "
    "default user and realm."},
 
-  {"shishi tgs --server-name=imap", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Get a ticket for the imap server."},
+  {"shishi jas/admin@ACCOUNTING", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
+   "Get a ticket for jas/admin in the ACCOUNTING realm."},
 
   {"shishi list --server-name=krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG",
    0, 0, OPTION_DOC | OPTION_NO_USAGE,
@@ -832,15 +682,13 @@ static struct argp_option options[] = {
 static struct argp argp = {
   options,
   parse_opt,
-  "[COMMAND [COMMAND-OPTION...]]\n"
-    "as [AS-OPTION...]\n"
-    "tgs [TGS-OPTION...]\n"
-    "list [LIST-OPTION...]\n"
-    "destroy [DESTROY-OPTION...]\n"
-    "client [CLIENT-OPTION...]\n"
-    "server [SERVER-OPTION...]\n"
-    "ap [AP-OPTION...]\n" "crypto [CRYPTO-OPTION...]\n" "kdc [KDC-OPTION...]",
-  "Shishi -- A RFC 1510(bis) implementation"
+  "[COMMAND] [NAME] [OPTION...]\n"
+  "destroy [DESTROY-OPTION...]\n"
+  "get [GET-OPTION...]\n"
+  "list [LIST-OPTION...]\n"
+  "ap [AP-OPTION...]\n"
+  "crypto [CRYPTO-OPTION...]\n",
+  "Shishi -- A Kerberos 5 implementation"
 };
 
 int
@@ -866,6 +714,17 @@ main (int argc, char *argv[])
   if (rc != SHISHI_OK)
     error (1, 0, "Could not set encryption types: %s\n", shishi_strerror (rc));
 
+  if (arg.client)
+    {
+      rc = shishi_parse_name (handle, arg.client,
+			      arg.cname ? NULL : &arg.cname,
+			      arg.realm ? NULL : &arg.realm);
+
+      if (rc != SHISHI_OK)
+	error (1, 0, "Could not parse principal \"%s\": %s\n", arg.client,
+	       shishi_strerror (rc));
+    }
+
   rc = shishi_cfg (handle, arg.lib_options);
   if (rc != SHISHI_OK)
     error (1, 0, "Could not read library options: %s\n", shishi_strerror (rc));
@@ -886,8 +745,7 @@ main (int argc, char *argv[])
 
   if (arg.tgtname == NULL)
     {
-      asprintf (&arg.tgtname, "krbtgt/%s",
-		       shishi_realm_default (handle));
+      asprintf (&arg.tgtname, "krbtgt/%s", shishi_realm_default (handle));
       if (arg.tgtname == NULL)
 	error (1, 0, "Could not allocate TGT name.");
     }
@@ -896,106 +754,30 @@ main (int argc, char *argv[])
 
   switch (arg.command)
     {
-    case COMMAND_AS:
+    case COMMAND_GET:
+    default:
       {
-	Shishi_as *as;
 	Shishi_tkt *tkt;
+	Shishi_tkts_hint hint;
 
-	rc = shishi_as (handle, &as);
-	if (rc == SHISHI_OK)
-	  rc = shishi_as_sendrecv (as);
-	if (rc == SHISHI_OK)
-	  rc = shishi_as_rep_process (as, NULL, arg.password);
-	if (rc != SHISHI_OK)
+	memset (&hint, 0, sizeof (hint));
+	hint.client = (char *) arg.cname;
+	hint.server = (char *) arg.sname ? arg.sname : arg.tgtname;
+
+	tkt = shishi_tkts_get (shishi_tkts_default (handle), &hint);
+	if (!tkt)
 	  {
-	    printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
-		    shishi_strerror_details (handle));
-	    if (rc == SHISHI_GOT_KRBERROR)
-	      shishi_krberror_pretty_print (handle, stdout,
-					    shishi_as_krberror (as));
-	    break;
-	  }
-
-	if (arg.verbose)
-	  {
-	    shishi_kdcreq_print (handle, stdout, shishi_as_req (as));
-	    shishi_kdcrep_print (handle, stdout, shishi_as_rep (as));
-	    shishi_enckdcreppart_print
-	      (handle, stdout, shishi_tkt_enckdcreppart (shishi_as_tkt (as)));
-	  }
-
-	tkt = shishi_as_tkt (as);
-
-	if (!arg.silent)
-	  {
-	    shishi_tkt_pretty_print (tkt, stdout);
-	    shishi_tkt_lastreq_pretty_print (tkt, stdout);
-	  }
-
-	rc = shishi_tkts_add (shishi_tkts_default (handle), tkt);
-	if (rc != SHISHI_OK)
-	  printf ("Could not add ticket: %s", shishi_strerror (rc));
-      }
-      break;
-
-    case COMMAND_TGS:
-      {
-	Shishi_tgs *tgs;
-	Shishi_tkt *tgt;
-	Shishi_tkt *tkt;
-
-	tgt = shishi_tkts_find_for_clientserver
-	  (shishi_tkts_default (handle),
-	   shishi_principal_default (handle), arg.tgtname);
-	if (tgt == NULL)
-	  {
-	    printf ("TGT not found.  Please use the AS command first.\n");
+	    printf ("Could not get ticket for `%s'.\n",
+		    arg.tgtname ? arg.tgtname : arg.cname);
 	    rc = !SHISHI_OK;
-	    break;
 	  }
-
-	rc = shishi_tgs (handle, &tgs);
-	shishi_tgs_tgtkt_set (tgs, tgt);
-	if (rc == SHISHI_OK)
-	  rc = shishi_tgs_set_server (tgs, arg.sname ?
-				      arg.sname : arg.tgtname);
-	if (rc == SHISHI_OK)
-	  rc = shishi_tgs_req_build (tgs);
-	if (rc == SHISHI_OK)
-	  rc = shishi_tgs_sendrecv (tgs);
-	if (rc == SHISHI_OK)
-	  rc = shishi_tgs_rep_process (tgs);
-	if (rc != SHISHI_OK)
+	else
 	  {
-	    printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
-		    shishi_strerror_details (handle));
-	    if (rc == SHISHI_GOT_KRBERROR)
-	      shishi_krberror_pretty_print (handle, stdout,
-					    shishi_tgs_krberror (tgs));
-	    break;
+	    rc = shishi_tkt_pretty_print (tkt, stdout);
+	    if (rc != SHISHI_OK)
+	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
+		       shishi_strerror (rc), shishi_strerror_details (handle));
 	  }
-
-	if (arg.verbose)
-	  {
-	    shishi_authenticator_print
-	      (handle, stdout, shishi_ap_authenticator (shishi_tgs_ap (tgs)));
-	    shishi_apreq_print
-	      (handle, stdout, shishi_ap_req (shishi_tgs_ap (tgs)));
-	    shishi_kdcreq_print (handle, stdout, shishi_tgs_req (tgs));
-	    shishi_kdcrep_print (handle, stdout, shishi_tgs_rep (tgs));
-	  }
-
-	tkt = shishi_tgs_tkt (tgs);
-
-	if (!arg.silent)
-	  {
-	    shishi_tkt_lastreq_pretty_print (tkt, stdout);
-	    shishi_tkt_pretty_print (tkt, stdout);
-	  }
-
-	rc = shishi_tkts_add (shishi_tkts_default (handle), tkt);
-	if (rc != SHISHI_OK)
-	  printf ("Could not add ticket: %s", shishi_strerror (rc));
       }
       break;
 
@@ -1045,14 +827,6 @@ main (int argc, char *argv[])
       }
       break;
 
-    case COMMAND_CLIENT:
-      rc = client (handle, arg);
-      break;
-
-    case COMMAND_SERVER:
-      rc = server (handle, arg);
-      break;
-
     case COMMAND_AP:
       rc = ap (handle, arg);
       break;
@@ -1062,30 +836,6 @@ main (int argc, char *argv[])
       if (rc != SHISHI_OK)
 	fprintf (stderr, "Operation failed:\n%s\n%s\n",
 		 shishi_strerror (rc), shishi_strerror_details (handle));
-      break;
-
-    case COMMAND_KDC:
-      //rc = kdc (handle, arg);
-      break;
-
-    default:
-      {
-	Shishi_tkt *tkt;
-
-	tkt = shishi_tkts_get_for_server (shishi_tkts_default (handle),
-					  arg.tgtname);
-	if (!tkt)
-	  {
-	    printf ("Could not get ticket for `%s'.\n", arg.tgtname);
-	    rc = !SHISHI_OK;
-	    break;
-	  }
-
-	rc = shishi_tkt_pretty_print (tkt, stdout);
-	if (rc != SHISHI_OK)
-	  fprintf (stderr, "Operation failed:\n%s\n%s\n",
-		   shishi_strerror (rc), shishi_strerror_details (handle));
-      }
       break;
     }
 
