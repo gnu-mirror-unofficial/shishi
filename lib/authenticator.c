@@ -442,6 +442,31 @@ shishi_authenticator_cusec_set (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_authenticator_seqnumber_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @seqnumber: output integer with sequence number field.
+ *
+ * Extract sequence number field from Authenticator.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_seqnumber_get (Shishi * handle,
+				    Shishi_asn1 authenticator,
+				    uint32_t * seqnumber)
+{
+  int res;
+
+  res = shishi_asn1_read_uint32 (handle, authenticator,
+				 "seq-number", seqnumber);
+  if (res != SHISHI_OK)
+    return res;
+
+  return res;
+}
+
 int
 shishi_authenticator_cname_get (Shishi * handle,
 				Shishi_asn1 authenticator,
