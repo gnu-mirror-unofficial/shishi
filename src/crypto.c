@@ -55,6 +55,8 @@ crypto (Shishi * handle, struct arguments arg)
 
   key = shishi_key(arg.algorithm, NULL);
 
+  shishi_key_version_set(key, arg.kvno);
+
   if (arg.password)
     {
       rc = shishi_string_to_key (handle, arg.algorithm,
@@ -93,11 +95,14 @@ crypto (Shishi * handle, struct arguments arg)
     {
       char buf[BUFSIZ];
 
-      rc = shishi_randomize(handle, buf, shishi_key_length(key));
+      rc = shishi_randomize(handle, buf,
+			    shishi_cipher_randomlen(arg.algorithm));
       if (rc != SHISHI_OK)
 	return rc;
 
-      shishi_key_value_set(key, buf);
+      shishi_random_to_key(handle, arg.algorithm,
+			   buf, shishi_cipher_randomlen(arg.algorithm),
+			   key);
     }
   else if (arg.readkeyfile)
     {
