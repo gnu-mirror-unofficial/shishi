@@ -442,6 +442,18 @@ simplified_dencrypt (Shishi * handle,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
+  if (iv)
+    {
+      size_t blocksize = gcry_cipher_get_algo_blklen (alg);
+      if (decryptp)
+	memcpy (iv, in + inlen - blocksize, blocksize);
+      else
+	/* XXX what is the output iv for CBC-CTS mode?
+	   but is this value useful at all for that mode anyway?
+	   Mostly it is DES apps that want the updated iv, so this is ok. */
+	memcpy (iv, *out + *outlen - blocksize, blocksize);
+    }
+
   gcry_cipher_close (ch);
 
 #else
@@ -473,6 +485,7 @@ simplified_dencrypt (Shishi * handle,
       else
 	CBC_ENCRYPT (&des, des_encrypt, inlen, *out, in);
       if (iv)
+	/* XXX see above */
 	memcpy (iv, des.iv, sizeof (des.iv));
       break;
 
@@ -492,6 +505,7 @@ simplified_dencrypt (Shishi * handle,
       else
 	CBC_ENCRYPT (&des3, des3_encrypt, inlen, *out, in);
       if (iv)
+	/* XXX see above */
 	memcpy (iv, des3.iv, sizeof (des3.iv));
       break;
 
@@ -514,6 +528,7 @@ simplified_dencrypt (Shishi * handle,
 	  CBC_CTS_ENCRYPT (&aes, aes_encrypt, inlen, *out, in);
 	}
       if (iv)
+	/* XXX see above */
 	memcpy (iv, aes.iv, sizeof (aes.iv));
       break;
     }
