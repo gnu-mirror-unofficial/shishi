@@ -32,7 +32,7 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	version.c password.c
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-INCLUDES = -I../asn1/lib @LIBGCRYPT_CFLAGS@ @GNET_CFLAGS@
+INCLUDES = -I../asn1/lib @LIBGCRYPT_CFLAGS@
 
 include_HEADERS = shishi.h
 

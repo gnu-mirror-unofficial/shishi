@@ -19,107 +19,84 @@
  *
  */
 
-#include "config.h"
-
-#include <string.h>
-
-#include <sys/select.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#include <errno.h>
-#include <netdb.h>
-
 #include "internal.h"
 
-#if HAVE_GNET
-#include <glib.h>
-#include <gnet/gnet.h>
-
 int
-shishi_kdc_sendrecv_udp (Shishi * handle,
-			 char *indata,
-			 int inlen, char *outdata, int * outlen)
+shishi_sendrecv_udp (char *hostname,
+		     char *indata,
+		     int inlen, 
+		     char *outdata, 
+		     int * outlen)
 {
+  struct sockaddr_storage ssa, lsa;
+  struct hostent* he;
+  struct sockaddr_in* ssa_inp = (struct sockaddr_in*) &ssa;
+  struct sockaddr_in* lsa_inp = (struct sockaddr_in*) &lsa;
   struct protoent *proto;
-  GInetAddr *addr = NULL;
-  GUdpSocket *socket = NULL;
-  guint n;
-  gint port;
-  GIOChannel *iochannel = NULL;
-  GUdpPacket *packet;
-  gint rv;
-  GIOError error = G_IO_ERROR_NONE;
+  int sockfd;
+  int bytes_sent, bytes_received, total_received;
+  struct sockaddr_storage from_sa;
+  int length = sizeof(struct sockaddr_storage);
+  fd_set readfds;
+  struct timeval timeout = {0, 0};
+
+  memset (&ssa, 0, sizeof(ssa));
+  he = gethostbyname(hostname);
+  if (he != NULL && he->h_addr_list[0] != NULL)
+    {
+      ssa_inp->sin_family = he->h_addrtype;
+      memcpy(&ssa_inp->sin_addr, he->h_addr_list[0], he->h_length);
+    }
 
   proto = getprotobyname ("kerberos");
   if (proto)
-    port = proto->p_proto;
+    ssa_inp->sin_port = htons(proto->p_proto);
   else
-    port = 88;
+    ssa_inp->sin_port = htons(88);
 
-  /* Create the address */
-  addr = gnet_inetaddr_new (handle->kdc, port);
-  g_assert (addr != NULL);
+  memset (&lsa, 0, sizeof(lsa));
+  lsa_inp->sin_family = AF_INET;
+  lsa_inp->sin_addr.s_addr = htonl(INADDR_ANY);
 
-  /* Create the socket */
-  socket = gnet_udp_socket_new ();
-  g_assert (socket != NULL);
+  sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+  if (sockfd < 0)
+    return !SHISHI_OK;
 
-  /* Get the IOChannel */
-  iochannel = gnet_udp_socket_get_iochannel (socket);
-  g_assert (iochannel != NULL);
+  if (bind(sockfd, (struct sockaddr*)&lsa, sizeof(lsa)) != 0)
+    {
+      close(sockfd);
+      return !SHISHI_OK;
+    }
+  
+  bytes_sent = sendto(sockfd, (void*) indata, inlen, 0, 
+		      (struct sockaddr*)&ssa, sizeof(ssa));
+  if (bytes_sent != inlen)
+    return !SHISHI_OK;
 
-  /* Create packet */
-  packet = gnet_udp_packet_send_new (indata, inlen, addr);
-
-  /* Send packet */
-  rv = gnet_udp_socket_send (socket, packet);
-  g_assert (rv == 0);
-  gnet_udp_packet_delete (packet);
-
-  /* Receive packet */
-  n = 0;
-  packet = gnet_udp_packet_receive_new (outdata, *outlen);
-  *outlen = 0;
+  total_received = 0;
   do
     {
-      n = gnet_udp_socket_receive (socket, packet);
-      if (n == 0)
-	{
-	  printf ("read nothing\n");
-	}
-      *outlen += n;
+      bytes_received = recvfrom(sockfd, outdata + total_received, 
+				*outlen - total_received, 0, 
+				(struct sockaddr*)&from_sa, &length);
+      total_received += bytes_received;
+
+      FD_ZERO (&readfds);
+      FD_SET (sockfd, &readfds);
     }
-  while (gnet_udp_socket_has_packet (socket));
+  while(select(sockfd + 1, &readfds, NULL, NULL, &timeout) == 1);
 
-  gnet_inetaddr_delete (packet->addr);
-  gnet_udp_packet_delete (packet);
+  close(sockfd);
 
-  gnet_inetaddr_delete (addr);
-  gnet_udp_socket_delete (socket);
+  *outlen = total_received;
 
   return SHISHI_OK;
 }
-
-#else
-
-int
-shishi_kdc_sendrecv_udp (Shishi * handle,
-			 char *indata,
-			 int inlen, char *outdata, int * outlen)
-{
-
-  return !SHISHI_OK;
-}
-
-#endif
 
 int
 shishi_kdc_sendrecv (Shishi * handle,
 		     char *indata,
 		     int inlen, char *outdata, int * outlen)
 {
-  return shishi_kdc_sendrecv_udp (handle, indata, inlen, outdata, outlen);
+  return shishi_sendrecv_udp (handle->kdc, indata, inlen, outdata, outlen);
 }

@@ -17,11 +17,11 @@
 # License along with Shishi; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
-MOST_SUBDIRS = intl m4 po asn1 argp lib src test doc
+MOST_SUBDIRS = intl m4 po asn1 lib src test doc
 
-DIST_SUBDIRS = crypto $(MOST_SUBDIRS)
+DIST_SUBDIRS = crypto argp gdbm $(MOST_SUBDIRS)
 
-SUBDIRS = @CRYPTO@ $(MOST_SUBDIRS)
+SUBDIRS = @CRYPTO@ @ARGP@ @GDBM@ $(MOST_SUBDIRS)
 
 ACLOCAL_AMFLAGS = -I m4 -I crypto/src -I asn1/src
 

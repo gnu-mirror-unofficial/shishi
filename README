@@ -22,7 +22,6 @@ please let me know so work duplication can be avoided.
   + PKINIT?
   + Documentation
   + I18n
-  + Get rid of Glib/Gnet dependency: re-implement netio.c
   - Port more applications to use shishi
   - Port to Cyclone?
   - Handle too small buffers in some places?

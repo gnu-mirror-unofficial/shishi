@@ -15,11 +15,11 @@ $AUTOCONF &&
 $AUTOMAKE --add-missing &&
 $AUTOHEADER &&
 cd .. &&
-cd crypto &&
-rm -vf config.cache &&
-rm -rvf autom4te.cache &&
-./autogen.sh &&
-cd .. &&
+#cd crypto &&
+#rm -vf config.cache &&
+#rm -rvf autom4te.cache &&
+#./autogen.sh &&
+#cd .. &&
 $GETTEXTIZE --intl --force &&
 rm -fv `find . -name \*~` &&
 rm -vf config.cache &&

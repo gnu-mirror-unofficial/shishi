@@ -1,0 +1,5 @@
+Makefile
+autoconf.h
+config.log
+config.status
+libtool

@@ -17,10 +17,15 @@
 # License along with Shishi; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
-bin_PROGRAMS = shishi
+bin_PROGRAMS = shishi shishid
+
 shishi_SOURCES = data.h gettext.h shishi.c kdc.c authp.c crypto.c \
 	list.c client.c server.c
-shishi_LDADD = @GNET_LIBS@ @LIBARGP@ @LTLIBINTL@ \
+shishi_LDADD = @LIBARGP@ @LTLIBINTL@ \
+	../lib/libshishi.la ../asn1/lib/libtasn1.la @LIBGCRYPT@
+
+shishid_SOURCES = shishid.c
+shishid_LDADD = @LIBARGP@ @LTLIBINTL@ \
 	../lib/libshishi.la ../asn1/lib/libtasn1.la @LIBGCRYPT@
 
 localedir = $(datadir)/locale
