@@ -172,35 +172,35 @@ AC_CONFIG_SUBDIRS(argp)
 #fi
 #AC_SUBST(LIBGDBM)
 
-# Check for stringprep
-AC_ARG_WITH(system-stringprep,
-  AC_HELP_STRING([--without-system-stringprep],
-		[don't use the system's libstringprep]))
-if test "$with_system_stringprep" != "no" ; then
-	PKG_CHECK_MODULES(LIBSTRINGPREP, libstringprep >= 0.0.1,
-		with_system_stringprep=yes,
-		with_system_stringprep=no)
+# Check for idn
+AC_ARG_WITH(system-idn,
+  AC_HELP_STRING([--without-system-idn],
+		[don't use the system's libidn]))
+if test "$with_system_idn" != "no" ; then
+	PKG_CHECK_MODULES(LIBIDN, libidn >= 0.1.0,
+		with_system_idn=yes,
+		with_system_idn=no)
 fi
-if test "$with_system_stringprep" = "no"; then
+if test "$with_system_idn" = "no"; then
 	AC_MSG_WARN([[
 
-The system's libstringprep 0.0.1 or later not used. Using copy
-distributed with shishi instead.
+The system's GNU Libidn 0.1.0 or later not used. Using copy
+distributed with Shishi instead.
 
-See <http://josefsson.org/libstringprep/>.
+See <http://www.gnu.org/software/libidn/>.
 
 Don't worry.
 ]])
-	LIBSTRINGPREP_CFLAGS="-I\$(top_srcdir)/libstringprep"
-	LIBSTRINGPREP_LIBS="\$(top_builddir)/libstringprep/libstringprep.la"
-	LIBSTRINGPREP=libstringprep
+	LIBIDN_CFLAGS="-I\$(top_srcdir)/libstringprep"
+	LIBIDN_LIBS="\$(top_builddir)/libstringprep/libidn.la"
+	LIBIDN=libstringprep
 fi
-AC_SUBST(LIBSTRINGPREP)
-AC_SUBST(LIBSTRINGPREP_CFLAGS)
-AC_SUBST(LIBSTRINGPREP_LIBS)
-AC_MSG_CHECKING([if system's libstringprep should be used])
-AC_MSG_RESULT($with_system_stringprep)
-AC_CONFIG_SUBDIRS(libstringprep)
+AC_SUBST(LIBIDN)
+AC_SUBST(LIBIDN_CFLAGS)
+AC_SUBST(LIBIDN_LIBS)
+AC_MSG_CHECKING([if system's libidn should be used])
+AC_MSG_RESULT($with_system_idn)
+AC_CONFIG_SUBDIRS(libidn)
 
 dnl libtasn1 will be built
 dnl AC_CHECK_LIB([tasn1], libasn1_strerror,, AC_MSG_ERROR([libtasn1 is required]))
