@@ -61,7 +61,7 @@ int
 _shishi_asn1_integer_field (Shishi * handle, ASN1_TYPE node,
 			    int *i, char *field)
 {
-  char buf[4];
+  unsigned char buf[4];
   int buflen;
   int rc;
 
