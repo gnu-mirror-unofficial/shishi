@@ -585,7 +585,8 @@ main (int argc, char **argv)
 #ifdef SHISHI
 	case 's':
 	  shishi = 1;
-	  port = "543";
+	  if (!encryption)
+	    port = "543";
 	  break;
 	case 'x':
 	  encryption = 1;
