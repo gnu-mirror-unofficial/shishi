@@ -22,271 +22,154 @@
  */
 
 static int
-des_crc_verify (Shishi * handle, char *out, int *outlen)
+raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
 {
-  int res;
-  char md[16];
+  char md[MAX_HASH_LEN];
   gcry_md_hd_t hd;
+  gpg_error_t err;
+  int hlen = gcry_md_get_algo_dlen (algo);
+  int ok;
   char *p;
 
-  memcpy (md, out + 8, 4);
-  memset (out + 8, 0, 4);
+  memcpy (md, out + 8, hlen);
+  memset (out + 8, 0, hlen);
 
-  gcry_md_open (&hd, GCRY_MD_CRC32_RFC1510, 0);
-
-  if (!hd)
+  err = gcry_md_open (&hd, algo, 0);
+  if (err != GPG_ERR_NO_ERROR)
     {
-      puts ("CRC not available");
-      return !SHISHI_OK;
+      shishi_error_printf (handle, "Algo %d not available in libgcrypt", algo);
+      return SHISHI_GCRYPT_ERROR;
     }
 
   gcry_md_write (hd, out, *outlen);
-  p = gcry_md_read (hd, GCRY_MD_CRC32_RFC1510);
+
+  p = gcry_md_read (hd, algo);
+  if (p == NULL)
+    {
+      shishi_error_printf (handle, "Libgcrypt failed to compute hash");
+      return SHISHI_GCRYPT_ERROR;
+    }
+
   if (VERBOSECRYPTO (handle))
     {
-      int i;
-
-      for (i = 0; i < 4; i++)
-	printf ("%02X ", md[i] & 0xFF);
-      printf ("\n");
-      for (i = 0; i < 4; i++)
-	printf ("%02X ", p[i] & 0xFF);
-      printf ("\n");
+      puts("DES verify:");
+      hexprint(md, hlen);
+      hexprint (p, hlen);
     }
 
-  if (memcmp (p, md, 4) == 0)
-    {
-      memmove (out, out + 8 + 4, *outlen - 8 - 4);
-      *outlen -= 8 + 4;
-      res = SHISHI_OK;
-    }
-  else
-    {
-      if (VERBOSE (handle))
-	printf ("des-cbc-crc verify fail\n");
-      res = !SHISHI_OK;
-    }
+  ok = memcmp (p, md, hlen) == 0;
 
   gcry_md_close (hd);
 
-  return res;
-}
-
-static int
-des_crc_checksum (Shishi * handle,
-		  char *out, size_t * outlen, const char *in, size_t inlen)
-{
-  int res;
-  char buffer[BUFSIZ];
-  char *p;
-  gcry_md_hd_t hd;
-
-  if (inlen + 8 + 4 > BUFSIZ)
+  if (!ok)
     {
-      shishi_error_printf (handle, "checksum inbuffer too large");
-      return !SHISHI_OK;
+      shishi_error_printf (handle, "DES verify failed");
+      return SHISHI_CRYPTO_ERROR;
     }
 
-  memcpy (buffer + 8 + 4, in, inlen);
-  memset (buffer + 8, 0, 4);
-
-  res = shishi_randomize (handle, buffer, 8);
-  if (res != SHISHI_OK)
-    return res;
-
-  gcry_md_open (&hd, GCRY_MD_CRC32_RFC1510, 0);
-  if (hd == NULL)
-    return SHISHI_GCRYPT_ERROR;
-
-  gcry_md_write (hd, buffer, inlen + 8 + 4);
-  p = gcry_md_read (hd, GCRY_MD_CRC32_RFC1510);
-
-  memcpy (buffer + 8, p, 4);
-  gcry_md_close (hd);
-
-  memcpy (out, buffer, 8 + 4);
-
-  *outlen = 8 + 4;
+  memmove (out, out + 8 + hlen, *outlen - 8 - hlen);
+  *outlen -= 8 + hlen;
 
   return SHISHI_OK;
 }
 
 static int
-des_md4_verify (Shishi * handle, char *out, int *outlen)
+raw_des_checksum (Shishi * handle,
+		  int algo,
+		  const char *in, size_t inlen,
+		  char *out, size_t * outlen,
+		  int hashzeros)
 {
-  int res;
-  char md[16];
-  gcry_md_hd_t hd;
-  char *p;
-
-  memcpy (md, out + 8, 16);
-  memset (out + 8, 0, 16);
-
-  gcry_md_open (&hd, GCRY_MD_MD4, 0);
-
-  if (!hd)
-    {
-      puts ("MD4 not available");
-      return !SHISHI_OK;
-    }
-
-  gcry_md_write (hd, out, *outlen);
-  p = gcry_md_read (hd, GCRY_MD_MD4);
-  if (VERBOSECRYPTO (handle))
-    {
-      int i;
-
-      for (i = 0; i < 16; i++)
-	printf ("%02X ", md[i] & 0xFF);
-      printf ("\n");
-      for (i = 0; i < 16; i++)
-	printf ("%02X ", p[i] & 0xFF);
-      printf ("\n");
-    }
-
-  if (memcmp (p, md, 16) == 0)
-    {
-      memmove (out, out + 8 + 16, *outlen - 8 - 16);
-      *outlen -= 8 + 16;
-      res = SHISHI_OK;
-    }
-  else
-    {
-      if (VERBOSE (handle))
-	printf ("des-cbc-md4 verify fail\n");
-      res = !SHISHI_OK;
-    }
-
-  gcry_md_close (hd);
-
-  return res;
-}
-
-static int
-des_md4_checksum (Shishi * handle,
-		  char *out, size_t * outlen, const char *in, size_t inlen)
-{
-  int res;
-  char buffer[BUFSIZ];
+  gpg_error_t err;
+  int hlen = gcry_md_get_algo_dlen (algo);
+  char buffer[8 + MAX_HASH_LEN];
   char *p;
   gcry_md_hd_t hd;
+  int res;
 
-  if (inlen + 8 + 16 > BUFSIZ)
+  err = gcry_md_open (&hd, algo, 0);
+  if (err != GPG_ERR_NO_ERROR)
     {
-      shishi_error_printf (handle, "checksum inbuffer too large");
-      return !SHISHI_OK;
+      shishi_error_printf (handle, "MD %d not available in libgcrypt", algo);
+      return SHISHI_GCRYPT_ERROR;
     }
-
-  memcpy (buffer + 8 + 16, in, inlen);
-  memset (buffer + 8, 0, 16);
 
   res = shishi_randomize (handle, buffer, 8);
   if (res != SHISHI_OK)
     return res;
 
-  gcry_md_open (&hd, GCRY_MD_MD4, 0);
-  if (hd == NULL)
-    return SHISHI_GCRYPT_ERROR;
+  memset (buffer + 8, 0, hlen);
 
-  gcry_md_write (hd, buffer, inlen + 8 + 16);
-  p = gcry_md_read (hd, GCRY_MD_MD4);
+  if (hashzeros)
+    gcry_md_write (hd, buffer, 8 + hlen);
+  else
+    gcry_md_write (hd, buffer, 8);
+  gcry_md_write (hd, in, inlen);
 
-  memcpy (buffer + 8, p, 16);
+  p = gcry_md_read (hd, algo);
+  if (p == NULL)
+    {
+      shishi_error_printf (handle, "Libgcrypt failed to compute hash");
+      return SHISHI_GCRYPT_ERROR;
+    }
+
+  memcpy(out, buffer, 8);
+  memcpy(out + 8, p, hlen);
+
   gcry_md_close (hd);
 
-  memcpy (out, buffer, 8 + 16);
-
-  *outlen = 8 + 16;
+  *outlen = 8 + hlen;
 
   return SHISHI_OK;
 }
 
 static int
-des_md5_verify (Shishi * handle, char *out, int *outlen)
+des_encrypt (Shishi * handle,
+	     Shishi_key * key,
+	     int keyusage,
+	     const char *iv,
+	     size_t ivlen,
+	     const char *in, size_t inlen, char **out, size_t * outlen,
+	     int algo)
 {
+  char cksum[8 + MAX_HASH_LEN];
+  char *inpad;
+  char *pt;
+  size_t inpadlen, padzerolen = 0, ptlen, cksumlen;
   int res;
-  char md[16];
-  gcry_md_hd_t hd;
-  char *p;
 
-  memcpy (md, out + 8, 16);
-  memset (out + 8, 0, 16);
+  if (inlen % 8)
+    padzerolen = 8 - (inlen % 8);
+  inpadlen = inlen + padzerolen;
+  inpad = xmalloc (inpadlen);
 
-  gcry_md_open (&hd, GCRY_MD_MD5, 0);
+  memcpy (inpad, in, inlen);
+  memset (inpad + inlen, 0, padzerolen);
 
-  if (!hd)
-    {
-      shishi_error_set (handle, "MD5 not available");
-      return !SHISHI_OK;
-    }
-
-  gcry_md_write (hd, out, *outlen);
-  p = gcry_md_read (hd, GCRY_MD_MD5);
-  if (VERBOSECRYPTO (handle))
-    {
-      int i;
-
-      for (i = 0; i < 16; i++)
-	printf ("%02X ", md[i] & 0xFF);
-      printf ("\n");
-      for (i = 0; i < 16; i++)
-	printf ("%02X ", p[i] & 0xFF);
-      printf ("\n");
-    }
-
-  if (memcmp (p, md, 16) == 0)
-    {
-      memmove (out, out + 8 + 16, *outlen - 8 - 16);
-      *outlen -= 8 + 16;
-      res = SHISHI_OK;
-    }
-  else
-    {
-      if (VERBOSE (handle))
-	printf ("des-cbc-md5 verify fail\n");
-      res = !SHISHI_OK;
-    }
-
-  gcry_md_close (hd);
-
-  return res;
-}
-
-static int
-des_md5_checksum (Shishi * handle,
-		  char *out, size_t * outlen, const char *in, size_t inlen)
-{
-  int res;
-  char buffer[BUFSIZ];
-  char *p;
-  gcry_md_hd_t hd;
-
-  if (inlen + 8 + 16 > BUFSIZ)
-    {
-      shishi_error_printf (handle, "checksum inbuffer too large");
-      return !SHISHI_OK;
-    }
-
-  memcpy (buffer + 8 + 16, in, inlen);
-  memset (buffer + 8, 0, 16);
-
-  res = shishi_randomize (handle, buffer, 8);
+  res = raw_des_checksum (handle, algo, inpad, inpadlen, cksum, &cksumlen, 1);
   if (res != SHISHI_OK)
-    return res;
+    {
+      shishi_error_printf (handle, "DES checksum failed");
+      return res;
+    }
 
-  gcry_md_open (&hd, GCRY_MD_MD5, 0);
-  if (hd == NULL)
-    return SHISHI_GCRYPT_ERROR;
+  ptlen = inpadlen + cksumlen;
+  pt = xmalloc (ptlen);
+  memcpy (pt, cksum, cksumlen);
+  memcpy (pt + cksumlen, inpad, inpadlen);
 
-  gcry_md_write (hd, buffer, inlen + 8 + 16);
-  p = gcry_md_read (hd, GCRY_MD_MD5);
+  free (inpad);
 
-  memcpy (buffer + 8, p, 16);
-  gcry_md_close (hd);
+  res = simplified_encrypt (handle, key, 0, iv, ivlen,
+			    pt, ptlen, out, outlen);
 
-  memcpy (out, buffer, 8 + 16);
+  free (pt);
 
-  *outlen = 8 + 16;
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "DES encrypt failed");
+      return res;
+    }
 
   return SHISHI_OK;
 }
@@ -295,130 +178,24 @@ static int
 des_crc_encrypt (Shishi * handle,
 		 Shishi_key * key,
 		 int keyusage,
-		 const char *iv, size_t ivlen,
+		 const char *iv,
+		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  char buffer[BUFSIZ];
-  char buffer2[BUFSIZ];
-  int buflen;
-  int buf2len;
-  int res;
-
-  memcpy (buffer2, in, inlen);
-  buf2len = inlen;
-
-  while ((buf2len % 8) != 0)
-    {
-      buffer2[buf2len] = '\0';	/* XXX */
-      buf2len++;
-    }
-
-  buflen = sizeof (buffer);
-  res = des_crc_checksum (handle, buffer, &buflen, buffer2, buf2len);
-  memcpy (buffer + buflen, buffer2, buf2len);
-  buflen += buf2len;
-  res = simplified_encrypt (handle, key, 0, iv, ivlen,
-			    buffer, buflen, out, outlen);
-
-  return res;
-}
-
-static int
-des_crc_decrypt (Shishi * handle,
-		 Shishi_key * key,
-		 int keyusage,
-		 const char *iv, size_t ivlen,
-		 const char *in, size_t inlen, char **out, size_t * outlen)
-{
-  int res;
-
-  printf ("in %d\n", inlen);
-  res = simplified_decrypt (handle, key, 0, iv, ivlen,
-			    in, inlen, out, outlen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_set (handle, "decrypt failed");
-      return res;
-    }
-#if 0
-  memcpy (out,
-	  "\x56\xcc\xa9\xd6\x67\x0a\xca\x0e\xbc\x58\xdc\x9b\x79\x81\xd3\x30\x81\xd0\xa0\x13\x30\x11\xa0\x03\x02\x01\x01\xa1\x0a\x04\x08\x8f\x75\x58\x45\x9d\x31\x6b\x1f\xa1\x1c\x30\x1a\x30\x18\xa0\x03\x02\x01\x00\xa1\x11\x18\x0f\x31\x39\x37\x30\x30\x31\x30\x31\x30\x30\x30\x30\x30\x30\x5a\xa2\x06\x02\x04\x3d\xdd\x3a\x46\xa4\x07\x03\x05\x00\x50\x40\x00\x00\xa5\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x32\x31\x31\x39\x35\x35\x35\x30\x5a\xa7\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x32\x32\x30\x35\x35\x35\x35\x30\x5a\xa9\x0f\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xaa\x22\x30\x20\xa0\x03\x02\x01\x00\xa1\x19\x30\x17\x1b\x06\x6b\x72\x62\x74\x67\x74\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xab\x2f\x30\x2d\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x01\x01\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x02\x01\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xd9\xd0\xac\x49\x00\x00\x00\x00\x00\x00",
-	  232);
-  *outlen = 232;
-#endif
-  {
-    size_t i;
-    printf ("decrypt %d\n", *outlen);
-    for (i = 0; i < *outlen; i++)
-      printf ("%02x ", ((char *) out)[i] & 0xFF);
-    printf ("\n");
-  }
-  res = des_crc_verify (handle, *out, outlen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_set (handle, "verify failed");
-      return res;
-    }
-
-  return res;
+  return des_encrypt (handle, key, keyusage, iv, ivlen,
+		      in, inlen, out, outlen, GCRY_MD_CRC32_RFC1510);
 }
 
 static int
 des_md4_encrypt (Shishi * handle,
 		 Shishi_key * key,
 		 int keyusage,
-		 const char *iv, size_t ivlen,
-		 const char *in, size_t inlen, char **out, size_t * outlen)
-{
-  char buffer[BUFSIZ];
-  char buffer2[BUFSIZ];
-  size_t buflen;
-  size_t buf2len;
-  int res;
-
-  memcpy (buffer2, in, inlen);
-  buf2len = inlen;
-  while ((buf2len % 8) != 0)
-    {
-      buffer2[buf2len] = '\0';	/* XXX */
-      buf2len++;
-    }
-
-  buflen = sizeof (buffer);
-  res = des_md4_checksum (handle, buffer, &buflen, buffer2, buf2len);
-  memcpy (buffer + buflen, buffer, buf2len);
-  buflen += buf2len;
-  res = simplified_encrypt (handle, key, 0, iv, ivlen,
-			    buffer, buflen, out, outlen);
-
-  return res;
-}
-
-static int
-des_md4_decrypt (Shishi * handle,
-		 Shishi_key * key,
-		 int keyusage,
 		 const char *iv,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  int res;
-
-  res = simplified_decrypt (handle, key, 0, iv, ivlen,
-			    in, inlen, out, outlen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_set (handle, "decrypt failed");
-      return res;
-    }
-  res = des_md4_verify (handle, *out, outlen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_set (handle, "verify failed");
-      return res;
-    }
-
-  return res;
+  return des_encrypt (handle, key, keyusage, iv, ivlen,
+		      in, inlen, out, outlen, GCRY_MD_MD4);
 }
 
 static int
@@ -429,29 +206,61 @@ des_md5_encrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  char buffer[BUFSIZ];
-  char buffer2[BUFSIZ];
-  size_t buflen;
-  size_t buf2len;
+  return des_encrypt (handle, key, keyusage, iv, ivlen,
+		      in, inlen, out, outlen, GCRY_MD_MD5);
+}
+
+static int
+des_decrypt (Shishi * handle,
+	     Shishi_key * key,
+	     int keyusage,
+	     const char *iv, size_t ivlen,
+	     const char *in, size_t inlen,
+	     char **out, size_t * outlen,
+	     int algo)
+{
   int res;
 
-  memcpy (buffer2, in, inlen);
-  buf2len = inlen;
-
-  while ((buf2len % 8) != 0)
+  res = simplified_decrypt (handle, key, 0, iv, ivlen,
+			    in, inlen, out, outlen);
+  if (res != SHISHI_OK)
     {
-      buffer2[buf2len] = '\0';	/* XXX */
-      buf2len++;
+      shishi_error_printf (handle, "decrypt failed");
+      return res;
     }
 
-  buflen = sizeof (buffer);
-  res = des_md5_checksum (handle, buffer, &buflen, buffer2, buf2len);
-  memcpy (buffer + buflen, buffer2, buf2len);
-  buflen += buf2len;
-  res = simplified_encrypt (handle, key, 0, iv, ivlen,
-			    buffer, buflen, out, outlen);
+  res = raw_des_verify (handle, algo, *out, outlen);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "verify failed");
+      return res;
+    }
 
   return res;
+}
+
+static int
+des_crc_decrypt (Shishi * handle,
+		 Shishi_key * key,
+		 int keyusage,
+		 const char *iv,
+		 size_t ivlen,
+		 const char *in, size_t inlen, char **out, size_t * outlen)
+{
+  return des_decrypt (handle, key, keyusage, iv, ivlen,
+		      in, inlen, out, outlen, GCRY_MD_CRC32_RFC1510);
+}
+
+static int
+des_md4_decrypt (Shishi * handle,
+		 Shishi_key * key,
+		 int keyusage,
+		 const char *iv,
+		 size_t ivlen,
+		 const char *in, size_t inlen, char **out, size_t * outlen)
+{
+  return des_decrypt (handle, key, keyusage, iv, ivlen,
+		      in, inlen, out, outlen, GCRY_MD_MD4);
 }
 
 static int
@@ -462,23 +271,8 @@ des_md5_decrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  int res;
-
-  res = simplified_decrypt (handle, key, 0, iv, ivlen,
-			    in, inlen, out, outlen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_set (handle, "decrypt failed");
-      return res;
-    }
-  res = des_md5_verify (handle, *out, outlen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_set (handle, "verify failed");
-      return res;
-    }
-
-  return res;
+  return des_decrypt (handle, key, keyusage, iv, ivlen,
+		      in, inlen, out, outlen, GCRY_MD_MD5);
 }
 
 static int
@@ -541,60 +335,40 @@ des_set_odd_key_parity (char key[8])
 static int
 des_key_correction (Shishi * handle, char *key)
 {
-  int res;
   gcry_cipher_hd_t ch;
+  gpg_error_t err;
 
   /* fixparity(key); */
   des_set_odd_key_parity (key);
 
-  gcry_cipher_open (&ch, GCRY_CIPHER_DES, GCRY_CIPHER_MODE_CBC, 0);
-  if (ch == NULL)
-    return !SHISHI_OK;
-
-  /* XXX libgcrypt tests for pseudo-weak keys, rfc 1510 doesn't */
-
-  res = gcry_cipher_setkey (ch, key, 8);
-  if (res != GPG_ERR_NO_ERROR)
+  err = gcry_cipher_open (&ch, GCRY_CIPHER_DES, GCRY_CIPHER_MODE_CBC, 0);
+  if (err != GPG_ERR_NO_ERROR)
     {
-      if (gpg_err_code (res) == GPG_ERR_WEAK_KEY)
+      shishi_error_printf (handle, "DES-CBC not available in libgcrypt");
+      return SHISHI_GCRYPT_ERROR;
+    }
+
+  /* XXX? libgcrypt tests for pseudo-weak keys, rfc 1510 doesn't */
+
+  err = gcry_cipher_setkey (ch, key, 8);
+
+  gcry_cipher_close (ch);
+
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      if (gpg_err_code (err) == GPG_ERR_WEAK_KEY)
 	{
 	  if (VERBOSECRYPTO (handle))
 	    printf ("\t ;; WEAK KEY (corrected)\n");
 	  key[7] ^= 0xF0;
 	}
       else
-	return !SHISHI_OK;
+	{
+	  shishi_error_printf (handle, "DES setkey failed");
+	  shishi_error_set (handle, gpg_strerror (err));
+	  return SHISHI_GCRYPT_ERROR;
+	}
     }
-
-  gcry_cipher_close (ch);
-
-  return SHISHI_OK;
-}
-
-static int
-des_cbc_check (char key[8], char *data, int n_data)
-{
-  gcry_cipher_hd_t ch;
-  int res;
-
-  gcry_cipher_open (&ch, GCRY_CIPHER_DES,
-		    GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
-  if (ch == NULL)
-    return SHISHI_GCRYPT_ERROR;
-
-  res = gcry_cipher_setkey (ch, key, 8);
-  if (res != GPG_ERR_NO_ERROR)
-    return SHISHI_GCRYPT_ERROR;
-
-  res = gcry_cipher_setiv (ch, key, 8);
-  if (res != 0)
-    return SHISHI_GCRYPT_ERROR;
-
-  res = gcry_cipher_encrypt (ch, key, 8, data, n_data);
-  if (res != 0)
-    return SHISHI_GCRYPT_ERROR;
-
-  gcry_cipher_close (ch);
 
   return SHISHI_OK;
 }
@@ -618,6 +392,52 @@ des_random_to_key (Shishi * handle,
   shishi_key_value_set (outkey, tmp);
 
   return SHISHI_OK;
+}
+
+static int
+des_cbc_check (Shishi * handle, char key[8], char *data, int n_data)
+{
+  gcry_cipher_hd_t ch;
+  gpg_error_t err;
+  int res = SHISHI_GCRYPT_ERROR;
+
+  err = gcry_cipher_open (&ch, GCRY_CIPHER_DES,
+			  GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES-CBC-MAC not available in libgcrypt");
+      return SHISHI_GCRYPT_ERROR;
+    }
+
+  err = gcry_cipher_setkey (ch, key, 8);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES setkey failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      goto done;
+    }
+
+  err = gcry_cipher_setiv (ch, key, 8);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES setiv failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      goto done;
+    }
+
+  err = gcry_cipher_encrypt (ch, key, 8, data, n_data);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES encrypt failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      goto done;
+    }
+
+  return SHISHI_OK;
+
+ done:
+  gcry_cipher_close (ch);
+  return res;
 }
 
 static int
@@ -796,7 +616,7 @@ des_string_to_key (Shishi * handle,
     memcpy (s + stringlen, salt, saltlen);
   memset (s + stringlen + saltlen, 0, n_s - stringlen - saltlen);
 
-  res = des_cbc_check (tempkey, s, n_s);
+  res = des_cbc_check (handle, tempkey, s, n_s);
   if (res != SHISHI_OK)
     return res;
 
@@ -821,131 +641,67 @@ des_string_to_key (Shishi * handle,
 }
 
 static int
-checksum_md4 (Shishi * handle, char *out, int *outlen, char *in, int inlen)
+des_checksum (Shishi * handle,
+	      Shishi_key * key,
+	      int keyusage,
+	      int cksumtype,
+	      char *in, size_t inlen, char **out, size_t * outlen,
+	      int algo)
 {
-  int res;
   char buffer[BUFSIZ];
-  gcry_md_hd_t hd;
-  char *p;
+  int buflen;
+  char *keyp;
+  int i;
+  int res;
 
-  if (inlen + 8 > BUFSIZ)
+  buflen = sizeof (buffer);
+  res = raw_des_checksum (handle, algo, in, inlen, buffer, &buflen, 0);
+  if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "checksum inbuffer too large");
-      return !SHISHI_OK;
+      shishi_error_set (handle, "checksum failed");
+      return res;
     }
 
-  memcpy (buffer + 8, in, inlen);
+  keyp = shishi_key_value (key);
 
-#if 0
-  printf ("cksum in len=%d:", inlen);
-  for (i = 0; i < inlen; i++)
-    printf ("%02x ", in[i] & 0xFF);
-  printf ("\n");
-#endif
-
-  res = shishi_randomize (handle, buffer, 8);
-  if (res != SHISHI_OK)
-    return res;
-
-#if 0
-  printf ("cksum random: ");
   for (i = 0; i < 8; i++)
-    printf ("%02X ", buffer[i] & 0xFF);
-  printf ("\n");
-#endif
+    keyp[i] ^= 0xF0;
 
-  gcry_md_open (&hd, GCRY_MD_MD4, 0);
-  if (!hd)
-    return SHISHI_GCRYPT_ERROR;
+  res = simplified_dencrypt (handle, key, NULL, 0, buffer, buflen,
+			     out, outlen, 0);
 
-  gcry_md_write (hd, buffer, inlen + 8);
-  p = gcry_md_read (hd, GCRY_MD_MD4);
+  for (i = 0; i < 8; i++)
+    keyp[i] ^= 0xF0;
 
-#if 0
-  printf ("cksum md4: ");
-  for (i = 0; i < 16; i++)
-    printf ("%02X ", p[i] & 0xFF);
-  printf ("\n");
-#endif
-
-  memcpy (buffer + 8, p, 16);
-  gcry_md_close (hd);
-
-  memcpy (out, buffer, 8 + 16);
-
-  *outlen = 8 + 16;
-
-#if 0
-  printf ("cksum out: ");
-  for (i = 0; i < *outlen; i++)
-    printf ("%02X ", out[i] & 0xFF);
-  printf ("\n");
-#endif
+  if (res != SHISHI_OK)
+    {
+      shishi_error_set (handle, "encrypt failed");
+      return res;
+    }
 
   return SHISHI_OK;
 }
 
 static int
-checksum_md5 (Shishi * handle, char *out, int *outlen, char *in, int inlen)
+des_md4_checksum (Shishi * handle,
+		  Shishi_key * key,
+		  int keyusage,
+		  int cksumtype,
+		  char *in, size_t inlen, char **out, size_t * outlen)
 {
-  int res;
-  char buffer[BUFSIZ];
-  gcry_md_hd_t hd;
-  char *p;
+  return des_checksum (handle, key, keyusage, cksumtype,
+		       in, inlen, out, outlen,
+		       GCRY_MD_MD4);
+}
 
-  if (inlen + 8 > BUFSIZ)
-    {
-      shishi_error_printf (handle, "checksum inbuffer too large");
-      return !SHISHI_OK;
-    }
-
-  memcpy (buffer + 8, in, inlen);
-
-#if 0
-  printf ("cksum in len=%d:", inlen);
-  for (i = 0; i < inlen; i++)
-    printf ("%02x ", in[i] & 0xFF);
-  printf ("\n");
-#endif
-
-  res = shishi_randomize (handle, buffer, 8);
-  if (res != SHISHI_OK)
-    return res;
-
-#if 0
-  printf ("cksum random: ");
-  for (i = 0; i < 8; i++)
-    printf ("%02X ", buffer[i] & 0xFF);
-  printf ("\n");
-#endif
-
-  gcry_md_open (&hd, GCRY_MD_MD5, 0);
-  if (!hd)
-    return SHISHI_GCRYPT_ERROR;
-
-  gcry_md_write (hd, buffer, inlen + 8);
-  p = gcry_md_read (hd, GCRY_MD_MD5);
-
-#if 0
-  printf ("cksum md5: ");
-  for (i = 0; i < 16; i++)
-    printf ("%02X ", p[i] & 0xFF);
-  printf ("\n");
-#endif
-
-  memcpy (buffer + 8, p, 16);
-  gcry_md_close (hd);
-
-  memcpy (out, buffer, 8 + 16);
-
-  *outlen = 8 + 16;
-
-#if 0
-  printf ("cksum out: ");
-  for (i = 0; i < *outlen; i++)
-    printf ("%02X ", out[i] & 0xFF);
-  printf ("\n");
-#endif
-
-  return SHISHI_OK;
+static int
+des_md5_checksum (Shishi * handle,
+		  Shishi_key * key,
+		  int keyusage,
+		  int cksumtype,
+		  char *in, size_t inlen, char **out, size_t * outlen)
+{
+  return des_checksum (handle, key, keyusage, cksumtype,
+		       in, inlen, out, outlen,
+		       GCRY_MD_MD5);
 }

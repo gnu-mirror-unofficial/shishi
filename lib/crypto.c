@@ -574,11 +574,13 @@ static int
 simplified_checksum (Shishi * handle,
 		     Shishi_key * key,
 		     int keyusage,
+		     int cksumtype,
 		     char *in, size_t inlen, char **out, size_t * outlen)
 {
   Shishi_key *checksumkey;
   int halg = GCRY_MD_SHA1;	/* XXX hide this in crypto-lowlevel.c */
   int hlen = gcry_md_get_algo_dlen (halg);
+  int cksumlen = shishi_cipher_cksumlen (cksumtype);
   int res;
 
   res = simplified_derivekey (handle, key, keyusage,
@@ -592,6 +594,25 @@ simplified_checksum (Shishi * handle,
 
   if (res != SHISHI_OK)
     return res;
+
+  *outlen = cksumlen;
+
+  return SHISHI_OK;
+}
+
+int
+_shishi_cipher_init (void)
+{
+  if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
+    {
+      if (gcry_check_version (GCRYPT_VERSION) == NULL)
+	return SHISHI_GCRYPT_ERROR;
+      if (gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0) != GPG_ERR_NO_ERROR)
+	return SHISHI_GCRYPT_ERROR;
+      if (gcry_control (GCRYCTL_INITIALIZATION_FINISHED,
+			NULL, 0) != GPG_ERR_NO_ERROR)
+	return SHISHI_GCRYPT_ERROR;
+    }
 
   return SHISHI_OK;
 }
@@ -622,6 +643,13 @@ typedef int (*Shishi_decrypt_function) (Shishi * handle,
 					const char *iv, size_t ivlen,
 					const char *in, size_t inlen,
 					char **out, size_t * outlen);
+
+typedef int (*Shishi_checksum_function) (Shishi * handle,
+					 Shishi_key * key,
+					 int keyusage,
+					 int cksumtype,
+					 char *in, size_t inlen,
+					 char **out, size_t * outlen);
 
 #include "crypto-null.c"
 #include "crypto-des.c"
@@ -791,23 +819,6 @@ static cipherinfo *ciphers[] = {
   &aes128_cts_hmac_sha1_96_info,
   &aes256_cts_hmac_sha1_96_info
 };
-
-int
-_shishi_cipher_init (void)
-{
-  if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
-    {
-      if (gcry_check_version (GCRYPT_VERSION) == NULL)
-	return SHISHI_GCRYPT_ERROR;
-      if (gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0) != GPG_ERR_NO_ERROR)
-	return SHISHI_GCRYPT_ERROR;
-      if (gcry_control (GCRYCTL_INITIALIZATION_FINISHED,
-			NULL, 0) != GPG_ERR_NO_ERROR)
-	return SHISHI_GCRYPT_ERROR;
-    }
-
-  return SHISHI_OK;
-}
 
 /**
  * shishi_cipher_supported_p:
@@ -1036,6 +1047,212 @@ _shishi_cipher_decrypt (int32_t type)
   return NULL;
 }
 
+struct checksuminfo
+{
+  int32_t type;
+  char *name;
+  int cksumlen;
+  Shishi_checksum_function checksum;
+};
+typedef struct checksuminfo checksuminfo;
+
+static checksuminfo md4_info = {
+  SHISHI_RSA_MD4_DES,
+  "rsa-md4-des",
+  24,
+  des_md4_checksum
+};
+
+static checksuminfo md5_info = {
+  SHISHI_RSA_MD5_DES,
+  "rsa-md5-des",
+  24,
+  des_md5_checksum
+};
+
+static checksuminfo hmac_sha1_des3_kd_info = {
+  SHISHI_DES3_CBC_HMAC_SHA1_KD,
+  "hmac-sha1-des3-kd",
+  20,
+  des3_checksum
+};
+
+static checksuminfo hmac_sha1_96_aes128_info = {
+  SHISHI_HMAC_SHA1_96_AES128,
+  "hmac-sha1-96-aes128",
+  96 / 8,
+  aes128_checksum
+};
+
+static checksuminfo hmac_sha1_96_aes256_info = {
+  SHISHI_HMAC_SHA1_96_AES256,
+  "hmac-sha1-96-aes256",
+  96 / 8,
+  aes256_checksum
+};
+
+int
+checksum_foo (Shishi * handle,
+	      Shishi_key * key,
+	      int keyusage,
+	      int cksumtype,
+	      char *in, size_t inlen,
+	      char **out, size_t * outlen)
+{
+  char buffer[BUFSIZ];
+  int buflen;
+  char *keyp;
+  char *p;
+  int i;
+  gcry_md_hd_t hd;
+  gcry_cipher_hd_t ch;
+  int res;
+  exit(38);
+  gcry_md_open (&hd, GCRY_MD_MD5, 0);
+  if (!hd)
+    return SHISHI_GCRYPT_ERROR;
+
+  gcry_md_write (hd, in, inlen);
+  p = gcry_md_read (hd, GCRY_MD_MD5);
+
+  keyp = shishi_key_value (key);
+
+  gcry_cipher_open (&ch, GCRY_CIPHER_DES,
+		    GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
+  if (ch == NULL)
+    return SHISHI_GCRYPT_ERROR;
+
+  res = gcry_cipher_setkey (ch, keyp, 8);
+  if (res != GPG_ERR_NO_ERROR)
+    return SHISHI_GCRYPT_ERROR;
+
+  res = gcry_cipher_setiv (ch, NULL, 8);
+  if (res != 0)
+    return SHISHI_GCRYPT_ERROR;
+
+  *outlen = 8;
+  *out = xmalloc (*outlen);
+
+  res = gcry_cipher_encrypt (ch, *out, *outlen, p, 16);
+  if (res != 0)
+    return SHISHI_GCRYPT_ERROR;
+
+  gcry_cipher_close (ch);
+  gcry_md_close (hd);
+}
+
+static checksuminfo foo_info = {
+  42,
+  "foo",
+  8,
+  checksum_foo
+};
+
+static checksuminfo *checksums[] = {
+  &md4_info,
+  &md5_info,
+  &hmac_sha1_des3_kd_info,
+  &hmac_sha1_96_aes128_info,
+  &hmac_sha1_96_aes256_info,
+  &foo_info
+};
+
+/**
+ * shishi_checksum_supported_p:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return 0 iff checksum is unsupported.
+ **/
+int
+shishi_checksum_supported_p (int32_t type)
+{
+  size_t i;
+
+  for (i = 0; i < sizeof (checksums) / sizeof (checksums[0]); i++)
+    if (type == checksums[i]->type)
+      return 1;
+
+  return 0;
+}
+
+/**
+ * shishi_checksum_name:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return name of checksum type,
+ * e.g. "hmac-sha1-96-aes256", as defined in the standards.
+ **/
+const char *
+shishi_checksum_name (int32_t type)
+{
+  size_t i;
+  char *p;
+
+  for (i = 0; i < sizeof (checksums) / sizeof (checksums[0]); i++)
+    {
+      if (type == checksums[i]->type)
+	return checksums[i]->name;
+    }
+
+  asprintf (&p, "unknown checksum %d", type);
+  return p;
+}
+
+/**
+ * shishi_checksum_cksumlen:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return length of checksum used for the encryption type,
+ * as defined in the standards.
+ **/
+size_t
+shishi_checksum_cksumlen (int32_t type)
+{
+  size_t i;
+
+  for (i = 0; i < sizeof (checksums) / sizeof (checksums[0]); i++)
+    if (type == checksums[i]->type)
+      return checksums[i]->cksumlen;
+
+  return -1;
+}
+
+/**
+ * shishi_checksum_parse:
+ * @checksum: name of checksum type, e.g. "hmac-sha1-96-aes256".
+ *
+ * Return value: Return checksum type corresponding to a string.
+ **/
+int
+shishi_checksum_parse (const char *checksum)
+{
+  size_t i;
+  char *endptr;
+
+  i = strtol (checksum, &endptr, 0);
+
+  if (endptr != checksum)
+    return i;
+
+  for (i = 0; i < sizeof (checksums) / sizeof (checksums[0]); i++)
+    if (strcasecmp (checksum, checksums[i]->name) == 0)
+      return checksums[i]->type;
+
+  return -1;
+}
+
+static Shishi_checksum_function
+_shishi_checksum (int32_t type)
+{
+  size_t i;
+
+  for (i = 0; i < sizeof (checksums) / sizeof (checksums[0]); i++)
+    if (type == checksums[i]->type)
+      return checksums[i]->checksum;
+
+  return NULL;
+}
+
 /**
  * shishi_string_to_key:
  * @handle: shishi handle as allocated by shishi_init().
@@ -1086,7 +1303,7 @@ shishi_string_to_key (Shishi * handle,
     {
       shishi_error_printf (handle, "Unsupported keytype %d",
 			   shishi_key_type (outkey));
-      return !SHISHI_OK;
+      return SHISHI_CRYPTO_ERROR;
     }
 
   res = (*string2key) (handle, password, passwordlen,
@@ -1142,7 +1359,7 @@ shishi_random_to_key (Shishi * handle,
     {
       shishi_error_printf (handle, "Unsupported random_to_key() ekeytype %d",
 			   keytype);
-      return !SHISHI_OK;
+      return SHISHI_CRYPTO_ERROR;
     }
 
   res = (*random2key) (handle, random, randomlen, outkey);
@@ -1186,6 +1403,7 @@ shishi_checksum (Shishi * handle,
 		 int cksumtype,
 		 char *in, size_t inlen, char **out, size_t * outlen)
 {
+  Shishi_checksum_function checksum;
   int res;
 
   if (VERBOSECRYPTO (handle))
@@ -1204,145 +1422,14 @@ shishi_checksum (Shishi * handle,
   if (cksumtype == 0)
     cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
 
-  /* XXX create a dispatcher instead of hardcoding this */
-
-  switch (cksumtype)
+  checksum = _shishi_checksum (cksumtype);
+  if (checksum == NULL)
     {
-    case SHISHI_RSA_MD4_DES:
-      {
-	char buffer[BUFSIZ];
-	int buflen;
-	char *keyp;
-	int i;
-
-	buflen = sizeof (buffer);
-	res = checksum_md4 (handle, buffer, &buflen, in, inlen);
-	if (res != SHISHI_OK)
-	  {
-	    shishi_error_set (handle, "checksum failed");
-	    return res;
-	  }
-
-	keyp = shishi_key_value (key);
-
-	for (i = 0; i < 8; i++)
-	  keyp[i] ^= 0xF0;
-
-	res = simplified_dencrypt (handle, key, NULL, 0, buffer, buflen,
-				   out, outlen, 0);
-
-	for (i = 0; i < 8; i++)
-	  keyp[i] ^= 0xF0;
-
-	if (res != SHISHI_OK)
-	  {
-	    shishi_error_set (handle, "encrypt failed");
-	    return res;
-	  }
-      }
-      break;
-
-    case SHISHI_RSA_MD5_DES:
-      {
-	char buffer[BUFSIZ];
-	int buflen;
-	char *keyp;
-	int i;
-
-	buflen = sizeof (buffer);
-	res = checksum_md5 (handle, buffer, &buflen, in, inlen);
-	if (res != SHISHI_OK)
-	  {
-	    shishi_error_set (handle, "checksum failed");
-	    return res;
-	  }
-
-	keyp = shishi_key_value (key);
-
-	for (i = 0; i < 8; i++)
-	  keyp[i] ^= 0xF0;
-
-	res = simplified_dencrypt (handle, key, NULL, 0, buffer, buflen,
-				   out, outlen, 0);
-
-	for (i = 0; i < 8; i++)
-	  keyp[i] ^= 0xF0;
-
-	if (res != SHISHI_OK)
-	  {
-	    shishi_error_set (handle, "encrypt failed");
-	    return res;
-	  }
-      }
-      break;
-
-    case SHISHI_HMAC_SHA1_DES3_KD:
-      res = simplified_checksum (handle, key, keyusage,
-				 in, inlen, out, outlen);
-      break;
-
-    case SHISHI_HMAC_SHA1_96_AES128:
-      res = simplified_checksum (handle, key, keyusage,
-				 in, inlen, out, outlen);
-      *outlen = 96 / 8;
-      break;
-
-    case SHISHI_HMAC_SHA1_96_AES256:
-      res = simplified_checksum (handle, key, keyusage,
-				 in, inlen, out, outlen);
-      *outlen = 96 / 8;
-      break;
-
-    case 42:
-      {
-	char buffer[BUFSIZ];
-	int buflen;
-	char *keyp;
-	char *p;
-	int i;
-	gcry_md_hd_t hd;
-	gcry_cipher_hd_t ch;
-
-	gcry_md_open (&hd, GCRY_MD_MD5, 0);
-	if (!hd)
-	  return SHISHI_GCRYPT_ERROR;
-
-	gcry_md_write (hd, in, inlen);
-	p = gcry_md_read (hd, GCRY_MD_MD5);
-
-	keyp = shishi_key_value (key);
-
-	gcry_cipher_open (&ch, GCRY_CIPHER_DES,
-			  GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
-	if (ch == NULL)
-	  return SHISHI_GCRYPT_ERROR;
-
-	res = gcry_cipher_setkey (ch, keyp, 8);
-	if (res != GPG_ERR_NO_ERROR)
-	  return SHISHI_GCRYPT_ERROR;
-
-	res = gcry_cipher_setiv (ch, NULL, 8);
-	if (res != 0)
-	  return SHISHI_GCRYPT_ERROR;
-
-	*outlen = 8;
-	*out = xmalloc (*outlen);
-
-	res = gcry_cipher_encrypt (ch, *out, *outlen, p, 16);
-	if (res != 0)
-	  return SHISHI_GCRYPT_ERROR;
-
-	gcry_cipher_close (ch);
-	gcry_md_close (hd);
-      }
-      break;
-
-    default:
-      shishi_error_printf (handle, "Unsupported checksum type %d",
-			   shishi_key_type (key));
-      res = SHISHI_CRYPTO_ERROR;
-      break;
+      shishi_error_printf (handle, "Unsupported checksum type %d", cksumtype);
+      return SHISHI_CRYPTO_ERROR;
     }
+
+  res = (*checksum) (handle, key, keyusage, cksumtype, in, inlen, out, outlen);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -1836,7 +1923,7 @@ shishi_dr (Shishi * handle,
     }
 
   if (constantlen > MAX_DR_CONSTANT)
-    return !SHISHI_OK;
+    return SHISHI_TOO_SMALL_BUFFER;
 
   if (constantlen == blocksize)
     {

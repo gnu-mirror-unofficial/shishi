@@ -30,7 +30,7 @@ _shishi_asn1_read (void)
 {
   Shishi_asn1 definitions = NULL;
   int asn1_result = ASN1_SUCCESS;
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
 
   asn1_result = asn1_array2tree (shishi_asn1_tab,
 				 &definitions, errorDescription);
@@ -50,7 +50,7 @@ shishi_der2asn1 (Shishi * handle,
 		 const char *fieldname,
 		 const char *nodename, const char *der, size_t derlen)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
   Shishi_asn1 structure = NULL;
   int asn1_result = ASN1_SUCCESS;
 
@@ -77,13 +77,16 @@ int
 shishi_a2d_field (Shishi * handle,
 		  Shishi_asn1 node, const char *field, char *der, int *len)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
   int rc;
 
   rc = asn1_der_coding (node, field, (unsigned char *) der, len,
 			errorDescription);
   if (rc != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+    {
+      shishi_error_set (handle, errorDescription);
+      return SHISHI_ASN1_ERROR;
+    }
 
   return SHISHI_OK;
 }
@@ -98,13 +101,16 @@ int
 shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
 		      const char *field, char **der, int *len)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
   int rc;
 
   *len = 0;
   rc = asn1_der_coding (node, field, NULL, len, errorDescription);
   if (rc != ASN1_MEM_ERROR)
-    return SHISHI_ASN1_ERROR;
+    {
+      shishi_error_set (handle, errorDescription);
+      return SHISHI_ASN1_ERROR;
+    }
 
   *der = malloc (*len);
   if (!*der)
@@ -112,7 +118,10 @@ shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
 
   rc = asn1_der_coding (node, field, *der, len, errorDescription);
   if (rc != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+    {
+      shishi_error_set (handle, errorDescription);
+      return SHISHI_ASN1_ERROR;
+    }
 
   return SHISHI_OK;
 }

@@ -883,6 +883,10 @@ extern size_t shishi_cipher_keylen (int type);
 extern size_t shishi_cipher_randomlen (int type);
 extern int shishi_cipher_defaultcksumtype (int32_t type);
 extern int shishi_cipher_parse (const char *cipher);
+extern int shishi_checksum_supported_p (int32_t type);
+extern const char *shishi_checksum_name (int32_t type);
+extern size_t shishi_checksum_cksumlen (int32_t type);
+extern int shishi_checksum_parse (const char *checksum);
 extern int shishi_string_to_key (Shishi * handle,
 				 int32_t keytype,
 				 const char *password, size_t passwordlen,

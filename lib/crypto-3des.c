@@ -244,3 +244,15 @@ des3_string_to_key (Shishi * handle,
 
   return SHISHI_OK;
 }
+
+static int
+des3_checksum (Shishi * handle,
+	       Shishi_key * key,
+	       int keyusage,
+	       int cksumtype,
+	       char *in, size_t inlen,
+	       char **out, size_t * outlen)
+{
+  return simplified_checksum (handle, key, keyusage, cksumtype,
+			      in, inlen, out, outlen);
+}
