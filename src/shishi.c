@@ -894,7 +894,7 @@ main (int argc, char *argv[])
 
   if (arg.tgtname == NULL)
     {
-      shishi_asprintf (&arg.tgtname, "krbtgt/%s",
+      asprintf (&arg.tgtname, "krbtgt/%s",
 		       shishi_realm_default (handle));
       if (arg.tgtname == NULL)
 	die ("Could not allocate TGT name.");
