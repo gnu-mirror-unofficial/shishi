@@ -159,7 +159,7 @@ struct Shishi_realminfo
 
 struct Shishi
 {
-  ASN1_TYPE asn1;
+  Shishi_asn1 asn1;
   int verbose;
   char *default_realm;
   char *default_principal;
@@ -186,31 +186,32 @@ struct Shishi
 int
 _shishi_print_armored_data (Shishi * handle,
 			    FILE * fh,
-			    ASN1_TYPE asn1, char *asn1type, char *headers);
+			    Shishi_asn1 asn1, char *asn1type, char *headers);
 int
-_shishi_save_data (Shishi * handle, FILE * fh, ASN1_TYPE asn1,
+_shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
 		   char *asn1type);
 
 int
 _shishi_authenticator_input (Shishi * handle,
-			     FILE * fh, ASN1_TYPE * authenticator, int type);
+			     FILE * fh, Shishi_asn1 * authenticator,
+			     int type);
 
 int
-_shishi_apreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * apreq, int type);
-int
-_shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type);
-int
-_shishi_kdcreq_input (Shishi * handle,
-		      FILE * fh, ASN1_TYPE * asreq, int type);
-int
-_shishi_kdcrep_input (Shishi * handle,
-		      FILE * fh, ASN1_TYPE * asrep, int type);
-int
-_shishi_krberror_input (Shishi * handle,
-			FILE * fh, ASN1_TYPE * krberror, int type);
-int
-_shishi_encapreppart_input (Shishi * handle, FILE * fh,
-			    ASN1_TYPE * encapreppart, int type);
+_shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
+		     int type);
+int _shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep,
+			 int type);
+int _shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq,
+			  int type);
+int _shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep,
+			  int type);
+int _shishi_krberror_input (Shishi * handle, FILE * fh,
+			    Shishi_asn1 * krberror, int type);
+int _shishi_encapreppart_input (Shishi * handle, FILE * fh,
+				Shishi_asn1 * encapreppart, int type);
+
+Shishi_asn1 _shishi_asn1_read (void);
+int _shishi_cipher_init (void);
 
 #if WITH_DMALLOC
 #include <dmalloc.h>
