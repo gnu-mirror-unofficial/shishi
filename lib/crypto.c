@@ -1,5 +1,5 @@
 /* crypto.c	crypto functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -1369,7 +1369,7 @@ shishi_randomize (Shishi * handle, char *data, int datalen)
 
   memcpy (data, tmp, datalen < BUFSIZ ? datalen : BUFSIZ);
 
-  gcry_randomize (data, datalen, GCRY_WEAK_RANDOM);
+  gcry_randomize (data, datalen, GCRY_STRONG_RANDOM);
 
   if (datalen > 0 &&
       memcmp (data, tmp, datalen < BUFSIZ ? datalen : BUFSIZ) == 0)
