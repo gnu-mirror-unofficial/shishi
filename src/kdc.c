@@ -276,6 +276,13 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       else
 	req = shishi_tgsreq (handle, arg.realm, arg.sname, oldtkt);
       
+      if (req == ASN1_TYPE_EMPTY)
+	{
+	  printf ("Could not generate KDC-REQ: %s", 
+		  shishi_strerror_details(handle));
+	  return 1;
+	}
+
       if (oldtkt)
 	{
 	  if (arg.verbose)
@@ -295,9 +302,6 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 	    shishi_apreq_to_file (handle, shishi_last_apreq (handle),
 				  arg.apreqwritetype, arg.apreqwritefile);
 	}
-
-      if (req == ASN1_TYPE_EMPTY)
-	return 1;
 
       if (!arg.sendrecv_p && !arg.response_p)
 	return 0;

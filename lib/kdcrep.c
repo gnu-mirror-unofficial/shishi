@@ -369,7 +369,6 @@ shishi_kdcrep_decrypt (Shishi * handle,
 			   "des_decrypt fail, most likely wrong password\n");
       return res;
     }
-
   {
     FILE *fh;
     fh = fopen("ggg", "w");

@@ -318,34 +318,12 @@ shishi_authenticator_set_cname (Shishi * handle,
       return !SHISHI_OK;
     }
 
-#if 1
-  res = asn1_number_of_elements (node, "Authenticator.cname.name-string", &i);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
-
-  while (i > 0)
-    {
-      sprintf (buf, "Authenticator.cname.name-string.?%d", i);
-      res = asn1_write_value (node, buf, NULL, 0);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return !SHISHI_OK;
-	}
-      i--;
-    }
-#else
-  /* this should work, fix libasn1 */
   res = asn1_write_value (node, "Authenticator.cname.name-string", NULL, 0);
   if (res != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (res));
       return !SHISHI_OK;
     }
-#endif
 
   res = asn1_write_value (node, "Authenticator.cname.name-string", "NEW", 1);
   if (res != ASN1_SUCCESS)
@@ -490,28 +468,23 @@ shishi_authenticator_set_cksum (Shishi * handle,
 int
 shishi_authenticator_add_cksum (Shishi * handle,
 				ASN1_TYPE authenticator,
-				ASN1_TYPE enckdcreppart,
+				int keyusage,
+				int keytype,
+				char *key,
+				int keylen,
 				char *data, int datalen)
 {
   int res;
 
   if (datalen > 0)
     {
-      unsigned char key[BUFSIZ];
-      int keylen;
-      int keytype;
       char cksum[BUFSIZ];
       int cksumlen;
 
-      keylen = sizeof (key);
-      res = shishi_enckdcreppart_get_key (handle, enckdcreppart,
-					  &keytype, key, &keylen);
-      if (res != SHISHI_OK)
-	return res;
-
       cksumlen = sizeof (cksum);
-      res = shishi_checksum (handle, SHISHI_RSA_MD5_DES,
-			     cksum, &cksumlen, data, datalen, key, keylen);
+      res = shishi_derive_checksum (handle, SHISHI_RSA_MD5_DES, keyusage,
+				    cksum, &cksumlen, data, datalen, 
+				    key, keylen);
       if (res != SHISHI_OK)
 	return res;
 

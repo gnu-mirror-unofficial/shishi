@@ -228,6 +228,9 @@ shishi_tgsreq (Shishi * handle,
 	       Shishi_ticket *ticket)
 {
   ASN1_TYPE req = ASN1_TYPE_EMPTY;
+  unsigned char key[BUFSIZ];
+  int keylen;
+  int keytype;
   int res;
 
   req = shishi_tgs_req (handle);
@@ -242,10 +245,18 @@ shishi_tgsreq (Shishi * handle,
       return ASN1_TYPE_EMPTY;
     }
 
+  keylen = sizeof (key);
+  res = shishi_enckdcreppart_get_key
+    (handle, 
+     shishi_ticket_enckdcreppart(handle, ticket),
+     &keytype, key, &keylen);
+  if (res != SHISHI_OK)
+    return ASN1_TYPE_EMPTY;
+
   res = shishi_kdcreq_make_padata_tgs
     (handle, req, 
      shishi_ticket_ticket(handle, ticket),
-     shishi_ticket_enckdcreppart(handle, ticket));
+     keytype, key, keylen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make TGS PA-DATA: %s\n",
@@ -446,29 +457,6 @@ shishi_kdcreq_set_cname (Shishi * handle,
       return !SHISHI_OK;
     }
 
-#if 1
-  res =
-    asn1_number_of_elements (kdcreq, "KDC-REQ.req-body.cname.name-string",
-			     &i);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
-
-  while (i > 0)
-    {
-      sprintf (buf, "KDC-REQ.req-body.cname.name-string.?%d", i);
-      res = asn1_write_value (kdcreq, buf, NULL, 0);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return !SHISHI_OK;
-	}
-      i--;
-    }
-#else
-  /* this should work, fix libasn1 */
   res =
     asn1_write_value (kdcreq, "KDC-REQ.req-body.cname.name-string", NULL, 0);
   if (res != ASN1_SUCCESS)
@@ -476,7 +464,6 @@ shishi_kdcreq_set_cname (Shishi * handle,
       shishi_error_set (handle, libtasn1_strerror (res));
       return !SHISHI_OK;
     }
-#endif
 
   res =
     asn1_write_value (kdcreq, "KDC-REQ.req-body.cname.name-string", "NEW", 1);
@@ -554,34 +541,12 @@ shishi_kdcreq_set_etype (Shishi * handle,
   char buf2[BUFSIZ];
   int i;
 
-#if 1
-  res = asn1_number_of_elements (kdcreq, "KDC-REQ.req-body.etype", &i);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
-
-  while (i > 0)
-    {
-      sprintf (buf, "KDC-REQ.req-body.etype.?%d", i);
-      res = asn1_write_value (kdcreq, buf, NULL, 0);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return !SHISHI_OK;
-	}
-      i--;
-    }
-#else
-  /* this should work, fix libasn1 */
   res = asn1_write_value (kdcreq, "KDC-REQ.req-body.etype", NULL, 0);
   if (res != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (res));
       return !SHISHI_OK;
     }
-#endif
 
   for (i = 1; i <= netype; i++)
     {
@@ -635,37 +600,13 @@ shishi_kdcreq_set_sname (Shishi * handle,
       return !SHISHI_OK;
     }
 
-#if 1
-  res =
-    asn1_number_of_elements (kdcreq, "KDC-REQ.req-body.sname.name-string",
-			     &i);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
-
-  while (i > 0)
-    {
-      sprintf (buf, "KDC-REQ.req-body.sname.name-string.?%d", i);
-      res = asn1_write_value (kdcreq, buf, NULL, 0);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return !SHISHI_OK;
-	}
-      i--;
-    }
-#else
-  /* this should work, fix libasn1 */
-  res =
+  res = 
     asn1_write_value (kdcreq, "KDC-REQ.req-body.sname.name-string", NULL, 0);
   if (res != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (res));
       return !SHISHI_OK;
     }
-#endif
 
   i = 1;
   while (service[i - 1])
@@ -855,7 +796,9 @@ int
 shishi_kdcreq_make_padata_tgs (Shishi * handle,
 			       ASN1_TYPE kdcreq,
 			       ASN1_TYPE ticket,
-			       ASN1_TYPE enckdcreppart)
+			       int keytype,
+			       char *key,
+			       int keylen)
 {
   ASN1_TYPE apreq = ASN1_TYPE_EMPTY;
   int res;
@@ -876,10 +819,13 @@ shishi_kdcreq_make_padata_tgs (Shishi * handle,
       return res;
     }
 
-  res = shishi_apreq_make_authenticator (handle,
-					 apreq,
-					 enckdcreppart,
-					 kdcreq, "KDC-REQ.req-body");
+  res = shishi_apreq_make_authenticator
+    (handle,
+     apreq,
+     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
+     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR,
+     keytype, key, keylen,
+     kdcreq, "KDC-REQ.req-body");
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not make authenticator: %s\n",

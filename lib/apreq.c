@@ -372,7 +372,10 @@ error:
 int
 shishi_apreq_add_authenticator (Shishi * handle,
 				ASN1_TYPE apreq,
-				ASN1_TYPE enckdcreppart,
+				int keyusage,
+				int keytype,
+				char *key,
+				int keylen,
 				ASN1_TYPE authenticator)
 {
   int res = ASN1_SUCCESS;
@@ -381,15 +384,6 @@ shishi_apreq_add_authenticator (Shishi * handle,
   int buflen;
   unsigned char der[BUFSIZ];
   int derlen;
-  unsigned char key[BUFSIZ];
-  int keylen;
-  int keytype;
-
-  keylen = sizeof (key);
-  res = shishi_enckdcreppart_get_key (handle, enckdcreppart,
-				      &keytype, key, &keylen);
-  if (res != SHISHI_OK)
-    return res;
 
   res = asn1_der_coding (authenticator, "Authenticator", der, &derlen,
 			 errorDescription);
@@ -407,8 +401,8 @@ shishi_apreq_add_authenticator (Shishi * handle,
     }
 
   buflen = BUFSIZ;
-  res = shishi_encrypt (handle, keytype, buf, &buflen,
-			der, derlen, key, keylen);
+  res = shishi_derive_encrypt (handle, keytype, keyusage, buf, &buflen,
+			       der, derlen, key, keylen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "des_encrypt fail\n");
@@ -423,7 +417,11 @@ shishi_apreq_add_authenticator (Shishi * handle,
 int
 shishi_apreq_make_authenticator_der (Shishi * handle,
 				     ASN1_TYPE apreq,
-				     ASN1_TYPE enckdcreppart,
+				     int authenticatorcksumkeyusage,
+				     int authenticatorkeyusage,
+				     int keytype,
+				     char *key,
+				     int keylen,
 				     char *der, int derlen)
 {
   ASN1_TYPE authenticator = ASN1_TYPE_EMPTY;
@@ -438,7 +436,9 @@ shishi_apreq_make_authenticator_der (Shishi * handle,
     }
 
   res = shishi_authenticator_add_cksum (handle, authenticator,
-					enckdcreppart, der, derlen);
+					authenticatorcksumkeyusage,
+					keytype, key, keylen,
+					der, derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle,
@@ -447,7 +447,8 @@ shishi_apreq_make_authenticator_der (Shishi * handle,
       return res;
     }
 
-  res = shishi_apreq_add_authenticator (handle, apreq, enckdcreppart,
+  res = shishi_apreq_add_authenticator (handle, apreq, authenticatorkeyusage,
+					keytype, key, keylen,
 					authenticator);
   if (res != SHISHI_OK)
     {
@@ -462,7 +463,11 @@ shishi_apreq_make_authenticator_der (Shishi * handle,
 int
 shishi_apreq_make_authenticator (Shishi * handle,
 				 ASN1_TYPE apreq,
-				 ASN1_TYPE enckdcreppart,
+				 int authenticatorcksumkeyusage,
+				 int authenticatorkeyusage,
+				 int keytype,
+				 char *key,
+				 int keylen,
 				 ASN1_TYPE node, char *field)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
@@ -486,7 +491,12 @@ shishi_apreq_make_authenticator (Shishi * handle,
   else
     derlen = 0;
 
-  res = shishi_apreq_make_authenticator_der (handle, apreq, enckdcreppart,
+  res = shishi_apreq_make_authenticator_der (handle, apreq, 
+					     authenticatorcksumkeyusage,
+					     authenticatorkeyusage,
+					     keytype,
+					     key,
+					     keylen,
 					     der, derlen);
   if (res != SHISHI_OK)
     return res;

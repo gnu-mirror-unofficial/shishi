@@ -23,6 +23,14 @@
 
 #include <gcrypt.h>
 
+typedef enum {
+  SHISHI_DERIVEKEYMODE_CHECKSUM,
+  SHISHI_DERIVEKEYMODE_PRIVACY,
+  SHISHI_DERIVEKEYMODE_INTEGRITY
+} Shishi_derivekeymode;
+
+#define MAX_DERIVEDKEY_LEN 50
+
 /* Utilities */
 
 static int
@@ -929,11 +937,120 @@ des3_decrypt (Shishi * handle,
 		 1);
 }
 
+#define DES3_DERIVEKEY_CONSTANTLEN 5
+
+static int
+des3_derivekey (Shishi *handle,
+		int derivekeymode,
+		int keyusage,
+		unsigned char *key,
+		int keylen,
+		unsigned char *derivedkey,
+		int *derivedkeylen)
+{
+  char constant[DES3_DERIVEKEY_CONSTANTLEN];
+  int res;
+
+  if (handle->debug)
+    {
+      printf ("des3_derivekey\n");
+      printf ("\t ;; mode %d (%s)\n", derivekeymode,
+	      derivekeymode == SHISHI_DERIVEKEYMODE_CHECKSUM ? "checksum" :
+	      derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY ? "integrity" :
+	      "privacy");
+      hexprint (key, keylen);
+      puts ("");
+    }
+
+  if (*derivedkeylen < keylen)
+    return SHISHI_DERIVEDKEY_TOO_SMALL;
+
+  *derivedkeylen = keylen;
+  
+  keyusage = htonl(keyusage);
+  memcpy(constant, &keyusage, DES3_DERIVEKEY_CONSTANTLEN-1);
+  if (derivekeymode == SHISHI_DERIVEKEYMODE_CHECKSUM)
+    memcpy(&constant[DES3_DERIVEKEY_CONSTANTLEN-1], "\x99", 1);
+  else if (derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY)
+    memcpy(&constant[DES3_DERIVEKEY_CONSTANTLEN-1], "\x55", 1);
+  else /* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
+    memcpy(&constant[DES3_DERIVEKEY_CONSTANTLEN-1], "\xAA", 1);
+
+  res = shishi_dk (handle, SHISHI_DES3_CBC_HMAC_SHA1_KD, key, keylen, 
+		   constant, DES3_DERIVEKEY_CONSTANTLEN,
+		   derivedkey, *derivedkeylen);
+
+  if (handle->debug)
+    {
+      printf ("\t ;; des3_derivekey out:\n");
+      hexprint (derivedkey, *derivedkeylen);
+      puts ("");
+    }
+
+  return res;
+}
+
 static int
 des3_cbc_sha1_kd_checksum (Shishi * handle,
 			   unsigned char *out,
 			   int *outlen, unsigned char *in, int inlen)
 {
+#if 0
+  int res;
+  unsigned char buffer[BUFSIZ];
+  unsigned char confounder[8];
+  unsigned char md[16];
+  GCRY_MD_HD hd;
+  int i;
+
+  if (inlen + 8 + 16 > BUFSIZ)
+    {
+      shishi_error_printf (handle, "checksum inbuffer too large");
+      return !SHISHI_OK;
+    }
+
+  memcpy (buffer + 8 + 16, in, inlen);
+  memset (buffer + 8, 0, 16);
+
+  res = shishi_randomize (handle, buffer, 8);
+  if (res != SHISHI_OK)
+    return res;
+
+#if 0
+  printf ("cksum random: ");
+  for (i = 0; i < 8; i++)
+    printf ("%02X ", buffer[i]);
+  printf ("\n");
+#endif
+
+  hd = gcry_md_open (GCRY_MD_MD5, 0);
+  if (hd)
+    {
+      unsigned char *p;
+
+      gcry_md_write (hd, buffer, inlen + 8 + 16);
+      p = gcry_md_read (hd, GCRY_MD_MD5);
+
+#if 0
+      printf ("cksum md5: ");
+      for (i = 0; i < 16; i++)
+	printf ("%02X ", p[i]);
+      printf ("\n");
+#endif
+
+      memcpy (buffer + 8, p, 16);
+      gcry_md_close (hd);
+    }
+  else
+    {
+      puts ("bajs");
+      exit (1);
+    }
+
+  memcpy (out, buffer, 8 + 16);
+
+  *outlen = 8 + 16;
+#endif
   *outlen = 0;
   return SHISHI_OK;
 }
@@ -958,8 +1075,37 @@ des3_cbc_sha1_kd_encrypt (Shishi * handle,
 }
 
 static int
-des3_cbc_sha1_kd_verify (Shishi * handle, unsigned char *out, int *outlen)
+des3_cbc_sha1_kd_verify (Shishi * handle, unsigned char *out, int *outlen,
+			 unsigned char *key)
 {
+  GCRY_MD_HD mdh;
+  unsigned char *hash;
+  int i;
+  int res;
+
+  res = gcry_control (GCRYCTL_INIT_SECMEM, 512, 0);
+  if (res != GCRYERR_SUCCESS)
+    return SHISHI_GCRYPT_ERROR;
+
+  mdh = gcry_md_open (GCRY_MD_SHA1, GCRY_MD_FLAG_HMAC);
+  if (mdh == NULL)
+    return SHISHI_GCRYPT_ERROR;
+
+  res = gcry_md_setkey (mdh, key, 24);
+  if (res != GCRYERR_SUCCESS)
+    return SHISHI_GCRYPT_ERROR;
+
+  gcry_md_write (mdh, out, *outlen-24);
+  
+  hash = gcry_md_read (mdh, GCRY_MD_SHA1);
+  if (hash == NULL)
+    return SHISHI_GCRYPT_ERROR;
+
+  printf("hash: ");
+  for (i = 0; i < 21; i++)
+    printf("%02x", hash[i]);
+  printf("\n");
+
   memmove (out, out + 8, *outlen - 8);
   *outlen -= 8 + 24;
   return SHISHI_OK;
@@ -972,14 +1118,42 @@ des3_cbc_sha1_kd_decrypt (Shishi * handle,
 			  unsigned char *in, int inlen, unsigned char *key)
 {
   int res;
+  char derivedkey[50];
+  int derivedkeylen = 24;
 
-  res = des3_decrypt (handle, out, outlen, in, inlen, key);
+  derivedkeylen = MAX_DERIVEDKEY_LEN;
+  res = des3_derivekey(handle, SHISHI_DERIVEKEYMODE_PRIVACY, 
+		       SHISHI_KEYUSAGE_ENCASREPPART, key, 24,
+		       derivedkey, &derivedkeylen);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = des3_decrypt (handle, out, outlen, in, inlen, derivedkey);
   if (res != SHISHI_OK)
     {
       shishi_error_set (handle, "decrypt failed");
       return res;
     }
-  res = des3_cbc_sha1_kd_verify (handle, out, outlen);
+
+  {
+    FILE *fh;
+    fh = fopen("hhh", "w");
+    if (fh)
+      {
+	fwrite (out, sizeof (out[0]), *outlen, fh);
+	fclose(fh);
+      }
+  }
+
+  derivedkeylen = MAX_DERIVEDKEY_LEN;
+  res = des3_derivekey(handle, SHISHI_DERIVEKEYMODE_INTEGRITY,
+		       SHISHI_KEYUSAGE_ENCASREPPART, key, 24,
+		       derivedkey, &derivedkeylen);
+  if (res != SHISHI_OK)
+    return res;
+
+
+  res = des3_cbc_sha1_kd_verify (handle, out, outlen, derivedkey);
   if (res != SHISHI_OK)
     {
       shishi_error_set (handle, "verify failed");
@@ -1209,6 +1383,14 @@ typedef int (*Shishi_decrypt_function) (Shishi * handle,
 					unsigned char *in,
 					int inlen, unsigned char *key);
 
+typedef int (*Shishi_derivekey_function) (Shishi * handle,
+					  int derivekeymode,
+					  int keyusage,
+					  unsigned char *key,
+					  int keylen,
+					  unsigned char *derivedkey,
+					  int *derivedkeylen);
+
 struct cipherinfo
 {
   int type;
@@ -1221,6 +1403,7 @@ struct cipherinfo
   Shishi_string_to_key_function string2key;
   Shishi_encrypt_function encrypt;
   Shishi_decrypt_function decrypt;
+  Shishi_derivekey_function derivekey;
 };
 typedef struct cipherinfo cipherinfo;
 
@@ -1282,7 +1465,8 @@ cipherinfo des3_cbc_sha1_kd_info = {
   des3_random_to_key,
   des3_string_to_key,
   des3_cbc_sha1_kd_encrypt,
-  des3_cbc_sha1_kd_decrypt
+  des3_cbc_sha1_kd_decrypt,
+  des3_derivekey
 };
 
 cipherinfo *ciphers[] = {
@@ -1373,6 +1557,18 @@ _shishi_cipher_decrypt (int type)
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
       return ciphers[i]->decrypt;
+
+  return NULL;
+}
+
+static Shishi_derivekey_function
+_shishi_cipher_derivekey (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->derivekey;
 
   return NULL;
 }
@@ -1606,7 +1802,7 @@ shishi_random_to_key (Shishi * handle,
  **/
 int
 shishi_checksum (Shishi * handle,
-		 int etype,
+		 int cksumtype,
 		 unsigned char *out,
 		 int *outlen,
 		 unsigned char *in, int inlen, unsigned char *key, int keylen)
@@ -1615,7 +1811,7 @@ shishi_checksum (Shishi * handle,
 
   if (handle->debug)
     {
-      printf ("checksum (%s, in, key)\n", shishi_cipher_name (etype));
+      printf ("checksum (%s, in, key)\n", shishi_cipher_name (cksumtype));
       printf ("\t ;; in:\n");
       escapeprint (in, inlen);
       hexprint (in, inlen);
@@ -1626,7 +1822,7 @@ shishi_checksum (Shishi * handle,
       puts ("");
     }
 
-  switch (etype)
+  switch (cksumtype)
     {
     case SHISHI_RSA_MD5_DES:
       if (keylen < 8)
@@ -1690,6 +1886,46 @@ shishi_checksum (Shishi * handle,
   return res;
 }
 
+
+int
+shishi_derive_checksum (Shishi * handle,
+			int cksumtype, int usage,
+			unsigned char *out,
+			int *outlen,
+			unsigned char *in, int inlen, 
+			unsigned char *key, int keylen)
+{
+  int derivedkeylen;
+  int constantlen;
+  char constant[5];
+  char derivedkey[50];
+  int res;
+
+  if (cksumtype == SHISHI_HMAC_SHA1_DES3_KD)
+    {
+      derivedkeylen = keylen;
+      constantlen = 5;
+  
+      usage = htonl(usage);
+      memcpy(constant, &usage, 4);
+      memcpy(constant + 4, "\x99", 1);
+
+      res = shishi_dk (handle, cksumtype, key, keylen, constant, constantlen,
+		       derivedkey, derivedkeylen);
+      if (res != SHISHI_OK)
+	return res;
+    }
+  else
+    {
+      derivedkeylen = keylen;
+      memcpy(derivedkey, key, keylen);
+    }
+
+  res = shishi_checksum (handle, cksumtype, out, outlen, 
+			 in, inlen, derivedkey, derivedkeylen);
+
+  return res;
+}
 
 /**
  * shishi_encrypt:
@@ -1769,30 +2005,24 @@ shishi_derive_encrypt (Shishi * handle,
 		       unsigned char *in, int inlen, 
 		       unsigned char *key, int keylen)
 {
+  Shishi_derivekey_function derivekey;
+  char derivedkey[MAX_DERIVEDKEY_LEN];
   int derivedkeylen;
-  int constantlen;
-  char constant[5];
-  char derivedkey[50];
   int res;
 
-  if (etype == SHISHI_DES3_CBC_HMAC_SHA1_KD)
-    {
-      derivedkeylen = keylen;
-      constantlen = 5;
-  
-      usage = htonl(usage);
-      memcpy(constant, &usage, 4);
-      memcpy(constant + 4, "\xAA", 1);
-
-      res = shishi_dk (handle, etype, key, keylen, constant, constantlen,
-		       derivedkey, derivedkeylen);
-      if (res != SHISHI_OK)
-	return res;
-    }
-  else
+  derivekey = _shishi_cipher_derivekey (etype);
+  if (derivekey == NULL)
     {
       derivedkeylen = keylen;
       memcpy(derivedkey, key, keylen);
+    }
+  else
+    {
+      derivedkeylen = MAX_DERIVEDKEY_LEN;
+      res = derivekey(handle, SHISHI_DERIVEKEYMODE_PRIVACY, usage, key, keylen,
+		      derivedkey, &derivedkeylen);
+      if (res != SHISHI_OK)
+	return res;
     }
 
   res = shishi_encrypt(handle, etype, out, outlen, 
@@ -1879,30 +2109,24 @@ shishi_derive_decrypt (Shishi * handle,
 		       unsigned char *in, int inlen, 
 		       unsigned char *key, int keylen)
 {
+  Shishi_derivekey_function derivekey;
+  char derivedkey[MAX_DERIVEDKEY_LEN];
   int derivedkeylen;
-  int constantlen;
-  char constant[5];
-  char derivedkey[50];
   int res;
 
-  if (etype == SHISHI_DES3_CBC_HMAC_SHA1_KD)
-    {
-      derivedkeylen = keylen;
-      constantlen = 5;
-  
-      usage = htonl(usage);
-      memcpy(constant, &usage, 4);
-      memcpy(constant + 4, "\xAA", 1);
-
-      res = shishi_dk (handle, etype, key, keylen, constant, constantlen,
-		       derivedkey, derivedkeylen);
-      if (res != SHISHI_OK)
-	return res;
-    }
-  else
+  derivekey = NULL;//_shishi_cipher_derivekey (etype);
+  if (derivekey == NULL)
     {
       derivedkeylen = keylen;
       memcpy(derivedkey, key, keylen);
+    }
+  else
+    {
+      derivedkeylen = MAX_DERIVEDKEY_LEN;
+      res = derivekey(handle, SHISHI_DERIVEKEYMODE_PRIVACY, usage, key, keylen,
+		      derivedkey, &derivedkeylen);
+      if (res != SHISHI_OK)
+	return res;
     }
 
   res = shishi_decrypt(handle, etype, out, outlen, 
