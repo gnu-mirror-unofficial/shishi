@@ -31,12 +31,12 @@
 .Dt TELNETD 8
 .Os BSD 4.2
 .Sh NAME
-.Nm telnetd
-.Nd DARPA
+.Nm shishi-telnetd
+.Nd Kerberized DARPA
 .Tn TELNET
 protocol server
 .Sh SYNOPSIS
-.Nm /usr/libexec/telnetd
+.Nm shishi-telnetd
 .Op Fl BUhlkns
 .Op Fl D Ar debugmode
 .Op Fl I Ns Ar initid
@@ -48,6 +48,17 @@ protocol server
 .Op Fl u Ar len
 .Op Fl debug Op Ar port
 .Sh DESCRIPTION
+Note that
+.Nm shishi-telnetd
+is patched from the original telnetd daemon, and the rest of this man
+page has not been updated.  You may assume that the server has been
+compiled with support for Kerberos 5 via Shishi when reading the rest
+of this document. If things does not seem to work, a hint is is that
+you need to supply the
+.Fl a
+.Nm user
+option to enable automatical Kerberos 5 authentication.
+.Pp
 The
 .Nm telnetd
 command is a server which supports the

@@ -1,10 +1,10 @@
-inetdaemon_PROGRAMS = telnetd
+inetdaemon_PROGRAMS = shishi-telnetd
 
-telnetd_SOURCES = telnetd.c pty.c term.c utility.c \
+shishi_telnetd_SOURCES = telnetd.c pty.c term.c utility.c \
  state.c termstat.c slc.c
 noinst_HEADERS = telnetd.h
 
-man_MANS = telnetd.8
+man_MANS = shishi-telnetd.8
 
 LIBTERMCAP = @LIBTERMCAP@
 LIBCRYPT = @LIBCRYPT@
