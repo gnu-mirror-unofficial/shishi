@@ -230,7 +230,9 @@ shishi_cfg (Shishi * handle, char *option)
 		  {
 		    *p = '\0';
 		    p++;
-		    if (strcmp(p, "tcp") == 0)
+		    if (strcmp(p, "udp") == 0)
+		      protocol = UDP;
+		    else if (strcmp(p, "tcp") == 0)
 		      protocol = TCP;
 		    else if (strcmp(p, "tls") == 0)
 		      protocol = TLS;
