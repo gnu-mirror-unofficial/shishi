@@ -1,4 +1,6 @@
-# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc getdate mktime
+# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc getdate
+# timegm
+# + base64 (x)memdup
 # s/libfoo_a/libfoo_la/g
 # s/libfoo.a/libfoo.la/
 # s/#libfoo_la_LIBADD = @LIBOBJS@/libfoo_la_LIBADD = @LTLIBOBJS@/g
