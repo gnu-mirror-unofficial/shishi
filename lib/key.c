@@ -327,22 +327,19 @@ shishi_key_from_base64 (Shishi * handle,
 
   if (value)
     {
-      size_t len;
-      char *buf;
+      size_t len = MAX_KEY_LEN;
 
-      buf = xmalloc (strlen (value) + 1);
-
-      len = base64_from (buf, value);
+      if (!base64_decode (value, strlen (value), (*key)->value, &len))
+	{
+	  shishi_key_done (*key);
+	  return SHISHI_BASE64_ERROR;
+	}
 
       if (len != shishi_key_length (*key))
 	{
-	  free (buf);
+	  shishi_key_done (*key);
 	  return SHISHI_INVALID_KEY;
 	}
-
-      shishi_key_value_set (*key, buf);
-
-      free (buf);
     }
 
   return SHISHI_OK;
