@@ -1,5 +1,5 @@
 \input texinfo   @c -*- mode: texinfo; coding: us-ascii; -*-
-@c Copyright (C) 2002, 2003 Simon Josefsson
+@c Copyright (C) 2002, 2003, 2004 Simon Josefsson
 @c This file is part of Shishi.
 @c See below for copying conditions.
 
@@ -4205,6 +4205,10 @@ Shisa is a separate and standalone library from Shishi
 information stored in the Kerberos user database used by Shishi, you
 do not need to link or use the Shishi library at all.  However, you
 may find it useful to combine the two libraries.
+
+For two real world examples on using the Shisa library, refer to
+@file{src/shisa.c} (Shisa command line tool) and @file{src/kdc.c}
+(part of Shishid server).
 
 Shisa is typically initialized by calling @code{shisa_init}, and
 deinitialized (when the application no longer need to use Shisa,
