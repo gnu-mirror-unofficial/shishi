@@ -1,5 +1,5 @@
 # System configuration file for Shishi @VERSION@
-# Copyright 2002  Simon Josefsson
+# Copyright 2002, 2003  Simon Josefsson
 # 
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
@@ -58,7 +58,7 @@
 # Specify KDC addresses for realms.
 # Value is REALM,KDCADDRESS[,KDCADDRESS...]
 # KDCADDRESS is the hostname or IP address of KDC.
-realm-kdc=JOSEFSSON.ORG,latte.josefsson.org
+realm-kdc=JOSEFSSON.ORG,ristretto.josefsson.org
 
 # Specify realm for servers.
 # Value is REALM,SERVERREGEXP[,SERVERREGEXP...]
