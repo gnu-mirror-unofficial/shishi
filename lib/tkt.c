@@ -50,7 +50,7 @@ shishi_tkt (Shishi * handle, Shishi_tkt ** tkt)
 
   t->handle = handle;
 
-  t->ticket = shishi_asn1_ticket (handle);
+  t->ticket = shishi_ticket (handle);
   if (t->ticket == NULL)
     {
       shishi_error_printf (handle, "Could not create Ticket: %s\n",

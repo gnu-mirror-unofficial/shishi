@@ -481,9 +481,6 @@ shishi_asn1_encapreppart (Shishi * handle)
   return shishi_asn1_new (handle, "Kerberos5.EncAPRepPart", "EncAPRepPart");
 }
 
-#define SHISHI_TICKET_DEFAULT_TKTVNO "5"
-#define SHISHI_TICKET_DEFAULT_TKTVNO_LEN 0
-
 /**
  * shishi_asn1_ticket:
  * @handle: shishi handle as allocated by shishi_init().
@@ -495,29 +492,7 @@ shishi_asn1_encapreppart (Shishi * handle)
 Shishi_asn1
 shishi_asn1_ticket (Shishi * handle)
 {
-  int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
-
-  res = asn1_create_element (handle->asn1, "Kerberos5.Ticket", &node);
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-#if 1
-  res = asn1_write_value (node, "tkt-vno",
-			  (const unsigned char *)
-			  SHISHI_TICKET_DEFAULT_TKTVNO,
-			  SHISHI_TICKET_DEFAULT_TKTVNO_LEN);
-  if (res != ASN1_SUCCESS)
-    goto error;
-#endif
-
-  return (Shishi_asn1) node;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != NULL)
-    asn1_delete_structure (&node);
-  return NULL;
+  return shishi_asn1_new (handle, "Kerberos5.Ticket", "Ticket");
 }
 
 /**

@@ -388,7 +388,7 @@ shishi_kdcrep_get_ticket (Shishi * handle,
 
   /* there's GOT to be an easier way to do this */
 
-  *ticket = shishi_asn1_ticket (handle);
+  *ticket = shishi_ticket (handle);
   if (!*ticket)
     return SHISHI_ASN1_ERROR;
 

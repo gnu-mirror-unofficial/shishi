@@ -21,6 +21,41 @@
 
 #include "internal.h"
 
+#define SHISHI_TICKET_DEFAULT_TKTVNO "5"
+#define SHISHI_TICKET_DEFAULT_TKTVNO_LEN 0
+
+/**
+ * shishi_ticket:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * This function creates a new ASN.1 Ticket, populated with some
+ * default values.
+ *
+ * Return value: Returns the ticket or NULL on failure.
+ **/
+Shishi_asn1
+shishi_ticket (Shishi * handle)
+{
+  Shishi_asn1 node = NULL;
+  int rc;
+
+  node = shishi_asn1_ticket (handle);
+  if (!node)
+    return NULL;
+
+  rc = shishi_asn1_write (handle, node, "tkt-vno",
+			   SHISHI_TICKET_DEFAULT_TKTVNO,
+			   SHISHI_TICKET_DEFAULT_TKTVNO_LEN);
+  if (rc != SHISHI_OK)
+    goto error;
+
+  return node;
+
+ error:
+  shishi_asn1_done (handle, node);
+  return NULL;
+}
+
 /**
  * shishi_ticket_realm_get:
  * @handle: shishi handle as allocated by shishi_init().

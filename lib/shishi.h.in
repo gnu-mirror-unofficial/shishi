@@ -655,6 +655,7 @@ extern char *shishi_server_for_local_service (Shishi * handle,
 					      const char *service);
 
 /* ticket.c */
+extern Shishi_asn1 shishi_ticket (Shishi * handle);
 extern int shishi_ticket_server (Shishi * handle, Shishi_asn1 ticket,
 				 char **server, size_t * serverlen);
 extern int shishi_ticket_sname_get (Shishi * handle,
