@@ -40,7 +40,7 @@ sbin_PROGRAMS = shishid
 shishid_SOURCES = shishid.c
 shishid_LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
-	../lib/libshishi.la
+	../lib/libshishi.la ../db/libshisa.la
 
 localedir = $(datadir)/locale
 

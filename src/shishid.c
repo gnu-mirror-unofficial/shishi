@@ -119,6 +119,7 @@
 #endif
 
 #include <shishi.h>
+#include <shisa.h>
 #include <argp.h>
 
 #define FAMILY_IPV4 "IPv4"
@@ -153,11 +154,9 @@ struct arguments
 {
   int silent, verbose;
   char *cfgfile;
-  char *keyfile;
   char *setuid;
   struct listenspec *listenspec;
   int nlistenspec;
-  Shishi_key *tgskey;
 };
 
 const char *argp_program_version = PACKAGE_STRING;
@@ -184,10 +183,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
     case 'c':
       arguments->cfgfile = strdup (arg);
-      break;
-
-    case 'k':
-      arguments->keyfile = strdup (arg);
       break;
 
     case 'u':
@@ -347,9 +342,6 @@ static struct argp_option options[] = {
    "indicates all addresses on the local host. "
    "The default is \"" LISTEN_DEFAULT "\".", 0},
 
-  {"key-file", 'k', "FILE", 0,
-   "Read keys from file.  Default is " KDCKEYFILE ".", 0},
-
   {"setuid", 'u', "NAME", 0,
    "After binding socket, set user identity.", 0},
 
@@ -407,6 +399,30 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
   int err;
   char *username, *servername, *realm;
 
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_cname_get (handle, shishi_as_req (as), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  username = strdup (buf);
+  printf ("username %s\n", username);
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_sname_get (handle, shishi_as_req (as), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  servername = strdup (buf);
+  printf ("servername %s\n", servername);
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_realm_get (handle, shishi_as_req (as), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  realm = strdup (buf);
+  printf ("client & server realm %s\n", realm);
+
   tkt = shishi_as_tkt (as);
   if (!tkt)
     return SHISHI_MALLOC_ERROR;
@@ -432,30 +448,6 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
   if (err)
     return err;
 
-  buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_cname_get (handle, shishi_as_req (as), buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-  buf[buflen] = '\0';
-  username = strdup (buf);
-  printf ("username %s\n", username);
-
-  buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_sname_get (handle, shishi_as_req (as), buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-  buf[buflen] = '\0';
-  servername = strdup (buf);
-  printf ("servername %s\n", servername);
-
-  buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_realm_get (handle, shishi_as_req (as), buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-  buf[buflen] = '\0';
-  realm = strdup (buf);
-  printf ("client & server realm %s\n", realm);
-
   err = shishi_tkt_clientrealm_set (tkt, realm, username);
   if (err)
     return err;
@@ -463,7 +455,7 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
   err = shishi_tkt_serverrealm_set (tkt, realm, servername);
   if (err)
     return err;
-
+#if 0
   userkey = shishi_keys_for_serverrealm_in_file (handle,
 						 arg->keyfile,
 						 username, realm);
@@ -473,6 +465,7 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
   err = shishi_tkt_build (tkt, arg->tgskey);
   if (err)
     return err;
+#endif
 
   err = shishi_as_rep_build (as, userkey);
   if (err)
@@ -580,13 +573,14 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
     return rc;
 
   /* XXX check if ticket is for our tgt key */
-
+#if 0
   /* decrypt ticket with our key, and decrypt authenticator using key in tkt */
   rc = shishi_ap_req_process_keyusage
     (shishi_tgs_ap (tgs), arg->tgskey,
      SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
   if (rc != SHISHI_OK)
     return rc;
+#endif
 
   /* XXX check that checksum in authenticator match tgsreq.req-body */
 
@@ -623,13 +617,13 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
   err = shishi_tkt_serverrealm_set (tkt, realm, servername);
   if (err)
     return err;
-
+#if 0
   serverkey = shishi_keys_for_serverrealm_in_file (handle,
 						   arg->keyfile,
 						   servername, realm);
   if (!serverkey)
     return !SHISHI_OK;
-
+#endif
   err = shishi_tkt_build (tkt, serverkey);
   if (err)
     return err;
@@ -1178,9 +1172,8 @@ launch (Shishi * handle, struct arguments *arg)
 }
 
 static int
-setup (Shishi * handle, struct arguments *arg)
+setup (Shishi * handle, Shisa * dbh, struct arguments *arg)
 {
-  char *tgtname;
   int rc;
 
   rc = setup_fatal_krberror (handle);
@@ -1190,20 +1183,7 @@ setup (Shishi * handle, struct arguments *arg)
       return 1;
     }
 
-  asprintf (&tgtname, "krbtgt/%s", shishi_realm_default (handle));
-  arg->tgskey = shishi_keys_for_serverrealm_in_file
-    (handle, arg->keyfile, tgtname, shishi_realm_default (handle));
-  free (tgtname);
-  if (!arg->tgskey)
-    {
-      syslog (LOG_ERR, "Key for krbtgt/%s not found in %s\n",
-	      shishi_realm_default (handle), arg->keyfile);
-      return 1;
-    }
-
   rc = launch (handle, arg);
-
-  shishi_key_done (arg->tgskey);
 
   return rc;
 }
@@ -1212,6 +1192,7 @@ static int
 init (struct arguments *arg)
 {
   Shishi *handle;
+  Shisa *dbh;
   int rc;
 
 #ifdef USE_STARTTLS
@@ -1244,8 +1225,16 @@ init (struct arguments *arg)
   if (arg->verbose > 4)
     shishi_cfg (handle, "verbose-crypto");
 
-  rc = setup (handle, arg);
+  rc = shisa_init (&dbh);
+  if (rc != SHISA_OK)
+    {
+      syslog (LOG_ERR, "Aborting due to Shisa initialization failure\n");
+      return 1;
+    }
 
+  rc = setup (handle, dbh, arg);
+
+  shisa_done (dbh);
   shishi_done (handle);
 
   return rc;
@@ -1266,15 +1255,11 @@ main (int argc, char *argv[])
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
-  if (!arg.keyfile)
-    arg.keyfile = strdup (KDCKEYFILE);
-
   if (!arg.cfgfile)
     arg.cfgfile = strdup (SYSTEMCFGFILE);
 
   rc = init (&arg);
 
-  free (arg.keyfile);
   free (arg.cfgfile);
   if (arg.setuid)
     free (arg.setuid);
