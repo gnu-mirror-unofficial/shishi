@@ -21,18 +21,23 @@ EXTRA_DIST = rfc1510.asn1 rfc1510bis.asn1
 
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = internal.h gettext.h \
-	init.c cfg.c done.c realm.c principal.c error.c base64.c \
+	init.c cfg.c done.c realm.c principal.c error.c \
+	base64.c vasprintf.c \
 	gztime.c diskio.c \
 	authenticator.c \
 	kdc.c kdcreq.c kdcrep.c enckdcreppart.c as.c tgs.c \
 	ap.c apreq.c aprep.c encapreppart.c \
 	ticketset.c ticket.c encticketpart.c \
-	netio.c crypto.c \
+	netio.c crypto.c pkcs5.h pkcs5.c \
 	rfc1510_asn1_tab.c asn1.c \
 	version.c password.c
+libshishi_la_LIBADD = @LIBGCRYPT_BUILD_LIBS@ @LIBSTRINGPREP_LIBS@ \
+	../asn1/lib/ASN1.lo ../asn1/lib/decoding.lo ../asn1/lib/gstr.lo \
+	../asn1/lib/errors.lo ../asn1/lib/parser_aux.lo \
+	../asn1/lib/structure.lo ../asn1/lib/element.lo ../asn1/lib/coding.lo
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-INCLUDES = -I../asn1/lib @LIBGCRYPT_CFLAGS@
+INCLUDES = -I../asn1/lib @LIBGCRYPT_BUILD_CFLAGS@
 
 include_HEADERS = shishi.h
 
