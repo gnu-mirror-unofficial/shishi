@@ -953,15 +953,25 @@ main (int argc, char *argv[])
 	    break;
 	  }
 
-	rc =
-	  shishi_tgs (handle, tgt, &tgs, arg.sname ? arg.sname : arg.tgtname);
+	rc = shishi_tgs (handle, &tgs);
+	shishi_tgs_tgticket_set(tgs, tgt);
+	if (rc == SHISHI_OK)
+	  rc = shishi_tgs_set_server (tgs, arg.sname ?
+				      arg.sname :
+				      arg.tgtname);
+	if (rc == SHISHI_OK)
+	  rc = shishi_tgs_req_build (tgs);
+	if (rc == SHISHI_OK)
+	  rc = shishi_tgs_sendrecv (tgs);
+	if (rc == SHISHI_OK)
+	  rc = shishi_tgs_rep_process (tgs);
 	if (rc != SHISHI_OK)
 	  {
 	    printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
 		    shishi_strerror_details (handle));
 	    if (rc == SHISHI_GOT_KRBERROR)
 	      shishi_krberror_pretty_print(handle, stdout,
-					   shishi_tgs_get_krberror(tgs));
+					   shishi_tgs_krberror(tgs));
 	    break;
 	  }
 
@@ -971,11 +981,11 @@ main (int argc, char *argv[])
 	      (handle, stdout, shishi_ap_authenticator(shishi_tgs_ap (tgs)));
 	    shishi_apreq_print
 	      (handle, stdout, shishi_ap_req(shishi_tgs_ap (tgs)));
-	    shishi_kdcreq_print (handle, stdout, shishi_tgs_get_tgsreq (tgs));
-	    shishi_kdcrep_print (handle, stdout, shishi_tgs_get_tgsrep (tgs));
+	    shishi_kdcreq_print (handle, stdout, shishi_tgs_req (tgs));
+	    shishi_kdcrep_print (handle, stdout, shishi_tgs_rep (tgs));
 	  }
 
-	tkt = shishi_tgs_get_ticket (tgs);
+	tkt = shishi_tgs_ticket (tgs);
 
 	if (!arg.silent)
 	  {
