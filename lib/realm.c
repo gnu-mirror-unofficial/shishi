@@ -1,5 +1,5 @@
 /* realm.c	realm related functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -95,29 +95,63 @@ shishi_realm_default_set (Shishi * handle, const char *realm)
     handle->default_realm = NULL;
 }
 
-const char *
+char *
 shishi_realm_for_server_file (Shishi * handle, char *server)
 {
   return NULL;
 }
 
-const char *
+/**
+ * shishi_realm_for_server_dns:
+ * @handle: Shishi library handle create by shishi_init().
+ * @server: hostname to find realm for.
+ *
+ * Find Kerberos realm for a host using DNS lookups, according to
+ * draft-ietf-krb-wg-krb-dns-locate-03.txt.  Since DNS lookups may be
+ * spoofed, relying on the realm information may result in a
+ * redirection attack.  In a single-realm scenario, this only achieves
+ * a denial of service, but with cross-realm trust it may redirect you
+ * to a compromised realm.  For this reason, Shishi prints a warning,
+ * suggesting that the user should add the proper 'server-realm'
+ * configuration tokens instead.
+ *
+ * Return value: Returns realm for host, or NULL if not found.
+ **/
+char *
 shishi_realm_for_server_dns (Shishi * handle, char *server)
 {
-  const char *p = "JOSEFSSON.ORG";
+  dnshost_t rrs;
+  char *tmp = NULL;
+  char *p = server;
 
-  fprintf (stderr,
-	   "warning: Assuming server `%s' is in realm `%s'\n"
-	   "warning: based on insecure DNS information.\n"
-	   "warning: Abort if this appear fruadulent.\n", server, p);
+  do {
+    asprintf (&tmp, "_kerberos.%s", p);
+    rrs = _shishi_resolv (tmp, T_TXT);
+    free (tmp);
+    p = strchr (p, '.');
+    if (p)
+      p++;
+  }
+  while (!rrs && p && *p);
 
-  return p;
+  if (!rrs)
+    return NULL;
+
+  if (rrs->class != C_IN || rrs->type != T_TXT)
+    {
+      shishi_warn (handle, "Got non-TXT response to TXT query from DNS?");
+      return NULL;
+    }
+
+  shishi_warn (handle, "DNS maps '%s' to '%s'", server, (char*)rrs->rr);
+
+  return rrs->rr;
 }
 
-const char *
+char *
 shishi_realm_for_server (Shishi * handle, char *server)
 {
-  const char *p;
+  char *p;
 
   p = shishi_realm_for_server_file (handle, server);
   if (!p)

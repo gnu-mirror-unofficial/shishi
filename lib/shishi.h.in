@@ -559,11 +559,9 @@ extern void shishi_error_clear (Shishi * handle);
 extern char *shishi_realm_default_guess (void);
 extern const char *shishi_realm_default (Shishi * handle);
 extern void shishi_realm_default_set (Shishi * handle, const char *realm);
-extern const char *shishi_realm_for_server_file (Shishi * handle,
-						 char *server);
-extern const char *shishi_realm_for_server_dns (Shishi * handle,
-						char *server);
-extern const char *shishi_realm_for_server (Shishi * handle, char *server);
+extern char *shishi_realm_for_server_file (Shishi * handle, char *server);
+extern char *shishi_realm_for_server_dns (Shishi * handle, char *server);
+extern char *shishi_realm_for_server (Shishi * handle, char *server);
 
 /* principal.c */
 extern char *shishi_principal_default_guess (void);
