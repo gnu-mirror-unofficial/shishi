@@ -1,3 +1,289 @@
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.8.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix DIST_SUBDIRS.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Only dist examples and extra, don't build them.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* doc/man/Makefile.am: Generated.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Include getline.h.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Gnulib update.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-ba.c, gl/argp-eexst.c, gl/argp-fmtstream.c,
+	gl/argp-fmtstream.h, gl/argp-fs-xinl.c, gl/argp-help.c,
+	gl/argp-namefrob.h, gl/argp-parse.c, gl/argp-pv.c, gl/argp-pvh.c,
+	gl/argp-xinl.c, gl/argp.h, gl/error.c, gl/error.h, gl/getdate.y,
+	gl/getdomainname.c, gl/getdomainname.h, gl/getline.c, gl/getline.h,
+	gl/getndelim2.c, gl/getndelim2.h, gl/linebuffer.c, gl/stdbool_.h,
+	gl/unlocked-io.h, gl/xalloc.h, gl/xgetdomainname.c,
+	gl/xgetdomainname.h, gl/xgethostname.h, gl/xmalloc.c, gl/xstrdup.c:
+	Update.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/Makefile.am, gl/m4/argp.m4, gl/m4/getdomainname.m4,
+	gl/m4/getline.m4, gl/m4/getndelim2.m4, gl/m4/ssize_t.m4,
+	gl/m4/stdbool.m4, gl/m4/xalloc.m4, gl/Makefile.am: Update.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authorize.c, lib/error.c: Doc fix.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, configure.ac: Use CONDITIONALs instead of @...@
+	subsitution for SUBDIRS.
+
+2003-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* examples/Makefile.am: Remove LIBIDN_LIBS.  Fix libtool -l usage.
+
+2003-10-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2003-10-10  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Revert typo.
+
+2003-10-10  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix so version comment (matches libtool manual).
+
+2003-10-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Fix indent target.
+
+2003-10-10  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-10-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/password.c: Change KRBprep to SASLprep (the former supposedly
+	deprecated).
+
+2003-10-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authorize.c, lib/cfg.c, lib/init.c, lib/internal.h,
+	lib/shishi.h.in: Enhance authorization system, from Nicolas
+	Pouvesle <nico.pou@fnac.net>.
+
+2003-10-07  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Put AC_CHECK_SIZEOF test early; it doesn't use
+	libtool so if any libtool library was added using AC_CHECK_LIB
+	(e.g., libidn) configure aborts due to linker failure (need
+	-L/foo/bar/lib etc).
+
+2003-10-04  Simon Josefsson <simon@josefsson.org>
+
+	* m4/Makefile.am, m4/libgcrypt.m4: Add libgcrypt.m4, suggested by
+	Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-10-03  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-ba.c, gl/argp-eexst.c, gl/argp-fmtstream.c,
+	gl/argp-fs-xinl.c, gl/argp-help.c, gl/argp-namefrob.h,
+	gl/argp-parse.c, gl/argp-pv.c, gl/argp-pvh.c, gl/argp-xinl.c: Sync
+	with my proposed glibc patches.
+
+2003-10-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix info hierarchy.
+
+2003-10-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/Makefile.am: Generalize clean hook.
+
+2003-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp-fmtstream.c, gl/argp-help.c: Upstream sync.
+
+2003-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Cosmetic fixes.
+
+2003-09-29  Nicolas Pouvesle <nico.pou@fnac.net>
+
+	* doc/shishi.texi: Fix.
+
+2003-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.asn1: Revert.
+
+2003-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authorize.c, lib/crypto-ctx.c, lib/crypto-des.c,
+	lib/crypto-rc4.c, lib/crypto.c, lib/error.c, lib/init.c,
+	lib/kdcrep.c, lib/kdcreq.c, lib/kerberos5.asn1, lib/libgcrypt.c,
+	lib/nettle.c, lib/password.c, lib/priv.c, lib/shishi.h.in,
+	lib/tkt.c, lib/tkts.c, src/shishi.c, tests/crypto.c: Indent.
+
+2003-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Fix indent target.
+
+2003-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add keyusage, from Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2003-09-29  Nicolas Pouvesle <nico.pou@fnac.net>
+
+	* doc/shishi.texi: Add.
+
+2003-09-28  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-09-28  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Add.
+
+2003-09-28  Simon Josefsson <simon@josefsson.org>
+
+	* doc/man/Makefile.am: Generated.
+
+2003-09-28  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/authorize.c, lib/shishi.h.in:
+	(shishi_authorized_p): Add.
+
+2003-09-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-09-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix non-GNUTLS build, from Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-ctx.c:
+	(shishi_crypto): Handle NULL iv, from Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h, lib/realm.c: Use xgetdomainname.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/getdomainname.c,
+	gl/getdomainname.h, gl/xgetdomainname.c, gl/xgetdomainname.h,
+	gl/m4/Makefile.am, gl/m4/getdomainname.m4: Add getdomainname and
+	xgetdomainname.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h, lib/keys.c, lib/principal.c, lib/realm.c: Use
+	xgethostname().
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/xgethostname.c, gl/xgethostname.h: Add
+	xgethostname.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Simplify include mess.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am, doc/shishi.texi: Add crypto-ctx.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* doc/man/Makefile.am: Generated.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-ctx.c: Fix API.  Doc fix.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix API.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/crypto-ctx.c, lib/shishi.h.in: Add context
+	encryption API (for repeated encryptions with updated IV).
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Fix.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* gl/argp.h: Upstream sync.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c:
+	(shishi_cfg_from_file): Replace fgets with readlinebuffer, to
+	support unrestricted line lengths.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* gl/linebuffer.c: Fix bug.
+
+2003-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/linebuffer.c, gl/linebuffer.h,
+	gl/m4/Makefile.am, gl/m4/extensions.m4, gl/m4/memdup.m4,
+	gl/m4/xmemdup.m4: Add.
+
+2003-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Cleanup STARTTLS stuff.
+
+2003-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix STARTTLS test.
+
+2003-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, doc/shishi.texi: Add.
+
+2003-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/internal.h, lib/netio.c, lib/starttls.c,
+	configure.ac, doc/shishi.texi, src/shishid.c: Add experimental
+	STARTTLS support.
+
+2003-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
 2003-09-21  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.7.
