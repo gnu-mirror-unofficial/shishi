@@ -19,7 +19,9 @@
  *
  */
 
-#include "shishi.h"
+#include <shishi.h>
+#include <gcrypt.h>
+#include <pkcs5.h>
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -344,6 +346,55 @@ struct str2key {
     SHISHI_DES3_CBC_HMAC_SHA1_KD }
 };
 
+struct pkcs5 {
+  int iterations;
+  char *password;
+  char *salt;
+  int algo;
+  int dklen;
+  char *expected;
+} pkcs5[] = {
+  { 1, "password", "ATHENA.MIT.EDUraeburn", PKCS5_PRF_SHA1, 16,
+    "\xCD\xED\xB5\x28\x1B\xB2\xF8\x01\x56\x5A\x11\x22\xB2\x56\x35\x15" },
+  { 2, "password", "ATHENA.MIT.EDUraeburn", PKCS5_PRF_SHA1, 16,
+    "\x01\xdb\xee\x7f\x4a\x9e\x24\x3e\x98\x8b\x62\xc7\x3c\xda\x93\x5d" },
+  { 2, "password", "ATHENA.MIT.EDUraeburn", PKCS5_PRF_SHA1, 32, 
+    "\x01\xdb\xee\x7f\x4a\x9e\x24\x3e\x98\x8b\x62\xc7\x3c\xda\x93\x5d"
+    "\xa0\x53\x78\xb9\x32\x44\xec\x8f\x48\xa9\x9e\x61\xad\x79\x9d\x86" },
+  { 1200, "password", "ATHENA.MIT.EDUraeburn", PKCS5_PRF_SHA1, 16,
+    "\x5c\x08\xeb\x61\xfd\xf7\x1e\x4e\x4e\xc3\xcf\x6b\xa1\xf5\x51\x2b" },
+  { 1200, "password", "ATHENA.MIT.EDUraeburn", PKCS5_PRF_SHA1, 32,
+    "\x5c\x08\xeb\x61\xfd\xf7\x1e\x4e\x4e\xc3\xcf\x6b\xa1\xf5\x51\x2b"
+    "\xa7\xe5\x2d\xdb\xc5\xe5\x14\x2f\x70\x8a\x31\xe2\xe6\x2b\x1e\x13" },
+  { 5, "password", "\x12\x34\x56\x78\x78\x56\x34\x12\x00", PKCS5_PRF_SHA1, 16,
+    "\xd1\xda\xa7\x86\x15\xf2\x87\xe6\xa1\xc8\xb1\x20\xd7\x06\x2a\x49" },
+  { 5, "password", "\x12\x34\x56\x78\x78\x56\x34\x12\x00", PKCS5_PRF_SHA1, 32,
+    "\xd1\xda\xa7\x86\x15\xf2\x87\xe6\xa1\xc8\xb1\x20\xd7\x06\x2a\x49"
+    "\x3f\x98\xd2\x03\xe6\xbe\x49\xa6\xad\xf4\xfa\x57\x4b\x6e\x64\xee" },
+  { 1200, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "pass phrase equals block size", PKCS5_PRF_SHA1, 16,
+    "\x13\x9c\x30\xc0\x96\x6b\xc3\x2b\xa5\x5f\xdb\xf2\x12\x53\x0a\xc9" },
+  { 1200, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "pass phrase equals block size", PKCS5_PRF_SHA1, 32,
+    "\x13\x9c\x30\xc0\x96\x6b\xc3\x2b\xa5\x5f\xdb\xf2\x12\x53\x0a\xc9"
+    "\xc5\xec\x59\xf1\xa4\x52\xf5\xcc\x9a\xd9\x40\xfe\xa0\x59\x8e\xd1" },
+  { 1200, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "pass phrase exceeds block size", PKCS5_PRF_SHA1, 16,
+    "\x9c\xca\xd6\xd4\x68\x77\x0c\xd5\x1b\x10\xe6\xa6\x87\x21\xbe\x61" },
+  { 1200, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "pass phrase exceeds block size", PKCS5_PRF_SHA1, 32,
+    "\x9c\xca\xd6\xd4\x68\x77\x0c\xd5\x1b\x10\xe6\xa6\x87\x21\xbe\x61"
+    "\x1a\x8b\x4d\x28\x26\x01\xdb\x3b\x36\xbe\x92\x46\x91\x5e\xc8\x2a" },
+  { 50, G_CLEF "\x00", "EXAMPLE.COMpianist", PKCS5_PRF_SHA1, 16,
+    "\x6b\x9c\xf2\x6d\x45\x45\x5a\x43\xa5\xb8\xbb\x27\x6a\x40\x3b\x39" },
+  { 50, G_CLEF "\x00", "EXAMPLE.COMpianist", PKCS5_PRF_SHA1, 32, 
+    "\x6b\x9c\xf2\x6d\x45\x45\x5a\x43\xa5\xb8\xbb\x27\x6a\x40\x3b\x39"
+    "\xe7\xfe\x37\xa0\xc4\x1e\x02\xc2\x81\xff\x30\x69\xe1\xe9\x4f\x52" },
+  { 500, "All n-entities must communicate with other n-entities via n-1 entiteeheehees", "\x12\x34\x56\x78\x78\x56\x34\x12\x00", PKCS5_PRF_SHA1, 16, 
+    "\x6A\x89\x70\xBF\x68\xC9\x2C\xAE\xA8\x4A\x8D\xF2\x85\x10\x85\x86" }
+
+};
+
 int
 main (int argc, char *argv[])
 {
@@ -598,6 +649,64 @@ main (int argc, char *argv[])
       if (crc != crc32[i].crc32)
 	{
 	  fail("shishi_mod_crc32() entry %d failed\n", i);
+	    
+	  if (verbose)
+	    printf("ERROR\n");
+	}
+      else if (verbose)
+	printf("OK\n");
+    }
+
+  res = gcry_control (GCRYCTL_INIT_SECMEM, 512, 0);
+  if (res != GCRYERR_SUCCESS)
+    fail("gcrypt failed to initialize secure memory");
+
+  for (i = 0; i < sizeof(pkcs5) / sizeof(pkcs5[0]); i++)
+    {
+      if (verbose)
+	printf("PKCS5 entry %d\n", i);
+
+      res = PBKDF2 (pkcs5[i].algo, 
+		    pkcs5[i].password, 
+		    strlen(pkcs5[i].password), 
+		    pkcs5[i].salt, 
+		    strlen(pkcs5[i].salt),
+		    pkcs5[i].iterations, 
+		    pkcs5[i].dklen, 
+		    out);
+
+      if (res != PKCS5_OK)
+	{
+	  fail("PKCS5 entry %d failed fatally: %d\n", i, res);
+	  continue;
+	}
+
+      if (verbose)
+	{
+	  printf("password:\n");
+	  escapeprint(pkcs5[i].password, strlen(pkcs5[i].password));
+	  hexprint(pkcs5[i].password, strlen(pkcs5[i].password)); puts("");
+	  binprint(pkcs5[i].password, strlen(pkcs5[i].password)); puts("");
+
+	  printf("salt:\n");
+	  escapeprint(pkcs5[i].salt, strlen(pkcs5[i].salt));
+	  hexprint(pkcs5[i].salt, strlen(pkcs5[i].salt)); puts("");
+	  binprint(pkcs5[i].salt, strlen(pkcs5[i].salt)); puts("");
+
+	  printf("computed key:\n");
+	  escapeprint(out, pkcs5[i].dklen);
+	  hexprint(out, pkcs5[i].dklen); puts("");
+	  binprint(out, pkcs5[i].dklen); puts("");
+
+	  printf("expected key:\n");
+	  escapeprint(pkcs5[i].expected, pkcs5[i].dklen);
+	  hexprint(pkcs5[i].expected, pkcs5[i].dklen); puts("");
+	  binprint(pkcs5[i].expected, pkcs5[i].dklen); puts("");
+	}
+
+      if (memcmp (pkcs5[i].expected, out, pkcs5[i].dklen) != 0)
+	{
+	  fail("PKCS5 entry %d failed\n", i);
 	    
 	  if (verbose)
 	    printf("ERROR\n");
