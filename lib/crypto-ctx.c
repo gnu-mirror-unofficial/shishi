@@ -20,7 +20,6 @@
  */
 
 #include "internal.h"
-#include "crypto.h"
 
 struct Shishi_crypto
 {
@@ -32,12 +31,34 @@ struct Shishi_crypto
   size_t ivlen;
 };
 
+/**
+ * shishi_crypto:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to encrypt with.
+ * @keyusage: integer specifying what this key will encrypt/decrypt.
+ * @etype: integer specifying what cipher to use.
+ * @iv: input array with initialization vector
+ * @ivlen: size of input array with initialization vector.
+ *
+ * Initialize a crypto context.  This store a key, keyusage,
+ * encryption type and initialization vector in a "context", and the
+ * caller can then use this context to perform encryption via
+ * shishi_crypto_encrypt() and decryption via shishi_crypto_encrypt()
+ * without supplying all those details again.  The functions also
+ * takes care of propagating the IV between calls.
+ *
+ * When the application no longer need to use the context, it should
+ * deallocate resources associated with it by calling
+ * shishi_crypto_done().
+ *
+ * Return value: Return a newly allocated crypto context.
+ **/
 Shishi_crypto *
-shishi_crypto_init (Shishi * handle,
-		    Shishi_key * key,
-		    int keyusage,
-		    int32_t etype,
-		    const char * iv, size_t ivlen)
+shishi_crypto (Shishi * handle,
+	       Shishi_key * key,
+	       int keyusage,
+	       int32_t etype,
+	       const char * iv, size_t ivlen)
 {
   Shishi_crypto *ctx;
   int rc;
@@ -58,6 +79,24 @@ shishi_crypto_init (Shishi * handle,
   return ctx;
 }
 
+/**
+ * shishi_crypto_encrypt:
+ * @ctx: crypto context as returned by shishi_crypto().
+ * @in: input array with data to encrypt.
+ * @inlen: size of input array with data to encrypt.
+ * @out: output array with newly allocated encrypted data.
+ * @outlen: output variable with size of newly allocated output array.
+ *
+ * Encrypt data, using information (e.g., key and initialization
+ * vector) from context.  The IV is updated inside the context after
+ * this call.
+ *
+ * When the application no longer need to use the context, it should
+ * deallocate resources associated with it by calling
+ * shishi_crypto_done().
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
 int
 shishi_crypto_encrypt (Shishi_crypto * ctx,
 		       const char *in, size_t inlen,
@@ -82,6 +121,24 @@ shishi_crypto_encrypt (Shishi_crypto * ctx,
   return rc;
 }
 
+/**
+ * shishi_crypto_decrypt:
+ * @ctx: crypto context as returned by shishi_crypto().
+ * @in: input array with data to decrypt.
+ * @inlen: size of input array with data to decrypt.
+ * @out: output array with newly allocated decrypted data.
+ * @outlen: output variable with size of newly allocated output array.
+ *
+ * Decrypt data, using information (e.g., key and initialization
+ * vector) from context.  The IV is updated inside the context after
+ * this call.
+ *
+ * When the application no longer need to use the context, it should
+ * deallocate resources associated with it by calling
+ * shishi_crypto_done().
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
 int
 shishi_crypto_decrypt (Shishi_crypto * ctx,
 		       const char *in, size_t inlen,
@@ -106,6 +163,12 @@ shishi_crypto_decrypt (Shishi_crypto * ctx,
   return rc;
 }
 
+/**
+ * shishi_crypto_close:
+ * @ctx: crypto context as returned by shishi_crypto().
+ *
+ * Deallocate resources associated with the crypto context.
+ **/
 void
 shishi_crypto_close (Shishi_crypto * ctx)
 {
