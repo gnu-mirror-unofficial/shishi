@@ -19,167 +19,8 @@
  *
  */
 
-#if HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <string.h>
-
-/* Get setuid, read, etc. */
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-
-/* Get gethostbyname, getservbyname. */
-#ifdef HAVE_NETDB_H
-# include <netdb.h>
-#endif
-
-/* For select, etc. */
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
-
-/* For select, etc. */
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
-#endif
-
-/* Get select, etc. */
-#ifdef HAVE_SYS_SELECT_H
-# include <sys/select.h>
-#endif
-
-/* Get accept, sendto, etc. */
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
-
-/* Used for the backlog argument to listen. */
-#ifndef SOMAXCONN
-# define SOMAXCONN INT_MAX
-#endif
-
-#ifdef HAVE_SYS_IOCTL_H
-# include <sys/ioctl.h>
-#endif
-
-/* Get errno. */
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif
-#ifndef errno
-extern int errno;
-#endif
-
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#else
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif
-#endif
-
-/* Get signal, etc. */
-#ifdef HAVE_SIGNAL_H
-# include <signal.h>
-#endif
-
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-#ifdef HAVE_NETINET_IN6_H
-# include <netinet/in6.h>
-#endif
-
-#ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h>
-#endif
-
-#ifdef HAVE_SYSLOG_H
-# include <syslog.h>
-#endif
-
-#ifdef USE_STARTTLS
-# include <gnutls/gnutls.h>
-#endif
-
-/* Setup i18n. */
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#else
-# define setlocale(Category, Locale) /* empty */
-#endif
-#include <gettext.h>
-#define _(String) gettext (String)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
-
-/* Get xmalloc. */
-#include "xalloc.h"
-
-/* Get error. */
-#include "error.h"
-
-/* Get asprintf. */
-#include "vasprintf.h"
-
-/* Get program_name, etc. */
-#include "progname.h"
-
-/* Shishi and Shisa library. */
-#include <shishi.h>
-#include <shisa.h>
-
-/* Command line parameter parser via gengetopt. */
-#include "shishid_cmd.h"
-
-struct listenspec
-{
-  char *str;
-  int family;
-  int listening;
-  struct sockaddr listenaddr;
-  struct sockaddr addr;
-  socklen_t addrlen;
-  struct sockaddr_in *sin;
-  int port;
-  int type;
-  int sockfd;
-  char buf[BUFSIZ]; /* XXX */
-  size_t bufpos;
-#ifdef USE_STARTTLS
-  gnutls_session session;
-  int usetls;
-#endif
-  struct listenspec *next;
-};
-
-extern Shishi * handle;
-extern Shisa * dbh;
-extern struct gengetopt_args_info arg;
-extern struct listenspec *listenspec;
-extern char *fatal_krberror;
-extern size_t fatal_krberror_len;
-
-#ifdef USE_STARTTLS
-#define DH_BITS 1024
-extern gnutls_dh_params dh_params;
-extern gnutls_anon_server_credentials anoncred;
-#endif
-
-extern void process (char *in, int inlen, char **out, size_t * outlen);
+/* Get Shishid stuff. */
+#include "kdc.h"
 
 /* Destroy listenspec element and return pointer to element before the
    removed element, or NULL if the first element was removed (or the
@@ -193,7 +34,7 @@ kdc_close (struct listenspec *ls)
   if (ls->sockfd)
     {
       if (!arg.quiet_flag)
-	printf ("Closing %s...\n", ls->str);
+	syslog (LOG_INFO, "Closing %s...\n", ls->str);
       rc = close (ls->sockfd);
       if (rc != 0)
 	syslog (LOG_ERR, "Could not close connection to %s on socket %d",
@@ -234,7 +75,7 @@ kdc_extension (struct listenspec *ls)
       const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
 
       if (!arg.quiet_flag)
-	printf ("Trying to upgrade to TLS...\n");
+	syslog (LOG_INFO, "Trying to upgrade to TLS...");
 
       sent_bytes = sendto (ls->sockfd, "\x70\x00\x00\x02", 4,
 			   0, &ls->addr, ls->addrlen);
@@ -287,25 +128,31 @@ kdc_process (struct listenspec *ls)
 #ifdef USE_STARTTLS
   if (ls->usetls)
     {
-      process (ls->buf, ls->bufpos, &p, &plen);
+      plen = process (ls->buf, ls->bufpos, &p);
       printf ("TLS process %d sending %d\n", ls->bufpos, plen);
     }
   else
 #endif
     {
       if (ls->type == SOCK_STREAM)
-	process (ls->buf + 4, ls->bufpos - 4, &p, &plen);
+	plen = process (ls->buf + 4, ls->bufpos - 4, &p);
       else
-	process (ls->buf, ls->bufpos, &p, &plen);
+	plen = process (ls->buf, ls->bufpos, &p);
     }
 
-  printf ("Got %d bytes\n", plen);
+  printf ("Process yielded %d bytes\n", plen);
 
-  memcpy (ls->buf, p, plen);
-  ls->bufpos = plen;
-
-  if (p != fatal_krberror)
-    free (p);
+  if (plen <= 0)
+    {
+      memcpy (ls->buf, fatal_krberror, fatal_krberror_len);
+      ls->bufpos = fatal_krberror_len;
+    }
+  else
+    {
+      memcpy (ls->buf, p, plen);
+      ls->bufpos = plen;
+      free (p);
+    }
 }
 
 static void
@@ -477,7 +324,8 @@ kdc_loop (void)
       if (rc < 0)
 	{
 	  if (errno != EINTR)
-	    error (0, errno, "Error listening to sockets (%d)", rc);
+	    syslog (LOG_ERR, "Error listening on sockets (%d): %s",
+		    rc, strerror (errno));
 	  continue;
 	}
 

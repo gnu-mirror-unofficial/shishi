@@ -23,48 +23,8 @@
 # include "config.h"
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <string.h>
-
-#ifdef HAVE_SYSLOG_H
-# include <syslog.h>
-#endif
-
-/* Setup i18n. */
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#else
-# define setlocale(Category, Locale) /* empty */
-#endif
-#include <gettext.h>
-#define _(String) gettext (String)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
-
-/* Get xmalloc. */
-#include "xalloc.h"
-
-/* Get asprintf. */
-#include "vasprintf.h"
-
-/* Get program_name, etc. */
-#include "progname.h"
-
-/* Shishi and Shisa library. */
-#include <shishi.h>
-#include <shisa.h>
-
-/* Command line parameter parser via gengetopt. */
-#include "shishid_cmd.h"
-
-extern Shishi * handle;
-extern Shisa * dbh;
-extern struct gengetopt_args_info arg;
-extern char *fatal_krberror;
-extern size_t fatal_krberror_len;
+/* Get Shishid stuff. */
+#include "kdc.h"
 
 static int
 asreq1 (Shishi_as * as)
@@ -562,19 +522,17 @@ process_1 (char *in, size_t inlen, char **out, size_t * outlen)
   return SHISHI_OK;
 }
 
-void
-process (char *in, int inlen, char **out, size_t * outlen)
+ssize_t
+process (char *in, int inlen, char **out)
 {
+  size_t outlen;
   int rc;
 
   *out = NULL;
-  *outlen = 0;
 
-  rc = process_1 (in, inlen, out, outlen);
+  rc = process_1 (in, inlen, out, &outlen);
+  if (rc != SHISHI_OK)
+    return -1;
 
-  if (rc != SHISHI_OK || *out == NULL || *outlen == 0)
-    {
-      *out = fatal_krberror;
-      *outlen = fatal_krberror_len;
-    }
+  return outlen;
 }

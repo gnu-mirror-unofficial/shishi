@@ -19,136 +19,14 @@
  *
  */
 
-#if HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <string.h>
-
-/* Get setuid, read, etc. */
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-
-/* Get gethostbyname, getservbyname. */
-#ifdef HAVE_NETDB_H
-# include <netdb.h>
-#endif
-
-/* Get getpwnam. */
-#ifdef HAVE_PWD_H
-# include <pwd.h>
-#endif
-
-/* For select, etc. */
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
-
-/* For select, etc. */
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
-#endif
-
-/* Get select, etc. */
-#ifdef HAVE_SYS_SELECT_H
-# include <sys/select.h>
-#endif
-
-/* Get accept, sendto, etc. */
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
-
-/* Used for the backlog argument to listen. */
-#ifndef SOMAXCONN
-# define SOMAXCONN INT_MAX
-#endif
-
-#ifdef HAVE_SYS_IOCTL_H
-# include <sys/ioctl.h>
-#endif
-
-/* Get errno. */
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif
-#ifndef errno
-extern int errno;
-#endif
-
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#else
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif
-#endif
-
-/* Get signal, etc. */
-#ifdef HAVE_SIGNAL_H
-# include <signal.h>
-#endif
-
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-#ifdef HAVE_NETINET_IN6_H
-# include <netinet/in6.h>
-#endif
-
-#ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h>
-#endif
-
-#ifdef HAVE_SYSLOG_H
-# include <syslog.h>
-#endif
-
-#ifdef USE_STARTTLS
-# include <gnutls/gnutls.h>
-#endif
-
-/* Setup i18n. */
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#else
-# define setlocale(Category, Locale) /* empty */
-#endif
-#include <gettext.h>
-#define _(String) gettext (String)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
-
-/* Get xmalloc. */
-#include "xalloc.h"
+/* Get Shishid stuff. */
+#include "kdc.h"
 
 /* Get error. */
 #include "error.h"
 
-/* Get asprintf. */
-#include "vasprintf.h"
-
 /* Get program_name, etc. */
 #include "progname.h"
-
-/* Shishi and Shisa library. */
-#include <shishi.h>
-#include <shisa.h>
-
-/* Command line parameter parser via gengetopt. */
-#include "shishid_cmd.h"
 
 #define FAMILY_IPV4 "IPv4"
 #define FAMILY_IPV6 "IPv6"
@@ -162,27 +40,6 @@ extern int errno;
 # define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
 #endif
 
-struct listenspec
-{
-  char *str;
-  int family;
-  int listening;
-  struct sockaddr listenaddr;
-  struct sockaddr addr;
-  socklen_t addrlen;
-  struct sockaddr_in *sin;
-  int port;
-  int type;
-  int sockfd;
-  char buf[BUFSIZ]; /* XXX */
-  size_t bufpos;
-#ifdef USE_STARTTLS
-  gnutls_session session;
-  int usetls;
-#endif
-  struct listenspec *next;
-};
-
 Shishi * handle;
 Shisa * dbh;
 struct gengetopt_args_info arg;
@@ -195,8 +52,6 @@ size_t fatal_krberror_len;
 gnutls_dh_params dh_params;
 gnutls_anon_server_credentials anoncred;
 #endif
-
-extern void kdc_loop (void);
 
 static void
 kdc_listen ()
