@@ -1658,8 +1658,8 @@ be found at @url{http://josefsson.org/gss/}.
 @node Acknowledgements
 @chapter Acknowledgements
 
-Shishi uses Libgcrypt by Werner Koch et al, Libtasn1 by Fabio Fiorina
-et al, and includes copies of GNU Mailutils and GNU IDN Library.
+Shishi uses Libgcrypt and Libgpg-error by Werner Koch et al, Libtasn1
+by Fabio Fiorina et al.
 
 @c **********************************************************
 @c *******************  Appendices  *************************
