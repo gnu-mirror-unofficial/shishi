@@ -2820,104 +2820,91 @@ db file /usr/local/var/shishi
 If no command is given, Shishi try to make sure you have a ticket
 granting ticket for the default realm, and then display it.
 
-Mandatory or optional arguments to long options are also mandatory or optional
-for any corresponding short options.
+Mandatory arguments to long options are mandatory for short options
+too.
 
 @example
-Usage: shishi [OPTION...] [CLIENT [SERVER]] [OPTION...]
-  or:  shishi [OPTION...] --list [CLIENT [SERVER]]
-  or:  shishi [OPTION...] --destroy [CLIENT [SERVER]]
-  or:  shishi [OPTION...] --string-to-key [CLIENT] [OPTION...]
-  or:  shishi [OPTION...]
-Shishi -- A Kerberos 5 implementation
-
-      --client-name=NAME     Client name. Default is login username.
-  -d, --destroy              Destroy tickets in local cache, subject to
-                             --client-name and --server-name limiting.
-  -e, --endtime=STRING       Specify when ticket validity should expire.  The
-                             time syntax may be relative (to the start time),
-                             such as "20 hours", or absolute, such as
-                             "2001-02-03 04:05:06 CET". The default is 8 hours
-                             after the start time.
-  -E, --encryption-type=ETYPE,[ETYPE...]
-                             Encryption types to use.  ETYPE is either
-                             registered name or integer.
-      --force-as             Force AS mode. Default is to use TGS iff a TGT is
-                             found.
-      --force-tgs            Force TGS mode. Default is to use TGS iff a TGT is
-                             found.
-      --forwardable          Get a forwardable ticket, i.e., one that can be
-                             used to get forwarded tickets.
-      --forwarded            Get a forwarded ticket.
-  -l, --list                 List tickets in local cache, subject to
-                             --server-name limiting.
-      --proxiable            Get a proxiable ticket, i.e., one that can be used
-                             to get proxy tickets.
-      --proxy                Get a proxy ticket.
-      --realm=REALM          Realm of server. Default is DNS domain of local
-                             host. For AS, this also indicates realm of client.
-      --renew-till=STRING    Specify renewable life of ticket.  Implies
-                             --renewable.  Accepts same time syntax as
-                             --endtime.  If --renewable is specified, the
-                             default is 1 week after the start time.
-      --renewable            Get a renewable ticket.
-  -R, --renew                Renew ticket.  Use --server-name to specify
-                             ticket, default is the most recent renewable
-                             ticket granting ticket for the default realm.
-      --server=[FAMILY:]ADDRESS:SERVICE/TYPE
-                             Send all requests to HOST instead of using normal
-                             logic to locate KDC addresses (discouraged).
-      --server-name=NAME     Server name. Default is "krbtgt/REALM" where REALM
-                             is server realm (see --realm).
-  -s, --starttime=STRING     Specify when ticket should start to be valid.
-                             Accepts same time syntax as --endtime. The default
-                             is to become valid immediately.
-      --ticket-granter=NAME  Service name in ticket to use for authenticating
-                             request. Only for TGS. Defaults to
-                             "krbtgt/REALM@@REALM" where REALM is server realm
-                             (see --realm).
-
- Options for low-level cryptography (CRYPTO-OPTIONS):
-      --client-name=NAME     Username. Default is login name.
-      --key-version=INTEGER  Version number of key. Default is 0.
-      --parameter=STRING     String-to-key parameter. This data is specific for
-                             each encryption algorithm and rarely needed.
-      --random               Generate key from random data.
-      --realm=REALM          Realm of principal. Defaults to DNS domain of
-                             local host.
-      --salt=SALT            Salt to use for --string-to-key. Defaults to
-                             concatenation of realm and (unwrapped) client
-                             name.
-      --string-to-key[=[PASSWORD]]
-                             Convert password into Kerberos key.  Note that
-                             --client-name, --realm, and --salt influence the
-                             generated key.
-
- Other options:
-      --configuration-file=FILE   Read user configuration from file.  Default
-                             is ~/.shishi/config.
-  -c, --ticket-file=FILE     Read tickets from FILE. Default is
-                             $HOME/.shishi/tickets.
-  -o, --library-options=STRING   Parse STRING as a configuration file
-                             statement.
-  -q, --quiet, --silent      Don't produce any output.
-      --system-configuration-file=FILE
-                             Read system wide configuration from file.  Default
-                             is /usr/local/etc/shishi.conf.
-      --ticket-write-file=FILE   Write tickets to FILE.  Default is to write
-                             them back to ticket file.
-  -v, --verbose              Produce verbose output.  Use multiple times to
-                             increase amount of verbose output.
-  CLIENT                     Set client name and realm from NAME.  The
-                             --client-name and --realm parameters can be used
-                             to override part of NAME.
-  SERVER                     Set server name and realm from NAME.  The
-                             --server-name and --server-realm parameters can be
-                             used to override part of SERVER.
-
-  -?, --help                 Give this help list
-      --usage                Give a short usage message
-  -V, --version              Print program version
+Usage: shishi [OPTIONS]... [CLIENT [SERVER]]...
+ 
+  -h, --help                              Print help and exit
+  -V, --version                           Print version and exit
+ 
+Commands:
+  -d, --destroy                           Destroy tickets in local cache,
+                                            limited by any --client-name or
+                                            --server-name.  (default=off)
+  -l, --list                              List tickets in local cache, limited
+                                            by any --client-name and
+                                            --server-name.  (default=off)
+  -r, --renew                             Renew ticket.  Use --server-name to
+                                            specify ticket, default is the
+                                            most recent renewable ticket
+                                            granting ticket for the default
+                                            realm.  (default=off)
+ 
+Flags:
+      --forwardable                       Get a forwardable ticket, i.e., one
+                                            that can be used to get forwarded
+                                            tickets.  (default=off)
+      --forwarded                         Get a forwarded ticket.  (default=
+                                            off)
+      --proxiable                         Get a proxiable ticket, i.e., one
+                                            that can be used to get proxy
+                                            tickets.  (default=off)
+      --proxy                             Get a proxy ticket.  (default=off)
+      --renewable                         Get a renewable ticket.  (default=
+                                            off)
+ 
+Options:
+      --client-name=NAME                  Client name. Default is login
+                                            username.
+  -E, --encryption-type=ETYPE,[ETYPE...]  Encryption types to use.  ETYPE is
+                                            either registered name or integer.
+                                             Valid values include 'aes128',
+                                            'aes256', 'aes' (same as
+                                            'aes256'), '3des', 'des-md5',
+                                            'des-md4', 'des-crc', 'des' (same
+                                            as 'des-md5'), and 'arcfour'.
+  -e, --endtime=STRING                    Specify when ticket validity should
+                                            expire.  The time syntax may be
+                                            relative (to the start time), such
+                                            as '20 hours', or absolute, such
+                                            as '2001-02-03 04:05:06 CET'. The
+                                            default is 8 hours after the start
+                                            time.
+      --realm=STRING                      Set default realm.
+      --renew-till=STRING                 Specify renewable life of ticket.
+                                            Implies --renewable.  Accepts same
+                                            time syntax as --endtime.  If
+                                            --renewable is specified, the
+                                            default is 1 week after the start
+                                            time.
+      --server-name=NAME                  Server name. Default is
+                                            'krbtgt/REALM' where REALM is
+                                            client realm.
+  -s, --starttime=STRING                  Specify when ticket should start to
+                                            be valid.  Accepts same time
+                                            syntax as --endtime. The default
+                                            is to become valid immediately.
+      --ticket-granter=NAME               Service name in ticket to use for
+                                            authenticating request. Only for
+                                            TGS. Defaults to
+                                            'krbtgt/REALM@@REALM' where REALM
+                                            is client realm.
+ 
+Other options:
+      --configuration-file=FILE           Read user configuration from FILE.
+  -c, --ticket-file=FILE                  Read tickets from FILE.
+  -o, --library-options=STRING            Parse STRING as a configuration file
+                                            statement.
+  -q, --quiet                             Don't produce any diagnostic output.
+                                              (default=off)
+      --system-configuration-file=FILE    Read system configuration from FILE.
+      --ticket-write-file=FILE            Write tickets from FILE.  Default is
+                                            to write them back to where they
+                                            were read from.
+  -v, --verbose                           Produce verbose output.
+                                              (default=off)
 @end example
 
 @node Parameters for shishid
@@ -2927,28 +2914,34 @@ If no parameters are specified, @samp{shishid} listens on the defaults
 interfaces and answers incoming requests using the keys in the default
 key file.
 
-Mandatory or optional arguments to long options are also mandatory or optional
-for any corresponding short options.
+Mandatory arguments to long options are mandatory for short options
+too.
 
 @example
-  -c, --configuration-file=FILE   Read configuration from file.  Default is
-                             /usr/local/etc/shishi.conf.
-  -k, --key-file=FILE        Read keys from file.  Default is
-                             /usr/local/etc/shishid.keys.
-  -l, --listen=[FAMILY:]ADDRESS:SERVICE/TYPE,...
-                             What to listen on. Family is "IPv4" or "IPv6", if
-                             absent the family is decided by
-                             gethostbyname(ADDRESS). An address of "*"
-                             indicates all addresses on the local host. The
-                             default is "IPv4:*:kerberos/udp,
-                             IPv4:*:kerberos/tcp, IPv6:*:kerberos/udp,
-                             IPv6:*:kerberos/tcp".
-  -q, -s, --quiet, --silent  Don't produce any output.
-  -u, --setuid=NAME          After binding socket, set user identity.
-  -v, --verbose              Produce verbose output.
-  -?, --help                 Give this help list
-      --usage                Give a short usage message
-  -V, --version              Print program version
+Usage: shishid [OPTIONS]...
+
+  -h, --help                                  Print help and exit
+  -V, --version                               Print version and exit
+  -c, --configuration-file=FILE               Use specified configuration
+                                                file.
+  -l, --listen=[FAMILY:]ADDRESS:SERVICE/TYPE  Sockets to listen for queries
+                                                on.  Family is `IPv4' or
+                                                `IPv6', if absent the family
+                                                is decided by
+                                                gethostbyname(ADDRESS). An
+                                                address of `*' indicates all
+                                                addresses on the local host.
+                                                The default is
+                                                `IPv4:*:kerberos/udp,
+                                                IPv4:*:kerberos/tcp,
+                                                IPv6:*:kerberos/udp,
+                                                IPv6:*:kerberos/tcp'.
+  -u, --setuid=NAME                           After binding socket, set user
+                                                identity.
+  -v, --verbose                               Produce verbose output.
+                                                  (default=off)
+  -q, --quiet                                 Don't produce any diagnostic output.
+                                                  (default=off)
 @end example
 
 @node Parameters for shisa
@@ -2957,22 +2950,22 @@ for any corresponding short options.
 The purpose of @samp{shisa} is to manipulate information stored in the
 Kerberos 5 database used by Shishi.
 
-Mandatory or optional arguments to long options are also mandatory or
-optional for any corresponding short options.
+Mandatory arguments to long options are mandatory for short options
+too.
 
 @example
 Usage: shisa [OPTIONS]... [REALM [PRINCIPAL]]...
 
   -h, --help                         Print help and exit
   -V, --version                      Print version and exit
-
+ 
 Operations:
   -a, --add                          Add realm or principal to database.
   -d, --dump                         Dump entries in database.
   -l, --list                         List entries in database.
   -m, --modify                       Modify principal entry in database.
   -r, --remove                       Remove realm or principal from database.
-
+ 
 Parameters:
   -f, --force                        Allow removal of non-empty realms.
                                          (default=off)
@@ -2980,31 +2973,31 @@ Parameters:
                                          (default=off)
       --disabled                     Only dump or list disabled principals.
                                          (default=off)
-      --keys                         Dump or list keys as well.
+      --keys                         Print sensitive cryptographic key and password.
                                          (default=off)
-
+ 
 Values (for --add and --modify):
-  -E, --encryption-type=STRING       Override default key encryption type.  
-                                       Valid values include 'aes128', 
-                                       'aes256', 'aes' (same as 'aes256'), 
-                                       '3des', 'des-md5', 'des-md4', 
-                                       'des-crc', 'des' (same as 'des-md5'), 
+  -E, --encryption-type=STRING       Override default key encryption type.
+                                       Valid values include 'aes128',
+                                       'aes256', 'aes' (same as 'aes256'),
+                                       '3des', 'des-md5', 'des-md4',
+                                       'des-crc', 'des' (same as 'des-md5'),
                                        and 'arcfour'.
       --random                       Use a random key.  (default)
       --password[=STRING]            Derive key from this password.
-      --salt=STRING                  Use specified salt for deriving key.  
-                                       Defaults to concatenation of realm and 
+      --salt=STRING                  Use specified salt for deriving key.
+                                       Defaults to concatenation of realm and
                                        (unwrapped) principal name.
-      --string-to-key-parameter=HEX  Encryption algorithm specific parameter 
-                                       for password derivation.  Currently 
-                                       only the AES algorithm can utilize 
-                                       this, where it is interpreted as the 
-                                       iteration count of the PKCS#5 PBKDF2 
+      --string-to-key-parameter=HEX  Encryption algorithm specific parameter
+                                       for password derivation.  Currently
+                                       only the AES algorithm can utilize
+                                       this, where it is interpreted as the
+                                       iteration count of the PKCS#5 PBKDF2
                                        key deriver.
-
+ 
 Other options:
   -c, --configuration-file=FILE      Use specified configuration file.
-  -o, --library-options=STRING       Parse string as configuration file 
+  -o, --library-options=STRING       Parse string as configuration file
                                        statement.
   -v, --verbose                      Produce verbose output.
                                          (default=off)
