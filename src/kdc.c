@@ -35,7 +35,7 @@ asreq1 (Shishi_as * as)
   int rc;
   char *username = NULL, *servername = NULL, *realm = NULL;
   Shisa_principal server, user;
-  uint32_t etype;
+  uint32_t sessionkeytype = -1, etype;
   int i;
 
   /*
@@ -93,7 +93,7 @@ asreq1 (Shishi_as * as)
     }
 
   rc = shisa_keys_find (dbh, realm, username, NULL, &userkeys, &nuserkeys);
-  if (rc != SHISA_OK)
+  if (rc != SHISA_OK || nuserkeys == 0)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
 	      username, realm, rc, shisa_strerror (rc));
@@ -125,7 +125,7 @@ asreq1 (Shishi_as * as)
 
   rc = shisa_keys_find (dbh, realm, servername, NULL,
 			 &serverkeys, &nserverkeys);
-  if (rc != SHISA_OK)
+  if (rc != SHISA_OK || nserverkeys == 0)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
 	      servername, realm, rc, shisa_strerror (rc));
@@ -172,15 +172,10 @@ asreq1 (Shishi_as * as)
       if (!shishi_cipher_supported_p (etype))
 	continue;
 
-      if (serverdbkey == NULL)
+      if (sessionkeytype == -1)
 	for (j = 0; j < nserverkeys; j++)
-	  {
-	    syslog (LOG_DEBUG,
-		    "Matching client etype %d against server key etype %d",
-		    etype, serverkeys[j]->etype);
-	    if (serverkeys[j]->etype == etype)
-	      serverdbkey = serverkeys[j];
-	  }
+	  if (serverkeys[j]->etype == etype)
+	    sessionkeytype = serverkeys[j]->etype;
 
       if (userdbkey == NULL)
 	for (j = 0; j < nuserkeys; j++)
@@ -205,17 +200,6 @@ asreq1 (Shishi_as * as)
       goto fatal;
     }
 
-  if (serverdbkey == NULL)
-    {
-      syslog (LOG_NOTICE, "No matching server keys for %s@%s",
-	      servername, realm);
-      rc = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
-					   SHISHI_KDC_ERR_ETYPE_NOSUPP);
-      if (rc != SHISHI_OK)
-	goto fatal;
-      rc = SHISHI_INVALID_PRINCIPAL_NAME;
-      goto fatal;
-    }
 
   rc = shishi_key_from_value (handle, userdbkey->etype,
 			       userdbkey->key, &userkey);
@@ -226,8 +210,10 @@ asreq1 (Shishi_as * as)
       goto fatal;
     }
 
-  rc = shishi_key_from_value (handle, serverdbkey->etype,
-			       serverdbkey->key, &serverkey);
+  /* XXX Select "best" available key (highest kvno, best algorithm?)
+     here. The client etype should not influence this. */
+  rc = shishi_key_from_value (handle, serverkeys[0]->etype,
+			       serverkeys[0]->key, &serverkey);
   if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_key_from_value (server) failed (%d): %s",
@@ -274,7 +260,10 @@ asreq1 (Shishi_as * as)
    * tickets with a weak session key encryption type.
    */
 
-  rc = shishi_key_random (handle, shishi_key_type (serverkey), &sessionkey);
+  if (sessionkeytype == -1)
+    sessionkeytype = shishi_cfg_clientkdcetype_fast (handle);
+
+  rc = shishi_key_random (handle, sessionkeytype, &sessionkey);
   if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_key_random (session key) failed (%d): %s",
@@ -391,7 +380,6 @@ asreq1 (Shishi_as * as)
       goto fatal;
     }
 
-  /* XXX Use "best" server key, not the one chosen by client (see above). */
   rc = shishi_tkt_build (tkt, serverkey);
   if (rc != SHISHI_OK)
     {
@@ -514,7 +502,7 @@ tgsreq1 (Shishi_tgs * tgs)
     }
 
   rc = shisa_keys_find (dbh, tgrealm, tgname, NULL, &tgkeys, &ntgkeys);
-  if (rc != SHISA_OK)
+  if (rc != SHISA_OK || ntgkeys == 0)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
 	      tgname, tgrealm, rc, shisa_strerror (rc));
@@ -646,7 +634,7 @@ tgsreq1 (Shishi_tgs * tgs)
 
   rc = shisa_keys_find (dbh, serverrealm, servername, NULL,
 			&serverkeys, &nserverkeys);
-  if (rc != SHISA_OK)
+  if (rc != SHISA_OK || nserverkeys == 0)
     {
       syslog (LOG_ERR, "shisa_keys_find(%s@%s) failed (%d): %s",
 	      servername, serverrealm, rc, shisa_strerror (rc));
@@ -656,7 +644,6 @@ tgsreq1 (Shishi_tgs * tgs)
 
   /* XXX Select "best" available key (highest kvno, best algorithm?)
      here. The client etype should not influence this. */
-
   rc = shishi_key_from_value (handle, serverkeys[0]->etype,
 			      serverkeys[0]->key, &serverkey);
   if (rc != SHISHI_OK)
@@ -692,6 +679,11 @@ tgsreq1 (Shishi_tgs * tgs)
    */
 
   tkt = shishi_tgs_tkt (tgs);
+  if (tkt == NULL)
+    {
+      syslog (LOG_ERR, "shishi_tgs_tkt failed");
+      goto fatal;
+    }
 
   rc = shishi_encticketpart_crealm
     (handle, shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
