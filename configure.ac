@@ -51,11 +51,6 @@ AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION(0.12.1)
 AM_MISSING_PROG(PERL, perl, $missing_dir)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
-AM_MISSING_PROG(TEXI2PDF, texi2pdf, $missing_dir)
-AM_MISSING_PROG(DOCBOOK2TXT, docbook2txt, $missing_dir)
-AM_MISSING_PROG(DOCBOOK2HTML, docbook2html, $missing_dir)
-AM_MISSING_PROG(DOCBOOK2PS, docbook2ps, $missing_dir)
-AM_MISSING_PROG(DOCBOOK2PDF, docbook2pdf, $missing_dir)
 AM_MISSING_PROG(ASN1PARSER, asn1Parser, $missing_dir)
 AM_WITH_DMALLOC
 
