@@ -20,7 +20,6 @@
  */
 
 #include "internal.h"
-#include <gcrypt.h>
 
 #define WARNSTR "libshishi: warning: "
 
@@ -65,17 +64,8 @@ shishi (void)
     }
   memset ((void *) handle, 0, sizeof (*handle));
 
-#if 0
-  res = gcry_control (GCRYCTL_INIT_SECMEM, 512, 0);
-  if (res != GCRYERR_SUCCESS)
-    {
-      fprintf (stderr, "libshishi: error: %s\n",
-	       shishi_strerror (SHISHI_GCRYPT_ERROR));
-      return NULL;
-    }
-#else
-  gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0);
-#endif
+  if (_shishi_cipher_init() != SHISHI_OK)
+    return NULL;
 
   handle->asn1 = _shishi_asn1_read ();
   if (handle->asn1 == NULL)
