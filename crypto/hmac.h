@@ -28,7 +28,6 @@
 
 #include "nettle-meta.h"
 
-#include "md4.h"
 #include "md5.h"
 #include "sha.h"
 
@@ -76,21 +75,6 @@ hmac_digest(const void *outer, const void *inner, void *state,
                (hash), (length), (digest) )
 
 /* HMAC using specific hash functions */
-
-/* hmac-md4 */
-struct hmac_md4_ctx HMAC_CTX(struct md4_ctx);
-
-void
-hmac_md4_set_key(struct hmac_md4_ctx *ctx,
-		 unsigned key_length, const uint8_t *key);
-
-void
-hmac_md4_update(struct hmac_md4_ctx *ctx,
-		unsigned length, const uint8_t *data);
-
-void
-hmac_md4_digest(struct hmac_md4_ctx *ctx,
-		unsigned length, uint8_t *digest);
 
 /* hmac-md5 */
 struct hmac_md5_ctx HMAC_CTX(struct md5_ctx);

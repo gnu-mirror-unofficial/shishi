@@ -29,7 +29,7 @@ libnettle_la_SOURCES = macros.h nettle-meta.h nettle-internal.h \
 	memxor.c memxor.h \
 	md4.h md4.c md4-meta.c md5.h md5.c md5-meta.c \
 	sha.h sha1.c sha1-compress.c sha1-meta.c \
-	hmac.c hmac.h hmac-md4.c hmac-md5.c hmac-sha1.c \
+	hmac.c hmac.h hmac-md5.c hmac-sha1.c \
 	arcfour.h arcfour.c arcfour-crypt.c \
 	des3.c des.c des.h desCode.h \
 	aes.h aes.c aes-internal.h \
