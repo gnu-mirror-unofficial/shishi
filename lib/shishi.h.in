@@ -514,7 +514,9 @@ Shishi_krb_error;
 
 typedef enum
 {
-  SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED = 1
+  SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED = 1,
+  SHISHI_TKTSHINTFLAGS_RENEWABLE_TICKET = 2,
+  SHISHI_TKTSHINTFLAGS_PROXIABLE_TICKET = 4
 }
 Shishi_tkts_hintflags;
 
@@ -531,7 +533,6 @@ struct Shishi_tkts_hint
   time_t starttime;
   time_t endtime;
   time_t renew_till;
-  int renewable;
 };
 typedef struct Shishi_tkts_hint Shishi_tkts_hint;
 
