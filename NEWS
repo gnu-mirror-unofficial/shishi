@@ -2,13 +2,14 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.1 (unreleased)
+* Version 0.0.1 (released 2003-08-09)
 
-** InetUtils copy removed (we send patches upstream instead).
+** InetUtils copy removed.
+The patches (also found in extra/inetutils.diff) are forwarded upstream.
 
 ** Libidn copy removed.
-Libidn is optional but recommended, and is used automatically when
-present.
+Libidn is optional, but recommended.  It is used automatically if
+present on your system.
 
 ** Gettext not included.
 Due to some conflicts between libtool and gettext, if you want i18n on
@@ -27,6 +28,8 @@ Specify --with-system-libtasn1 to link with the installed libtasn1, if
 you have it.
 
 ** KDC addresses are now found via DNS SRV RRs as a last resort.
+This is only enabled if libresolv and resolv.h is found on your
+system.
 
 ** Argp and other compatibility files replaced by gl/ directory.
 
