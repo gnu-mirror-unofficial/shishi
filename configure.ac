@@ -178,19 +178,22 @@ fi
 # Check for libtasn1
 AC_ARG_WITH(system-asn1,
 	AC_HELP_STRING([--with-system-asn1], [Use the system's libtasn1]),
-	system_asn1=$withval, system_asn1=no)
-if test "$system_asn1" = "yes"; then
-	AC_CHECK_LIB(tasn1, asn1_read_tag, :,
+	system_asn1=$withval, system_asn1=yes)
+if test "$system_asn1" != "no"; then
+	AC_CHECK_HEADER(libtasn1.h,, system_asn1=no)
+fi
+if test "$system_asn1" != "no"; then
+	AC_CHECK_LIB(tasn1, asn1_check_version, :,
 		system_asn1=no
-		AC_MSG_WARN([Libtasn1 0.2.x not found. Using included one.]))
+		AC_MSG_WARN([Libtasn1 >=0.2.2 not found. Using included one.]))
 fi
 AC_MSG_CHECKING([whether to use the system's libtasn1])
 AC_MSG_RESULT($system_asn1)
-if test "$system_asn1" = "yes"; then
+if test "$system_asn1" != "no"; then
  LIBTASN1_LIBS=-ltasn1
 else
  ASN1=asn1
- LIBTASN1_LIBS="../asn1/libminitasn1.la"
+ LIBTASN1_LIBS="\$(top_builddir)/asn1/libminitasn1.la"
 fi
 AC_SUBST(ASN1)
 AC_SUBST(LIBTASN1_LIBS)
@@ -198,11 +201,11 @@ AC_SUBST(LIBTASN1_LIBS)
 # Check for libgcrypt
 AC_ARG_WITH(libgcrypt,
   AC_HELP_STRING([--with-libgcrypt], [use libgcrypt for low-level crypto]),
-  libgcrypt=$withval, libgcrypt=no)
+  libgcrypt=$withval, libgcrypt=yes)
 if test "$libgcrypt" != "no" ; then
-	AM_PATH_LIBGCRYPT(1.1.42, :, [
+	AM_PATH_LIBGCRYPT(1.1.44, :, [
 		libgcrypt=no
-		AC_MSG_WARN([Libgcrypt >= 1.1.42 not found.])
+		AC_MSG_WARN([Libgcrypt >= 1.1.44 not found.])
 	])
 fi
 AC_MSG_CHECKING([whether to use libgcrypt])
@@ -212,7 +215,7 @@ if test "$libgcrypt" != "no" ; then
 else
 	CRYPTO=crypto
 	CRYPTO_CFLAGS="-I\$(top_srcdir)/crypto"
-	CRYPTO_LIBS="../crypto/libnettle.la"
+	CRYPTO_LIBS="\$(top_builddir)/crypto/libnettle.la"
 fi
 AM_CONDITIONAL(LIBGCRYPT, test "$libgcrypt" != "no")
 AM_CONDITIONAL(NETTLE, test "$libgcrypt" = "no")
