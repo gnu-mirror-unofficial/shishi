@@ -902,24 +902,18 @@ shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
 					const char *service,
 					const char *passwd)
 {
+  Shishi_tkt *tkt;
   Shishi_tkts_hint hint;
-  char buf[HOST_NAME_MAX];
   int ret;
-
-  strcpy (buf, service);
-  strcat (buf, "/");
-
-  ret = gethostname (&buf[strlen (service) + 1],
-		     sizeof (buf) - strlen (service) - 1);
-  buf[sizeof (buf) - 1] = '\0';
-
-  if (ret != 0)
-    strcpy (&buf[strlen (service) + 1], "localhost");
 
   memset (&hint, 0, sizeof (hint));
   hint.client = (char *) shishi_principal_default (tkts->handle);
-  hint.server = buf;
+  hint.server = shishi_server_for_local_service (tkts->handle, service);
   hint.passwd = (char *) passwd;
 
-  return shishi_tkts_get (tkts, &hint);
+  tkt = shishi_tkts_get (tkts, &hint);
+
+  free (hint.server);
+
+  return tkt;
 }
