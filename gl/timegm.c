@@ -76,7 +76,7 @@ timegm (struct tm *tm)
 	return (time_t) - 1;
       tl += 3600;
     }
-#ifdef HAVE_GMTIME_R
+#if HAVE_GMTIME_R && HAVE_DECL_GMTIME_R
   tg = gmtime_r (&tl, tg);
 #else
   tg = gmtime (&tl);
