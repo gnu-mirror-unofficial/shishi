@@ -290,7 +290,7 @@ shishi_ticket_set_enc_part (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  shishi_asprintf (&format, "%d", etype);
+  asprintf (&format, "%d", etype);
   res = shishi_asn1_write (handle, ticket, "enc-part.etype",
 			   format, 0);
   free (format);
@@ -301,7 +301,7 @@ shishi_ticket_set_enc_part (Shishi * handle,
     res = shishi_asn1_write (handle, ticket, "enc-part.kvno", NULL, 0);
   else
     {
-      shishi_asprintf (&format, "%d", etype);
+      asprintf (&format, "%d", etype);
       res = shishi_asn1_write (handle, ticket, "enc-part.kvno",
 			       format, 0);
       free (format);

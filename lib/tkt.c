@@ -691,7 +691,7 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
 
   for (i = 1; i <= n; i++)
     {
-      shishi_asprintf (&format, "last-req.?%d.lr-type", i);
+      asprintf (&format, "last-req.?%d.lr-type", i);
       res = shishi_asn1_read_integer (tkt->handle, tkt->enckdcreppart,
 				      format, &tmplrtype);
       free (format);
@@ -700,7 +700,7 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
 
       if (lrtype == tmplrtype)
 	{
-	  shishi_asprintf (&format, "last-req.?%d.lr-value", i);
+	  asprintf (&format, "last-req.?%d.lr-value", i);
 	  res = shishi_asn1_read (tkt->handle, tkt->enckdcreppart,
 				  format, lrtime, lrtimelen);
 	  free (format);

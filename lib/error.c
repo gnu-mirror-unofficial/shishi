@@ -147,7 +147,7 @@ shishi_strerror (int err)
       break;
 
     default:
-      shishi_asprintf (&p, _("Unknown shishi error (%d)"), err);
+      asprintf (&p, _("Unknown shishi error (%d)"), err);
       break;
     }
 

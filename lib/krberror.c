@@ -374,7 +374,7 @@ shishi_krberror_errorcode_message (Shishi * handle, int errorcode)
     }
 
   /* XXX memory leak */
-  shishi_asprintf (&p, _("Unknown KRB-ERROR error code %d."), errorcode);
+  asprintf (&p, _("Unknown KRB-ERROR error code %d."), errorcode);
   return p;
 }
 

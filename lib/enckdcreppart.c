@@ -160,7 +160,7 @@ shishi_enckdcreppart_nonce_set (Shishi * handle,
   int res;
   char *format;
 
-  shishi_asprintf (&format, "%ld", nonce);
+  asprintf (&format, "%ld", nonce);
   res = shishi_asn1_write (handle, enckdcreppart, "nonce",
 			   format, 0);
   free (format);

@@ -328,7 +328,7 @@ shishi_cfg_default_userfile (Shishi * handle)
       if (home == NULL)
 	home = "";
 
-      shishi_asprintf (&handle->usercfgfile, "%s%s", home, USERCFG_FILE);
+      asprintf (&handle->usercfgfile, "%s%s", home, USERCFG_FILE);
     }
 
   return handle->usercfgfile;

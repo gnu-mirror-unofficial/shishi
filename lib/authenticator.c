@@ -667,14 +667,14 @@ shishi_authenticator_authorizationdata (Shishi * handle,
   if (nth > i)
     return SHISHI_OUT_OF_RANGE;
 
-  shishi_asprintf (&format, "authorization-data.?%d.ad-type",
+  asprintf (&format, "authorization-data.?%d.ad-type",
 		   nth);
   res = shishi_asn1_integer_field (handle, authenticator, adtype, format);
   free (format);
   if (res != SHISHI_OK)
     return res;
 
-  shishi_asprintf (&format, "authorization-data.?%d.ad-data",
+  asprintf (&format, "authorization-data.?%d.ad-data",
 		   i);
   res = shishi_asn1_field (handle, authenticator, addata, addatalen, format);
   free (format);

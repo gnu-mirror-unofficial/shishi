@@ -163,7 +163,7 @@ shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
   char *buf;
   int res;
 
-  shishi_asprintf (&buf, "%d", n);
+  asprintf (&buf, "%d", n);
   res = shishi_asn1_write (handle, node, field, buf, 0);
   free(buf);
   if (res != SHISHI_OK)

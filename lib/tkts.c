@@ -47,7 +47,7 @@ shishi_tkts_default_file_guess (void)
   if (home == NULL)
     home = "";
 
-  shishi_asprintf (&p, "%s%s", home, TICKET_FILE);
+  asprintf (&p, "%s%s", home, TICKET_FILE);
 
   return p;
 }
@@ -767,7 +767,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 
   /* Try to get cached TGT ... */
   memset (&lochint, 0, sizeof (lochint));
-  shishi_asprintf (&tgtname, "krbtgt/%s",
+  asprintf (&tgtname, "krbtgt/%s",
 		   shishi_realm_default (tkts->handle));
   lochint.server = tgtname;
   tgt = shishi_tkts_find (tkts, &lochint);
