@@ -807,10 +807,13 @@ mentioned here, contact the author (@pxref{Bug Reports}).
 @cindex Installation
 @cindex Download
 
-The package can be downloaded from several places, including
-@url{http://josefsson.org/shishi/releases/}.  The latest version is
-stored in a file, e.g., @samp{shishi-@value{VERSION}.tar.gz} where the
-@samp{@value{VERSION}} indicate the highest version number.
+The package can be downloaded from several places, including:
+
+@url{http://josefsson.org/shishi/releases/}
+
+The latest version is stored in a file, e.g.,
+@samp{shishi-@value{VERSION}.tar.gz} where the @samp{@value{VERSION}}
+indicate the highest version number.
 
 The package is then extracted, configured and built like many other
 packages that use Autoconf.  For detailed information on configuring
