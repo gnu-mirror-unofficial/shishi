@@ -4,6 +4,8 @@ inetdaemondir = @inetdaemondir@
 
 inetdaemon_PROGRAMS = shishi-telnetd
 
+EXTRA_PROGRAMS = shishi-telnetd
+
 shishi_telnetd_SOURCES = telnetd.c pty.c term.c utility.c \
  state.c termstat.c slc.c
 noinst_HEADERS = telnetd.h

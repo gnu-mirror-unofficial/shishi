@@ -82,7 +82,7 @@ char *telnet_krb5_realm = NULL;
 #define DEBUG(c) if (auth_debug_mode) printf c
 
 static int
-Data (Authenticator *ap, int type, krb5_pointer d, int c)
+Data (TN_Authenticator *ap, int type, krb5_pointer d, int c)
 {
   unsigned char *p = str_data + 4;
   unsigned char *cd = (unsigned char *) d;
@@ -117,7 +117,7 @@ Data (Authenticator *ap, int type, krb5_pointer d, int c)
 
 /* FIXME: Reverse return code! */
 int
-kerberos5_init (Authenticator *ap, int server)
+kerberos5_init (TN_Authenticator *ap, int server)
 {
   str_data[3] = server ? TELQUAL_REPLY : TELQUAL_IS;
   if (telnet_context == 0 && krb5_init_context(&telnet_context))
@@ -192,7 +192,7 @@ encryption_init (krb5_creds *creds)
 #endif
 
 int
-kerberos5_send (Authenticator *ap)
+kerberos5_send (TN_Authenticator *ap)
 {
   krb5_error_code r;
   krb5_ccache ccache;
@@ -333,7 +333,7 @@ telnet_encrypt_key (Session_Key *skey)
 #endif
 
 void
-kerberos5_reply (Authenticator *ap, unsigned char *data, int cnt)
+kerberos5_reply (TN_Authenticator *ap, unsigned char *data, int cnt)
 {
 #ifdef ENCRYPTION
   Session_Key skey;
@@ -398,7 +398,7 @@ kerberos5_reply (Authenticator *ap, unsigned char *data, int cnt)
 	      auth_send_retry ();
 	      break;
 	    }
-
+	  
 	  krb5_free_ap_rep_enc_part (telnet_context, reply);
 	  telnet_encrypt_key (&skey);
 	  mutual_complete = 1;
@@ -422,7 +422,7 @@ kerberos5_reply (Authenticator *ap, unsigned char *data, int cnt)
 }
 
 int
-kerberos5_status (Authenticator *ap, char *name, int level)
+kerberos5_status (TN_Authenticator *ap, char *name, int level)
 {
   if (level < AUTH_USER)
     return level;
@@ -439,7 +439,7 @@ kerberos5_status (Authenticator *ap, char *name, int level)
 }
 
 int
-kerberos5_is_auth (Authenticator *ap, unsigned char *data, int cnt,
+kerberos5_is_auth (TN_Authenticator *ap, unsigned char *data, int cnt,
 		   char *errbuf, int errbuflen)
 {
   int r = 0;
@@ -623,7 +623,7 @@ kerberos5_is_auth (Authenticator *ap, unsigned char *data, int cnt,
 
 #ifdef FORWARD
 int
-kerberos5_is_forward (Authenticator *ap, unsigned char *data, int cnt,
+kerberos5_is_forward (TN_Authenticator *ap, unsigned char *data, int cnt,
 		      char *errbuf, int errbuflen)
 {
   int r = 0;
@@ -654,7 +654,7 @@ kerberos5_is_forward (Authenticator *ap, unsigned char *data, int cnt,
 #endif
      
 void
-kerberos5_is (Authenticator *ap, unsigned char *data, int cnt)
+kerberos5_is (TN_Authenticator *ap, unsigned char *data, int cnt)
 {
   int r = 0;
   char errbuf[512];
@@ -780,7 +780,7 @@ kerberos5_printsub (unsigned char *data, int cnt,
 #ifdef FORWARD
 
 void
-kerberos5_forward (Authenticator *ap)
+kerberos5_forward (TN_Authenticator *ap)
 {
   krb5_error_code r;
   krb5_ccache ccache;

@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = ../ansi2knr
 
 bin_PROGRAMS = shishi-telnet
 
-EXTRA_PROGRAMS = telnet
+EXTRA_PROGRAMS = shishi-telnet
 
 shishi_telnet_SOURCES = authenc.c commands.c main.c network.c ring.c sys_bsd.c \
 	telnet.c terminal.c tn3270.c utilities.c

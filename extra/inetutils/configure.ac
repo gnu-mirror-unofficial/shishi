@@ -19,9 +19,9 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 
-AC_PREREQ(2.52)
+AC_PREREQ(2.54)
 
-AC_INIT([GNU inetutils], [1.4.1], [bug-inetutils@gnu.org])
+AC_INIT([GNU inetutils], [1.4.2], [bug-inetutils@gnu.org])
 
 AC_CONFIG_SRCDIR([inetd/inetd.c])
 AM_CONFIG_HEADER([config.h:config.hin])
@@ -474,6 +474,8 @@ AC_FUNC_SETVBUF_REVERSED
 AC_FUNC_FORK
 AC_FUNC_STRCOLL
 AC_FUNC_MMAP
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
 
 AC_CHECK_FUNCS(bcopy bcmp bzero cfsetspeed cgetent dirfd fchdir flock \
                fpathconf ftruncate \

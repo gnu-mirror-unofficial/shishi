@@ -61,7 +61,7 @@ char *telnet_krb5_realm = NULL;
 #define DEBUG(c) if (auth_debug_mode) printf c
 
 static int
-Data (Authenticator *ap, int type, unsigned char *d, int c)
+Data (TN_Authenticator *ap, int type, unsigned char *d, int c)
 {
   unsigned char *p = str_data + 4;
   unsigned char *cd = (unsigned char *) d;
@@ -96,7 +96,7 @@ Data (Authenticator *ap, int type, unsigned char *d, int c)
 
 /* FIXME: Reverse return code! */
 int
-krb5shishi_init (Authenticator *ap, int server)
+krb5shishi_init (TN_Authenticator *ap, int server)
 {
   if (server)
     {
@@ -115,7 +115,7 @@ krb5shishi_init (Authenticator *ap, int server)
 }
 
 void
-krb5shishi_cleanup (Authenticator *ap)
+krb5shishi_cleanup (TN_Authenticator *ap)
 {
   if (shishi_handle == 0)
     return;
@@ -171,7 +171,7 @@ encryption_init (krb5_creds *creds)
 #endif
 
 int
-krb5shishi_send (Authenticator *ap)
+krb5shishi_send (TN_Authenticator *ap)
 {
   int ap_opts;
   char type_check[2];
@@ -287,7 +287,7 @@ telnet_encrypt_key (Session_Key *skey)
 #endif
 
 void
-krb5shishi_reply (Authenticator *ap, unsigned char *data, int cnt)
+krb5shishi_reply (TN_Authenticator *ap, unsigned char *data, int cnt)
 {
 #ifdef ENCRYPTION
   Session_Key skey;
@@ -360,7 +360,7 @@ krb5shishi_reply (Authenticator *ap, unsigned char *data, int cnt)
 }
 
 int
-krb5shishi_status (Authenticator *ap, char *name, int level)
+krb5shishi_status (TN_Authenticator *ap, char *name, int level)
 {
   puts("krb5shishi_status");
 
@@ -378,7 +378,7 @@ krb5shishi_status (Authenticator *ap, char *name, int level)
 }
 
 int
-krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
+krb5shishi_is_auth (TN_Authenticator *a, unsigned char *data, int cnt,
 		    char *errbuf, int errbuflen)
 {
   Shishi_ap *ap;
@@ -469,7 +469,7 @@ krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
 }
     
 void
-krb5shishi_is (Authenticator *ap, unsigned char *data, int cnt)
+krb5shishi_is (TN_Authenticator *ap, unsigned char *data, int cnt)
 {
   int r = 0;
   char errbuf[512];

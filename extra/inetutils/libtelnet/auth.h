@@ -75,8 +75,8 @@ typedef struct XauthP {
 	void	(*reply) P((struct XauthP *, unsigned char *, int));
 	int	(*status) P((struct XauthP *, char *, int));
 	void	(*printsub) P((unsigned char *, int, unsigned char *, int));
-        void	(*cleanup) P((struct XauthP *));
-} Authenticator;
+	void	(*cleanup) P((struct XauthP *));
+} TN_Authenticator;
 
 #include "auth-proto.h"
 

@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 1991, 1993
+ * Copyright (c) 1991, 1993, 2003
  *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@
 #endif
 
 #if	defined(AUTHENTICATION)
-Authenticator *findauthenticator P((int, int));
+TN_Authenticator *findauthenticator P((int, int));
 
 void auth_init P((char *, int));
 int auth_cmd P((int, char **));
@@ -67,36 +67,36 @@ void auth_send P((unsigned char *, int));
 void auth_send_retry P((void));
 void auth_is P((unsigned char *, int));
 void auth_reply P((unsigned char *, int));
-void auth_finished P((Authenticator *, int));
+void auth_finished P((TN_Authenticator *, int));
 int auth_wait P((char *));
 void auth_disable_name P((char *));
 void auth_gen_printsub P((unsigned char *, int, unsigned char *, int));
 
 #ifdef	KRB4
-int kerberos4_init P((Authenticator *, int));
-int kerberos4_send P((Authenticator *));
-void kerberos4_is P((Authenticator *, unsigned char *, int));
-void kerberos4_reply P((Authenticator *, unsigned char *, int));
-int kerberos4_status P((Authenticator *, char *, int));
+int kerberos4_init P((TN_Authenticator *, int));
+int kerberos4_send P((TN_Authenticator *));
+void kerberos4_is P((TN_Authenticator *, unsigned char *, int));
+void kerberos4_reply P((TN_Authenticator *, unsigned char *, int));
+int kerberos4_status P((TN_Authenticator *, char *, int));
 void kerberos4_printsub P((unsigned char *, int, unsigned char *, int));
 #endif
 
 #ifdef	KRB5
-int kerberos5_init P((Authenticator *, int));
-int kerberos5_send P((Authenticator *));
-void kerberos5_is P((Authenticator *, unsigned char *, int));
-void kerberos5_reply P((Authenticator *, unsigned char *, int));
-int kerberos5_status P((Authenticator *, char *, int));
+int kerberos5_init P((TN_Authenticator *, int));
+int kerberos5_send P((TN_Authenticator *));
+void kerberos5_is P((TN_Authenticator *, unsigned char *, int));
+void kerberos5_reply P((TN_Authenticator *, unsigned char *, int));
+int kerberos5_status P((TN_Authenticator *, char *, int));
 void kerberos5_printsub P((unsigned char *, int, unsigned char *, int));
 #endif
 
 #ifdef	SHISHI
-int krb5shishi_init P((Authenticator *, int));
-int krb5shishi_send P((Authenticator *));
-void krb5shishi_is P((Authenticator *, unsigned char *, int));
-void krb5shishi_reply P((Authenticator *, unsigned char *, int));
-int krb5shishi_status P((Authenticator *, char *, int));
+int krb5shishi_init P((TN_Authenticator *, int));
+int krb5shishi_send P((TN_Authenticator *));
+void krb5shishi_is P((TN_Authenticator *, unsigned char *, int));
+void krb5shishi_reply P((TN_Authenticator *, unsigned char *, int));
+int krb5shishi_status P((TN_Authenticator *, char *, int));
 void krb5shishi_printsub P((unsigned char *, int, unsigned char *, int));
-void krb5shishi_cleanup P((Authenticator *));
+void krb5shishi_cleanup P((TN_Authenticator *));
 #endif
 #endif
