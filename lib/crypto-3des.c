@@ -68,18 +68,21 @@ des3none_dencrypt (Shishi * handle,
 
       res = simplified_dencrypt (handle, derivedkey, iv, ivlen,
 				 in, inlen, out, outlen, direction);
-      if (res != SHISHI_OK)
-	return res;
 
       shishi_key_done (&derivedkey);
+
+      if (res != SHISHI_OK)
+	return res;
     }
   else
     {
       res = simplified_dencrypt (handle, key, iv, ivlen,
 				 in, inlen, out, outlen, direction);
+      if (res != SHISHI_OK)
+	return res;
     }
 
-  return res;
+  return SHISHI_OK;
 }
 
 static int
