@@ -80,7 +80,8 @@ typedef enum
   SHISHI_ASN1_NO_VALUE = 45,
   SHISHI_CONNECT_ERROR = 46,
   SHISHI_VERIFY_FAILED = 47,
-  SHISHI_LAST_ERROR = 47
+  SHISHI_PRIV_BAD_KEYTYPE = 48,
+  SHISHI_LAST_ERROR = 48
 }
 Shishi_rc;
 
@@ -541,6 +542,7 @@ typedef struct Shishi_tgs Shishi_tgs;
 typedef struct Shishi_ap Shishi_ap;
 typedef struct Shishi_key Shishi_key;
 typedef struct Shishi_safe Shishi_safe;
+typedef struct Shishi_priv Shishi_priv;
 #ifndef _SHISHI_HAS_LIBTASN1_H
 typedef struct node_asn_struct *ASN1_TYPE;
 #endif
@@ -1436,6 +1438,9 @@ extern Shishi_asn1 shishi_asn1_enckdcreppart (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_encasreppart (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_krberror (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_krbsafe (Shishi * handle);
+extern Shishi_asn1 shishi_asn1_priv (Shishi * handle);
+extern Shishi_asn1 shishi_asn1_encprivpart (Shishi * handle);
+
 extern Shishi_asn1 shishi_der2asn1 (Shishi * handle,
 				    const char *fieldname,
 				    const char *nodename,
@@ -1457,6 +1462,19 @@ extern Shishi_asn1 shishi_der2asn1_kdcrep (Shishi * handle,
 					   const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_kdcreq (Shishi * handle,
 					   const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_apreq (Shishi * handle,
+					  const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_aprep (Shishi * handle,
+					  const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_authenticator (Shishi * handle,
+						  const char *der,
+						  size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_krberror (Shishi * handle,
+					     const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_krbsafe (Shishi * handle,
+					    const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_priv (Shishi * handle,
+					 const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_encasreppart (Shishi * handle,
 						 const char *der,
 						 size_t derlen);
@@ -1466,20 +1484,12 @@ extern Shishi_asn1 shishi_der2asn1_enctgsreppart (Shishi * handle,
 extern Shishi_asn1 shishi_der2asn1_enckdcreppart (Shishi * handle,
 						  const char *der,
 						  size_t derlen);
-extern Shishi_asn1 shishi_der2asn1_authenticator (Shishi * handle,
-						  const char *der,
-						  size_t derlen);
-extern Shishi_asn1 shishi_der2asn1_krberror (Shishi * handle,
-					     const char *der, size_t derlen);
-extern Shishi_asn1 shishi_der2asn1_krbsafe (Shishi * handle,
-					    const char *der, size_t derlen);
-extern Shishi_asn1 shishi_der2asn1_apreq (Shishi * handle,
-					  const char *der, size_t derlen);
-extern Shishi_asn1 shishi_der2asn1_aprep (Shishi * handle,
-					  const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_encapreppart (Shishi * handle,
 						 const char *der,
 						 size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_encprivpart (Shishi * handle,
+						const char *der,
+						size_t derlen);
 
 /* ap.c */
 extern int shishi_ap (Shishi * handle, Shishi_ap ** ap);
@@ -1855,5 +1865,49 @@ extern int shishi_safe_set_user_data (Shishi * handle,
 				      size_t userdatalen);
 extern int shishi_safe_build (Shishi_safe * safe, Shishi_key * key);
 extern int shishi_safe_verify (Shishi_safe * safe, Shishi_key * key);
+
+/* priv.c */
+extern int shishi_priv (Shishi * handle, Shishi_priv ** priv);
+extern void shishi_priv_done (Shishi_priv * priv);
+extern Shishi_key *shishi_priv_key (Shishi_priv * priv);
+extern void shishi_priv_key_set (Shishi_priv * priv, Shishi_key * key);
+extern Shishi_asn1 shishi_priv_priv (Shishi_priv * priv);
+extern void shishi_priv_priv_set (Shishi_priv * priv, Shishi_asn1 asn1priv);
+extern int shishi_priv_priv_der (Shishi_priv * priv, char **out,
+				 size_t * outlen);
+extern int shishi_priv_priv_der_set (Shishi_priv * priv,
+				     char *der, size_t derlen);
+extern Shishi_asn1 shishi_priv_encprivpart (Shishi_priv * priv);
+extern void shishi_priv_encprivpart_set (Shishi_priv * priv,
+					 Shishi_asn1 asn1priv);
+extern int shishi_priv_encprivpart_der (Shishi_priv * priv, char **out,
+					size_t * outlen);
+extern int shishi_priv_encprivpart_der_set (Shishi_priv * priv,
+					    char *der, size_t derlen);
+extern int shishi_priv_print (Shishi * handle, FILE * fh, Shishi_asn1 priv);
+extern int shishi_priv_save (Shishi * handle, FILE * fh, Shishi_asn1 priv);
+extern int shishi_priv_to_file (Shishi * handle, Shishi_asn1 priv,
+				int filetype, char *filename);
+extern int shishi_priv_parse (Shishi * handle, FILE * fh, Shishi_asn1 * priv);
+extern int shishi_priv_read (Shishi * handle, FILE * fh, Shishi_asn1 * priv);
+extern int shishi_priv_from_file (Shishi * handle, Shishi_asn1 * priv,
+				  int filetype, const char *filename);
+extern int shishi_priv_enc_part_etype (Shishi * handle,
+				       Shishi_asn1 priv,
+				       int32_t * etype);
+extern int shishi_priv_set_enc_part (Shishi * handle,
+				     Shishi_asn1 priv,
+				     int etype,
+				     const char *encpart, size_t encpartlen);
+extern int shishi_encprivpart_user_data (Shishi * handle,
+					 Shishi_asn1 encprivpart,
+					 char **userdata,
+					 size_t * userdatalen);
+extern int shishi_encprivpart_set_user_data (Shishi * handle,
+					     Shishi_asn1 encprivpart,
+					     const char *userdata,
+					     size_t userdatalen);
+extern int shishi_priv_build (Shishi_priv * priv, Shishi_key * key);
+extern int shishi_priv_process (Shishi_priv * priv, Shishi_key * key);
 
 #endif
