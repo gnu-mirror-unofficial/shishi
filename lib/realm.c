@@ -21,9 +21,6 @@
 
 #include "internal.h"
 
-/* Get _shishi_resolv, etc. */
-#include "resolver.h"
-
 /**
  * shishi_realm_default_guess:
  *
@@ -152,14 +149,14 @@ shishi_realm_for_server_file (Shishi * handle, char *server)
 char *
 shishi_realm_for_server_dns (Shishi * handle, char *server)
 {
-  dnshost_t rrs;
+  Shishi_dns rrs;
   char *tmp = NULL;
   char *p = server;
 
   do
     {
       asprintf (&tmp, "_kerberos.%s", p);
-      rrs = _shishi_resolv (tmp, T_TXT);
+      rrs = shishi_resolv (tmp, SHISHI_DNS_TXT);
       free (tmp);
       p = strchr (p, '.');
       if (p)
@@ -177,8 +174,7 @@ shishi_realm_for_server_dns (Shishi * handle, char *server)
     }
 
   shishi_warn (handle, "DNS maps '%s' to '%s'.", server, (char *) rrs->rr);
-  shishi_warn (handle,
-	       "Consider using a 'server-realm' configuration token.");
+  shishi_warn (handle, "Consider using a 'server-realm' configuration token.");
 
   return rrs->rr;
 }

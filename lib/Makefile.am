@@ -46,7 +46,7 @@ libshishi_la_SOURCES = shishi.h.in internal.h \
 	netio.c key.c keys.c hostkeys.c crypto.c crypto.h crypto-ctx.c \
 	asn1.c asn1.h kerberos5.c \
 	version.c password.c \
-	utils.c utils.h resolv.c resolver.h
+	utils.c utils.h resolv.c
 if NULL
 libshishi_la_SOURCES += crypto-null.c
 endif

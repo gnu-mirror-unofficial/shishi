@@ -564,6 +564,32 @@ struct Shishi_tkts_hint
 };
 typedef struct Shishi_tkts_hint Shishi_tkts_hint;
 
+/* resolv.c */
+#define SHISHI_DNS_TXT 16
+#define SHISHI_DNS_SRV 33
+
+struct Shishi_dns_st
+{
+  struct Shishi_dns_st *next;
+
+  uint16_t class;
+  uint16_t type;
+  uint32_t ttl;
+
+  void *rr;
+};
+typedef struct Shishi_dns_st *Shishi_dns;
+
+struct Shishi_dns_srv_st
+{
+  uint16_t priority;
+  uint16_t weight;
+  uint16_t port;
+
+  char name[256];
+};
+typedef struct Shishi_dns_srv_st *Shishi_dns_srv;
+
 typedef struct Shishi Shishi;
 typedef struct Shishi_tkt Shishi_tkt;
 typedef struct Shishi_tkts Shishi_tkts;
@@ -668,8 +694,9 @@ extern int shishi_ticket_sname_set (Shishi * handle,
 				    Shishi_name_type name_type,
 				    char *sname[]);
 extern int shishi_ticket_srealmserver_set (Shishi * handle,
-					   Shishi_asn1 ticket, char *realm,
-					   char *server);
+					   Shishi_asn1 ticket,
+					   const char *realm,
+					   const char *server);
 extern int shishi_ticket_set_server (Shishi * handle, Shishi_asn1 ticket,
 				     const char *server);
 extern int shishi_ticket_realm_get (Shishi * handle,
@@ -2084,5 +2111,9 @@ extern const char *shishi_x509key_default_file (Shishi * handle);
 
 /* utils.c */
 extern time_t shishi_get_date (const char *p, const time_t * now);
+
+/* resolv.c */
+Shishi_dns shishi_resolv (const char *zone, uint16_t querytype);
+void shishi_resolv_free (Shishi_dns rrs);
 
 #endif

@@ -24,9 +24,6 @@
 /* Get _shishi_sendrecv_tls, etc. */
 #include "starttls.h"
 
-/* Get _shishi_resolv, etc. */
-#include "resolver.h"
-
 /* Get _shishi_realminfo, etc. */
 #include "diskio.h"
 
@@ -286,13 +283,14 @@ shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
 static int
 shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 			   const char *indata, size_t inlen,
-			   char **outdata, size_t * outlen, dnshost_t rrs)
+			   char **outdata, size_t * outlen,
+			   Shishi_dns rrs)
 {
   int rc;
 
   for (; rrs; rrs = rrs->next)
     {
-      dns_srv_t srv = (dns_srv_t) rrs->rr;
+      Shishi_dns_srv srv = rrs->rr;
       struct addrinfo hints;
       struct addrinfo *ai;
       char *port;
@@ -340,7 +338,7 @@ shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
 			 const char *indata, size_t inlen,
 			 char **outdata, size_t * outlen)
 {
-  dnshost_t rrs;
+  Shishi_dns rrs;
   char *tmp;
   int rc;
 
@@ -348,7 +346,7 @@ shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
     printf ("Finding SRV RRs for %s...\n", realm);
 
   asprintf (&tmp, "_kerberos._udp.%s", realm);
-  rrs = _shishi_resolv (tmp, T_SRV);
+  rrs = shishi_resolv (tmp, SHISHI_DNS_SRV);
   free (tmp);
 
   if (rrs)
@@ -360,7 +358,7 @@ shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
       rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
     }
 
-  _shishi_resolv_free (rrs);
+  shishi_resolv_free (rrs);
 
   return rc;
 }

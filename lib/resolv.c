@@ -1,6 +1,6 @@
 /* resolv.c --- Resolver glue.
  * Copyright (C) 2003, 2004  Simon Josefsson
- * Copyright (c) 2002 Jeremie Miller, Thomas Muldowney,
+ * Copyright (C) 2002 Jeremie Miller, Thomas Muldowney,
  *                    Ryan Eatmon, Robert Norris
  *
  * This file is part of Shishi.
@@ -21,13 +21,13 @@
  *
  */
 
+/* This file is based on resolver.h from jabberd - Jabber Open Source
+ * Server, licensed under GPL.  See:
+ *
+ * http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/jabberd2/resolver/
+ */
+
 #include "internal.h"
-
-/* This file comes from jabberd - Jabber Open Source Server, licensed
-   under GPL. http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/jabberd2/ */
-
-/* Get prototypes. */
-#include "resolver.h"
 
 #ifdef HAVE_LIBRESOLV
 
@@ -45,42 +45,7 @@ typedef union
 } dns_packet_t;
 
 static void *
-_srv_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
-{
-  unsigned int priority, weight, port;
-  int len;
-  char host[256];
-  dns_srv_t srv;
-
-  GETSHORT (priority, *scan);
-  GETSHORT (weight, *scan);
-  GETSHORT (port, *scan);
-
-  len = dn_expand (packet.buf, eom, *scan, host, 256);
-  if (len < 0)
-    return NULL;
-  *scan = (unsigned char *) (*scan + len);
-
-  srv = (dns_srv_t) xmalloc (sizeof (struct dns_srv_st));
-
-  srv->priority = priority;
-  srv->weight = weight;
-  srv->port = port;
-
-  /* figure out the randomised weight */
-  /* !!! this seems wrong, but I don't have the RFC on hand */
-  if (weight != 0)
-    srv->rweight = 1 + random () % (10000 * weight);
-  else
-    srv->rweight = 0;
-
-  strcpy (srv->name, host);
-
-  return (void *) srv;
-}
-
-static void *
-_txt_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
+txt_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
 {
   size_t len = (size_t) ** scan;
   char *p;
@@ -93,48 +58,86 @@ _txt_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
   return p;
 }
 
+static void *
+srv_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
+{
+  unsigned int priority, weight, port;
+  int len;
+  char host[256];
+  Shishi_dns_srv srv;
+
+  GETSHORT (priority, *scan);
+  GETSHORT (weight, *scan);
+  GETSHORT (port, *scan);
+
+  len = dn_expand (packet.buf, eom, *scan, host, 256);
+  if (len < 0)
+    return NULL;
+  *scan = (unsigned char *) (*scan + len);
+
+  srv = xmalloc (sizeof (*srv));
+
+  srv->priority = priority;
+  srv->weight = weight;
+  srv->port = port;
+
+  strcpy (srv->name, host);
+
+  return (void *) srv;
+}
+
 /* compare two srv structures, order by priority then by randomised weight */
 static int
-_srv_compare (const void *a, const void *b)
+srv_compare (const void *a, const void *b)
 {
-  dns_srv_t aa, bb;
+  Shishi_dns_srv aa, bb;
 
   if (a == NULL)
     return 1;
   if (b == NULL)
     return -1;
 
-  aa = (dns_srv_t) (*((dnshost_t *) a))->rr;
-  bb = (dns_srv_t) (*((dnshost_t *) b))->rr;
+  aa = (*((Shishi_dns *) a))->rr;
+  bb = (*((Shishi_dns *) b))->rr;
 
   if (aa->priority > bb->priority)
     return 1;
   if (aa->priority < bb->priority)
     return -1;
 
-  if (aa->rweight > bb->rweight)
+  if (aa->weight > bb->weight)
     return -1;
-  if (aa->rweight < bb->rweight)
+  if (aa->weight < bb->weight)
     return 1;
 
   return 0;
 }
 
-/* the actual resolver function */
-dnshost_t
-_shishi_resolv (const char *zone, unsigned int query_type)
+/**
+ * shishi_resolv:
+ * @zone: owner name of data, e.g. "EXAMPLE.ORG"
+ * @querytype: type of data to query for, e.g., SHISHI_DNS_TXT.
+ *
+ * Query DNS resolver for data of type @querytype at owner name @zone.
+ * Currently TXT and SRV types are supported.
+ *
+ * Return value: Returns linked list of DNS records, or NULL if query
+ *   failed.
+ **/
+Shishi_dns
+shishi_resolv (const char *zone, uint16_t querytype)
 {
   char host[256];
   dns_packet_t packet;
   int len, qdcount, ancount, an, n;
   unsigned char *eom, *scan;
-  dnshost_t *reply, first;
-  unsigned int type, class, ttl;
+  Shishi_dns *reply, first;
+  uint16_t type, class, ttl;
 
   if (zone == NULL || *zone == '\0')
     return NULL;
 
-  switch (query_type)
+  switch (querytype)
     {
     case T_TXT:
     case T_SRV:
@@ -145,7 +148,7 @@ _shishi_resolv (const char *zone, unsigned int query_type)
     }
 
   /* do the actual query */
-  if ((len = res_query (zone, C_IN, query_type, packet.buf, MAX_PACKET)) < 0
+  if ((len = res_query (zone, C_IN, querytype, packet.buf, MAX_PACKET)) < 0
       || len < (int) sizeof (HEADER))
     return NULL;
 
@@ -172,8 +175,7 @@ _shishi_resolv (const char *zone, unsigned int query_type)
     }
 
   /* create an array to store the replies in */
-  reply = (dnshost_t *) xmalloc (sizeof (dnshost_t) * ancount);
-  memset (reply, 0, sizeof (dnshost_t) * ancount);
+  reply = xcalloc (ancount, sizeof (Shishi_dns));
 
   an = 0;
   /* loop through the answer buffer and extract SRV records */
@@ -198,14 +200,14 @@ _shishi_resolv (const char *zone, unsigned int query_type)
       GETSHORT (len, scan);
 
       /* skip records we're not interested in */
-      if (type != query_type)
+      if (type != querytype)
 	{
 	  scan = (unsigned char *) (scan + len);
 	  continue;
 	}
 
       /* create a new reply structure to save it in */
-      reply[an] = (dnshost_t) xmalloc (sizeof (struct dnshost_st));
+      reply[an] = xmalloc (sizeof (reply[0]));
 
       reply[an]->type = type;
       reply[an]->class = class;
@@ -217,11 +219,11 @@ _shishi_resolv (const char *zone, unsigned int query_type)
       switch (type)
 	{
 	case T_TXT:
-	  reply[an]->rr = _txt_rr (packet, eom, &scan);
+	  reply[an]->rr = txt_rr (packet, eom, &scan);
 	  break;
 
 	case T_SRV:
-	  reply[an]->rr = _srv_rr (packet, eom, &scan);
+	  reply[an]->rr = srv_rr (packet, eom, &scan);
 	  break;
 
 	default:
@@ -242,8 +244,8 @@ _shishi_resolv (const char *zone, unsigned int query_type)
     }
 
   /* sort srv records them */
-  if (query_type == T_SRV)
-    qsort (reply, an, sizeof (dnshost_t), _srv_compare);
+  if (querytype == T_SRV)
+    qsort (reply, an, sizeof (Shishi_dns), srv_compare);
 
   /* build a linked list out of the array elements */
   for (n = 0; n < an - 1; n++)
@@ -256,11 +258,26 @@ _shishi_resolv (const char *zone, unsigned int query_type)
   return first;
 }
 
-/* free an srv structure */
-void
-_shishi_resolv_free (dnshost_t dns)
+#else
+
+Shishi_dns
+shishi_resolv (const char *zone, uint16_t querytype)
 {
-  dnshost_t next;
+  return NULL;
+}
+
+#endif
+
+/**
+ * shishi_resolv_free:
+ * @dns: list of DNS RR as returned by shishi_resolv().
+ *
+ * Deallocate list of DNS RR as returned by shishi_resolv().
+ **/
+void
+shishi_resolv_free (Shishi_dns dns)
+{
+  Shishi_dns next;
 
   while (dns != NULL)
     {
@@ -271,17 +288,3 @@ _shishi_resolv_free (dnshost_t dns)
     }
 }
 
-#else
-
-dnshost_t
-_shishi_resolv (const char *zone, unsigned int query_type)
-{
-  return NULL;
-}
-
-void
-_shishi_resolv_free (dnshost_t dns)
-{
-}
-
-#endif
