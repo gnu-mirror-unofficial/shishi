@@ -6,7 +6,9 @@ See the end for copying conditions.
 
 ** InetUtils copy removed (we send patches upstream instead).
 
-** Libidn copy removed (it is optional but recommended, used when present).
+** Libidn copy removed.
+Libidn is optional but recommended, and is used automatically when
+present.
 
 ** Gettext not included.
 Due to some conflicts between libtool and gettext, if you want i18n on
@@ -15,9 +17,14 @@ you can install GNU gettext before building this package.  If you
 don't care about i18n, this package should work fine (except for i18n,
 of course).
 
-** Libgcrypt updated (libpgp-error added in errcrypto/).
+** Low-level crypto uses nettle if libgcrypt is not installed.
+Libgcrypt is not shipped with Shishi any more, instead a more
+streamlined crypto implementation based on nettle is included.
+Specify --with-libgcrypt to use libgcrypt.
 
 ** Libtasn1 updated and replaced by "minitasn1" from gnutls.
+Specify --with-system-libtasn1 to link with the installed libtasn1, if
+you have it.
 
 ** KDC addresses are now found via DNS SRV RRs as a last resort.
 
