@@ -63,9 +63,15 @@ AC_TYPE_SIGNAL
 AC_HEADER_TIME
 AC_CHECK_DECLS(h_errno)
 AC_CHECK_TYPE([socklen_t],, [AC_DEFINE([socklen_t], [size_t],
-              [Define to `DEFAULT' if <sys/socket.h> does not define.])], [
- #ifdef HAVE_SYS_SOCKET_H
+              [Define to `size_t' if `socklen_t' is missing.])], [
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
 #endif
 ])
 
