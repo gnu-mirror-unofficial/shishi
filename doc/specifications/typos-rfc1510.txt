@@ -1,0 +1,34 @@
+To: rfc-editor@rfc-editor.org
+Subject: Typos in RFC 1510, "The Kerberos Network Authentication Service (V5)"
+From: Simon Josefsson <jas@extundo.com>
+Date: Mon, 20 May 2002 21:41:22 +0200
+Message-ID: <ilu8z6eobdp.fsf@latte.josefsson.org>
+Gcc: nnimap+yxa:INBOX.sent-mail.2002.05
+--text follows this line--
+In section 5.4.2:
+
+   EncASRepPart ::=    [APPLICATION 25[25]] EncKDCRepPart
+
+Should be:
+
+   EncASRepPart ::=    [APPLICATION 25] EncKDCRepPart
+
+In section 5.8.1:
+
+                    starttime[5]           KerberosTime OPTIONAL,
+                    endtime[6]             KerberosTime OPTIONAL
+                    renew-till[7]          KerberosTime OPTIONAL,
+
+Should be:
+
+                    starttime[5]           KerberosTime OPTIONAL,
+                    endtime[6]             KerberosTime OPTIONAL,
+                    renew-till[7]          KerberosTime OPTIONAL,
+
+In section 5.9.1:
+
+      METHOD-DATA ::=    SEQUENCE of PA-DATA
+
+Should be:
+
+      METHOD-DATA ::=    SEQUENCE OF PA-DATA

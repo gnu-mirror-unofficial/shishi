@@ -1,0 +1,40 @@
+# User configuration file for Shishi @VERSION@
+# Copyright 2002  Simon Josefsson
+# 
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+# 
+# This file is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Unless you you specify which configuration file to use (with the
+# commandline option "--configuration-file filename"), Shishi uses the
+# file $HOME/.shishi/config by default.  Note that the system
+# configuration file is read before this file.  Settings specified
+# here overrides those specified in the system configuration file.
+#
+# An option file can contain all long options which are
+# available in Shishi. If the first non white space character of
+# a line is a '#', this line is ignored.  Empty lines are also
+# ignored.
+#
+# See the manual for a list of options.
+
+# Specify the default realm, by default the hostname of the host is used.
+#default-realm JOSEFSSON.ORG
+
+# Specify the default principal, by default the login username is used.
+#default-principal jas
+
+# Enable verbose library messages
+#verbose
+
+# Enable debug library messages
+#debug
+
+# Read realm definitions (KDC address) from MIT or Heimdal configuration file
+#read-krb5conf-realms=/etc/krb5.conf
+
+#kdc localhost

@@ -1,0 +1,625 @@
+\input texinfo                  @c -*- Texinfo -*-
+@c Copyright (C) 2002 Simon Josefsson
+@c 
+@c This file is part of the shishi
+@c Permission is granted to copy, distribute and/or modify this document
+@c under the terms of the GNU Free Documentation License, Version 1.1
+@c or any later version published by the Free Software Foundation;
+@c with the Invariant Sections being with no Invariant Sections, with the
+@c no Front-Cover Texts, and with the no Back-Cover Texts.
+@c A copy of the license is included in the section entitled ``GNU
+@c Free Documentation License'' in the file 'fdl.texi'.
+@c
+@setfilename shishi.info
+@include version.texi
+@settitle The Shishi Reference Manual
+
+@c Unify some of the indices.
+@syncodeindex tp fn
+@syncodeindex pg fn
+
+@copying
+This is @cite{The Shishi Reference Manual}, last updated
+@value{UPDATED}, for Version @value{VERSION} of the @acronym{Shishi}
+library.
+     
+Copyright @copyright{} 2002 Simon Josefsson.
+     
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.1 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with the Front-Cover texts being ``A GNU Manual,''
+and with the Back-Cover Texts as in (a) below.  A copy of the license
+is included in the section entitled ``GNU Free Documentation
+License.''
+     
+(a) The FSF's Back-Cover Text is: ``You have freedom to copy and
+modify this GNU Manual, like GNU software.  Copies published by the
+Free Software Foundation raise funds for GNU development.''
+@end quotation
+@end copying
+
+@dircategory Net Utilities
+@direntry
+* shishi: (shishi)		Kerberos 5 implementation
+@end direntry
+
+@titlepage
+@title The Shishi Reference Manual
+@subtitle for version @value{VERSION}, @value{UPDATED}
+@author Simon Josefsson (@email{bug-shishi@@josefsson.org})
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+     
+@contents
+
+@ifnottex
+@node Top
+@top Shishi
+@insertcopying
+@end ifnottex
+
+@menu
+* Introduction::                How to use this manual.
+* Programming API::             How to use the library programmatically.
+* Acknowledgements::            Whom to blame.
+
+Appendices
+
+* Copying This Manual::         How you can copy and share this manual.
+* Library Copying::             How you can copy and share the library.
+* Copying::                     How you can copy and share the tools.
+
+Indices
+
+* Concept Index::               Index of concepts and programs.
+* Function and Data Index::     Index of functions, variables and data types.
+@end menu
+
+
+@node Introduction
+@chapter Introduction
+
+Shishi is a package that implements the Kerberos network security
+system.
+
+@menu
+* Getting Started::             
+* Features::                    
+* Kerberos Overview::                    
+@end menu
+
+@node Getting Started
+@section Getting Started
+
+This manual documents the Shishi application and library programming
+interface.  All commands, functions and data types provided by Shishi
+are explained.
+
+The reader is assumed to possess basic familiarity with network
+security and Kerberos.
+
+This manual can be used in several ways.  If read from the beginning
+to the end, it gives a good introduction into the library and how it
+can be used in an application.  Forward references are included where
+necessary.  Later on, the manual can be used as a reference manual to
+get just the information needed about any particular interface of the
+library.  Experienced programmers might want to start looking at the
+examples at the end of the manual, and then only read up those parts
+of the interface which are unclear.
+
+@node Features
+@section Features
+
+Shishi might have a couple of advantages over other packages doing a
+similar job.
+
+@table @asis
+@item It's Free Software
+Anybody can use, modify, and redistribute it under the terms of the GNU
+Lesser General Public License (@pxref{Library Copying}).
+
+@item It's thread-safe
+The library uses no global variables.
+
+@item It's internationalized
+It handles non-ASCII username and passwords and user visible strings
+used in the library (error messages) can be translated into the users'
+language.
+
+@item It's portable
+It should work on all Unix like operating systems, including Windows.
+
+@end table
+
+
+@node Kerberos Overview
+@section Kerberos Overview
+
+This section describes Kerberos 5 from a protocol point of
+view@footnote{The text is a lightly adapted version of the
+introduction section from RFC 1510 by J. Kohl and C. Neuman, September
+1993, unclear copyrights, but presumably owned by The Internet
+Society.}.
+
+Kerberos provides a means of verifying the identities of principals,
+(e.g., a workstation user or a network server) on an open
+(unprotected) network.  This is accomplished without relying on
+authentication by the host operating system, without basing trust on
+host addresses, without requiring physical security of all the hosts
+on the network, and under the assumption that packets traveling along
+the network can be read, modified, and inserted at will. (Note,
+however, that many applications use Kerberos' functions only upon the
+initiation of a stream-based network connection, and assume the
+absence of any "hijackers" who might subvert such a connection.  Such
+use implicitly trusts the host addresses involved.)  Kerberos performs
+authentication under these conditions as a trusted third- party
+authentication service by using conventional cryptography, i.e.,
+shared secret key.  (shared secret key - Secret and private are often
+used interchangeably in the literature.  In our usage, it takes two
+(or more) to share a secret, thus a shared DES key is a secret key.
+Something is only private when no one but its owner knows it.  Thus,
+in public key cryptosystems, one has a public and a private key.)
+
+The authentication process proceeds as follows: A client sends a
+request to the authentication server (AS) requesting "credentials" for
+a given server.  The AS responds with these credentials, encrypted in
+the client's key.  The credentials consist of 1) a "ticket" for the
+server and 2) a temporary encryption key (often called a "session
+key").  The client transmits the ticket (which contains the client's
+identity and a copy of the session key, all encrypted in the server's
+key) to the server.  The session key (now shared by the client and
+server) is used to authenticate the client, and may optionally be used
+to authenticate the server.  It may also be used to encrypt further
+communication between the two parties or to exchange a separate
+sub-session key to be used to encrypt further communication.
+
+The implementation consists of one or more authentication servers
+running on physically secure hosts.  The authentication servers
+maintain a database of principals (i.e., users and servers) and their
+secret keys. Code libraries provide encryption and implement the
+Kerberos protocol.  In order to add authentication to its
+transactions, a typical network application adds one or two calls to
+the Kerberos library, which results in the transmission of the
+necessary messages to achieve authentication.
+
+The Kerberos protocol consists of several sub-protocols (or
+exchanges).  There are two methods by which a client can ask a
+Kerberos server for credentials.  In the first approach, the client
+sends a cleartext request for a ticket for the desired server to the
+AS. The reply is sent encrypted in the client's secret key. Usually
+this request is for a ticket-granting ticket (TGT) which can later be
+used with the ticket-granting server (TGS).  In the second method, the
+client sends a request to the TGS.  The client sends the TGT to the
+TGS in the same manner as if it were contacting any other application
+server which requires Kerberos credentials.  The reply is encrypted in
+the session key from the TGT.
+
+Once obtained, credentials may be used to verify the identity of the
+principals in a transaction, to ensure the integrity of messages
+exchanged between them, or to preserve privacy of the messages.  The
+application is free to choose whatever protection may be necessary.
+
+To verify the identities of the principals in a transaction, the
+client transmits the ticket to the server.  Since the ticket is sent
+"in the clear" (parts of it are encrypted, but this encryption doesn't
+thwart replay) and might be intercepted and reused by an attacker,
+additional information is sent to prove that the message was
+originated by the principal to whom the ticket was issued.  This
+information (called the authenticator) is encrypted in the session
+key, and includes a timestamp.  The timestamp proves that the message
+was recently generated and is not a replay.  Encrypting the
+authenticator in the session key proves that it was generated by a
+party possessing the session key.  Since no one except the requesting
+principal and the server know the session key (it is never sent over
+the network in the clear) this guarantees the identity of the client.
+
+The integrity of the messages exchanged between principals can also be
+guaranteed using the session key (passed in the ticket and contained
+in the credentials).  This approach provides detection of both replay
+attacks and message stream modification attacks.  It is accomplished
+by generating and transmitting a collision-proof checksum (elsewhere
+called a hash or digest function) of the client's message, keyed with
+the session key.  Privacy and integrity of the messages exchanged
+between principals can be secured by encrypting the data to be passed
+using the session key passed in the ticket, and contained in the
+credentials.
+
+
+@c **********************************************************
+@c *****************  Programming API  **********************
+@c **********************************************************
+@node Programming API
+@chapter Programming API
+
+This chapter describes all the publicly available functions in the
+library.
+
+@menu
+* Preparation::                 What you should do before using the library.
+* Global Functions::            Functions for use in the global context.
+* Ticket Functions::            Low-level ticket manipulation functions.
+* Ticket Set Functions::        High-level ticket management functions.
+* AS/TGS Functions::            Functions to handle ticket requests to KDC.
+* Authenticator Functions::     Low-level authenticator functions.
+* AP-REQ and AP-REP Functions:: Client/Server functions.
+* Cryptographic Functions::     Low-level cryptographic functions.
+* Error Handling::              Error codes and such.
+* Examples::                    Example code.
+@end menu
+
+@node Preparation
+@section Preparation
+
+To use `Libshishi', you have to perform some changes to your sources
+and the build system.  The necessary changes are small and explained
+in the following sections.  At the end of this chapter, it is
+described how the library is initialized, and how the requirements of
+the library are verified.
+
+A faster way to find out how to adapt your application for use with
+`Libshishi' may be to look at the examples at the end of this manual
+(@pxref{Examples}).
+
+@menu
+* Header::                      
+* Initialization::               
+* Version Check::               
+* Building the source::         
+@end menu
+
+@node Header
+@subsection Header
+
+All interfaces (data types and functions) of the library are defined
+in the header file `shishi.h'.  You must include this in all programs
+using the library, either directly or through some other header file,
+like this:
+
+@example
+#include <shishi.h>
+@end example
+
+The name space of `Libshishi' is @code{shishi_*} for function names,
+@code{Shishi*} for data types and @code{SHISHI_*} for other symbols.  In
+addition the same name prefixes with one prepended underscore are
+reserved for internal use and should never be used by an application.
+
+@node Initialization
+@subsection Initialization
+
+`Libshishi' must be initialized before it can be used.  The library is
+initialized by calling @code{shishi_init()} (@pxref{Global Functions}).
+The resources allocated by the initialization process can be released
+if the application no longer has a need to call `Libshishi' functions,
+this is done by calling @code{shishi_done()}.
+
+In order to take advantage of the internationalisation features in
+`Libshishi', such as translated error messages, the application must
+set the current locale using @code{setlocale()} before initializing
+`Libshishi'.
+
+@node Version Check
+@subsection Version Check
+
+It is often desirable to check that the version of `Libshishi' used is
+indeed one which fits all requirements.  Even with binary compatibility
+new features may have been introduced but due to problem with the
+dynamic linker an old version is actually used.  So you may want to
+check that the version is okay right after program startup.
+
+@include shishi-api-version.texi
+
+@node Building the source
+@subsection Building the source
+@cindex Compiling your application
+
+If you want to compile a source file including the `shishi.h' header
+file, you must make sure that the compiler can find it in the
+directory hierarchy.  This is accomplished by adding the path to the
+directory in which the header file is located to the compilers include
+file search path (via the @option{-I} option).
+
+However, the path to the include file is determined at the time the
+source is configured.  To solve this problem, `Libshishi' ships with a small
+helper program @command{shishi-config} that knows the path to the
+include file and other configuration options.  The options that need
+to be added to the compiler invocation at compile time are output by
+the @option{--cflags} option to @command{shishi-config}.  The following
+example shows how it can be used at the command line:
+
+@example
+gcc -c foo.c `shishi-config --cflags`
+@end example
+
+Adding the output of @samp{shishi-config --cflags} to the compilers
+command line will ensure that the compiler can find the `Libshishi' header
+file.
+
+A similar problem occurs when linking the program with the library.
+Again, the compiler has to find the library files.  For this to work,
+the path to the library files has to be added to the library search path
+(via the @option{-L} option).  For this, the option @option{--libs} to
+@command{shishi-config} can be used.  For convenience, this option
+also outputs all other options that are required to link the program
+with the `Libshishi' libararies (in particular, the @samp{-lshishi}
+option).  The example shows how to link @file{foo.o} with the `Libshishi'
+library to a program @command{foo}.
+
+@example
+gcc -o foo foo.o `shishi-config --libs`
+@end example
+
+Of course you can also combine both examples to a single command by
+specifying both options to @command{shishi-config}:
+
+@example
+gcc -o foo foo.c `shishi-config --cflags --libs`
+@end example
+
+@node Global Functions
+@section Global Functions
+
+@include shishi-api-global.texi
+
+@node Ticket Functions
+@section Ticket Functions
+
+@include shishi-api-ticket.texi
+
+@node Ticket Set Functions
+@section Ticket Set Functions
+
+A ``ticket set'' is, as the name implies, a collection of tickets.
+Functions are provided to read tickets from file into a ticket set, to
+query number of tickets in the set, to extract a given ticket from the
+set, to search the ticket set for tickets matching certain criterium,
+to write the ticket set to a file, etc.
+
+@include shishi-api-ticketset.texi
+
+@node AS/TGS Functions
+@section AS/TGS Functions
+
+The Authentication Service (AS) is used to get an initial ticket using
+e.g. your password.  The Ticket Granting Service (TGS) is used to get
+subsequent tickets using other tickets.  Protocol wise the procedures
+are very similar, which is the reason they are described together.
+The following illustrates the AS-REQ, TGS-REQ and AS-REP, TGS-REP
+ASN.1 structures.  Most of the functions use the mnemonic ``KDC''
+instead of either AS or TGS, which means the function operates on both
+AS and TGS types.  Only where the distinction between AS and TGS is
+important are the AS and TGS names used.
+
+@verbatim
+-- Request --
+
+AS-REQ		::= KDC-REQ {10}
+TGS-REQ		::= KDC-REQ {12}
+
+KDC-REQ {INTEGER:tagnum}	::= [APPLICATION tagnum] SEQUENCE {
+	pvno		[1] INTEGER (5) -- first tag is [1], not [0] --,
+	msg-type	[2] INTEGER (tagnum),
+	padata		[3] SEQUENCE OF PA-DATA OPTIONAL,
+	req-body	[4] KDC-REQ-BODY
+}
+
+KDC-REQ-BODY	::= SEQUENCE {
+	kdc-options		[0] KDCOptions,
+	cname			[1] PrincipalName OPTIONAL
+				    -- Used only in AS-REQ --,
+	realm			[2] Realm
+				    -- Server's realm
+				    -- Also client's in AS-REQ --,
+	sname			[3] PrincipalName OPTIONAL,
+	from			[4] KerberosTime OPTIONAL,
+	till			[5] KerberosTime,
+	rtime			[6] KerberosTime OPTIONAL,
+	nonce			[7] UInt32,
+	etype			[8] SEQUENCE OF Int32 -- EncryptionType
+				    -- in preference order --,
+	addresses		[9] HostAddresses OPTIONAL,
+	enc-authorization-data	[10] EncryptedData {
+					AuthorizationData,
+					{ keyuse-TGSReqAuthData-sesskey
+					  | keyuse-TGSReqAuthData-subkey }
+				     } OPTIONAL,
+	additional-tickets	[11] SEQUENCE OF Ticket OPTIONAL
+}
+
+-- Reply --
+
+AS-REP		::= KDC-REP {11, EncASRepPart, {keyuse-EncASRepPart}}
+TGS-REP		::= KDC-REP {13, EncTGSRepPart,
+			{ keyuse-EncTGSRepPart-sesskey
+			  | keyuse-EncTGSRepPart-subkey }}
+
+KDC-REP {INTEGER:tagnum,
+	 TypeToEncrypt,
+	 UInt32:KeyUsages}	::= [APPLICATION tagnum] SEQUENCE {
+	pvno		[0] INTEGER (5),
+	msg-type	[1] INTEGER (tagnum),
+	padata		[2] SEQUENCE OF PA-DATA OPTIONAL,
+	crealm		[3] Realm,
+	cname		[4] PrincipalName,
+	ticket		[5] Ticket,
+	enc-part	[6] EncryptedData {TypeToEncrypt, KeyUsages}
+}
+
+EncASRepPart	::= [APPLICATION 25] EncKDCRepPart
+EncTGSRepPart	::= [APPLICATION 26] EncKDCRepPart
+
+EncKDCRepPart	::= SEQUENCE {
+	key		[0] EncryptionKey,
+	last-req	[1] LastReq,
+	nonce		[2] UInt32,
+	key-expiration	[3] KerberosTime OPTIONAL,
+	flags		[4] TicketFlags,
+	authtime	[5] KerberosTime,
+	starttime	[6] KerberosTime OPTIONAL,
+	endtime		[7] KerberosTime,
+	renew-till	[8] KerberosTime OPTIONAL,
+	srealm		[9] Realm,
+	sname		[10] PrincipalName,
+	caddr		[11] HostAddresses OPTIONAL
+}
+@end verbatim
+
+@include shishi-api-kdc.texi
+
+@node Authenticator Functions
+@section Authenticator Functions
+
+An ``Authenticator'' is a ASN.1 structure that work as a proof that an
+entity owns a ticket.  It is usually embedded in the AP-REQ structure
+(@pxref{AP-REQ and AP-REP Functions}).  The following illustrates the
+Authenticator ASN.1 structure.
+
+@verbatim
+Authenticator	::= [APPLICATION 2] SEQUENCE  {
+	authenticator-vno	[0] INTEGER (5),
+	crealm			[1] Realm,
+	cname			[2] PrincipalName,
+	cksum			[3] Checksum OPTIONAL,
+	cusec			[4] Microseconds,
+	ctime			[5] KerberosTime,
+	subkey			[6] EncryptionKey OPTIONAL,
+	seq-number		[7] UInt32 OPTIONAL,
+	authorization-data	[8] AuthorizationData OPTIONAL
+}
+@end verbatim
+
+@include shishi-api-authenticator.texi
+
+@node AP-REQ and AP-REP Functions
+@section AP-REQ and AP-REP Functions
+
+The ``AP-REQ'' and ``AP-REP'' are ASN.1 structures used by application
+client and servers to prove to each other who they are.  The
+structures contain auxilliary information, together with an
+authenticator (@pxref{Authenticator Functions}) which is the real
+cryptographic proof.  The following illustrates the AP-REQ and AP-REP
+ASN.1 structures.
+
+@verbatim
+AP-REQ		::= [APPLICATION 14] SEQUENCE {
+	pvno		[0] INTEGER (5),
+	msg-type	[1] INTEGER (14),
+	ap-options	[2] APOptions,
+	ticket		[3] Ticket,
+	authenticator	[4] EncryptedData {Authenticator,
+				{ keyuse-pa-TGSReq-authenticator
+				  | keyuse-APReq-authenticator }}
+}
+
+AP-REP		::= [APPLICATION 15] SEQUENCE {
+	pvno		[0] INTEGER (5),
+	msg-type	[1] INTEGER (15),
+	enc-part	[2] EncryptedData {EncAPRepPart,
+				{ keyuse-EncAPRepPart }}
+}
+
+EncAPRepPart	::= [APPLICATION 27] SEQUENCE {
+	ctime		[0] KerberosTime,
+	cusec		[1] Microseconds,
+	subkey		[2] EncryptionKey OPTIONAL,
+	seq-number	[3] UInt32 OPTIONAL
+}
+@end verbatim
+
+@include shishi-api-ap.texi
+
+@node Cryptographic Functions
+@section Cryptographic Functions
+
+@include shishi-api-crypto.texi
+
+@node Error Handling
+@section Error Handling
+@cindex Error Handling
+
+Most functions in `Libshishi' are returning an error if they fail.  For
+this reason, the application should always catch the error condition and
+take appropriate measures, for example by releasing the resources and
+passing the error up to the caller, or by displaying a descriptive
+message to the user and cancelling the operation.
+
+Some error values do not indicate a system error or an error in the
+operation, but the result of an operation that failed properly.
+
+@menu
+* Error values::                A list of all error values used.
+* Error strings::               How to get a descriptive string from a value.
+@end menu
+
+@node Error values
+@subsection Error values
+
+Errors are returned as an @code{int}.  Except for the OK case an
+application should always use the constants instead of their numeric
+value.  Applications are encouraged to use the constants even for OK
+as it improves readability.  Possible values are:
+
+@table @code
+@item SHISHI_OK
+This value indicates success.  The value of this error is guaranteed
+to always be @code{0}.
+
+@end table
+
+@node Error strings
+@subsection Error strings
+
+@include shishi-api-error.texi
+
+@node Examples
+@section Examples
+@cindex Examples
+
+This chapter does not contain example code which illustrate how
+`Shishi' can be used when writing your own application.
+
+@c **********************************************************
+@c *******************  Acknowledgements  *******************
+@c **********************************************************
+@node Acknowledgements
+@chapter Acknowledgements
+
+Simon Josefsson created Shishi autumn 2002.
+
+Shishi uses Libgcrypt by Werner Koch and Libtasn1 by Fabio Fiorina,
+and is inspired by their makefiles and documentation.
+
+@c **********************************************************
+@c *******************  Appendices  *************************
+@c **********************************************************
+
+@node Copying This Manual
+@appendix Copying This Manual
+
+@menu
+* GNU Free Documentation License::  License for copying this manual.
+@end menu
+
+@include fdl.texi
+
+@include lgpl.texi
+
+@include gpl.texi
+
+@node Concept Index
+@unnumbered Concept Index
+
+@printindex cp
+
+@node Function and Data Index
+@unnumbered Function and Data Index
+
+@printindex fn
+
+@summarycontents
+@contents
+@bye
