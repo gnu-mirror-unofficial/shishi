@@ -886,23 +886,23 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
   fprintf (fh, "%s:\n", buf);
 
   t = shishi_tkt_authctime (tkt);
-  fprintf (fh, _("Authtime:\t%s"), ctime (&t));
+  fprintf (fh, _("Acquired:\t%s"), ctime (&t));
 
   t = shishi_tkt_startctime (tkt);
   if (t != (time_t) - 1)
-    fprintf (fh, _("Starttime:\t%s"), ctime (&t));
+    fprintf (fh, _("Valid from:\t%s"), ctime (&t));
 
   t = shishi_tkt_endctime (tkt);
   p = ctime (&t);
   p[strlen (p) - 1] = '\0';
-  fprintf (fh, _("Endtime:\t%s"), p);
+  fprintf (fh, _("Expires:\t%s"), p);
   if (!shishi_tkt_valid_now_p (tkt))
     fprintf (fh, " (EXPIRED)");
   fprintf (fh, "\n");
 
   t = shishi_tkt_renew_tillc (tkt);
   if (t != (time_t) - 1)
-    fprintf (fh, _("Renewable until:\t%s"), ctime (&t));
+    fprintf (fh, _("Renewable till:\t%s"), ctime (&t));
 
   buflen = sizeof (buf);
   buf[0] = '\0';
