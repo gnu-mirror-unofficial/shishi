@@ -87,10 +87,7 @@ shishi_encticketpart_get_enc_part_etype (Shishi * handle,
  * shishi_encticketpart_get_key:
  * @handle: shishi handle as allocated by shishi_init().
  * @encticketpart: input EncTicketPart variable.
- * @keytype: output variable that holds key type.
- * @keyvalue: output array with key.
- * @keyvalue_len: on input, maximum size of output array with key,
- *                on output, holds the actual size of output array with key.
+ * @key: newly allocated key.
  *
  * Extract the session key in the Ticket.
  *

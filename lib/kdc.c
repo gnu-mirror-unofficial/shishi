@@ -24,7 +24,7 @@
 /**
  * shishi_as_derive_salt:
  * @handle: shishi handle as allocated by shishi_init().
- * @asrep: input AS-REP variable.
+ * @asreq: input AS-REQ variable.
  * @asrep: input AS-REP variable.
  * @salt: output array with salt.
  * @saltlen: on input, maximum size of output array with salt, on output,
@@ -185,7 +185,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 /**
  * shishi_kdc_copy_crealm:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: KDC-REQ to read crealm from.
+ * @kdcrep: KDC-REP to read crealm from.
  * @encticketpart: EncTicketPart to set crealm in.
  *
  * Set crealm in KDC-REP to value in EncTicketPart.
@@ -194,7 +194,8 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
  **/
 int
 shishi_kdc_copy_crealm (Shishi * handle,
-			Shishi_asn1 kdcrep, Shishi_asn1 encticketpart)
+			Shishi_asn1 kdcrep,
+			Shishi_asn1 encticketpart)
 {
   unsigned char buf[BUFSIZ];
   int buflen;
@@ -217,8 +218,8 @@ shishi_kdc_copy_crealm (Shishi * handle,
 /**
  * shishi_as_check_crealm:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: AS-REQ to compare realm field in.
- * @kdcrep: AS-REP to compare realm field in.
+ * @asreq: AS-REQ to compare realm field in.
+ * @asrep: AS-REP to compare realm field in.
  *
  * Verify that AS-REQ.req-body.realm and AS-REP.crealm fields matches.
  * This is one of the steps that has to be performed when processing a
@@ -267,9 +268,9 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 }
 
 /**
- * shishi_kdc_copy_crealm:
+ * shishi_kdc_copy_cname:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: KDC-REQ to read cname from.
+ * @kdcrep: KDC-REQ to read cname from.
  * @encticketpart: EncTicketPart to set cname in.
  *
  * Set cname in KDC-REP to value in EncTicketPart.
@@ -329,8 +330,8 @@ shishi_kdc_copy_cname (Shishi * handle,
 /**
  * shishi_as_check_cname:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: AS-REQ to compare client name field in.
- * @kdcrep: AS-REP to compare client name field in.
+ * @asreq: AS-REQ to compare client name field in.
+ * @asrep: AS-REP to compare client name field in.
  *
  * Verify that AS-REQ.req-body.realm and AS-REP.crealm fields matches.
  * This is one of the steps that has to be performed when processing a
@@ -513,8 +514,8 @@ shishi_kdc_check_nonce (Shishi * handle,
 /**
  * shishi_tgs_process:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: input variable that holds the sent KDC-REQ.
- * @kdcrep: input variable that holds the received KDC-REP.
+ * @tgsreq: input variable that holds the sent KDC-REQ.
+ * @tgsrep: input variable that holds the received KDC-REP.
  * @oldenckdcreppart: input variable with EncKDCRepPart used in request.
  * @enckdcreppart: output variable that holds new EncKDCRepPart.
  *
@@ -557,8 +558,8 @@ shishi_tgs_process (Shishi * handle,
 /**
  * shishi_as_process:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: input variable that holds the sent KDC-REQ.
- * @kdcrep: input variable that holds the received KDC-REP.
+ * @asreq: input variable that holds the sent KDC-REQ.
+ * @asrep: input variable that holds the received KDC-REP.
  * @string: input variable with zero terminated password.
  * @enckdcreppart: output variable that holds new EncKDCRepPart.
  *
@@ -611,9 +612,8 @@ shishi_as_process (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: input variable that holds the sent KDC-REQ.
  * @kdcrep: input variable that holds the received KDC-REP.
- * @keytype: input variable that holds type of key.
  * @key: input array with key to decrypt encrypted part of KDC-REP with.
- * @keylen: size of input array with key.
+ * @keyusage: kereros key usage value.
  * @enckdcreppart: output variable that holds new EncKDCRepPart.
  *
  * Process a KDC client exchange and output decrypted EncKDCRepPart

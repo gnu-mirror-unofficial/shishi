@@ -68,10 +68,7 @@ shishi_encasreppart (Shishi * handle)
  * shishi_enckdcreppart_get_key:
  * @handle: shishi handle as allocated by shishi_init().
  * @enckdcreppart: input EncKDCRepPart variable.
- * @keytype: output variable that holds key type.
- * @keyvalue: output array with key.
- * @keyvalue_len: on input, maximum size of output array with key,
- *                on output, holds the actual size of output array with key.
+ * @key: newly allocated encryption key handle.
  *
  * Extract the key to use with the ticket sent in the KDC-REP
  * associated with the EndKDCRepPart input variable.

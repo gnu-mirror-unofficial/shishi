@@ -104,7 +104,7 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
 
 /**
  * shishi_safe_key:
- * @ap: structure that holds information about SAFE exchange
+ * @safe: structure that holds information about SAFE exchange
  *
  * Return value: Returns the key used in the SAFE exchange, or NULL if
  *               not yet set or an error occured.
@@ -130,7 +130,7 @@ shishi_safe_key_set (Shishi_safe * safe, Shishi_key * key)
 
 /**
  * shishi_safe_safe:
- * @ap: structure that holds information about SAFE exchange
+ * @safe: structure that holds information about SAFE exchange
  *
  * Return value: Returns the ASN.1 safe in the SAFE exchange, or NULL if
  *               not yet set or an error occured.
@@ -144,7 +144,7 @@ shishi_safe_safe (Shishi_safe * safe)
 /**
  * shishi_safe_safe_set:
  * @safe: structure that holds information about SAFE exchange
- * @safe: KRB-SAFE to store in SAFE exchange.
+ * @asn1safe: KRB-SAFE to store in SAFE exchange.
  *
  * Set the KRB-SAFE in the SAFE exchange.
  **/

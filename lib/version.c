@@ -64,13 +64,14 @@ _shishi_parse_version_string (const char *s, int *major, int *minor,
  * @req_version: version string to compare with, or NULL
  *
  * Check that the the version of the library is at minimum the one
- * given as a string in @req_version and return the actual version
- * string of the library; return NULL if the condition is not met.  If
- * %NULL is passed to this function no check is done and only the
- * version string is returned.  It is a pretty good idea to run this
- * function as soon as possible, because it may also intializes some
- * subsystems.  In a multithreaded environment if should be called
- * before any more threads are created.
+ * given as a string in @req_version.
+
+ * Return value: the actual version string of the library; NULL if the
+ * condition is not met.  If %NULL is passed to this function no check
+ * is done and only the version string is returned.  It is a pretty
+ * good idea to run this function as soon as possible, because it may
+ * also intializes some subsystems.  In a multithreaded environment if
+ * should be called before any more threads are created.
  **/
 const char *
 shishi_check_version (const char *req_version)

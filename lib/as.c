@@ -98,7 +98,7 @@ shishi_as (Shishi * handle, Shishi_as ** as)
    arrays. */
 
 /**
- * shishi_as_get_asreq:
+ * shishi_as_asreq:
  * @as: structure that holds information about AS exchange
  *
  * Return value: Returns the generated AS-REQ packet from the AS
@@ -209,9 +209,12 @@ shishi_as_rep (Shishi_as * as)
 /**
  * shishi_as_rep_process:
  * @as: structure that holds information about AS exchange
+ * @key: user's key, used to encrypt the encrypted part of the AS-REP.
+ * @password: user's password, used if key is NULL.
  *
  * Process new AS-REP and set ticket.  The key is used to decrypt the
- * AP-REP.
+ * AP-REP.  If both key and password is NULL, the user is queried for
+ * it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/

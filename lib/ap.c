@@ -356,7 +356,7 @@ shishi_ap_authenticator_cksumdata (Shishi_ap * ap, char *out, int *len)
  * @ap: structure that holds information about AP exchange
  * @authenticatorcksumdata: input array with authenticator checksum
  * data to use in AP.
- * @authenticatorcksumdata: length of input array with authenticator
+ * @authenticatorcksumdatalen: length of input array with authenticator
  * checksum data to use in AP.
  *
  * Set the Authenticator Checksum Data in the AP exchange.
@@ -568,6 +568,7 @@ shishi_ap_req_build (Shishi_ap * ap)
 /**
  * shishi_ap_req_process:
  * @ap: structure that holds information about AP exchange
+ * @key: cryptographic key used to decrypt ticket in AP-REQ.
  *
  * Decrypt ticket in AP-REQ using supplied key and decrypt
  * Authenticator in AP-REQ using key in decrypted ticket, and on
@@ -778,7 +779,7 @@ shishi_ap_rep_build (Shishi_ap * ap)
 /**
  * shishi_ap_rep_asn1:
  * @ap: structure that holds information about AP exchange
- * @apreq: output AP-REP variable.
+ * @aprep: output AP-REP variable.
  *
  * Build AP-REP using shishi_ap_rep_build() and return it.
  *

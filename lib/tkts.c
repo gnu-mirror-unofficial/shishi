@@ -114,7 +114,7 @@ shishi_tkts_default (Shishi * handle)
 int
 shishi_tkts_default_to_file (Shishi_tkts * tkts)
 {
-  shishi_tkts_to_file (tkts, shishi_tkts_default_file (tkts->handle));
+  return shishi_tkts_to_file (tkts, shishi_tkts_default_file (tkts->handle));
 }
 
 /**
@@ -196,8 +196,8 @@ shishi_tkts_nth (Shishi_tkts * tkts, int ticketno)
 /**
  * shishi_tkts_remove:
  * @tkts: ticket set handle as allocated by shishi_tkts().
- * @ticketnum: ticket number of ticket in the set to remove.  The
- * first ticket is ticket number 0.
+ * @ticketno: ticket number of ticket in the set to remove.  The first
+ * ticket is ticket number 0.
  *
  * Return value: Returns SHISHI_OK if succesful or if ticketno
  * larger than size of ticket set.
@@ -236,7 +236,7 @@ shishi_tkts_remove (Shishi_tkts * tkts, int ticketno)
 /**
  * shishi_tkts_add:
  * @tkts: ticket set handle as allocated by shishi_tkts().
- * @ticket: ticket to be added to ticket set.
+ * @tkt: ticket to be added to ticket set.
  *
  * Return value: Returns SHISHI_OK iff succesful.
  **/
@@ -379,7 +379,7 @@ shishi_tkts_from_file (Shishi_tkts * tkts, const char *filename)
 /**
  * shishi_tkts_write:
  * @tkts: ticket set handle as allocated by shishi_tkts().
- * @filename: filename to write tickets to.
+ * @fh: file descriptor to write tickets to.
  *
  * Write tickets in set to file descriptor.
  *
@@ -973,7 +973,6 @@ shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
 {
   Shishi_tkt *tkt;
   Shishi_tkts_hint hint;
-  int ret;
 
   memset (&hint, 0, sizeof (hint));
   hint.client = (char *) shishi_principal_default (tkts->handle);

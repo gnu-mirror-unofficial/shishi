@@ -66,7 +66,7 @@ error:
 }
 
 /**
- * shishi_as_rep:
+ * shishi_asrep:
  * @handle: shishi handle as allocated by shishi_init().
  *
  * This function creates a new AS-REP, populated with some default
@@ -81,7 +81,7 @@ shishi_asrep (Shishi * handle)
 }
 
 /**
- * shishi_tgs_rep:
+ * shishi_tgsrep:
  * @handle: shishi handle as allocated by shishi_init().
  *
  * This function creates a new TGS-REP, populated with some default
@@ -309,7 +309,7 @@ shishi_kdcrep_cname_set (Shishi * handle,
  * shishi_kdcrep_client_set:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcrep: Kdcrep variable to set server name field in.
- * @name: zero-terminated string with principal name on RFC 1964 form.
+ * @client: zero-terminated string with principal name on RFC 1964 form.
  *
  * Set the client name field in the KDC-REP.
  *

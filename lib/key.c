@@ -113,6 +113,7 @@ shishi_key_type (Shishi_key * key)
 /**
  * shishi_key_type_set:
  * @key: structure that holds key information
+ * @type: type to set in key.
  *
  * Set the type of key in key structure.
  **/
@@ -139,7 +140,6 @@ shishi_key_value (Shishi_key * key)
  * shishi_key_value_set:
  * @key: structure that holds key information
  * @value: input array with key data.
- * @length: length of input array with key data.
  *
  * Set the key value and length in key structure.
  **/
@@ -346,6 +346,7 @@ shishi_key_from_base64 (Shishi * handle,
  * shishi_key_random
  * @handle: Shishi library handle create by shishi_init().
  * @type: type of key.
+ * @key: pointer to structure that will hold newly created key information
  *
  * Create a new Key information structure for the key type and some
  * random data.  KEY contains a newly allocated structure only if this
@@ -381,6 +382,7 @@ shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
  * @type: type of key.
  * @random: random data.
  * @randomlen: length of random data.
+ * @outkey: pointer to structure that will hold newly created key information
  *
  * Create a new Key information structure, and set the key type and
  * key value using shishi_random_to_key().  KEY contains a newly
@@ -392,15 +394,15 @@ shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
 int
 shishi_key_from_random (Shishi * handle,
 			int32_t type,
-			char *random, size_t randomlen, Shishi_key ** key)
+			char *random, size_t randomlen, Shishi_key ** outkey)
 {
   int rc;
 
-  rc = shishi_key (handle, key);
+  rc = shishi_key (handle, outkey);
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_random_to_key (handle, type, random, randomlen, *key);
+  rc = shishi_random_to_key (handle, type, random, randomlen, *outkey);
 
   return rc;
 }
@@ -414,6 +416,7 @@ shishi_key_from_random (Shishi * handle,
  * @salt: input array containing salt.
  * @saltlen: length of input array containing salt.
  * @parameter: input array with opaque encryption type specific information.
+ * @outkey: pointer to structure that will hold newly created key information
  *
  * Create a new Key information structure, and set the key type and
  * key value using shishi_string_to_key().  KEY contains a newly
@@ -427,16 +430,16 @@ shishi_key_from_string (Shishi * handle,
 			int32_t type,
 			const char *password, size_t passwordlen,
 			const char *salt, size_t saltlen,
-			const char *parameter, Shishi_key ** key)
+			const char *parameter, Shishi_key ** outkey)
 {
   int rc;
 
-  rc = shishi_key (handle, key);
+  rc = shishi_key (handle, outkey);
   if (rc != SHISHI_OK)
     return rc;
 
   rc = shishi_string_to_key (handle, type, password, passwordlen,
-			     salt, saltlen, parameter, *key);
+			     salt, saltlen, parameter, *outkey);
   if (rc != SHISHI_OK)
     return rc;
 

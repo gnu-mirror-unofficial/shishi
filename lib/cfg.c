@@ -62,6 +62,7 @@ int getsubopt (char **optionp, char *const *tokens, char **valuep);
 
 /**
  * shishi_cfg:
+ * @handle: Shishi library handle create by shishi_init().
  * @option: string with shishi library option.
  *
  * Configure shishi library with given option.
@@ -245,6 +246,7 @@ shishi_cfg (Shishi * handle, char *option)
 
 /**
  * shishi_cfg_from_file:
+ * @handle: Shishi library handle create by shishi_init().
  * @cfg: filename to read configuration from.
  *
  * Configure shishi library using configuration file.

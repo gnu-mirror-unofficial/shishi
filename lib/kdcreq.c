@@ -138,7 +138,7 @@ error:
 }
 
 /**
- * shishi_as_req:
+ * shishi_asreq:
  * @handle: shishi handle as allocated by shishi_init().
  *
  * This function creates a new AS-REQ, populated with some default
@@ -153,7 +153,7 @@ shishi_asreq (Shishi * handle)
 }
 
 /**
- * shishi_tgs_req:
+ * shishi_tgsreq:
  * @handle: shishi handle as allocated by shishi_init().
  *
  * This function creates a new TGS-REQ, populated with some default

@@ -279,7 +279,7 @@ shishi_authenticator_set_crealm (Shishi * handle,
  * @authenticator: authenticator as allocated by shishi_authenticator().
  * @name_type: type of principial, see Shishi_name_type, usually
  *             SHISHI_NT_UNKNOWN.
- * @principal: input array with principal name.
+ * @cname: input array with principal name.
  *
  * Set principal field in authenticator to specified value.
  *
@@ -304,8 +304,8 @@ shishi_authenticator_set_cname (Shishi * handle,
 /**
  * shishi_authenticator_client_set:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcrep: Authenticator to set client name field in.
- * @name: zero-terminated string with principal name on RFC 1964 form.
+ * @authenticator: Authenticator to set client name field in.
+ * @client: zero-terminated string with principal name on RFC 1964 form.
  *
  * Set the client name field in the Authenticator.
  *
@@ -520,7 +520,8 @@ shishi_authenticator_set_cksum (Shishi * handle,
  * shishi_authenticator_add_cksum:
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: authenticator as allocated by shishi_authenticator().
- * @enckdcreppart: ticket information where the key is taken from.
+ * @key: key to to use for encryption.
+ * @keyusage: kerberos key usage value to use in encryption.
  * @data: input array with data to calculate checksum on.
  * @datalen: size of input array with data to calculate checksum on.
  *

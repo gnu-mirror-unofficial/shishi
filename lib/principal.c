@@ -291,7 +291,7 @@ shishi_principal_name_realm_get (Shishi * handle,
  * @namefield: name of field in namenode containing principal name.
  * @name_type: type of principial, see Shishi_name_type, usually
  *             SHISHI_NT_UNKNOWN.
- * @sname: zero-terminated input array with principal name.
+ * @name: zero-terminated input array with principal name.
  *
  * Set the given principal name field to given name.
  *
@@ -344,6 +344,7 @@ shishi_principal_name_set (Shishi * handle,
 
 /**
  * shishi_principal_set:
+ * @handle: shishi handle as allocated by shishi_init().
  * @namenode: ASN.1 structure with principal in @namefield.
  * @namefield: name of field in namenode containing principal name.
  * @name: zero-terminated string with principal name on RFC 1964 form.

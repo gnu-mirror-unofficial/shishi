@@ -1921,9 +1921,7 @@ shishi_n_fold (Shishi * handle,
 /**
  * shishi_dr:
  * @handle: shishi handle as allocated by shishi_init().
- * @etype: cryptographic encryption type, see Shishi_etype.
  * @key: input array with cryptographic key to use.
- * @keylen: size of input array with cryptographic key.
  * @constant: input array with the constant string.
  * @constantlen: size of input array with the constant string.
  * @derivedrandom: output array with derived random data.
@@ -2024,13 +2022,10 @@ shishi_dr (Shishi * handle,
 /**
  * shishi_dk:
  * @handle: shishi handle as allocated by shishi_init().
- * @etype: cryptographic encryption type, see Shishi_etype.
- * @key: input array with cryptographic key to use.
- * @keylen: size of input array with cryptographic key.
+ * @key: input cryptographic key to use.
  * @constant: input array with the constant string.
  * @constantlen: size of input array with the constant string.
- * @derivedkey: output array with derived key.
- * @derivedkeylen: size of output array with derived key.
+ * @derivedkey: pointer to derived key (allocated by caller).
  *
  * Derive a key from a key and a constant thusly:
  * DK(KEY, CONSTANT) = SHISHI_RANDOM-TO-KEY(SHISHI_DR(KEY, CONSTANT)).

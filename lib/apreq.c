@@ -350,11 +350,12 @@ shishi_apreq_set_authenticator (Shishi * handle,
  * shishi_apreq_add_authenticator:
  * @handle: shishi handle as allocated by shishi_init().
  * @apreq: AP-REQ to add authenticator field to.
- * @enckdcreppart: ticket information where the key is taken from.
+ * @key: key to to use for encryption.
+ * @keyusage: kerberos key usage value to use in encryption.
  * @authenticator: authenticator as allocated by shishi_authenticator().
  *
- * Encrypts DER encoded authenticator using key from ticket and store
- * it in the AP-REQ.
+ * Encrypts DER encoded authenticator using key and store it in the
+ * AP-REQ.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -581,7 +582,7 @@ shishi_apreq_get_authenticator_etype (Shishi * handle,
 /**
  * shishi_apreq_get_ticket:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcrep: AP-REQ variable to get ticket from.
+ * @apreq: AP-REQ variable to get ticket from.
  * @ticket: output variable to hold extracted ticket.
  *
  * Extract ticket from AP-REQ.

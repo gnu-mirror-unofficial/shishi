@@ -175,7 +175,7 @@ shishi_ticket_srealmserver_set (Shishi * handle,
 /**
  * shishi_ticket_get_enc_part_etype:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcrep: Ticket variable to get value from.
+ * @ticket: Ticket variable to get value from.
  * @etype: output variable that holds the value.
  *
  * Extract Ticket.enc-part.etype.
