@@ -22,6 +22,8 @@
 #ifndef _CRYPTO_H
 #define _CRYPTO_H
 
+#define SHISHI_DK_CONSTANT "\x6b\x65\x72\x62\x65\x72\x6f\x73"
+
 extern int _shishi_crypto_init (Shishi * handle);
 
 int
