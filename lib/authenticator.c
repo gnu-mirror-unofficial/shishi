@@ -506,19 +506,15 @@ shishi_authenticator_set_cksum (Shishi * handle,
 				Shishi_asn1 authenticator,
 				int cksumtype, char *cksum, int cksumlen)
 {
-  char format[BUFSIZ];
   int res;
 
-  sprintf (format, "%i", cksumtype);
-  res =
-    shishi_asn1_write (handle, authenticator, "cksum.cksumtype",
-		       format, 0);
+  res = shishi_asn1_write_integer (handle, authenticator,
+				   "cksum.cksumtype", cksumtype);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res =
-    shishi_asn1_write (handle, authenticator, "cksum.checksum",
-		       cksum, cksumlen);
+  res = shishi_asn1_write (handle, authenticator, "cksum.checksum",
+			   cksum, cksumlen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
