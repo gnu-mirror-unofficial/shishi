@@ -180,7 +180,7 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
 
       if (strcasecmp (handle->stringprocess, "stringprep") == 0)
 	{
-	  rc = stringprep_profile (*s, &p, "KRBprep", 0);
+	  rc = stringprep_profile (*s, &p, "SASLprep", 0);
 	  if (rc == SHISHI_OK)
 	    {
 	      free (*s);
