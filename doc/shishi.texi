@@ -477,7 +477,8 @@ integrity protected with a keyed SHA1 hash, in HMAC mode, truncated to
 96 bits.  There is no security proof, but the schemes are assumed to
 provide adequate security in the sense that knowledge on how to crack
 them is not known to the public.  Note that AES has yet to receive the
-test of time, and the CBC variation used is not widely standardized
+test of time, and the AES cipher encryption mode (CBC with Ciphertext
+Stealing, and a non-standard IV output) is not widely standardized
 (hence not widely studied).  It is associated with the
 @code{hmac-sha1-96-aes128} and @code{hmac-sha1-96-aes256} checksums,
 respectively.
@@ -512,11 +513,11 @@ It is weak.  It is compatible with all encryption mechanisms.
 
 @item rsa-md4
 
-@code{rsa-md4} is a unkeyed MD4 hash computed over the message.  Since
-it is unkeyed, it is in general a weak checksum, however applications
-can, with care, use it non-weak ways (e.g., by including the hash in
-other messages that are encrypted or checksummed).  It is compatible
-with all encryption mechanisms.
+@code{rsa-md4} is a unkeyed MD4 hash computed over the message.  It is
+weak, because it is unkeyed.  However applications can, with care, use
+it non-weak ways (e.g., by including the hash in other messages that
+are protected by other means).  It is compatible with all encryption
+mechanisms.
 
 @item rsa-md4-des
 
@@ -529,11 +530,11 @@ mechanisms.
 
 @item rsa-md5
 
-@code{rsa-md5} is a unkeyed MD5 hash computed over the message.  Since
-it is unkeyed, it is in general a weak checksum, however applications
-can, with care, use it non-weak ways (e.g., by including the hash in
-other messages that are encrypted or checksummed).  It is compatible
-with all encryption mechanisms.
+@code{rsa-md5} is a unkeyed MD5 hash computed over the message.  It is
+weak, because it is unkeyed.  However applications can, with care, use
+it non-weak ways (e.g., by including the hash in other messages that
+are protected by other means).  It is compatible with all encryption
+mechanisms.
 
 @item rsa-md5-des
 
@@ -549,10 +550,11 @@ mechanisms.
 @code{hmac-sha1-des3-kd} is a keyed SHA1 hash in HMAC mode computed
 over the message.  The key is derived from the base protocol by the
 simplified key derivation function (similar to the password key
-derivation functions of @code{des3-cbc-sha1-kd}).  It has no security
-proof, but is assumed to provide good security, if the key derivation
-function is good.  It is compatible with the @code{des3-cbc-sha1-kd}
-encryption mechanism.
+derivation functions of @code{des3-cbc-sha1-kd}, which does not appear
+to be widely used outside Kerberos and hence not widely studied).  It
+has no security proof, but is assumed to provide good security.  The
+weakest part is likely the proprietary key derivation function.  It is
+compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
 
 @item hmac-sha1-96-aes128
 @itemx hmac-sha1-96-aes256
@@ -561,10 +563,9 @@ encryption mechanism.
 over the message and then truncated to 96 bits.  The key is derived
 from the base protocol by the simplified key derivation function
 (similar to the password key derivation functions of
-@code{des3-cbc-sha1-kd}).  It has no security proof, but is assumed to
-provide good security, if the key derivation function is good.  It is
-compatible with the @code{aes*-cts-hmac-sha1-96} encryption
-mechanisms.
+@code{aes*-cts-hmac-sha1-96}, i.e., PKCS#5).  It has no security
+proof, but is assumed to provide good security.  It is compatible with
+the @code{aes*-cts-hmac-sha1-96} encryption mechanisms.
 
 @end table
 
