@@ -1,0 +1,19 @@
+# shisa.conf --- Database configuration file for Shishi
+# Copyright 2002, 2003  Simon Josefsson
+# 
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
+#
+# An option file can contain all long options which are available in
+# Shishi. If the first non white space character of a line is a '#',
+# this line is ignored.  Empty lines are also ignored.
+#
+# See the manual for a list of options.
+
+# db <type> [location] [parameters ...]
+# Specifies the data sources to find Kerberos 5 data.
+# Currently only the "file" database type is supported.
+#
+# Examples (this is also the default if no database is specified):
+# db file /var/shishi/shisa.db
