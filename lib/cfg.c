@@ -34,7 +34,7 @@ shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
 
   for (i = 0; val = strtok_r (i == 0 ? value : NULL, ", \t", &ptrptr); i++)
     {
-      int etype = shishi_etype_parse (val);
+      int etype = shishi_cipher_parse (val);
 
       if (etype == -1)
 	fprintf (stderr, "Ignoring unknown encryption type: `%s'\n", val);
@@ -94,7 +94,7 @@ static const char *_shishi_opts[] = {
  * @option: string with shishi library option.
  *
  * Configure shishi library with option..
- * 
+ *
  * Return Value: Returns SHISHI_OK if option was valid.
  **/
 int
@@ -238,7 +238,7 @@ shishi_cfg (Shishi * handle, char *option)
  * @cfg: filename to read configuration from.
  *
  * Configure shishi library using configuration file.
- * 
+ *
  * Return Value: Returns SHISHI_OK iff succesful.
  **/
 int
@@ -295,10 +295,10 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
 }
 
 /**
- * shishi_cfg_print: 
+ * shishi_cfg_print:
  * @handle: Shishi library handle create by shishi_init().
  * @fh: file descriptor to print verbose configuration information.
- * 
+ *
  * Return Value: Returns SHISHI_OK.
  **/
 int

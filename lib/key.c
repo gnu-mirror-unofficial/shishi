@@ -87,7 +87,7 @@ shishi_key_value_set (Shishi_key * key, char *value)
  * shishi_key_version:
  * @key: structure that holds key information
  *
- * Return value: Returns the version of key.
+ * Return value: Returns the version of key ("kvno").
  **/
 int
 shishi_key_version (Shishi_key * key)
@@ -100,7 +100,7 @@ shishi_key_version (Shishi_key * key)
  * @key: structure that holds key information
  * @version: new version integer.
  *
- * Set the version of key in key structure.
+ * Set the version of key ("kvno") in key structure.
  **/
 void
 shishi_key_version_set (Shishi_key * key, int version)
@@ -111,6 +111,8 @@ shishi_key_version_set (Shishi_key * key, int version)
 /**
  * shishi_key_name:
  * @key: structure that holds key information
+ *
+ * Calls shishi_cipher_name for key type.
  *
  * Return value: Return name of key.
  **/
@@ -124,7 +126,9 @@ shishi_key_name (Shishi_key * key)
  * shishi_key_length:
  * @key: structure that holds key information
  *
- * Return value: Returns the length of the key.
+ * Calls shishi_cipher_keylen for key type.
+ *
+ * Return value: Returns the length of the key value.
  **/
 size_t
 shishi_key_length (Shishi_key * key)
@@ -193,7 +197,7 @@ shishi_key_copy (Shishi_key * dstkey, Shishi_key *srckey)
  *
  * Allocates a new key information structure and creates key based on
  * random data supplied.  KEY contains a newly allocated structure if
- * succesful.
+ * succesful.  See also shishi_random_to_key().
  *
  * Return value: Returns SHISHI_OK iff succesful.
  **/
@@ -219,7 +223,7 @@ shishi_key_from_random (Shishi *handle,
  * @password: password.
  *
  * Allocates a new key information structure and copies the supplied
- * data into it.
+ * data into it.  See also shishi_string_to_key().
  *
  * Return value: Returns newly allocated key structure, or NULL on failure.
  **/

@@ -100,6 +100,114 @@ bin7print (char *str, int len)
 }
 
 static int
+gcd (int a, int b)
+{
+  if (b == 0)
+    return a;
+  else
+    return gcd (b, a % b);
+}
+
+static int
+lcm (int a, int b)
+{
+  return a * b / gcd (a, b);
+}
+
+static int
+rot13 (Shishi * handle, unsigned char *in, unsigned char *out, int len)
+{
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("\t ;; rot 13 in:\n");
+      escapeprint (in, len);
+      hexprint (in, len);
+      puts ("");
+      binprint (in, len);
+      puts ("");
+    }
+
+  if (len == 1)
+    {
+      out[0] =
+	(in[0] >> 5) & 0x01 |
+	(in[0] >> 5) & 0x02 |
+	(in[0] >> 5) & 0x04 |
+	(in[0] << 3) & 0x08 |
+	(in[0] << 3) & 0x10 |
+	(in[0] << 3) & 0x20 | (in[0] << 3) & 0x40 | (in[0] << 3) & 0x80;
+    }
+  else if (len > 1)
+    {
+      unsigned char nexttolast, last;
+      int i;
+
+      nexttolast = in[len - 2];
+      last = in[len - 1];
+
+      for (i = len * 8 - 1; i >= 13; i--)
+	{
+	  unsigned int pos = i / 8;
+	  unsigned char mask = ~(1 << (7 - i % 8));
+	  unsigned int pos2 = (i - 13) / 8;
+	  unsigned char mask2 = (1 << (7 - (i - 13) % 8));
+
+	  out[pos] = (out[pos] & mask) |
+	    (((in[pos2] & mask2) ? 0xFF : 0x00) & ~mask);
+	}
+      out[0] = (nexttolast << 3) | (last >> 5);
+      out[1] = (in[1] & ~(0xFF & (0xFF << 3))) | (0xFF & (last << 3));
+    }
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("\t ;; rot13 out:\n");
+      escapeprint (out, len);
+      hexprint (out, len);
+      puts ("");
+      binprint (out, len);
+      puts ("");
+    }
+
+  return SHISHI_OK;
+}
+
+static int
+ocadd (unsigned char *add1, unsigned char *add2, unsigned char *sum, int len)
+{
+  int i;
+  int carry = 0;
+
+  for (i = len - 1; i >= 0; i--)
+    {
+      unsigned int tmpsum = add1[i] + add2[i];
+
+      sum[i] = 0xFF & (tmpsum + carry);
+      if ((tmpsum + carry) & ~0xFF)
+	carry = 1;
+      else
+	carry = 0;
+    }
+  if (carry)
+    {
+      int done = 0;
+
+      for (i = len - 1; i >= 0; i--)
+	if (sum[i] != 0xFF)
+	  {
+	    sum[i]++;
+	    done = 1;
+	    break;
+	  }
+
+      if (!done)
+	memset (sum, 0, len);
+    }
+
+  return SHISHI_OK;
+}
+
+static int
 simplified_hmac (Shishi * handle,
 		 Shishi_key *key,
 		 char *in,
@@ -160,12 +268,12 @@ simplified_hmac_verify (Shishi * handle,
 }
 
 typedef enum
-{
-  SHISHI_DERIVEKEYMODE_CHECKSUM,
-  SHISHI_DERIVEKEYMODE_PRIVACY,
-  SHISHI_DERIVEKEYMODE_INTEGRITY
-}
-Shishi_derivekeymode;
+  {
+    SHISHI_DERIVEKEYMODE_CHECKSUM,
+    SHISHI_DERIVEKEYMODE_PRIVACY,
+    SHISHI_DERIVEKEYMODE_INTEGRITY
+  }
+  Shishi_derivekeymode;
 
 static int
 simplified_derivekey (Shishi * handle,
@@ -455,109 +563,769 @@ simplified_checksum (Shishi * handle,
   return SHISHI_OK;
 }
 
-static int
-gcd (int a, int b)
+typedef int (*Shishi_random_to_key_function) (Shishi * handle,
+					      char *random,
+					      int randomlen,
+					      Shishi_key *outkey);
+
+typedef int (*Shishi_string_to_key_function) (Shishi * handle,
+					      char *password,
+					      int passwordlen,
+					      char *salt,
+					      int saltlen,
+					      char *parameter,
+					      Shishi_key *outkey);
+
+typedef int (*Shishi_encrypt_function) (Shishi * handle,
+					Shishi_key *key,
+					int keyusage,
+					char *in,
+					int inlen,
+					char *out,
+					int *outlen);
+
+typedef int (*Shishi_decrypt_function) (Shishi * handle,
+					Shishi_key *key,
+					int keyusage,
+					char *in,
+					int inlen,
+					char *out,
+					int *outlen);
+
+#include "crypto-null.c"
+#include "crypto-des.c"
+#include "crypto-3des.c"
+#include "crypto-aes.c"
+
+struct cipherinfo
 {
-  if (b == 0)
-    return a;
-  else
-    return gcd (b, a % b);
-}
+  int type;
+  char *name;
+  int blocksize;
+  int minpadsize;
+  int confoundersize;
+  int keylen;
+  int defaultcksumtype;
+  Shishi_random_to_key_function random2key;
+  Shishi_string_to_key_function string2key;
+  Shishi_encrypt_function encrypt;
+  Shishi_decrypt_function decrypt;
+};
+typedef struct cipherinfo cipherinfo;
 
-static int
-lcm (int a, int b)
-{
-  return a * b / gcd (a, b);
-}
+cipherinfo null_info = {
+  0,
+  "NULL",
+  1,
+  0,
+  0,
+  0,
+  SHISHI_RSA_MD5,
+  null_random_to_key,
+  null_string_to_key,
+  null_encrypt,
+  null_decrypt
+};
 
-static int
-rot13 (Shishi * handle, unsigned char *in, unsigned char *out, int len)
-{
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("\t ;; rot 13 in:\n");
-      escapeprint (in, len);
-      hexprint (in, len);
-      puts ("");
-      binprint (in, len);
-      puts ("");
-    }
+cipherinfo des_cbc_crc_info = {
+  1,
+  "des-cbc-crc",
+  8,
+  4,
+  8,
+  8,
+  SHISHI_RSA_MD5_DES,
+  des_random_to_key,
+  des_string_to_key,
+  des_crc_encrypt,
+  des_crc_decrypt
+};
 
-  if (len == 1)
-    {
-      out[0] =
-	(in[0] >> 5) & 0x01 |
-	(in[0] >> 5) & 0x02 |
-	(in[0] >> 5) & 0x04 |
-	(in[0] << 3) & 0x08 |
-	(in[0] << 3) & 0x10 |
-	(in[0] << 3) & 0x20 | (in[0] << 3) & 0x40 | (in[0] << 3) & 0x80;
-    }
-  else if (len > 1)
-    {
-      unsigned char nexttolast, last;
-      int i;
+cipherinfo des_cbc_md4_info = {
+  2,
+  "des-cbc-md4",
+  8,
+  0,
+  8,
+  8,
+  SHISHI_RSA_MD4_DES,
+  des_random_to_key,
+  des_string_to_key,
+  des_md4_encrypt,
+  des_md4_decrypt
+};
 
-      nexttolast = in[len - 2];
-      last = in[len - 1];
+cipherinfo des_cbc_md5_info = {
+  3,
+  "des-cbc-md5",
+  8,
+  0,
+  8,
+  8,
+  SHISHI_RSA_MD5_DES,
+  des_random_to_key,
+  des_string_to_key,
+  des_md5_encrypt,
+  des_md5_decrypt
+};
 
-      for (i = len * 8 - 1; i >= 13; i--)
-	{
-	  unsigned int pos = i / 8;
-	  unsigned char mask = ~(1 << (7 - i % 8));
-	  unsigned int pos2 = (i - 13) / 8;
-	  unsigned char mask2 = (1 << (7 - (i - 13) % 8));
+cipherinfo des3_cbc_sha1_kd_info = {
+  16,
+  "des3-cbc-sha1-kd",
+  8,
+  0,
+  8,
+  3 * 8,
+  SHISHI_HMAC_SHA1_DES3_KD,
+  des3_random_to_key,
+  des3_string_to_key,
+  des3_encrypt,
+  des3_decrypt
+};
 
-	  out[pos] = (out[pos] & mask) |
-	    (((in[pos2] & mask2) ? 0xFF : 0x00) & ~mask);
-	}
-      out[0] = (nexttolast << 3) | (last >> 5);
-      out[1] = (in[1] & ~(0xFF & (0xFF << 3))) | (0xFF & (last << 3));
-    }
+cipherinfo aes128_cts_hmac_sha1_96_info = {
+  17,
+  "aes128-cts-hmac-sha1-96",
+  16,
+  0,
+  16,
+  128 / 8,
+  SHISHI_HMAC_SHA1_96_AES128,
+  aes128_random_to_key,
+  aes128_string_to_key,
+  aes128_encrypt,
+  aes128_decrypt
+};
 
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("\t ;; rot13 out:\n");
-      escapeprint (out, len);
-      hexprint (out, len);
-      puts ("");
-      binprint (out, len);
-      puts ("");
-    }
+cipherinfo aes256_cts_hmac_sha1_96_info = {
+  18,
+  "aes256-cts-hmac-sha1-96",
+  16,
+  0,
+  16,
+  256 / 8,
+  SHISHI_HMAC_SHA1_96_AES256,
+  aes256_random_to_key,
+  aes256_string_to_key,
+  aes256_encrypt,
+  aes256_decrypt
+};
 
-  return SHISHI_OK;
-}
+cipherinfo *ciphers[] = {
+  &null_info,
+  &des_cbc_crc_info,
+  &des_cbc_md4_info,
+  &des_cbc_md5_info,
+  &des3_cbc_sha1_kd_info,
+  &aes128_cts_hmac_sha1_96_info,
+  &aes256_cts_hmac_sha1_96_info
+};
 
-static int
-ocadd (unsigned char *add1, unsigned char *add2, unsigned char *sum, int len)
+/**
+ * shishi_cipher_name:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return name of encryption type,
+ * e.g. "des3-cbc-sha1-kd", as defined in the standards.
+ **/
+const char *
+shishi_cipher_name (int type)
 {
   int i;
-  int carry = 0;
+  char *p;
 
-  for (i = len - 1; i >= 0; i--)
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     {
-      unsigned int tmpsum = add1[i] + add2[i];
-
-      sum[i] = 0xFF & (tmpsum + carry);
-      if ((tmpsum + carry) & ~0xFF)
-	carry = 1;
-      else
-	carry = 0;
+      if (type == ciphers[i]->type)
+	return ciphers[i]->name;
     }
-  if (carry)
-    {
-      int done = 0;
 
-      for (i = len - 1; i >= 0; i--)
-	if (sum[i] != 0xFF)
+  shishi_asprintf (&p, "unknown cipher %d", type);
+  return p;
+}
+
+/**
+ * shishi_cipher_blocksize:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return block size for encryption type, as defined in
+ * the standards.
+ **/
+int
+shishi_cipher_blocksize (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->blocksize;
+
+  return -1;
+}
+
+/**
+ * shishi_cipher_minpadsize:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return the minimum pad size for encryption type, as
+ * defined in the standards.
+ **/
+int
+shishi_cipher_minpadsize (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->minpadsize;
+
+  return -1;
+}
+
+/**
+ * shishi_cipher_confoundersize:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Returns the size of the confounder (random data) for
+ * encryption type, as defined in the standards.
+ **/
+int
+shishi_cipher_confoundersize (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->confoundersize;
+
+  return -1;
+}
+
+/**
+ * shishi_cipher_keylen:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return length of key used for the encryption type, as
+ * defined in the standards.
+ **/
+size_t
+shishi_cipher_keylen (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->keylen;
+
+  return -1;
+}
+
+/**
+ * shishi_cipher_defaultcksumtype:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return associated checksum mechanism for the
+ * encryption type, as defined in the standards.
+ **/
+int
+shishi_cipher_defaultcksumtype (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->defaultcksumtype;
+
+  return -1;
+}
+
+/**
+ * shishi_cipher_parse:
+ * @cipher: name of encryption type, e.g. "des3-cbc-sha1-kd".
+ *
+ * Return value: Return encryption type corresponding to a string.
+ **/
+int
+shishi_cipher_parse (const char *cipher)
+{
+  int i;
+  char *endptr;
+
+  i = strtol (cipher, &endptr, 0);
+
+  if (endptr != cipher)
+    return i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (strcasecmp (cipher, ciphers[i]->name) == 0)
+      return ciphers[i]->type;
+
+  return -1;
+}
+
+static Shishi_random_to_key_function
+_shishi_cipher_random_to_key (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->random2key;
+
+  return NULL;
+}
+
+static Shishi_string_to_key_function
+_shishi_cipher_string_to_key (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->string2key;
+
+  return NULL;
+}
+
+static Shishi_encrypt_function
+_shishi_cipher_encrypt (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->encrypt;
+
+  return NULL;
+}
+
+static Shishi_decrypt_function
+_shishi_cipher_decrypt (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->decrypt;
+
+  return NULL;
+}
+
+/**
+ * shishi_string_to_key:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @keytype: cryptographic encryption type, see Shishi_etype.
+ * @password: input array with password.
+ * @passwordlen: length of input array with password.
+ * @salt: input array with salt.
+ * @saltlen: length of input array with salt.
+ * @parameter: input array with opaque encryption type specific information.
+ * @outkey: allocated key handle that will contain new key.
+ *
+ * Derive key from a string (password) and salt (commonly
+ * concatenation of realm and principal) for specified key type, and
+ * set the type and value in the given key to the computed values.
+ * The parameter value is specific for each keytype, and can be set if
+ * the parameter information is not available.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_string_to_key (Shishi * handle,
+		      int keytype,
+		      char *password,
+		      int passwordlen,
+		      char *salt,
+		      int saltlen,
+		      char *parameter,
+		      Shishi_key *outkey)
+{
+  Shishi_string_to_key_function string2key;
+  int res;
+
+  shishi_key_type_set(outkey, keytype);
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("string_to_key (%s, password, salt)\n",
+	      shishi_key_name (outkey));
+      printf ("\t ;; password:\n");
+      escapeprint (password, passwordlen);
+      hexprint (password, passwordlen);
+      puts ("");
+      printf ("\t ;; salt:\n");
+      escapeprint (salt, saltlen);
+      hexprint (salt, saltlen);
+      puts ("");
+    }
+
+  string2key = _shishi_cipher_string_to_key (shishi_key_type(outkey));
+  if (string2key == NULL)
+    {
+      shishi_error_printf (handle, "Unsupported keytype %d",
+			   shishi_key_type(outkey));
+      return !SHISHI_OK;
+    }
+
+  res = (*string2key) (handle, password, passwordlen,
+		       salt, saltlen, parameter, outkey);
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("\t ;; string_to_key key:\n");
+      hexprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      puts ("");
+      binprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      puts ("");
+    }
+
+  return res;
+}
+
+/**
+ * shishi_random_to_key:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @keytype: cryptographic encryption type, see Shishi_etype.
+ * @random: input array with random data.
+ * @randomlen: length of input array with random data.
+ * @outkey: allocated key handle that will contain new key.
+ *
+ * Derive key from random data for specified key type, and set the
+ * type and value in the given key to the computed values.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_random_to_key (Shishi * handle,
+		       int keytype,
+		       char *random,
+		       int randomlen,
+		       Shishi_key *outkey)
+{
+  Shishi_random_to_key_function random2key;
+  int res;
+
+  shishi_key_type_set(outkey, keytype);
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("random_to_key (%s, random)\n", shishi_key_name (outkey));
+      printf ("\t ;; random:\n");
+      hexprint (random, randomlen);
+      puts ("");
+      binprint (random, randomlen);
+      puts ("");
+    }
+
+  random2key = _shishi_cipher_random_to_key (keytype);
+  if (random2key == NULL)
+    {
+      shishi_error_printf (handle, "Unsupported random_to_key() ekeytype %d",
+			   keytype);
+      return !SHISHI_OK;
+    }
+
+  res = (*random2key) (handle, random, randomlen, outkey);
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("\t ;; random_to_key key:\n");
+      hexprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      puts ("");
+      binprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      puts ("");
+    }
+
+  return res;
+}
+
+/**
+ * shishi_checksum:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to encrypt with.
+ * @keyusage: integer specifying what this key is encrypting.
+ * @cksumtype: the checksum algorithm to use.
+ * @in: input array with data to integrity protect.
+ * @inlen: size of input array with data to integrity protect.
+ * @out: output array with integrity protected data.
+ * @outlen: on input, holds maximum size of output array, on output,
+ *          holds actual size of output array.
+ *
+ * Integrity protect data using key, possibly altered by supplied key
+ * usage.  If key usage is 0, no key derivation is used.
+ *
+ * If OUT is NULL, this functions only set OUTLEN.  This usage may be
+ * used by the caller to allocate the proper buffer size.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_checksum (Shishi * handle,
+		 Shishi_key *key,
+		 int keyusage,
+		 int cksumtype,
+		 char *in, int inlen, char *out, int *outlen)
+{
+  int res;
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("checksum (%s, %d, in, out)\n",
+	      shishi_key_name (key), cksumtype);
+      printf ("\t ;; key (%d):\n", shishi_key_length(key));
+      hexprint (shishi_key_value(key), shishi_key_length(key));
+      puts ("");
+      printf ("\t ;; in:\n");
+      escapeprint (in, inlen);
+      hexprint (in, inlen);
+      puts ("");
+    }
+
+  if (cksumtype == 0)
+    cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type(key));
+
+  switch (cksumtype)
+    {
+    case SHISHI_RSA_MD4_DES:
+      {
+	char buffer[BUFSIZ];
+	int buflen;
+	char *keyp;
+	int i;
+
+	buflen = sizeof (buffer);
+	res = checksum_md4 (handle, buffer, &buflen, in, inlen);
+	if (res != SHISHI_OK)
 	  {
-	    sum[i]++;
-	    done = 1;
-	    break;
+	    shishi_error_set (handle, "checksum failed");
+	    return res;
 	  }
 
-      if (!done)
-	memset (sum, 0, len);
+	keyp = shishi_key_value(key);
+
+	for (i = 0; i < 8; i++)
+	  keyp[i] ^= 0xF0;
+
+	res = simplified_dencrypt (handle, key, buffer, buflen,
+				   out, outlen, 0);
+
+	for (i = 0; i < 8; i++)
+	  keyp[i] ^= 0xF0;
+
+	if (res != SHISHI_OK)
+	  {
+	    shishi_error_set (handle, "encrypt failed");
+	    return res;
+	  }
+      }
+      break;
+
+    case SHISHI_RSA_MD5_DES:
+      {
+	char buffer[BUFSIZ];
+	int buflen;
+	char *keyp;
+	int i;
+
+	buflen = sizeof (buffer);
+	res = checksum_md5 (handle, buffer, &buflen, in, inlen);
+	if (res != SHISHI_OK)
+	  {
+	    shishi_error_set (handle, "checksum failed");
+	    return res;
+	  }
+
+	keyp = shishi_key_value(key);
+
+	for (i = 0; i < 8; i++)
+	  keyp[i] ^= 0xF0;
+
+	res = simplified_dencrypt (handle, key, buffer, buflen,
+				   out, outlen, 0);
+
+	for (i = 0; i < 8; i++)
+	  keyp[i] ^= 0xF0;
+
+	if (res != SHISHI_OK)
+	  {
+	    shishi_error_set (handle, "encrypt failed");
+	    return res;
+	  }
+      }
+      break;
+
+    case SHISHI_HMAC_SHA1_DES3_KD:
+      res = simplified_checksum(handle, key, keyusage, in, inlen, out, outlen);
+      break;
+
+    default:
+      res = !SHISHI_OK;
+      printf ("unimplemented checksum type!\n");
+      break;
+    }
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("\t ;; checksum out:\n");
+      escapeprint (out, *outlen);
+      hexprint (out, *outlen);
+      puts ("");
+    }
+
+  return res;
+}
+
+/**
+ * shishi_encrypt:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to encrypt with.
+ * @keyusage: integer specifying what this key is encrypting.
+ * @in: input array with data to encrypt.
+ * @inlen: size of input array with data to encrypt.
+ * @out: output array with encrypted data.
+ * @outlen: on input, holds maximum size of output array, on output,
+ *          holds actual size of output array.
+ *
+ * Encrypts data using key, possibly altered by supplied key usage.
+ * If key usage is 0, no key derivation is used.
+ *
+ * If OUT is NULL, this functions only set OUTLEN.  This usage may be
+ * used by the caller to allocate the proper buffer size.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_encrypt (Shishi * handle,
+		Shishi_key *key,
+		int keyusage,
+		char *in, int inlen,
+		char *out, int *outlen)
+{
+  Shishi_encrypt_function encrypt;
+  int res;
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("encrypt (type=%s, usage=%d, key, in)\n",
+	      shishi_key_name (key), keyusage);
+      printf ("\t ;; key (%d):\n", shishi_key_length(key));
+      hexprint (shishi_key_value(key), shishi_key_length(key));
+      puts ("");
+      printf ("\t ;; in (%d):\n", inlen);
+      escapeprint (in, inlen);
+      hexprint (in, inlen);
+      puts ("");
+    }
+
+  encrypt = _shishi_cipher_encrypt (shishi_key_type(key));
+  if (encrypt == NULL)
+    {
+      shishi_error_printf (handle, "Unsupported keytype %d",
+			   shishi_key_type(key));
+      return !SHISHI_OK;
+    }
+
+  res = (*encrypt) (handle, key, keyusage, in, inlen, out, outlen);
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("\t ;; encrypt out:\n");
+      escapeprint (out, *outlen);
+      hexprint (out, *outlen);
+      puts ("");
+    }
+
+  return res;
+}
+
+/**
+ * shishi_decrypt:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to decrypt with.
+ * @keyusage: integer specifying what this key is decrypting.
+ * @in: input array with data to decrypt.
+ * @inlen: size of input array with data to decrypt.
+ * @out: output array with decrypted data.
+ * @outlen: on input, holds maximum size of output array, on output,
+ *          holds actual size of output array.
+ *
+ * Decrypts data using key, possibly altered by supplied key usage.
+ * If key usage is 0, no key derivation is used.
+ *
+ * If OUT is NULL, this functions only set OUTLEN.  This usage may be
+ * used by the caller to allocate the proper buffer size.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_decrypt (Shishi * handle,
+		Shishi_key *key,
+		int keyusage,
+		char *in, int inlen,
+		char *out, int *outlen)
+{
+  Shishi_decrypt_function decrypt;
+  int res;
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("decrypt (type=%s, usage=%d, key, in, out)\n",
+	      shishi_key_name (key), keyusage);
+      printf ("\t ;; key (%d):\n", shishi_key_length(key));
+      hexprint (shishi_key_value(key), shishi_key_length(key));
+      puts ("");
+      printf ("\t ;; in (%d):\n", inlen);
+      escapeprint (in, inlen);
+      hexprint (in, inlen);
+      puts ("");
+    }
+
+  decrypt = _shishi_cipher_decrypt (shishi_key_type(key));
+  if (decrypt == NULL)
+    {
+      shishi_error_printf (handle, "Unsupported keytype %d",
+			   shishi_key_type(key));
+      return !SHISHI_OK;
+    }
+
+  res = (*decrypt) (handle, key, keyusage, in, inlen, out, outlen);
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("\t ;; decrypt out:\n");
+      escapeprint (out, *outlen);
+      hexprint (out, *outlen);
+      puts ("");
+    }
+
+  return res;
+}
+
+/**
+ * shishi_randomize:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @data: output array to be filled with random data.
+ * @datalen: size of output array.
+ *
+ * Store cryptographically strong random data of given size in the
+ * provided buffer.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_randomize (Shishi * handle, char *data, int datalen)
+{
+  char tmp[BUFSIZ];
+
+  memcpy (data, tmp, datalen < BUFSIZ ? datalen : BUFSIZ);
+
+  gcry_randomize (data, datalen, GCRY_WEAK_RANDOM);
+
+  if (datalen > 0 &&
+      memcmp (data, tmp, datalen < BUFSIZ ? datalen : BUFSIZ) == 0)
+    {
+      shishi_error_set (handle, "No random data collected.");
+      return SHISHI_GCRYPT_ERROR;
     }
 
   return SHISHI_OK;
@@ -594,13 +1362,13 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
   int k = 0;
 
   /*
-     To n-fold a number X, replicate the input value to a length that is
-     the least common multiple of n and the length of X. Before each
-     repetition, the input is rotated to the right by 13 bit
-     positions. The successive n-bit chunks are added together using
-     1's-complement addition (that is, addition with end-around carry)
-     to yield a n-bit result denoted <X>_n.
-   */
+    To n-fold a number X, replicate the input value to a length that is
+    the least common multiple of n and the length of X. Before each
+    repetition, the input is rotated to the right by 13 bit
+    positions. The successive n-bit chunks are added together using
+    1's-complement addition (that is, addition with end-around carry)
+    to yield a n-bit result denoted <X>_n.
+  */
 
   a = (char *) malloc (m);
   if (a == NULL)
@@ -867,753 +1635,6 @@ shishi_dk (Shishi * handle,
 			      derivedkey);
   if (res != SHISHI_OK)
     return res;
-
-  return SHISHI_OK;
-}
-
-#include "crypto-null.c"
-#include "crypto-des.c"
-#include "crypto-3des.c"
-#include "crypto-aes.c"
-
-typedef int (*Shishi_random_to_key_function) (Shishi * handle,
-					      char *random,
-					      int randomlen,
-					      Shishi_key *outkey);
-
-typedef int (*Shishi_string_to_key_function) (Shishi * handle,
-					      char *password,
-					      int passwordlen,
-					      char *salt,
-					      int saltlen,
-					      char *parameter,
-					      Shishi_key *outkey);
-
-typedef int (*Shishi_encrypt_function) (Shishi * handle,
-					Shishi_key *key,
-					int keyusage,
-					char *in,
-					int inlen,
-					char *out,
-					int *outlen);
-
-typedef int (*Shishi_decrypt_function) (Shishi * handle,
-					Shishi_key *key,
-					int keyusage,
-					char *in,
-					int inlen,
-					char *out,
-					int *outlen);
-
-struct cipherinfo
-{
-  int type;
-  char *name;
-  int blocksize;
-  int minpadsize;
-  int confoundersize;
-  int keylen;
-  int defaultcksumtype;
-  Shishi_random_to_key_function random2key;
-  Shishi_string_to_key_function string2key;
-  Shishi_encrypt_function encrypt;
-  Shishi_decrypt_function decrypt;
-};
-typedef struct cipherinfo cipherinfo;
-
-cipherinfo null_info = {
-  0,
-  "NULL",
-  1,
-  0,
-  0,
-  0,
-  SHISHI_RSA_MD5,
-  null_random_to_key,
-  null_string_to_key,
-  null_encrypt,
-  null_decrypt
-};
-
-cipherinfo des_cbc_crc_info = {
-  1,
-  "des-cbc-crc",
-  8,
-  4,
-  8,
-  8,
-  SHISHI_RSA_MD5_DES,
-  des_random_to_key,
-  des_string_to_key,
-  des_crc_encrypt,
-  des_crc_decrypt
-};
-
-cipherinfo des_cbc_md4_info = {
-  2,
-  "des-cbc-md4",
-  8,
-  0,
-  8,
-  8,
-  SHISHI_RSA_MD4_DES,
-  des_random_to_key,
-  des_string_to_key,
-  des_md4_encrypt,
-  des_md4_decrypt
-};
-
-cipherinfo des_cbc_md5_info = {
-  3,
-  "des-cbc-md5",
-  8,
-  0,
-  8,
-  8,
-  SHISHI_RSA_MD5_DES,
-  des_random_to_key,
-  des_string_to_key,
-  des_md5_encrypt,
-  des_md5_decrypt
-};
-
-cipherinfo des3_cbc_sha1_kd_info = {
-  16,
-  "des3-cbc-sha1-kd",
-  8,
-  0,
-  8,
-  3 * 8,
-  SHISHI_HMAC_SHA1_DES3_KD,
-  des3_random_to_key,
-  des3_string_to_key,
-  des3_encrypt,
-  des3_decrypt
-};
-
-cipherinfo aes128_cts_hmac_sha1_96_info = {
-  17,
-  "aes128-cts-hmac-sha1-96",
-  16,
-  0,
-  16,
-  128 / 8,
-  SHISHI_HMAC_SHA1_96_AES128,
-  aes128_random_to_key,
-  aes128_string_to_key,
-  aes128_encrypt,
-  aes128_decrypt
-};
-
-cipherinfo aes256_cts_hmac_sha1_96_info = {
-  18,
-  "aes256-cts-hmac-sha1-96",
-  16,
-  0,
-  16,
-  256 / 8,
-  SHISHI_HMAC_SHA1_96_AES256,
-  aes256_random_to_key,
-  aes256_string_to_key,
-  aes256_encrypt,
-  aes256_decrypt
-};
-
-cipherinfo *ciphers[] = {
-  &null_info,
-  &des_cbc_crc_info,
-  &des_cbc_md4_info,
-  &des_cbc_md5_info,
-  &des3_cbc_sha1_kd_info,
-  &aes128_cts_hmac_sha1_96_info,
-  &aes256_cts_hmac_sha1_96_info
-};
-
-/**
- * shishi_cipher_name:
- * @type: encryption type, see Shishi_etype.
- *
- * Return name of encryption type, e.g. "des3-cbc-sha1-kd".
- **/
-const char *
-shishi_cipher_name (int type)
-{
-  int i;
-  char *p;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    {
-      if (type == ciphers[i]->type)
-	return ciphers[i]->name;
-    }
-
-  shishi_asprintf (&p, "unknown cipher %d", type);
-  return p;
-}
-
-int
-shishi_cipher_blocksize (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->blocksize;
-
-  return -1;
-}
-
-int
-shishi_cipher_minpadsize (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->minpadsize;
-
-  return -1;
-}
-
-int
-shishi_cipher_confoundersize (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->confoundersize;
-
-  return -1;
-}
-
-/**
- * shishi_cipher_keylen:
- * @type: encryption type, see Shishi_etype.
- *
- * Return length of key used in the encryption type.
- **/
-size_t
-shishi_cipher_keylen (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->keylen;
-
-  return -1;
-}
-
-/**
- * shishi_cipher_defaultcksumtype:
- * @type: encryption type, see Shishi_etype.
- *
- * Return associated checksum mechanism for the encryption type.
- **/
-int
-shishi_cipher_defaultcksumtype (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->defaultcksumtype;
-
-  return -1;
-}
-
-static Shishi_random_to_key_function
-_shishi_cipher_random_to_key (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->random2key;
-
-  return NULL;
-}
-
-static Shishi_string_to_key_function
-_shishi_cipher_string_to_key (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->string2key;
-
-  return NULL;
-}
-
-static Shishi_encrypt_function
-_shishi_cipher_encrypt (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->encrypt;
-
-  return NULL;
-}
-
-static Shishi_decrypt_function
-_shishi_cipher_decrypt (int type)
-{
-  int i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (type == ciphers[i]->type)
-      return ciphers[i]->decrypt;
-
-  return NULL;
-}
-
-/**
- * shishi_etype_parse:
- * @cipher: name of encryption type, e.g. "des3-cbc-sha1-kd".
- *
- * Return encryption type corresponding to a string.
- **/
-int
-shishi_etype_parse (char *cipher)
-{
-  int i;
-  char *endptr;
-
-  i = strtol (cipher, &endptr, 0);
-
-  if (endptr != cipher)
-    return i;
-
-  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
-    if (strcasecmp (cipher, ciphers[i]->name) == 0)
-      return ciphers[i]->type;
-
-  return -1;
-}
-
-
-/**
- * shishi_string_to_key:
- * @handle: shishi handle as allocated by shishi_init().
- * @etype: cryptographic encryption type, see Shishi_etype.
- * @password: input array with password.
- * @passwordlen: length of input array with password.
- * @parameter: input array with opaque encryption type specific information.
- * @outkey: output array with key.
- * @outkeylen: on input, holds maximum size of output array, on output
- *             holds actual size of output array.
- *
- * Convert a string (password) and some salt (realm and principal)
- * into a cryptographic key.  The parameter can be, and often is, NULL.
- *
- * If OUTKEY is NULL, this functions only set OUTKEYLEN.  This usage
- * may be used by the caller to allocate the proper buffer size.
- *
- * Return value: Returns %SHISHI_OK iff successful.
- **/
-int
-shishi_string_to_key (Shishi * handle,
-		      int keytype,
-		      char *password,
-		      int passwordlen,
-		      char *salt,
-		      int saltlen,
-		      char *parameter,
-		      Shishi_key *outkey)
-{
-  Shishi_string_to_key_function string2key;
-  int res;
-
-  shishi_key_type_set(outkey, keytype);
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("string_to_key (%s, password, salt)\n",
-	      shishi_key_name (outkey));
-      printf ("\t ;; password:\n");
-      escapeprint (password, passwordlen);
-      hexprint (password, passwordlen);
-      puts ("");
-      printf ("\t ;; salt:\n");
-      escapeprint (salt, saltlen);
-      hexprint (salt, saltlen);
-      puts ("");
-    }
-
-  string2key = _shishi_cipher_string_to_key (shishi_key_type(outkey));
-  if (string2key == NULL)
-    {
-      shishi_error_printf (handle, "Unsupported keytype %d",
-			   shishi_key_type(outkey));
-      return !SHISHI_OK;
-    }
-
-  res = (*string2key) (handle, password, passwordlen,
-		       salt, saltlen, parameter, outkey);
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("\t ;; string_to_key key:\n");
-      hexprint (shishi_key_value(outkey), shishi_key_length(outkey));
-      puts ("");
-      binprint (shishi_key_value(outkey), shishi_key_length(outkey));
-      puts ("");
-    }
-
-  return res;
-}
-
-/**
- * shishi_random_to_key:
- * @handle: shishi handle as allocated by shishi_init().
- * @keytype: cryptographic encryption type, see Shishi_etype.
- * @random: input array with random data.
- * @randomlen: length of input array with random data.
- * @outkey: output array with key.
- * @outkeylen: on input, holds maximum size of output array, on output
- *             holds actual size of output array.
- *
- * Convert random data into a cryptographic key.
- *
- * If OUTKEY is NULL, this functions only set OUTKEYLEN.  This usage
- * may be used by the caller to allocate the proper buffer size.
- *
- * Return value: Returns %SHISHI_OK iff successful.
- **/
-int
-shishi_random_to_key (Shishi * handle,
-		       int keytype,
-		       char *random,
-		       int randomlen,
-		       Shishi_key *outkey)
-{
-  Shishi_random_to_key_function random2key;
-  int res;
-
-  shishi_key_type_set(outkey, keytype);
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("random_to_key (%s, random)\n", shishi_key_name (outkey));
-      printf ("\t ;; random:\n");
-      hexprint (random, randomlen);
-      puts ("");
-      binprint (random, randomlen);
-      puts ("");
-    }
-
-  random2key = _shishi_cipher_random_to_key (keytype);
-  if (random2key == NULL)
-    {
-      shishi_error_printf (handle, "Unsupported random_to_key() ekeytype %d",
-			   keytype);
-      return !SHISHI_OK;
-    }
-
-  res = (*random2key) (handle, random, randomlen, outkey);
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("\t ;; random_to_key key:\n");
-      hexprint (shishi_key_value(outkey), shishi_key_length(outkey));
-      puts ("");
-      binprint (shishi_key_value(outkey), shishi_key_length(outkey));
-      puts ("");
-    }
-
-  return res;
-}
-
-/**
- * shishi_checksum:
- * @handle: shishi handle as allocated by shishi_init().
- * @key: key to encrypt with.
- * @keyusage: integer specifying what this key is encrypting.
- * @cksumtype: the checksum algorithm to use.
- * @out: output array with integrity protected data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
- * @in: input array with data to integrity protect.
- * @inlen: size of input array with data to integrity protect.
- * @key: input array with cryptographic key to use.
- * @keylen: size of input array with cryptographic key.
- *
- * Integrity protect data using a cryptographic checksum suite.
- *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
- *
- * Return value: Returns %SHISHI_OK iff successful.
- **/
-int
-shishi_checksum (Shishi * handle,
-		 Shishi_key *key,
-		 int keyusage,
-		 int cksumtype,
-		 char *in, int inlen, char *out, int *outlen)
-{
-  int res;
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("checksum (%s, %d, in, out)\n",
-	      shishi_key_name (key), cksumtype);
-      printf ("\t ;; key (%d):\n", shishi_key_length(key));
-      hexprint (shishi_key_value(key), shishi_key_length(key));
-      puts ("");
-      printf ("\t ;; in:\n");
-      escapeprint (in, inlen);
-      hexprint (in, inlen);
-      puts ("");
-    }
-
-  if (cksumtype == 0)
-    cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type(key));
-
-  switch (cksumtype)
-    {
-    case SHISHI_RSA_MD4_DES:
-      {
-	char buffer[BUFSIZ];
-	int buflen;
-	char *keyp;
-	int i;
-
-	buflen = sizeof (buffer);
-	res = checksum_md4 (handle, buffer, &buflen, in, inlen);
-	if (res != SHISHI_OK)
-	  {
-	    shishi_error_set (handle, "checksum failed");
-	    return res;
-	  }
-
-	keyp = shishi_key_value(key);
-
-	for (i = 0; i < 8; i++)
-	  keyp[i] ^= 0xF0;
-
-	res = simplified_dencrypt (handle, key, buffer, buflen,
-				   out, outlen, 0);
-
-	for (i = 0; i < 8; i++)
-	  keyp[i] ^= 0xF0;
-
-	if (res != SHISHI_OK)
-	  {
-	    shishi_error_set (handle, "encrypt failed");
-	    return res;
-	  }
-      }
-      break;
-
-    case SHISHI_RSA_MD5_DES:
-      {
-	char buffer[BUFSIZ];
-	int buflen;
-	char *keyp;
-	int i;
-
-	buflen = sizeof (buffer);
-	res = checksum_md5 (handle, buffer, &buflen, in, inlen);
-	if (res != SHISHI_OK)
-	  {
-	    shishi_error_set (handle, "checksum failed");
-	    return res;
-	  }
-
-	keyp = shishi_key_value(key);
-
-	for (i = 0; i < 8; i++)
-	  keyp[i] ^= 0xF0;
-
-	res = simplified_dencrypt (handle, key, buffer, buflen,
-				   out, outlen, 0);
-
-	for (i = 0; i < 8; i++)
-	  keyp[i] ^= 0xF0;
-
-	if (res != SHISHI_OK)
-	  {
-	    shishi_error_set (handle, "encrypt failed");
-	    return res;
-	  }
-      }
-      break;
-
-    case SHISHI_HMAC_SHA1_DES3_KD:
-      res = simplified_checksum(handle, key, keyusage, in, inlen, out, outlen);
-      break;
-
-    default:
-      res = !SHISHI_OK;
-      printf ("unimplemented checksum type!\n");
-      break;
-    }
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("\t ;; checksum out:\n");
-      escapeprint (out, *outlen);
-      hexprint (out, *outlen);
-      puts ("");
-    }
-
-  return res;
-}
-
-/**
- * shishi_encrypt:
- * @handle: shishi handle as allocated by shishi_init().
- * @key: key to encrypt with.
- * @keyusage: integer specifying what this key is encrypting.
- * @out: output array with encrypted data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
- * @in: input array with data to encrypt.
- * @inlen: size of input array with data to encrypt.
- *
- * Encrypts data using a cryptographic encryption suite.
- *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
- *
- * Return value: Returns %SHISHI_OK iff successful.
- **/
-int
-shishi_encrypt (Shishi * handle,
-		Shishi_key *key,
-		int keyusage,
-		char *in, int inlen,
-		char *out, int *outlen)
-{
-  Shishi_encrypt_function encrypt;
-  int res;
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("encrypt (type=%s, usage=%d, key, in)\n",
-	      shishi_key_name (key), keyusage);
-      printf ("\t ;; key (%d):\n", shishi_key_length(key));
-      hexprint (shishi_key_value(key), shishi_key_length(key));
-      puts ("");
-      printf ("\t ;; in (%d):\n", inlen);
-      escapeprint (in, inlen);
-      hexprint (in, inlen);
-      puts ("");
-    }
-
-  encrypt = _shishi_cipher_encrypt (shishi_key_type(key));
-  if (encrypt == NULL)
-    {
-      shishi_error_printf (handle, "Unsupported keytype %d",
-			   shishi_key_type(key));
-      return !SHISHI_OK;
-    }
-
-  res = (*encrypt) (handle, key, keyusage, in, inlen, out, outlen);
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("\t ;; encrypt out:\n");
-      escapeprint (out, *outlen);
-      hexprint (out, *outlen);
-      puts ("");
-    }
-
-  return res;
-}
-
-/**
- * shishi_decrypt:
- * @handle: shishi handle as allocated by shishi_init().
- * @key: key to decrypt with.
- * @keyusage: integer specifying what this key is decrypting.
- * @out: output array with decrypted data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
- * @in: input array with data to decrypt.
- * @inlen: size of input array with data to decrypt.
- *
- * Decrypts data using a cryptographic encryption suite.
- *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
- *
- * Return value: Returns %SHISHI_OK iff successful.
- **/
-int
-shishi_decrypt (Shishi * handle,
-		Shishi_key *key,
-		int keyusage,
-		char *in, int inlen,
-		char *out, int *outlen)
-{
-  Shishi_decrypt_function decrypt;
-  int res;
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("decrypt (type=%s, usage=%d, key, in, out)\n",
-	      shishi_key_name (key), keyusage);
-      printf ("\t ;; key (%d):\n", shishi_key_length(key));
-      hexprint (shishi_key_value(key), shishi_key_length(key));
-      puts ("");
-      printf ("\t ;; in (%d):\n", inlen);
-      escapeprint (in, inlen);
-      hexprint (in, inlen);
-      puts ("");
-    }
-
-  decrypt = _shishi_cipher_decrypt (shishi_key_type(key));
-  if (decrypt == NULL)
-    {
-      shishi_error_printf (handle, "Unsupported keytype %d",
-			   shishi_key_type(key));
-      return !SHISHI_OK;
-    }
-
-  res = (*decrypt) (handle, key, keyusage, in, inlen, out, outlen);
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("\t ;; decrypt out:\n");
-      escapeprint (out, *outlen);
-      hexprint (out, *outlen);
-      puts ("");
-    }
-
-  return res;
-}
-
-/**
- * shishi_randomize:
- * @handle: shishi handle as allocated by shishi_init().
- * @data: output array to be filled with random data.
- * @datalen: size of output array.
- *
- * Store cryptographically strong random data in the provided buffer.
- *
- * Return value: Returns %SHISHI_OK iff successful.
- **/
-int
-shishi_randomize (Shishi * handle, char *data, int datalen)
-{
-  char tmp[BUFSIZ];
-
-  memcpy (data, tmp, datalen < BUFSIZ ? datalen : BUFSIZ);
-
-  gcry_randomize (data, datalen, GCRY_WEAK_RANDOM);
-
-  if (datalen > 0 &&
-      memcmp (data, tmp, datalen < BUFSIZ ? datalen : BUFSIZ) == 0)
-    {
-      shishi_error_set (handle, "No random data collected.");
-      return SHISHI_GCRYPT_ERROR;
-    }
 
   return SHISHI_OK;
 }

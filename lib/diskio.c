@@ -759,6 +759,21 @@ _shishi_krberror_input (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_key_print:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @fh: file handle opened for writing.
+ * @key: key to print.
+ * @clientname: optional string representation of name
+ *              of principal owning key.
+ * @realm:  optional string representation of realm
+ *          of principal owning key.
+ *
+ * Print an ASCII representation of a key structure to file
+ * descriptor.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_key_print (Shishi * handle, FILE * fh, Shishi *key,
 		  char *clientname, char *realm)
@@ -796,6 +811,21 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi *key,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_key_to_file:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @filename: filename to append key to.
+ * @key: key to print.
+ * @clientname: optional string representation of name
+ *              of principal owning key.
+ * @realm:  optional string representation of realm
+ *          of principal owning key.
+ *
+ * Print an ASCII representation of a key structure to a file.  The
+ * file is appended to if it exists.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_key_to_file (Shishi * handle, char *filename, Shishi *key,
 		    char *clientname, char *realm)
@@ -823,4 +853,3 @@ shishi_key_to_file (Shishi * handle, char *filename, Shishi *key,
 
   return SHISHI_OK;
 }
-

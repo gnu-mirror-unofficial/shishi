@@ -22,6 +22,8 @@
 #include "internal.h"
 #include <gcrypt.h>
 
+#define WARNSTR "libshishi: warning: "
+
 #if ENABLE_NLS
 char *
 _shishi_gettext (const char *str)
@@ -155,16 +157,22 @@ _shishi_init_read (Shishi * handle,
   if (*ticketsetfile)
     rc =
       shishi_ticketset_from_file (handle, handle->ticketset, ticketsetfile);
+  if (rc == SHISHI_FOPEN_ERROR)
+    fprintf (stderr, WARNSTR "%s: %s\n", ticketsetfile, strerror(errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
   if (*systemcfgfile)
     rc = shishi_cfg_from_file (handle, systemcfgfile);
+  if (rc == SHISHI_FOPEN_ERROR)
+    fprintf (stderr, WARNSTR "%s: %s\n", systemcfgfile, strerror(errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
   if (*usercfgfile)
     rc = shishi_cfg_from_file (handle, usercfgfile);
+  if (rc == SHISHI_FOPEN_ERROR)
+    fprintf (stderr, WARNSTR "%s: %s\n", usercfgfile, strerror(errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
@@ -230,7 +238,7 @@ shishi_warn (Shishi * handle, char *fmt, ...)
   va_start (ap, fmt);
   if (VERBOSE (handle))
     {
-      fprintf (stderr, "libshishi: warning: ");
+      fprintf (stderr, WARNSTR);
       vfprintf (stderr, fmt, ap);
       fprintf (stderr, "\n");
     }

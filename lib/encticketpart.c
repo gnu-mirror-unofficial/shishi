@@ -26,9 +26,9 @@
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcrep: Ticket variable to get value from.
  * @etype: output variable that holds the value.
- * 
+ *
  * Extract Ticket.enc-part.etype.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -54,9 +54,9 @@ shishi_encticketpart_get_enc_part_etype (Shishi * handle,
  * @keyvalue: output array with key.
  * @keyvalue_len: on input, maximum size of output array with key,
  *                on output, holds the actual size of output array with key.
- * 
+ *
  * Extract the session key in the Ticket.
- * 
+ *
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int

@@ -530,8 +530,20 @@ extern int shishi_cipher_blocksize (int type);
 extern int shishi_cipher_minpadsize (int type);
 extern int shishi_cipher_confoundersize (int type);
 extern size_t shishi_cipher_keylen (int type);
-extern int shishi_etype_parse (char *cipher);
-extern int shishi_randomize (Shishi * handle, char *data, int datalen);
+extern int shishi_cipher_parse (const char *cipher);
+extern int shishi_string_to_key (Shishi * handle,
+				 int keytype,
+				 char *password,
+				 int passwordlen,
+				 char *salt,
+				 int saltlen,
+				 char *parameter,
+				 Shishi_key *outkey);
+extern int shishi_random_to_key (Shishi * handle,
+				 int keytype,
+				 char *random,
+				 int randomlen,
+				 Shishi_key *outkey);
 extern int shishi_encrypt (Shishi * handle,
 			   Shishi_key *key,
 			   int keyusage,
@@ -547,6 +559,7 @@ extern int shishi_checksum (Shishi * handle,
 			    int keyusage,
 			    int cksumtype,
 			    char *in, int inlen, char *out, int *outlen);
+extern int shishi_randomize (Shishi * handle, char *data, int datalen);
 extern int shishi_dk (Shishi * handle,
 		      Shishi_key *key,
 		      char *constant,

@@ -1,6 +1,6 @@
 \input texinfo                  @c -*- Texinfo -*-
 @c Copyright (C) 2002 Simon Josefsson
-@c 
+@c
 @c This file is part of the shishi
 @c Permission is granted to copy, distribute and/or modify this document
 @c under the terms of the GNU Free Documentation License, Version 1.1
@@ -92,10 +92,10 @@ Shishi implements the RFC 1510 network security system, also known as
 Kerberos 5.
 
 @menu
-* Getting Started::             
-* Features and Status::                    
-* Overview::                    
-* Cryptographic Overview::                    
+* Getting Started::
+* Features and Status::
+* Overview::
+* Cryptographic Overview::
 * Supported Platforms::
 * Bug Reports::
 @end menu
@@ -442,10 +442,10 @@ Shishi has been tested on the following platforms:
 
 @enumerate
 
-@c @item Tru64 UNIX
-@c @cindex Tru64
-@c 
-@c alphaev68-dec-osf5.1, Tru64 UNIX C compiler, and Tru64 Make.
+@item Tru64 UNIX
+@cindex Tru64
+
+alphaev68-dec-osf5.1, Tru64 UNIX C compiler, and Tru64 Make.
 
 @item Debian 3.0r0 (Woody)
 @cindex Debian
@@ -460,12 +460,12 @@ i686-pc-linux-gnu, GCC 3.2, GNU Make.
 
 @c @item IRIX 6.5
 @c @cindex IRIX
-@c 
+@c
 @c mips-sgi-irix6.5, MIPS C compiler, IRIX Make.
-@c 
+@c
 @c @item AIX 4.3.2
 @c @cindex AIX
-@c 
+@c
 @c rs6000-ibm-aix4.3.2.0, IBM C for AIX compiler, AIX Make.
 
 @item Solaris 2.8
@@ -949,10 +949,10 @@ A faster way to find out how to adapt your application for use with
 (@pxref{Examples}).
 
 @menu
-* Header::                      
-* Initialization::               
-* Version Check::               
-* Building the source::         
+* Header::
+* Initialization::
+* Version Check::
+* Building the source::
 @end menu
 
 @node Header
@@ -1385,17 +1385,44 @@ Authenticator	::= [APPLICATION 2] SEQUENCE  {
 @node Cryptographic Functions
 @section Cryptographic Functions
 
+Underneath the high-level functions described earlier, cryptographic
+operations are happening.  If you need to access these cryptographic
+primitives directly, this section describes the functions available.
+
+Most cryptographic operations need keying material, and cryptographic
+keys have been isolated into it's own data structure
+@code{Shishi_key}.  The following illustrates it's contents, but note
+that you cannot access it's elements directly but must use the
+accessor functions described below.
+
+@verbatim
+struct Shishi_key
+{
+  int type;    /* RFC 1510 encryption integer type */
+  char *value; /* Cryptographic key data */
+  int version; /* RFC 1510 ``kvno'' */
+};
+@end verbatim
+
+All functions that operate on this data structure are described now.
+
+@include shishi-api-key.texi
+
+After creating the key structure, it can be used to encrypt and
+decrypt data, calculate checksum on data etc.  All available functions
+are described now.
+
 @include shishi-api-crypto.texi
 
 @node Error Handling
 @section Error Handling
 @cindex Error Handling
 
-Most functions in `Libshishi' are returning an error if they fail.  For
-this reason, the application should always catch the error condition and
-take appropriate measures, for example by releasing the resources and
-passing the error up to the caller, or by displaying a descriptive
-message to the user and cancelling the operation.
+Most functions in `Libshishi' are returning an error if they fail.
+For this reason, the application should always catch the error
+condition and take appropriate measures, for example by releasing the
+resources and passing the error up to the caller, or by displaying a
+descriptive message to the user and cancelling the operation.
 
 Some error values do not indicate a system error or an error in the
 operation, but the result of an operation that failed properly.
