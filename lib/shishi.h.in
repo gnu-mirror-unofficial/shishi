@@ -365,16 +365,22 @@ typedef enum
      (raeburn/MIT) */
   SHISHI_KEYUSAGE_GSS_R1 = 22,
   SHISHI_KEYUSAGE_GSS_R2 = 23,
-  SHISHI_KEYUSAGE_GSS_R3 = 24
-    /* 16-18,20-21,25-511. Reserved for future use in Kerberos and related
-       protocols.
-       512-1023.      Reserved for uses internal to a Kerberos
-       implementation.
-       1024.         Encryption for application use in protocols that
-       do not specify key usage values
-       1025.         Checksums for application use in protocols that
-       do not specify key usage values
-       1026-2047.      Reserved for application use. */
+  SHISHI_KEYUSAGE_GSS_R3 = 24,
+  /* 16-18,20-21,25-511. Reserved for future use in Kerberos and related
+     protocols. */
+  /* 512-1023.      Reserved for uses internal to a Kerberos
+     implementation. */
+  /* 1024.         Encryption for application use in protocols that
+     do not specify key usage values */
+  /* 1025.         Checksums for application use in protocols that
+     do not specify key usage values */
+  /* 1026-2047.      Reserved for application use.
+     1026,1028,1030,1032,1034 used in KCMD protocol */
+  SHISHI_KEYUSAGE_KCMD_DES = 1026,
+  SHISHI_KEYUSAGE_KCMD_INPUT = 1028,
+  SHISHI_KEYUSAGE_KCMD_OUTPUT = 1030,
+  SHISHI_KEYUSAGE_KCMD_STDERR_INPUT = 1032,
+  SHISHI_KEYUSAGE_KCMD_STDERR_OUTPUT = 1034
 }
 Shishi_keyusage;
 
