@@ -19,7 +19,7 @@
  *
  */
 
-#include "internal.h"
+#include "info.h"
 
 /* For stat. */
 #include <sys/stat.h>

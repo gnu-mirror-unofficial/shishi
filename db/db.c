@@ -19,7 +19,7 @@
  *
  */
 
-#include "internal.h"
+#include "info.h"
 
 /* Get "file" database prototypes. */
 #include "file.h"

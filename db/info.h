@@ -1,4 +1,4 @@
-/* internal.h --- Internal header file for shisa library.
+/* info.h --- Internal header file for shisa library.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef _INTERNAL_H
-#define _INTERNAL_H
+#ifndef _INFO_H
+#define _INFO_H
 
 #if HAVE_CONFIG_H
 # include "config.h"
@@ -141,4 +141,4 @@ extern int getsubopt (char **optionp, char *const *tokens, char **valuep);
    backend, given a name (e.g., "file"). */
 extern _Shisa_backend *_shisa_find_backend (const char *name);
 
-#endif /* _INTERNAL_H */
+#endif /* _INFO_H */

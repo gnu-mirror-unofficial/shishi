@@ -19,7 +19,7 @@
  *
  */
 
-#include "internal.h"
+#include "info.h"
 
 /**
  * shisa_enumerate_realms:

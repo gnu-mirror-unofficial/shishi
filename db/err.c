@@ -19,7 +19,7 @@
  *
  */
 
-#include "internal.h"
+#include "info.h"
 
 struct shisa_error_msgs
 {

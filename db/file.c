@@ -49,7 +49,7 @@
 
 /* XXX fix race conditions. */
 
-#include "internal.h"
+#include "info.h"
 
 /* Get prototypes. */
 #include "file.h"
