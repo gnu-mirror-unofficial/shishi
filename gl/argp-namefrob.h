@@ -87,7 +87,7 @@
 #undef __strchrnul
 #define __strchrnul strchrnul
 #undef __strerror_r
-#define __strerror strerror_r
+#define __strerror_r strerror_r
 #undef __mempcpy
 #define __mempcpy mempcpy
 #undef __strndup
