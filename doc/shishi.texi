@@ -762,7 +762,7 @@ Usage: shishi [OPTION...] [NAME] [OPTION...]
                              is to become valid immediately.
       --ticket-granter=NAME  Service name in ticket to use for authenticating
                              request. Only for TGS. Defaults to
-                             "krbtgt/REALM@REALM" where REALM is server realm
+                             "krbtgt/REALM@@REALM" where REALM is server realm
                              (see --realm).
  
  Options for low-level cryptography (CRYPTO-OPTIONS):
