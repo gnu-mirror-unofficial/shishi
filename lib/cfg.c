@@ -264,6 +264,7 @@ shishi_cfg (Shishi * handle, char *option)
 		struct servent *se;
 		char *p;
 		int protocol = UDP;
+		int port = -1;
 
 		if ((p = strchr (value, '/')))
 		  {
@@ -278,6 +279,13 @@ shishi_cfg (Shishi * handle, char *option)
 		    else
 		      shishi_warn (handle,
 				   "Ignoring unknown KDC parameter: %s", p);
+		  }
+
+		if ((p = strchr (value, ':')))
+		  {
+		    *p = '\0';
+		    p++;
+		    port = atoi (p);
 		  }
 
 		he = gethostbyname (value);	/* XXX move to netio.c */
@@ -302,11 +310,16 @@ shishi_cfg (Shishi * handle, char *option)
 
 		sinaddr->sin_family = he->h_addrtype;
 		memcpy (&sinaddr->sin_addr, he->h_addr_list[0], he->h_length);
-		se = getservbyname ("kerberos", NULL);
-		if (se)
-		  sinaddr->sin_port = se->s_port;
+		if (port == -1)
+		  {
+		    se = getservbyname ("kerberos", NULL);
+		    if (se)
+		      sinaddr->sin_port = se->s_port;
+		    else
+		      sinaddr->sin_port = htons (88);
+		  }
 		else
-		  sinaddr->sin_port = htons (88);
+		  sinaddr->sin_port = htons(port);
 	      }
 	  if (realm)
 	    break;
