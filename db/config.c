@@ -1,5 +1,5 @@
 /* cfg.c --- Read Shisa Configuration file.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -27,7 +27,7 @@ enum
   THE_END
 };
 
-static char *const _shisa_opts[] = {
+static const char *_shisa_opts[] = {
   /* [DB_OPTION] =        */ "db",
   /* [THE_END] =          */ NULL
 };

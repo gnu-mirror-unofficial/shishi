@@ -1,5 +1,5 @@
 /* info.h --- Internal header file for shisa library.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -106,7 +106,7 @@ typedef int (*_Shisa_db_key_remove) (Shisa * dbh,
 
 struct _Shisa_backend
 {
-  char *name;
+  const char *name;
   _Shisa_db_init init;
   _Shisa_db_done done;
   _Shisa_db_enumerate_realms enumerate_realms;

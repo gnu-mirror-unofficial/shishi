@@ -1,5 +1,5 @@
 /* fileutil.c --- Utility functions used by file.c.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -390,13 +390,13 @@ _shisa_isfile4 (const char *path1,
 static uint32_t
 uint32link (const char *file)
 {
-  char *link;
+  char *linkname;
 
-  link = xreadlink (file);
-  if (link == NULL)
+  linkname = xreadlink (file);
+  if (linkname == NULL)
     return 0;
 
-  return atol (link);
+  return atol (linkname);
 }
 
 int

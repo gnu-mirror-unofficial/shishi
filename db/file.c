@@ -72,13 +72,13 @@ enum
   THE_END
 };
 
-static char *const _shisa_file_opts[] = {
+static const char *_shisa_file_opts[] = {
   /* [READ_ONLY_OPTION] =        */ "read-only",
   /* [ALLOW_CREATE_OPTION] =     */ "allow-create",
   /* [THE_END] =                 */ NULL
 };
 
-int
+static int
 shisa_file_cfg (Shisa * dbh, Shisa_file * info, const char *option)
 {
   char *opt = option ? xstrdup (option) : NULL;
@@ -346,6 +346,7 @@ remove_keys (Shisa * dbh,
   return SHISA_OK;
 }
 
+#if 0
 static int
 remove_info (Shisa * dbh,
 	     void *state, const char *realm, const char *principal)
@@ -372,6 +373,7 @@ remove_info (Shisa * dbh,
 
   return SHISA_OK;
 }
+#endif
 
 static int
 principal_remove (Shisa * dbh,
@@ -413,7 +415,7 @@ shisa_file_principal_remove (Shisa * dbh,
   return rc;
 }
 
-int
+static int
 read_key (Shisa * dbh,
 	  Shisa_file * info,
 	  const char *realm,

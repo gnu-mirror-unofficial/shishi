@@ -1,5 +1,5 @@
 /* error.c --- Error handling functions for the Shisa library.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -24,7 +24,7 @@
 struct shisa_error_msgs
 {
   int errorcode;
-  char *message;
+  const char *message;
 };
 
 static struct shisa_error_msgs _shisa_error_messages[] = {
