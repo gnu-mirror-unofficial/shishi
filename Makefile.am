@@ -19,7 +19,7 @@
 
 MOST_SUBDIRS = intl m4 po asn1 lib src tests doc extra
 
-DIST_SUBDIRS = crypto argp gdbm $(MOST_SUBDIRS)
+DIST_SUBDIRS = crypto argp $(MOST_SUBDIRS)
 
 SUBDIRS = @CRYPTO@ @ARGP@ $(MOST_SUBDIRS)
 
@@ -34,9 +34,9 @@ pkgdata_DATA = shishi.skel
 EXTRA_DIST = config.rpath mkinstalldirs \
 	shishi.conf.in shishi.skel.in shishi.pc.in \
 	gdbm/COPYING gdbm/ChangeLog gdbm/INSTALL gdbm/Makefile.in gdbm/NEWS \
-	gdbm/README gdbm/aclocal.m4 gdbm/autoconf.h.in \
+	gdbm/README gdbm/aclocal.m4 \
 	gdbm/bucket.c gdbm/close.c gdbm/config.guess \
-	gdbm/config.sub gdbm/configure gdbm/configure.in \
+	gdbm/config.sub gdbm/configure.in \
 	gdbm/conv2gdbm.c gdbm/dbm.h gdbm/dbmclose.c gdbm/dbmdelete.c \
 	gdbm/dbmdirfno.c gdbm/dbmfetch.c gdbm/dbminit.c gdbm/dbmopen.c \
 	gdbm/dbmpagfno.c gdbm/dbmrdonly.c gdbm/dbmseq.c gdbm/dbmstore.c \
@@ -47,7 +47,7 @@ EXTRA_DIST = config.rpath mkinstalldirs \
 	gdbm/gdbmerrno.h gdbm/gdbmexists.c gdbm/gdbmfdesc.c gdbm/gdbmfetch.c \
 	gdbm/gdbmopen.c gdbm/gdbmreorg.c gdbm/gdbmseq.c gdbm/gdbmsetopt.c \
 	gdbm/gdbmstore.c gdbm/gdbmsync.c gdbm/getopt.c gdbm/getopt.h \
-	gdbm/global.c gdbm/hash.c gdbm/install-sh gdbm/ltmain.sh \
+	gdbm/global.c gdbm/hash.c gdbm/install-sh \
 	gdbm/mkinstalldirs gdbm/ndbm.h gdbm/proto.h gdbm/seq.c gdbm/store.c \
 	gdbm/systems.h gdbm/testdbm.c gdbm/testgdbm.c gdbm/testndbm.c \
 	gdbm/update.c gdbm/version.c
