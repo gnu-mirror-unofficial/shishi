@@ -14,7 +14,7 @@
    Lesser General Public License for more details.
  
    You should have received a copy of the GNU Lesser General Public
-   License along with libgpgme-error; if not, write to the Free
+   License along with libgpg-error; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA.  */
 
@@ -217,7 +217,10 @@ typedef enum
     GPG_ERR_WRONG_BLOB_TYPE = 127,      /* Keybox BLOB of wrong type.  */
     GPG_ERR_MISSING_VALUE = 128,        /* A required value is missing.  */
 
-    /* 129 to 149 are free to be used.  */
+    GPG_ERR_HARDWARE = 129,             /* e.g. EEPROM error of a smartcard. */
+    GPG_ERR_PIN_BLOCKED = 130,
+    GPG_ERR_USE_CONDITIONS = 131,       /* e.g. used with smartcards. */
+    /* 132 to 149 are free to be used.   */
 
     GPG_ERR_INV_ENGINE = 150,
     GPG_ERR_PUBKEY_NOT_TRUSTED = 151,
@@ -467,7 +470,7 @@ gpg_error (gpg_err_code_t code)
 static GPG_ERR_INLINE gpg_err_code_t
 gpg_err_code (gpg_error_t err)
 {
-  return err & GPG_ERR_CODE_MASK;
+  return (gpg_err_code_t) (err & GPG_ERR_CODE_MASK);
 }
 
 
@@ -475,7 +478,8 @@ gpg_err_code (gpg_error_t err)
 static GPG_ERR_INLINE gpg_err_source_t
 gpg_err_source (gpg_error_t err)
 {
-  return (err >> GPG_ERR_SOURCE_SHIFT) & GPG_ERR_SOURCE_MASK;
+  return (gpg_err_source_t) ((err >> GPG_ERR_SOURCE_SHIFT)
+			     & GPG_ERR_SOURCE_MASK);
 }
 
 

@@ -1,3 +1,51 @@
+2003-08-06  Marcus Brinkmann  <marcus@g10code.de>
+
+	* code-from-errno.c, code-to-errno.c, err-codes.h.in,
+	err-sources.h.in, errnos.in, gpg-error.h, strerror.c, strsource.c:
+	Fix typo in copyright notice.
+
+2003-07-31  Marcus Brinkmann  <marcus@g10code.de>
+
+	* README: Clarify copyright conditions.
+	* src/mkstrtable.awk: Don't claim in the copyright information
+	that this program is part of libgpg-error.
+	* src/mkerrnos.awk: Likewise.
+	* src/mkerrcodes1.awk: Likewise.
+	* src/mkerrcodes2.awk: Likewise.
+
+2003-07-31  Marcus Brinkmann  <marcus@g10code.de>
+
+	* src/strerror.c (gpg_strerror): Use CODE, not ERR to map error
+	code to errno.
+
+	* configure.ac (AC_INIT): Bump version to 0.3.
+
+	Released 0.3.
+
+2003-07-30  Marcus Brinkmann  <marcus@g10code.de>
+
+	* configure.ac (AC_INIT): Bump version to 0.2.
+
+	Released 0.2.
+
+2003-07-17  Werner Koch  <wk@gnupg.org>
+
+	* src/gpg-error.h: Add HARDWARE, PIN_BLOCKED and USE_CONDITIONS.
+
+2003-07-16  Moritz Schulte  <moritz@g10code.com>
+
+	* src/gpg-error.h (gpg_err_code): Cast return value to
+	gpg_err_code_t.  Thanks to Ralf Schneider
+	<ralf@tapfere-schneiderleins.de>.
+	(gpg_err_source): Cast return value to gpg_err_source_t.  Thanks
+	to Ralf Schneider <ralf@tapfere-schneiderleins.de>.
+
+2003-07-15  Moritz Schulte  <moritz@g10code.com>
+
+	* src/gpg-error.m4 (AM_PATH_GPG_ERROR): Use `0.0' instead of
+	`0.0.0' in case no version number is given, since the following
+	sed commands expect the former form, not a triplet.
+
 2003-07-06  Marcus Brinkmann  <marcus@g10code.de>
 
 	* src/gpg-error.h (GPG_ERR_INLINE): Define macro.  Use it instead
@@ -22,6 +70,8 @@
 	(m4datadir, m4data_DATA): New variables.
 	* src/gpg-error-config.in: New file.
 	* src/gpg-error.m4: New file.
+
+	Released 0.1.
 
 2003-06-05  Marcus Brinkmann  <marcus@g10code.de>
 

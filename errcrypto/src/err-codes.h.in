@@ -15,7 +15,7 @@
    Lesser General Public License for more details.
  
    You should have received a copy of the GNU Lesser General Public
-   License along with libgpgme-error; if not, write to the Free
+   License along with libgpg-error; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
    02111-1307, USA.  */
 
@@ -146,6 +146,9 @@
 126	Nothing found
 127	Wrong blob type
 128	Missing value
+129	Hardware problem
+130	PIN blocked     
+131	Conditions of use not satisfied 
 150	Invalid crypto engine
 151	Public key not trusted
 152	Decryption failed
