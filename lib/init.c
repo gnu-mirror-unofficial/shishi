@@ -206,3 +206,17 @@ shishi_last_encapreppart (Shishi * handle)
 {
   return handle->lastencapreppart;
 }
+
+void
+shishi_warn(Shishi * handle, char *fmt, ...)
+{
+  va_list ap;
+  va_start(ap, fmt);
+  if (!SILENT(handle))
+    {
+      fprintf(stderr, "libshishi: warning: ");
+      vfprintf(stderr, fmt, ap);
+      fprintf(stderr, "\n");
+    }
+  va_end(ap);
+}

@@ -250,7 +250,10 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
 
   fh = fopen(cfg, "r");
   if (fh == NULL)
-    return SHISHI_FOPEN_ERROR;
+    {
+      shishi_warn(handle, "`%s': %s", cfg, strerror(errno));
+      return SHISHI_FOPEN_ERROR;
+    }
 
   while (!feof(fh) && !ferror(fh))
     {
