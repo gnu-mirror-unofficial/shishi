@@ -1,4 +1,4 @@
-/* shishid.c	Shishi Key Distribution Center daemon.
+/* shishid.c --- Shishi Key Distribution Center daemon.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -149,12 +149,12 @@ extern int errno;
 #define FAMILY_IPV6 "IPv6"
 
 #ifdef WITH_IPV6
-#define LISTEN_DEFAULT FAMILY_IPV4 ":*:kerberos/udp, " \
+# define LISTEN_DEFAULT FAMILY_IPV4 ":*:kerberos/udp, " \
 			FAMILY_IPV4 ":*:kerberos/tcp, " \
 			FAMILY_IPV6 ":*:kerberos/udp, " \
 			FAMILY_IPV6 ":*:kerberos/tcp"
 #else
-#define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
+# define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
 #endif
 
 #define DH_BITS 1024
@@ -435,7 +435,8 @@ tgsreq1 (Shishi_tgs * tgs)
     }
   printf ("Found keys for server %s@%s...\n", servername, serverrealm);
 
-  /* XXX select "best" available key (highest kvno, best algorithm?) here. */
+  /* XXX select "best" available key (tgs-req etype list, highest
+     kvno, best algorithm?) here. */
 
   rc = shishi_key_from_value (handle, serverkeys[0]->etype,
 			       serverkeys[0]->key, &serverkey);
@@ -1300,17 +1301,17 @@ main (int argc, char *argv[])
       return 1;
     }
 
-#ifdef LOG_PERROR
-  openlog (PACKAGE, LOG_CONS | LOG_PERROR, LOG_DAEMON);
-#else
-  openlog (PACKAGE, LOG_CONS, LOG_DAEMON);
-#endif
-
   if (!arg.configuration_file_arg)
     arg.configuration_file_arg = strdup (SYSTEMCFGFILE);
   if (!arg.listen_given)
     arg.listen_arg = strdup (LISTEN_DEFAULT);
   parse_listen (arg.listen_arg);
+
+#ifdef LOG_PERROR
+  openlog (PACKAGE, LOG_CONS | LOG_PERROR, LOG_DAEMON);
+#else
+  openlog (PACKAGE, LOG_CONS, LOG_DAEMON);
+#endif
 
   rc = init ();
 
