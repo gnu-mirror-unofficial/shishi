@@ -79,18 +79,18 @@ shishi_cfg (Shishi * handle, char *option)
 	  if (value && atoi (value) > 0)
 	    handle->kdctimeout = atoi (value);
 	  else if (value)
-	    fprintf (stderr, "Invalid KDC timeout value: `%s'\n", value);
+	    shishi_warn (handle, "Invalid KDC timeout value: `%s'\n", value);
 	  else
-	    fprintf (stderr, "Missing KDC timeout value.\n");
+	    shishi_warn (handle, "Missing KDC timeout value.\n");
 	  break;
 
 	case KDC_RETRIES_OPTION:
 	  if (value && atoi (value) > 0)
 	    handle->kdcretries = atoi (value);
 	  else if (value)
-	    fprintf (stderr, "Invalid KDC retries value: `%s'\n", value);
+	    shishi_warn (handle, "Invalid KDC retries value: `%s'\n", value);
 	  else
-	    fprintf (stderr, "Missing KDC retries value.\n");
+	    shishi_warn (handle, "Missing KDC retries value.\n");
 	  break;
 
 	case REALM_KDC_OPTION:
@@ -163,8 +163,9 @@ shishi_cfg (Shishi * handle, char *option)
 		if (he == NULL ||
 		    he->h_addr_list[0] == NULL || he->h_addrtype != AF_INET)
 		  {
-		    fprintf (stderr, "Unknown KDC host `%s' (h_errno %d)\n",
-			     value, h_errno);
+		    shishi_warn (handle,
+				 "Unknown KDC host `%s' (h_errno %d)\n",
+				 value, h_errno);
 		    break;
 		  }
 
@@ -192,7 +193,7 @@ shishi_cfg (Shishi * handle, char *option)
 	  /* fall through */
 
 	default:
-	  fprintf (stderr, "Unknown option `%s'\n", value);
+	  shishi_warn (handle, "Unknown option: `%s'\n", value);
 	  break;
 	}
     }
@@ -363,7 +364,7 @@ shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
       int etype = shishi_cipher_parse (val);
 
       if (etype == -1)
-	fprintf (stderr, "Ignoring unknown encryption type: `%s'\n", val);
+	shishi_warn (handle, "Ignoring unknown encryption type: `%s'\n", val);
       else
 	{
 	  int *new;
