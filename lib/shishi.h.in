@@ -270,7 +270,7 @@ Shishi_keyusage;
 
 typedef enum
 {
-  SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED = 1,
+  SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED = 1
 }
 Shishi_tkts_hintflags;
 
