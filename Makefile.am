@@ -84,10 +84,9 @@ examples:
 	(cd examples && make)
 
 ChangeLog:
-	test ! -f .cvsusers || \
-	(cvs2cl --fsf --FSF --usermap .cvsusers \
-	-I "ChangeLog|.cvs|autogen.sh|doc/specification|libstringprep" && \
-	cat .cvscopying >> ChangeLog)
+	cvs2cl --fsf --FSF --usermap .cvsusers -I ChangeLog -I .cvs \
+		-I autogen.sh -I doc/specification
+	cat .cvscopying >> ChangeLog
 
 tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
 htmldir = ../www-$(PACKAGE)
