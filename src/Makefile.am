@@ -18,19 +18,25 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_srcdir)/db -I../lib
+
+bin_PROGRAMS = shishi shisa
+
+shishi_SOURCES = shishi.c gettext.h
+shishi_LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
 	../lib/libshishi.la
 
-bin_PROGRAMS = shishi
-shishi_SOURCES = shishi.c gettext.h
+shisa_SOURCES = shisa.c gettext.h
+shisa_LDADD = ../db/libshisa.la
 
 sbin_PROGRAMS = shishid
 shishid_SOURCES = shishid.c
+shishid_LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
+	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
+	../lib/libshishi.la
 
 localedir = $(datadir)/locale
-
-INCLUDES = -I$(top_srcdir)/gl -I../lib
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
