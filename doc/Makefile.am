@@ -28,7 +28,7 @@ info_TEXINFOS = shishi.texi
 shishi_TEXINFOS = gpl.texi fdl.texi $(gdoc_TEXINFOS) \
 	shishi-api-error-labels.texi
 
-AM_MAKEINFOHTMLFLAGS = --no-split --number-sections --css-include=shishi.css
+AM_MAKEINFOHTMLFLAGS = --no-split --number-sections --css-include=texinfo.css
 
 dist_man_MANS = shishi.1 shisa.1 shishid.1 $(gdoc_MANS)
 MAINTAINERCLEANFILES = $(dist_man_MANS)
