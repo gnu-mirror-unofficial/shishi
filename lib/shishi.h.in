@@ -1250,7 +1250,7 @@ extern int shishi_md5 (Shishi * handle, const char *in, size_t inlen,
 extern int shishi_hmac_sha1 (Shishi * handle,
 			     const char *key, size_t keylen,
 			     const char *in, size_t inlen,
-			     char *outhash[16]);
+			     char *outhash[20]);
 extern int shishi_des_cbc_mac (Shishi * handle,
 			       const char key[8],
 			       const char iv[8],

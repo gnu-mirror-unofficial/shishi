@@ -29,7 +29,6 @@ raw_des_checksum0 (Shishi * handle, int algo,
   char *tmp;
   size_t tmplen;
   char *p;
-  size_t plen;
   int blen = 8;
   int hlen = 16;
   int rc;
@@ -47,11 +46,11 @@ raw_des_checksum0 (Shishi * handle, int algo,
   switch (algo)
     {
     case SHISHI_DES_CBC_MD4:
-      rc = shishi_md4 (handle, tmp, tmplen, &p, &plen);
+      rc = shishi_md4 (handle, tmp, tmplen, &p);
       break;
 
     case SHISHI_DES_CBC_MD5:
-      rc = shishi_md5 (handle, tmp, tmplen, &p, &plen);
+      rc = shishi_md5 (handle, tmp, tmplen, &p);
       break;
 
     default:
@@ -60,7 +59,7 @@ raw_des_checksum0 (Shishi * handle, int algo,
       break;
     }
 
-  memcpy (out + blen, p, plen);
+  memcpy (out + blen, p, hlen);
 
   *outlen = blen + hlen;
 
@@ -75,7 +74,6 @@ raw_des_checksum1 (Shishi * handle, int algo,
   char *tmp;
   size_t tmplen;
   char *p;
-  size_t plen;
   int blen = 8;
   int hlen = 16;
   int rc;
@@ -95,11 +93,11 @@ raw_des_checksum1 (Shishi * handle, int algo,
   switch (algo)
     {
     case SHISHI_DES_CBC_MD4:
-      rc = shishi_md4 (handle, tmp, tmplen, &p, &plen);
+      rc = shishi_md4 (handle, tmp, tmplen, &p);
       break;
 
     case SHISHI_DES_CBC_MD5:
-      rc = shishi_md5 (handle, tmp, tmplen, &p, &plen);
+      rc = shishi_md5 (handle, tmp, tmplen, &p);
       break;
 
     default:
@@ -108,7 +106,7 @@ raw_des_checksum1 (Shishi * handle, int algo,
       break;
     }
 
-  memcpy (out + blen, p, plen);
+  memcpy (out + blen, p, hlen);
 
   *outlen = blen + hlen;
 
@@ -248,11 +246,11 @@ des_decrypt_verify (Shishi * handle,
   switch (algo)
     {
     case SHISHI_DES_CBC_MD4:
-      shishi_md4 (handle, *out, *outlen, &computed, &hlen);
+      shishi_md4 (handle, *out, *outlen, &computed);
       break;
 
     case SHISHI_DES_CBC_MD5:
-      shishi_md5 (handle, *out, *outlen, &computed, &hlen);
+      shishi_md5 (handle, *out, *outlen, &computed);
       break;
 
     default:
@@ -695,15 +693,14 @@ gss_des_checksum (Shishi * handle,
 		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
   char *p;
-  size_t plen;
   int rc;
 
-  rc = shishi_md5 (handle, in, inlen, &p, &plen);
+  rc = shishi_md5 (handle, in, inlen, &p);
   if (rc != SHISHI_OK)
     return rc;
 
   *outlen = 8;
-  rc = shishi_des_cbc_mac (handle, shishi_key_value (key), NULL, p, plen, out);
+  rc = shishi_des_cbc_mac (handle, shishi_key_value (key), NULL, p, 16, out);
 
   free (p);
 
@@ -715,14 +712,13 @@ gss_des_checksum (Shishi * handle,
 
 static int
 des_verify (Shishi * handle, int algo,
-	    const char key[8],
+	    Shishi_key *key,
 	    const char *in, size_t inlen,
 	    const char *cksum, size_t cksumlen)
 {
   char *out;
   size_t outlen;
   char *md;
-  size_t mdlen;
   size_t tmplen;
   char *tmp;
   char *keyp;
@@ -738,14 +734,16 @@ des_verify (Shishi * handle, int algo,
    * verify_mic                decrypt and verify rsa-md5 checksum
    */
 
-  keyp = xmemdup (key, 8);
+  keyp = shishi_key_value (key);
+
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
 
   res = simplified_decrypt (handle, key, 0, NULL, 0, NULL, NULL,
 			    cksum, cksumlen, &out, &outlen);
 
-  free (keyp);
+  for (i = 0; i < 8; i++)
+    keyp[i] ^= 0xF0;
 
   if (res != SHISHI_OK)
     {
@@ -761,11 +759,11 @@ des_verify (Shishi * handle, int algo,
   switch (algo)
     {
     case SHISHI_RSA_MD4_DES:
-      res = shishi_md4 (handle, tmp, tmplen, &md, &mdlen);
+      res = shishi_md4 (handle, tmp, tmplen, &md);
       break;
 
     case SHISHI_RSA_MD5_DES:
-      res = shishi_md5 (handle, tmp, tmplen, &md, &mdlen);
+      res = shishi_md5 (handle, tmp, tmplen, &md);
       break;
 
     default:
@@ -792,7 +790,7 @@ des_md4_verify (Shishi * handle,
 		const char *in, size_t inlen,
 		const char *cksum, size_t cksumlen)
 {
-  return des_verify (handle, SHISHI_RSA_MD4_DES, shishi_key_value (key),
+  return des_verify (handle, SHISHI_RSA_MD4_DES, key,
 		     in, inlen, cksum, cksumlen);
 }
 
@@ -804,6 +802,6 @@ des_md5_verify (Shishi * handle,
 		const char *in, size_t inlen,
 		const char *cksum, size_t cksumlen)
 {
-  return des_verify (handle, SHISHI_RSA_MD5_DES, shishi_key_value (key),
+  return des_verify (handle, SHISHI_RSA_MD5_DES, key,
 		     in, inlen, cksum, cksumlen);
 }

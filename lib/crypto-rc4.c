@@ -231,7 +231,7 @@ rc4_hmac_string_to_key (Shishi * handle,
 			const char *parameter, Shishi_key * outkey)
 {
   char *tmp, *md;
-  size_t tmplen, mdlen, i;
+  size_t tmplen, i;
   int rc;
 
   tmplen = 2*stringlen;
@@ -243,7 +243,7 @@ rc4_hmac_string_to_key (Shishi * handle,
       tmp[2*i + 1] = '\x0';
     }
 
-  rc = shishi_md4 (handle, tmp, tmplen, &md, &mdlen);
+  rc = shishi_md4 (handle, tmp, tmplen, &md);
   if (rc != SHISHI_OK)
     return rc;
 

@@ -212,7 +212,7 @@ simplified_hmac (Shishi * handle,
 		 const char *in, size_t inlen,
 		 char **outhash, size_t * outhashlen)
 {
-  *outhashlen = 16;
+  *outhashlen = 20;
   return shishi_hmac_sha1 (handle,
 			   shishi_key_value (key), shishi_key_length (key),
 			   in, inlen,
@@ -233,6 +233,21 @@ simplified_hmac_verify (Shishi * handle,
   res = simplified_hmac (handle, key, in, inlen, &hash, &hlen);
   if (res != SHISHI_OK || hash == NULL)
     return res;
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("\t ;; HMAC verify:\n");
+      escapeprint (hash, hlen);
+      hexprint (hash, hlen);
+      puts ("");
+      binprint (hash, hlen);
+      puts ("");
+      escapeprint (hmac, hmaclen);
+      hexprint (hmac, hmaclen);
+      puts ("");
+      binprint (hmac, hmaclen);
+      puts ("");
+    }
 
   same = (hlen == hmaclen) && memcmp (hash, hmac, hmaclen) == 0;
 
