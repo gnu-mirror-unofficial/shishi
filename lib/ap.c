@@ -689,6 +689,8 @@ shishi_ap_req_process_keyusage (Shishi_ap * ap,
       return rc;
     }
 
+  /* XXX? verify checksum in authenticator. */
+
   if (VERBOSEASN1 (ap->handle))
     shishi_authenticator_print (ap->handle, stdout, authenticator);
 
