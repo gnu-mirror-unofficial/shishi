@@ -81,7 +81,7 @@ shishi_authenticator (Shishi * handle)
    * it and the successive sequence numbers do not repeat other
    * sequences.
    */
-  shishi_randomize (handle, 0, &seqnr, sizeof(seqnr));
+  shishi_randomize (handle, 0, &seqnr, sizeof (seqnr));
 
   /* XXX remove once libtasn1 _asn1_convert_integer is fixed. */
   seqnr &= 0x7FFFFFFF;
@@ -389,8 +389,7 @@ shishi_authenticator_client_set (Shishi * handle,
  **/
 int
 shishi_authenticator_ctime (Shishi * handle,
-			    Shishi_asn1 authenticator,
-			    char **t)
+			    Shishi_asn1 authenticator, char **t)
 {
   return shishi_time (handle, authenticator, "ctime", t);
 }
@@ -407,8 +406,7 @@ shishi_authenticator_ctime (Shishi * handle,
  **/
 int
 shishi_authenticator_ctime_set (Shishi * handle,
-				Shishi_asn1 authenticator,
-				const char *t)
+				Shishi_asn1 authenticator, const char *t)
 {
   int res;
 
@@ -432,8 +430,7 @@ shishi_authenticator_ctime_set (Shishi * handle,
  **/
 int
 shishi_authenticator_cusec_get (Shishi * handle,
-				Shishi_asn1 authenticator,
-				uint32_t *cusec)
+				Shishi_asn1 authenticator, uint32_t * cusec)
 {
   int res;
 
@@ -456,8 +453,7 @@ shishi_authenticator_cusec_get (Shishi * handle,
  **/
 int
 shishi_authenticator_cusec_set (Shishi * handle,
-				Shishi_asn1 authenticator,
-				uint32_t cusec)
+				Shishi_asn1 authenticator, uint32_t cusec)
 {
   int res;
 
@@ -603,7 +599,7 @@ shishi_authenticator_cksum (Shishi * handle,
     return res;
 
   res = shishi_asn1_read (handle, authenticator, "cksum.checksum",
-			   cksum, cksumlen);
+			  cksum, cksumlen);
   if (res != SHISHI_OK)
     return res;
 
@@ -806,7 +802,7 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
 int
 shishi_authenticator_authorizationdata (Shishi * handle,
 					Shishi_asn1 authenticator,
-					int32_t *adtype,
+					int32_t * adtype,
 					char **addata, size_t * addatalen,
 					size_t nth)
 {
@@ -886,7 +882,7 @@ shishi_authenticator_get_subkey (Shishi * handle,
     return res;
 
   res = shishi_asn1_read (handle, authenticator, "subkey.keyvalue",
-			   &subkeyvalue, &subkeylen);
+			  &subkeyvalue, &subkeylen);
   if (res != SHISHI_OK)
     return res;
 

@@ -109,7 +109,7 @@ _shishi_kdcreq (Shishi * handle, int as)
     goto error;
 
   shishi_randomize (handle, 0, &nonce, sizeof (nonce));
-  nonce &= 0x7FFFFFFF; /* XXX fix _libtasn1_convert_integer. */
+  nonce &= 0x7FFFFFFF;		/* XXX fix _libtasn1_convert_integer. */
   res = shishi_kdcreq_nonce_set (handle, node, nonce);
   if (res != SHISHI_OK)
     goto error;
@@ -353,9 +353,7 @@ shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq, uint32_t * nonce)
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
-shishi_kdcreq_nonce_set (Shishi * handle,
-			 Shishi_asn1 kdcreq,
-			 uint32_t nonce)
+shishi_kdcreq_nonce_set (Shishi * handle, Shishi_asn1 kdcreq, uint32_t nonce)
 {
   int res;
 
@@ -456,7 +454,7 @@ shishi_kdcreq_realm (Shishi * handle, Shishi_asn1 kdcreq,
 		     char **realm, size_t * realmlen)
 {
   return shishi_asn1_read_optional (handle, kdcreq, "req-body.realm",
-				     realm, realmlen);
+				    realm, realmlen);
 }
 
 int
@@ -464,7 +462,7 @@ shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
 			 char **realm, size_t * realmlen)
 {
   return shishi_asn1_read_optional (handle, kdcreq, "req-body.realm",
-				     realm, realmlen);
+				    realm, realmlen);
 }
 
 /**
@@ -612,8 +610,7 @@ int
 shishi_kdcreq_till (Shishi * handle, Shishi_asn1 kdcreq,
 		    char **till, size_t * tilllen)
 {
-  return shishi_asn1_read (handle, kdcreq, "req-body.till",
-			    till, tilllen);
+  return shishi_asn1_read (handle, kdcreq, "req-body.till", till, tilllen);
 }
 
 /**
@@ -631,14 +628,14 @@ shishi_kdcreq_tillc (Shishi * handle, Shishi_asn1 kdcreq)
 {
   char *till;
   size_t tilllen;
-  time_t t = (time_t) -1;
+  time_t t = (time_t) - 1;
   int res;
 
   res = shishi_kdcreq_till (handle, kdcreq, &till, &tilllen);
   if (res != SHISHI_OK)
     return t;
 
-  if (tilllen == SHISHI_GENERALIZEDTIME_LENGTH + 1) /* XXX why +1 ? */
+  if (tilllen == SHISHI_GENERALIZEDTIME_LENGTH + 1)	/* XXX why +1 ? */
     t = shishi_generalize_ctime (handle, till);
 
   free (till);

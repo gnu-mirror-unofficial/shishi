@@ -293,7 +293,9 @@ shishi_principal_name_get (Shishi * handle,
     {
       len = *outlen - totlen;
       asprintf (&format, "%s.name-string.?%d", namefield, i);
-      res = shishi_asn1_read_inline (handle, namenode, format, &out[totlen], &len);
+      res =
+	shishi_asn1_read_inline (handle, namenode, format, &out[totlen],
+				 &len);
       free (format);
       if (res != SHISHI_OK)
 	return res;
@@ -365,7 +367,7 @@ shishi_principal_name_realm_get (Shishi * handle,
 
       len = *outlen - totlen;
       res = shishi_asn1_read_inline (handle, realmnode, realmfield,
-			      &out[totlen], &len);
+				     &out[totlen], &len);
       if (res == SHISHI_ASN1_NO_ELEMENT)
 	totlen--;
       else if (res != SHISHI_OK)

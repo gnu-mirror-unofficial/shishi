@@ -533,7 +533,8 @@ const char *
 shishi_cfg_default_userfile (Shishi * handle)
 {
   if (!handle->usercfgfile)
-    handle->usercfgfile = shishi_cfg_userdirectory_file (handle, USERCFG_FILE);
+    handle->usercfgfile =
+      shishi_cfg_userdirectory_file (handle, USERCFG_FILE);
 
   return handle->usercfgfile;
 }

@@ -79,8 +79,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
 		       int sockfd,
 		       gnutls_session session,
 		       const char *indata, size_t inlen,
-		       char **outdata, size_t *outlen,
-		       size_t timeout)
+		       char **outdata, size_t * outlen, size_t timeout)
 {
   int ret;
   ssize_t bytes_sent, bytes_read;
@@ -110,7 +109,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
       return SHISHI_RECVFROM_ERROR;
     }
 
-  if (gnutls_session_is_resumed( session) != 0)
+  if (gnutls_session_is_resumed (session) != 0)
     shishi_error_printf (handle, "TLS handshake completed (resumed)");
   else
     shishi_error_printf (handle, "TLS handshake completed (not resumed)");
@@ -180,7 +179,7 @@ int
 _shishi_sendrecv_tls (Shishi * handle,
 		      struct sockaddr *addr,
 		      const char *indata, size_t inlen,
-		      char **outdata, size_t *outlen,
+		      char **outdata, size_t * outlen,
 		      size_t timeout, Shishi_tkts_hint * hint)
 {
   const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,

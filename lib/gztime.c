@@ -107,8 +107,7 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_time (Shishi * handle, Shishi_asn1 node,
-	     const char *field, char **t)
+shishi_time (Shishi * handle, Shishi_asn1 node, const char *field, char **t)
 {
   size_t len;
   int res;

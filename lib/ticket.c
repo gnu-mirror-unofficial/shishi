@@ -44,14 +44,14 @@ shishi_ticket (Shishi * handle)
     return NULL;
 
   rc = shishi_asn1_write (handle, node, "tkt-vno",
-			   SHISHI_TICKET_DEFAULT_TKTVNO,
-			   SHISHI_TICKET_DEFAULT_TKTVNO_LEN);
+			  SHISHI_TICKET_DEFAULT_TKTVNO,
+			  SHISHI_TICKET_DEFAULT_TKTVNO_LEN);
   if (rc != SHISHI_OK)
     goto error;
 
   return node;
 
- error:
+error:
   shishi_asn1_done (handle, node);
   return NULL;
 }
@@ -279,7 +279,7 @@ shishi_ticket_decrypt (Shishi * handle,
     return SHISHI_TICKET_BAD_KEYTYPE;
 
   res = shishi_asn1_read (handle, ticket, "enc-part.cipher",
-			   &cipher, &cipherlen);
+			  &cipher, &cipherlen);
   if (res != SHISHI_OK)
     return res;
 

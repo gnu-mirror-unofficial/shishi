@@ -37,7 +37,7 @@ static int
 shishi_sendrecv_udp (Shishi * handle,
 		     struct sockaddr *addr,
 		     const char *indata, int inlen,
-		     char **outdata, size_t *outlen, size_t timeout)
+		     char **outdata, size_t * outlen, size_t timeout)
 {
   struct sockaddr lsa;
   struct sockaddr_in *lsa_inp = (struct sockaddr_in *) &lsa;
@@ -116,7 +116,7 @@ static int
 shishi_sendrecv_tcp (Shishi * handle,
 		     struct sockaddr *addr,
 		     const char *indata, int inlen,
-		     char **outdata, size_t *outlen, size_t timeout)
+		     char **outdata, size_t * outlen, size_t timeout)
 {
   char tmpbuf[BUFSIZ];		/* XXX can we do without it?
 				   MSG_PEEK|MSG_TRUNC doesn't work for udp.. */

@@ -468,7 +468,7 @@ shishi_safe_user_data (Shishi * handle,
   int res;
 
   res = shishi_asn1_read (handle, safe, "safe-body.user-data",
-			   userdata, userdatalen);
+			  userdata, userdatalen);
   if (res != SHISHI_OK)
     return res;
 

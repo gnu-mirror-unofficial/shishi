@@ -135,7 +135,7 @@ xgettimeofday (struct timeval *tv, struct timezone *tz)
 }
 
 time_t
-shishi_get_date (const char *p, const time_t *now)
+shishi_get_date (const char *p, const time_t * now)
 {
   struct timespec nowspec = { 0, 0 };
   struct timespec thenspec;
@@ -147,7 +147,7 @@ shishi_get_date (const char *p, const time_t *now)
 
   if (!get_date (&thenspec, p, &nowspec))
     {
-      thenspec.tv_sec = (time_t) -1;
+      thenspec.tv_sec = (time_t) - 1;
       thenspec.tv_nsec = 0;
     }
 

@@ -70,7 +70,7 @@ shishi_encapreppart (Shishi * handle)
    * it and the successive sequence numbers do not repeat other
    * sequences.
    */
-  shishi_randomize (handle, 0, &seqnr, sizeof(seqnr));
+  shishi_randomize (handle, 0, &seqnr, sizeof (seqnr));
 
   /*
    * Implementation note: as noted before, some implementations omit
@@ -270,8 +270,7 @@ shishi_encapreppart_from_file (Shishi * handle, Shishi_asn1 * encapreppart,
  **/
 int
 shishi_encapreppart_get_key (Shishi * handle,
-			     Shishi_asn1 encapreppart,
-			     Shishi_key ** key)
+			     Shishi_asn1 encapreppart, Shishi_key ** key)
 {
   int res;
   char *buf;
@@ -284,7 +283,7 @@ shishi_encapreppart_get_key (Shishi * handle,
     return res;
 
   res = shishi_asn1_read (handle, encapreppart, "subkey.keyvalue",
-			   &buf, &buflen);
+			  &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -311,8 +310,7 @@ shishi_encapreppart_get_key (Shishi * handle,
  **/
 int
 shishi_encapreppart_ctime (Shishi * handle,
-			   Shishi_asn1 encapreppart,
-			   char **t)
+			   Shishi_asn1 encapreppart, char **t)
 {
   return shishi_time (handle, encapreppart, "ctime", t);
 }
@@ -329,8 +327,7 @@ shishi_encapreppart_ctime (Shishi * handle,
  **/
 int
 shishi_encapreppart_ctime_set (Shishi * handle,
-			       Shishi_asn1 encapreppart,
-			       const char *t)
+			       Shishi_asn1 encapreppart, const char *t)
 {
   int res;
 
@@ -354,8 +351,7 @@ shishi_encapreppart_ctime_set (Shishi * handle,
  **/
 int
 shishi_encapreppart_cusec_get (Shishi * handle,
-			       Shishi_asn1 encapreppart,
-			       uint32_t *cusec)
+			       Shishi_asn1 encapreppart, uint32_t * cusec)
 {
   int res;
 
@@ -378,8 +374,7 @@ shishi_encapreppart_cusec_get (Shishi * handle,
  **/
 int
 shishi_encapreppart_cusec_set (Shishi * handle,
-			       Shishi_asn1 encapreppart,
-			       uint32_t cusec)
+			       Shishi_asn1 encapreppart, uint32_t cusec)
 {
   int res;
 

@@ -95,7 +95,7 @@ shishi_enckdcreppart_get_key (Shishi * handle,
     return res;
 
   res = shishi_asn1_read (handle, enckdcreppart, "key.keyvalue",
-			   &buf, &buflen);
+			  &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -398,8 +398,7 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res =
-    shishi_asn1_read (handle, encticketpart, "renew-till", &buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "renew-till", &buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return SHISHI_ASN1_ERROR;
 

@@ -166,8 +166,7 @@ aes256_string_to_key (Shishi * handle,
 
 static int
 aes128_random_to_key (Shishi * handle,
-		      const char *rnd,
-		      size_t rndlen, Shishi_key * outkey)
+		      const char *rnd, size_t rndlen, Shishi_key * outkey)
 {
   if (rndlen < shishi_key_length (outkey))
     return SHISHI_CRYPTO_ERROR;
@@ -179,8 +178,7 @@ aes128_random_to_key (Shishi * handle,
 
 static int
 aes256_random_to_key (Shishi * handle,
-		      const char *rnd,
-		      size_t rndlen, Shishi_key * outkey)
+		      const char *rnd, size_t rndlen, Shishi_key * outkey)
 {
   if (rndlen < shishi_key_length (outkey))
     return SHISHI_CRYPTO_ERROR;

@@ -398,7 +398,7 @@ shishi_aprep_decrypt (Shishi * handle,
     return SHISHI_APREP_BAD_KEYTYPE;
 
   res = shishi_asn1_read (handle, aprep, "enc-part.cipher",
-			   &cipher, &cipherlen);
+			  &cipher, &cipherlen);
   if (res != SHISHI_OK)
     return res;
 

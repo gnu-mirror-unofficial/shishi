@@ -149,8 +149,8 @@ shishi_asn1_read_inline (Shishi * handle, Shishi_asn1 node,
  **/
 int
 shishi_asn1_read (Shishi * handle,
-		   Shishi_asn1 node, const char *field,
-		   char **data, size_t * datalen)
+		  Shishi_asn1 node, const char *field,
+		  char **data, size_t * datalen)
 {
   int rc;
   int len = 0;
@@ -242,7 +242,9 @@ shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
   if (buflen < 4)
     {
       memset (buf, 0, sizeof (buf));
-      rc = shishi_asn1_read_inline (handle, node, field, &buf[4 - buflen], &buflen);
+      rc =
+	shishi_asn1_read_inline (handle, node, field, &buf[4 - buflen],
+				 &buflen);
       if (rc != SHISHI_OK)
 	return rc;
     }

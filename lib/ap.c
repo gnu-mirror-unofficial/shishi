@@ -291,8 +291,7 @@ int
 shishi_ap_set_tktoptionsraw (Shishi_ap * ap,
 			     Shishi_tkt * tkt,
 			     int options,
-			     int32_t cksumtype,
-			     const char *data, size_t len)
+			     int32_t cksumtype, const char *data, size_t len)
 {
   int rc;
 
@@ -445,8 +444,7 @@ int
 shishi_ap_tktoptionsraw (Shishi * handle,
 			 Shishi_ap ** ap,
 			 Shishi_tkt * tkt, int options,
-			 int32_t cksumtype,
-			 const char *data, size_t len)
+			 int32_t cksumtype, const char *data, size_t len)
 {
   int rc;
 

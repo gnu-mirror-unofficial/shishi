@@ -520,7 +520,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq, uint32_t *flags)
+shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq, uint32_t * flags)
 {
   return shishi_asn1_read_bitstring (handle, apreq, "ap-options", flags);
 }
@@ -574,7 +574,8 @@ shishi_apreq_mutual_required_p (Shishi * handle, Shishi_asn1 apreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq, uint32_t options)
+shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq,
+			  uint32_t options)
 {
   int res;
 
@@ -628,8 +629,7 @@ shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq, uint32_t option)
  **/
 int
 shishi_apreq_options_remove (Shishi * handle,
-			     Shishi_asn1 apreq,
-			     uint32_t option)
+			     Shishi_asn1 apreq, uint32_t option)
 {
   uint32_t options;
   int res;
@@ -708,7 +708,7 @@ shishi_apreq_get_ticket (Shishi * handle,
     goto error;
 
   res = shishi_asn1_read (handle, apreq, "ticket.sname.name-type",
-			   &buf, &buflen);
+			  &buf, &buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -744,7 +744,7 @@ shishi_apreq_get_ticket (Shishi * handle,
     }
 
   res = shishi_asn1_read (handle, apreq, "ticket.enc-part.etype",
-			   &buf, &buflen);
+			  &buf, &buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -754,7 +754,7 @@ shishi_apreq_get_ticket (Shishi * handle,
     goto error;
 
   res = shishi_asn1_read (handle, apreq, "ticket.enc-part.kvno",
-			   &buf, &buflen);
+			  &buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     goto error;
 
@@ -769,7 +769,7 @@ shishi_apreq_get_ticket (Shishi * handle,
     goto error;
 
   res = shishi_asn1_read (handle, apreq, "ticket.enc-part.cipher",
-			   &buf, &buflen);
+			  &buf, &buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -807,7 +807,7 @@ shishi_apreq_decrypt (Shishi * handle,
     return SHISHI_APREQ_BAD_KEYTYPE;
 
   res = shishi_asn1_read (handle, apreq, "authenticator.cipher",
-			   &cipher, &cipherlen);
+			  &cipher, &cipherlen);
   if (res != SHISHI_OK)
     return res;
 

@@ -388,8 +388,7 @@ shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
 int
 shishi_key_from_random (Shishi * handle,
 			int32_t type,
-			const char *rnd, size_t rndlen,
-			Shishi_key ** outkey)
+			const char *rnd, size_t rndlen, Shishi_key ** outkey)
 {
   int rc;
 

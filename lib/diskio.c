@@ -37,8 +37,7 @@ int
 _shishi_print_armored_data (Shishi * handle,
 			    FILE * fh,
 			    Shishi_asn1 asn1,
-			    const char *asn1type,
-			    char *headers)
+			    const char *asn1type, char *headers)
 {
   char *der;
   size_t derlen;

@@ -115,7 +115,7 @@ shishi_encticketpart_get_key (Shishi * handle,
     return res;
 
   res = shishi_asn1_read (handle, encticketpart, "key.keyvalue",
-			   &buf, &buflen);
+			  &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -188,7 +188,7 @@ shishi_encticketpart_crealm (Shishi * handle,
 			     char **crealm, size_t * crealmlen)
 {
   return shishi_asn1_read (handle, encticketpart, "crealm",
-			    crealm, crealmlen);
+			   crealm, crealmlen);
 }
 
 /**
@@ -347,7 +347,7 @@ shishi_encticketpart_authtime (Shishi * handle,
 			       char *authtime, size_t * authtimelen)
 {
   return shishi_asn1_read_inline (handle, encticketpart, "authtime",
-			   authtime, authtimelen);
+				  authtime, authtimelen);
 }
 
 time_t

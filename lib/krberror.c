@@ -736,8 +736,7 @@ shishi_krberror_ctime (Shishi * handle, Shishi_asn1 krberror, char **t)
  **/
 int
 shishi_krberror_ctime_set (Shishi * handle,
-			   Shishi_asn1 krberror,
-			   const char *t)
+			   Shishi_asn1 krberror, const char *t)
 {
   int res;
 
@@ -784,7 +783,8 @@ shishi_krberror_remove_ctime (Shishi * handle, Shishi_asn1 krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_cusec (Shishi * handle, Shishi_asn1 krberror, uint32_t *cusec)
+shishi_krberror_cusec (Shishi * handle, Shishi_asn1 krberror,
+		       uint32_t * cusec)
 {
   int res;
 
@@ -807,8 +807,7 @@ shishi_krberror_cusec (Shishi * handle, Shishi_asn1 krberror, uint32_t *cusec)
  **/
 int
 shishi_krberror_cusec_set (Shishi * handle,
-			   Shishi_asn1 krberror,
-			   uint32_t cusec)
+			   Shishi_asn1 krberror, uint32_t cusec)
 {
   int res;
 
@@ -892,8 +891,7 @@ shishi_krberror_stime_set (Shishi * handle,
  **/
 int
 shishi_krberror_susec (Shishi * handle,
-		       Shishi_asn1 krberror,
-		       uint32_t *susec)
+		       Shishi_asn1 krberror, uint32_t * susec)
 {
   int res;
 
@@ -916,8 +914,7 @@ shishi_krberror_susec (Shishi * handle,
  **/
 int
 shishi_krberror_susec_set (Shishi * handle,
-			   Shishi_asn1 krberror,
-			   uint32_t susec)
+			   Shishi_asn1 krberror, uint32_t susec)
 {
   int res;
 
@@ -1152,8 +1149,7 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
       if (res == SHISHI_OK && len > 0)
 	{
 	  buf[len] = '\0';
-	  fprintf (fh, "Additional error message from server:\n%s\n",
-		   buf);
+	  fprintf (fh, "Additional error message from server:\n%s\n", buf);
 	}
     }
 

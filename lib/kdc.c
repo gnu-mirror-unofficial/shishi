@@ -127,7 +127,7 @@ shishi_kdcreq_sendrecv_hint (Shishi * handle,
     }
 
   res = shishi_asn1_read (handle, kdcreq, "req-body.realm",
-			   &realm, &realmlen);
+			  &realm, &realmlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not get realm: %s\n",
@@ -242,7 +242,7 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   int res;
 
   res = shishi_asn1_read (handle, asreq, "req-body.realm",
-			   &reqrealm, &reqrealmlen);
+			  &reqrealm, &reqrealmlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read request realm: %s\n",
@@ -298,7 +298,7 @@ shishi_kdc_copy_cname (Shishi * handle,
   int res;
 
   res = shishi_asn1_read (handle, encticketpart,
-			   "cname.name-type", &buf, &buflen);
+			  "cname.name-type", &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -378,15 +378,13 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   for (i = 1; i <= j; i++)
     {
       asprintf (&format, "req-body.cname.name-string.?%d", i);
-      res = shishi_asn1_read (handle, asreq, format,
-			       &reqcname, &reqcnamelen);
+      res = shishi_asn1_read (handle, asreq, format, &reqcname, &reqcnamelen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
 
       asprintf (&format, "cname.name-string.?%d", i);
-      res = shishi_asn1_read (handle, asrep, format,
-			       &repcname, &repcnamelen);
+      res = shishi_asn1_read (handle, asrep, format, &repcname, &repcnamelen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
@@ -514,7 +512,7 @@ shishi_kdc_check_nonce (Shishi * handle,
   int res;
 
   res = shishi_asn1_read (handle, kdcreq, "req-body.nonce",
-			   &reqnonce, &reqnoncelen);
+			  &reqnonce, &reqnoncelen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read request nonce: %s\n",
@@ -523,7 +521,7 @@ shishi_kdc_check_nonce (Shishi * handle,
     }
 
   res = shishi_asn1_read (handle, enckdcreppart, "nonce",
-			   &repnonce, &repnoncelen);
+			  &repnonce, &repnoncelen);
   if (res != SHISHI_OK)
     {
       free (reqnonce);
