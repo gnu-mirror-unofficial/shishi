@@ -1,3 +1,83 @@
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.14.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* po/sv.po: Update.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* po/sv.po: Generated.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot: Remove.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gendocs.sh: Sync.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix API.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Fix API.  Clone cksum buffers.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Add raw checksum API.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Doc fix.
+
+2004-01-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c:
+	(shishi_ap_req_process_keyusage): Extract authenticator checksum
+	data.
+
+2004-01-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/shishi.h.in:
+	(shishi_authenticator_cksum): Allocate result.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* tests/low-crypto.c: Disable.  Reported by Adrian Bunk
+	<bunk@fs.tum.de>.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c, src/server.c: Fix warnings.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Don't use //.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
 2004-01-15  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.13.
