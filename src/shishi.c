@@ -22,6 +22,220 @@
 #include "data.h"
 #include <argp.h>
 
+int
+crypto (Shishi * handle, struct arguments arg)
+{
+  FILE *infh, *outfh;
+  Shishi_key *key;
+  char *in, *out;
+  size_t inlen, outlen;
+  int rc;
+  int i;
+
+  if (arg.cname == NULL)
+    arg.cname = shishi_principal_default (handle);
+
+  if (arg.realm == NULL)
+    arg.realm = shishi_realm_default (handle);
+
+  if (arg.salt == NULL)
+    {
+      arg.salt = malloc (strlen (arg.realm) + strlen (arg.cname) + 1);
+      if (!arg.salt)
+	return SHISHI_MALLOC_ERROR;
+      strcpy (arg.salt, arg.realm);
+      strcat (arg.salt, arg.cname);
+    }
+
+  rc = shishi_key (handle, &key);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (handle, _("Cannot create key: %s"),
+			   shishi_strerror (rc));
+      return rc;
+    }
+
+  shishi_key_type_set (key, arg.algorithm);
+  shishi_key_version_set (key, arg.kvno);
+  shishi_key_principal_set (key, arg.cname);
+  shishi_key_realm_set (key, arg.realm);
+
+  if (arg.password)
+    {
+      rc = shishi_string_to_key (handle, arg.algorithm,
+				 arg.password,
+				 strlen (arg.password),
+				 arg.salt,
+				 strlen (arg.salt), arg.parameter, key);
+      if (rc != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, _("Error in string2key"));
+	  return rc;
+	}
+
+    }
+  else if (arg.keyvalue)
+    {
+      rc = shishi_key_from_base64 (handle, arg.algorithm, arg.keyvalue, &key);
+      if (rc != SHISHI_OK)
+	{
+	  fprintf (stderr, _("Could not create key: %s\n"),
+		   shishi_strerror (rc));
+	  return rc;
+	}
+    }
+  else if (arg.random)
+    {
+      char buf[BUFSIZ];
+
+      rc = shishi_randomize (handle, buf,
+			     shishi_cipher_randomlen (arg.algorithm));
+      if (rc != SHISHI_OK)
+	return rc;
+
+      shishi_random_to_key (handle, arg.algorithm,
+			    buf, shishi_cipher_randomlen (arg.algorithm),
+			    key);
+    }
+  else if (arg.readkeyfile)
+    {
+      key = shishi_keys_for_server_in_file (handle, arg.readkeyfile,
+					    arg.cname);
+#if 0
+      shishi_key_from_file (handle, arg.writekeyfile, arg.algorithm, key,
+			    keylen, arg.kvno, arg.cname, arg.realm);
+#endif
+
+      if (key == NULL)
+	{
+	  fprintf (stderr, _("Could not find key: %s\n"),
+		   shishi_strerror_details (handle));
+	  return 1;
+	}
+    }
+  else
+    {
+      fprintf (stderr, "Nothing to do.\n");
+      return SHISHI_OK;
+    }
+
+  if (shishi_key_type (key) == SHISHI_NULL && !arg.silent)
+    fprintf (stderr,
+	     "warning: using %s is silly, consider using --algorithm.\n",
+	     shishi_cipher_name (arg.algorithm));
+
+  if (arg.verbose ||
+      ((arg.password || arg.random || arg.keyvalue) &&
+       !(arg.encrypt_p || arg.decrypt_p)))
+    {
+      shishi_key_print (handle, stdout, key);
+    }
+
+#if 0
+  currently broken
+    if (arg.encrypt_p || arg.decrypt_p)
+      {
+	if (arg.inputfile)
+	  {
+	    infh = fopen (arg.inputfile, "r");
+	    if (infh == NULL)
+	      {
+		shishi_error_printf (handle, _("`%s': %s\n"),
+				     arg.inputfile, strerror (errno));
+		return SHISHI_FOPEN_ERROR;
+	      }
+	  }
+	else
+	  infh = stdin;
+
+	if (arg.outputfile)
+	  {
+	    outfh = fopen (arg.outputfile, "w");
+	    if (outfh == NULL)
+	      {
+		shishi_error_printf (handle, _("`%s': %s\n"),
+				     arg.inputfile, strerror (errno));
+		return SHISHI_FOPEN_ERROR;
+	      }
+	  }
+	else
+	  outfh = stdout;
+
+	outlen = fread (out, sizeof (out[0]),
+			sizeof (out) / sizeof (out[0]), infh);
+	if (outlen == 0)
+	  {
+	    fprintf (stderr, _("Error reading `%s'\n"), arg.inputfile);
+	    return !SHISHI_OK;
+	  }
+	if (arg.verbose)
+	  printf (_("Read %d bytes...\n"), outlen);
+
+	if (arg.encrypt_p)
+	  rc = shishi_encrypt (handle, key, arg.keyusage,
+			       out, outlen, &in, &inlen);
+	else
+	  rc = shishi_decrypt (handle, key, arg.keyusage,
+			       in, inlen, &out, &outlen);
+	if (rc != SHISHI_OK)
+	  {
+	    shishi_error_printf (handle, _("Error ciphering\n"));
+	    return rc;
+	  }
+
+	if (arg.outputtype == SHISHI_FILETYPE_HEX)
+	  {
+	    for (i = 0; i < inlen; i++)
+	      {
+		if ((i % 16) == 0)
+		  fprintf (outfh, "\n");
+		fprintf (outfh, "%02x ", in[i]);
+	      }
+	    fprintf (outfh, "\n");
+	  }
+	else if (arg.outputtype == SHISHI_FILETYPE_BINARY)
+	  {
+	    i = fwrite (in, sizeof (in[0]), inlen, outfh);
+	    if (i != inlen)
+	      {
+		fprintf (stderr, _("Short write (%d < %d)...\n"), i, inlen);
+		return 1;
+	      }
+	    printf (_("Wrote %d bytes...\n"), inlen);
+	  }
+
+	if (arg.outputfile)
+	  {
+	    rc = fclose (outfh);
+	    if (rc != 0)
+	      {
+		shishi_error_printf (handle, _("`%s': %s\n"),
+				     arg.outputfile, strerror (errno));
+		return SHISHI_FCLOSE_ERROR;
+	      }
+	  }
+
+	if (arg.inputfile)
+	  {
+	    rc = fclose (infh);
+	    if (rc != 0)
+	      {
+		shishi_error_printf (handle, _("`%s': %s\n"),
+				     arg.inputfile, strerror (errno));
+		return SHISHI_FCLOSE_ERROR;
+	      }
+	  }
+      }
+#endif
+
+  if (arg.writekeyfile)
+    {
+      shishi_key_to_file (handle, arg.writekeyfile, key);
+    }
+
+  return 0;
+}
+
 const char *program_name = PACKAGE;
 const char *argp_program_version = PACKAGE_STRING;
 const char *argp_program_bug_address = PACKAGE_BUGREPORT;
@@ -109,7 +323,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       /* Crypto */
 
     case OPTION_CRYPTO_ALGORITHM:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       arguments->algorithm = shishi_cipher_parse (arg);
@@ -119,7 +333,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case OPTION_CRYPTO_ENCRYPT:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       if (arguments->decrypt_p)
@@ -128,7 +342,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case OPTION_CRYPTO_DECRYPT:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       if (arguments->encrypt_p)
@@ -137,39 +351,32 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case OPTION_CRYPTO_SALT:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       arguments->salt = strdup (arg);
       break;
 
     case OPTION_CRYPTO_PARAMETER:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       arguments->parameter = strdup (arg);
       break;
 
     case OPTION_CRYPTO_PASSWORD:
-    case OPTION_GET_PASSWORD:
-      if (arguments->command != COMMAND_CRYPTO &&
-	  arguments->command != COMMAND_GET)
-	argp_error
-	  (state,
-	   _("Option `%s' only valid with GET and CRYPTO."),
-	   state->argv[state->next - 1]);
       arguments->password = strdup (arg);
       break;
 
     case OPTION_CRYPTO_RANDOM:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       arguments->random = 1;
       break;
 
     case OPTION_CRYPTO_READ_DATA_FILE:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       parse_filename (arg, &arguments->inputtype, &arguments->inputfile);
@@ -179,7 +386,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case OPTION_CRYPTO_WRITE_DATA_FILE:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       parse_filename (arg, &arguments->outputtype, &arguments->outputfile);
@@ -189,227 +396,79 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case OPTION_CRYPTO_READ_KEY_FILE:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       arguments->readkeyfile = strdup (arg);
       break;
 
     case OPTION_CRYPTO_WRITE_KEY_FILE:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       arguments->writekeyfile = strdup (arg);
       break;
 
-      /* Authenticator */
-
-    case OPTION_AP_AUTHENTICATOR_READ_FILE:
-      if (arguments->command != COMMAND_AP)
-	argp_error (state, _("Option `%s' only valid with AP."),
-		    state->argv[state->next - 1]);
-      parse_filename (arg, &arguments->authenticatorreadtype,
-		      &arguments->authenticatorreadfile);
-      break;
-
-    case OPTION_AP_AUTHENTICATOR_DATA:
-      if (arguments->command != COMMAND_AP)
-	argp_error (state, _("Option `%s' only valid with AP."),
-		    state->argv[state->next - 1]);
-      arguments->authenticatordata = strdup (arg);
-      break;
-
-    case OPTION_AP_AUTHENTICATOR_READ_DATA_FILE:
-      if (arguments->command != COMMAND_AP)
-	argp_error (state, _("Option `%s' only valid with AP."),
-		    state->argv[state->next - 1]);
-      parse_filename (arg, &arguments->authenticatordatareadtype,
-		      &arguments->authenticatordatareadfile);
-      if (arguments->authenticatordatareadtype == SHISHI_FILETYPE_TEXT ||
-	  arguments->authenticatordatareadtype == SHISHI_FILETYPE_DER)
-	arguments->authenticatordatareadtype = SHISHI_FILETYPE_BINARY;
-      break;
-
-    case OPTION_CRYPTO_CLIENT_NAME:
-    case OPTION_GET_CLIENT_NAME:
-      if (arguments->command != COMMAND_CRYPTO &&
-	  arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with CRYPTO and GET."),
-		    state->argv[state->next - 1]);
+    case OPTION_CLIENT_NAME:
       arguments->cname = strdup (arg);
       break;
 
     case 'r':
-    case OPTION_AP_REALM:
-    case OPTION_CRYPTO_REALM:
-    case OPTION_GET_REALM:
-      if (arguments->command != COMMAND_AP &&
-	  arguments->command != COMMAND_CRYPTO &&
-	  arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with AP, CRYPTO and GET."),
-		    state->argv[state->next - 1]);
+    case OPTION_REALM:
       arguments->realm = strdup (arg);
       break;
 
     case OPTION_CRYPTO_KEY_VALUE:
-    case OPTION_GET_KEY_VALUE:
-      if (arguments->command != COMMAND_CRYPTO &&
-	  arguments->command != COMMAND_GET)
-	argp_error (state,
-		    _("Option `%s' only valid with CRYPTO and GET."),
-		    state->argv[state->next - 1]);
       arguments->keyvalue = strdup (arg);
       break;
 
     case OPTION_CRYPTO_KEY_USAGE:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       arguments->keyusage = atoi (arg);
       break;
 
     case OPTION_CRYPTO_KEY_VERSION:
-      if (arguments->command != COMMAND_CRYPTO)
+      if (arguments->command != OPTION_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       arguments->kvno = atoi (arg);
       break;
 
-    case OPTION_AP_SERVER_NAME:
-    case OPTION_LIST_SERVER_NAME:
-    case OPTION_GET_SERVER_NAME:
+    case OPTION_SERVER_NAME:
       arguments->sname = strdup (arg);
       break;
 
-    case OPTION_GET_FORCE_AS:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
+    case OPTION_FORCE_AS:
       arguments->forceas_p = 1;
       break;
 
-    case OPTION_GET_FORCE_TGS:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
+    case OPTION_FORCE_TGS:
       arguments->forcetgs_p = 1;
       break;
 
-    case OPTION_GET_TICKET_GRANTER:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
+    case OPTION_TICKET_GRANTER:
       arguments->tgtname = strdup (arg);
       break;
 
-    case OPTION_GET_REQUEST:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
-      arguments->request_p = 1;
+    case OPTION_CRYPTO:
+      arguments->command = OPTION_CRYPTO;
       break;
 
-    case OPTION_AP_REQUEST_WRITE_FILE:
-    case OPTION_GET_WRITE_AP_REQUEST_FILE:
-      if (arguments->command != COMMAND_GET &&
-	  arguments->command != COMMAND_AP)
-	argp_error (state,
-		    _("Option `%s' only valid with AP and GET."),
-		    state->argv[state->next - 1]);
-      parse_filename (arg, &arguments->apreqwritetype,
-		      &arguments->apreqwritefile);
+    case OPTION_LIST:
+      arguments->command = OPTION_LIST;
       break;
 
-    case OPTION_AP_AUTHENTICATOR_WRITE_FILE:
-    case OPTION_GET_WRITE_AUTHENTICATOR_FILE:
-      if (arguments->command != COMMAND_AP ||
-	  arguments->command != COMMAND_GET)
-	argp_error (state,
-		    _("Option `%s' only valid with AP and GET."),
-		    state->argv[state->next - 1]);
-      parse_filename (arg, &arguments->authenticatorwritetype,
-		      &arguments->authenticatorwritefile);
-      break;
-
-    case OPTION_GET_WRITE_REQUEST_FILE:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
-      parse_filename (arg, &arguments->kdcreqwritetype,
-		      &arguments->kdcreqwritefile);
-      break;
-
-    case OPTION_GET_READ_REQUEST_FILE:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
-      parse_filename (arg, &arguments->kdcreqreadtype,
-		      &arguments->kdcreqreadfile);
-      break;
-
-    case OPTION_GET_WRITE_RESPONSE_FILE:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
-      parse_filename (arg, &arguments->kdcrepwritetype,
-		      &arguments->kdcrepwritefile);
-      break;
-
-    case OPTION_GET_READ_RESPONSE_FILE:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
-      parse_filename (arg, &arguments->kdcrepreadtype,
-		      &arguments->kdcrepreadfile);
-      break;
-
-    case OPTION_GET_SENDRECV:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
-      arguments->sendrecv_p = 1;
-      break;
-
-    case OPTION_GET_RESPONSE:
-      if (arguments->command != COMMAND_GET)
-	argp_error (state, _("Option `%s' only valid with GET."),
-		    state->argv[state->next - 1]);
-      arguments->response_p = 1;
+    case OPTION_DESTROY:
+      arguments->command = OPTION_DESTROY;
       break;
 
     case ARGP_KEY_ARG:
-      if (arguments->command && arguments->client)
+      if (arguments->client)
 	argp_error (state, _("Too many arguments: `%s'"), arg);
       else
-	{
-	  if (strcmp (arg, "get") == 0)
-	    {
-	      arguments->command = COMMAND_GET;
-	    }
-	  else if (strcmp (arg, "list") == 0)
-	    {
-	      arguments->command = COMMAND_LIST;
-	    }
-	  else if (strcmp (arg, "destroy") == 0)
-	    {
-	      arguments->command = COMMAND_DESTROY;
-	    }
-	  else if (strcmp (arg, "ap") == 0)
-	    {
-	      arguments->command = COMMAND_AP;
-	    }
-	  else if (strcmp (arg, "crypto") == 0)
-	    {
-	      arguments->command = COMMAND_CRYPTO;
-	    }
-	  else
-	    {
-	      if (!arguments->command)
-		arguments->command = COMMAND_GET;
-	      arguments->client = arg;
-	    }
-	  break;
-	}
+	arguments->client = arg;
       break;
 
     default:
@@ -421,88 +480,59 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
 static struct argp_option options[] = {
 
-  {0, 0, 0, 0, "Ticket management:", 20},
+  {0, 0, 0, 0, "If no command is given, Shishi try to make sure you have a "
+   "ticket granting ticket for the default realm, and then display it."},
 
-  {"destroy", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Destroy tickets."},
+  {"client-name", OPTION_CLIENT_NAME, "NAME", 0,
+   "Client name. Default is login username. Only for AS.", 10},
 
-  {"get", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Acquire tickets."},
+  {"destroy", OPTION_DESTROY, 0, 0,
+   "Destroy tickets in local cache, subject to --server-name limiting."},
 
-  {"list", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "List tickets."},
+  {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
+   "Encryption types to use.  ETYPE is either registered name or integer."},
 
-  {0, 0, 0, 0, "Low-level commands:", 40},
+  {"force-as", OPTION_FORCE_AS, 0, 0,
+   "Force AS mode. Default is to use TGS iff a TGT is found."},
 
-  {"ap", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Client/Server Authentication (AP-REQ and AP-REP)."},
+  {"force-tgs", OPTION_FORCE_TGS, 0, 0,
+   "Force TGS mode. Default is to use TGS iff a TGT is found."},
 
-  {"crypto", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Cryptographic functions."},
-
-  {0, 0, 0, 0, "If no command is given, Shishi invokes the GET command "
-   "if no ticket granting ticket is found for the default realm, otherwise "
-   " the LIST command is invoked.", 50},
-
-  /************** LIST */
-
-  {0, 0, 0, 0, "Options for the List command (LIST-OPTIONS):", 300},
-
-  {"server-name", OPTION_LIST_SERVER_NAME, "NAME", 0,
-   "List tickets for specified server only."},
-
-  /************** DESTROY */
-
-  {0, 0, 0, 0, "Options for the Destroy command (DESTROY-OPTIONS):", 400},
-
-  {"server-name", OPTION_DESTROY_SERVER_NAME, "NAME", 0,
-   "Destroy tickets for specified server only."},
-
-  /************** AP */
-
-  {0, 0, 0, 0,
-   "Options for low-level Client/Server Authentication (AP-OPTIONS):", 700},
-
-  {"data", OPTION_AP_AUTHENTICATOR_DATA, "B64STRING", 0,
-   "Base64 encoded data to checksum in generated authenticator. "
-   "By default checksum is omitted (indicating no application payload)."},
-
-  {"read-ap-request-file", OPTION_AP_REQUEST_READ_FILE, "[TYPE,]FILE", 0,
-   "Read AP-REQ from FILE in format TYPE; TEXT (default) or DER. "
-   "Default is to generate it."},
-
-  {"read-data-file", OPTION_AP_AUTHENTICATOR_READ_DATA_FILE, "[TYPE,]FILE", 0,
-   "Read data to checksum in generated authenticator from FILE in format "
-   "TYPE, BASE64, HEX or BINARY (default). "
-   "By default checksum is omitted (indicating no application payload)."},
+  {"list", OPTION_LIST, 0, 0,
+   "List tickets in local cache, subject to --server-name limiting."},
 
   {"realm", 'r', "REALM", 0,
-   "Realm of server. Defaults to DNS domain of local host. Used for "
-   "locating the ticket to use."},
+   "Realm of server. Default is DNS domain of local host. For AS, this also "
+   "indicates realm of client."},
 
-  {"server-name", OPTION_AP_SERVER_NAME, "NAME", 0,
-   "Name of server. Defaults to \"krbtgt.DEFAULTREALM\" where DEFAULTREALM "
-   "is realm of server. Used for locating the ticket to use."},
+  {"server", OPTION_SERVER, "HOST", 0,
+   "Send request to HOST. Default uses address from configuration file."},
 
-  {"write-authenticator-file", OPTION_AP_AUTHENTICATOR_WRITE_FILE,
-   "[TYPE,]FILE", 0,
-   "Write authenticator to FILE in format TYPE; TEXT (default) or DER. "
-   "Not written by default."},
+  {"server-name", OPTION_SERVER_NAME, "NAME", 0,
+   "Server name. Default is \"krbtgt/REALM\" where REALM is server "
+   "realm (see --realm)."},
 
-  {"write-ap-request-file", OPTION_AP_REQUEST_WRITE_FILE, "[TYPE,]FILE", 0,
-   "Write AP-REQ to FILE in format TYPE; TEXT (default) or DER.  "
-   "Default is stdout."},
+  {"ticket-granter", OPTION_TICKET_GRANTER, "NAME", 0,
+   "Service name in ticket to use for authenticating request. Only for TGS. "
+   "Defaults to \"krbtgt/REALM@REALM\" where REALM is server "
+   "realm (see --realm)."},
+
+  {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
+   "Cipher key to decrypt response (discouraged)."},
+
+  {"password", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
+   "Password to decrypt response (discouraged).  Only for AS."},
 
   /************** CRYPTO */
 
   {0, 0, 0, 0,
-   "Options for low-level cryptography (CRYPTO-OPTIONS):", 800},
+   "Options for low-level cryptography (CRYPTO-OPTIONS):", 100},
 
   {"algorithm", OPTION_CRYPTO_ALGORITHM, "ALGORITHM", 0,
    "Cipher algorithm, expressed either as the etype integer or "
    "the registered name."},
 
-  {"client-name", OPTION_GET_CLIENT_NAME, "NAME", 0,
+  {"client-name", OPTION_CLIENT_NAME, "NAME", 0,
    "Username. Default is login name."},
 
   {"decrypt", OPTION_CRYPTO_DECRYPT, 0, 0,
@@ -551,84 +581,9 @@ static struct argp_option options[] = {
   {"write-data-file", OPTION_CRYPTO_WRITE_DATA_FILE, "[TYPE,]FILE", 0,
    "Write data to FILE in TYPE, BASE64, HEX or BINARY (default)."},
 
-  /************** GET */
-
-  {0, 0, 0, 0,
-   "Options for ticket acquisition (GET-OPTIONS):", 900},
-
-  {"client-name", OPTION_GET_CLIENT_NAME, "NAME", 0,
-   "Client name. Default is login username. Only for AS."},
-
-  {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
-   "Encryption types to use.  ETYPE is either registered name or integer."},
-
-  {"force-as", OPTION_GET_FORCE_AS, 0, 0,
-   "Force AS mode. Default is to use TGS iff a TGT is found."},
-
-  {"force-tgs", OPTION_GET_FORCE_TGS, 0, 0,
-   "Force TGS mode. Default is to use TGS iff a TGT is found."},
-
-  {"realm", 'r', "REALM", 0,
-   "Realm of server. Default is DNS domain of local host. For AS, this also "
-   "indicates realm of client."},
-
-  {"server", OPTION_GET_SERVER, "HOST", 0,
-   "Send request to HOST. Default uses address from configuration file."},
-
-  {"server-name", OPTION_GET_SERVER_NAME, "NAME", 0,
-   "Server name. Default is \"krbtgt/REALM\" where REALM is server "
-   "realm (see --realm)."},
-
-  {"ticket-granter", OPTION_GET_TICKET_GRANTER, "NAME", 0,
-   "Service name in ticket to use for authenticating request. Only for TGS. "
-   "Defaults to \"krbtgt/REALM@REALM\" where REALM is server "
-   "realm (see --realm)."},
-
-  {"key-value", OPTION_GET_KEY_VALUE, "KEY", 0,
-   "Cipher key to decrypt response (discouraged)."},
-
-  {"read-kdc-request-file", OPTION_GET_READ_REQUEST_FILE, "[TYPE,]FILE", 0,
-   "Read KDC-REQ from FILE in format TYPE; TEXT (default) or DER. "
-   "Default is to generate it."},
-
-  {"read-kdc-response-file", OPTION_GET_READ_RESPONSE_FILE, "[TYPE,]FILE", 0,
-   "Read KDC-REP from FILE in format TYPE; TEXT (default) or DER. "
-   "Default is to receive it from server."},
-
-  {"request", OPTION_GET_REQUEST, 0, 0,
-   "Only generate the request."},
-
-  {"response", OPTION_GET_RESPONSE, 0, 0,
-   "Only parse request and response and output ticket."},
-
-  {"sendrecv", OPTION_GET_SENDRECV, 0, 0,
-   "Only send request and receive response."},
-
-  {"password", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
-   "Password to decrypt response (discouraged).  Only for AS."},
-
-  {"write-ap-request-file", OPTION_GET_WRITE_AP_REQUEST_FILE, "[TYPE,]FILE",
-   0,
-   "Write AP-REQ to FILE in TYPE, either TEXT (default) or DER. "
-   "Only for TGS. Not written by default."},
-
-  {"write-authenticator-file", OPTION_GET_WRITE_AUTHENTICATOR_FILE,
-   "[TYPE,]FILE", 0,
-   "Write Authenticator to FILE in TYPE, either TEXT (default) or DER. "
-   "Only for TGS. Not written by default."},
-
-  {"write-kdc-request-file", OPTION_GET_WRITE_REQUEST_FILE, "[TYPE,]FILE", 0,
-   "Write KDC-REQ to FILE in format TYPE; TEXT (default) or DER. "
-   "Not written by default."},
-
-  {"write-kdc-response-file", OPTION_GET_WRITE_RESPONSE_FILE, "[TYPE,]FILE",
-   0,
-   "Write KDC-REP to FILE in format TYPE; TEXT (default) or DER. "
-   "Not written by default."},
-
   /************** OTHER */
 
-  {0, 0, 0, 0, "Other options:", 1000},
+  {0, 0, 0, 0, "Other options:", 200},
 
   {"verbose", 'v', 0, 0,
    "Produce verbose output.",},
@@ -663,7 +618,7 @@ static struct argp_option options[] = {
 
   /************** EXAMPLES */
 
-  {0, 0, 0, 0, "Examples:", 2000},
+  {0, 0, 0, 0, "Examples:", 300},
 
   {"shishi", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
    "Get a ticket granting ticket from the default KDC server for the "
@@ -672,7 +627,7 @@ static struct argp_option options[] = {
   {"shishi jas/admin@ACCOUNTING", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
    "Get a ticket for jas/admin in the ACCOUNTING realm."},
 
-  {"shishi list --server-name=krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG",
+  {"shishi --list --server-name=krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG",
    0, 0, OPTION_DOC | OPTION_NO_USAGE,
    "List tickets for the Ticket Granting Service in the JOSEFSSON.ORG realm."},
 
@@ -682,12 +637,10 @@ static struct argp_option options[] = {
 static struct argp argp = {
   options,
   parse_opt,
-  "[COMMAND] [NAME] [OPTION...]\n"
-  "destroy [DESTROY-OPTION...]\n"
-  "get [GET-OPTION...]\n"
-  "list [LIST-OPTION...]\n"
-  "ap [AP-OPTION...]\n"
-  "crypto [CRYPTO-OPTION...]\n",
+  "[NAME] [OPTION...]\n"
+  "--list [--server-name=NAME]\n"
+  "--destroy [--server-name=NAME]\n"
+  "--crypto [CRYPTO-OPTION...]\n",
   "Shishi -- A Kerberos 5 implementation"
 };
 
@@ -754,34 +707,7 @@ main (int argc, char *argv[])
 
   switch (arg.command)
     {
-    case COMMAND_GET:
-    default:
-      {
-	Shishi_tkt *tkt;
-	Shishi_tkts_hint hint;
-
-	memset (&hint, 0, sizeof (hint));
-	hint.client = (char *) arg.cname;
-	hint.server = (char *) arg.sname ? arg.sname : arg.tgtname;
-
-	tkt = shishi_tkts_get (shishi_tkts_default (handle), &hint);
-	if (!tkt)
-	  {
-	    printf ("Could not get ticket for `%s'.\n",
-		    arg.tgtname ? arg.tgtname : arg.cname);
-	    rc = !SHISHI_OK;
-	  }
-	else
-	  {
-	    rc = shishi_tkt_pretty_print (tkt, stdout);
-	    if (rc != SHISHI_OK)
-	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
-		       shishi_strerror (rc), shishi_strerror_details (handle));
-	  }
-      }
-      break;
-
-    case COMMAND_LIST:
+    case OPTION_LIST:
       if (!arg.silent)
 	printf (_("Tickets in `%s':\n"), shishi_tkts_default_file (handle));
 
@@ -791,7 +717,7 @@ main (int argc, char *argv[])
 	fprintf (stderr, "Could not list tickets: %s", shishi_strerror (rc));
       break;
 
-    case COMMAND_DESTROY:
+    case OPTION_DESTROY:
       {
 	int i, removed = 0;
 	for (i = 0; i < shishi_tkts_size (shishi_tkts_default (handle)); i++)
@@ -827,15 +753,37 @@ main (int argc, char *argv[])
       }
       break;
 
-    case COMMAND_AP:
-      rc = ap (handle, arg);
-      break;
-
-    case COMMAND_CRYPTO:
+    case OPTION_CRYPTO:
       rc = crypto (handle, arg);
       if (rc != SHISHI_OK)
 	fprintf (stderr, "Operation failed:\n%s\n%s\n",
 		 shishi_strerror (rc), shishi_strerror_details (handle));
+      break;
+
+    default:
+      {
+	Shishi_tkt *tkt;
+	Shishi_tkts_hint hint;
+
+	memset (&hint, 0, sizeof (hint));
+	hint.client = (char *) arg.cname;
+	hint.server = (char *) arg.sname ? arg.sname : arg.tgtname;
+
+	tkt = shishi_tkts_get (shishi_tkts_default (handle), &hint);
+	if (!tkt)
+	  {
+	    printf ("Could not get ticket for `%s'.\n",
+		    arg.tgtname ? arg.tgtname : arg.cname);
+	    rc = !SHISHI_OK;
+	  }
+	else
+	  {
+	    rc = shishi_tkt_pretty_print (tkt, stdout);
+	    if (rc != SHISHI_OK)
+	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
+		       shishi_strerror (rc), shishi_strerror_details (handle));
+	  }
+      }
       break;
     }
 
