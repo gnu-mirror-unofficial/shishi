@@ -106,24 +106,29 @@ shishi_parse_name (Shishi * handle, const char *name,
       escaped = 1;
 
   if (principal)
-    *principal = xstrndup (p, p - name);
+    {
+      *principal = xstrndup (name, p - name + 1);
+      (*principal)[p - name] = '\0';
+    }
 
-  q = p;
+  if (*p)
+    {
+      q = ++p;
 
-  while (*q && (*q != '@' || escaped))
-    if (escaped)
-      escaped = 0;
-    else if (*q++ == '\\')
-      escaped = 1;
+      while (*q)
+	if (escaped)
+	  escaped = 0;
+	else if (*q++ == '\\')
+	  escaped = 1;
 
-  if (escaped)
-    return SHISHI_INVALID_PRINCIPAL_NAME;
+      if (escaped)
+	return SHISHI_INVALID_PRINCIPAL_NAME;
 
-  if (realm)
-    if (*q)
-      *realm = xstrdup (p + 1);
-    else
-      *realm = NULL;
+      if (realm)
+	*realm = xstrdup (p);
+    }
+  else if (realm)
+    *realm = strdup(shishi_realm_default (handle));
 
   return SHISHI_OK;
 }
