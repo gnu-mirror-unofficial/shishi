@@ -224,10 +224,10 @@ kdc (Shishi * handle, struct arguments arg)
     }
   else
     {
-      oldtkt = shishi_ticketset_find_ticket_for_clientserver (handle,
-							      NULL,
-							      arg.cname,
-							      arg.tgtname);
+      oldtkt = shishi_ticketset_find_for_clientserver (handle,
+						       NULL,
+						       arg.cname,
+						       arg.tgtname);
       if (arg.forcetgs_p && oldtkt == NULL)
 	{
 	  printf ("Could not find ticket for TGS\n");

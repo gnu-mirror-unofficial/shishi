@@ -75,7 +75,7 @@ ap (Shishi * handle, struct arguments arg)
       Shishi_ticket *ticket;
       int res;
 
-      ticket = shishi_ticketset_find_ticket_for_clientserver
+      ticket = shishi_ticketset_find_for_clientserver
 	(shishi_ticketset(handle), arg.cname, arg.sname);
       if (ticket == NULL)
 	{

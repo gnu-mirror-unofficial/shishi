@@ -48,7 +48,7 @@ client (Shishi * handle, struct arguments arg)
       printf ("Service name: `%s'\n", arg.sname);
     }
 
-  tkt = shishi_ticketset_get_ticket_for_server
+  tkt = shishi_ticketset_get_for_server
     (shishi_ticketset(handle), arg.sname);
   if (tkt == NULL)
     {

@@ -957,7 +957,7 @@ main (int argc, char *argv[])
 	Shishi_ticket *tgt;
 	Shishi_ticket *tkt;
 
-	tgt = shishi_ticketset_find_ticket_for_clientserver
+	tgt = shishi_ticketset_find_for_clientserver
 	  (shishi_ticketset(handle), shishi_principal_default (handle),
 	   arg.tgtname);
 	if (tgt == NULL)
@@ -1087,7 +1087,7 @@ main (int argc, char *argv[])
       {
 	Shishi_ticket *tgt;
 
-	tgt = shishi_ticketset_find_ticket_for_clientserver
+	tgt = shishi_ticketset_find_for_clientserver
 	  (shishi_ticketset(handle),
 	   shishi_principal_default (handle), arg.tgtname);
 	if (tgt == NULL)
