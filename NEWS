@@ -15,8 +15,8 @@ If a usable version is not found, the internal Nettle (crypto/) and/or
 libminitasn1 (asn1/) libraries are used instead.
 
 ** It is possible to enable and disable part of the system at compile time.
-The --disable-des, --disable-3des, --disable-aes, --disable-md,
---disable-null, --enable-arcfour.
+See --disable-des, --disable-3des, --disable-aes, --disable-md,
+--disable-null, and --enable-arcfour.
 
 ** The internal crypto interface now fully modularized.
 If you wish to add support for a new low-level cryptographic library,
