@@ -17,6 +17,8 @@
 # License along with Shishi; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
+DISTCHECK_CONFIGURE_FLAGS = --without-included-gettext
+
 MOST_SUBDIRS = intl m4 po asn1 lib src tests doc extra
 
 DIST_SUBDIRS = crypto argp libstringprep $(MOST_SUBDIRS)
