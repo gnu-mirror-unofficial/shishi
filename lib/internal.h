@@ -1,5 +1,5 @@
 /* internal.h --- Internal header file for Shishi.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -63,7 +63,7 @@
 #endif
 
 #if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
-//extern int h_errno;
+/*extern int h_errno;*/
 #endif
 
 #ifdef HAVE_PWD_H
