@@ -3,5 +3,8 @@
 Makefile
 Makefile.in
 libshishi-gss.la
+context.lo
+cred.lo
+msg.lo
 name.lo
 oid.lo
