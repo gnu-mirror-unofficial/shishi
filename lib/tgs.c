@@ -86,6 +86,14 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
   if (res != SHISHI_OK)
     return res;
 
+  res = shishi_tkt (handle, &ltgs->tkt);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_tkt_flags_set (ltgs->tkt, SHISHI_TICKETFLAGS_INITIAL);
+  if (res != SHISHI_OK)
+    return res;
+
   return SHISHI_OK;
 }
 
@@ -107,7 +115,7 @@ shishi_tgs_tgtkt (Shishi_tgs * tgs)
  * @tgs: structure that holds information about TGS exchange
  * @tgtkt: ticket granting ticket to store in TGS.
  *
- * Set the Ticket in the AP exchange.
+ * Set the Ticket in the TGS exchange.
  **/
 void
 shishi_tgs_tgtkt_set (Shishi_tgs * tgs, Shishi_tkt * tgtkt)
@@ -140,6 +148,98 @@ Shishi_asn1
 shishi_tgs_req (Shishi_tgs * tgs)
 {
   return tgs->tgsreq;
+}
+
+/**
+ * shishi_tgs_req_set:
+ * @tgs: structure that holds information about TGS exchange
+ * @tgsreq: tgsreq to store in TGS.
+ *
+ * Set the TGS-REQ in the TGS exchange.
+ **/
+void
+shishi_tgs_req_set (Shishi_tgs * tgs, Shishi_asn1 tgsreq)
+{
+  if (tgs->tgsreq)
+    shishi_asn1_done (tgs->handle, tgs->tgsreq);
+  tgs->tgsreq = tgsreq;
+}
+
+/**
+ * shishi_tgs_req_der:
+ * @tgs: structure that holds information about TGS exchange
+ * @out: output array with der encoding of TGS-REQ.
+ * @outlen: length of output array with der encoding of TGS-REQ.
+ *
+ * DER encode TGS-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_req_der (Shishi_tgs * tgs, char *out, int *outlen)
+{
+  int rc;
+
+  rc = shishi_a2d (tgs->handle, tgs->tgsreq, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_tgs_req_der_set:
+ * @tgs: structure that holds information about TGS exchange
+ * @der: input array with DER encoded AP-REQ.
+ * @derlen: length of input array with DER encoded AP-REQ.
+ *
+ * DER decode TGS-REQ and set it TGS exchange.  If decoding fails, the
+ * TGS-REQ in the TGS exchange remains.
+ *
+ * Return value: Returns SHISHI_OK.
+ **/
+int
+shishi_tgs_req_der_set (Shishi_tgs * tgs, char *der, size_t derlen)
+{
+  Shishi_asn1 tgsreq;
+
+  tgsreq = shishi_der2asn1_tgsreq (tgs->handle, der, derlen);
+
+  if (tgsreq == NULL)
+    return SHISHI_ASN1_ERROR;
+
+  tgs->tgsreq = tgsreq;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_tgs_req_process:
+ * @tgs: structure that holds information about TGS exchange
+ *
+ * Process new TGS-REQ and set ticket.  The key to decrypt the TGS-REQ
+ * is taken from the EncKDCReqPart of the TGS tgticket.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_req_process (Shishi_tgs * tgs)
+{
+  Shishi_asn1 apreq;
+  int rc;
+
+  if (VERBOSE (tgs->handle))
+    printf ("Processing TGS-REQ...\n");
+
+  rc = shishi_kdcreq_get_padata_tgs (tgs->handle, tgs->tgsreq, &apreq);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  shishi_ap_req_set (tgs->ap, apreq);
+
+  shishi_apreq_print (tgs->handle, stdout, shishi_ap_req (tgs->ap));
+
+  return SHISHI_OK;
 }
 
 /**
@@ -220,6 +320,28 @@ shishi_tgs_rep (Shishi_tgs * tgs)
 }
 
 /**
+ * shishi_tgs_rep_der:
+ * @tgs: structure that holds information about TGS exchange
+ * @out: output array with der encoding of TGS-REP.
+ * @outlen: length of output array with der encoding of TGS-REP.
+ *
+ * DER encode TGS-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_rep_der (Shishi_tgs * tgs, char *out, int *outlen)
+{
+  int rc;
+
+  rc = shishi_a2d (tgs->handle, tgs->tgsrep, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_tgs_rep_process:
  * @tgs: structure that holds information about TGS exchange
  *
@@ -279,6 +401,62 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
 }
 
 /**
+ * shishi_tgs_rep_build:
+ * @tgs: structure that holds information about TGS exchange
+ * @key: user's key, used to encrypt the encrypted part of the TGS-REP.
+ *
+ * Build TGS-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_rep_build (Shishi_tgs * tgs, Shishi_key * key)
+{
+  int rc;
+
+  /* XXX there are reasons for having padata in TGS-REP */
+  rc = shishi_kdcrep_clear_padata (tgs->handle, tgs->tgsrep);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_enckdcreppart_populate_encticketpart
+    (tgs->handle, shishi_tkt_enckdcreppart (tgs->tkt),
+     shishi_tkt_encticketpart (tgs->tkt));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdc_copy_nonce (tgs->handle, tgs->tgsreq,
+			      shishi_tkt_enckdcreppart (tgs->tkt));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdcrep_add_enc_part (tgs->handle,
+				   tgs->tgsrep,
+				   key,
+				   SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
+				   shishi_tkt_enckdcreppart (tgs->tkt));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdcrep_set_ticket (tgs->handle, tgs->tgsrep,
+				 shishi_tkt_ticket (tgs->tkt));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdc_copy_crealm (tgs->handle, tgs->tgsrep,
+			       shishi_tkt_encticketpart (tgs->tkt));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdc_copy_cname (tgs->handle, tgs->tgsrep,
+			      shishi_tkt_encticketpart (tgs->tkt));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_tgs_krberror:
  * @tgs: structure that holds information about TGS exchange
  *
@@ -289,6 +467,43 @@ Shishi_asn1
 shishi_tgs_krberror (Shishi_tgs * tgs)
 {
   return tgs->krberror;
+}
+
+/**
+ * shishi_tgs_krberror_der:
+ * @tgs: structure that holds information about TGS exchange
+ * @out: output array with der encoding of KRB-ERROR.
+ * @outlen: length of output array with der encoding of KRB-ERROR.
+ *
+ * DER encode KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_krberror_der (Shishi_tgs * tgs, char *out, int *outlen)
+{
+  int rc;
+
+  rc = shishi_a2d (tgs->handle, tgs->krberror, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_tgs_krberror_set:
+ * @tgs: structure that holds information about TGS exchange
+ * @krberror: krberror to store in TGS.
+ *
+ * Set the KRB-ERROR in the TGS exchange.
+ **/
+void
+shishi_tgs_krberror_set (Shishi_tgs * tgs, Shishi_asn1 krberror)
+{
+  if (tgs->krberror)
+    shishi_asn1_done (tgs->handle, tgs->krberror);
+  tgs->krberror = krberror;
 }
 
 /**
@@ -309,7 +524,7 @@ shishi_tgs_tkt (Shishi_tgs * tgs)
  * @tgs: structure that holds information about TGS exchange
  * @tkt: ticket to store in TGS.
  *
- * Set the Ticket in the AP exchange.
+ * Set the Ticket in the TGS exchange.
  **/
 void
 shishi_tgs_tkt_set (Shishi_tgs * tgs, Shishi_tkt * tkt)
