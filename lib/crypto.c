@@ -1231,7 +1231,7 @@ static checksuminfo *checksums[] = {
 
 /**
  * shishi_checksum_supported_p:
- * @type: encryption type, see Shishi_etype.
+ * @type: checksum type, see Shishi_cksumtype.
  *
  * Return value: Return 0 iff checksum is unsupported.
  **/
@@ -1249,7 +1249,7 @@ shishi_checksum_supported_p (int32_t type)
 
 /**
  * shishi_checksum_name:
- * @type: encryption type, see Shishi_etype.
+ * @type: checksum type, see Shishi_cksumtype.
  *
  * Return value: Return name of checksum type,
  * e.g. "hmac-sha1-96-aes256", as defined in the standards.
@@ -1272,7 +1272,7 @@ shishi_checksum_name (int32_t type)
 
 /**
  * shishi_checksum_cksumlen:
- * @type: encryption type, see Shishi_etype.
+ * @type: checksum type, see Shishi_cksumtype.
  *
  * Return value: Return length of checksum used for the checksum type,
  * as defined in the standards.
@@ -1293,7 +1293,8 @@ shishi_checksum_cksumlen (int32_t type)
  * shishi_checksum_parse:
  * @checksum: name of checksum type, e.g. "hmac-sha1-96-aes256".
  *
- * Return value: Return checksum type corresponding to a string.
+ * Return value: Return checksum type, see Shishi_cksumtype,
+ * corresponding to a string.
  **/
 int
 shishi_checksum_parse (const char *checksum)
