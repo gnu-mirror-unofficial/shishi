@@ -21,6 +21,16 @@
 
 #include "internal.h"
 
+/**
+ * shishi_encapreppart:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * This function creates a new EncAPRepPart, populated with some
+ * default values.  It uses the current time as returned by the system
+ * for the ctime and cusec fields.
+ *
+ * Return value: Returns the encapreppart or NULL on failure.
+ **/
 Shishi_asn1
 shishi_encapreppart (Shishi * handle)
 {
@@ -372,6 +382,16 @@ shishi_encapreppart_seqnumber_get (Shishi * handle,
   return res;
 }
 
+/**
+ * shishi_encapreppart_time_copy:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encapreppart: EncAPRepPart as allocated by shishi_encapreppart().
+ * @authenticator: Authenticator to copy time fields from.
+ *
+ * Copy time fields from Authenticator into EncAPRepPart.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_encapreppart_time_copy (Shishi * handle,
 			       Shishi_asn1 encapreppart,
