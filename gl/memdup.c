@@ -22,6 +22,12 @@
 /* Specification.  */
 #include "memdup.h"
 
+/* Get malloc */
+#include <stdlib.h>
+
+/* Get memcpy */
+#include <string.h>
+
 /* Duplicate N bytes of data buffer. */
 extern void *
 memdup (void *dest, const void *src, size_t n)
