@@ -22,7 +22,7 @@
  */
 
 /* This file comes from jabberd - Jabber Open Source Server, licensed
-   under GPL. */
+   under GPL. http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/jabberd2/ */
 
 #include "internal.h"
 
