@@ -200,7 +200,7 @@ AC_SUBST(LIBIDN_CFLAGS)
 AC_SUBST(LIBIDN_LIBS)
 AC_MSG_CHECKING([if system's libidn should be used])
 AC_MSG_RESULT($with_system_idn)
-AC_CONFIG_SUBDIRS(libidn)
+AC_CONFIG_SUBDIRS(libstringprep)
 
 dnl libtasn1 will be built
 dnl AC_CHECK_LIB([tasn1], libasn1_strerror,, AC_MSG_ERROR([libtasn1 is required]))
