@@ -990,13 +990,17 @@ kdc_loop (Shishi * handle, struct arguments *arg)
 		printf ("Has %d bytes from %s\n", ls->bufpos, ls->str);
 
 		if (arg->listenspec[i].type == SOCK_DGRAM ||
-		    (ls->bufpos > 4
-		     && ntohl (*(int *) ls->buf) == ls->bufpos))
+		    (ls->bufpos > 4 &&
+		     ntohl (*(int *) ls->buf) + 4 == ls->bufpos))
 		  {
 		    char *p;
 		    size_t plen;
 
-		    process (handle, arg, ls->buf, ls->bufpos, &p, &plen);
+		    if (arg->listenspec[i].type == SOCK_STREAM)
+		      process (handle, arg, ls->buf + 4, ls->bufpos - 4,
+			       &p, &plen);
+		    else
+		      process (handle, arg, ls->buf, ls->bufpos, &p, &plen);
 
 		    if (p && plen > 0)
 		      {
