@@ -1,19 +1,5 @@
 ## Process this file with automake to produce Makefile.in.
 
-# GNULIB modules:
-# error getopt realloc setenv strcase strchrnul strnlen strdup strndup xstrndup vasprintf vasnprintf xalloc getdate timegm gethostname xgethostname xgetdomainname getline xreadlink progname
-
-# Local not-yet-in-gnulib modules:
-# + base64
-
-# After using gnulib-tool, do:
-# s/libfoo_a/libfoo_la/g
-# s/libfoo.a/libfoo.la/
-# s/libfoo_a_LIBADD = @LIBOBJS@//g
-# s/#libfoo_la_LIBADD/libfoo_la_LIBADD/g
-# s/@LIBOBJS@/@LTLIBOBJS@/g
-# s/noinst_LIBRARIES/noinst_LTLIBRARIES/g
-
 AUTOMAKE_OPTIONS = 1.5 gnits no-dependencies
 
 noinst_LTLIBRARIES = libfoo.la
@@ -38,11 +24,9 @@ alloca.h: alloca_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
-libfoo_la_LIBADD += @ALLOCA@
-#libfoo_la_LIBADD += @LTALLOCA@
+libfoo_la_LIBADD += @LTALLOCA@
 libfoo_la_SOURCES += allocsa.h allocsa.c
 
-libfoo_la_SOURCES += getsubopt.h
 
 libfoo_la_SOURCES += exit.h
 
@@ -69,6 +53,8 @@ getopt.h: getopt_.h
 	cp $(srcdir)/getopt_.h $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += getopt.h getopt.h-t
+
+libfoo_la_SOURCES += getsubopt.h
 
 libfoo_la_SOURCES += gettext.h
 
