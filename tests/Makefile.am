@@ -22,7 +22,7 @@ EXTRA_DIST = utils.c
 
 TESTS = crypto authenticator gztime
 
-INCLUDES = -I$(top_srcdir)/lib -I../lib @LIBIDN_CFLAGS@
+INCLUDES = -I$(top_srcdir)/lib -I../lib
 LDADD =  @LTLIBINTL@ ../lib/libshishi.la
 
 noinst_PROGRAMS = $(TESTS)
