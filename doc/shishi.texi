@@ -41,7 +41,7 @@ Free Software Foundation raise funds for GNU development.''
 
 @dircategory Net Utilities
 @direntry
-* shishi: (shishi).		An RFC 1510 implementation
+* shishi: (shishi).		A Kerberos 5 implementation
 @end direntry
 
 @titlepage
@@ -87,8 +87,7 @@ Indices
 @node Introduction
 @chapter Introduction
 
-Shishi implements the RFC 1510 network security system, also known as
-Kerberos 5.
+Shishi implements the Kerberos 5 network security system.
 
 @menu
 * Getting Started::
@@ -107,7 +106,7 @@ interface.  All commands, functions and data types provided by Shishi
 are explained.
 
 The reader is assumed to possess basic familiarity with network
-security and the RFC 1510 security system.
+security and the Kerberos 5 security system.
 
 This manual can be used in several ways.  If read from the beginning
 to the end, it gives a good introduction into the library and how it
@@ -626,8 +625,8 @@ specify the client name @code{simon@@JOSEFSSON.ORG}.
 @example
 @cartouche
 $ shishi simon@@JOSEFSSON.ORG
-Enter password for `jas@@JOSEFSSON.ORG':
-jas@@JOSEFSSON.ORG:
+Enter password for `simon@@JOSEFSSON.ORG':
+simon@@JOSEFSSON.ORG:
 Authtime:       Fri Aug 15 04:44:49 2003
 Endtime:        Fri Aug 15 05:01:29 2003
 Server:         krbtgt/JOSEFSSON.ORG key des3-cbc-sha1-kd (16)
@@ -737,7 +736,8 @@ $
 @end cartouche
 @end example
 
-Below follows a list of all parameters.
+Refer to the reference manual for all available parameters
+(@pxref{Parameters for shishi}).
 
 @c **********************************************************
 @c ****************  Administration Manual  *****************
@@ -814,7 +814,8 @@ $
 @end cartouche
 @end example
 
-You are now ready to start the KDC:
+You are now ready to start the KDC.  Refer to the reference manual for
+available parameters (@pxref{Parameters for shishid}).
 
 @example
 @cartouche
