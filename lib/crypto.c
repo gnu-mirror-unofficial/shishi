@@ -457,7 +457,6 @@ simplified_dencrypt (Shishi * handle,
     }
 
   gcry_cipher_close (ch);
-
 #else
   struct CBC_CTX(struct des_ctx, DES_BLOCK_SIZE) des;
   struct CBC_CTX(struct des3_ctx, DES3_BLOCK_SIZE) des3;
@@ -478,10 +477,9 @@ simplified_dencrypt (Shishi * handle,
 	  shishi_error_printf (handle, "Nettle setkey failed");
 	  return SHISHI_CRYPTO_INTERNAL_ERROR;
 	}
-      if (iv)
-	CBC_SET_IV (&des, iv);
-      else
-	memset(des.iv, 0, sizeof(des.iv));
+      memset(des.iv, 0, sizeof(des.iv));
+      /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
+      memcpy(des.iv, iv, ivlen < sizeof(des.iv) ? ivlen : sizeof(des.iv));
       if (decryptp)
 	CBC_DECRYPT (&des, des_decrypt, inlen, *out, in);
       else
@@ -502,10 +500,9 @@ simplified_dencrypt (Shishi * handle,
 	  shishi_error_printf (handle, "Nettle setkey failed");
 	  return SHISHI_CRYPTO_INTERNAL_ERROR;
 	}
-      if (iv)
-	CBC_SET_IV (&des3, iv);
-      else
-	memset(des3.iv, 0, sizeof(des3.iv));
+      memset(des3.iv, 0, sizeof(des3.iv));
+      /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
+      memcpy(des3.iv, iv, ivlen < sizeof(des3.iv) ? ivlen : sizeof(des3.iv));
       if (decryptp)
 	CBC_DECRYPT (&des3, des3_decrypt, inlen, *out, in);
       else
@@ -521,10 +518,9 @@ simplified_dencrypt (Shishi * handle,
 
     case SHISHI_AES128_CTS_HMAC_SHA1_96:
     case SHISHI_AES256_CTS_HMAC_SHA1_96:
-      if (iv)
-	CBC_CTS_SET_IV (&aes, iv);
-      else
-	memset(aes.iv, 0, sizeof(aes.iv));
+      memset(aes.iv, 0, sizeof(aes.iv));
+      /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
+      memcpy(aes.iv, iv, ivlen < sizeof(aes.iv) ? ivlen : sizeof(aes.iv));
       if (decryptp)
 	{
 	  aes_set_decrypt_key (&aes.ctx, shishi_key_length (key),
@@ -546,8 +542,8 @@ simplified_dencrypt (Shishi * handle,
 	}
       break;
     }
-
 #endif
+
   return SHISHI_OK;
 }
 
