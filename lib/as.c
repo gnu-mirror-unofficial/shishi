@@ -265,12 +265,10 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
 
   if (key == NULL && password == NULL)
     {
-      char password[BUFSIZ];
+      char *password;
 
-      res = shishi_prompt_password (as->handle,
-				    stdin, password, BUFSIZ,
-				    stdout, "Enter password for `%s': ",
-				    user);
+      res = shishi_prompt_password (as->handle, &password,
+				    "Enter password for `%s': ", user);
       if (res != SHISHI_OK)
 	{
 	  shishi_error_printf (as->handle, "Reading password failed: %s\n",
@@ -280,6 +278,7 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
 
       res = shishi_as_process (as->handle, as->asreq, as->asrep,
 			       password, &kdcreppart);
+      free (password);
     }
   else if (key == NULL)
     res = shishi_as_process (as->handle, as->asreq, as->asrep,
