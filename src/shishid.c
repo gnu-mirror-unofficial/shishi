@@ -304,6 +304,8 @@ doit (void)
 
   gnutls_certificate_set_dh_params (x509cred, dh_params);
 
+  resume_db_init (arg.resume_limit_arg);
+
   if (!arg.quiet_flag)
     printf ("Initializing GNUTLS...done\n");
 #endif
@@ -327,6 +329,8 @@ doit (void)
 #ifdef USE_STARTTLS
   if (!arg.quiet_flag)
     printf ("Deinitializing GNUTLS...\n");
+
+  resume_db_done ();
 
   gnutls_global_deinit ();
 

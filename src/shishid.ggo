@@ -33,7 +33,7 @@ option "x509cafile" - "X.509 certificate authorities used to verify client certi
 option "x509certfile" - "X.509 server certificate, in PEM format." string typestr="FILE" no
 option "x509crlfile" - "X.509 certificate revocation list to check for revoked client certificates, in PEM format." string typestr="FILE" no
 option "x509keyfile" - "X.509 server certificate key, in PEM format." string typestr="FILE" no
-
+option "resume-limit" - "Keep track of up to this many TLS sessions for resume purposes (0 to disable TLS resume)." short default="50" no
 section "Other options"
 
 option "configuration-file" c "Use specified configuration file." string typestr="FILE" no

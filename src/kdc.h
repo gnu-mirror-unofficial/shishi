@@ -181,3 +181,10 @@ extern ssize_t process (const char *in, size_t inlen, char **out);
 /* Interface between server.c and starttls.c. */
 extern void kdc_send1 (struct listenspec *ls);
 extern int kdc_extension (struct listenspec *ls);
+
+/* Interface between shishid.c, server.c and resume.c. */
+extern void resume_db_init (size_t nconnections);
+extern void resume_db_done (void);
+extern int resume_db_store (void *dbf, gnutls_datum key, gnutls_datum data);
+extern gnutls_datum resume_db_fetch (void *dbf, gnutls_datum key);
+extern int resume_db_delete (void *dbf, gnutls_datum key);

@@ -61,8 +61,8 @@ logcertinfo (gnutls_session session)
 	unsigned bits;
 	const char *keytype, *validity;
 
-	rc =
-	  gnutls_x509_crt_import (cert, &cert_list[i], GNUTLS_X509_FMT_DER);
+	rc = gnutls_x509_crt_import (cert, &cert_list[i],
+				     GNUTLS_X509_FMT_DER);
 	if (rc < 0)
 	  {
 	    syslog (LOG_ERR, "TLS xci[%d] failed (%d): %s", i,
@@ -252,6 +252,9 @@ logtlsinfo (gnutls_session session)
       syslog (LOG_ERR, "Unknown TLS authentication (%d)", cred);
       break;
     }
+
+  if (gnutls_session_is_resumed (session))
+    syslog (LOG_INFO, "TLS session is resumed.");
 }
 
 #define STARTTLS_CLIENT_REQUEST "\x70\x00\x00\x01"
@@ -325,6 +328,10 @@ kdc_extension (struct listenspec *ls)
       gnutls_dh_set_prime_bits (ls->session, DH_BITS);
       gnutls_transport_set_ptr (ls->session,
 				(gnutls_transport_ptr) ls->sockfd);
+
+      gnutls_db_set_retrieve_function (ls->session, resume_db_fetch);
+      gnutls_db_set_store_function (ls->session, resume_db_store);
+      gnutls_db_set_remove_function (ls->session, resume_db_delete);
 
       rc = gnutls_handshake (ls->session);
       if (rc < 0)

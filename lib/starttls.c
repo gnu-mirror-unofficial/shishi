@@ -84,6 +84,8 @@ _shishi_sendrecv_tls1 (Shishi * handle,
   int ret;
   ssize_t bytes_sent, bytes_read;
   char extbuf[STARTTLS_LEN + 1];
+  static size_t session_data_size = 0;
+  static void *session_data = NULL;
 
   bytes_sent = write (sockfd, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN);
   if (bytes_sent != STARTTLS_LEN)
@@ -96,6 +98,9 @@ _shishi_sendrecv_tls1 (Shishi * handle,
 
   gnutls_transport_set_ptr (session, (gnutls_transport_ptr) sockfd);
 
+  if (session_data_size > 0)
+    gnutls_session_set_data (session, session_data, session_data_size);
+
   ret = gnutls_handshake (session);
   if (ret < 0)
     {
@@ -104,7 +109,30 @@ _shishi_sendrecv_tls1 (Shishi * handle,
       return SHISHI_RECVFROM_ERROR;
     }
 
-  shishi_error_printf (handle, "TLS handshake completed");
+  if (gnutls_session_is_resumed( session) != 0)
+    shishi_error_printf (handle, "TLS handshake completed (resumed)");
+  else
+    shishi_error_printf (handle, "TLS handshake completed (not resumed)");
+
+  if (session_data_size == 0)
+    {
+      ret = gnutls_session_get_data (session, NULL, &session_data_size);
+      if (ret < 0)
+	{
+	  shishi_error_printf (handle, "TLS gsgd(1) failed (%d): %s",
+			       ret, gnutls_strerror (ret));
+	  return SHISHI_RECVFROM_ERROR;
+	}
+      session_data = xmalloc (session_data_size);
+      ret = gnutls_session_get_data (session, session_data,
+				     &session_data_size);
+      if (ret < 0)
+	{
+	  shishi_error_printf (handle, "TLS gsgd(2) failed (%d): %s",
+			       ret, gnutls_strerror (ret));
+	  return SHISHI_RECVFROM_ERROR;
+	}
+    }
 
   bytes_sent = gnutls_record_send (session, indata, inlen);
   if (bytes_sent != inlen)

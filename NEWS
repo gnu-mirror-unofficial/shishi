@@ -10,6 +10,14 @@ add and remove keys via the command line interface.
 
 ** The KDC has been cleaned up and the error handling is more robust.
 
+** The Shishi client and Shishid KDC now support TLS resumption.
+This improves connection speed, in particular for the normal AS plus
+TGS combination.  Currently the TLS resume database is only stored in
+memory, so if either the client or server process is restarted, the
+TLS resume information is lost.  This add --resume-limit to Shishid,
+which can be used to specify the size of the TLS resume database (or
+to disable it).
+
 ** The Shisa programming API is documented in the manual.
 
 * Version 0.0.11 (released 2003-12-21)
