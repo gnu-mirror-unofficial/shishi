@@ -175,22 +175,22 @@ test (Shishi * handle)
     fail ("shishi_authenticator_add_authorizationdata() failed\n");
 
   /* shishi_authenticator_authorizationdata */
-  m = sizeof (buffer);
-  res = shishi_authenticator_authorizationdata (handle, a, &t, buffer, &m, 1);
+  res = shishi_authenticator_authorizationdata (handle, a, &t, &buf, &m, 1);
   if (debug)
-    escapeprint (buffer, m);
-  if (res == SHISHI_OK && t == 42 && m == 3 && memcmp (buffer, "baz", 3) == 0)
+    escapeprint (buf, m);
+  if (res == SHISHI_OK && t == 42 && m == 3 && memcmp (buf, "baz", 3) == 0)
     success ("shishi_authenticator_authorizationdata() OK\n");
   else
     fail ("shishi_authenticator_authorizationdata() failed\n");
+  free (buf);
 
   /* shishi_authenticator_authorizationdata */
-  m = sizeof (buffer);
-  res = shishi_authenticator_authorizationdata (handle, a, &t, buffer, &m, 2);
+  res = shishi_authenticator_authorizationdata (handle, a, &t, &buf, &m, 2);
   if (res == SHISHI_OUT_OF_RANGE)
     success ("shishi_authenticator_authorizationdata() OK\n");
   else
     fail ("shishi_authenticator_authorizationdata() failed\n");
+  free (buf);
 
   /* shishi_authenticator_remove_cksum */
   res = shishi_authenticator_remove_cksum (handle, a);
