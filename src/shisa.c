@@ -219,6 +219,7 @@ apply_options (const char *realm,
 	       Shisa_principal *ph,
 	       Shisa_key *dbkey)
 {
+  char *passwd = args_info.password_arg;
   char *salt = args_info.salt_arg;
   char *str2keyparam = NULL;
   size_t str2keyparamlen = 0;
@@ -244,8 +245,6 @@ apply_options (const char *realm,
 
   if (args_info.password_given)
     {
-      char *passwd = args_info.password_arg;
-
       if (!passwd)
 	{
 	  rc = shishi_prompt_password (sh, &passwd, "Password for `%s@%s': ",
@@ -275,7 +274,7 @@ apply_options (const char *realm,
   dbkey->saltlen = strlen (salt);
   dbkey->str2keyparam = str2keyparam;
   dbkey->str2keyparamlen = str2keyparamlen;
-  dbkey->password = args_info.password_arg;
+  dbkey->password = passwd;
 
   return EXIT_SUCCESS;
 }
