@@ -33,7 +33,7 @@ shishi_strerror_details (Shishi * handle)
 /**
  * shishi_strerror:
  * @err: shishi error code
- * 
+ *
  * Return value: Returns a pointer to a statically allocated string
  * containing a description of the error with the error value
  * @var{err}.  This string can be used to output a diagnostic message
@@ -51,7 +51,7 @@ shishi_strerror (int err)
       break;
 
     case SHISHI_MALLOC_ERROR:
-      p = _("Memory allocation error in shishi library");
+      p = _("Memory allocation error in shishi library.");
       break;
 
     case SHISHI_BASE64_ERROR:
@@ -60,32 +60,32 @@ shishi_strerror (int err)
       break;
 
     case SHISHI_FOPEN_ERROR:
-      p = _("Could not open file");
+      p = _("Could not open file.");
       break;
 
     case SHISHI_FCLOSE_ERROR:
-      p = _("Could not close file");
+      p = _("Could not close file.");
       break;
 
     case SHISHI_GCRYPT_ERROR:
-      p = _("Internal libgcrypt error");
+      p = _("Internal libgcrypt error.");
       break;
 
     case SHISHI_NONCE_MISMATCH:
       p =
-	_("Replay protection value (nonce) differ between request and reply");
+	_("Replay protection value (nonce) differ between request and reply.");
       break;
 
     case SHISHI_REALM_MISMATCH:
-      p = _("Client realm value differ between request and reply");
+      p = _("Client realm value differ between request and reply.");
       break;
 
     case SHISHI_CNAME_MISMATCH:
-      p = _("Client name value differ between request and reply");
+      p = _("Client name value differ between request and reply.");
       break;
 
     case SHISHI_ASN1_ERROR:
-      p = _("Error in ASN.1 data, probably due to corrupt data");
+      p = _("Error in ASN.1 data, probably due to corrupt data.");
       break;
 
     case SHISHI_CRYPTO_ERROR:
