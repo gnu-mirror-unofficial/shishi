@@ -69,7 +69,7 @@ shishi_ticketset_default_file (Shishi * handle)
     {
       char *p;
 
-      p=shishi_ticketset_default_file_guess ();
+      p = shishi_ticketset_default_file_guess ();
       shishi_ticketset_default_file_set (handle, p);
       free (p);
     }
@@ -93,7 +93,7 @@ shishi_ticketset_default_file_set (Shishi * handle, const char *ticketsetfile)
   if (handle->ticketsetdefaultfile)
     free (handle->ticketsetdefaultfile);
   if (ticketsetfile)
-    handle->ticketsetdefaultfile = strdup(ticketsetfile);
+    handle->ticketsetdefaultfile = strdup (ticketsetfile);
   else
     handle->ticketsetdefaultfile = NULL;
 }
@@ -111,7 +111,7 @@ shishi_ticketset (Shishi * handle, Shishi_ticketset ** ticketset)
   *ticketset = malloc (sizeof (**ticketset));
   if (*ticketset == NULL)
     return SHISHI_MALLOC_ERROR;
-  memset(*ticketset, 0, sizeof(**ticketset));
+  memset (*ticketset, 0, sizeof (**ticketset));
 
   (*ticketset)->handle = handle;
 
@@ -159,8 +159,7 @@ shishi_ticketset_get (Shishi_ticketset * ticketset, int ticketno)
  * larger than size of ticket set.
  **/
 int
-shishi_ticketset_remove (Shishi_ticketset * ticketset,
-			 int ticketno)
+shishi_ticketset_remove (Shishi_ticketset * ticketset, int ticketno)
 {
   if (!ticketset)
     return SHISHI_INVALID_TICKETSET;
@@ -169,9 +168,9 @@ shishi_ticketset_remove (Shishi_ticketset * ticketset,
     return SHISHI_OK;
 
   if (ticketno < ticketset->ntickets)
-    memmove(&ticketset->tickets[ticketno], &ticketset->tickets[ticketno + 1],
-	    sizeof(*ticketset->tickets) *
-	    (ticketset->ntickets - ticketno - 1));
+    memmove (&ticketset->tickets[ticketno], &ticketset->tickets[ticketno + 1],
+	     sizeof (*ticketset->tickets) *
+	     (ticketset->ntickets - ticketno - 1));
 
   --ticketset->ntickets;
 
@@ -186,7 +185,7 @@ shishi_ticketset_remove (Shishi_ticketset * ticketset,
   else
     {
       if (ticketset->tickets)
-	free(ticketset->tickets);
+	free (ticketset->tickets);
       ticketset->tickets = NULL;
     }
 
@@ -234,8 +233,7 @@ shishi_ticketset_add (Shishi_ticketset * ticketset, Shishi_ticket * ticket)
 int
 shishi_ticketset_new (Shishi_ticketset * ticketset,
 		      ASN1_TYPE ticket,
-		      ASN1_TYPE enckdcreppart,
-		      ASN1_TYPE kdcrep)
+		      ASN1_TYPE enckdcreppart, ASN1_TYPE kdcrep)
 {
   Shishi_ticket *tkt;
   int res;
@@ -282,7 +280,8 @@ shishi_ticketset_read (Shishi_ticketset * ticketset, FILE * fh)
 	  break;
 	}
 
-      res = shishi_enckdcreppart_parse (ticketset->handle, fh, &enckdcreppart);
+      res =
+	shishi_enckdcreppart_parse (ticketset->handle, fh, &enckdcreppart);
       if (res != SHISHI_OK)
 	break;
 
@@ -359,7 +358,7 @@ shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
   for (i = 0; i < ticketset->ntickets; i++)
     {
       res = shishi_kdcrep_print
-	(ticketset->handle, fh, shishi_ticket_kdcrep(ticketset->tickets[i]));
+	(ticketset->handle, fh, shishi_ticket_kdcrep (ticketset->tickets[i]));
       if (res != SHISHI_OK)
 	{
 	  shishi_error_printf (ticketset->handle,
@@ -370,7 +369,7 @@ shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
 
       res = shishi_enckdcreppart_print
 	(ticketset->handle, fh,
-	 shishi_ticket_enckdcreppart(ticketset->tickets[i]));
+	 shishi_ticket_enckdcreppart (ticketset->tickets[i]));
       if (res != SHISHI_OK)
 	{
 	  shishi_error_printf (ticketset->handle,
@@ -420,7 +419,7 @@ shishi_ticketset_expire (Shishi_ticketset * ticketset)
 	i++;
     }
 
-  if (VERBOSE(ticketset->handle) && warn)
+  if (VERBOSE (ticketset->handle) && warn)
     shishi_warn (ticketset->handle,
 		 ngettext ("removed %d expired ticket\n",
 			   "removed %d expired tickets\n", warn), warn);
@@ -438,8 +437,7 @@ shishi_ticketset_expire (Shishi_ticketset * ticketset)
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int
-shishi_ticketset_to_file (Shishi_ticketset * ticketset,
-			  const char *filename)
+shishi_ticketset_to_file (Shishi_ticketset * ticketset, const char *filename)
 {
   FILE *fh;
   int res;
@@ -562,15 +560,15 @@ shishi_ticketset_print (Shishi_ticketset * ticketset, FILE * fh)
 }
 
 Shishi_ticket *
-shishi_ticketset_find_for_clientserveretypevalid (Shishi_ticketset * ticketset,
+shishi_ticketset_find_for_clientserveretypevalid (Shishi_ticketset *
+						  ticketset,
 						  const char *client,
 						  const char *server,
-						  int etype,
-						  int valid)
+						  int etype, int valid)
 {
   int i;
 
-  if (VERBOSE(ticketset->handle))
+  if (VERBOSE (ticketset->handle))
     fprintf (stderr, "Searching tickets for client `%s' and server `%s'\n",
 	     client, server);
 
@@ -616,8 +614,7 @@ shishi_ticketset_find_for_clientserver_all (Shishi_ticketset * ticketset,
 
 Shishi_ticket *
 shishi_ticketset_find_for_serveretype (Shishi_ticketset * ticketset,
-				       const char *server,
-				       int etype)
+				       const char *server, int etype)
 {
   return shishi_ticketset_find_for_clientserveretypevalid
     (ticketset, shishi_principal_default (ticketset->handle),
@@ -641,7 +638,8 @@ shishi_ticketset_find_for_server_all (Shishi_ticketset * ticketset,
 }
 
 Shishi_ticket *
-shishi_ticketset_get_for_clientserverpasswdetype (Shishi_ticketset * ticketset,
+shishi_ticketset_get_for_clientserverpasswdetype (Shishi_ticketset *
+						  ticketset,
 						  const char *client,
 						  const char *server,
 						  const char *passwd,
@@ -659,8 +657,8 @@ shishi_ticketset_get_for_clientserverpasswdetype (Shishi_ticketset * ticketset,
   if (tkt)
     return tkt;
 
-  shishi_asprintf(&tgtname, "krbtgt/%s",
-		  shishi_realm_default (ticketset->handle));
+  shishi_asprintf (&tgtname, "krbtgt/%s",
+		   shishi_realm_default (ticketset->handle));
 
   tgt = shishi_ticketset_find_for_clientserver (ticketset, client, tgtname);
   if (tgt == NULL)
@@ -677,14 +675,14 @@ shishi_ticketset_get_for_clientserverpasswdetype (Shishi_ticketset * ticketset,
 	  printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
 		  shishi_strerror_details (ticketset->handle));
 	  if (rc == SHISHI_GOT_KRBERROR)
-	    shishi_krberror_pretty_print(ticketset->handle, stdout,
-					 shishi_as_krberror(as));
+	    shishi_krberror_pretty_print (ticketset->handle, stdout,
+					  shishi_as_krberror (as));
 	  return NULL;
 	}
 
       tgt = shishi_as_ticket (as);
 
-      if (VERBOSEASN1(ticketset->handle))
+      if (VERBOSEASN1 (ticketset->handle))
 	{
 	  shishi_kdcreq_print (ticketset->handle, stdout, shishi_as_req (as));
 	  shishi_kdcrep_print (ticketset->handle, stdout, shishi_as_rep (as));
@@ -700,7 +698,7 @@ shishi_ticketset_get_for_clientserverpasswdetype (Shishi_ticketset * ticketset,
     }
 
   rc = shishi_tgs (ticketset->handle, &tgs);
-  shishi_tgs_tgticket_set(tgs, tgt);
+  shishi_tgs_tgticket_set (tgs, tgt);
   if (rc == SHISHI_OK)
     rc = shishi_tgs_set_server (tgs, server);
   if (rc == SHISHI_OK)
@@ -714,20 +712,20 @@ shishi_ticketset_get_for_clientserverpasswdetype (Shishi_ticketset * ticketset,
       printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
 	      shishi_strerror_details (ticketset->handle));
       if (rc == SHISHI_GOT_KRBERROR)
-	shishi_krberror_pretty_print(ticketset->handle, stdout,
-				     shishi_tgs_krberror(tgs));
+	shishi_krberror_pretty_print (ticketset->handle, stdout,
+				      shishi_tgs_krberror (tgs));
       return NULL;
     }
 
   tkt = shishi_tgs_ticket (tgs);
 
-  if (VERBOSEASN1(ticketset->handle))
+  if (VERBOSEASN1 (ticketset->handle))
     {
       shishi_authenticator_print
 	(ticketset->handle, stdout,
-	 shishi_ap_authenticator(shishi_tgs_ap (tgs)));
+	 shishi_ap_authenticator (shishi_tgs_ap (tgs)));
       shishi_apreq_print
-	(ticketset->handle, stdout, shishi_ap_req(shishi_tgs_ap (tgs)));
+	(ticketset->handle, stdout, shishi_ap_req (shishi_tgs_ap (tgs)));
       shishi_kdcreq_print (ticketset->handle, stdout, shishi_tgs_req (tgs));
       shishi_kdcrep_print (ticketset->handle, stdout, shishi_tgs_rep (tgs));
       shishi_ticket_pretty_print (tkt, stdout);
@@ -743,20 +741,17 @@ shishi_ticketset_get_for_clientserverpasswdetype (Shishi_ticketset * ticketset,
 Shishi_ticket *
 shishi_ticketset_get_for_clientserveretype (Shishi_ticketset * ticketset,
 					    const char *client,
-					    const char *server,
-					    int etype)
+					    const char *server, int etype)
 {
   return shishi_ticketset_get_for_clientserverpasswdetype (ticketset,
 							   client,
 							   server,
-							   NULL,
-							   etype);
+							   NULL, etype);
 }
 
 Shishi_ticket *
 shishi_ticketset_get_for_clientserver (Shishi_ticketset * ticketset,
-				       const char *client,
-				       const char *server)
+				       const char *client, const char *server)
 {
   return shishi_ticketset_get_for_clientserveretype
     (ticketset, shishi_principal_default (ticketset->handle), server, -1);
@@ -778,24 +773,24 @@ shishi_ticketset_get_for_localservicepasswd (Shishi_ticketset * ticketset,
   char buf[HOST_NAME_MAX];
   int ret;
 
-  strcpy(buf, service);
-  strcat(buf, "/");
+  strcpy (buf, service);
+  strcat (buf, "/");
 
-  ret = gethostname (&buf[strlen(service) + 1],
-		     sizeof(buf) - strlen(service) - 1);
-  buf[sizeof(buf) - 1] = '\0';
+  ret = gethostname (&buf[strlen (service) + 1],
+		     sizeof (buf) - strlen (service) - 1);
+  buf[sizeof (buf) - 1] = '\0';
 
   if (ret != 0)
-    strcpy (&buf[strlen(service) + 1], "localhost");
+    strcpy (&buf[strlen (service) + 1], "localhost");
 
   return shishi_ticketset_get_for_clientserverpasswdetype
-    (ticketset, shishi_principal_default (ticketset->handle), buf, passwd, -1);
+    (ticketset, shishi_principal_default (ticketset->handle), buf, passwd,
+     -1);
 }
 
 Shishi_ticket *
 shishi_ticketset_get_for_serveretype (Shishi_ticketset * ticketset,
-				      const char *server,
-				      int etype)
+				      const char *server, int etype)
 {
   return shishi_ticketset_get_for_clientserveretype
     (ticketset, shishi_principal_default (ticketset->handle), server, etype);

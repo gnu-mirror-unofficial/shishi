@@ -54,9 +54,7 @@ shishi_ticket_realm_get (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ticket_realm_set (Shishi * handle,
-			 ASN1_TYPE ticket,
-			 const char *realm)
+shishi_ticket_realm_set (Shishi * handle, ASN1_TYPE ticket, const char *realm)
 {
   int res = ASN1_SUCCESS;
 
@@ -115,8 +113,7 @@ shishi_ticket_sname_set (Shishi * handle,
   i = 1;
   while (sname[i - 1])
     {
-      res = asn1_write_value (ticket, "Ticket.sname.name-string",
-			      "NEW", 1);
+      res = asn1_write_value (ticket, "Ticket.sname.name-string", "NEW", 1);
       if (res != ASN1_SUCCESS)
 	{
 	  shishi_error_set (handle, libtasn1_strerror (res));
@@ -139,8 +136,7 @@ shishi_ticket_sname_set (Shishi * handle,
 
 int
 shishi_ticket_set_server (Shishi * handle,
-			  ASN1_TYPE ticket,
-			  const char *server)
+			  ASN1_TYPE ticket, const char *server)
 {
   char *tmpserver;
   char **serverbuf;
@@ -187,9 +183,7 @@ shishi_ticket_snamerealm_get (Shishi * handle,
 
 int
 shishi_kdcreq_srealmserver_set (Shishi * handle,
-				ASN1_TYPE ticket,
-				char *realm,
-				char *server)
+				ASN1_TYPE ticket, char *realm, char *server)
 {
   int res;
 
@@ -224,7 +218,7 @@ shishi_asn1ticket_get_enc_part_etype (Shishi * handle,
   *etype = 0;
   buflen = sizeof (*etype);
   res = shishi_asn1_field (handle, ticket,
-			    (char *) etype, &buflen, "Ticket.enc-part.etype");
+			   (char *) etype, &buflen, "Ticket.enc-part.etype");
 
   return res;
 }
@@ -337,7 +331,7 @@ shishi_ticket_encticketpart_set (Shishi_ticket * ticket,
 				 ASN1_TYPE encticketpart)
 {
   if (ticket->encticketpart)
-    shishi_asn1_done(ticket->handle, ticket->encticketpart);
+    shishi_asn1_done (ticket->handle, ticket->encticketpart);
   ticket->encticketpart = encticketpart;
 }
 
@@ -355,8 +349,8 @@ shishi_ticket_key (Shishi_ticket * ticket)
       int res;
 
       res = shishi_enckdcreppart_get_key (ticket->handle,
-					  shishi_ticket_enckdcreppart (ticket),
-					  &ticket->key);
+					  shishi_ticket_enckdcreppart
+					  (ticket), &ticket->key);
       if (res != SHISHI_OK)
 	return NULL;
     }
@@ -385,7 +379,7 @@ shishi_ticket (Shishi * handle,
   if (tkt == NULL)
     return NULL;
 
-  memset(tkt, 0, sizeof(*tkt));
+  memset (tkt, 0, sizeof (*tkt));
 
   tkt->handle = handle;
   tkt->ticket = ticket;
@@ -396,11 +390,11 @@ shishi_ticket (Shishi * handle,
 }
 
 void
-shishi_ticket_done (Shishi_ticket *ticket)
+shishi_ticket_done (Shishi_ticket * ticket)
 {
   if (ticket->key)
-    shishi_key_done(&ticket->key);
-  free(ticket);
+    shishi_key_done (&ticket->key);
+  free (ticket);
 }
 
 int
@@ -414,7 +408,7 @@ shishi_ticket_flags (Shishi_ticket * ticket, int *flags)
   memset (buf, 0, sizeof (buf));
   buflen = sizeof (buf);
   res = shishi_asn1_field (ticket->handle, ticket->enckdcreppart,
-			    buf, &buflen, "EncKDCRepPart.flags");
+			   buf, &buflen, "EncKDCRepPart.flags");
   if (res != SHISHI_OK)
     {
       shishi_error_set (ticket->handle, libtasn1_strerror (res));
@@ -430,8 +424,7 @@ shishi_ticket_flags (Shishi_ticket * ticket, int *flags)
 		 ((buf[i] >> 1) & 0x08) |
 		 ((buf[i] << 1) & 0x10) |
 		 ((buf[i] << 3) & 0x20) |
-		 ((buf[i] << 5) & 0x40) |
-		 ((buf[i] << 7) & 0x80)) << (8*i);
+		 ((buf[i] << 5) & 0x40) | ((buf[i] << 7) & 0x80)) << (8 * i);
     }
 
   return SHISHI_OK;
@@ -575,8 +568,7 @@ shishi_ticket_realm (Shishi_ticket * ticket, char *realm, int *realmlen)
 }
 
 int
-shishi_ticket_server (Shishi_ticket * ticket,
-		      char *server, int *serverlen)
+shishi_ticket_server (Shishi_ticket * ticket, char *server, int *serverlen)
 {
   return shishi_ticket_sname_get (ticket->handle, ticket->ticket,
 				  server, serverlen);
@@ -625,8 +617,8 @@ int
 shishi_ticket_keytype (Shishi_ticket * ticket, int *etype)
 {
   return shishi_asn1_integer_field (ticket->handle,
-				     ticket->enckdcreppart, etype,
-				     "EncKDCRepPart.key.keytype");
+				    ticket->enckdcreppart, etype,
+				    "EncKDCRepPart.key.keytype");
 }
 
 int
@@ -636,8 +628,8 @@ shishi_ticket_keytype_p (Shishi_ticket * ticket, int etype)
   int rc;
 
   rc = shishi_asn1_integer_field (ticket->handle,
-				   ticket->enckdcreppart, &tktetype,
-				   "EncKDCRepPart.key.keytype");
+				  ticket->enckdcreppart, &tktetype,
+				  "EncKDCRepPart.key.keytype");
   if (rc != SHISHI_OK)
     return 0;
 
@@ -646,9 +638,7 @@ shishi_ticket_keytype_p (Shishi_ticket * ticket, int etype)
 
 int
 shishi_ticket_lastreq (Shishi_ticket * ticket,
-		       char *lrtime,
-		       int *lrtimelen,
-		       Shihi_lrtype lrtype)
+		       char *lrtime, int *lrtimelen, Shihi_lrtype lrtype)
 {
   unsigned char format[BUFSIZ];
   Shihi_lrtype tmplrtype;
@@ -665,7 +655,7 @@ shishi_ticket_lastreq (Shishi_ticket * ticket,
       sprintf (format, "EncKDCRepPart.last-req.?%d.lr-type", i);
 
       res = shishi_asn1_integer_field (ticket->handle, ticket->enckdcreppart,
-					&tmplrtype, format);
+				       &tmplrtype, format);
       if (res != SHISHI_OK)
 	return SHISHI_ASN1_ERROR;
 
@@ -674,7 +664,7 @@ shishi_ticket_lastreq (Shishi_ticket * ticket,
 	  sprintf (format, "EncKDCRepPart.last-req.?%d.lr-value", i);
 
 	  res = shishi_asn1_field (ticket->handle, ticket->enckdcreppart,
-				    lrtime, lrtimelen, format);
+				   lrtime, lrtimelen, format);
 	  if (res != SHISHI_OK)
 	    return SHISHI_ASN1_ERROR;
 
@@ -706,30 +696,32 @@ shishi_ticket_lastreqc (Shishi_ticket * ticket, Shihi_lrtype lrtype)
 }
 
 int
-shishi_ticket_lastreq_pretty_print (Shishi_ticket * ticket, FILE *fh)
+shishi_ticket_lastreq_pretty_print (Shishi_ticket * ticket, FILE * fh)
 {
   time_t t;
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_INITIAL_TGT_REQUEST);
   if (t != (time_t) - 1)
-    fprintf(fh, _("Time of last initial request for a TGT:\t%s"), ctime(&t));
+    fprintf (fh, _("Time of last initial request for a TGT:\t%s"),
+	     ctime (&t));
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_INITIAL_REQUEST);
   if (t != (time_t) - 1)
-    fprintf(fh, "Time of last initial request:\t%s", ctime(&t));
+    fprintf (fh, "Time of last initial request:\t%s", ctime (&t));
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_NEWEST_TGT_ISSUE);
   if (t != (time_t) - 1)
-    fprintf(fh, "Time of issue for the newest ticket-granting ticket used:\t%s",
-	   ctime(&t));
+    fprintf (fh,
+	     "Time of issue for the newest ticket-granting ticket used:\t%s",
+	     ctime (&t));
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_RENEWAL);
   if (t != (time_t) - 1)
-    fprintf(fh, "Time of the last renewal:\t%s", ctime(&t));
+    fprintf (fh, "Time of the last renewal:\t%s", ctime (&t));
 
   t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_REQUEST);
   if (t != (time_t) - 1)
-    fprintf(fh, "Time of last request:\t%s", ctime(&t));
+    fprintf (fh, "Time of last request:\t%s", ctime (&t));
 
   return SHISHI_OK;
 }
@@ -739,7 +731,7 @@ shishi_ticket_authtime (Shishi_ticket * ticket,
 			char *authtime, int *authtimelen)
 {
   return shishi_asn1_field (ticket->handle, ticket->enckdcreppart,
-			     authtime, authtimelen, "EncKDCRepPart.authtime");
+			    authtime, authtimelen, "EncKDCRepPart.authtime");
 }
 
 time_t
@@ -767,8 +759,8 @@ shishi_ticket_starttime (Shishi_ticket * ticket,
 			 char *starttime, int *starttimelen)
 {
   return shishi_asn1_optional_field (ticket->handle, ticket->enckdcreppart,
-				      starttime, starttimelen,
-				      "EncKDCRepPart.starttime");
+				     starttime, starttimelen,
+				     "EncKDCRepPart.starttime");
 }
 
 time_t
@@ -795,7 +787,7 @@ int
 shishi_ticket_endtime (Shishi_ticket * ticket, char *endtime, int *endtimelen)
 {
   return shishi_asn1_field (ticket->handle, ticket->enckdcreppart,
-			     endtime, endtimelen, "EncKDCRepPart.endtime");
+			    endtime, endtimelen, "EncKDCRepPart.endtime");
 }
 
 time_t
@@ -823,8 +815,8 @@ shishi_ticket_renew_till (Shishi_ticket * ticket,
 			  char *renewtill, int *renewtilllen)
 {
   return shishi_asn1_optional_field (ticket->handle, ticket->enckdcreppart,
-				      renewtill, renewtilllen,
-				      "EncKDCRepPart.renew-till");
+				     renewtill, renewtilllen,
+				     "EncKDCRepPart.renew-till");
 }
 
 time_t
@@ -914,7 +906,7 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
   if (res != SHISHI_OK)
     return res;
   fprintf (fh, _("Server:\t\t%s key %s (%d)\n"), buf,
-	  shishi_cipher_name (keytype), keytype);
+	   shishi_cipher_name (keytype), keytype);
 
   res = shishi_ticket_keytype (ticket, &keytype);
   if (res != SHISHI_OK)
@@ -924,8 +916,8 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
   if (res != SHISHI_OK)
     return res;
   fprintf (fh, _("Ticket key:\t%s (%d) protected by %s (%d)\n"),
-	  shishi_cipher_name (keytype), keytype,
-	  shishi_cipher_name (etype), etype);
+	   shishi_cipher_name (keytype), keytype,
+	   shishi_cipher_name (etype), etype);
 
 
   res = shishi_ticket_flags (ticket, &flags);
@@ -969,8 +961,7 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
 int
 shishi_asn1ticket_decrypt (Shishi * handle,
 			   ASN1_TYPE ticket,
-			   Shishi_key *key,
-			   ASN1_TYPE * encticketpart)
+			   Shishi_key * key, ASN1_TYPE * encticketpart)
 {
   int res;
   int i;
@@ -984,12 +975,12 @@ shishi_asn1ticket_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (etype != shishi_key_type(key))
+  if (etype != shishi_key_type (key))
     return SHISHI_TICKET_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
   res = shishi_asn1_field (handle, ticket, cipher, &cipherlen,
-			    "Ticket.enc-part.cipher");
+			   "Ticket.enc-part.cipher");
   if (res != SHISHI_OK)
     return res;
 
@@ -1028,14 +1019,13 @@ shishi_asn1ticket_decrypt (Shishi * handle,
 }
 
 int
-shishi_ticket_decrypt (Shishi_ticket * ticket,
-		       Shishi_key *key)
+shishi_ticket_decrypt (Shishi_ticket * ticket, Shishi_key * key)
 {
   int rc;
   ASN1_TYPE encticketpart;
 
-  rc = shishi_asn1ticket_decrypt(ticket->handle, ticket->ticket, key,
-				 &encticketpart);
+  rc = shishi_asn1ticket_decrypt (ticket->handle, ticket->ticket, key,
+				  &encticketpart);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -1056,10 +1046,10 @@ shishi_ticket_decrypt (Shishi_ticket * ticket,
  * Set the encrypted enc-part field in the Ticket.  The encrypted data
  * is usually created by calling shishi_encrypt() on the DER encoded
  * enc-part.  To save time, you may want to use
- * shishi_ticket_add_encpart() instead, which calculates the encrypted
- * data and calls this function in one step.
+ * shishi_ticket_add_enc_part() instead, which calculates the
+ * encrypted data and calls this function in one step.
  *
- * Return value:
+ * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_ticket_set_enc_part (Shishi * handle,
@@ -1094,7 +1084,7 @@ shishi_ticket_set_enc_part (Shishi * handle,
 
   return SHISHI_OK;
 
- error:
+error:
   shishi_error_set (handle, libtasn1_strerror (res));
   return SHISHI_ASN1_ERROR;
 }
@@ -1104,18 +1094,17 @@ shishi_ticket_set_enc_part (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @ticket: Ticket to add enc-part field to.
  * @key: key used to encrypt enc-part.
- * @encticketpart: EncTicketPart as allocated by shishi_authenticator().
+ * @encticketpart: EncTicketPart to add.
  *
- * Encrypts DER encoded authenticator using key from ticket and store
- * it in the AP-REQ.
+ * Encrypts DER encoded EncTicketPart using key and stores it in the
+ * Ticket.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_ticket_add_enc_part (Shishi * handle,
 			    ASN1_TYPE ticket,
-			    Shishi_key *key,
-			    ASN1_TYPE encticketpart)
+			    Shishi_key * key, ASN1_TYPE encticketpart)
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];
@@ -1127,7 +1116,7 @@ shishi_ticket_add_enc_part (Shishi * handle,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode encticketpart: %s\n",
-			   shishi_strerror(res));
+			   shishi_strerror (res));
       return !SHISHI_OK;
     }
 
@@ -1140,8 +1129,8 @@ shishi_ticket_add_enc_part (Shishi * handle,
       return res;
     }
 
-  res = shishi_ticket_set_enc_part (handle, ticket, shishi_key_type(key),
-				    shishi_key_version(key), buf, buflen);
+  res = shishi_ticket_set_enc_part (handle, ticket, shishi_key_type (key),
+				    shishi_key_version (key), buf, buflen);
 
   return res;
 }
