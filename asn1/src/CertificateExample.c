@@ -381,7 +381,7 @@ create_certificate(node_asn *cert_def,unsigned char *der,int *der_len)
                          ,errorDescription);
   if(result!=ASN1_SUCCESS){
     printf("\n'tbsCertificate' encoding creation: ERROR\n");
-    //    return;
+    /*    return; */
   }
   /* add the lines for the signature on der[0]..der[der_len-1]: result in str2 */
   result=asn1_write_value(cert1,"certificate1.signature",str2,368); /* dsa-with-sha */ 

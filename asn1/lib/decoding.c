@@ -421,7 +421,7 @@ asn1_der_decoding(ASN1_TYPE *element,const unsigned char *der,int len,
 	      while(p3){
 		ris=_asn1_extract_tag_der(p3,der+counter,&len2);
 		if(ris==ASN1_SUCCESS) break;
-		//if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;
+		/*if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;*/
 		p3=p3->right;
 	      }
 	    }
@@ -430,7 +430,7 @@ asn1_der_decoding(ASN1_TYPE *element,const unsigned char *der,int len,
 	      p=p2;
 	      break;
 	    }
-	    //else if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;
+	    /*else if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;*/
 	  }
 	  p2=p2->right;
 	}
@@ -474,7 +474,7 @@ asn1_der_decoding(ASN1_TYPE *element,const unsigned char *der,int len,
 
       if(ris==ASN1_SUCCESS) ris=_asn1_extract_tag_der(p,der+counter,&len2);
       if(ris!=ASN1_SUCCESS){
-	//if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;
+	/*if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;*/
 	if(p->type&CONST_OPTION){
 	  p->type|=CONST_NOT_USED;
 	  move=RIGHT;
@@ -484,7 +484,7 @@ asn1_der_decoding(ASN1_TYPE *element,const unsigned char *der,int len,
 	  move=RIGHT;
 	}
 	else {
-	  //return (type_field(p->type)!=TYPE_ANY)?ASN1_TAG_ERROR:ASN1_ERROR_TYPE_ANY;
+	  /*return (type_field(p->type)!=TYPE_ANY)?ASN1_TAG_ERROR:ASN1_ERROR_TYPE_ANY;*/
 	  if (errorDescription!=NULL)
 	    _asn1_error_description_tag_error(p,errorDescription);
 	  
@@ -737,7 +737,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 	      while(p3){
 		ris=_asn1_extract_tag_der(p3,der+counter,&len2);
 		if(ris==ASN1_SUCCESS) break;
-		//if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;
+		/*if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;*/
 		p3=p3->right;
 	      }
 	    }
@@ -746,7 +746,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 	      p=p2;
 	      break;
 	    }
-	    //else if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;
+	    /*else if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;*/
 	  }
 	  p2=p2->right;
 	}
@@ -790,7 +790,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 
       if(ris==ASN1_SUCCESS) ris=_asn1_extract_tag_der(p,der+counter,&len2);
       if(ris!=ASN1_SUCCESS){
-	//if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;
+	/*if(ris==ASN1_ERROR_TYPE_ANY) return ASN1_ERROR_TYPE_ANY;*/
 	if(p->type&CONST_OPTION){
 	  p->type|=CONST_NOT_USED;
 	  move=RIGHT;
@@ -800,7 +800,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 	  move=RIGHT;
 	}
 	else {
-	  //return (type_field(p->type)!=TYPE_ANY)?ASN1_TAG_ERROR:ASN1_ERROR_TYPE_ANY;
+	  /*return (type_field(p->type)!=TYPE_ANY)?ASN1_TAG_ERROR:ASN1_ERROR_TYPE_ANY; */
 	  if (errorDescription!=NULL)
 	    _asn1_error_description_tag_error(p,errorDescription);
 	  

@@ -44,7 +44,7 @@ char help_man[] = "asn1Coding generates a DER encoding from a file\n"
                   " <file1> file with ASN1 definitions.\n"
                   " <file2> file with assignments.\n"
                   "\n"
-#ifdef HAVE_GETOPT_H
+#ifdef HAVE_GETOPT_LONG
                   "Operation modes:\n"
                   "  -h, --help    shows this message and exit.\n"
                   "  -v, --version shows version information and exit.\n"
@@ -121,7 +121,7 @@ int
 main(int argc,char *argv[])
 {
 
-#ifdef HAVE_GETOPT_H
+#ifdef HAVE_GETOPT_LONG
   static struct option long_options[] =
   {
     {"help",    no_argument,       0, 'h'},
@@ -130,10 +130,10 @@ main(int argc,char *argv[])
     {"output",  required_argument, 0, 'o'},
     {0, 0, 0, 0}
   };
+ int option_index = 0;
 #endif
 
  int option_result;
- int option_index = 0;
  char *outputFileName=NULL;
  char *inputFileAsnName=NULL;
  char *inputFileAssignmentName=NULL;
@@ -157,7 +157,7 @@ main(int argc,char *argv[])
 
  while(1){
 
-#ifdef HAVE_GETOPT_H
+#ifdef HAVE_GETOPT_LONG
    option_result=getopt_long(argc,argv,"hvco:",long_options,&option_index);
 #else
    option_result=getopt(argc,argv,"hvco:");

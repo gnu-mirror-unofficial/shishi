@@ -152,7 +152,7 @@ main(int argc,char *argv[])
   }
 
   /* Only for Test */
-  //asn1_visit_tree(stdout,definitions,"TEST_PARSER",ASN1_PRINT_ALL);
+  /*asn1_visit_tree(stdout,definitions,"TEST_PARSER",ASN1_PRINT_ALL); */
 
   /* Clear the definitions structures */
   asn1_delete_structure(&definitions);

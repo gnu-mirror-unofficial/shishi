@@ -42,7 +42,7 @@ char help_man[] = "asn1Parser reads files with ASN1 definitions and\n"
                   "\n"
                   "Usage: asn1Parser [options] file\n"
                   "\n"
-#ifdef HAVE_GETOPT_H
+#ifdef HAVE_GETOPT_LONG
                   "Operation modes:\n"
                   "  -h, --help    shows this message and exit\n"
                   "  -v, --version shows version information and exit.\n"
@@ -70,7 +70,7 @@ int
 main(int argc,char *argv[])
 {
 
-#ifdef HAVE_GETOPT_H
+#ifdef HAVE_GETOPT_LONG
   static struct option long_options[] =
   {
     {"help",    no_argument,       0, 'h'},
@@ -80,10 +80,10 @@ main(int argc,char *argv[])
     {"name",    required_argument, 0, 'n'},
     {0, 0, 0, 0}
   };
+ int option_index = 0;
 #endif
 
  int option_result;
- int option_index = 0;
  char *outputFileName=NULL;
  char *inputFileName=NULL;
  char *vectorName=NULL;
@@ -98,7 +98,7 @@ main(int argc,char *argv[])
 
  while(1){
 
-#ifdef HAVE_GETOPT_H
+#ifdef HAVE_GETOPT_LONG
    option_result=getopt_long(argc,argv,"hvco:n:",long_options,&option_index);
 #else
    option_result=getopt(argc,argv,"hvco:n:");
@@ -108,7 +108,7 @@ main(int argc,char *argv[])
 
    switch(option_result){
    case 0:
-#ifdef HAVE_GETOPT_H
+#ifdef HAVE_GETOPT_LONG
      printf("option %s",long_options[option_index].name);
      if(optarg) printf(" with arg %s",optarg);
      printf("\n");

@@ -135,7 +135,7 @@ typedef struct static_struct_asn ASN1_ARRAY_TYPE;
 #define CONST_GENERALIZED (1<<23)
 #define CONST_UTC         (1<<24)
 
-// #define CONST_IMPORTS     (1<<25)
+/* #define CONST_IMPORTS     (1<<25) */
 
 #define CONST_NOT_USED    (1<<26)
 #define CONST_SET         (1<<27)

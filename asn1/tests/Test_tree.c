@@ -68,12 +68,12 @@ test_type test_array[]={
   {ACT_DELETE,"","",0,ASN1_SUCCESS},
 
   {ACT_CREATE,"TEST_TREE.SequenceTestAny","Seq",0,ASN1_SUCCESS},
-  //   {ACT_WRITE,"Seq.id","2 5 29 2",0,ASN1_SUCCESS},
-  //{ACT_WRITE,"Seq.any1",0,0,ASN1_SUCCESS},
-  //{ACT_WRITE,"Seq.any1","DER",0,ASN1_SUCCESS},
+  /*   {ACT_WRITE,"Seq.id","2 5 29 2",0,ASN1_SUCCESS}, */
+  /*{ACT_WRITE,"Seq.any1",0,0,ASN1_SUCCESS}, */
+  /*{ACT_WRITE,"Seq.any1","DER",0,ASN1_SUCCESS}, */
   
-  //{ACT_WRITE,"Seq.any2","NEW",1,ASN1_SUCCESS},
-  //{ACT_WRITE,"Seq.any2.?LAST","DER",0,ASN1_SUCCESS},
+  /*{ACT_WRITE,"Seq.any2","NEW",1,ASN1_SUCCESS}, */
+  /*{ACT_WRITE,"Seq.any2.?LAST","DER",0,ASN1_SUCCESS}, */
   {ACT_WRITE,"Seq.i","10",0,ASN1_SUCCESS},
 
   {ACT_WRITE,"Seq.subjectPublicKeyInfo.algorithm.algorithm","1 2 3 4 5"
@@ -88,14 +88,14 @@ test_type test_array[]={
 
   {ACT_DELETE,"","",0,ASN1_SUCCESS},
   {ACT_CREATE,"TEST_TREE.SequenceTestAny","Seq",0,ASN1_SUCCESS},
-  //{ACT_DECODING,0,0,0,ASN1_SUCCESS},
+  /*{ACT_DECODING,0,0,0,ASN1_SUCCESS}, */
   
-  //  {ACT_DECODING_ELEMENT,"Seq.any2",0,0,ASN1_SUCCESS},
+  /*  {ACT_DECODING_ELEMENT,"Seq.any2",0,0,ASN1_SUCCESS}, */
   {ACT_DECODING_ELEMENT,"Seq.subjectPublicKeyInfo",0,0,ASN1_SUCCESS}, 
-  //{ACT_DECODING_ELEMENT,"Seq.id",0,0,ASN1_SUCCESS},
-  //{ACT_EXPAND_ANY,0,0,0,ASN1_SUCCESS},
+  /*{ACT_DECODING_ELEMENT,"Seq.id",0,0,ASN1_SUCCESS}, */
+  /*{ACT_EXPAND_ANY,0,0,0,ASN1_SUCCESS}, */
   
-  //{ACT_EXPAND_OCTET,"Seq.oct1","Seq.id",0,ASN1_SUCCESS},
+  /*{ACT_EXPAND_OCTET,"Seq.oct1","Seq.id",0,ASN1_SUCCESS}, */
   
   /*
   {ACT_CREATE,"TEST_TREE.Sequence1","Seq",0,ASN1_SUCCESS},
