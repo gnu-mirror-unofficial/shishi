@@ -627,7 +627,7 @@ shishi_kdcreq_till (Shishi * handle, Shishi_asn1 kdcreq,
  * KDC-REQ.
  **/
 time_t
-shishi_kdcreq_tillc (Shishi * handle, Shishi_asn1 * kdcreq)
+shishi_kdcreq_tillc (Shishi * handle, Shishi_asn1 kdcreq)
 {
   char *till;
   size_t tilllen;
