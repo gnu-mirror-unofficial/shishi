@@ -317,7 +317,7 @@ test (Shishi * handle)
 	  fail ("shishi_3des() failure\n");
 	}
 
-      if (memcmp (ivout, "\x46\x57\x6b\x16\xd9\x5d\xf2\x38", 8) == 0)
+      if (memcmp (ivout, "\x4e\x4b\xe8\x14\x44\x25\xf2\x19", 8) == 0)
 	success ("shishi_3des() OK\n");
       else
 	{
@@ -344,8 +344,8 @@ test (Shishi * handle)
 	  fail ("shishi_aes_cts(24) failure\n");
 	}
 
-      if (memcmp (ivout, "\x96\x4d\x2d\xcd\x0b\xa3\x0d\x8f"
-		  "\x89\xee\x53\x33\x54\xa8\xb0\xb7", 8) == 0)
+      if (memcmp (ivout, "\x22\x8f\x1a\xc5\xd4\x74\xd2\x74"
+		  "\x96\x4d\x2d\xcd\x0b\xa3\x0d\x8f", 16) == 0)
 	success ("shishi_aes_cts(24) OK\n");
       else
 	{
@@ -372,8 +372,8 @@ test (Shishi * handle)
 	  fail ("shishi_aes_cts(23) failure\n");
 	}
 
-      if (memcmp (ivout, "\xad\xe6\x50\xff\xe1\x08\x17\x9a"
-		  "\x6d\x89\xee\x53\x33\x54\xa8\xb0", 16) == 0)
+      if (memcmp (ivout, "\x45\x23\x5a\x0c\x6b\x8a\x0c\xad"
+		  "\xe6\x50\xff\xe1\x08\x17\x9a\x6d", 16) == 0)
 	success ("shishi_aes_cts(23) OK\n");
       else
 	{
@@ -383,7 +383,6 @@ test (Shishi * handle)
       free (out);
     }
 
-#if 0		/* XXX This doesn't work well? */
   err = shishi_aes_cts (handle, 0, "keykeykeykeykeyk", 16,
 			"iviviviviviviviv", &ivout,
 			"abcdefghijklmnopqrstuvx", 25, &out);
@@ -391,8 +390,8 @@ test (Shishi * handle)
     fail ("shishi_aes_cts(25) failed: %d\n", err);
   else
     {
-      if (memcmp (out, "\x45\x23\x5a\x0c\x6b\x8a\x0c\xad"
-		  "\xe6\x50\xff\xe1\x08\x17\x9a\x6d"
+      if (memcmp (out, "\x4f\x76\x9d\xb0\x8c\x81\xbc\x1a"
+		  "\xe9\x80\x45\x85\xde\x30\x00\xf8"
 		  "\x89\xee\x53\x33\x54\xa8\xb0\xb7\xb6", 25) == 0)
 	success ("shishi_aes_cts(25) OK\n");
       else
@@ -401,8 +400,8 @@ test (Shishi * handle)
 	  fail ("shishi_aes_cts(25) failure\n");
 	}
 
-      if (memcmp (ivout, "\x50\xff\xe1\x08\x17\x9a\x6d\x89"
-		  "\xee\x53\x33\x54\xa8\xb0\xb7\xb6", 16) == 0)
+      if (memcmp (ivout, "\x4f\x76\x9d\xb0\x8c\x81\xbc\x1a"
+		  "\xe9\x80\x45\x85\xde\x30\x00\xf8", 16) == 0)
 	success ("shishi_aes_cts(25) OK\n");
       else
 	{
@@ -411,5 +410,4 @@ test (Shishi * handle)
 	}
       free (out);
     }
-#endif
 }
