@@ -344,7 +344,7 @@ test (Shishi * handle)
   int res;
 
   if (debug)
-    shishi_cfg (handle, strdup ("verbose-crypto"));
+    shishi_cfg (handle, strdup ("verbose-crypto,verbose-crypto-noise"));
 
   for (i = 0; i < sizeof (drdk) / sizeof (drdk[0]); i++)
     {
