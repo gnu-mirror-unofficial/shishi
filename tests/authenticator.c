@@ -56,8 +56,9 @@ test (Shishi * handle)
   char buffer2[BUFSIZ];
   char *p;
   int n, m, res;
+  uint32_t seq;
 
-  /* shishi_authenticator() */
+  /* shishi_authenticator */
   a = shishi_authenticator (handle);
   if (debug)
     printf ("shishi_authenticator () => `%p'.\n", a);
@@ -72,21 +73,49 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_remove_subkey() failed\n");
 
-  /* shishi_authenticator_set_crealm() */
+  /* shishi_authenticator_seqnumber_get */
+  res = shishi_authenticator_seqnumber_get (handle, a, &seq);
+  if (res == SHISHI_OK)
+    success ("shishi_authenticator_seqnumber_get() OK\n");
+  else
+    fail ("shishi_authenticator_seqnumber_get() failed\n");
+
+  /* shishi_authenticator_seqnumber_set */
+  res = shishi_authenticator_seqnumber_set (handle, a, 42);
+  if (res == SHISHI_OK)
+    success ("shishi_authenticator_seqnumber_set() OK\n");
+  else
+    fail ("shishi_authenticator_seqnumber_set() failed\n");
+
+  /* shishi_authenticator_seqnumber_get */
+  res = shishi_authenticator_seqnumber_get (handle, a, &seq);
+  if (res == SHISHI_OK && seq == 42)
+    success ("shishi_authenticator_seqnumber_get() OK\n");
+  else
+    fail ("shishi_authenticator_seqnumber_get() failed\n");
+
+  /* shishi_authenticator_seqnumber_remove */
+  res = shishi_authenticator_seqnumber_remove (handle, a);
+  if (res == SHISHI_OK)
+    success ("shishi_authenticator_seqnumber_remove() OK\n");
+  else
+    fail ("shishi_authenticator_seqnumber_remove() failed\n");
+
+  /* shishi_authenticator_set_crealm */
   res = shishi_authenticator_set_crealm (handle, a, "foo");
   if (res == SHISHI_OK)
     success ("shishi_authenticator_set_crealm() OK\n");
   else
     fail ("shishi_authenticator_set_crealm() failed\n");
 
-  /* shishi_authenticator_client_set() */
+  /* shishi_authenticator_client_set */
   res = shishi_authenticator_client_set (handle, a, "foo/bar/baz");
   if (res == SHISHI_OK)
     success ("shishi_authenticator_client_set() OK\n");
   else
     fail ("shishi_authenticator_client_set() failed\n");
 
-  /* shishi_authenticator_cname_get() */
+  /* shishi_authenticator_cname_get */
   n = sizeof (buffer);
   res = shishi_authenticator_cname_get (handle, a, buffer, &n);
   if (debug)
@@ -97,14 +126,14 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_cname_get() failed\n");
 
-  /* shishi_authenticator_client_set() */
+  /* shishi_authenticator_client_set */
   res = shishi_authenticator_client_set (handle, a, "foo");
   if (res == SHISHI_OK)
     success ("shishi_authenticator_client_set() OK\n");
   else
     fail ("shishi_authenticator_client_set() failed\n");
 
-  /* shishi_authenticator_cname_get() */
+  /* shishi_authenticator_cname_get */
   n = sizeof (buffer);
   res = shishi_authenticator_cname_get (handle, a, buffer, &n);
   if (debug)
@@ -115,14 +144,14 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_cname_get() failed\n");
 
-  /* shishi_authenticator_set_crealm() */
+  /* shishi_authenticator_set_crealm */
   res = shishi_authenticator_set_crealm (handle, a, "bar");
   if (res == SHISHI_OK)
     success ("shishi_authenticator_set_crealm() OK\n");
   else
     fail ("shishi_authenticator_set_crealm() failed\n");
 
-  /* shishi_authenticator_cnamerealm_get() */
+  /* shishi_authenticator_cnamerealm_get */
   n = sizeof (buffer);
   res = shishi_authenticator_cnamerealm_get (handle, a, buffer, &n);
   if (debug)
@@ -133,14 +162,14 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_cnamerealm_get() failed\n");
 
-  /* shishi_authenticator_add_authorizationdata() */
+  /* shishi_authenticator_add_authorizationdata */
   res = shishi_authenticator_add_authorizationdata (handle, a, 42, "baz", 3);
   if (res == SHISHI_OK)
     success ("shishi_authenticator_add_authorizationdata() OK\n");
   else
     fail ("shishi_authenticator_add_authorizationdata() failed\n");
 
-  /* shishi_authenticator_authorizationdata() */
+  /* shishi_authenticator_authorizationdata */
   m = sizeof (buffer);
   res = shishi_authenticator_authorizationdata (handle, a, &n, buffer, &m, 1);
   if (debug)
@@ -150,7 +179,7 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_authorizationdata() failed\n");
 
-  /* shishi_authenticator_authorizationdata() */
+  /* shishi_authenticator_authorizationdata */
   m = sizeof (buffer);
   res = shishi_authenticator_authorizationdata (handle, a, &n, buffer, &m, 2);
   if (res == SHISHI_OUT_OF_RANGE)
@@ -158,14 +187,14 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_authorizationdata() failed\n");
 
-  /* shishi_authenticator_remove_cksum() */
+  /* shishi_authenticator_remove_cksum */
   res = shishi_authenticator_remove_cksum (handle, a);
   if (res == SHISHI_OK)
     success ("shishi_authenticator_remove_cksum() OK\n");
   else
     fail ("shishi_authenticator_remove_cksum() failed\n");
 
-  /* shishi_a2d() */
+  /* shishi_a2d */
   n = sizeof (buffer);
   res = shishi_a2d (handle, a, buffer, &n);
   if (res == SHISHI_OK)
@@ -173,7 +202,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_a2d() failed\n");
 
-  /* shishi_authenticator_to_file() */
+  /* shishi_authenticator_to_file */
   res = shishi_authenticator_to_file (handle, a, SHISHI_FILETYPE_TEXT,
 				      "authenticator.tmp");
   if (res == SHISHI_OK)
@@ -181,13 +210,13 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_to_file() failed\n");
 
-  /* shishi_asn1_done() */
+  /* shishi_asn1_done */
   shishi_asn1_done (handle, a);
   success ("shishi_asn1_done() OK\n");
 
   a = NULL;
 
-  /* shishi_authenticator_from_file() */
+  /* shishi_authenticator_from_file */
   res = shishi_authenticator_from_file (handle, &a, SHISHI_FILETYPE_TEXT,
 					"authenticator.tmp");
   if (res == SHISHI_OK)
@@ -197,7 +226,7 @@ test (Shishi * handle)
 
   if (debug)
     {
-      /* shishi_authenticator_print() */
+      /* shishi_authenticator_print */
       res = shishi_authenticator_print (handle, stdout, a);
       if (res == SHISHI_OK)
 	success ("shishi_authenticator_print() OK\n");
@@ -205,7 +234,7 @@ test (Shishi * handle)
 	fail ("shishi_authenticator_print() failed\n");
     }
 
-  /* shishi_a2d() */
+  /* shishi_a2d */
   m = sizeof (buffer2);
   res = shishi_a2d (handle, a, buffer2, &m);
   if (res == SHISHI_OK)
@@ -219,14 +248,14 @@ test (Shishi * handle)
   else
     fail ("DER comparison failed\n");
 
-  /* shishi_authenticator_cusec_set() */
+  /* shishi_authenticator_cusec_set */
   res = shishi_authenticator_cusec_set (handle, a, 4711);
   if (res == SHISHI_OK)
     success ("shishi_authenticator_cusec_set() OK\n");
   else
     fail ("shishi_authenticator_cusec_set() failed\n");
 
-  /* shishi_authenticator_cusec_get() */
+  /* shishi_authenticator_cusec_get */
   res = shishi_authenticator_cusec_get (handle, a, &n);
   if (debug)
     printf ("shishi_authenticator_cusec_get () => `%d'.\n", n);
@@ -235,14 +264,14 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_cusec_get() failed\n");
 
-  /* shishi_authenticator_ctime_set() */
+  /* shishi_authenticator_ctime_set */
   res = shishi_authenticator_ctime_set (handle, a, "19700101011831Z");
   if (res == SHISHI_OK)
     success ("shishi_authenticator_ctime_set() OK\n");
   else
     fail ("shishi_authenticator_ctime_set() failed\n");
 
-  /* shishi_authenticator_ctime() */
+  /* shishi_authenticator_ctime */
   res = shishi_authenticator_ctime (handle, a, &p);
   if (debug)
     escapeprint (p, strlen (p));
@@ -251,7 +280,7 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_ctime() failed\n");
 
-  /* shishi_a2d() */
+  /* shishi_a2d */
   n = sizeof (buffer);
   res = shishi_a2d (handle, a, buffer, &n);
   if (res == SHISHI_OK)
@@ -272,14 +301,14 @@ test (Shishi * handle)
   else
     fail ("DER comparison failed\n");
 
-  /* shishi_authenticator_clear_authorizationdata() */
+  /* shishi_authenticator_clear_authorizationdata */
   res = shishi_authenticator_clear_authorizationdata (handle, a);
   if (res == SHISHI_OK)
     success ("shishi_authenticator_clear_authorizationdata() OK\n");
   else
     fail ("shishi_authenticator_clear_authorizationdata() failed\n");
 
-  /* shishi_a2d() */
+  /* shishi_a2d */
   n = sizeof (buffer);
   res = shishi_a2d (handle, a, buffer, &n);
   if (res == SHISHI_OK)
@@ -300,7 +329,7 @@ test (Shishi * handle)
   else
     fail ("DER comparison failed\n");
 
-  /* unlink() */
+  /* unlink */
   res = unlink ("authenticator.tmp");
   if (res == 0)
     success ("unlink() OK\n");
