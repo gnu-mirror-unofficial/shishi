@@ -138,6 +138,7 @@ typedef struct checksuminfo checksuminfo;
 
 extern cipherinfo null_info;
 
+extern checksuminfo crc32_info;
 extern checksuminfo md4_info;
 extern checksuminfo md5_info;
 

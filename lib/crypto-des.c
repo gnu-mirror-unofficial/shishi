@@ -667,6 +667,17 @@ des_checksum (Shishi * handle,
 }
 
 static int
+des_crc_checksum (Shishi * handle,
+		  Shishi_key * key,
+		  int keyusage,
+		  int cksumtype,
+		  const char *in, size_t inlen, char **out, size_t * outlen)
+{
+  return des_checksum (handle, key, keyusage, cksumtype,
+		       in, inlen, out, outlen, SHISHI_DES_CBC_CRC);
+}
+
+static int
 des_md4_checksum (Shishi * handle,
 		  Shishi_key * key,
 		  int keyusage,
@@ -816,7 +827,7 @@ cipherinfo des_cbc_crc_info = {
   8,
   8,
   8,
-  SHISHI_RSA_MD5_DES,
+  SHISHI_CRC32,
   des_random_to_key,
   des_string_to_key,
   des_crc_encrypt,
@@ -866,6 +877,13 @@ cipherinfo des_cbc_none_info = {
   des_string_to_key,
   des_none_encrypt,
   des_none_decrypt
+};
+
+checksuminfo crc32_info = {
+  SHISHI_CRC32,
+  "crc32",
+  4,
+  des_crc_checksum,
 };
 
 checksuminfo md4_des_info = {

@@ -709,6 +709,9 @@ _shishi_cipher_decrypt (int32_t type)
 }
 
 static checksuminfo *checksums[] = {
+#if WITH_DES
+  &crc32_info,
+#endif
 #if WITH_MD
   &md4_info,
 #endif
