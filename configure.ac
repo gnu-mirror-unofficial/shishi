@@ -224,6 +224,19 @@ AC_SEARCH_LIBS(socket, socket)
 AC_SEARCH_LIBS(gethostbyname, nsl)
 AC_SEARCH_LIBS(syslog, syslog)
 
+# Check for gnutls.
+AM_PATH_LIBGNUTLS(0.8.8, gnutls=yes, gnutls=no)
+AC_ARG_ENABLE(gnutls,
+	AC_HELP_STRING([--disable-gnutls], [disable TLS support]),
+	gnutls=$enableval)
+if test "$gnutls" != "no" ; then
+	AC_DEFINE(USE_GNUTLS, 1, [Define to 1 if you want TLS support.])
+else
+	AC_MSG_WARN([GNUTLS not found, required for TLS support])
+fi
+AC_MSG_CHECKING([if TLS should be supported])
+AC_MSG_RESULT($gnutls)
+
 # For gnulib stuff in gl/.
 gl_FUNC_ALLOCA
 gl_ARGP
