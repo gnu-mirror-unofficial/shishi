@@ -72,8 +72,7 @@ Free Software Foundation raise funds for GNU development.''
 Appendices
 
 * Copying This Manual::         How you can copy and share this manual.
-* Library Copying::             How you can copy and share the library.
-* Copying::                     How you can copy and share the tools.
+* Copying::                     How you can copy and share the source.
 
 Indices
 
@@ -128,7 +127,7 @@ similar job.
 @table @asis
 @item It's Free Software
 Anybody can use, modify, and redistribute it under the terms of the GNU
-Lesser General Public License (@pxref{Library Copying}).
+General Public License (@pxref{Copying}).
 
 @item It's thread-safe
 The library uses no global variables.
@@ -171,7 +170,7 @@ know so work duplication can be avoided.
 
 @itemize @bullet
 
-@item Telnet client causes Heimdal telnetd to crash.
+@item Telnet client causes Heimdal telnetd to crash. (Update: now it doesn't crash, but telnetd complains ``Read req failed: Decrypt integrity check failed''.  MIT telnetd works though.)
 
 @item Cross-realm support (week).
 
@@ -1516,8 +1515,6 @@ Fiorina et al.
 @end menu
 
 @include fdl.texi
-
-@include lgpl.texi
 
 @include gpl.texi
 
