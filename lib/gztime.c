@@ -22,6 +22,16 @@
 #include "internal.h"
 #include "timegm.h"
 
+/**
+ * shishi_generalize_time:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @t: C time to convert.
+ *
+ * Convert C time to KerberosTime.  The string must not be deallocate
+ * by caller.
+ *
+ * Return value: Return a KerberosTime time string corresponding to C time t.
+ **/
 const char *
 shishi_generalize_time (Shishi * handle, time_t t)
 {
@@ -34,6 +44,16 @@ shishi_generalize_time (Shishi * handle, time_t t)
   return handle->gztime_buf;
 }
 
+/**
+ * shishi_generalize_now:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Convert current time to KerberosTime.  The string must not be
+ * deallocate by caller.
+ *
+ * Return value: Return a KerberosTime time string corresponding to
+ *   current time.
+ **/
 const char *
 shishi_generalize_now (Shishi * handle)
 {
@@ -42,6 +62,15 @@ shishi_generalize_now (Shishi * handle)
   return shishi_generalize_time (handle, t);
 }
 
+/**
+ * shishi_generalize_ctime:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @t: KerberosTime to convert.
+ *
+ * Convert KerberosTime to C time.
+ *
+ * Return value: Returns C time corresponding to KerberosTime t.
+ **/
 time_t
 shishi_generalize_ctime (Shishi * handle, const char *t)
 {
@@ -59,4 +88,40 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
   ct = timegm (&tm);
 
   return ct;
+}
+
+/**
+ * shishi_time_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @node: ASN.1 node to get time from.
+ * @field: Name of field in ASN.1 node to get time from.
+ * @time: newly allocated output array with zero terminated time string.
+ *
+ * Extract time from ASN.1 structure.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_time (Shishi * handle, Shishi_asn1 node,
+	     const char *field, char **time)
+{
+  size_t len;
+  int res;
+
+  len = GENERALIZEDTIME_TIME_LEN + 1;
+  *time = xmalloc(len);
+
+  res = shishi_asn1_read (handle, node, field, *time, &len);
+  if (res != SHISHI_OK)
+    return res;
+
+  if (len == GENERALIZEDTIME_TIME_LEN)
+    {
+      shishi_error_printf (handle, "Read time too short (%s)", *time);
+      return SHISHI_ASN1_ERROR;
+    }
+
+  (*time)[len] = '\0';
+
+  return SHISHI_OK;
 }
