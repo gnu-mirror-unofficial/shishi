@@ -45,7 +45,7 @@ shisa_cmd.c shisa_cmd.h: shisa.ggo
 		 --input $< --file-name shisa_cmd
 	perl -pi -e 's/\[FILES\]/\[REALM \[PRINCIPAL\]\]/g' shisa_cmd.c
 
-shishid_SOURCES = shishid.c server.c kdc.c \
+shishid_SOURCES = shishid.c server.c kdc.h kdc.c \
 	shishid.ggo shishid_cmd.h shishid_cmd.c
 if STARTTLS
 shishid_SOURCES += starttls.c
