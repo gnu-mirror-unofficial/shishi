@@ -842,7 +842,8 @@ shishi_authenticator_set_subkey (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: authenticator as allocated by shishi_authenticator().
  *
- * Generate random subkey and store it in the authenticator.
+ * Generate random subkey, of the default encryption type from
+ * configuration, and store it in the authenticator.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -850,22 +851,46 @@ int
 shishi_authenticator_add_random_subkey (Shishi * handle,
 					Shishi_asn1 authenticator)
 {
+  int n;
   int res;
   int *etypes;
-  Shishi_key *subkey;
 
-  res = shishi_cfg_clientkdcetype (handle, &etypes);
-  if (!res)
-    return res;
+  n = shishi_cfg_clientkdcetype (handle, &etypes);
+  if (n <= 0)
+    return SHISHI_TICKET_BAD_KEYTYPE; /* XXX */
 
-  res = shishi_key_random (handle, etypes[0], &subkey);
+  res = shishi_authenticator_add_random_subkey_etype (handle, authenticator,
+						      etypes[0]);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_authenticator_set_subkey (handle, authenticator,
-					 shishi_key_type (subkey),
-					 shishi_key_value (subkey),
-					 shishi_key_length (subkey));
+  return res;
+}
+
+/**
+ * shishi_authenticator_add_random_subkey_etype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @etype: encryption type of random key to generate.
+ *
+ * Generate random subkey of indicated encryption type, and store it
+ * in the authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_add_random_subkey_etype (Shishi * handle,
+					      Shishi_asn1 authenticator,
+					      int etype)
+{
+  int res;
+  Shishi_key *subkey;
+
+  res = shishi_key_random (handle, etype, &subkey);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_authenticator_add_subkey (handle, authenticator, subkey);
 
   shishi_key_done (subkey);
 
