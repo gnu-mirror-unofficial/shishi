@@ -1,3 +1,272 @@
+2004-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2004-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.18.
+
+2004-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Add.
+
+2004-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/authenticator.c, lib/encticketpart.c,
+	lib/krberror.c, lib/netio.c, lib/principal.c, lib/realm.c,
+	lib/resolv.c, lib/tkt.c, src/kdc.c, src/shishid.c,
+	tests/authenticator.c, tests/rijndael.c, tests/utils.c: Indent.
+
+2004-10-14  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-10-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/hostkeys.c:
+	(shishi_hostkeys_default_file): Fix mem leak.  Perhaps too slow now?
+	Could be optimized.
+
+2004-10-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Fix mem leak.
+
+2004-10-14  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-10-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/aprep.c, lib/shishi.h.in:
+	(shishi_aprep_enc_part_make): Don't create new EncAPRepPart, use
+	existing.
+
+2004-10-14  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getpass.c: Sync.
+
+2004-10-14  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2004-10-05  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Fix.
+
+2004-10-05  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/exit.h, gl/exitfail.c, gl/exitfail.h,
+	gl/unlocked-io.h, gl/xalloc-die.c, gl/m4/exitfail.m4,
+	gl/m4/unlocked-io.m4: Remove.
+
+2004-10-05  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/error.c, gl/getdate.y, gl/getndelim2.c,
+	gl/getpass.c, gl/getsubopt.c, gl/progname.h, gl/vasnprintf.h,
+	gl/xalloc.h, gl/xmalloc.c, gl/xstrdup.c, gl/m4/gnulib.m4,
+	gl/m4/xalloc.m4, lib/ap.c, lib/crypto-ctx.c, lib/crypto.c,
+	lib/libgcrypt.c, lib/nettle.c: Gnulib update.  Fix callers.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Move.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c, src/kdc.c: Sanitize.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Sanitize.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/resolv.c: Fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c, lib/shishi.h.in: Fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c: Fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c: Doc fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ticket.c: Fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/netio.c, lib/realm.c, lib/resolv.c,
+	lib/resolver.h, lib/shishi.h.in: Make resolver API public.  Cleanup
+	resolver.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/inet_r.c, gl/inet_r.h, gl/xinet.c, gl/xinet.h,
+	gl/m4/gnulib.m4: Remove.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/resolv.c: Remove A record parsing, to avoid xinet/inet_r.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Remove comment.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Doc fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Doc fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c, lib/shishi.h.in:
+	(shishi_krberror_cname): Removed.
+	(shishi_krberror_client): Add.
+	(shishi_krberror_sname): Removed.
+	(shishi_krberror_server): Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c, lib/shishi.h.in:
+	(shishi_principal_name_get): Remove.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c, lib/principal.c, lib/shishi.h.in:
+	(shishi_krberror_cname):
+	(shishi_krberror_sname): Allocate output.
+	(shishi_principal_name_realm_get): Remove.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c:
+	(shishi_tkt_client): Allocate output.
+	(shishi_tkt_cnamerealm): Remove.
+	(shishi_tkt_clientrealm): Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Remove.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authorize.c, lib/encticketpart.c, lib/shishi.h.in:
+	(shishi_encticketpart_cnamerealm_get):
+	(shishi_encticketpart_cname_get): Remove.
+	(shishi_encticketpart_clientrealm): Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: Use new API.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c, tests/authenticator.c: Fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/shishi.h.in:
+	(shishi_authenticator_cname_get):
+	(shishi_authenticator_cnamerealm_get): Remove.
+	(shishi_authenticator_client):
+	(shishi_authenticator_clientrealm): Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c, lib/kdcreq.c, lib/shishi.h.in:
+	(shishi_asreq_cnamerealm_get): Remove.
+	(shishi_asreq_clientrealm): Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c, lib/shishi.h.in: Remove.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/ticket.c, lib/tkt.c: Remove.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Fix.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c, lib/shishi.h.in:
+	(shishi_principal_name_realm): Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ticket.c, lib/shishi.h.in: Remove.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/progname.c, gl/progname.h,
+	gl/m4/gnulib.m4, lib/shishi.h.in, lib/utils.c: Update.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/resolv.c: Use xinet.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/inet_r.c, gl/inet_r.h, gl/xinet.c, gl/xinet.h,
+	gl/m4/gnulib.m4, configure.ac: Add.
+
+2004-09-17  Simon Josefsson <simon@josefsson.org>
+
+	* gl/vasnprintf.c, gl/vasprintf.c, gl/m4/vasnprintf.m4,
+	gl/m4/eoverflow.m4: Update.
+
+2004-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/Makefile.am:
+	(clean-local): Add style.css.
+
 2004-09-10  Simon Josefsson <simon@josefsson.org>
 
 	* doc/shishi.texi: Fix.
