@@ -60,7 +60,7 @@ shishi_ticketset_default_file_guess (void)
  * @handle: Shishi library handle create by shishi_init().
  *
  * Return value: Returns the default ticket set used in the library.
- * (Not a copy of it, so don't modify it.)
+ * (Not a copy of it, so don't modify or deallocate it.)
  **/
 const char *
 shishi_ticketset_default_file (Shishi * handle)
@@ -103,7 +103,7 @@ shishi_ticketset_default_file_set (Shishi * handle, const char *ticketsetfile)
  * @handle: shishi handle as allocated by shishi_init().
  * @ticketset: output pointer to newly allocated ticketset handle.
  *
- * Return value: Returns %SHISHI_OK
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_ticketset_init (Shishi * handle, Shishi_ticketset ** ticketset)
@@ -136,7 +136,8 @@ shishi_ticketset_size (Shishi_ticketset * ticketset)
  *
  * Return value: Returns a ticket handle to the ticketno:th ticket in
  * the ticket set, or NULL if ticket set is invalid or ticketno is out
- * of bounds.  The first ticket is ticketno 0.
+ * of bounds.  The first ticket is ticketno 0, the second ticketno 1,
+ * and so on.
  **/
 Shishi_ticket *
 shishi_ticketset_get (Shishi_ticketset * ticketset, int ticketno)
@@ -153,8 +154,8 @@ shishi_ticketset_get (Shishi_ticketset * ticketset, int ticketno)
  * @ticketnum: ticket number of ticket in the set to remove.  The
  * first ticket is ticket number 0.
  *
- * Return value: Returns SHISHI_OK iff succesful, or ticketno larger
- * than size of ticket set.
+ * Return value: Returns SHISHI_OK if succesful or if ticketno
+ * larger than size of ticket set.
  **/
 int
 shishi_ticketset_remove (Shishi_ticketset * ticketset,
@@ -636,27 +637,37 @@ shishi_ticketset_get_ticket_for_clientserveretype (Shishi_ticketset * ticketset,
 	return NULL;
     }
 
-  rc = shishi_tgs (ticketset->handle, tgt, &tgs, server);
+  rc = shishi_tgs (ticketset->handle, &tgs);
+  shishi_tgs_tgticket_set(tgs, tgt);
+  if (rc == SHISHI_OK)
+    rc = shishi_tgs_set_server (tgs, server);
+  if (rc == SHISHI_OK)
+    rc = shishi_tgs_req_build (tgs);
+  if (rc == SHISHI_OK)
+    rc = shishi_tgs_sendrecv (tgs);
+  if (rc == SHISHI_OK)
+    rc = shishi_tgs_rep_process (tgs);
   if (rc != SHISHI_OK)
     {
       printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
 	      shishi_strerror_details (ticketset->handle));
       if (rc == SHISHI_GOT_KRBERROR)
 	shishi_krberror_pretty_print(ticketset->handle, stdout,
-				     shishi_tgs_get_krberror(tgs));
+				     shishi_tgs_krberror(tgs));
       return NULL;
     }
 
-  tkt = shishi_tgs_get_ticket (tgs);
+  tkt = shishi_tgs_ticket (tgs);
 
   if (VERBOSEASN1(ticketset->handle))
     {
       shishi_authenticator_print
-	(ticketset->handle, stdout, shishi_ap_authenticator(shishi_tgs_ap (tgs)));
+	(ticketset->handle, stdout,
+	 shishi_ap_authenticator(shishi_tgs_ap (tgs)));
       shishi_apreq_print
 	(ticketset->handle, stdout, shishi_ap_req(shishi_tgs_ap (tgs)));
-      shishi_kdcreq_print (ticketset->handle, stdout, shishi_tgs_get_tgsreq (tgs));
-      shishi_kdcrep_print (ticketset->handle, stdout, shishi_tgs_get_tgsrep (tgs));
+      shishi_kdcreq_print (ticketset->handle, stdout, shishi_tgs_req (tgs));
+      shishi_kdcrep_print (ticketset->handle, stdout, shishi_tgs_rep (tgs));
       shishi_ticket_pretty_print (tkt, stdout);
     }
 

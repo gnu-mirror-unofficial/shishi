@@ -51,7 +51,7 @@ shishi_principal_default_guess (void)
  * @handle: Shishi library handle create by shishi_init().
  *
  * Return value: Returns the default principal name used in the
- * library.  (Not a copy of it, so don't modify it.)
+ * library.  (Not a copy of it, so don't modify or deallocate it.)
  **/
 const char *
 shishi_principal_default (Shishi * handle)

@@ -256,6 +256,19 @@ shishi_as_ticket (Shishi_as * as)
 }
 
 /**
+ * shishi_as_ticket_set:
+ * @as: structure that holds information about AS exchange
+ * @ticket: ticket to store in AS.
+ *
+ * Set the Ticket in the AP exchange.
+ **/
+void
+shishi_as_ticket_set (Shishi_as * as, Shishi_ticket *ticket)
+{
+  as->ticket = ticket;
+}
+
+/**
  * shishi_as_sendrecv:
  * @as: structure that holds information about AS exchange
  *

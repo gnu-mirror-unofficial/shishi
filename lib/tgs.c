@@ -26,6 +26,7 @@
 
 struct Shishi_tgs
 {
+  Shishi *handle;
   ASN1_TYPE tgsreq;
   Shishi_ticket *tgticket;
   Shishi_ap *ap;
@@ -35,29 +36,83 @@ struct Shishi_tgs
 };
 
 /**
- * shishi_tgs_get_tgsreq:
- * @tgs: structure that holds information about TGS exchange
+ * shishi_tgs:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @tgs: holds pointer to newly allocate Shishi_tgs structure.
  *
- * Return value: Returns the generated TGS-REQ from the TGS exchange,
- *               or NULL if not yet set or an error occured.
+ * Allocate a new TGS exchange variable.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
  **/
-ASN1_TYPE
-shishi_tgs_get_tgsreq (Shishi_tgs * tgs)
+int
+shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
 {
-  return tgs->tgsreq;
+  Shishi_tgs *ltgs;
+  int res;
+
+  *tgs = malloc (sizeof (**tgs));
+  if (*tgs == NULL)
+    return SHISHI_MALLOC_ERROR;
+  ltgs = *tgs;
+  memset(ltgs, 0, sizeof(*ltgs));
+
+  ltgs->handle = handle;
+
+  ltgs->tgsreq = shishi_tgsreq (handle);
+  if (ltgs->tgsreq == NULL)
+    {
+      shishi_error_printf (handle, "Could not create TGS-REQ: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  ltgs->tgsrep = shishi_tgsrep (handle);
+  if (ltgs->tgsreq == NULL)
+    {
+      shishi_error_printf (handle, "Could not create TGS-REP: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  ltgs->krberror = shishi_krberror (handle);
+  if (ltgs->krberror == NULL)
+    {
+      shishi_error_printf (handle, "Could not create KRB-ERROR: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  res = shishi_ap (handle, &ltgs->ap);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
 }
 
 /**
- * shishi_tgs_get_tgticket:
+ * shishi_tgs_tgticket:
  * @tgs: structure that holds information about TGS exchange
  *
  * Return value: Returns the ticket-granting-ticket used in the TGS
  *               exchange, or NULL if not yet set or an error occured.
  **/
 Shishi_ticket *
-shishi_tgs_get_tgticket (Shishi_tgs * tgs)
+shishi_tgs_tgticket (Shishi_tgs * tgs)
 {
   return tgs->tgticket;
+}
+
+/**
+ * shishi_tgs_tgticket_set:
+ * @tgs: structure that holds information about TGS exchange
+ * @tgticket: ticket granting ticket to store in TGS.
+ *
+ * Set the Ticket in the AP exchange.
+ **/
+void
+shishi_tgs_tgticket_set (Shishi_tgs * tgs, Shishi_ticket *tgticket)
+{
+  tgs->tgticket = tgticket;
 }
 
 /**
@@ -75,145 +130,266 @@ shishi_tgs_ap (Shishi_tgs * tgs)
 }
 
 /**
- * shishi_tgs_get_tgsrep:
+ * shishi_tgs_req:
+ * @tgs: structure that holds information about TGS exchange
+ *
+ * Return value: Returns the generated TGS-REQ from the TGS exchange,
+ *               or NULL if not yet set or an error occured.
+ **/
+ASN1_TYPE
+shishi_tgs_req (Shishi_tgs * tgs)
+{
+  return tgs->tgsreq;
+}
+
+/**
+ * shishi_tgs_req_build:
+ * @tgs: structure that holds information about TGS exchange
+ *
+ * Checksum data in authenticator and add ticket and authenticator to
+ * TGS-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_req_build (Shishi_tgs * tgs)
+{
+  int res;
+  int apoptions;
+
+  res = shishi_apreq_options (tgs->handle, shishi_ap_req(tgs->ap), &apoptions);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (tgs->handle,
+			   "Could not get AP-REQ AP-Options: %s\n",
+			   shishi_strerror (res));
+      return res;
+    }
+
+  res = shishi_ap_set_tktoptionsasn1usage
+    (tgs->ap, tgs->tgticket, apoptions, tgs->tgsreq, "KDC-REQ.req-body",
+     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
+     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
+  if (res == SHISHI_OK)
+    res = shishi_ap_req_build(tgs->ap);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (tgs->handle, "Could not make AP-REQ: %s\n",
+			   shishi_strerror (res));
+      return res;
+    }
+
+  res = shishi_kdcreq_add_padata_tgs (tgs->handle, tgs->tgsreq,
+				      shishi_ap_req(tgs->ap));
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (tgs->handle, "Could not add AP-REQ to TGS: %s\n",
+			   shishi_strerror (res));
+      return res;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_tgs_rep:
  * @tgs: structure that holds information about TGS exchange
  *
  * Return value: Returns the received TGS-REP from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
 ASN1_TYPE
-shishi_tgs_get_tgsrep (Shishi_tgs * tgs)
+shishi_tgs_rep (Shishi_tgs * tgs)
 {
   return tgs->tgsrep;
 }
 
 /**
- * shishi_tgs_get_krberror:
+ * shishi_tgs_rep_process:
+ * @tgs: structure that holds information about TGS exchange
+ *
+ * Process new TGS-REP and set ticket.  The key to decrypt the TGS-REP
+ * is taken from the EncKDCRepPart of the TGS tgticket.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_rep_process (Shishi_tgs * tgs)
+{
+  ASN1_TYPE kdcreppart, ticket;
+  int res;
+
+  res = shishi_tgs_process (tgs->handle, tgs->tgsreq, tgs->tgsrep,
+			    shishi_ticket_enckdcreppart (tgs->tgticket),
+			    &kdcreppart);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (tgs->handle, "Could not process TGS: %s",
+			   shishi_strerror (res));
+      return res;
+    }
+
+  res = shishi_kdcrep_get_ticket (tgs->handle, tgs->tgsrep, &ticket);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (tgs->handle,
+			   "Could not extract ticket from TGS-REP: %s",
+			   shishi_strerror (res));
+      return res;
+    }
+
+  tgs->ticket = shishi_ticket (tgs->handle, ticket, kdcreppart, tgs->tgsrep);
+  if (tgs->ticket == NULL)
+    {
+      shishi_error_printf (tgs->handle, "Could not create ticket");
+      return SHISHI_MALLOC_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_tgs_krberror:
  * @tgs: structure that holds information about TGS exchange
  *
  * Return value: Returns the received TGS-REP from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
 ASN1_TYPE
-shishi_tgs_get_krberror (Shishi_tgs * tgs)
+shishi_tgs_krberror (Shishi_tgs * tgs)
 {
   return tgs->krberror;
 }
 
 /**
- * shishi_tgs_get_ticket:
+ * shishi_tgs_ticket:
  * @tgs: structure that holds information about TGS exchange
  *
  * Return value: Returns the newly aquired ticket from the TGS
  *               exchange, or NULL if not yet set or an error occured.
  **/
 Shishi_ticket *
-shishi_tgs_get_ticket (Shishi_tgs * tgs)
+shishi_tgs_ticket (Shishi_tgs * tgs)
 {
   return tgs->ticket;
 }
 
 /**
- * shishi_tgs:
- * @handle: shishi handle as allocated by shishi_init().
- * @tgticket: ticket-granting-ticket, used to authenticate the request.
- * @tgs: holds pointer to newly allocate Shishi_tgs structure.
- * @server: indicates the server to acquire ticket for.
+ * shishi_tgs_ticket_set:
+ * @tgs: structure that holds information about TGS exchange
+ * @ticket: ticket to store in TGS.
  *
- * Perform subsequent Kerberos 5 authentication, in order to acquire a
- * ticket for a server.
+ * Set the Ticket in the AP exchange.
+ **/
+void
+shishi_tgs_ticket_set (Shishi_tgs * tgs, Shishi_ticket *ticket)
+{
+  tgs->ticket = ticket;
+}
+
+/**
+ * shishi_tgs_sendrecv:
+ * @tgs: structure that holds information about TGS exchange
+ *
+ * Send TGS-REQ and receive TGS-REP or KRB-ERROR.  This is the initial
+ * Kerberos 5 authentication, usually used to acquire a Ticket
+ * Granting Ticket.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tgs (Shishi * handle,
-	    Shishi_ticket * tgticket, Shishi_tgs ** tgs, char *server)
+shishi_tgs_sendrecv (Shishi_tgs * tgs)
 {
-  /* XXX parse server into realm + sname */
-  return shishi_tgs_realmsname (handle, tgticket, tgs,
-				shishi_realm_default (handle), server);
-}
-
-int
-shishi_tgs_realmsname (Shishi * handle,
-		       Shishi_ticket * tgticket,
-		       Shishi_tgs ** tgs, char *realm, char *sname)
-{
-  ASN1_TYPE ticket, kdcreppart, apreq;
   int res;
 
-  *tgs = malloc (sizeof (**tgs));
-  if (*tgs == NULL)
-    return SHISHI_MALLOC_ERROR;
-
-  (*tgs)->tgsreq = shishi_tgsreq (handle);
-  if ((*tgs)->tgsreq == ASN1_TYPE_EMPTY)
-    return SHISHI_ASN1_ERROR;
-
-  res = shishi_kdcreq_set_realmserver (handle, (*tgs)->tgsreq, realm, sname);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not set realm and server in KDC-REQ: %s\n"),
-	       shishi_strerror (res));
-      goto done;
-    }
-
-  res = shishi_ap_tktoptionsasn1usage
-    (handle, &(*tgs)->ap, tgticket, 0, (*tgs)->tgsreq, "KDC-REQ.req-body",
-     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
-     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
-  if (res == SHISHI_OK)
-    res = shishi_ap_req_asn1((*tgs)->ap, &apreq);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not make AP-REQ: %s\n",
-			   shishi_strerror_details (handle));
-      goto done;
-    }
-
-  res = shishi_kdcreq_add_padata_tgs (handle, (*tgs)->tgsreq, apreq);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not add padata to TGS: %s\n",
-			   shishi_strerror_details (handle));
-      goto done;
-    }
-
-  res = shishi_kdcreq_sendrecv (handle, (*tgs)->tgsreq, &(*tgs)->tgsrep);
+  res = shishi_kdcreq_sendrecv (tgs->handle, tgs->tgsreq, &tgs->tgsrep);
   if (res == SHISHI_GOT_KRBERROR)
     {
-      (*tgs)->krberror = (*tgs)->tgsrep;
-      (*tgs)->tgsrep = NULL;
+      tgs->krberror = tgs->tgsrep;
+      tgs->tgsrep = NULL;
     }
   if (res != SHISHI_OK)
-    goto done;
+    return res;
 
-  res = shishi_tgs_process (handle, (*tgs)->tgsreq, (*tgs)->tgsrep,
-			    shishi_ticket_enckdcreppart (tgticket),
-			    &kdcreppart);
-  if (res != SHISHI_OK)
-    goto done;
+  return SHISHI_OK;
+}
 
-  res = shishi_kdcrep_get_ticket (handle, (*tgs)->tgsrep, &ticket);
+/**
+ * shishi_tgs_set_server:
+ * @tgs: structure that holds information about TGS exchange
+ * @server: indicates the server to acquire ticket for.
+ *
+ * Set the server in the TGS-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_set_server (Shishi_tgs * tgs, const char *server)
+{
+  int res;
+
+  res = shishi_kdcreq_set_server (tgs->handle, tgs->tgsreq, server);
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle,
-			   "Could not extract ticket from TGS-REP: %s",
-			   shishi_strerror_details (handle));
+      shishi_error_printf (tgs->handle,
+			   "Could not set server in KDC-REQ: %s\n",
+			   shishi_strerror (res));
       return res;
     }
 
-  (*tgs)->ticket =
-    shishi_ticket (handle, ticket, kdcreppart, (*tgs)->tgsrep);
-  if ((*tgs)->ticket == NULL)
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_tgs_set_realm:
+ * @tgs: structure that holds information about TGS exchange
+ * @realm: indicates the realm to acquire ticket for.
+ *
+ * Set the server in the TGS-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_set_realm (Shishi_tgs * tgs, const char *realm)
+{
+  int res;
+
+  res = shishi_kdcreq_set_realm (tgs->handle, tgs->tgsreq, realm);
+  if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "Could not create ticket");
-      return SHISHI_MALLOC_ERROR;
+      shishi_error_printf (tgs->handle,
+			   "Could not set realm in KDC-REQ: %s\n",
+			   shishi_strerror (res));
+      return res;
     }
 
   return SHISHI_OK;
+}
 
-done:
-  free (*tgs);
-  return res;
+/**
+ * shishi_tgs_set_realm:
+ * @tgs: structure that holds information about TGS exchange
+ * @realm: indicates the realm to acquire ticket for.
+ * @server: indicates the server to acquire ticket for.
+ *
+ * Set the realm and server in the TGS-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tgs_set_realmserver (Shishi_tgs * tgs,
+			    const char *realm,
+			    const char *server)
+{
+  int res;
+
+  res = shishi_tgs_set_server (tgs, server);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_tgs_set_realm (tgs, realm);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
 }

@@ -63,7 +63,7 @@ shishi_realm_default_guess (void)
  * @handle: Shishi library handle create by shishi_init().
  *
  * Return value: Returns the default realm used in the library.  (Not
- * a copy of it, so don't modify it.)
+ * a copy of it, so don't modify or deallocate it.)
  **/
 const char *
 shishi_realm_default (Shishi * handle)
