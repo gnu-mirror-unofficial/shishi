@@ -1,5 +1,5 @@
 /* safe.c --- Application data integrity protection.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -519,7 +519,7 @@ shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
   char *buffer;
   size_t buflen;
   char *cksum;
-  int cksumlen;
+  size_t cksumlen;
   int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
 
   rc = shishi_safe_set_cksum (safe->handle, safe->safe, 0, "", 0);

@@ -331,12 +331,12 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
 				   Shishi_tkt * tkt,
 				   int options,
 				   Shishi_asn1 node,
-				   char *field,
+				   const char *field,
 				   int authenticatorcksumkeyusage,
 				   int authenticatorkeyusage)
 {
   char *buf;
-  int buflen;
+  size_t buflen;
   int res;
 
   res = shishi_a2d_new_field (ap->handle, node, field, &buf, &buflen);
@@ -523,7 +523,7 @@ shishi_ap_tktoptionsasn1usage (Shishi * handle,
 			       Shishi_tkt * tkt,
 			       int options,
 			       Shishi_asn1 node,
-			       char *field,
+			       const char *field,
 			       int authenticatorcksumkeyusage,
 			       int authenticatorkeyusage)
 {
@@ -1325,7 +1325,7 @@ shishi_ap_encapreppart_set (Shishi_ap * ap, Shishi_asn1 encapreppart)
 const char *
 shishi_ap_option2string (Shishi_apoptions option)
 {
-  char *str;
+  const char *str;
 
   switch (option)
     {

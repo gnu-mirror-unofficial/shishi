@@ -1004,7 +1004,7 @@ int
 shishi_kdcreq_options_add (Shishi * handle,
 			   Shishi_asn1 kdcreq, uint32_t option)
 {
-  int options;
+  uint32_t options;
   int res;
 
   res = shishi_kdcreq_options (handle, kdcreq, &options);
