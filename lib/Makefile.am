@@ -35,7 +35,7 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	rfc1510_asn1_tab.c asn1.c \
 	version.c password.c
 libshishi_la_LIBADD = @LIBTASN1_LIBS@ @LIBGCRYPT_LIBS@ @LIBIDN_LIBS@ \
-	@LTLIBINTL@ ../gl/libfoo.a
+	@LTLIBINTL@ -L../gl -lfoo
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 INCLUDES = -I$(top_srcdir)/gl -I../intl \
