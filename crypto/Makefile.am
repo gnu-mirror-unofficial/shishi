@@ -22,7 +22,7 @@ EXTRA_DIST = README
 
 noinst_LTLIBRARIES = libnettle.la
 
-INCLUDES = -I$(top_srcdir)/lib
+INCLUDES = -I../lib
 
 libnettle_la_SOURCES = macros.h nettle-meta.h nettle-internal.h \
 	keymap.h rotors.h parity.h \
