@@ -22,7 +22,7 @@ if ENABLE_GTK_DOC
 SUBDIRS = reference
 endif
 
-EXTRA_DIST = gdoc shishi.html shishi.pdf shishi.ps
+EXTRA_DIST = gdoc shishi.html shishi.pdf shishi.ps texinfo.css
 
 info_TEXINFOS = shishi.texi
 shishi_TEXINFOS = gpl.texi fdl.texi $(gdoc_TEXINFOS) \
