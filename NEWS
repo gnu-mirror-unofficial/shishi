@@ -9,6 +9,11 @@ See the User Manual for discussion and examples.
 
 ** Man pages for all public functions are included.
 
+** Installed versions of Libgcrypt and libtasn1 used where possible.
+Shishi need Libgcrypt 1.1.44 or later, and libtasn1 0.2.5 or later.
+If a usable version is not found, the internal Nettle (crypto/) and/or
+libminitasn1 (asn1/) libraries are used instead.
+
 * Version 0.0.5 (released 2003-09-07)
 
 ** Server host name to realm mapping via DNS supported.
