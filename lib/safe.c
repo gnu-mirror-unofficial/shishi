@@ -62,44 +62,44 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
   if (lsafe->safe == NULL)
     return SHISHI_ASN1_ERROR;
 
-  rc = shishi_asn1_write (handle, lsafe->safe, "KRB-SAFE.pvno", "5", 0);
+  rc = shishi_asn1_write (handle, lsafe->safe, "pvno", "5", 0);
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_asn1_write (handle, lsafe->safe, "KRB-SAFE.msg-type", "20", 0);
+  rc = shishi_asn1_write (handle, lsafe->safe, "msg-type", "20", 0);
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_asn1_write (handle, lsafe->safe, "KRB-SAFE.safe-body.seq-number",
+  rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.seq-number",
 			  NULL, 0);
   if (rc != SHISHI_OK)
     return rc;
 
   gettimeofday (&tv, &tz);
   sprintf (usec, "%ld", tv.tv_usec % 1000000);
-  rc = shishi_asn1_write (handle, lsafe->safe, "KRB-SAFE.safe-body.usec",
+  rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.usec",
 			  usec, 0);
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_asn1_write (handle, lsafe->safe, "KRB-SAFE.safe-body.timestamp",
+  rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.timestamp",
 			  shishi_generalize_time (handle, time (NULL)), 0);
   if (rc != SHISHI_OK)
     return rc;
 
   rc = shishi_asn1_write (handle, lsafe->safe,
-			  "KRB-SAFE.safe-body.s-address.addr-type",
+			  "safe-body.s-address.addr-type",
 			  "3", 0); /* directional */
   if (rc != SHISHI_OK)
     return rc;
 
   rc = shishi_asn1_write (handle, lsafe->safe,
-			  "KRB-SAFE.safe-body.s-address.address",
+			  "safe-body.s-address.address",
 			  "\x00\x00\x00\x00", 4); /* sender */
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_asn1_write (handle, lsafe->safe, "KRB-SAFE.safe-body.r-address",
+  rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.r-address",
 			  NULL, 0);
   if (rc != SHISHI_OK)
     return rc;
@@ -391,12 +391,12 @@ shishi_safe_cksum (Shishi * handle,
   int res;
 
   res = shishi_asn1_integer_field (handle, safe, cksumtype,
-				   "KRB-SAFE.cksum.cksumtype");
+				   "cksum.cksumtype");
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_field (handle, safe, cksum, cksumlen,
-			   "KRB-SAFE.cksum.checksum");
+			   "cksum.checksum");
   if (res != SHISHI_OK)
     return res;
 
@@ -428,12 +428,12 @@ shishi_safe_set_cksum (Shishi * handle,
   int res;
 
   sprintf (format, "%i", cksumtype);
-  res = shishi_asn1_write (handle, safe, "KRB-SAFE.cksum.cksumtype",
+  res = shishi_asn1_write (handle, safe, "cksum.cksumtype",
 			   format, 0);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, safe, "KRB-SAFE.cksum.checksum",
+  res = shishi_asn1_write (handle, safe, "cksum.checksum",
 			   cksum, cksumlen);
   if (res != SHISHI_OK)
     return res;
@@ -460,7 +460,7 @@ shishi_safe_user_data (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_read (handle, safe, "KRB-SAFE.safe-body.user-data",
+  res = shishi_asn1_read (handle, safe, "safe-body.user-data",
 			  userdata, userdatalen);
   if (res != SHISHI_OK)
     return res;
@@ -486,7 +486,7 @@ shishi_safe_set_user_data (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write (handle, safe, "KRB-SAFE.safe-body.user-data",
+  res = shishi_asn1_write (handle, safe, "safe-body.user-data",
 			   userdata, userdatalen);
   if (res != SHISHI_OK)
     return res;

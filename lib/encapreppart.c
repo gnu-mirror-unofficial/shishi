@@ -34,22 +34,22 @@ shishi_encapreppart (Shishi * handle)
   if (!node)
     return NULL;
 
-  res = shishi_asn1_write (handle, node, "EncAPRepPart.ctime",
+  res = shishi_asn1_write (handle, node, "ctime",
 			   shishi_generalize_time (handle, time (NULL)), 0);
   if (res != SHISHI_OK)
     goto error;
 
   gettimeofday (&tv, &tz);
   sprintf (usec, "%ld", tv.tv_usec % 1000000);
-  res = shishi_asn1_write (handle, node, "EncAPRepPart.cusec", usec, 0);
+  res = shishi_asn1_write (handle, node, "cusec", usec, 0);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "EncAPRepPart.subkey", NULL, 0);
+  res = shishi_asn1_write (handle, node, "subkey", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "EncAPRepPart.seq-number", NULL, 0);
+  res = shishi_asn1_write (handle, node, "seq-number", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
 
@@ -248,12 +248,12 @@ shishi_encapreppart_get_key (Shishi * handle,
 
   *keytype = 0;
   res = shishi_asn1_read_integer (handle, encapreppart,
-				  "EncAPRepPart.subkey.keytype", keytype);
+				  "subkey.keytype", keytype);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_read (handle, encapreppart,
-			  "EncAPRepPart.subkey.keyvalue",
+			  "subkey.keyvalue",
 			  keyvalue, keyvalue_len);
   if (res != SHISHI_OK)
     return res;
@@ -270,7 +270,7 @@ shishi_encapreppart_ctime_get (Shishi * handle,
 
   len = GENERALIZEDTIME_TIME_LEN + 1;
   res = shishi_asn1_field (handle, encapreppart,
-			   ctime, &len, "EncAPRepPart.ctime");
+			   ctime, &len, "ctime");
   if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
     ctime[len] = '\0';
 
@@ -283,7 +283,7 @@ shishi_encapreppart_ctime_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write (handle, encapreppart, "EncAPRepPart.ctime",
+  res = shishi_asn1_write (handle, encapreppart, "ctime",
 			   ctime, strlen (ctime));
   if (res != SHISHI_OK)
     return res;
@@ -298,7 +298,7 @@ shishi_encapreppart_cusec_get (Shishi * handle,
   int res;
 
   res = shishi_asn1_integer_field (handle, encapreppart, cusec,
-				   "EncAPRepPart.cusec");
+				   "cusec");
   *cusec = ntohl (*cusec);
 
   return res;
@@ -312,7 +312,7 @@ shishi_encapreppart_cusec_set (Shishi * handle,
   int res;
 
   sprintf (usec, "%d", cusec);
-  res = shishi_asn1_write (handle, encapreppart, "EncAPRepPart.cusec",
+  res = shishi_asn1_write (handle, encapreppart, "cusec",
 			   usec, 0);
   if (res != SHISHI_OK)
     return res;
@@ -330,23 +330,23 @@ shishi_encapreppart_time_copy (Shishi * handle,
   int res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, authenticator, "Authenticator.cusec",
+  res = shishi_asn1_read (handle, authenticator, "cusec",
 			  buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, encapreppart, "EncAPRepPart.cusec",
+  res = shishi_asn1_write (handle, encapreppart, "cusec",
 			   buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, authenticator, "Authenticator.ctime",
+  res = shishi_asn1_read (handle, authenticator, "ctime",
 			  buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, encapreppart, "EncAPRepPart.ctime",
+  res = shishi_asn1_write (handle, encapreppart, "ctime",
 			   buf, buflen);
   if (res != SHISHI_OK)
     return res;

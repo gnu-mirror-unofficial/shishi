@@ -49,24 +49,24 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (!node)
     return NULL;
 
-  res = shishi_asn1_write (handle, node, "KDC-REQ.pvno",
+  res = shishi_asn1_write (handle, node, "pvno",
 			   SHISHI_KDCREQ_DEFAULT_PVNO,
 			   SHISHI_KDCREQ_DEFAULT_PVNO_LEN);
   if (res != SHISHI_OK)
     goto error;
 
   if (as)
-    res = shishi_asn1_write (handle, node, "KDC-REQ.msg-type",
+    res = shishi_asn1_write (handle, node, "msg-type",
 			     SHISHI_AS_REQ_DEFAULT_MSG_TYPE,
 			     SHISHI_AS_REQ_DEFAULT_MSG_TYPE_LEN);
   else
-    res = shishi_asn1_write (handle, node, "KDC-REQ.msg-type",
+    res = shishi_asn1_write (handle, node, "msg-type",
 			     SHISHI_TGS_REQ_DEFAULT_MSG_TYPE,
 			     SHISHI_TGS_REQ_DEFAULT_MSG_TYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "KDC-REQ.req-body.kdc-options",
+  res = shishi_asn1_write (handle, node, "req-body.kdc-options",
 			   SHISHI_KDCREQ_DEFAULT_REQ_BODY_KDC_OPTIONS,
 			   SHISHI_KDCREQ_DEFAULT_REQ_BODY_KDC_OPTIONS_LEN);
   if (res != SHISHI_OK)
@@ -76,7 +76,7 @@ _shishi_kdcreq (Shishi * handle, int as)
     res = shishi_kdcreq_set_cname (handle, node, SHISHI_NT_PRINCIPAL,
 				   shishi_principal_default (handle));
   else
-    res = shishi_asn1_write (handle, node, "KDC-REQ.req-body.cname", NULL, 0);
+    res = shishi_asn1_write (handle, node, "req-body.cname", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
 
@@ -92,28 +92,28 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "KDC-REQ.req-body.sname.name-type",
+  res = shishi_asn1_write (handle, node, "req-body.sname.name-type",
 			   SHISHI_KDCREQ_DEFAULT_REQ_BODY_SNAME_NAME_TYPE,
 			   SHISHI_KDCREQ_DEFAULT_REQ_BODY_SNAME_NAME_TYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "KDC-REQ.req-body.from", NULL, 0);
+  res = shishi_asn1_write (handle, node, "req-body.from", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "KDC-REQ.req-body.till",
+  res = shishi_asn1_write (handle, node, "req-body.till",
 			   shishi_generalize_time (handle,
 						   time (NULL) + 1000), 0);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "KDC-REQ.req-body.rtime", NULL, 0);
+  res = shishi_asn1_write (handle, node, "req-body.rtime", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
 
   shishi_randomize (handle, &noncebuf[0], sizeof (noncebuf));
-  res = shishi_asn1_write (handle, node, "KDC-REQ.req-body.nonce", noncebuf,
+  res = shishi_asn1_write (handle, node, "req-body.nonce", noncebuf,
 			   sizeof (noncebuf));
   if (res != SHISHI_OK)
     goto error;
@@ -123,19 +123,19 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "KDC-REQ.req-body.addresses",
+  res = shishi_asn1_write (handle, node, "req-body.addresses",
 			   NULL, 0);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node,
-			   "KDC-REQ.req-body.enc-authorization-data", NULL,
+			   "req-body.enc-authorization-data", NULL,
 			   0);
   if (res != SHISHI_OK)
     goto error;
 
   res =
-    shishi_asn1_write (handle, node, "KDC-REQ.req-body.additional-tickets",
+    shishi_asn1_write (handle, node, "req-body.additional-tickets",
 		       NULL, 0);
   if (res != SHISHI_OK)
     goto error;
@@ -344,7 +344,7 @@ shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq,
   int res;
 
   res = shishi_asn1_integer2_field (handle, kdcreq, nonce,
-				    "KDC-REQ.req-body.nonce");
+				    "req-body.nonce");
   if (res != SHISHI_OK)
     return res;
 
@@ -373,23 +373,23 @@ shishi_kdcreq_set_cname (Shishi * handle,
 
   sprintf (buf, "%d", name_type);
 
-  res = shishi_asn1_write (handle, kdcreq, "KDC-REQ.req-body.cname.name-type",
+  res = shishi_asn1_write (handle, kdcreq, "req-body.cname.name-type",
 			   buf, 0);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, kdcreq,
-			   "KDC-REQ.req-body.cname.name-string", NULL, 0);
+			   "req-body.cname.name-string", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, kdcreq,
-			   "KDC-REQ.req-body.cname.name-string", "NEW", 1);
+			   "req-body.cname.name-string", "NEW", 1);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, kdcreq,
-			   "KDC-REQ.req-body.cname.name-string.?1",
+			   "req-body.cname.name-string.?1",
 			   principal, strlen (principal));
   if (res != SHISHI_OK)
     return res;
@@ -402,7 +402,7 @@ shishi_kdcreq_cname_get (Shishi * handle,
 			 Shishi_asn1 kdcreq, char *cname, size_t * cnamelen)
 {
   return shishi_principal_name_get (handle, kdcreq,
-				    "KDC-REQ.req-body.cname",
+				    "req-body.cname",
 				    cname, cnamelen);
 }
 
@@ -412,8 +412,8 @@ shishi_asreq_cnamerealm_get (Shishi * handle,
 			     char *cnamerealm, size_t * cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, asreq,
-					  "KDC-REQ.req-body.cname", asreq,
-					  "KDC-REQ.req-body.realm",
+					  "req-body.cname", asreq,
+					  "req-body.realm",
 					  cnamerealm, cnamerealmlen);
 }
 
@@ -422,7 +422,7 @@ shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
 			 char *realm, int *realmlen)
 {
   return shishi_asn1_optional_field (handle, kdcreq, realm, realmlen,
-				     "KDC-REQ.req-body.realm");
+				     "req-body.realm");
 }
 
 /**
@@ -442,7 +442,7 @@ shishi_kdcreq_set_realm (Shishi * handle, Shishi_asn1 kdcreq,
   int res;
 
   res =
-    shishi_asn1_write (handle, kdcreq, "KDC-REQ.req-body.realm", realm, 0);
+    shishi_asn1_write (handle, kdcreq, "req-body.realm", realm, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -454,7 +454,7 @@ shishi_kdcreq_sname_get (Shishi * handle,
 			 Shishi_asn1 kdcreq, char *sname, size_t * snamelen)
 {
   return shishi_principal_name_get (handle, kdcreq,
-				    "KDC-REQ.req-body.sname",
+				    "req-body.sname",
 				    sname, snamelen);
 }
 
@@ -464,8 +464,8 @@ shishi_kdcreq_snamerealm_get (Shishi * handle,
 			      char *snamerealm, size_t * snamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, kdcreq,
-					  "KDC-REQ.req-body.sname", kdcreq,
-					  "KDC-REQ.req-body.realm",
+					  "req-body.sname", kdcreq,
+					  "req-body.realm",
 					  snamerealm, snamerealmlen);
 }
 
@@ -492,13 +492,13 @@ shishi_kdcreq_set_sname (Shishi * handle,
 
   sprintf (buf, "%d", name_type);
 
-  res = shishi_asn1_write (handle, kdcreq, "KDC-REQ.req-body.sname.name-type",
+  res = shishi_asn1_write (handle, kdcreq, "req-body.sname.name-type",
 			   buf, 0);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, kdcreq,
-			   "KDC-REQ.req-body.sname.name-string", NULL, 0);
+			   "req-body.sname.name-string", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -506,12 +506,12 @@ shishi_kdcreq_set_sname (Shishi * handle,
   while (sname[i - 1])
     {
       res = shishi_asn1_write (handle, kdcreq,
-			       "KDC-REQ.req-body.sname.name-string", "NEW",
+			       "req-body.sname.name-string", "NEW",
 			       1);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (buf, "KDC-REQ.req-body.sname.name-string.?%d", i);
+      sprintf (buf, "req-body.sname.name-string.?%d", i);
       res = shishi_asn1_write (handle, kdcreq, buf, sname[i - 1], 0);
       if (res != SHISHI_OK)
 	return res;
@@ -594,7 +594,7 @@ shishi_kdcreq_etype (Shishi * handle,
   char buf[BUFSIZ];
   int res;
 
-  sprintf (buf, "KDC-REQ.req-body.etype.?%d", netype);
+  sprintf (buf, "req-body.etype.?%d", netype);
   res = shishi_asn1_integer_field (handle, kdcreq, etype, buf);
   if (res != SHISHI_OK)
     return res;
@@ -623,18 +623,18 @@ shishi_kdcreq_set_etype (Shishi * handle,
   char buf2[BUFSIZ];
   int i;
 
-  res = shishi_asn1_write (handle, kdcreq, "KDC-REQ.req-body.etype", NULL, 0);
+  res = shishi_asn1_write (handle, kdcreq, "req-body.etype", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
   for (i = 1; i <= netype; i++)
     {
       res = shishi_asn1_write (handle, kdcreq,
-			       "KDC-REQ.req-body.etype", "NEW", 1);
+			       "req-body.etype", "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (buf, "KDC-REQ.req-body.etype.?%d", i);
+      sprintf (buf, "req-body.etype.?%d", i);
       sprintf (buf2, "%d", etype[i - 1]);
       res = shishi_asn1_write (handle, kdcreq, buf, buf2, 0);
       if (res != SHISHI_OK)
@@ -658,7 +658,7 @@ shishi_kdcreq_clear_padata (Shishi * handle, Shishi_asn1 kdcreq)
 {
   int res;
 
-  res = shishi_asn1_write (handle, kdcreq, "KDC-REQ.padata", NULL, 0);
+  res = shishi_asn1_write (handle, kdcreq, "padata", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -691,21 +691,21 @@ shishi_kdcreq_add_padata (Shishi * handle,
   int res;
   int i;
 
-  res = shishi_asn1_write (handle, kdcreq, "KDC-REQ.padata", "NEW", 1);
+  res = shishi_asn1_write (handle, kdcreq, "padata", "NEW", 1);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_number_of_elements (handle, kdcreq, "KDC-REQ.padata", &i);
+  res = shishi_asn1_number_of_elements (handle, kdcreq, "padata", &i);
   if (res != SHISHI_OK)
     return res;
 
-  sprintf (format, "KDC-REQ.padata.?%d.padata-value", i);
+  sprintf (format, "padata.?%d.padata-value", i);
   res = shishi_asn1_write (handle, kdcreq, format, data, datalen);
   if (res != SHISHI_OK)
     return res;
 
   sprintf (buf, "%d", padatatype);
-  sprintf (format, "KDC-REQ.padata.?%d.padata-type", i);
+  sprintf (format, "padata.?%d.padata-type", i);
   res = shishi_asn1_write (handle, kdcreq, format, buf, 0);
   if (res != SHISHI_OK)
     return res;

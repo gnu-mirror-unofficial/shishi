@@ -33,11 +33,11 @@ shishi_enckdcreppart (Shishi * handle)
     return NULL;
 
   /* XXX remove these two: */
-  res = shishi_asn1_write (handle, node, "EncKDCRepPart.key-expiration",
+  res = shishi_asn1_write (handle, node, "key-expiration",
 			   NULL, 0);
   if (res != SHISHI_OK)
     puts ("urk");
-  res = shishi_asn1_write (handle, node, "EncKDCRepPart.caddr", NULL, 0);
+  res = shishi_asn1_write (handle, node, "caddr", NULL, 0);
   if (res != SHISHI_OK)
     puts ("urk2");
 
@@ -55,11 +55,11 @@ shishi_encasreppart (Shishi * handle)
     return NULL;
 
   /* XXX remove these two: */
-  res = shishi_asn1_write (handle, node, "EncKDCRepPart.key-expiration",
+  res = shishi_asn1_write (handle, node, "key-expiration",
 			   NULL, 0);
   if (res != SHISHI_OK)
     puts ("urk");
-  res = shishi_asn1_write (handle, node, "EncKDCRepPart.caddr", NULL, 0);
+  res = shishi_asn1_write (handle, node, "caddr", NULL, 0);
   if (res != SHISHI_OK)
     puts ("urk2");
 
@@ -90,13 +90,13 @@ shishi_enckdcreppart_get_key (Shishi * handle,
   int keytype;
 
   res = shishi_asn1_integer_field (handle, enckdcreppart, &keytype,
-				   "EncKDCRepPart.key.keytype");
+				   "key.keytype");
   if (res != SHISHI_OK)
     return res;
 
   buflen = BUFSIZ;
   res = shishi_asn1_field (handle, enckdcreppart, buf, &buflen,
-			   "EncKDCRepPart.key.keyvalue");
+			   "key.keyvalue");
   if (res != SHISHI_OK)
     return res;
 
@@ -128,13 +128,13 @@ shishi_enckdcreppart_key_set (Shishi * handle,
 
   keytype = shishi_key_type (key);
   sprintf (buf, "%d", keytype);
-  res = shishi_asn1_write (handle, enckdcreppart, "EncKDCRepPart.key.keytype",
+  res = shishi_asn1_write (handle, enckdcreppart, "key.keytype",
 			   buf, 0);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   res = shishi_asn1_write (handle, enckdcreppart,
-			   "EncKDCRepPart.key.keyvalue",
+			   "key.keyvalue",
 			   shishi_key_value (key), shishi_key_length (key));
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
@@ -161,7 +161,7 @@ shishi_enckdcreppart_nonce_set (Shishi * handle,
   char *format;
 
   shishi_asprintf (&format, "%ld", nonce);
-  res = shishi_asn1_write (handle, enckdcreppart, "EncKDCRepPart.nonce",
+  res = shishi_asn1_write (handle, enckdcreppart, "nonce",
 			   format, 0);
   free (format);
   if (res != SHISHI_OK)
@@ -188,7 +188,7 @@ shishi_enckdcreppart_flags_set (Shishi * handle,
   char buf[BUFSIZ];
 
   sprintf (buf, "%d", flags);
-  res = shishi_asn1_write (handle, enckdcreppart, "EncKDCRepPart.flags",
+  res = shishi_asn1_write (handle, enckdcreppart, "flags",
 			   buf, 0);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
@@ -218,65 +218,65 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
   int res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "EncTicketPart.flags",
+  res = shishi_asn1_read (handle, encticketpart, "flags",
 			  buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = shishi_asn1_write (handle, enckdcreppart, "EncKDCRepPart.flags",
+  res = shishi_asn1_write (handle, enckdcreppart, "flags",
 			   buf, buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "EncTicketPart.authtime",
+  res = shishi_asn1_read (handle, encticketpart, "authtime",
 			  buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = shishi_asn1_write (handle, enckdcreppart, "EncKDCRepPart.authtime",
+  res = shishi_asn1_write (handle, enckdcreppart, "authtime",
 			   buf, buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "EncTicketPart.starttime",
+  res = shishi_asn1_read (handle, encticketpart, "starttime",
 			  buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return SHISHI_ASN1_ERROR;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
-    res = shishi_asn1_write (handle, enckdcreppart, "EncKDCRepPart.starttime",
+    res = shishi_asn1_write (handle, enckdcreppart, "starttime",
 			     NULL, 0);
   else
-    res = shishi_asn1_write (handle, enckdcreppart, "EncKDCRepPart.starttime",
+    res = shishi_asn1_write (handle, enckdcreppart, "starttime",
 			     buf, buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "EncTicketPart.endtime",
+  res = shishi_asn1_read (handle, encticketpart, "endtime",
 			  buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = shishi_asn1_write (handle, enckdcreppart, "EncKDCRepPart.endtime",
+  res = shishi_asn1_write (handle, enckdcreppart, "endtime",
 			   buf, buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "EncTicketPart.renew-till",
+  res = shishi_asn1_read (handle, encticketpart, "renew-till",
 			  buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return SHISHI_ASN1_ERROR;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
     res = shishi_asn1_write (handle, enckdcreppart,
-			     "EncKDCRepPart.renew-till", NULL, 0);
+			     "renew-till", NULL, 0);
   else
     res = shishi_asn1_write (handle, enckdcreppart,
-			     "EncKDCRepPart.renew-till", buf, buflen);
+			     "renew-till", buf, buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
@@ -303,7 +303,7 @@ shishi_enckdcreppart_srealm_set (Shishi * handle,
   int res = SHISHI_OK;
 
   res = shishi_asn1_write (handle, enckdcreppart,
-			   "EncKDCRepPart.srealm", srealm, 0);
+			   "srealm", srealm, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -335,12 +335,12 @@ shishi_enckdcreppart_sname_set (Shishi * handle,
   sprintf (buf, "%d", name_type);
 
   res = shishi_asn1_write (handle, enckdcreppart,
-			   "EncKDCRepPart.sname.name-type", buf, 0);
+			   "sname.name-type", buf, 0);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, enckdcreppart,
-			   "EncKDCRepPart.sname.name-string", NULL, 0);
+			   "sname.name-string", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -348,11 +348,11 @@ shishi_enckdcreppart_sname_set (Shishi * handle,
   while (sname[i - 1])
     {
       res = shishi_asn1_write (handle, enckdcreppart,
-			       "EncKDCRepPart.sname.name-string", "NEW", 1);
+			       "sname.name-string", "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (buf, "EncKDCRepPart.sname.name-string.?%d", i);
+      sprintf (buf, "sname.name-string.?%d", i);
       res = shishi_asn1_write (handle, enckdcreppart, buf, sname[i - 1], 0);
       if (res != SHISHI_OK)
 	return res;

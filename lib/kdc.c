@@ -49,7 +49,7 @@ shishi_as_derive_salt (Shishi * handle,
   int res;
   int i, n;
 
-  res = shishi_asn1_number_of_elements (handle, asrep, "KDC-REP.padata", &n);
+  res = shishi_asn1_number_of_elements (handle, asrep, "padata", &n);
   if (res == SHISHI_ASN1_NO_ELEMENT)
     n = 0;
   else if (res != SHISHI_OK)
@@ -59,14 +59,14 @@ shishi_as_derive_salt (Shishi * handle,
     {
       int patype;
 
-      sprintf (format, "KDC-REP.padata.?%d.padata-type", i);
+      sprintf (format, "padata.?%d.padata-type", i);
       res = shishi_asn1_integer_field (handle, asrep, &patype, format);
       if (res != SHISHI_OK)
 	return res;
 
       if (patype == SHISHI_PA_PW_SALT)
 	{
-	  sprintf (format, "KDC-REP.padata.?%d.padata-value", i);
+	  sprintf (format, "padata.?%d.padata-value", i);
 	  res = shishi_asn1_read (handle, asrep, format, salt, saltlen);
 	  if (res != SHISHI_OK)
 	    return res;
@@ -77,12 +77,12 @@ shishi_as_derive_salt (Shishi * handle,
 
   len = *saltlen;
   res =
-    shishi_asn1_read (handle, asreq, "KDC-REQ.req-body.realm", salt, &len);
+    shishi_asn1_read (handle, asreq, "req-body.realm", salt, &len);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_number_of_elements (handle, asreq,
-					"KDC-REQ.req-body.cname.name-string",
+					"req-body.cname.name-string",
 					&n);
   if (res != SHISHI_OK)
     return res;
@@ -93,7 +93,7 @@ shishi_as_derive_salt (Shishi * handle,
       if (tmplen < 0)
 	return SHISHI_TOO_SMALL_BUFFER;
 
-      sprintf (format, "KDC-REQ.req-body.cname.name-string.?%d", i);
+      sprintf (format, "req-body.cname.name-string.?%d", i);
       res = shishi_asn1_read (handle, asreq, format, salt + len, &tmplen);
       if (res != SHISHI_OK)
 	return res;
@@ -126,7 +126,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 
   realmlen = sizeof (realm);
   res = shishi_asn1_field (handle, kdcreq, realm, &realmlen,
-			   "KDC-REQ.req-body.realm");
+			   "req-body.realm");
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not get realm: %s\n",
@@ -201,12 +201,12 @@ shishi_kdc_copy_crealm (Shishi * handle,
   buf[0] = '\0';		/* XXX if crealm is empty, buflen == 0 which
 				   causes libtasn1 to strlen(buf)... */
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "EncTicketPart.crealm",
+  res = shishi_asn1_read (handle, encticketpart, "crealm",
 			  buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.crealm", buf, buflen);
+  res = shishi_asn1_write (handle, kdcrep, "crealm", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -233,7 +233,7 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   int reqrealmlen = BUFSIZ, reprealmlen = BUFSIZ;
   int res;
 
-  res = shishi_asn1_read (handle, asreq, "KDC-REQ.req-body.realm",
+  res = shishi_asn1_read (handle, asreq, "req-body.realm",
 			  reqrealm, &reqrealmlen);
   if (res != SHISHI_OK)
     {
@@ -242,7 +242,7 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
       return res;
     }
 
-  res = shishi_asn1_read (handle, asrep, "KDC-REP.crealm",
+  res = shishi_asn1_read (handle, asrep, "crealm",
 			  reprealm, &reprealmlen);
   if (res != SHISHI_OK)
     {
@@ -288,40 +288,40 @@ shishi_kdc_copy_cname (Shishi * handle,
 
   buflen = BUFSIZ;
   res = shishi_asn1_read (handle, encticketpart,
-			  "EncTicketPart.cname.name-type", buf, &buflen);
+			  "cname.name-type", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-type",
+  res = shishi_asn1_write (handle, kdcrep, "cname.name-type",
 			   buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_number_of_elements (handle, encticketpart,
-					"EncTicketPart.cname.name-string",
+					"cname.name-string",
 					&n);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-string",
+  res = shishi_asn1_write (handle, kdcrep, "cname.name-string",
 			   NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
   for (i = 1; i <= n; i++)
     {
-      res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-string",
+      res = shishi_asn1_write (handle, kdcrep, "cname.name-string",
 			       "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (format, "EncTicketPart.cname.name-string.?%d", i);
+      sprintf (format, "cname.name-string.?%d", i);
       buflen = BUFSIZ;
       res = shishi_asn1_read (handle, encticketpart, format, buf, &buflen);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (format, "KDC-REP.cname.name-string.?%d", i);
+      sprintf (format, "cname.name-string.?%d", i);
       res = shishi_asn1_write (handle, kdcrep, format, buf, buflen);
       if (res != SHISHI_OK)
 	return res;
@@ -355,13 +355,13 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   /* We do not compare msg-type as recommended on the ietf-krb-wg list */
 
   res = shishi_asn1_number_of_elements (handle, asreq,
-					"KDC-REQ.req-body.cname.name-string",
+					"req-body.cname.name-string",
 					&i);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_number_of_elements (handle, asrep,
-					"KDC-REP.cname.name-string", &j);
+					"cname.name-string", &j);
   if (res != SHISHI_OK)
     return res;
 
@@ -370,13 +370,13 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 
   for (i = 1; i <= j; i++)
     {
-      sprintf (format, "KDC-REQ.req-body.cname.name-string.?%d", i);
+      sprintf (format, "req-body.cname.name-string.?%d", i);
       reqcnamelen = sizeof (reqcname);
       res = shishi_asn1_read (handle, asreq, format, reqcname, &reqcnamelen);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (format, "KDC-REP.cname.name-string.?%d", i);
+      sprintf (format, "cname.name-string.?%d", i);
       repcnamelen = sizeof (repcname);
       res = shishi_asn1_read (handle, asrep, format, repcname, &repcnamelen);
       if (res != SHISHI_OK)
@@ -453,7 +453,7 @@ shishi_kdc_check_nonce (Shishi * handle,
   int repnoncelen = BUFSIZ;
   int res;
 
-  res = shishi_asn1_read (handle, kdcreq, "KDC-REQ.req-body.nonce",
+  res = shishi_asn1_read (handle, kdcreq, "req-body.nonce",
 			  reqnonce, &reqnoncelen);
   if (res != SHISHI_OK)
     {
@@ -462,7 +462,7 @@ shishi_kdc_check_nonce (Shishi * handle,
       return res;
     }
 
-  res = shishi_asn1_read (handle, enckdcreppart, "EncKDCRepPart.nonce",
+  res = shishi_asn1_read (handle, enckdcreppart, "nonce",
 			  repnonce, &repnoncelen);
   if (res != SHISHI_OK)
     {
@@ -667,7 +667,7 @@ shishi_kdc_process (Shishi * handle,
 
   msgtype = 0;
   res = shishi_asn1_integer_field (handle, kdcrep,
-				   &msgtype, "KDC-REP.msg-type");
+				   &msgtype, "msg-type");
   if (res != SHISHI_OK)
     return res;
 

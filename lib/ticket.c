@@ -25,7 +25,7 @@ int
 shishi_ticket_realm_get (Shishi * handle,
 			 Shishi_asn1 ticket, char *realm, int *realmlen)
 {
-  return shishi_asn1_field (handle, ticket, realm, realmlen, "Ticket.realm");
+  return shishi_asn1_field (handle, ticket, realm, realmlen, "realm");
 }
 
 /**
@@ -44,7 +44,7 @@ shishi_ticket_realm_set (Shishi * handle, Shishi_asn1 ticket,
 {
   int res;
 
-  res = shishi_asn1_write (handle, ticket, "Ticket.realm", realm, 0);
+  res = shishi_asn1_write (handle, ticket, "realm", realm, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -55,7 +55,7 @@ int
 shishi_ticket_sname_get (Shishi * handle,
 			 Shishi_asn1 ticket, char *server, int *serverlen)
 {
-  return shishi_principal_name_get (handle, ticket, "Ticket.sname",
+  return shishi_principal_name_get (handle, ticket, "sname",
 				    server, serverlen);
 }
 
@@ -82,11 +82,11 @@ shishi_ticket_sname_set (Shishi * handle,
 
   sprintf (buf, "%d", name_type);
 
-  res = shishi_asn1_write (handle, ticket, "Ticket.sname.name-type", buf, 0);
+  res = shishi_asn1_write (handle, ticket, "sname.name-type", buf, 0);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, ticket, "Ticket.sname.name-string",
+  res = shishi_asn1_write (handle, ticket, "sname.name-string",
 			   NULL, 0);
   if (res != SHISHI_OK)
     return res;
@@ -94,12 +94,12 @@ shishi_ticket_sname_set (Shishi * handle,
   i = 1;
   while (sname[i - 1])
     {
-      res = shishi_asn1_write (handle, ticket, "Ticket.sname.name-string",
+      res = shishi_asn1_write (handle, ticket, "sname.name-string",
 			       "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (buf, "Ticket.sname.name-string.?%d", i);
+      sprintf (buf, "sname.name-string.?%d", i);
       res = shishi_asn1_write (handle, ticket, buf, sname[i - 1], 0);
       if (res != SHISHI_OK)
 	return res;
@@ -152,8 +152,8 @@ shishi_ticket_snamerealm_get (Shishi * handle,
 			      Shishi_asn1 ticket,
 			      char *serverrealm, int *serverrealmlen)
 {
-  return shishi_principal_name_realm_get (handle, ticket, "Ticket.sname",
-					  ticket, "Ticket.realm",
+  return shishi_principal_name_realm_get (handle, ticket, "sname",
+					  ticket, "realm",
 					  serverrealm, serverrealmlen);
 }
 
@@ -194,7 +194,7 @@ shishi_ticket_get_enc_part_etype (Shishi * handle,
   *etype = 0;
   buflen = sizeof (*etype);
   res = shishi_asn1_field (handle, ticket,
-			   (char *) etype, &buflen, "Ticket.enc-part.etype");
+			   (char *) etype, &buflen, "enc-part.etype");
 
   return res;
 }
@@ -221,7 +221,7 @@ shishi_ticket_decrypt (Shishi * handle,
 
   cipherlen = BUFSIZ;
   res = shishi_asn1_field (handle, ticket, cipher, &cipherlen,
-			   "Ticket.enc-part.cipher");
+			   "enc-part.cipher");
   if (res != SHISHI_OK)
     return res;
 
@@ -285,24 +285,24 @@ shishi_ticket_set_enc_part (Shishi * handle,
   char *format;
   int res = SHISHI_OK;
 
-  res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.cipher",
+  res = shishi_asn1_write (handle, ticket, "enc-part.cipher",
 			   buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
   shishi_asprintf (&format, "%d", etype);
-  res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.etype",
+  res = shishi_asn1_write (handle, ticket, "enc-part.etype",
 			   format, 0);
   free (format);
   if (res != SHISHI_OK)
     return res;
 
   if (kvno == 0)
-    res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.kvno", NULL, 0);
+    res = shishi_asn1_write (handle, ticket, "enc-part.kvno", NULL, 0);
   else
     {
       shishi_asprintf (&format, "%d", etype);
-      res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.kvno",
+      res = shishi_asn1_write (handle, ticket, "enc-part.kvno",
 			       format, 0);
       free (format);
     }

@@ -46,9 +46,9 @@ _shishi_print_armored_data (Shishi * handle,
   if (asn1 == NULL)
     return !SHISHI_OK;
 
-  asn1_print_structure (fh, asn1, asn1->name, ASN1_PRINT_NAME_TYPE_VALUE);
+  asn1_print_structure (fh, asn1, "", ASN1_PRINT_NAME_TYPE_VALUE);
 
-  res = shishi_a2d_field (handle, asn1, asn1type, der, &derlen);
+  res = shishi_a2d_field (handle, asn1, "", der, &derlen);
   if (res != ASN1_SUCCESS)
     {
       shishi_error_printf (handle, "Could not DER encode %s: %s\n",

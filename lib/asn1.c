@@ -23,6 +23,8 @@
 #define _SHISHI_HAS_LIBTASN1_H 1
 #include "internal.h"
 
+#define asn1_create_element(a,b,c,d) asn1_create_element(a,b,c)
+
 extern const ASN1_ARRAY_TYPE shishi_asn1_tab[];
 
 Shishi_asn1
@@ -92,7 +94,7 @@ shishi_a2d_field (Shishi * handle,
 int
 shishi_a2d (Shishi * handle, Shishi_asn1 node, char *der, int *len)
 {
-  return shishi_a2d_field (handle, node, node->name, der, len);
+  return shishi_a2d_field (handle, node, "", der, len);
 }
 
 int
@@ -285,7 +287,7 @@ shishi_asn1_ticket (Shishi * handle)
     goto error;
 
 #if 1
-  res = asn1_write_value (node, "Ticket.tkt-vno",
+  res = asn1_write_value (node, "tkt-vno",
 			  (const unsigned char *)
 			  SHISHI_TICKET_DEFAULT_TKTVNO,
 			  SHISHI_TICKET_DEFAULT_TKTVNO_LEN);

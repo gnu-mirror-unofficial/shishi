@@ -171,7 +171,7 @@ shishi_tgs_req_build (Shishi_tgs * tgs)
     }
 
   res = shishi_ap_set_tktoptionsasn1usage
-    (tgs->ap, tgs->tgtkt, apoptions, tgs->tgsreq, "KDC-REQ.req-body",
+    (tgs->ap, tgs->tgtkt, apoptions, tgs->tgsreq, "req-body",
      SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR_CKSUM,
      SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
   if (res == SHISHI_OK)

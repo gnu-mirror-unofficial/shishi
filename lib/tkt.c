@@ -94,7 +94,7 @@ int
 shishi_tkt_client (Shishi_tkt * tkt, char *client, int *clientlen)
 {
   return shishi_principal_name_get (tkt->handle, tkt->kdcrep,
-				    "KDC-REP.cname", client, clientlen);
+				    "cname", client, clientlen);
 }
 
 int
@@ -132,8 +132,8 @@ int
 shishi_tkt_cnamerealm (Shishi_tkt * tkt, char *cnamerealm, int *cnamerealmlen)
 {
   return shishi_principal_name_realm_get (tkt->handle,
-					  tkt->kdcrep, "KDC-REP.cname",
-					  tkt->kdcrep, "KDC-REP.crealm",
+					  tkt->kdcrep, "cname",
+					  tkt->kdcrep, "crealm",
 					  cnamerealm, cnamerealmlen);
 }
 
@@ -425,7 +425,7 @@ shishi_tkt_flags (Shishi_tkt * tkt, int *flags)
   memset (buf, 0, sizeof (buf));
   buflen = sizeof (buf);
   res = shishi_asn1_field (tkt->handle, tkt->enckdcreppart,
-			   buf, &buflen, "EncKDCRepPart.flags");
+			   buf, &buflen, "flags");
   if (res != SHISHI_OK)
     return res;
 
@@ -649,7 +649,7 @@ shishi_tkt_keytype (Shishi_tkt * tkt, int *etype)
 {
   return shishi_asn1_integer_field (tkt->handle,
 				    tkt->enckdcreppart, etype,
-				    "EncKDCRepPart.key.keytype");
+				    "key.keytype");
 }
 
 int
@@ -660,7 +660,7 @@ shishi_tkt_keytype_p (Shishi_tkt * tkt, int etype)
 
   rc = shishi_asn1_integer_field (tkt->handle,
 				  tkt->enckdcreppart, &tktetype,
-				  "EncKDCRepPart.key.keytype");
+				  "key.keytype");
   if (rc != SHISHI_OK)
     return 0;
 
@@ -677,13 +677,13 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
   int i, n;
 
   res = shishi_asn1_number_of_elements (tkt->handle, tkt->enckdcreppart,
-					"EncKDCRepPart.last-req", &n);
+					"last-req", &n);
   if (res != SHISHI_OK)
     return res;
 
   for (i = 1; i <= n; i++)
     {
-      shishi_asprintf (&format, "EncKDCRepPart.last-req.?%d.lr-type", i);
+      shishi_asprintf (&format, "last-req.?%d.lr-type", i);
       res = shishi_asn1_read_integer (tkt->handle, tkt->enckdcreppart,
 				      format, &tmplrtype);
       free (format);
@@ -692,7 +692,7 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
 
       if (lrtype == tmplrtype)
 	{
-	  shishi_asprintf (&format, "EncKDCRepPart.last-req.?%d.lr-value", i);
+	  shishi_asprintf (&format, "last-req.?%d.lr-value", i);
 	  res = shishi_asn1_read (tkt->handle, tkt->enckdcreppart,
 				  format, lrtime, lrtimelen);
 	  free (format);
@@ -761,7 +761,7 @@ int
 shishi_tkt_authtime (Shishi_tkt * tkt, char *authtime, int *authtimelen)
 {
   return shishi_asn1_field (tkt->handle, tkt->enckdcreppart,
-			    authtime, authtimelen, "EncKDCRepPart.authtime");
+			    authtime, authtimelen, "authtime");
 }
 
 time_t
@@ -789,7 +789,7 @@ shishi_tkt_starttime (Shishi_tkt * tkt, char *starttime, int *starttimelen)
 {
   return shishi_asn1_optional_field (tkt->handle, tkt->enckdcreppart,
 				     starttime, starttimelen,
-				     "EncKDCRepPart.starttime");
+				     "starttime");
 }
 
 time_t
@@ -816,7 +816,7 @@ int
 shishi_tkt_endtime (Shishi_tkt * tkt, char *endtime, int *endtimelen)
 {
   return shishi_asn1_field (tkt->handle, tkt->enckdcreppart,
-			    endtime, endtimelen, "EncKDCRepPart.endtime");
+			    endtime, endtimelen, "endtime");
 }
 
 time_t
@@ -844,7 +844,7 @@ shishi_tkt_renew_till (Shishi_tkt * tkt, char *renewtill, int *renewtilllen)
 {
   return shishi_asn1_optional_field (tkt->handle, tkt->enckdcreppart,
 				     renewtill, renewtilllen,
-				     "EncKDCRepPart.renew-till");
+				     "renew-till");
 }
 
 time_t

@@ -393,7 +393,7 @@ shishi_krberror_errorcode (Shishi * handle,
 			   Shishi_asn1 krberror, int *errorcode)
 {
   return shishi_asn1_integer_field (handle, krberror, errorcode,
-				    "KRB-ERROR.error-code");
+				    "error-code");
 }
 
 /**
@@ -432,7 +432,7 @@ shishi_krberror_etext (Shishi * handle, Shishi_asn1 krberror,
 		       char *etext, size_t * etextlen)
 {
   return shishi_asn1_optional_field (handle, krberror, etext, etextlen,
-				     "KRB-ERROR.e-text");
+				     "e-text");
 }
 
 /**

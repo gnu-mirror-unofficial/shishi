@@ -29,28 +29,28 @@ shishi_encticketpart (Shishi * handle)
 
   node = shishi_asn1_encticketpart (handle);
 
-  res = shishi_asn1_write (handle, node, "EncTicketPart.starttime", NULL, 0);
+  res = shishi_asn1_write (handle, node, "starttime", NULL, 0);
   if (res != SHISHI_OK)
     {
       shishi_asn1_done (handle, node);
       return NULL;
     }
 
-  res = shishi_asn1_write (handle, node, "EncTicketPart.renew-till", NULL, 0);
+  res = shishi_asn1_write (handle, node, "renew-till", NULL, 0);
   if (res != SHISHI_OK)
     {
       shishi_asn1_done (handle, node);
       return NULL;
     }
 
-  res = shishi_asn1_write (handle, node, "EncTicketPart.caddr", NULL, 0);
+  res = shishi_asn1_write (handle, node, "caddr", NULL, 0);
   if (res != SHISHI_OK)
     {
       shishi_asn1_done (handle, node);
       return NULL;
     }
 
-  res = shishi_asn1_write (handle, node, "EncTicketPart.authorization-data",
+  res = shishi_asn1_write (handle, node, "authorization-data",
 			   NULL, 0);
   if (res != SHISHI_OK)
     {
@@ -82,7 +82,7 @@ shishi_encticketpart_get_enc_part_etype (Shishi * handle,
   *etype = 0;
   buflen = sizeof (*etype);
   res = shishi_asn1_field (handle, encticketpart, (char *) etype, &buflen,
-			   "EncTicketPart.enc-part.etype");
+			   "enc-part.etype");
 
   return res;
 }
@@ -110,13 +110,13 @@ shishi_encticketpart_get_key (Shishi * handle,
   int keytype;
 
   res = shishi_asn1_integer_field (handle, encticketpart, &keytype,
-				   "EncTicketPart.key.keytype");
+				   "key.keytype");
   if (res != SHISHI_OK)
     return res;
 
   buflen = BUFSIZ;
   res = shishi_asn1_field (handle, encticketpart, buf, &buflen,
-			   "EncTicketPart.key.keyvalue");
+			   "key.keyvalue");
   if (res != SHISHI_OK)
     return res;
 
@@ -148,13 +148,13 @@ shishi_encticketpart_key_set (Shishi * handle,
 
   keytype = shishi_key_type (key);
   sprintf (buf, "%d", keytype);
-  res = shishi_asn1_write (handle, encticketpart, "EncTicketPart.key.keytype",
+  res = shishi_asn1_write (handle, encticketpart, "key.keytype",
 			   buf, 0);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, encticketpart,
-			   "EncTicketPart.key.keyvalue",
+			   "key.keyvalue",
 			   shishi_key_value (key), shishi_key_length (key));
   if (res != SHISHI_OK)
     return res;
@@ -180,7 +180,7 @@ shishi_encticketpart_flags_set (Shishi * handle,
   char buf[BUFSIZ];
 
   sprintf (buf, "%d", flags);
-  res = shishi_asn1_write (handle, encticketpart, "EncTicketPart.flags",
+  res = shishi_asn1_write (handle, encticketpart, "flags",
 			   buf, 0);
   if (res != SHISHI_OK)
     return res;
@@ -204,7 +204,7 @@ shishi_encticketpart_crealm_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write (handle, encticketpart, "EncTicketPart.crealm",
+  res = shishi_asn1_write (handle, encticketpart, "crealm",
 			   realm, 0);
   if (res != SHISHI_OK)
     return res;
@@ -236,22 +236,22 @@ shishi_encticketpart_cname_set (Shishi * handle,
   sprintf (buf, "%d", name_type);
 
   res = shishi_asn1_write (handle, encticketpart,
-			   "EncTicketPart.cname.name-type", buf, 0);
+			   "cname.name-type", buf, 0);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, encticketpart,
-			   "EncTicketPart.cname.name-string", NULL, 0);
+			   "cname.name-string", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, encticketpart,
-			   "EncTicketPart.cname.name-string", "NEW", 1);
+			   "cname.name-string", "NEW", 1);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, encticketpart,
-			   "EncTicketPart.cname.name-string.?1",
+			   "cname.name-string.?1",
 			   principal, strlen (principal));
   if (res != SHISHI_OK)
     return res;
@@ -282,12 +282,12 @@ shishi_encticketpart_transited_set (Shishi * handle,
 
   sprintf (buf, "%d", trtype);
   res = shishi_asn1_write (handle, encticketpart,
-			   "EncTicketPart.transited.tr-type", buf, 0);
+			   "transited.tr-type", buf, 0);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_write (handle, encticketpart,
-			   "EncTicketPart.transited.contents",
+			   "transited.contents",
 			   trdata, trdatalen);
   if (res != SHISHI_OK)
     return res;
@@ -312,7 +312,7 @@ shishi_encticketpart_authtime_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write (handle, encticketpart, "EncTicketPart.authtime",
+  res = shishi_asn1_write (handle, encticketpart, "authtime",
 			   authtime, GENERALIZEDTIME_TIME_LEN);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
@@ -337,7 +337,7 @@ shishi_encticketpart_endtime_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write (handle, encticketpart, "EncTicketPart.endtime",
+  res = shishi_asn1_write (handle, encticketpart, "endtime",
 			   endtime, GENERALIZEDTIME_TIME_LEN);
   if (res != SHISHI_OK)
     return res;
@@ -351,7 +351,7 @@ shishi_encticketpart_authtime (Shishi * handle,
 			       char *authtime, int *authtimelen)
 {
   return shishi_asn1_field (handle, encticketpart, authtime, authtimelen,
-			    "EncTicketPart.authtime");
+			    "authtime");
 }
 
 time_t
@@ -381,7 +381,7 @@ shishi_encticketpart_cname_get (Shishi * handle,
 				char *cname, int *cnamelen)
 {
   return shishi_principal_name_get (handle, encticketpart,
-				    "EncTicketPart.cname", cname, cnamelen);
+				    "cname", cname, cnamelen);
 }
 
 int
@@ -390,8 +390,8 @@ shishi_encticketpart_cnamerealm_get (Shishi * handle,
 				     char *cnamerealm, int *cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, encticketpart,
-					  "EncTicketPart.cname",
+					  "cname",
 					  encticketpart,
-					  "EncTicketPart.crealm",
+					  "crealm",
 					  cnamerealm, cnamerealmlen);
 }
