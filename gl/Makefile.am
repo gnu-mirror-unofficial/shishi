@@ -113,12 +113,6 @@ libgnu_la_SOURCES += gettext.h
 
 ## end   gnulib module gettext
 
-## begin gnulib module gettime
-
-libgnu_la_SOURCES += gettime.c
-
-## end   gnulib module gettime
-
 ## begin gnulib module progname
 
 libgnu_la_SOURCES += progname.h progname.c
