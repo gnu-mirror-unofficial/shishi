@@ -62,7 +62,7 @@
 /* Global variables. */
 Shishi *sh;
 Shisa *dbh;
-struct gengetopt_args_info args_info;
+struct gengetopt_args_info args;
 
 void
 printfield (const char *fieldname, const char *value)
@@ -96,29 +96,49 @@ print3field (const char *fieldname, const char *text, uint32_t num)
   free (p);
 }
 
+void
+printdbkey (const char *realm, const char *principal, Shisa_key * dbkey)
+{
+  Shishi_key *key;
+  int rc;
+
+  rc = shishi_key_from_value (sh, dbkey->etype, dbkey->key, &key);
+  if (rc == SHISHI_OK)
+    {
+      shishi_key_realm_set (key, realm);
+      shishi_key_principal_set (key, principal);
+      shishi_key_print (sh, stdout, key);
+    }
+  else
+    error (0, 0, "shishi_key_from_value: %s\n", shishi_strerror (rc));
+}
+
 int
 dumplist_realm_principal (const char *realm, const char *principal)
 {
   Shisa_principal ph;
   int rc;
 
-  if (args_info.dump_given ||
-      args_info.enabled_flag || args_info.disabled_flag)
+  if (args.dump_given || args.enabled_flag || args.disabled_flag)
     {
       rc = shisa_principal_find (dbh, realm, principal, &ph);
       if (rc != SHISA_OK)
-	return rc;
+	{
+	  error (0, 0, "shishi_principal_find failed (%d): %s\n",
+		 rc, shisa_strerror (rc));
+	  return rc;
+	}
+
+      if (args.enabled_flag && ph.isdisabled)
+	return SHISA_OK;
+
+      if (args.disabled_flag && !ph.isdisabled)
+	return SHISA_OK;
     }
-
-  if (args_info.enabled_flag && ph.isdisabled)
-    return SHISA_OK;
-
-  if (args_info.disabled_flag && !ph.isdisabled)
-    return SHISA_OK;
 
   printf ("\t%s\n", principal);
 
-  if (args_info.dump_given)
+  if (args.dump_given)
     {
       Shisa_key **keys;
       size_t nkeys;
@@ -141,47 +161,35 @@ dumplist_realm_principal (const char *realm, const char *principal)
       if (ph.accountexpire != (time_t) - 1)
 	printtimefield ("Account expire on", ph.accountexpire);
 
-      rc = shisa_enumerate_keys (dbh, realm, principal, &keys, &nkeys);
-      if (rc == SHISA_OK)
+      rc = shisa_keys_find (dbh, realm, principal, NULL, &keys, &nkeys);
+      if (rc != SHISA_OK)
 	{
-	  for (i = 0; i < nkeys; i++)
-	    {
-	      if (keys[i])
-		{
-		  printuint32field ("Key", i);
-
-		  print3field ("\tEtype", shishi_cipher_name (keys[i]->etype),
-			       keys[i]->etype);
-		  if (args_info.keys_given)
-		    {
-		      Shishi_key *key;
-
-		      rc = shishi_key_from_value (sh, keys[i]->etype,
-						  keys[i]->key, &key);
-		      if (rc == SHISHI_OK)
-			{
-			  shishi_key_realm_set (key, realm);
-			  shishi_key_principal_set (key, principal);
-			  shishi_key_print (sh, stdout, key);
-			}
-		      else
-			return SHISA_NO_KEY;
-		    }
-		  if (keys[i]->saltlen > 0)
-		    printfield ("\tSalt", keys[i]->salt);
-		  if (keys[i]->str2keyparamlen > 0)
-		    printfield ("\tS2K params", keys[i]->str2keyparam);
-		  if (args_info.keys_given)
-		    if (keys[i]->password)
-		      printfield ("\tPassword", keys[i]->password);
-		  shisa_key_free (dbh, keys[i]);
-		}
-	      else
-		printfield ("\tKey is", "MISSING");
-	    }
-	  if (nkeys > 0)
-	    free (keys);
+	  error (0, 0, "shishi_keys_find(%s, %s) failed (%d): %s\n",
+		 realm, principal, rc, shisa_strerror (rc));
+	  return rc;
 	}
+
+      for (i = 0; i < nkeys; i++)
+	if (keys[i])
+	  {
+	    printuint32field ("Key", i);
+
+	    print3field ("\tEtype", shishi_cipher_name (keys[i]->etype),
+			 keys[i]->etype);
+	    if (args.keys_given)
+	      printdbkey (realm, principal, keys[i]);
+	    if (keys[i]->saltlen > 0)
+	      printfield ("\tSalt", keys[i]->salt);
+	    if (keys[i]->str2keyparamlen > 0)
+	      printfield ("\tS2K params", keys[i]->str2keyparam);
+	    if (args.keys_given)
+	      if (keys[i]->password)
+		printfield ("\tPassword", keys[i]->password);
+	  }
+	else
+	  printfield ("\tKey is", "MISSING");
+
+      shisa_keys_free (dbh, keys, nkeys);
     }
 
   return SHISA_OK;
@@ -218,12 +226,12 @@ dumplist (void)
 {
   int rc;
 
-  if (args_info.inputs_num == 1)
-    rc = dumplist_realm (args_info.inputs[0]);
-  else if (args_info.inputs_num == 2)
+  if (args.inputs_num == 1)
+    rc = dumplist_realm (args.inputs[0]);
+  else if (args.inputs_num == 2)
     {
-      char *realm = args_info.inputs[0];
-      char *principal = args_info.inputs[1];
+      char *realm = args.inputs[0];
+      char *principal = args.inputs[1];
       printf ("%s\n", realm);
       rc = dumplist_realm_principal (realm, principal);
     }
@@ -250,195 +258,34 @@ dumplist (void)
   return rc;
 }
 
-int
-apply_options (const char *realm,
-	       const char *principal, Shisa_principal * ph, Shisa_key * dbkey)
-{
-  char *passwd = args_info.password_arg;
-  char *salt = args_info.salt_arg;
-  char *str2keyparam = NULL;
-  size_t str2keyparamlen = 0;
-  Shishi_key *key;
-  int32_t etype;
-  int rc;
-
-  if (principal != NULL)
-    {
-      etype = shishi_cfg_clientkdcetype_fast (sh);
-
-      if (salt == NULL)
-	asprintf (&salt, "%s%s", realm, principal);
-
-      if (args_info.string_to_key_parameter_given)
-	{
-	  /* XXX */
-	}
-
-      if (args_info.password_given)
-	{
-	  if (!passwd)
-	    {
-	      rc = shishi_prompt_password (sh, &passwd,
-					   "Password for `%s@%s': ",
-					   principal, realm);
-	      if (rc != SHISHI_OK)
-		return EXIT_FAILURE;
-	    }
-
-	  rc = shishi_key_from_string (sh, etype,
-				       passwd, strlen (passwd),
-				       salt, strlen (salt),
-				       str2keyparam, &key);
-	}
-      else
-	rc = shishi_key_random (sh, etype, &key);
-      if (rc != SHISHI_OK)
-	return EXIT_FAILURE;
-
-      shishi_key_realm_set (key, realm);
-      shishi_key_principal_set (key, principal);
-
-      if (args_info.verbose_flag)
-	shishi_key_print (sh, stdout, key);
-
-      dbkey->etype = etype;
-      dbkey->key = shishi_key_value (key);
-      dbkey->keylen = shishi_key_length (key);
-      dbkey->salt = salt;
-      dbkey->saltlen = strlen (salt);
-      dbkey->str2keyparam = str2keyparam;
-      dbkey->str2keyparamlen = str2keyparamlen;
-      dbkey->password = passwd;
-    }
-
-  return EXIT_SUCCESS;
-}
-
-int
-modify_principal (const char *realm, const char *principal)
-{
-  Shisa_principal ph;
-  int rc;
-
-  printf ("Modifying principal `%s@%s'...\n", principal, realm);
-
-  rc = shisa_principal_update (dbh, realm, principal, &ph);
-  if (rc != SHISA_OK)
-    {
-      printf ("failure: %s\n", shisa_strerror (rc));
-      return EXIT_FAILURE;
-    }
-
-  printf ("Modifying principal `%s@%s'...done\n", principal, realm);
-
-  return EXIT_SUCCESS;
-}
-
-int
-modify (void)
+void
+add (const char *realm, const char *principal,
+     Shisa_principal * ph, Shisa_key * key)
 {
   int rc;
-
-  if (args_info.inputs_num == 2)
-    rc = modify_principal (args_info.inputs[0], args_info.inputs[1]);
-  else
-    {
-      error (0, 0, "too few arguments");
-      error (0, 0, "Try `%s --help' for more information.", program_name);
-      return EXIT_FAILURE;
-    }
-
-  return EXIT_SUCCESS;
-}
-
-int
-add_principal (const char *realm, const char *principal)
-{
-  Shisa_principal ph;
-  Shisa_key key;
-  int rc;
-
-  memset (&ph, 0, sizeof (ph));
-  memset (&key, 0, sizeof (key));
-  rc = apply_options (realm, principal, &ph, &key);
-  if (rc != EXIT_SUCCESS)
-    return EXIT_FAILURE;
 
   if (principal == NULL)
     printf ("Adding realm `%s'...\n", realm);
   else
     printf ("Adding principal `%s@%s'...\n", principal, realm);
 
-  rc = shisa_principal_add (dbh, realm, principal, &ph, &key);
+  rc = shisa_principal_add (dbh, realm, principal, ph, key);
   if (rc != SHISA_OK)
-    {
-      printf ("failure: %s\n", shisa_strerror (rc));
-      return EXIT_FAILURE;
-    }
+    error (EXIT_FAILURE, 0, "shisa_principal_add failed (%d): %s",
+	   rc, shisa_strerror (rc));
 
   if (principal == NULL)
     printf ("Adding realm `%s'...done\n", realm);
   else
     printf ("Adding principal `%s@%s'...done\n", principal, realm);
-
-
-  return EXIT_SUCCESS;
 }
 
-int
-add (void)
+void
+delete (const char *realm, const char *principal)
 {
   int rc;
 
-  if (args_info.inputs_num == 1)
-    rc = add_principal (args_info.inputs[0], NULL);
-  else if (args_info.inputs_num == 2)
-    rc = add_principal (args_info.inputs[0], args_info.inputs[1]);
-  else
-    {
-      int oldverbose = args_info.verbose_flag;
-      const char *realm = shishi_realm_default (sh);
-      char *host;
-      char *tmp;
-
-      /* This is mostly meant for 'make install', as it set up the
-         default realm, and write a host key to stdout, which can be
-         redirected into $prefix/etc/shishi/shishi.keys. */
-
-      printf ("Adding default realm `%s'...\n", realm);
-      rc = add_principal (realm, NULL);
-      if (rc != EXIT_SUCCESS)
-	return EXIT_FAILURE;
-
-      args_info.verbose_flag = 0;
-
-      asprintf (&tmp, "krbtgt/%s", realm);
-      rc = add_principal (realm, tmp);
-      free (tmp);
-      if (rc != EXIT_SUCCESS)
-	return EXIT_FAILURE;
-
-      args_info.verbose_flag = 1;
-
-      host = xgethostname ();
-      asprintf (&tmp, "host/%s", host);
-      free (host);
-      rc = add_principal (realm, tmp);
-      free (tmp);
-      args_info.verbose_flag = oldverbose;
-      if (rc != EXIT_SUCCESS)
-	return EXIT_FAILURE;
-    }
-
-  return rc;
-}
-
-int
-delete_principal (const char *realm, const char *principal)
-{
-  int rc;
-
-  if (principal == NULL && args_info.force_flag)
+  if (principal == NULL && args.force_flag)
     {
       char **principals;
       size_t nprincipals;
@@ -446,19 +293,18 @@ delete_principal (const char *realm, const char *principal)
 
       rc = shisa_enumerate_principals (dbh, realm, &principals, &nprincipals);
       if (rc != SHISA_OK)
-	return rc;
+	error (EXIT_FAILURE, 0, "shisa_enumerate_principals failed (%d): %s",
+	       rc, shisa_strerror (rc));
 
       for (i = 0; i < nprincipals; i++)
-	{
-	  if (rc == SHISA_OK)
-	    rc = delete_principal (realm, principals[i]);
-	  free (principals[i]);
-	}
+	if (principals[i])
+	  {
+	    delete (realm, principals[i]);
+	    free (principals[i]);
+	  }
+
       if (nprincipals > 0)
 	free (principals);
-
-      if (rc != SHISA_OK)
-	return rc;
     }
 
   if (principal == NULL)
@@ -468,41 +314,98 @@ delete_principal (const char *realm, const char *principal)
 
   rc = shisa_principal_remove (dbh, realm, principal);
   if (rc != SHISA_OK)
-    {
-      printf ("failure: %s\n", shisa_strerror (rc));
-      return EXIT_FAILURE;
-    }
+    error (EXIT_FAILURE, 0, "shisa_principal_remove failed (%d): %s",
+	   rc, shisa_strerror (rc));
 
   if (principal == NULL)
     printf ("Removing realm `%s'...done\n", realm);
   else
     printf ("Removing principal `%s@%s'...done\n", principal, realm);
-
-  return EXIT_SUCCESS;
 }
 
-int
-delete (void)
+void
+apply_options (const char *realm,
+	       const char *principal, Shisa_principal * ph, Shisa_key * dbkey)
 {
+  char *passwd = args.password_arg;
+  char *salt = args.salt_arg;
+  char *str2keyparam = NULL;
+  size_t str2keyparamlen = 0;
+  Shishi_key *key;
+  int32_t etype;
   int rc;
 
-  if (args_info.inputs_num == 1)
-    rc = delete_principal (args_info.inputs[0], NULL);
-  else if (args_info.inputs_num == 2)
-    rc = delete_principal (args_info.inputs[0], args_info.inputs[1]);
-  else
+  if (ph)
     {
-      error (0, 0, "too few arguments");
-      error (0, 0, "Try `%s --help' for more information.", program_name);
-      return EXIT_FAILURE;
+      if (args.key_version_given)
+	ph->kvno = args.key_version_arg;
     }
 
-  return EXIT_SUCCESS;
+  if (dbkey)
+    {
+      etype = shishi_cfg_clientkdcetype_fast (sh);
+
+      if (!salt && realm && principal)
+	asprintf (&salt, "%s%s", realm, principal);
+
+      if (args.string_to_key_parameter_given)
+	{
+	  /* XXX */
+	}
+
+      if (args.password_given)
+	{
+	  if (!passwd)
+	    {
+	      if (realm && principal)
+		rc = shishi_prompt_password (sh, &passwd,
+					     "Password for `%s@%s': ",
+					     principal, realm);
+	      else
+		rc = shishi_prompt_password (sh, &passwd, "Password: ");
+	      if (rc != SHISHI_OK)
+		error (EXIT_FAILURE, 0, "Could not read password");
+	    }
+
+	  rc = shishi_key_from_string (sh, etype,
+				       passwd, strlen (passwd),
+				       salt, strlen (salt),
+				       str2keyparam, &key);
+	}
+      else
+	rc = shishi_key_random (sh, etype, &key);
+
+      if (rc != SHISHI_OK)
+	error (EXIT_FAILURE, 0, "Could not create key (%d): %s", rc,
+	       shishi_strerror (rc));
+
+      if (realm && principal)
+	{
+	  shishi_key_realm_set (key, realm);
+	  shishi_key_principal_set (key, principal);
+	}
+
+      if (args.verbose_flag)
+	shishi_key_print (sh, stdout, key);
+
+      dbkey->kvno = args.key_version_arg;
+      dbkey->etype = etype;
+      dbkey->key = shishi_key_value (key);
+      dbkey->keylen = shishi_key_length (key);
+      dbkey->salt = salt;
+      dbkey->saltlen = salt ? strlen (salt) : 0;
+      dbkey->str2keyparam = str2keyparam;
+      dbkey->str2keyparamlen = str2keyparamlen;
+      dbkey->password = passwd;
+    }
 }
 
 int
 main (int argc, char *argv[])
 {
+  char *realm = NULL, *principal = NULL;
+  Shisa_principal ph;
+  Shisa_key key;
   int rc;
 
   setlocale (LC_ALL, "");
@@ -510,22 +413,22 @@ main (int argc, char *argv[])
   textdomain (PACKAGE);
   set_program_name (argv[0]);
 
-  if (cmdline_parser (argc, argv, &args_info) != 0)
+  if (cmdline_parser (argc, argv, &args) != 0)
     error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
 	   program_name);
 
-  if (args_info.add_given + args_info.dump_given + args_info.list_given +
-      args_info.modify_given + args_info.remove_given > 1 ||
-      args_info.inputs_num > 2)
+  rc = args.add_given + args.dump_given + args.list_given +
+    args.modify_given + args.remove_given +
+    args.key_add_given + args.key_remove_given;
+
+  if (rc > 1 || args.inputs_num > 2)
     {
       error (0, 0, "too many arguments");
       error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
 	     program_name);
     }
 
-  if (args_info.help_given ||
-      args_info.add_given + args_info.dump_given + args_info.list_given +
-      args_info.modify_given + args_info.remove_given != 1)
+  if (rc == 0 || args.help_given)
     {
       cmdline_parser_print_help ();
       printf ("\nMandatory arguments to long options are "
@@ -534,37 +437,121 @@ main (int argc, char *argv[])
       return EXIT_SUCCESS;
     }
 
-  rc = shisa_init_with_paths (&dbh, args_info.configuration_file_arg);
+  rc = shisa_init_with_paths (&dbh, args.configuration_file_arg);
   if (rc != SHISA_OK)
     error (EXIT_FAILURE, 0, "Initialization failed:\n%s",
 	   shisa_strerror (rc));
 
-  rc = shisa_cfg (dbh, args_info.library_options_arg);
+  rc = shisa_cfg (dbh, args.library_options_arg);
   if (rc != SHISA_OK)
     error (EXIT_FAILURE, 0, "Could not read library options `%s':\n%s",
-	   args_info.library_options_arg, shisa_strerror (rc));
+	   args.library_options_arg, shisa_strerror (rc));
 
   rc = shishi_init (&sh);
   if (rc != SHISHI_OK)
     error (EXIT_FAILURE, 0, "Shishi initialization failed:\n%s",
 	   shishi_strerror (rc));
 
-  rc = shishi_cfg_clientkdcetype_set (sh, args_info.encryption_type_arg);
+  rc = shishi_cfg_clientkdcetype_set (sh, args.encryption_type_arg);
   if (rc != SHISHI_OK)
     error (EXIT_FAILURE, 0, "Could not set encryption type `%s':\n%s",
-	   args_info.encryption_type_arg, shishi_strerror (rc));
+	   args.encryption_type_arg, shishi_strerror (rc));
 
-  if (args_info.list_given || args_info.dump_given)
+  if ((args.inputs_num < 2 && (args.modify_given ||
+			       args.key_add_given ||
+			       args.key_remove_given)) ||
+      (args.inputs_num < 1 && (args.remove_given)))
+    {
+      error (0, 0, "too few arguments");
+      error (0, 0, "Try `%s --help' for more information.", program_name);
+      return EXIT_FAILURE;
+    }
+
+  memset (&ph, 0, sizeof (ph));
+  memset (&key, 0, sizeof (key));
+  apply_options (realm, principal, &ph, &key);
+
+  if (args.inputs_num > 0)
+    realm = args.inputs[0];
+  if (args.inputs_num > 1)
+    principal = args.inputs[1];
+
+  if (args.list_given || args.dump_given)
     rc = dumplist ();
-  else if (args_info.add_given)
-    rc = add ();
-  else if (args_info.remove_given)
-    rc = delete ();
-  else if (args_info.modify_given)
-    rc = modify ();
+  else if (args.remove_given)
+    delete (realm, principal);
+  else if (args.add_given && (args.inputs_num == 1 || args.inputs_num == 2))
+    add (realm, principal, &ph, &key);
+  else if (args.add_given)
+    {
+      char *host;
+      char *tmp;
+      Shisa_key key2;
+
+      /* This is mostly meant for 'make install', as it set up the
+         default realm, and write a host key to stdout, which can be
+         redirected into $prefix/etc/shishi/shishi.keys. */
+
+      realm = shishi_realm_default (sh);
+
+      printf ("Adding default realm `%s'...\n", realm);
+      add (realm, NULL, NULL, NULL);
+
+      asprintf (&tmp, "krbtgt/%s", realm);
+      add (realm, tmp, &ph, &key);
+      free (tmp);
+
+      args.verbose_flag = 1;
+
+      host = xgethostname ();
+      asprintf (&tmp, "host/%s", host);
+      free (host);
+
+      memset (&key2, 0, sizeof (key2));
+      apply_options (realm, tmp, NULL, &key2);
+
+      add (realm, tmp, &ph, &key2);
+      free (tmp);
+    }
+  else if (args.modify_given)
+    {
+      printf ("Modifying principal `%s@%s'...\n", principal, realm);
+
+      rc = shisa_principal_update (dbh, realm, principal, &ph);
+      if (rc != SHISA_OK)
+	error (EXIT_FAILURE, 0, "shisa_principal_update failed (%d): %s\n",
+	       rc, shisa_strerror (rc));
+
+      printf ("Modifying principal `%s@%s'...done\n", principal, realm);
+    }
+  else if (args.key_add_given)
+    {
+      printf ("Adding key to `%s@%s'...\n", principal, realm);
+
+      rc = shisa_key_add (dbh, realm, principal, &key);
+      if (rc != SHISA_OK)
+	error (EXIT_FAILURE, 0, "shisa_key_add failed (%d): %s\n",
+	       rc, shisa_strerror (rc));
+
+      if (args.keys_given)
+	printdbkey (realm, principal, &key);
+
+      printf ("Adding key to `%s@%s'...done\n", principal, realm);
+    }
+  else if (args.key_remove_given)
+    {
+      printf ("Removing key from `%s@%s'...\n", principal, realm);
+
+      rc = shisa_key_remove (dbh, realm, principal, &key);
+      if (rc != SHISA_OK)
+	error (EXIT_FAILURE, 0, "shisa_key_remove failed (%d): %s\n",
+	       rc, shisa_strerror (rc));
+
+      printf ("Removing key from `%s@%s'...done\n", principal, realm);
+    }
 
   shisa_done (dbh);
   shishi_done (sh);
 
-  return rc;
+  return EXIT_SUCCESS;
 }
