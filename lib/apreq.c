@@ -354,7 +354,7 @@ shishi_apreq_set_authenticator (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @apreq: AP-REQ to add authenticator field to.
  * @key: key to to use for encryption.
- * @keyusage: kerberos key usage value to use in encryption.
+ * @keyusage: cryptographic key usage value to use in encryption.
  * @authenticator: authenticator as allocated by shishi_authenticator().
  *
  * Encrypts DER encoded authenticator using key and store it in the

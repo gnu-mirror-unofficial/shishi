@@ -1146,13 +1146,13 @@ shishi_verify (Shishi * handle,
  * IVOUTLEN is NULL, the updated IV is not saved anywhere.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1240,13 +1240,13 @@ shishi_encrypt_ivupdate_etype (Shishi * handle,
  * lost, see shishi_encrypt_ivupdate_etype if you need it.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1283,13 +1283,13 @@ shishi_encrypt_iv_etype (Shishi * handle,
  * next IV is lost, see shishi_encrypt_ivupdate_etype if you need it.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1328,13 +1328,13 @@ shishi_encrypt_etype (Shishi * handle,
  * saved anywhere.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1372,13 +1372,13 @@ shishi_encrypt_ivupdate (Shishi * handle,
  * you need it.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1412,13 +1412,13 @@ shishi_encrypt_iv (Shishi * handle,
  * The next IV is lost, see shishi_encrypt_ivupdate if you need it.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1456,13 +1456,13 @@ shishi_encrypt (Shishi * handle,
  * IVOUTLEN is NULL, the updated IV is not saved anywhere.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1544,13 +1544,13 @@ shishi_decrypt_ivupdate_etype (Shishi * handle,
  * lost, see shishi_decrypt_ivupdate_etype if you need it.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1587,13 +1587,13 @@ shishi_decrypt_iv_etype (Shishi * handle,
  * shishi_decrypt_ivupdate_etype if you need it.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1631,13 +1631,13 @@ shishi_decrypt_etype (Shishi * handle,
  * saved anywhere.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1675,13 +1675,13 @@ shishi_decrypt_ivupdate (Shishi * handle,
  * shishi_decrypt_ivupdate_etype if you need it.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1715,13 +1715,13 @@ shishi_decrypt_iv (Shishi * handle,
  * IV is lost, see shishi_decrypt_ivupdate if you need it.
  *
  * Note that DECRYPT(ENCRYPT(data)) does not necessarily yield data
- * exactly, some Kerberos encryption types add pad to make the data
- * fit into the block size of the encryption algorithm.  Furthermore,
- * the pad is not guaranteed to look in any special way, although
- * existing implementations often pad with the zero byte.  This means
- * that you may have to "frame" data, so it is possible to infer the
- * original length after decryption.  Compare ASN.1 DER which contains
- * such information.
+ * exactly.  Some encryption types add pad to make the data fit into
+ * the block size of the encryption algorithm.  Furthermore, the pad
+ * is not guaranteed to look in any special way, although existing
+ * implementations often pad with the zero byte.  This means that you
+ * may have to "frame" data, so it is possible to infer the original
+ * length after decryption.  Compare ASN.1 DER which contains such
+ * information.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/

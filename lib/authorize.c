@@ -1,4 +1,4 @@
-/* authorize.c	Authorization to services of authenticated Kerberos principals.
+/* authorize.c --- Authorization to services of authenticated principals.
  * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -31,7 +31,7 @@ shishi_authorize_strcmp (Shishi * handle, const char *principal,
   return 0;
 }
 
-/* MIT/Heimdal kerberos 5 authorization method */
+/* MIT/Heimdal authorization method */
 int
 shishi_authorize_k5login (Shishi * handle, const char *principal,
 			  const char *authzname)
@@ -140,7 +140,7 @@ shishi_authorization_parse (const char *authorization)
  * the principal name with @authzname using strcmp().
  *
  * Return value: Returns 1 if authzname is authorized for services by
- *   authenticated Kerberos client principal, or 0 otherwise.
+ *   authenticated client principal, or 0 otherwise.
  **/
 int
 shishi_authorized_p (Shishi * handle, Shishi_tkt * tkt, const char *authzname)

@@ -167,8 +167,8 @@ arcfour_hmac_encrypt (Shishi * handle,
    *
    * otherwise it will not work.  Compare DECRYPT where the later is
    * taken from.  Another interpretation would be to HMAC a zeroized
-   * checksum field, like certain other Kerberos cipher suites do, but
-   * that does not interoperate.
+   * checksum field, like certain other cipher suites do, but that
+   * does not interoperate.
    *
    */
 

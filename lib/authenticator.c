@@ -652,7 +652,7 @@ shishi_authenticator_set_cksum (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: authenticator as allocated by shishi_authenticator().
  * @key: key to to use for encryption.
- * @keyusage: kerberos key usage value to use in encryption.
+ * @keyusage: cryptographic key usage value to use in encryption.
  * @data: input array with data to calculate checksum on.
  * @datalen: size of input array with data to calculate checksum on.
  *
@@ -678,7 +678,7 @@ shishi_authenticator_add_cksum (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: authenticator as allocated by shishi_authenticator().
  * @key: key to to use for encryption.
- * @keyusage: kerberos key usage value to use in encryption.
+ * @keyusage: cryptographic key usage value to use in encryption.
  * @cksumtype: checksum to type to calculate checksum.
  * @data: input array with data to calculate checksum on.
  * @datalen: size of input array with data to calculate checksum on.
