@@ -24,14 +24,19 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
 	@DEFS@
 
-BUILT_SOURCES = shisa_cmd.c shisa_cmd.h shishid_cmd.c shishid_cmd.h
+BUILT_SOURCES = shishi_cmd.c shishi_cmd.h shisa_cmd.c shisa_cmd.h \
+	shishid_cmd.c shishid_cmd.h
 MAINTAINERCLEANFILES = $(BUILT_SOURCES)
 
 bin_PROGRAMS = shishi shisa
 sbin_PROGRAMS = shishid
 
-shishi_SOURCES = shishi.c
+shishi_SOURCES = shishi.c shishi.ggo shishi_cmd.h shishi_cmd.c
 shishi_LDADD = ../gl/libfoo.la ../lib/libshishi.la @LTLIBINTL@
+shishi_cmd.c shishi_cmd.h: shishi.ggo
+	gengetopt --unamed-opts --no-handle-help --no-handle-error \
+		 --input $< --file-name shishi_cmd
+	perl -pi -e 's/\[FILES\]/\[CLIENT \[SERVER\]\]/g' shishi_cmd.c
 
 shisa_SOURCES = shisa.c shisa.ggo shisa_cmd.h shisa_cmd.c
 shisa_LDADD = ../gl/libfoo.la ../db/libshisa.la ../lib/libshishi.la @LTLIBINTL@

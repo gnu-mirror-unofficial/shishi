@@ -1,0 +1,59 @@
+## Process this file with gengetopt to produce shishi_cmd.*
+# Copyright (C) 2002, 2003 Simon Josefsson.
+#
+# This file is part of Shishi.
+#
+# Shishi is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# Shishi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Shishi; see the file COPYING.  If not, write to
+# the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+package "shishi"
+
+purpose "Kerberos 5 client.  If no command is given, Shishi acquire or
+list a valid ticket for you, identified by CLIENT (if empty, default
+username in default realm), for the service SERVER (if empty, ticket
+granting ticket for client realm)."
+
+section "Commands"
+
+option "destroy" d "Destroy tickets in local cache, limited by any --client-name or --server-name." flag off
+option "list" l "List tickets in local cache, limited by any --client-name and --server-name." flag off
+option "renew" r "Renew ticket.  Use --server-name to specify ticket, default is the most recent renewable ticket granting ticket for the default realm." flag off
+
+section "Flags"
+option "forwardable" - "Get a forwardable ticket, i.e., one that can be used to get forwarded tickets." flag off
+option "forwarded" - "Get a forwarded ticket." flag off
+option "proxiable" - "Get a proxiable ticket, i.e., one that can be used to get proxy tickets." flag off
+option "proxy" - "Get a proxy ticket." flag off
+option "renewable" - "Get a renewable ticket." flag off
+
+section "Options"
+option "client-name" - "Client name. Default is login username." string typestr="NAME" no
+option "encryption-type" E "Encryption types to use.  ETYPE is either registered name or integer." string typestr="ETYPE,[ETYPE...]" no
+option "endtime" e "Specify when ticket validity should expire.  The time syntax may be relative (to the start time), such as '20 hours', or absolute, such as '2001-02-03 04:05:06 CET'. The default is 8 hours after the start time." string typestr="STRING" no
+option "realm" - "Set default realm." string typestr="STRING" no
+option "renew-till" - "Specify renewable life of ticket.  Implies --renewable.  Accepts same time syntax as --endtime.  If --renewable is specified, the default is 1 week after the start time." string typestr="STRING" no
+option "server-name" - "Server name. Default is 'krbtgt/REALM' where REALM is client realm." string typestr="NAME" no
+option "starttime" s "Specify when ticket should start to be valid.  Accepts same time syntax as --endtime. The default is to become valid immediately." string typestr="STRING" no
+option "ticket-granter" - "Service name in ticket to use for authenticating request. Only for TGS. Defaults to 'krbtgt/REALM@REALM' where REALM is client realm." string typestr="NAME" no
+
+section "Other options"
+
+option "configuration-file" - "Read user configuration from FILE." string typestr="FILE" no
+option "ticket-file" c "Read tickets from FILE." string typestr="FILE" no
+option "library-options" o "Parse STRING as a configuration file statement." string typestr="STRING" no
+option "quiet" q "Don't produce any diagnostic output.\n" flag off
+option "system-configuration-file" - "Read system configuration from FILE." string typestr="FILE" no
+option "ticket-write-file" - "Write tickets from FILE.  Default is to write them back to where they were read from." string typestr="FILE" no
+option "verbose" v "Produce verbose output.\n" flag off
