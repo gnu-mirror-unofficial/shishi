@@ -954,7 +954,7 @@ extern int
 shishi_authenticator_authorizationdata (Shishi * handle,
 					Shishi_asn1 authenticator,
 					int32_t * adtype,
-					char *addata, size_t * addatalen,
+					char **addata, size_t * addatalen,
 					size_t nth);
 extern int shishi_authenticator_read (Shishi * handle, FILE * fh,
 				      Shishi_asn1 * authenticator);
