@@ -1,9 +1,0 @@
-#! /bin/sh
-
-aclocal && \
-libtoolize -c --force --automake && \
-aclocal && \
-autoheader  && \
-automake -a -c --gnu || automake -a -c --gnu
-autoconf
-
