@@ -714,11 +714,22 @@ Mandatory or optional arguments to long options are also mandatory or optional
 for any corresponding short options.
 
 @example
+Usage: shishi [OPTION...] [NAME] [OPTION...]
+  or:  shishi [OPTION...] --list [--server-name=NAME]
+  or:  shishi [OPTION...] --destroy [--server-name=NAME]
+  or:  shishi [OPTION...] --crypto [CRYPTO-OPTION...]
+  or:  shishi [OPTION...]
+
       --client-name=NAME     Client name. Default is login username. Only for
                              AS.
-      --destroy              Destroy tickets in local cache, subject to
+  -d, --destroy              Destroy tickets in local cache, subject to
                              --server-name limiting.
-  -e, --encryption-type=ETYPE,[ETYPE...]
+  -e, --endtime=STRING       Specify when ticket validity should expire.  The
+                             time syntax may be relative (to the start time),
+                             such as "20 hours", or absolute, such as
+                             "2001-02-03 04:05:06 CET". The default is 8 hours
+                             after the start time.
+  -E, --encryption-type=ETYPE,[ETYPE...]
                              Encryption types to use.  ETYPE is either
                              registered name or integer.
       --force-as             Force AS mode. Default is to use TGS iff a TGT is
@@ -726,20 +737,32 @@ for any corresponding short options.
       --force-tgs            Force TGS mode. Default is to use TGS iff a TGT is
                              found.
       --key-value=KEY        Cipher key to decrypt response (discouraged).
-      --list                 List tickets in local cache, subject to
+  -l, --list                 List tickets in local cache, subject to
                              --server-name limiting.
       --password=PASSWORD    Password to decrypt response (discouraged).  Only
                              for AS.
-  -r, --realm=REALM          Realm of server. Default is DNS domain of local
+      --realm=REALM          Realm of server. Default is DNS domain of local
                              host. For AS, this also indicates realm of client.
                              
-      --server=HOST          Send request to HOST. Default uses address from
-                             configuration file.
+      --renew-till=STRING    Specify renewable life of ticket.  Implies
+                             --renewable.  Accepts same time syntax as
+                             --endtime.  If --renewable is specified, the
+                             default is 1 week after the start time.
+      --renewable            Get a renewable ticket.
+  -R, --renew                Renew ticket.  Use --server-name to specify
+                             ticket, default is the most recent renewable
+                             ticket granting ticket for the default realm.
+      --server=[FAMILY:]ADDRESS:SERVICE/TYPE
+                             Send all requests to HOST instead of using normal
+                             logic to locate KDC addresses (discouraged).
       --server-name=NAME     Server name. Default is "krbtgt/REALM" where REALM
                              is server realm (see --realm).
+  -s, --starttime=STRING     Specify when ticket should start to be valid.
+                             Accepts same time syntax as --endtime. The default
+                             is to become valid immediately.
       --ticket-granter=NAME  Service name in ticket to use for authenticating
                              request. Only for TGS. Defaults to
-                             "krbtgt/REALM@@REALM" where REALM is server realm
+                             "krbtgt/REALM@REALM" where REALM is server realm
                              (see --realm).
  
  Options for low-level cryptography (CRYPTO-OPTIONS):
@@ -774,24 +797,23 @@ for any corresponding short options.
       --write-key-file=FILE  Append cipher key to FILE
  
  Other options:
-  -c, --configuration-file=FILE   Read user configuration from file.  Default
+      --configuration-file=FILE   Read user configuration from file.  Default
                              is ~/.shishi/config.
+  -c, --ticket-file=FILE     Read tickets from FILE. Default is
+                             $HOME/.shishi/tickets.
   -o, --library-options=STRING   Parse STRING as a configuration file
                              statement.
   -q, --quiet, --silent      Don't produce any output.
-  -s, --system-configuration-file=FILE
+      --system-configuration-file=FILE
                              Read system wide configuration from file.  Default
                              is /usr/local/etc/shishi.conf.
-  -t, --ticket-file=FILE     Read tickets from FILE. Default is
-                             $HOME/.shishi/tickets.
+      --ticket-write-file=FILE   Write tickets to FILE.  Default is to write
+                             them back to ticket file.
   -v, --verbose              Produce verbose output.
       --verbose-library      Produce verbose output in the library.
-  -w, --ticket-write-file=FILE   Write tickets to FILE.  Default is to write
-                             them back to ticket file.
   NAME                       Set client name and realm from NAME.  The
                              --client-name and --realm can be used to override
                              part of NAME.
- 
   -?, --help                 Give this help list
       --usage                Give a short usage message
   -V, --version              Print program version
