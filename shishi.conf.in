@@ -54,6 +54,7 @@
 #verbose-asn1
 #verbose-noise
 #verbose-crypto
+#verbose-crypto-noise
 
 # Specify KDC addresses for realms.
 # Value is REALM,KDCADDRESS[/PROTOCOL][,KDCADDRESS[/PROTOCOL]...]
