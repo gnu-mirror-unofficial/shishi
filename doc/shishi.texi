@@ -386,8 +386,9 @@ algorithm, and the way it is used, is used by any other protocols,
 although it seems unlikely).  Data is integrity protected with a keyed
 SHA1 hash in HMAC mode.  It has no security proof, but is assumed to
 provide adequate security in the sense that knowledge on how to crack
-it is not known to the public.  It is associated with the
-@code{hmac-sha1-des3-kd} checksum.
+it is not known to the public.  Note that the key derivation function
+is not widely used outside of Kerberos, hence not widely studied.  It
+is associated with the @code{hmac-sha1-des3-kd} checksum.
 
 @item aes128-cts-hmac-sha1-96
 @item aes256-cts-hmac-sha1-96.
@@ -468,8 +469,9 @@ mechanisms.
 over the message.  The key is derived from the base protocol by the
 simplified key derivation function (similar to the password key
 derivation functions of @code{des3-cbc-sha1-kd}).  It has no security
-proof, but is assumed to provide good security.  It is compatible with
-the @code{des3-cbc-sha1-kd} encryption mechanism.
+proof, but is assumed to provide good security, if the key derivation
+function is good.  It is compatible with the @code{des3-cbc-sha1-kd}
+encryption mechanism.
 
 @item hmac-sha1-96-aes128
 @item hmac-sha1-96-aes256
@@ -479,8 +481,8 @@ over the message and then truncated to 96 bits.  The key is derived
 from the base protocol by the simplified key derivation function
 (similar to the password key derivation functions of
 @code{des3-cbc-sha1-kd}).  It has no security proof, but is assumed to
-provide good security.  It is compatible with the
-@code{des3-cbc-sha1-kd} encryption mechanism.
+provide good security, if the key derivation function is good.  It is
+compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
 
 @end table
 
