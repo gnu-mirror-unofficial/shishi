@@ -50,8 +50,6 @@ md5.c \
 rijndael.c \
 rmd160.c \
 rndegd.c \
-endunix.c \
-rndnw32.c \
 rsa.c \
 sha256.c \
 sha512.c \
