@@ -891,7 +891,7 @@ extern int shishi_authenticator_remove_cksum (Shishi * handle,
 extern int shishi_authenticator_cksum (Shishi * handle,
 				       Shishi_asn1 authenticator,
 				       int32_t * cksumtype,
-				       char *cksum, size_t * cksumlen);
+				       char **cksum, size_t * cksumlen);
 extern int shishi_authenticator_set_cksum (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   int cksumtype,

@@ -1,5 +1,5 @@
 /* authenticator.c --- Functions for authenticators.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -479,11 +479,12 @@ shishi_authenticator_remove_cksum (Shishi * handle, Shishi_asn1 authenticator)
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: authenticator as allocated by shishi_authenticator().
  * @cksumtype: output checksum type.
- * @cksum: output checksum data from authenticator.
- * @cksumlen: on input, maximum size of output checksum data buffer,
- *            on output, actual size of output checksum data buffer.
+ * @cksum: newly allocated output checksum data from authenticator.
+ * @cksumlen: on output, actual size of allocated output checksum data buffer.
  *
- * Read checksum value from authenticator.
+ * Read checksum value from authenticator.  @cksum is allocated by
+ * this function, and it is the responsibility of caller to deallocate
+ * it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -491,7 +492,7 @@ int
 shishi_authenticator_cksum (Shishi * handle,
 			    Shishi_asn1 authenticator,
 			    int32_t * cksumtype,
-			    char *cksum, size_t * cksumlen)
+			    char **cksum, size_t * cksumlen)
 {
   int res;
 
@@ -500,8 +501,8 @@ shishi_authenticator_cksum (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read (handle, authenticator, "cksum.checksum",
-			  cksum, cksumlen);
+  res = shishi_asn1_read2 (handle, authenticator, "cksum.checksum",
+			   cksum, cksumlen);
   if (res != SHISHI_OK)
     return res;
 
