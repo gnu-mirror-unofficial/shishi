@@ -7,6 +7,7 @@
 @documentencoding ISO-8859-1
 @include version.texi
 @settitle Shishi
+@finalout
 
 @c Unify some of the indices.
 @syncodeindex tp fn
@@ -275,6 +276,12 @@ The shishi_authorized_p() is not a good solution, better would be to
 have a generic and flexible authorization library.  Possibly based on
 S-EXP's in tickets?  Should support non-Kerberos uses as well, of
 course.
+
+@item Proof read manual.
+
+@item X.500 support, including DOMAIN-X500-COMPRESS.
+I will accept patches that implement this, if it causes minimal
+changes to the current code.
 
 @end itemize
 
@@ -1392,14 +1399,17 @@ The realm names are printed at column 0, the principal names are
 indented with one @samp{TAB} character (aka @samp{\t} or ASCII 0x09
 Horizontal Tabulation), and the information about each principal are
 indented with two @samp{TAB} characters.  The above output means that
-there is one realm @samp{latte} with two principals; @samp{krbtgt} and
-@samp{admin}.
+there is one realm @samp{latte} with two principals;
+@samp{krbtgt/latte} (which is used to authenticate Kerberos ticket
+requests) and @samp{host/latte} (used to authenticate host-based
+applications like Telnet).  They were created during @samp{make
+install} on a host called @samp{latte}.
 
 If the installation did not create a default database for you, you
 might get an error similar to the following.
 
 @example
-jas@@latte:~/src/shishi$ shisa -l
+jas@@latte:~/src/shishi$ shisa -d
 shisa: Cannot initialize `file' database backend.
 Location `/usr/local/var/shishi' and options `N/A'.
 shisa: Initialization failed:
@@ -1415,13 +1425,12 @@ up a Kerberos server does not require root access.  Indeed, it may be
 prudent to run all Shishi applications as a special non-@samp{root}
 user, and have all Shishi related files owned by that user, so that
 any security vulnerabilities does not lead to a system compromise.
-(However, if the user database is lost, system compromises of other
+(However, if the user database is stolen, system compromises of other
 systems may be possible if you use, e.g., Kerberos Telnet.)
 
 @example
-jas@@latte:~/src/shishi$ rmdir /usr/local/var/shishi
 jas@@latte:~/src/shishi$ mkdir /usr/local/var/shishi
-jas@@latte:~/src/shishi$ chmod 0700 /usr/local/var/shishi
+jas@@latte:~/src/shishi$ chmod go-rwx /usr/local/var/shishi
 @end example
 
 Back to the first example, where you have a realm @samp{latte} with
@@ -1448,8 +1457,8 @@ jas@@latte:~/src/shishi$
 You may be asking yourself ``What if the realm has many more
 principals?''.  If you fear manual labor (or a small @samp{sed}
 script, recall the format of @samp{--list}?), don't worry, there is a
-@samp{--force} (short form @samp{-f}) flag.  Here is a faster way to
-do the above:
+@samp{--force} (short form @samp{-f}) flag.  Use with care.  Here is a
+faster way to do the above:
 
 @example
 jas@@latte:~/src/shishi$ shisa -r latte -f
@@ -1462,7 +1471,28 @@ Removing realm `latte'...done
 jas@@latte:~/src/shishi$
 @end example
 
-TBW
+You should now have a working, but empty, Shisa database.  Let's set
+up the realm manually, step by step.  The first step is to decide on
+name for your realm.  The full story is explained elsewhere
+(@pxref{Realm and Principal Naming}) but the short story is to take
+your @acronym{DNS} domain name and translate it to upper case.  For
+example, if your organization uses @code{example.org} it is a good
+idea to use @code{EXAMPLE.ORG} as the name of your Kerberos realm.
+We'll use @code{EXAMPLE.ORG} as the realm name in these examples.
+Let's create the realm.
+
+@example
+jas@@latte:~/src/shishi/doc$ shisa -a EXAMPLE.ORG
+Adding realm `EXAMPLE.ORG'...
+Adding realm `EXAMPLE.ORG'...done
+jas@@latte:~/src/shishi/doc$
+@end example
+
+Currently, there are no properties associated with entire realms.  In
+the future, it may be possible to set a default realm-wide password
+expiry policy or similar.
+
+
 
 @node Starting Shishid
 @section Starting Shishid
@@ -1623,16 +1653,447 @@ if you believe it is generally useful (@pxref{Bug Reports}).
 @node Reference Manual
 @chapter Reference Manual
 
-This chapter describes in high detail all parameters, configuration
-file verbs, etc.
+This chapter discuss the underlying assumptions of Kerberos, contain a
+glossary to Kerberos concepts, give you background information on
+choosing realm and principal names, and describe all parameters and
+configuration file syntaxes for the Shishi tools.
 
 @menu
+* Environmental Assumptions::   Kerberos 5 assumptions about your system.
+* Glossary of terms::           Glossary of Kerberos related terminology.
+* Realm and Principal Naming::  How to name your realm and principals.
 * Shishi Configuration::        Explains the Core Shishi configuration file.
 * Shisa Configuration::         Explains the Shisa database definition file.
 * Parameters for shishi::       Command line parameters for 'shishi'.
 * Parameters for shishid::      Command line parameters for 'shishid'.
 * Parameters for shisa::        Command line parameters for 'shisa'.
 @end menu
+
+@node Environmental Assumptions
+@section Environmental Assumptions
+
+Kerberos imposes a few assumptions on the environment in which it can
+properly function:
+
+@itemize @bullet
+
+@item
+"Denial of service" attacks are not solved with Kerberos. There
+are places in the protocols where an intruder can prevent an
+application from participating in the proper authentication steps.
+Detection and solution of such attacks (some of which can appear
+to be not-uncommon "normal" failure modes for the system) is
+usually best left to the human administrators and users.
+@item
+Principals MUST keep their secret keys secret. If an intruder
+somehow steals a principal's key, it will be able to masquerade as
+that principal or impersonate any server to the legitimate
+principal.
+@item
+"Password guessing" attacks are not solved by Kerberos. If a user
+chooses a poor password, it is possible for an attacker to
+successfully mount an offline dictionary attack by repeatedly
+attempting to decrypt, with successive entries from a dictionary,
+messages obtained which are encrypted under a key derived from the
+user's password.
+@item
+Each host on the network MUST have a clock which is "loosely
+synchronized" to the time of the other hosts; this synchronization
+is used to reduce the bookkeeping needs of application servers
+when they do replay detection. The degree of "looseness" can be
+configured on a per-server basis, but is typically on the order of
+5 minutes. If the clocks are synchronized over the network, the
+clock synchronization protocol MUST itself be secured from network
+attackers.
+@item
+Principal identifiers are not recycled on a short-term basis. A
+typical mode of access control will use access control lists
+(ACLs) to grant permissions to particular principals. If a stale
+ACL entry remains for a deleted principal and the principal
+identifier is reused, the new principal will inherit rights
+specified in the stale ACL entry. By not re-using principal
+identifiers, the danger of inadvertent access is removed.
+@end itemize
+
+@node Glossary of terms
+@section Glossary of terms
+
+@table @asis
+@item Authentication
+@cindex Authentication
+Verifying the claimed identity of a principal.
+
+@item Authentication header
+@cindex Authentication header
+A record containing a Ticket and an Authenticator to be presented
+to a server as part of the authentication process.
+
+@item Authentication path
+@cindex Authentication path
+A sequence of intermediate realms transited in the authentication
+process when communicating from one realm to another.
+
+@item Authenticator
+@cindex Authenticator
+A record containing information that can be shown to have been
+recently generated using the session key known only by the client
+and server.
+
+@item Authorization
+@cindex Authorization
+The process of determining whether a client may use a service,
+which objects the client is allowed to access, and the type of
+access allowed for each.
+
+@item Capability
+@cindex Capability
+A token that grants the bearer permission to access an object or
+service. In Kerberos, this might be a ticket whose use is
+restricted by the contents of the authorization data field, but
+which lists no network addresses, together with the session key
+necessary to use the ticket.
+
+@item Ciphertext
+@cindex Ciphertext
+The output of an encryption function. Encryption transforms
+plaintext into ciphertext.
+
+@item Client
+@cindex Client
+A process that makes use of a network service on behalf of a user.
+Note that in some cases a Server may itself be a client of some
+other server (e.g. a print server may be a client of a file
+server).
+
+@item Credentials
+@cindex Credentials
+A ticket plus the secret session key necessary to successfully use
+that ticket in an authentication exchange.
+
+@item Encryption Type (etype)
+@cindex Encryption Type (etype)
+When associated with encrypted data, an encryption type identifies
+the algorithm used to encrypt the data and is used to select the
+appropriate algorithm for decrypting the data.  Encryption type
+tags are communicated in other messages to enumerate algorithms
+that are desired, supported, preferred, or allowed to be used for
+encryption of data between parties.  This preference is combined
+with local information and policy to select an algorithm to be
+used.
+
+@item KDC
+@cindex KDC
+Key Distribution Center, a network service that supplies tickets
+and temporary session keys; or an instance of that service or the
+host on which it runs. The KDC services both initial ticket and
+ticket-granting ticket requests. The initial ticket portion is
+sometimes referred to as the Authentication Server (or service).
+The ticket-granting ticket portion is sometimes referred to as the
+ticket-granting server (or service).
+
+@item Kerberos
+@cindex Kerberos
+The name given to the Project Athena's authentication service, the
+protocol used by that service, or the code used to implement the
+authentication service.  The name is adopted from the three-headed
+dog which guards Hades.
+
+@item Key Version Number (kvno)
+@cindex Key Version Number (kvno)
+A tag associated with encrypted data identifies which key was used
+for encryption when a long lived key associated with a principal
+changes over time.  It is used during the transition to a new key
+so that the party decrypting a message can tell whether the data
+was encrypted using the old or the new key.
+
+@item Plaintext
+@cindex Plaintext
+The input to an encryption function or the output of a decryption
+function. Decryption transforms ciphertext into plaintext.
+
+@item Principal
+@cindex Principal
+A named client or server entity that participates in a network
+communication, with one name that is considered canonical.
+
+@item Principal identifier
+@cindex Principal identifier
+The canonical name used to uniquely identify each different
+principal.
+
+@item Seal
+@cindex Seal
+To encipher a record containing several fields in such a way that
+the fields cannot be individually replaced without either
+knowledge of the encryption key or leaving evidence of tampering.
+
+@item Secret key
+@cindex Secret key
+An encryption key shared by a principal and the KDC, distributed
+outside the bounds of the system, with a long lifetime. In the
+case of a human user's principal, the secret key MAY be derived
+from a password.
+
+@item Server
+@cindex Server
+A particular Principal which provides a resource to network
+clients.  The server is sometimes referred to as the Application
+Server.
+
+@item Service
+@cindex Service
+A resource provided to network clients; often provided by more
+than one server (for example, remote file service).
+
+@item Session key
+@cindex Session key
+A temporary encryption key used between two principals, with a
+lifetime limited to the duration of a single login "session".  In
+the Kerberos system, a session key is generated by the KDC.  The
+session key is distinct from the sub-session key, described next..
+
+@item Sub-session key
+@cindex Sub-session key
+A temporary encryption key used between two principals, selected
+and exchanged by the principals using the session key, and with a
+lifetime limited to the duration of a single association. The sub-
+session key is also referred to as the subkey.
+
+@item Ticket
+@cindex Ticket
+@cindex Kerberos Ticket
+A record that helps a client authenticate itself to a server; it
+contains the client's identity, a session key, a timestamp, and
+other information, all sealed using the server's secret key. It
+only serves to authenticate a client when presented along with a
+fresh Authenticator.
+@end table
+
+@node Realm and Principal Naming
+@section Realm and Principal Naming
+
+This section contains the discussion on naming realms and principals
+from the Kerberos specification.
+
+@subsection Realm Names
+
+Although realm names are encoded as GeneralStrings and although a
+realm can technically select any name it chooses, interoperability
+across realm boundaries requires agreement on how realm names are to
+be assigned, and what information they imply.
+
+To enforce these conventions, each realm MUST conform to the
+conventions itself, and it MUST require that any realms with which
+inter-realm keys are shared also conform to the conventions and
+require the same from its neighbors.
+
+Kerberos realm names are case sensitive. Realm names that differ only
+in the case of the characters are not equivalent. There are presently
+three styles of realm names: domain, X500, and other. Examples of
+each style follow:
+
+@example
+     domain:   ATHENA.MIT.EDU
+       X500:   C=US/O=OSF
+      other:   NAMETYPE:rest/of.name=without-restrictions
+@end example
+
+Domain syle realm names MUST look like domain names: they consist of
+components separated by periods (.) and they contain neither colons
+(:) nor slashes (/). Though domain names themselves are case
+insensitive, in order for realms to match, the case must match as
+well. When establishing a new realm name based on an internet domain
+name it is recommended by convention that the characters be converted
+to upper case.
+
+X.500 names contain an equal (=) and cannot contain a colon (:)
+before the equal. The realm names for X.500 names will be string
+representations of the names with components separated by slashes.
+Leading and trailing slashes will not be included. Note that the
+slash separator is consistent with Kerberos implementations based on
+RFC1510, but it is different from the separator recommended in
+RFC2253.
+
+Names that fall into the other category MUST begin with a prefix that
+contains no equal (=) or period (.) and the prefix MUST be followed
+by a colon (:) and the rest of the name. All prefixes must be
+assigned before they may be used. Presently none are assigned.
+
+The reserved category includes strings which do not fall into the
+first three categories. All names in this category are reserved. It
+is unlikely that names will be assigned to this category unless there
+is a very strong argument for not using the 'other' category.
+
+These rules guarantee that there will be no conflicts between the
+various name styles. The following additional constraints apply to
+the assignment of realm names in the domain and X.500 categories: the
+name of a realm for the domain or X.500 formats must either be used
+by the organization owning (to whom it was assigned) an Internet
+domain name or X.500 name, or in the case that no such names are
+registered, authority to use a realm name MAY be derived from the
+authority of the parent realm. For example, if there is no domain
+name for E40.MIT.EDU, then the administrator of the MIT.EDU realm can
+authorize the creation of a realm with that name.
+
+This is acceptable because the organization to which the parent is
+assigned is presumably the organization authorized to assign names to
+its children in the X.500 and domain name systems as well. If the
+parent assigns a realm name without also registering it in the domain
+name or X.500 hierarchy, it is the parent's responsibility to make
+sure that there will not in the future exist a name identical to the
+realm name of the child unless it is assigned to the same entity as
+the realm name.
+
+@subsection Principal Names
+
+As was the case for realm names, conventions are needed to ensure
+that all agree on what information is implied by a principal name.
+The name-type field that is part of the principal name indicates the
+kind of information implied by the name. The name-type SHOULD be
+treated only as a hint to interpreting the meaning of a name. It is
+not significant when checking for equivalence. Principal names that
+differ only in the name-type identify the same principal. The name
+type does not partition the name space. Ignoring the name type, no
+two names can be the same (i.e. at least one of the components, or
+the realm, MUST be different). The following name types are defined:
+
+@example
+name-type      value   meaning
+
+NT-UNKNOWN        0  Name type not known
+NT-PRINCIPAL      1  Just the name of the principal as in DCE, or for users
+NT-SRV-INST       2  Service and other unique instance (krbtgt)
+NT-SRV-HST        3  Service with host name as instance (telnet, rcommands)
+NT-SRV-XHST       4  Service with host as remaining components
+NT-UID            5  Unique ID
+NT-X500-PRINCIPAL 6  Encoded X.509 Distingished name [RFC 2253]
+NT-SMTP-NAME      7  Name in form of SMTP email name (e.g. user@@foo.com)
+NT-ENTERPRISE    10   Enterprise name - may be mapped to principal name
+@end example
+
+When a name implies no information other than its uniqueness at a
+particular time the name type PRINCIPAL SHOULD be used. The principal
+name type SHOULD be used for users, and it might also be used for a
+unique server. If the name is a unique machine generated ID that is
+guaranteed never to be reassigned then the name type of UID SHOULD be
+used (note that it is generally a bad idea to reassign names of any
+type since stale entries might remain in access control lists).
+
+If the first component of a name identifies a service and the
+remaining components identify an instance of the service in a server
+specified manner, then the name type of SRV-INST SHOULD be used. An
+example of this name type is the Kerberos ticket-granting service
+whose name has a first component of krbtgt and a second component
+identifying the realm for which the ticket is valid.
+
+If the first component of a name identifies a service and there is a
+single component following the service name identifying the instance
+as the host on which the server is running, then the name type SRV-
+HST SHOULD be used. This type is typically used for Internet services
+such as telnet and the Berkeley R commands. If the separate
+components of the host name appear as successive components following
+the name of the service, then the name type SRV-XHST SHOULD be used.
+This type might be used to identify servers on hosts with X.500 names
+where the slash (/) might otherwise be ambiguous.
+
+A name type of NT-X500-PRINCIPAL SHOULD be used when a name from an
+X.509 certificate is translated into a Kerberos name. The encoding of
+the X.509 name as a Kerberos principal shall conform to the encoding
+rules specified in RFC 2253.
+
+A name type of SMTP allows a name to be of a form that resembles a
+SMTP email name. This name, including an "@@" and a domain name, is
+used as the one component of the principal name.
+
+A name type of UNKNOWN SHOULD be used when the form of the name is
+not known. When comparing names, a name of type UNKNOWN will match
+principals authenticated with names of any type. A principal
+authenticated with a name of type UNKNOWN, however, will only match
+other names of type UNKNOWN.
+
+Names of any type with an initial component of 'krbtgt' are reserved
+for the Kerberos ticket granting service. @xref{krbtgt,, Name of the
+TGS}, for the form of such names.
+
+@subsubsection Name of server principals
+
+The principal identifier for a server on a host will generally be
+composed of two parts: (1) the realm of the KDC with which the server
+is registered, and (2) a two-component name of type NT-SRV-HST if the
+host name is an Internet domain name or a multi-component name of
+type NT-SRV-XHST if the name of the host is of a form such as X.500
+that allows slash (/) separators. The first component of the two- or
+multi-component name will identify the service and the latter
+components will identify the host. Where the name of the host is not
+case sensitive (for example, with Internet domain names) the name of
+the host MUST be lower case. If specified by the application protocol
+for services such as telnet and the Berkeley R commands which run
+with system privileges, the first component MAY be the string 'host'
+instead of a service specific identifier.
+
+@subsubsection Name of the TGS
+@anchor{krbtgt}
+
+The principal identifier of the ticket-granting service shall be
+composed of three parts: (1) the realm of the KDC issuing the TGS
+ticket (2) a two-part name of type NT-SRV-INST, with the first part
+"krbtgt" and the second part the name of the realm which will accept
+the ticket-granting ticket. For example, a ticket-granting ticket
+issued by the ATHENA.MIT.EDU realm to be used to get tickets from the
+ATHENA.MIT.EDU KDC has a principal identifier of "ATHENA.MIT.EDU"
+(realm), ("krbtgt", "ATHENA.MIT.EDU") (name). A ticket-granting
+ticket issued by the ATHENA.MIT.EDU realm to be used to get tickets
+from the MIT.EDU realm has a principal identifier of "ATHENA.MIT.EDU"
+(realm), ("krbtgt", "MIT.EDU") (name).
+
+@subsection Choosing a principal with which to communicate
+
+The Kerberos protocol provides the means for verifying (subject to
+the assumptions in @ref{Environmental Assumptions}) that the entity with which one communicates
+is the same entity that was registered with the KDC using the claimed
+identity (principal name). It is still necessary to determine whether
+that identity corresponds to the entity with which one intends to
+communicate.
+
+When appropriate data has been exchanged in advance, this
+determination may be performed syntactically by the application based
+on the application protocol specification, information provided by
+the user, and configuration files. For example, the server principal
+name (including realm) for a telnet server might be derived from the
+user specified host name (from the telnet command line), the "host/"
+prefix specified in the application protocol specification, and a
+mapping to a Kerberos realm derived syntactically from the domain
+part of the specified hostname and information from the local
+Kerberos realms database.
+
+One can also rely on trusted third parties to make this
+determination, but only when the data obtained from the third party
+is suitably integrity protected while resident on the third party
+server and when transmitted.  Thus, for example, one should not rely
+on an unprotected domain name system record to map a host alias to
+the primary name of a server, accepting the primary name as the party
+one intends to contact, since an attacker can modify the mapping and
+impersonate the party with which one intended to communicate.
+
+Implementations of Kerberos and protocols based on Kerberos MUST NOT
+use insecure DNS queries to canonicalize the hostname components of
+the service principal names.  In an environment without secure name
+service, application authors MAY append a statically configured
+domain name to unqualified hostnames before passing the name to the
+security mechanisms, but should do no more than that.  Secure name
+service facilities, if available, might be trusted for hostname
+canonicalization, but such canonicalization by the client SHOULD NOT
+be required by KDC implementations.
+
+Implementation note: Many current implementations do some degree of
+canonicalization of the provided service name, often using DNS even
+though it creates security problems. However there is no consistency
+among implementations about whether the service name is case folded
+to lower case or whether reverse resolution is used. To maximize
+interoperability and security, applications SHOULD provide security
+mechanisms with names which result from folding the user-entered name
+to lower case, without performing any other modifications or
+canonicalization.
 
 @node Shishi Configuration
 @section Shishi Configuration
