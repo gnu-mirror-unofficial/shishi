@@ -1,5 +1,5 @@
 /* crypto.c	interface to cryptographic functionality
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -26,10 +26,8 @@ crypto (Shishi * handle, struct arguments arg)
 {
   FILE *infh, *outfh;
   Shishi_key *key;
-  char out[BUFSIZ];
-  int outlen;
-  char in[BUFSIZ];
-  int inlen;
+  char *in, *out;
+  size_t inlen, outlen;
   int rc;
   int i;
 
@@ -132,6 +130,8 @@ crypto (Shishi * handle, struct arguments arg)
       shishi_key_print (handle, stdout, key);
     }
 
+#if 0
+  currently broken
   if (arg.encrypt_p || arg.decrypt_p)
     {
       if (arg.inputfile)
@@ -170,13 +170,12 @@ crypto (Shishi * handle, struct arguments arg)
       if (arg.verbose)
 	printf (_("Read %d bytes...\n"), outlen);
 
-      inlen = sizeof (in);
       if (arg.encrypt_p)
 	rc = shishi_encrypt (handle, key, arg.keyusage,
-			     out, outlen, in, &inlen);
+			     out, outlen, &in, &inlen);
       else
 	rc = shishi_decrypt (handle, key, arg.keyusage,
-			     in, inlen, out, &outlen);
+			     in, inlen, &out, &outlen);
       if (rc != SHISHI_OK)
 	{
 	  shishi_error_printf (handle, _("Error ciphering\n"));
@@ -226,6 +225,7 @@ crypto (Shishi * handle, struct arguments arg)
 	    }
 	}
     }
+#endif
 
   if (arg.writekeyfile)
     {

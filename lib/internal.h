@@ -122,6 +122,7 @@ extern char *_shishi_gettext (const char *str);
 #include "setenv.h"
 #include "vasprintf.h"
 #include "gettext.h"
+#include "xalloc.h"
 #include "shishi.h"
 
 #define GENERALIZEDTIME_TIME_LEN 15

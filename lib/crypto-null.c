@@ -29,14 +29,12 @@ null_encrypt (Shishi * handle,
 	      size_t ivlen,
 	      const char *in,
 	      size_t inlen,
-	      char *out,
+	      char **out,
 	      size_t *outlen)
 {
-  if (*outlen < inlen)
-    return SHISHI_TOO_SMALL_BUFFER;
-
-  memcpy (out, in, inlen);
   *outlen = inlen;
+  *out = xmalloc(*outlen);
+  memcpy (*out, in, inlen);
 
   return SHISHI_OK;
 }
@@ -49,14 +47,12 @@ null_decrypt (Shishi * handle,
 	      size_t ivlen,
 	      const char *in,
 	      size_t inlen,
-	      char *out,
+	      char **out,
 	      size_t *outlen)
 {
-  if (*outlen < inlen)
-    return SHISHI_TOO_SMALL_BUFFER;
-
-  memcpy (out, in, inlen);
   *outlen = inlen;
+  *out = xmalloc(*outlen);
+  memcpy (*out, in, inlen);
 
   return SHISHI_OK;
 }

@@ -295,7 +295,7 @@ int
 shishi_kdcrep_cname_set (Shishi * handle,
 			 Shishi_asn1 kdcrep,
 			 Shishi_name_type name_type,
-			 char *cname[])
+			 const char *cname[])
 {
   int res;
 
@@ -628,18 +628,13 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
 			    Shishi_asn1 kdcrep,
 			    int etype, int kvno, char *buf, int buflen)
 {
-  char *format;
   int res = SHISHI_OK;
 
-  res = shishi_asn1_write (handle, kdcrep, "enc-part.cipher",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, kdcrep, "enc-part.cipher", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
-  asprintf (&format, "%d", etype);
-  res = shishi_asn1_write (handle, kdcrep, "enc-part.etype",
-			   format, 0);
-  free (format);
+  res = shishi_asn1_write_int32 (handle, kdcrep, "enc-part.etype", etype);
   if (res != SHISHI_OK)
     return res;
 
@@ -652,10 +647,7 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
     }
   else
     {
-      asprintf (&format, "%d", etype);
-      res = shishi_asn1_write (handle, kdcrep, "enc-part.kvno",
-			       format, 0);
-      free (format);
+      res = shishi_asn1_write_uint32 (handle, kdcrep, "enc-part.kvno", kvno);
       if (res != SHISHI_OK)
 	return res;
     }
@@ -685,29 +677,33 @@ shishi_kdcrep_add_enc_part (Shishi * handle,
 			    int keyusage, Shishi_asn1 enckdcreppart)
 {
   int res = SHISHI_OK;
-  char buf[BUFSIZ];
-  int buflen;
-  char der[BUFSIZ];
+  char *buf;
+  size_t buflen;
+  char *der;
   size_t derlen;
 
-  res = shishi_a2d (handle, enckdcreppart, der, &derlen);
+  res = shishi_new_a2d (handle, enckdcreppart, &der, &derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode enckdcreppart: %s\n",
 			   shishi_strerror (res));
-      return !SHISHI_OK;
+      return SHISHI_ASN1_ERROR;
     }
 
-  buflen = BUFSIZ;
-  res = shishi_encrypt (handle, key, keyusage, der, derlen, buf, &buflen);
+  res = shishi_encrypt (handle, key, keyusage, der, derlen, &buf, &buflen);
+
+  free(der);
+
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "des_encrypt fail\n");
+      shishi_error_printf (handle, "Cannot encrypt EncKDCRepPart\n");
       return res;
     }
 
   res = shishi_kdcrep_set_enc_part (handle, kdcrep, shishi_key_type (key),
 				    shishi_key_version (key), buf, buflen);
+
+  free(buf);
 
   return res;
 }
@@ -720,8 +716,8 @@ shishi_kdcrep_decrypt (Shishi * handle,
 {
   int res;
   int i;
-  int buflen = BUFSIZ;
-  unsigned char buf[BUFSIZ];
+  char *buf;
+  size_t buflen;
   unsigned char cipher[BUFSIZ];
   int cipherlen;
   int etype;
@@ -740,13 +736,11 @@ shishi_kdcrep_decrypt (Shishi * handle,
     return res;
 
   res = shishi_decrypt (handle, key, keyusage,
-			cipher, cipherlen, buf, &buflen);
+			cipher, cipherlen, &buf, &buflen);
   if (res != SHISHI_OK)
     {
-      if (VERBOSE (handle))
-	printf ("des_decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
-			   "des_decrypt fail, most likely wrong password\n");
+			   "KDCRep decryption failed, wrong password?\n");
       return res;
     }
 
@@ -772,6 +766,8 @@ shishi_kdcrep_decrypt (Shishi * handle,
       if (*enckdcreppart != NULL)
 	break;
     }
+
+  free (buf);
 
   if (*enckdcreppart == NULL)
     {

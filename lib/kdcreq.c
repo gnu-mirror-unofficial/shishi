@@ -338,12 +338,12 @@ shishi_kdcreq_from_file (Shishi * handle, Shishi_asn1 * kdcreq,
 }
 
 int
-shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq,
-		     unsigned long *nonce)
+shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq, uint32_t *nonce)
 {
   int res;
 
-  res = shishi_asn1_integer_field (handle, kdcreq, nonce, "req-body.nonce");
+  res = shishi_asn1_integer_field (handle, kdcreq,
+				   (int*)nonce, "req-body.nonce");
   if (res != SHISHI_OK)
     return res;
 

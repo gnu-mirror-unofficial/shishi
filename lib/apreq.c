@@ -366,8 +366,8 @@ shishi_apreq_add_authenticator (Shishi * handle,
 				int keyusage, Shishi_asn1 authenticator)
 {
   int res;
-  char buf[BUFSIZ];
-  int buflen;
+  char *buf;
+  size_t buflen;
   char *der;
   size_t derlen;
 
@@ -379,12 +379,13 @@ shishi_apreq_add_authenticator (Shishi * handle,
       return res;
     }
 
-  buflen = BUFSIZ;
-  res = shishi_encrypt (handle, key, keyusage, der, derlen, buf, &buflen);
+  res = shishi_encrypt (handle, key, keyusage, der, derlen, &buf, &buflen);
+
   free(der);
+
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "des_encrypt fail\n");
+      shishi_error_printf (handle, "Cannot encrypt authenticator.\n");
       return res;
     }
 
@@ -409,7 +410,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
 			 Shishi_asn1 ticket)
 {
   int res;
-  unsigned char *format;
+  char *format;
   unsigned char buf[BUFSIZ];
   int buflen;
   int i, n;
@@ -600,7 +601,7 @@ shishi_apreq_get_ticket (Shishi * handle,
 			 Shishi_asn1 apreq, Shishi_asn1 * ticket)
 {
   unsigned char buf[BUFSIZ];
-  unsigned char *format;
+  char *format;
   int buflen;
   int res;
   int i, n;
@@ -720,8 +721,8 @@ shishi_apreq_decrypt (Shishi * handle,
 {
   int res;
   int i;
-  size_t buflen = BUFSIZ;
-  char buf[BUFSIZ];
+  char *buf;
+  size_t buflen;
   char cipher[BUFSIZ];
   int cipherlen;
   int etype;
@@ -740,14 +741,11 @@ shishi_apreq_decrypt (Shishi * handle,
     return res;
 
   res = shishi_decrypt (handle, key, keyusage,
-			cipher, cipherlen, buf, &buflen);
+			cipher, cipherlen, &buf, &buflen);
 
   if (res != SHISHI_OK)
     {
-      if (VERBOSE (handle))
-	printf ("decrypt failed: %s\n", shishi_strerror_details (handle));
-      shishi_error_printf (handle,
-			   "decrypt fail, most likely wrong password\n");
+      shishi_error_printf (handle, "decrypt fail, most likely wrong password\n");
       return SHISHI_APREQ_DECRYPT_FAILED;
     }
 

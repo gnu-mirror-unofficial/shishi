@@ -422,19 +422,15 @@ shishi_safe_cksum (Shishi * handle,
 int
 shishi_safe_set_cksum (Shishi * handle,
 		       Shishi_asn1 safe,
-		       int cksumtype, char *cksum, int cksumlen)
+		       int cksumtype, char *cksum, size_t cksumlen)
 {
-  char format[BUFSIZ];
   int res;
 
-  sprintf (format, "%i", cksumtype);
-  res = shishi_asn1_write (handle, safe, "cksum.cksumtype",
-			   format, 0);
+  res = shishi_asn1_write_int32 (handle, safe, "cksum.cksumtype", cksumtype);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, safe, "cksum.checksum",
-			   cksum, cksumlen);
+  res = shishi_asn1_write (handle, safe, "cksum.checksum", cksum, cksumlen);
   if (res != SHISHI_OK)
     return res;
 
@@ -511,7 +507,7 @@ shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
   int rc;
   char buffer[BUFSIZ];
   int buflen;
-  char cksum[BUFSIZ];
+  char *cksum;
   int cksumlen;
   int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
 
@@ -529,9 +525,8 @@ shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
   if (VERBOSEASN1(safe->handle))
     shishi_key_print(safe->handle, stdout, key);
 
-  cksumlen = sizeof (cksum);
   rc = shishi_checksum (safe->handle, key, SHISHI_KEYUSAGE_KRB_SAFE, cksumtype,
-			buffer, buflen, cksum, &cksumlen);
+			buffer, buflen, &cksum, &cksumlen);
   if (rc != SHISHI_OK)
     return rc;
 

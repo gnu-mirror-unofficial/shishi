@@ -22,8 +22,9 @@
 #ifndef SHISHI_H
 #define SHISHI_H
 
-#include <stdio.h>		/* FILE */
 #include <stddef.h>		/* size_t */
+#include <stdio.h>		/* FILE */
+#include <idn-int.h>		/* uint32_t, etc */
 
 #define SHISHI_VERSION "@PACKAGE_VERSION@"
 
@@ -284,13 +285,13 @@ Shishi_tkts_hintflags;
 struct Shishi_tkts_hint
 {
   int startpos;
-  const char *server;
-  const char *serverrealm;
-  const char *client;
-  const char *clientrealm;
+  char *server;
+  char *serverrealm;
+  char *client;
+  char *clientrealm;
   int flags;
   int etype;
-  const char *passwd;
+  char *passwd;
 };
 typedef struct Shishi_tkts_hint Shishi_tkts_hint;
 
@@ -393,10 +394,11 @@ extern int shishi_ticket_realm_get (Shishi * handle, Shishi_asn1 ticket,
 extern int shishi_ticket_realm_set (Shishi * handle, Shishi_asn1 ticket,
 				    const char *realm);
 extern int shishi_ticket_get_enc_part_etype (Shishi * handle,
-					     Shishi_asn1 ticket, int *etype);
+					     Shishi_asn1 ticket,
+					     int32_t *etype);
 extern int shishi_ticket_set_enc_part (Shishi * handle, Shishi_asn1 ticket,
-				       int etype, int kvno, char *buf,
-				       int buflen);
+				       int etype, int kvno,
+				       char *buf, size_t buflen);
 extern int shishi_ticket_add_enc_part (Shishi * handle, Shishi_asn1 ticket,
 				       Shishi_key * key,
 				       Shishi_asn1 encticketpart);
@@ -589,7 +591,7 @@ extern int shishi_authenticator_cksum (Shishi * handle,
 extern int shishi_authenticator_set_cksum (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   int cksumtype,
-					   char *cksum, int cksumlen);
+					   char *cksum, size_t cksumlen);
 extern int shishi_authenticator_add_cksum (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   Shishi_key * key,
@@ -705,7 +707,7 @@ extern int shishi_asreq_cnamerealm_get (Shishi * handle, Shishi_asn1 kdcreq,
 					char *cnamerealm,
 					size_t * cnamerealmlen);
 extern int shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq,
-				unsigned long *nonce);
+				uint32_t *nonce);
 extern int shishi_kdcreq_cname_get (Shishi * handle,
 				    Shishi_asn1 kdcreq,
 				    char *cname, size_t * cnamelen);
@@ -749,7 +751,7 @@ extern int shishi_enckdcreppart_srealmserver_set (Shishi * handle,
 						  const char *server);
 extern int shishi_enckdcreppart_nonce_set (Shishi * handle,
 					   Shishi_asn1 enckdcreppart,
-					   unsigned long nonce);
+					   uint32_t nonce);
 extern int
 shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
 					     Shishi_asn1 enckdcreppart,
@@ -822,7 +824,7 @@ extern int shishi_kdcrep_crealm_set (Shishi * handle,
 extern int shishi_kdcrep_cname_set (Shishi * handle,
 				    Shishi_asn1 kdcrep,
 				    Shishi_name_type name_type,
-				    char *cname[]);
+				    const char *cname[]);
 extern int shishi_kdcrep_client_set (Shishi * handle, Shishi_asn1 kdcrep,
 				     const char *client);
 extern int shishi_kdcrep_crealmserver_set (Shishi * handle,
@@ -884,64 +886,66 @@ extern int shishi_cipher_defaultcksumtype (int type);
 extern int shishi_cipher_parse (const char *cipher);
 extern int shishi_string_to_key (Shishi * handle,
 				 int keytype,
-				 const char *password,
-				 int passwordlen,
-				 const char *salt,
-				 int saltlen,
-				 const char *parameter, Shishi_key * outkey);
+				 const char *password, size_t passwordlen,
+				 const char *salt, size_t saltlen,
+				 const char *parameter,
+				 Shishi_key * outkey);
 extern int shishi_random_to_key (Shishi * handle,
 				 int keytype,
-				 char *random,
-				 int randomlen, Shishi_key * outkey);
+				 char *random, size_t randomlen,
+				 Shishi_key * outkey);
 extern int shishi_encrypt (Shishi * handle,
 			   Shishi_key * key,
 			   int keyusage,
-			   char *in, int inlen, char *out, int *outlen);
+			   char *in, size_t inlen,
+			   char **out, size_t *outlen);
 extern int shishi_encrypt_iv (Shishi * handle,
 			      Shishi_key * key,
 			      int keyusage,
-			      char *iv, int ivlen,
-			      char *in, int inlen,
-			      char *out, int *outlen);
+			      char *iv, size_t ivlen,
+			      char *in, size_t inlen,
+			      char **out, size_t *outlen);
 extern int shishi_encrypt_iv_etype (Shishi * handle,
 				    Shishi_key * key,
 				    int keyusage,
 				    int etype,
-				    char *iv, int ivlen,
-				    char *in, int inlen,
-				    char *out, int *outlen);
+				    char *iv, size_t ivlen,
+				    char *in, size_t inlen,
+				    char **out, size_t *outlen);
 extern int shishi_decrypt (Shishi * handle,
 			   Shishi_key * key,
 			   int keyusage,
-			   char *in, int inlen, char *out, int *outlen);
+			   char *in, size_t inlen,
+			   char **out, size_t *outlen);
 extern int shishi_decrypt_iv (Shishi * handle,
 			      Shishi_key * key,
 			      int keyusage,
-			      char *iv, int ivlen,
-			      char *in, int inlen,
-			      char *out, int *outlen);
+			      char *iv, size_t ivlen,
+			      char *in, size_t inlen,
+			      char **out, size_t *outlen);
 extern int shishi_decrypt_iv_etype (Shishi * handle,
 				    Shishi_key * key,
 				    int keyusage,
 				    int etype,
-				    char *iv, int ivlen,
-				    char *in, int inlen,
-				    char *out, int *outlen);
+				    char *iv, size_t ivlen,
+				    char *in, size_t inlen,
+				    char **out, size_t *outlen);
 extern int shishi_checksum (Shishi * handle,
 			    Shishi_key * key,
 			    int keyusage,
 			    int cksumtype,
-			    char *in, int inlen, char *out, int *outlen);
-extern int shishi_randomize (Shishi * handle, char *data, int datalen);
+			    char *in, size_t inlen,
+			    char **out, size_t *outlen);
+extern int shishi_randomize (Shishi * handle, char *data, size_t datalen);
 extern int shishi_dk (Shishi * handle,
 		      Shishi_key * key,
-		      char *constant,
-		      int constantlen, Shishi_key * derivedkey);
+		      char *constant, int constantlen,
+		      Shishi_key * derivedkey);
 extern int shishi_dr (Shishi * handle,
 		      Shishi_key * key,
-		      char *derivedkey,
-		      int derivedkeylen, char *constant, int constantlen);
-extern int shishi_n_fold (Shishi * handle, char *in, int m, char *out, int n);
+		      char *derivedkey, size_t derivedkeylen,
+		      char *constant, size_t constantlen);
+extern int shishi_n_fold (Shishi * handle, char *in, size_t m, char *out, size_t n);
 
 /* version.c */
 extern const char *shishi_check_version (const char *req_version);
@@ -969,15 +973,19 @@ extern int shishi_new_a2d (Shishi * handle, Shishi_asn1 node,
 extern int shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
 extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 			     const char *field, char *data, size_t * datalen);
-extern int shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
-				     const char *field, int *i);
+extern int shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
+				    const char *field, int32_t *i);
+extern int shishi_asn1_read_uint32 (Shishi * handle, Shishi_asn1 node,
+				    const char *field, uint32_t *i);
 extern int shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
 				       const char *field, int *flags);
 extern int shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 			      const char *field,
 			      const char *data, size_t datalen);
-extern int shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
-				      const char *field, int n);
+extern int shishi_asn1_write_int32 (Shishi * handle, Shishi_asn1 node,
+				    const char *field, int32_t n);
+extern int shishi_asn1_write_uint32 (Shishi * handle, Shishi_asn1 node,
+				     const char *field, uint32_t n);
 extern int shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
 					const char *field, int flags);
 extern int shishi_asn1_field (Shishi * handle,
@@ -988,9 +996,6 @@ extern int shishi_asn1_optional_field (Shishi * handle,
 				       Shishi_asn1 node,
 				       char *data, size_t * datalen,
 				       const char *field);
-extern int shishi_asn1_integer_field (Shishi * handle,
-				      Shishi_asn1 node, int *i,
-				      const char *field);
 extern int shishi_asn1_number_of_elements (Shishi * handle,
 					   Shishi_asn1 node,
 					   const char *field, int *n);
@@ -1399,7 +1404,7 @@ extern int shishi_safe_cksum (Shishi * handle,
 			      int *cksumtype, char *cksum, size_t * cksumlen);
 extern int shishi_safe_set_cksum (Shishi * handle,
 				  Shishi_asn1 safe,
-				  int cksumtype, char *cksum, int cksumlen);
+				  int cksumtype, char *cksum, size_t cksumlen);
 extern int shishi_safe_user_data (Shishi * handle,
 				  Shishi_asn1 safe,
 				  char *userdata, size_t * userdatalen);

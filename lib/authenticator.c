@@ -503,7 +503,7 @@ shishi_authenticator_cksum (Shishi * handle,
 int
 shishi_authenticator_set_cksum (Shishi * handle,
 				Shishi_asn1 authenticator,
-				int cksumtype, char *cksum, int cksumlen)
+				int cksumtype, char *cksum, size_t cksumlen)
 {
   int res;
 
@@ -542,18 +542,18 @@ shishi_authenticator_add_cksum (Shishi * handle,
 
   if (data && datalen > 0)
     {
-      char cksum[BUFSIZ];
+      char *cksum;
       int cksumlen;
       int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
 
-      cksumlen = sizeof (cksum);
       res = shishi_checksum (handle, key, keyusage, cksumtype,
-			     data, datalen, cksum, &cksumlen);
+			     data, datalen, &cksum, &cksumlen);
       if (res != SHISHI_OK)
 	return res;
 
       res = shishi_authenticator_set_cksum (handle, authenticator,
 					    cksumtype, cksum, cksumlen);
+      free(cksum);
     }
   else
     res = shishi_authenticator_remove_cksum (handle, authenticator);

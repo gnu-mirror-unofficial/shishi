@@ -29,7 +29,7 @@ des3_encrypt (Shishi * handle,
 	      size_t ivlen,
 	      const char *in,
 	      size_t inlen,
-	      char *out,
+	      char **out,
 	      size_t *outlen)
 {
   return simplified_encrypt (handle, key, keyusage, iv, ivlen,
@@ -44,7 +44,7 @@ des3_decrypt (Shishi * handle,
 	      size_t ivlen,
 	      const char *in,
 	      size_t inlen,
-	      char *out,
+	      char **out,
 	      size_t *outlen)
 {
   return simplified_decrypt (handle, key, keyusage, iv, ivlen,
@@ -59,7 +59,7 @@ des3none_dencrypt (Shishi * handle,
 		   size_t ivlen,
 		   const char *in,
 		   size_t inlen,
-		   char *out,
+		   char **out,
 		   size_t *outlen,
 		   int direction)
 {
@@ -70,13 +70,8 @@ des3none_dencrypt (Shishi * handle,
       size_t len;
       Shishi_key *derivedkey;
 
-      res = shishi_key_from_value (handle, shishi_key_type (key),
-				   NULL, &derivedkey);
-      if (res != SHISHI_OK)
-	return res;
-
       res = simplified_derivekey (handle, key, keyusage,
-				  SHISHI_DERIVEKEYMODE_PRIVACY, derivedkey);
+				  SHISHI_DERIVEKEYMODE_PRIVACY, &derivedkey);
       if (res != SHISHI_OK)
 	return res;
 
@@ -104,7 +99,7 @@ des3none_encrypt (Shishi * handle,
 		  size_t ivlen,
 		  const char *in,
 		  size_t inlen,
-		  char *out,
+		  char **out,
 		  size_t *outlen)
 {
   return des3none_dencrypt (handle, key, keyusage,
@@ -119,7 +114,7 @@ des3none_decrypt (Shishi * handle,
 		  size_t ivlen,
 		  const char *in,
 		  size_t inlen,
-		  char *out,
+		  char **out,
 		  size_t *outlen)
 {
   return des3none_dencrypt (handle, key, keyusage,

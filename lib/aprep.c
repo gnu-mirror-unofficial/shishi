@@ -275,7 +275,7 @@ shishi_aprep_enc_part_add (Shishi * handle,
 			   Shishi_asn1 encapreppart)
 {
   int res;
-  char buf[BUFSIZ];
+  char *buf;
   size_t buflen;
   char *der;
   int derlen = BUFSIZ;
@@ -299,18 +299,21 @@ shishi_aprep_enc_part_add (Shishi * handle,
       derlen++;
     }
 
-  buflen = BUFSIZ;
   res = shishi_encrypt (handle, key, SHISHI_KEYUSAGE_ENCAPREPPART,
-			der, derlen, buf, &buflen);
-  free(der);
+			der, derlen, &buf, &buflen);
+
+  free (der);
+
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "des_encrypt fail\n");
+      shishi_error_printf (handle, "APRep encryption failed\n");
       return res;
     }
 
   res = shishi_aprep_enc_part_set (handle, aprep, shishi_key_type (key),
 				   buf, buflen);
+
+  free (buf);
 
   return res;
 }
@@ -378,10 +381,10 @@ shishi_aprep_decrypt (Shishi * handle,
 {
   int res;
   int i;
-  size_t buflen = BUFSIZ;
-  char buf[BUFSIZ];
+  char *buf;
+  size_t buflen;
   char cipher[BUFSIZ];
-  int cipherlen;
+  size_t cipherlen;
   int etype;
 
   res = shishi_aprep_get_enc_part_etype (handle, aprep, &etype);
@@ -392,19 +395,17 @@ shishi_aprep_decrypt (Shishi * handle,
     return SHISHI_APREP_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
-  res = shishi_asn1_field (handle, aprep, &cipher, &cipherlen,
-			       "enc-part.cipher");
+  res = shishi_asn1_field (handle, aprep, cipher, &cipherlen,
+			   "enc-part.cipher");
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_decrypt (handle, key, keyusage, cipher, cipherlen,
-			buf, &buflen);
+			&buf, &buflen);
   if (res != SHISHI_OK)
     {
-      if (VERBOSE (handle))
-	printf ("decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
-			   "decrypt fail, most likely wrong password\n");
+			   "APRep decryption failed, wrong password?\n");
       return res;
     }
 

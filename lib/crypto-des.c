@@ -298,12 +298,9 @@ static int
 des_crc_encrypt (Shishi * handle,
 		 Shishi_key *key,
 		 int keyusage,
-		 const char *iv,
-		 size_t ivlen,
-		 const char *in,
-		 size_t inlen,
-		 char *out,
-		 size_t *outlen)
+		 const char *iv, size_t ivlen,
+		 const char *in, size_t inlen,
+		 char **out, size_t *outlen)
 {
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
@@ -334,12 +331,9 @@ static int
 des_crc_decrypt (Shishi * handle,
 		 Shishi_key *key,
 		 int keyusage,
-		 const char *iv,
-		 size_t ivlen,
-		 const char *in,
-		 size_t inlen,
-		 char *out,
-		 size_t *outlen)
+		 const char *iv, size_t ivlen,
+		 const char *in, size_t inlen,
+		 char **out, size_t *outlen)
 {
   int res;
 
@@ -362,7 +356,7 @@ des_crc_decrypt (Shishi * handle,
 	printf("%02x ", ((char*)out)[i] & 0xFF);
       printf("\n");
     }
-  res = des_crc_verify (handle, out, outlen);
+  res = des_crc_verify (handle, *out, outlen);
   if (res != SHISHI_OK)
     {
       shishi_error_set (handle, "verify failed");
@@ -376,12 +370,9 @@ static int
 des_md4_encrypt (Shishi * handle,
 		 Shishi_key *key,
 		 int keyusage,
-		 const char *iv,
-		 size_t ivlen,
-		 const char *in,
-		 size_t inlen,
-		 char *out,
-		 size_t *outlen)
+		 const char *iv, size_t ivlen,
+		 const char *in, size_t inlen,
+		 char **out, size_t *outlen)
 {
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
@@ -415,7 +406,7 @@ des_md4_decrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in,
 		 size_t inlen,
-		 char *out,
+		 char **out,
 		 size_t *outlen)
 {
   int res;
@@ -427,7 +418,7 @@ des_md4_decrypt (Shishi * handle,
       shishi_error_set (handle, "decrypt failed");
       return res;
     }
-  res = des_md4_verify (handle, out, outlen);
+  res = des_md4_verify (handle, *out, outlen);
   if (res != SHISHI_OK)
     {
       shishi_error_set (handle, "verify failed");
@@ -445,7 +436,7 @@ des_md5_encrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in,
 		 size_t inlen,
-		 char *out,
+		 char **out,
 		 size_t *outlen)
 {
   char buffer[BUFSIZ];
@@ -481,7 +472,7 @@ des_md5_decrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in,
 		 size_t inlen,
-		 char *out,
+		 char **out,
 		 size_t *outlen)
 {
   int res;
@@ -493,7 +484,7 @@ des_md5_decrypt (Shishi * handle,
       shishi_error_set (handle, "decrypt failed");
       return res;
     }
-  res = des_md5_verify (handle, out, outlen);
+  res = des_md5_verify (handle, *out, outlen);
   if (res != SHISHI_OK)
     {
       shishi_error_set (handle, "verify failed");
@@ -511,7 +502,7 @@ des_none_encrypt (Shishi * handle,
 		  size_t ivlen,
 		  const char *in,
 		  size_t inlen,
-		  char *out,
+		  char **out,
 		  size_t *outlen)
 {
   int res;
@@ -532,7 +523,7 @@ des_none_decrypt (Shishi * handle,
 		  size_t ivlen,
 		  const char *in,
 		  size_t inlen,
-		  char *out,
+		  char **out,
 		  size_t *outlen)
 {
   int res;

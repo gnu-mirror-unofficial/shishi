@@ -157,8 +157,24 @@ shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 }
 
 int
-shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
-			   const char *field, int n)
+shishi_asn1_write_uint32 (Shishi * handle, Shishi_asn1 node,
+			  const char *field, uint32_t n)
+{
+  char *buf;
+  int res;
+
+  asprintf (&buf, "%ud", n);
+  res = shishi_asn1_write (handle, node, field, buf, 0);
+  free(buf);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+int
+shishi_asn1_write_int32 (Shishi * handle, Shishi_asn1 node,
+			 const char *field, int32_t n)
 {
   char *buf;
   int res;
@@ -170,6 +186,13 @@ shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
     return res;
 
   return SHISHI_OK;
+}
+
+int
+shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
+			   const char *field, int n)
+{
+  return shishi_asn1_write_int32 (handle, node, field, (int32_t)n);
 }
 
 int
@@ -192,8 +215,8 @@ shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 }
 
 int
-shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
-			  const char *field, int *i)
+shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
+			const char *field, int32_t *i)
 {
   unsigned char buf[4];
   int buflen;
@@ -207,6 +230,7 @@ shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
       shishi_error_set (handle, libtasn1_strerror (rc));
       return SHISHI_ASN1_ERROR;
     }
+
   if (buflen < 4)
     {
       memset (buf, 0, sizeof (buf));
@@ -220,6 +244,20 @@ shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
   *i = buf[3] | (buf[2] << 8) | (buf[1] << 16) | (buf[0] << 24);
 
   return SHISHI_OK;
+}
+
+int
+shishi_asn1_read_uint32 (Shishi * handle, Shishi_asn1 node,
+			 const char *field, uint32_t *i)
+{
+  shishi_asn1_read_int32 (handle, node, field, (int32_t*)i);
+}
+
+int
+shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
+			  const char *field, int *i)
+{
+  shishi_asn1_read_int32 (handle, node, field, (int32_t*)i);
 }
 
 int
@@ -341,6 +379,7 @@ int
 shishi_asn1_integer_field (Shishi * handle,
 			   Shishi_asn1 node, int *i, const char *field)
 {
+  /* OBSOLETE */
   return shishi_asn1_read_integer(handle, node, field, i);
 }
 

@@ -416,7 +416,7 @@ shishi_kdc_copy_nonce (Shishi * handle,
 		       Shishi_asn1 kdcreq, Shishi_asn1 enckdcreppart)
 {
   int res;
-  unsigned long nonce;
+  uint32_t nonce;
 
   res = shishi_kdcreq_nonce (handle, kdcreq, &nonce);
   if (res != SHISHI_OK)

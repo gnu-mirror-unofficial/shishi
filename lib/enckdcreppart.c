@@ -150,15 +150,11 @@ shishi_enckdcreppart_key_set (Shishi * handle,
 int
 shishi_enckdcreppart_nonce_set (Shishi * handle,
 				Shishi_asn1 enckdcreppart,
-				unsigned long nonce)
+				uint32_t nonce)
 {
   int res;
-  char *format;
 
-  asprintf (&format, "%ld", nonce);
-  res = shishi_asn1_write (handle, enckdcreppart, "nonce",
-			   format, 0);
-  free (format);
+  res = shishi_asn1_write_uint32 (handle, enckdcreppart, "nonce", nonce);
   if (res != SHISHI_OK)
     return res;
 

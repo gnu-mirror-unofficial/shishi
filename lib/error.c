@@ -165,7 +165,12 @@ void
 shishi_error_set (Shishi * handle, const char *error)
 {
   if (error)
-    strncpy (handle->error, error, sizeof (handle->error));
+    {
+      strncpy (handle->error, error, sizeof (handle->error));
+
+      if (VERBOSE (handle))
+	puts (handle->error);
+    }
   else
     shishi_error_clear (handle);
 }
@@ -178,4 +183,7 @@ shishi_error_printf (Shishi * handle, char *format, ...)
   va_start (ap, format);
 
   vsnprintf (handle->error, sizeof (handle->error), format, ap);
+
+  if (VERBOSE (handle))
+    puts (handle->error);
 }

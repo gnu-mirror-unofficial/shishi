@@ -186,15 +186,11 @@ shishi_ticket_srealmserver_set (Shishi * handle,
  **/
 int
 shishi_ticket_get_enc_part_etype (Shishi * handle,
-				  Shishi_asn1 ticket, int *etype)
+				  Shishi_asn1 ticket, int32_t *etype)
 {
-  int buflen;
   int res;
 
-  *etype = 0;
-  buflen = sizeof (*etype);
-  res = shishi_asn1_field (handle, ticket,
-			   (char *) etype, &buflen, "enc-part.etype");
+  res = shishi_asn1_read_int32 (handle, ticket, "enc-part.etype", etype);
 
   return res;
 }
@@ -206,10 +202,10 @@ shishi_ticket_decrypt (Shishi * handle,
 {
   int res;
   int i;
-  int buflen = BUFSIZ;
-  unsigned char buf[BUFSIZ];
+  char *buf;
+  size_t buflen;
   unsigned char cipher[BUFSIZ];
-  int cipherlen;
+  size_t cipherlen;
   int etype;
 
   res = shishi_ticket_get_enc_part_etype (handle, ticket, &etype);
@@ -226,14 +222,11 @@ shishi_ticket_decrypt (Shishi * handle,
     return res;
 
   res = shishi_decrypt (handle, key, SHISHI_KEYUSAGE_ENCTICKETPART,
-			cipher, cipherlen, buf, &buflen);
+			cipher, cipherlen, &buf, &buflen);
 
   if (res != SHISHI_OK)
     {
-      if (VERBOSE (handle))
-	printf ("des_decrypt failed: %s\n", shishi_strerror_details (handle));
-      shishi_error_printf (handle,
-			   "des_decrypt fail, most likely wrong password\n");
+      shishi_error_printf (handle, "Ticket decrypt failed, wrong password?\n");
       return SHISHI_TICKET_DECRYPT_FAILED;
     }
 
@@ -280,32 +273,23 @@ shishi_ticket_decrypt (Shishi * handle,
 int
 shishi_ticket_set_enc_part (Shishi * handle,
 			    Shishi_asn1 ticket,
-			    int etype, int kvno, char *buf, int buflen)
+			    int etype, int kvno, char *buf, size_t buflen)
 {
   char *format;
   int res = SHISHI_OK;
 
-  res = shishi_asn1_write (handle, ticket, "enc-part.cipher",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, ticket, "enc-part.cipher", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
-  asprintf (&format, "%d", etype);
-  res = shishi_asn1_write (handle, ticket, "enc-part.etype",
-			   format, 0);
-  free (format);
+  res = shishi_asn1_write_int32 (handle, ticket, "enc-part.etype", etype);
   if (res != SHISHI_OK)
     return res;
 
   if (kvno == 0)
     res = shishi_asn1_write (handle, ticket, "enc-part.kvno", NULL, 0);
   else
-    {
-      asprintf (&format, "%d", etype);
-      res = shishi_asn1_write (handle, ticket, "enc-part.kvno",
-			       format, 0);
-      free (format);
-    }
+    res = shishi_asn1_write_uint32 (handle, ticket, "enc-part.kvno", kvno);
   if (res != SHISHI_OK)
     return res;
 
@@ -330,30 +314,34 @@ shishi_ticket_add_enc_part (Shishi * handle,
 			    Shishi_key * key, Shishi_asn1 encticketpart)
 {
   int res = SHISHI_OK;
-  char buf[BUFSIZ];
-  int buflen;
-  char der[BUFSIZ];
+  char *buf;
+  size_t buflen;
+  char *der;
   size_t derlen;
 
-  res = shishi_a2d (handle, encticketpart, der, &derlen);
+  res = shishi_new_a2d (handle, encticketpart, &der, &derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode encticketpart: %s\n",
 			   shishi_strerror (res));
-      return !SHISHI_OK;
+      return res;
     }
 
-  buflen = BUFSIZ;
   res = shishi_encrypt (handle, key, SHISHI_KEYUSAGE_ENCTICKETPART,
-			der, derlen, buf, &buflen);
+			der, derlen, &buf, &buflen);
+
+  free(der);
+
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "des_encrypt fail\n");
+      shishi_error_printf (handle, "Cannot encrypt encrypted part of ticket\n");
       return res;
     }
 
   res = shishi_ticket_set_enc_part (handle, ticket, shishi_key_type (key),
 				    shishi_key_version (key), buf, buflen);
+
+  free(buf);
 
   return res;
 }
