@@ -129,7 +129,7 @@ shishi_krberror_save (Shishi * handle, FILE * fh, Shishi_asn1 krberror)
  **/
 int
 shishi_krberror_to_file (Shishi * handle, Shishi_asn1 krberror,
-			 int filetype, char *filename)
+			 int filetype, const char *filename)
 {
   FILE *fh;
   int res;
@@ -209,7 +209,7 @@ shishi_krberror_read (Shishi * handle, FILE * fh, Shishi_asn1 * krberror)
  **/
 int
 shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
-			   int filetype, char *filename)
+			   int filetype, const char *filename)
 {
   int res;
   FILE *fh;

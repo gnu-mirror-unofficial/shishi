@@ -217,7 +217,7 @@ shishi_kdcreq_save (Shishi * handle, FILE * fh, Shishi_asn1 kdcreq)
  **/
 int
 shishi_kdcreq_to_file (Shishi * handle, Shishi_asn1 kdcreq,
-		       int filetype, char *filename)
+		       int filetype, const char *filename)
 {
   FILE *fh;
   int res;
@@ -297,7 +297,7 @@ shishi_kdcreq_read (Shishi * handle, FILE * fh, Shishi_asn1 * kdcreq)
  **/
 int
 shishi_kdcreq_from_file (Shishi * handle, Shishi_asn1 * kdcreq,
-			 int filetype, char *filename)
+			 int filetype, const char *filename)
 {
   int res;
   FILE *fh;

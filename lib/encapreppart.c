@@ -143,7 +143,7 @@ shishi_encapreppart_save (Shishi * handle, FILE * fh,
  **/
 int
 shishi_encapreppart_to_file (Shishi * handle, Shishi_asn1 encapreppart,
-			     int filetype, char *filename)
+			     int filetype, const char *filename)
 {
   FILE *fh;
   int res;
@@ -225,7 +225,7 @@ shishi_encapreppart_read (Shishi * handle, FILE * fh,
  **/
 int
 shishi_encapreppart_from_file (Shishi * handle, Shishi_asn1 * encapreppart,
-			       int filetype, char *filename)
+			       int filetype, const char *filename)
 {
   int res;
   FILE *fh;

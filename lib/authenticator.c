@@ -185,7 +185,7 @@ shishi_authenticator_save (Shishi * handle,
  **/
 int
 shishi_authenticator_to_file (Shishi * handle, Shishi_asn1 authenticator,
-			      int filetype, char *filename)
+			      int filetype, const char *filename)
 {
   FILE *fh;
   int res;
@@ -268,7 +268,7 @@ shishi_authenticator_read (Shishi * handle,
  **/
 int
 shishi_authenticator_from_file (Shishi * handle, Shishi_asn1 * authenticator,
-				int filetype, char *filename)
+				int filetype, const char *filename)
 {
   int res;
   FILE *fh;

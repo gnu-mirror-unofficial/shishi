@@ -139,7 +139,7 @@ shishi_aprep_save (Shishi * handle, FILE * fh, Shishi_asn1 aprep)
  **/
 int
 shishi_aprep_to_file (Shishi * handle, Shishi_asn1 aprep,
-		      int filetype, char *filename)
+		      int filetype, const char *filename)
 {
   FILE *fh;
   int res;
@@ -219,7 +219,7 @@ shishi_aprep_read (Shishi * handle, FILE * fh, Shishi_asn1 * aprep)
  **/
 int
 shishi_aprep_from_file (Shishi * handle, Shishi_asn1 * aprep,
-			int filetype, char *filename)
+			int filetype, const char *filename)
 {
   int res;
   FILE *fh;

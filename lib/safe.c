@@ -270,7 +270,7 @@ shishi_safe_save (Shishi * handle, FILE * fh, Shishi_asn1 safe)
  **/
 int
 shishi_safe_to_file (Shishi * handle, Shishi_asn1 safe,
-		     int filetype, char *filename)
+		     int filetype, const char *filename)
 {
   FILE *fh;
   int res;

@@ -201,7 +201,7 @@ shishi_apreq_save (Shishi * handle, FILE * fh, Shishi_asn1 apreq)
  **/
 int
 shishi_apreq_to_file (Shishi * handle, Shishi_asn1 apreq,
-		      int filetype, char *filename)
+		      int filetype, const char *filename)
 {
   FILE *fh;
   int res;
@@ -281,7 +281,7 @@ shishi_apreq_read (Shishi * handle, FILE * fh, Shishi_asn1 * apreq)
  **/
 int
 shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
-			int filetype, char *filename)
+			int filetype, const char *filename)
 {
   int res;
   FILE *fh;

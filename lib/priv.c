@@ -1,5 +1,5 @@
 /* priv.c --- Application data privacy protection.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -361,7 +361,7 @@ shishi_priv_save (Shishi * handle, FILE * fh, Shishi_asn1 priv)
  **/
 int
 shishi_priv_to_file (Shishi * handle, Shishi_asn1 priv,
-		     int filetype, char *filename)
+		     int filetype, const char *filename)
 {
   FILE *fh;
   int res;

@@ -961,12 +961,12 @@ extern int shishi_authenticator_parse (Shishi * handle, FILE * fh,
 				       Shishi_asn1 * authenticator);
 extern int shishi_authenticator_from_file (Shishi * handle,
 					   Shishi_asn1 * authenticator,
-					   int filetype, char *filename);
+					   int filetype, const char *filename);
 extern int shishi_authenticator_print (Shishi * handle, FILE * fh,
 				       Shishi_asn1 authenticator);
 extern int shishi_authenticator_to_file (Shishi * handle,
 					 Shishi_asn1 authenticator,
-					 int filetype, char *filename);
+					 int filetype, const char *filename);
 extern int shishi_authenticator_save (Shishi * handle, FILE * fh,
 				      Shishi_asn1 authenticator);
 
@@ -1043,13 +1043,13 @@ extern int shishi_kdcreq_save (Shishi * handle, FILE * fh,
 extern int shishi_kdcreq_print (Shishi * handle, FILE * fh,
 				Shishi_asn1 kdcreq);
 extern int shishi_kdcreq_to_file (Shishi * handle, Shishi_asn1 kdcreq,
-				  int filetype, char *filename);
+				  int filetype, const char *filename);
 extern int shishi_kdcreq_parse (Shishi * handle, FILE * fh,
 				Shishi_asn1 * kdcreq);
 extern int shishi_kdcreq_read (Shishi * handle, FILE * fh,
 			       Shishi_asn1 * kdcreq);
 extern int shishi_kdcreq_from_file (Shishi * handle, Shishi_asn1 * kdcreq,
-				    int filetype, char *filename);
+				    int filetype, const char *filename);
 extern int shishi_asreq_cnamerealm_get (Shishi * handle, Shishi_asn1 kdcreq,
 					char *cnamerealm,
 					size_t * cnamerealmlen);
@@ -1188,13 +1188,13 @@ extern int shishi_kdcrep_save (Shishi * handle, FILE * fh,
 extern int shishi_kdcrep_print (Shishi * handle, FILE * fh,
 				Shishi_asn1 kdcrep);
 extern int shishi_kdcrep_to_file (Shishi * handle, Shishi_asn1 kdcrep,
-				  int filetype, char *filename);
+				  int filetype, const char *filename);
 extern int shishi_kdcrep_parse (Shishi * handle, FILE * fh,
 				Shishi_asn1 * kdcrep);
 extern int shishi_kdcrep_read (Shishi * handle, FILE * fh,
 			       Shishi_asn1 * kdcrep);
 extern int shishi_kdcrep_from_file (Shishi * handle, Shishi_asn1 * kdcrep,
-				    int filetype, char *filename);
+				    int filetype, const char *filename);
 extern int shishi_kdcrep_clear_padata (Shishi * handle, Shishi_asn1 kdcrep);
 extern int shishi_kdcrep_get_enc_part_etype (Shishi * handle,
 					     Shishi_asn1 kdcrep,
@@ -1232,13 +1232,13 @@ extern int shishi_krberror_print (Shishi * handle, FILE * fh,
 extern int shishi_krberror_save (Shishi * handle, FILE * fh,
 				 Shishi_asn1 krberror);
 extern int shishi_krberror_to_file (Shishi * handle, Shishi_asn1 krberror,
-				    int filetype, char *filename);
+				    int filetype, const char *filename);
 extern int shishi_krberror_parse (Shishi * handle, FILE * fh,
 				  Shishi_asn1 * krberror);
 extern int shishi_krberror_read (Shishi * handle, FILE * fh,
 				 Shishi_asn1 * krberror);
 extern int shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
-				      int filetype, char *filename);
+				      int filetype, const char *filename);
 extern int shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror);
 extern int shishi_krberror_der (Shishi * handle,
 				Shishi_asn1 krberror,
@@ -1828,14 +1828,14 @@ extern int shishi_encapreppart_save (Shishi * handle, FILE * fh,
 				     Shishi_asn1 encapreppart);
 extern int shishi_encapreppart_to_file (Shishi * handle,
 					Shishi_asn1 encapreppart,
-					int filetype, char *filename);
+					int filetype, const char *filename);
 extern int shishi_encapreppart_read (Shishi * handle, FILE * fh,
 				     Shishi_asn1 * encapreppart);
 extern int shishi_encapreppart_parse (Shishi * handle, FILE * fh,
 				      Shishi_asn1 * encapreppart);
 extern int shishi_encapreppart_from_file (Shishi * handle,
 					  Shishi_asn1 * encapreppart,
-					  int filetype, char *filename);
+					  int filetype, const char *filename);
 extern int shishi_encapreppart_get_key (Shishi * handle,
 					Shishi_asn1 encapreppart,
 					int32_t * keytype,
@@ -1855,10 +1855,10 @@ extern Shishi_asn1 shishi_apreq (Shishi * handle);
 extern int shishi_apreq_parse (Shishi * handle, FILE * fh,
 			       Shishi_asn1 * apreq);
 extern int shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
-				   int filetype, char *filename);
+				   int filetype, const char *filename);
 extern int shishi_apreq_print (Shishi * handle, FILE * fh, Shishi_asn1 apreq);
 extern int shishi_apreq_to_file (Shishi * handle, Shishi_asn1 apreq,
-				 int filetype, char *filename);
+				 int filetype, const char *filename);
 extern int shishi_apreq_read (Shishi * handle, FILE * fh,
 			      Shishi_asn1 * apreq);
 extern int shishi_apreq_save (Shishi * handle, FILE * fh, Shishi_asn1 apreq);
@@ -1916,13 +1916,13 @@ extern Shishi_asn1 shishi_aprep (Shishi * handle);
 extern int shishi_aprep_print (Shishi * handle, FILE * fh, Shishi_asn1 aprep);
 extern int shishi_aprep_save (Shishi * handle, FILE * fh, Shishi_asn1 aprep);
 extern int shishi_aprep_to_file (Shishi * handle, Shishi_asn1 aprep,
-				 int filetype, char *filename);
+				 int filetype, const char *filename);
 extern int shishi_aprep_read (Shishi * handle, FILE * fh,
 			      Shishi_asn1 * aprep);
 extern int shishi_aprep_parse (Shishi * handle, FILE * fh,
 			       Shishi_asn1 * aprep);
 extern int shishi_aprep_from_file (Shishi * handle, Shishi_asn1 * aprep,
-				   int filetype, char *filename);
+				   int filetype, const char *filename);
 extern int shishi_aprep_decrypt (Shishi * handle, Shishi_asn1 aprep,
 				 Shishi_key * key, int keyusage,
 				 Shishi_asn1 * encapreppart);
@@ -2018,7 +2018,7 @@ extern int shishi_safe_safe_der_set (Shishi_safe * safe,
 extern int shishi_safe_print (Shishi * handle, FILE * fh, Shishi_asn1 safe);
 extern int shishi_safe_save (Shishi * handle, FILE * fh, Shishi_asn1 safe);
 extern int shishi_safe_to_file (Shishi * handle, Shishi_asn1 safe,
-				int filetype, char *filename);
+				int filetype, const char *filename);
 extern int shishi_safe_parse (Shishi * handle, FILE * fh, Shishi_asn1 * safe);
 extern int shishi_safe_read (Shishi * handle, FILE * fh, Shishi_asn1 * safe);
 extern int shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
@@ -2062,7 +2062,7 @@ extern int shishi_priv_encprivpart_der_set (Shishi_priv * priv,
 extern int shishi_priv_print (Shishi * handle, FILE * fh, Shishi_asn1 priv);
 extern int shishi_priv_save (Shishi * handle, FILE * fh, Shishi_asn1 priv);
 extern int shishi_priv_to_file (Shishi * handle, Shishi_asn1 priv,
-				int filetype, char *filename);
+				int filetype, const char *filename);
 extern int shishi_priv_parse (Shishi * handle, FILE * fh, Shishi_asn1 * priv);
 extern int shishi_priv_read (Shishi * handle, FILE * fh, Shishi_asn1 * priv);
 extern int shishi_priv_from_file (Shishi * handle, Shishi_asn1 * priv,
