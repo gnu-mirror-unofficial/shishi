@@ -34,6 +34,7 @@ INCLUDES = -I$(top_srcdir)/gl -I../lib
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
+	-DKDCKEYFILE=\"$(sysconfdir)/shishid.keys\" \
 	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
 	@DEFS@
 
