@@ -719,6 +719,23 @@ static cipherinfo *ciphers[] = {
   &aes256_cts_hmac_sha1_96_info
 };
 
+int
+_shishi_cipher_init (void)
+{
+  if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
+    {
+      if (gcry_check_version (GCRYPT_VERSION) == NULL)
+	return SHISHI_GCRYPT_ERROR;
+      if (gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0) != GCRYERR_SUCCESS)
+	return SHISHI_GCRYPT_ERROR;
+      if (gcry_control (GCRYCTL_INITIALIZATION_FINISHED,
+			NULL, 0) != GCRYERR_SUCCESS)
+	return SHISHI_GCRYPT_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
 /**
  * shishi_cipher_supported_p:
  * @type: encryption type, see Shishi_etype.
