@@ -31,14 +31,14 @@ bin_PROGRAMS = shishi shisa
 sbin_PROGRAMS = shishid
 
 shishi_SOURCES = shishi.c shishi.ggo shishi_cmd.h shishi_cmd.c
-shishi_LDADD = ../gl/libfoo.la ../lib/libshishi.la @LTLIBINTL@
+shishi_LDADD = ../gl/libgnu.la ../lib/libshishi.la @LTLIBINTL@
 shishi_cmd.c shishi_cmd.h: shishi.ggo
 	gengetopt --unamed-opts="CLIENT [SERVER]" \
 		--no-handle-help --no-handle-error \
 		--input $< --file-name shishi_cmd
 
 shisa_SOURCES = shisa.c shisa.ggo shisa_cmd.h shisa_cmd.c
-shisa_LDADD = ../gl/libfoo.la ../db/libshisa.la ../lib/libshishi.la @LTLIBINTL@
+shisa_LDADD = ../gl/libgnu.la ../db/libshisa.la ../lib/libshishi.la @LTLIBINTL@
 shisa_cmd.c shisa_cmd.h: shisa.ggo
 	gengetopt --unamed-opts="REALM [PRINCIPAL]" \
 		--no-handle-help --no-handle-error \
@@ -49,7 +49,7 @@ shishid_SOURCES = shishid.c server.c kdc.h kdc.c \
 if STARTTLS
 shishid_SOURCES += starttls.c resume.c
 endif
-shishid_LDADD = ../gl/libfoo.la ../lib/libshishi.la \
+shishid_LDADD = ../gl/libgnu.la ../lib/libshishi.la \
 	../db/libshisa.la @LIBGNUTLS_LIBS@ @LTLIBINTL@
 shishid_cmd.c shishid_cmd.h: shishid.ggo
 	gengetopt --no-handle-help --no-handle-error \
