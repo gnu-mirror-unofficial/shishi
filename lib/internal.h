@@ -211,13 +211,6 @@ struct Shishi
   Shishi_tkts *tkts;
 };
 
-#define BASE_DIR "/.shishi"
-#define TICKET_FILE BASE_DIR "/tickets"
-#define USERCFG_FILE BASE_DIR "/shishi.conf"
-
-#define X509CERT_FILE "client.certs"
-#define X509KEY_FILE "client.key"
-
 #define TICKETLIFE (60*60*8)	/* Work day */
 #define RENEWLIFE (60*60*24*7)	/* Week */
 
