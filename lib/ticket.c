@@ -65,7 +65,7 @@ shishi_ticket_realm_set (Shishi * handle, Shishi_asn1 ticket,
 /**
  * shishi_ticket_server:
  * @handle: Shishi library handle create by shishi_init().
- * @kdcreq: ASN.1 Ticket variable to get server name from.
+ * @ticket: ASN.1 Ticket variable to get server name from.
  * @server: pointer to newly allocated zero terminated string containing
  *   principal name.  May be %NULL (to only populate @serverlen).
  * @serverlen: pointer to length of @server on output, excluding terminating
