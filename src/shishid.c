@@ -543,6 +543,32 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
   int32_t etype, keyusage;
   int i;
 
+  buflen = sizeof (buf) - 1;
+  err = shishi_encticketpart_cname_get
+    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
+     buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  username = strdup (buf);
+  printf ("username %s\n", username);
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_sname_get (handle, shishi_tgs_req (tgs), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  servername = strdup (buf);
+  printf ("servername %s\n", servername);
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_realm_get (handle, shishi_tgs_req (tgs), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  realm = strdup (buf);
+  printf ("server realm %s\n", realm);
+
   tkt = shishi_tgs_tkt (tgs);
   if (!tkt)
     return SHISHI_MALLOC_ERROR;
@@ -584,32 +610,6 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 #endif
 
   /* XXX check that checksum in authenticator match tgsreq.req-body */
-
-  buflen = sizeof (buf) - 1;
-  err = shishi_encticketpart_cname_get
-    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
-     buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-  buf[buflen] = '\0';
-  username = strdup (buf);
-  printf ("username %s\n", username);
-
-  buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_sname_get (handle, shishi_tgs_req (tgs), buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-  buf[buflen] = '\0';
-  servername = strdup (buf);
-  printf ("servername %s\n", servername);
-
-  buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_realm_get (handle, shishi_tgs_req (tgs), buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-  buf[buflen] = '\0';
-  realm = strdup (buf);
-  printf ("server realm %s\n", realm);
 
   err = shishi_tkt_clientrealm_set (tkt, realm, username);
   if (err)
