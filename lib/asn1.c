@@ -288,14 +288,14 @@ int
 shishi_asn1_read_uint32 (Shishi * handle, Shishi_asn1 node,
 			 const char *field, uint32_t * i)
 {
-  shishi_asn1_read_int32 (handle, node, field, (int32_t *) i);
+  return shishi_asn1_read_int32 (handle, node, field, (int32_t *) i);
 }
 
 int
 shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
 			  const char *field, int *i)
 {
-  shishi_asn1_read_int32 (handle, node, field, (int32_t *) i);
+  return shishi_asn1_read_int32 (handle, node, field, (int32_t *) i);
 }
 
 int
