@@ -1,4 +1,4 @@
-/* asn1.c	utilities to extract data from RFC 1510 ASN.1 types
+/* asn1.c	utilities to manipulate RFC 1510 ASN.1 types
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -142,6 +142,28 @@ shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
       else
 	return SHISHI_ASN1_ERROR;
     }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
+			  const char *field, int *i)
+{
+  unsigned char buf[4];
+  int buflen;
+  int rc;
+
+  memset (buf, 0, sizeof (buf));
+  buflen = sizeof (buf);
+  rc = asn1_read_value (node, field, buf, &buflen);
+  if (rc != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (rc));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  *i = buf[0] | buf[1] << 8 | buf[2] << 16 | buf[3] << 24;
 
   return SHISHI_OK;
 }
