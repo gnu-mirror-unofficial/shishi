@@ -2,5 +2,7 @@
 .libs
 Makefile
 Makefile.in
+authenticator
 crypto
+gztime
 ticketset
