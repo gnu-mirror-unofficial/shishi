@@ -1964,9 +1964,6 @@ extern Shishi_asn1 shishi_encticketpart (Shishi * handle);
 extern int shishi_encticketpart_key_set (Shishi * handle,
 					 Shishi_asn1 encticketpart,
 					 Shishi_key * key);
-extern int shishi_encticketpart_get_enc_part_etype (Shishi * handle,
-						    Shishi_asn1 encticketpart,
-						    int32_t * etype);
 extern int shishi_encticketpart_get_key (Shishi * handle,
 					 Shishi_asn1 encticketpart,
 					 Shishi_key ** key);

@@ -68,29 +68,6 @@ shishi_encticketpart (Shishi * handle)
 }
 
 /**
- * shishi_asn1ticket_get_enc_part_etype:
- * @handle: shishi handle as allocated by shishi_init().
- * @kdcrep: Ticket variable to get value from.
- * @etype: output variable that holds the value.
- *
- * Extract Ticket.enc-part.etype.
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_encticketpart_get_enc_part_etype (Shishi * handle,
-					 Shishi_asn1 encticketpart,
-					 int32_t * etype)
-{
-  int res;
-
-  res = shishi_asn1_read_int32 (handle, encticketpart,
-				"enc-part.etype", etype);
-
-  return res;
-}
-
-/**
  * shishi_encticketpart_get_key:
  * @handle: shishi handle as allocated by shishi_init().
  * @encticketpart: input EncTicketPart variable.
