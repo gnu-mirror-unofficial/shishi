@@ -22,6 +22,36 @@
 #include "internal.h"
 
 int
+_shishi_a2d (Shishi *handle, ASN1_TYPE node, char *der, int *len)
+{
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
+  int rc;
+
+  rc = asn1_der_coding (node, node->name, der, len, errorDescription);
+  if (rc != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+int
+_shishi_asn1_done (Shishi * handle, ASN1_TYPE node)
+{
+
+  int rc;
+
+  rc = asn1_delete_structure(&node);
+  if (rc != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (rc));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+
+int
 _shishi_asn1_field (Shishi * handle,
 		    ASN1_TYPE node, char *data, int *datalen, char *field)
 {

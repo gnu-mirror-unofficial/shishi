@@ -370,7 +370,7 @@ shishi_ticketset_write (Shishi * handle,
 
   for (i = 0; i < ticketset->ntickets; i++)
     {
-      if (!shishi_ticket_valid_now_p (handle, ticketset->tickets[i]))
+      if (!shishi_ticket_valid_now_p (ticketset->tickets[i]))
 	{
 	  if (warn)
 	    fprintf (stderr, "warning: removing expired ticket\n"), warn = 0;
@@ -483,7 +483,7 @@ shishi_ticketset_print_for_service (Shishi * handle,
 	      goto done;
 	    }
 
-	  res = shishi_ticket_server (handle, ticket, buf, &buflen);
+	  res = shishi_ticket_server (ticket, buf, &buflen);
 	  if (res != SHISHI_OK)
 	    {
 	      free (buf);
@@ -501,8 +501,8 @@ shishi_ticketset_print_for_service (Shishi * handle,
 	}
 
       printf ("\n");
-      res = shishi_ticket_print
-	(handle, shishi_ticketset_get (handle, ticketset, i), stdout);
+      res = shishi_ticket_print (shishi_ticketset_get (handle, ticketset, i),
+				 stdout);
       if (res != SHISHI_OK)
 	goto done;
 
@@ -568,10 +568,10 @@ shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
 
   for (i = 0; i < ticketset->ntickets; i++)
     {
-      if (!shishi_ticket_server_p (handle, ticketset->tickets[i], server))
+      if (!shishi_ticket_server_p (ticketset->tickets[i], server))
 	continue;
 
-      if (!shishi_ticket_valid_now_p (handle, ticketset->tickets[i]))
+      if (!shishi_ticket_valid_now_p (ticketset->tickets[i]))
 	continue;
 
       return ticketset->tickets[i];
@@ -626,7 +626,7 @@ shishi_ticketset_get_ticket_for_clientserver (Shishi * handle,
 	{
 	  shishi_kdcreq_print (handle, stdout, shishi_as_get_asreq (as));
 	  shishi_kdcrep_print (handle, stdout, shishi_as_get_asrep (as));
-	  shishi_ticket_print (handle, tgt, stdout);
+	  shishi_ticket_print (tgt, stdout);
 	}
 
       rc = shishi_ticketset_add (handle, ticketset, tgt);
@@ -657,7 +657,7 @@ shishi_ticketset_get_ticket_for_clientserver (Shishi * handle,
       shishi_apreq_print (handle, stdout, shishi_tgs_get_apreq (tgs));
       shishi_kdcreq_print (handle, stdout, shishi_tgs_get_tgsreq (tgs));
       shishi_kdcrep_print (handle, stdout, shishi_tgs_get_tgsrep (tgs));
-      shishi_ticket_print (handle, tkt, stdout);
+      shishi_ticket_print (tkt, stdout);
     }
 
   rc = shishi_ticketset_add (handle, ticketset, tkt);

@@ -295,34 +295,34 @@ extern void shishi_principal_default_set (Shishi * handle,
 					  const char *principal);
 
 /* ticket.c */
-extern int shishi_asn1ticket_realm (Shishi * handle,
-				    ASN1_TYPE ticket,
-				    char *realm, int *realmlen);
-
-extern int shishi_asn1ticket_service (Shishi * handle,
-				      ASN1_TYPE ticket,
-				      char *service, int *servicelen);
-
-/* ticket.c */
 extern ASN1_TYPE shishi_ticket_ticket (Shishi_ticket * ticket);
 extern ASN1_TYPE shishi_ticket_enckdcreppart (Shishi_ticket * ticket);
+extern Shishi_key *shishi_ticket_key (Shishi_ticket * ticket);
 extern Shishi_ticket *shishi_ticket (Shishi * handle,
 				     char *principal,
 				     ASN1_TYPE ticket,
 				     ASN1_TYPE enckdcreppart);
-extern int shishi_ticket_print (Shishi * handle, Shishi_ticket * ticket,
-				FILE * fh);
+extern int shishi_ticket_print (Shishi_ticket * ticket, FILE * fh);
 extern char *shishi_ticket_principal (Shishi_ticket * ticket);
-extern int shishi_ticket_authtime (Shishi * handle, Shishi_ticket * ticket,
+extern int shishi_ticket_authtime (Shishi_ticket * ticket,
 				   char *authtime, int *authtimelen);
-extern int shishi_ticket_starttime (Shishi * handle, Shishi_ticket * ticket,
+extern int shishi_ticket_starttime (Shishi_ticket * ticket,
 				    char *starttime, int *starttimelen);
-extern int shishi_ticket_endtime (Shishi * handle, Shishi_ticket * ticket,
+extern int shishi_ticket_endtime (Shishi_ticket * ticket,
 				  char *endtime, int *endtimelen);
-extern int shishi_ticket_renew_till (Shishi * handle, Shishi_ticket * ticket,
+extern int shishi_ticket_renew_till (Shishi_ticket * ticket,
 				     char *renewtilltime, int *renewtilllen);
-extern int shishi_ticket_keytype (Shishi * handle, Shishi_ticket * ticket,
+extern int shishi_ticket_keytype (Shishi_ticket * ticket,
 				  int *etype);
+extern int shishi_ticket_server (Shishi_ticket * ticket,
+				 char *service, int *servicelen);
+extern int shishi_ticket_realm (Shishi_ticket * ticket,
+				char *realm, int *realmlen);
+extern int shishi_ticket_server_p (Shishi_ticket * ticket, char *service);
+extern int shishi_ticket_valid_at_time_p (Shishi_ticket * ticket, time_t now);
+extern int shishi_ticket_valid_now_p (Shishi_ticket * ticket);
+
+
 extern int shishi_ticket_apreq_data (Shishi * handle, Shishi_ticket * ticket,
 				     char *data, int datalen,
 				     ASN1_TYPE * apreq);
@@ -634,25 +634,39 @@ shishi_d2a_encapreppart (Shishi * handle, char *der, int der_len);
 /* ap.c */
 extern const char *shishi_ap_option2string (int option);
 extern int shishi_ap_string2option (const char *str);
-extern Shishi_ticket *shishi_ap_get_ticket (Shishi_ap * ap);
-extern ASN1_TYPE shishi_ap_get_authenticator (Shishi_ap * ap);
-extern ASN1_TYPE shishi_ap_get_apreq (Shishi_ap * ap);
-extern ASN1_TYPE shishi_ap_get_aprep (Shishi_ap * ap);
-extern ASN1_TYPE shishi_ap_get_encapreppart (Shishi_ap * ap);
-extern int shishi_ap (Shishi * handle,
-		      Shishi_ticket * ticket,
-		      Shishi_ap ** ap);
-extern int shishi_ap_data (Shishi * handle,
-			   Shishi_ticket * ticket,
-			   char *data, int datalen, Shishi_ap ** ap);
-extern int shishi_ap_request_get_der (Shishi * handle,
-				      Shishi_ap * ap, char *out, int *outlen);
-extern int shishi_ap_reply_set_der (Shishi * handle,
-				    Shishi_ap * ap, char *der, int derlen);
-extern int shishi_ap_reply_verify_der (Shishi * handle,
-				       Shishi_ap * ap, char *der, int derlen);
-extern int shishi_ap_reply_verify (Shishi * handle,
-				   Shishi_ap * ap, ASN1_TYPE aprep);
+
+extern int shishi_ap (Shishi * handle, Shishi_ap ** ap);
+
+extern Shishi_ticket *shishi_ap_ticket (Shishi_ap * ap);
+extern void shishi_ap_ticket_set (Shishi_ap * ap, Shishi_ticket * ticket);
+
+extern int shishi_ap_authenticator_cksumdata (Shishi_ap * ap,
+					      char *out, int *len);
+extern void
+shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
+				       char *authenticatorcksumdata,
+				       int authenticatorcksumdatalen);
+
+extern ASN1_TYPE shishi_ap_authenticator (Shishi_ap * ap);
+extern void shishi_ap_authenticator_set (Shishi_ap * ap,
+					 ASN1_TYPE authenticator);
+
+extern ASN1_TYPE shishi_ap_req (Shishi_ap * ap);
+extern int shishi_ap_req_build (Shishi_ap * ap);
+extern int shishi_ap_req_asn1 (Shishi_ap * ap, ASN1_TYPE * apreq);
+extern int shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen);
+extern void shishi_ap_req_set (Shishi_ap * ap, ASN1_TYPE apreq);
+
+extern ASN1_TYPE shishi_ap_rep (Shishi_ap * ap);
+extern int shishi_ap_rep_der_set (Shishi_ap * ap, char *der, int derlen);
+extern int shishi_ap_rep_verify (Shishi_ap * ap);
+extern int shishi_ap_rep_verify_der (Shishi_ap * ap, char *der, int derlen);
+extern int shishi_ap_rep_verify_asn1 (Shishi_ap * ap, ASN1_TYPE aprep);
+extern void shishi_ap_rep_set (Shishi_ap * ap, ASN1_TYPE aprep);
+
+extern ASN1_TYPE shishi_ap_encapreppart (Shishi_ap * ap);
+extern void shishi_ap_encapreppart_set (Shishi_ap * ap,
+					ASN1_TYPE encapreppart);
 
 /* key.c */
 extern int shishi_key_type (Shishi_key * key);
@@ -696,6 +710,7 @@ extern int shishi_enckdcreppart_get_key (Shishi * handle,
 					 Shishi_key **key);
 
 /* aprep.c */
+extern ASN1_TYPE shishi_aprep (Shishi * handle);
 extern int shishi_aprep_decrypt (Shishi * handle,
 				 ASN1_TYPE aprep,
 				 Shishi_key *key,

@@ -35,10 +35,10 @@
 /**
  * shishi_aprep:
  * @handle: shishi handle as allocated by shishi_init().
- * 
+ *
  * This function creates a new AP-REP, populated with some default
  * values.
- * 
+ *
  * Return value: Returns the authenticator or ASN1_TYPE_EMPTY on
  * failure.
  **/
@@ -100,9 +100,9 @@ error:
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @aprep: AP-REP to print.
- * 
+ *
  * Print ASCII armored DER encoding of AP-REP to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -116,9 +116,9 @@ shishi_aprep_print (Shishi * handle, FILE * fh, ASN1_TYPE aprep)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @aprep: AP-REP to save.
- * 
+ *
  * Save DER encoding of AP-REP to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -134,10 +134,10 @@ shishi_aprep_save (Shishi * handle, FILE * fh, ASN1_TYPE aprep)
  * @filetype: input variable specifying type of file to be written,
  *            see Shishi_filetype.
  * @filename: input variable with filename to write to.
- * 
+ *
  * Write AP-REP to file in specified TYPE.  The file will be
  * truncated if it exists.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -180,10 +180,10 @@ shishi_aprep_to_file (Shishi * handle, ASN1_TYPE aprep,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @aprep: output variable with newly allocated AP-REP.
- * 
+ *
  * Read ASCII armored DER encoded AP-REP from file and populate given
  * variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -197,9 +197,9 @@ shishi_aprep_parse (Shishi * handle, FILE * fh, ASN1_TYPE * aprep)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @aprep: output variable with newly allocated AP-REP.
- * 
+ *
  * Read DER encoded AP-REP from file and populate given variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -215,9 +215,9 @@ shishi_aprep_read (Shishi * handle, FILE * fh, ASN1_TYPE * aprep)
  * @filetype: input variable specifying type of file to be read,
  *            see Shishi_filetype.
  * @filename: input variable with filename to read from.
- * 
+ *
  * Read AP-REP from file in specified TYPE.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -366,9 +366,9 @@ shishi_aprep_enc_part_make (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @aprep: AP-REP variable to get value from.
  * @etype: output variable that holds the value.
- * 
+ *
  * Extract AP-REP.enc-part.etype.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
