@@ -370,10 +370,10 @@ shishi_apreq_add_authenticator (Shishi * handle,
   int res;
   char buf[BUFSIZ];
   int buflen;
-  char der[BUFSIZ];
+  char *der;
   size_t derlen;
 
-  res = shishi_a2d (handle, authenticator, der, &derlen);
+  res = shishi_new_a2d (handle, authenticator, &der, &derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode authenticator: %s\n",
@@ -383,6 +383,7 @@ shishi_apreq_add_authenticator (Shishi * handle,
 
   buflen = BUFSIZ;
   res = shishi_encrypt (handle, key, keyusage, der, derlen, buf, &buflen);
+  free(der);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "des_encrypt fail\n");
