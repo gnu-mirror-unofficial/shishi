@@ -247,15 +247,15 @@ des3_string_to_key (Shishi * handle,
     return res;
 
   res = des3_random_to_key (handle, nfold, nfoldlen, key);
-  if (res != SHISHI_OK)
-    return res;
-
-  /* key = DK (tmpKey, KerberosConstant) */
-  res = shishi_dk (handle, key, "kerberos", strlen ("kerberos"), outkey);
-  if (res != SHISHI_OK)
-    return res;
+  if (res == SHISHI_OK)
+    /* key = DK (tmpKey, Constant) */
+    res = shishi_dk (handle, key, SHISHI_DK_CONSTANT,
+		     strlen (SHISHI_DK_CONSTANT), outkey);
 
   shishi_key_done (key);
+
+  if (res != SHISHI_OK)
+    return res;
 
   if (VERBOSECRYPTO (handle))
     {
