@@ -6,7 +6,7 @@ See the end for copying conditions.
 
 ** Libtasn1 updated to 0.2.13.
 
-** Gnulib files updated.
+** Gnulib files updated, and uses within the library updated.
 
 ** Fix srcdir != objdir building, reported by Mike Castle.
 
