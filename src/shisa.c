@@ -477,7 +477,7 @@ main (int argc, char *argv[])
 
   rc = shisa_init_with_paths (&dbh, args_info.configuration_file_arg);
   if (rc != SHISA_OK)
-    error (1, 0, "Initialization failed:\n %s", shisa_strerror (rc));
+    error (1, 0, "Initialization failed:\n%s", shisa_strerror (rc));
 
   rc = shisa_cfg (dbh, args_info.library_options_arg);
   if (rc != SHISA_OK)
