@@ -26,13 +26,13 @@ null_encrypt (Shishi * handle,
 	      int keyusage,
 	      char *key,
 	      int keylen,
-	      char *in, 
-	      int inlen, 
+	      char *in,
+	      int inlen,
 	      char *out,
 	      int *outlen)
 {
   if (*outlen < inlen)
-    return !SHISHI_OK;
+    return SHISHI_TOO_SMALL_BUFFER;
 
   memcpy (out, in, inlen);
   *outlen = inlen;
@@ -51,7 +51,7 @@ null_decrypt (Shishi * handle,
 	      int *outlen)
 {
   if (*outlen < inlen)
-    return !SHISHI_OK;
+    return SHISHI_TOO_SMALL_BUFFER;
 
   memcpy (out, in, inlen);
   *outlen = inlen;
@@ -69,13 +69,13 @@ null_random_to_key (Shishi * handle,
 }
 
 static int
-null_string_to_key_function (Shishi * handle,
-			     char *password,
-			     int passwordlen,
-			     char *salt,
-			     int saltlen,
-			     char *parameter,
-			     char *outkey)
+null_string_to_key (Shishi * handle,
+		    char *password,
+		    int passwordlen,
+		    char *salt,
+		    int saltlen,
+		    char *parameter,
+		    char *outkey)
 {
   return SHISHI_OK;
 }
