@@ -2355,38 +2355,38 @@ proceeding from the beginning of the string:
 
 @enumerate
 @item
-        One or more principal name components; if more than one
-        principal name component is included, the components are
-        separated by `/`.  Arbitrary octets may be included within
-        principal name components, with the following constraints and
-        special considerations:
+One or more principal name components; if more than one
+principal name component is included, the components are
+separated by `/`.  Arbitrary octets may be included within
+principal name components, with the following constraints and
+special considerations:
 @enumerate a
 @item
-           Any occurrence of the characters `@@` or `/` within a
-           name component must be immediately preceded by the `\`
-           quoting character, to prevent interpretation as a component
-           or realm separator.
+Any occurrence of the characters `@@` or `/` within a
+name component must be immediately preceded by the `\`
+quoting character, to prevent interpretation as a component
+or realm separator.
 @item
-           The ASCII newline, tab, backspace, and null characters
-           may occur directly within the component or may be
-           represented, respectively, by `\n`, `\t`, `\b`, or `\0`.
+The ASCII newline, tab, backspace, and null characters
+may occur directly within the component or may be
+represented, respectively, by `\n`, `\t`, `\b`, or `\0`.
 @item
-           If the `\` quoting character occurs outside the contexts
-           described in (1a) and (1b) above, the following character is
-           interpreted literally.  As a special case, this allows the
-           doubled representation `\\` to represent a single occurrence
-           of the quoting character.
+If the `\` quoting character occurs outside the contexts
+described in (1a) and (1b) above, the following character is
+interpreted literally.  As a special case, this allows the
+doubled representation `\\` to represent a single occurrence
+of the quoting character.
 @item
-           An occurrence of the `\` quoting character as the last
-           character of a component is illegal.
+An occurrence of the `\` quoting character as the last
+character of a component is illegal.
 @end enumerate
 @item
-        Optionally, a `@@` character, signifying that a realm name
-        immediately follows. If no realm name element is included, the
-        local realm name is assumed.  The `/` , `:`, and null characters
-        may not occur within a realm name; the `@@`, newline, tab, and
-        backspace characters may be included using the quoting
-        conventions described in (1a), (1b), and (1c) above.
+Optionally, a `@@` character, signifying that a realm name
+immediately follows. If no realm name element is included, the
+local realm name is assumed.  The `/` , `:`, and null characters
+may not occur within a realm name; the `@@`, newline, tab, and
+backspace characters may be included using the quoting
+conventions described in (1a), (1b), and (1c) above.
 @end enumerate
 
 @node Shishi Configuration
