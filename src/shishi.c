@@ -177,35 +177,13 @@ struct arguments
   const char *realm;
   char *systemcfgfile;
   char *usercfgfile;
-  /* get and ap */
-  char *authenticatorwritefile;
-  int authenticatorwritetype;
-  char *apreqwritefile;
-  int apreqwritetype;
-  /* get */
   const char *client;
   const char *cname;
   const char *sname;
   char *tgtname;
   int forceas_p;
   int forcetgs_p;
-  char *kdcreqwritefile;
-  int kdcreqwritetype;
-  char *kdcreqreadfile;
-  int kdcreqreadtype;
-  char *kdcrepwritefile;
-  int kdcrepwritetype;
-  char *kdcrepreadfile;
-  int kdcrepreadtype;
-  /* ap */
-  char *apreqreadfile;
-  int apreqreadtype;
   char *servername;
-  char *authenticatorreadfile;
-  int authenticatorreadtype;
-  char *authenticatordatareadfile;
-  int authenticatordatareadtype;
-  char *authenticatordata;
   /* crypto */
   int algorithm;
   int encrypt_p;
@@ -224,6 +202,10 @@ struct arguments
   char *outputfile;
   int outputtype;
 };
+
+const char *program_name = PACKAGE;
+const char *argp_program_version = PACKAGE_STRING;
+const char *argp_program_bug_address = PACKAGE_BUGREPORT;
 
 int
 crypto (Shishi * handle, struct arguments arg)
@@ -438,10 +420,6 @@ crypto (Shishi * handle, struct arguments arg)
 
   return 0;
 }
-
-const char *program_name = PACKAGE;
-const char *argp_program_version = PACKAGE_STRING;
-const char *argp_program_bug_address = PACKAGE_BUGREPORT;
 
 static void
 parse_filename (char *arg, int *type, char **var)
@@ -873,8 +851,8 @@ main (int argc, char *argv[])
   if (arg.client)
     {
       rc = shishi_parse_name (handle, arg.client,
-			      arg.cname ? NULL : &arg.cname,
-			      arg.realm ? NULL : &arg.realm);
+			      (char **) (arg.cname ? NULL : &arg.cname),
+			      (char **) (arg.realm ? NULL : &arg.realm));
 
       if (rc != SHISHI_OK)
 	error (1, 0, "Could not parse principal \"%s\": %s\n", arg.client,
@@ -970,7 +948,7 @@ main (int argc, char *argv[])
 
 	memset (&hint, 0, sizeof (hint));
 	hint.client = (char *) arg.cname;
-	hint.server = (char *) arg.sname ? arg.sname : arg.tgtname;
+	hint.server = (char *) (arg.sname ? arg.sname : arg.tgtname);
 
 	tkt = shishi_tkts_get (shishi_tkts_default (handle), &hint);
 	if (!tkt)
