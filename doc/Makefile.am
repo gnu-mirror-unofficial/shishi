@@ -18,7 +18,7 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-SUBDIRS = reference
+SUBDIRS = reference man
 
 shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
 	shishi-api-ticket.texi shishi-api-tkt.texi shishi-api-tkts.texi \
@@ -29,15 +29,12 @@ shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
 	shishi-api-crypto.texi shishi-api-nettle.texi shishi-api-version.texi \
 	shishi-api-error.texi shishi-api-error-labels.texi
 
-generated = shishi.txt shishi.html shishi.ps shishi.pdf $(shishi_texi_auto_deps)
-
-man_MANS = shishi.1
+generated = shishi.txt shishi.html shishi.ps shishi.pdf \
+	$(shishi_texi_auto_deps)
 
 MAINTAINERCLEANFILES = $(generated)
 
-DISTCLEANFILES = $(man_MANS)
-
-EXTRA_DIST = gdoc $(man_MANS) $(generated)
+EXTRA_DIST = gdoc $(generated)
 
 info_TEXINFOS = shishi.texi
 ps_TEXINFOS = shishi.texi
@@ -103,12 +100,6 @@ shishi-api-error-labels.texi: $(top_srcdir)/lib/error.c
 
 shishi-api-version.texi: $(top_srcdir)/lib/version.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi.1: $(top_srcdir)/src/shishi.c $(top_builddir)/src/shishi
-	$(HELP2MAN) \
-		--name="kerberos 5 implementation" \
-		--help-option="--program-name shishi --help" \
-		--output=$@ $(top_builddir)/src/shishi
 
 # Texinfo:
 
