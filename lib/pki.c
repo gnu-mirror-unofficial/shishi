@@ -1,5 +1,5 @@
 /* pki.c --- Public Key Infrastructure support functions for Shishi.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -20,6 +20,9 @@
  */
 
 #include "internal.h"
+
+#define X509KEY_FILE "client.key"
+#define X509CERT_FILE "client.certs"
 
 /**
  * shishi_x509cert_default_file_guess:

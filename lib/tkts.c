@@ -28,6 +28,8 @@ struct Shishi_tkts
   int ntkts;
 };
 
+#define TICKET_FILE "tickets"
+
 /**
  * shishi_tkts_default_file_guess:
  *

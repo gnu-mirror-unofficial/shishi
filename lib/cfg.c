@@ -468,6 +468,8 @@ shishi_cfg_default_systemfile (Shishi * handle)
   return SYSTEMCFGFILE;
 }
 
+#define BASE_DIR "/.shishi"
+
 /**
  * shishi_cfg_default_userdirectory:
  * @handle: Shishi library handle create by shishi_init().
@@ -518,6 +520,8 @@ shishi_cfg_userdirectory_file (Shishi * handle, const char *file)
 
   return out;
 }
+
+#define USERCFG_FILE "shishi.conf"
 
 /**
  * shishi_cfg_default_userfile:
