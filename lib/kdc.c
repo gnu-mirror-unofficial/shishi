@@ -202,10 +202,6 @@ shishi_kdc_copy_crealm (Shishi * handle,
   size_t buflen;
   int res;
 
-#if 0
-  buf[0] = '\0';		/* XXX if crealm is empty, buflen == 0 which
-				   causes libtasn1 to strlen(buf)... */
-#endif
   res = shishi_asn1_read2 (handle, encticketpart, "crealm", &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
