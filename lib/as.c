@@ -284,6 +284,7 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
 /**
  * shishi_as_rep_build:
  * @as: structure that holds information about AS exchange
+ * @key: user's key, used to encrypt the encrypted part of the AS-REP.
  *
  * Build AS-REP.
  *
