@@ -1,5 +1,5 @@
 /* kdcreq.c --- Key distribution (AS/TGS) request functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -589,7 +589,7 @@ shishi_kdcreq_set_realmserver (Shishi * handle,
  *
  * Get "till" field (i.e. "endtime") in KDC-REQ, as zero-terminated
  * string.  The string is typically 15 characters long.  The string is
- * allocate by this function, and it is the responsibility of the
+ * allocated by this function, and it is the responsibility of the
  * caller to deallocate it.  Note that the output length @realmlen
  * does not include the terminating zero.
  *

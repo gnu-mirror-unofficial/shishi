@@ -1,5 +1,5 @@
 /* asn1.c --- Utilities to manipulate RFC 1510 ASN.1 types.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -143,6 +143,8 @@ shishi_asn1_read_inline (Shishi * handle, Shishi_asn1 node,
  * @datalen: actual size of output buffer.
  *
  * Extract data stored in a ASN.1 field into a newly allocated buffer.
+ * The buffer will always be zero terminated, even though @datalen
+ * will not include the added zero.
  *
  * Return value: Returns SHISHI_OK if successful,
  *   SHISHI_ASN1_NO_ELEMENT if the element do not exist,
