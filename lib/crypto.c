@@ -472,6 +472,8 @@ simplified_dencrypt (Shishi * handle,
 	CBC_DECRYPT (&des, des_decrypt, inlen, *out, in);
       else
 	CBC_ENCRYPT (&des, des_encrypt, inlen, *out, in);
+      if (iv)
+	memcpy (iv, des.iv, sizeof (des.iv));
       break;
 
     case SHISHI_DES3_CBC_HMAC_SHA1_KD:
@@ -489,6 +491,8 @@ simplified_dencrypt (Shishi * handle,
 	CBC_DECRYPT (&des3, des3_decrypt, inlen, *out, in);
       else
 	CBC_ENCRYPT (&des3, des3_encrypt, inlen, *out, in);
+      if (iv)
+	memcpy (iv, des3.iv, sizeof (des3.iv));
       break;
 
     case SHISHI_AES128_CTS_HMAC_SHA1_96:
@@ -509,6 +513,8 @@ simplified_dencrypt (Shishi * handle,
 			       shishi_key_value (key));
 	  CBC_CTS_ENCRYPT (&aes, aes_encrypt, inlen, *out, in);
 	}
+      if (iv)
+	memcpy (iv, aes.iv, sizeof (aes.iv));
       break;
     }
 
@@ -1482,7 +1488,8 @@ shishi_checksum (Shishi * handle,
  * @key: key to encrypt with.
  * @keyusage: integer specifying what this key is encrypting.
  * @etype: integer specifying what decryption method to use.
- * @iv: input array with initialization vector.
+ * @iv: on input, array with initialization vector, on ouput array
+ *      with updated initialization vector
  * @ivlen: size of input array with initialization vector.
  * @in: input array with data to encrypt.
  * @inlen: size of input array with data to encrypt.
@@ -1548,6 +1555,9 @@ shishi_encrypt_iv_etype (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @key: key to encrypt with.
  * @keyusage: integer specifying what this key is encrypting.
+ * @iv: on input, array with initialization vector, on ouput array
+ *      with updated initialization vector
+ * @ivlen: size of input array with initialization vector.
  * @in: input array with data to encrypt.
  * @inlen: size of input array with data to encrypt.
  * @out: output array with encrypted data.
@@ -1609,7 +1619,8 @@ shishi_encrypt (Shishi * handle,
  * @key: key to decrypt with.
  * @keyusage: integer specifying what this key is decrypting.
  * @etype: integer specifying what decryption method to use.
- * @iv: input array with initialization vector.
+ * @iv: on input, array with initialization vector, on ouput array
+ *      with updated initialization vector
  * @ivlen: size of input array with initialization vector.
  * @in: input array with data to decrypt.
  * @inlen: size of input array with data to decrypt.
@@ -1675,7 +1686,8 @@ shishi_decrypt_iv_etype (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @key: key to decrypt with.
  * @keyusage: integer specifying what this key is decrypting.
- * @iv: input array with initialization vector.
+ * @iv: on input, array with initialization vector, on ouput array
+ *      with updated initialization vector
  * @ivlen: size of input array with initialization vector.
  * @in: input array with data to decrypt.
  * @inlen: size of input array with data to decrypt.
