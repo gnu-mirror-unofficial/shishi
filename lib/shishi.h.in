@@ -1144,8 +1144,8 @@ extern int shishi_enckdcreppart_flags_set (Shishi * handle,
 /* kdc.c */
 extern int shishi_as_derive_salt (Shishi * handle,
 				  Shishi_asn1 asreq,
-				  Shishi_asn1 asrep, char *salt,
-				  size_t * saltlen);
+				  Shishi_asn1 asrep,
+				  char **salt, size_t * saltlen);
 extern int shishi_tgs_process (Shishi * handle,
 			       Shishi_asn1 tgsreq,
 			       Shishi_asn1 tgsrep,
