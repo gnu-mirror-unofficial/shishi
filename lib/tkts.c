@@ -1018,7 +1018,6 @@ Shishi_tkt *
 shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 {
   Shishi_tkt *tkt, *tgt;
-  int rc;
 
   /* If we already have a matching ticket, avoid getting a new one. */
   hint->startpos = 0;
