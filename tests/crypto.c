@@ -213,7 +213,6 @@ str2key[] =
 #define S_CARON "\xC5\xA1"
 #define C_ACUTE "\xC4\x87"
 #define G_CLEF "\xF0\x9D\x84\x9E"
-#ifdef USE_GCRYPT
   {
   "password",
       "ATHENA.MIT.EDUraeburn",
@@ -242,7 +241,6 @@ str2key[] =
   "NNNN6666",
       "FFFFAAAA", "\xC4\xBF\x6B\x25\xAD\xF7\xA4\xF8", SHISHI_DES_CBC_MD5}
   ,
-#endif
   {
   "password",
       "ATHENA.MIT.EDUraeburn",
@@ -734,10 +732,9 @@ main (int argc, char *argv[])
       if (verbose)
 	printf ("PKCS5 entry %d\n", i);
 
-      res = shishi_pbkdf2_sha1 (pkcs5[i].password,
-				strlen (pkcs5[i].password),
-				pkcs5[i].salt,
-				strlen (pkcs5[i].salt),
+      res = shishi_pbkdf2_sha1 (handle,
+				pkcs5[i].password, strlen (pkcs5[i].password),
+				pkcs5[i].salt, strlen (pkcs5[i].salt),
 				pkcs5[i].iterations, pkcs5[i].dklen, out);
       if (res != SHISHI_OK)
 	{

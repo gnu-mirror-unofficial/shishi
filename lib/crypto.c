@@ -20,16 +20,6 @@
  */
 
 #include "internal.h"
-#ifdef USE_GCRYPT
-#include <gcrypt.h>
-#else
-#include "hmac.h"
-#include "des.h"
-#include "aes.h"
-#include "cbc.h"
-#include "cbc-cts.h"
-#include "cbc-mac.h"
-#endif
 
 static void
 escapeprint (const char *str, int len)
@@ -2066,45 +2056,6 @@ shishi_decrypt (Shishi * handle,
 }
 
 /**
- * shishi_randomize:
- * @handle: shishi handle as allocated by shishi_init().
- * @data: output array to be filled with random data.
- * @datalen: size of output array.
- *
- * Store cryptographically strong random data of given size in the
- * provided buffer.
- *
- * Return value: Returns %SHISHI_OK iff successful.
- **/
-int
-shishi_randomize (Shishi * handle, char *data, size_t datalen)
-{
-#ifdef USE_GCRYPT
-  gcry_randomize (data, datalen, GCRY_STRONG_RANDOM);
-#else
-  int fd;
-  char *device;
-
-  device = "/dev/urandom";
-
-  fd = open (device, O_RDONLY);
-  if (fd < 0)
-    {
-      shishi_error_printf (handle, "Could not open random device: %s\n",
-			   strerror (errno));
-      return SHISHI_FOPEN_ERROR;
-    }
-  else
-    {
-      read (fd, data, datalen);
-      close (fd);
-    }
-#endif
-
-  return SHISHI_OK;
-}
-
-/**
  * shishi_n_fold:
  * @handle: shishi handle as allocated by shishi_init().
  * @in: input array with data to decrypt.
@@ -2143,7 +2094,7 @@ shishi_n_fold (Shishi * handle,
      to yield a n-bit result denoted <X>_n.
    */
 
-  a = (char *) xmemdup (a, in, m);
+  a = (char *) xmemdup (in, m);
 
   lcmmn = lcm (m, n);
 
@@ -2394,6 +2345,165 @@ shishi_dk (Shishi * handle,
 			      derivedkey);
   if (res != SHISHI_OK)
     return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_pbkdf2_sha1:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @P: input password, an octet string
+ * @Plen: length of password, an octet string
+ * @S: input salt, an octet string
+ * @Slen: length of salt, an octet string
+ * @c: iteration count, a positive integer
+ * @dkLen: intended length in octets of the derived key, a positive integer,
+ *   at most (2^32 - 1) * hLen.  The DK array must have room for this many
+ *   characters.
+ * @DK: output derived key, a dkLen-octet string
+ *
+ * Derive key using the PBKDF2 defined in PKCS5.  PBKDF2 applies a
+ * pseudorandom function to derive keys. The length of the derived key
+ * is essentially unbounded. (However, the maximum effective search
+ * space for the derived key may be limited by the structure of the
+ * underlying pseudorandom function, which is this function is always
+ * SHA1.)
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_pbkdf2_sha1 (Shishi * handle,
+		    const char *P, size_t Plen,
+		    const char *S, size_t Slen,
+		    unsigned int c,
+		    unsigned int dkLen, char *DK)
+{
+  unsigned int hLen = 20;
+  char U[20];
+  char T[20];
+  unsigned int u;
+  unsigned int l;
+  unsigned int r;
+  unsigned int i;
+  unsigned int k;
+  char *p;
+  int rc;
+
+  if (c == 0)
+    return SHISHI_PKCS5_INVALID_ITERATION_COUNT;
+
+  if (dkLen == 0)
+    return SHISHI_PKCS5_INVALID_DERIVED_KEY_LENGTH;
+
+  /*
+   *
+   *  Steps:
+   *
+   *     1. If dkLen > (2^32 - 1) * hLen, output "derived key too long" and
+   *        stop.
+   */
+
+  if (dkLen > 4294967295U)
+    return SHISHI_PKCS5_DERIVED_KEY_TOO_LONG;
+
+  /*
+   *     2. Let l be the number of hLen-octet blocks in the derived key,
+   *        rounding up, and let r be the number of octets in the last
+   *        block:
+   *
+   *                  l = CEIL (dkLen / hLen) ,
+   *                  r = dkLen - (l - 1) * hLen .
+   *
+   *        Here, CEIL (x) is the "ceiling" function, i.e. the smallest
+   *        integer greater than, or equal to, x.
+   */
+
+  l = dkLen / hLen;
+  if (dkLen % hLen)
+    l++;
+  r = dkLen - (l - 1) * hLen;
+
+  /*
+   *     3. For each block of the derived key apply the function F defined
+   *        below to the password P, the salt S, the iteration count c, and
+   *        the block index to compute the block:
+   *
+   *                  T_1 = F (P, S, c, 1) ,
+   *                  T_2 = F (P, S, c, 2) ,
+   *                  ...
+   *                  T_l = F (P, S, c, l) ,
+   *
+   *        where the function F is defined as the exclusive-or sum of the
+   *        first c iterates of the underlying pseudorandom function PRF
+   *        applied to the password P and the concatenation of the salt S
+   *        and the block index i:
+   *
+   *                  F (P, S, c, i) = U_1 \xor U_2 \xor ... \xor U_c
+   *
+   *        where
+   *
+   *                  U_1 = PRF (P, S || INT (i)) ,
+   *                  U_2 = PRF (P, U_1) ,
+   *                  ...
+   *                  U_c = PRF (P, U_{c-1}) .
+   *
+   *        Here, INT (i) is a four-octet encoding of the integer i, most
+   *        significant octet first.
+   *
+   *     4. Concatenate the blocks and extract the first dkLen octets to
+   *        produce a derived key DK:
+   *
+   *                  DK = T_1 || T_2 ||  ...  || T_l<0..r-1>
+   *
+   *     5. Output the derived key DK.
+   *
+   *  Note. The construction of the function F follows a "belt-and-
+   *  suspenders" approach. The iterates U_i are computed recursively to
+   *  remove a degree of parallelism from an opponent; they are exclusive-
+   *  ored together to reduce concerns about the recursion degenerating
+   *  into a small set of values.
+   *
+   */
+
+  for (i = 1; i <= l; i++)
+    {
+      memset (T, 0, hLen);
+
+      for (u = 1; u <= c; u++)
+	{
+	  if (u == 1)
+	    {
+	      char *tmp;
+	      size_t tmplen = Slen + 4;
+
+	      tmp = alloca (tmplen);
+
+	      memcpy (tmp, S, Slen);
+	      tmp[Slen + 0] = (i & 0xff000000) >> 24;
+	      tmp[Slen + 1] = (i & 0x00ff0000) >> 16;
+	      tmp[Slen + 2] = (i & 0x0000ff00) >> 8;
+	      tmp[Slen + 3] = (i & 0x000000ff) >> 0;
+
+	      rc = shishi_hmac_sha1 (handle, P, Plen, tmp, tmplen, &p, &hLen);
+	    }
+	  else
+	    {
+	      rc = shishi_hmac_sha1 (handle, P, Plen, U, hLen, &p, &hLen);
+	    }
+
+	  if (rc != SHISHI_OK)
+	    return rc;
+
+	  memcpy (U, p, hLen);
+
+	  free (p);
+
+	  for (k = 0; k < hLen; k++)
+	    T[k] ^= U[k];
+	}
+
+      memcpy (DK + (i - 1) * hLen, T, i == l ? r : hLen);
+    }
 
   return SHISHI_OK;
 }

@@ -42,6 +42,92 @@ shishi_crypto_init (void)
   return SHISHI_OK;
 }
 
+/**
+ * shishi_randomize:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @data: output array to be filled with random data.
+ * @datalen: size of output array.
+ *
+ * Store cryptographically strong random data of given size in the
+ * provided buffer.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_randomize (Shishi * handle, char *data, size_t datalen)
+{
+  gcry_randomize (data, datalen, GCRY_STRONG_RANDOM);
+  return SHISHI_OK;
+}
+
+int
+shishi_md4 (Shishi * handle,
+	    const char *in, size_t inlen,
+	    char **out, size_t *outlen)
+{
+  gcry_md_hd_t hd;
+  gpg_error_t err;
+  char *p;
+
+  err = gcry_md_open (&hd, GCRY_MD_MD4, 0);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "Libgcrypt cannot open MD4 handle");
+      shishi_error_set (handle, gpg_strerror (err));
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  gcry_md_write (hd, in, inlen);
+
+  p = gcry_md_read (hd, GCRY_MD_MD4);
+  if (p == NULL)
+    {
+      shishi_error_printf (handle, "Libgcrypt failed to compute hash");
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  *outlen = gcry_md_get_algo_dlen (GCRY_MD_MD4);
+  *out = xmemdup (p, *outlen);
+
+  gcry_md_close (hd);
+
+  return SHISHI_OK;
+}
+
+int
+shishi_md4 (Shishi * handle,
+	    const char *in, size_t inlen,
+	    char **out, size_t *outlen)
+{
+  gcry_md_hd_t hd;
+  gpg_error_t err;
+  char *p;
+
+  err = gcry_md_open (&hd, GCRY_MD_MD5, 0);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "Libgcrypt cannot open MD5 handle");
+      shishi_error_set (handle, gpg_strerror (err));
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  gcry_md_write (hd, in, inlen);
+
+  p = gcry_md_read (hd, GCRY_MD_MD5);
+  if (p == NULL)
+    {
+      shishi_error_printf (handle, "Libgcrypt failed to compute hash");
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  *outlen = gcry_md_get_algo_dlen (GCRY_MD_MD5);
+  *out = xmemdup (p, *outlen);
+
+  gcry_md_close (hd);
+
+  return SHISHI_OK;
+}
+
 int
 shishi_hmac_sha1 (Shishi * handle,
 		  const char *key, size_t keylen,
@@ -79,7 +165,7 @@ shishi_hmac_sha1 (Shishi * handle,
     }
 
   *outhashlen = hlen;
-  *outhash = xmemdup (*outhash, hash, *outhashlen);
+  *outhash = xmemdup (hash, *outhashlen);
 
   gcry_md_close (mdh);
 
@@ -172,6 +258,58 @@ shishi_des (Shishi * handle, int decryptp,
 			   ivout, ivoutlen,
 			   in, inlen,
 			   out, outlen);
+}
+
+int
+shishi_des_cbc_mac (Shishi * handle,
+		    const char key[8],
+		    const char iv[8],
+		    const char *in, size_t inlen,
+		    char *out[8])
+{
+  gcry_cipher_hd_t ch;
+  gpg_error_t err;
+  int res = SHISHI_CRYPTO_INTERNAL_ERROR;
+
+  err = gcry_cipher_open (&ch, GCRY_CIPHER_DES,
+			  GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES-CBC-MAC not available in libgcrypt");
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  err = gcry_cipher_setkey (ch, key, 8);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES setkey failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      goto done;
+    }
+
+  err = gcry_cipher_setiv (ch, iv, 8);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES setiv failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      goto done;
+    }
+
+  *out = xmalloc (8);
+
+  err = gcry_cipher_encrypt (ch, *out, 8, in, inlen);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES encrypt failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      goto done;
+    }
+
+  return SHISHI_OK;
+
+ done:
+  gcry_cipher_close (ch);
+  return res;
 }
 
 int

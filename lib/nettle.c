@@ -31,10 +31,101 @@
 #include "cbc-mac.h"
 
 int
-shishi_cipher_init (void)
+shishi_crypto_init (void)
 {
   return SHISHI_OK;
 }
+
+/**
+ * shishi_randomize:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @data: output array to be filled with random data.
+ * @datalen: size of output array.
+ *
+ * Store cryptographically strong random data of given size in the
+ * provided buffer.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_randomize (Shishi * handle, char *data, size_t datalen)
+{
+  int fd;
+  char *device;
+  size_t len = 0;
+  int rc;
+
+  device = "/dev/random";
+
+  fd = open (device, O_RDONLY);
+  if (fd < 0)
+    {
+      shishi_error_printf (handle, "Could not open random device: %s",
+			   strerror (errno));
+      return SHISHI_FILE_ERROR;
+    }
+
+  do
+    {
+      ssize_t tmp;
+
+      tmp = read (fd, data, datalen);
+
+      if (tmp < 0)
+	{
+	  shishi_error_printf (handle, "Could not read from random device: %s",
+			       strerror (errno));
+	  return SHISHI_FILE_ERROR;
+	}
+
+      len += tmp;
+
+      if (len < datalen)
+	shishi_error_printf (handle, "Short read from random device: %d < %d",
+			     len, datalen);
+    }
+  while (len < datalen);
+
+  rc = close (fd);
+  if (rc < 0)
+    shishi_warn (handle, "Could not close random device: %s",
+		 strerror (errno));
+
+  return SHISHI_OK;
+}
+
+int
+shishi_md4 (Shishi * handle,
+	    const char *in, size_t inlen,
+	    char **out, size_t *outlen)
+{
+  struct md4_ctx md4;
+
+  md4_init (&md4);
+  md4_update (&md4, inlen, in);
+  *outlen = MD4_DIGEST_SIZE;
+  *out = xmalloc (*outlen);
+  md4_digest (&md4, *outlen, *out);
+
+  return SHISHI_OK;
+}
+
+int
+shishi_md5 (Shishi * handle,
+	    const char *in, size_t inlen,
+	    char **out, size_t *outlen)
+{
+  struct md5_ctx md5;
+
+  md5_init (&md5);
+  md5_update (&md5, inlen, in);
+  *outlen = MD5_DIGEST_SIZE;
+  *out = xmalloc (*outlen);
+  md5_digest (&md5, *outlen, *out);
+
+  return SHISHI_OK;
+}
+
 
 int
 shishi_hmac_sha1 (Shishi * handle,
@@ -86,8 +177,37 @@ shishi_des (Shishi * handle, int decryptp,
   if (ivout && ivoutlen)
     {
       *ivoutlen = sizeof (des.iv);
-      *ivout = xmemdup (*ivout, des.iv, *ivoutlen);
+      *ivout = xmemdup (des.iv, *ivoutlen);
     }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_des_cbc_mac (Shishi * handle,
+		    const char key[8],
+		    const char iv[8],
+		    const char *in, size_t inlen,
+		    char *out[8])
+{
+  struct CBC_MAC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
+  int rc;
+
+  rc = des_set_key (&des.ctx, key);
+  if (!rc)
+    {
+      shishi_error_printf (handle, "Nettle des_set_key() failed (%d)", rc);
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  if (iv)
+    CBC_SET_IV (&des, iv);
+  else
+    memset (des.iv, 0, DES_BLOCK_SIZE);
+
+  *out = xmalloc (8);
+
+  CBC_MAC (&des, des_encrypt, inlen, *out, in);
 
   return SHISHI_OK;
 }
@@ -125,7 +245,7 @@ shishi_3des (Shishi * handle, int decryptp,
   if (ivout && ivoutlen)
     {
       *ivoutlen = sizeof (des3.iv);
-      *ivout = xmemdup (*ivout, des3.iv, *ivoutlen);
+      *ivout = xmemdup (des3.iv, *ivoutlen);
     }
 
   return SHISHI_OK;
@@ -140,7 +260,6 @@ shishi_aes (Shishi * handle, int decryptp,
 	    char **out, size_t * outlen)
 {
   struct CBC_CTS_CTX (struct aes_ctx, AES_BLOCK_SIZE) aes;
-  int rc;
 
   *outlen = inlen;
   *out = xmalloc (*outlen);
@@ -165,7 +284,7 @@ shishi_aes (Shishi * handle, int decryptp,
       /* XXX what is the output iv for CBC-CTS mode?
 	 but is this value useful at all for that mode anyway?
 	 Mostly it is DES apps that want the updated iv, so this is ok. */
-      *ivout = xmemdup (*ivout, aes.iv, *ivoutlen);
+      *ivout = xmemdup (aes.iv, *ivoutlen);
     }
 
   return SHISHI_OK;

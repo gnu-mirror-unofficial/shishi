@@ -214,6 +214,8 @@ else
 	CRYPTO_CFLAGS="-I\$(top_srcdir)/crypto"
 	CRYPTO_LIBS="-L../crypto -lnettle"
 fi
+AM_CONDITIONAL(LIBGCRYPT, test "$libgcrypt" != "no")
+AM_CONDITIONAL(NETTLE, test "$libgcrypt" = "no")
 AC_SUBST(CRYPTO)
 AC_SUBST(CRYPTO_CFLAGS)
 AC_SUBST(CRYPTO_LIBS)

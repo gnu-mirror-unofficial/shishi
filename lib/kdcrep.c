@@ -727,8 +727,7 @@ shishi_kdcrep_decrypt (Shishi * handle,
   free (cipher);
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle,
-			   "KDCRep decryption failed, wrong password?\n");
+      shishi_error_printf (handle, "KDCRep decryption failed, wrong password?");
       return res;
     }
 

@@ -106,7 +106,7 @@ aes_string_to_key (Shishi * handle,
     }
 
   /* tkey = random2key(PBKDF2(passphrase, salt, iter_count, keylength)) */
-  res = shishi_pbkdf2_sha1 (password, passwordlen, salt, saltlen,
+  res = shishi_pbkdf2_sha1 (handle, password, passwordlen, salt, saltlen,
 			    iterations, keylen, key);
   if (res != SHISHI_OK)
     return res;

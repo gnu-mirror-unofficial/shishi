@@ -81,7 +81,8 @@ typedef enum
   SHISHI_CONNECT_ERROR = 46,
   SHISHI_VERIFY_FAILED = 47,
   SHISHI_PRIV_BAD_KEYTYPE = 48,
-  SHISHI_LAST_ERROR = 48
+  SHISHI_FILE_ERROR = 49,
+  SHISHI_LAST_ERROR = 49
 }
 Shishi_rc;
 
@@ -1242,6 +1243,13 @@ extern int shishi_time (Shishi * handle, Shishi_asn1 node,
 
 /* crypto wrappers (nettle.c, libgcrypt.c, ...) */
 extern int shishi_crypto_init (void);
+extern int shishi_randomize (Shishi * handle, char *data, size_t datalen);
+extern int shishi_md4 (Shishi * handle,
+		       const char *in, size_t inlen,
+		       char **out, size_t *outlen);
+extern int shishi_md5 (Shishi * handle,
+		       const char *in, size_t inlen,
+		       char **out, size_t *outlen);
 extern int shishi_hmac_sha1 (Shishi * handle,
 			     const char *key, size_t keylen,
 			     const char *in, size_t inlen,
@@ -1252,6 +1260,11 @@ extern int shishi_des (Shishi * handle, int decryptp,
 		       char **ivout, size_t * ivoutlen,
 		       const char *in, size_t inlen,
 		       char **out, size_t * outlen);
+extern int shishi_des_cbc_mac (Shishi * handle,
+			       const char key[8],
+			       const char iv[8],
+			       const char *in, size_t inlen,
+			       char *out[8]);
 extern int shishi_3des (Shishi * handle, int decryptp,
 			const char *key, size_t keylen,
 			const char *iv, size_t ivlen,
@@ -1378,7 +1391,6 @@ extern int shishi_verify (Shishi * handle,
 			  int cksumtype,
 			  const char *in, size_t inlen,
 			  const char *cksum, size_t cksumlen);
-extern int shishi_randomize (Shishi * handle, char *data, size_t datalen);
 extern int shishi_dk (Shishi * handle,
 		      Shishi_key * key,
 		      const char *constant, size_t constantlen,
@@ -1389,7 +1401,8 @@ extern int shishi_dr (Shishi * handle,
 		      char *derivedrandom, size_t derivedrandomlen);
 extern int shishi_n_fold (Shishi * handle, const char *in, size_t inlen,
 			  char *out, size_t outlen);
-extern int shishi_pbkdf2_sha1 (const char *P, size_t Plen,
+extern int shishi_pbkdf2_sha1 (Shishi * handle,
+			       const char *P, size_t Plen,
 			       const char *S, size_t Slen,
 			       unsigned int c, unsigned int dkLen, char *DK);
 

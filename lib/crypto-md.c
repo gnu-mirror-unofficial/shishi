@@ -39,5 +39,5 @@ md5_checksum (Shishi * handle,
 	      int cksumtype,
 	      const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return shishi_md5 (handle, in, inlen, out, outlen);
+  return shishi_md4 (handle, in, inlen, out, outlen);
 }

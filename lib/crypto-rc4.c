@@ -112,7 +112,7 @@ rc4_hmac_md5_checksum (Shishi * handle,
 		       const char *in, size_t inlen,
 		       char **out, size_t * outlen)
 {
-
+#if 0
 #if USE_GCRYPT
   gcry_md_hd_t mdh, mdh2;
   int halg = GCRY_MD_MD5;
@@ -174,7 +174,7 @@ rc4_hmac_md5_checksum (Shishi * handle,
     }
 
   *outlen = hlen;
-  *out = xmemdup (*out, hash, *outlen);
+  *out = xmemdup (hash, *outlen);
 
   gcry_md_close (mdh2);
 #else
@@ -201,6 +201,7 @@ rc4_hmac_md5_checksum (Shishi * handle,
   *out = xmalloc (*outlen);
 
   hmac_md5_digest (&ctx, *outlen, *out);
+#endif
 #endif
   return SHISHI_OK;
 }
@@ -229,44 +230,24 @@ rc4_hmac_string_to_key (Shishi * handle,
 			size_t saltlen,
 			const char *parameter, Shishi_key * outkey)
 {
-#ifdef USE_GCRYPT
-  char *hash;
-  gcry_md_hd_t hd;
-  size_t i;
+  char *tmp, *md;
+  size_t tmplen, mdlen, i;
+  int rc;
 
-  gcry_md_open (&hd, GCRY_MD_MD4, 0);
-  if (!hd)
-    return SHISHI_CRYPTO_INTERNAL_ERROR;
+  tmplen = 2*stringlen;
+  tmp = xmalloc (tmplen);
 
   for (i = 0; i < stringlen; i++)
     {
-      gcry_md_write (hd, &string[i], 1);
-      gcry_md_write (hd, "", 1);
-    }
-  hash = gcry_md_read (hd, GCRY_MD_MD4);
-  if (hash == NULL)
-    {
-      shishi_error_printf (handle, "Libgcrypt failed to compute hash");
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
+      tmp[2*i] = string[i];
+      tmp[2*i + 1] = '\x0';
     }
 
-  shishi_key_value_set (outkey, hash);
+  rc = shishi_md4 (handle, tmp, tmplen, &md, &mdlen);
+  if (rc != SHISHI_OK)
+    return rc;
 
-  gcry_md_close (hd);
-#else
-  struct md4_ctx md4;
-  char digest[MD4_DIGEST_SIZE];
-  size_t i;
+  shishi_key_value_set (outkey, md);
 
-  md4_init (&md4);
-  for (i = 0; i < stringlen; i++)
-    {
-      md4_update (&md4, 1, &string[i]);
-      md4_update (&md4, 1, "");
-    }
-  md4_digest (&md4, sizeof (digest), digest);
-
-  shishi_key_value_set (outkey, digest);
-#endif
   return SHISHI_OK;
 }
