@@ -62,5 +62,6 @@ EXTRA_DIST += xalloc.m4
 EXTRA_DIST += xstrndup.m4
 
 # Local changes
+EXTRA_DIST += getdomainname.m4
 EXTRA_DIST += memdup.m4
 EXTRA_DIST += xmemdup.m4

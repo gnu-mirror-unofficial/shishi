@@ -109,4 +109,6 @@ libfoo_la_SOURCES += xstrndup.h xstrndup.c
 libfoo_la_SOURCES += base64.c base64.h
 libfoo_la_SOURCES += memdup.h memdup.c
 libfoo_la_SOURCES += xmemdup.h xmemdup.c
+libfoo_la_SOURCES += getdomainname.h
+libfoo_la_SOURCES += xgetdomainname.h xgetdomainname.c
 EXTRA_DIST += README
