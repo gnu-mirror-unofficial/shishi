@@ -881,8 +881,9 @@ static struct argp argp = {
   options,
   parse_opt,
   "[CLIENT [SERVER]] [OPTION...]\n"
-    "--list [CLIENT [SERVER]]\n"
-    "--destroy [CLIENT [SERVER]]\n" "--string-to-key\n",
+  "--list [CLIENT [SERVER]]\n"
+  "--destroy [CLIENT [SERVER]]\n"
+  "--string-to-key [CLIENT] [OPTION...]\n",
   "Shishi -- A Kerberos 5 implementation",
   NULL,
   NULL,
