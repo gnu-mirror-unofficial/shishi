@@ -21,6 +21,15 @@
 
 #include "internal.h"
 
+struct Shishi_ap
+{
+  Shishi_ticket *ticket;
+  ASN1_TYPE authenticator;
+  ASN1_TYPE apreq;
+  ASN1_TYPE aprep;
+  ASN1_TYPE encapreppart;
+};
+
 #define APOPTION_RESERVED "reserved"
 #define APOPTION_USE_SESSION_KEY "use-session-key"
 #define APOPTION_MUTUAL_REQUIRED "mutual-required"
@@ -111,7 +120,7 @@ shishi_ap_data (Shishi * handle,
 /**
  * shishi_ap_get_ticket:
  * @ap: structure that holds information about AP exchange
- * 
+ *
  * Return value: Returns the ticket from the AP exchange, or NULL if
  *               not yet set or an error occured.
  **/
@@ -124,7 +133,7 @@ shishi_ap_get_ticket (Shishi_ap * ap)
 /**
  * shishi_ap_get_authenticator:
  * @ap: structure that holds information about AP exchange
- * 
+ *
  * Return value: Returns the Authenticator from the AP exchange, or
  *               NULL if not yet set or an error occured.
  **/
@@ -137,7 +146,7 @@ shishi_ap_get_authenticator (Shishi_ap * ap)
 /**
  * shishi_ap_get_apreq:
  * @ap: structure that holds information about AP exchange
- * 
+ *
  * Return value: Returns the AP-REQ from the AP exchange, or NULL if
  *               not yet set or an error occured.
  **/
@@ -150,7 +159,7 @@ shishi_ap_get_apreq (Shishi_ap * ap)
 /**
  * shishi_ap_get_aprep:
  * @ap: structure that holds information about AP exchange
- * 
+ *
  * Return value: Returns the AP-REP from the AP exchange, or NULL if
  *               not yet set or an error occured.
  **/
@@ -163,7 +172,7 @@ shishi_ap_get_aprep (Shishi_ap * ap)
 /**
  * shishi_ap_get_aprep:
  * @ap: structure that holds information about AP exchange
- * 
+ *
  * Return value: Returns the EncAPREPPart from the AP exchange, or
  *               NULL if not yet set or an error occured.
  **/
@@ -205,9 +214,6 @@ shishi_ap_reply_verify_der (Shishi * handle,
 			    Shishi_ap * ap, char *der, int derlen)
 {
   ASN1_TYPE aprep;
-  unsigned char key[MAX_KEY_LEN];
-  int keylen;
-  int etype, keytype;
   int res;
 
   aprep = shishi_d2a_aprep (handle, der, derlen);

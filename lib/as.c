@@ -21,6 +21,14 @@
 
 #include "internal.h"
 
+struct Shishi_as
+{
+  ASN1_TYPE asreq;
+  ASN1_TYPE asrep;
+  ASN1_TYPE krberror;
+  Shishi_ticket *ticket;
+};
+
 /* TODO: add shishi_as_clientserver(h,p,a,client,server) and make the
    shishi_as_cnamerealmsname function take real cname/sname pointer
    arrays. */

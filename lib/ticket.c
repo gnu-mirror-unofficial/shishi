@@ -729,7 +729,6 @@ shishi_ticket_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  puts("o");
   if (etype != shishi_key_type(key))
     return SHISHI_KDCREP_BAD_KEYTYPE;
 

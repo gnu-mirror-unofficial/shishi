@@ -21,6 +21,12 @@
 
 #include "internal.h"
 
+struct Shishi_ticketset
+{
+  Shishi_ticket **tickets;
+  int ntickets;
+};
+
 /**
  * shishi_ticketset_init:
  * @handle: shishi handle as allocated by shishi_init().

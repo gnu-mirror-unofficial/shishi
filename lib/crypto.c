@@ -287,7 +287,10 @@ static int
 simplified_encrypt (Shishi * handle,
 		    Shishi_key *key,
 		    int keyusage,
-		    char *in, int inlen, char *out, int *outlen)
+		    char *in,
+		    int inlen,
+		    char *out,
+		    int *outlen)
 {
   int res;
   int padzerolen = 0;
@@ -362,7 +365,10 @@ static int
 simplified_decrypt (Shishi * handle,
 		    Shishi_key *key,
 		    int keyusage,
-		    char *in, int inlen, char *out, int *outlen)
+		    char *in,
+		    int inlen,
+		    char *out,
+		    int *outlen)
 {
   int res;
 

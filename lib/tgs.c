@@ -24,10 +24,21 @@
 
 #include "internal.h"
 
+struct Shishi_tgs
+{
+  ASN1_TYPE tgsreq;
+  Shishi_ticket *tgticket;
+  ASN1_TYPE authenticator;
+  ASN1_TYPE apreq;
+  ASN1_TYPE tgsrep;
+  ASN1_TYPE krberror;
+  Shishi_ticket *ticket;
+};
+
 /**
  * shishi_tgs_get_tgsreq:
  * @tgs: structure that holds information about TGS exchange
- * 
+ *
  * Return value: Returns the generated TGS-REQ from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
@@ -40,7 +51,7 @@ shishi_tgs_get_tgsreq (Shishi_tgs * tgs)
 /**
  * shishi_tgs_get_tgticket:
  * @tgs: structure that holds information about TGS exchange
- * 
+ *
  * Return value: Returns the ticket-granting-ticket used in the TGS
  *               exchange, or NULL if not yet set or an error occured.
  **/
@@ -53,7 +64,7 @@ shishi_tgs_get_tgticket (Shishi_tgs * tgs)
 /**
  * shishi_tgs_get_authenticator:
  * @tgs: structure that holds information about TGS exchange
- * 
+ *
  * Return value: Returns the generated Authenticator (part of AP-REQ)
  *               from the TGS exchange, or NULL if not yet set or an
  *               error occured.
@@ -67,7 +78,7 @@ shishi_tgs_get_authenticator (Shishi_tgs * tgs)
 /**
  * shishi_tgs_get_apreq:
  * @tgs: structure that holds information about TGS exchange
- * 
+ *
  * Return value: Returns the generated AP-REQ (part of TGS-REQ) from
  *               the TGS exchange, or NULL if not yet set or an error
  *               occured.
@@ -81,7 +92,7 @@ shishi_tgs_get_apreq (Shishi_tgs * tgs)
 /**
  * shishi_tgs_get_tgsrep:
  * @tgs: structure that holds information about TGS exchange
- * 
+ *
  * Return value: Returns the received TGS-REP from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
@@ -94,7 +105,7 @@ shishi_tgs_get_tgsrep (Shishi_tgs * tgs)
 /**
  * shishi_tgs_get_krberror:
  * @tgs: structure that holds information about TGS exchange
- * 
+ *
  * Return value: Returns the received TGS-REP from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
@@ -107,7 +118,7 @@ shishi_tgs_get_krberror (Shishi_tgs * tgs)
 /**
  * shishi_tgs_get_ticket:
  * @tgs: structure that holds information about TGS exchange
- * 
+ *
  * Return value: Returns the newly aquired ticket from the TGS
  *               exchange, or NULL if not yet set or an error occured.
  **/
@@ -123,10 +134,10 @@ shishi_tgs_get_ticket (Shishi_tgs * tgs)
  * @tgticket: ticket-granting-ticket, used to authenticate the request.
  * @tgs: holds pointer to newly allocate Shishi_tgs structure.
  * @server: indicates the server to acquire ticket for.
- * 
+ *
  * Perform subsequent Kerberos 5 authentication, in order to acquire a
  * ticket for a server.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int

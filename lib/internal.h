@@ -143,12 +143,6 @@ extern char *_shishi_gettext (const char *str);
 		  SHISHI_VERBOSE_NOICE)
 #define VERBOSE(h) (h->verbose & ~VERBOSES)
 
-struct Shishi_ticketset
-{
-  Shishi_ticket **tickets;
-  int ntickets;
-};
-
 struct Shishi_kdcinfo
 {
   char *name;
@@ -160,34 +154,6 @@ struct Shishi_realminfo
   char *name;
   struct Shishi_kdcinfo *kdcaddresses;
   int nkdcaddresses;
-};
-
-struct Shishi_as
-{
-  ASN1_TYPE asreq;
-  ASN1_TYPE asrep;
-  ASN1_TYPE krberror;
-  Shishi_ticket *ticket;
-};
-
-struct Shishi_tgs
-{
-  ASN1_TYPE tgsreq;
-  Shishi_ticket *tgticket;
-  ASN1_TYPE authenticator;
-  ASN1_TYPE apreq;
-  ASN1_TYPE tgsrep;
-  ASN1_TYPE krberror;
-  Shishi_ticket *ticket;
-};
-
-struct Shishi_ap
-{
-  Shishi_ticket *ticket;
-  ASN1_TYPE authenticator;
-  ASN1_TYPE apreq;
-  ASN1_TYPE aprep;
-  ASN1_TYPE encapreppart;
 };
 
 struct Shishi

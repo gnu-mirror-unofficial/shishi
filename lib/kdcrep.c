@@ -74,10 +74,10 @@ error:
 /**
  * shishi_as_rep:
  * @handle: shishi handle as allocated by shishi_init().
- * 
+ *
  * This function creates a new AS-REP, populated with some default
  * values.
- * 
+ *
  * Return value: Returns the AS-REP or ASN1_TYPE_EMPTY on failure.
  **/
 ASN1_TYPE
@@ -89,10 +89,10 @@ shishi_as_rep (Shishi * handle)
 /**
  * shishi_tgs_rep:
  * @handle: shishi handle as allocated by shishi_init().
- * 
+ *
  * This function creates a new TGS-REP, populated with some default
  * values.
- * 
+ *
  * Return value: Returns the TGS-REP or ASN1_TYPE_EMPTY on failure.
  **/
 ASN1_TYPE
@@ -107,9 +107,9 @@ shishi_tgs_rep (Shishi * handle)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @kdcrep: KDC-REP to print.
- * 
+ *
  * Print ASCII armored DER encoding of KDC-REP to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -123,9 +123,9 @@ shishi_kdcrep_print (Shishi * handle, FILE * fh, ASN1_TYPE kdcrep)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @kdcrep: KDC-REP to save.
- * 
+ *
  * Print  DER encoding of KDC-REP to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -141,10 +141,10 @@ shishi_kdcrep_save (Shishi * handle, FILE * fh, ASN1_TYPE kdcrep)
  * @filetype: input variable specifying type of file to be written,
  *            see Shishi_filetype.
  * @filename: input variable with filename to write to.
- * 
+ *
  * Write KDC-REP to file in specified TYPE.  The file will be truncated
  * if it exists.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -187,10 +187,10 @@ shishi_kdcrep_to_file (Shishi * handle, ASN1_TYPE kdcrep,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @kdcrep: output variable with newly allocated KDC-REP.
- * 
+ *
  * Read ASCII armored DER encoded KDC-REP from file and populate given
  * variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -204,9 +204,9 @@ shishi_kdcrep_parse (Shishi * handle, FILE * fh, ASN1_TYPE * kdcrep)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @kdcrep: output variable with newly allocated KDC-REP.
- * 
+ *
  * Read DER encoded KDC-REP from file and populate given variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -222,9 +222,9 @@ shishi_kdcrep_read (Shishi * handle, FILE * fh, ASN1_TYPE * kdcrep)
  * @filetype: input variable specifying type of file to be read,
  *            see Shishi_filetype.
  * @filename: input variable with filename to read from.
- * 
+ *
  * Read KDC-REP from file in specified TYPE.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -267,9 +267,9 @@ shishi_kdcrep_from_file (Shishi * handle, ASN1_TYPE * kdcrep,
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcrep: KDC-REP variable to get value from.
  * @etype: output variable that holds the value.
- * 
+ *
  * Extract KDC-REP.enc-part.etype.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -285,9 +285,9 @@ shishi_kdcrep_get_enc_part_etype (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcrep: KDC-REP variable to get ticket from.
  * @ticket: output variable to hold extracted ticket.
- * 
+ *
  * Extract ticket from KDC-REP.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -422,7 +422,6 @@ shishi_kdcrep_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  puts("a");
   if (etype != shishi_key_type(key))
     return SHISHI_KDCREP_BAD_KEYTYPE;
 
