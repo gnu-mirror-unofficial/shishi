@@ -268,6 +268,9 @@ kdc_listen ()
     printf ("Listening on %d ports...\n", maxfd);
 }
 
+/* Destroy listenspec element and return pointer to element before the
+   removed element, or NULL if the first element was removed (or the
+   destroyed list element wasn't in the list). */
 static struct listenspec *
 kdc_close (struct listenspec *ls)
 {
@@ -292,7 +295,10 @@ kdc_close (struct listenspec *ls)
   if (ls->str)
     free (ls->str);
 
-  tmp = ls->next;
+  for (tmp = listenspec; tmp && tmp->next != ls; tmp = tmp->next)
+    ;
+  if (tmp)
+    tmp->next = ls->next;
 
   free (ls);
 
@@ -304,10 +310,9 @@ kdc_unlisten (void)
 {
   struct listenspec *ls = listenspec;
 
-  while (ls)
-    ls = kdc_close (ls);
-
-  listenspec = NULL;
+  while (ls->next)
+    ls = kdc_close (ls->next);
+  listenspec = kdc_close (ls);
 }
 
 static void
@@ -502,7 +507,7 @@ ctrlc (int signum)
 static void
 kdc_loop (void)
 {
-  struct listenspec *ls, *last;
+  struct listenspec *ls;
   fd_set readfds;
   int maxfd = 0, i;
   int rc;
@@ -533,12 +538,12 @@ kdc_loop (void)
 	  continue;
 	}
 
-      for (ls = listenspec, last = NULL; ls; last = ls, ls = ls->next)
+      for (ls = listenspec; ls; ls = ls->next)
 	if (FD_ISSET (ls->sockfd, &readfds))
 	  if (ls->type == SOCK_STREAM && ls->listening)
 	    kdc_accept (ls);
 	  else if (kdc_read (ls) < 0)
-	    last->next = kdc_close (ls);
+	    ls = kdc_close (ls);
 	  else
 	    kdc_handle2 (ls);
     }
