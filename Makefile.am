@@ -20,9 +20,9 @@
 
 DISTCHECK_CONFIGURE_FLAGS = --disable-gtk-doc
 
-MOST_SUBDIRS = m4 po gl lib src tests examples doc extra
+MOST_SUBDIRS = m4 po gl lib src tests examples doc
 
-DIST_SUBDIRS = crypto asn1 $(MOST_SUBDIRS)
+DIST_SUBDIRS = crypto asn1 $(MOST_SUBDIRS) extra
 
 SUBDIRS = @CRYPTO@ @ASN1@ $(MOST_SUBDIRS)
 
@@ -43,6 +43,10 @@ indent:
 	(cd lib && make indent)
 	(cd src && make indent)
 	(cd tests && make indent)
+
+.PHONY: extra
+extra:
+	(cd extra && make)
 
 ChangeLog:
 	test ! -f .cvsusers || \
