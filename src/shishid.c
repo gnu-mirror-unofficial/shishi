@@ -536,7 +536,7 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
   int buflen;
   int err;
   char *username, *servername, *realm;
-  int32_t etype;
+  int32_t etype, keyusage;
   int i;
 
   tkt = shishi_tgs_tkt (tgs);
@@ -635,11 +635,17 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
     return err;
 
   if (err == SHISHI_OK)
-    keytouse = subkey;
+    {
+      keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY;
+      keytouse = subkey;
+    }
   else
-    keytouse = sessiontktkey;
+    {
+      keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY;
+      keytouse = sessiontktkey;
+    }
 
-  err = shishi_tgs_rep_build (tgs, keytouse);
+  err = shishi_tgs_rep_build (tgs, keyusage, keytouse);
   if (err)
     return err;
 
@@ -981,7 +987,7 @@ kdc_loop (Shishi * handle, struct arguments *arg)
 		    close (ls->sockfd);
 		    ls->sockfd = 0;
 		  }
-		else
+		else if (read_bytes > 0)
 		  {
 		    ls->bufpos += read_bytes;
 		    ls->buf[ls->bufpos] = '\0';
