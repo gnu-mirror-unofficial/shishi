@@ -201,10 +201,6 @@ AC_FUNC_STRFTIME
 
 AC_CONFIG_SUBDIRS(asn1 crypto argp gdbm extra/inetutils)
 
-enable_encryption=yes; export enable_encryption
-enable_authentication=yes; export enable_authentication
-with_shishi=yes; export with_shishi
-
 AC_CONFIG_FILES(Makefile intl/Makefile po/Makefile.in m4/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
 	extra/Makefile shishi.pc shishi.conf shishi.skel)

@@ -26,7 +26,6 @@
 #include <stdio.h>
 #include <arpa/telnet.h>
 #include <shishi.h>
-#include <krb5.h>
 #include <assert.h>
 
 #include <com_err.h>
@@ -42,10 +41,6 @@
 #include "auth.h"
 #include "misc.h"
 
-#ifndef KRB5_ENV_CCNAME
-# define KRB5_ENV_CCNAME "KRB5CCNAME"
-#endif
-
 #ifdef  ENCRYPTION
 #include "encrypt.h"
 #endif
@@ -58,16 +53,9 @@ static unsigned char str_data[2048] = { IAC, SB, TELOPT_AUTHENTICATION, 0,
 #define KRB_ACCEPT           2       /* Accepted */
 #define KRB_RESPONSE         3       /* Response for mutual auth. */
 
-krb5_auth_context auth_context = 0;
-krb5_context telnet_context = 0;
 Shishi *shishi_handle = 0;
 Shishi_ap *auth_handle;
 
-static  krb5_data auth; /* session key for telnet */
-static  krb5_ticket *ticket = NULL; /* telnet matches the AP_REQ and
-				       AP_REP with this */
-
-krb5_keyblock   *session_key = 0;
 char *telnet_srvtab = NULL;
 char *telnet_krb5_realm = NULL;
 
@@ -114,38 +102,20 @@ krb5shishi_init (Authenticator *ap, int server)
   str_data[3] = server ? TELQUAL_REPLY : TELQUAL_IS;
   if (shishi_handle == 0 && shishi_init(&shishi_handle))
     return 0;
-  if (telnet_context == 0 && krb5_init_context(&telnet_context))
-    return 0;
   return 1;
 }
 
 void
 krb5shishi_cleanup ()
 {
-  krb5_ccache ccache;
-  char *ccname;
-
-  if (telnet_context == 0)
-    return;
-
   if (shishi_handle == 0)
     return;
-
-  ccname = getenv (KRB5_ENV_CCNAME);
-  if (ccname)
-    {
-      if (!krb5_cc_resolve (telnet_context, ccname, &ccache))
-	krb5_cc_destroy (telnet_context, ccache);
-  }
-
-  krb5_free_context (telnet_context);
-  telnet_context = 0;
 
   shishi_done(shishi_handle);
   shishi_handle = 0;
 }
 
-#ifdef  ENCRYPTION
+#ifdef  FOOOOOOOOOENCRYPTION
 
 void
 encryption_init (krb5_creds *creds)
@@ -296,7 +266,7 @@ krb5shishi_send (Authenticator *ap)
   return 1;
 }
 
-#ifdef ENCRYPTION
+#ifdef FOOOOOOOOOENCRYPTION
 void
 telnet_encrypt_key (Session_Key *skey)
 {
@@ -395,6 +365,7 @@ krb5shishi_status (Authenticator *ap, char *name, int level)
   if (level < AUTH_USER)
     return level;
 
+#if 0
   if (UserNameRequested
       && krb5_kuserok (telnet_context, ticket->enc_part2->client,
 		       UserNameRequested))
@@ -403,6 +374,8 @@ krb5shishi_status (Authenticator *ap, char *name, int level)
       strcpy (name, UserNameRequested);
       return AUTH_VALID;
     } 
+#endif
+
   return AUTH_USER;
 }
 
@@ -410,6 +383,7 @@ int
 krb5shishi_is_auth (Authenticator *ap, unsigned char *data, int cnt,
 		    char *errbuf, int errbuflen)
 {
+#if 0
   int r = 0;
   krb5_keytab keytabid = 0;
   krb5_authenticator *authenticator;
@@ -588,6 +562,7 @@ krb5shishi_is_auth (Authenticator *ap, unsigned char *data, int cnt,
 			  &session_key);
     }
   telnet_encrypt_key (&skey);
+#endif
   return 0;
 }
     
@@ -619,15 +594,10 @@ krb5shishi_is (Authenticator *ap, unsigned char *data, int cnt)
     {
       if (!errbuf[0])
 	snprintf (errbuf, sizeof errbuf,
-		  "kerberos_is: %s", error_message(r));
+		  "kerberos_is: error");
       Data (ap, KRB_REJECT, errbuf, -1);
       DEBUG(("%s\r\n", errbuf));
       syslog (LOG_ERR, "%s", errbuf);
-      if (auth_context)
-	{
-	  krb5_auth_con_free (telnet_context, auth_context);
-	  auth_context = 0;
-	}
     }
 }
     

@@ -57,12 +57,12 @@ AC_ARG_ENABLE(authentication,
               [  --enable-authentication enable connection authentication],
 	      , enable_authentication=no)
 
-AC_ARG_WITH(krb4, [  --with-krb4[[=PATH]]      Compile with Kerberos IV],
-            [KERBEROS_VERSION=4
-             KERBEROS_DIR=$withval])
-AC_ARG_WITH(krb5, [  --with-krb5[[=PATH]]      Compile with Kerberos V],
-            [KERBEROS_VERSION=5
-             KERBEROS_DIR=$withval])
+#AC_ARG_WITH(krb4, [  --with-krb4[[=PATH]]      Compile with Kerberos IV],
+#            [KERBEROS_VERSION=4
+#             KERBEROS_DIR=$withval])
+#AC_ARG_WITH(krb5, [  --with-krb5[[=PATH]]      Compile with Kerberos V],
+#            [KERBEROS_VERSION=5
+#             KERBEROS_DIR=$withval])
 AC_ARG_WITH(shishi, AC_HELP_STRING([--with-shishi],
                                    [Compile with Shishi (Kerberos 5)]))
 AC_ARG_WITH(wrap, [  --with-wrap    add tcp wrapper support])
@@ -240,67 +240,69 @@ dnl FIXME: Make this test case a bit more robust.  Is there a reason why
 dnl        KRB4 exists?
 LIBAUTH=
 INCAUTH=
-if test "$enable_encryption" = yes -o "$enable_authentication" = yes; then
-  AH_TEMPLATE(KERBEROS_IV, [Define to one if you have Kerberos IV])
-  AH_TEMPLATE(KRB4, [Define to one if you have Kerberos IV])
-  AH_TEMPLATE(KERBEROS, [Define to one if you have Kerberos])
-  AH_TEMPLATE(DES_ENCRYPTION, [FIXME])
-  AH_TEMPLATE(KERBEROS_V, [Define to one if you have Kerberos V])
-  AH_TEMPLATE(KRB5, [Define to one if you have Kerberos V])
+#if test "$enable_encryption" = yes -o "$enable_authentication" = yes; then
+#  AH_TEMPLATE(KERBEROS_IV, [Define to one if you have Kerberos IV])
+#  AH_TEMPLATE(KRB4, [Define to one if you have Kerberos IV])
+#  AH_TEMPLATE(KERBEROS, [Define to one if you have Kerberos])
+#  AH_TEMPLATE(DES_ENCRYPTION, [FIXME])
+#  AH_TEMPLATE(KERBEROS_V, [Define to one if you have Kerberos V])
+#  AH_TEMPLATE(KRB5, [Define to one if you have Kerberos V])
   AH_TEMPLATE(SHISHI, [Define to 1 if you have Shishi])
   
-  if test "$KERBEROS_VERSION" = 4; then
-    AC_CHECK_LIB(krb, krb_mk_req,
-                 [LIBAUTH=-lkrb
-                  AC_DEFINE(KERBEROS_IV)
-                  AC_DEFINE(KRB4)],
-                 -L$KERBEROS_DIR)
-    if test ".$LIBAUTH" != . ; then
-      AC_CHECK_LIB(des, des_key_sched,
-                   [LIBAUTH="$LIBAUTH -ldes"],
-                   -L$KERBEROS_DIR)
-      dnl FIXME: Fix this to one test case.
-      test "$enable_authentication" = yes -a "$ac_cv_lib_krb_krb_mk_req" = yes\
-  && AC_DEFINE(KRB4)
-      test "$enable_authentication" = yes -a "$ac_cv_lib_krb_krb_mk_req" = yes \
-  && AC_DEFINE(KERBEROS)
-      test "$enable_encryption" = yes -a "$ac_cv_lib_des_des_key_sched" = yes \
-        && AC_DEFINE(DES_ENCRYPTION)
-    fi
-  else
-    IU_CHECK_KRB5($KERBEROS_VERSION,$KERBEROS_DIR)
-    LIBAUTH=$KRB5_LIBS
-    INCAUTH=$KRB_CFLAGS
-    if test ".$LIBAUTH" != . ;then
-      case $KERBEROS_VERSION in
-      4) AC_DEFINE(KERBEROS_IV)
-         AC_DEFINE(KRB4)
-         ;;
-      5) AC_DEFINE(KERBEROS_V)
-	 AC_DEFINE(KRB5)
-         ;;
-      esac
-    fi
-  fi
-
-  if test "$with_shishi" = "yes"; then
+#  if test "$KERBEROS_VERSION" = 4; then
+#    AC_CHECK_LIB(krb, krb_mk_req,
+#                 [LIBAUTH=-lkrb
+#                  AC_DEFINE(KERBEROS_IV)
+#                  AC_DEFINE(KRB4)],
+#                 -L$KERBEROS_DIR)
+#    if test ".$LIBAUTH" != . ; then
+#      AC_CHECK_LIB(des, des_key_sched,
+#                   [LIBAUTH="$LIBAUTH -ldes"],
+#                   -L$KERBEROS_DIR)
+#      dnl FIXME: Fix this to one test case.
+#      test "$enable_authentication" = yes -a "$ac_cv_lib_krb_krb_mk_req" = yes\
+#  && AC_DEFINE(KRB4)
+#      test "$enable_authentication" = yes -a "$ac_cv_lib_krb_krb_mk_req" = yes \
+#  && AC_DEFINE(KERBEROS)
+#      test "$enable_encryption" = yes -a "$ac_cv_lib_des_des_key_sched" = yes \
+#        && AC_DEFINE(DES_ENCRYPTION)
+#    fi
+#  else
+#    IU_CHECK_KRB5($KERBEROS_VERSION,$KERBEROS_DIR)
+#    LIBAUTH=$KRB5_LIBS
+#    INCAUTH=$KRB_CFLAGS
+#    if test ".$LIBAUTH" != . ;then
+#      case $KERBEROS_VERSION in
+#      4) AC_DEFINE(KERBEROS_IV)
+#         AC_DEFINE(KRB4)
+#         ;;
+#      5) AC_DEFINE(KERBEROS_V)
+#	 AC_DEFINE(KRB5)
+#         ;;
+#      esac
+#    fi
+#  fi
+#
+#  if test "$with_shishi" = "yes"; then
     PKG_CHECK_MODULES(SHISHI, shishi >= 0.0.0)
     LIBAUTH="$LIBAUTH $SHISHI_LIBS"
     INCAUTH="$INCAUTH $SHISHI_CFLAGS"
     AC_DEFINE(SHISHI)
-  fi
-
-fi
+#  fi
+#
+#fi
 AC_SUBST(LIBAUTH)
 AC_SUBST(INCAUTH)
 
 dnl Define CPP macros that enable auth/encrypt code
-if test ".$LIBAUTH" != .; then
-  test "$enable_authentication" = yes && AC_DEFINE(AUTHENTICATION, 1,
+#if test ".$LIBAUTH" != .; then
+#  test "$enable_authentication" = yes && 
+AC_DEFINE(AUTHENTICATION, 1,
                    [Define to one if you want authentication.])
-  test "$enable_encryption" = yes     && AC_DEFINE(ENCRYPTION, 1,
+#  test "$enable_encryption" = yes     && 
+AC_DEFINE(ENCRYPTION, 1,
                    [Define to one if you want encryption.])
-fi
+#fi
 
 dnl Check if they want support for Wrap.  Certain daemons like
 dnl ftpd have support for it.
@@ -331,7 +333,7 @@ AC_HEADER_TIME
 AC_HEADER_DIRENT
 
 AC_CHECK_HEADERS(arpa/nameser.h des.h errno.h fcntl.h features.h glob.h \
-                 krb.h memory.h malloc.h netinet/in_systm.h netinet/ip.h \
+                 memory.h malloc.h netinet/in_systm.h netinet/ip.h \
                  netinet/ip_icmp.h netinet/ip_var.h \
                  security/pam_appl.h \
                  shadow.h stdarg.h stdlib.h string.h stropts.h sys/tty.h \
