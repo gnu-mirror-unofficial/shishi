@@ -22,11 +22,11 @@
 /* Get Shishid stuff. */
 #include "kdc.h"
 
+/* Get program_name, for error. */
+#include "progname.h"
+
 /* Get error. */
 #include "error.h"
-
-/* Get program_name, etc. */
-#include "progname.h"
 
 #define FAMILY_IPV4 "IPv4"
 #define FAMILY_IPV6 "IPv6"
@@ -56,65 +56,59 @@ gnutls_anon_server_credentials anoncred;
 static void
 kdc_listen ()
 {
-  struct listenspec *ls;
+  struct listenspec *ls, **last;
   int maxfd = 0;
   int i;
   int yes;
 
-  for (ls = listenspec; ls; ls = ls->next)
+  for (ls = listenspec, last = NULL; ls; last = &ls->next, ls = ls->next)
     {
       if (!arg.quiet_flag)
-	printf ("Listening on %s...", ls->str);
+	printf ("Listening on %s...\n", ls->str);
 
       ls->sockfd = socket (ls->family, ls->type, 0);
       if (ls->sockfd < 0)
 	{
-	  if (!arg.quiet_flag)
-	    printf ("failed\n");
 	  error (0, errno, "Cannot listen on %s because socket failed",
 		 ls->str);
-	  ls->sockfd = 0;
-	  continue;
+	  goto error;
 	}
 
       yes = 1;
       if (setsockopt (ls->sockfd, SOL_SOCKET, SO_REUSEADDR,
 		      (char *) &yes, sizeof (yes)) < 0)
 	{
-	  if (!arg.quiet_flag)
-	    printf ("failed\n");
 	  error (0, errno, "Cannot listen on %s because setsockopt failed",
 		 ls->str);
-	  close (ls->sockfd);
-	  ls->sockfd = 0;
-	  continue;
+	  goto errorclose;
 	}
 
       if (bind (ls->sockfd, &ls->listenaddr, sizeof (ls->listenaddr)) != 0)
 	{
-	  if (!arg.quiet_flag)
-	    printf ("failed\n");
 	  error (0, errno, "Cannot listen on %s because bind failed",
 		 ls->str);
-	  close (ls->sockfd);
-	  ls->sockfd = 0;
-	  continue;
+	  goto errorclose;
 	}
 
       if (ls->type == SOCK_STREAM && listen (ls->sockfd, SOMAXCONN) != 0)
 	{
-	  if (!arg.quiet_flag)
-	    printf ("failed\n");
 	  error (0, errno, "Cannot listen on %s because listen failed",
 		 ls->str);
-	  close (ls->sockfd);
-	  ls->sockfd = 0;
-	  continue;
+	  goto errorclose;
 	}
 
       maxfd++;
-      if (!arg.quiet_flag)
-	printf ("done\n");
+      continue;
+
+    errorclose:
+      close (ls->sockfd);
+    error:
+      free (ls->str);
+      if (last)
+	*last = ls->next;
+      else
+	listenspec = ls->next;
+      free (ls);
     }
 
   if (maxfd == 0)
@@ -162,10 +156,12 @@ kdc_setuid (void)
 
   passwd = getpwnam (arg.setuid_arg);
   if (passwd == NULL)
-    if (errno)
-      error (EXIT_FAILURE, errno, "Cannot setuid because getpwnam failed");
-    else
-      error (EXIT_FAILURE, 0, "No such user `%s'.", arg.setuid_arg);
+    {
+      if (errno)
+	error (EXIT_FAILURE, errno, "Cannot setuid because getpwnam failed");
+      else
+	error (EXIT_FAILURE, 0, "No such user `%s'.", arg.setuid_arg);
+    }
 
   rc = setuid (passwd->pw_uid);
   if (rc == -1)
@@ -234,23 +230,29 @@ doit (void)
 #ifdef USE_STARTTLS
   if (!arg.quiet_flag)
     printf ("Initializing GNUTLS...\n");
+
   err = gnutls_global_init ();
   if (err)
     error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS: %s (%d)",
 	   gnutls_strerror (err), err);
+
   err = gnutls_dh_params_init (&dh_params);
   if (err)
     error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS DH parameters: %s (%d)",
 	   gnutls_strerror (err), err);
+
   err = gnutls_dh_params_generate2 (dh_params, DH_BITS);
   if (err)
     error (EXIT_FAILURE, 0, "Cannot generate GNUTLS DH parameters: %s (%d)",
 	   gnutls_strerror (err), err);
+
   err = gnutls_anon_allocate_server_credentials (&anoncred);
   if (err)
     error (EXIT_FAILURE, 0, "Cannot allocate GNUTLS credential: %s (%d)",
 	   gnutls_strerror (err), err);
+
   gnutls_anon_set_server_dh_params (anoncred, dh_params);
+
   if (!arg.quiet_flag)
     printf ("Initializing GNUTLS...done\n");
 #endif
@@ -267,12 +269,16 @@ doit (void)
 
   kdc_loop ();
 
+  closelog ();
+
   kdc_unlisten ();
 
 #ifdef USE_STARTTLS
   if (!arg.quiet_flag)
     printf ("Deinitializing GNUTLS...\n");
+
   gnutls_global_deinit ();
+
   if (!arg.quiet_flag)
     printf ("Deinitializing GNUTLS...done\n");
 #endif
@@ -313,7 +319,8 @@ parse_listen (char *listen)
 
       proto = strrchr (val, '/');
       if (proto == NULL)
-	error (1, 0, "Could not find type in listen spec: `%s'", ls->str);
+	error (EXIT_FAILURE, 0, "Could not find type in listen spec: `%s'",
+	       ls->str);
       *proto = '\0';
       proto++;
 
@@ -324,7 +331,8 @@ parse_listen (char *listen)
 
       service = strrchr (val, ':');
       if (service == NULL)
-	error (1, 0, "Could not find service in listen spec: `%s'", ls->str);
+	error (EXIT_FAILURE, 0, "Could not find service in listen spec: `%s'",
+	       ls->str);
       *service = '\0';
       service++;
 
@@ -336,7 +344,7 @@ parse_listen (char *listen)
       else if (atoi (service) != 0)
 	ls->port = atoi (service);
       else
-	error (1, 0, "Unknown service `%s' in listen spec: `%s'",
+	error (EXIT_FAILURE, 0, "Unknown service `%s' in listen spec: `%s'",
 	       service, ls->str);
 
 #ifdef WITH_IPV6
@@ -386,12 +394,13 @@ parse_listen (char *listen)
 	    }
 #endif
 	  else
-	    error (1, 0, "Unknown protocol family (%d) returned "
+	    error (EXIT_FAILURE, 0, "Unknown protocol family (%d) returned "
 		   "by gethostbyname(\"%s\"): `%s'", he->h_addrtype,
 		   val, ls->str);
 	}
       else
-	error (1, 0, "Unknown host `%s' in listen spec: `%s'", val, ls->str);
+	error (EXIT_FAILURE, 0, "Unknown host `%s' in listen spec: `%s'",
+	       val, ls->str);
     }
 }
 
@@ -406,8 +415,7 @@ main (int argc, char *argv[])
   set_program_name (argv[0]);
 
   if (cmdline_parser (argc, argv, &arg) != 0)
-    error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
-	   program_name);
+    error (EXIT_FAILURE, 0, "Try `%s --help' for more information.", argv[0]);
 
   if (arg.help_given)
     {
