@@ -1488,8 +1488,8 @@ extern Shishi_asn1 shishi_der2asn1_encapreppart (Shishi * handle,
 						 size_t derlen);
 
 /* ap.c */
-extern const char *shishi_ap_option2string (int option);
-extern int shishi_ap_string2option (const char *str);
+extern const char *shishi_ap_option2string (Shishi_apoptions option);
+extern Shishi_apoptions shishi_ap_string2option (const char *str);
 
 extern int shishi_ap (Shishi * handle, Shishi_ap ** ap);
 extern int shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap);
