@@ -796,7 +796,7 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 	}
       else
 	{
-	  if (in_body == 0 && strcmp (line, "") == 0)
+	  if (strcmp (line, "") == 0 || strcmp (line, " ") == 0)
 	    in_body = 1;
 
 	  if (strncmp (line, "Keytype: ", strlen ("Keytype: ")) == 0)
@@ -881,12 +881,14 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
   if ((i + 1) % 64 != 0)
     fprintf (fh, "\n");
 
+#if 0
   if (VERBOSENOICE (handle))
     {
       for (i = 0; i < shishi_key_length (key); i++)
 	fprintf (stdout, "%02x", shishi_key_value (key)[i] & 0xFF);
       fprintf (stdout, "\n");
     }
+#endif
 
   fprintf (fh, HEADEREND "\n", "KEY");
 
