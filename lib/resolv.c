@@ -207,7 +207,7 @@ shishi_resolv (const char *zone, uint16_t querytype)
 	}
 
       /* create a new reply structure to save it in */
-      reply[an] = xmalloc (sizeof (reply[0]));
+      reply[an] = xmalloc (sizeof (*reply[0]));
 
       reply[an]->type = type;
       reply[an]->class = class;
