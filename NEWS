@@ -6,6 +6,10 @@ See the end for copying conditions.
 
 ** Passwords are processed with SASLprep instead of KRBprep.
 
+** Documentation additions.
+Protocol descriptions for STARTTLS, AES-CCM encrypted telnet, and
+Kerberos rsh/rlogin.
+
 ** Support for upgrading TCP connections to KDC to TLS supported (STARTTLS).
 STARTTLS support will be compiled in automatically, if you have GNUTLS
 installed, but can be disabled unconditionally by configuring with
