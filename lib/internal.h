@@ -127,6 +127,7 @@
 #include "xstrndup.h"
 #include "getdate.h"
 #include "base64.h"
+#include "xmemdup.h"
 
 #include "shishi.h"
 
@@ -177,6 +178,8 @@ struct Shishi_realminfo
   char *name;
   struct Shishi_kdcinfo *kdcaddresses;
   size_t nkdcaddresses;
+  char  **serverwildcards;
+  size_t nserverwildcards;
 };
 
 struct Shishi

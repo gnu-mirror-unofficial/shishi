@@ -257,8 +257,7 @@ simplified_hmac (Shishi * handle,
     }
 
   *outhashlen = hlen;
-  *outhash = xmalloc (*outhashlen);
-  memcpy (*outhash, hash, *outhashlen);
+  *outhash = xmemdup (*outhash, hash, *outhashlen);
 
   gcry_md_close (mdh);
 #else
@@ -487,9 +486,8 @@ simplified_dencrypt (Shishi * handle,
       if (ivout && ivoutlen)
 	{
 	  *ivoutlen = sizeof (des.iv);
-	  *ivout = xmalloc (*ivoutlen);
 	  /* XXX see above */
-	  memcpy (*ivout, des.iv, *ivoutlen);
+	  *ivout = xmemdup (*ivout, des.iv, *ivoutlen);
 	}
       break;
 
@@ -511,9 +509,8 @@ simplified_dencrypt (Shishi * handle,
       if (ivout && ivoutlen)
 	{
 	  *ivoutlen = sizeof (des3.iv);
-	  *ivout = xmalloc (*ivoutlen);
 	  /* XXX see above */
-	  memcpy (*ivout, des3.iv, *ivoutlen);
+	  *ivout = xmemdup (*ivout, des3.iv, *ivoutlen);
 	}
       break;
 
@@ -537,9 +534,8 @@ simplified_dencrypt (Shishi * handle,
       if (ivout && ivoutlen)
 	{
 	  *ivoutlen = sizeof (aes.iv);
-	  *ivout = xmalloc (*ivoutlen);
 	  /* XXX see above */
-	  memcpy (*ivout, aes.iv, *ivoutlen);
+	  *ivout = xmemdup (*ivout, aes.iv, *ivoutlen);
 	}
       break;
     }
