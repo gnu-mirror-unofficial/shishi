@@ -1164,7 +1164,7 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
 struct krb_error_msgs
 {
   int errorcode;
-  char *message;
+  const char *message;
 };
 
 struct krb_error_msgs _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {

@@ -24,7 +24,7 @@
 struct shishi_error_msgs
 {
   int errorcode;
-  char *message;
+  const char *message;
 };
 
 struct shishi_error_msgs _shishi_error_messages[] = {
@@ -256,7 +256,7 @@ shishi_info (Shishi * handle, const char *format, ...)
   va_start (ap, format);
   vasprintf (&out, format, ap);
 
-  type = shishi_outputtype (handle);
+  type = shishi_error_outputtype (handle);
   switch (type)
     {
     case SHISHI_OUTPUTTYPE_STDERR:
@@ -291,7 +291,7 @@ shishi_warn (Shishi * handle, const char *format, ...)
   va_start (ap, format);
   vasprintf (&out, format, ap);
 
-  type = shishi_outputtype (handle);
+  type = shishi_error_outputtype (handle);
   switch (type)
     {
     case SHISHI_OUTPUTTYPE_STDERR:
