@@ -42,11 +42,11 @@ int
 shishi_ticket_realm_set (Shishi * handle, Shishi_asn1 ticket,
 			 const char *realm)
 {
-  int res = ASN1_SUCCESS;
+  int res;
 
-  res = asn1_write_value (ticket, "Ticket.realm", realm, 0);
-  if (res != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+  res = shishi_asn1_write (handle, ticket, "Ticket.realm", realm, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
@@ -76,43 +76,33 @@ shishi_ticket_sname_set (Shishi * handle,
 			 Shishi_asn1 ticket,
 			 Shishi_name_type name_type, char *sname[])
 {
-  int res = ASN1_SUCCESS;
+  int res = SHISHI_OK;
   char buf[BUFSIZ];
   int i;
 
   sprintf (buf, "%d", name_type);
 
-  res = asn1_write_value (ticket, "Ticket.sname.name-type", buf, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
+  res = shishi_asn1_write (handle, ticket, "Ticket.sname.name-type", buf, 0);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (ticket, "Ticket.sname.name-string", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
+  res = shishi_asn1_write (handle, ticket, "Ticket.sname.name-string",
+			   NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   i = 1;
   while (sname[i - 1])
     {
-      res = asn1_write_value (ticket, "Ticket.sname.name-string", "NEW", 1);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return !SHISHI_OK;
-	}
+      res = shishi_asn1_write (handle, ticket, "Ticket.sname.name-string",
+			       "NEW", 1);
+      if (res != SHISHI_OK)
+	return res;
 
       sprintf (buf, "Ticket.sname.name-string.?%d", i);
-      res = asn1_write_value (ticket, buf, sname[i - 1], 0);
-      if (res != ASN1_SUCCESS)
-	{
-	  shishi_error_set (handle, libtasn1_strerror (res));
-	  return !SHISHI_OK;
-	}
+      res = shishi_asn1_write (handle, ticket, buf, sname[i - 1], 0);
+      if (res != SHISHI_OK)
+	return res;
 
       i++;
     }
@@ -292,36 +282,30 @@ shishi_ticket_set_enc_part (Shishi * handle,
 			    int etype, int kvno, char *buf, int buflen)
 {
   char format[BUFSIZ];
-  int res = ASN1_SUCCESS;
+  int res = SHISHI_OK;
 
-  res = asn1_write_value (ticket, "Ticket.enc-part.cipher", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.cipher",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   sprintf (format, "%d", etype);
-  res = asn1_write_value (ticket, "Ticket.enc-part.etype", format, 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.etype", format, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   if (kvno == 0)
-    {
-      res = asn1_write_value (ticket, "Ticket.enc-part.kvno", NULL, 0);
-      if (res != ASN1_SUCCESS)
-	goto error;
-    }
+    res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.kvno", NULL, 0);
   else
     {
       shishi_asprintf (&format, "%d", etype);
-      res = asn1_write_value (ticket, "Ticket.enc-part.kvno", format, 0);
-      if (res != ASN1_SUCCESS)
-	goto error;
+      res = shishi_asn1_write (handle, ticket, "Ticket.enc-part.kvno",
+			       format, 0);
     }
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  return SHISHI_ASN1_ERROR;
 }
 
 /**
@@ -341,7 +325,7 @@ shishi_ticket_add_enc_part (Shishi * handle,
 			    Shishi_asn1 ticket,
 			    Shishi_key * key, Shishi_asn1 encticketpart)
 {
-  int res = ASN1_SUCCESS;
+  int res = SHISHI_OK;
   char buf[BUFSIZ];
   int buflen;
   char der[BUFSIZ];
