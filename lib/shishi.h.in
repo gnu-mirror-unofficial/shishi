@@ -962,7 +962,8 @@ extern int shishi_tgs_req_build (Shishi_tgs * tgs);
 extern int shishi_tgs_req_process (Shishi_tgs * tgs);
 extern Shishi_asn1 shishi_tgs_rep (Shishi_tgs * tgs);
 extern int shishi_tgs_rep_der (Shishi_tgs * tgs, char **out, size_t * outlen);
-extern int shishi_tgs_rep_build (Shishi_tgs * tgs, Shishi_key * key);
+extern int shishi_tgs_rep_build (Shishi_tgs * tgs, int keyusage,
+				 Shishi_key * key);
 extern int shishi_tgs_rep_process (Shishi_tgs * tgs);
 extern Shishi_asn1 shishi_tgs_krberror (Shishi_tgs * tgs);
 extern int shishi_tgs_krberror_der (Shishi_tgs * tgs, char **out,

@@ -416,6 +416,7 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
 /**
  * shishi_tgs_rep_build:
  * @tgs: structure that holds information about TGS exchange
+ * @keyusage: keyusage integer.
  * @key: user's key, used to encrypt the encrypted part of the TGS-REP.
  *
  * Build TGS-REP.
@@ -423,7 +424,7 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tgs_rep_build (Shishi_tgs * tgs, Shishi_key * key)
+shishi_tgs_rep_build (Shishi_tgs * tgs, int keyusage, Shishi_key * key)
 {
   int rc;
 
@@ -445,8 +446,7 @@ shishi_tgs_rep_build (Shishi_tgs * tgs, Shishi_key * key)
 
   rc = shishi_kdcrep_add_enc_part (tgs->handle,
 				   tgs->tgsrep,
-				   key,
-				   SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
+				   key, keyusage,
 				   shishi_tkt_enckdcreppart (tgs->tkt));
   if (rc != SHISHI_OK)
     return rc;
