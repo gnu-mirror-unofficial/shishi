@@ -743,23 +743,21 @@ static struct argp_option options[] = {
    "the start time.", 0},
 
   {"forwardable", OPTION_FORWARDABLE, 0, 0,
-   "Get a forwardable ticket.  Only valid for initial authentication, or "
-   "when the ticket-granting ticket is forwardable.", 0},
+   "Get a forwardable ticket, i.e., one that can be used to get forwarded "
+   "tickets.", 0},
 
   {"forwarded", OPTION_FORWARDED, 0, 0,
-   "Get a forwarded ticket.  Only valid when the ticket-granting ticket is "
-   "forwardable.", 0},
+   "Get a forwarded ticket.", 0},
 
   {"list", 'l', 0, 0,
    "List tickets in local cache, subject to --server-name limiting.", 0},
 
   {"proxiable", OPTION_PROXIABLE, 0, 0,
-   "Get a proxiable ticket.  Only valid for initial authentication, or when "
-   "the ticket-granting ticket is proxiable.", 0},
+   "Get a proxiable ticket, i.e., one that can be used to get proxy "
+   "tickets.", 0},
 
   {"proxy", OPTION_PROXY, 0, 0,
-   "Get a proxy ticket.  Only valid when the ticket-granting ticket is "
-   "proxiable.", 0},
+   "Get a proxy ticket.", 0},
 
   {"renew", 'R', 0, 0,
    "Renew ticket.  Use --server-name to specify ticket, default is the "
