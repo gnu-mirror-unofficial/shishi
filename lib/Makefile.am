@@ -51,6 +51,11 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DDMALLOC_FUNC_CHECK \
 	@DEFS@
 
+shishi_int = shishi-int.h
+BUILT_SOURCES = $(shishi_int)
+DISTCLEANFILES = $(shishi_int)
+nodist_include_HEADERS = $(shishi_int)
+
 kerberos5.c: $(srcdir)/kerberos5.asn1
 	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $^
 
