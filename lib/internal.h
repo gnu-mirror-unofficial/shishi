@@ -33,22 +33,6 @@
 #include <ctype.h>
 #endif
 
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-#ifdef HAVE_NETDB_H
-#include <netdb.h>
-#endif
-
-#if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
-//extern int h_errno;
-#endif
-
-#ifdef HAVE_PWD_H
-#include <pwd.h>
-#endif
-
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -69,20 +53,28 @@
 #include <sys/stat.h>
 #endif
 
+#if HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif
+
+#if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
+//extern int h_errno;
+#endif
+
+#ifdef HAVE_PWD_H
+#include <pwd.h>
+#endif
+
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #endif
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif
-
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#else
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif
 #endif
 
 #if TIME_WITH_SYS_TIME
