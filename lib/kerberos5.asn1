@@ -1,5 +1,28 @@
- -- - This is Appendix A from RFC1510bis with some cosmetic changes
- -- - done in order to make it parse with the buggy libtasn1 parser.
+-- kerberos.asn1   Kerberos ASN.1 Module
+-- Copyright (C) 2002, 2003  Simon Josefsson
+--
+-- This file is part of Shishi.
+--
+-- Shishi is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- Shishi is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with Shishi; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+--
+
+-- This module is based on the one given in appendix A of RFC1510bis
+-- (draft-ietf-krb-wg-kerberos-clarifications-04.txt) which exhibits
+-- no copyright notice, but is presumable owned by ISOC via IETF.
+
+-- The modifications are to make libtasn1's parser accept it.
  
 Kerberos5 {
   iso(1) identified-organization(3) dod(6) internet(1)
