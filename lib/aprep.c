@@ -484,9 +484,9 @@ shishi_aprep_verify (Shishi * handle,
 
   if (VERBOSE (handle))
     {
-      printf ("authenticator cusec %d ctime %s\n", authenticatorcusec,
+      printf ("authenticator cusec %08x ctime %s\n", authenticatorcusec,
 	      authenticatorctime);
-      printf ("encapreppart cusec %d ctime %s\n", encapreppartcusec,
+      printf ("encapreppart cusec %08x ctime %s\n", encapreppartcusec,
 	      encapreppartctime);
     }
 
