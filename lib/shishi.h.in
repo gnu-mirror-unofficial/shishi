@@ -1789,8 +1789,4 @@ extern int shishi_safe_set_user_data (Shishi * handle,
 extern int shishi_safe_build (Shishi_safe * safe, Shishi_key * key);
 extern int shishi_safe_verify (Shishi_safe * safe, Shishi_key * key);
 
-/* utils.c */
-extern time_t xtime (time_t * t);
-extern int xgettimeofday (struct timeval *tv, struct timezone *tz);
-
 #endif
