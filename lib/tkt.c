@@ -619,7 +619,7 @@ shishi_tkt_flags_add (Shishi_tkt * tkt, uint32_t flag)
 int
 shishi_tkt_forwardable_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -645,7 +645,7 @@ shishi_tkt_forwardable_p (Shishi_tkt * tkt)
 int
 shishi_tkt_forwarded_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -672,7 +672,7 @@ shishi_tkt_forwarded_p (Shishi_tkt * tkt)
 int
 shishi_tkt_proxiable_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -695,7 +695,7 @@ shishi_tkt_proxiable_p (Shishi_tkt * tkt)
 int
 shishi_tkt_proxy_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -729,7 +729,7 @@ shishi_tkt_proxy_p (Shishi_tkt * tkt)
 int
 shishi_tkt_may_postdate_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -756,7 +756,7 @@ shishi_tkt_may_postdate_p (Shishi_tkt * tkt)
 int
 shishi_tkt_postdated_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -784,7 +784,7 @@ shishi_tkt_postdated_p (Shishi_tkt * tkt)
 int
 shishi_tkt_invalid_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -808,7 +808,7 @@ shishi_tkt_invalid_p (Shishi_tkt * tkt)
 int
 shishi_tkt_renewable_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -834,7 +834,7 @@ shishi_tkt_renewable_p (Shishi_tkt * tkt)
 int
 shishi_tkt_initial_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -859,7 +859,7 @@ shishi_tkt_initial_p (Shishi_tkt * tkt)
 int
 shishi_tkt_pre_authent_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -884,7 +884,7 @@ shishi_tkt_pre_authent_p (Shishi_tkt * tkt)
 int
 shishi_tkt_hw_authent_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -930,7 +930,7 @@ shishi_tkt_hw_authent_p (Shishi_tkt * tkt)
 int
 shishi_tkt_transited_policy_checked_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
@@ -960,7 +960,7 @@ shishi_tkt_transited_policy_checked_p (Shishi_tkt * tkt)
 int
 shishi_tkt_ok_as_delegate_p (Shishi_tkt * tkt)
 {
-  int flags = 0;
+  uint32_t flags = 0;
 
   shishi_tkt_flags (tkt, &flags);
 
