@@ -39,7 +39,6 @@ shishi_authenticator (Shishi * handle)
   Shishi_asn1 node = NULL;
   struct timeval tv;
   struct timezone tz;
-  char usec[BUFSIZ];
 
   node = shishi_asn1_authenticator (handle);
   if (!node)
@@ -603,8 +602,7 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
 					    int adtype,
 					    char *addata, int addatalen)
 {
-  char format[BUFSIZ];
-  char buf[BUFSIZ];
+  char *format;
   int res;
   int i;
 
@@ -619,14 +617,17 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  sprintf (buf, "%d", adtype);
-  sprintf (format, "authorization-data.?%d.ad-type", i);
-  res = shishi_asn1_write (handle, authenticator, format, buf, 0);
+  asprintf (&format, "authorization-data.?%d.ad-type", i);
+  res = shishi_asn1_write_integer (handle, authenticator, format, adtype);
   if (res != SHISHI_OK)
-    return res;
+    {
+      free(format);
+      return res;
+    }
 
   sprintf (format, "authorization-data.?%d.ad-data", i);
   res = shishi_asn1_write (handle, authenticator, format, addata, addatalen);
+  free(format);
   if (res != SHISHI_OK)
     return res;
 
