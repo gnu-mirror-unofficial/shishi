@@ -21,6 +21,7 @@
 
 #include "internal.h"
 
+#define INFOSTR "libshishi: info: "
 #define WARNSTR "libshishi: warning: "
 
 #if ENABLE_NLS
@@ -72,8 +73,7 @@ shishi (void)
   handle->asn1 = _shishi_asn1_read ();
   if (handle->asn1 == NULL)
     {
-      fprintf (stderr, "libshishi: error: %s\n",
-	       shishi_strerror (SHISHI_ASN1_ERROR));
+      shishi_warn (handle, "%s", shishi_strerror (SHISHI_ASN1_ERROR));
       return NULL;
     }
 
@@ -85,8 +85,7 @@ shishi (void)
 				    handle->nclientkdcetypes);
   if (handle->clientkdcetypes == NULL)
     {
-      fprintf (stderr, "libshishi: error: %s\n",
-	       shishi_strerror (SHISHI_MALLOC_ERROR));
+      shishi_warn (handle, "%s", shishi_strerror (SHISHI_MALLOC_ERROR));
       return NULL;
     }
   handle->clientkdcetypes[0] = SHISHI_AES256_CTS_HMAC_SHA1_96;
@@ -105,12 +104,67 @@ shishi (void)
   return handle;
 }
 
+
+static void
+_shishi_maybe_install_usercfg (Shishi * handle)
+{
+  const char *usercfg = shishi_cfg_default_userfile (handle);
+  const char *userdir = shishi_cfg_default_userdirectory (handle);
+  struct stat buf;
+  FILE *fh;
+  FILE *src, *dst;
+  int rc;
+  int c;
+
+  fh = fopen (usercfg, "r");
+  if (fh)
+    {
+      fclose (fh);
+      return;
+    }
+
+  rc = stat (userdir, &buf);
+  if (rc == -1 && errno == ENOENT)
+    {
+      rc = mkdir (userdir, S_IRUSR|S_IWUSR|S_IXUSR);
+      if (rc != 0)
+	shishi_info (handle, "mkdir %s: %s", userdir, strerror (errno));
+    }
+  else if (rc != 0)
+    shishi_info (handle, "stat %s: %s", userdir, strerror (errno));
+
+  src = fopen (SKELCFGFILE, "r");
+  if (!src)
+    {
+      shishi_info (handle, "open %s: %s", SKELCFGFILE, strerror (errno));
+      return;
+    }
+
+  dst = fopen (usercfg, "w");
+  if (!dst)
+    {
+      fclose (src);
+      shishi_info (handle, "open %s: %s", usercfg, strerror (errno));
+      return;
+    }
+
+  while ((c = getc(src)) != EOF )
+    putc (c, dst);
+
+  fclose (dst);
+  fclose (src);
+
+  shishi_info (handle, "created `%s'", usercfg);
+}
+
 static int
 _shishi_init_read (Shishi * handle,
 		   const char *tktsfile,
 		   const char *systemcfgfile, const char *usercfgfile)
 {
   int rc = SHISHI_OK;
+
+  _shishi_maybe_install_usercfg (handle);
 
   if (!tktsfile)
     tktsfile = shishi_tkts_default_file (handle);
@@ -129,26 +183,26 @@ _shishi_init_read (Shishi * handle,
   if (*tktsfile)
     rc = shishi_tkts_from_file (handle->tkts, tktsfile);
   if (rc == SHISHI_FOPEN_ERROR)
-    fprintf (stderr, WARNSTR "%s: %s\n", tktsfile, strerror (errno));
+    shishi_warn (handle, "%s: %s", tktsfile, strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
   if (*systemcfgfile)
     rc = shishi_cfg_from_file (handle, systemcfgfile);
   if (rc == SHISHI_FOPEN_ERROR)
-    fprintf (stderr, WARNSTR "%s: %s\n", systemcfgfile, strerror (errno));
+    shishi_warn (handle, "%s: %s", systemcfgfile, strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
   if (*usercfgfile)
     rc = shishi_cfg_from_file (handle, usercfgfile);
   if (rc == SHISHI_FOPEN_ERROR)
-    fprintf (stderr, WARNSTR "%s: %s\n", usercfgfile, strerror (errno));
+    shishi_warn (handle, "%s: %s", usercfgfile, strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
-  if (VERBOSE (handle))
-    shishi_cfg_print (handle, stdout);
+  if (VERBOSENOICE (handle))
+    shishi_cfg_print (handle, stderr);
 
   return SHISHI_OK;
 }
@@ -272,15 +326,27 @@ shishi_init_server_with_paths (Shishi ** handle, const char *systemcfgfile)
 }
 
 void
+shishi_info (Shishi * handle, const char *fmt, ...)
+{
+  va_list ap;
+  va_start (ap, fmt);
+
+  fprintf (stderr, INFOSTR);
+  vfprintf (stderr, fmt, ap);
+  fprintf (stderr, "\n");
+
+  va_end (ap);
+}
+
+void
 shishi_warn (Shishi * handle, const char *fmt, ...)
 {
   va_list ap;
   va_start (ap, fmt);
-  if (VERBOSE (handle))
-    {
-      fprintf (stderr, WARNSTR);
-      vfprintf (stderr, fmt, ap);
-      fprintf (stderr, "\n");
-    }
+
+  fprintf (stderr, WARNSTR);
+  vfprintf (stderr, fmt, ap);
+  fprintf (stderr, "\n");
+
   va_end (ap);
 }
