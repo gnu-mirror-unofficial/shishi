@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.1 (released 2003-08-09)
+* Version 0.0.1 (released 2003-08-10)
 
 ** InetUtils copy removed.
 The patches (also found in extra/inetutils.diff) are forwarded upstream.
