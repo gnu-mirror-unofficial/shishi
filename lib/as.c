@@ -465,7 +465,7 @@ shishi_as_krberror_der (Shishi_as * as, char **out, size_t * outlen)
 {
   int rc;
 
-  rc = shishi_new_a2d (as->handle, as->krberror, out, outlen);
+  rc = shishi_krberror_der (as->handle, as->krberror, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
