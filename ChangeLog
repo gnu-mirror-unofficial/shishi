@@ -1,3 +1,312 @@
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.16.
+
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/kdcreq.c: Fix.
+
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* m4/autobuild.m4, po/pl.po, po/sv.po: Add.
+
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Use Autobuild.
+
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* README: Fix.
+
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-08-01  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getopt.c, gl/getopt1.c, gl/m4/getopt.m4: Sync.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c:
+	(shishi_key_done): Free more.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/hostkeys.c: Support SHISHI_KEYS.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/aprep.c: Don't read out of bounds.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Set endtime for TGS-REQ.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c:
+	(shishi_kdcreq_tillc): Add.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c:
+	(set_tgtflags_based_on_hint): Propagate endtime.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Listen to endtime in AS-REQ (no policy checks).
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/kdcreq.c: Add.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/enckdcreppart.c:
+	(shishi_enckdcreppart_endtime_set): Add.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: *kdcrep* fixes.
+
+2004-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c:
+	(maybe_install_usercfg): Don't create anything if non-standard home
+	is used.
+
+2004-07-08  Simon Josefsson <simon@josefsson.org>
+
+	* tests/crypto.c: More debugging.
+
+2004-07-02  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/Makefile.am: Add -I../gl.
+
+2004-07-02  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getndelim2.c: Fix.
+
+2004-07-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/error.c, lib/init.c: Fix.
+
+2004-07-02  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Default to Nettle.
+
+2004-07-02  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-07-02  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Improve IPv6 test (uClibc doesn't have
+	in6addr_any).
+
+2004-07-02  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-07-02  Simon Josefsson <simon@josefsson.org>
+
+	* db/fileutil.c: Fix API.
+
+2004-07-02  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/alloca.c, gl/alloca_.h,
+	gl/getline.c, gl/getndelim2.c, gl/getndelim2.h, gl/getopt.c,
+	gl/getopt.h, gl/getopt1.c, gl/getopt_.h, gl/gettime.c, gl/malloc.c,
+	gl/vasnprintf.c, gl/xmalloc.c, gl/xreadlink.c, gl/xreadlink.h,
+	gl/m4/alloca.m4, gl/m4/allocsa.m4, gl/m4/bison.m4, gl/m4/error.m4,
+	gl/m4/getdate.m4, gl/m4/getopt.m4, gl/m4/gettext.m4,
+	gl/m4/gettime.m4, gl/m4/glibc21.m4, gl/m4/intmax.m4,
+	gl/m4/intmax_t.m4, gl/m4/inttypes_h.m4, gl/m4/longlong.m4,
+	gl/m4/stdbool.m4, gl/m4/stdint_h.m4, gl/m4/timespec.m4,
+	gl/m4/uintmax_t.m4, gl/m4/ulonglong.m4, gl/m4/unlocked-io.m4,
+	gl/m4/vasnprintf.m4, gl/m4/xalloc.m4: Gnulib update.  Mainly for
+	getopt that work on uClibc.
+
+2004-07-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2004-05-21  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/decoding.c, asn1/int.h, asn1/libtasn1.h: Update to 0.2.10.
+
+2004-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS: Update PGP key.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Write tickets before shutting down TLS library.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, lib/shishi.h.in: Fix.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c, lib/tkts.c, lib/pki.c: Add.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Remove.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c:
+	(shishi_tkts_default_file_guess): Use SHISHI_TICKETS.  Use
+	shishi_cfg_userdirectory_file.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add SHISHI_HOME and SHISHI_TICKETS.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Typo.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c:
+	(shishi_cfg_default_userfile): Use shishi_cfg_userdirectory_file.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c:
+	(shishi_cfg_default_userdirectory): Use SHISHI_HOME.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add SHISHI_USER.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Typo.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c:
+	(shishi_principal_default): Add SHISHI_USER.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Typo.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Mention SHISHI_CONFIG.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Doc fix.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c:
+	(shishi_cfg_default_systemfile): Look for SHISHI_CONFIG env.var.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Bug workaround.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Fix printf templates.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c, lib/shishi.h.in: Add shishi_kdcreq_nonce_set.  Use
+	it.
+
+2004-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/int.h, asn1/libtasn1.h: Update.
+
+2004-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/Makefile.am, crypto/hmac-md4.c, crypto/hmac.h: Remove
+	HMAC-MD4 (why was it added?).
+
+2004-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/nettle.c: Include md4.h directly (not via hmac.h).
+
+2004-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Fix error messages, suggested by Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.pc.in: Drop -R libs flag.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c:
+	(shishi_cfg): Clear newly allocated realminfos, reported by Nicolas
+	Pouvesle <nico.pou@fnac.net>.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Require modern autoconf/automake/gettext.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
 2004-04-18  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po, po/sv.po: Generated.
