@@ -52,31 +52,31 @@ shishi_aprep (Shishi * handle)
   if (!node)
     return NULL;
 
-  res = shishi_asn1_write (handle, node, "AP-REP.pvno",
+  res = shishi_asn1_write (handle, node, "pvno",
 			   SHISHI_APREP_DEFAULT_PVNO,
 			   SHISHI_APREP_DEFAULT_PVNO_LEN);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "AP-REP.msg-type",
+  res = shishi_asn1_write (handle, node, "msg-type",
 			   SHISHI_APREP_DEFAULT_MSG_TYPE,
 			   SHISHI_APREP_DEFAULT_MSG_TYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "AP-REP.enc-part.etype",
+  res = shishi_asn1_write (handle, node, "enc-part.etype",
 			   SHISHI_APREP_DEFAULT_ENC_PART_ETYPE,
 			   SHISHI_APREP_DEFAULT_ENC_PART_ETYPE_LEN);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "AP-REP.enc-part.kvno",
+  res = shishi_asn1_write (handle, node, "enc-part.kvno",
 			   SHISHI_APREP_DEFAULT_ENC_PART_KVNO,
 			   SHISHI_APREP_DEFAULT_ENC_PART_KVNO_LEN);
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "AP-REP.enc-part.cipher",
+  res = shishi_asn1_write (handle, node, "enc-part.cipher",
 			   SHISHI_APREP_DEFAULT_ENC_PART_CIPHER,
 			   SHISHI_APREP_DEFAULT_ENC_PART_CIPHER_LEN);
   if (res != SHISHI_OK)
@@ -257,13 +257,13 @@ shishi_aprep_enc_part_set (Shishi * handle,
   char format[BUFSIZ];
   int res;
 
-  res = shishi_asn1_write (handle, aprep, "AP-REP.enc-part.cipher",
+  res = shishi_asn1_write (handle, aprep, "enc-part.cipher",
 			   buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
   sprintf (format, "%d", etype);
-  res = shishi_asn1_write (handle, aprep, "AP-REP.enc-part.etype", format, 0);
+  res = shishi_asn1_write (handle, aprep, "enc-part.etype", format, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -368,7 +368,7 @@ shishi_aprep_get_enc_part_etype (Shishi * handle, Shishi_asn1 aprep,
 				 int *etype)
 {
   return shishi_asn1_integer_field (handle, aprep, etype,
-				    "AP-REP.enc-part.etype");
+				    "enc-part.etype");
 }
 
 int
@@ -394,7 +394,7 @@ shishi_aprep_decrypt (Shishi * handle,
 
   cipherlen = BUFSIZ;
   res = shishi_asn1_field (handle, aprep, cipher, &cipherlen,
-			   "AP-REP.enc-part.cipher");
+			   "enc-part.cipher");
   if (res != SHISHI_OK)
     return res;
 

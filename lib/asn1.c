@@ -23,8 +23,6 @@
 #define _SHISHI_HAS_LIBTASN1_H 1
 #include "internal.h"
 
-#define asn1_create_element(a,b,c,d) asn1_create_element(a,b,c)
-
 extern const ASN1_ARRAY_TYPE shishi_asn1_tab[];
 
 Shishi_asn1
@@ -56,8 +54,7 @@ shishi_der2asn1 (Shishi * handle,
   Shishi_asn1 structure = NULL;
   int asn1_result = ASN1_SUCCESS;
 
-  asn1_result = asn1_create_element (handle->asn1, fieldname,
-				     &structure, nodename);
+  asn1_result = asn1_create_element (handle->asn1, fieldname, &structure);
   if (asn1_result != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (asn1_result));
@@ -281,8 +278,7 @@ shishi_asn1_ticket (Shishi * handle)
   int res = ASN1_SUCCESS;
   ASN1_TYPE node = ASN1_TYPE_EMPTY;
 
-  res = asn1_create_element (handle->asn1, "Kerberos5.Ticket",
-			     &node, "Ticket");
+  res = asn1_create_element (handle->asn1, "Kerberos5.Ticket", &node);
   if (res != ASN1_SUCCESS)
     goto error;
 
@@ -310,7 +306,7 @@ shishi_asn1_new (Shishi * handle, const char *field, const char *name)
   ASN1_TYPE node = ASN1_TYPE_EMPTY;
   int res;
 
-  res = asn1_create_element (handle->asn1, field, &node, name);
+  res = asn1_create_element (handle->asn1, field, &node);
   if (res != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (res));
