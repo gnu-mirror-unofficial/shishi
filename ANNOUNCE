@@ -2,8 +2,8 @@ Shishi ANNOUNCE -- Overview to attract interest.
 See the end for copying conditions.
 
 Shishi is an (still incomplete) implementation of the RFC 1510 and RFC
-1510bis network authentication system, also known as Kerberos.  RFC
-1510 can be used to authenticate users in distributed systems.
+1510bis network authentication system.  RFC 1510 can be used to
+authenticate users in distributed systems.
 
 Shishi contains a library ('libgsasl') that can be used by application
 developers to add support for RFC 1510.  Shishi contains a command
