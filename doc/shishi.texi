@@ -197,8 +197,6 @@ know so work duplication can be avoided.
 
 @item Cross-realm support (week).
 
-@item Session keys in AP (week).
-
 @item PKINIT (use libksba, weeks)
 
 @item Finish GSSAPI support via GPL GSS (weeks)
