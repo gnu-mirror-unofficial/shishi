@@ -438,7 +438,8 @@ is compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
 @node Supported Platforms
 @section Supported Platforms
 
-Shishi has been tested on the following platforms:
+Shishi has at some point in time been tested on the following
+platforms.
 
 @enumerate
 
@@ -932,7 +933,8 @@ library.
 
 @menu
 * Preparation::                 What you should do before using the library.
-* Global Functions::            Functions for use in the global context.
+* Initialization Functions::    Creating library handle, configuration file.
+* Utility Functions::           Utilities for use in the global context.
 * Ticket Set Functions::        High-level ticket management functions.
 * AP-REQ and AP-REP Functions:: Client/Server functions.
 * Ticket Functions::            Medium-level ticket manipulation functions.
@@ -986,10 +988,10 @@ reserved for internal use and should never be used by an application.
 @subsection Initialization
 
 `Libshishi' must be initialized before it can be used.  The library is
-initialized by calling @code{shishi_init()} (@pxref{Global Functions}).
-The resources allocated by the initialization process can be released
-if the application no longer has a need to call `Libshishi' functions,
-this is done by calling @code{shishi_done()}.
+initialized by calling @code{shishi_init()} (@pxref{Initialization
+Functions}).  The resources allocated by the initialization process
+can be released if the application no longer has a need to call
+`Libshishi' functions, this is done by calling @code{shishi_done()}.
 
 In order to take advantage of the internationalisation features in
 `Libshishi', such as translated error messages, the application must
@@ -1000,10 +1002,10 @@ set the current locale using @code{setlocale()} before initializing
 @subsection Version Check
 
 It is often desirable to check that the version of `Libshishi' used is
-indeed one which fits all requirements.  Even with binary compatibility
-new features may have been introduced but due to problem with the
-dynamic linker an old version is actually used.  So you may want to
-check that the version is okay right after program startup.
+indeed one which fits all requirements.  Even with binary
+compatibility new features may have been introduced but due to problem
+with the dynamic linker an old version is actually used.  So you may
+want to check that the version is okay right after program startup.
 
 @include shishi-api-version.texi
 
@@ -1054,10 +1056,17 @@ specifying both options to @command{pkg-config}:
 gcc -o foo foo.c `pkg-config shishi --cflags --libs`
 @end example
 
-@node Global Functions
-@section Global Functions
+@node Initialization Functions
+@section Initialization Functions
 
-@include shishi-api-global.texi
+@include shishi-api-init.texi
+
+
+@node Utility Functions
+@section Utility Functions
+
+@include shishi-api-utility.texi
+
 
 @node Ticket Set Functions
 @section Ticket Set Functions
@@ -1072,6 +1081,7 @@ subsequent authentication (@pxref{TGS Functions}) and storing the new
 ticket in the ticket set are also provided.
 
 @include shishi-api-ticketset.texi
+
 
 @node AP-REQ and AP-REP Functions
 @section AP-REQ and AP-REP Functions
@@ -1111,10 +1121,12 @@ EncAPRepPart	::= [APPLICATION 27] SEQUENCE {
 
 @include shishi-api-ap.texi
 
+
 @node Ticket Functions
 @section Ticket Functions
 
 @include shishi-api-ticket.texi
+
 
 @node AS Functions
 @section AS Functions
@@ -1193,6 +1205,7 @@ EncKDCRepPart	::= SEQUENCE {
 @end verbatim
 
 @include shishi-api-as.texi
+
 
 @node TGS Functions
 @section TGS Functions
@@ -1273,6 +1286,7 @@ EncKDCRepPart	::= SEQUENCE {
 @end verbatim
 
 @include shishi-api-tgs.texi
+
 
 @node AS/TGS Functions
 @section AS/TGS Functions
@@ -1367,6 +1381,7 @@ EncKDCRepPart	::= SEQUENCE {
 
 @include shishi-api-kdc.texi
 
+
 @node Authenticator Functions
 @section Authenticator Functions
 
@@ -1391,6 +1406,7 @@ Authenticator	::= [APPLICATION 2] SEQUENCE  {
 @end verbatim
 
 @include shishi-api-authenticator.texi
+
 
 @node Cryptographic Functions
 @section Cryptographic Functions
@@ -1423,6 +1439,7 @@ decrypt data, calculate checksum on data etc.  All available functions
 are described now.
 
 @include shishi-api-crypto.texi
+
 
 @node Error Handling
 @section Error Handling

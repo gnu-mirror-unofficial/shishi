@@ -7,12 +7,13 @@ shishi-api-authenticator.texi
 shishi-api-crypto.texi
 shishi-api-error.texi
 shishi-api-error-labels.texi
-shishi-api-global.texi
+shishi-api-init.texi
 shishi-api-kdc.texi
 shishi-api-key.texi
 shishi-api-tgs.texi
 shishi-api-ticket.texi
 shishi-api-ticketset.texi
+shishi-api-utility.texi
 shishi-api-version.texi
 shishi.1
 shishi.aux

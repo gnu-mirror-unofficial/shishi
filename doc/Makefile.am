@@ -17,7 +17,7 @@
 # License along with Shishi; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
-shishi_texi_auto_deps = shishi-api-global.texi \
+shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
 	shishi-api-ticket.texi shishi-api-ticketset.texi \
 	shishi-api-as.texi shishi-api-tgs.texi \
 	shishi-api-kdc.texi shishi-api-authenticator.texi shishi-api-ap.texi \
@@ -40,7 +40,10 @@ EXTRA_DIST = gdoc $(man_MANS) $(generated)
 info_TEXINFOS = shishi.texi
 shishi_TEXINFOS = lgpl.texi gpl.texi fdl.texi $(shishi_texi_auto_deps)
 
-shishi-api-global.texi: $(top_srcdir)/lib/init.c $(top_srcdir)/lib/done.c $(top_srcdir)/lib/cfg.c
+shishi-api-init.texi: $(top_srcdir)/lib/init.c $(top_srcdir)/lib/done.c $(top_srcdir)/lib/cfg.c
+	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
+
+shishi-api-utility.texi: $(top_srcdir)/lib/realm.c $(top_srcdir)/lib/principal.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-ticket.texi: $(top_srcdir)/lib/ticket.c
