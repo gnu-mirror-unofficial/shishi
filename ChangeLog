@@ -1,3 +1,606 @@
+2003-09-07  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.5.
+
+2003-09-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Fix.
+
+2003-09-07  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/mktime.c, gl/time_r.c,
+	gl/time_r.h, gl/timegm.c, gl/timegm.h, gl/m4/Makefile.am,
+	gl/m4/mktime.m4, gl/m4/restrict.m4, gl/m4/time_r.m4,
+	gl/m4/timegm.m4: Sync upstream.
+
+2003-09-07  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix.
+
+2003-09-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Include gnulib headers.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: Generated.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Include PRIV stuff.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Add PRIV.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Mention PRIV.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c, lib/diskio.c, lib/internal.h: Add PRIV stuff.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* tests/priv.c, tests/Makefile.am: Add PRIV self test.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* examples/Makefile.am, examples/client-priv.c: Add PRIV example.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/priv.c: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/Makefile.am, lib/priv.c: Add PRIV stuff.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/aprep.c, lib/apreq.c, lib/as.c, lib/asn1.c,
+	lib/authenticator.c, lib/cfg.c, lib/crypto.c, lib/diskio.c,
+	lib/encapreppart.c, lib/enckdcreppart.c, lib/encticketpart.c,
+	lib/error.c, lib/gztime.c, lib/init.c, lib/internal.h, lib/kdc.c,
+	lib/kdcreq.c, lib/key.c, lib/krberror.c, lib/netio.c, lib/realm.c,
+	lib/resolv.c, lib/safe.c, lib/shishi.h.in, lib/tgs.c, lib/ticket.c,
+	lib/tkt.c, lib/tkts.c, lib/utils.c, src/shishi.c, tests/crypto.c,
+	tests/safe.c: Indent.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* examples/server.c, lib/crypto-md.c: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c, lib/kdc.c, lib/crypto-md.c: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* tests/ticketset.c: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* gl/timegm.c: Don't crash.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encapreppart.c: Doc fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* tests/safe.c: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c, lib/kdc.c, lib/kdcreq.c, lib/principal.c, lib/tkt.c:
+	Use size_t for length variables.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix API.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/aprep.c, tests/authenticator.c: Use new API.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/krberror.c, lib/encapreppart.c: Use
+	shishi_time.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/gztime.c: Add.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/aprep.c, lib/apreq.c, lib/asn1.c,
+	lib/encticketpart.c, lib/shishi.h.in: Use size_t for length
+	variables.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: Generated.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/crypto.c, lib/kdcrep.c, lib/kdcreq.c,
+	lib/shishi.h.in, lib/ticket.c, lib/tkt.c: Use size_t for length
+	variables.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/keys.c, lib/tkt.c, examples/server.c:
+	Fix API.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Dist crypto-{md,rc4}.c.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/safe.c, lib/shishi.h.in: Fix prototypes.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Add ticketset.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* tests/ticketset.c: Replace die() with fail().  Init n to size of
+	buffer, for shishi_a2d.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* tests/safe.c, tests/Makefile.am: Test SAFE stuff.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/Makefile.am: Fix copying conditions.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Dist README.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/Makefile.am: Dist README.  Fix copying conditions.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getdate.y, gl/timegm.c, gl/timegm.h: Upstream sync.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Fix comments.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* gl/README: Add.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/aes-internal.h, crypto/aes.h, crypto/cbc.h, crypto/des.c,
+	crypto/des.h, crypto/desCode.h, crypto/hmac.h, crypto/md4-meta.c,
+	crypto/md4.c, crypto/md4.h, crypto/md5.c, crypto/md5.h,
+	crypto/nettle-meta.h, crypto/sha.h: Upstream sync.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/README: Add.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/README: Rewrite.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/ASN1.c: Unused.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/pam_shishi.c, lib/ap.c, lib/aprep.c, lib/as.c,
+	lib/diskio.c, lib/enckdcreppart.c, lib/error.c, lib/kdc.c,
+	lib/shishi.h.in, lib/tgs.c, lib/ticket.c, lib/tkt.c, lib/tkts.c,
+	src/shishi.c, tests/crypto.c: Fix error API.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-3des.c, lib/crypto-aes.c, lib/crypto-des.c,
+	lib/crypto-md.c, lib/crypto-rc4.c, lib/crypto.c: Fix prototypes.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-3des.c: Fix API.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in:
+	(Shishi_krberror): Renamed to Shishi_krb_error to avoid GTK-DOC
+	mixup with shishi_krberror().
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi, lib/error.c: Fix.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c, lib/init.c:
+	(shishi_info, shishi_warn): Move to error.c, for better
+	documentation.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Fix done.c.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/done.c, lib/init.c:
+	(shishi_done): Move to init.c, remove done.c. (Improves generated
+	documentation.)
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-3des.c, lib/crypto-aes.c, lib/crypto.c: Fix API.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c, src/shishid.c, tests/crypto.c: Fix API.
+
+2003-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/as.c, lib/asn1.c, lib/key.c, lib/safe.c,
+	lib/shishi.h.in, lib/tgs.c: Add or fix shishi_*_done.
+
+2003-09-05  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Doc fix, from Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-09-05  Simon Josefsson <simon@josefsson.org>
+
+	* ANNOUNCE: Fix.
+
+2003-09-04  Simon Josefsson <simon@josefsson.org>
+
+	* examples/client.c: Remove safe stuff.
+
+2003-09-04  Simon Josefsson <simon@josefsson.org>
+
+	* examples/Makefile.am, examples/client-safe.c: Add.
+
+2003-09-04  Simon Josefsson <simon@josefsson.org>
+
+	* examples/client.c: Fix.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* examples/client.c, examples/server.c: Fix SAFE.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c, lib/crypto.c, lib/shishi.h.in: Add
+	des_md5_verify (assumes nettle).
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/safe.c:
+	(shishi_safe_verify): Use shishi_verify.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/crypto.c: Fix checksum.  Add verify.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Add.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdc.c: Fix KDC bug workaround.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-rc4.c: Unfinished.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Doc fix.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Support draft-brezak-win2k-krb-rc4-hmac-04.txt.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* tests/crypto.c: Add RC4 str2key test.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Don't hardcode etypes.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add etype/cksumtype discussion.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Doc fix.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-md.c: Fix header.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/shishi.h.in:
+	(shishi_ap_authenticator_cksumtype): Fix prototype.  Fix callers.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c: Fix.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c:
+	(shishi_authenticator_add_cksum): Use
+	shishi_authenticator_add_cksum_type.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* extra/rsh-redone/rlogin.c, extra/rsh-redone/rsh.c: Fix, from
+	Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/authenticator.c, lib/crypto-md.c, lib/crypto.c,
+	lib/shishi.h.in: Add md4/md5 cksum.  Support non-default checksum
+	type in authenticator/AP.  From Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2003-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Comment fix.
+
+2003-09-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Doc fix.
+
+2003-09-02  Simon Josefsson <simon@josefsson.org>
+
+	* doc/draft-ietf-krb-wg-gssapi-cfx-01.txt: Add.
+
+2003-09-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Debug output fix, from Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2003-09-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Doc fix, from Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* gl/timegm.c: Fix gmtime_r.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/timegm.m4: Fix.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* gl/timegm.c: New.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/timegm.m4: Fix.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add download&install.  Add autoconf tests.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add hacking section.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* gl/memdup.c, gl/xmemdup.c: Fix.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/hostkeys.c, lib/principal.c, lib/realm.c, lib/tkts.c: Use
+	xstrdup.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-3des.c, lib/crypto-des.c: Use xmalloc.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tgs.c: Typo.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Use xrealloc, xstrdup.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/safe.c, lib/tgs.c: Use xcalloc.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c: Doc fix.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c, lib/tkt.c, lib/ticket.c: Use xmalloc.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c: Use xstrdup.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c: Use xcalloc.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c, lib/asn1.c, lib/crypto.c, lib/enckdcreppart.c,
+	lib/init.c: Use xmalloc.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c, lib/ap.c: Use xcalloc.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Revert.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/internal.h: Add.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Remove kdc.  Add server-realm (unfinished).
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c, lib/internal.h: Use memdup.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/memdup.c, gl/memdup.h, gl/xmemdup.c,
+	gl/xmemdup.h: Add.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2003-09-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix AES cksumtype, from Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* extra/inetutils.diff: Update.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha: Fix.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Fix crash.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* ANNOUNCE: Fix.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/realm.c: Doc fix.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/realm.c, lib/shishi.h.in: Support host->realm mapping via
+	DNS.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/resolv.c: Zero terminate TXT's.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/resolv.c: Support TXT.  Fix memory allocation.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix markup.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi, shishi.conf.in, shishi.skel.in: Fix.
+
+2003-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add reference manual.
+
 2003-08-31  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.4.
