@@ -1036,8 +1036,10 @@ extern int shishi_as_derive_salt (Shishi * handle,
 				  Shishi_asn1 asreq,
 				  Shishi_asn1 asrep, char *salt,
 				  size_t * saltlen);
-extern int shishi_tgs_process (Shishi * handle, Shishi_asn1 tgsreq,
+extern int shishi_tgs_process (Shishi * handle,
+			       Shishi_asn1 tgsreq,
 			       Shishi_asn1 tgsrep,
+			       Shishi_asn1 authenticator,
 			       Shishi_asn1 oldenckdcreppart,
 			       Shishi_asn1 * enckdcreppart);
 extern int shishi_as_process (Shishi * handle, Shishi_asn1 asreq,
@@ -1661,10 +1663,6 @@ extern int shishi_apreq_to_file (Shishi * handle, Shishi_asn1 apreq,
 extern int shishi_apreq_read (Shishi * handle, FILE * fh,
 			      Shishi_asn1 * apreq);
 extern int shishi_apreq_save (Shishi * handle, FILE * fh, Shishi_asn1 apreq);
-extern int shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq,
-				 int *flags);
-extern int shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq,
-				     int options);
 extern int shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
 				    Shishi_asn1 ticket);
 extern int shishi_apreq_set_authenticator (Shishi * handle, Shishi_asn1 apreq,
@@ -1683,6 +1681,8 @@ extern int shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq,
 				     int options);
 extern int shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq,
 				     int option);
+extern int shishi_apreq_options_remove (Shishi * handle, Shishi_asn1 apreq,
+					int option);
 extern int shishi_apreq_get_ticket (Shishi * handle, Shishi_asn1 apreq,
 				    Shishi_asn1 * ticket);
 extern int shishi_apreq_get_authenticator_etype (Shishi * handle,
