@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-08-15 05:21+0200\n"
+"POT-Creation-Date: 2003-08-17 01:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -291,32 +291,32 @@ msgstr ""
 msgid "Reading KDC-REP from %s...done\n"
 msgstr ""
 
-#: lib/kdcreq.c:230
+#: lib/kdcreq.c:223
 #, c-format
 msgid "Writing KDC-REQ to %s...\n"
 msgstr ""
 
-#: lib/kdcreq.c:237
+#: lib/kdcreq.c:230
 #, c-format
 msgid "Writing KDC-REQ in %s format...\n"
 msgstr ""
 
-#: lib/kdcreq.c:252
+#: lib/kdcreq.c:245
 #, c-format
 msgid "Writing KDC-REQ to %s...done\n"
 msgstr ""
 
-#: lib/kdcreq.c:310
+#: lib/kdcreq.c:303
 #, c-format
 msgid "Reading KDC-REQ from %s...\n"
 msgstr ""
 
-#: lib/kdcreq.c:317
+#: lib/kdcreq.c:310
 #, c-format
 msgid "Reading KDC-REQ in %s format...\n"
 msgstr ""
 
-#: lib/kdcreq.c:332
+#: lib/kdcreq.c:325
 #, c-format
 msgid "Reading KDC-REQ from %s...done\n"
 msgstr ""
@@ -430,76 +430,91 @@ msgstr ""
 msgid "Ticket flags:\t"
 msgstr ""
 
-#: src/shishi.c:238
+#: src/shishi.c:255
 #, c-format
 msgid "Cannot create key: %s"
 msgstr ""
 
-#: src/shishi.c:257
+#: src/shishi.c:274
 msgid "Error in string2key"
 msgstr ""
 
-#: src/shishi.c:267
+#: src/shishi.c:284
 #, c-format
 msgid "Could not create key: %s\n"
 msgstr ""
 
-#: src/shishi.c:296
+#: src/shishi.c:313
 #, c-format
 msgid "Could not find key: %s\n"
 msgstr ""
 
-#: src/shishi.c:328 src/shishi.c:341 src/shishi.c:397 src/shishi.c:408
+#: src/shishi.c:345 src/shishi.c:358 src/shishi.c:414 src/shishi.c:425
 #, c-format
 msgid "`%s': %s\n"
 msgstr ""
 
-#: src/shishi.c:353
+#: src/shishi.c:370
 #, c-format
 msgid "Error reading `%s'\n"
 msgstr ""
 
-#: src/shishi.c:357
+#: src/shishi.c:374
 #, c-format
 msgid "Read %d bytes...\n"
 msgstr ""
 
-#: src/shishi.c:367
+#: src/shishi.c:384
 msgid "Error ciphering\n"
 msgstr ""
 
-#: src/shishi.c:386
+#: src/shishi.c:403
 #, c-format
 msgid "Short write (%d < %d)...\n"
 msgstr ""
 
-#: src/shishi.c:389
+#: src/shishi.c:406
 #, c-format
 msgid "Wrote %d bytes...\n"
 msgstr ""
 
-#: src/shishi.c:508 src/shishi.c:518 src/shishi.c:527 src/shishi.c:536
-#: src/shishi.c:543 src/shishi.c:554 src/shishi.c:561 src/shishi.c:571
-#: src/shishi.c:581 src/shishi.c:588 src/shishi.c:608 src/shishi.c:615
+#: src/shishi.c:523 src/shishi.c:533 src/shishi.c:542 src/shishi.c:555
+#: src/shishi.c:562 src/shishi.c:569 src/shishi.c:580 src/shishi.c:587
+#: src/shishi.c:597 src/shishi.c:604 src/shishi.c:611 src/shishi.c:621
 #, c-format
 msgid "Option `%s' only valid with CRYPTO."
 msgstr ""
 
-#: src/shishi.c:512
+#: src/shishi.c:527
 #, c-format
 msgid "Unknown encryption type in `%s'"
 msgstr ""
 
-#: src/shishi.c:521 src/shishi.c:530
+#: src/shishi.c:536 src/shishi.c:545
 msgid "Cannot both encrypt and decrypt."
 msgstr ""
 
-#: src/shishi.c:650
+#: src/shishi.c:656
+#, c-format
+msgid "invalid --starttime date `%s'"
+msgstr ""
+
+#: src/shishi.c:691
 #, c-format
 msgid "Too many arguments: `%s'"
 msgstr ""
 
-#: src/shishi.c:893
+#: src/shishi.c:945
+#, c-format
+msgid "invalid --endtime date `%s'"
+msgstr ""
+
+#: src/shishi.c:952
+#, c-format
+msgid "invalid --renew-till date `%s'"
+msgstr ""
+
+#: src/shishi.c:974
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""
