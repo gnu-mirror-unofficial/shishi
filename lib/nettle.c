@@ -24,6 +24,7 @@
 #include "internal.h"
 
 #include "hmac.h"
+#include "arcfour.h"
 #include "des.h"
 #include "aes.h"
 #include "cbc.h"
@@ -101,7 +102,8 @@ shishi_randomize (Shishi * handle, char *data, size_t datalen)
  * @inlen: length of input character array of data to hash.
  * @out: newly allocated character array with hash of data.
  *
- * Compute hash of data using MD4.
+ * Compute hash of data using MD4.  The @out buffer must be
+ * deallocated by the caller.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -127,7 +129,8 @@ shishi_md4 (Shishi * handle,
  * @inlen: length of input character array of data to hash.
  * @out: newly allocated character array with hash of data.
  *
- * Compute hash of data using MD5.
+ * Compute hash of data using MD5.  The @out buffer must be
+ * deallocated by the caller.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -155,7 +158,8 @@ shishi_md5 (Shishi * handle,
  * @inlen: length of input character array of data to hash.
  * @outhash: newly allocated character array with keyed hash of data.
  *
- * Compute keyed checksum of data using HMAC-MD5
+ * Compute keyed checksum of data using HMAC-MD5.  The @outhash buffer
+ * must be deallocated by the caller.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -184,7 +188,8 @@ shishi_hmac_md5 (Shishi * handle,
  * @inlen: length of input character array of data to hash.
  * @outhash: newly allocated character array with keyed hash of data.
  *
- * Compute keyed checksum of data using HMAC-SHA1
+ * Compute keyed checksum of data using HMAC-SHA1.  The @outhash
+ * buffer must be deallocated by the caller.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -213,7 +218,8 @@ shishi_hmac_sha1 (Shishi * handle,
  * @inlen: length of input character array of data to hash.
  * @out: newly allocated character array with keyed hash of data.
  *
- * Computed keyed checksum of data using DES-CBC-MAC.
+ * Computed keyed checksum of data using DES-CBC-MAC.  The @out buffer
+ * must be deallocated by the caller.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -247,6 +253,44 @@ shishi_des_cbc_mac (Shishi * handle,
 }
 
 /**
+ * shishi_arcfour:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
+ * @key: input character array with key to use.
+ * @keylen
+ * @in: input character array of data to encrypt/decrypt.
+ * @inlen: length of input character array of data to encrypt/decrypt.
+ * @out: newly allocated character array with encrypted/decrypted data.
+ *
+ * Encrypt or decrypt data (depending on @decryptp) using ARCFOUR.
+ * The @out buffer must be deallocated by the caller.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_arcfour (Shishi * handle, int decryptp,
+		const char *key, size_t keylen,
+		const char *in, size_t inlen,
+		char **out)
+{
+  struct arcfour_ctx ctx;
+  int rc;
+
+  *out = xmalloc (inlen);
+
+  rc = arcfour_set_key (&ctx, keylen, key);
+  if (!rc)
+    {
+      shishi_error_printf (handle, "Nettle arcfour_set_key failed");
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  arcfour_crypt (&ctx, inlen, in, *out);
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_des:
  * @handle: shishi handle as allocated by shishi_init().
  * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
@@ -257,7 +301,8 @@ shishi_des_cbc_mac (Shishi * handle,
  * @inlen: length of input character array of data to encrypt/decrypt.
  * @out: newly allocated character array with encrypted/decrypted data.
  *
- * Encrypt or decrypt data (depending on DECRYPTP) using DES in CBC mode.
+ * Encrypt or decrypt data (depending on @decryptp) using DES in CBC
+ * mode.  The @out buffer must be deallocated by the caller.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -308,7 +353,8 @@ shishi_des (Shishi * handle, int decryptp,
  * @inlen: length of input character array of data to encrypt/decrypt.
  * @out: newly allocated character array with encrypted/decrypted data.
  *
- * Encrypt or decrypt data (depending on DECRYPTP) using 3DES in CBC mode.
+ * Encrypt or decrypt data (depending on @decryptp) using 3DES in CBC
+ * mode.  The @out buffer must be deallocated by the caller.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -360,9 +406,10 @@ shishi_3des (Shishi * handle, int decryptp,
  * @inlen: length of input character array of data to encrypt/decrypt.
  * @out: newly allocated character array with encrypted/decrypted data.
  *
- * Encrypt or decrypt data (depending on DECRYPTP) using AES in
- * CBC-CTS mode.  The length of the key decide if AES 128 or AES 256
- * should be used.
+ * Encrypt or decrypt data (depending on @decryptp) using AES in
+ * CBC-CTS mode.  The length of the key, @keylen, decide if AES 128 or
+ * AES 256 should be used.  The @out buffer must be deallocated by the
+ * caller.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
