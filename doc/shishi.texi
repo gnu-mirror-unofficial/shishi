@@ -6,15 +6,15 @@
 @setfilename shishi.info
 @documentencoding ISO-8859-1
 @include version.texi
-@settitle The Shishi Manual
+@settitle Shishi
 
 @c Unify some of the indices.
 @syncodeindex tp fn
 @syncodeindex pg fn
 
 @copying
-This is @cite{The Shishi Manual}, last updated @value{UPDATED}, for
-Version @value{VERSION} of Shishi.
+This manual is last updated @value{UPDATED} for version
+@value{VERSION} of Shishi.
 
 Copyright @copyright{} 2002, 2003 Simon Josefsson.
 
@@ -39,9 +39,10 @@ Software Foundation raise funds for GNU development.''
 @end direntry
 
 @titlepage
-@title The Shishi Manual
+@title Shishi
+@subtitle Kerberos 5 implementation for the GNU system
 @subtitle for version @value{VERSION}, @value{UPDATED}
-@author Simon Josefsson (@email{bug-shishi@@josefsson.org})
+@author Simon Josefsson
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -2523,7 +2524,7 @@ thus prudent to offer future extensions on our proposal.  Secondly we
 reserve two values in this new typed hole, and described how they are
 used to implement STARTTLS.
 
-@subsubsection Extensible typed hole based on reserved high bit
+@subsection Extensible typed hole based on reserved high bit
 
 When the high bit is set, the remaining 31 bits of the 4 octets are
 treated as an extensible typed hole, and thus form a 31 bit integer
@@ -2547,7 +2548,7 @@ is set:
  2147483648      RESERVED.
 @end verbatim
 
-@subsubsection STARTTLS requested by client (extension mode 1)
+@subsection STARTTLS requested by client (extension mode 1)
 
 When this is sent by the client, the client is requesting the server
 to start TLS negotiation on the TCP stream.  The client MUST NOT start
@@ -2563,14 +2564,14 @@ Kerberos 5 exchanges are allowed by client policy.  In the latter
 case, it should invoke TLS negotiation on the stream.  If any other
 data is received, the client MUST close the TCP stream.
 
-@subsubsection STARTTLS request accepted by server (extension mode 2)
+@subsection STARTTLS request accepted by server (extension mode 2)
 
 This 4 octet message should be sent by the server when it has received
 the previous 4 octet message.  The message is an acknowledgment of the
 client's request to initiate STARTTLS on the channel.  The server MUST
 then invoke a TLS negotiation.
 
-@subsubsection Proceeding after successful TLS negotiation
+@subsection Proceeding after successful TLS negotiation
 
 If the TLS negotiation ended successfully, possibly also considering
 client or server policies, the exchange within the TLS protected
@@ -2583,7 +2584,7 @@ without requiring pre-authentication or the like.  However, it is not
 an error to carry out pre-authentication as well.  We are currently
 experimenting with this mode of operation.
 
-@subsubsection Proceeding after failed TLS negotiation
+@subsection Proceeding after failed TLS negotiation
 
 If the TLS negotiation fails, possibly due to client or server policy
 (e.g., inadequate support of encryption types in TLS, or lack of
