@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
-"POT-Creation-Date: 2002-11-29 07:36+0100\n"
+"POT-Creation-Date: 2002-11-30 18:25+0100\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -16,8 +16,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/shishi.c:128 src/shishi.c:138 src/shishi.c:147 src/shishi.c:171
-#: src/shishi.c:181
+#: src/shishi.c:128 src/shishi.c:138 src/shishi.c:147 src/shishi.c:156
+#: src/shishi.c:163 src/shishi.c:185 src/shishi.c:192 src/shishi.c:202
+#: src/shishi.c:288 src/shishi.c:295
 #, c-format
 msgid "Option `%s' only valid with CRYPTO."
 msgstr "Flagga \"%s\" får bara användas med CRYPTO"
@@ -31,58 +32,58 @@ msgstr "Okänd krypteringstyp i \"%s\""
 msgid "Cannot both encrypt and decrypt."
 msgstr "Kan inte kryptera och dekyptera samtidigt"
 
-#: src/shishi.c:164 src/shishi.c:229
+#: src/shishi.c:178 src/shishi.c:250
 #, fuzzy, c-format
 msgid "Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."
 msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
 
-#: src/shishi.c:193 src/shishi.c:201 src/shishi.c:208
+#: src/shishi.c:214 src/shishi.c:222 src/shishi.c:229
 #, c-format
 msgid "Option `%s' only valid with AP."
 msgstr ""
 
-#: src/shishi.c:247
+#: src/shishi.c:268
 #, fuzzy, c-format
 msgid "Option `%s' only valid with AP, CLIENT, CRYPTO and KDC/AS/TGS."
 msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
 
-#: src/shishi.c:260
+#: src/shishi.c:281
 #, c-format
 msgid "Option `%s' only valid with CRYPTO and KDC/AS/TGS."
 msgstr ""
 
-#: src/shishi.c:276 src/shishi.c:283
+#: src/shishi.c:311 src/shishi.c:318
 #, fuzzy, c-format
 msgid "Option `%s' only valid with KDC."
 msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
 
-#: src/shishi.c:292
+#: src/shishi.c:327
 #, fuzzy, c-format
 msgid "Option `%s' only valid with KDC/TGS."
 msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
 
-#: src/shishi.c:299 src/shishi.c:328 src/shishi.c:336 src/shishi.c:344
-#: src/shishi.c:352 src/shishi.c:360 src/shishi.c:367
+#: src/shishi.c:334 src/shishi.c:363 src/shishi.c:371 src/shishi.c:379
+#: src/shishi.c:387 src/shishi.c:395 src/shishi.c:402
 #, c-format
 msgid "Option `%s' only valid with KDC/AS/TGS."
 msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
 
-#: src/shishi.c:309 src/shishi.c:320
+#: src/shishi.c:344 src/shishi.c:355
 #, c-format
 msgid "Option `%s' only valid with AP and KDC/AS/TGS."
 msgstr ""
 
-#: src/shishi.c:374
+#: src/shishi.c:409
 #, c-format
 msgid "Too many arguments: `%s'"
 msgstr "För många parametrar: `%s'"
 
-#: src/shishi.c:411
+#: src/shishi.c:446
 #, c-format
 msgid "Unknown command: '%s'"
 msgstr "Okänt kommando: '%s'"
 
-#: src/shishi.c:859
+#: src/shishi.c:919
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""
