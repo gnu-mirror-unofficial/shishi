@@ -157,7 +157,7 @@ shishi_cfg (Shishi * handle, char *option)
 		struct hostent *he;
 		struct servent *se;
 
-		he = gethostbyname (value);
+		he = gethostbyname (value); /* XXX move to netio.c */
 		if (he == NULL ||
 		    he->h_addr_list[0] == NULL || he->h_addrtype != AF_INET)
 		  {
