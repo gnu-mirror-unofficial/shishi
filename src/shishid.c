@@ -355,7 +355,7 @@ static struct argp argp = {
 };
 
 static char *fatal_krberror;
-static size_t *fatal_krberror_len;
+static size_t fatal_krberror_len;
 
 static int
 setup_fatal_krberror (Shishi * handle)
@@ -440,10 +440,8 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
     return err;
 
   /* XXX use a "preferred server kdc etype" from shishi instead? */
+
   err = shishi_key_random (handle, etype, &sessionkey);
-  if (err)
-    return err;
-  err = shishi_key_random (handle, etype, &sessiontktkey);
   if (err)
     return err;
 
@@ -483,15 +481,15 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
   if (err)
     return err;
 
-  buflen = sizeof (buf);
-  err = shishi_as_derive_salt (handle, shishi_as_req (as), shishi_as_rep (as),
-			       buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-
   userkey = shishi_keys_for_serverrealm_in_file (handle,
 						 arg->keyfile,
 						 username, realm);
+  if (!userkey)
+    return !SHISHI_OK;
+
+  sessiontktkey = shishi_keys_for_serverrealm_in_file
+    (handle, arg->keyfile, "krbtgt/latte.josefsson.org",
+     "latte.josefsson.org");
   if (!userkey)
     return !SHISHI_OK;
 
@@ -571,6 +569,161 @@ asreq (Shishi * handle, struct arguments *arg,
 
   return;
 }
+static int
+tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
+{
+  Shishi_key *tgskey;
+  int rc;
+  Shishi_tkt *tkt;
+  Shishi_key *sessiontktkey, *userkey;
+  char buf[BUFSIZ];
+  int buflen;
+  int err;
+  char *servername, *realm;
+
+  /* extract pa-data and populate tgs->ap */
+  rc = shishi_tgs_req_process (tgs);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  tgskey = shishi_keys_for_serverrealm_in_file (handle,
+						arg->keyfile,
+						"krbtgt/latte.josefsson.org",
+						"latte.josefsson.org");
+  if (!tgskey)
+    return !SHISHI_OK;
+
+  /* decrypt ticket with our key, and decrypt authenticator using key in tkt */
+  rc = shishi_ap_req_process (shishi_tgs_ap (tgs), tgskey);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  /* XXX check that checksum in authenticator match tgsreq.req-body */
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_sname_get (handle, shishi_tgs_req (tgs), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  servername = strdup (buf);
+  printf ("servername %s\n", servername);
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_realm_get (handle, shishi_tgs_req (tgs), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  realm = strdup (buf);
+  printf ("server realm %s\n", realm);
+
+  tkt = shishi_tgs_tkt (tgs);
+  if (!tkt)
+    return SHISHI_MALLOC_ERROR;
+
+  err = shishi_tkt_serverrealm_set (tkt, realm, servername);
+  if (err)
+    return err;
+  shishi_tgs_tkt_set (tgs, shishi_ap_tkt (shishi_tgs_ap (tgs)));
+
+  userkey = shishi_keys_for_serverrealm_in_file (handle,
+						 arg->keyfile,
+						 "simon", realm);
+  if (!userkey)
+    return !SHISHI_OK;
+
+  sessiontktkey = shishi_keys_for_serverrealm_in_file
+    (handle, arg->keyfile, "krbtgt/latte.josefsson.org",
+     "latte.josefsson.org");
+  if (!userkey)
+    return !SHISHI_OK;
+
+  if (arg->verbose)
+    {
+      shishi_kdcreq_print (handle, stderr, shishi_tgs_req (tgs));
+      shishi_encticketpart_print (handle, stderr,
+				  shishi_tkt_encticketpart (tkt));
+      shishi_ticket_print (handle, stderr, shishi_tkt_ticket (tkt));
+      shishi_enckdcreppart_print (handle, stderr,
+				  shishi_tkt_enckdcreppart (tkt));
+      shishi_kdcrep_print (handle, stderr, shishi_tgs_rep (tgs));
+    }
+
+  err = shishi_tkt_build (tkt, sessiontktkey);
+  if (err)
+    return err;
+
+  err = shishi_tgs_rep_build (tgs, userkey);
+  if (err)
+    return err;
+
+  if (arg->verbose)
+    {
+      shishi_kdcreq_print (handle, stderr, shishi_tgs_req (tgs));
+      shishi_encticketpart_print (handle, stderr,
+				  shishi_tkt_encticketpart (tkt));
+      shishi_ticket_print (handle, stderr, shishi_tkt_ticket (tkt));
+      shishi_enckdcreppart_print (handle, stderr,
+				  shishi_tkt_enckdcreppart (tkt));
+      shishi_kdcrep_print (handle, stderr, shishi_tgs_rep (tgs));
+    }
+
+  return SHISHI_OK;
+}
+
+static void
+tgsreq (Shishi * handle, struct arguments *arg,
+	Shishi_asn1 kdcreq, char **out, int *outlen)
+{
+  Shishi_tgs *tgs;
+  int rc;
+
+  rc = shishi_tgs (handle, &tgs);
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "Incoming request failed: Cannot create TGS: %s\n",
+	      shishi_strerror (rc));
+      /* XXX hard coded KRB-ERROR? */
+      *out = strdup ("foo");
+      *outlen = strlen (*out);
+      return;
+    }
+
+  shishi_tgs_req_set (tgs, kdcreq);
+
+  *out = malloc (BUFSIZ);
+  if (*out == NULL)
+    {
+      syslog (LOG_ERR, "Incoming request failed: Cannot allocate memory\n");
+      /* XXX hard coded KRB-ERROR? */
+      *out = NULL;
+      *outlen = 0;
+      return;
+    }
+  *outlen = BUFSIZ;
+
+  rc = tgsreq1 (handle, arg, tgs);
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_NOTICE, "Could not answer request: %s: %s\n",
+	      shishi_strerror (rc),
+	      shishi_krberror_message (handle, shishi_tgs_krberror (tgs)));
+      rc = shishi_tgs_krberror_der (tgs, *out, outlen);
+    }
+  else
+    rc = shishi_tgs_rep_der (tgs, *out, outlen);
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_ERR,
+	      "Incoming request failed: Cannot DER encode reply: %s\n",
+	      shishi_strerror (rc));
+      /* XXX hard coded KRB-ERROR? */
+      *out = strdup ("aaaaaa");
+      *outlen = strlen (*out);
+      return;
+    }
+
+  return;
+}
 
 static Shishi_msgtype
 get_msgtype (Shishi * handle, char *in, size_t inlen)
@@ -628,8 +781,8 @@ process_1 (Shishi * handle, struct arguments *arg,
       kdcreq = shishi_der2asn1_tgsreq (handle, in, inlen);
       if (kdcreq)
 	{
-	  fprintf (stderr, "tgs-req...\n");
 	  shishi_kdcreq_print (handle, stdout, kdcreq);
+	  tgsreq (handle, arg, kdcreq, out, outlen);
 	  return SHISHI_OK;
 	}
       else
@@ -996,11 +1149,13 @@ main (int argc, char *argv[])
   if (!arg.keyfile)
     arg.keyfile = strdup (KDCKEYFILE);
 
+  if (!arg.cfgfile)
+    arg.cfgfile = strdup (SYSTEMCFGFILE);
+
   rc = launch (&arg);
 
   free (arg.keyfile);
-  if (arg.cfgfile)
-    free (arg.cfgfile);
+  free (arg.cfgfile);
   if (arg.setuid)
     free (arg.setuid);
 
