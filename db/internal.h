@@ -37,8 +37,13 @@
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
 
+/* Get xmalloc. */
 #include "xalloc.h"
 
+/* Get getline, ssize_t. */
+#include "getline.h"
+
+/* Get prototypes. */
 #include "shisa.h"
 
 typedef int (*_Shisa_db_init) (Shisa *dbh,

@@ -1,4 +1,4 @@
-/* Get fopen. */
+/* Get FILE, fopen. */
 #include <stdio.h>
 
 extern int _shisa_isdir (const char *path);
