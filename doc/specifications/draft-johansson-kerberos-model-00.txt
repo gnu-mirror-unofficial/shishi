@@ -6,7 +6,7 @@ Expires: April 8, 2004                                   October 9, 2003
 
 
               An information model for Kerberos version 5
-                     draft-johansson-kerberos-model
+                     draft-johansson-kerberos-model-00
 
 Status of this Memo
 
@@ -227,7 +227,7 @@ Internet-Draft    An information model for Kerberos version 5  October 2003
 
 3. Acknowledgments
 
-   Love Hörnquist-Åstrand <lha@it.su.se> for important contributions.
+   Love H÷rnquist-Êstrand <lha@it.su.se> for important contributions.
 
 
 
@@ -696,7 +696,7 @@ Author's Address
 
    Leif Johansson
    Stockholm university
-   Enheten för IT och Media
+   Enheten f÷r IT och Media
    Stockholm  SE-106 91
 
    EMail: leifj@it.su.se
