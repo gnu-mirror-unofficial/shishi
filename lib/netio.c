@@ -46,7 +46,7 @@ shishi_sendrecv_udp (Shishi * handle,
   int sockfd;
   int bytes_sent;
   struct sockaddr_storage from_sa;
-  size_t length = sizeof (struct sockaddr_storage);
+  socklen_t length = sizeof (struct sockaddr_storage);
   fd_set readfds;
   struct timeval tout;
   int rc;
@@ -123,7 +123,7 @@ shishi_sendrecv_tcp (Shishi * handle,
   int sockfd;
   int bytes_sent;
   struct sockaddr_storage from_sa;
-  size_t length = sizeof (struct sockaddr_storage);
+  socklen_t length = sizeof (struct sockaddr_storage);
   fd_set readfds;
   struct timeval tout;
   int rc;
