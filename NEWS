@@ -13,9 +13,12 @@ database is supported.  Shisa consists of two parts, a library
 is designed to be concurrent write safe, i.e., multiple writers to the
 same database is permitted.  This is very much work in progress.
 
-** The Administration and Reference Manual has been (re)written.
-
 ** A new tool 'shisa' added to add/remove/list/modify the Shisa database.
+
+** The Administration and Reference Manual has been (re)written.
+There is now a step-by-step walk-through on creating the database for
+a new realm, adding a few principals, starting the server and testing
+it by getting tickets.
 
 ** Shishid (the Kerberos server) now read keys via the Shisa database.
 The old hostkeys-alike file based "database" is no longer supported.
@@ -51,6 +54,8 @@ shishi.skel (user configuration file template), shishi.keys (host
 specific keys) and the Shisa database root, respectively.
 
 ** IANA allocated Telnet Encrypt command 12 for the AES-CCM mode.
+
+** Autoconf 2.59, Automake 1.8, and Libtool from CVS is used.
 
 ** Some more self tests were added.
 
