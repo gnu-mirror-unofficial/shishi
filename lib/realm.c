@@ -89,3 +89,36 @@ shishi_realm_default_get (Shishi * handle)
 {
   return handle->default_realm;
 }
+
+
+const char *
+shishi_realm_for_server_file (Shishi * handle, char *server)
+{
+  return NULL;
+}
+
+const char *
+shishi_realm_for_server_dns (Shishi * handle, char *server)
+{
+  const char *p = "JOSEFSSON.ORG";
+
+  fprintf(stderr,
+	  "warning: Assuming server `%s' is in realm `%s'\n"
+	  "warning: based on insecure DNS information.\n"
+	  "warning: Abort if this appear fruadulent.\n",
+	  server, p);
+
+  return p;
+}
+
+const char *
+shishi_realm_for_server (Shishi * handle, char *server)
+{
+  const char *p;
+
+  p = shishi_realm_for_server_file (handle, server);
+  if (!p)
+    p = shishi_realm_for_server_dns (handle, server);
+
+  return p;
+}
