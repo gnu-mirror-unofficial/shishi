@@ -64,7 +64,7 @@ _asn1_get_length_der(const unsigned char *der,int  *len)
       ans=0;
       while(punt<=k) ans=ans*256+der[punt++];
     }
-    else{  /* indefinite lenght method */
+    else{  /* indefinite length method */
       ans=-1;
     }
 
@@ -492,11 +492,11 @@ _asn1_get_indefinite_length_string(const unsigned char* der,int* len)
   * @element: pointer to an ASN1 structure
   * @ider: vector that contains the DER encoding. 
   * @len: number of bytes of *der: der[0]..der[len-1]
-  * Description:
+  * @errorDescription: null-terminated string contains details when an error occurred.
   *
   * Fill the structure *ELEMENT with values of a DER encoding string. The sructure must just be
   * created with function 'create_stucture'.
-  * If an error accurs during de decoding procedure, the *ELEMENT is deleted
+  * If an error occurs during the decoding procedure, the *ELEMENT is deleted
   * and set equal to ASN1_TYPE_EMPTY.
   *
   * Returns:
@@ -833,7 +833,7 @@ asn1_der_decoding(ASN1_TYPE *element,const void *ider,int len,
 	  counter+=len2+len3;
 	}
 	else{ /* indefinite length */
-	  /* Check indefinite lenth method in a EXPLICIT TAG */
+	  /* Check indefinite lenth method in an EXPLICIT TAG */
 	  if((p->type&CONST_TAG) && (der[counter-1]==0x80))
 	    indefinite=1;
 	  else
@@ -858,7 +858,7 @@ asn1_der_decoding(ASN1_TYPE *element,const void *ider,int len,
 	  counter+=len2;
 
 	  /* Check if a couple of 0x00 are present due to an EXPLICIT TAG with
-	     a indefinite length method. */
+	     an indefinite length method. */
 	  if(indefinite){
 	    if(!der[counter] && !der[counter+1]){ 
 	      counter+=2;
@@ -912,14 +912,14 @@ asn1_der_decoding(ASN1_TYPE *element,const void *ider,int len,
   * @elementName: name of the element to fill
   * @ider: vector that contains the DER encoding of the whole structure. 
   * @len: number of bytes of *der: der[0]..der[len-1]
-  * @errorDescription: null-terminated string contains details when an arror accured.
+  * @errorDescription: null-terminated string contains details when an error occurred.
   * 
   * Description:
   *
   * Fill the element named ELEMENTNAME with values of a DER encoding string. 
   * The sructure must just be created with function 'create_stucture'.
   * The DER vector must contain the encoding string of the whole STRUCTURE.
-  * If an error accurs during the decoding procedure, the *STRUCTURE is deleted
+  * If an error occurs during the decoding procedure, the *STRUCTURE is deleted
   * and set equal to ASN1_TYPE_EMPTY.
   *
   * Returns:
@@ -958,7 +958,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
     return ASN1_GENERIC_ERROR;
   }
 
-  if((*structure)->name){  /* Has *structure a name? */
+  if((*structure)->name){  /* Has *structure got a name? */
     nameLen-=strlen((*structure)->name);
     if(nameLen>0) strcpy(currentName,(*structure)->name);
     else{
@@ -1335,7 +1335,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 	  counter+=len2+len3;
 	}
 	else{ /* indefinite length */
-	  /* Check indefinite lenth method in a EXPLICIT TAG */
+	  /* Check indefinite lenth method in an EXPLICIT TAG */
 	  if((p->type&CONST_TAG) && (der[counter-1]==0x80))
 	    indefinite=1;
 	  else
@@ -1366,7 +1366,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 	  counter+=len2;
 
 	  /* Check if a couple of 0x00 are present due to an EXPLICIT TAG with
-	     a indefinite length method. */
+	     an indefinite length method. */
 	  if(indefinite){
 	    if(!der[counter] && !der[counter+1]){ 
 	      counter+=2;
@@ -1690,7 +1690,7 @@ asn1_der_decoding_startEnd(ASN1_TYPE element,const void *ider,int len,
 	  counter+=len2+len4+len3;
 	}
 	else{ /* indefinite length */
-	  /* Check indefinite lenth method in a EXPLICIT TAG */
+	  /* Check indefinite lenth method in an EXPLICIT TAG */
 	  if((p->type&CONST_TAG) && (der[counter-1]==0x80))
 	    indefinite=1;
 	  else
@@ -1703,7 +1703,7 @@ asn1_der_decoding_startEnd(ASN1_TYPE element,const void *ider,int len,
 	  counter+=len2;
 
 	  /* Check if a couple of 0x00 are present due to an EXPLICIT TAG with
-	     a indefinite length method. */
+	     an indefinite length method. */
 	  if(indefinite){
 	    if(!der[counter] && !der[counter+1])
 	      counter+=2;
@@ -1742,8 +1742,7 @@ asn1_der_decoding_startEnd(ASN1_TYPE element,const void *ider,int len,
 
 
 /**
-  * asn1_expand_any_defined_by - Expand every "ANY DEFINED BY" fields of 
-  *    structure *ELEMENT with the corresponding type.
+  * asn1_expand_any_defined_by - Expand "ANY DEFINED BY" fields in structure.
   * @definitions: ASN1 definitions
   * @element: pointer to an ASN1 structure
   * Description:
@@ -1938,8 +1937,7 @@ asn1_expand_any_defined_by(ASN1_TYPE definitions,ASN1_TYPE *element)
 
 
 /**
-  * asn1_expand_octet_string - Expand an "OCTET STRING" fields of 
-  *    structure *ELEMENT with the corresponding type.
+  * asn1_expand_octet_string - Expand "OCTET STRING" fields in structure.
   * @definitions: ASN1 definitions
   * @element: pointer to an ASN1 structure
   * @octetName: name of the OCTECT STRING field to expand.
@@ -2069,10 +2067,4 @@ asn1_expand_octet_string(ASN1_TYPE definitions,ASN1_TYPE *element,
 
   return retCode;
 }
-
-
-
-
-
-
 
