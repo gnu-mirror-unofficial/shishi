@@ -15,6 +15,9 @@ The library (lib/) is licensed under the GNU Lesser Public License
 license (see COPYING.LIB), the application (src/) is licensed under
 the GNU Public License (see COPYING), and the documentation (doc/) is
 licensed under the GNU Free Documentation License (see COPYING.DOC).
+Third party libraries (asn1/, crypto/, argp/, and extra/inetutils/)
+are distributed here for convenience, and they have their own
+respective licenses.
 
 For updates to the project, see <URL:http://josefsson.org/shishi/>.
 
