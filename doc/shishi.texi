@@ -201,10 +201,10 @@ know so work duplication can be avoided.
 
 @item PKINIT (use libksba, weeks)
 
-@item Finish GSSAPI support via GPL GSS (weeks)
-Shishi will not support GSS, but a separate project ``GPL GSS'' is
-under way to produce a generic GSS implementation, and it will use
-Shishi to implement the Kerberos 5 mechanism.
+@item Finish GSSAPI support via GSSLib (weeks)
+Shishi will not support GSSLib natively, but a separate project
+``GSSLib'' is under way to produce a generic GSS implementation, and
+it will use Shishi to implement the Kerberos 5 mechanism.
 
 @item Port to cyclone (cyclone need to mature first)
 
@@ -2067,7 +2067,9 @@ yet.
 
 @node Generic Security Service
 @section Generic Security Service
-@cindex Generic Security Service (GSS)
+@cindex Generic Security Service
+@cindex GSS-API
+@cindex GSSLib
 
 As an alternative to the native Shishi programming API, it is possible
 to program Shishi through the Generic Security Services (GSS) API.
