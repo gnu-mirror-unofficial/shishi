@@ -424,7 +424,7 @@ shishi_tkt_client_p (Shishi_tkt * tkt, const char *client)
  **/
 int
 shishi_tkt_clientrealm (Shishi_tkt * tkt,
-			char *client, size_t *clientlen)
+			char **client, size_t *clientlen)
 {
   return shishi_principal_name_realm (tkt->handle,
 				      tkt->kdcrep, "cname",
