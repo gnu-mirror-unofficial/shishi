@@ -32,46 +32,44 @@
 #include <string.h>
 
 void
-cbc_cts_encrypt(void *ctx,
-		void (*f)(void *ctx,
-			  unsigned length,
-			  uint8_t *dst,
-			  const uint8_t *src),
-		unsigned block_size, uint8_t *iv,
-		unsigned length, uint8_t *dst,
-		const uint8_t *src)
+cbc_cts_encrypt (void *ctx,
+		 void (*f) (void *ctx,
+			    unsigned length,
+			    uint8_t * dst,
+			    const uint8_t * src),
+		 unsigned block_size, uint8_t * iv,
+		 unsigned length, uint8_t * dst, const uint8_t * src)
 {
   unsigned nblocks = length / block_size;
   unsigned restbytes = (length % block_size) == 0 ?
     block_size : length % block_size;
 
-  for ( ; nblocks; nblocks--, src += block_size, dst += block_size)
+  for (; nblocks; nblocks--, src += block_size, dst += block_size)
     {
-      memxor(iv, src, block_size);
-      f(ctx, block_size, dst, iv);
-      memcpy(iv, dst, block_size);
+      memxor (iv, src, block_size);
+      f (ctx, block_size, dst, iv);
+      memcpy (iv, dst, block_size);
     }
 
   if (length > block_size)
     {
-      memcpy(dst, dst - block_size, restbytes);
+      memcpy (dst, dst - block_size, restbytes);
       dst -= block_size;
-      memcpy(dst, src, restbytes);
-      memset(dst + restbytes, 0, block_size - restbytes);
-      memxor(iv, dst, block_size);
-      f(ctx, block_size, dst, iv);
+      memcpy (dst, src, restbytes);
+      memset (dst + restbytes, 0, block_size - restbytes);
+      memxor (iv, dst, block_size);
+      f (ctx, block_size, dst, iv);
     }
 }
 
 void
-cbc_cts_decrypt(void *ctx,
-		void (*f)(void *ctx,
-			  unsigned length,
-			  uint8_t *dst,
-			  const uint8_t *src),
-		unsigned block_size, uint8_t *iv,
-		unsigned length, uint8_t *dst,
-		const uint8_t *src)
+cbc_cts_decrypt (void *ctx,
+		 void (*f) (void *ctx,
+			    unsigned length,
+			    uint8_t * dst,
+			    const uint8_t * src),
+		 unsigned block_size, uint8_t * iv,
+		 unsigned length, uint8_t * dst, const uint8_t * src)
 {
   unsigned nblocks = length / block_size;
   unsigned restbytes = (length % block_size) == 0 ?
@@ -85,25 +83,22 @@ cbc_cts_decrypt(void *ctx,
 	nblocks--;
     }
 
-  for ( ; nblocks; nblocks--, src += block_size, dst += block_size)
+  for (; nblocks; nblocks--, src += block_size, dst += block_size)
     {
-      memcpy(tmpiv, src, block_size);
-      f(ctx, block_size, dst, src);
-      memxor(dst, iv, block_size);
-      memcpy(iv, tmpiv, block_size);
+      memcpy (tmpiv, src, block_size);
+      f (ctx, block_size, dst, src);
+      memxor (dst, iv, block_size);
+      memcpy (iv, tmpiv, block_size);
     }
 
   if (length > block_size)
     {
-      memcpy(tmpiv, iv, block_size);
-      memcpy(iv, src + block_size, restbytes);
-
-      f(ctx, block_size, dst, src);
+      memcpy (iv, src + block_size, restbytes);
+      f (ctx, block_size, dst, src);
       memxor (dst, iv, restbytes);
-
-      memcpy(dst + block_size, dst, restbytes);
-      memcpy(iv + restbytes, dst + restbytes, block_size - restbytes);
-      f(ctx, block_size, dst, iv);
+      memcpy (dst + block_size, dst, restbytes);
+      memcpy (iv + restbytes, dst + restbytes, block_size - restbytes);
+      f (ctx, block_size, dst, iv);
       memxor (dst, tmpiv, block_size);
     }
 }
