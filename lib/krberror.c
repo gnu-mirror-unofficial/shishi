@@ -298,7 +298,7 @@ shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror)
 	return rc;
     }
 
-  rc = shishi_krberror_cname (handle, krberror, &tmp, &tmplen);
+  rc = shishi_krberror_client (handle, krberror, &tmp, &tmplen);
   if (rc != SHISHI_OK &&
       rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
