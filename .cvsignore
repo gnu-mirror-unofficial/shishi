@@ -1,4 +1,5 @@
 .deps
+ABOUT-NLS
 COPYING
 INSTALL
 Makefile
@@ -9,6 +10,7 @@ config.guess
 config.h
 config.h.in
 config.log
+config.rpath
 config.status
 config.sub
 configure
@@ -19,6 +21,7 @@ libtool
 ltmain.sh
 m4
 missing
+mkinstalldirs
 po
 shishi-*.tar.gz
 shishi.conf
