@@ -13,7 +13,7 @@ database is supported.  Shisa consists of two parts, a library
 is designed to be concurrent write safe, i.e., multiple writers to the
 same database is permitted.  This is very much work in progress.
 
-** The Administration Manual has been completely rewritten (for Shisa).
+** The Administration and Reference Manual has been (re)written.
 
 ** A new tool 'shisa' added to add/remove/list/modify the Shisa database.
 
