@@ -574,8 +574,8 @@ extern const char *shishi_strerror_details (Shishi * handle);
 extern void shishi_error_set (Shishi * handle, const char *error);
 extern void shishi_error_printf (Shishi * handle, char *format, ...);
 extern void shishi_error_clear (Shishi * handle);
-extern void shishi_info (Shishi * handle, const char *fmt, ...);
-extern void shishi_warn (Shishi * handle, const char *fmt, ...);
+extern void shishi_info (Shishi * handle, const char *format, ...);
+extern void shishi_warn (Shishi * handle, const char *format, ...);
 
 /* realm.c */
 extern char *shishi_realm_default_guess (void);
