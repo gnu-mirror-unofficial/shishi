@@ -873,11 +873,12 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
   if ((i + 1) % 64 != 0)
     fprintf (fh, "\n");
 
-#if 0
-  for (i = 0; i < shishi_key_length (key); i++)
-    fprintf (fh, "%02x", shishi_key_value (key)[i] & 0xFF);
-  fprintf (fh, "\n");
-#endif
+  if (VERBOSENOICE (handle))
+    {
+      for (i = 0; i < shishi_key_length (key); i++)
+	fprintf (stdout, "%02x", shishi_key_value (key)[i] & 0xFF);
+      fprintf (stdout, "\n");
+    }
 
   fprintf (fh, HEADEREND "\n", "KEY");
 
