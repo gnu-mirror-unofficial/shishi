@@ -49,7 +49,7 @@ _a_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
   GETLONG (in.s_addr, *scan);
   in.s_addr = ntohl (in.s_addr);
 
-  return strdup (inet_ntoa (in));
+  return xstrdup (inet_ntoa (in));
 }
 
 static void *
@@ -69,7 +69,7 @@ _srv_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
     return NULL;
   *scan = (unsigned char *) (*scan + len);
 
-  srv = (dns_srv_t) malloc (sizeof (struct dns_srv_st));
+  srv = (dns_srv_t) xmalloc (sizeof (struct dns_srv_st));
 
   srv->priority = priority;
   srv->weight = weight;
@@ -85,6 +85,19 @@ _srv_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
   strcpy (srv->name, host);
 
   return (void *) srv;
+}
+
+static void *
+_txt_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
+{
+  size_t len = (size_t)**scan;
+  char *p;
+
+  p = xmalloc (len);
+  memcpy (p, *scan + 1, len);
+  *scan += (unsigned char) (len + 1);
+
+  return p;
 }
 
 /* compare two srv structures, order by priority then by randomised weight */
@@ -130,8 +143,9 @@ _shishi_resolv (const char *zone, unsigned int query_type)
 
   switch (query_type)
     {
-    case T_SRV:
     case T_A:
+    case T_TXT:
+    case T_SRV:
       break;
 
     default:
@@ -166,7 +180,7 @@ _shishi_resolv (const char *zone, unsigned int query_type)
     }
 
   /* create an array to store the replies in */
-  reply = (dnshost_t *) malloc (sizeof (dnshost_t) * ancount);
+  reply = (dnshost_t *) xmalloc (sizeof (dnshost_t) * ancount);
   memset (reply, 0, sizeof (dnshost_t) * ancount);
 
   an = 0;
@@ -199,7 +213,7 @@ _shishi_resolv (const char *zone, unsigned int query_type)
 	}
 
       /* create a new reply structure to save it in */
-      reply[an] = (dnshost_t) malloc (sizeof (struct dnshost_st));
+      reply[an] = (dnshost_t) xmalloc (sizeof (struct dnshost_st));
 
       reply[an]->type = type;
       reply[an]->class = class;
@@ -212,6 +226,10 @@ _shishi_resolv (const char *zone, unsigned int query_type)
 	{
 	case T_A:
 	  reply[an]->rr = _a_rr (packet, eom, &scan);
+	  break;
+
+	case T_TXT:
+	  reply[an]->rr = _txt_rr (packet, eom, &scan);
 	  break;
 
 	case T_SRV:
