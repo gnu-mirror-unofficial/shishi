@@ -910,7 +910,6 @@ kdc_loop (Shishi * handle, struct arguments *arg)
 
   while (!quit)
     {
-      sleep (1);
       do
 	{
 	  FD_ZERO (&readfds);
