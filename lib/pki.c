@@ -67,6 +67,8 @@ shishi_x509cert_default_file_set (Shishi * handle, const char *x509certfile)
  * shishi_x509cert_default_file:
  * @handle: Shishi library handle create by shishi_init().
  *
+ * Get filename for default X.509 certificate.
+ *
  * Return value: Returns the default X.509 client certificate filename
  *   used in the library.  The certificate is used during TLS
  *   connections with the KDC to authenticate the client.  The string is
@@ -122,6 +124,8 @@ shishi_x509key_default_file_set (Shishi * handle, const char *x509keyfile)
 /**
  * shishi_x509key_default_file:
  * @handle: Shishi library handle create by shishi_init().
+ *
+ * Get filename for default X.509 key.
  *
  * Return value: Returns the default X.509 client key filename
  *   used in the library.  The key is used during TLS

@@ -56,6 +56,8 @@ shishi_tkts_default_file_guess (Shishi * handle)
  * shishi_tkts_default_file:
  * @handle: Shishi library handle create by shishi_init().
  *
+ * Get filename of default ticket set.
+ *
  * Return value: Returns the default ticket set filename used in the
  * library.  The string is not a copy, so don't modify or deallocate
  * it.
@@ -100,6 +102,8 @@ shishi_tkts_default_file_set (Shishi * handle, const char *tktsfile)
  * shishi_tkts_default:
  * @handle: Shishi library handle create by shishi_init().
  *
+ * Get the default ticket set for library handle.
+ *
  * Return value: Return the handle global ticket set.
  **/
 Shishi_tkts *
@@ -122,6 +126,8 @@ shishi_tkts_default_to_file (Shishi_tkts * tkts)
  * shishi_tkts:
  * @handle: shishi handle as allocated by shishi_init().
  * @tkts: output pointer to newly allocated tkts handle.
+ *
+ * Get a new ticket set handle.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -164,6 +170,8 @@ shishi_tkts_done (Shishi_tkts ** tkts)
  * shishi_tkts_size:
  * @tkts: ticket set handle as allocated by shishi_tkts().
  *
+ * Get size of ticket set.
+ *
  * Return value: Returns number of tickets stored in ticket set.
  **/
 int
@@ -177,10 +185,12 @@ shishi_tkts_size (Shishi_tkts * tkts)
  * @tkts: ticket set handle as allocated by shishi_tkts().
  * @ticketno: integer indicating requested ticket in ticket set.
  *
+ * Get the n:th ticket in ticket set.
+ *
  * Return value: Returns a ticket handle to the ticketno:th ticket in
- * the ticket set, or NULL if ticket set is invalid or ticketno is out
- * of bounds.  The first ticket is ticketno 0, the second ticketno 1,
- * and so on.
+ *   the ticket set, or NULL if ticket set is invalid or ticketno is
+ *   out of bounds.  The first ticket is ticketno 0, the second
+ *   ticketno 1, and so on.
  **/
 Shishi_tkt *
 shishi_tkts_nth (Shishi_tkts * tkts, int ticketno)
@@ -195,10 +205,12 @@ shishi_tkts_nth (Shishi_tkts * tkts, int ticketno)
  * shishi_tkts_remove:
  * @tkts: ticket set handle as allocated by shishi_tkts().
  * @ticketno: ticket number of ticket in the set to remove.  The first
- * ticket is ticket number 0.
+ *   ticket is ticket number 0.
  *
- * Return value: Returns SHISHI_OK if succesful or if ticketno
- * larger than size of ticket set.
+ * Remove a ticket, indexed by @ticketno, in ticket set.
+ *
+ * Return value: Returns SHISHI_OK if succesful or if ticketno larger
+ *   than size of ticket set.
  **/
 int
 shishi_tkts_remove (Shishi_tkts * tkts, int ticketno)
@@ -233,6 +245,10 @@ shishi_tkts_remove (Shishi_tkts * tkts, int ticketno)
  * shishi_tkts_add:
  * @tkts: ticket set handle as allocated by shishi_tkts().
  * @tkt: ticket to be added to ticket set.
+ *
+ * Add a ticket to the ticket set.  Only the pointer is stored, so if
+ * you modify @tkt, the ticket in the ticket set will also be
+ * modified.
  *
  * Return value: Returns SHISHI_OK iff succesful.
  **/
