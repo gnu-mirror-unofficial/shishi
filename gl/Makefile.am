@@ -58,12 +58,20 @@ libfoo_la_SOURCES += getdomainname.h
 libfoo_la_SOURCES += getline.h
 EXTRA_DIST += getndelim2.h getndelim2.c
 
-libfoo_la_SOURCES += getopt.h getopt.c getopt1.c getopt_int.h
+BUILT_SOURCES += $(GETOPT_H)
+EXTRA_DIST += getopt_.h getopt_int.h
+
+# We need the following in order to create an <getopt.h> when the system
+# doesn't have one that works with the given compiler.
+all-local $(libfoo_la_OBJECTS): $(GETOPT_H)
+getopt.h: getopt_.h
+	cp $(srcdir)/getopt_.h $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += getopt.h getopt.h-t
 
 libfoo_la_SOURCES += gettext.h
 
 libfoo_la_SOURCES += gettime.c
-
 
 
 
