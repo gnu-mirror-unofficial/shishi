@@ -967,7 +967,8 @@ shishi_string_to_key (Shishi * handle,
 int
 shishi_random_to_key (Shishi * handle,
 		      int32_t keytype,
-		      char *random, size_t randomlen, Shishi_key * outkey)
+		      const char *random, size_t randomlen,
+		      Shishi_key * outkey)
 {
   Shishi_random_to_key_function random2key;
   int res;

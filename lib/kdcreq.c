@@ -481,7 +481,7 @@ shishi_kdcreq_set_realm (Shishi * handle, Shishi_asn1 kdcreq,
  **/
 int
 shishi_kdcreq_server (Shishi * handle, Shishi_asn1 kdcreq,
-		      char **server, size_t ** serverlen)
+		      char **server, size_t * serverlen)
 {
   return shishi_principal_name (handle, kdcreq, "req-body.sname",
 				server, serverlen);
