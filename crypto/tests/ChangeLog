@@ -1,0 +1,53 @@
+2002-11-23  Werner Koch  <wk@gnupg.org>
+
+	* basic.c (check_digests): Add another test for MD4.  By Simon
+	Josefsson.
+
+2002-11-10  Simon Josefsson  <jas@extundo.com>
+
+	* basic.c (check_aes128_cbc_cts_cipher): New function.
+	(check_one_cipher): Add flags parameter.
+	(check_ciphers): Support flags parameter.
+	(main): Check CTS.
+
+2002-11-10  Werner Koch  <wk@gnupg.org>
+
+	* basic.c (check_one_md): New.  By Simon Josefsson.
+	(check_digests): New tests for MD4.  By Simon.
+
+2002-08-26  Werner Koch  <wk@gnupg.org>
+
+	* basic.c (check_ciphers): Check simple DES.
+
+2002-05-16  Werner Koch  <wk@gnupg.org>
+
+	* tsexp.c (back_and_forth): Very minimal test of the new functions.
+
+2002-05-14  Werner Koch  <wk@gnupg.org>
+
+	Changed license of all files to the LGPL.
+
+2002-05-02  Werner Koch  <wk@gnupg.org>
+
+	* basic.c: Add option --verbose.
+
+2002-01-11  Werner Koch  <wk@gnupg.org>
+
+	* tsexp.c (canon_len): Fixed tests.
+
+2001-12-18  Werner Koch  <wk@gnupg.org>
+
+	* tsexp.c: New.
+
+	
+ Copyright 2001, 2002 Free Software Foundation, Inc.
+
+ This file is free software; as a special exception the author gives
+ unlimited permission to copy and/or distribute it, with or without
+ modifications, as long as this notice is preserved.
+
+ This file is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+ implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+	
+
