@@ -1069,7 +1069,7 @@ process (const char *in, size_t inlen, char **out)
   node = shishi_der2asn1 (handle, in, inlen);
   if (node == NULL)
     {
-      syslog (LOG_ERR, "Received %d bytes of non-Kerberos 5 data", inlen);
+      syslog (LOG_ERR, "Received %d bytes of unknown data", inlen);
       return -1;
     }
 
