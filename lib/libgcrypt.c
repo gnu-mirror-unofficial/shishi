@@ -63,7 +63,7 @@ shishi_randomize (Shishi * handle, char *data, size_t datalen)
 int
 shishi_md4 (Shishi * handle,
 	    const char *in, size_t inlen,
-	    char **out, size_t *outlen)
+	    char *out[16])
 {
   gcry_md_hd_t hd;
   gpg_error_t err;
@@ -97,7 +97,7 @@ shishi_md4 (Shishi * handle,
 int
 shishi_md5 (Shishi * handle,
 	    const char *in, size_t inlen,
-	    char **out, size_t *outlen)
+	    char *out[16])
 {
   gcry_md_hd_t hd;
   gpg_error_t err;
@@ -132,7 +132,7 @@ int
 shishi_hmac_sha1 (Shishi * handle,
 		  const char *key, size_t keylen,
 		  const char *in, size_t inlen,
-		  char **outhash, size_t * outhashlen)
+		  char *outhash[16])
 {
   gcry_md_hd_t mdh;
   size_t hlen = gcry_md_get_algo_dlen (GCRY_MD_SHA1);
@@ -170,6 +170,58 @@ shishi_hmac_sha1 (Shishi * handle,
   gcry_md_close (mdh);
 
   return SHISHI_OK;
+}
+
+int
+shishi_des_cbc_mac (Shishi * handle,
+		    const char key[8],
+		    const char iv[8],
+		    const char *in, size_t inlen,
+		    char *out[8])
+{
+  gcry_cipher_hd_t ch;
+  gpg_error_t err;
+  int res = SHISHI_CRYPTO_INTERNAL_ERROR;
+
+  err = gcry_cipher_open (&ch, GCRY_CIPHER_DES,
+			  GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES-CBC-MAC not available in libgcrypt");
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  err = gcry_cipher_setkey (ch, key, 8);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES setkey failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      goto done;
+    }
+
+  err = gcry_cipher_setiv (ch, iv, 8);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES setiv failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      goto done;
+    }
+
+  *out = xmalloc (8);
+
+  err = gcry_cipher_encrypt (ch, *out, 8, in, inlen);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "DES encrypt failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      goto done;
+    }
+
+  return SHISHI_OK;
+
+ done:
+  gcry_cipher_close (ch);
+  return res;
 }
 
 static int
@@ -245,11 +297,11 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int decryptp,
 
 int
 shishi_des (Shishi * handle, int decryptp,
-	    const char *key, size_t keylen,
-	    const char *iv, size_t ivlen,
-	    char **ivout, size_t * ivoutlen,
+	    const char key[8],
+	    const char iv[8],
+	    char *ivout[8],
 	    const char *in, size_t inlen,
-	    char **out, size_t * outlen)
+	    char **out)
 {
   return shishi_libgcrypt (handle, GCRY_CIPHER_DES, 0,
 			   decryptp,
@@ -261,64 +313,12 @@ shishi_des (Shishi * handle, int decryptp,
 }
 
 int
-shishi_des_cbc_mac (Shishi * handle,
-		    const char key[8],
-		    const char iv[8],
-		    const char *in, size_t inlen,
-		    char *out[8])
-{
-  gcry_cipher_hd_t ch;
-  gpg_error_t err;
-  int res = SHISHI_CRYPTO_INTERNAL_ERROR;
-
-  err = gcry_cipher_open (&ch, GCRY_CIPHER_DES,
-			  GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "DES-CBC-MAC not available in libgcrypt");
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  err = gcry_cipher_setkey (ch, key, 8);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "DES setkey failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      goto done;
-    }
-
-  err = gcry_cipher_setiv (ch, iv, 8);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "DES setiv failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      goto done;
-    }
-
-  *out = xmalloc (8);
-
-  err = gcry_cipher_encrypt (ch, *out, 8, in, inlen);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "DES encrypt failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      goto done;
-    }
-
-  return SHISHI_OK;
-
- done:
-  gcry_cipher_close (ch);
-  return res;
-}
-
-int
 shishi_3des (Shishi * handle, int decryptp,
-	     const char *key, size_t keylen,
-	     const char *iv, size_t ivlen,
-	     char **ivout, size_t * ivoutlen,
+	     const char key[24],
+	     const char iv[8],
+	     char *ivout[8],
 	     const char *in, size_t inlen,
-	     char **out, size_t * outlen)
+	     char **out)
 {
   return shishi_libgcrypt (handle, GCRY_CIPHER_3DES, 0,
 			   decryptp,
@@ -330,12 +330,12 @@ shishi_3des (Shishi * handle, int decryptp,
 }
 
 int
-shishi_aes (Shishi * handle, int decryptp,
-	    const char *key, size_t keylen,
-	    const char *iv, size_t ivlen,
-	    char **ivout, size_t * ivoutlen,
-	    const char *in, size_t inlen,
-	    char **out, size_t * outlen)
+shishi_aes_cts (Shishi * handle, int decryptp,
+		const char *key, size_t keylen,
+		const char iv[16],
+		char *ivout[16],
+		const char *in, size_t inlen,
+		char **out)
 {
   return shishi_libgcrypt (handle, GCRY_CIPHER_AES, GCRY_CIPHER_CBC_CTS,
 			   decryptp,

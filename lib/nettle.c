@@ -31,7 +31,7 @@
 #include "cbc-mac.h"
 
 int
-shishi_crypto_init (void)
+_shishi_crypto_init (void)
 {
   return SHISHI_OK;
 }
@@ -97,15 +97,14 @@ shishi_randomize (Shishi * handle, char *data, size_t datalen)
 int
 shishi_md4 (Shishi * handle,
 	    const char *in, size_t inlen,
-	    char **out, size_t *outlen)
+	    char *out[MD4_DIGEST_SIZE])
 {
   struct md4_ctx md4;
 
   md4_init (&md4);
   md4_update (&md4, inlen, in);
-  *outlen = MD4_DIGEST_SIZE;
-  *out = xmalloc (*outlen);
-  md4_digest (&md4, *outlen, *out);
+  *out = xmalloc (MD4_DIGEST_SIZE);
+  md4_digest (&md4, MD4_DIGEST_SIZE, *out);
 
   return SHISHI_OK;
 }
@@ -113,82 +112,40 @@ shishi_md4 (Shishi * handle,
 int
 shishi_md5 (Shishi * handle,
 	    const char *in, size_t inlen,
-	    char **out, size_t *outlen)
+	    char *out[MD5_DIGEST_SIZE])
 {
   struct md5_ctx md5;
 
   md5_init (&md5);
   md5_update (&md5, inlen, in);
-  *outlen = MD5_DIGEST_SIZE;
-  *out = xmalloc (*outlen);
-  md5_digest (&md5, *outlen, *out);
+  *out = xmalloc (MD5_DIGEST_SIZE);
+  md5_digest (&md5, MD5_DIGEST_SIZE, *out);
 
   return SHISHI_OK;
 }
-
 
 int
 shishi_hmac_sha1 (Shishi * handle,
 		  const char *key, size_t keylen,
 		  const char *in, size_t inlen,
-		  char **outhash, size_t * outhashlen)
+		  char *outhash[SHA1_DIGEST_SIZE])
 {
   struct hmac_sha1_ctx ctx;
 
   hmac_sha1_set_key (&ctx, keylen, key);
   hmac_sha1_update (&ctx, inlen, in);
-  *outhashlen = SHA1_DIGEST_SIZE;
-  *outhash = xmalloc (*outhashlen);
-  hmac_sha1_digest (&ctx, *outhashlen, *outhash);
-
-  return SHISHI_OK;
-}
-
-int
-shishi_des (Shishi * handle, int decryptp,
-	    const char *key, size_t keylen,
-	    const char *iv, size_t ivlen,
-	    char **ivout, size_t * ivoutlen,
-	    const char *in, size_t inlen,
-	    char **out, size_t * outlen)
-{
-  struct CBC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
-  int rc;
-
-  *outlen = inlen;
-  *out = xmalloc (*outlen);
-
-  rc = des_set_key (&des.ctx, key);
-  if (!rc)
-    {
-      shishi_error_printf (handle, "Nettle setkey failed");
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  memset (des.iv, 0, sizeof (des.iv));
-  /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
-  memcpy (des.iv, iv, ivlen < sizeof (des.iv) ? ivlen : sizeof (des.iv));
-
-  if (decryptp)
-    CBC_DECRYPT (&des, des_decrypt, inlen, *out, in);
-  else
-    CBC_ENCRYPT (&des, des_encrypt, inlen, *out, in);
-
-  if (ivout && ivoutlen)
-    {
-      *ivoutlen = sizeof (des.iv);
-      *ivout = xmemdup (des.iv, *ivoutlen);
-    }
+  *outhash = xmalloc (SHA1_DIGEST_SIZE);
+  hmac_sha1_digest (&ctx, SHA1_DIGEST_SIZE, *outhash);
 
   return SHISHI_OK;
 }
 
 int
 shishi_des_cbc_mac (Shishi * handle,
-		    const char key[8],
-		    const char iv[8],
+		    const char key[DES_KEY_SIZE],
+		    const char iv[DES_BLOCK_SIZE],
 		    const char *in, size_t inlen,
-		    char *out[8])
+		    char *out[DES_BLOCK_SIZE])
 {
   struct CBC_MAC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
   int rc;
@@ -205,7 +162,7 @@ shishi_des_cbc_mac (Shishi * handle,
   else
     memset (des.iv, 0, DES_BLOCK_SIZE);
 
-  *out = xmalloc (8);
+  *out = xmalloc (DES_BLOCK_SIZE);
 
   CBC_MAC (&des, des_encrypt, inlen, *out, in);
 
@@ -213,18 +170,53 @@ shishi_des_cbc_mac (Shishi * handle,
 }
 
 int
+shishi_des (Shishi * handle, int decryptp,
+	    const char key[DES_KEY_SIZE],
+	    const char iv[DES_BLOCK_SIZE],
+	    char *ivout[DES_BLOCK_SIZE],
+	    const char *in, size_t inlen,
+	    char **out)
+{
+  struct CBC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
+  int rc;
+
+  *out = xmalloc (inlen);
+
+  rc = des_set_key (&des.ctx, key);
+  if (!rc)
+    {
+      shishi_error_printf (handle, "Nettle setkey failed");
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  if (iv)
+    CBC_SET_IV (&des, iv);
+  else
+    memset (des.iv, 0, sizeof (des.iv));
+
+  if (decryptp)
+    CBC_DECRYPT (&des, des_decrypt, inlen, *out, in);
+  else
+    CBC_ENCRYPT (&des, des_encrypt, inlen, *out, in);
+
+  if (ivout)
+    *ivout = xmemdup (des.iv, DES_BLOCK_SIZE);
+
+  return SHISHI_OK;
+}
+
+int
 shishi_3des (Shishi * handle, int decryptp,
-	     const char *key, size_t keylen,
-	     const char *iv, size_t ivlen,
-	     char **ivout, size_t * ivoutlen,
+	     const char key[DES3_KEY_SIZE],
+	     const char iv[DES3_BLOCK_SIZE],
+	     char *ivout[DES3_BLOCK_SIZE],
 	     const char *in, size_t inlen,
-	     char **out, size_t * outlen)
+	     char **out)
 {
   struct CBC_CTX (struct des3_ctx, DES3_BLOCK_SIZE) des3;
   int rc;
 
-  *outlen = inlen;
-  *out = xmalloc (*outlen);
+  *out = xmalloc (inlen);
 
   rc = des3_set_key (&des3.ctx, key);
   if (!rc)
@@ -233,40 +225,40 @@ shishi_3des (Shishi * handle, int decryptp,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  memset (des3.iv, 0, sizeof (des3.iv));
-  /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
-  memcpy (des3.iv, iv, ivlen < sizeof (des3.iv) ? ivlen : sizeof (des3.iv));
+  if (iv)
+    CBC_SET_IV (&des3, iv);
+  else
+    memset (des3.iv, 0, sizeof (des3.iv));
 
   if (decryptp)
     CBC_DECRYPT (&des3, des3_decrypt, inlen, *out, in);
   else
     CBC_ENCRYPT (&des3, des3_encrypt, inlen, *out, in);
 
-  if (ivout && ivoutlen)
-    {
-      *ivoutlen = sizeof (des3.iv);
-      *ivout = xmemdup (des3.iv, *ivoutlen);
-    }
+  if (ivout)
+    *ivout = xmemdup (des3.iv, DES3_BLOCK_SIZE);
 
   return SHISHI_OK;
 }
 
 int
-shishi_aes (Shishi * handle, int decryptp,
-	    const char *key, size_t keylen,
-	    const char *iv, size_t ivlen,
-	    char **ivout, size_t * ivoutlen,
-	    const char *in, size_t inlen,
-	    char **out, size_t * outlen)
+shishi_aes_cts (Shishi * handle, int decryptp,
+		const char *key, size_t keylen,
+		const char iv[AES_BLOCK_SIZE],
+		char *ivout[AES_BLOCK_SIZE],
+		const char *in, size_t inlen,
+		char **out)
 {
   struct CBC_CTS_CTX (struct aes_ctx, AES_BLOCK_SIZE) aes;
 
-  *outlen = inlen;
-  *out = xmalloc (*outlen);
+  *out = xmalloc (inlen);
 
-  memset (aes.iv, 0, sizeof (aes.iv));
-  /* XXX Use CBC_SET_IV (&des, iv), but how with ivlen? */
-  memcpy (aes.iv, iv, ivlen < sizeof (aes.iv) ? ivlen : sizeof (aes.iv));
+
+  if (iv)
+    CBC_SET_IV (&aes, iv);
+  else
+    memset (aes.iv, 0, sizeof (aes.iv));
+
   if (decryptp)
     {
       aes_set_decrypt_key (&aes.ctx, keylen, key);
@@ -278,14 +270,11 @@ shishi_aes (Shishi * handle, int decryptp,
       CBC_CTS_ENCRYPT (&aes, aes_encrypt, inlen, *out, in);
     }
 
-  if (ivout && ivoutlen)
-    {
-      *ivoutlen = sizeof (aes.iv);
-      /* XXX what is the output iv for CBC-CTS mode?
-	 but is this value useful at all for that mode anyway?
-	 Mostly it is DES apps that want the updated iv, so this is ok. */
-      *ivout = xmemdup (aes.iv, *ivoutlen);
-    }
+  if (ivout)
+    /* XXX what is the output iv for CBC-CTS mode?
+       but is this value useful at all for that mode anyway?
+       Mostly it is DES apps that want the updated iv, so this is ok. */
+    *ivout = xmemdup (aes.iv, AES_BLOCK_SIZE);
 
   return SHISHI_OK;
 }

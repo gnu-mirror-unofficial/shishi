@@ -212,10 +212,11 @@ simplified_hmac (Shishi * handle,
 		 const char *in, size_t inlen,
 		 char **outhash, size_t * outhashlen)
 {
+  *outhashlen = 16;
   return shishi_hmac_sha1 (handle,
 			   shishi_key_value (key), shishi_key_length (key),
 			   in, inlen,
-			   outhash, outhashlen);
+			   outhash);
 }
 
 static int
@@ -323,36 +324,34 @@ simplified_dencrypt (Shishi * handle,
 {
   int rc;
 
+  if (outlen)
+    *outlen = inlen;
+
   switch (shishi_key_type (key))
     {
     case SHISHI_DES_CBC_CRC:
     case SHISHI_DES_CBC_MD4:
     case SHISHI_DES_CBC_MD5:
-      rc = shishi_des (handle, decryptp,
-		       shishi_key_value (key), shishi_key_length (key),
-		       iv, ivlen,
-		       ivout, ivoutlen,
-		       in, inlen,
-		       out, outlen);
+      if (ivoutlen)
+	*ivoutlen = 8;
+      rc = shishi_des (handle, decryptp, shishi_key_value (key),
+		       iv, ivout, in, inlen, out);
       break;
 
     case SHISHI_DES3_CBC_HMAC_SHA1_KD:
-      rc = shishi_3des (handle, decryptp,
-			shishi_key_value (key), shishi_key_length (key),
-			iv, ivlen,
-			ivout, ivoutlen,
-			in, inlen,
-			out, outlen);
+      if (ivoutlen)
+	*ivoutlen = 8;
+      rc = shishi_3des (handle, decryptp, shishi_key_value (key),
+			iv, ivout, in, inlen, out);
       break;
 
     case SHISHI_AES128_CTS_HMAC_SHA1_96:
     case SHISHI_AES256_CTS_HMAC_SHA1_96:
-      rc = shishi_aes (handle, decryptp,
-		       shishi_key_value (key), shishi_key_length (key),
-		       iv, ivlen,
-		       ivout, ivoutlen,
-		       in, inlen,
-		       out, outlen);
+      if (ivoutlen)
+	*ivoutlen = 16;
+      rc = shishi_aes_cts (handle, decryptp,
+			   shishi_key_value (key), shishi_key_length (key),
+			   iv, ivout, in, inlen, out);
       break;
 
     default:
@@ -2485,11 +2484,11 @@ shishi_pbkdf2_sha1 (Shishi * handle,
 	      tmp[Slen + 2] = (i & 0x0000ff00) >> 8;
 	      tmp[Slen + 3] = (i & 0x000000ff) >> 0;
 
-	      rc = shishi_hmac_sha1 (handle, P, Plen, tmp, tmplen, &p, &hLen);
+	      rc = shishi_hmac_sha1 (handle, P, Plen, tmp, tmplen, &p);
 	    }
 	  else
 	    {
-	      rc = shishi_hmac_sha1 (handle, P, Plen, U, hLen, &p, &hLen);
+	      rc = shishi_hmac_sha1 (handle, P, Plen, U, hLen, &p);
 	    }
 
 	  if (rc != SHISHI_OK)
