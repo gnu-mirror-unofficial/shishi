@@ -11,8 +11,9 @@ IN A PRODUCTION ENVIRONMENT!
 It will not become stable without help.  Donate time or money.
 
 To compile from CVS, you need perl, texinfo, GTK-DOC, autoconf 2.5+,
-automake 1.7+, help2man, gengetopt and asn1Parser.  Bootstrap the
-build environment with:
+automake 1.7+, help2man, asn1Parser from Libtasn1 CVS (or copy
+lib/kerberos5.c from Shishi releases, it rarely changes), and
+gengetopt 2.12rc.  Bootstrap the build environment with:
 
   $ ./autogen.sh
 
