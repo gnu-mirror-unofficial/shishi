@@ -735,7 +735,7 @@ _shishi_krberror_input (Shishi * handle,
     }
   else
     {
-      derlen = fread (der, sizeof (der[0]), 
+      derlen = fread (der, sizeof (der[0]),
 		      sizeof (der) / sizeof (der[0]), fh);
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
@@ -758,3 +758,69 @@ _shishi_krberror_input (Shishi * handle,
 
   return SHISHI_OK;
 }
+
+int
+shishi_key_print (Shishi * handle, FILE * fh, int keytype, char *key,
+		  int keylen, int kvno, char *clientname, char *realm)
+{
+  char b64key[BUFSIZ];
+  int res;
+  int i;
+
+  shishi_to_base64 (b64key, key, keylen, sizeof (b64key));
+
+  fprintf (fh, HEADERBEG "\n", "KEY");
+
+  fprintf (fh, "Keytype: %d (%s)\n", keytype,
+	   shishi_cipher_name (keytype));
+  if (clientname)
+    fprintf (fh, "Clientname: %s\n", clientname);
+  if (realm)
+    fprintf (fh, "Realm: %s\n", realm);
+  if (kvno)
+    fprintf (fh, "Key-Version-Number: %d\n", kvno);
+  fprintf (fh, "\n");
+
+  for (i = 0; i < strlen (b64key); i++)
+    {
+      fprintf (fh, "%c", b64key[i]);
+      if ((i + 1) % 64 == 0)
+	fprintf (fh, "\n");
+    }
+  if ((i + 1) % 64 != 0)
+    fprintf (fh, "\n");
+
+  fprintf (fh, HEADEREND "\n", "KEY");
+
+  return SHISHI_OK;
+}
+
+int
+shishi_key_to_file (Shishi * handle, char *filename, int keytype, char *key,
+		    int keylen, int kvno, char *clientname, char *realm)
+{
+  FILE *fh;
+  int res;
+
+  if (VERBOSE (handle))
+    printf (_("Writing KEY to %s...\n"), filename);
+
+  fh = fopen (filename, "a");
+  if (fh == NULL)
+    return SHISHI_FOPEN_ERROR;
+
+  res = shishi_key_print (handle, fh, keytype, key, keylen,
+			  kvno, clientname, realm);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = fclose (fh);
+  if (res != 0)
+    return SHISHI_FCLOSE_ERROR;
+
+  if (VERBOSE (handle))
+    printf (_("Writing KEY to %s...done\n"), filename);
+
+  return SHISHI_OK;
+}
+
