@@ -1290,7 +1290,7 @@ extern int shishi_krberror_set_crealm (Shishi * handle,
 				       const char *crealm);
 extern int shishi_krberror_client (Shishi * handle,
 				   Shishi_asn1 krberror,
-				   char **cname, size_t *cnamelen);
+				   char **client, size_t * clientlen);
 extern int shishi_krberror_set_cname (Shishi * handle,
 				      Shishi_asn1 krberror,
 				      Shishi_name_type name_type,

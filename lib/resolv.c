@@ -270,20 +270,20 @@ shishi_resolv (const char *zone, uint16_t querytype)
 
 /**
  * shishi_resolv_free:
- * @dns: list of DNS RR as returned by shishi_resolv().
+ * @rrs: list of DNS RR as returned by shishi_resolv().
  *
  * Deallocate list of DNS RR as returned by shishi_resolv().
  **/
 void
-shishi_resolv_free (Shishi_dns dns)
+shishi_resolv_free (Shishi_dns rrs)
 {
   Shishi_dns next;
 
-  while (dns != NULL)
+  while (rrs != NULL)
     {
-      next = dns->next;
-      free (dns->rr);
-      free (dns);
-      dns = next;
+      next = rrs->next;
+      free (rrs->rr);
+      free (rrs);
+      rrs = next;
     }
 }

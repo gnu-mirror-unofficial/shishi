@@ -615,7 +615,7 @@ shishi_krberror_set_realm (Shishi * handle,
  * @krberror: krberror as allocated by shishi_krberror().
  * @server: pointer to newly allocated zero terminated string containing
  *   server name.  May be %NULL (to only populate @serverlen).
- * @snamelen: pointer to length of @server on output, excluding terminating
+ * @serverlen: pointer to length of @server on output, excluding terminating
  *   zero.  May be %NULL (to only populate @server).
  *
  * Return server principal name in KRB-ERROR.
