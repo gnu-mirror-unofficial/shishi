@@ -2,7 +2,8 @@ Shishi README -- Important introductory notes.
 Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
-This directory holds an implementation of RFC 1510(bis).
+This directory holds Shishi, an implementation of Kerberos 5.  Shishi
+is part of a GNU system.
 
 See ANNOUNCE for an overview, and doc/shishi.{info,ps,pdf} for the
 manual.  Installation instructions are found in the INSTALL file in
