@@ -183,6 +183,8 @@ struct Shishi
   char *default_principal;
   int kdctimeout;
   int kdcretries;
+  int ticketlife;
+  int renewlife;
   int32_t *clientkdcetypes;
   int nclientkdcetypes;
   struct Shishi_realminfo *realminfos;
@@ -201,6 +203,9 @@ struct Shishi
 #define BASE_DIR "/.shishi"
 #define TICKET_FILE BASE_DIR "/tickets"
 #define USERCFG_FILE BASE_DIR "/shishi.conf"
+
+#define TICKETLIFE (60*60*8)   /* Work day */
+#define RENEWLIFE (60*60*24*7) /* Week */
 
 int
 _shishi_print_armored_data (Shishi * handle,
