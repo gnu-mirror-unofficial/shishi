@@ -9,6 +9,11 @@ The earlier salt computed was incorrect, so existing keys in your
 Shisa database, that were derived from passwords, are incorrect, and
 should be changed.
 
+** Fixed shisa key file parser to handle keys with leading whitespace.
+The parser used fscanf, which skip whitespace.  If your cryptographic
+key (not passwords), in binary format, had leading whitespace, it
+would fail to read the correct key.
+
 ** Fix shishid crash on startup when sockets can't be opened.
 
 ** Various minor bugfixes.
