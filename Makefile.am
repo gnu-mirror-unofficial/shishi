@@ -20,13 +20,13 @@
 
 DISTCHECK_CONFIGURE_FLAGS = --without-included-gettext --disable-gtk-doc
 
-MOST_SUBDIRS = intl m4 po asn1 lib src tests doc extra
+MOST_SUBDIRS = intl m4 po lib src tests doc extra
 
-DIST_SUBDIRS = crypto argp libstringprep $(MOST_SUBDIRS)
+DIST_SUBDIRS = crypto asn1 argp libstringprep $(MOST_SUBDIRS)
 
-SUBDIRS = @CRYPTO@ @ARGP@ @LIBIDN@ $(MOST_SUBDIRS)
+SUBDIRS = @CRYPTO@ @ASN1@ @ARGP@ @LIBIDN@ $(MOST_SUBDIRS)
 
-ACLOCAL_AMFLAGS = -I m4 -I crypto/src -I asn1/src
+ACLOCAL_AMFLAGS = -I m4 -I crypto/src
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = shishi.pc
