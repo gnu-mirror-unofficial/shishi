@@ -49,8 +49,8 @@ md4.c \
 md5.c \
 rijndael.c \
 rmd160.c \
-rndegd.c \
 rndlinux.c \
+rndegd.c \
 rndunix.c \
 rndw32.c \
 rsa.c \
