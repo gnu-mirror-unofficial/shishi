@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in.
 
 # GNULIB modules:
-# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm linebuffer xgethostname xgetdomainname getline xreadlink
+# alloca error getopt memmove memset realloc setenv strcase strchrnul strnlen strdup strndup xstrndup strerror vasprintf vasnprintf xalloc getdate timegm linebuffer gethostname xgethostname xgetdomainname getline xreadlink progname
 
 # Local not-yet-in-gnulib modules:
 # + base64 (x)memdup
@@ -40,10 +40,6 @@ MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 libfoo_la_LIBADD += @ALLOCA@
 #libfoo_la_LIBADD += @LTALLOCA@
-libfoo_la_SOURCES += argp.h argp-ba.c argp-eexst.c \
-           argp-fmtstream.c argp-fmtstream.h argp-fs-xinl.c argp-help.c \
-           argp-namefrob.h argp-parse.c argp-pv.c argp-pvh.c argp-xinl.c
-
 
 libfoo_la_SOURCES += exit.h
 
@@ -67,8 +63,6 @@ libfoo_la_SOURCES += gettext.h
 libfoo_la_SOURCES += linebuffer.h linebuffer.c
 
 
-
-libfoo_la_SOURCES += mempcpy.h
 
 
 
@@ -99,19 +93,9 @@ libfoo_la_SOURCES += strchrnul.h
 libfoo_la_SOURCES += strndup.h
 
 
-EXTRA_DIST += sysexit_.h
-
-# We need the following in order to create a <sysexits.h> when the system
-# doesn't have one that works with the given compiler.
-all-local $(libfoo_la_OBJECTS): $(SYSEXITS_H)
-sysexits.h: sysexit_.h
-	cp $(srcdir)/sysexit_.h sysexits.h-t
-	mv sysexits.h-t sysexits.h
-MOSTLYCLEANFILES += sysexits.h sysexits.h-t
+libfoo_la_SOURCES += timegm.h
 
 libfoo_la_SOURCES += time_r.h
-
-libfoo_la_SOURCES += timegm.h
 
 libfoo_la_SOURCES += unlocked-io.h
 
