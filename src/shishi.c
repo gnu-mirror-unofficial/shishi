@@ -243,12 +243,13 @@ crypto (Shishi * handle, struct arguments arg)
     {
       char *cname, *tok, *tokptr;
 
-      cname = xstrdup(arg.cname);
+      cname = xstrdup (arg.cname);
       arg.salt = xstrdup (arg.crealm);
       tok = strtok_r (cname, "/", &tokptr);
       while (tok)
 	{
-	  arg.salt = xrealloc (arg.salt, strlen(arg.salt) + strlen(tok) + 1);
+	  arg.salt =
+	    xrealloc (arg.salt, strlen (arg.salt) + strlen (tok) + 1);
 	  strcat (arg.salt, tok);
 	  tok = strtok_r (NULL, "/", &tokptr);
 	}
@@ -697,67 +698,68 @@ parse_opt (int key, char *arg, struct argp_state *state)
 static struct argp_option options[] = {
 
   {0, 0, 0, 0, "If no command is given, Shishi try to make sure you have a "
-   "ticket granting ticket for the default realm, and then display it."},
+   "ticket granting ticket for the default realm, and then display it.", 0},
 
   {"client-name", OPTION_CLIENT_NAME, "NAME", 0,
    "Client name. Default is login username. Only for AS.", 10},
 
   {"destroy", 'd', 0, 0,
-   "Destroy tickets in local cache, subject to --server-name limiting."},
+   "Destroy tickets in local cache, subject to --server-name limiting.", 0},
 
   {"encryption-type", 'E', "ETYPE,[ETYPE...]", 0,
-   "Encryption types to use.  ETYPE is either registered name or integer."},
+   "Encryption types to use.  ETYPE is either registered name or integer.",
+   0},
 
   {"force-as", OPTION_FORCE_AS, 0, 0,
-   "Force AS mode. Default is to use TGS iff a TGT is found."},
+   "Force AS mode. Default is to use TGS iff a TGT is found.", 0},
 
   {"force-tgs", OPTION_FORCE_TGS, 0, 0,
-   "Force TGS mode. Default is to use TGS iff a TGT is found."},
+   "Force TGS mode. Default is to use TGS iff a TGT is found.", 0},
 
   {"endtime", 'e', "STRING", 0,
    "Specify when ticket validity should expire.  The time syntax may be "
    "relative (to the start time), such as \"20 hours\", or absolute, "
    "such as \"2001-02-03 04:05:06 CET\". The default is 8 hours after "
-   "the start time."},
+   "the start time.", 0},
 
   {"list", 'l', 0, 0,
-   "List tickets in local cache, subject to --server-name limiting."},
+   "List tickets in local cache, subject to --server-name limiting.", 0},
 
   {"renew", 'R', 0, 0,
    "Renew ticket.  Use --server-name to specify ticket, default is the "
-   "most recent renewable ticket granting ticket for the default realm."},
+   "most recent renewable ticket granting ticket for the default realm.", 0},
 
   {"renewable", OPTION_RENEWABLE, 0, 0,
-   "Get a renewable ticket."},
+   "Get a renewable ticket.", 0},
 
   {"renew-till", OPTION_RENEW_TILL, "STRING", 0,
    "Specify renewable life of ticket.  Implies --renewable.  Accepts same "
    "time syntax as --endtime.  If --renewable is specified, the default is 1 "
-   "week after the start time."},
+   "week after the start time.", 0},
 
   {"realm", OPTION_REALM, "REALM", 0,
    "Realm of server. Default is DNS domain of local host. For AS, this also "
-   "indicates realm of client."},
+   "indicates realm of client.", 0},
 
   {"server", OPTION_SERVER, "[FAMILY:]ADDRESS:SERVICE/TYPE", 0,
    "Send all requests to HOST instead of using normal logic to locate "
-   "KDC addresses (discouraged)."},
+   "KDC addresses (discouraged).", 0},
 
   {"server-name", OPTION_SERVER_NAME, "NAME", 0,
    "Server name. Default is \"krbtgt/REALM\" where REALM is server "
-   "realm (see --realm)."},
+   "realm (see --realm).", 0},
 
   {"starttime", 's', "STRING", 0,
    "Specify when ticket should start to be valid.  Accepts same time syntax "
-   "as --endtime. The default is to become valid immediately."},
+   "as --endtime. The default is to become valid immediately.", 0},
 
   {"ticket-granter", OPTION_TICKET_GRANTER, "NAME", 0,
    "Service name in ticket to use for authenticating request. Only for TGS. "
    "Defaults to \"krbtgt/REALM@REALM\" where REALM is server "
-   "realm (see --realm)."},
+   "realm (see --realm).", 0},
 
   {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
-   "Cipher key to decrypt response (discouraged)."},
+   "Cipher key to decrypt response (discouraged).", 0},
 
   /************** CRYPTO */
 
@@ -765,95 +767,97 @@ static struct argp_option options[] = {
    "Options for low-level cryptography (CRYPTO-OPTIONS):", 100},
 
   {"client-name", OPTION_CLIENT_NAME, "NAME", 0,
-   "Username. Default is login name."},
+   "Username. Default is login name.", 0},
 #if 0
   {"decrypt", OPTION_CRYPTO_DECRYPT, 0, 0,
-   "Decrypt data."},
+   "Decrypt data.", 0},
 
   {"encrypt", OPTION_CRYPTO_ENCRYPT, 0, 0,
-   "Encrypt data."},
+   "Encrypt data.", 0},
 
   {"key-usage", OPTION_CRYPTO_KEY_USAGE, "KEYUSAGE", 0,
    "Encrypt or decrypt using specified key usage.  Default is 0, which "
-   "means no key derivation are performed."},
+   "means no key derivation are performed.", 0},
 #endif
   {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
-   "Base64 encoded key value."},
+   "Base64 encoded key value.", 0},
 
   {"key-version", OPTION_CRYPTO_KEY_VERSION, "INTEGER", 0,
-   "Version number of key."},
+   "Version number of key.", 0},
 
   {"password", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
-   "Password used to generate key (discouraged)."},
+   "Password used to generate key (discouraged).", 0},
 
   {"random", OPTION_CRYPTO_RANDOM, 0, 0,
-   "Generate key from random data."},
+   "Generate key from random data.", 0},
 #if 0
   {"read-key-file", OPTION_CRYPTO_READ_KEY_FILE, "FILE", 0,
-   "Read cipher key from FILE"},
+   "Read cipher key from FILE", 0},
 
   {"read-data-file", OPTION_CRYPTO_READ_DATA_FILE, "[TYPE,]FILE", 0,
-   "Read data from FILE in TYPE, BASE64, HEX or BINARY (default)."},
+   "Read data from FILE in TYPE, BASE64, HEX or BINARY (default).", 0},
 #endif
   {"realm", OPTION_REALM, "REALM", 0,
-   "Realm of principal. Defaults to DNS domain of local host. "},
+   "Realm of principal. Defaults to DNS domain of local host. ", 0},
 
   {"salt", OPTION_CRYPTO_SALT, "SALT", 0,
    "Salt to use for --string-to-key. Defaults to concatenation of "
-   "realm and (unwrapped) client name."},
+   "realm and (unwrapped) client name.", 0},
 
   {"string-to-key", OPTION_CRYPTO_STR2KEY, "[PASSWORD]", OPTION_ARG_OPTIONAL,
    "Convert password into Kerberos key.  Note that --client-name, --realm, "
-   "and --salt influence the generated key."},
+   "and --salt influence the generated key.", 0},
 
   {"parameter", OPTION_CRYPTO_PARAMETER, "STRING", 0,
    "String-to-key parameter to use when --password is specified. This data "
-   "is specific for each encryption algorithm and rarely needed."},
+   "is specific for each encryption algorithm and rarely needed.", 0},
 
   {"write-key-file", OPTION_CRYPTO_WRITE_KEY_FILE, "FILE", 0,
-   "Append cipher key to FILE"},
+   "Append cipher key to FILE", 0},
 #if 0
   {"write-data-file", OPTION_CRYPTO_WRITE_DATA_FILE, "[TYPE,]FILE", 0,
-   "Write data to FILE in TYPE, BASE64, HEX or BINARY (default)."},
+   "Write data to FILE in TYPE, BASE64, HEX or BINARY (default).", 0},
 #endif
   /************** OTHER */
 
   {0, 0, 0, 0, "Other options:", 200},
 
   {"verbose", 'v', 0, 0,
-   "Produce verbose output.",},
+   "Produce verbose output.", 0},
 
   {"verbose-library", OPTION_VERBOSE_LIBRARY, 0, 0,
-   "Produce verbose output in the library.",},
+   "Produce verbose output in the library.", 0},
 
   {"quiet", 'q', 0, 0,
-   "Don't produce any output."},
+   "Don't produce any output.", 0},
 
-  {"silent", 0, 0, OPTION_ALIAS},
+  {"silent", 0, 0, OPTION_ALIAS,
+   NULL, 0},
 
   {"system-configuration-file", OPTION_CFG_SYSTEM, "FILE", 0,
    "Read system wide configuration from file.  Default is " SYSTEMCFGFILE
-   "."},
+   ".", 0},
 
   {"configuration-file", OPTION_CFG_USER, "FILE", 0,
-   "Read user configuration from file.  Default is ~/.shishi/config."},
+   "Read user configuration from file.  Default is ~/.shishi/config.", 0},
 
   {"library-options", 'o', "STRING", 0,
-   "Parse STRING as a configuration file statement."},
+   "Parse STRING as a configuration file statement.", 0},
 
   {"ticket-file", 'c', "FILE", 0,
-   "Read tickets from FILE. Default is $HOME/.shishi/tickets."},
+   "Read tickets from FILE. Default is $HOME/.shishi/tickets.", 0},
 
   {"ticket-write-file", OPTION_WRITE_TICKET_FILE, "FILE", 0,
-   "Write tickets to FILE.  Default is to write them back to ticket file."},
+   "Write tickets to FILE.  Default is to write them back to ticket file.",
+   0},
 
   {"CLIENT", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
    "Set client name and realm from NAME.  The --client-name and --realm "
-   "parameters can be used to override part of NAME."},
+   "parameters can be used to override part of NAME.", 0},
 
   {"SERVER", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
    "Set server name and realm from NAME.  The --server-name and "
-   "--server-realm parameters can be used to override part of SERVER."},
+   "--server-realm parameters can be used to override part of SERVER.", 0},
 
   /************** EXAMPLES */
 
@@ -861,26 +865,29 @@ static struct argp_option options[] = {
 
   {"shishi", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
    "Get a ticket granting ticket from the default KDC server for the "
-   "default user and realm."},
+   "default user and realm.", 0},
 
   {"shishi jas/admin@ACCOUNTING", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Get a ticket for jas/admin in the ACCOUNTING realm."},
+   "Get a ticket for jas/admin in the ACCOUNTING realm.", 0},
 
   {"shishi --list --server-name=krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG",
    0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "List tickets for the Ticket Granting Service in the JOSEFSSON.ORG realm."},
+   "List tickets for the Ticket Granting Service in the JOSEFSSON.ORG realm.",
+   0},
 
-  {0}
+  {NULL, 0, 0, 0, NULL, 0}
 };
 
 static struct argp argp = {
   options,
   parse_opt,
   "[CLIENT [SERVER]] [OPTION...]\n"
-  "--list [CLIENT [SERVER]]\n"
-  "--destroy [CLIENT [SERVER]]\n"
-  "--string-to-key\n",
-  "Shishi -- A Kerberos 5 implementation"
+    "--list [CLIENT [SERVER]]\n"
+    "--destroy [CLIENT [SERVER]]\n" "--string-to-key\n",
+  "Shishi -- A Kerberos 5 implementation",
+  NULL,
+  NULL,
+  NULL
 };
 
 int

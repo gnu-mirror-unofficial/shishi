@@ -323,36 +323,41 @@ parse_opt (int key, char *arg, struct argp_state *state)
 static struct argp_option options[] = {
 
   {"verbose", 'v', 0, 0,
-   "Produce verbose output."},
+   "Produce verbose output.", 0},
 
   {"quiet", 'q', 0, 0,
-   "Don't produce any output."},
+   "Don't produce any output.", 0},
 
-  {"silent", 's', 0, OPTION_ALIAS},
+  {"silent", 's', 0, OPTION_ALIAS,
+   NULL, 0},
 
   {"configuration-file", 'c', "FILE", 0,
-   "Read configuration from file.  Default is " SYSTEMCFGFILE "."},
+   "Read configuration from file.  Default is " SYSTEMCFGFILE ".", 0},
 
   {"listen", 'l', "[FAMILY:]ADDRESS:SERVICE/TYPE,...", 0,
    "What to listen on. Family is \"IPv4\" or \"IPv6\", if absent the "
    "family is decided by gethostbyname(ADDRESS). An address of \"*\" "
    "indicates all addresses on the local host. "
-   "The default is \"" LISTEN_DEFAULT "\"."},
+   "The default is \"" LISTEN_DEFAULT "\".", 0},
 
   {"key-file", 'k', "FILE", 0,
-   "Read keys from file.  Default is " KDCKEYFILE "."},
+   "Read keys from file.  Default is " KDCKEYFILE ".", 0},
 
   {"setuid", 'u', "NAME", 0,
-   "After binding socket, set user identity."},
+   "After binding socket, set user identity.", 0},
 
-  {0}
+  {NULL, 0, NULL, 0,
+   NULL, 0}
 };
 
 static struct argp argp = {
   options,
   parse_opt,
   NULL,
-  "Shishid -- Key Distribution Center network daemon"
+  "Shishid -- Key Distribution Center network daemon",
+  NULL,
+  NULL,
+  NULL
 };
 
 static char *fatal_krberror;
@@ -639,30 +644,31 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 
   if (arg->verbose)
     {
-      puts("KDC-REQ in:");
+      puts ("KDC-REQ in:");
       shishi_kdcreq_print (handle, stderr, shishi_tgs_req (tgs));
-      puts("AP-REQ in KDC-REQ:");
-      shishi_apreq_print (handle, stderr, shishi_ap_req (shishi_tgs_ap (tgs)));
-      puts("Authenticator in AP-REQ in KDC-REQ:");
+      puts ("AP-REQ in KDC-REQ:");
+      shishi_apreq_print (handle, stderr,
+			  shishi_ap_req (shishi_tgs_ap (tgs)));
+      puts ("Authenticator in AP-REQ in KDC-REQ:");
       shishi_authenticator_print (handle, stderr, shishi_ap_authenticator
 				  (shishi_tgs_ap (tgs)));
-      puts("Ticket in AP-REQ:");
+      puts ("Ticket in AP-REQ:");
       shishi_ticket_print (handle, stdout,
 			   shishi_tkt_ticket
 			   (shishi_ap_tkt (shishi_tgs_ap (tgs))));
-      puts("EncTicketPart in AP-REQ:");
+      puts ("EncTicketPart in AP-REQ:");
       shishi_encticketpart_print (handle, stdout,
 				  shishi_tkt_encticketpart
 				  (shishi_ap_tkt (shishi_tgs_ap (tgs))));
-      puts("Ticket in TGS-REP:");
+      puts ("Ticket in TGS-REP:");
       shishi_ticket_print (handle, stdout, shishi_tkt_ticket (tkt));
-      puts("EncTicketPart in TGS-REP:");
+      puts ("EncTicketPart in TGS-REP:");
       shishi_encticketpart_print (handle, stderr,
 				  shishi_tkt_encticketpart (tkt));
-      puts("EncKDCRepPart in TGS-REP:");
+      puts ("EncKDCRepPart in TGS-REP:");
       shishi_enckdcreppart_print (handle, stderr,
 				  shishi_tkt_enckdcreppart (tkt));
-      puts("KDC-REP:");
+      puts ("KDC-REP:");
       shishi_kdcrep_print (handle, stderr, shishi_tgs_rep (tgs));
     }
 
@@ -724,7 +730,7 @@ get_msgtype (Shishi * handle, char *in, size_t inlen)
 
 static int
 process_1 (Shishi * handle, struct arguments *arg,
-	   char *in, size_t inlen, char **out, size_t *outlen)
+	   char *in, size_t inlen, char **out, size_t * outlen)
 {
   Shishi_asn1 kdcreq;
   Shishi_msgtype msgtype;
@@ -792,7 +798,7 @@ process_1 (Shishi * handle, struct arguments *arg,
 
 static void
 process (Shishi * handle, struct arguments *arg,
-	 char *in, int inlen, char **out, size_t *outlen)
+	 char *in, int inlen, char **out, size_t * outlen)
 {
   int rc;
 
@@ -900,7 +906,7 @@ kdc_loop (Shishi * handle, struct arguments *arg)
   int maxfd = 0;
   int rc;
   int i;
-  int sent_bytes, read_bytes;
+  ssize_t sent_bytes, read_bytes;
 
   while (!quit)
     {
@@ -999,12 +1005,12 @@ kdc_loop (Shishi * handle, struct arguments *arg)
 					       0, &addr, length);
 			while (sent_bytes == -1 && errno == EAGAIN);
 
-			if (sent_bytes == -1)
+			if (sent_bytes < 0)
 			  perror ("write");
-			else if (sent_bytes > plen)
+			else if ((size_t) sent_bytes > plen)
 			  fprintf (stderr, "wrote %db but buffer only %db",
 				   sent_bytes, plen);
-			else if (sent_bytes < plen)
+			else if ((size_t) sent_bytes < plen)
 			  fprintf (stderr,
 				   "short write (%db) writing %d bytes\n",
 				   sent_bytes, plen);
@@ -1100,7 +1106,7 @@ launch (Shishi * handle, struct arguments *arg)
   return 0;
 }
 
-int
+static int
 setup (Shishi * handle, struct arguments *arg)
 {
   char *tgtname;
@@ -1113,7 +1119,7 @@ setup (Shishi * handle, struct arguments *arg)
       return 1;
     }
 
-  asprintf(&tgtname, "krbtgt/%s", shishi_realm_default (handle));
+  asprintf (&tgtname, "krbtgt/%s", shishi_realm_default (handle));
   arg->tgskey = shishi_keys_for_serverrealm_in_file
     (handle, arg->keyfile, tgtname, shishi_realm_default (handle));
   free (tgtname);
@@ -1131,10 +1137,10 @@ setup (Shishi * handle, struct arguments *arg)
   return rc;
 }
 
-int
+static int
 init (struct arguments *arg)
 {
-  Shishi * handle;
+  Shishi *handle;
   int rc;
 
   rc = shishi_init_server_with_paths (&handle, arg->cfgfile);
