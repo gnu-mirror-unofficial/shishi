@@ -295,7 +295,7 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 					  arg.authenticatorwritetype,
 					  arg.authenticatorwritefile);
 
-	  if (!arg.silent)
+	  if (arg.verbose)
 	    shishi_apreq_print (handle, stdout, shishi_last_apreq (handle));
 	  
 	  if (arg.apreqwritefile)
@@ -393,10 +393,10 @@ kdc (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     }
 
   if (!arg.silent)
-    printf("Adding new ticket...done\n");
+    shishi_ticket_print (handle, newtkt, stdout);
 
   if (!arg.silent)
-    shishi_ticket_print (handle, newtkt, stdout);
+    printf("Adding new ticket...done\n");
 
   return SHISHI_OK;
 }

@@ -20,6 +20,12 @@
 #
 # See the manual for a list of options.
 
+# Read MIT or Heimdal configuration file for the following parameters:
+#   default-realm
+#   realm-kdc
+# You can override these values by specifying alternate values below.
+read-krb5conf=/etc/krb5.conf
+
 # Specify the default realm, by default the hostname of the host is used.
 #default-realm JOSEFSSON.ORG
 
@@ -37,13 +43,15 @@
 # this is not specified, des3-cbc-sha1-kd and des-cbc-md5 is used.
 # client-kdc-etypes des-cbc-md5
 
-# Enable verbose library messages
+# Enable verbose library messages.
 #verbose
 
-# Enable debug library messages
+# Enable debug library messages.
 #debug
 
-# Read realm definitions (KDC address) from MIT or Heimdal configuration file
-read-krb5conf-realms=/etc/krb5.conf
+# Specify KDC addresses for realms.
+# Value is REALM,KDCADDRESS[,KDCADDRESS...]
+# KDCADDRESS is the hostname or IP address of KDC
+realm-kdc=lab.josefsson.org,latte.josefsson.org
 
 kdc localhost

@@ -209,14 +209,14 @@ shishi_apreq_to_file (Shishi * handle, ASN1_TYPE apreq,
   FILE *fh;
   int res;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Writing AP-REQ to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Writing AP-REQ in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -231,7 +231,7 @@ shishi_apreq_to_file (Shishi * handle, ASN1_TYPE apreq,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Writing AP-REQ to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -289,14 +289,14 @@ shishi_apreq_from_file (Shishi * handle, ASN1_TYPE * apreq,
   int res;
   FILE *fh;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Reading AP-REQ from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Reading AP-REQ in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -311,7 +311,7 @@ shishi_apreq_from_file (Shishi * handle, ASN1_TYPE * apreq,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Reading AP-REQ from %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -866,7 +866,7 @@ shishi_apreq_decrypt (Shishi * handle,
 
   if (res != SHISHI_OK)
     {
-      if (shishi_verbose (handle))
+      if (!SILENT(handle))
 	printf ("des_decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
 			   "des_decrypt fail, most likely wrong password\n");
@@ -877,7 +877,7 @@ shishi_apreq_decrypt (Shishi * handle,
      bytes until we can parse it. */
   for (i = 0; i < 8; i++)
     {
-      if (shishi_debug (handle))
+      if (DEBUG(handle))
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
       *authenticator = shishi_d2a_authenticator (handle, &buf[0], buflen - i);

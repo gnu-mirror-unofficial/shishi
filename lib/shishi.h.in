@@ -44,6 +44,7 @@ enum {
   SHISHI_TOO_SMALL_BUFFER,
   SHISHI_DERIVEDKEY_TOO_SMALL,
   SHISHI_GCRYPT_ERROR,
+  SHISHI_TIMEOUT,
   SHISHI_TTY_ERROR
 };
 
@@ -447,13 +448,6 @@ shishi_kdcreq (Shishi * handle,
 	       char *realm,
 	       char *service,
 	       ASN1_TYPE *req);
-
-/* netio.c */
-extern int shishi_kdc_sendrecv (Shishi *handle,
-				char *indata,
-				int inlen,
-				char *outdata,
-				int *outlen);
 
 /* base64.c */
 extern void shishi_to_base64 (unsigned char *out, const unsigned char *in, 

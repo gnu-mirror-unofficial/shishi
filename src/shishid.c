@@ -25,7 +25,6 @@
 #ifdef STDC_HEADERS
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
 #endif
 #include <unistd.h>
 #include <ctype.h>
@@ -293,14 +292,6 @@ static struct argp argp = {
   "Shishid -- A Kerberos 5 Key Distribution Center Network Service"
 };
 
-int quit = 0;
-
-void
-ctrlc (int signum)
-{
-  quit = 1;
-}
-
 void
 process (Shishi *handle, 
 	 struct arguments arg, 
@@ -309,12 +300,28 @@ process (Shishi *handle,
 	 int sockfd)
 {
   ASN1_TYPE kdcreq;
+  ASN1_TYPE kdcrep;
 
   printf("Processing %d bytes: %s\n", datalen, data);
 
   kdcreq = shishi_d2a_kdcreq (handle, data, datalen);
   if (kdcreq == ASN1_TYPE_EMPTY)
     puts("oops");
+
+  shishi_kdcreq_print(handle, stdout, kdcreq);
+
+  kdcrep = shishi_as_rep(handle);
+
+  shishi_kdcrep_print(handle, stdout, kdcrep);
+
+}
+
+int quit = 0;
+
+void
+ctrlc (int signum)
+{
+  quit = 1;
 }
 
 int
@@ -459,7 +466,7 @@ doit (Shishi *handle, struct arguments arg)
 		read_bytes = recvfrom(ls->sockfd, ls->buf + ls->bufpos, 
 				      BUFSIZ - ls->bufpos, 0, &addr, &length);
 
-		if (arg.listenspec[i].type == SOCK_STREAM && 
+		if (arg.listenspec[i].type == SOCK_STREAM &&
 		    arg.listenspec[i].family == -1 &&
 		    read_bytes == 0)
 		  {
@@ -473,7 +480,7 @@ doit (Shishi *handle, struct arguments arg)
 		    ls->buf[ls->bufpos] = '\0';
 		  }
 
-		printf("Has %d bytes from %s: %s\n", 
+		printf("Has %d bytes from %s: %s\n",
 		       ls->bufpos, ls->str, ls->buf);
 
 		if (arg.listenspec[i].type == SOCK_DGRAM ||
@@ -506,16 +513,6 @@ doit (Shishi *handle, struct arguments arg)
   return 0;
 }
 
-void
-die(char *fmt, ...)
-{
-  va_list ap;
-  va_start(ap, fmt);
-  vfprintf (stderr, fmt, ap);
-  va_end(ap);
-  exit(1);
-}
-
 int
 main (int argc, char *argv[])
 {
@@ -528,14 +525,20 @@ main (int argc, char *argv[])
 
   handle = shishi_init ();
   if (handle == NULL)
-    die("Internal error: could not initialize shishi\n");
+    {
+      fprintf(stderr, "Could not initialize library\n");
+      return 1;
+    }
 
   if (arg.cfgfile == NULL)
     arg.cfgfile = SYSTEMCFGFILE;
-
   rc = shishi_readcfg (handle, arg.cfgfile);
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
-    die("Could not read system config: %s\n", shishi_strerror (rc));
+    {
+      fprintf(stderr, "Could not read configuration file `%s': %s\n", 
+	      arg.cfgfile, shishi_strerror (rc));
+      return 1;
+    }
 
   rc = doit(handle, arg);
 

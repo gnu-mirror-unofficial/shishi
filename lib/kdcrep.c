@@ -21,6 +21,86 @@
 
 #include "internal.h"
 
+#define SHISHI_KDCREP_DEFAULT_PVNO      "5"
+#define SHISHI_KDCREP_DEFAULT_PVNO_LEN  0
+#define SHISHI_AS_REP_DEFAULT_MSG_TYPE      "11"
+#define SHISHI_AS_REP_DEFAULT_MSG_TYPE_LEN  0
+#define SHISHI_TGS_REP_DEFAULT_MSG_TYPE      "13"
+#define SHISHI_TGS_REP_DEFAULT_MSG_TYPE_LEN  0
+
+ASN1_TYPE
+_shishi_kdcrep (Shishi * handle, int as)
+{
+  int res = ASN1_SUCCESS;
+  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+
+  if (as)
+    res = 
+      asn1_create_element (handle->asn1, "Kerberos5.AS-REP", &node, "KDC-REP");
+  else
+    res =
+      asn1_create_element (handle->asn1, "Kerberos5.TGS-REP", &node, 
+			   "KDC-REP");
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  res = asn1_write_value (node, "KDC-REP.pvno",
+			  SHISHI_KDCREP_DEFAULT_PVNO,
+			  SHISHI_KDCREP_DEFAULT_PVNO_LEN);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  if (as)
+    res = asn1_write_value (node, "KDC-REP.msg-type",
+			    SHISHI_AS_REP_DEFAULT_MSG_TYPE,
+			    SHISHI_AS_REP_DEFAULT_MSG_TYPE_LEN);
+  else
+    res = asn1_write_value (node, "KDC-REP.msg-type",
+			    SHISHI_TGS_REP_DEFAULT_MSG_TYPE,
+			    SHISHI_TGS_REP_DEFAULT_MSG_TYPE_LEN);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  return node;
+
+error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  if (node != ASN1_TYPE_EMPTY)
+    asn1_delete_structure (&node);
+  return NULL;
+}
+
+/**
+ * shishi_as_rep:
+ * @handle: shishi handle as allocated by shishi_init().
+ * 
+ * This function creates a new AS-REP, populated with some default
+ * values.
+ * 
+ * Return value: Returns the AS-REP or ASN1_TYPE_EMPTY on failure.
+ **/
+ASN1_TYPE
+shishi_as_rep (Shishi * handle)
+{
+  return _shishi_kdcrep (handle, 1);
+}
+
+/**
+ * shishi_tgs_rep:
+ * @handle: shishi handle as allocated by shishi_init().
+ * 
+ * This function creates a new TGS-REP, populated with some default
+ * values.
+ * 
+ * Return value: Returns the TGS-REP or ASN1_TYPE_EMPTY on failure.
+ **/
+ASN1_TYPE
+shishi_tgs_rep (Shishi * handle)
+{
+  return _shishi_kdcrep (handle, 0);
+}
+
+
 /**
  * shishi_kdcrep_print:
  * @handle: shishi handle as allocated by shishi_init().
@@ -73,14 +153,14 @@ shishi_kdcrep_to_file (Shishi * handle, ASN1_TYPE kdcrep,
   FILE *fh;
   int res;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Writing KDC-REP to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Writing KDC-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -95,7 +175,7 @@ shishi_kdcrep_to_file (Shishi * handle, ASN1_TYPE kdcrep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Writing KDC-REP to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -153,14 +233,14 @@ shishi_kdcrep_from_file (Shishi * handle, ASN1_TYPE * kdcrep,
   int res;
   FILE *fh;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Reading KDC-REP from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Reading KDC-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -175,7 +255,7 @@ shishi_kdcrep_from_file (Shishi * handle, ASN1_TYPE * kdcrep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Reading KDC-REP from %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -363,7 +443,7 @@ shishi_kdcrep_decrypt (Shishi * handle,
 
   if (res != SHISHI_OK)
     {
-      if (shishi_verbose (handle))
+      if (!SILENT(handle))
 	printf ("des_decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
 			   "des_decrypt fail, most likely wrong password\n");
@@ -383,7 +463,7 @@ shishi_kdcrep_decrypt (Shishi * handle,
      bytes until we can parse it. */
   for (i = 0; i < 8; i++)
     {
-      if (shishi_debug (handle))
+      if (DEBUG (handle))
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
       *enckdcreppart = shishi_d2a_encasreppart (handle, &buf[0], buflen - i);

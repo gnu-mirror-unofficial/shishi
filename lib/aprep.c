@@ -147,14 +147,14 @@ shishi_aprep_to_file (Shishi * handle, ASN1_TYPE aprep,
   FILE *fh;
   int res;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Writing AP-REP to %s...\n"), filename);
 
   fh = fopen (filename, "w");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Writing AP-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -169,7 +169,7 @@ shishi_aprep_to_file (Shishi * handle, ASN1_TYPE aprep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Writing AP-REP to %s...done\n"), filename);
 
   return SHISHI_OK;
@@ -227,14 +227,14 @@ shishi_aprep_from_file (Shishi * handle, ASN1_TYPE * aprep,
   int res;
   FILE *fh;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Reading AP-REP from %s...\n"), filename);
 
   fh = fopen (filename, "r");
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Reading AP-REP in %s format...\n"),
 	    filetype == SHISHI_FILETYPE_TEXT ? "TEXT" : "DER");
 
@@ -249,7 +249,7 @@ shishi_aprep_from_file (Shishi * handle, ASN1_TYPE * aprep,
   if (res != 0)
     return SHISHI_FCLOSE_ERROR;
 
-  if (shishi_verbose (handle))
+  if (!SILENT(handle))
     printf (_("Reading AP-REP from %s...done\n"), filename);
 
   return SHISHI_OK;

@@ -22,37 +22,25 @@
 #include "internal.h"
 
 int
-shishi_sendrecv_udp (char *hostname,
+shishi_sendrecv_udp (Shishi *handle,
+		     struct sockaddr *addr,
 		     char *indata,
 		     int inlen, 
 		     char *outdata, 
-		     int * outlen)
+		     int * outlen,
+		     int timeout)
 {
-  struct sockaddr_storage ssa, lsa;
+  struct sockaddr_storage lsa;
   struct hostent* he;
-  struct sockaddr_in* ssa_inp = (struct sockaddr_in*) &ssa;
   struct sockaddr_in* lsa_inp = (struct sockaddr_in*) &lsa;
   struct protoent *proto;
   int sockfd;
-  int bytes_sent, bytes_received, total_received;
+  int bytes_sent;
   struct sockaddr_storage from_sa;
   int length = sizeof(struct sockaddr_storage);
   fd_set readfds;
-  struct timeval timeout = {0, 0};
-
-  memset (&ssa, 0, sizeof(ssa));
-  he = gethostbyname(hostname);
-  if (he != NULL && he->h_addr_list[0] != NULL)
-    {
-      ssa_inp->sin_family = he->h_addrtype;
-      memcpy(&ssa_inp->sin_addr, he->h_addr_list[0], he->h_length);
-    }
-
-  proto = getprotobyname ("kerberos");
-  if (proto)
-    ssa_inp->sin_port = htons(proto->p_proto);
-  else
-    ssa_inp->sin_port = htons(8888);
+  struct timeval tout;
+  int rc;
 
   memset (&lsa, 0, sizeof(lsa));
   lsa_inp->sin_family = AF_INET;
@@ -67,36 +55,62 @@ shishi_sendrecv_udp (char *hostname,
       close(sockfd);
       return !SHISHI_OK;
     }
-  
-  bytes_sent = sendto(sockfd, (void*) indata, inlen, 0, 
-		      (struct sockaddr*)&ssa, sizeof(ssa));
+
+  bytes_sent = sendto(sockfd, (void*) indata, inlen, 0, addr, sizeof(*addr));
   if (bytes_sent != inlen)
     return !SHISHI_OK;
 
-  total_received = 0;
-  do
+  FD_ZERO (&readfds);
+  FD_SET (sockfd, &readfds);
+  tout.tv_sec = timeout;
+  tout.tv_usec = 0;
+  if (select(sockfd + 1, &readfds, NULL, NULL, &tout) == 1)
     {
-      bytes_received = recvfrom(sockfd, outdata + total_received, 
-				*outlen - total_received, 0, 
-				(struct sockaddr*)&from_sa, &length);
-      total_received += bytes_received;
-
-      FD_ZERO (&readfds);
-      FD_SET (sockfd, &readfds);
+      *outlen = recvfrom(sockfd, outdata, *outlen, 0,
+			 (struct sockaddr*)&from_sa, &length);
+      rc = SHISHI_OK;
     }
-  while(select(sockfd + 1, &readfds, NULL, NULL, &timeout) == 1);
-
+  else
+    rc = SHISHI_TIMEOUT;
+  
   close(sockfd);
 
-  *outlen = total_received;
-
-  return SHISHI_OK;
+  return rc;
 }
 
 int
 shishi_kdc_sendrecv (Shishi * handle,
+		     char *realm,
 		     char *indata,
 		     int inlen, char *outdata, int * outlen)
 {
-  return shishi_sendrecv_udp (handle->kdc, indata, inlen, outdata, outlen);
+  int i,j;
+  int rc;
+
+  for (i=0; i < handle->nrealminfos; i++)
+    if (realm && strcmp(handle->realminfos[i].name, realm) == 0)
+      {
+	for (j=0; j < handle->realminfos[i].nkdcaddresses; j++)
+	  {
+	    struct Shishi_kdcinfo *ki = &handle->realminfos[i].kdcaddresses[j];
+
+	    printf("Sending to %s (%s)...\n", ki->name,
+		   inet_ntoa(((struct sockaddr_in*)
+			      &ki->sockaddress)->sin_addr));
+	    rc = shishi_sendrecv_udp (handle, &ki->sockaddress,
+				      indata, inlen, outdata, outlen, 5);
+	    if (rc == SHISHI_TIMEOUT)
+	      {
+		printf("No data received, continuing...\n");
+	      }
+	    else
+	      return rc;
+	  }
+	printf("All KDCs timed out...\n");
+	return !SHISHI_OK;
+      }
+
+  printf("No KDC defined for realm %s\n", realm);
+
+  return !SHISHI_OK;
 }

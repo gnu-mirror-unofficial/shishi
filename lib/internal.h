@@ -36,6 +36,7 @@
 #include <ctype.h>
 
 #include <netdb.h>
+extern int h_errno;
 #include <pwd.h>
 #include <sys/types.h>
 
@@ -160,15 +161,39 @@ struct Shishi_ticketset
   int ntickets;
 };
 
+struct Shishi_kdcinfo
+{
+  char *name;
+  struct sockaddr sockaddress;
+};
+
+struct Shishi_realminfo
+{
+  char *name;
+  struct Shishi_kdcinfo *kdcaddresses;
+  int nkdcaddresses;
+};
+
+#define SHISHI_DEBUG_CRYPTO (1<<1)
+#define SHISHI_DEBUG_ASN1   (1<<2)
+
+#define DEBUGASN1(h) (h->debugmask & SHISHI_DEBUG_ASN1)
+#define DEBUGCRYPTO(h) (h->debugmask & SHISHI_DEBUG_CRYPTO)
+#define DEBUG(h) (h->debugmask & ~SHISHI_DEBUG_ASN1 & ~SHISHI_DEBUG_CRYPTO)
+
+#define SILENT(h) (h->silent)
+
 struct Shishi
 {
   ASN1_TYPE asn1;
-  int verbose;
-  int debug;
+  int debugmask;
+  int silent;
   char *default_realm;
   char *default_principal;
   int *clientkdcetypes;
   int nclientkdcetypes;
+  struct Shishi_realminfo *realminfos;
+  int nrealminfos;
   char *kdc;
   char error[1024];
   char *gztime_buf[40];

@@ -285,7 +285,7 @@ des_md5_verify (Shishi * handle, unsigned char *out, int *outlen)
 
   gcry_md_write (hd, out, *outlen);
   p = gcry_md_read (hd, GCRY_MD_MD5);
-  if (shishi_debug (handle))
+  if (DEBUGCRYPTO(handle))
     {
       int i;
 
@@ -305,7 +305,7 @@ des_md5_verify (Shishi * handle, unsigned char *out, int *outlen)
     }
   else
     {
-      if (shishi_verbose (handle))
+      if (DEBUG(handle))
 	printf ("des-cbc-md5 verify fail\n");
       res = !SHISHI_OK;
     }
@@ -510,7 +510,7 @@ des_key_correction (Shishi * handle, unsigned char *key)
     {
       if (res == GCRYERR_WEAK_KEY)
 	{
-	  if (handle->debug)
+	  if (DEBUGCRYPTO(handle))
 	    printf ("\t ;; WEAK KEY (corrected)\n");
 	  key[7] ^= 0xF0;
 	}
@@ -572,7 +572,7 @@ des_string_to_key (Shishi * handle,
   unsigned char temp, temp2;
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("des_string_to_key (string, salt)\n");
 
@@ -608,7 +608,7 @@ des_string_to_key (Shishi * handle,
   memset (s + stringlen + saltlen, 0, n_s - stringlen - saltlen);
   memset (tempkey, 0, sizeof (tempkey));	/* tempkey = NULL; */
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; s = pad(string|salt):\n");
       escapeprint (s, n_s);
@@ -618,7 +618,7 @@ des_string_to_key (Shishi * handle,
 
   for (i = 0; i < n_s / 8; i++)
     {
-      if (handle->debug)
+      if (DEBUGCRYPTO(handle))
 	{
 	  printf ("for (8byteblock in s) {\n");
 	  printf ("\t ;; loop iteration %d\n", i);
@@ -634,7 +634,7 @@ des_string_to_key (Shishi * handle,
       for (j = 0; j < 8; j++)
 	s[i * 8 + j] = s[i * 8 + j] & ~0x80;
 
-      if (handle->debug)
+      if (DEBUGCRYPTO(handle))
 	{
 	  printf ("\t ;; 56bitstring:\n");
 	  bin7print (&s[i * 8], 8);
@@ -665,7 +665,7 @@ des_string_to_key (Shishi * handle,
 	      s[i * 8 + j] = temp2;
 	      s[i * 8 + 7 - j] = temp;
 	    }
-	  if (handle->debug)
+	  if (DEBUGCRYPTO(handle))
 	    {
 	      printf ("reverse(56bitstring)\n");
 	      printf ("\t ;; 56bitstring after reverse\n");
@@ -676,7 +676,7 @@ des_string_to_key (Shishi * handle,
 
       odd = !odd;
 
-      if (handle->debug)
+      if (DEBUGCRYPTO(handle))
 	{
 	  printf ("odd = ! odd\n");
 	  printf ("tempstring = tempstring XOR 56bitstring;\n");
@@ -686,7 +686,7 @@ des_string_to_key (Shishi * handle,
       for (j = 0; j < 8; j++)
 	tempkey[j] ^= s[i * 8 + j];
 
-      if (handle->debug)
+      if (DEBUGCRYPTO(handle))
 	{
 	  printf ("\t ;; tempstring\n");
 	  bin7print (tempkey, 8);
@@ -698,7 +698,7 @@ des_string_to_key (Shishi * handle,
   for (j = 0; j < 8; j++)
     tempkey[j] = tempkey[j] << 1;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("for (8byteblock in s) {\n");
       printf ("}\n");
@@ -716,7 +716,7 @@ des_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; tempkey\n");
       escapeprint (tempkey, 8);
@@ -741,7 +741,7 @@ des_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; key\n");
       escapeprint (tempkey, 8);
@@ -763,7 +763,7 @@ des_string_to_key (Shishi * handle,
 static int
 rot13 (Shishi *handle, unsigned char *in, unsigned char *out, int len)
 {
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; rot 13 in:\n");
       escapeprint (in, len);
@@ -815,7 +815,7 @@ rot13 (Shishi *handle, unsigned char *in, unsigned char *out, int len)
       out[1] = (in[1] & ~(0xFF & (0xFF << 3))) | (0xFF & (last << 3));
     }
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; rot13 out:\n");
       escapeprint (out, len);
@@ -951,7 +951,7 @@ des3_derivekey (Shishi *handle,
   char constant[DES3_DERIVEKEY_CONSTANTLEN];
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("des3_derivekey\n");
       printf ("\t ;; mode %d (%s)\n", derivekeymode,
@@ -980,7 +980,7 @@ des3_derivekey (Shishi *handle,
 		   constant, DES3_DERIVEKEY_CONSTANTLEN,
 		   derivedkey, *derivedkeylen);
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; des3_derivekey out:\n");
       hexprint (derivedkey, *derivedkeylen);
@@ -1188,7 +1188,7 @@ des3_random_to_key (Shishi * handle,
 {
   int i;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("des3_random_to_key (random)\n");
       printf ("\t ;; random (length %d):\n", 168 / 8);
@@ -1213,7 +1213,7 @@ des3_random_to_key (Shishi * handle,
       des_set_odd_key_parity (key + i * 8);
     }
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("key = des3_random_to_key (random)\n");
       printf ("\t ;; key:\n");
@@ -1242,7 +1242,7 @@ des3_string_to_key (Shishi * handle,
   unsigned char temp, temp2;
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("des3_string_to_key (string, salt)\n");
 
@@ -1665,7 +1665,7 @@ shishi_string_to_key (Shishi * handle,
   Shishi_string_to_key_function string2key;
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("string_to_key (%s, string, salt)\n",
 	      shishi_cipher_name (etype));
@@ -1700,7 +1700,7 @@ shishi_string_to_key (Shishi * handle,
       *outkeylen = shishi_cipher_keylen (etype);
     }
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; string_to_key key:\n");
       hexprint (outkey, *outkeylen);
@@ -1738,7 +1738,7 @@ shishi_random_to_key (Shishi * handle,
   Shishi_random_to_key_function random2key;
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("random_to_key (%s, random)\n", shishi_cipher_name (etype));
       printf ("\t ;; random:\n");
@@ -1769,7 +1769,7 @@ shishi_random_to_key (Shishi * handle,
       *outkeylen = shishi_cipher_keylen (etype);
     }
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; random_to_key key:\n");
       hexprint (outkey, *outkeylen);
@@ -1809,7 +1809,7 @@ shishi_checksum (Shishi * handle,
 {
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("checksum (%s, in, key)\n", shishi_cipher_name (cksumtype));
       printf ("\t ;; in:\n");
@@ -1875,7 +1875,7 @@ shishi_checksum (Shishi * handle,
       break;
     }
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; checksum out:\n");
       escapeprint (out, *outlen);
@@ -1956,7 +1956,7 @@ shishi_encrypt (Shishi * handle,
   Shishi_encrypt_function encrypt;
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("encrypt (%s, in, key)\n", shishi_cipher_name (etype));
       printf ("\t ;; in:\n");
@@ -1986,7 +1986,7 @@ shishi_encrypt (Shishi * handle,
 
   res = (*encrypt) (handle, out, outlen, in, inlen, key);
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; encrypt out:\n");
       escapeprint (out, *outlen);
@@ -2060,7 +2060,7 @@ shishi_decrypt (Shishi * handle,
   Shishi_decrypt_function decrypt;
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("decrypt (%s, in, key)\n", shishi_cipher_name (etype));
       printf ("\t ;; in:\n");
@@ -2090,7 +2090,7 @@ shishi_decrypt (Shishi * handle,
 
   res = (*decrypt) (handle, out, outlen, in, inlen, key);
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; decrypt out:\n");
       escapeprint (out, *outlen);
@@ -2210,7 +2210,7 @@ shishi_n_fold (Shishi * handle,
 
   lcmmn = lcm (m, n);
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("%d-fold (string)\n", n * 8);
       printf ("\t ;; string length %d bytes %d bits\n", m, m * 8);
@@ -2229,7 +2229,7 @@ shishi_n_fold (Shishi * handle,
   /* Replicate the input th the LCMMN length */
   for (i = 0; i < (lcmmn / m); i++)
     {
-      if (handle->debug)
+      if (DEBUGCRYPTO(handle))
 	{
 	  printf ("\t ;; %d-th replication\n", i + 1);
 	  printf ("string = rot13(string)\n");
@@ -2238,13 +2238,13 @@ shishi_n_fold (Shishi * handle,
       memcpy ((unsigned char *) &buf[i * m], a, m);
       rot13 (handle, a, a, m);
 
-      if (handle->debug)
+      if (DEBUGCRYPTO(handle))
 	puts("");
     }
 
   memset (out, 0, n);		/* just in case */
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; replicated string (length %d):\n", lcmmn);
       hexprint (buf, lcmmn);
@@ -2261,7 +2261,7 @@ shishi_n_fold (Shishi * handle,
 
   for (i = 0; i < (lcmmn / n); i++)
     {
-      if (handle->debug)
+      if (DEBUGCRYPTO(handle))
 	{
 	  printf ("\t ;; %d-th one's complement addition sum\n", i + 1);
 	  printf ("\t ;; sum:\n");
@@ -2279,7 +2279,7 @@ shishi_n_fold (Shishi * handle,
 
       ocadd (out, (unsigned char *) &buf[i * n], out, n);
 
-      if (handle->debug)
+      if (DEBUGCRYPTO(handle))
 	{
 	  printf ("\t ;; sum:\n");
 	  hexprint (out, n);
@@ -2290,7 +2290,7 @@ shishi_n_fold (Shishi * handle,
 	}
     }
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; nfold\n");
       hexprint (out, n);
@@ -2340,7 +2340,7 @@ shishi_dr (Shishi * handle,
   int len, totlen, cipherlen;
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("dr (%s, key, constant, %d)\n",
 	      shishi_cipher_name (etype), derivedrandomlen);
@@ -2372,7 +2372,7 @@ shishi_dr (Shishi * handle,
 	return res;
     }
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; possibly nfolded constant (length %d):\n", 8);
       escapeprint (nfoldconstant, 8);
@@ -2398,7 +2398,7 @@ shishi_dr (Shishi * handle,
     }
   while (totlen < derivedrandomlen);
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("\t ;; derived random (length %d):\n", derivedrandomlen);
       hexprint (derivedrandom, derivedrandomlen);
@@ -2438,7 +2438,7 @@ shishi_dk (Shishi * handle,
   int tmplen, len;
   int res;
 
-  if (handle->debug)
+  if (DEBUGCRYPTO(handle))
     {
       printf ("dk (%s, key, constant, %d)\n",
 	      shishi_cipher_name (etype), derivedkeylen);

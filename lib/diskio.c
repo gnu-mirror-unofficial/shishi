@@ -158,7 +158,7 @@ _shishi_read_armored_data (Shishi * handle,
 	  continue;
 	}
       line[strlen (line) - 1] = '\0';
-      if (shishi_debug (handle))
+      if (DEBUG(handle))
 	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
 
       /* XXX check if all chars in line are b64 data, otherwise bail out */

@@ -106,30 +106,6 @@ shishi_init ()
   return handle;
 }
 
-/**
- * shishi_verbose: 
- * @handle: Shishi library handle create by shishi_init().
- * 
- * Return Value: Returns 0 iff library verbosity is disabled.
- **/
-int
-shishi_verbose (Shishi * handle)
-{
-  return handle->verbose;
-}
-
-/**
- * shishi_debug:
- * @handle: Shishi library handle create by shishi_init().
- * 
- * Return Value: Returns 0 iff library debugging is disabled.
- **/
-int
-shishi_debug (Shishi * handle)
-{
-  return handle->debug;
-}
-
 ASN1_TYPE
 shishi_last_authenticator (Shishi * handle)
 {

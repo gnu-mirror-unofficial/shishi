@@ -130,6 +130,8 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
 {
   char der[BUFSIZ];		/* XXX dynamically allocate this */
   int der_len, out_len;
+  char realm[BUFSIZ];		/* XXX dynamically allocate this */
+  int realmlen;
   int res;
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
 
@@ -141,8 +143,18 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
       return !SHISHI_OK;
     }
 
+  realmlen = sizeof(realm);
+  res = _shishi_asn1_field (handle, kdcreq, realm, &realmlen, "KDC-REQ.req-body.realm");
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not get realm: %s\n",
+			   shishi_strerror_details (handle));
+      return !SHISHI_OK;
+    }
+  realm[realmlen] = '\0';
+
   out_len = BUFSIZ;
-  res = shishi_kdc_sendrecv (handle, der, der_len, der, &out_len);
+  res = shishi_kdc_sendrecv (handle, realm, der, der_len, der, &out_len);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not send to KDC: %s\n",
@@ -151,7 +163,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
     }
   der_len = out_len;
 
-  if (shishi_debug (handle))
+  if (DEBUGASN1(handle))
     printf ("received %d bytes\n", der_len);
 
   *kdcrep = shishi_der2asn1_as_rep (handle->asn1, der,
@@ -231,7 +243,7 @@ shishi_as_check_crealm (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
   reqrealm[reqrealmlen] = '\0';
   reprealm[reprealmlen] = '\0';
 
-  if (shishi_debug (handle))
+  if (DEBUGASN1(handle))
     {
       printf ("request realm: %s\n", reqrealm);
       printf ("reply realm: %s\n", reprealm);
@@ -305,7 +317,7 @@ shishi_as_check_cname (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
 	  return SHISHI_ASN1_ERROR;
 	}
 
-      if (shishi_debug (handle))
+      if (DEBUGASN1(handle))
 	{
 	  reqcname[reqcnamelen] = '\0';
 	  repcname[repcnamelen] = '\0';
@@ -372,7 +384,7 @@ shishi_kdc_check_nonce (Shishi * handle,
       return SHISHI_ASN1_ERROR;
     }
 
-  if (shishi_debug (handle))
+  if (DEBUGASN1(handle))
     {
       int i;
 

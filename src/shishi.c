@@ -728,7 +728,7 @@ main (int argc, char *argv[])
   rc = shishi_ticketset_from_file (handle, ticketset, arg.ticketfile);
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     die("Could not read tickets: %s\n", shishi_strerror (rc));
-
+  shishi_dumpcfg(handle);
   rc = 1;
   switch (arg.command)
     {
