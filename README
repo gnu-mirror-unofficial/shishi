@@ -3,11 +3,6 @@ See the end for copying conditions.
 
 This directory holds an implementation of RFC 1510 (aka Kerberos 5).
 
-Shishi is unstable.  You should expect it to not work.  You should
-expect it to have security problems.  The API will likely change.
-This is the development release.  A proper release will be made in due
-time.  Let me repeat that, SHISHI IS MOST LIKELY INSECURE.
-
 Installation instructions are found in the INSTALL file in this
 directory.  Further instructions are found in doc/shishi.info.
 
