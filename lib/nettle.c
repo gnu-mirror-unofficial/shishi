@@ -153,7 +153,7 @@ shishi_md5 (Shishi * handle,
  * @keylen: length of input character array with key to use.
  * @in: input character array of data to hash.
  * @inlen: length of input character array of data to hash.
- * @out: newly allocated character array with keyed hash of data.
+ * @outhash: newly allocated character array with keyed hash of data.
  *
  * Compute keyed checksum of data using HMAC-SHA1
  *
@@ -324,13 +324,16 @@ shishi_3des (Shishi * handle, int decryptp,
  * @handle: shishi handle as allocated by shishi_init().
  * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
  * @key: input character array with key to use.
+ * @keylen: length of input character array with key to use.
  * @iv: input character array with initialization vector to use, or NULL.
  * @ivout: output character array with updated initialization vector, or NULL.
  * @in: input character array of data to encrypt/decrypt.
  * @inlen: length of input character array of data to encrypt/decrypt.
  * @out: newly allocated character array with encrypted/decrypted data.
  *
- * Encrypt or decrypt data (depending on DECRYPTP) using AES in CBC-CTS mode.
+ * Encrypt or decrypt data (depending on DECRYPTP) using AES in
+ * CBC-CTS mode.  The length of the key decide if AES 128 or AES 256
+ * should be used.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
