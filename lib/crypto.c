@@ -30,6 +30,7 @@
 #include "aes.h"
 #include "cbc.h"
 #include "cbc-cts.h"
+#include "cbc-mac.h"
 #endif
 
 static void
@@ -774,7 +775,6 @@ static cipherinfo null_info = {
   null_decrypt
 };
 
-#ifdef USE_GCRYPT
 static cipherinfo des_cbc_crc_info = {
   1,
   "des-cbc-crc",
@@ -834,7 +834,6 @@ static cipherinfo des_cbc_none_info = {
   des_none_encrypt,
   des_none_decrypt
 };
-#endif
 
 static cipherinfo des3_cbc_sha1_kd_info = {
   16,
@@ -898,12 +897,10 @@ static cipherinfo aes256_cts_hmac_sha1_96_info = {
 
 static cipherinfo *ciphers[] = {
   &null_info,
-#ifdef USE_GCRYPT
   &des_cbc_crc_info,
   &des_cbc_md4_info,
   &des_cbc_md5_info,
   &des_cbc_none_info,
-#endif
   &des3_cbc_none_info,
   &des3_cbc_sha1_kd_info,
   &aes128_cts_hmac_sha1_96_info,
@@ -1146,7 +1143,6 @@ struct checksuminfo
 };
 typedef struct checksuminfo checksuminfo;
 
-#ifdef USE_GCRYPT
 static checksuminfo md4_info = {
   SHISHI_RSA_MD4_DES,
   "rsa-md4-des",
@@ -1160,7 +1156,6 @@ static checksuminfo md5_info = {
   24,
   des_md5_checksum
 };
-#endif
 
 static checksuminfo hmac_sha1_des3_kd_info = {
   SHISHI_HMAC_SHA1_DES3_KD,
@@ -1183,7 +1178,6 @@ static checksuminfo hmac_sha1_96_aes256_info = {
   aes256_checksum
 };
 
-#ifdef USE_GCRYPT
 int
 checksum_foo (Shishi * handle,
 	      Shishi_key * key,
@@ -1192,6 +1186,7 @@ checksum_foo (Shishi * handle,
 	      char *in, size_t inlen,
 	      char **out, size_t * outlen)
 {
+#ifdef USE_GCRYPT
   char buffer[BUFSIZ];
   int buflen;
   char *keyp;
@@ -1232,7 +1227,30 @@ checksum_foo (Shishi * handle,
 
   gcry_cipher_close (ch);
   gcry_md_close (hd);
+#else
+  struct md5_ctx md5;
+  struct CBC_MAC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
+  char digest[MD5_DIGEST_SIZE];
+  int rc;
 
+  md5_init (&md5);
+  md5_update (&md5, inlen, in);
+  md5_digest (&md5, sizeof(digest), digest);
+
+  rc = des_set_key (&des.ctx, shishi_key_value (key));
+  if (!rc)
+    {
+      shishi_error_printf (handle, "des_set_key() failed (%d)", rc);
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  memset(des.iv, 0, sizeof(des.iv));
+
+  *outlen = DES_BLOCK_SIZE;
+  *out = xmalloc (*outlen);
+
+  CBC_MAC (&des, des_encrypt, MD5_DIGEST_SIZE, *out, digest);
+#endif
   return SHISHI_OK;
 }
 
@@ -1242,19 +1260,14 @@ static checksuminfo foo_info = {
   8,
   checksum_foo
 };
-#endif
 
 static checksuminfo *checksums[] = {
-#ifdef USE_GCRYPT
   &md4_info,
   &md5_info,
-#endif
   &hmac_sha1_des3_kd_info,
   &hmac_sha1_96_aes128_info,
   &hmac_sha1_96_aes256_info,
-#ifdef USE_GCRYPT
   &foo_info
-#endif
 };
 
 /**

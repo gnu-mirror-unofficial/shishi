@@ -20,11 +20,11 @@
  * Note: This file is #include'd by crypto.c.
  *
  */
-#ifdef USE_GCRYPT
 
 static int
 raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
 {
+#ifdef USE_GCRYPT
   char md[MAX_HASH_LEN];
   gcry_md_hd_t hd;
   gpg_error_t err;
@@ -70,6 +70,37 @@ raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
 
   memmove (out, out + 8 + hlen, *outlen - 8 - hlen);
   *outlen -= 8 + hlen;
+#else
+  struct md5_ctx md5;
+  char incoming[MD5_DIGEST_SIZE];
+  char computed[MD5_DIGEST_SIZE];
+  int rc;
+
+  memcpy (incoming, out + 8, MD5_DIGEST_SIZE);
+  memset (out + 8, 0, MD5_DIGEST_SIZE);
+
+  md5_init (&md5);
+  md5_update (&md5, *outlen, out);
+  md5_digest (&md5, sizeof(computed), computed);
+
+
+  if (VERBOSECRYPTO (handle))
+    {
+      puts("DES verify:");
+      hexprint(incoming, MD5_DIGEST_SIZE);
+      hexprint (computed, MD5_DIGEST_SIZE);
+    }
+
+
+  if (memcmp (computed, incoming, MD5_DIGEST_SIZE) != 0)
+    {
+      shishi_error_printf (handle, "DES verify failed");
+      return SHISHI_CRYPTO_ERROR;
+    }
+
+  memmove (out, out + 8 + MD5_DIGEST_SIZE, *outlen - 8 - MD5_DIGEST_SIZE);
+  *outlen -= 8 + MD5_DIGEST_SIZE;
+#endif
 
   return SHISHI_OK;
 }
@@ -81,6 +112,7 @@ raw_des_checksum (Shishi * handle,
 		  char *out, size_t * outlen,
 		  int hashzeros)
 {
+#ifdef USE_GCRYPT
   gpg_error_t err;
   int hlen = gcry_md_get_algo_dlen (algo);
   char buffer[8 + MAX_HASH_LEN];
@@ -120,6 +152,28 @@ raw_des_checksum (Shishi * handle,
   gcry_md_close (hd);
 
   *outlen = 8 + hlen;
+#else
+  struct md5_ctx md5;
+  int rc;
+
+  rc = shishi_randomize (handle, out, 8);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  memset (out + 8, 0, MD5_DIGEST_SIZE);
+
+  md5_init (&md5);
+
+  if (hashzeros)
+    md5_update (&md5, 8 + MD5_DIGEST_SIZE, out);
+  else
+    md5_update (&md5, 8, out);
+  md5_update (&md5, inlen, in);
+
+  md5_digest (&md5, MD5_DIGEST_SIZE, out + 8);
+
+  *outlen = 8 + MD5_DIGEST_SIZE;
+#endif
 
   return SHISHI_OK;
 }
@@ -184,7 +238,7 @@ des_crc_encrypt (Shishi * handle,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return _des_encrypt (handle, key, keyusage, iv, ivlen,
-		      in, inlen, out, outlen, GCRY_MD_CRC32_RFC1510);
+		       in, inlen, out, outlen, SHISHI_DES_CBC_CRC);
 }
 
 static int
@@ -196,7 +250,7 @@ des_md4_encrypt (Shishi * handle,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return _des_encrypt (handle, key, keyusage, iv, ivlen,
-		      in, inlen, out, outlen, GCRY_MD_MD4);
+		       in, inlen, out, outlen, SHISHI_DES_CBC_MD4);
 }
 
 static int
@@ -208,7 +262,19 @@ des_md5_encrypt (Shishi * handle,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return _des_encrypt (handle, key, keyusage, iv, ivlen,
-		      in, inlen, out, outlen, GCRY_MD_MD5);
+		       in, inlen, out, outlen, SHISHI_DES_CBC_MD5);
+}
+
+static int
+des_none_encrypt (Shishi * handle,
+		  Shishi_key * key,
+		  int keyusage,
+		  const char *iv,
+		  size_t ivlen,
+		  const char *in, size_t inlen, char **out, size_t * outlen)
+{
+  return simplified_encrypt (handle, key, 0, iv, ivlen,
+			     in, inlen, out, outlen);
 }
 
 static int
@@ -249,7 +315,7 @@ des_crc_decrypt (Shishi * handle,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return _des_decrypt (handle, key, keyusage, iv, ivlen,
-		      in, inlen, out, outlen, GCRY_MD_CRC32_RFC1510);
+		       in, inlen, out, outlen, SHISHI_DES_CBC_CRC);
 }
 
 static int
@@ -261,7 +327,7 @@ des_md4_decrypt (Shishi * handle,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return _des_decrypt (handle, key, keyusage, iv, ivlen,
-		      in, inlen, out, outlen, GCRY_MD_MD4);
+		       in, inlen, out, outlen, SHISHI_DES_CBC_MD4);
 }
 
 static int
@@ -273,25 +339,7 @@ des_md5_decrypt (Shishi * handle,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return _des_decrypt (handle, key, keyusage, iv, ivlen,
-		      in, inlen, out, outlen, GCRY_MD_MD5);
-}
-
-static int
-des_none_encrypt (Shishi * handle,
-		  Shishi_key * key,
-		  int keyusage,
-		  const char *iv,
-		  size_t ivlen,
-		  const char *in, size_t inlen, char **out, size_t * outlen)
-{
-  int res;
-
-  res = simplified_encrypt (handle, key, 0, iv, ivlen,
-			    in, inlen, out, outlen);
-  if (res != SHISHI_OK)
-    return res;
-
-  return SHISHI_OK;
+		       in, inlen, out, outlen, SHISHI_DES_CBC_MD5);
 }
 
 static int
@@ -302,16 +350,9 @@ des_none_decrypt (Shishi * handle,
 		  size_t ivlen,
 		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  int res;
-
-  res = simplified_decrypt (handle, key, 0, iv, ivlen,
-			    in, inlen, out, outlen);
-  if (res != SHISHI_OK)
-    return res;
-
-  return SHISHI_OK;
+  return simplified_decrypt (handle, key, 0, iv, ivlen,
+			     in, inlen, out, outlen);
 }
-#endif
 
 static int
 des_set_odd_key_parity (char key[8])
@@ -334,10 +375,10 @@ des_set_odd_key_parity (char key[8])
   return SHISHI_OK;
 }
 
-#ifdef USE_GCRYPT
 static int
 des_key_correction (Shishi * handle, char *key)
 {
+#ifdef USE_GCRYPT
   gcry_cipher_hd_t ch;
   gpg_error_t err;
 
@@ -372,6 +413,21 @@ des_key_correction (Shishi * handle, char *key)
 	  return SHISHI_CRYPTO_INTERNAL_ERROR;
 	}
     }
+#else
+  struct CBC_MAC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
+  int rc;
+
+  /* fixparity(key); */
+  des_set_odd_key_parity (key);
+
+  rc = des_set_key (&des.ctx, key);
+  if (!rc && des.ctx.status == DES_WEAK_KEY)
+    {
+      if (VERBOSECRYPTO (handle))
+	printf ("\t ;; WEAK KEY (corrected)\n");
+      key[7] ^= 0xF0;
+    }
+#endif
 
   return SHISHI_OK;
 }
@@ -400,6 +456,7 @@ des_random_to_key (Shishi * handle,
 static int
 des_cbc_check (Shishi * handle, char key[8], char *data, int n_data)
 {
+#ifdef USE_GCRYPT
   gcry_cipher_hd_t ch;
   gpg_error_t err;
   int res = SHISHI_CRYPTO_INTERNAL_ERROR;
@@ -441,6 +498,23 @@ des_cbc_check (Shishi * handle, char key[8], char *data, int n_data)
  done:
   gcry_cipher_close (ch);
   return res;
+#else
+  struct CBC_MAC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
+  int rc;
+
+  rc = des_set_key (&des.ctx, key);
+  if (!rc)
+    {
+      shishi_error_printf (handle, "des_set_key() failed (%d)", rc);
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  CBC_SET_IV (&des, key);
+
+  CBC_ENCRYPT (&des, des_encrypt, n_data, key, data);
+
+  return SHISHI_OK;
+#endif
 }
 
 static int
@@ -694,7 +768,7 @@ des_md4_checksum (Shishi * handle,
 {
   return des_checksum (handle, key, keyusage, cksumtype,
 		       in, inlen, out, outlen,
-		       GCRY_MD_MD4);
+		       SHISHI_RSA_MD4_DES);
 }
 
 static int
@@ -706,6 +780,5 @@ des_md5_checksum (Shishi * handle,
 {
   return des_checksum (handle, key, keyusage, cksumtype,
 		       in, inlen, out, outlen,
-		       GCRY_MD_MD5);
+		       SHISHI_RSA_MD5_DES);
 }
-#endif
