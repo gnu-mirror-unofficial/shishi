@@ -1999,6 +1999,13 @@ are described now.
 
 @include shishi-api-crypto.texi
 
+Also included in Shishi is an interface to the really low-level
+cryptographic primitives.  They map directly on the underlying
+cryptographic library used (e.g., Nettle) and is used internally by
+Shishi.
+
+@include shishi-api-nettle.texi
+
 
 @node Utility Functions
 @section Utility Functions
