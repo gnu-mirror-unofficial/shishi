@@ -955,8 +955,8 @@ kdc_handle2 (struct listenspec *ls)
       }
 }
 
-static void
-kdc_read (struct listenspec *ls, struct listenspec *last)
+static int
+kdc_read (struct listenspec *ls)
 {
   ssize_t read_bytes;
 
@@ -964,17 +964,17 @@ kdc_read (struct listenspec *ls, struct listenspec *last)
 			 sizeof(ls->buf) - ls->bufpos, 0,
 			 &ls->addr, &ls->addrlen);
 
-  if (read_bytes < 0 || (read_bytes == 0 && ls->type == SOCK_STREAM))
+  if (read_bytes < 0)
     {
-      if (read_bytes == 0)
-	{
-	  if (!arg.quiet_flag)
-	    printf ("Peer %s disconnected\n", ls->str);
-	}
-      else
-	error (0, errno, "Error from recvfrom (%d)", read_bytes);
-      last->next = kdc_close (ls);
-      return;
+      error (0, errno, "Error from recvfrom (%d)", read_bytes);
+      return -1;
+    }
+
+  if (read_bytes == 0 && ls->type == SOCK_STREAM)
+    {
+      if (!arg.quiet_flag)
+	printf ("Peer %s disconnected\n", ls->str);
+      return -1;
     }
 
   ls->bufpos += read_bytes;
@@ -984,7 +984,7 @@ kdc_read (struct listenspec *ls, struct listenspec *last)
     printf ("Has %d bytes from %s on socket %d\n",
 	    ls->bufpos, ls->str, ls->sockfd);
 
-  kdc_handle2 (ls);
+  return 0;
 }
 
 static void
@@ -1046,8 +1046,10 @@ kdc_loop (void)
 	if (FD_ISSET (ls->sockfd, &readfds))
 	  if (ls->type == SOCK_STREAM && ls->listening)
 	    kdc_accept (ls, last);
+	  else if (kdc_read (ls) < 0)
+	    last->next = kdc_close (ls);
 	  else
-	    kdc_read (ls, last);
+	    kdc_handle2 (ls);
     }
 
   return 0;
