@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.20 (unreleased)
 
+** Fix formatting of man pages, based on warnings from Doclifter.
+
+** Updated gnulib compatibility files.
+
 * Version 0.0.19 (released 2004-11-12)
 
 ** Documentation improvements.

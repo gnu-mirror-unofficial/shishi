@@ -5,9 +5,8 @@ Changelog-URL: http://josefsson.org/cgi-bin/viewcvs.cgi/shishi/ChangeLog?rev=HEA
 BSD-Port-URL: http://www.freshports.org/devel/shishi/
 CVS-URL: http://josefsson.org/cgi-bin/viewcvs.cgi/shishi/
 Mirror-Site-URL: http://josefsson.org/shishi
-Version: 0.0.19
-Release-Focus: Minor feature enhancements
+Version: 0.0.20
+Release-Focus: Minor bugfixes
 
-Documentation improvements, such as adding making the Shishi API
-manual available in DevHelp format.  Updated gnulib compatibility
-files.
+Fix formatting of man pages, based on warnings from Doclifter.
+Updated gnulib compatibility files.
