@@ -64,7 +64,7 @@ libfoo_la_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 
 libfoo_la_SOURCES += vasprintf.h
 
-libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
+libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c xstrndup.c
 
 libfoo_la_SOURCES += mempcpy.h
 
