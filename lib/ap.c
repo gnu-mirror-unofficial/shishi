@@ -1026,8 +1026,19 @@ shishi_ap_encapreppart_set (Shishi_ap * ap, Shishi_asn1 encapreppart)
 #define APOPTION_MUTUAL_REQUIRED "mutual-required"
 #define APOPTION_UNKNOWN "unknown"
 
+/**
+ * shishi_ap_option2string:
+ * @option: enumerated AP-Option type, see Shishi_apoptions.
+ *
+ * Convert AP-Option type to AP-Option name string.  Note that @option
+ * must be just one of the AP-Option types, it cannot be an binary
+ * ORed indicating several AP-Options.
+ *
+ * Return value: Returns static string with name of AP-Option that
+ *   must not be deallocated, or "unknown" if AP-Option was not understood.
+ **/
 const char *
-shishi_ap_option2string (int option)
+shishi_ap_option2string (Shishi_apoptions option)
 {
   char *str;
 
@@ -1053,7 +1064,17 @@ shishi_ap_option2string (int option)
   return str;
 }
 
-int
+/**
+ * shishi_ap_string2option:
+ * @str: zero terminated character array with name of AP-Option,
+ *   e.g. "use-session-key".
+ *
+ * Convert AP-Option name to AP-Option type.
+ *
+ * Return value: Returns enumerated type member corresponding to AP-Option,
+ *   or 0 if string was not understood.
+ **/
+Shishi_apoptions
 shishi_ap_string2option (const char *str)
 {
   int option;
