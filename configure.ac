@@ -18,8 +18,8 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-AC_PREREQ(2.50)
-AC_INIT(shishi, 0.0.9, bug-shishi@josefsson.org)
+AC_PREREQ(2.59)
+AC_INIT([shishi],[0.0.9],[bug-shishi@josefsson.org])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
@@ -34,7 +34,6 @@ AC_SUBST(LT_AGE)
 
 AM_INIT_AUTOMAKE(gnits)
 AM_CONFIG_HEADER(config.h)
-AC_CONFIG_AUX_DIR(.)
 
 # Checks for header files.
 AC_PROG_CC
@@ -128,7 +127,7 @@ AC_SEARCH_LIBS(syslog, syslog)
 
 # Check for PAM
 AC_ARG_ENABLE(pam,
-  AC_HELP_STRING([--disable-pam], [Don't use PAM even if available]))
+  AS_HELP_STRING([--disable-pam], [Don't use PAM even if available]))
 if test "$enable_pam" != "no"; then
 	AC_CHECK_HEADERS(security/pam_appl.h)
 	AC_CHECK_HEADERS(security/pam_modules.h, [], [],
@@ -151,7 +150,7 @@ AC_MSG_RESULT($enable_pam)
 
 # Check for IPv6
 AC_ARG_ENABLE(ipv6,
-  AC_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
+  AS_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
 if test "$enable_ipv6" != "no"; then
   enable_ipv6=yes
   AC_CHECK_DECLS([AF_INET6, IN6ADDR_ANY_INIT],,enable_ipv6=no,[
@@ -193,7 +192,7 @@ AC_MSG_RESULT($enable_ipv6)
 
 # Check gdbm
 #AC_ARG_WITH(system-gdbm,
-#  AC_HELP_STRING([--without-system-gdbm], [Don't use the system's gdbm]))
+#  AS_HELP_STRING([--without-system-gdbm], [Don't use the system's gdbm]))
 #if test "$with_system_gdbm" != "no" ; then
 #  AC_CHECK_LIB(gdbm, gdbm_open,,with_system_gdbm=no)
 #fi
@@ -208,7 +207,7 @@ AC_MSG_RESULT($enable_ipv6)
 
 # Check for idn
 AC_ARG_WITH(stringprep,
-  AC_HELP_STRING([--without-stringprep],
+  AS_HELP_STRING([--without-stringprep],
 		[don't use libidn for string processing even if available]),
 	stringprep=$withval, stringprep=yes)
 if test "$stringprep" != "no"; then
@@ -225,22 +224,19 @@ fi
 
 # Check for libtasn1
 AC_ARG_WITH(system-asn1,
-	AC_HELP_STRING([--with-system-asn1], [Use the system's libtasn1]),
+	AS_HELP_STRING([--with-system-asn1], [Use the system's libtasn1]),
 	system_asn1=$withval, system_asn1=auto)
 if test "$system_asn1" = "auto"; then
 	save_LIBS=$LIBS
 	LIBS="$LIBS -ltasn1"
 	AC_CACHE_CHECK([for libtasn1 >= 0.2.5], ac_cv_libtasn1, [
-		AC_TRY_RUN([
+		AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <libtasn1.h>
 int main ()
 {
   return asn1_check_version ("0.2.5") == NULL;
 }
-],
-		ac_cv_libtasn1=yes,
-		ac_cv_libtasn1=no,
-		ac_cv_libtasn1=no)
+]])],[ac_cv_libtasn1=yes],[ac_cv_libtasn1=no],[ac_cv_libtasn1=no])
 	])
 	LIBS=$save_LIBS
 	if test "$ac_cv_libtasn1" = "yes"; then
@@ -263,7 +259,7 @@ AC_SUBST(LIBTASN1_CFLAGS)
 
 # Check for libgcrypt
 AC_ARG_WITH(libgcrypt,
-  AC_HELP_STRING([--with-libgcrypt], [use libgcrypt for low-level crypto]),
+  AS_HELP_STRING([--with-libgcrypt], [use libgcrypt for low-level crypto]),
   libgcrypt=$withval, libgcrypt=yes)
 if test "$libgcrypt" != "no" ; then
 	AM_PATH_LIBGCRYPT(1.1.43, :, [
@@ -286,7 +282,7 @@ AC_SUBST(CRYPTO_LIBS)
 
 # Check for gnutls.
 AC_ARG_ENABLE(starttls,
-	AC_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
+	AS_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
 	starttls=$enableval, starttls=yes)
 if test "$starttls" != "no"; then
 	AM_PATH_LIBGNUTLS(0.8.8, starttls=yes, starttls=no)
@@ -308,7 +304,7 @@ AM_MISSING_PROG(DOCBOOK2PDF, docbook2pdf, $missing_dir)
 AM_MISSING_PROG(DOCBOOK2PS, docbook2ps, $missing_dir)
 
 # Let people enable/disable various encryption/checksum types.
-AC_ARG_ENABLE(des, AC_HELP_STRING([--disable-des],
+AC_ARG_ENABLE(des, AS_HELP_STRING([--disable-des],
 			[disable DES related encryption/checksum types]),
 		enable_des=$enableval, enable_des=yes)
 AM_CONDITIONAL(DES, test "$enable_des" != "no")
@@ -318,7 +314,7 @@ fi
 AC_MSG_CHECKING([if DES related encryption/checksum types should be used])
 AC_MSG_RESULT($enable_des)
 
-AC_ARG_ENABLE(3des, AC_HELP_STRING([--disable-3des],
+AC_ARG_ENABLE(3des, AS_HELP_STRING([--disable-3des],
 			[disable 3DES encryption/checksum type]),
 		enable_3des=$enableval, enable_3des=yes)
 AM_CONDITIONAL(DES3, test "$enable_3des" != "no")
@@ -328,7 +324,7 @@ fi
 AC_MSG_CHECKING([if 3DES encryption/checksum type should be used])
 AC_MSG_RESULT($enable_3des)
 
-AC_ARG_ENABLE(aes, AC_HELP_STRING([--disable-aes],
+AC_ARG_ENABLE(aes, AS_HELP_STRING([--disable-aes],
 			[disable AES encryption/checksum types]),
 		enable_aes=$enableval, enable_aes=yes)
 AM_CONDITIONAL(AES, test "$enable_aes" != "no")
@@ -338,7 +334,7 @@ fi
 AC_MSG_CHECKING([if AES encryption/checksum types should be used])
 AC_MSG_RESULT($enable_aes)
 
-AC_ARG_ENABLE(md, AC_HELP_STRING([--disable-md],
+AC_ARG_ENABLE(md, AS_HELP_STRING([--disable-md],
 			[disable unkeyed MD4/MD5 checksum types]),
 		enable_md=$enableval, enable_md=yes)
 AM_CONDITIONAL(MD, test "$enable_md" != "no")
@@ -348,7 +344,7 @@ fi
 AC_MSG_CHECKING([if unkeyed MD checksum types should be used])
 AC_MSG_RESULT($enable_md)
 
-AC_ARG_ENABLE(null, AC_HELP_STRING([--disable-null],
+AC_ARG_ENABLE(null, AS_HELP_STRING([--disable-null],
 			[disable dummy NULL encryption/checksum type]),
 		enable_null=$enableval, enable_null=yes)
 AM_CONDITIONAL(NULL, test "$enable_null" != "no")
@@ -358,7 +354,7 @@ fi
 AC_MSG_CHECKING([if dummy NULL encryption/checksum type should be used])
 AC_MSG_RESULT($enable_null)
 
-AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--disable-arcfour],
+AC_ARG_ENABLE(arcfour, AS_HELP_STRING([--disable-arcfour],
 			[disable ARCFOUR encryption/checksum type]),
 		enable_arcfour=$enableval, enable_arcfour=yes)
 AM_CONDITIONAL(ARCFOUR, test "$enable_arcfour" != "no")
