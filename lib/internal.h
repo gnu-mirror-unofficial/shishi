@@ -140,6 +140,10 @@ extern char *_shishi_gettext (const char *str);
 		  SHISHI_VERBOSE_NOICE)
 #define VERBOSE(h) (h->verbose & ~VERBOSES)
 
+#ifndef HOST_NAME_MAX
+#define HOST_NAME_MAX BUFSIZ
+#endif
+
 struct Shishi_kdcinfo
 {
   char *name;
@@ -170,6 +174,7 @@ struct Shishi
   char *gztime_buf[40];
   char *usercfgfile;
   char *ticketsetdefaultfile;
+  char *hostkeysdefaultfile;
   char *stringprocess;
   Shishi_ticketset *ticketset;
   /* XXX remove: */
@@ -190,16 +195,25 @@ _shishi_a2d_field (Shishi *handle,
 		   ASN1_TYPE node, char *field,
 		   char *der, int *len);
 
+ASN1_TYPE
+shishi_d2a_enctgsreppart (Shishi * handle, char *der, int der_len);
 int
 _shishi_asn1_done (Shishi * handle, ASN1_TYPE node);
 
 int
 _shishi_asn1_field (Shishi * handle,
-		    ASN1_TYPE node, char *data, int *datalen, char *field);
+		    ASN1_TYPE node, char *data, size_t *datalen, char *field);
 int
 _shishi_asn1_optional_field (Shishi * handle,
 			     ASN1_TYPE node,
-			     char *data, int *datalen, char *field);
+			     char *data, size_t *datalen, char *field);
+int
+_shishi_asn1_integer_field (Shishi * handle, ASN1_TYPE node,
+			    int *i, char *field);
+int
+shishi_principal_name_get (Shishi * handle,
+			   ASN1_TYPE namenode,
+			   char *namefield, char *out, int *outlen);
 extern ASN1_TYPE
 shishi_der2asn1_ticket (ASN1_TYPE definitions,
 			char *der, int der_len, char *errorDescription);
@@ -235,5 +249,12 @@ _shishi_kdcreq_input (Shishi * handle,
 int
 _shishi_kdcrep_input (Shishi * handle,
 		      FILE * fh, ASN1_TYPE * asrep, int type);
+int
+_shishi_krberror_input (Shishi * handle,
+			FILE * fh, ASN1_TYPE * krberror, int type);
+
+#if WITH_DMALLOC
+#include <dmalloc.h>
+#endif
 
 #endif /* _INTERNAL_H */

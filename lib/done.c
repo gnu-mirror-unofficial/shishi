@@ -36,8 +36,6 @@
 void
 shishi_done (Shishi * handle)
 {
-  int rc;
-
   if (handle->ticketset)
     {
       shishi_ticketset_to_file (handle->ticketset,
@@ -52,6 +50,8 @@ shishi_done (Shishi * handle)
     free (handle->usercfgfile);
   if (handle->ticketsetdefaultfile)
     free (handle->ticketsetdefaultfile);
+  if (handle->hostkeysdefaultfile)
+    free (handle->hostkeysdefaultfile);
 
   if (handle->asn1)
     asn1_delete_structure (&handle->asn1);

@@ -32,7 +32,7 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	kdc.c kdcreq.c kdcrep.c enckdcreppart.c as.c tgs.c \
 	ap.c apreq.c aprep.c encapreppart.c \
 	ticketset.c ticket.c encticketpart.c \
-	netio.c key.c crypto.c pkcs5.h pkcs5.c \
+	netio.c hostkeys.c key.c crypto.c pkcs5.h pkcs5.c \
 	rfc1510_asn1_tab.c asn1.c \
 	version.c password.c \
 	setenv.h
@@ -51,6 +51,7 @@ include_HEADERS = shishi.h
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
 	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
+	-DHOSTKEYSFILE=\"$(sysconfdir)/shishi.keys\" \
 	@DEFS@
 
 rfc1510_asn1_tab.c: $(srcdir)/rfc1510.asn1

@@ -47,7 +47,6 @@ shishi_as_derive_salt (Shishi * handle,
   int tmplen;
   unsigned char format[BUFSIZ];
   int res = ASN1_SUCCESS;
-  char buf[BUFSIZ];
   int i, n;
 
   res = asn1_number_of_elements (asrep, "KDC-REP.padata", &n);
@@ -220,7 +219,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
 int
 shishi_as_check_crealm (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
 {
-  unsigned char reqrealm[BUFSIZ], reprealm[BUFSIZ];
+  char reqrealm[BUFSIZ], reprealm[BUFSIZ];
   int reqrealmlen = BUFSIZ, reprealmlen = BUFSIZ;
   int res;
 
@@ -488,7 +487,6 @@ shishi_as_process (Shishi * handle,
 		   ASN1_TYPE asreq,
 		   ASN1_TYPE asrep, char *string, ASN1_TYPE * enckdcreppart)
 {
-  unsigned char format[BUFSIZ];
   unsigned char salt[BUFSIZ];
   int saltlen;
   int res;
@@ -504,11 +502,9 @@ shishi_as_process (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  key = shishi_key (keytype, NULL);
-
-  res = shishi_string_to_key (handle, keytype,
-			      string, strlen (string),
-			      salt, saltlen, NULL, key);
+  res = shishi_key_from_string (handle, keytype,
+				string, strlen (string),
+				salt, saltlen, NULL, &key);
   if (res != SHISHI_OK)
     return res;
 
@@ -553,13 +549,8 @@ shishi_kdc_process (Shishi * handle,
 		    ASN1_TYPE * enckdcreppart)
 {
   int res;
-  int i, len;
-  int buflen = BUFSIZ;
-  unsigned char buf[BUFSIZ];
-  unsigned char cipher[BUFSIZ];
-  int realmlen = BUFSIZ;
-  int cipherlen;
-  unsigned char etype;
+  int i;
+  size_t len;
   int msgtype;
 
   /*

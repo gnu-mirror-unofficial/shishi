@@ -41,7 +41,6 @@ _shishi_print_armored_data (Shishi * handle,
   char b64der[BUFSIZ];
   int res;
   int i;
-  char *tmp;
 
   if (asn1 == ASN1_TYPE_EMPTY)
     return !SHISHI_OK;
@@ -214,10 +213,6 @@ _shishi_ticket_input (Shishi * handle,
   char b64der[BUFSIZ];
   size_t b64len = 0;
   int res;
-  int i;
-  size_t nread;
-  int in_data = 0;
-  int lno = 0;
 
   if (type == 0)
     {
@@ -279,10 +274,6 @@ _shishi_enckdcreppart_input (Shishi * handle,
   char b64der[BUFSIZ];
   size_t b64len = 0;
   int res;
-  int i;
-  size_t nread;
-  int in_data = 0;
-  int lno = 0;
 
   if (type == 0)
     {
@@ -365,10 +356,6 @@ _shishi_kdcreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * asreq, int type)
   char b64der[BUFSIZ];
   size_t b64len = 0;
   int res;
-  int i;
-  size_t nread;
-  int in_data = 0;
-  int lno = 0;
 
   if (type == 0)
     {
@@ -433,7 +420,6 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, ASN1_TYPE * asrep, int type)
   char b64der[BUFSIZ];
   size_t b64len = 0;
   int res;
-  int i;
 
   if (type == 0)
     {
@@ -496,10 +482,6 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * apreq, int type)
   char b64der[BUFSIZ];
   size_t b64len = 0;
   int res;
-  int i;
-  size_t nread;
-  int in_data = 0;
-  int lno = 0;
 
   if (type == 0)
     {
@@ -548,10 +530,6 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type)
   char b64der[BUFSIZ];
   size_t b64len = 0;
   int res;
-  int i;
-  size_t nread;
-  int in_data = 0;
-  int lno = 0;
 
   if (type == 0)
     {
@@ -601,10 +579,6 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
   char b64der[BUFSIZ];
   size_t b64len = 0;
   int res;
-  int i;
-  size_t nread;
-  int in_data = 0;
-  int lno = 0;
 
   if (type == 0)
     {
@@ -655,10 +629,6 @@ _shishi_authenticator_input (Shishi * handle,
   char b64der[BUFSIZ];
   size_t b64len = 0;
   int res;
-  int i;
-  size_t nread;
-  int in_data = 0;
-  int lno = 0;
 
   if (type == 0)
     {
@@ -709,10 +679,6 @@ _shishi_krberror_input (Shishi * handle,
   char b64der[BUFSIZ];
   size_t b64len = 0;
   int res;
-  int i;
-  size_t nread;
-  int in_data = 0;
-  int lno = 0;
 
   if (type == 0)
     {
@@ -752,25 +718,107 @@ _shishi_krberror_input (Shishi * handle,
 
   return SHISHI_OK;
 }
+int
+shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
+{
+  int lno = 0;
+  char line[BUFSIZ];
+  char armorbegin[BUFSIZ];
+  char armorend[BUFSIZ];
+  int in_data = 0, in_body = 0;
+  int res;
+  Shishi_key *lkey;
+
+  res = shishi_key (handle, &lkey);
+  if (res != SHISHI_OK)
+    return res;
+
+  sprintf (armorbegin, HEADERBEG, "KEY");
+  sprintf (armorend, HEADEREND, "KEY");
+#if 0
+  len = 0;
+  while (fgets (line, sizeof (line), fh))
+    {
+      lno++;
+      line[sizeof (line) - 1] = '\0';
+      if (!*line || line[strlen (line) - 1] != '\n')
+	{
+	  fprintf (stderr, "input line %u too long or missing LF\n", lno);
+	  continue;
+	}
+      line[strlen (line) - 1] = '\0';
+      if (VERBOSE (handle))
+	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
+
+      /* XXX check if all chars in line are b64 data, otherwise bail out */
+
+      if (in_data)
+	{
+	  if (strncmp (line, armorend, strlen (armorend)) == 0)
+	    break;
+	}
+      else
+	{
+	  in_data = strncmp (line, armorbegin, strlen (armorbegin)) == 0;
+	  continue;
+	}
+
+      if (in_body)
+	{
+	  keylen = shishi_from_base64 (line, strlen(line));
+	}
+
+      if (len + strlen (line) >= maxsize)
+	{
+	  shishi_error_printf (handle, "too large input size on line %d\n",
+			       lno);
+	  return !SHISHI_OK;
+	}
+
+      memcpy (buffer + len, line, strlen (line));
+      len += strlen (line);
+    }
+
+  if (len <= 0)
+    return !SHISHI_OK;
+
+  buffer[len] = '\0';
+
+  return SHISHI_OK;
+
+      b64len = sizeof (b64der);
+      res = _shishi_read_armored_data (handle, fh, b64der, b64len, "Ticket");
+      if (res != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, "armor data read fail\n");
+	  return res;
+	}
+#endif
+  return SHISHI_OK;
+}
 
 /**
  * shishi_key_print:
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle opened for writing.
  * @key: key to print.
- * @clientname: optional string representation of name
- *              of principal owning key.
- * @realm:  optional string representation of realm
- *          of principal owning key.
  *
  * Print an ASCII representation of a key structure to file
- * descriptor.
+ * descriptor.  Example output:
+ *
+ * -----BEGIN SHISHI KEY-----
+ * Keytype: 18 (aes256-cts-hmac-sha1-96)
+ * Principal: host/latte.josefsson.org
+ * Realm: JOSEFSSON.ORG
+ * Key-Version-Number: 1
+ *
+ * P1QdeW/oSiag/bTyVEBAY2msiGSTmgLXlopuCKoppDs=
+ * -----END SHISHI KEY-----
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_key_print (Shishi * handle, FILE * fh, Shishi *key,
-		  char *clientname, char *realm)
+shishi_key_print (Shishi * handle, FILE * fh, Shishi_key *key)
 {
   char b64key[BUFSIZ];
   int res;
@@ -783,10 +831,10 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi *key,
 
   fprintf (fh, "Keytype: %d (%s)\n", shishi_key_type(key),
 	   shishi_cipher_name (shishi_key_type(key)));
-  if (clientname)
-    fprintf (fh, "Clientname: %s\n", clientname);
-  if (realm)
-    fprintf (fh, "Realm: %s\n", realm);
+  if (shishi_key_principal(key))
+    fprintf (fh, "Principal: %s\n", shishi_key_principal(key));
+  if (shishi_key_realm(key))
+    fprintf (fh, "Realm: %s\n", shishi_key_realm(key));
   if (shishi_key_version(key))
     fprintf (fh, "Key-Version-Number: %d\n", shishi_key_version(key));
   fprintf (fh, "\n");
@@ -810,19 +858,15 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi *key,
  * @handle: shishi handle as allocated by shishi_init().
  * @filename: filename to append key to.
  * @key: key to print.
- * @clientname: optional string representation of name
- *              of principal owning key.
- * @realm:  optional string representation of realm
- *          of principal owning key.
  *
  * Print an ASCII representation of a key structure to a file.  The
- * file is appended to if it exists.
+ * file is appended to if it exists.  See shishi_key_print() for
+ * format of output.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_key_to_file (Shishi * handle, char *filename, Shishi *key,
-		    char *clientname, char *realm)
+shishi_key_to_file (Shishi * handle, char *filename, Shishi *key)
 {
   FILE *fh;
   int res;
@@ -834,7 +878,7 @@ shishi_key_to_file (Shishi * handle, char *filename, Shishi *key,
   if (fh == NULL)
     return SHISHI_FOPEN_ERROR;
 
-  res = shishi_key_print (handle, fh, key, clientname, realm);
+  res = shishi_key_print (handle, fh, key);
   if (res != SHISHI_OK)
     return res;
 

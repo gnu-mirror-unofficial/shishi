@@ -18,6 +18,7 @@ enckdcreppart.lo
 encticketpart.lo
 error.lo
 gztime.lo
+hostkeys.lo
 init.lo
 kdc.lo
 kdcrep.lo

@@ -80,7 +80,9 @@ shishi_encticketpart_get_key (Shishi * handle,
   if (res != ASN1_SUCCESS)
     return res;
 
-  *key = shishi_key (keytype, buf);
+  res = shishi_key_from_value (handle, keytype, buf, key);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }

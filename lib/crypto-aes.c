@@ -115,7 +115,9 @@ aes_string_to_key (Shishi * handle,
   if (res != PKCS5_OK)
     return res;
 
-  tmpkey = shishi_key(shishi_key_type(outkey), key);
+  res = shishi_key_from_value(handle, shishi_key_type(outkey), key, &tmpkey);
+  if (res != SHISHI_OK)
+    return res;
 
   /* key = DK(tkey, "kerberos") */
   res = shishi_dk (handle, tmpkey, "kerberos", strlen ("kerberos"), outkey);

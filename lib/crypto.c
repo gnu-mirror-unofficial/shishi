@@ -117,7 +117,7 @@ lcm (int a, int b)
 }
 
 static int
-rot13 (Shishi * handle, unsigned char *in, unsigned char *out, int len)
+rot13 (Shishi * handle, char *in, char *out, int len)
 {
   if (VERBOSECRYPTO (handle))
     {
@@ -132,16 +132,18 @@ rot13 (Shishi * handle, unsigned char *in, unsigned char *out, int len)
   if (len == 1)
     {
       out[0] =
-	(in[0] >> 5) & 0x01 |
-	(in[0] >> 5) & 0x02 |
-	(in[0] >> 5) & 0x04 |
-	(in[0] << 3) & 0x08 |
-	(in[0] << 3) & 0x10 |
-	(in[0] << 3) & 0x20 | (in[0] << 3) & 0x40 | (in[0] << 3) & 0x80;
+	((in[0] >> 5) & 0x01) |
+	((in[0] >> 5) & 0x02) |
+	((in[0] >> 5) & 0x04) |
+	((in[0] << 3) & 0x08) |
+	((in[0] << 3) & 0x10) |
+	((in[0] << 3) & 0x20) |
+	((in[0] << 3) & 0x40) |
+	((in[0] << 3) & 0x80);
     }
   else if (len > 1)
     {
-      unsigned char nexttolast, last;
+      char nexttolast, last;
       int i;
 
       nexttolast = in[len - 2];
@@ -149,15 +151,15 @@ rot13 (Shishi * handle, unsigned char *in, unsigned char *out, int len)
 
       for (i = len * 8 - 1; i >= 13; i--)
 	{
-	  unsigned int pos = i / 8;
-	  unsigned char mask = ~(1 << (7 - i % 8));
-	  unsigned int pos2 = (i - 13) / 8;
-	  unsigned char mask2 = (1 << (7 - (i - 13) % 8));
+	  int pos = i / 8;
+	  char mask = ~(1 << (7 - i % 8));
+	  int pos2 = (i - 13) / 8;
+	  char mask2 = (1 << (7 - (i - 13) % 8));
 
 	  out[pos] = (out[pos] & mask) |
 	    (((in[pos2] & mask2) ? 0xFF : 0x00) & ~mask);
 	}
-      out[0] = (nexttolast << 3) | (last >> 5);
+      out[0] = ((nexttolast & 0xFF) << 3) | ((last & 0xFF) >> 5);
       out[1] = (in[1] & ~(0xFF & (0xFF << 3))) | (0xFF & (last << 3));
     }
 
@@ -175,17 +177,17 @@ rot13 (Shishi * handle, unsigned char *in, unsigned char *out, int len)
 }
 
 static int
-ocadd (unsigned char *add1, unsigned char *add2, unsigned char *sum, int len)
+ocadd (char *add1, char *add2, char *sum, int len)
 {
   int i;
   int carry = 0;
 
   for (i = len - 1; i >= 0; i--)
     {
-      unsigned int tmpsum = add1[i] + add2[i];
+      int tmpsum = (unsigned char)add1[i] + (unsigned char)add2[i];
 
-      sum[i] = 0xFF & (tmpsum + carry);
-      if ((tmpsum + carry) & ~0xFF)
+      sum[i] = (tmpsum + carry) & 0xFF;
+      if (tmpsum + carry > 0xFF)
 	carry = 1;
       else
 	carry = 0;
@@ -195,7 +197,7 @@ ocadd (unsigned char *add1, unsigned char *add2, unsigned char *sum, int len)
       int done = 0;
 
       for (i = len - 1; i >= 0; i--)
-	if (sum[i] != 0xFF)
+	if ((unsigned char)sum[i] != 0xFF)
 	  {
 	    sum[i]++;
 	    done = 1;
@@ -212,15 +214,15 @@ ocadd (unsigned char *add1, unsigned char *add2, unsigned char *sum, int len)
 static int
 simplified_hmac (Shishi * handle,
 		 Shishi_key *key,
-		 char *in,
-		 int inlen,
+		 const char *in,
+		 size_t inlen,
 		 char *outhash,
-		 int outhashlen)
+		 size_t outhashlen)
 {
   GCRY_MD_HD mdh;
   int halg = GCRY_MD_SHA1;
   int hlen = gcry_md_get_algo_dlen (halg);
-  char *hash;
+  unsigned char *hash;
   int res;
 
   mdh = gcry_md_open (halg, GCRY_MD_FLAG_HMAC);
@@ -234,7 +236,7 @@ simplified_hmac (Shishi * handle,
       return SHISHI_GCRYPT_ERROR;
     }
 
-  gcry_md_write (mdh, in, inlen);
+  gcry_md_write (mdh, (const unsigned char *)in, inlen);
 
   hash = gcry_md_read (mdh, halg);
   if (hash == NULL)
@@ -250,7 +252,10 @@ simplified_hmac (Shishi * handle,
 static int
 simplified_hmac_verify (Shishi * handle,
 			Shishi_key *key,
-			char *in, int inlen, char *hmac, int hmaclen)
+			const char *in,
+			size_t inlen,
+			char *hmac,
+			size_t hmaclen)
 {
   char hash[MAX_HASH_LEN];
   int res;
@@ -334,15 +339,14 @@ simplified_derivekey (Shishi * handle,
 static int
 simplified_dencrypt (Shishi * handle,
 		     Shishi_key *key,
-		     char *in,
-		     int inlen,
+		     const char *in,
+		     size_t inlen,
 		     char *out,
-		     int *outlen,
+		     size_t *outlen,
 		     int direction)
 {
   int res;
   GCRY_CIPHER_HD ch;
-  int j;
   int alg = 0;
   int mode = GCRY_CIPHER_MODE_CBC;
   int flags = 0;
@@ -376,8 +380,10 @@ simplified_dencrypt (Shishi * handle,
 
   if (res == GCRYERR_SUCCESS)
     res = direction ?
-      gcry_cipher_decrypt (ch, out, *outlen, in, inlen) :
-      gcry_cipher_encrypt (ch, out, *outlen, in, inlen);
+      gcry_cipher_decrypt (ch, (unsigned char*)out, *outlen,
+			   (const unsigned char*)in, inlen) :
+      gcry_cipher_encrypt (ch, (unsigned char*)out, *outlen,
+			   (const unsigned char*)in, inlen);
 
   if (res != GCRYERR_SUCCESS)
     {
@@ -397,10 +403,10 @@ static int
 simplified_encrypt (Shishi * handle,
 		    Shishi_key *key,
 		    int keyusage,
-		    char *in,
-		    int inlen,
+		    const char *in,
+		    size_t inlen,
 		    char *out,
-		    int *outlen)
+		    size_t *outlen)
 {
   int res;
   int padzerolen = 0;
@@ -419,12 +425,13 @@ simplified_encrypt (Shishi * handle,
       int blen = shishi_cipher_blocksize (shishi_key_type(key));
       int halg = GCRY_MD_SHA1;
       int hlen = gcry_md_get_algo_dlen (halg);
-      int len;
+      size_t len;
       Shishi_key *derivedkey;
 
-      derivedkey = shishi_key (shishi_key_type(key), NULL);
-      if (!derivedkey)
-	return SHISHI_MALLOC_ERROR;
+      res = shishi_key_from_value (handle, shishi_key_type(key),
+				   NULL, &derivedkey);
+      if (res != SHISHI_OK)
+	return res;
 
       buflen = inlen + blen + padzerolen;
       buffer = malloc (buflen);
@@ -475,10 +482,10 @@ static int
 simplified_decrypt (Shishi * handle,
 		    Shishi_key *key,
 		    int keyusage,
-		    char *in,
-		    int inlen,
+		    const char *in,
+		    size_t inlen,
 		    char *out,
-		    int *outlen)
+		    size_t *outlen)
 {
   int res;
 
@@ -487,12 +494,13 @@ simplified_decrypt (Shishi * handle,
       Shishi_key *derivedkey;
       int blen = shishi_cipher_blocksize (shishi_key_type(key));
       int halg = GCRY_MD_SHA1;
-      int hlen = gcry_md_get_algo_dlen (halg);
-      int len;
+      size_t hlen = gcry_md_get_algo_dlen (halg);
+      size_t len;
 
-      derivedkey = shishi_key (shishi_key_type(key), NULL);
-      if (!derivedkey)
-	return SHISHI_MALLOC_ERROR;
+      res = shishi_key_from_value (handle, shishi_key_type(key),
+				   NULL, &derivedkey);
+      if (res != SHISHI_OK)
+	return res;
 
       res = simplified_derivekey (handle, key, keyusage,
 				  SHISHI_DERIVEKEYMODE_PRIVACY, derivedkey);
@@ -536,15 +544,14 @@ simplified_checksum (Shishi * handle,
 		     char *in, int inlen, char *out, int *outlen)
 {
   Shishi_key *derivedkey;
-  int derivedkeylen;
   int halg = GCRY_MD_SHA1; /* XXX hide this in crypto-lowlevel.c */
   int hlen = gcry_md_get_algo_dlen (halg);
   int res;
-  int i;
 
-  derivedkey = shishi_key(shishi_key_type(key), NULL);
-  if (!derivedkey)
-    return SHISHI_MALLOC_ERROR;
+  res = shishi_key_from_value (handle, shishi_key_type(key),
+			       NULL, &derivedkey);
+  if (res != SHISHI_OK)
+    return res;
 
   res = simplified_derivekey (handle, key, keyusage,
 			      SHISHI_DERIVEKEYMODE_CHECKSUM,
@@ -616,7 +623,7 @@ struct cipherinfo
 };
 typedef struct cipherinfo cipherinfo;
 
-cipherinfo null_info = {
+static cipherinfo null_info = {
   0,
   "NULL",
   1,
@@ -631,7 +638,7 @@ cipherinfo null_info = {
   null_decrypt
 };
 
-cipherinfo des_cbc_crc_info = {
+static cipherinfo des_cbc_crc_info = {
   1,
   "des-cbc-crc",
   8,
@@ -646,7 +653,7 @@ cipherinfo des_cbc_crc_info = {
   des_crc_decrypt
 };
 
-cipherinfo des_cbc_md4_info = {
+static cipherinfo des_cbc_md4_info = {
   2,
   "des-cbc-md4",
   8,
@@ -661,7 +668,7 @@ cipherinfo des_cbc_md4_info = {
   des_md4_decrypt
 };
 
-cipherinfo des_cbc_md5_info = {
+static cipherinfo des_cbc_md5_info = {
   3,
   "des-cbc-md5",
   8,
@@ -676,7 +683,7 @@ cipherinfo des_cbc_md5_info = {
   des_md5_decrypt
 };
 
-cipherinfo des3_cbc_sha1_kd_info = {
+static cipherinfo des3_cbc_sha1_kd_info = {
   16,
   "des3-cbc-sha1-kd",
   8,
@@ -691,7 +698,7 @@ cipherinfo des3_cbc_sha1_kd_info = {
   des3_decrypt
 };
 
-cipherinfo aes128_cts_hmac_sha1_96_info = {
+static cipherinfo aes128_cts_hmac_sha1_96_info = {
   17,
   "aes128-cts-hmac-sha1-96",
   16,
@@ -706,7 +713,7 @@ cipherinfo aes128_cts_hmac_sha1_96_info = {
   aes128_decrypt
 };
 
-cipherinfo aes256_cts_hmac_sha1_96_info = {
+static cipherinfo aes256_cts_hmac_sha1_96_info = {
   18,
   "aes256-cts-hmac-sha1-96",
   16,
@@ -721,7 +728,7 @@ cipherinfo aes256_cts_hmac_sha1_96_info = {
   aes256_decrypt
 };
 
-cipherinfo *ciphers[] = {
+static cipherinfo *ciphers[] = {
   &null_info,
   &des_cbc_crc_info,
   &des_cbc_md4_info,
