@@ -27,6 +27,7 @@ gss_get_mic (OM_uint32 * minor_status,
 	     gss_qop_t qop_req,
 	     const gss_buffer_t message_buffer, gss_buffer_t message_token)
 {
+  return GSS_S_FAILURE;
 }
 
 OM_uint32
@@ -35,6 +36,7 @@ gss_verify_mic (OM_uint32 * minor_status,
 		const gss_buffer_t message_buffer,
 		const gss_buffer_t token_buffer, gss_qop_t * qop_state)
 {
+  return GSS_S_FAILURE;
 }
 
 OM_uint32
@@ -45,6 +47,7 @@ gss_wrap (OM_uint32 * minor_status,
 	  const gss_buffer_t input_message_buffer,
 	  int *conf_state, gss_buffer_t output_message_buffer)
 {
+  return GSS_S_FAILURE;
 }
 
 OM_uint32
@@ -54,4 +57,5 @@ gss_unwrap (OM_uint32 * minor_status,
 	    gss_buffer_t output_message_buffer,
 	    int *conf_state, gss_qop_t * qop_state)
 {
+  return GSS_S_FAILURE;
 }

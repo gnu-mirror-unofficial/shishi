@@ -37,7 +37,9 @@ struct gss_cred_id_t
 
 struct gss_name_t
 {
-  int foo;
+  int length;
+  char *value;
+  gss_OID type;
 };
 
 #endif /* _GSS_INTERNAL_H */
