@@ -773,22 +773,76 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   if (tgt == NULL)
     {
       Shishi_as *as;
+      time_t starttime = hint->starttime ? hint->starttime : time(NULL);
+      time_t endtime = hint->endtime ? hint->endtime :
+	starttime + tkts->handle->ticketlife;
+      time_t renew_till = hint->renew_till ? hint->renew_till :
+	starttime + tkts->handle->renewlife;
 
       /* Get TGT ... XXX cross realm */
 
       rc = shishi_as (tkts->handle, &as);
+      if (rc != SHISHI_OK)
+	{
+	  shishi_error_printf (tkts->handle, "Cannot create AS: %s",
+			       shishi_strerror (rc));
+	  return NULL;
+	}
+
+      if (hint->starttime)
+	{
+	  rc = shishi_asn1_write (tkts->handle, shishi_as_req(as),
+				  "req-body.from",
+				  shishi_generalize_time (tkts->handle,
+							  starttime),
+				  0);
+	  if (rc != SHISHI_OK)
+	    {
+	      shishi_error_printf (tkts->handle, "Cannot set starttime: %s",
+				   shishi_strerror (rc));
+	      return NULL;
+	    }
+	}
+
+      if (hint->endtime)
+	{
+	  rc = shishi_asn1_write (tkts->handle, shishi_as_req(as),
+				  "req-body.till",
+				  shishi_generalize_time (tkts->handle,
+							  endtime),
+				  0);
+	  if (rc != SHISHI_OK)
+	    {
+	      shishi_error_printf (tkts->handle, "Cannot set starttime: %s",
+				   shishi_strerror (rc));
+	      return NULL;
+	    }
+	}
+
       if (hint->renewable)
 	{
 	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req(as),
 					  SHISHI_KDCOPTIONS_RENEWABLE);
+	  if (rc != SHISHI_OK)
+	    {
+	      shishi_error_printf (tkts->handle, "Cannot set KDC Options: %s",
+				   shishi_strerror (rc));
+	      return NULL;
+	    }
 
-	  if (rc == SHISHI_OK)
-	    rc = shishi_asn1_write (tkts->handle, shishi_as_req(as),
-				    "req-body.rtime",
-				    shishi_generalize_time (tkts->handle,
-							    time (NULL) + 42),
-				    0);
+	  rc = shishi_asn1_write (tkts->handle, shishi_as_req(as),
+				  "req-body.rtime",
+				  shishi_generalize_time
+				  (tkts->handle, renew_till),
+				  0);
+	  if (rc != SHISHI_OK)
+	    {
+	      shishi_error_printf (tkts->handle, "Cannot set KDC Options: %s",
+				   shishi_strerror (rc));
+	      return NULL;
+	    }
 	}
+
       if (rc == SHISHI_OK)
 	rc = shishi_as_req_build (as);
       if (rc == SHISHI_OK)
@@ -797,8 +851,10 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 	rc = shishi_as_rep_process (as, NULL, hint->passwd);
       if (rc != SHISHI_OK)
 	{
-	  printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
-		  shishi_strerror_details (tkts->handle));
+	  shishi_error_printf (tkts->handle,
+			       "AS exchange failed: %s\n%s\n",
+			       shishi_strerror (rc),
+			       shishi_strerror_details (tkts->handle));
 	  if (rc == SHISHI_GOT_KRBERROR)
 	    shishi_krberror_pretty_print (tkts->handle, stdout,
 					  shishi_as_krberror (as));
@@ -809,8 +865,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 
       if (!tgt)
 	{
-	  printf ("No ticket in AS-REP?!: %s\n",
-		  shishi_strerror_details (tkts->handle));
+	  shishi_error_printf (tkts->handle, "No ticket in AS-REP");
 	  return NULL;
 	}
 
