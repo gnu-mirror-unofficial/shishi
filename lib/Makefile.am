@@ -35,7 +35,7 @@ nodist_include_HEADERS = shishi-int.h
 
 include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
-libshishi_la_SOURCES = internal.h gettext.h \
+libshishi_la_SOURCES = internal.h \
 	init.c cfg.c realm.c principal.c error.c krberror.c \
 	gztime.c diskio.c \
 	authenticator.c \
