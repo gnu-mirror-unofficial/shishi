@@ -43,8 +43,8 @@ shishi_as_derive_salt (Shishi * handle,
 		       Shishi_asn1 asreq,
 		       Shishi_asn1 asrep, char *salt, size_t * saltlen)
 {
-  int len = *saltlen;
-  int tmplen;
+  size_t len = *saltlen;
+  size_t tmplen;
   char *format;
   int res;
   int i, n;
@@ -112,11 +112,11 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 			Shishi_asn1 * kdcrep)
 {
   char *der;
-  int der_len;
+  size_t der_len;
   size_t buflen;
   char *buffer;
   char *realm;
-  int realmlen;
+  size_t realmlen;
   int res;
 
   res = shishi_new_a2d (handle, kdcreq, &der, &der_len);
@@ -660,7 +660,7 @@ shishi_as_process (Shishi * handle,
 		   const char *string, Shishi_asn1 * enckdcreppart)
 {
   unsigned char salt[BUFSIZ];
-  int saltlen;
+  size_t saltlen;
   int res;
   Shishi_key *key;
   int keytype;

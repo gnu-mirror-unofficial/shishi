@@ -310,7 +310,7 @@ shishi_principal_name_set (Shishi * handle,
 			   Shishi_name_type name_type, const char *name[])
 {
   int res;
-  char *buf, *asn1name;
+  char *asn1name;
   int i;
 
   asprintf (&asn1name, "%s.name-type", namefield);

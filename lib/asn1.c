@@ -385,11 +385,11 @@ shishi_asn1_read_empty_p (Shishi * handle,
 
 int
 shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
-				const char *field, int *n)
+				const char *field, size_t *n)
 {
   int rc;
 
-  rc = asn1_number_of_elements (node, field, n);
+  rc = asn1_number_of_elements (node, field, (int*)n);
   if (rc != ASN1_SUCCESS)
     {
       if (rc == ASN1_ELEMENT_NOT_FOUND)

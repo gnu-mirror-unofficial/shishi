@@ -140,7 +140,7 @@ int
 shishi_tkt_cnamerealm_p (Shishi_tkt * tkt, const char *client)
 {
   char *buf;
-  int buflen;
+  size_t buflen;
   int res;
 
   buflen = strlen (client) + 1;
@@ -681,7 +681,7 @@ time_t
 shishi_tkt_lastreqc (Shishi_tkt * tkt, Shishi_lrtype lrtype)
 {
   char lrtime[GENERALIZEDTIME_TIME_LEN + 1];
-  int lrtimelen;
+  size_t lrtimelen;
   time_t t;
   int res;
 
@@ -739,7 +739,7 @@ time_t
 shishi_tkt_authctime (Shishi_tkt * tkt)
 {
   char authtime[GENERALIZEDTIME_TIME_LEN + 1];
-  int authtimelen;
+  size_t authtimelen;
   time_t t;
   int res;
 
@@ -793,7 +793,7 @@ time_t
 shishi_tkt_endctime (Shishi_tkt * tkt)
 {
   char endtime[GENERALIZEDTIME_TIME_LEN + 1];
-  int endtimelen;
+  size_t endtimelen;
   time_t t;
   int res;
 
@@ -820,7 +820,7 @@ time_t
 shishi_tkt_renew_tillc (Shishi_tkt * tkt)
 {
   char renewtill[GENERALIZEDTIME_TIME_LEN + 1];
-  int renewtilllen;
+  size_t renewtilllen;
   time_t t;
   int res;
 
@@ -860,7 +860,7 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
 {
   char buf[BUFSIZ];
   char *p;
-  int buflen;
+  size_t buflen;
   int keytype, etype, flags;
   int res;
   time_t t;

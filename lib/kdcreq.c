@@ -792,7 +792,7 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
 {
   int res;
   char *data;
-  int datalen;
+  size_t datalen;
 
   res = shishi_new_a2d (handle, apreq, &data, &datalen);
   if (res != SHISHI_OK)
