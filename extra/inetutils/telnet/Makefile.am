@@ -1,11 +1,11 @@
-bin_PROGRAMS = telnet
+bin_PROGRAMS = shishi-telnet
 
-telnet_SOURCES = authenc.c commands.c main.c network.c ring.c sys_bsd.c \
+shishi_telnet_SOURCES = authenc.c commands.c main.c network.c ring.c sys_bsd.c \
 	telnet.c terminal.c tn3270.c utilities.c
 
 noinst_HEADERS = defines.h externs.h fdset.h general.h ring.h types.h
 
-man_MANS = telnet.1
+man_MANS = shishi-telnet.1
 
 INCLUDES = -DTERMCAP -DLINEMODE -DKLUDGELINEMODE -DENV_HACK
 
