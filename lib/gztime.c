@@ -55,7 +55,7 @@ time_t
 shishi_generalize_ctime (Shishi * handle, const char *t)
 {
   struct tm tm;
-  time_t t;
+  time_t ct;
 
   memset (&tm, 0, sizeof (tm));
 
@@ -65,7 +65,7 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
   tm.tm_year -= 1900;
   tm.tm_mon--;
 
-  t = my_timegm (&tm);
+  ct = my_timegm (&tm);
 
-  return t;
+  return ct;
 }
