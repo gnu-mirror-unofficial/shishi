@@ -1,7 +1,6 @@
 /* Parse comma separate list into words.
-   Copyright (C) 1996, 1997, 1999, 2004 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-   Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
+   Copyright (C) 2004 Free Software Foundation, Inc.
+   Contributed by Simon Josefsson <jas@extundo.com>, 2004.
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,6 +17,18 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+/* Assuming *OPTIONP is a comma separated list of elements of the form
+   "token" or "token=value", getsubopt parses the first of these elements.
+   If the first element refers to a "token" that is member of the given
+   NULL-terminated array of tokens:
+     - It replaces the comma with a NUL byte, updates *OPTIONP to point past
+       the first option and the comma, sets *VALUEP to the value of the
+       element (or NULL if it doesn't contain an "=" sign),
+     - It returns the index of the "token" in the given array of tokens.
+   Otherwise it returns -1, and *OPTIONP and *VALUEP are undefined.
+   For more details see the POSIX:2001 specification.
+   http://www.opengroup.org/onlinepubs/009695399/functions/getsubopt.html */
+
 #if HAVE_GETSUBOPT
 
 /* Get getsubopt declaration.  */
@@ -25,8 +36,6 @@
 
 #else
 
-extern int getsubopt (char **restrict optionp,
-		      char *const *restrict tokens,
-		      char **restrict valuep);
+extern int getsubopt (char **optionp, char *const *tokens, char **valuep);
 
 #endif

@@ -21,8 +21,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Get strchrnul.  */
-#include <strchrnul.h>
+#if !_LIBC
+/* This code is written for inclusion in gnu-libc, and uses names in
+   the namespace reserved for libc.  If we're compiling in gnulib,
+   define those names to be the normal ones instead.  */
+# include "strchrnul.h"
+# undef __strchrnul
+# define __strchrnul strchrnul
+#endif
 
 /* Parse comma separated suboption from *OPTIONP and match against
    strings in TOKENS.  If found return index and set *VALUEP to
@@ -31,10 +37,7 @@
    suboption.  On exit *OPTIONP is set to the beginning of the next
    token or at the terminating NUL character.  */
 int
-getsubopt (optionp, tokens, valuep)
-     char **optionp;
-     char *const *tokens;
-     char **valuep;
+getsubopt (char **optionp, char *const *tokens, char **valuep)
 {
   char *endp, *vstart;
   int cnt;
@@ -43,7 +46,7 @@ getsubopt (optionp, tokens, valuep)
     return -1;
 
   /* Find end of next token.  */
-  endp = strchrnul (*optionp, ',');
+  endp = __strchrnul (*optionp, ',');
 
   /* Find start of value.  */
   vstart = memchr (*optionp, '=', endp - *optionp);
@@ -53,7 +56,7 @@ getsubopt (optionp, tokens, valuep)
   /* Try to match the characters between *OPTIONP and VSTART against
      one of the TOKENS.  */
   for (cnt = 0; tokens[cnt] != NULL; ++cnt)
-    if (memcmp (*optionp, tokens[cnt], vstart - *optionp) == 0
+    if (strncmp (*optionp, tokens[cnt], vstart - *optionp) == 0
 	&& tokens[cnt][vstart - *optionp] == '\0')
       {
 	/* We found the current option in TOKENS.  */
