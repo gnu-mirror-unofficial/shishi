@@ -116,19 +116,19 @@ fi
 AC_SUBST(LIBARGP)
 
 # Check gdbm
-AC_ARG_WITH(system-gdbm,
-  AC_HELP_STRING([--without-system-gdbm], [Don't use the system's gdbm]))
-if test "$with_system_gdbm" != "no" ; then
-  AC_CHECK_LIB(gdbm, gdbm_open,,with_system_gdbm=no)
-fi
-LIBGDBM=""
-if test "$with_system_gdbm" = "no" ; then
-  LIBGDBM="\$(top_builddir)/gdbm/libgdbm.a"
-  CFLAGS="$CFLAGS -I\$(top_srcdir)/gdbm"
-  GDBM=gdbm
-  AC_SUBST(GDBM)
-fi
-AC_SUBST(LIBGDBM)
+#AC_ARG_WITH(system-gdbm,
+#  AC_HELP_STRING([--without-system-gdbm], [Don't use the system's gdbm]))
+#if test "$with_system_gdbm" != "no" ; then
+#  AC_CHECK_LIB(gdbm, gdbm_open,,with_system_gdbm=no)
+#fi
+#LIBGDBM=""
+#if test "$with_system_gdbm" = "no" ; then
+#  LIBGDBM="\$(top_builddir)/gdbm/libgdbm.a"
+#  CFLAGS="$CFLAGS -I\$(top_srcdir)/gdbm"
+#  GDBM=gdbm
+#  AC_SUBST(GDBM)
+#fi
+#AC_SUBST(LIBGDBM)
 
 AC_ARG_ENABLE(ipv6,
   AC_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
@@ -195,11 +195,13 @@ AC_MSG_RESULT($with_system_stringprep)
 # Checks for library functions.
 AC_CHECK_FUNCS(gethostname signal \
 		memmove memset bcopy bzero \
-		select \
+		select ngettext \
 		strchr strdup strerror strstr strcasecmp)
 AC_FUNC_STRFTIME
+AC_REPLACE_FUNCS(setenv)
 
-AC_CONFIG_SUBDIRS(asn1 crypto argp gdbm extra/inetutils)
+# gdbm
+AC_CONFIG_SUBDIRS(asn1 crypto argp extra/inetutils)
 
 AC_CONFIG_FILES(Makefile intl/Makefile po/Makefile.in m4/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \

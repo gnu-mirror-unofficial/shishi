@@ -21,7 +21,7 @@ MOST_SUBDIRS = intl m4 po asn1 lib src tests doc extra
 
 DIST_SUBDIRS = crypto argp gdbm $(MOST_SUBDIRS)
 
-SUBDIRS = @CRYPTO@ @ARGP@ @GDBM@ $(MOST_SUBDIRS)
+SUBDIRS = @CRYPTO@ @ARGP@ $(MOST_SUBDIRS)
 
 ACLOCAL_AMFLAGS = -I m4 -I crypto/src -I asn1/src
 
