@@ -127,6 +127,21 @@ extern char *_shishi_gettext (const char *str);
 #define MAX_KEY_LEN 32
 #define MAX_HASH_LEN 32
 
+#define SHISHI_VERBOSE_CRYPTO  (1<<1)
+#define SHISHI_VERBOSE_ASN1    (1<<2)
+#define SHISHI_VERBOSE_NOICE   (1<<3)
+
+#define KRBTGT "krbtgt"
+#define PRINCIPAL_DELIMITER "/"
+
+#define VERBOSEASN1(h) (h->verbose & SHISHI_VERBOSE_ASN1)
+#define VERBOSECRYPTO(h) (h->verbose & SHISHI_VERBOSE_CRYPTO)
+#define VERBOSENOICE(h) (h->verbose & SHISHI_VERBOSE_NOICE)
+#define VERBOSES (SHISHI_VERBOSE_ASN1 |		\
+		  SHISHI_VERBOSE_CRYPTO |	\
+		  SHISHI_VERBOSE_NOICE)
+#define VERBOSE(h) (h->verbose & ~VERBOSES)
+
 struct Shishi_ticket
 {
   char *principal;
@@ -152,21 +167,6 @@ struct Shishi_realminfo
   struct Shishi_kdcinfo *kdcaddresses;
   int nkdcaddresses;
 };
-
-#define SHISHI_VERBOSE_CRYPTO  (1<<1)
-#define SHISHI_VERBOSE_ASN1    (1<<2)
-#define SHISHI_VERBOSE_NOICE   (1<<3)
-
-#define KRBTGT "krbtgt"
-#define PRINCIPAL_DELIMITER "/"
-
-#define VERBOSEASN1(h) (h->verbose & SHISHI_VERBOSE_ASN1)
-#define VERBOSECRYPTO(h) (h->verbose & SHISHI_VERBOSE_CRYPTO)
-#define VERBOSENOICE(h) (h->verbose & SHISHI_VERBOSE_NOICE)
-#define VERBOSES (SHISHI_VERBOSE_ASN1 | \
-		  SHISHI_VERBOSE_CRYPTO | \
-		  SHISHI_VERBOSE_NOICE)
-#define VERBOSE(h) (h->verbose & ~VERBOSES)
 
 struct Shishi_as
 {
@@ -194,6 +194,13 @@ struct Shishi_ap
   ASN1_TYPE apreq;
   ASN1_TYPE aprep;
   ASN1_TYPE encapreppart;
+};
+
+struct Shishi_key
+{
+  int type;
+  char value[MAX_KEY_LEN];
+  int length;
 };
 
 struct Shishi
