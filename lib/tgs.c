@@ -238,8 +238,6 @@ shishi_tgs_req_process (Shishi_tgs * tgs)
 
   shishi_ap_req_set (tgs->ap, apreq);
 
-  shishi_apreq_print (tgs->handle, stdout, shishi_ap_req (tgs->ap));
-
   return SHISHI_OK;
 }
 

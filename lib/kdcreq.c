@@ -657,6 +657,9 @@ shishi_kdcreq_get_padata (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
+  *out = NULL;
+  *outlen = 0;
+
   for (i = 1; i <= n; i++)
     {
       int32_t patype;
@@ -667,11 +670,8 @@ shishi_kdcreq_get_padata (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      printf("pa type %d\n", patype);
       if (patype == padatatype)
 	{
-	  puts("ok");
-
 	  asprintf (&format, "padata.?%d.padata-value", i);
 	  res = shishi_asn1_read2 (handle, kdcreq, format, out, outlen);
 	  free (format);
@@ -706,6 +706,9 @@ shishi_kdcreq_get_padata_tgs (Shishi * handle,
   size_t derlen;
   int rc;
 
+  if (VERBOSE (handle))
+    printf ("Extracting AP-REQ from KDC-REQ...\n");
+
   rc = shishi_kdcreq_get_padata (handle, kdcreq, SHISHI_PA_TGS_REQ,
 				 &der, &derlen);
   if (rc != SHISHI_OK)
@@ -714,6 +717,9 @@ shishi_kdcreq_get_padata_tgs (Shishi * handle,
   *apreq = shishi_der2asn1_apreq (handle, der, derlen);
   if (!*apreq)
     return SHISHI_ASN1_ERROR;
+
+  if (VERBOSEASN1 (handle))
+    shishi_apreq_print (handle, stdout, *apreq);
 
   return SHISHI_OK;
 }

@@ -773,7 +773,6 @@ process_1 (Shishi * handle, struct arguments *arg,
       kdcreq = shishi_der2asn1_asreq (handle, in, inlen);
       if (kdcreq)
 	{
-	  shishi_kdcreq_print (handle, stdout, kdcreq);
 	  asreq (handle, arg, kdcreq, out, outlen);
 	  return SHISHI_OK;
 	}
@@ -790,7 +789,6 @@ process_1 (Shishi * handle, struct arguments *arg,
       kdcreq = shishi_der2asn1_tgsreq (handle, in, inlen);
       if (kdcreq)
 	{
-	  shishi_kdcreq_print (handle, stdout, kdcreq);
 	  tgsreq (handle, arg, kdcreq, out, outlen);
 	  return SHISHI_OK;
 	}
