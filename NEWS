@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.13 (unreleased)
 
+** Fix shishid crash on startup when sockets can't be opened.
+
+** Various minor bugfixes.
+
 * Version 0.0.12 (released 2004-01-02)
 
 ** The user database library Shisa has been improved.
