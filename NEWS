@@ -6,7 +6,9 @@ See the end for copying conditions.
 
 ** InetUtils copy removed (we send patches upstream instead).
 
-** Libgcrypt updated (libpgp-error added in errcrypto/).
+** Libidn copy removed (it is optional but recommended, used when present).
+
+** Libtasn1 and Libgcrypt updated (libpgp-error added in errcrypto/).
 
 ** Argp and other compatibility files replaced by gl/ directory.
 
