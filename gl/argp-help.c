@@ -76,7 +76,6 @@ char *strerror (int errnum);
 # if !HAVE_DECL_STRERROR_R
 char *strerror_r (int errnum, char *buf, size_t buflen);
 # endif
-# define __strerror_r strerror_r
 #endif
 
 #include "argp.h"

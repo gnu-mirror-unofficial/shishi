@@ -133,7 +133,7 @@ argp_default_parser (int key, char *arg, struct argp_state *state)
       else
 	state->name = arg;
 
-#if defined _LIBC || HAVE_DECL_PROGRAM_INVOCATION_NAME
+#if defined _LIBC || HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
       program_invocation_short_name = state->name;
 #endif
 
