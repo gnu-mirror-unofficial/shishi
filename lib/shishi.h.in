@@ -1869,17 +1869,17 @@ extern int shishi_apreq_add_authenticator (Shishi * handle, Shishi_asn1 apreq,
 					   Shishi_key * key, int keyusage,
 					   Shishi_asn1 authenticator);
 extern int shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq,
-				 int *flags);
+				 uint32_t *flags);
 extern int shishi_apreq_use_session_key_p (Shishi * handle,
 					   Shishi_asn1 apreq);
 extern int shishi_apreq_mutual_required_p (Shishi * handle,
 					   Shishi_asn1 apreq);
 extern int shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq,
-				     int options);
+				     uint32_t options);
 extern int shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq,
-				     int option);
+				     uint32_t option);
 extern int shishi_apreq_options_remove (Shishi * handle, Shishi_asn1 apreq,
-					int option);
+					uint32_t option);
 extern int shishi_apreq_get_ticket (Shishi * handle, Shishi_asn1 apreq,
 				    Shishi_asn1 * ticket);
 extern int shishi_apreq_get_authenticator_etype (Shishi * handle,
