@@ -295,6 +295,8 @@ shishi_aprep_enc_part_add (Shishi * handle,
       return !SHISHI_OK;
     }
 
+  der = xrealloc (der, derlen + 8);
+
   while ((derlen % 8) != 0)
     {
       der[derlen] = '\0';
