@@ -24,6 +24,7 @@
 #include "internal.h"
 #include "crypto.h"
 
+#include "md4.h"
 #include "hmac.h"
 #include "arcfour.h"
 #include "des.h"
