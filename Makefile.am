@@ -20,7 +20,7 @@
 
 DISTCHECK_CONFIGURE_FLAGS = --without-included-gettext --disable-gtk-doc
 
-MOST_SUBDIRS = intl m4 po gss lib src tests doc extra
+MOST_SUBDIRS = intl m4 po lib src tests doc extra
 
 DIST_SUBDIRS = crypto asn1 argp libstringprep $(MOST_SUBDIRS)
 
@@ -29,13 +29,13 @@ SUBDIRS = @CRYPTO@ @ASN1@ @ARGP@ @LIBIDN@ $(MOST_SUBDIRS)
 ACLOCAL_AMFLAGS = -I m4 -I crypto/src
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = shishi.pc shishi-gss.pc
+pkgconfig_DATA = shishi.pc
 
 sysconf_DATA = shishi.conf
 pkgdata_DATA = shishi.skel
 
 EXTRA_DIST = ANNOUNCE config.rpath mkinstalldirs \
-	shishi.conf.in shishi.skel.in shishi.pc.in shishi-gss.pc.in
+	shishi.conf.in shishi.skel.in shishi.pc.in
 
 .PHONY: ChangeLog
 ChangeLog:
@@ -45,7 +45,6 @@ ChangeLog:
 
 indent:
 	(cd lib && make indent)
-	(cd gss && make indent)
 	(cd src && make indent)
 	(cd tests && make indent)
 
