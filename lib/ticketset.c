@@ -208,9 +208,9 @@ shishi_ticketset_add (Shishi_ticketset * ticketset, Shishi_ticket * ticket)
 /**
  * shishi_ticketset_new:
  * @ticketset: ticket set handle as allocated by shishi_ticketset_init().
- * @principal: input ticket client principal.
  * @ticket: input ticket variable.
  * @enckdcreppart: input ticket detail variable.
+ * @kdcrep: input KDC-REP variable.
  *
  * Allocate a new ticket and add it to the ticket set.
  *
@@ -218,13 +218,14 @@ shishi_ticketset_add (Shishi_ticketset * ticketset, Shishi_ticket * ticket)
  **/
 int
 shishi_ticketset_new (Shishi_ticketset * ticketset,
-		      char *principal,
-		      ASN1_TYPE ticket, ASN1_TYPE enckdcreppart)
+		      ASN1_TYPE ticket,
+		      ASN1_TYPE enckdcreppart,
+		      ASN1_TYPE kdcrep)
 {
   Shishi_ticket *tkt;
   int res;
 
-  tkt = shishi_ticket (ticketset->handle, principal, ticket, enckdcreppart);
+  tkt = shishi_ticket (ticketset->handle, ticket, enckdcreppart, kdcrep);
 
   res = shishi_ticketset_add (ticketset, tkt);
   if (res != SHISHI_OK)
@@ -251,42 +252,41 @@ shishi_ticketset_read (Shishi_ticketset * ticketset, FILE * fh)
   char *user;
   int res;
 
-  asprintf(&user, "%s@%s", shishi_principal_default (ticketset->handle),
-	   shishi_realm_default (ticketset->handle));
-  if (user == NULL)
-    return SHISHI_MALLOC_ERROR;
-
   res = SHISHI_OK;
   while (!feof (fh))
     {
       ASN1_TYPE ticket;
       ASN1_TYPE enckdcreppart;
+      ASN1_TYPE kdcrep;
 
-      res = shishi_enckdcreppart_parse (ticketset->handle, fh, &enckdcreppart);
+      res = shishi_kdcrep_parse (ticketset->handle, fh, &kdcrep);
       if (res != SHISHI_OK)
 	{
 	  res = SHISHI_OK;
 	  break;
 	}
 
+      res = shishi_enckdcreppart_parse (ticketset->handle, fh, &enckdcreppart);
+      if (res != SHISHI_OK)
+	break;
+
       res = shishi_ticket_parse (ticketset->handle, fh, &ticket);
       if (res != SHISHI_OK)
 	break;
 
-      res = shishi_ticketset_new (ticketset, user, ticket, enckdcreppart);
+      res = shishi_ticketset_new (ticketset, ticket, enckdcreppart, kdcrep);
       if (res != SHISHI_OK)
 	break;
 
       if (VERBOSE (ticketset->handle))
 	{
 	  printf ("Read ticket for principal `':\n");
+	  shishi_kdcrep_print (ticketset->handle, stdout, kdcrep);
 	  shishi_enckdcreppart_print (ticketset->handle, stdout,
 				      enckdcreppart);
 	  shishi_asn1ticket_print (ticketset->handle, stdout, ticket);
 	}
     }
-
-  free(user);
 
   return res;
 }
@@ -349,6 +349,16 @@ shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
 	  if (warn)
 	    fprintf (stderr, "warning: removing expired ticket\n"), warn = 0;
 	  continue;
+	}
+
+      res = shishi_kdcrep_print
+	(ticketset->handle, fh, shishi_ticket_kdcrep(ticketset->tickets[i]));
+      if (res != SHISHI_OK)
+	{
+	  shishi_error_printf (ticketset->handle,
+			       "Could not print ticket: %s\n",
+			       shishi_strerror_details (ticketset->handle));
+	  return res;
 	}
 
       res = shishi_enckdcreppart_print

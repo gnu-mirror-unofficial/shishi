@@ -24,8 +24,8 @@
 struct Shishi_ticket
 {
   Shishi *handle;
-  char *principal;
   ASN1_TYPE ticket;
+  ASN1_TYPE kdcrep;
   ASN1_TYPE enckdcreppart;
   Shishi_key *key;
 };
@@ -81,21 +81,24 @@ shishi_asn1ticket_get_enc_part_etype (Shishi * handle,
 }
 
 /**
- * shishi_ticket_principal:
- * @handle: shishi handle as allocated by shishi_init().
+ * shishi_ticket_cnamerealm:
  * @ticket: input variable with ticket info.
+ * XXX
  *
- * Return value: Returns client principal of ticket.
+ * Return value: Returns client principal and realm of ticket.
  **/
-char *
-shishi_ticket_principal (Shishi_ticket * ticket)
+int
+shishi_ticket_cnamerealm (Shishi_ticket * ticket,
+			  char *cnamerealm, int *cnamerealmlen)
 {
-  return ticket->principal ? ticket->principal : "<none>";
+  return shishi_principal_name_realm_get (ticket->handle,
+					  ticket->kdcrep, "KDC-REP.cname",
+					  ticket->kdcrep, "KDC-REP.crealm",
+					  cnamerealm, cnamerealmlen);
 }
 
 /**
  * shishi_ticket_ticket:
- * @handle: shishi handle as allocated by shishi_init().
  * @ticket: input variable with ticket info.
  *
  * Return value: Returns actual ticket.
@@ -108,7 +111,6 @@ shishi_ticket_ticket (Shishi_ticket * ticket)
 
 /**
  * shishi_ticket_enckdcreppart:
- * @handle: shishi handle as allocated by shishi_init().
  * @ticket: input variable with ticket info.
  *
  * Return value: Returns auxilliary ticket information.
@@ -117,6 +119,18 @@ ASN1_TYPE
 shishi_ticket_enckdcreppart (Shishi_ticket * ticket)
 {
   return ticket->enckdcreppart;
+}
+
+/**
+ * shishi_ticket_kdcrep:
+ * @ticket: input variable with ticket info.
+ *
+ * Return value: Returns KDC-REP information.
+ **/
+ASN1_TYPE
+shishi_ticket_kdcrep (Shishi_ticket * ticket)
+{
+  return ticket->kdcrep;
 }
 
 /**
@@ -145,17 +159,17 @@ shishi_ticket_key (Shishi_ticket * ticket)
 /**
  * shishi_ticket:
  * @handle: shishi handle as allocated by shishi_init().
- * @principal: input variable with client principal of ticket.
  * @ticket: input variable with ticket.
  * @enckdcreppart: input variable with auxilliary ticket information.
+ * @kdcrep: input variable with KDC-REP ticket information.
  *
  * Create a new ticket handle.
  *
  * Return value: Returns new ticket handle, or %NULL on error.
  **/
 Shishi_ticket *
-shishi_ticket (Shishi * handle, char *principal,
-	       ASN1_TYPE ticket, ASN1_TYPE enckdcreppart)
+shishi_ticket (Shishi * handle,
+	       ASN1_TYPE ticket, ASN1_TYPE enckdcreppart, ASN1_TYPE kdcrep)
 {
   Shishi_ticket *tkt;
 
@@ -166,9 +180,9 @@ shishi_ticket (Shishi * handle, char *principal,
   memset(tkt, 0, sizeof(*tkt));
 
   tkt->handle = handle;
-  tkt->principal = principal;
   tkt->ticket = ticket;
   tkt->enckdcreppart = enckdcreppart;
+  tkt->kdcrep = kdcrep;
 
   return tkt;
 }
@@ -647,7 +661,13 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
   int res;
   time_t t;
 
-  printf ("%s:\n", shishi_ticket_principal (ticket));
+  buflen = sizeof (buf);
+  buf[0] = '\0';
+  res = shishi_ticket_cnamerealm (ticket, buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
+  buf[buflen] = '\0';
+  printf ("%s:\n", buf);
 
   t = shishi_ticket_authctime (ticket);
   printf (_("Authtime:\t%s"), ctime (&t));
@@ -674,15 +694,20 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
   if (res != SHISHI_OK)
     return res;
   buf[buflen] = '\0';
-  printf (_("Service:\t%s\n"), buf);
+  res = shishi_asn1ticket_get_enc_part_etype (ticket->handle,
+					      ticket->ticket, &keytype);
+  if (res != SHISHI_OK)
+    return res;
+  printf (_("Service:\t%s with server key %s (%d)\n"), buf,
+	  shishi_cipher_name (keytype), keytype);
 
   res = shishi_ticket_keytype (ticket, &keytype);
   if (res != SHISHI_OK)
     return res;
-  res = shishi_asn1ticket_get_enc_part_etype (ticket->handle, ticket->ticket,
-					      &etype);
-    if (res != SHISHI_OK)
-      return res;
+  res = shishi_kdcrep_get_enc_part_etype (ticket->handle,
+					  ticket->kdcrep, &etype);
+  if (res != SHISHI_OK)
+    return res;
   printf (_("Key type:\t%s (%d) protected by %s (%d)\n"),
 	  shishi_cipher_name (keytype), keytype,
 	  shishi_cipher_name (etype), etype);

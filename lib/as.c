@@ -189,7 +189,7 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char * password)
       return res;
     }
 
-  as->ticket = shishi_ticket (as->handle, strdup (user), ticket, kdcreppart);
+  as->ticket = shishi_ticket (as->handle, ticket, kdcreppart, as->asrep);
   if (as->ticket == NULL)
     {
       shishi_error_printf (as->handle, "Could not create ticket");

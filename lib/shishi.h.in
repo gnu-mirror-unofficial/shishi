@@ -309,11 +309,12 @@ extern ASN1_TYPE shishi_ticket_ticket (Shishi_ticket * ticket);
 extern ASN1_TYPE shishi_ticket_enckdcreppart (Shishi_ticket * ticket);
 extern Shishi_key *shishi_ticket_key (Shishi_ticket * ticket);
 extern Shishi_ticket *shishi_ticket (Shishi * handle,
-				     char *principal,
 				     ASN1_TYPE ticket,
-				     ASN1_TYPE enckdcreppart);
+				     ASN1_TYPE enckdcreppart,
+				     ASN1_TYPE kdcrep);
 extern int shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh);
-extern char *shishi_ticket_principal (Shishi_ticket * ticket);
+extern int shishi_ticket_cnamerealm (Shishi_ticket * ticket,
+				     char *cnamerealm, int *cnamerealmlen);
 extern int shishi_ticket_lastreq (Shishi_ticket * ticket,
 				  char *lrtime,
 				  int *lrtimelen,

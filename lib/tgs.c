@@ -204,9 +204,7 @@ shishi_tgs_realmsname (Shishi * handle,
     }
 
   (*tgs)->ticket =
-    shishi_ticket (handle,
-		   strdup (shishi_ticket_principal (tgticket)),
-		   ticket, kdcreppart);
+    shishi_ticket (handle, ticket, kdcreppart, (*tgs)->tgsrep);
   if ((*tgs)->ticket == NULL)
     {
       shishi_error_printf (handle, "Could not create ticket");
