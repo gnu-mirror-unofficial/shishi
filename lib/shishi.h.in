@@ -1831,7 +1831,7 @@ extern int shishi_safe_to_file (Shishi * handle, Shishi_asn1 safe,
 extern int shishi_safe_parse (Shishi * handle, FILE * fh, Shishi_asn1 * safe);
 extern int shishi_safe_read (Shishi * handle, FILE * fh, Shishi_asn1 * safe);
 extern int shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
-				  int filetype, char *filename);
+				  int filetype, const char *filename);
 extern int shishi_safe_cksum (Shishi * handle,
 			      Shishi_asn1 safe,
 			      int32_t * cksumtype,
@@ -1839,14 +1839,15 @@ extern int shishi_safe_cksum (Shishi * handle,
 extern int shishi_safe_set_cksum (Shishi * handle,
 				  Shishi_asn1 safe,
 				  int32_t cksumtype,
-				  char *cksum, size_t cksumlen);
+				  const char *cksum, size_t cksumlen);
 extern int shishi_safe_user_data (Shishi * handle,
 				  Shishi_asn1 safe,
 				  char **userdata,
 				  size_t * userdatalen);
 extern int shishi_safe_set_user_data (Shishi * handle,
 				      Shishi_asn1 safe,
-				      char *userdata, size_t userdatalen);
+				      const char *userdata,
+				      size_t userdatalen);
 extern int shishi_safe_build (Shishi_safe * safe, Shishi_key * key);
 extern int shishi_safe_verify (Shishi_safe * safe, Shishi_key * key);
 

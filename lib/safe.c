@@ -347,7 +347,7 @@ shishi_safe_read (Shishi * handle, FILE * fh, Shishi_asn1 * safe)
  **/
 int
 shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
-		       int filetype, char *filename)
+		       int filetype, const char *filename)
 {
   int res;
   FILE *fh;
@@ -430,7 +430,7 @@ shishi_safe_cksum (Shishi * handle,
 int
 shishi_safe_set_cksum (Shishi * handle,
 		       Shishi_asn1 safe,
-		       int32_t cksumtype, char *cksum, size_t cksumlen)
+		       int32_t cksumtype, const char *cksum, size_t cksumlen)
 {
   int res;
 
@@ -485,7 +485,7 @@ shishi_safe_user_data (Shishi * handle,
 int
 shishi_safe_set_user_data (Shishi * handle,
 			   Shishi_asn1 safe,
-			   char *userdata, size_t userdatalen)
+			   const char *userdata, size_t userdatalen)
 {
   int res;
 
