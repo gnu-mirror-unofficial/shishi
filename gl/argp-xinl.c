@@ -22,7 +22,7 @@
 #include <config.h>
 #endif
 
-#if defined HAVE_FEATURES_H || defined _LIBC
+#if defined _LIBC || defined HAVE_FEATURES_H
 # include <features.h>
 #endif
 

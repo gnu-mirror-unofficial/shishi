@@ -1847,12 +1847,8 @@ __argp_failure (const struct argp_state *state, int status, int errnum,
 
 #ifdef USE_IN_LIBIO
 	      if (_IO_fwide (stream, 0) > 0)
-#if defined _LIBC || defined HAVE_STRERROR_R
 		__fwprintf (stream, L": %s",
 			    __strerror_r (errnum, buf, sizeof (buf)));
-#else
-		__fwprintf (stream, L": %s", strerror (errnum));
-#endif
 	      else
 #endif
 		{
