@@ -42,7 +42,12 @@ struct Shishi_ap
  * @handle: shishi handle as allocated by shishi_init().
  * @ap: pointer to new structure that holds information about AP exchange
  *
- * Create a new AP exchange.
+ * Create a new AP exchange with a random subkey of the default
+ * encryption type from configuration.  Note that there is no
+ * guarantee that the receiver will understand that key type, you
+ * should probably use shishi_ap_etype() or shishi_ap_nosubkey()
+ * instead.  In the future, this function will likely behave as
+ * shishi_ap_nosubkey() and shishi_ap_nosubkey() will be removed.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -60,6 +65,43 @@ shishi_ap (Shishi * handle, Shishi_ap ** ap)
     }
 
   res = shishi_authenticator_add_random_subkey (handle, (*ap)->authenticator);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not add random subkey in AP: %s\n",
+			   shishi_strerror (res));
+      return res;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_ap_etype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ap: pointer to new structure that holds information about AP exchange
+ * @etype: encryption type of newly generated random subkey.
+ *
+ * Create a new AP exchange with a random subkey of indicated
+ * encryption type.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_etype (Shishi * handle, Shishi_ap ** ap, int etype)
+{
+  int res;
+
+  res = shishi_ap_nosubkey (handle, ap);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not create Authenticator: %s\n",
+			   shishi_error (handle));
+      return res;
+    }
+
+  res = shishi_authenticator_add_random_subkey_etype (handle,
+						      (*ap)->authenticator,
+						      etype);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not add random subkey in AP: %s\n",
@@ -263,7 +305,9 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
  * @options: AP-REQ options to set in newly created AP.
  *
  * Create a new AP exchange using shishi_ap(), and set the ticket and
- * AP-REQ apoptions using shishi_ap_set_tktoption().
+ * AP-REQ apoptions using shishi_ap_set_tktoption().  A random session
+ * key is added to the authenticator, using the same keytype as the
+ * ticket.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -273,7 +317,7 @@ shishi_ap_tktoptions (Shishi * handle,
 {
   int rc;
 
-  rc = shishi_ap (handle, ap);
+  rc = shishi_ap_etype (handle, ap, shishi_tkt_keytype_fast (tkt));
   if (rc != SHISHI_OK)
     return rc;
 
@@ -295,7 +339,8 @@ shishi_ap_tktoptions (Shishi * handle,
  *
  * Create a new AP exchange using shishi_ap(), and set the ticket,
  * AP-REQ apoptions and the Authenticator checksum data using
- * shishi_ap_set_tktoptionsdata().
+ * shishi_ap_set_tktoptionsdata(). A random session key is added to
+ * the authenticator, using the same keytype as the ticket.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -307,7 +352,7 @@ shishi_ap_tktoptionsdata (Shishi * handle,
 {
   int rc;
 
-  rc = shishi_ap (handle, ap);
+  rc = shishi_ap_etype (handle, ap, shishi_tkt_keytype_fast (tkt));
   if (rc != SHISHI_OK)
     return rc;
 
@@ -331,7 +376,9 @@ shishi_ap_tktoptionsdata (Shishi * handle,
  *
  * Create a new AP exchange using shishi_ap(), and set ticket, options
  * and authenticator checksum data from the DER encoding of the ASN.1
- * field using shishi_ap_set_tktoptionsasn1usage().
+ * field using shishi_ap_set_tktoptionsasn1usage().  A random session
+ * key is added to the authenticator, using the same keytype as the
+ * ticket.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -347,7 +394,7 @@ shishi_ap_tktoptionsasn1usage (Shishi * handle,
 {
   int rc;
 
-  rc = shishi_ap (handle, ap);
+  rc = shishi_ap_etype (handle, ap, shishi_tkt_keytype_fast (tkt));
   if (rc != SHISHI_OK)
     return rc;
 
