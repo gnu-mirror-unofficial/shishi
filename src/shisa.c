@@ -29,12 +29,12 @@
 #include <string.h>
 #include <ctype.h>
 
+/* Setup i18n. */
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #else
 # define setlocale(Category, Locale) /* empty */
 #endif
-
 #include <gettext.h>
 #define _(String) gettext (String)
 #define gettext_noop(String) String
@@ -52,11 +52,14 @@
 /* Get error. */
 #include "error.h"
 
+/* Shishi and Shisa library. */
 #include <shisa.h>
 #include <shishi.h>
 
+/* Command line parameter parser via gengetopt. */
 #include "shisa_cmd.h"
 
+/* Global variables. */
 Shishi *sh;
 Shisa *dbh;
 struct gengetopt_args_info args_info;
