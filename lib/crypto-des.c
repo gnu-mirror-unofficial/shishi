@@ -863,13 +863,13 @@ checksum_md4 (Shishi * handle,
   char md[16];
   GCRY_MD_HD hd;
   int i;
+  char *p;
 
   if (inlen + 8 > BUFSIZ)
     {
       shishi_error_printf (handle, "checksum inbuffer too large");
       return !SHISHI_OK;
     }
-
 
   memcpy (buffer + 8, in, inlen);
 
@@ -892,28 +892,21 @@ checksum_md4 (Shishi * handle,
 #endif
 
   hd = gcry_md_open (GCRY_MD_MD4, 0);
-  if (hd)
-    {
-      char *p;
+  if (!hd)
+    return SHISHI_GCRYPT_ERROR;
 
-      gcry_md_write (hd, buffer, inlen + 8);
-      p = gcry_md_read (hd, GCRY_MD_MD4);
+  gcry_md_write (hd, buffer, inlen + 8);
+  p = gcry_md_read (hd, GCRY_MD_MD4);
 
 #if 0
-      printf ("cksum md4: ");
-      for (i = 0; i < 16; i++)
-	printf ("%02X ", p[i]);
-      printf ("\n");
+  printf ("cksum md4: ");
+  for (i = 0; i < 16; i++)
+    printf ("%02X ", p[i]);
+  printf ("\n");
 #endif
 
-      memcpy (buffer + 8, p, 16);
-      gcry_md_close (hd);
-    }
-  else
-    {
-      puts ("bajs");
-      exit (1);
-    }
+  memcpy (buffer + 8, p, 16);
+  gcry_md_close (hd);
 
   memcpy (out, buffer, 8 + 16);
 
@@ -939,13 +932,13 @@ checksum_md5 (Shishi * handle,
   char md[16];
   GCRY_MD_HD hd;
   int i;
+  char *p;
 
   if (inlen + 8 > BUFSIZ)
     {
       shishi_error_printf (handle, "checksum inbuffer too large");
       return !SHISHI_OK;
     }
-
 
   memcpy (buffer + 8, in, inlen);
 
@@ -968,28 +961,21 @@ checksum_md5 (Shishi * handle,
 #endif
 
   hd = gcry_md_open (GCRY_MD_MD5, 0);
-  if (hd)
-    {
-      char *p;
+  if (!hd)
+    return SHISHI_GCRYPT_ERROR;
 
-      gcry_md_write (hd, buffer, inlen + 8);
-      p = gcry_md_read (hd, GCRY_MD_MD5);
+  gcry_md_write (hd, buffer, inlen + 8);
+  p = gcry_md_read (hd, GCRY_MD_MD5);
 
 #if 0
-      printf ("cksum md5: ");
-      for (i = 0; i < 16; i++)
-	printf ("%02X ", p[i]);
-      printf ("\n");
+  printf ("cksum md5: ");
+  for (i = 0; i < 16; i++)
+    printf ("%02X ", p[i]);
+  printf ("\n");
 #endif
 
-      memcpy (buffer + 8, p, 16);
-      gcry_md_close (hd);
-    }
-  else
-    {
-      puts ("bajs");
-      exit (1);
-    }
+  memcpy (buffer + 8, p, 16);
+  gcry_md_close (hd);
 
   memcpy (out, buffer, 8 + 16);
 
