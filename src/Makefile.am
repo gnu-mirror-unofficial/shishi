@@ -29,7 +29,8 @@ shishid_LDADD = @LIBARGP@ ../lib/libshishi.la
 
 localedir = $(datadir)/locale
 
-INCLUDES = -I../lib -I../argp -I../intl -DLOCALEDIR=\"$(localedir)\"
+INCLUDES = -I../asn1/lib -I../lib -I../argp -I../intl \
+	-DLOCALEDIR=\"$(localedir)\"
 
 DEFS = -DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
 	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
