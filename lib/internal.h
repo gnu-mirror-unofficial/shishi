@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <string.h>
 #endif
 
 #ifdef HAVE_SYS_TYPES_H
@@ -88,16 +89,6 @@
 # endif
 #endif
 
-#if HAVE_STRING_H
-# if !STDC_HEADERS && HAVE_MEMORY_H
-#  include <memory.h>
-# endif
-# include <string.h>
-#endif
-#if HAVE_STRINGS_H
-# include <strings.h>
-#endif
-
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -119,9 +110,9 @@
 #include <resolv.h>
 #endif
 
-#ifdef HAVE_SYSLOG_H 
-#include <syslog.h> 
-#endif 
+#ifdef HAVE_SYSLOG_H
+#include <syslog.h>
+#endif
 
 #include "gettext.h"
 
