@@ -136,6 +136,8 @@ extern char *_shishi_gettext (const char *str);
 #define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
 #endif
 
+const char *program_name = PACKAGE;
+
 struct listenspec
 {
   char *str;

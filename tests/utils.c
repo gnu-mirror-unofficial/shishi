@@ -106,6 +106,8 @@
 #include <netinet/in6.h>
 #endif
 
+const char *program_name = PACKAGE;
+
 static int verbose = 0;
 static int debug = 0;
 static int error_count = 0;
