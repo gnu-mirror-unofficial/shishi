@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-# Copyright (C) 2002 Simon Josefsson.
+# Copyright (C) 2002, 2003 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -53,7 +53,7 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
 AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
 	sys/time.h sys/types.h sys/select.h sys/socket.h sys/stat.h stdint.h \
-	termios.h signal.h pwd.h errno.h)
+	termios.h signal.h pwd.h errno.h syslog.h)
 AC_CHECK_HEADERS(netinet/in.h netinet/in6.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
