@@ -739,8 +739,6 @@ process_1 (Shishi * handle, struct arguments *arg,
   if (!krberr)
     return SHISHI_MALLOC_ERROR;
 
-  fprintf (stderr, "Processing %d bytes...\n", inlen);
-
   node = shishi_der2asn1 (handle, in, inlen);
 
   fprintf (stderr, "ASN.1 msg-type %d (0x%x)...\n",
@@ -751,37 +749,27 @@ process_1 (Shishi * handle, struct arguments *arg,
     {
     case SHISHI_MSGTYPE_AS_REQ:
       rc = asreq (handle, arg, node, out, outlen);
-      if (rc == SHISHI_OK)
-	return rc;
-
-      rc = shishi_krberror_set_etext (handle, krberr,
-				      "Error responding to AS-REQ.");
-      if (rc != SHISHI_OK)
-	return rc;
       break;
 
     case SHISHI_MSGTYPE_TGS_REQ:
       rc = tgsreq (handle, arg, node, out, outlen);
-      if (rc == SHISHI_OK)
-	return rc;
-
-      rc = shishi_krberror_set_etext (handle, krberr,
-				      "Error responding to TGS-REQ.");
-      if (rc != SHISHI_OK)
-	return rc;
       break;
 
     default:
-      rc = shishi_krberror_set_etext (handle, krberr,
-				      "Unsupported message type");
-      if (rc != SHISHI_OK)
-	return rc;
+      rc = !SHISHI_OK;
       break;
     }
 
-  rc = shishi_krberror_der (handle, krberr, out, outlen);
   if (rc != SHISHI_OK)
-    return rc;
+    {
+      rc = shishi_krberror_set_etext (handle, krberr, "General error");
+      if (rc != SHISHI_OK)
+	return rc;
+
+      rc = shishi_krberror_der (handle, krberr, out, outlen);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
 
   return SHISHI_OK;
 }
