@@ -24,6 +24,7 @@
 int
 server (Shishi * handle, struct arguments arg)
 {
+  Shishi_ap *ap;
   Shishi_ticket *tkt;
   ASN1_TYPE apreq, aprep, ticket, encticketpart, authenticator;
   Shishi_key *key, *key2;
@@ -88,31 +89,23 @@ server (Shishi * handle, struct arguments arg)
     }
   else if (arg.keyvalue)
     {
-      unsigned char buf[BUFSIZ];
-      int keylen;
-      int keytype;
-      Shishi_key *key;
-
-      key = shishi_key(arg.algorithm, NULL);
-
-      if (strlen (arg.keyvalue) > sizeof (buf))
+      res = shishi_key_from_base64 (handle, arg.algorithm, arg.keyvalue, &key);
+      if (res != SHISHI_OK)
 	{
-	  fprintf (stderr, "keyvalue too large\n");
-	  return 1;
+	  fprintf (stderr, _("Could not create key: %s\n"),
+		   shishi_strerror (res));
+	  return res;
 	}
-      keylen = shishi_from_base64 (buf, arg.keyvalue);
-      if (keylen != shishi_key_length(key))
-	{
-	  fprintf (stderr, "base64 decoding of key value failed\n");
-	  return 1;
-	}
-
-      shishi_key_value_set(key, buf);
     }
   else
     {
-      printf ("No key\n");
-      return 1;
+      key = shishi_hostkeys_for_localservice (handle, "host");
+      if (key == NULL)
+	{
+	  fprintf (stderr, "Could not find key: %s\n",
+		   shishi_strerror_details (handle));
+	  return 1;
+	}
     }
 
   res = shishi_apreq_parse (handle, stdin, &apreq);
@@ -123,68 +116,44 @@ server (Shishi * handle, struct arguments arg)
       return 1;
     }
 
-  res = shishi_apreq_get_ticket (handle, apreq, &ticket);
+  res = shishi_ap(handle, &ap);
   if (res != SHISHI_OK)
     {
-      fprintf (stderr, _("Could not extract ticket:\n%s\n%s\n"),
-	       shishi_strerror (res), shishi_strerror_details (handle));
+      fprintf (stderr, _("Could not create AP: %s\n"),
+	       shishi_strerror (res));
       return 1;
     }
+
+  shishi_ap_req_set (ap, apreq);
+
+  res = shishi_ap_req_process (ap, key);
+  if (res != SHISHI_OK)
+    {
+      fprintf (stderr, "Could not process AP-REQ: %s\n",
+	       shishi_strerror (res));
+      return 1;
+    }
+
 
   if (arg.verbose)
-    {
-      puts ("Read:");
-
-      shishi_apreq_print (handle, stdout, apreq);
-      shishi_asn1ticket_print (handle, stdout, ticket);
-    }
-
-  res = shishi_ticket_decrypt (handle, ticket, key, &encticketpart);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Error decrypting ticket: %s\n"),
-	       shishi_strerror_details (handle));
-      return 1;
-    }
-
-  if (arg.verbose)
-    asn1_print_structure (stdout, encticketpart, encticketpart->name,
-			  ASN1_PRINT_NAME_TYPE_VALUE);
-
-  res = shishi_encticketpart_get_key (handle, encticketpart, &key2);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("EncTicketPart get key failed: %s\n"),
-	       shishi_strerror_details (handle));
-      return 1;
-    }
-
-  res = shishi_apreq_decrypt (handle, apreq, key2, 0, &authenticator);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Error decrypting apreq:%s\n%s\n"),
-	       shishi_strerror (res), shishi_strerror_details (handle));
-      return 1;
-    }
-
-  if (arg.verbose)
-    asn1_print_structure (stdout, authenticator, authenticator->name,
-			  ASN1_PRINT_NAME_TYPE_VALUE);
+    shishi_authenticator_print (handle, stdout, shishi_ap_authenticator(ap));
 
   cnamerealmlen = sizeof (cnamerealm);
-  res = shishi_authenticator_cnamerealm_get (handle, authenticator,
+  res = shishi_authenticator_cnamerealm_get (handle,
+					     shishi_ap_authenticator(ap),
 					     cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Client name (from authenticator): %s\n", cnamerealm);
 
   cnamerealmlen = sizeof (cnamerealm);
-  res = shishi_encticketpart_cnamerealm_get (handle, encticketpart,
+  res = shishi_encticketpart_cnamerealm_get (handle,
+					     shishi_ticket_encticketpart(shishi_ap_ticket(ap)),
 					     cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Client name (from encticketpart): %s\n", cnamerealm);
 
   cnamerealmlen = sizeof (cnamerealm);
-  res = shishi_ticket_snamerealm_get (handle, ticket,
+  res = shishi_ticket_snamerealm_get (handle, shishi_ap_ticket(ap),
 				      cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Server name (from ticket): %s\n", cnamerealm);
@@ -193,13 +162,18 @@ server (Shishi * handle, struct arguments arg)
 
   if (shishi_apreq_mutual_required_p (handle, apreq))
     {
-      ASN1_TYPE encapreppart, aprep;
+      ASN1_TYPE aprep;
 
       printf ("Mutual authentication required.\n");
 
-      aprep = shishi_aprep (handle);
-      res = shishi_aprep_enc_part_make (handle, aprep,
-					authenticator, encticketpart);
+      res = shishi_ap_rep_asn1(ap, &aprep);
+      if (res != SHISHI_OK)
+	{
+	  fprintf (stderr, "Error creating AP-REP: %s\n",
+		   shishi_strerror (res));
+	  return 1;
+	}
+
       if (arg.verbose)
 	shishi_encapreppart_print (handle, stdout,
 				   shishi_last_encapreppart (handle));
