@@ -1,4 +1,4 @@
-This directory holds an implementation of kerberos 5 (RFC 1510).
+This directory holds an implementation of RFC 1510 (Kerberos 5).
 
 Shishi is unstable and in its early steps of development.  You should
 expect it to not work as well as having security problems.  The API
