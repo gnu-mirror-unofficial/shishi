@@ -203,16 +203,6 @@ shishi_ticket_set_server (Shishi * handle,
 }
 
 int
-shishi_ticket_snamerealm_get (Shishi * handle,
-			      Shishi_asn1 ticket,
-			      char *serverrealm, size_t * serverrealmlen)
-{
-  return shishi_principal_name_realm_get (handle, ticket, "sname",
-					  ticket, "realm",
-					  serverrealm, serverrealmlen);
-}
-
-int
 shishi_ticket_srealmserver_set (Shishi * handle,
 				Shishi_asn1 ticket, char *realm, char *server)
 {

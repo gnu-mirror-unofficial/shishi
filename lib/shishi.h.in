@@ -676,9 +676,6 @@ extern int shishi_ticket_sname_set (Shishi * handle,
 				    Shishi_asn1 ticket,
 				    Shishi_name_type name_type,
 				    char *sname[]);
-extern int shishi_ticket_snamerealm_get (Shishi * handle, Shishi_asn1 ticket,
-					 char *serverrealm,
-					 size_t * serverrealmlen);
 extern int shishi_ticket_srealmserver_set (Shishi * handle,
 					   Shishi_asn1 ticket, char *realm,
 					   char *server);
@@ -757,9 +754,6 @@ extern int shishi_tkt_keytype_p (Shishi_tkt * tkt, int32_t etype);
 extern int shishi_tkt_server (Shishi_tkt * tkt,
 			      char **server, size_t * serverlen);
 extern int shishi_tkt_server_p (Shishi_tkt * tkt, const char *server);
-extern int shishi_tkt_server_realm (Shishi_tkt * tkt,
-				    char *serverrealm,
-				    size_t * serverrealmlen);
 extern int shishi_tkt_valid_at_time_p (Shishi_tkt * tkt, time_t now);
 extern int shishi_tkt_valid_now_p (Shishi_tkt * tkt);
 extern int shishi_tkt_expired_p (Shishi_tkt * tkt);

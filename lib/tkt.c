@@ -518,14 +518,6 @@ shishi_tkt_server_p (Shishi_tkt * tkt, const char *server)
   return res;
 }
 
-int
-shishi_tkt_server_realm (Shishi_tkt * tkt,
-			 char *serverrealm, size_t * serverrealmlen)
-{
-  return shishi_ticket_snamerealm_get (tkt->handle, tkt->ticket,
-				       serverrealm, serverrealmlen);
-}
-
 /**
  * shishi_tkt_flags:
  * @tkt: input variable with ticket info.
