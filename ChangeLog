@@ -1,3 +1,441 @@
+2003-06-02  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Remove ticketset for now.
+
+2003-06-02  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.0.
+
+2003-06-02  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Add release target.
+
+2003-06-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Add DES encrypt/decrypt without checksum.  Add
+	dummy checksum.
+
+2003-06-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c: Add DES encrypt/decrypt without checksum.
+
+2003-06-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix NONE ciphers.
+
+2003-05-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Add encapreppart functions to AP section.
+
+2003-05-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/aprep.c, lib/apreq.c: Fix a2d.
+
+2003-05-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encapreppart.c, lib/shishi.h.in: Add
+	shishi_encapreppart_seqnumber_get.
+
+2003-05-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-3des.c, lib/crypto.c, lib/shishi.h.in: Add 3des-none. 
+	Add encrypt/decrypt with specific etype.
+
+2003-05-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-3des.c, lib/crypto-aes.c, lib/crypto-des.c,
+	lib/crypto-null.c, lib/crypto.c, lib/shishi.h.in: Add
+	shishi_{en,de}crypt_iv().
+
+2003-05-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix typo.
+
+2003-05-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add GSS keyusage constants.
+
+2003-05-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c: Fix.
+
+2003-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/shishi.h.in: Add shishi_ap_req_der_new.
+
+2003-05-08  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Fix asn1Parser.
+
+2003-05-08  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Remove GSS stuff.
+
+2003-05-08  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Check for asn1Parser.
+
+2003-05-08  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Add.
+
+2003-05-08  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Fix doc.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, README, configure.ac, tests/Makefile.am,
+	shishi-gss.pc.in: Remove GSS stuff (moved to separate project).
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Remove GSS stuff.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* shishi-gss.pc.in: Add.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Add shishi-gss.pc*.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Build shishi-gss.pc.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc: Escape { and }.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Indent in gss/.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am, doc/shishi.texi: Add.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* README: Add gss/.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, AUTHORS: Fix.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, configure.ac, doc/Makefile.am, doc/shishi.texi,
+	tests/Makefile.am, tests/gss.c: Add framework for GSS-API support.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c, tests/crypto.c, tests/gztime.c,
+	tests/ticketset.c, tests/utils.c: Move include of shishi.h from
+	utils.c to each file.
+
+2003-05-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Typo.
+
+2003-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix info dir entry.
+
+2003-04-16  Simon Josefsson <simon@josefsson.org>
+
+	* ANNOUNCE: Mention devices it runs on.
+
+2003-04-15  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Use new cvs2cl.
+
+2003-03-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Use new allocating a2d.
+
+2003-03-26  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Add comment.
+
+2003-03-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c, lib/kdc.c, lib/shishi.h.in: Add new allocating a2d
+	functions and use them.
+
+2003-03-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c: Use new libgcrypt CBC-MAC interface.
+
+2003-03-26  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/AUTHORS, crypto/NEWS, crypto/THANKS, crypto/TODO,
+	crypto/configure.ac, crypto/cipher/arcfour.c,
+	crypto/cipher/blowfish.c, crypto/cipher/cast5.c,
+	crypto/cipher/cipher.c, crypto/cipher/des.c,
+	crypto/cipher/dynload.c, crypto/cipher/dynload.h,
+	crypto/cipher/elgamal.c, crypto/cipher/elgamal.h,
+	crypto/cipher/md.c, crypto/cipher/md4.c, crypto/cipher/md5.c,
+	crypto/cipher/primegen.c, crypto/cipher/pubkey.c,
+	crypto/cipher/random.c, crypto/cipher/rijndael.c,
+	crypto/cipher/rmd160.c, crypto/cipher/rndegd.c,
+	crypto/cipher/rndlinux.c, crypto/cipher/rndunix.c,
+	crypto/cipher/rndw32.c, crypto/cipher/rsa.c, crypto/cipher/rsa.h,
+	crypto/cipher/sha1.c, crypto/cipher/sha256.c,
+	crypto/cipher/tiger.c, crypto/cipher/twofish.c,
+	crypto/doc/gcrypt.texi, crypto/scripts/db2any, crypto/src/cipher.h,
+	crypto/src/g10lib.h, crypto/src/gcrypt.h, crypto/src/global.c,
+	crypto/src/misc.c, crypto/src/secmem.c, crypto/src/secmem.h,
+	crypto/src/sexp.c, crypto/tests/Makefile.am, crypto/tests/basic.c,
+	crypto/tests/keygen.c, crypto/tests/pubkey.c: Upstream sync.
+
+2003-03-26  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/NEWS, asn1/configure.in, asn1/doc/asn1.tex, asn1/lib/ASN1.c,
+	asn1/lib/coding.c, asn1/lib/decoding.c, asn1/lib/element.c,
+	asn1/lib/errors.c, asn1/lib/errors_int.h, asn1/lib/int.h,
+	asn1/lib/libtasn1.h, asn1/lib/parser_aux.c, asn1/lib/structure.c,
+	asn1/src/CertificateExample.c, asn1/src/CrlExample.c,
+	asn1/src/asn1Coding.c, asn1/tests/Test_parser.asn,
+	asn1/tests/Test_parser.c, asn1/tests/Test_tree.asn,
+	asn1/tests/Test_tree.c, asn1/tests/Test_tree_asn1_tab.c: Upstream
+	sync.
+
+2003-03-14  Simon Josefsson <simon@josefsson.org>
+
+	* tests/crypto.c: Fix debug output, spotted by Marcus Watts
+	<mdw@umich.edu>.
+
+2003-02-19  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/NEWS, asn1/configure.in, asn1/lib/ASN1.c,
+	asn1/lib/decoding.c, asn1/lib/element.c, asn1/lib/int.h,
+	asn1/lib/libtasn1.h, asn1/lib/structure.c,
+	asn1/tests/Test_tree.asn, asn1/tests/Test_tree.c: Upstream update.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* extra/inetutils/Makefile.am, extra/inetutils/NEWS,
+	extra/inetutils/configure.ac,
+	extra/inetutils/libinetutils/Makefile.am,
+	extra/inetutils/libinetutils/getopt.c,
+	extra/inetutils/libinetutils/getopt.h,
+	extra/inetutils/libinetutils/getopt1.c,
+	extra/inetutils/libinetutils/getpass.c,
+	extra/inetutils/libinetutils/gettext.h,
+	extra/inetutils/libinetutils/getusershell.c,
+	extra/inetutils/libinetutils/iruserok.c,
+	extra/inetutils/libinetutils/krcmd.c,
+	extra/inetutils/libinetutils/malloc.c,
+	extra/inetutils/libinetutils/memcmp.c,
+	extra/inetutils/libinetutils/memcpy.c,
+	extra/inetutils/libinetutils/memmove.c,
+	extra/inetutils/libinetutils/memset.c,
+	extra/inetutils/libinetutils/obstack.c,
+	extra/inetutils/libinetutils/obstack.h,
+	extra/inetutils/libinetutils/pathmax.h,
+	extra/inetutils/libinetutils/realloc.c,
+	extra/inetutils/libinetutils/setenv.c,
+	extra/inetutils/libinetutils/setenv.h,
+	extra/inetutils/libinetutils/strcasecmp.c,
+	extra/inetutils/libinetutils/strdup.c,
+	extra/inetutils/libinetutils/strerror.c,
+	extra/inetutils/libinetutils/xalloc.h,
+	extra/inetutils/libinetutils/xgetcwd.c,
+	extra/inetutils/libinetutils/xgetcwd.h,
+	extra/inetutils/libinetutils/xmalloc.c,
+	extra/inetutils/libinetutils/xstrdup.c,
+	extra/inetutils/libtelnet/Makefile.am,
+	extra/inetutils/libtelnet/auth-proto.h,
+	extra/inetutils/libtelnet/auth.c, extra/inetutils/libtelnet/auth.h,
+	extra/inetutils/libtelnet/forward.c,
+	extra/inetutils/libtelnet/kerberos.c,
+	extra/inetutils/libtelnet/kerberos5.c,
+	extra/inetutils/libtelnet/misc.c,
+	extra/inetutils/libtelnet/read_passwd.c,
+	extra/inetutils/libtelnet/shishi.c,
+	extra/inetutils/ping/Makefile.am, extra/inetutils/ping/ping.c,
+	extra/inetutils/ping/ping_echo.c,
+	extra/inetutils/telnet/Makefile.am,
+	extra/inetutils/telnet/commands.c,
+	extra/inetutils/telnetd/Makefile.am,
+	extra/inetutils/telnetd/state.c, extra/inetutils/whois/net.c:
+	Upstream update.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/safe.c: Make it work.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c: Use new ASN.1 API.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Use new ASN.1 and principal APIs.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcrep.c: Use new principal API.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Add *_set().
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encapreppart.c: Doc fixes.  Use new ASN.1 APIs.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Fix integer functions.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c, tests/gztime.c, tests/ticketset.c: Indent.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Add authenticator and gztime.  Remove asn1
+	CFLAGS.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* tests/utils.c: Fix prototypes.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: Add.
+
+2003-02-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c: Cleanups.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* tests/gztime.c: Add.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/gztime.c: Make it work again.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/gztime.c: Fix prototypes.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.  Fix prototypes.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* tests/ticketset.c: Fix title.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Fix.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/scripts/config.guess, crypto/scripts/config.sub,
+	crypto/scripts/install-sh, crypto/scripts/missing,
+	crypto/scripts/mkinstalldirs, crypto/INSTALL: Fix.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Allow use of external libtasn1.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, lib/Makefile.am: Allow use of external libtasn1. 
+	Remove *_BUILD_* junk for pkg-config.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.pc.in: CFLAGS for libgcrypt not needed to use shishi.	Let
+	libtool handle library dependencies.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: We need libgcrypt >1.1.13.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/AUTHORS, crypto/INSTALL, crypto/NEWS, crypto/README,
+	crypto/TODO, crypto/configure.ac, crypto/libgcrypt.txt,
+	crypto/cipher/Makefile.am, crypto/cipher/bithelp.h,
+	crypto/cipher/cipher.c, crypto/cipher/crc.c, crypto/cipher/dsa.c,
+	crypto/cipher/dsa.h, crypto/cipher/dynload.c,
+	crypto/cipher/dynload.h, crypto/cipher/elgamal.c,
+	crypto/cipher/elgamal.h, crypto/cipher/md.c, crypto/cipher/md4.c,
+	crypto/cipher/md5.c, crypto/cipher/pubkey.c,
+	crypto/cipher/rand-internal.h, crypto/cipher/random.c,
+	crypto/cipher/random.h, crypto/cipher/rijndael.c,
+	crypto/cipher/rmd160.c, crypto/cipher/rndegd.c,
+	crypto/cipher/rndlinux.c, crypto/cipher/rndunix.c,
+	crypto/cipher/rndw32.c, crypto/cipher/rsa.c, crypto/cipher/rsa.h,
+	crypto/cipher/sha1.c, crypto/cipher/sha256.c,
+	crypto/cipher/tiger.c, crypto/cipher/twofish.c,
+	crypto/doc/gcrypt.texi, crypto/mpi/Makefile.am,
+	crypto/mpi/longlong.h, crypto/scripts/config.guess,
+	crypto/scripts/config.sub, crypto/scripts/db2any,
+	crypto/scripts/install-sh, crypto/scripts/missing,
+	crypto/scripts/mkinstalldirs, crypto/src/Makefile.am,
+	crypto/src/g10lib.h, crypto/src/gcrypt.h, crypto/src/global.c,
+	crypto/src/libgcrypt.vers, crypto/src/secmem.h, crypto/src/sexp.c,
+	crypto/src/stdmem.c, crypto/src/stdmem.h, crypto/src/testapi.c,
+	crypto/tests/Makefile.am, crypto/tests/basic.c,
+	crypto/tests/keygen.c: Upstream update.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/aprep.c, lib/apreq.c, lib/asn1.c, lib/authenticator.c,
+	lib/diskio.c, lib/encapreppart.c, lib/enckdcreppart.c,
+	lib/encticketpart.c, lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c,
+	lib/krberror.c, lib/safe.c, lib/tgs.c, lib/ticket.c, lib/tkt.c: Use
+	new libtasn1 API.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/configure.in: Upstream update.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/lib/element.c, asn1/lib/decoding.c: Upstream update.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/lib/defines.h, asn1/NEWS, asn1/doc/asn1.tex: Upstream
+	update.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/lib/ASN1.y, asn1/lib/coding.c, asn1/lib/structure.c,
+	asn1/lib/parser_aux.c, asn1/lib/libtasn1.h, asn1/lib/int.h,
+	asn1/lib/gstr.c, asn1/lib/gstr.h, asn1/lib/errors.c: Upstream
+	update.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/tests/Test_parser.c, asn1/tests/Test_tree.asn,
+	asn1/tests/Test_tree.c, asn1/src/CertificateExample.c,
+	asn1/src/CrlExample.c, asn1/src/asn1Coding.c,
+	asn1/src/asn1Coding_test.asg, asn1/src/asn1Decoding.c,
+	asn1/src/asn1Parser.c: Upstream update.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: Generated.
+
+2003-02-11  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/shishi.types: Add.
+
 2003-02-11  Simon Josefsson <simon@josefsson.org>
 
 	* ANNOUNCE: Update.
@@ -17,6 +455,10 @@
 2003-02-10  Simon Josefsson <simon@josefsson.org>
 
 	* doc/shishi.texi: Add KRB-SAFE.  Move utility functions.
+
+2003-02-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: [no log message]
 
 2003-02-10  Simon Josefsson <simon@josefsson.org>
 
@@ -118,7 +560,7 @@
 
 2003-02-08  Simon Josefsson <simon@josefsson.org>
 
-	* lib/apreq.c, lib/shishi.h.in, lib/encapreppart.c, lib/ticket.c: 
+	* lib/apreq.c, lib/shishi.h.in, lib/encapreppart.c, lib/ticket.c:
 	Fix.
 
 2003-02-08  Simon Josefsson <simon@josefsson.org>
@@ -235,9 +677,8 @@
 
 2003-02-05  Simon Josefsson <simon@josefsson.org>
 
-	* lib/principal.c, lib/asn1.c: 
-	(shishi_principal_name_get, shishi_principal_name_realm_get): Move
-	from asn1.c to principal.c
+	* lib/principal.c, lib/asn1.c: (shishi_principal_name_get,
+	shishi_principal_name_realm_get): Move from asn1.c to principal.c
 
 2003-02-05  Simon Josefsson <simon@josefsson.org>
 
@@ -265,7 +706,7 @@
 
 2003-02-05  Simon Josefsson <simon@josefsson.org>
 
-	* lib/authenticator.c, lib/kdcreq.c, lib/shishi.h.in, lib/init.c: 
+	* lib/authenticator.c, lib/kdcreq.c, lib/shishi.h.in, lib/init.c:
 	Fix.
 
 2003-02-05  Simon Josefsson <simon@josefsson.org>
@@ -365,7 +806,7 @@
 
 2003-02-03  Simon Josefsson <simon@josefsson.org>
 
-	* src/kdc.c: Fix.  What to do about this file?  Abandon?
+	* src/kdc.c: Fix.  What to do about this file?	Abandon?
 
 2003-02-03  Simon Josefsson <simon@josefsson.org>
 
@@ -406,7 +847,7 @@
 
 2003-02-03  Simon Josefsson <simon@josefsson.org>
 
-	* doc/reference/shishi.types, doc/reference/tmpl/shishi.sgml: 
+	* doc/reference/shishi.types, doc/reference/tmpl/shishi.sgml:
 	Remove autogenerated stuff.
 
 2003-02-03  Simon Josefsson <simon@josefsson.org>
@@ -424,14 +865,14 @@
 	lib/kdcreq.c, lib/safe.c, lib/shishi.h.in, lib/tgs.c, lib/ticket.c,
 	src/authp.c, src/client.c, src/server.c, src/shishi.c,
 	src/shishid.c, tests/ticketset.c: Rename shishi_ticketset_* to
-	shishi_tkts_*.  Separate ASN.1 ticket functions into shishi_ticket_*
-	and high-level ticket functions into shishi_tkt_*.
+	shishi_tkts_*.	Separate ASN.1 ticket functions into
+	shishi_ticket_* and high-level ticket functions into shishi_tkt_*.
 
 2003-02-02  Simon Josefsson <simon@josefsson.org>
 
-	* lib/ticket.c: Add.  Fix typo.
-	(shishi_ticket_key_set): Set key in EncKDCRepPart too.
-	(shishi_ticket2): Set transited, authtime, endtime.
+	* lib/ticket.c: Add.  Fix typo.  (shishi_ticket_key_set): Set key
+	in EncKDCRepPart too.  (shishi_ticket2): Set transited, authtime,
+	endtime.
 
 2003-02-02  Simon Josefsson <simon@josefsson.org>
 
@@ -464,8 +905,7 @@
 
 2003-02-02  Simon Josefsson <simon@josefsson.org>
 
-	* lib/kdc.c: 
-	(shishi_as_process): Print derived user key.
+	* lib/kdc.c: (shishi_as_process): Print derived user key.
 
 2003-02-02  Simon Josefsson <simon@josefsson.org>
 
@@ -500,7 +940,8 @@
 	shishi_enckdcreppart_populate_encticketpart,
 	shishi_enckdcreppart_srealm_set, shishi_enckdcreppart_sname_set,
 	shishi_enckdcreppart_server_set,
-	shishi_enckdcreppart_srealmserver_set, shishi_encasreppart.  Indent.
+	shishi_enckdcreppart_srealmserver_set, shishi_encasreppart. 
+	Indent.
 
 2003-02-01  Simon Josefsson <simon@josefsson.org>
 
@@ -512,8 +953,8 @@
 	* lib/kdcrep.c: Add shishi_kdcrep_crealm_set,
 	shishi_kdcrep_cname_set, shishi_kdcrep_client_set,
 	shishi_kdcrep_crealmserver_set, shishi_kdcrep_set_enc_part,
-	shishi_kdcrep_add_enc_part.
-	(shishi_kdcrep_get_ticket): Don't lose on (some) optional fields.
+	shishi_kdcrep_add_enc_part.  (shishi_kdcrep_get_ticket): Don't lose
+	on (some) optional fields.
 
 2003-02-01  Simon Josefsson <simon@josefsson.org>
 
@@ -534,9 +975,8 @@
 
 2003-02-01  Simon Josefsson <simon@josefsson.org>
 
-	* lib/apreq.c: 
-	(shishi_apreq_get_ticket, shishi_apreq_set_ticket): Don't lose on
-	optional fields (some still left though).
+	* lib/apreq.c: (shishi_apreq_get_ticket, shishi_apreq_set_ticket):
+	Don't lose on optional fields (some still left though).
 
 2003-02-01  Simon Josefsson <simon@josefsson.org>
 
@@ -544,9 +984,8 @@
 
 2003-02-01  Simon Josefsson <simon@josefsson.org>
 
-	* lib/ap.c: Indent.
-	(shishi_ap_rep_der_set): Don't lose previous AP-REP.
-	(shishi_ap_rep_der): New.
+	* lib/ap.c: Indent.  (shishi_ap_rep_der_set): Don't lose previous
+	AP-REP.  (shishi_ap_rep_der): New.
 
 2003-01-31  Simon Josefsson <simon@josefsson.org>
 
@@ -658,7 +1097,7 @@
 2002-12-14  Simon Josefsson <simon@josefsson.org>
 
 	* doc/Makefile.am, doc/reference/Makefile.am,
-	doc/reference/shishi-docs.sgml, doc/reference/shishi.types: 
+	doc/reference/shishi-docs.sgml, doc/reference/shishi.types:
 	Generate HTML/SGML API documentation using GTK-DOC.
 
 2002-12-14  Simon Josefsson <simon@josefsson.org>
@@ -742,7 +1181,7 @@
 	lib/crypto-aes.c, lib/crypto-des.c, lib/crypto.c, lib/diskio.c,
 	lib/encapreppart.c, lib/init.c, lib/internal.h, lib/kdc.c,
 	lib/kdcrep.c, lib/kdcreq.c, lib/netio.c, lib/password.c,
-	lib/shishi.h.in, lib/ticket.c, lib/ticketset.c, lib/vasprintf.c: 
+	lib/shishi.h.in, lib/ticket.c, lib/ticketset.c, lib/vasprintf.c:
 	Fix warnings.
 
 2002-12-12  Simon Josefsson <simon@josefsson.org>
@@ -758,7 +1197,7 @@
 	* lib/ap.c, lib/aprep.c, lib/apreq.c, lib/as.c, lib/asn1.c,
 	lib/authenticator.c, lib/diskio.c, lib/encapreppart.c,
 	lib/enckdcreppart.c, lib/encticketpart.c, lib/kdc.c, lib/kdcrep.c,
-	lib/kdcreq.c, lib/krberror.c, lib/shishi.h.in, lib/ticket.c: 
+	lib/kdcreq.c, lib/krberror.c, lib/shishi.h.in, lib/ticket.c:
 	Cleanup ASN.1 stuff.
 
 2002-12-12  Simon Josefsson <simon@josefsson.org>
@@ -784,7 +1223,7 @@
 
 2002-12-11  Simon Josefsson <simon@josefsson.org>
 
-	* lib/init.c, lib/shishi.h.in, lib/ticketset.c: 
+	* lib/init.c, lib/shishi.h.in, lib/ticketset.c:
 	s/ticketset_init/ticketset/g
 
 2002-12-11  Simon Josefsson <simon@josefsson.org>
@@ -913,7 +1352,7 @@
 
 2002-12-09  Simon Josefsson <simon@josefsson.org>
 
-	* lib/ap.c, lib/as.c, lib/crypto-des.c, lib/tgs.c, lib/ticketset.c: 
+	* lib/ap.c, lib/as.c, lib/crypto-des.c, lib/tgs.c, lib/ticketset.c:
 	Improve verbose messages.
 
 2002-12-09  Simon Josefsson <simon@josefsson.org>
@@ -961,8 +1400,8 @@
 
 	* lib/as.c, lib/shishi.h.in, lib/tgs.c, lib/ticket.c,
 	lib/ticketset.c: Store KDC-REP in ticket file too (for the cname,
-	crealm, and keytype protection etype fields, and possibly other uses
-	in the future).
+	crealm, and keytype protection etype fields, and possibly other
+	uses in the future).
 
 2002-12-08  Simon Josefsson <simon@josefsson.org>
 
@@ -1118,13 +1557,13 @@
 
 2002-12-07  Simon Josefsson <simon@josefsson.org>
 
-	* extra/inetutils/telnet/Makefile.am, extra/inetutils/configure.ac: 
+	* extra/inetutils/telnet/Makefile.am, extra/inetutils/configure.ac:
 	Add -I's.
 
 2002-12-07  Simon Josefsson <simon@josefsson.org>
 
 	* extra/inetutils/libtelnet/auth-proto.h,
-	extra/inetutils/libtelnet/auth.h, extra/inetutils/libtelnet/auth.c: 
+	extra/inetutils/libtelnet/auth.h, extra/inetutils/libtelnet/auth.c:
 	Add cleanup.
 
 2002-12-07  Simon Josefsson <simon@josefsson.org>
@@ -1337,7 +1776,7 @@
 	extra/inetutils/tftpd/tftpd.8, extra/inetutils/tftpd/tftpd.c,
 	extra/inetutils/uucpd/Makefile.am, extra/inetutils/uucpd/uucpd.c,
 	extra/inetutils/whois/Makefile.am, extra/inetutils/whois/main.c,
-	extra/inetutils/whois/net.c, extra/inetutils/whois/whois-servers: 
+	extra/inetutils/whois/net.c, extra/inetutils/whois/whois-servers:
 	Add entire GNU Inetutils, although most of it is disabled by
 	Shishi's configure.ac.
 
@@ -1372,7 +1811,7 @@
 	* lib/as.c, lib/authenticator.c, lib/done.c, lib/init.c,
 	lib/internal.h, lib/kdcreq.c, lib/principal.c, lib/realm.c,
 	lib/shishi.h.in, lib/tgs.c, lib/ticketset.c, src/authp.c,
-	src/client.c, src/crypto.c, src/kdc.c, src/server.c, src/shishi.c: 
+	src/client.c, src/crypto.c, src/kdc.c, src/server.c, src/shishi.c:
 	Harmonise realm, principal and ticketset filename API.
 
 2002-12-04  Simon Josefsson <simon@josefsson.org>
@@ -1386,7 +1825,7 @@
 2002-12-04  Simon Josefsson <simon@josefsson.org>
 
 	* lib/error.c, lib/shishi.h.in, lib/ticketset.c, src/authp.c,
-	src/client.c, src/data.h, src/kdc.c, src/server.c, src/shishi.c: 
+	src/client.c, src/data.h, src/kdc.c, src/server.c, src/shishi.c:
 	Add ticket destroy command.  Use default ticketset in src/.
 
 2002-12-04  Simon Josefsson <simon@josefsson.org>
@@ -1445,7 +1884,7 @@
 	* lib/ap.c, lib/as.c, lib/crypto-des.c, lib/crypto.c,
 	lib/internal.h, lib/kdcrep.c, lib/tgs.c, lib/ticket.c,
 	lib/ticketset.c: Move some private structures to where they belong.
-	Fixes.
+	 Fixes.
 
 2002-12-02  Simon Josefsson <simon@josefsson.org>
 
@@ -1473,7 +1912,7 @@
 
 2002-12-02  Simon Josefsson <simon@josefsson.org>
 
-	* lib/ap.c, lib/kdcreq.c, lib/shishi.h.in, lib/tgs.c, lib/ticket.c: 
+	* lib/ap.c, lib/kdcreq.c, lib/shishi.h.in, lib/tgs.c, lib/ticket.c:
 	Don't take handle parameter in ticket accessor functions.
 
 2002-12-02  Simon Josefsson <simon@josefsson.org>
@@ -1512,7 +1951,7 @@
 2002-12-01  Simon Josefsson <simon@josefsson.org>
 
 	* lib/base64.c, lib/internal.h, lib/password.c, lib/principal.c,
-	lib/shishi.h.in: Fix includes.  Export key usage values.
+	lib/shishi.h.in: Fix includes.	Export key usage values.
 
 2002-12-01  Simon Josefsson <simon@josefsson.org>
 
@@ -1520,7 +1959,7 @@
 
 2002-12-01  Simon Josefsson <simon@josefsson.org>
 
-	* src/crypto.c, src/data.h, src/kdc.c, src/server.c, src/shishi.c: 
+	* src/crypto.c, src/data.h, src/kdc.c, src/server.c, src/shishi.c:
 	Enhance key handling in crypto.  Fixes.
 
 2002-12-01  Simon Josefsson <simon@josefsson.org>
@@ -1541,7 +1980,7 @@
 
 2002-12-01  Simon Josefsson <simon@josefsson.org>
 
-	* lib/crypto.c: Always specify rand2key and str2key functions.
+	* lib/crypto.c: Always specify rand2key and str2key functions. 
 	Allow randomize to return 0 "random" bytes.
 
 2002-12-01  Simon Josefsson <simon@josefsson.org>
@@ -1636,7 +2075,7 @@
 
 2002-11-30  Simon Josefsson <simon@josefsson.org>
 
-	* lib/strcasecmp.c, lib/memmove.c, lib/memset.c, lib/strerror.c: 
+	* lib/strcasecmp.c, lib/memmove.c, lib/memset.c, lib/strerror.c:
 	From gnulib, a AC_LIBOBJ.
 
 2002-11-30  Simon Josefsson <simon@josefsson.org>
@@ -1661,7 +2100,7 @@
 	lib/pkcs5.h, lib/realm.c, lib/setenv.h, lib/shishi.h.in, lib/tgs.c,
 	lib/ticket.c, lib/ticketset.c, lib/vasprintf.c, src/Makefile.am,
 	src/authp.c, src/client.c, src/crypto.c, src/kdc.c, src/server.c,
-	src/shishi.c, src/shishid.c, tests/Makefile.am, tests/crypto.c: 
+	src/shishi.c, src/shishid.c, tests/Makefile.am, tests/crypto.c:
 	indent
 
 2002-11-29  Simon Josefsson <simon@josefsson.org>
@@ -1995,7 +2434,7 @@
 	extra/inetutils/libinetutils/Makefile.am,
 	extra/inetutils/libinetutils/tftpsubs.h,
 	extra/inetutils/telnet/Makefile.am,
-	extra/inetutils/telnetd/Makefile.am, extra/inetutils/telnetd/pty.c: 
+	extra/inetutils/telnetd/Makefile.am, extra/inetutils/telnetd/pty.c:
 	fixes.
 
 2002-11-26  Simon Josefsson <simon@josefsson.org>
@@ -2026,12 +2465,20 @@
 
 2002-11-25  Simon Josefsson <simon@josefsson.org>
 
+	* extra/README: [no log message]
+
+2002-11-25  Simon Josefsson <simon@josefsson.org>
+
 	* extra/inetutils/AUTHORS, extra/inetutils/NEWS,
 	extra/inetutils/README: Upstream files.
 
 2002-11-25  Simon Josefsson <simon@josefsson.org>
 
 	* Makefile.am, README, configure.ac: extra/
+
+2002-11-25  Simon Josefsson <simon@josefsson.org>
+
+	* extra/README: [no log message]
 
 2002-11-25  Simon Josefsson <simon@josefsson.org>
 
@@ -2096,7 +2543,7 @@
 	extra/inetutils/libinetutils/xmalloc.c,
 	extra/inetutils/libinetutils/xstrdup.c,
 	extra/inetutils/telnet/Makefile.am,
-	extra/inetutils/telnetd/Makefile.am, extra/inetutils/telnetd/pty.c: 
+	extra/inetutils/telnetd/Makefile.am, extra/inetutils/telnetd/pty.c:
 	Now it works.
 
 2002-11-25  Simon Josefsson <simon@josefsson.org>
@@ -2149,6 +2596,11 @@
 
 2002-11-25  Simon Josefsson <simon@josefsson.org>
 
+	* po/LINGUAS, po/Makevars, po/POTFILES.in, po/shishi.pot, po/sv.po:
+	[no log message]
+
+2002-11-25  Simon Josefsson <simon@josefsson.org>
+
 	* lib/kdcrep.c: remove debug code
 
 2002-11-25  Simon Josefsson <simon@josefsson.org>
@@ -2161,7 +2613,19 @@
 
 2002-11-25  Simon Josefsson <simon@josefsson.org>
 
+	* m4/Makefile.am, m4/pkg.m4: [no log message]
+
+2002-11-25  Simon Josefsson <simon@josefsson.org>
+
+	* config.rpath, mkinstalldirs: [no log message]
+
+2002-11-25  Simon Josefsson <simon@josefsson.org>
+
 	* README, THANKS, configure.ac, shishi.pc.in: add copyright
+
+2002-11-25  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS, README: [no log message]
 
 2002-11-25  Simon Josefsson <simon@josefsson.org>
 
@@ -2203,6 +2667,10 @@
 
 2002-11-22  Simon Josefsson <simon@josefsson.org>
 
+	* README: [no log message]
+
+2002-11-22  Simon Josefsson <simon@josefsson.org>
+
 	* lib/apreq.c, lib/diskio.c, lib/kdcrep.c, lib/ticket.c: "kerberos"
 	is a dirty word.
 
@@ -2237,11 +2705,15 @@
 
 2002-11-22  Simon Josefsson <simon@josefsson.org>
 
-	* configure.ac: Fixes.  Add stringprep.
+	* configure.ac: Fixes.	Add stringprep.
 
 2002-11-22  Simon Josefsson <simon@josefsson.org>
 
 	* Makefile.am: test/ renamed to tests/ (repository mv).
+
+2002-11-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: [no log message]
 
 2002-11-22  Simon Josefsson <simon@josefsson.org>
 
@@ -2359,7 +2831,7 @@
 
 2002-11-14  Simon Josefsson <simon@josefsson.org>
 
-	* argp/depcomp, argp/install-sh, argp/missing, argp/mkinstalldirs: 
+	* argp/depcomp, argp/install-sh, argp/missing, argp/mkinstalldirs:
 	Removed junk (automatically generated).
 
 2002-11-08  Simon Josefsson <simon@josefsson.org>
@@ -2392,8 +2864,8 @@
 	configuration file settings.  Manual improvements.  Added MOD-CRC32
 	and test vectors.  Added MD4 (to be replaced by my patch to
 	libgcrypt).  Added Shishi_as and Shishi_tgs structures for
-	high-level KDC exchanges.  Separated KDC command into high-level AS,
-	TGS and low-level KDC.
+	high-level KDC exchanges.  Separated KDC command into high-level
+	AS, TGS and low-level KDC.
 
 2002-11-02  Simon Josefsson <simon@josefsson.org>
 
@@ -2402,7 +2874,7 @@
 	lib/encapreppart.c, lib/init.c, lib/internal.h, lib/kdc.c,
 	lib/kdcrep.c, lib/kdcreq.c, lib/netio.c, lib/shishi.h.in,
 	lib/ticket.c, lib/ticketset.c, src/kdc.c, src/shishi.c,
-	src/shishid.c: Reworked silent/verbose/debug handling in library.
+	src/shishid.c: Reworked silent/verbose/debug handling in library. 
 	Handles more than one KDC.
 
 2002-10-31  Simon Josefsson <simon@josefsson.org>
@@ -2457,6 +2929,10 @@
 	* shishi.conf.in, shishi.skel.in, lib/cfg.c, lib/init.c,
 	lib/internal.h, lib/kdcreq.c: Add client-kdc-etypes configuration
 	option.
+
+2002-10-26  Simon Josefsson <simon@josefsson.org>
+
+	* acinclude.m4, Makefile.am, mkinstalldirs: [no log message]
 
 2002-10-26  Simon Josefsson <simon@josefsson.org>
 
