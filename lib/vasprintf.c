@@ -20,9 +20,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include "internal.h"
 
 static int
-int_vasprintf (char **result, const char *format, va_list * args)
+int_vasprintf (char **result, char *format, va_list * args)
 {
-  const char *p = format;
+  char *p = format;
   /* Add one to make sure that it is never zero, which might cause malloc
      to return NULL.  */
   int total_width = strlen (format) + 1;
@@ -42,7 +42,7 @@ int_vasprintf (char **result, const char *format, va_list * args)
 	      total_width += abs (va_arg (ap, int));
 	    }
 	  else
-	    total_width += strtoul (p, (char **) &p, 10);
+	    total_width += strtoul (p, &p, 10);
 	  if (*p == '.')
 	    {
 	      ++p;
@@ -94,13 +94,13 @@ int_vasprintf (char **result, const char *format, va_list * args)
 }
 
 static int
-_shishi_vasprintf (char **result, const char *format, va_list args)
+_shishi_vasprintf (char **result, char *format, va_list args)
 {
   return int_vasprintf (result, format, &args);
 }
 
 int
-shishi_asprintf (char **result, const char *format, ...)
+shishi_asprintf (char **result, char *format, ...)
 {
   va_list args;
   int done;

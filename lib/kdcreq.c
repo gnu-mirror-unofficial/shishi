@@ -39,7 +39,7 @@ _shishi_kdcreq (Shishi * handle, int as)
 {
   int res;
   Shishi_asn1 node;
-  char *servicebuf[3];
+  const char *servicebuf[3];
   char noncebuf[4];
 
   if (as)
@@ -85,7 +85,7 @@ _shishi_kdcreq (Shishi * handle, int as)
     goto error;
 
   servicebuf[0] = "krbtgt";
-  servicebuf[1] = (char *) shishi_realm_default (handle);
+  servicebuf[1] = shishi_realm_default (handle);
   servicebuf[2] = NULL;
   res = shishi_kdcreq_set_sname (handle, node,
 				 SHISHI_NT_PRINCIPAL, servicebuf);
@@ -484,7 +484,7 @@ shishi_kdcreq_snamerealm_get (Shishi * handle,
 int
 shishi_kdcreq_set_sname (Shishi * handle,
 			 Shishi_asn1 kdcreq,
-			 Shishi_name_type name_type, char *sname[])
+			 Shishi_name_type name_type, const char *sname[])
 {
   int res;
   char buf[BUFSIZ];
@@ -527,7 +527,7 @@ shishi_kdcreq_set_server (Shishi * handle, Shishi_asn1 req,
 			  const char *server)
 {
   char *tmpserver;
-  char **serverbuf;
+  const char **serverbuf;
   char *tokptr;
   int res;
   int i;
