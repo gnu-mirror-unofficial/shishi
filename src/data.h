@@ -77,7 +77,6 @@ extern int errno;
 
 #include "gettext.h"
 #define _(String) gettext (String)
-#define _N(S1, S2, N) ngettext (S1, S2, N)
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
 
