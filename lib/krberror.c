@@ -21,6 +21,11 @@
 
 #include "internal.h"
 
+#define SHISHI_KRB_ERROR_DEFAULT_PVNO      "5"
+#define SHISHI_KRB_ERROR_DEFAULT_PVNO_LEN  0
+#define SHISHI_KRB_ERROR_DEFAULT_MSG_TYPE      "30"
+#define SHISHI_KRB_ERROR_DEFAULT_MSG_TYPE_LEN  0
+
 /**
  * shishi_krberror:
  * @handle: shishi handle as allocated by shishi_init().
@@ -33,13 +38,42 @@
 Shishi_asn1
 shishi_krberror (Shishi * handle)
 {
-  Shishi_asn1 node;
+  Shishi_asn1 krberror;
+  struct timeval tv;
+  struct timezone tz;
+  int rc;
 
-  node = shishi_asn1_krberror (handle);
-  if (!node)
+  xgettimeofday (&tv, &tz);
+
+  krberror = shishi_asn1_krberror (handle);
+  if (!krberror)
     return NULL;
 
-  return node;
+  rc = shishi_asn1_write (handle, krberror, "pvno",
+			   SHISHI_KRB_ERROR_DEFAULT_PVNO,
+			   SHISHI_KRB_ERROR_DEFAULT_PVNO_LEN);
+
+  if (rc == SHISHI_OK)
+    rc = shishi_asn1_write (handle, krberror, "msg-type",
+			     SHISHI_KRB_ERROR_DEFAULT_MSG_TYPE,
+			     SHISHI_KRB_ERROR_DEFAULT_MSG_TYPE_LEN);
+
+
+  if (rc == SHISHI_OK)
+    rc = shishi_krberror_susec_set (handle, krberror, tv.tv_usec % 1000000);
+
+  if (rc == SHISHI_OK)
+    rc = shishi_asn1_write (handle, krberror, "stime",
+			    shishi_generalize_now (handle), 0);
+
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "shishi_krberror() failed");
+      shishi_asn1_done (handle, krberror);
+      krberror = NULL;
+    }
+
+  return krberror;
 }
 
 /**
@@ -202,180 +236,492 @@ shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
   return SHISHI_OK;
 }
 
-struct krb_error_msgs
+/**
+ * shishi_krberror_der:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @out: output array with newly allocated DER encoding of KRB-ERROR.
+ * @outlen: length of output array with DER encoding of KRB-ERROR.
+ *
+ * DER encode KRB-ERROR.  The caller must deallocate the OUT buffer.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_der (Shishi * handle,
+		     Shishi_asn1 krberror,
+		     char **out, size_t *outlen)
 {
-  int errorcode;
-  char *message;
-};
+  int rc;
 
-enum krb_error_codes
-{
-  KDC_ERR_NONE = 0,
-  KDC_ERR_NAME_EXP = 1,
-  KDC_ERR_SERVICE_EXP = 2,
-  KDC_ERR_BAD_PVNO = 3,
-  KDC_ERR_C_OLD_MAST_KVNO = 4,
-  KDC_ERR_S_OLD_MAST_KVNO = 5,
-  KDC_ERR_C_PRINCIPAL_UNKNOWN = 6,
-  KDC_ERR_S_PRINCIPAL_UNKNOWN = 7,
-  KDC_ERR_PRINCIPAL_NOT_UNIQUE = 8,
-  KDC_ERR_NULL_KEY = 9,
-  KDC_ERR_CANNOT_POSTDATE = 10,
-  KDC_ERR_NEVER_VALID = 11,
-  KDC_ERR_POLICY = 12,
-  KDC_ERR_BADOPTION = 13,
-  KDC_ERR_ETYPE_NOSUPP = 14,
-  KDC_ERR_SUMTYPE_NOSUPP = 15,
-  KDC_ERR_PADATA_TYPE_NOSUPP = 16,
-  KDC_ERR_TRTYPE_NOSUPP = 17,
-  KDC_ERR_CLIENT_REVOKED = 18,
-  KDC_ERR_SERVICE_REVOKED = 19,
-  KDC_ERR_TGT_REVOKED = 20,
-  KDC_ERR_CLIENT_NOTYET = 21,
-  KDC_ERR_SERVICE_NOTYET = 22,
-  KDC_ERR_KEY_EXPIRED = 23,
-  KDC_ERR_PREAUTH_FAILED = 24,
-  KDC_ERR_PREAUTH_REQUIRED = 25,
-  KDC_ERR_SERVER_NOMATCH = 26,
-  KDC_ERR_MUST_USE_USER2USER = 27,
-  KDC_ERR_PATH_NOT_ACCPETED = 28,
-  KDC_ERR_SVC_UNAVAILABLE = 29,
-  KRB_AP_ERR_BAD_INTEGRITY = 31,
-  KRB_AP_ERR_TKT_EXPIRED = 32,
-  KRB_AP_ERR_TKT_NYV = 33,
-  KRB_AP_ERR_REPEAT = 34,
-  KRB_AP_ERR_NOT_US = 35,
-  KRB_AP_ERR_BADMATCH = 36,
-  KRB_AP_ERR_SKEW = 37,
-  KRB_AP_ERR_BADADDR = 38,
-  KRB_AP_ERR_BADVERSION = 39,
-  KRB_AP_ERR_MSG_TYPE = 40,
-  KRB_AP_ERR_MODIFIED = 41,
-  KRB_AP_ERR_BADORDER = 42,
-  KRB_AP_ERR_BADKEYVER = 44,
-  KRB_AP_ERR_NOKEY = 45,
-  KRB_AP_ERR_MUT_FAIL = 46,
-  KRB_AP_ERR_BADDIRECTION = 47,
-  KRB_AP_ERR_METHOD = 48,
-  KRB_AP_ERR_BADSEQ = 49,
-  KRB_AP_ERR_INAPP_CKSUM = 50,
-  KRB_AP_PATH_NOT_ACCEPTED = 51,
-  KRB_ERR_RESPONSE_TOO_BIG = 52,
-  KRB_ERR_GENERIC = 60,
-  KRB_ERR_FIELD_TOOLONG = 61,
-  KDC_ERROR_CLIENT_NOT_TRUSTED = 62,
-  KDC_ERROR_KDC_NOT_TRUSTED = 63,
-  KDC_ERROR_INVALID_SIG = 64,
-  KDC_ERR_KEY_TOO_WEAK = 65,
-  KDC_ERR_CERTIFICATE_MISMATCH = 66,
-  KRB_AP_ERR_NO_TGT = 67,
-  KDC_ERR_WRONG_REALM = 68,
-  KRB_AP_ERR_USER_TO_USER_REQUIRED = 69,
-  KDC_ERR_CANT_VERIFY_CERTIFICATE = 70,
-  KDC_ERR_INVALID_CERTIFICATE = 71,
-  KDC_ERR_REVOKED_CERTIFICATE = 72,
-  KDC_ERR_REVOCATION_STATUS_UNKNOWN = 73,
-  KDC_ERR_REVOCATION_STATUS_UNAVAILABLE = 74,
-  KDC_ERR_CLIENT_NAME_MISMATCH = 75,
-  KDC_ERR_KDC_NAME_MISMATCH = 76,
-  KDC_ERR_SIZE = 77
-};
+  rc = shishi_new_a2d (handle, krberror, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
 
-struct krb_error_msgs _shishi_krberror_messages[KDC_ERR_SIZE] = {
-  {KDC_ERR_NONE, "No error"},
-  {KDC_ERR_NAME_EXP, "Client's entry in database has expired"},
-  {KDC_ERR_SERVICE_EXP, "Server's entry in database has expired"},
-  {KDC_ERR_BAD_PVNO, "Requested protocol version number not supported"},
-  {KDC_ERR_C_OLD_MAST_KVNO, "Client's key encrypted in old master key"},
-  {KDC_ERR_S_OLD_MAST_KVNO, "Server's key encrypted in old master key"},
-  {KDC_ERR_C_PRINCIPAL_UNKNOWN, "Client not found in Kerberos database"},
-  {KDC_ERR_S_PRINCIPAL_UNKNOWN, "Server not found in Kerberos database"},
-  {KDC_ERR_PRINCIPAL_NOT_UNIQUE, "Multiple principal entries in database"},
-  {KDC_ERR_NULL_KEY, "The client or server has a null key"},
-  {KDC_ERR_CANNOT_POSTDATE, "Ticket not eligible for postdating"},
-  {KDC_ERR_NEVER_VALID, "Requested start time is later than end time"},
-  {KDC_ERR_POLICY, "KDC policy rejects request"},
-  {KDC_ERR_BADOPTION, "KDC cannot accommodate requested option"},
-  {KDC_ERR_ETYPE_NOSUPP, "KDC has no support for encryption type"},
-  {KDC_ERR_SUMTYPE_NOSUPP, "KDC has no support for checksum type"},
-  {KDC_ERR_PADATA_TYPE_NOSUPP, "KDC has no support for padata type"},
-  {KDC_ERR_TRTYPE_NOSUPP, "KDC has no support for transited type"},
-  {KDC_ERR_CLIENT_REVOKED, "Clients credentials have been revoked"},
-  {KDC_ERR_SERVICE_REVOKED, "Credentials for server have been revoked"},
-  {KDC_ERR_TGT_REVOKED, "TGT has been revoked"},
-  {KDC_ERR_CLIENT_NOTYET, "Client not yet valid - try again later"},
-  {KDC_ERR_SERVICE_NOTYET, "Server not yet valid - try again later"},
-  {KDC_ERR_KEY_EXPIRED, "Password has expired "},
-  {KDC_ERR_PREAUTH_FAILED, "Pre-authentication information was invalid"},
-  {KDC_ERR_PREAUTH_REQUIRED, "Additional pre-authenticationrequired [40]"},
-  {KDC_ERR_SERVER_NOMATCH, "Requested server and ticket don't match"},
-  {KDC_ERR_MUST_USE_USER2USER, "Server principal valid for user2user only"},
-  {KDC_ERR_PATH_NOT_ACCPETED, "KDC Policy rejects transited path"},
-  {KDC_ERR_SVC_UNAVAILABLE, "A service is not available"},
-  {KRB_AP_ERR_BAD_INTEGRITY, "Integrity check on decrypted field failed"},
-  {KRB_AP_ERR_TKT_EXPIRED, "Ticket expired"},
-  {KRB_AP_ERR_TKT_NYV, "Ticket not yet valid"},
-  {KRB_AP_ERR_REPEAT, "Request is a replay"},
-  {KRB_AP_ERR_NOT_US, "The ticket isn't for us"},
-  {KRB_AP_ERR_BADMATCH, "Ticket and authenticator don't match"},
-  {KRB_AP_ERR_SKEW, "Clock skew too great"},
-  {KRB_AP_ERR_BADADDR, "Incorrect net address"},
-  {KRB_AP_ERR_BADVERSION, "Protocol version mismatch"},
-  {KRB_AP_ERR_MSG_TYPE, "Invalid msg type"},
-  {KRB_AP_ERR_MODIFIED, "Message stream modified"},
-  {KRB_AP_ERR_BADORDER, "Message out of order"},
-  {KRB_AP_ERR_BADKEYVER, "Specified version of key is not available"},
-  {KRB_AP_ERR_NOKEY, "Service key not available"},
-  {KRB_AP_ERR_MUT_FAIL, "Mutual authentication failed"},
-  {KRB_AP_ERR_BADDIRECTION, "Incorrect message direction"},
-  {KRB_AP_ERR_METHOD, "Alternative authentication method required"},
-  {KRB_AP_ERR_BADSEQ, "Incorrect sequence number in message"},
-  {KRB_AP_ERR_INAPP_CKSUM, "Inappropriate type of checksum in message"},
-  {KRB_AP_PATH_NOT_ACCEPTED, "Policy rejects transited path"},
-  {KRB_ERR_RESPONSE_TOO_BIG, "Response too big for UDP, retry with TCP"},
-  {KRB_ERR_GENERIC, "Generic error (description in e-text)"},
-  {KRB_ERR_FIELD_TOOLONG, "Field is too long for this implementation"},
-  {KDC_ERROR_CLIENT_NOT_TRUSTED, "(pkinit)"},
-  {KDC_ERROR_KDC_NOT_TRUSTED, "(pkinit)"},
-  {KDC_ERROR_INVALID_SIG, "(pkinit)"},
-  {KDC_ERR_KEY_TOO_WEAK, "(pkinit)"},
-  {KDC_ERR_CERTIFICATE_MISMATCH, "(pkinit)"},
-  {KRB_AP_ERR_NO_TGT, "(user-to-user)"},
-  {KDC_ERR_WRONG_REALM, "(user-to-user)"},
-  {KRB_AP_ERR_USER_TO_USER_REQUIRED, "(user-to-user)"},
-  {KDC_ERR_CANT_VERIFY_CERTIFICATE, "(pkinit)"},
-  {KDC_ERR_INVALID_CERTIFICATE, "(pkinit)"},
-  {KDC_ERR_REVOKED_CERTIFICATE, "(pkinit)"},
-  {KDC_ERR_REVOCATION_STATUS_UNKNOWN, "(pkinit)"},
-  {KDC_ERR_REVOCATION_STATUS_UNAVAILABLE, "(pkinit)"},
-  {KDC_ERR_CLIENT_NAME_MISMATCH, "(pkinit)"},
-  {KDC_ERR_KDC_NAME_MISMATCH, "(pkinit)"}
-};
+  return SHISHI_OK;
+}
 
 /**
- * shishi_krberror_errorcode_message:
+ * shishi_krberror_set_crealm:
  * @handle: shishi handle as allocated by shishi_init().
- * @errorcode: integer KRB-ERROR error code.
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @crealm: input array with realm.
  *
- * Return value: Return a string describing error code.  This function
- *               will always return a string even if the error code
- *               isn't known.
+ * Set realm field in krberror to specified value.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
  **/
-const char *
-shishi_krberror_errorcode_message (Shishi * handle, int errorcode)
+int
+shishi_krberror_set_crealm (Shishi * handle,
+			    Shishi_asn1 krberror,
+			    const char *crealm)
 {
-  int i;
-  char *p;
+  int res;
 
-  for (i = 0; i < KDC_ERR_SIZE; i++)
-    {
-      if (errorcode == _shishi_krberror_messages[i].errorcode)
-	return _(_shishi_krberror_messages[i].message);
-    }
+  res = shishi_asn1_write (handle, krberror, "crealm", crealm, 0);
+  if (res != SHISHI_OK)
+    return res;
 
-  /* XXX memory leak */
-  asprintf (&p, _("Unknown KRB-ERROR error code %d."), errorcode);
-  return p;
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_remove_crealm:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ *
+ * Remove client realm field in KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_remove_crealm (Shishi * handle,
+			       Shishi_asn1 krberror)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "crealm", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_set_cname:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @name_type: type of principial, see Shishi_name_type, usually
+ *             SHISHI_NT_UNKNOWN.
+ * @cname: input array with principal name.
+ *
+ * Set principal field in krberror to specified value.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_set_cname (Shishi * handle,
+			   Shishi_asn1 krberror,
+			   Shishi_name_type name_type,
+			   const char *cname[])
+{
+  int res;
+
+  res = shishi_principal_name_set (handle, krberror, "cname",
+				   name_type, cname);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_remove_cname:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ *
+ * Remove client realm field in KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_remove_cname (Shishi * handle,
+			       Shishi_asn1 krberror)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "cname", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_client_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror to set client name field in.
+ * @client: zero-terminated string with principal name on RFC 1964 form.
+ *
+ * Set the client name field in the Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_client_set (Shishi * handle,
+			    Shishi_asn1 krberror,
+			    const char *client)
+{
+  int res;
+
+  res = shishi_principal_set (handle, krberror, "cname", client);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_set_realm:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @realm: input array with (server) realm.
+ *
+ * Set (server) realm field in krberror to specified value.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_set_realm (Shishi * handle,
+			   Shishi_asn1 krberror,
+			   const char *realm)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "realm", realm, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+
+/**
+ * shishi_krberror_set_sname:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @name_type: type of principial, see Shishi_name_type, usually
+ *             SHISHI_NT_UNKNOWN.
+ * @sname: input array with principal name.
+ *
+ * Set principal field in krberror to specified value.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_set_sname (Shishi * handle,
+			   Shishi_asn1 krberror,
+			   Shishi_name_type name_type,
+			   const char *sname[])
+{
+  int res;
+
+  res = shishi_principal_name_set (handle, krberror, "sname",
+				   name_type, sname);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_server_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror to set server name field in.
+ * @server: zero-terminated string with principal name on RFC 1964 form.
+ *
+ * Set the server name field in the Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_server_set (Shishi * handle,
+			    Shishi_asn1 krberror,
+			    const char *server)
+{
+  int res;
+
+  res = shishi_principal_set (handle, krberror, "sname", server);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_remove_server:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror to set server name field in.
+ *
+ * Remove server name field in KRB-ERROR.  (Since it is not marked
+ * OPTIONAL in the ASN.1 profile, what is done is to set the name-type
+ * to UNKNOWN and make sure the name-string sequence is empty.)
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_remove_server (Shishi * handle,
+			       Shishi_asn1 krberror)
+{
+  int res;
+
+  res = shishi_asn1_write_int32 (handle, krberror, "sname.name-type",
+				 SHISHI_NT_UNKNOWN);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_write (handle, krberror, "sname.name-string", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_ctime_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror to set client name field in.
+ * @client: zero-terminated string with principal name on RFC 1964 form.
+ * @ctime: output array, must have room for at least
+ *   GENERALIZEDTIME_TIME_LEN characters.
+ *
+ * Extract client time from KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_ctime_get (Shishi * handle,
+			   Shishi_asn1 krberror, char *ctime)
+{
+  int len;
+  int res;
+
+  len = GENERALIZEDTIME_TIME_LEN + 1;
+  res = shishi_asn1_read (handle, krberror, "ctime", ctime, &len);
+  if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
+    ctime[len] = '\0';
+
+  return res;
+}
+
+/**
+ * shishi_krberror_ctime_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror as allocated by shishi_krberror().
+ * @ctime: string with generalized time value to store in Krberror.
+ *
+ * Store client time in Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_ctime_set (Shishi * handle,
+			   Shishi_asn1 krberror, char *ctime)
+{
+  int res;
+
+  if (ctime)
+    res = shishi_asn1_write (handle, krberror, "ctime",
+			     ctime, GENERALIZEDTIME_TIME_LEN);
+  else
+    res = shishi_asn1_write (handle, krberror, "ctime", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_remove_ctime:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror as allocated by shishi_krberror().
+ *
+ * Remove client time field in Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_remove_ctime (Shishi * handle, Shishi_asn1 krberror)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "ctime", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_cusec_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror as allocated by shishi_krberror().
+ * @cusec: output integer with client microseconds field.
+ *
+ * Extract client microseconds field from Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_cusec_get (Shishi * handle,
+				Shishi_asn1 krberror, int *cusec)
+{
+  int res;
+
+  res = shishi_asn1_read_uint32 (handle, krberror, "cusec", cusec);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_cusec_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @cusec: client microseconds to set in krberror, 0-999999.
+ *
+ * Set the cusec field in the Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_cusec_set (Shishi * handle, Shishi_asn1 krberror, int cusec)
+{
+  int res;
+
+  res = shishi_asn1_write_uint32 (handle, krberror, "cusec", cusec);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_remove_cusec:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror as allocated by shishi_krberror().
+ *
+ * Remove client usec field in Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_remove_cusec (Shishi * handle, Shishi_asn1 krberror)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "cusec", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_stime_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror to set client name field in.
+ * @client: zero-terminated string with principal name on RFC 1964 form.
+ * @stime: output array, must have room for at least
+ *   GENERALIZEDTIME_TIME_LEN characters.
+ *
+ * Extract server time from KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_stime_get (Shishi * handle,
+			   Shishi_asn1 krberror, char *stime)
+{
+  int len;
+  int res;
+
+  len = GENERALIZEDTIME_TIME_LEN + 1;
+  res = shishi_asn1_read (handle, krberror, "stime", stime, &len);
+  if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
+    stime[len] = '\0';
+
+  return res;
+}
+
+/**
+ * shishi_krberror_stime_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror as allocated by shishi_krberror().
+ * @stime: string with generalized time value to store in Krberror.
+ *
+ * Store server time in Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_stime_set (Shishi * handle,
+			   Shishi_asn1 krberror, char *stime)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "stime",
+			   stime, GENERALIZEDTIME_TIME_LEN);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_susec_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror as allocated by shishi_krberror().
+ * @susec: output integer with server microseconds field.
+ *
+ * Extract server microseconds field from Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_susec_get (Shishi * handle,
+			   Shishi_asn1 krberror, int *susec)
+{
+  int res;
+
+  res = shishi_asn1_read_uint32 (handle, krberror, "susec", susec);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_susec_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @susec: server microseconds to set in krberror, 0-999999.
+ *
+ * Set the susec field in the Krberror.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_susec_set (Shishi * handle, Shishi_asn1 krberror, int susec)
+{
+  int res;
+
+  res = shishi_asn1_write_uint32 (handle, krberror, "susec", susec);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
 }
 
 /**
@@ -415,6 +761,29 @@ shishi_krberror_errorcode_fast (Shishi * handle, Shishi_asn1 krberror)
 }
 
 /**
+ * shishi_krberror_errorcode_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: KRB-ERROR structure with error code to set.
+ * @errorcode: new error code to set in krberror.
+ *
+ * Set the error-code field to a new error code.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_errorcode_set (Shishi * handle,
+			       Shishi_asn1 krberror, int errorcode)
+{
+  int res;
+
+  res = shishi_asn1_write_int32 (handle, krberror, "error-code", errorcode);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_krberror_etext:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: KRB-ERROR structure with error code.
@@ -435,22 +804,93 @@ shishi_krberror_etext (Shishi * handle, Shishi_asn1 krberror,
 }
 
 /**
- * shishi_krberror_message:
+ * shishi_krberror_set_etext:
  * @handle: shishi handle as allocated by shishi_init().
- * @krberror: KRB-ERROR structure with error code.
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @etext: input array with error text to set.
  *
- * Extract error code (see shishi_krberror_errorcode_fast()) and
- * return error message (see shishi_krberror_errorcode_message()).
+ * Set error text (e-text) field in KRB-ERROR to specified value.
  *
- * Return value: Return a string describing error code.  This function
- *               will always return a string even if the error code
- *               isn't known.
+ * Return value: Returns SHISHI_OK iff successful.
  **/
-const char *
-shishi_krberror_message (Shishi * handle, Shishi_asn1 krberror)
+int
+shishi_krberror_set_etext (Shishi * handle,
+			   Shishi_asn1 krberror,
+			   const char *etext)
 {
-  return shishi_krberror_errorcode_message
-    (handle, shishi_krberror_errorcode_fast (handle, krberror));
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "e-text", etext, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_remove_etext:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ *
+ * Remove error text (e-text) field in KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_remove_etext (Shishi * handle, Shishi_asn1 krberror)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "e-text", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_set_edata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @edata: input array with error text to set.
+ *
+ * Set error text (e-data) field in KRB-ERROR to specified value.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_set_edata (Shishi * handle,
+			   Shishi_asn1 krberror,
+			   const char *edata)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "e-data", edata, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_remove_edata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ *
+ * Remove error text (e-data) field in KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_remove_edata (Shishi * handle, Shishi_asn1 krberror)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, krberror, "e-data", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
 }
 
 /**
@@ -485,4 +925,126 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
 
 
   return SHISHI_OK;
+}
+
+struct krb_error_msgs
+{
+  int errorcode;
+  char *message;
+};
+
+struct krb_error_msgs _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
+  {SHISHI_KDC_ERR_NONE, "No error"},
+  {SHISHI_KDC_ERR_NAME_EXP, "Client's entry in database has expired"},
+  {SHISHI_KDC_ERR_SERVICE_EXP, "Server's entry in database has expired"},
+  {SHISHI_KDC_ERR_BAD_PVNO, "Requested protocol version number not supported"},
+  {SHISHI_KDC_ERR_C_OLD_MAST_KVNO, "Client's key encrypted in old master key"},
+  {SHISHI_KDC_ERR_S_OLD_MAST_KVNO, "Server's key encrypted in old master key"},
+  {SHISHI_KDC_ERR_C_PRINCIPAL_UNKNOWN, "Client not found in Kerberos database"},
+  {SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN, "Server not found in Kerberos database"},
+  {SHISHI_KDC_ERR_PRINCIPAL_NOT_UNIQUE, "Multiple principal entries in database"},
+  {SHISHI_KDC_ERR_NULL_KEY, "The client or server has a null key"},
+  {SHISHI_KDC_ERR_CANNOT_POSTDATE, "Ticket not eligible for postdating"},
+  {SHISHI_KDC_ERR_NEVER_VALID, "Requested start time is later than end time"},
+  {SHISHI_KDC_ERR_POLICY, "KDC policy rejects request"},
+  {SHISHI_KDC_ERR_BADOPTION, "KDC cannot accommodate requested option"},
+  {SHISHI_KDC_ERR_ETYPE_NOSUPP, "KDC has no support for encryption type"},
+  {SHISHI_KDC_ERR_SUMTYPE_NOSUPP, "KDC has no support for checksum type"},
+  {SHISHI_KDC_ERR_PADATA_TYPE_NOSUPP, "KDC has no support for padata type"},
+  {SHISHI_KDC_ERR_TRTYPE_NOSUPP, "KDC has no support for transited type"},
+  {SHISHI_KDC_ERR_CLIENT_REVOKED, "Clients credentials have been revoked"},
+  {SHISHI_KDC_ERR_SERVICE_REVOKED, "Credentials for server have been revoked"},
+  {SHISHI_KDC_ERR_TGT_REVOKED, "TGT has been revoked"},
+  {SHISHI_KDC_ERR_CLIENT_NOTYET, "Client not yet valid - try again later"},
+  {SHISHI_KDC_ERR_SERVICE_NOTYET, "Server not yet valid - try again later"},
+  {SHISHI_KDC_ERR_KEY_EXPIRED, "Password has expired "},
+  {SHISHI_KDC_ERR_PREAUTH_FAILED, "Pre-authentication information was invalid"},
+  {SHISHI_KDC_ERR_PREAUTH_REQUIRED, "Additional pre-authenticationrequired [40]"},
+  {SHISHI_KDC_ERR_SERVER_NOMATCH, "Requested server and ticket don't match"},
+  {SHISHI_KDC_ERR_MUST_USE_USER2USER, "Server principal valid for user2user only"},
+  {SHISHI_KDC_ERR_PATH_NOT_ACCPETED, "KDC Policy rejects transited path"},
+  {SHISHI_KDC_ERR_SVC_UNAVAILABLE, "A service is not available"},
+  {SHISHI_KRB_AP_ERR_BAD_INTEGRITY, "Integrity check on decrypted field failed"},
+  {SHISHI_KRB_AP_ERR_TKT_EXPIRED, "Ticket expired"},
+  {SHISHI_KRB_AP_ERR_TKT_NYV, "Ticket not yet valid"},
+  {SHISHI_KRB_AP_ERR_REPEAT, "Request is a replay"},
+  {SHISHI_KRB_AP_ERR_NOT_US, "The ticket isn't for us"},
+  {SHISHI_KRB_AP_ERR_BADMATCH, "Ticket and authenticator don't match"},
+  {SHISHI_KRB_AP_ERR_SKEW, "Clock skew too great"},
+  {SHISHI_KRB_AP_ERR_BADADDR, "Incorrect net address"},
+  {SHISHI_KRB_AP_ERR_BADVERSION, "Protocol version mismatch"},
+  {SHISHI_KRB_AP_ERR_MSG_TYPE, "Invalid msg type"},
+  {SHISHI_KRB_AP_ERR_MODIFIED, "Message stream modified"},
+  {SHISHI_KRB_AP_ERR_BADORDER, "Message out of order"},
+  {SHISHI_KRB_AP_ERR_BADKEYVER, "Specified version of key is not available"},
+  {SHISHI_KRB_AP_ERR_NOKEY, "Service key not available"},
+  {SHISHI_KRB_AP_ERR_MUT_FAIL, "Mutual authentication failed"},
+  {SHISHI_KRB_AP_ERR_BADDIRECTION, "Incorrect message direction"},
+  {SHISHI_KRB_AP_ERR_METHOD, "Alternative authentication method required"},
+  {SHISHI_KRB_AP_ERR_BADSEQ, "Incorrect sequence number in message"},
+  {SHISHI_KRB_AP_ERR_INAPP_CKSUM, "Inappropriate type of checksum in message"},
+  {SHISHI_KRB_AP_PATH_NOT_ACCEPTED, "Policy rejects transited path"},
+  {SHISHI_KRB_ERR_RESPONSE_TOO_BIG, "Response too big for UDP, retry with TCP"},
+  {SHISHI_KRB_ERR_GENERIC, "Generic error (description in e-text)"},
+  {SHISHI_KRB_ERR_FIELD_TOOLONG, "Field is too long for this implementation"},
+  {SHISHI_KDC_ERROR_CLIENT_NOT_TRUSTED, "(pkinit)"},
+  {SHISHI_KDC_ERROR_KDC_NOT_TRUSTED, "(pkinit)"},
+  {SHISHI_KDC_ERROR_INVALID_SIG, "(pkinit)"},
+  {SHISHI_KDC_ERR_KEY_TOO_WEAK, "(pkinit)"},
+  {SHISHI_KDC_ERR_CERTIFICATE_MISMATCH, "(pkinit)"},
+  {SHISHI_KRB_AP_ERR_NO_TGT, "(user-to-user)"},
+  {SHISHI_KDC_ERR_WRONG_REALM, "(user-to-user)"},
+  {SHISHI_KRB_AP_ERR_USER_TO_USER_REQUIRED, "(user-to-user)"},
+  {SHISHI_KDC_ERR_CANT_VERIFY_CERTIFICATE, "(pkinit)"},
+  {SHISHI_KDC_ERR_INVALID_CERTIFICATE, "(pkinit)"},
+  {SHISHI_KDC_ERR_REVOKED_CERTIFICATE, "(pkinit)"},
+  {SHISHI_KDC_ERR_REVOCATION_STATUS_UNKNOWN, "(pkinit)"},
+  {SHISHI_KDC_ERR_REVOCATION_STATUS_UNAVAILABLE, "(pkinit)"},
+  {SHISHI_KDC_ERR_CLIENT_NAME_MISMATCH, "(pkinit)"},
+  {SHISHI_KDC_ERR_KDC_NAME_MISMATCH, "(pkinit)"}
+};
+
+/**
+ * shishi_krberror_errorcode_message:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @errorcode: integer KRB-ERROR error code.
+ *
+ * Return value: Return a string describing error code.  This function
+ *               will always return a string even if the error code
+ *               isn't known.
+ **/
+const char *
+shishi_krberror_errorcode_message (Shishi * handle, int errorcode)
+{
+  int i;
+  char *p;
+
+  for (i = 0; i < SHISHI_LAST_ERROR_CODE; i++)
+    {
+      if (errorcode == _shishi_krberror_messages[i].errorcode)
+	return _(_shishi_krberror_messages[i].message);
+    }
+
+  /* XXX memory leak */
+  asprintf (&p, _("Unknown KRB-ERROR error code %d."), errorcode);
+  return p;
+}
+
+/**
+ * shishi_krberror_message:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: KRB-ERROR structure with error code.
+ *
+ * Extract error code (see shishi_krberror_errorcode_fast()) and
+ * return error message (see shishi_krberror_errorcode_message()).
+ *
+ * Return value: Return a string describing error code.  This function
+ *               will always return a string even if the error code
+ *               isn't known.
+ **/
+const char *
+shishi_krberror_message (Shishi * handle, Shishi_asn1 krberror)
+{
+  return shishi_krberror_errorcode_message
+    (handle, shishi_krberror_errorcode_fast (handle, krberror));
 }

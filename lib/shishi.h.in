@@ -163,29 +163,29 @@ Shishi_KDCOptions;
 typedef enum
 {
   /* Request for initial authentication */
-  SHISHI_MSGTYPE_AS_REQ     = 10,
+  SHISHI_MSGTYPE_AS_REQ = 10,
   /* Response to SHISHI_MSGTYPE_AS_REQ request */
-  SHISHI_MSGTYPE_AS_REP     = 11,
+  SHISHI_MSGTYPE_AS_REP = 11,
   /* Request for authentication based on TGT */
-  SHISHI_MSGTYPE_TGS_REQ    = 12,
+  SHISHI_MSGTYPE_TGS_REQ = 12,
   /* Response to SHISHI_MSGTYPE_TGS_REQ request */
-  SHISHI_MSGTYPE_TGS_REP    = 13,
+  SHISHI_MSGTYPE_TGS_REP = 13,
   /* application request to server */
-  SHISHI_MSGTYPE_AP_REQ     = 14,
+  SHISHI_MSGTYPE_AP_REQ = 14,
   /* Response to SHISHI_MSGTYPE_AP_REQ_MUTUAL */
-  SHISHI_MSGTYPE_AP_REP     = 15,
+  SHISHI_MSGTYPE_AP_REP = 15,
   /* Reserved for user-to-user krb_tgt_request */
   SHISHI_MSGTYPE_RESERVED16 = 16,
   /* Reserved for user-to-user krb_tgt_reply */
   SHISHI_MSGTYPE_RESERVED17 = 17,
   /* Safe (checksummed) application message */
-  SHISHI_MSGTYPE_SAFE       = 20,
+  SHISHI_MSGTYPE_SAFE = 20,
   /* Private (encrypted) application message */
-  SHISHI_MSGTYPE_PRIV       = 21,
+  SHISHI_MSGTYPE_PRIV = 21,
   /* Private (encrypted) message to forward credentials */
-  SHISHI_MSGTYPE_CRED       = 22,
+  SHISHI_MSGTYPE_CRED = 22,
   /* Error response */
-  SHISHI_MSGTYPE_ERROR      = 30
+  SHISHI_MSGTYPE_ERROR = 30
 }
 Shishi_msgtype;
 
@@ -303,6 +303,148 @@ typedef enum
     /* 512-1023. Reserved for uses internal to a Kerberos implementation. */
 }
 Shishi_keyusage;
+
+typedef enum
+{
+  /* No error */
+  SHISHI_KDC_ERR_NONE = 0,
+  /* Client's entry in database has expired */
+  SHISHI_KDC_ERR_NAME_EXP = 1,
+  /* Server's entry in database has expired */
+  SHISHI_KDC_ERR_SERVICE_EXP = 2,
+  /* Requested protocol version number  - not supported */
+  SHISHI_KDC_ERR_BAD_PVNO = 3,
+  /* Client's key encrypted in old master key */
+  SHISHI_KDC_ERR_C_OLD_MAST_KVNO = 4,
+  /* Server's key encrypted in old master key */
+  SHISHI_KDC_ERR_S_OLD_MAST_KVNO = 5,
+  /* Client not found in Kerberos database */
+  SHISHI_KDC_ERR_C_PRINCIPAL_UNKNOWN = 6,
+  /* Server not found in Kerberos database */
+  SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN = 7,
+  /* Multiple principal entries in database */
+  SHISHI_KDC_ERR_PRINCIPAL_NOT_UNIQUE = 8,
+  /* The client or server has a null key */
+  SHISHI_KDC_ERR_NULL_KEY = 9,
+  /* Ticket not eligible for postdating */
+  SHISHI_KDC_ERR_CANNOT_POSTDATE = 10,
+  /* Requested start time is later than end time */
+  SHISHI_KDC_ERR_NEVER_VALID = 11,
+  /* KDC policy rejects request */
+  SHISHI_KDC_ERR_POLICY = 12,
+  /* KDC cannot accommodate requested option */
+  SHISHI_KDC_ERR_BADOPTION = 13,
+  /* KDC has no support for encryption type */
+  SHISHI_KDC_ERR_ETYPE_NOSUPP = 14,
+  /* KDC has no support for checksum type */
+  SHISHI_KDC_ERR_SUMTYPE_NOSUPP = 15,
+  /* KDC has no support for padata type */
+  SHISHI_KDC_ERR_PADATA_TYPE_NOSUPP = 16,
+  /* KDC has no support for transited type */
+  SHISHI_KDC_ERR_TRTYPE_NOSUPP = 17,
+  /* Clients credentials have been revoked */
+  SHISHI_KDC_ERR_CLIENT_REVOKED = 18,
+  /* Credentials for server have been revoked */
+  SHISHI_KDC_ERR_SERVICE_REVOKED = 19,
+  /* TGT has been revoked */
+  SHISHI_KDC_ERR_TGT_REVOKED = 20,
+  /* Client not yet valid - try again later */
+  SHISHI_KDC_ERR_CLIENT_NOTYET = 21,
+  /* Server not yet valid - try again later */
+  SHISHI_KDC_ERR_SERVICE_NOTYET = 22,
+  /* Password has expired - change password to reset */
+  SHISHI_KDC_ERR_KEY_EXPIRED = 23,
+  /* Pre-authentication information was invalid */
+  SHISHI_KDC_ERR_PREAUTH_FAILED = 24,
+  /* Additional pre-authenticationrequired */
+  SHISHI_KDC_ERR_PREAUTH_REQUIRED = 25,
+  /* Requested server and ticket don't match */
+  SHISHI_KDC_ERR_SERVER_NOMATCH = 26,
+  /* Server principal valid for user = 2,user only */
+  SHISHI_KDC_ERR_MUST_USE_USER2USER = 27,
+  /* KDC Policy rejects transited path */
+  SHISHI_KDC_ERR_PATH_NOT_ACCPETED = 28,
+  /* A service is not available */
+  SHISHI_KDC_ERR_SVC_UNAVAILABLE = 29,
+  /* Integrity check on decrypted field failed */
+  SHISHI_KRB_AP_ERR_BAD_INTEGRITY = 31,
+  /* Ticket expired */
+  SHISHI_KRB_AP_ERR_TKT_EXPIRED = 32,
+  /* Ticket not yet valid */
+  SHISHI_KRB_AP_ERR_TKT_NYV = 33,
+  /* Request is a replay */
+  SHISHI_KRB_AP_ERR_REPEAT = 34,
+  /* The ticket isn't for us */
+  SHISHI_KRB_AP_ERR_NOT_US = 35,
+  /* Ticket and authenticator don't match */
+  SHISHI_KRB_AP_ERR_BADMATCH = 36,
+  /* Clock skew too great */
+  SHISHI_KRB_AP_ERR_SKEW = 37,
+  /* Incorrect net address */
+  SHISHI_KRB_AP_ERR_BADADDR = 38,
+  /* Protocol version mismatch */
+  SHISHI_KRB_AP_ERR_BADVERSION = 39,
+  /* Invalid msg type */
+  SHISHI_KRB_AP_ERR_MSG_TYPE = 40,
+  /* Message stream modified */
+  SHISHI_KRB_AP_ERR_MODIFIED = 41,
+  /* Message out of order */
+  SHISHI_KRB_AP_ERR_BADORDER = 42,
+  /* Specified version of key is not available */
+  SHISHI_KRB_AP_ERR_BADKEYVER = 44,
+  /* Service key not available */
+  SHISHI_KRB_AP_ERR_NOKEY = 45,
+  /* Mutual authentication failed */
+  SHISHI_KRB_AP_ERR_MUT_FAIL = 46,
+  /* Incorrect message direction */
+  SHISHI_KRB_AP_ERR_BADDIRECTION = 47,
+  /* Alternative authentication method required */
+  SHISHI_KRB_AP_ERR_METHOD = 48,
+  /* Incorrect sequence number in message */
+  SHISHI_KRB_AP_ERR_BADSEQ = 49,
+  /* Inappropriate type of checksum in message */
+  SHISHI_KRB_AP_ERR_INAPP_CKSUM = 50,
+  /* Policy rejects transited path */
+  SHISHI_KRB_AP_PATH_NOT_ACCEPTED = 51,
+  /* Response too big for UDP, retry with TCP */
+  SHISHI_KRB_ERR_RESPONSE_TOO_BIG = 52,
+  /* Generic error (description in e-text) */
+  SHISHI_KRB_ERR_GENERIC = 60,
+  /* Field is too long for this implementation */
+  SHISHI_KRB_ERR_FIELD_TOOLONG = 61,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERROR_CLIENT_NOT_TRUSTED = 62,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERROR_KDC_NOT_TRUSTED = 63,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERROR_INVALID_SIG = 64,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERR_KEY_TOO_WEAK = 65,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERR_CERTIFICATE_MISMATCH = 66,
+  /* No TGT available to validate USER-TO-USER */
+  SHISHI_KRB_AP_ERR_NO_TGT = 67,
+  /* USER-TO-USER TGT issued different KDC */
+  SHISHI_KDC_ERR_WRONG_REALM = 68,
+  /* Ticket must be for USER-TO-USER */
+  SHISHI_KRB_AP_ERR_USER_TO_USER_REQUIRED = 69,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERR_CANT_VERIFY_CERTIFICATE = 70,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERR_INVALID_CERTIFICATE = 71,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERR_REVOKED_CERTIFICATE = 72,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERR_REVOCATION_STATUS_UNKNOWN = 73,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERR_REVOCATION_STATUS_UNAVAILABLE = 74,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERR_CLIENT_NAME_MISMATCH = 75,
+  /* Reserved for PKINIT */
+  SHISHI_KDC_ERR_KDC_NAME_MISMATCH = 76,
+  SHISHI_LAST_ERROR_CODE = 76
+}
+Shishi_error_code;
 
 typedef enum
 {
@@ -902,18 +1044,84 @@ extern int shishi_krberror_read (Shishi * handle, FILE * fh,
 				 Shishi_asn1 * krberror);
 extern int shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
 				      int filetype, char *filename);
-extern const char *shishi_krberror_errorcode_message (Shishi * handle,
-						      int errorcode);
-extern const char *shishi_krberror_message (Shishi * handle,
-					    Shishi_asn1 krberror);
+extern int shishi_krberror_der (Shishi * handle,
+				Shishi_asn1 krberror,
+				char **out, size_t *outlen);
+extern int shishi_krberror_set_crealm (Shishi * handle,
+				       Shishi_asn1 krberror,
+				       const char *crealm);
+extern int shishi_krberror_remove_crealm (Shishi * handle,
+					  Shishi_asn1 krberror);
+extern int shishi_krberror_set_cname (Shishi * handle,
+				      Shishi_asn1 krberror,
+				      Shishi_name_type name_type,
+				      const char *cname[]);
+extern int shishi_krberror_remove_cname (Shishi * handle,
+					 Shishi_asn1 krberror);
+extern int shishi_krberror_client_set (Shishi * handle,
+				       Shishi_asn1 krberror,
+				       const char *client);
+extern int shishi_krberror_set_realm (Shishi * handle,
+				      Shishi_asn1 krberror,
+				      const char *realm);
+extern int shishi_krberror_set_sname (Shishi * handle,
+				      Shishi_asn1 krberror,
+				      Shishi_name_type name_type,
+				      const char *sname[]);
+extern int shishi_krberror_server_set (Shishi * handle,
+				       Shishi_asn1 krberror,
+				       const char *server);
+extern int shishi_krberror_remove_server (Shishi * handle,
+					  Shishi_asn1 krberror);
+extern int shishi_krberror_ctime_get (Shishi * handle,
+				      Shishi_asn1 krberror, char *ctime);
+extern int shishi_krberror_ctime_set (Shishi * handle,
+				      Shishi_asn1 krberror, char *ctime);
+extern int shishi_krberror_remove_ctime (Shishi * handle,
+					 Shishi_asn1 krberror);
+extern int shishi_krberror_cusec_get (Shishi * handle,
+				      Shishi_asn1 krberror,
+				      int *cusec);
+extern int shishi_krberror_cusec_set (Shishi * handle,
+				      Shishi_asn1 krberror,
+				      int cusec);
+extern int shishi_krberror_remove_cusec (Shishi * handle,
+					 Shishi_asn1 krberror);
+extern int shishi_krberror_stime_get (Shishi * handle,
+				      Shishi_asn1 krberror, char *stime);
+extern int shishi_krberror_stime_set (Shishi * handle,
+				      Shishi_asn1 krberror, char *stime);
+extern int shishi_krberror_susec_get (Shishi * handle,
+				      Shishi_asn1 krberror, int *susec);
+extern int shishi_krberror_susec_set (Shishi * handle,
+				      Shishi_asn1 krberror,
+				      int susec);
+extern int shishi_krberror_errorcode_set (Shishi * handle,
+					  Shishi_asn1 krberror,
+					  int errorcode);
 extern int shishi_krberror_etext (Shishi * handle, Shishi_asn1 krberror,
 				  char *etext, size_t * etextlen);
+extern int shishi_krberror_set_etext (Shishi * handle,
+				      Shishi_asn1 krberror,
+				      const char *etext);
+extern int shishi_krberror_remove_etext (Shishi * handle,
+					 Shishi_asn1 krberror);
+extern int shishi_krberror_set_edata (Shishi * handle,
+				      Shishi_asn1 krberror,
+				      const char *edata);
+extern int shishi_krberror_remove_edata (Shishi * handle,
+					 Shishi_asn1 krberror);
 extern int shishi_krberror_errorcode (Shishi * handle,
-				      Shishi_asn1 krberror, int *errorcode);
+				      Shishi_asn1 krberror,
+				      int *errorcode);
 extern int shishi_krberror_errorcode_fast (Shishi * handle,
 					   Shishi_asn1 krberror);
 extern int shishi_krberror_pretty_print (Shishi * handle,
 					 FILE * fh, Shishi_asn1 krberror);
+extern const char *shishi_krberror_errorcode_message (Shishi * handle,
+						      int errorcode);
+extern const char *shishi_krberror_message (Shishi * handle,
+					    Shishi_asn1 krberror);
 
 /* base64.c */
 extern void shishi_to_base64 (unsigned char *out, const unsigned char *in,
@@ -925,6 +1133,7 @@ extern int shishi_asprintf (char **result, char *format, ...);
 
 /* gztime.c */
 extern const char *shishi_generalize_time (Shishi * handle, time_t t);
+extern const char *shishi_generalize_now (Shishi * handle);
 extern time_t shishi_generalize_ctime (Shishi * handle, const char *t);
 
 /* crypto.c */
@@ -1527,5 +1736,9 @@ extern int shishi_safe_set_user_data (Shishi * handle,
 				      char *userdata, size_t userdatalen);
 extern int shishi_safe_build (Shishi_safe * safe, Shishi_key * key);
 extern int shishi_safe_verify (Shishi_safe * safe, Shishi_key * key);
+
+/* utils.c */
+extern time_t xtime (time_t * t);
+extern int xgettimeofday (struct timeval *tv, struct timezone *tz);
 
 #endif

@@ -153,8 +153,6 @@ struct arguments
   int nlistenspec;
 };
 
-struct arguments arg;
-
 const char *argp_program_version = PACKAGE_STRING;
 const char *argp_program_bug_address = PACKAGE_BUGREPORT;
 
@@ -356,6 +354,68 @@ static struct argp argp = {
   "Shishid -- Key Distribution Center network daemon"
 };
 
+static char *fatal_krberror;
+static size_t *fatal_krberror_len;
+
+static int
+setup_fatal_krberror (Shishi * handle)
+{
+  Shishi_asn1 krberr;
+  int rc;
+
+  krberr = shishi_krberror (handle);
+  if (!krberr)
+    return SHISHI_MALLOC_ERROR;
+
+  rc = shishi_krberror_errorcode_set (handle, krberr,
+				      SHISHI_KRB_ERR_GENERIC);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_ctime (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_cusec (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_crealm (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_cname (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_set_realm (handle, krberr, "");
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_server (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_set_etext (handle, krberr,
+				  "Internal KDC error, contact administrator");
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_edata (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  shishi_krberror_print (handle, stdout, krberr);
+  shishi_krberror_pretty_print (handle, stdout, krberr);
+
+  rc = shishi_krberror_der (handle, krberr, &fatal_krberror,
+			    &fatal_krberror_len);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
 static int
 asreq1 (Shishi * handle, struct arguments arg, Shishi_as * as)
 {
@@ -518,15 +578,15 @@ asreq (Shishi * handle, struct arguments arg,
 static Shishi_msgtype
 get_msgtype (Shishi * handle, char *in, size_t inlen)
 {
-  if (inlen > 1 && *in >= 0x60 && *in <= 0x7F)
+  if (inlen > 1 && *in >= 0x60 && (unsigned char) *in <= 0x7F)
     return *in - 0x60;
   else
     return 0;
 }
 
-static void
-process (Shishi * handle, struct arguments arg,
-	 char *in, int inlen, char **out, int *outlen)
+static int
+process_1 (Shishi * handle, struct arguments arg,
+	   char *in, size_t inlen, char **out, size_t *outlen)
 {
   Shishi_asn1 kdcreq;
   Shishi_msgtype msgtype;
@@ -539,7 +599,7 @@ process (Shishi * handle, struct arguments arg,
 
   switch (msgtype)
     {
-    case SHISHI_MSGTYPE_AS_REQ:
+    case SHISHI_MSGTYPE_AS_REQ+1:
       kdcreq = shishi_der2asn1_asreq (handle, in, inlen);
       if (kdcreq)
 	{
@@ -566,9 +626,45 @@ process (Shishi * handle, struct arguments arg,
       break;
 
     default:
-      /* XXX hard coded KRB-ERROR? Note 0x7F multi-byte msgtypes too. */
-      *out = NULL;
-      *outlen = 0;
+      {
+	Shishi_asn1 krberr;
+	int rc;
+
+	krberr = shishi_krberror (handle);
+	if (!krberr)
+	  return SHISHI_MALLOC_ERROR;
+
+	rc = shishi_krberror_errorcode_set (handle, krberr,
+					    SHISHI_KRB_ERR_GENERIC);
+	if (rc != SHISHI_OK)
+	  return rc;
+
+	shishi_krberror_print (handle, stdout, krberr);
+	shishi_krberror_pretty_print (handle, stdout, krberr);
+
+	rc = shishi_krberror_der (handle, krberr, out, outlen);
+	if (rc != SHISHI_OK)
+	  return rc;
+      }
+      break;
+    }
+}
+
+static void
+process (Shishi * handle, struct arguments arg,
+	 char *in, int inlen, char **out, size_t *outlen)
+{
+  int rc;
+
+  *out = NULL;
+  *outlen = 0;
+
+  rc = process_1 (handle, arg, in, inlen, out, outlen);
+
+  if (rc != SHISHI_OK || *out == NULL || *outlen == 0)
+    {
+      *out = fatal_krberror;
+      *outlen = fatal_krberror_len;
     }
 }
 
@@ -770,7 +866,7 @@ doit (Shishi * handle, struct arguments arg)
 		     && ntohl (*(int *) ls->buf) == ls->bufpos))
 		  {
 		    char *p;
-		    int plen;
+		    size_t plen;
 
 		    process (handle, arg, ls->buf, ls->bufpos, &p, &plen);
 
@@ -791,7 +887,8 @@ doit (Shishi * handle, struct arguments arg)
 				   "short write (%db) writing %d bytes\n",
 				   sent_bytes, plen);
 
-			free (p);
+			if (p != fatal_krberror)
+			  free (p);
 		      }
 
 		    ls->bufpos = 0;
@@ -820,10 +917,39 @@ doit (Shishi * handle, struct arguments arg)
 }
 
 int
+launch (struct arguments *arg)
+{
+  Shishi * handle;
+  int rc;
+
+  rc = shishi_init_server_with_paths (&handle, arg->cfgfile);
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "Aborting due to library initialization failure\n");
+      return 1;
+    }
+
+  rc = setup_fatal_krberror (handle);
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "Fatal error message cannot be allocated\n");
+      return 1;
+    }
+
+  rc = doit (handle, *arg);
+
+  shishi_done (handle);
+
+  return rc;
+}
+
+int
 main (int argc, char *argv[])
 {
   Shishi *handle;
   int rc;
+
+  struct arguments arg;
 
 #ifdef LOG_PERROR
   openlog (PACKAGE, LOG_CONS | LOG_PERROR, LOG_DAEMON);
@@ -833,17 +959,10 @@ main (int argc, char *argv[])
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
-  rc = shishi_init_server_with_paths (&handle, arg.cfgfile);
-  if (rc != SHISHI_OK)
-    {
-      syslog (LOG_ERR, "Aborting due to library initialization failure\n");
-      return 1;
-    }
-
   if (!arg.keyfile)
     arg.keyfile = strdup (KDCKEYFILE);
 
-  rc = doit (handle, arg);
+  rc = launch (&arg);
 
   free (arg.keyfile);
   if (arg.cfgfile)
@@ -851,7 +970,6 @@ main (int argc, char *argv[])
   if (arg.setuid)
     free (arg.setuid);
 
-  shishi_done (handle);
   closelog ();
 
   return rc;

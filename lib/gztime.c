@@ -33,6 +33,14 @@ shishi_generalize_time (Shishi * handle, time_t t)
   return handle->gztime_buf;
 }
 
+const char *
+shishi_generalize_now (Shishi * handle)
+{
+  time_t t = xtime (NULL);
+
+  return shishi_generalize_time (handle, t);
+}
+
 static time_t
 my_timegm (struct tm *tm)
 {
