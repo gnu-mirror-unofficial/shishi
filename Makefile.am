@@ -55,6 +55,7 @@ EXTRA_DIST = config.rpath mkinstalldirs \
 	gdbm/systems.h gdbm/testdbm.c gdbm/testgdbm.c gdbm/testndbm.c \
 	gdbm/update.c gdbm/version.c
 
+.PHONY: ChangeLog
 ChangeLog:
 	cvs2cl --fsf --usermap .cvsusers --separate-header -I \
     "ChangeLog|.cvsignore|.cvsusers|autogen.sh|doc/specification|libstringprep"
