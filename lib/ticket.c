@@ -62,6 +62,29 @@ shishi_ticket_realm_set (Shishi * handle, Shishi_asn1 ticket,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_ticket_server:
+ * @handle: Shishi library handle create by shishi_init().
+ * @kdcreq: ASN.1 Ticket variable to get server name from.
+ * @server: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @serverlen).
+ * @serverlen: pointer to length of @server on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @server).
+ *
+ * Represent server principal name in Ticket as zero-terminated
+ * string.  The string is allocate by this function, and it is the
+ * responsibility of the caller to deallocate it.  Note that the
+ * output length @serverlen does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ticket_server (Shishi * handle, Shishi_asn1 ticket,
+		      char **server, size_t * serverlen)
+{
+  return shishi_principal_name (handle, ticket, "sname", server, serverlen);
+}
+
 int
 shishi_ticket_sname_get (Shishi * handle,
 			 Shishi_asn1 ticket, char *server, size_t * serverlen)

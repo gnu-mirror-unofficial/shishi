@@ -175,6 +175,15 @@ shishi_encticketpart_flags_set (Shishi * handle,
   return SHISHI_OK;
 }
 
+int
+shishi_encticketpart_crealm (Shishi * handle,
+			     Shishi_asn1 encticketpart,
+			     char **crealm, size_t * crealmlen)
+{
+  return shishi_asn1_read2 (handle, encticketpart, "crealm",
+			    crealm, crealmlen);
+}
+
 /**
  * shishi_encticketpart_crealm_set:
  * @handle: shishi handle as allocated by shishi_init().
