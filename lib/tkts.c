@@ -380,7 +380,7 @@ shishi_tkts_from_file (Shishi_tkts * tkts, const char *filename)
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   return SHISHI_OK;
 }
@@ -499,7 +499,7 @@ shishi_tkts_to_file (Shishi_tkts * tkts, const char *filename)
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   return SHISHI_OK;
 }

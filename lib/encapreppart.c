@@ -168,7 +168,7 @@ shishi_encapreppart_to_file (Shishi * handle, Shishi_asn1 encapreppart,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Writing EncAPRepPart to %s...done\n"), filename);
@@ -250,7 +250,7 @@ shishi_encapreppart_from_file (Shishi * handle, Shishi_asn1 * encapreppart,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Reading EncAPRepPart from %s...done\n"), filename);

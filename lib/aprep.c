@@ -164,7 +164,7 @@ shishi_aprep_to_file (Shishi * handle, Shishi_asn1 aprep,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Writing AP-REP to %s...done\n"), filename);
@@ -244,7 +244,7 @@ shishi_aprep_from_file (Shishi * handle, Shishi_asn1 * aprep,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Reading AP-REP from %s...done\n"), filename);

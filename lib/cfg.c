@@ -397,7 +397,7 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
     shishi_error_printf (handle, "Error reading configuration file");
 
   if (fclose (fh) != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   return SHISHI_OK;
 }

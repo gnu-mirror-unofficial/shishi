@@ -242,7 +242,7 @@ shishi_kdcreq_to_file (Shishi * handle, Shishi_asn1 kdcreq,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Writing KDC-REQ to %s...done\n"), filename);
@@ -322,7 +322,7 @@ shishi_kdcreq_from_file (Shishi * handle, Shishi_asn1 * kdcreq,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Reading KDC-REQ from %s...done\n"), filename);

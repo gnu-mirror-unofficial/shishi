@@ -87,24 +87,16 @@ _shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
 {
   char *der;
   size_t derlen;
-  int res;
   size_t i;
+  int res;
 
   res = shishi_asn1_to_der_field (handle, asn1, asn1type, &der, &derlen);
   if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not DER encode %s: %s\n",
-			   asn1type, shishi_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+    return res;
 
   i = fwrite (der, sizeof (der[0]), derlen, fh);
   if (i != derlen)
-    {
-      shishi_error_printf (handle, "Short write to file (wrote %d of %d)\n",
-			   i, derlen);
-      return !SHISHI_OK;
-    }
+    return SHISHI_IO_ERROR;
 
   return SHISHI_OK;
 }
@@ -974,7 +966,7 @@ shishi_key_to_file (Shishi * handle, const char *filename, Shishi_key * key)
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Writing KEY to %s...done\n"), filename);

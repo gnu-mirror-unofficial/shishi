@@ -154,7 +154,7 @@ shishi_krberror_to_file (Shishi * handle, Shishi_asn1 krberror,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Writing KRB-ERROR to %s...done\n"), filename);
@@ -234,7 +234,7 @@ shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Reading KRB-ERROR from %s...done\n"), filename);

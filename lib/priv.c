@@ -392,7 +392,7 @@ shishi_priv_to_file (Shishi * handle, Shishi_asn1 priv,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Writing PRIV to %s...done\n"), filename);
@@ -472,7 +472,7 @@ shishi_priv_from_file (Shishi * handle, Shishi_asn1 * priv,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Reading PRIV from %s...done\n"), filename);

@@ -226,7 +226,7 @@ shishi_apreq_to_file (Shishi * handle, Shishi_asn1 apreq,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Writing AP-REQ to %s...done\n"), filename);
@@ -306,7 +306,7 @@ shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
 
   res = fclose (fh);
   if (res != 0)
-    return SHISHI_FCLOSE_ERROR;
+    return SHISHI_IO_ERROR;
 
   if (VERBOSE (handle))
     printf (_("Reading AP-REQ from %s...done\n"), filename);
