@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.10 (unreleased)
 
+** The TLS support in Shishid now works.
+
 ** All command line interfaces now uses getopt instead of argp.
 
 * Version 0.0.9 (released 2003-12-12)
