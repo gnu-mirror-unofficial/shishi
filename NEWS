@@ -4,7 +4,7 @@ See the end for copying conditions.
 
 * Version 0.0.16 (unreleased)
 
-** Environment variable SHISHI_CONFIG override default system config path.
+** Environment variable SHISHI_CONFIG override default system config filename.
 
 * Version 0.0.15 (released 2004-04-18)
 
