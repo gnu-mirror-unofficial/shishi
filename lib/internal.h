@@ -120,6 +120,7 @@ extern char *_shishi_gettext (const char *str);
 #endif
 
 #include "setenv.h"
+#include "vasprintf.h"
 #include "gettext.h"
 #include "shishi.h"
 
