@@ -410,6 +410,7 @@ shishi_des_cbc_mac (Shishi * handle,
 int
 shishi_arcfour (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
+		const char *iv, char **ivout,
 		const char *in, size_t inlen,
 		char **out)
 {
@@ -417,8 +418,18 @@ shishi_arcfour (Shishi * handle, int decryptp,
 
   *out = xmalloc (inlen);
 
-  arcfour_set_key (&ctx, keylen, key);
+  if (iv)
+    memcpy (&ctx, iv, sizeof (ctx));
+  else
+    arcfour_set_key (&ctx, keylen, key);
+
   arcfour_crypt (&ctx, inlen, *out, in);
+
+  if (ivout)
+    {
+      *ivout = xmalloc (sizeof (ctx));
+      memcpy (*ivout, &ctx, sizeof (ctx));
+    }
 
   return SHISHI_OK;
 }

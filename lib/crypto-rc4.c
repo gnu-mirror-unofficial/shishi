@@ -198,7 +198,7 @@ arcfour_hmac_encrypt (Shishi * handle,
       _shishi_hexprint (K3, 16);
     }
 
-  err = shishi_arcfour (handle, 0, K3, 16, pt, ptlen, &ct);
+  err = shishi_arcfour (handle, 0, K3, 16, iv, ivout, pt, ptlen, &ct);
   if (err)
     goto done;
 
@@ -212,6 +212,10 @@ arcfour_hmac_encrypt (Shishi * handle,
   *out = xmalloc (*outlen);
   memcpy (*out, cksum, 16);
   memcpy (*out + 16, ct, ptlen);
+
+  if (ivoutlen)
+    /* size = sbox[256] + int32_t i + int32_t j */
+    *ivoutlen = 256 + 2*8;
 
   err = SHISHI_OK;
 
@@ -298,7 +302,7 @@ arcfour_hmac_decrypt (Shishi * handle,
       _shishi_hexprint (K3, 16);
     }
 
-  err = shishi_arcfour (handle, 1, K3, 16, in + 16, inlen - 16, &pt);
+  err = shishi_arcfour (handle, 1, K3, 16, iv, ivout, in + 16, inlen - 16, &pt);
   if (err)
     goto done;
 
@@ -326,6 +330,10 @@ arcfour_hmac_decrypt (Shishi * handle,
   *outlen = inlen - 16 - 8;
   *out = xmalloc (*outlen);
   memcpy (*out, pt + 8, inlen - 16 - 8);
+
+  if (ivoutlen)
+    /* size = sbox[256] + int32_t i + int32_t j */
+    *ivoutlen = 256 + 2*8;
 
   err = SHISHI_OK;
 
@@ -490,7 +498,7 @@ arcfour_hmac_string_to_key (Shishi * handle,
 cipherinfo arcfour_hmac_info = {
   SHISHI_ARCFOUR_HMAC,
   "arcfour-hmac",
-  16,
+  1,
   0,
   16,
   16,
@@ -505,7 +513,7 @@ cipherinfo arcfour_hmac_info = {
 cipherinfo arcfour_hmac_exp_info = {
   SHISHI_ARCFOUR_HMAC_EXP,
   "arcfour-hmac-exp",
-  16,
+  1,
   0,
   16,
   16,
