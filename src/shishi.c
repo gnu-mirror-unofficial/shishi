@@ -945,7 +945,7 @@ main (int argc, char *argv[])
 	    shishi_ticket_lastreq_pretty_print (tkt, stdout);
 	  }
 
-	rc = shishi_ticketset_add (shishi_ticketset(handle), tkt);
+	rc = shishi_ticketset_add (shishi_ticketset_default(handle), tkt);
 	if (rc != SHISHI_OK)
 	  printf ("Could not add ticket: %s", shishi_strerror (rc));
       }
@@ -958,7 +958,7 @@ main (int argc, char *argv[])
 	Shishi_ticket *tkt;
 
 	tgt = shishi_ticketset_find_for_clientserver
-	  (shishi_ticketset(handle), shishi_principal_default (handle),
+	  (shishi_ticketset_default(handle), shishi_principal_default (handle),
 	   arg.tgtname);
 	if (tgt == NULL)
 	  {
@@ -1007,7 +1007,7 @@ main (int argc, char *argv[])
 	    shishi_ticket_pretty_print (tkt, stdout);
 	  }
 
-	rc = shishi_ticketset_add (shishi_ticketset(handle), tkt);
+	rc = shishi_ticketset_add (shishi_ticketset_default(handle), tkt);
 	if (rc != SHISHI_OK)
 	  printf ("Could not add ticket: %s", shishi_strerror (rc));
       }
@@ -1018,7 +1018,7 @@ main (int argc, char *argv[])
 	printf (_("Tickets in `%s':\n"),
 		shishi_ticketset_default_file(handle));
 
-      rc = shishi_ticketset_print_for_service (shishi_ticketset(handle),
+      rc = shishi_ticketset_print_for_service (shishi_ticketset_default(handle),
 					       stdout, arg.sname);
       if (rc != SHISHI_OK)
 	fprintf (stderr, "Could not list tickets: %s", shishi_strerror (rc));
@@ -1027,11 +1027,11 @@ main (int argc, char *argv[])
     case COMMAND_DESTROY:
       {
 	int i, removed = 0;
-	for (i = 0; i < shishi_ticketset_size (shishi_ticketset(handle)); i++)
+	for (i = 0; i < shishi_ticketset_size (shishi_ticketset_default(handle)); i++)
 	  {
 	    if (arg.sname &&
 		!shishi_ticket_server_p (shishi_ticketset_get
-					 (shishi_ticketset(handle), i),
+					 (shishi_ticketset_default(handle), i),
 					 arg.sname))
 	      continue;
 
@@ -1039,11 +1039,11 @@ main (int argc, char *argv[])
 	      {
 		printf("Removing ticket:\n");
 		shishi_ticket_pretty_print(shishi_ticketset_get
-					   (shishi_ticketset(handle), i),
+					   (shishi_ticketset_default(handle), i),
 					   stdout);
 	      }
 
-	    rc = shishi_ticketset_remove (shishi_ticketset(handle), i);
+	    rc = shishi_ticketset_remove (shishi_ticketset_default(handle), i);
 	    if (rc != SHISHI_OK)
 	      fprintf (stderr, "Could not destroy ticket %d:\n%s\n", i,
 		       shishi_strerror (rc));
@@ -1088,7 +1088,7 @@ main (int argc, char *argv[])
 	Shishi_ticket *tgt;
 
 	tgt = shishi_ticketset_find_for_clientserver
-	  (shishi_ticketset(handle),
+	  (shishi_ticketset_default(handle),
 	   shishi_principal_default (handle), arg.tgtname);
 	if (tgt == NULL)
 	  arg.command = COMMAND_AS;

@@ -49,7 +49,7 @@ client (Shishi * handle, struct arguments arg)
     }
 
   tkt = shishi_ticketset_get_for_server
-    (shishi_ticketset(handle), arg.sname);
+    (shishi_ticketset_default(handle), arg.sname);
   if (tkt == NULL)
     {
       printf ("Cannot get ticket for server `%s'.\n", arg.sname);
