@@ -20,7 +20,7 @@
 
 CRYPTO_INCLUDES = crypto-null.c crypto-des.c crypto-3des.c crypto-aes.c
 
-EXTRA_DIST = rfc1510.asn1 rfc1510bis.asn1 $(CRYPTO_INCLUDES)
+EXTRA_DIST = kerberos5.asn1 $(CRYPTO_INCLUDES)
 
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = internal.h gettext.h \
@@ -32,7 +32,7 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	ap.c apreq.c aprep.c encapreppart.c safe.c \
 	ticket.c encticketpart.c tkt.c tkts.c \
 	netio.c hostkeys.c key.c crypto.c pkcs5.h pkcs5.c \
-	rfc1510_asn1_tab.c asn1.c \
+	asn1.c kerberos5.c \
 	version.c password.c
 libshishi_la_LIBADD = @LIBTASN1_LIBS@ @LIBGCRYPT_LIBS@ @LIBIDN_LIBS@ \
 	@LTLIBINTL@ -L../gl -lfoo
@@ -50,7 +50,7 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DDMALLOC_FUNC_CHECK \
 	@DEFS@
 
-rfc1510_asn1_tab.c: $(srcdir)/rfc1510.asn1
+kerberos5.c: $(srcdir)/kerberos5.asn1
 	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $^
 
 indent:

@@ -3,6 +3,6 @@
 Makefile
 Makefile.in
 libshishi.la
-rfc1510_asn1_tab.c
+kerberos5.c
 shishi.h
 *.lo
