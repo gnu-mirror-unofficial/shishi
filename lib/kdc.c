@@ -118,7 +118,7 @@ shishi_kdcreq_sendrecv_hint (Shishi * handle,
   size_t realmlen;
   int res;
 
-  res = shishi_new_a2d (handle, kdcreq, &der, &der_len);
+  res = shishi_asn1_to_der (handle, kdcreq, &der, &der_len);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode AS-REQ: %s\n",

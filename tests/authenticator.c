@@ -54,7 +54,7 @@ test (Shishi * handle)
   Shishi_asn1 a;
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
-  char *p;
+  char *p, *buf, *buf2;
   int res;
   size_t n, m;
   int32_t t;
@@ -199,13 +199,12 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_remove_cksum() failed\n");
 
-  /* shishi_a2d */
-  n = sizeof (buffer);
-  res = shishi_a2d (handle, a, buffer, &n);
+  /* shishi_asn1_to_der */
+  res = shishi_asn1_to_der (handle, a, &buf, &n);
   if (res == SHISHI_OK)
-    success ("shishi_a2d() OK\n");
+    success ("shishi_asn1_to_der() OK\n");
   else
-    n = 0, fail ("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_asn1_to_der() failed\n");
 
   /* shishi_authenticator_to_file */
   res = shishi_authenticator_to_file (handle, a, SHISHI_FILETYPE_TEXT,
@@ -239,19 +238,21 @@ test (Shishi * handle)
 	fail ("shishi_authenticator_print() failed\n");
     }
 
-  /* shishi_a2d */
-  m = sizeof (buffer2);
-  res = shishi_a2d (handle, a, buffer2, &m);
+  /* shishi_asn1_to_der */
+  res = shishi_asn1_to_der (handle, a, &buf2, &m);
   if (res == SHISHI_OK)
-    success ("shishi_a2d() OK\n");
+    success ("shishi_asn1_to_der() OK\n");
   else
-    n = 0, fail ("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_asn1_to_der() failed\n");
 
   /* Compare DER encodings of authenticators */
-  if (n > 0 && m > 0 && n == m && memcmp (buffer, buffer2, n) == 0)
+  if (n > 0 && m > 0 && n == m && memcmp (buf, buf2, n) == 0)
     success ("DER comparison OK\n");
   else
     fail ("DER comparison failed\n");
+
+  free (buf);
+  free (buf2);
 
   /* shishi_authenticator_cusec_set */
   res = shishi_authenticator_cusec_set (handle, a, 4711);
@@ -285,26 +286,27 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_ctime() failed\n");
 
-  /* shishi_a2d */
-  n = sizeof (buffer);
-  res = shishi_a2d (handle, a, buffer, &n);
+  /* shishi_asn1_to_der */
+  res = shishi_asn1_to_der (handle, a, &buf, &n);
   if (res == SHISHI_OK)
-    success ("shishi_a2d() OK\n");
+    success ("shishi_asn1_to_der() OK\n");
   else
-    n = 0, fail ("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_asn1_to_der() failed\n");
   if (debug)
     {
       shishi_authenticator_print (handle, stdout, a);
-      hexprint (buffer, n);
+      hexprint (buf, n);
       puts ("");
       hexprint (authenticator, sizeof (authenticator));
       puts ("");
     }
   if (n == sizeof (authenticator) &&
-      n == AUTHENTICATOR_LEN && memcmp (authenticator, buffer, n) == 0)
+      n == AUTHENTICATOR_LEN && memcmp (authenticator, buf, n) == 0)
     success ("DER comparison OK\n");
   else
     fail ("DER comparison failed\n");
+
+  free (buf);
 
   /* shishi_authenticator_clear_authorizationdata */
   res = shishi_authenticator_clear_authorizationdata (handle, a);
@@ -313,26 +315,27 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_clear_authorizationdata() failed\n");
 
-  /* shishi_a2d */
-  n = sizeof (buffer);
-  res = shishi_a2d (handle, a, buffer, &n);
+  /* shishi_asn1_to_der */
+  res = shishi_asn1_to_der (handle, a, &buf, &n);
   if (res == SHISHI_OK)
-    success ("shishi_a2d() OK\n");
+    success ("shishi_asn1_to_der() OK\n");
   else
-    n = 0, fail ("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_asn1_to_der() failed\n");
   if (debug)
     {
       shishi_authenticator_print (handle, stdout, a);
-      hexprint (buffer, n);
+      hexprint (buf, n);
       puts ("");
       hexprint (authenticator2, sizeof (authenticator2));
       puts ("");
     }
   if (n == sizeof (authenticator2) &&
-      n == AUTHENTICATOR2_LEN && memcmp (authenticator2, buffer, n) == 0)
+      n == AUTHENTICATOR2_LEN && memcmp (authenticator2, buf, n) == 0)
     success ("DER comparison OK\n");
   else
     fail ("DER comparison failed\n");
+
+  free (buf);
 
   /* unlink */
   res = unlink ("authenticator.tmp");

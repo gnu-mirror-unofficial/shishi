@@ -190,7 +190,7 @@ shishi_safe_safe_der (Shishi_safe * safe, char **out, size_t * outlen)
 {
   int rc;
 
-  rc = shishi_new_a2d (safe->handle, safe->safe, out, outlen);
+  rc = shishi_asn1_to_der (safe->handle, safe->safe, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 

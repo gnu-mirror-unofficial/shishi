@@ -8,6 +8,11 @@ See the end for copying conditions.
 
 ** Various minor fixes.
 
+** ASN.1 cleanup:
+shishi_new_a2d: RENAMED to shishi_asn1_to_der.
+shishi_a2d_new_field: RENAMED to shishi_asn1_to_der_field.
+shishi_a2d, shishi_a2d_field: REMOVED.
+
 * Version 0.0.17 (released 2004-08-08)
 
 ** Revamp of gnulib compatibility files.

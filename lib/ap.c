@@ -339,7 +339,7 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
   size_t buflen;
   int res;
 
-  res = shishi_a2d_new_field (ap->handle, node, field, &buf, &buflen);
+  res = shishi_asn1_to_der_field (ap->handle, node, field, &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -746,7 +746,7 @@ shishi_ap_req_der (Shishi_ap * ap, char **out, size_t * outlen)
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_new_a2d (ap->handle, ap->apreq, out, outlen);
+  rc = shishi_asn1_to_der (ap->handle, ap->apreq, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -1093,7 +1093,7 @@ shishi_ap_rep_der (Shishi_ap * ap, char **out, size_t * outlen)
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_new_a2d (ap->handle, ap->aprep, out, outlen);
+  rc = shishi_asn1_to_der (ap->handle, ap->aprep, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 

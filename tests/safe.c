@@ -151,12 +151,12 @@ test (Shishi * handle)
 	fail ("shishi_safe_print() failed\n");
     }
 
-  /* shishi_a2d() */
-  res = shishi_new_a2d (handle, asn1safe, &q, &m);
+  /* shishi_asn1_to_der() */
+  res = shishi_asn1_to_der (handle, asn1safe, &q, &m);
   if (res == SHISHI_OK)
-    success ("shishi_a2d() OK\n");
+    success ("shishi_asn1_to_der() OK\n");
   else
-    fail ("shishi_a2d() failed\n");
+    fail ("shishi_asn1_to_der() failed\n");
 
   /* Compare DER encodings of authenticators */
   if (l > 0 && m > 0 && l == m && memcmp (p, q, l) == 0)

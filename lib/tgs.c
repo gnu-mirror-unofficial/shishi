@@ -193,7 +193,7 @@ shishi_tgs_req_der (Shishi_tgs * tgs, char **out, size_t * outlen)
 {
   int rc;
 
-  rc = shishi_new_a2d (tgs->handle, tgs->tgsreq, out, outlen);
+  rc = shishi_asn1_to_der (tgs->handle, tgs->tgsreq, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -350,7 +350,7 @@ shishi_tgs_rep_der (Shishi_tgs * tgs, char **out, size_t * outlen)
 {
   int rc;
 
-  rc = shishi_new_a2d (tgs->handle, tgs->tgsrep, out, outlen);
+  rc = shishi_asn1_to_der (tgs->handle, tgs->tgsrep, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 

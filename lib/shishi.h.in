@@ -1539,16 +1539,12 @@ extern int
 shishi_prompt_password (Shishi * handle, char **s, const char *format, ...);
 
 /* asn1.c */
-extern int shishi_a2d_field (Shishi * handle,
-			     Shishi_asn1 node,
-			     const char *field, char *der, size_t * len);
-extern int shishi_a2d (Shishi * handle, Shishi_asn1 node,
-		       char *der, size_t * len);
-extern int shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
-				 const char *field, char **der, size_t * len);
-extern int shishi_new_a2d (Shishi * handle, Shishi_asn1 node,
-			   char **der, size_t * len);
-extern void shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
+extern int shishi_asn1_number_of_elements (Shishi * handle,
+					   Shishi_asn1 node,
+					   const char *field, size_t * n);
+extern int shishi_asn1_empty_p (Shishi * handle, Shishi_asn1 node,
+				const char *field);
+
 extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 			     const char *field, char *data, size_t * datalen);
 extern int shishi_asn1_read2 (Shishi * handle, Shishi_asn1 node,
@@ -1568,8 +1564,7 @@ extern int shishi_asn1_read_optional (Shishi * handle,
 extern int shishi_asn1_read2_optional (Shishi * handle,
 				       Shishi_asn1 node, const char *field,
 				       char **data, size_t * datalen);
-extern int shishi_asn1_empty_p (Shishi * handle, Shishi_asn1 node,
-				const char *field);
+
 extern int shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 			      const char *field,
 			      const char *data, size_t datalen);
@@ -1581,9 +1576,9 @@ extern int shishi_asn1_write_uint32 (Shishi * handle, Shishi_asn1 node,
 				     const char *field, uint32_t n);
 extern int shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
 					const char *field, uint32_t flags);
-extern int shishi_asn1_number_of_elements (Shishi * handle,
-					   Shishi_asn1 node,
-					   const char *field, size_t * n);
+
+extern void shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
+
 extern Shishi_asn1 shishi_asn1_asreq (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asrep (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_tgsreq (Shishi * handle);
@@ -1600,6 +1595,11 @@ extern Shishi_asn1 shishi_asn1_krberror (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_krbsafe (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_priv (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_encprivpart (Shishi * handle);
+
+extern int shishi_asn1_to_der (Shishi * handle, Shishi_asn1 node,
+			       char **der, size_t * len);
+extern int shishi_asn1_to_der_field (Shishi * handle, Shishi_asn1 node,
+				     const char *field, char **der, size_t * len);
 
 extern Shishi_msgtype shishi_asn1_msgtype (Shishi * handle, Shishi_asn1 node);
 extern Shishi_msgtype shishi_der_msgtype (Shishi * handle,

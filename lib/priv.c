@@ -202,7 +202,7 @@ shishi_priv_priv_der (Shishi_priv * priv, char **out, size_t * outlen)
 {
   int rc;
 
-  rc = shishi_new_a2d (priv->handle, priv->priv, out, outlen);
+  rc = shishi_asn1_to_der (priv->handle, priv->priv, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -281,7 +281,7 @@ shishi_priv_encprivpart_der (Shishi_priv * priv, char **out, size_t * outlen)
 {
   int rc;
 
-  rc = shishi_new_a2d (priv->handle, priv->encprivpart, out, outlen);
+  rc = shishi_asn1_to_der (priv->handle, priv->encprivpart, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -600,7 +600,7 @@ shishi_priv_build (Shishi_priv * priv, Shishi_key * key)
   char *der;
   size_t derlen;
 
-  res = shishi_new_a2d (priv->handle, priv->encprivpart, &der, &derlen);
+  res = shishi_asn1_to_der (priv->handle, priv->encprivpart, &der, &derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (priv->handle,

@@ -399,7 +399,7 @@ shishi_krberror_der (Shishi * handle,
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_new_a2d (handle, krberror, out, outlen);
+  rc = shishi_asn1_to_der (handle, krberror, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 

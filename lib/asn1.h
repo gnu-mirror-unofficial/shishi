@@ -1,5 +1,5 @@
 /* asn1.h --- Utilities to manipulate RFC 1510 ASN.1 types.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -20,7 +20,3 @@
  */
 
 extern int _shishi_asn1_init (Shishi * handle);
-extern Shishi_asn1 _shishi_asn1_read (void);
-extern int shishi_asn1_integer2_field (Shishi * handle,
-				       Shishi_asn1 node, unsigned long *i,
-				       const char *field);

@@ -374,7 +374,7 @@ shishi_apreq_add_authenticator (Shishi * handle,
   char *der;
   size_t derlen;
 
-  res = shishi_new_a2d (handle, authenticator, &der, &derlen);
+  res = shishi_asn1_to_der (handle, authenticator, &der, &derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode authenticator: %s\n",

@@ -51,7 +51,7 @@ _shishi_print_armored_data (Shishi * handle,
 
   asn1_print_structure (fh, asn1, "", ASN1_PRINT_NAME_TYPE_VALUE);
 
-  res = shishi_new_a2d (handle, asn1, &der, &derlen);
+  res = shishi_asn1_to_der (handle, asn1, &der, &derlen);
   if (res != ASN1_SUCCESS)
     {
       shishi_error_printf (handle, "Could not DER encode %s: %s\n",
@@ -92,8 +92,7 @@ _shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
   int res;
   size_t i;
 
-  derlen = sizeof (der);
-  res = shishi_a2d_new_field (handle, asn1, asn1type, &der, &derlen);
+  res = shishi_asn1_to_der_field (handle, asn1, asn1type, &der, &derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode %s: %s\n",

@@ -1285,7 +1285,7 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
   char *data;
   size_t datalen;
 
-  res = shishi_new_a2d (handle, apreq, &data, &datalen);
+  res = shishi_asn1_to_der (handle, apreq, &data, &datalen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode AP-REQ: %s\n",

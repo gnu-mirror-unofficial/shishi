@@ -287,7 +287,7 @@ shishi_aprep_enc_part_add (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_new_a2d (handle, encapreppart, &der, &derlen);
+  res = shishi_asn1_to_der (handle, encapreppart, &der, &derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode authenticator: %s\n",
