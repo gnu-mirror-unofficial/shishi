@@ -400,8 +400,8 @@ shishi_ticketset_print_for_service (Shishi * handle,
 
   if (found)
     {
-      printf (_N("\n%d ticket found.\n", "\n%d tickets found.\n", 
-		 found), found);
+      printf (ngettext("\n%d ticket found.\n", "\n%d tickets found.\n", 
+		       found), found);
     }
   else
     {
