@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -49,4 +49,4 @@ all: index.html
 clean-local:
 	rm -f *.bak scan.stamp tmpl.stamp sgml.stamp *.txt *.sgml \
 		$(PACKAGE)-doc.bottom $(PACKAGE)-doc.top \
-		$(HTML_OBJECTS) $(IMAGES) 
+		$(HTML_OBJECTS) $(IMAGES) style.css
