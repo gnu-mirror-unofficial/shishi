@@ -1045,6 +1045,18 @@ want to check that the version is okay right after program startup.
 
 @include shishi-api-version.texi
 
+The normal way to use the function is to put something similar to the
+following early in your @code{main()}:
+
+@example
+  if (!shishi_check_version (SHISHI_VERSION))
+    @{
+      printf ("shishi_check_version() failed:\n"
+              "Header file incompatible with shared library.\n");
+      exit(1);
+    @}
+@end example
+
 @node Building the source
 @subsection Building the source
 @cindex Compiling your application
