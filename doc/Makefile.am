@@ -86,13 +86,13 @@ shishi.1: $(top_srcdir)/src/shishi.c $(top_builddir)/src/shishi
 
 # Texinfo:
 
-shishi.txt: shishi.texi
+shishi.txt: shishi.texi $(shishi_TEXINFOS)
 	$(MAKEINFO) --no-header $< > $@
 
-shishi.html: shishi.texi
+shishi.html: shishi.texi $(shishi_TEXINFOS)
 	$(MAKEINFO) --html --no-split --number-sections $<
 
-shishi.ps: shishi.texi
+shishi.ps: shishi.texi $(shishi_TEXINFOS)
 
-shishi.pdf: shishi.texi
+shishi.pdf: shishi.texi $(shishi_TEXINFOS)
 	$(TEXI2PDF) $<
