@@ -1711,6 +1711,8 @@ this manual (@pxref{Building the source}), but note that you must use
    gss_release_cred           5.27 Discard a credential handle.
 @end verbatim
 
+@include shishi-api-gss-cred.texi
+
 @node Context-Level Routines
 @section Context-Level Routines
 
@@ -1738,6 +1740,8 @@ this manual (@pxref{Building the source}), but note that you must use
    gss_import_sec_context     5.17 Import a transferred context
 @end verbatim
 
+@include shishi-api-gss-context.texi
+
 @node Per-Message Routines
 @section Per-Message Routines
 
@@ -1760,6 +1764,8 @@ this manual (@pxref{Building the source}), but note that you must use
                                    MIC, and decrypt message content
                                    if necessary.
 @end verbatim
+
+@include shishi-api-gss-msg.texi
 
 @node Name Manipulation
 @section Name Manipulation
@@ -1809,6 +1815,8 @@ this manual (@pxref{Building the source}), but note that you must use
    gss_test_oid_set_member   5.30 Determines whether an object
                                        identifier is a member of a set.
 @end verbatim
+
+@include shishi-api-gss-misc.texi
 
 @c **********************************************************
 @c *******************  Acknowledgements  *******************
