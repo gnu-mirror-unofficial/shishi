@@ -1,5 +1,5 @@
 # Makefile for cipher modules
-# Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+# Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of Libgcrypt.
 #
@@ -19,64 +19,44 @@
 
 # Process this file with automake to produce Makefile.in
 
-
 INCLUDES = -I$(top_srcdir)/src 
 
 noinst_LTLIBRARIES = libcipher.la
 
-#OMIT_DEPENDENCIES = types.h gcrypt.h
+GCRYPT_MODULES = @GCRYPT_CIPHERS@ @GCRYPT_PUBKEY_CIPHERS@ @GCRYPT_DIGESTS@ @GCRYPT_RANDOM@
 
+libcipher_la_DEPENDENCIES = $(GCRYPT_MODULES)
+libcipher_la_LIBADD = $(GCRYPT_MODULES)
+AM_CFLAGS = @GPG_ERROR_CFLAGS@
 
-# The configure script greps the module names from the EXTRA_PROGRAMS line
-EXTRA_PROGRAMS = rndlinux rndunix rndegd rndw32 sha1 sha256 rmd160 md4 md5 tiger crc
+libcipher_la_SOURCES = \
+cipher.c pubkey.c ac.c md.c \
+bithelp.h  \
+primegen.c  \
+random.c random.h \
+rand-internal.h \
+rmd.h
 
-EXTRA_rndlinux_SOURCES = rndlinux.c
-EXTRA_rndunix_SOURCES = rndunix.c
-EXTRA_rndegd_SOURCES = rndegd.c
-EXTRA_rndw32_SOURCES = rndw32.c
-EXTRA_md4_SOURCES = md4.c
-EXTRA_md5_SOURCES = md5.c
-EXTRA_rmd160_SOURCES = rmd160.c
-EXTRA_sha1_SOURCES = sha1.c
-EXTRA_sha256_SOURCES = sha256.c
-EXTRA_tiger_SOURCES = tiger.c
-EXTRA_crc_SOURCES = crc.c
-
-
-libcipher_la_LDFLAGS =
-libcipher_la_SOURCES = cipher.c  \
-		 pubkey.c	\
-		 md.c		\
-		 dynload.c	\
-		 dynload.h	\
-		 bithelp.h	\
-		 des.c		\
-		 des.h		\
-		 rijndael.c     \
-		 twofish.c	\
-		 blowfish.c	\
-		 blowfish.h	\
-		 cast5.c	\
-		 cast5.h	\
-		 arcfour.c arcfour.h \
-		 elgamal.c	\
-		 elgamal.h	\
-		 primegen.c	\
-		 random.h	\
-		 random.c	\
-		 rand-internal.h \
-		 rmd.h		\
-		 dsa.h		\
-		 dsa.c		\
-		 rsa.c rsa.h    \
-		 construct.c
-
-# configure creates the constructor file
-BUILT_SOURCES = construct.c
-DISTCLEANFILES = construct.c
-
-libcipher_la_DEPENDENCIES = @STATIC_CIPHER_OBJS@
-libcipher_la_LIBADD =	    @STATIC_CIPHER_OBJS@
+EXTRA_libcipher_la_SOURCES = \
+arcfour.c \
+blowfish.c \
+cast5.c \
+crc.c \
+des.c \
+dsa.c \
+elgamal.c \
+md4.c \
+md5.c \
+rijndael.c \
+rmd160.c \
+rndegd.c \
+endunix.c \
+rndnw32.c \
+rsa.c \
+sha256.c \
+sha512.c \
+tiger.c \
+twofish.c
 
 # We need to lower the optimization for this module.
 tiger.o: $(srcdir)/tiger.c
@@ -84,7 +64,3 @@ tiger.o: $(srcdir)/tiger.c
 
 tiger.lo: $(srcdir)/tiger.c
 	`echo $(LTCOMPILE) -c $(srcdir)/tiger.c | sed -e 's/-O[2-9s]*/-O1/g' `
-
-
-
-

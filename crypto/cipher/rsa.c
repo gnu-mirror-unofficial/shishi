@@ -31,40 +31,41 @@
 #include "g10lib.h"
 #include "mpi.h"
 #include "cipher.h"
-#include "rsa.h"
 
 
-typedef struct {
-    MPI n;	    /* modulus */
-    MPI e;	    /* exponent */
+typedef struct
+{
+  gcry_mpi_t n;	    /* modulus */
+  gcry_mpi_t e;	    /* exponent */
 } RSA_public_key;
 
 
-typedef struct {
-    MPI n;	    /* public modulus */
-    MPI e;	    /* public exponent */
-    MPI d;	    /* exponent */
-    MPI p;	    /* prime  p. */
-    MPI q;	    /* prime  q. */
-    MPI u;	    /* inverse of p mod q. */
+typedef struct
+{
+  gcry_mpi_t n;	    /* public modulus */
+  gcry_mpi_t e;	    /* public exponent */
+  gcry_mpi_t d;	    /* exponent */
+  gcry_mpi_t p;	    /* prime  p. */
+  gcry_mpi_t q;	    /* prime  q. */
+  gcry_mpi_t u;	    /* inverse of p mod q. */
 } RSA_secret_key;
 
 
-static void test_keys( RSA_secret_key *sk, unsigned nbits );
+static void test_keys (RSA_secret_key *sk, unsigned nbits);
 static void generate (RSA_secret_key *sk,
-                      unsigned int nbits, unsigned long use_e );
-static int  check_secret_key( RSA_secret_key *sk );
-static void public(MPI output, MPI input, RSA_public_key *skey );
-static void secret(MPI output, MPI input, RSA_secret_key *skey );
+                      unsigned int nbits, unsigned long use_e);
+static int  check_secret_key (RSA_secret_key *sk);
+static void public (gcry_mpi_t output, gcry_mpi_t input, RSA_public_key *skey);
+static void secret (gcry_mpi_t output, gcry_mpi_t input, RSA_secret_key *skey);
 
 
 static void
 test_keys( RSA_secret_key *sk, unsigned nbits )
 {
     RSA_public_key pk;
-    MPI test = gcry_mpi_new ( nbits );
-    MPI out1 = gcry_mpi_new ( nbits );
-    MPI out2 = gcry_mpi_new ( nbits );
+    gcry_mpi_t test = gcry_mpi_new ( nbits );
+    gcry_mpi_t out1 = gcry_mpi_new ( nbits );
+    gcry_mpi_t out2 = gcry_mpi_new ( nbits );
 
     pk.n = sk->n;
     pk.e = sk->e;
@@ -87,10 +88,10 @@ test_keys( RSA_secret_key *sk, unsigned nbits )
 /* Callback used by the prime generation to test whether the exponent
    is suitable. Returns 0 if the test has been passed. */
 static int
-check_exponent (void *arg, MPI a)
+check_exponent (void *arg, gcry_mpi_t a)
 {
-  MPI e = arg;
-  MPI tmp;
+  gcry_mpi_t e = arg;
+  gcry_mpi_t tmp;
   int result;
   
   mpi_sub_ui (a, a, 1);
@@ -112,15 +113,15 @@ check_exponent (void *arg, MPI a)
 static void
 generate (RSA_secret_key *sk, unsigned int nbits, unsigned long use_e)
 {
-    MPI p, q; /* the two primes */
-    MPI d;    /* the private key */
-    MPI u;
-    MPI t1, t2;
-    MPI n;    /* the public key */
-    MPI e;    /* the exponent */
-    MPI phi;  /* helper: (p-1)(q-1) */
-    MPI g;
-    MPI f;
+    gcry_mpi_t p, q; /* the two primes */
+    gcry_mpi_t d;    /* the private key */
+    gcry_mpi_t u;
+    gcry_mpi_t t1, t2;
+    gcry_mpi_t n;    /* the public key */
+    gcry_mpi_t e;    /* the exponent */
+    gcry_mpi_t phi;  /* helper: (p-1)(q-1) */
+    gcry_mpi_t g;
+    gcry_mpi_t f;
 
     /* make sure that nbits is even so that we generate p, q of equal size */
     if ( (nbits&1) )
@@ -238,7 +239,7 @@ static int
 check_secret_key( RSA_secret_key *sk )
 {
     int rc;
-    MPI temp = mpi_alloc( mpi_get_nlimbs(sk->p)*2 );
+    gcry_mpi_t temp = mpi_alloc( mpi_get_nlimbs(sk->p)*2 );
 
     mpi_mul(temp, sk->p, sk->q );
     rc = mpi_cmp( temp, sk->n );
@@ -256,10 +257,10 @@ check_secret_key( RSA_secret_key *sk )
  * Where c is OUTPUT, m is INPUT and e,n are elements of PKEY.
  */
 static void
-public(MPI output, MPI input, RSA_public_key *pkey )
+public(gcry_mpi_t output, gcry_mpi_t input, RSA_public_key *pkey )
 {
     if( output == input ) { /* powm doesn't like output and input the same */
-	MPI x = mpi_alloc( mpi_get_nlimbs(input)*2 );
+	gcry_mpi_t x = mpi_alloc( mpi_get_nlimbs(input)*2 );
 	mpi_powm( x, input, pkey->e, pkey->n );
 	mpi_set(output, x);
 	mpi_free(x);
@@ -272,10 +273,10 @@ public(MPI output, MPI input, RSA_public_key *pkey )
 static void
 stronger_key_check ( RSA_secret_key *skey )
 {
-  MPI t = mpi_alloc_secure ( 0 );
-  MPI t1 = mpi_alloc_secure ( 0 );
-  MPI t2 = mpi_alloc_secure ( 0 );
-  MPI phi = mpi_alloc_secure ( 0 );
+  gcry_mpi_t t = mpi_alloc_secure ( 0 );
+  gcry_mpi_t t1 = mpi_alloc_secure ( 0 );
+  gcry_mpi_t t2 = mpi_alloc_secure ( 0 );
+  gcry_mpi_t phi = mpi_alloc_secure ( 0 );
 
   /* check that n == p * q */
   mpi_mul( t, skey->p, skey->q);
@@ -348,14 +349,14 @@ stronger_key_check ( RSA_secret_key *skey )
  * Where m is OUTPUT, c is INPUT and d,n,p,q,u are elements of SKEY.
  */
 static void
-secret(MPI output, MPI input, RSA_secret_key *skey )
+secret(gcry_mpi_t output, gcry_mpi_t input, RSA_secret_key *skey )
 {
-  #if 0
+#if 0
     mpi_powm( output, input, skey->d, skey->n );
-  #else
-    MPI m1   = mpi_alloc_secure( mpi_get_nlimbs(skey->n)+1 );
-    MPI m2   = mpi_alloc_secure( mpi_get_nlimbs(skey->n)+1 );
-    MPI h    = mpi_alloc_secure( mpi_get_nlimbs(skey->n)+1 );
+#else
+    gcry_mpi_t m1   = mpi_alloc_secure( mpi_get_nlimbs(skey->n)+1 );
+    gcry_mpi_t m2   = mpi_alloc_secure( mpi_get_nlimbs(skey->n)+1 );
+    gcry_mpi_t h    = mpi_alloc_secure( mpi_get_nlimbs(skey->n)+1 );
 
     /* m1 = c ^ (d mod (p-1)) mod p */
     mpi_sub_ui( h, skey->p, 1  );
@@ -378,7 +379,7 @@ secret(MPI output, MPI input, RSA_secret_key *skey )
     mpi_free ( h );
     mpi_free ( m1 );
     mpi_free ( m2 );
-  #endif
+#endif
 }
 
 
@@ -387,75 +388,70 @@ secret(MPI output, MPI input, RSA_secret_key *skey )
  **************  interface  ******************
  *********************************************/
 
-int
+gpg_err_code_t
 _gcry_rsa_generate (int algo, unsigned int nbits, unsigned long use_e,
-                    MPI *skey, MPI **retfactors)
+                    gcry_mpi_t *skey, gcry_mpi_t **retfactors)
 {
-    RSA_secret_key sk;
+  RSA_secret_key sk;
 
-    if( !is_RSA(algo) )
-	return GCRYERR_INV_PK_ALGO;
-
-    generate( &sk, nbits, use_e );
-    skey[0] = sk.n;
-    skey[1] = sk.e;
-    skey[2] = sk.d;
-    skey[3] = sk.p;
-    skey[4] = sk.q;
-    skey[5] = sk.u;
-    /* make an empty list of factors */
-    *retfactors = gcry_xcalloc( 1, sizeof **retfactors );
-    return 0;
+  generate (&sk, nbits, use_e);
+  skey[0] = sk.n;
+  skey[1] = sk.e;
+  skey[2] = sk.d;
+  skey[3] = sk.p;
+  skey[4] = sk.q;
+  skey[5] = sk.u;
+  
+  /* make an empty list of factors */
+  *retfactors = gcry_xcalloc( 1, sizeof **retfactors );
+  
+  return GPG_ERR_NO_ERROR;
 }
 
 
-int
-_gcry_rsa_check_secret_key( int algo, MPI *skey )
+gpg_err_code_t
+_gcry_rsa_check_secret_key( int algo, gcry_mpi_t *skey )
 {
-    RSA_secret_key sk;
+  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  RSA_secret_key sk;
 
-    if( !is_RSA(algo) )
-	return GCRYERR_INV_PK_ALGO;
+  sk.n = skey[0];
+  sk.e = skey[1];
+  sk.d = skey[2];
+  sk.p = skey[3];
+  sk.q = skey[4];
+  sk.u = skey[5];
 
-    sk.n = skey[0];
-    sk.e = skey[1];
-    sk.d = skey[2];
-    sk.p = skey[3];
-    sk.q = skey[4];
-    sk.u = skey[5];
-    if( !check_secret_key( &sk ) )
-	return GCRYERR_INV_PK_ALGO;
+  if (! check_secret_key (&sk))
+    err = GPG_ERR_PUBKEY_ALGO;
 
-    return 0;
+  return err;
 }
 
 
-
-int
-_gcry_rsa_encrypt (int algo, MPI *resarr, MPI data, MPI *pkey,
+gpg_err_code_t
+_gcry_rsa_encrypt (int algo, gcry_mpi_t *resarr, gcry_mpi_t data, gcry_mpi_t *pkey,
 		   int flags)
 {
-    RSA_public_key pk;
+  RSA_public_key pk;
 
-    if( algo != 1 && algo != 2 )
-	return GCRYERR_INV_PK_ALGO;
+  pk.n = pkey[0];
+  pk.e = pkey[1];
+  resarr[0] = mpi_alloc (mpi_get_nlimbs (pk.n));
+  public (resarr[0], data, &pk);
 
-    pk.n = pkey[0];
-    pk.e = pkey[1];
-    resarr[0] = mpi_alloc( mpi_get_nlimbs( pk.n ) );
-    public( resarr[0], data, &pk );
-    return 0;
+  return GPG_ERR_NO_ERROR;
 }
 
 /* Perform RSA blinding.  */
-GcryMPI
-_gcry_rsa_blind (MPI x, MPI r, MPI e, MPI n)
+gcry_mpi_t
+_gcry_rsa_blind (gcry_mpi_t x, gcry_mpi_t r, gcry_mpi_t e, gcry_mpi_t n)
 {
   /* A helper.  */
-  GcryMPI a;
+  gcry_mpi_t a;
 
   /* Result.  */
-  GcryMPI y;
+  gcry_mpi_t y;
 
   a = gcry_mpi_snew (gcry_mpi_get_nbits (n));
   y = gcry_mpi_snew (gcry_mpi_get_nbits (n));
@@ -472,10 +468,10 @@ _gcry_rsa_blind (MPI x, MPI r, MPI e, MPI n)
 }
 
 /* Undo RSA blinding.  */
-GcryMPI
-_gcry_rsa_unblind (MPI x, MPI ri, MPI n)
+gcry_mpi_t
+_gcry_rsa_unblind (gcry_mpi_t x, gcry_mpi_t ri, gcry_mpi_t n)
 {
-  GcryMPI y;
+  gcry_mpi_t y;
 
   y = gcry_mpi_snew (gcry_mpi_get_nbits (n));
 
@@ -488,157 +484,143 @@ _gcry_rsa_unblind (MPI x, MPI ri, MPI n)
   return y;
 }
 
-int
-_gcry_rsa_decrypt (int algo, MPI *result, MPI *data, MPI *skey,
+gpg_err_code_t
+_gcry_rsa_decrypt (int algo, gcry_mpi_t *result, gcry_mpi_t *data, gcry_mpi_t *skey,
 		   int flags)
 {
-    RSA_secret_key sk;
-    GcryMPI r = MPI_NULL;	/* Random number needed for
-				   blinding.  */
-    GcryMPI ri = MPI_NULL;	/* Modular multiplicative inverse of
+  RSA_secret_key sk;
+  gcry_mpi_t r = MPI_NULL;	/* Random number needed for blinding.  */
+  gcry_mpi_t ri = MPI_NULL;	/* Modular multiplicative inverse of
 				   r.  */
-    GcryMPI x = MPI_NULL;	/* Data to decrypt.  */
-    GcryMPI y;			/* Result.  */
+  gcry_mpi_t x = MPI_NULL;	/* Data to decrypt.  */
+  gcry_mpi_t y;			/* Result.  */
 
-    if (algo != 1 && algo != 2)
-	return GCRYERR_INV_PK_ALGO;
+  /* Extract private key.  */
+  sk.n = skey[0];
+  sk.e = skey[1];
+  sk.d = skey[2];
+  sk.p = skey[3];
+  sk.q = skey[4];
+  sk.u = skey[5];
 
-    /* Extract private key.  */
-    sk.n = skey[0];
-    sk.e = skey[1];
-    sk.d = skey[2];
-    sk.p = skey[3];
-    sk.q = skey[4];
-    sk.u = skey[5];
+  y = gcry_mpi_snew (gcry_mpi_get_nbits (sk.n));
 
-    y = gcry_mpi_snew (gcry_mpi_get_nbits (sk.n));
+  if (! (flags & PUBKEY_FLAG_NO_BLINDING))
+    {
+      /* Initialize blinding.  */
+      
+      /* First, we need a random number r between 0 and n - 1, which
+	 is relatively prime to n (i.e. it is neither p nor q).  */
+      r = gcry_mpi_snew (gcry_mpi_get_nbits (sk.n));
+      ri = gcry_mpi_snew (gcry_mpi_get_nbits (sk.n));
+      
+      gcry_mpi_randomize (r, gcry_mpi_get_nbits (sk.n),
+			  GCRY_STRONG_RANDOM);
+      gcry_mpi_mod (r, r, sk.n);
 
-    if (! (flags & PUBKEY_FLAG_NO_BLINDING))
-      {
-	/* Initialize blinding.  */
+      /* Actually it should be okay to skip the check for equality
+	 with either p or q here.  */
 
-	/* First, we need a random number r between 0 and n - 1, which
-	   is relatively prime to n (i.e. it is neither p nor q).  */
-	r = gcry_mpi_snew (gcry_mpi_get_nbits (sk.n));
-	ri = gcry_mpi_snew (gcry_mpi_get_nbits (sk.n));
+      /* Calculate inverse of r.  */
+      if (! gcry_mpi_invm (ri, r, sk.n))
+	BUG ();
+    }
 
-	gcry_mpi_randomize (r, gcry_mpi_get_nbits (sk.n),
-			    GCRY_STRONG_RANDOM);
-	gcry_mpi_mod (r, r, sk.n);
+  if (! (flags & PUBKEY_FLAG_NO_BLINDING))
+    /* Do blinding.  */
+    x = _gcry_rsa_blind (data[0], r, sk.e, sk.n);
+  else
+    /* Skip blinding.  */
+    x = data[0];
 
-	/* Actually it should be okay to skip the check for equality
-	   with either p or q here.  */
+  /* Do the encryption.  */
+  secret (y, x, &sk);
 
-	/* Calculate inverse of r.  */
-	if (! gcry_mpi_invm (ri, r, sk.n))
-	  BUG ();
-      }
+  if (! (flags & PUBKEY_FLAG_NO_BLINDING))
+    {
+      /* Undo blinding.  */
+      gcry_mpi_t a = gcry_mpi_copy (y);
+      
+      gcry_mpi_release (y);
+      y = _gcry_rsa_unblind (a, ri, sk.n);
+    }
 
-    if (! (flags & PUBKEY_FLAG_NO_BLINDING))
-      /* Do blinding.  */
-      x = _gcry_rsa_blind (data[0], r, sk.e, sk.n);
-    else
-      /* Skip blinding.  */
-      x = data[0];
+  if (! (flags & PUBKEY_FLAG_NO_BLINDING))
+    {
+      /* Deallocate resources needed for blinding.  */
+      gcry_mpi_release (x);
+      gcry_mpi_release (r);
+      gcry_mpi_release (ri);
+    }
 
-    /* Do the encryption.  */
-    secret (y, x, &sk);
-
-    if (! (flags & PUBKEY_FLAG_NO_BLINDING))
-      {
-	/* Undo blinding.  */
-	GcryMPI a = gcry_mpi_copy (y);
-
-	gcry_mpi_release (y);
-	y = _gcry_rsa_unblind (a, ri, sk.n);
-      }
-
-    if (! (flags & PUBKEY_FLAG_NO_BLINDING))
-      {
-	/* Deallocate resources needed for blinding.  */
-	gcry_mpi_release (x);
-	gcry_mpi_release (r);
-	gcry_mpi_release (ri);
-      }
-
-    /* Copy out result.  */
-    *result = y;
-
-    return 0;
+  /* Copy out result.  */
+  *result = y;
+  
+  return GPG_ERR_NO_ERROR;
 }
 
-int
-_gcry_rsa_sign( int algo, MPI *resarr, MPI data, MPI *skey )
+gpg_err_code_t
+_gcry_rsa_sign (int algo, gcry_mpi_t *resarr, gcry_mpi_t data, gcry_mpi_t *skey)
 {
-    RSA_secret_key sk;
+  RSA_secret_key sk;
+  
+  sk.n = skey[0];
+  sk.e = skey[1];
+  sk.d = skey[2];
+  sk.p = skey[3];
+  sk.q = skey[4];
+  sk.u = skey[5];
+  resarr[0] = mpi_alloc( mpi_get_nlimbs (sk.n));
+  secret (resarr[0], data, &sk);
 
-    if( algo != 1 && algo != 3 )
-	return GCRYERR_INV_PK_ALGO;
-
-    sk.n = skey[0];
-    sk.e = skey[1];
-    sk.d = skey[2];
-    sk.p = skey[3];
-    sk.q = skey[4];
-    sk.u = skey[5];
-    resarr[0] = mpi_alloc( mpi_get_nlimbs( sk.n ) );
-    secret( resarr[0], data, &sk );
-
-    return 0;
+  return GPG_ERR_NO_ERROR;
 }
 
-int
-_gcry_rsa_verify( int algo, MPI hash, MPI *data, MPI *pkey,
-	   int (*cmp)(void *opaque, MPI tmp), void *opaquev )
+gpg_err_code_t
+_gcry_rsa_verify (int algo, gcry_mpi_t hash, gcry_mpi_t *data, gcry_mpi_t *pkey,
+		  int (*cmp) (void *opaque, gcry_mpi_t tmp),
+		  void *opaquev)
 {
-    RSA_public_key pk;
-    MPI result;
-    int rc;
+  RSA_public_key pk;
+  gcry_mpi_t result;
+  gpg_err_code_t rc;
 
-    if( algo != 1 && algo != 3 )
-	return GCRYERR_INV_PK_ALGO;
-    pk.n = pkey[0];
-    pk.e = pkey[1];
-    result = gcry_mpi_new ( 160 );
-    public( result, data[0], &pk );
-    /*rc = (*cmp)( opaquev, result );*/
-    rc = mpi_cmp( result, hash )? GCRYERR_BAD_SIGNATURE:0;
-    gcry_mpi_release (result);
-
-    return rc;
+  pk.n = pkey[0];
+  pk.e = pkey[1];
+  result = gcry_mpi_new ( 160 );
+  public( result, data[0], &pk );
+  /*rc = (*cmp)( opaquev, result );*/
+  rc = mpi_cmp (result, hash) ? GPG_ERR_BAD_SIGNATURE : GPG_ERR_NO_ERROR;
+  gcry_mpi_release (result);
+  
+  return rc;
 }
 
 
 unsigned int
-_gcry_rsa_get_nbits( int algo, MPI *pkey )
+_gcry_rsa_get_nbits (int algo, gcry_mpi_t *pkey)
 {
-    if( !is_RSA(algo) )
-	return 0;
-    return mpi_get_nbits( pkey[0] );
+  return mpi_get_nbits (pkey[0]);
 }
 
+static char *rsa_names[] =
+  {
+    "rsa",
+    "openpgp-rsa",
+    "oid.1.2.840.113549.1.1.1",
+    NULL,
+  };
 
-/****************
- * Return some information about the algorithm.  We need algo here to
- * distinguish different flavors of the algorithm.
- * Returns: A pointer to string describing the algorithm or NULL if
- *	    the ALGO is invalid.
- * Usage: Bit 0 set : allows signing
- *	      1 set : allows encryption
- */
-const char *
-_gcry_rsa_get_info( int algo,
-	      int *npkey, int *nskey, int *nenc, int *nsig, int *r_usage )
-{
-    *npkey = 2;
-    *nskey = 6;
-    *nenc = 1;
-    *nsig = 1;
-
-    switch( algo ) {
-      case 1: *r_usage = GCRY_PK_USAGE_SIGN | GCRY_PK_USAGE_ENCR; return "RSA";
-      case 2: *r_usage = GCRY_PK_USAGE_ENCR; return "RSA-E";
-      case 3: *r_usage = GCRY_PK_USAGE_SIGN; return "RSA-S";
-      default:*r_usage = 0; return NULL;
-    }
-}
+gcry_pubkey_spec_t pubkey_spec_rsa =
+  {
+    "RSA", rsa_names, GCRY_PK_RSA,
+    "ne", "nedpqu", "a", "s", "n",
+    GCRY_PK_USAGE_SIGN | GCRY_PK_USAGE_ENCR,
+    _gcry_rsa_generate,
+    _gcry_rsa_check_secret_key,
+    _gcry_rsa_encrypt,
+    _gcry_rsa_decrypt,
+    _gcry_rsa_sign,
+    _gcry_rsa_verify,
+    _gcry_rsa_get_nbits,
+  };

@@ -1,5 +1,5 @@
 /* mpiutil.ac  -  Utility functions for MPI
- * Copyright (C) 1998, 2000, 2001, 2002 Free Software Foundation, Inc.
+ * Copyright (C) 1998, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
  *
  * This file is part of Libgcrypt.
  *
@@ -35,10 +35,10 @@
  *
  *	  But mpi_alloc is used in a lot of places :-)
  */
-MPI
+gcry_mpi_t
 _gcry_mpi_alloc( unsigned nlimbs )
 {
-    MPI a;
+    gcry_mpi_t a;
 
     a = gcry_xmalloc( sizeof *a );
     a->d = nlimbs? mpi_alloc_limb_space( nlimbs, 0 ) : NULL;
@@ -50,16 +50,16 @@ _gcry_mpi_alloc( unsigned nlimbs )
 }
 
 void
-_gcry_mpi_m_check( MPI a )
+_gcry_mpi_m_check( gcry_mpi_t a )
 {
     _gcry_check_heap(a);
     _gcry_check_heap(a->d);
 }
 
-MPI
+gcry_mpi_t
 _gcry_mpi_alloc_secure( unsigned nlimbs )
 {
-    MPI a;
+    gcry_mpi_t a;
 
     a = gcry_xmalloc( sizeof *a );
     a->d = nlimbs? mpi_alloc_limb_space( nlimbs, 1 ) : NULL;
@@ -76,9 +76,10 @@ mpi_ptr_t
 _gcry_mpi_alloc_limb_space( unsigned nlimbs, int secure )
 {
     size_t len = nlimbs * sizeof(mpi_limb_t);
-    mpi_ptr_t p;
+    mpi_ptr_t p = NULL;
 
-    p = secure? gcry_xmalloc_secure( len ) : gcry_xmalloc( len );
+    if (nlimbs)
+      p = secure? gcry_xmalloc_secure( len ) : gcry_xmalloc( len );
 
     return p;
 }
@@ -93,7 +94,7 @@ _gcry_mpi_free_limb_space( mpi_ptr_t a )
 
 
 void
-_gcry_mpi_assign_limb_space( MPI a, mpi_ptr_t ap, unsigned nlimbs )
+_gcry_mpi_assign_limb_space( gcry_mpi_t a, mpi_ptr_t ap, unsigned nlimbs )
 {
     mpi_free_limb_space(a->d);
     a->d = ap;
@@ -107,24 +108,27 @@ _gcry_mpi_assign_limb_space( MPI a, mpi_ptr_t ap, unsigned nlimbs )
  * (set to 0) [done by gcry_realloc()]
  */
 void
-_gcry_mpi_resize( MPI a, unsigned nlimbs )
+_gcry_mpi_resize (gcry_mpi_t a, unsigned nlimbs)
 {
-    if( nlimbs <= a->alloced )
-	return; /* no need to do it */
-    /* Note: a->secure is not used - instead the realloc functions
-     * take care of it. Maybe we should drop a->secure completely
-     * and rely on a mpi_is_secure function, which would be
-     * a wrapper around gcry_is_secure
-     */
-    if( a->d )
-	a->d = gcry_xrealloc(a->d, nlimbs * sizeof(mpi_limb_t) );
-    else  /* FIXME: It may not be allocted in secure memory */
-	a->d = gcry_xcalloc( nlimbs , sizeof(mpi_limb_t) );
-    a->alloced = nlimbs;
+  if (nlimbs <= a->alloced)
+    return; /* no need to do it */
+
+  if (a->d)
+    a->d = gcry_xrealloc (a->d, nlimbs * sizeof (mpi_limb_t));
+  else
+    {
+      if (a->flags & 1)
+	/* Secure memory is wanted.  */
+	a->d = gcry_xcalloc_secure (nlimbs , sizeof (mpi_limb_t));
+      else
+	/* Standard memory.  */
+	a->d = gcry_xcalloc (nlimbs , sizeof (mpi_limb_t));
+    }
+  a->alloced = nlimbs;
 }
 
 void
-_gcry_mpi_clear( MPI a )
+_gcry_mpi_clear( gcry_mpi_t a )
 {
     a->nlimbs = 0;
     a->flags = 0;
@@ -132,7 +136,7 @@ _gcry_mpi_clear( MPI a )
 
 
 void
-_gcry_mpi_free( MPI a )
+_gcry_mpi_free( gcry_mpi_t a )
 {
     if( !a )
 	return;
@@ -147,7 +151,7 @@ _gcry_mpi_free( MPI a )
 }
 
 static void
-mpi_set_secure( MPI a )
+mpi_set_secure( gcry_mpi_t a )
 {
     mpi_ptr_t ap, bp;
 
@@ -166,8 +170,8 @@ mpi_set_secure( MPI a )
 }
 
 
-MPI
-gcry_mpi_set_opaque( MPI a, void *p, unsigned int nbits )
+gcry_mpi_t
+gcry_mpi_set_opaque( gcry_mpi_t a, void *p, unsigned int nbits )
 {
     if( !a ) {
 	a = mpi_alloc(0);
@@ -189,7 +193,7 @@ gcry_mpi_set_opaque( MPI a, void *p, unsigned int nbits )
 
 
 void *
-gcry_mpi_get_opaque( MPI a, unsigned int *nbits )
+gcry_mpi_get_opaque( gcry_mpi_t a, unsigned int *nbits )
 {
     if( !(a->flags & 4) )
 	log_bug("mpi_get_opaque on normal mpi\n");
@@ -203,11 +207,11 @@ gcry_mpi_get_opaque( MPI a, unsigned int *nbits )
  * Note: This copy function should not interpret the MPI
  *	 but copy it transparently.
  */
-MPI
-_gcry_mpi_copy( MPI a )
+gcry_mpi_t
+_gcry_mpi_copy( gcry_mpi_t a )
 {
     int i;
-    MPI b;
+    gcry_mpi_t b;
 
     if( a && (a->flags & 4) ) {
 	void *p = gcry_is_secure(a->d)? gcry_xmalloc_secure( (a->sign+7)/8 )
@@ -235,10 +239,10 @@ _gcry_mpi_copy( MPI a )
  * a value as large as the one given in the argument and allocates it
  * with the same flags as A.
  */
-MPI
-_gcry_mpi_alloc_like( MPI a )
+gcry_mpi_t
+_gcry_mpi_alloc_like( gcry_mpi_t a )
 {
-    MPI b;
+    gcry_mpi_t b;
 
     if( a && (a->flags & 4) ) {
 	int n = (a->sign+7)/8;
@@ -261,7 +265,7 @@ _gcry_mpi_alloc_like( MPI a )
 
 
 void
-_gcry_mpi_set( MPI w, MPI u)
+_gcry_mpi_set( gcry_mpi_t w, gcry_mpi_t u)
 {
     mpi_ptr_t wp, up;
     mpi_size_t usize = u->nlimbs;
@@ -278,7 +282,7 @@ _gcry_mpi_set( MPI w, MPI u)
 
 
 void
-_gcry_mpi_set_ui( MPI w, unsigned long u)
+_gcry_mpi_set_ui( gcry_mpi_t w, unsigned long u)
 {
     RESIZE_IF_NEEDED(w, 1);
     w->d[0] = u;
@@ -288,10 +292,10 @@ _gcry_mpi_set_ui( MPI w, unsigned long u)
 }
 
 
-MPI
+gcry_mpi_t
 _gcry_mpi_alloc_set_ui( unsigned long u)
 {
-    MPI w = mpi_alloc(1);
+    gcry_mpi_t w = mpi_alloc(1);
     w->d[0] = u;
     w->nlimbs = u? 1:0;
     w->sign = 0;
@@ -300,7 +304,7 @@ _gcry_mpi_alloc_set_ui( unsigned long u)
 
 
 void
-_gcry_mpi_swap( MPI a, MPI b)
+_gcry_mpi_swap( gcry_mpi_t a, gcry_mpi_t b)
 {
     struct gcry_mpi tmp;
 
@@ -308,48 +312,48 @@ _gcry_mpi_swap( MPI a, MPI b)
 }
 
 void
-gcry_mpi_swap( MPI a, MPI b)
+gcry_mpi_swap( gcry_mpi_t a, gcry_mpi_t b)
 {
   _gcry_mpi_swap (a, b);
 }
 
 
-GCRY_MPI
+gcry_mpi_t
 gcry_mpi_new( unsigned int nbits )
 {
     return _gcry_mpi_alloc( (nbits+BITS_PER_MPI_LIMB-1) / BITS_PER_MPI_LIMB );
 }
 
 
-GCRY_MPI
+gcry_mpi_t
 gcry_mpi_snew( unsigned int nbits )
 {
     return _gcry_mpi_alloc_secure( (nbits+BITS_PER_MPI_LIMB-1) / BITS_PER_MPI_LIMB );
 }
 
 void
-gcry_mpi_release( GCRY_MPI a )
+gcry_mpi_release( gcry_mpi_t a )
 {
     _gcry_mpi_free( a );
 }
 
-GCRY_MPI
-gcry_mpi_copy( const GCRY_MPI a )
+gcry_mpi_t
+gcry_mpi_copy( const gcry_mpi_t a )
 {
-    return _gcry_mpi_copy( (GCRY_MPI)a );
+    return _gcry_mpi_copy( (gcry_mpi_t)a );
 }
 
-GCRY_MPI
-gcry_mpi_set( GCRY_MPI w, const GCRY_MPI u )
+gcry_mpi_t
+gcry_mpi_set( gcry_mpi_t w, const gcry_mpi_t u )
 {
     if( !w )
 	w = _gcry_mpi_alloc( mpi_get_nlimbs(u) );
-    _gcry_mpi_set( w, (GCRY_MPI)u );
+    _gcry_mpi_set( w, (gcry_mpi_t)u );
     return w;
 }
 
-GCRY_MPI
-gcry_mpi_set_ui( GCRY_MPI w, unsigned long u )
+gcry_mpi_t
+gcry_mpi_set_ui( gcry_mpi_t w, unsigned long u )
 {
     if( !w )
 	w = _gcry_mpi_alloc(1);
@@ -359,7 +363,7 @@ gcry_mpi_set_ui( GCRY_MPI w, unsigned long u )
 
 
 void
-gcry_mpi_randomize( GCRY_MPI w,
+gcry_mpi_randomize( gcry_mpi_t w,
 		    unsigned int nbits, enum gcry_random_level level )
 {
     char *p = mpi_is_secure(w) ? gcry_random_bytes( (nbits+7)/8, level )
@@ -370,7 +374,7 @@ gcry_mpi_randomize( GCRY_MPI w,
 
 
 void
-gcry_mpi_set_flag( GCRY_MPI a, enum gcry_mpi_flag flag )
+gcry_mpi_set_flag( gcry_mpi_t a, enum gcry_mpi_flag flag )
 {
     switch( flag ) {
       case GCRYMPI_FLAG_SECURE:  mpi_set_secure(a); break;
@@ -380,7 +384,7 @@ gcry_mpi_set_flag( GCRY_MPI a, enum gcry_mpi_flag flag )
 }
 
 void
-gcry_mpi_clear_flag( GCRY_MPI a, enum gcry_mpi_flag flag )
+gcry_mpi_clear_flag( gcry_mpi_t a, enum gcry_mpi_flag flag )
 {
     switch( flag ) {
       case GCRYMPI_FLAG_SECURE:
@@ -390,7 +394,7 @@ gcry_mpi_clear_flag( GCRY_MPI a, enum gcry_mpi_flag flag )
 }
 
 int
-gcry_mpi_get_flag( GCRY_MPI a, enum gcry_mpi_flag flag )
+gcry_mpi_get_flag( gcry_mpi_t a, enum gcry_mpi_flag flag )
 {
     switch( flag ) {
       case GCRYMPI_FLAG_SECURE: return (a->flags & 1);

@@ -1,3 +1,96 @@
+2003-07-02  Moritz Schulte  <moritz@g10code.com>
+
+	* Makefile.am (TESTS): Added: ac.
+
+	* ac.c: New file.
+
+2003-06-18  Werner Koch  <wk@gnupg.org>
+
+	* basic.c (check_cbc_mac_cipher): Adjusted for new API of get_blklen
+	and get_keylen.
+	(check_ctr_cipher): Ditto.
+	(check_one_cipher): Ditto.
+	(check_one_md): Adjusted for new API of gcry_md_copy.
+
+2003-06-18  Moritz Schulte  <moritz@g10code.com>
+
+	* register.c: Replace old type GcryModule with newer one:
+	gcry_module_t.
+	Adjusted for new API.
+
+	* Makefile.am (AM_CFLAGS): Added: @GPG_ERROR_CFLAGS@.
+
+2003-06-15  Moritz Schulte  <moritz@g10code.com>
+
+	* basic.c (get_keys_new): New function.
+	(do_check_one_pubkey): New function ...
+	(check_one_pubkey): ... use it.
+	(progress_handler): New function.
+	(main): Use gcry_set_progress_handler.
+
+2003-06-14  Moritz Schulte  <moritz@g10code.com>
+
+	* basic.c: Replaced calls to gcry_strerror with calls to
+	gpg_strerror.
+	(check_one_md): Adjust for new gcry_md_copy API.
+
+	* tsexp.c: Likewise.
+	* keygen.c: Likewise.
+
+2003-06-12  Moritz Schulte  <moritz@g10code.com>
+
+	* basic.c: Changed here and there, reorganized pubkey checks,
+	added DSA and ELG keys.
+
+2003-06-09  Moritz Schulte  <moritz@g10code.com>
+
+	* basic.c, keygen.c, pubkey.c, register.c, tsexp.c: Changed to use
+	new API.
+	
+2003-06-01  Moritz Schulte  <moritz@g10code.com>
+
+	* tsexp.c (canon_len): Adjust for new gcry_sexp_canon_len API.
+
+2003-05-26  Moritz Schulte  <moritz@g10code.com>
+
+	* basic.c (verify_one_signature): Adjust for libgpg-error.
+	(check_pubkey_sign): Likewise.
+	(check_pubkey): Likewise.
+	* basic.c (check_pubkey_sign): Likewise.
+	* tsexp.c (canon_len): Likewise.
+	(back_and_forth_one): Likewise.
+
+2003-04-27  Moritz Schulte  <moritz@g10code.com>
+
+	* pubkey.c: Changed the sample private key to contain the
+	identifier `openpgp-rsa' instead of `rsa'.
+
+	* basic.c (check_digests): Enabled/fixed some tests for TIGER.
+
+2003-04-17  Moritz Schulte  <moritz@g10code.com>
+
+	* Makefile.am (TESTS): Removed `register' for now.
+
+2003-04-17  Moritz Schulte  <moritz@g10code.com>
+
+	* basic.c (check_digests): Include checks for SHA512 and SHA384.
+
+2003-04-16  Moritz Schulte  <moritz@g10code.com>
+
+	* basic.c (check_one_md): Also test md_copy.
+
+2003-04-07  Moritz Schulte  <moritz@g10code.com>
+
+	* Makefile.am (TESTS): Added register.
+
+	* register.c: New file.
+
+2003-03-30  Simon Josefsson  <jas@extundo.com>
+
+	* basic.c (check_one_cipher): New.  Test CTR.
+	(main): Call it.
+	(check_ciphers): Check CTR mode.
+
 2003-03-26  Moritz Schulte  <moritz@g10code.com>
 
 	* Makefile.am (TESTS): Added pubkey.

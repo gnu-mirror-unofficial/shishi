@@ -1,3 +1,371 @@
+2003-07-02  Moritz Schulte  <moritz@g10code.com>
+
+	* module.c (_gcry_module_lookup): Fixed typo.
+
+	* gcrypt.h: Added all definitions and declarations necessary for
+	the new ac interface.
+
+2003-06-30  Moritz Schulte  <moritz@g10code.com>
+
+	* g10lib.h: Added declarations: _gcry_pk_module_lookup,
+	_gcry_pk_module_release.
+
+2003-06-18  Werner Koch  <wk@gnupg.org>
+
+	* benchmark.c (cipher_bench): Adjusted for new API of get_blklen
+	and get_keylen.
+
+	* gcrypt.h (gcry_cipher_get_algo_blklen)
+	(gcry_cipher_get_algo_keylen): Replaced macro by funcion.
+
+2003-06-18  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.h: Renamed types GcryDigestSpec, GcryCipherSpec and
+	GcryPubkeySpec into: gcry_digest_spec_t, gcry_cipher_spec_t and
+	gcry_pubkey_spec_t.
+	(gcry_pubkey_spec): Defined member `id' as unsigned.
+	(gcry_digest_spec): Likewise.
+	(gcry_cipher_spec): Likewise.
+
+	* module.c (_gcry_module_id_new): New function.
+	(_gcry_module_add): Generate a new ID via _gcry_module_id_new in
+	case `id' is zero.
+
+	* g10lib.h, module.c: Replace old type GcryModule with newer one:
+	gcry_module_t.
+
+	* module.c (_gcry_module_add): Added argument `id', use it.
+
+	* g10lib.h: Added declaration: _gcry_module_lookup_id.
+	(_gcry_module_add): Added argument `id'.
+
+	* module.c (_gcry_module_lookup_id): New function.
+
+	* g10lib.h (struct gcry_module): New member: id.
+
+	* gcrypt.h: New type: gcry_handler_progress_t,
+	gcry_handler_alloc_t, gcry_haandler_secure_check_t,
+	gcry_handler_realloc_t, gcry_handler_free_t,
+	gcry_handler_no_mem_t, gcry_handler_error_t, gcry_handler_log_t.
+	Use new types.
+
+	* cipher.h: Include <gcrypt.h>.
+	New types: gcry_pk_generate_t, gcry_pk_check_secret_key_t,
+	gcry_pk_encrypt_t, gcry_pk_decrypt_t, gcry_pk_sign_t,
+	gcry_pk_verify_t, gcry_pk_get_nbits_t, gcry_md_init_t,
+	gcry_md_write_t, gcry_md_final_t, gcry_md_read_t,
+	gcry_cipher_setkey_t, gcry_cipher_encrypt_t,
+	gcry_cipher_decrypt_t, gcry_cipher_stencrypt_t,
+	gcry_cipher_stdecrypt_t.
+	Use new types.
+
+2003-06-17  Moritz Schulte  <moritz@g10code.com>
+
+	* Makefile.am (AM_CFLAGS): Added: @GPG_ERROR_CFLAGS@.
+
+2003-06-16  Moritz Schulte  <moritz@g10code.com>
+
+	* g10lib.h: Replace last occurences of old type names with newer
+	names (i.e. replace MPI with gcry_mpi_t).
+	* mpi.h: Likewise.
+	* sexp.c: Likewise.
+
+2003-06-15  Moritz Schulte  <moritz@g10code.com>
+
+	* testapi.c (test_genkey): Use gpg_strerror instead of
+	gcry_strerror.
+
+	* global.c (gcry_control): Fixed typo.
+
+	* misc.c (_gcry_fatal_error): Use gpg_strerror instead of
+	gcry_strerror.
+
+	* types.h (STRLIST): Removed type since it is not used.
+
+2003-06-11  Moritz Schulte  <moritz@g10code.com>
+
+	* global.c (global_init): Call: _gcry_cipher_init, _gcry_md_init,
+	_gcry_pk_init.
+
+	* g10lib.h: Declare: _gcry_cipher_init, _gcry_md_init,
+	_gcry_pk_init.
+	
+	* global.c (gcry_strerror): Remove compatibility code.
+
+	* Makefile.am: Remove support libgpg-error special handling.
+	(AM_CPPFLAGS): Add @GPG_ERROR_CFLAGS@
+
+	* gcrypt.h: Likewise.
+
+2003-06-13  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.h (gcry_md_get_algo): Reverted to old API.  This is a
+	convenience function anyway and error checking is not approriate.
+	(gcry_md_is_enabled): New.
+	(gcry_md_is_secure): Replaced macro by function and reverted to old
+	API.
+
+2003-06-11  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.h (GCRYERR): Define _GCRY_ERR_SOURCE_DEFAULT instead of
+	GPG_ERR_SOURCE_DEFAULT, so that libgpg-error still works despite
+	the use of the old gcrypt error codes.
+	(gcry_md_copy): Swapped arguments.
+	
+2003-06-09  Moritz Schulte  <moritz@g10code.com>
+
+	* Makefile.am: Support for libgpg-error.
+
+2003-06-08  Moritz Schulte  <moritz@g10code.com>
+
+	* sexp.c (gcry_sexp_create): Expect sane error values from
+	gcry_sexp_canon_len instead of the `historical' values.
+
+2003-06-07  Moritz Schulte  <moritz@g10code.com>
+
+	* ath.c, ath.c, ath-pth.c, ath-pthread.c, benchmark.c, cipher.h,
+	g10lib.h, gcrypt.h, global.c, misc.c, missing-string.c, module.c,
+	mpi.h, secmem.c, secmem.h, sexp.c, stdmem.c, stdmem.h, testapi.c,
+	types.h: Edited all preprocessor instructions to remove whitespace
+	before the '#'.  This is not required by C89, but there are some
+	compilers out there that don't like it.  Replaced any occurence of
+	the now deprecated type names with the new ones.
+	
+	* gcrypt.h: Re-organized checking for gcc features; New macro:
+	_GCRY_GCC_ATTR_DEPRECATED.
+	Include copy of libgpg-error's gpg-error.h in order to make it
+	easy to build libgcrypt without needing libgpg-error.h.
+
+	(GCRY_MPI, GcryMPI, GCRY_SEXP, GcrySexp, GCRY_CIPHER_HD,
+	GcryCipherHd, GCRY_MD_HD, GcryMDHd): Declared deprecated.
+	(gcry_mpi_t, gcry_sexp_t, gcry_cipher_hd_t, gcry_md_hd_t): New
+	types.
+
+2003-06-04  Moritz Schulte  <moritz@g10code.com>
+
+	* sexp.c (sexp_sscan): New argument: arg_list, adjusted all
+	callers.
+	(ARG_NEXT): New macro.
+	(sexp_sscan): Use ARG_NEXT for receiving format string arguments.
+	(gcry_sexp_build_array): New function.
+
+2003-06-02  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h: Added some comments describing the gcry_sexp_*
+	functions.
+	Include <gpg-error.h> instead of <gpg/error.h>.
+
+2003-06-01  Moritz Schulte  <moritz@g10code.com>
+
+	* sexp.c (OLDPARSECODE): Removed macro...
+	(gcry_sexp_canon_len): ... and do not use it.
+
+	* gcrypt.h (gcry_errno): Removed declaration.
+
+	* g10lib.h (string_to_pubkey_algo, pubkey_algo_to_string,
+	pubkey_nbits): Removed declarations for non-existing functions.
+
+2003-05-31  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.h (is_RSA, is_ELGAMAL): Removed macros.
+
+	* g10lib.h (set_lasterr): Removed macro.
+	(_gcry_set_lasterr): Removed declaration.
+
+	* gcrypt.h: Changed declarations for: gcry_pk_algo_info,
+	gcry_md_open, gcry_md_copy, gcry_md_algo_info, gcry_md_info,
+	gcry_md_get_algo, gcry_random_add_bytes.
+	
+	(gcry_md_is_secure): Adjust macro for new API.
+
+2003-05-29  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h: Changed declarations for: gcry_cipher_open,
+	gcry_cipher_info, gcry_cipher_algo_info.
+	(gcry_cipher_get_algo_keylen): Adjuster for new
+	gcry_cipher_algo_info interface.
+	(gcry_cipher_get_algo_blklen): Likewise.
+
+	* global.c (gcry_errno): Removed function.
+	(gcry_strerror): Do not use gcry_errno.
+	(_gcry_set_lasterr): Removed function.
+	(last_ec): Removed variable.
+
+2003-05-27  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h (enum gcry_cipher_algos): Make Serpent IDs do not
+	conflict with OpenPGP.  Reported by Timo Schulz.
+
+	* global.c (gcry_control): Fixed name of enum list.
+
+2003-05-25  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.h (gcry_cipher_spec): Adjust return type of `setkey' for
+	libgpg-error.
+	(gcry_pubkey_spec): Adjust return type of `generate',
+	`check_secret_key', `encrypt', `decrypt', `sign' and `verify' for
+	libgpg-error.
+
+	* sexp.c (gcry_sexp_canon_len): Adjusted for libgpg-error.
+	(gcry_sexp_create): Likewise.
+	(gcry_sexp_new): Likewise.
+	(sexp_sscan): Likewise.
+	(gcry_sexp_build): Likewise.
+	(gcry_sexp_sscan): Likewise.
+
+	* module.c (_gcry_module_add): Likewise.
+
+	* global.c (last_ec): Change type to gpg_error_t.
+	(gcry_control): Adjust for libgpg-error.
+	(gcry_errno): Likewise.
+	(gcry_strerror): Likewise.
+	(_gcry_set_lasterr): Likewise.
+	(gcry_xmalloc): Likewise.
+	(gcry_xrealloc): Likewise.
+
+2003-05-22  Moritz Schulte  <moritz@g10code.com>
+
+	* types.h: Merged code from GnuPG regarding U64_C.
+
+	* missing-string.c (strsep): Removed function.
+
+	* g10lib.h: Removed declarations: strsep, strlwr.
+
+	* secmem.c (secmem_lock): New variable.
+	(SECMEM_LOCK, SECMEM_UNLOCK): New macros.
+	(_gcry_secmem_set_flags): Use SECMEM_LOCK and SECMEM_UNLOCK.
+	(_gcry_secmem_get_flags): Likewise.
+	(_gcry_secmem_init): Likewie.
+	(_gcry_secmem_malloc): Likewise.
+	(_gcry_secmem_free): Likewise.
+	(_gcry_secmem_malloc): Renamed to ...
+	(_gcry_secmem_malloc_internal): ... this.
+	(_gcry_secmem_malloc): New function, use SECMEM_LOCK,
+	SECMEM_UNLOCK, call _gcry_secmem_malloc_internal.
+	(_gcry_secmem_free): Renamed to ...
+	(_gcry_secmem_free_internal): ... this.
+	(_gcry_secmem_free): New function, use SECMEM_LOCK, SECMEM_UNLOCK,
+	call _gcry_secmem_free_internal.
+	(_gcry_secmem_realloc): Use SECMEM_LOCK, SECMEM_UNLOCK, call
+	_gcry_secmem_malloc_internal and _gcry_secmem_free_internal.
+	(_gcry_private_is_secure): Use SECMEM_LOCK, SECMEM_UNLOCK.
+	(_gcry_secmem_dump_stats): Likewise.
+	(_gcry_secmem_malloc_internal): Removed unused variable:
+	compressed.
+	Include "ath.h".
+
+2003-05-21  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h (GCRY_CIPHER_SERPENT128, GCRY_CIPHER_SERPENT192,
+	GCRY_CIPHER_SERPENT256): New symbols.
+
+2003-05-19  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h: Reversed changes from 2003-03-03 since they would have
+	been an unnecessary ABI break.
+
+2003-05-13  Moritz Schulte  <moritz@g10code.com>
+
+	* secmem.c (stats_update): New function.
+	(BLOCK_HEAD_SIZE): New symbol.
+	(MB_FLAG_ACTIVE): New symbol.
+	(ADDR_TO_BLOCK, BLOCK_VALID): New macros.
+	(mb_get_next): New function.
+	(mb_get_prev): New function.
+	(mb_merge): New function.
+	(mb_get_new): New function.
+	(unused_blocks): Removed variable.
+	(init_pool): Initialize new memory pool.
+	(_gcry_secmem_malloc): Use new heap management code.
+	(_gcry_secmem_free): Likewise.
+	(_gcry_secmem_realloc): Likewise.
+	Renamed type MEMBLOCK to memblock_t.
+
+2003-04-27  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.h (gcry_pubkey_spec): New member: sexp_names.
+
+2003-04-23  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.h (gcry_pubkey_spec): Removed members: npkey, nskey,
+	nenc, nsig.
+	(gcry_pubkey_spec): Added members: elements_pkey, elements_skey,
+	elements_enc, elements_sig, elements_grip.
+
+2003-04-17  Moritz Schulte  <moritz@g10code.com>
+
+	* g10lib.h (GcryModule): New typedef.
+
+	* gcrypt.h (gcry_cipher_register, gcry_cipher_unregister,
+	gcry_digest_register, gcry_digest_unregister,
+	gcry_pubkey_register, gcry_pubkey_unregister): Function
+	declarations removed - for now.
+	
+	* gcrypt.h (GcryModule): Declaration removed.
+	* gcrypt.h (GcryPubkeySpec, GcryDigestSpec, GcryCipherSpec):
+	Types Moved... 
+	* cipher.h: ... here.
+
+2003-04-17  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.h: Declare digest_spec_sha512 and digest_spec_384.
+
+2003-04-16  Moritz Schulte  <moritz@g10code.com>
+
+	* module.c (_gcry_module_use): New function.
+	* g10lib.h (_gcry_module_use): Declare function.
+
+	* libgcrypt-config.in: Support for --algorithms switch, which
+	prints the algorithms included in the built libgcrypt.
+
+	* global.c (gcry_set_progress_handler): Register progress
+	functions depending on the enabled algorithms.
+
+2003-04-07  Moritz Schulte  <moritz@g10code.com>
+
+	* Makefile.am (libgcrypt_la_SOURCES): Added module.c
+
+	* module.c: New file.
+	(_gcry_module_add): New function.
+	(_gcry_module_drop): New function.
+	(_gcry_module_lookup): New function.
+	(_gcry_module_release): New function.
+
+	* g10lib.h (GcryModule): New types.
+	(FLAG_MODULE_DISABLED): New symbol.
+	Added declarations for _gcry_module_add, _gcry_module_release and
+	_gcry_module_lookup.
+
+	* gcrypt.h: New types: GcryPubkeySpec, GcryDigestSpec,
+	GcryCipherSpec.
+	Added declarations for: gcry_cipher_register,
+	gcry_cipher_unregister, gcry_digest_register,
+	gcry_digest_unregister, gcry_pubkey_register and
+	gcry_pubkey_unregister.
+
+	* cipher.h: Removed symbols: CIPHER_ALGO_NONE, CIPHER_ALGO_IDEA,
+	CIPHER_ALGO_3DES, CIPHER_ALGO_CAST5, CIPHER_ALGO_BLOWFISH,
+	CIPHER_ALGO_SAFER_SK128, CIPHER_ALGO_DES_SK, CIPHER_ALGO_TWOFISH,
+	CIPHER_ALGO_TWOFISH_OLD, CIPHER_ALGO_DUMMY, PUBKEY_USAGE_SIG,
+	PUBKEY_USAGE_ENC, DIGEST_ALGO_MD5, DIGEST_ALGO_SHA1,
+	DIGEST_ALGO_RMD160, DIGEST_ALGO_TIGER, PUBKEY_ALGO_RSA,
+	PUBKEY_ALGO_RSA_E, PUBKEY_ALGO_RSA_S, PUBKEY_ALGO_DSA,
+	PUBKEY_ALGO_ELGAMAL, PUBKEY_ALGO_ELGAMAL_E.
+
+2003-04-02  Moritz Schulte  <moritz@g10code.com>
+
+	* benchmark.c (md_bench): Fix error message.
+
+2003-03-31  Moritz Schulte  <moritz@g10code.com>
+
+	* benchmark.c (cipher_bench): Added CTR mode.
+
+2003-03-30  Simon Josefsson  <jas@extundo.com>
+
+	* gcrypt.h (enum gcry_control_cmds): Add GCRY_SET_CTR.
+	(enum gcry_cipher_modes): Add GCRY_CIPHER_MODE_CTR.
+	(gcry_cipher_setctr): New macro to set counter.
+
 2003-03-19  Moritz Schulte  <moritz@g10code.com>
 
 	* cipher.h (PUBKEY_FLAG_NO_BLINDING): New symbol.

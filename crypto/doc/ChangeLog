@@ -1,3 +1,66 @@
+2003-07-02  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.texi: Documented ac interface.
+
+2003-06-18  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.texi: Small fixes.
+
+2003-06-16  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher-ref.sgml: Removed file.
+	* digest-ref.sgml: Likewise.
+	* misc-ref.sgml: Likewise.
+	* pubkey-ref.sgml: Likewise.
+	* reference.sgml: Likewise.
+	* version.sgml.in: Likewise.
+
+2003-06-15  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.texi: Documented several parts of the library, merged
+	some documentation from GPGME's manual, re-structured the whole
+	manual, added more menus.
+
+2003-06-14  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.texi (Hash Functions): Adjusteded description of
+	gcry_md_copy.
+	
+2003-06-12  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.texi (Public Key Functions): Fix example S-Exp, i.e.:
+	added the number of following digits as prefix to the number of
+	bits.
+	(Public Key Functions): Document the general usage of `flags',
+	including the no-blinding flag.
+
+2003-06-11  Werner Koch  <wk@gnupg.org>
+
+	* gcrypt.texi (Hash Functions): Document possible values of HD.
+
+2003-06-09  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.texi (Version Check): Changed description of
+	gcry_check_version; the user now *must* call the function to
+	initialize the library.
+
+2003-06-08  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.texi: Change for libgpg-error.
+
+2003-05-22  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.texi (Public Key Functions): Fixed typo.
+
+2003-05-17  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.texi (Public Key Functions): Mention that only the
+	checking of secret keys is supported currently.
+
+2003-03-30  Simon Josefsson  <jas@extundo.com>
+
+	* gcrypt.texi: Add CTR.
+
 2003-03-22  Simon Josefsson  <jas@extundo.com>
 
 	* gcrypt.texi: Add CBC-MAC.

@@ -36,9 +36,8 @@
 #include <assert.h>
 #include "g10lib.h"
 #include "memory.h"
-#include "dynload.h"
 #include "bithelp.h"
-
+#include "cipher.h"
 
 typedef struct {
     u32  h0,h1,h2,h3,h4;
@@ -49,15 +48,16 @@ typedef struct {
 
 
 static void
-sha1_init( SHA1_CONTEXT *hd )
+sha1_init (void *context)
 {
-    hd->h0 = 0x67452301;
-    hd->h1 = 0xefcdab89;
-    hd->h2 = 0x98badcfe;
-    hd->h3 = 0x10325476;
-    hd->h4 = 0xc3d2e1f0;
-    hd->nblocks = 0;
-    hd->count = 0;
+  SHA1_CONTEXT *hd = (SHA1_CONTEXT *) context;
+  hd->h0 = 0x67452301;
+  hd->h1 = 0xefcdab89;
+  hd->h2 = 0x98badcfe;
+  hd->h3 = 0x10325476;
+  hd->h4 = 0xc3d2e1f0;
+  hd->nblocks = 0;
+  hd->count = 0;
 }
 
 
@@ -77,9 +77,9 @@ transform( SHA1_CONTEXT *hd, byte *data )
     d = hd->h3;
     e = hd->h4;
 
-  #ifdef BIG_ENDIAN_HOST
+#ifdef WORDS_BIGENDIAN
     memcpy( x, data, 64 );
-  #else
+#else
     { int i;
       byte *p2;
       for(i=0, p2=(byte*)x; i < 16; i++, p2 += 4 ) {
@@ -89,7 +89,7 @@ transform( SHA1_CONTEXT *hd, byte *data )
 	p2[0] = *data++;
       }
     }
-  #endif
+#endif
 
 
 #define K1  0x5A827999L
@@ -206,8 +206,9 @@ transform( SHA1_CONTEXT *hd, byte *data )
  * of INBUF with length INLEN.
  */
 static void
-sha1_write( SHA1_CONTEXT *hd, byte *inbuf, size_t inlen)
+sha1_write( void *context, byte *inbuf, size_t inlen)
 {
+  SHA1_CONTEXT *hd = (SHA1_CONTEXT *) context;
     if( hd->count == 64 ) { /* flush the buffer */
 	transform( hd, hd->buf );
         _gcry_burn_stack (88+4*sizeof(void*));
@@ -245,8 +246,9 @@ sha1_write( SHA1_CONTEXT *hd, byte *inbuf, size_t inlen)
  */
 
 static void
-sha1_final(SHA1_CONTEXT *hd)
+sha1_final(void *context)
 {
+  SHA1_CONTEXT *hd = (SHA1_CONTEXT *) context;
     u32 t, msb, lsb;
     byte *p;
 
@@ -291,118 +293,35 @@ sha1_final(SHA1_CONTEXT *hd)
     _gcry_burn_stack (88+4*sizeof(void*));
 
     p = hd->buf;
-  #ifdef BIG_ENDIAN_HOST
-    #define X(a) do { *(u32*)p = hd->h##a ; p += 4; } while(0)
-  #else /* little endian */
-    #define X(a) do { *p++ = hd->h##a >> 24; *p++ = hd->h##a >> 16;	 \
+#ifdef WORDS_BIGENDIAN
+#define X(a) do { *(u32*)p = hd->h##a ; p += 4; } while(0)
+#else /* little endian */
+#define X(a) do { *p++ = hd->h##a >> 24; *p++ = hd->h##a >> 16;	 \
 		      *p++ = hd->h##a >> 8; *p++ = hd->h##a; } while(0)
-  #endif
+#endif
     X(0);
     X(1);
     X(2);
     X(3);
     X(4);
-  #undef X
+#undef X
 
 }
 
 static byte *
-sha1_read( SHA1_CONTEXT *hd )
+sha1_read( void *context )
 {
+  SHA1_CONTEXT *hd = (SHA1_CONTEXT *) context;
     return hd->buf;
 }
 
-/****************
- * Return some information about the algorithm.  We need algo here to
- * distinguish different flavors of the algorithm.
- * Returns: A pointer to string describing the algorithm or NULL if
- *	    the ALGO is invalid.
- */
-static const char *
-sha1_get_info( int algo, size_t *contextsize,
-	       byte **r_asnoid, int *r_asnlen, int *r_mdlen,
-	       void (**r_init)( void *c ),
-	       void (**r_write)( void *c, byte *buf, size_t nbytes ),
-	       void (**r_final)( void *c ),
-	       byte *(**r_read)( void *c )
-	     )
-{
-    static byte asn[15] = /* Object ID is 1.3.14.3.2.26 */
-		    { 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0e, 0x03,
-		      0x02, 0x1a, 0x05, 0x00, 0x04, 0x14 };
-    if( algo != 2 )
-	return NULL;
+static byte asn[15] = /* Object ID is 1.3.14.3.2.26 */
+  { 0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2b, 0x0e, 0x03,
+    0x02, 0x1a, 0x05, 0x00, 0x04, 0x14 };
 
-    *contextsize = sizeof(SHA1_CONTEXT);
-    *r_asnoid = asn;
-    *r_asnlen = DIM(asn);
-    *r_mdlen = 20;
-    *(void  (**)(SHA1_CONTEXT *))r_init 		= sha1_init;
-    *(void  (**)(SHA1_CONTEXT *, byte*, size_t))r_write = sha1_write;
-    *(void  (**)(SHA1_CONTEXT *))r_final		= sha1_final;
-    *(byte *(**)(SHA1_CONTEXT *))r_read 		= sha1_read;
-
-    return "SHA1";
-}
-
-
-
-#ifndef IS_MODULE
-static
-#endif
-const char * const gnupgext_version = "SHA1 ($Revision$)";
-
-static struct {
-    int class;
-    int version;
-    int  value;
-    void (*func)(void);
-} func_table[] = {
-    { 10, 1, 0, (void(*)(void))sha1_get_info },
-    { 11, 1, 2 },
-};
-
-
-#ifndef IS_MODULE
-static
-#endif
-void *
-gnupgext_enum_func( int what, int *sequence, int *class, int *vers )
-{
-    void *ret;
-    int i = *sequence;
-
-    do {
-	if( i >= DIM(func_table) || i < 0 ) {
-	    return NULL;
-	}
-	*class = func_table[i].class;
-	*vers  = func_table[i].version;
-	switch( *class ) {
-	  case 11:
-	  case 21:
-	  case 31:
-	    ret = &func_table[i].value;
-	    break;
-	  default:
-	    ret = func_table[i].func;
-	    break;
-	}
-	i++;
-    } while( what && what != *class );
-
-    *sequence = i;
-    return ret;
-}
-
-
-
-
-#ifndef IS_MODULE
-void
-_gcry_sha1_constructor(void)
-{
-    _gcry_register_internal_cipher_extension( gnupgext_version, gnupgext_enum_func );
-}
-#endif
-
+gcry_digest_spec_t digest_spec_sha1 =
+  {
+    "SHA1", GCRY_MD_SHA1, asn, DIM (asn), 20,
+    sha1_init, sha1_write, sha1_final, sha1_read,
+    sizeof (SHA1_CONTEXT)
+  };

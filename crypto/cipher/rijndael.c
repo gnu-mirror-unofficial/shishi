@@ -40,7 +40,7 @@
 
 #include "types.h"  /* for byte and u32 typedefs */
 #include "g10lib.h"
-#include "dynload.h"
+#include "cipher.h"
 
 #define MAXKC			(256/32)
 #define MAXROUNDS		14
@@ -1710,7 +1710,7 @@ static const u32 rcon[30] = {
 
 /* Perform the key setup.
  */  
-static int
+static gpg_err_code_t
 do_setkey (RIJNDAEL_context *ctx, const byte *key, const unsigned keylen)
 {
     static int initialized = 0;
@@ -1728,7 +1728,7 @@ do_setkey (RIJNDAEL_context *ctx, const byte *key, const unsigned keylen)
             log_error ("%s\n", selftest_failed );
     }
     if( selftest_failed )
-        return GCRYERR_SELFTEST;
+        return GPG_ERR_SELFTEST_FAILED;
 
     if( keylen == 128/8 ) {
         ROUNDS = 10;
@@ -1743,7 +1743,7 @@ do_setkey (RIJNDAEL_context *ctx, const byte *key, const unsigned keylen)
         KC = 8;
     }
     else
-	return GCRYERR_INV_KEYLEN;
+	return GPG_ERR_INV_KEYLEN;
 
     ctx->ROUNDS = ROUNDS;
     ctx->decryption_prepared = 0;
@@ -1751,7 +1751,7 @@ do_setkey (RIJNDAEL_context *ctx, const byte *key, const unsigned keylen)
     for (i = 0; i < keylen; i++) {
         k[i >> 2][i & 3] = key[i]; 
     }
- #define W (ctx->keySched)
+#define W (ctx->keySched)
 
     for (j = KC-1; j >= 0; j--) {
         *((u32*)tk[j]) = *((u32*)k[j]);
@@ -1806,16 +1806,17 @@ do_setkey (RIJNDAEL_context *ctx, const byte *key, const unsigned keylen)
         }
     }		
     
-  #undef W    
+#undef W    
     return 0;
 }
 
-static int
-rijndael_setkey (RIJNDAEL_context *ctx, const byte *key, const unsigned keylen)
+static gpg_err_code_t
+rijndael_setkey (void *context, const byte *key, const unsigned keylen)
 {
-    int rc = do_setkey (ctx, key, keylen);
-    _gcry_burn_stack ( 100 + 16*sizeof(int));
-    return rc;
+  RIJNDAEL_context *ctx = (RIJNDAEL_context *) context;
+  int rc = do_setkey (ctx, key, keylen);
+  _gcry_burn_stack ( 100 + 16*sizeof(int));
+  return rc;
 }
 
 
@@ -1832,7 +1833,7 @@ prepare_decryption( RIJNDAEL_context *ctx )
         *((u32*)ctx->keySched2[r][2]) = *((u32*)ctx->keySched[r][2]);
         *((u32*)ctx->keySched2[r][3]) = *((u32*)ctx->keySched[r][3]);
     }
-  #define W (ctx->keySched2)
+#define W (ctx->keySched2)
     for (r = 1; r < ctx->ROUNDS; r++) {
         w = W[r][0];
         *((u32*)w) = *((u32*)U1[w[0]]) ^ *((u32*)U2[w[1]])
@@ -1850,7 +1851,7 @@ prepare_decryption( RIJNDAEL_context *ctx )
         *((u32*)w) = *((u32*)U1[w[0]]) ^ *((u32*)U2[w[1]])
                    ^ *((u32*)U3[w[2]]) ^ *((u32*)U4[w[3]]);
     }
-  #undef W
+#undef W
 }	
 
 
@@ -1859,87 +1860,94 @@ prepare_decryption( RIJNDAEL_context *ctx )
 static void
 do_encrypt (const RIJNDAEL_context *ctx, byte *b, const byte *a)
 {
+  /* FIXME: Ugly code, replace by straighter implementaion and use
+     optimized assembler for common CPUs. */
+
     int r;
-    byte temp[4][4];
+    union {
+      u32  tempu32[4];  /* Force correct alignment. */
+      byte temp[4][4];
+    } u;
     int ROUNDS = ctx->ROUNDS;
-  #define rk (ctx->keySched)
+#define rk (ctx->keySched)
 
-    *((u32*)temp[0]) = *((u32*)(a   )) ^ *((u32*)rk[0][0]);
-    *((u32*)temp[1]) = *((u32*)(a+ 4)) ^ *((u32*)rk[0][1]);
-    *((u32*)temp[2]) = *((u32*)(a+ 8)) ^ *((u32*)rk[0][2]);
-    *((u32*)temp[3]) = *((u32*)(a+12)) ^ *((u32*)rk[0][3]);
-    *((u32*)(b    )) = *((u32*)T1[temp[0][0]])
-        ^ *((u32*)T2[temp[1][1]])
-        ^ *((u32*)T3[temp[2][2]]) 
-        ^ *((u32*)T4[temp[3][3]]);
-    *((u32*)(b + 4)) = *((u32*)T1[temp[1][0]])
-        ^ *((u32*)T2[temp[2][1]])
-        ^ *((u32*)T3[temp[3][2]]) 
-        ^ *((u32*)T4[temp[0][3]]);
-    *((u32*)(b + 8)) = *((u32*)T1[temp[2][0]])
-        ^ *((u32*)T2[temp[3][1]])
-        ^ *((u32*)T3[temp[0][2]]) 
-        ^ *((u32*)T4[temp[1][3]]);
-    *((u32*)(b +12)) = *((u32*)T1[temp[3][0]])
-        ^ *((u32*)T2[temp[0][1]])
-        ^ *((u32*)T3[temp[1][2]]) 
-        ^ *((u32*)T4[temp[2][3]]);
+    *((u32*)u.temp[0]) = *((u32*)(a   )) ^ *((u32*)rk[0][0]);
+    *((u32*)u.temp[1]) = *((u32*)(a+ 4)) ^ *((u32*)rk[0][1]);
+    *((u32*)u.temp[2]) = *((u32*)(a+ 8)) ^ *((u32*)rk[0][2]);
+    *((u32*)u.temp[3]) = *((u32*)(a+12)) ^ *((u32*)rk[0][3]);
+    *((u32*)(b    )) = *((u32*)T1[u.temp[0][0]])
+        ^ *((u32*)T2[u.temp[1][1]])
+        ^ *((u32*)T3[u.temp[2][2]]) 
+        ^ *((u32*)T4[u.temp[3][3]]);
+    *((u32*)(b + 4)) = *((u32*)T1[u.temp[1][0]])
+        ^ *((u32*)T2[u.temp[2][1]])
+        ^ *((u32*)T3[u.temp[3][2]]) 
+        ^ *((u32*)T4[u.temp[0][3]]);
+    *((u32*)(b + 8)) = *((u32*)T1[u.temp[2][0]])
+        ^ *((u32*)T2[u.temp[3][1]])
+        ^ *((u32*)T3[u.temp[0][2]]) 
+        ^ *((u32*)T4[u.temp[1][3]]);
+    *((u32*)(b +12)) = *((u32*)T1[u.temp[3][0]])
+        ^ *((u32*)T2[u.temp[0][1]])
+        ^ *((u32*)T3[u.temp[1][2]]) 
+        ^ *((u32*)T4[u.temp[2][3]]);
     for (r = 1; r < ROUNDS-1; r++) {
-        *((u32*)temp[0]) = *((u32*)(b   )) ^ *((u32*)rk[r][0]);
-        *((u32*)temp[1]) = *((u32*)(b+ 4)) ^ *((u32*)rk[r][1]);
-        *((u32*)temp[2]) = *((u32*)(b+ 8)) ^ *((u32*)rk[r][2]);
-        *((u32*)temp[3]) = *((u32*)(b+12)) ^ *((u32*)rk[r][3]);
+        *((u32*)u.temp[0]) = *((u32*)(b   )) ^ *((u32*)rk[r][0]);
+        *((u32*)u.temp[1]) = *((u32*)(b+ 4)) ^ *((u32*)rk[r][1]);
+        *((u32*)u.temp[2]) = *((u32*)(b+ 8)) ^ *((u32*)rk[r][2]);
+        *((u32*)u.temp[3]) = *((u32*)(b+12)) ^ *((u32*)rk[r][3]);
 
-        *((u32*)(b    )) = *((u32*)T1[temp[0][0]])
-            ^ *((u32*)T2[temp[1][1]])
-            ^ *((u32*)T3[temp[2][2]]) 
-            ^ *((u32*)T4[temp[3][3]]);
-        *((u32*)(b + 4)) = *((u32*)T1[temp[1][0]])
-            ^ *((u32*)T2[temp[2][1]])
-            ^ *((u32*)T3[temp[3][2]]) 
-            ^ *((u32*)T4[temp[0][3]]);
-        *((u32*)(b + 8)) = *((u32*)T1[temp[2][0]])
-            ^ *((u32*)T2[temp[3][1]])
-            ^ *((u32*)T3[temp[0][2]]) 
-            ^ *((u32*)T4[temp[1][3]]);
-        *((u32*)(b +12)) = *((u32*)T1[temp[3][0]])
-            ^ *((u32*)T2[temp[0][1]])
-            ^ *((u32*)T3[temp[1][2]]) 
-            ^ *((u32*)T4[temp[2][3]]);
+        *((u32*)(b    )) = *((u32*)T1[u.temp[0][0]])
+            ^ *((u32*)T2[u.temp[1][1]])
+            ^ *((u32*)T3[u.temp[2][2]]) 
+            ^ *((u32*)T4[u.temp[3][3]]);
+        *((u32*)(b + 4)) = *((u32*)T1[u.temp[1][0]])
+            ^ *((u32*)T2[u.temp[2][1]])
+            ^ *((u32*)T3[u.temp[3][2]]) 
+            ^ *((u32*)T4[u.temp[0][3]]);
+        *((u32*)(b + 8)) = *((u32*)T1[u.temp[2][0]])
+            ^ *((u32*)T2[u.temp[3][1]])
+            ^ *((u32*)T3[u.temp[0][2]]) 
+            ^ *((u32*)T4[u.temp[1][3]]);
+        *((u32*)(b +12)) = *((u32*)T1[u.temp[3][0]])
+            ^ *((u32*)T2[u.temp[0][1]])
+            ^ *((u32*)T3[u.temp[1][2]]) 
+            ^ *((u32*)T4[u.temp[2][3]]);
     }
     /* last round is special */   
-    *((u32*)temp[0]) = *((u32*)(b   )) ^ *((u32*)rk[ROUNDS-1][0]);
-    *((u32*)temp[1]) = *((u32*)(b+ 4)) ^ *((u32*)rk[ROUNDS-1][1]);
-    *((u32*)temp[2]) = *((u32*)(b+ 8)) ^ *((u32*)rk[ROUNDS-1][2]);
-    *((u32*)temp[3]) = *((u32*)(b+12)) ^ *((u32*)rk[ROUNDS-1][3]);
-    b[ 0] = T1[temp[0][0]][1];
-    b[ 1] = T1[temp[1][1]][1];
-    b[ 2] = T1[temp[2][2]][1];
-    b[ 3] = T1[temp[3][3]][1];
-    b[ 4] = T1[temp[1][0]][1];
-    b[ 5] = T1[temp[2][1]][1];
-    b[ 6] = T1[temp[3][2]][1];
-    b[ 7] = T1[temp[0][3]][1];
-    b[ 8] = T1[temp[2][0]][1];
-    b[ 9] = T1[temp[3][1]][1];
-    b[10] = T1[temp[0][2]][1];
-    b[11] = T1[temp[1][3]][1];
-    b[12] = T1[temp[3][0]][1];
-    b[13] = T1[temp[0][1]][1];
-    b[14] = T1[temp[1][2]][1];
-    b[15] = T1[temp[2][3]][1];
+    *((u32*)u.temp[0]) = *((u32*)(b   )) ^ *((u32*)rk[ROUNDS-1][0]);
+    *((u32*)u.temp[1]) = *((u32*)(b+ 4)) ^ *((u32*)rk[ROUNDS-1][1]);
+    *((u32*)u.temp[2]) = *((u32*)(b+ 8)) ^ *((u32*)rk[ROUNDS-1][2]);
+    *((u32*)u.temp[3]) = *((u32*)(b+12)) ^ *((u32*)rk[ROUNDS-1][3]);
+    b[ 0] = T1[u.temp[0][0]][1];
+    b[ 1] = T1[u.temp[1][1]][1];
+    b[ 2] = T1[u.temp[2][2]][1];
+    b[ 3] = T1[u.temp[3][3]][1];
+    b[ 4] = T1[u.temp[1][0]][1];
+    b[ 5] = T1[u.temp[2][1]][1];
+    b[ 6] = T1[u.temp[3][2]][1];
+    b[ 7] = T1[u.temp[0][3]][1];
+    b[ 8] = T1[u.temp[2][0]][1];
+    b[ 9] = T1[u.temp[3][1]][1];
+    b[10] = T1[u.temp[0][2]][1];
+    b[11] = T1[u.temp[1][3]][1];
+    b[12] = T1[u.temp[3][0]][1];
+    b[13] = T1[u.temp[0][1]][1];
+    b[14] = T1[u.temp[1][2]][1];
+    b[15] = T1[u.temp[2][3]][1];
     *((u32*)(b   )) ^= *((u32*)rk[ROUNDS][0]);
     *((u32*)(b+ 4)) ^= *((u32*)rk[ROUNDS][1]);
     *((u32*)(b+ 8)) ^= *((u32*)rk[ROUNDS][2]);
     *((u32*)(b+12)) ^= *((u32*)rk[ROUNDS][3]);
-  #undef rk
+#undef rk
 }
 
 static void
-rijndael_encrypt (const RIJNDAEL_context *ctx, byte *b, const byte *a)
+rijndael_encrypt (void *context, byte *b, const byte *a)
 {
-    do_encrypt (ctx, b, a);
-    _gcry_burn_stack (16 + 2*sizeof(int));
+  RIJNDAEL_context *ctx = (RIJNDAEL_context *) context;
+  do_encrypt (ctx, b, a);
+  _gcry_burn_stack (16 + 2*sizeof(int));
 }
 
 
@@ -1948,10 +1956,13 @@ rijndael_encrypt (const RIJNDAEL_context *ctx, byte *b, const byte *a)
 static void
 do_decrypt (RIJNDAEL_context *ctx, byte *b, const byte *a)
 {
-  #define rk  (ctx->keySched2)
+#define rk  (ctx->keySched2)
     int ROUNDS = ctx->ROUNDS; 
     int r;
-    byte temp[4][4];
+    union {
+      u32  tempu32[4];  /* Force correct alignment. */
+      byte temp[4][4];
+    } u;
 
     if ( !ctx->decryption_prepared ) {
         prepare_decryption ( ctx );
@@ -1959,82 +1970,83 @@ do_decrypt (RIJNDAEL_context *ctx, byte *b, const byte *a)
         ctx->decryption_prepared = 1;
     }
     
-    *((u32*)temp[0]) = *((u32*)(a   )) ^ *((u32*)rk[ROUNDS][0]);
-    *((u32*)temp[1]) = *((u32*)(a+ 4)) ^ *((u32*)rk[ROUNDS][1]);
-    *((u32*)temp[2]) = *((u32*)(a+ 8)) ^ *((u32*)rk[ROUNDS][2]);
-    *((u32*)temp[3]) = *((u32*)(a+12)) ^ *((u32*)rk[ROUNDS][3]);
+    *((u32*)u.temp[0]) = *((u32*)(a   )) ^ *((u32*)rk[ROUNDS][0]);
+    *((u32*)u.temp[1]) = *((u32*)(a+ 4)) ^ *((u32*)rk[ROUNDS][1]);
+    *((u32*)u.temp[2]) = *((u32*)(a+ 8)) ^ *((u32*)rk[ROUNDS][2]);
+    *((u32*)u.temp[3]) = *((u32*)(a+12)) ^ *((u32*)rk[ROUNDS][3]);
   
-    *((u32*)(b   )) = *((u32*)T5[temp[0][0]])
-        ^ *((u32*)T6[temp[3][1]])
-        ^ *((u32*)T7[temp[2][2]]) 
-        ^ *((u32*)T8[temp[1][3]]);
-    *((u32*)(b+ 4)) = *((u32*)T5[temp[1][0]])
-        ^ *((u32*)T6[temp[0][1]])
-        ^ *((u32*)T7[temp[3][2]]) 
-        ^ *((u32*)T8[temp[2][3]]);
-    *((u32*)(b+ 8)) = *((u32*)T5[temp[2][0]])
-        ^ *((u32*)T6[temp[1][1]])
-        ^ *((u32*)T7[temp[0][2]]) 
-        ^ *((u32*)T8[temp[3][3]]);
-    *((u32*)(b+12)) = *((u32*)T5[temp[3][0]])
-        ^ *((u32*)T6[temp[2][1]])
-        ^ *((u32*)T7[temp[1][2]]) 
-        ^ *((u32*)T8[temp[0][3]]);
+    *((u32*)(b   )) = *((u32*)T5[u.temp[0][0]])
+        ^ *((u32*)T6[u.temp[3][1]])
+        ^ *((u32*)T7[u.temp[2][2]]) 
+        ^ *((u32*)T8[u.temp[1][3]]);
+    *((u32*)(b+ 4)) = *((u32*)T5[u.temp[1][0]])
+        ^ *((u32*)T6[u.temp[0][1]])
+        ^ *((u32*)T7[u.temp[3][2]]) 
+        ^ *((u32*)T8[u.temp[2][3]]);
+    *((u32*)(b+ 8)) = *((u32*)T5[u.temp[2][0]])
+        ^ *((u32*)T6[u.temp[1][1]])
+        ^ *((u32*)T7[u.temp[0][2]]) 
+        ^ *((u32*)T8[u.temp[3][3]]);
+    *((u32*)(b+12)) = *((u32*)T5[u.temp[3][0]])
+        ^ *((u32*)T6[u.temp[2][1]])
+        ^ *((u32*)T7[u.temp[1][2]]) 
+        ^ *((u32*)T8[u.temp[0][3]]);
     for (r = ROUNDS-1; r > 1; r--) {
-		*((u32*)temp[0]) = *((u32*)(b   )) ^ *((u32*)rk[r][0]);
-		*((u32*)temp[1]) = *((u32*)(b+ 4)) ^ *((u32*)rk[r][1]);
-		*((u32*)temp[2]) = *((u32*)(b+ 8)) ^ *((u32*)rk[r][2]);
-		*((u32*)temp[3]) = *((u32*)(b+12)) ^ *((u32*)rk[r][3]);
-		*((u32*)(b   )) = *((u32*)T5[temp[0][0]])
-           ^ *((u32*)T6[temp[3][1]])
-           ^ *((u32*)T7[temp[2][2]]) 
-           ^ *((u32*)T8[temp[1][3]]);
-		*((u32*)(b+ 4)) = *((u32*)T5[temp[1][0]])
-           ^ *((u32*)T6[temp[0][1]])
-           ^ *((u32*)T7[temp[3][2]]) 
-           ^ *((u32*)T8[temp[2][3]]);
-		*((u32*)(b+ 8)) = *((u32*)T5[temp[2][0]])
-           ^ *((u32*)T6[temp[1][1]])
-           ^ *((u32*)T7[temp[0][2]]) 
-           ^ *((u32*)T8[temp[3][3]]);
-		*((u32*)(b+12)) = *((u32*)T5[temp[3][0]])
-           ^ *((u32*)T6[temp[2][1]])
-           ^ *((u32*)T7[temp[1][2]]) 
-           ^ *((u32*)T8[temp[0][3]]);
+		*((u32*)u.temp[0]) = *((u32*)(b   )) ^ *((u32*)rk[r][0]);
+		*((u32*)u.temp[1]) = *((u32*)(b+ 4)) ^ *((u32*)rk[r][1]);
+		*((u32*)u.temp[2]) = *((u32*)(b+ 8)) ^ *((u32*)rk[r][2]);
+		*((u32*)u.temp[3]) = *((u32*)(b+12)) ^ *((u32*)rk[r][3]);
+		*((u32*)(b   )) = *((u32*)T5[u.temp[0][0]])
+           ^ *((u32*)T6[u.temp[3][1]])
+           ^ *((u32*)T7[u.temp[2][2]]) 
+           ^ *((u32*)T8[u.temp[1][3]]);
+		*((u32*)(b+ 4)) = *((u32*)T5[u.temp[1][0]])
+           ^ *((u32*)T6[u.temp[0][1]])
+           ^ *((u32*)T7[u.temp[3][2]]) 
+           ^ *((u32*)T8[u.temp[2][3]]);
+		*((u32*)(b+ 8)) = *((u32*)T5[u.temp[2][0]])
+           ^ *((u32*)T6[u.temp[1][1]])
+           ^ *((u32*)T7[u.temp[0][2]]) 
+           ^ *((u32*)T8[u.temp[3][3]]);
+		*((u32*)(b+12)) = *((u32*)T5[u.temp[3][0]])
+           ^ *((u32*)T6[u.temp[2][1]])
+           ^ *((u32*)T7[u.temp[1][2]]) 
+           ^ *((u32*)T8[u.temp[0][3]]);
 	}
 	/* last round is special */   
-	*((u32*)temp[0]) = *((u32*)(b   )) ^ *((u32*)rk[1][0]);
-	*((u32*)temp[1]) = *((u32*)(b+ 4)) ^ *((u32*)rk[1][1]);
-	*((u32*)temp[2]) = *((u32*)(b+ 8)) ^ *((u32*)rk[1][2]);
-	*((u32*)temp[3]) = *((u32*)(b+12)) ^ *((u32*)rk[1][3]);
-	b[ 0] = S5[temp[0][0]];
-	b[ 1] = S5[temp[3][1]];
-	b[ 2] = S5[temp[2][2]];
-	b[ 3] = S5[temp[1][3]];
-	b[ 4] = S5[temp[1][0]];
-	b[ 5] = S5[temp[0][1]];
-	b[ 6] = S5[temp[3][2]];
-	b[ 7] = S5[temp[2][3]];
-	b[ 8] = S5[temp[2][0]];
-	b[ 9] = S5[temp[1][1]];
-	b[10] = S5[temp[0][2]];
-	b[11] = S5[temp[3][3]];
-	b[12] = S5[temp[3][0]];
-	b[13] = S5[temp[2][1]];
-	b[14] = S5[temp[1][2]];
-	b[15] = S5[temp[0][3]];
+	*((u32*)u.temp[0]) = *((u32*)(b   )) ^ *((u32*)rk[1][0]);
+	*((u32*)u.temp[1]) = *((u32*)(b+ 4)) ^ *((u32*)rk[1][1]);
+	*((u32*)u.temp[2]) = *((u32*)(b+ 8)) ^ *((u32*)rk[1][2]);
+	*((u32*)u.temp[3]) = *((u32*)(b+12)) ^ *((u32*)rk[1][3]);
+	b[ 0] = S5[u.temp[0][0]];
+	b[ 1] = S5[u.temp[3][1]];
+	b[ 2] = S5[u.temp[2][2]];
+	b[ 3] = S5[u.temp[1][3]];
+	b[ 4] = S5[u.temp[1][0]];
+	b[ 5] = S5[u.temp[0][1]];
+	b[ 6] = S5[u.temp[3][2]];
+	b[ 7] = S5[u.temp[2][3]];
+	b[ 8] = S5[u.temp[2][0]];
+	b[ 9] = S5[u.temp[1][1]];
+	b[10] = S5[u.temp[0][2]];
+	b[11] = S5[u.temp[3][3]];
+	b[12] = S5[u.temp[3][0]];
+	b[13] = S5[u.temp[2][1]];
+	b[14] = S5[u.temp[1][2]];
+	b[15] = S5[u.temp[0][3]];
 	*((u32*)(b   )) ^= *((u32*)rk[0][0]);
 	*((u32*)(b+ 4)) ^= *((u32*)rk[0][1]);
 	*((u32*)(b+ 8)) ^= *((u32*)rk[0][2]);
 	*((u32*)(b+12)) ^= *((u32*)rk[0][3]);
-  #undef rk
+#undef rk
 }
 
 static void
-rijndael_decrypt (RIJNDAEL_context *ctx, byte *b, const byte *a)
+rijndael_decrypt (void *context, byte *b, const byte *a)
 {
-    do_decrypt (ctx, b, a);
-    _gcry_burn_stack (16+2*sizeof(int));
+  RIJNDAEL_context *ctx = (RIJNDAEL_context *) context;
+  do_decrypt (ctx, b, a);
+  _gcry_burn_stack (16+2*sizeof(int));
 }
 
 /* Test a single encryption and decryption with each key size. */
@@ -2048,11 +2060,11 @@ selftest (void)
     /* The test vectors are from the AES supplied ones; more or less 
      * randomly taken from ecb_tbl.txt (I=42,81,14)
      */
-    static const byte plaintext[16] = {
+    static byte plaintext[16] = {
        0x01,0x4B,0xAF,0x22,0x78,0xA6,0x9D,0x33,
        0x1D,0x51,0x80,0x10,0x36,0x43,0xE9,0x9A
     };
-    static const byte key[16] = {
+    static byte key[16] = {
         0xE8,0xE9,0xEA,0xEB,0xED,0xEE,0xEF,0xF0,
         0xF2,0xF3,0xF4,0xF5,0xF7,0xF8,0xF9,0xFA
     };
@@ -2061,11 +2073,11 @@ selftest (void)
         0xCD,0x9A,0x78,0xAB,0x09,0xA5,0x11,0xBD
     };
 
-    static const byte plaintext_192[16] = {
+    static byte plaintext_192[16] = {
         0x76,0x77,0x74,0x75,0xF1,0xF2,0xF3,0xF4,
         0xF8,0xF9,0xE6,0xE7,0x77,0x70,0x71,0x72
     };
-    static const byte key_192[24] = {
+    static byte key_192[24] = {
         0x04,0x05,0x06,0x07,0x09,0x0A,0x0B,0x0C,
         0x0E,0x0F,0x10,0x11,0x13,0x14,0x15,0x16,
         0x18,0x19,0x1A,0x1B,0x1D,0x1E,0x1F,0x20
@@ -2075,11 +2087,11 @@ selftest (void)
         0x12,0x13,0x1A,0xC7,0xC5,0x47,0x88,0xAA
     };
     
-    static const byte plaintext_256[16] = {
+    static byte plaintext_256[16] = {
         0x06,0x9A,0x00,0x7F,0xC7,0x6A,0x45,0x9F,
         0x98,0xBA,0xF9,0x17,0xFE,0xDF,0x95,0x21
     };
-    static const byte key_256[32] = {
+    static byte key_256[32] = {
         0x08,0x09,0x0A,0x0B,0x0D,0x0E,0x0F,0x10,
         0x12,0x13,0x14,0x15,0x17,0x18,0x19,0x1A,
         0x1C,0x1D,0x1E,0x1F,0x21,0x22,0x23,0x24,
@@ -2116,97 +2128,23 @@ selftest (void)
     
     return NULL;
 }
+
 
-#ifdef IS_MODULE
-static
-#endif
-       const char *
-_gcry_rijndael_get_info (int algo, size_t *keylen,
-		  size_t *blocksize, size_t *contextsize,
-		  int  (**r_setkey) (void *c, byte *key, unsigned keylen),
-		  void (**r_encrypt) (void *c, byte *outbuf, byte *inbuf),
-		  void (**r_decrypt) (void *c, byte *outbuf, byte *inbuf)
-		 )
-{
-    *keylen = algo==7? 128 :  algo==8? 192 : 256;
-    *blocksize = 16;
-    *contextsize = sizeof (RIJNDAEL_context);
 
-    *(int  (**)(RIJNDAEL_context*, const byte*, const unsigned))r_setkey
-							= rijndael_setkey;
-    *(void (**)(const RIJNDAEL_context*, byte*, const byte*))r_encrypt
-							= rijndael_encrypt;
-    *(void (**)(RIJNDAEL_context*, byte*, const byte*))r_decrypt
-							= rijndael_decrypt;
+gcry_cipher_spec_t cipher_spec_aes =
+  {
+    "AES", GCRY_CIPHER_AES, 16, 128, sizeof (RIJNDAEL_context),
+    rijndael_setkey, rijndael_encrypt, rijndael_decrypt,
+  };
 
-    if( algo == 7 )
-	return "AES";
-    if (algo == 8)
-        return "AES192";
-    if (algo == 9)
-        return "AES256";
-    return NULL;
-}
+gcry_cipher_spec_t cipher_spec_aes192 =
+  {
+    "AES192", GCRY_CIPHER_AES192, 16, 192, sizeof (RIJNDAEL_context),
+    rijndael_setkey, rijndael_encrypt, rijndael_decrypt,
+  };
 
-
-#ifdef IS_MODULE
-const char * const gnupgext_version = "RIJNDAEL ($Revision$)";
-
-static struct {
-    int class;
-    int version;
-    int  value;
-    void (*func)(void);
-} func_table[] = {
-    { 20, 1, 0, (void(*)(void))_gcry_rijndael_get_info },
-    { 21, 1, 7  },
-    { 21, 1, 8  },
-    { 21, 1, 9  },
-};
-
-
-
-/****************
- * Enumerate the names of the functions together with information about
- * this function. Set sequence to an integer with a initial value of 0 and
- * do not change it.
- * If what is 0 all kind of functions are returned.
- * Return values: class := class of function:
- *			   10 = message digest algorithm info function
- *			   11 = integer with available md algorithms
- *			   20 = cipher algorithm info function
- *			   21 = integer with available cipher algorithms
- *			   30 = public key algorithm info function
- *			   31 = integer with available pubkey algorithms
- *		  version = interface version of the function/pointer
- *			    (currently this is 1 for all functions)
- */
-void *
-gnupgext_enum_func ( int what, int *sequence, int *class, int *vers )
-{
-    void *ret;
-    int i = *sequence;
-
-    do {
-	if ( i >= DIM(func_table) || i < 0 ) {
-	    return NULL;
-	}
-	*class = func_table[i].class;
-	*vers  = func_table[i].version;
-	switch( *class ) {
-	  case 11:
-	  case 21:
-	  case 31:
-	    ret = &func_table[i].value;
-	    break;
-	  default:
-	    ret = func_table[i].func;
-	    break;
-	}
-	i++;
-    } while ( what && what != *class );
-
-    *sequence = i;
-    return ret;
-}
-#endif
+gcry_cipher_spec_t cipher_spec_aes256 =
+  {
+    "AES256", GCRY_CIPHER_AES256, 16, 256, sizeof (RIJNDAEL_context),
+    rijndael_setkey, rijndael_encrypt, rijndael_decrypt,
+  };

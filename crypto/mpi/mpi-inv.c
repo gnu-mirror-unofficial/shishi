@@ -1,5 +1,5 @@
 /* mpi-inv.c  -  MPI functions
- *	Copyright (C) 1998, 2001, 2002 Free Software Foundation, Inc.
+ *	Copyright (C) 1998, 2001, 2002, 2003 Free Software Foundation, Inc.
  *
  * This file is part of Libgcrypt.
  *
@@ -30,11 +30,11 @@
  *		1 = (a*x) mod n
  */
 void
-_gcry_mpi_invm( MPI x, MPI a, MPI n )
+_gcry_mpi_invm( gcry_mpi_t x, gcry_mpi_t a, gcry_mpi_t n )
 {
-  #if 0
-    MPI u, v, u1, u2, u3, v1, v2, v3, q, t1, t2, t3;
-    MPI ta, tb, tc;
+#if 0
+    gcry_mpi_t u, v, u1, u2, u3, v1, v2, v3, q, t1, t2, t3;
+    gcry_mpi_t ta, tb, tc;
 
     u = mpi_copy(a);
     v = mpi_copy(n);
@@ -76,12 +76,12 @@ _gcry_mpi_invm( MPI x, MPI a, MPI n )
     mpi_free(t3);
     mpi_free(u);
     mpi_free(v);
-  #elif 0
+#elif 0
     /* Extended Euclid's algorithm (See TAOCP Vol II, 4.5.2, Alg X)
      * modified according to Michael Penk's solution for Exercise 35 */
 
     /* FIXME: we can simplify this in most cases (see Knuth) */
-    MPI u, v, u1, u2, u3, v1, v2, v3, t1, t2, t3;
+    gcry_mpi_t u, v, u1, u2, u3, v1, v2, v3, t1, t2, t3;
     unsigned k;
     int sign;
 
@@ -157,11 +157,11 @@ _gcry_mpi_invm( MPI x, MPI a, MPI n )
     mpi_free(t1);
     mpi_free(t2);
     mpi_free(t3);
-  #else
+#else
     /* Extended Euclid's algorithm (See TAOCP Vol II, 4.5.2, Alg X)
      * modified according to Michael Penk's solution for Exercise 35
      * with further enhancement */
-    MPI u, v, u1, u2=NULL, u3, v1, v2=NULL, v3, t1, t2=NULL, t3;
+    gcry_mpi_t u, v, u1, u2=NULL, u3, v1, v2=NULL, v3, t1, t2=NULL, t3;
     unsigned k;
     int sign;
     int odd ;
@@ -263,12 +263,12 @@ _gcry_mpi_invm( MPI x, MPI a, MPI n )
 
     mpi_free(u);
     mpi_free(v);
-  #endif
+#endif
 }
 
 
 int
-gcry_mpi_invm (MPI x, MPI a, MPI n)
+gcry_mpi_invm (gcry_mpi_t x, gcry_mpi_t a, gcry_mpi_t n)
 {
   _gcry_mpi_invm (x, a, n);
   return 1;

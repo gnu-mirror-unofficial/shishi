@@ -37,7 +37,7 @@
 #include <assert.h>
 #include "g10lib.h"
 #include "memory.h"
-#include "dynload.h"
+#include "cipher.h"
 
 #include "bithelp.h"
 
@@ -51,8 +51,10 @@ typedef struct {
 
 
 static void
-md5_init( MD5_CONTEXT *ctx )
+md5_init( void *context )
 {
+  MD5_CONTEXT *ctx = (MD5_CONTEXT *) context;
+
     ctx->A = 0x67452301;
     ctx->B = 0xefcdab89;
     ctx->C = 0x98badcfe;
@@ -87,7 +89,7 @@ transform( MD5_CONTEXT *ctx, byte *data )
     register u32 D = ctx->D;
     u32 *cwp = correct_words;
 
-#ifdef BIG_ENDIAN_HOST
+#ifdef WORDS_BIGENDIAN
     { int i;
       byte *p2, *p1;
       for(i=0, p1=data, p2=(byte*)correct_words; i < 16; i++, p2 += 4 ) {
@@ -213,8 +215,9 @@ transform( MD5_CONTEXT *ctx, byte *data )
  * in the message whose digest is being computed.
  */
 static void
-md5_write( MD5_CONTEXT *hd, byte *inbuf, size_t inlen)
+md5_write( void *context, byte *inbuf, size_t inlen)
 {
+  MD5_CONTEXT *hd = (MD5_CONTEXT *) context;
     if( hd->count == 64 ) { /* flush the buffer */
 	transform( hd, hd->buf );
         _gcry_burn_stack (80+6*sizeof(void*));
@@ -253,8 +256,9 @@ md5_write( MD5_CONTEXT *hd, byte *inbuf, size_t inlen)
  */
 
 static void
-md5_final( MD5_CONTEXT *hd )
+md5_final( void *context)
 {
+  MD5_CONTEXT *hd = (MD5_CONTEXT *) context;
     u32 t, msb, lsb;
     byte *p;
 
@@ -299,111 +303,35 @@ md5_final( MD5_CONTEXT *hd )
     _gcry_burn_stack (80+6*sizeof(void*));
 
     p = hd->buf;
-  #ifdef BIG_ENDIAN_HOST
-    #define X(a) do { *p++ = hd->a      ; *p++ = hd->a >> 8;      \
+#ifdef WORDS_BIGENDIAN
+#define X(a) do { *p++ = hd->a      ; *p++ = hd->a >> 8;      \
 		      *p++ = hd->a >> 16; *p++ = hd->a >> 24; } while(0)
-  #else /* little endian */
-    #define X(a) do { *(u32*)p = (*hd).a ; p += 4; } while(0)
-  #endif
+#else /* little endian */
+#define X(a) do { *(u32*)p = (*hd).a ; p += 4; } while(0)
+#endif
     X(A);
     X(B);
     X(C);
     X(D);
-  #undef X
+#undef X
 
 }
 
 static byte *
-md5_read( MD5_CONTEXT *hd )
+md5_read( void *context )
 {
-    return hd->buf;
+  MD5_CONTEXT *hd = (MD5_CONTEXT *) context;
+  return hd->buf;
 }
 
-/****************
- * Return some information about the algorithm.  We need algo here to
- * distinguish different flavors of the algorithm.
- * Returns: A pointer to string describing the algorithm or NULL if
- *	    the ALGO is invalid.
- */
-static const char *
-md5_get_info( int algo, size_t *contextsize,
-	       byte **r_asnoid, int *r_asnlen, int *r_mdlen,
-	       void (**r_init)( void *c ),
-	       void (**r_write)( void *c, byte *buf, size_t nbytes ),
-	       void (**r_final)( void *c ),
-	       byte *(**r_read)( void *c )
-	     )
-{
     static byte asn[18] = /* Object ID is 1.2.840.113549.2.5 */
 		    { 0x30, 0x20, 0x30, 0x0c, 0x06, 0x08, 0x2a, 0x86,0x48,
 		      0x86, 0xf7, 0x0d, 0x02, 0x05, 0x05, 0x00, 0x04, 0x10 };
 
-    if( algo != 1 )
-	return NULL;
 
-    *contextsize = sizeof(MD5_CONTEXT);
-    *r_asnoid = asn;
-    *r_asnlen = DIM(asn);
-    *r_mdlen = 16;
-    *(void  (**)(MD5_CONTEXT *))r_init		       = md5_init;
-    *(void  (**)(MD5_CONTEXT *, byte*, size_t))r_write = md5_write;
-    *(void  (**)(MD5_CONTEXT *))r_final 	       = md5_final;
-    *(byte *(**)(MD5_CONTEXT *))r_read		       = md5_read;
-
-    return "MD5";
-}
-
-
-#ifndef IS_MODULE
-static
-#endif
-const char * const gnupgext_version = "MD5 ($Revision$)";
-
-static struct {
-    int class;
-    int version;
-    int  value;
-    void (*func)(void);
-} func_table[] = {
-    { 10, 1, 0, (void(*)(void))md5_get_info },
-    { 11, 1, 1 },
-};
-
-
-#ifndef IS_MODULE
-static
-#endif
-void *
-gnupgext_enum_func( int what, int *sequence, int *class, int *vers )
-{
-    void *ret;
-    int i = *sequence;
-
-    do {
-	if( i >= DIM(func_table) || i < 0 )
-	    return NULL;
-	*class = func_table[i].class;
-	*vers  = func_table[i].version;
-	switch( *class ) {
-	  case 11: case 21: case 31: ret = &func_table[i].value; break;
-	  default:		     ret = func_table[i].func; break;
-	}
-	i++;
-    } while( what && what != *class );
-
-    *sequence = i;
-    return ret;
-}
-
-
-
-
-#ifndef IS_MODULE
-void
-_gcry_md5_constructor(void)
-{
-    _gcry_register_internal_cipher_extension( gnupgext_version, gnupgext_enum_func );
-}
-#endif
-
-/* end of file */
+gcry_digest_spec_t digest_spec_md5 =
+  {
+    "MD5", GCRY_MD_MD5, asn, DIM (asn), 16,
+    md5_init, md5_write, md5_final, md5_read,
+    sizeof (MD5_CONTEXT)
+  };

@@ -38,36 +38,36 @@
 #include <fcntl.h>
 #include <time.h>
 #ifdef	HAVE_GETHRTIME
-  #include <sys/times.h>
+#include <sys/times.h>
 #endif
 #ifdef HAVE_GETTIMEOFDAY
-  #include <sys/times.h>
+#include <sys/times.h>
 #endif
 #ifdef HAVE_GETRUSAGE
-  #include <sys/resource.h>
+#include <sys/resource.h>
 #endif
 #ifdef __MINGW32__
-  #include <process.h>
+#include <process.h>
 #endif
 #include "g10lib.h"
 #include "rmd.h"
 #include "random.h"
 #include "rand-internal.h"
-#include "dynload.h"
+//#include "dynload.h"
 #include "cipher.h" /* only used for the rmd160_hash_buffer() prototype */
 #include "ath.h"
 
 #ifndef RAND_MAX   /* for SunOS */
-  #define RAND_MAX 32767
+#define RAND_MAX 32767
 #endif
 
 
 #if SIZEOF_UNSIGNED_LONG == 8
-  #define ADD_VALUE 0xa5a5a5a5a5a5a5a5
+#define ADD_VALUE 0xa5a5a5a5a5a5a5a5
 #elif SIZEOF_UNSIGNED_LONG == 4
-  #define ADD_VALUE 0xa5a5a5a5
+#define ADD_VALUE 0xa5a5a5a5
 #else
-  #error weird size for an unsigned long
+#error weird size for an unsigned long
 #endif
 
 #define BLOCKLEN  64   /* hash this amount of bytes */
@@ -80,7 +80,7 @@
 #define POOLBLOCKS 30
 #define POOLSIZE (POOLBLOCKS*DIGESTLEN)
 #if (POOLSIZE % SIZEOF_UNSIGNED_LONG)
-  #error Please make sure that poolsize is a multiple of ulong
+#error Please make sure that poolsize is a multiple of ulong
 #endif
 #define POOLWORDS (POOLSIZE / SIZEOF_UNSIGNED_LONG)
 
@@ -133,7 +133,6 @@ static struct {
 static void (*progress_cb) (void *,const char*,int,int, int );
 static void *progress_cb_data;
 
-
 /* Note, we assume that this function is used before any concurrent
    access happens */
 static void
@@ -153,7 +152,8 @@ initialize(void)
   keypool = secure_alloc ? gcry_xcalloc_secure(1,POOLSIZE+BLOCKLEN)
                          : gcry_xcalloc(1,POOLSIZE+BLOCKLEN);
   is_initialized = 1;
-  _gcry_cipher_modules_constructor ();
+
+  //_gcry_cipher_modules_constructor ();
 }
 
 
@@ -281,18 +281,23 @@ get_random_bytes( size_t nbytes, int level, int secure )
 
    Note, that this fucntion currently does nothing.
 */
-int 
+gpg_error_t
 gcry_random_add_bytes (const void * buf, size_t buflen, int quality)
 {
+  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+
   if (!buf || quality < -1 || quality > 100)
-    return GCRYERR_INV_ARG;
+    err = GPG_ERR_INV_ARG;
+  /* FIXME */
+#if 0
   if (!buflen)
     return 0; /* Shortcut this dummy case. */
   /* Before we actuall enbale this code, we need to lock the pool,
      have a look at the quality and find a way to add them without
      disturbing the real entropy (we have estimated). */
   /*add_randomness( buf, buflen, 1 );*/
-  return 0;
+#endif
+  return err;
 }   
     
 
@@ -406,7 +411,7 @@ mix_pool(byte *pool)
     assert (pool_is_locked);
     _gcry_rmd160_init( &md );
 #if DIGESTLEN != 20
-#  error must have a digest length of 20 for ripe-md-160
+#error must have a digest length of 20 for ripe-md-160
 #endif
     /* loop over the pool */
     pend = pool + POOLSIZE;
@@ -475,11 +480,11 @@ read_seed_file()
     if( !seed_file_name )
 	return 0;
 
-  #ifdef HAVE_DOSISH_SYSTEM
+#ifdef HAVE_DOSISH_SYSTEM
     fd = open( seed_file_name, O_RDONLY | O_BINARY );
-  #else
+#else
     fd = open( seed_file_name, O_RDONLY );
-  #endif
+#endif
     if( fd == -1 && errno == ENOENT) {
 	allow_seed_file_update = 1;
 	return 0;
@@ -732,6 +737,62 @@ random_poll()
     read_random_source( 2, POOLSIZE/5, 1 );
 }
 
+static int (*
+getfnc_gather_random (void))(void (*)(const void*, size_t, int), int,
+			     size_t, int)
+{
+  int rndlinux_gather_random (void (*add) (const void *, size_t, int),
+			      int requester, size_t length, int level);
+  int rndunix_gather_random (void (*add) (const void *, size_t, int),
+			     int requester, size_t length, int level);
+  int rndegd_gather_random (void (*add) (const void *, size_t, int),
+			    int requester, size_t length, int level);
+  int rndegd_connect_socket (int nofail);
+  int rndw32_gather_random (void (*add) (const void *, size_t, int),
+			    int requester, size_t length, int level);
+
+  static int (*fnc)(void (*)(const void*, size_t, int), int, size_t, int);
+  
+  if (fnc)
+    return fnc;
+
+#if USE_RNDLINUX
+  if ( !access (NAME_OF_DEV_RANDOM, R_OK)
+       && !access (NAME_OF_DEV_RANDOM, R_OK))
+    {
+      fnc = rndlinux_gather_random;
+      return fnc;
+    }
+#endif
+
+#if USE_RNDEGD
+  if ( rndegd_connect_socket (1) != -1 )
+    {
+      fnc = rndegd_gather_random;
+      return fnc;
+    }
+#endif
+
+#if USE_RNDUNIX
+  fnc = rndunix_gather_random;
+  return fnc;
+#endif
+
+  log_fatal (_("no entropy gathering module detected\n"));
+
+  return NULL;
+}
+
+static void (*
+getfnc_fast_random_poll (void))( void (*)(const void*, size_t, int), int)
+{
+#if USE_RNDW32
+  int rndw32_gather_random_fast (void (*add) (const void *, size_t, int),
+				 int requester);
+  return rndw32_gather_random_fast;
+#endif
+  return NULL;
+}
 
 
 static void
@@ -746,7 +807,7 @@ do_fast_random_poll ()
 	if( !is_initialized )
 	    initialize();
 	initialized = 1;
-	fnc = _gcry_dynload_getfnc_fast_random_poll();
+	fnc = getfnc_fast_random_poll ();
     }
     if( fnc ) {
 	(*fnc)( add_randomness, 1 );
@@ -754,39 +815,39 @@ do_fast_random_poll ()
     }
 
     /* fall back to the generic function */
-  #if HAVE_GETHRTIME
+#if HAVE_GETHRTIME
     {	hrtime_t tv;
 	tv = gethrtime();
 	add_randomness( &tv, sizeof(tv), 1 );
     }
-  #elif HAVE_GETTIMEOFDAY
+#elif HAVE_GETTIMEOFDAY
     {	struct timeval tv;
 	if( gettimeofday( &tv, NULL ) )
 	    BUG();
 	add_randomness( &tv.tv_sec, sizeof(tv.tv_sec), 1 );
 	add_randomness( &tv.tv_usec, sizeof(tv.tv_usec), 1 );
     }
-  #elif HAVE_CLOCK_GETTIME
+#elif HAVE_CLOCK_GETTIME
     {	struct timespec tv;
 	if( clock_gettime( CLOCK_REALTIME, &tv ) == -1 )
 	    BUG();
 	add_randomness( &tv.tv_sec, sizeof(tv.tv_sec), 1 );
 	add_randomness( &tv.tv_nsec, sizeof(tv.tv_nsec), 1 );
     }
-  #else /* use times */
-    #ifndef HAVE_DOSISH_SYSTEM
+#else /* use times */
+#ifndef HAVE_DOSISH_SYSTEM
     {	struct tms buf;
 	times( &buf );
 	add_randomness( &buf, sizeof buf, 1 );
     }
-    #endif
-  #endif
-  #ifdef HAVE_GETRUSAGE
-    #ifndef RUSAGE_SELF
-      #ifdef __GCC__
+#endif
+#endif
+#ifdef HAVE_GETRUSAGE
+#ifndef RUSAGE_SELF
+#ifdef __GCC__
 	#warning There is no RUSAGE_SELF on this system
-      #endif
-    #else
+#endif
+#else
     {	
         struct rusage buf;
         /* QNX/Neutrino does return ENOSYS - so we just ignore it and
@@ -798,8 +859,8 @@ do_fast_random_poll ()
 	add_randomness( &buf, sizeof buf, 1 );
 	memset( &buf, 0, sizeof buf );
     }
-    #endif
-  #endif
+#endif
+#endif
     /* time and clock are availabe on all systems - so
      * we better do it just in case one of the above functions
      * didn't work */
@@ -846,8 +907,10 @@ read_random_source( int requester, size_t length, int level )
 						    size_t, int) = NULL;
     if( !fnc ) {
 	if( !is_initialized )
-	    initialize();
-	fnc = _gcry_dynload_getfnc_gather_random();
+	  initialize();
+	fnc = getfnc_gather_random ();
+	//fnc = ((GcryRandomSpec *) randoms_registered->spec)->add;
+	//fnc = _gcry_dynload_getfnc_gather_random();
 	if( !fnc ) {
 	    faked_rng = 1;
 	    fnc = gather_faked;

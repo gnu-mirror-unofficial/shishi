@@ -1,3 +1,92 @@
+2003-06-18  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac (available_ciphers): Removed Serpent, hrrm.
+
+2003-06-17  Moritz Schulte  <moritz@g10code.com>
+
+	* acinclude.m4: Removed macro definitions: GNUPG_CHECK_FAQPROG,
+	GNUPG_CHECK_ENDIAN, GNUPG_CHECK_CACHE, GNUPG_CHECK_PIC,
+	GNUPG_CHECK_EXPORTDYNAMIC, GNUPG_CHECK_IPC, GNUPG_PROG_NM,
+	GNUPG_SYS_SYMBOL_UNDERSCORE, GNUPG_FUNC_MKDIR_TAKES_ONE_ARG,
+	GPH_PROG_DB2ANY.
+	Added macro definitions: AM_PATH_GPG_ERROR.
+	
+	* configure.ac: Use alternative approach for building based on
+	conditional sources, which does not make automake eat all your
+	memory, etc.
+	Removed unused tests.
+	Renamed --enable-static-rnd to --enable-random.
+	Use Autoconf's AC_C_BIGENDIAN macro instead of our own.
+	Re-organized the whole file.
+
+2003-06-16  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac (AC_CONFIG_FILES): Removed doc/version.sgml.
+
+2003-06-11  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac: Remove --enable-libgpg-error flag.
+	Ue AC_PATH_GPG_ERROR.
+
+2003-06-09  Moritz Schulte  <moritz@g10code.com>
+
+	* NEWS: Mention API changes and libgpg-error.
+
+2003-05-25  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac (USE_LIBGPG_ERROR): Implementation of the
+	--enable-libgpg-error switch.
+	Define USE_LIBGPG_ERROR in LIBGCRYPT_CONFIG_FLAGS, in case
+	libgpg-error is used.
+
+2003-05-22  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac (AC_CHECK_HEADERS): Removed unused headers:
+	termio.h, langinfo.h.
+	(AC_CHECK_FUNCS): Removed unused functions: strsep, strlwr,
+	tcgetattr, setrlimit, strftime, nl_langinfo, sigaction,
+	sigprocmask, fopen64, fstat64.
+
+2003-04-27  Moritz Schulte  <moritz@g10code.com>
+
+	* README: Documented new configure switches.
+	Mention the --enable-maintainer-switch.
+
+	* configure.ac: Merged some code from GnuPG's configure.ac for
+	disabling sha512/tiger in case no 64 data types are available.
+
+2003-04-17  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac: Include support for sha512.
+
+2003-04-17  Moritz Schulte  <moritz@g10code.com>
+
+	* AUTHORS: Updated.
+
+2003-04-16  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac: Implement command line switches: --enable-ciphers,
+	--enable-pubkey-ciphers and --enable-digests.
+	Set Automake conditionals and config.h symbols depending on the
+	selected ciphers, pubkey-ciphers, digests and random-modules.
+
+	* acinclude.m4 (LIST_MEMBER): New macro.
+
+	* configure.ac: Simplified, removed code for parsing
+	EXTRA_PROGRAMS from Makefile.am.
+
+2003-04-08  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac: Merged random-module selection code from GnuPG's
+	configure.ac.
+
+2003-04-07  Moritz Schulte  <moritz@g10code.com>
+
+	* configure.ac: Removed code for generating contruct.c.
+	Remove digest modules from the static_modules list, only handle
+	random module selection.
+	
+
 2003-03-24  Moritz Schulte  <moritz@g10code.com>
 
 	* NEWS: Mention new CBC_MAC flag.

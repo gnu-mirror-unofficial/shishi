@@ -39,7 +39,6 @@
  *	      1 : general MPI debug
  */
 static unsigned int debug_flags;
-static int last_ec; /* fixme: make thread safe */
 
 static void *(*alloc_func)(size_t n) = NULL;
 static void *(*alloc_secure_func)(size_t n) = NULL;
@@ -58,10 +57,23 @@ static int any_init_done;
 static void
 global_init (void)
 {
+  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+
   if (any_init_done)
     return;
   any_init_done = 1;
   ath_init ();
+
+  if (! err)
+    _gcry_cipher_init ();
+  if (! err)
+    _gcry_md_init ();
+  if (! err)
+    _gcry_pk_init ();
+
+  if (err)
+    /* FIXME?  */
+    BUG ();
 }
 
 
@@ -136,209 +148,139 @@ gcry_check_version( const char *req_version )
     return NULL;
 }
 
-
-int
-gcry_control( enum gcry_global_control_cmds cmd, ... )
+gpg_error_t
+gcry_control (enum gcry_ctl_cmds cmd, ...)
 {
-    static int init_finished = 0;
-    va_list arg_ptr ;
-
-    va_start( arg_ptr, cmd ) ;
-    switch( cmd ) {
+  gpg_err_code_t err = GPG_ERR_NO_ERROR;
+  static int init_finished = 0;
+  va_list arg_ptr;
+  
+  va_start (arg_ptr, cmd);
+  switch (cmd)
+    {
 #if 0
-      case GCRYCTL_NO_MEM_IS_FATAL:
-	break;
-      case GCRYCTL_SET_FATAL_FNC:
-	break;
+    case GCRYCTL_NO_MEM_IS_FATAL:
+      break;
+    case GCRYCTL_SET_FATAL_FNC:
+      break;
 #endif
 
-      case GCRYCTL_ENABLE_M_GUARD:
-	_gcry_private_enable_m_guard();
-	break;
+    case GCRYCTL_ENABLE_M_GUARD:
+      _gcry_private_enable_m_guard ();
+      break;
 
-      case GCRYCTL_ENABLE_QUICK_RANDOM:
-        _gcry_quick_random_gen (1);
-        break;
+    case GCRYCTL_ENABLE_QUICK_RANDOM:
+      _gcry_quick_random_gen (1);
+      break;
 
-      case GCRYCTL_DUMP_RANDOM_STATS:
-	_gcry_random_dump_stats();
-	break;
+    case GCRYCTL_DUMP_RANDOM_STATS:
+      _gcry_random_dump_stats ();
+      break;
 
-      case GCRYCTL_DUMP_MEMORY_STATS:
-	/*m_print_stats("[fixme: prefix]");*/
-	break;
+    case GCRYCTL_DUMP_MEMORY_STATS:
+      /*m_print_stats("[fixme: prefix]");*/
+      break;
 
-      case GCRYCTL_DUMP_SECMEM_STATS:
-	_gcry_secmem_dump_stats();
-	break;
+    case GCRYCTL_DUMP_SECMEM_STATS:
+      _gcry_secmem_dump_stats ();
+      break;
 
-      case GCRYCTL_DROP_PRIVS:
-        global_init ();
-	_gcry_secmem_init( 0 );
-	break;
+    case GCRYCTL_DROP_PRIVS:
+      global_init ();
+      _gcry_secmem_init (0);
+      break;
 
-      case GCRYCTL_DISABLE_SECMEM:
-        global_init ();
-        no_secure_memory = 1;
-        break;    
+    case GCRYCTL_DISABLE_SECMEM:
+      global_init ();
+      no_secure_memory = 1;
+      break;    
 
-      case GCRYCTL_INIT_SECMEM:
-        global_init ();
-	_gcry_secmem_init( va_arg( arg_ptr, unsigned int ) );
-	break;
+    case GCRYCTL_INIT_SECMEM:
+      global_init ();
+      _gcry_secmem_init (va_arg (arg_ptr, unsigned int));
+      break;
 
-      case GCRYCTL_TERM_SECMEM:
-        global_init ();
-	_gcry_secmem_term();
-	break;
+    case GCRYCTL_TERM_SECMEM:
+      global_init ();
+      _gcry_secmem_term ();
+      break;
 
-      case GCRYCTL_DISABLE_SECMEM_WARN:
-	_gcry_secmem_set_flags ((_gcry_secmem_get_flags ()
-				 | GCRY_SECMEM_FLAG_NO_WARNING));
-	break;
+    case GCRYCTL_DISABLE_SECMEM_WARN:
+      _gcry_secmem_set_flags ((_gcry_secmem_get_flags ()
+			       | GCRY_SECMEM_FLAG_NO_WARNING));
+      break;
 
-      case GCRYCTL_SUSPEND_SECMEM_WARN:
-	_gcry_secmem_set_flags ((_gcry_secmem_get_flags ()
-				 | GCRY_SECMEM_FLAG_SUSPEND_WARNING));
-	break;
+    case GCRYCTL_SUSPEND_SECMEM_WARN:
+      _gcry_secmem_set_flags ((_gcry_secmem_get_flags ()
+			       | GCRY_SECMEM_FLAG_SUSPEND_WARNING));
+      break;
 
-      case GCRYCTL_RESUME_SECMEM_WARN:
-	_gcry_secmem_set_flags ((_gcry_secmem_get_flags ()
-				 & ~GCRY_SECMEM_FLAG_SUSPEND_WARNING));
-	break;
+    case GCRYCTL_RESUME_SECMEM_WARN:
+      _gcry_secmem_set_flags ((_gcry_secmem_get_flags ()
+			       & ~GCRY_SECMEM_FLAG_SUSPEND_WARNING));
+      break;
 
-      case GCRYCTL_USE_SECURE_RNDPOOL:
-        global_init ();
-	_gcry_secure_random_alloc(); /* put random number into secure memory */
-	break;
+    case GCRYCTL_USE_SECURE_RNDPOOL:
+      global_init ();
+      _gcry_secure_random_alloc (); /* put random number into secure memory */
+      break;
 
-      case GCRYCTL_SET_VERBOSITY:
-	_gcry_set_log_verbosity( va_arg( arg_ptr, int ) );
-	break;
+    case GCRYCTL_SET_VERBOSITY:
+      _gcry_set_log_verbosity (va_arg (arg_ptr, int));
+      break;
 
-      case GCRYCTL_SET_DEBUG_FLAGS:
-	debug_flags |= va_arg( arg_ptr, unsigned int );
-	break;
+    case GCRYCTL_SET_DEBUG_FLAGS:
+      debug_flags |= va_arg (arg_ptr, unsigned int);
+      break;
 
-      case GCRYCTL_CLEAR_DEBUG_FLAGS:
-	debug_flags &= ~va_arg( arg_ptr, unsigned int );
-	break;
+    case GCRYCTL_CLEAR_DEBUG_FLAGS:
+      debug_flags &= ~va_arg (arg_ptr, unsigned int);
+      break;
 
-      case GCRYCTL_DISABLE_INTERNAL_LOCKING:
-        global_init ();
-        /* We waste some bytes by doing it this way.  OTOH this
-           function is not anymore required becuase it is done
-           automagically. */
-        ath_deinit ();
-        break;
+    case GCRYCTL_DISABLE_INTERNAL_LOCKING:
+      global_init ();
+      /* We waste some bytes by doing it this way.  OTOH this function
+	 is not anymore required becuase it is done automagically. */
+      ath_deinit ();
+      break;
 
-      case GCRYCTL_ANY_INITIALIZATION_P:
-        va_end(arg_ptr);
-        return any_init_done? 1 : 0;
+    case GCRYCTL_ANY_INITIALIZATION_P:
+      if (any_init_done)
+	err = GPG_ERR_GENERAL;
+      break;
 
-      case GCRYCTL_INITIALIZATION_FINISHED_P:
-        va_end(arg_ptr);
-        return init_finished? 1 : 0;
+    case GCRYCTL_INITIALIZATION_FINISHED_P:
+      if (init_finished)
+	err = GPG_ERR_GENERAL;
+      break;
 
-      case GCRYCTL_INITIALIZATION_FINISHED:
-        /* This is a hook which should be used by an application after
-           all initialization has been done and right before any
-           threads are started.  It is not really needed but the only
-           way to be really sure that all initialization for
-           thread-safety has been done. */
-        if (!init_finished) {
+    case GCRYCTL_INITIALIZATION_FINISHED:
+      /* This is a hook which should be used by an application after
+	 all initialization has been done and right before any threads
+	 are started.  It is not really needed but the only way to be
+	 really sure that all initialization for thread-safety has
+	 been done. */
+        if (! init_finished)
+	  {
             global_init ();
             _gcry_random_initialize ();
             init_finished = 1;
-        }
+	  }
         break;
 
-      default:
-	va_end(arg_ptr);
-	return GCRYERR_INV_OP;
+    default:
+      err = GPG_ERR_INV_OP;
     }
-    va_end(arg_ptr);
-    return 0;
+
+  va_end(arg_ptr);
+  return gpg_error (err);
 }
 
-int
-gcry_errno()
+const char *
+gcry_strerror (gpg_error_t ec)
 {
-    return last_ec;
+  return gpg_strerror (ec);
 }
-
-const char*
-gcry_strerror( int ec )
-{
-    const char *s;
-    static char buf[20];
-
-    if( ec == -1 )
-	ec = gcry_errno();
-  #define X(n,a) case GCRYERR_##n : s = a; break;
-    switch( ec ) {
-      X(SUCCESS,        N_("no error"))
-      X(GENERAL,        N_("general error"))
-
-      X(INV_PK_ALGO,	N_("invalid public key algorithm"))
-      X(INV_MD_ALGO,	N_("invalid hash algorithm"))
-      X(BAD_PUBLIC_KEY ,N_("bad public key"))
-      X(BAD_SECRET_KEY ,N_("bad secret key"))
-      X(BAD_SIGNATURE , N_("bad signature"))
-
-      X(INV_CIPHER_ALGO,N_("invalid cipher algorithm"))
-      X(BAD_MPI,        N_("bad big integer"))
-      X(WRONG_PK_ALGO,	N_("unusable public key algorithm"))
-      X(WEAK_KEY,	N_("weak encryption key"))
-      X(INV_KEYLEN,     N_("invalid key length"))
-      X(INV_ARG,	N_("invalid argument"))
-      X(SELFTEST,       N_("selftest failed"))
-
-      X(INV_OP, 	N_("invalid operation code or ctl command"))
-      X(NO_MEM, 	N_("out of core"))
-      X(INTERNAL,	N_("internal error"))
-      X(EOF,		N_("EOF"))
-      X(INV_OBJ,	N_("an object is not valid"))
-      X(TOO_SHORT,	N_("provided buffer too short"))
-      X(TOO_LARGE,	N_("object is too large"))
-      X(NO_OBJ,         N_("no object"))
-      X(NOT_IMPL,       N_("not implemented"))
-      X(CONFLICT,	N_("conflict"))
-      X(INV_CIPHER_MODE,N_("invalid cipher mode"))
-        X(INV_FLAG,     N_("invalid flag"))
-
-        X(SEXP_INV_LEN_SPEC   ,N_("invalid length specification")) 
-        X(SEXP_STRING_TOO_LONG,N_("string too long")) 
-        X(SEXP_UNMATCHED_PAREN,N_("unmatched parenthesis")) 
-        X(SEXP_NOT_CANONICAL  ,N_("not a canonical S-expression")) 
-        X(SEXP_BAD_CHARACTER  ,N_("bad character")) 
-        X(SEXP_BAD_QUOTATION  ,N_("invalid hex/octal value or bad quotation")) 
-        X(SEXP_ZERO_PREFIX    ,N_("a length may not begin with zero")) 
-        X(SEXP_NESTED_DH      ,N_("nested display hints")) 
-        X(SEXP_UNMATCHED_DH   ,N_("unmatched display hint close")) 
-        X(SEXP_UNEXPECTED_PUNC,N_("unexpected reserved punctuation")) 
-        X(SEXP_BAD_HEX_CHAR,   N_("invalid hex character"))
-        X(SEXP_ODD_HEX_NUMBERS,N_("odd number of hex characters"))
-        X(SEXP_BAD_OCT_CHAR,   N_("invalid octal character"))
-
-      default:
-	sprintf( buf, "ec=%d", ec );
-	s = buf;
-    }
-  #undef X
-    return s;
-}
-
-
-int
-_gcry_set_lasterr( int ec )
-{
-    if( ec )
-	last_ec = ec == -1 ? GCRYERR_EOF : ec;
-    return ec;
-}
-
-
 
 /****************
  * NOTE: All 5 functions should be set.  */
@@ -418,12 +360,12 @@ void
 _gcry_check_heap( const void *a )
 {
     /* FIXME: implement this*/
-  #if 0
+#if 0
     if( some_handler )
 	some_handler(a)
     else
 	_gcry_private_check_heap(a)
-  #endif
+#endif
 }
 
 void *
@@ -504,7 +446,7 @@ gcry_xmalloc( size_t n )
     while ( !(p = gcry_malloc( n )) ) {
 	if( !outofcore_handler
 	    || !outofcore_handler( outofcore_handler_value, n, 0 ) ) {
-	    _gcry_fatal_error(GCRYERR_NO_MEM, NULL );
+	    _gcry_fatal_error(gpg_err_code_from_errno (errno), NULL );
 	}
     }
     return p;
@@ -518,7 +460,7 @@ gcry_xrealloc( void *a, size_t n )
     while ( !(p = gcry_realloc( a, n )) ) {
 	if( !outofcore_handler
 	    || !outofcore_handler( outofcore_handler_value, n, 2 ) ) {
-	    _gcry_fatal_error(GCRYERR_NO_MEM, NULL );
+	    _gcry_fatal_error(gpg_err_code_from_errno (errno), NULL );
 	}
     }
     return p;
@@ -532,7 +474,7 @@ gcry_xmalloc_secure( size_t n )
     while ( !(p = gcry_malloc_secure( n )) ) {
 	if( !outofcore_handler
 	    || !outofcore_handler( outofcore_handler_value, n, 1 ) ) {
-	    _gcry_fatal_error(GCRYERR_NO_MEM,
+	    _gcry_fatal_error(gpg_err_code_from_errno (errno),
 			     _("out of core in secure memory"));
 	}
     }
@@ -612,8 +554,12 @@ void
 gcry_set_progress_handler (void (*cb)(void *,const char*,int, int, int),
                            void *cb_data)
 {
+#if USE_DSA
   _gcry_register_pk_dsa_progress (cb, cb_data);
+#endif
+#if USE_ELGAMAL
   _gcry_register_pk_elg_progress (cb, cb_data);
+#endif
   _gcry_register_primegen_progress (cb, cb_data);
   _gcry_register_random_progress (cb, cb_data);
 }

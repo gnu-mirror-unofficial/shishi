@@ -53,16 +53,16 @@ die ( const char *format, ... )
 
 
 static void
-print_mpi (const char *text, GcryMPI a)
+print_mpi (const char *text, gcry_mpi_t a)
 {
   char *buf;
   void *bufaddr = &buf;
-  int rc;
+  gpg_error_t rc;
 
   rc = gcry_mpi_aprint (GCRYMPI_FMT_HEX, bufaddr, NULL, a);
   if (rc)
     fprintf (stderr, "%s=[error printing number: %s]\n",
-             text, gcry_strerror (rc));
+             text, gpg_strerror (rc));
   else
     {
       fprintf (stderr, "%s=0x%s\n", text, buf);
@@ -71,18 +71,17 @@ print_mpi (const char *text, GcryMPI a)
 }
 
 
-
 static void
-check_generated_rsa_key (GcrySexp key, unsigned long expected_e)
+check_generated_rsa_key (gcry_sexp_t key, unsigned long expected_e)
 {
-  GcrySexp skey, pkey, list;
+  gcry_sexp_t skey, pkey, list;
 
   pkey = gcry_sexp_find_token (key, "public-key", 0);
   if (!pkey)
     fail ("public part missing in return value\n");
   else
     {
-      GcryMPI e = NULL;
+      gcry_mpi_t e = NULL;
 
       list = gcry_sexp_find_token (pkey, "e", 0);
       if (!list || !(e=gcry_sexp_nth_mpi (list, 1, 0)) )
@@ -109,7 +108,7 @@ check_generated_rsa_key (GcrySexp key, unsigned long expected_e)
     {
       int rc = gcry_pk_testkey (skey);
       if (rc)
-        fail ("gcry_pk_testkey failed: %s\n", gcry_strerror (rc));
+        fail ("gcry_pk_testkey failed: %s\n", gpg_strerror (rc));
       gcry_sexp_release (skey);
     }
 
@@ -118,7 +117,7 @@ check_generated_rsa_key (GcrySexp key, unsigned long expected_e)
 static void
 check_rsa_keys (void)
 {
-  GcrySexp keyparm, key;
+  gcry_sexp_t keyparm, key;
   int rc;
 
   if (verbose)
@@ -129,11 +128,11 @@ check_rsa_keys (void)
                       "  (nbits 4:1024)\n"
                       " ))", 0, 1);
   if (rc)
-    die ("error creating S-expression: %s\n", gcry_strerror (rc));
+    die ("error creating S-expression: %s\n", gpg_strerror (rc));
   rc = gcry_pk_genkey (&key, keyparm);
   gcry_sexp_release (keyparm);
   if (rc)
-    die ("error generating RSA key: %s\n", gcry_strerror (rc));
+    die ("error generating RSA key: %s\n", gpg_strerror (rc));
 
   check_generated_rsa_key (key, 65537);
   gcry_sexp_release (key);
@@ -147,11 +146,11 @@ check_rsa_keys (void)
                       "  (rsa-use-e 3:257)\n"
                       " ))", 0, 1);
   if (rc)
-    die ("error creating S-expression: %s\n", gcry_strerror (rc));
+    die ("error creating S-expression: %s\n", gpg_strerror (rc));
   rc = gcry_pk_genkey (&key, keyparm);
   gcry_sexp_release (keyparm);
   if (rc)
-    die ("error generating RSA key: %s\n", gcry_strerror (rc));
+    die ("error generating RSA key: %s\n", gpg_strerror (rc));
 
   check_generated_rsa_key (key, 257);
   gcry_sexp_release (key);
@@ -165,11 +164,11 @@ check_rsa_keys (void)
                       "  (rsa-use-e 1:0)\n"
                       " ))", 0, 1);
   if (rc)
-    die ("error creating S-expression: %s\n", gcry_strerror (rc));
+    die ("error creating S-expression: %s\n", gpg_strerror (rc));
   rc = gcry_pk_genkey (&key, keyparm);
   gcry_sexp_release (keyparm);
   if (rc)
-    die ("error generating RSA key: %s\n", gcry_strerror (rc));
+    die ("error generating RSA key: %s\n", gpg_strerror (rc));
 
   check_generated_rsa_key (key, 0); /* We don't expect a constant exponent. */
   gcry_sexp_release (key);

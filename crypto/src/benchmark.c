@@ -94,18 +94,19 @@ static void
 md_bench ( const char *algoname )
 {
   int algo = gcry_md_map_name (algoname);
-  GcryMDHd hd;
+  gcry_md_hd_t hd;
   int i;
   char buf[1000];
+  gpg_error_t err = GPG_ERR_NO_ERROR;
 
   if (!algo)
     {
-      fprintf (stderr, PGM ": invalid hash algorithm `%s'/n", algoname);
+      fprintf (stderr, PGM ": invalid hash algorithm `%s'\n", algoname);
       exit (1);
     }
-  
-  hd = gcry_md_open (algo, 0);
-  if (!hd)
+
+  err = gcry_md_open (&hd, algo, 0);
+  if (err)
     {
       fprintf (stderr, PGM ": error opeing hash algorithm `%s'/n", algoname);
       exit (1);
@@ -148,8 +149,8 @@ cipher_bench ( const char *algoname )
 {
   static int header_printed;
   int algo = gcry_cipher_map_name (algoname);
-  GcryCipherHd hd;
-  int err, i;
+  gcry_cipher_hd_t hd;
+  int i;
   int keylen, blklen;
   char key[128];
   char outbuf[1000], buf[1000];
@@ -158,10 +159,12 @@ cipher_bench ( const char *algoname )
     { GCRY_CIPHER_MODE_ECB, "ECB", 1 },
     { GCRY_CIPHER_MODE_CBC, "CBC", 1 },
     { GCRY_CIPHER_MODE_CFB, "CFB", 0 },
+    { GCRY_CIPHER_MODE_CTR, "CTR", 0 },
     { GCRY_CIPHER_MODE_STREAM, "STREAM", 0 },
     {0}
   };
   int modeidx;
+  gpg_error_t err = GPG_ERR_NO_ERROR;
 
   if (!header_printed)
     {
@@ -183,6 +186,12 @@ cipher_bench ( const char *algoname )
     }
 
   keylen = gcry_cipher_get_algo_keylen (algo);
+  if (!keylen)
+    {
+      fprintf (stderr, PGM ": failed to get key length for algorithm `%s'\n",
+	       algoname);
+      exit (1);
+    }
   if ( keylen > sizeof key )
     {
         fprintf (stderr, PGM ": algo %d, keylength problem (%d)\n",
@@ -193,6 +202,12 @@ cipher_bench ( const char *algoname )
     key[i] = i + (clock () & 0xff);
 
   blklen = gcry_cipher_get_algo_blklen (algo);
+  if (!blklen)
+    {
+      fprintf (stderr, PGM ": failed to get block length for algorithm `%s'\n",
+	       algoname);
+      exit (1);
+    }
 
   printf ("%-10s", gcry_cipher_algo_name (algo));
   fflush (stdout);
@@ -209,17 +224,18 @@ cipher_bench ( const char *algoname )
       for (i=0; i < sizeof buf; i++)
         buf[i] = i;
 
-      hd = gcry_cipher_open (algo, modes[modeidx].mode, 0);
-      if (!hd)
+      err = gcry_cipher_open (&hd, algo, modes[modeidx].mode, 0);
+      if (err)
         {
           fprintf (stderr, PGM ": error opening cipher `%s'\n", algoname);
           exit (1);
         }
       
-      if (gcry_cipher_setkey (hd, key, keylen))
-        { 
+      err = gcry_cipher_setkey (hd, key, keylen);
+      if (err)
+      { 
           fprintf (stderr, "gcry_cipher_setkey failed: %s\n",
-                   gcry_strerror (-1) );
+		   gpg_strerror (err));
           gcry_cipher_close (hd);
           exit (1);
         }
@@ -238,21 +254,22 @@ cipher_bench ( const char *algoname )
       if (err)
         { 
           fprintf (stderr, "gcry_cipher_encrypt failed: %s\n",
-                   gcry_strerror (err) );
+                   gpg_strerror (err) );
           exit (1);
         }
 
-      hd = gcry_cipher_open (algo, modes[modeidx].mode, 0);
-      if (!hd)
+      err = gcry_cipher_open (&hd, algo, modes[modeidx].mode, 0);
+      if (err)
         {
           fprintf (stderr, PGM ": error opening cipher `%s'/n", algoname);
           exit (1);
         }
       
-      if (gcry_cipher_setkey (hd, key, keylen))
+      err = gcry_cipher_setkey (hd, key, keylen);
+      if (err)
         { 
           fprintf (stderr, "gcry_cipher_setkey failed: %s\n",
-                   gcry_strerror (-1) );
+                   gpg_strerror (err));
           gcry_cipher_close (hd);
           exit (1);
         }
@@ -267,7 +284,7 @@ cipher_bench ( const char *algoname )
       if (err)
         { 
           fprintf (stderr, "gcry_cipher_decrypt failed: %s\n",
-                   gcry_strerror (err) );
+                   gpg_strerror (err) );
           exit (1);
         }
     }
@@ -279,8 +296,9 @@ cipher_bench ( const char *algoname )
 static void
 do_powm ( const char *n_str, const char *e_str, const char *m_str)
 {
-  GcryMPI e, n, msg, cip;
-  int i, err;
+  gcry_mpi_t e, n, msg, cip;
+  gpg_error_t err;
+  int i;
 
   err = gcry_mpi_scan (&n, GCRYMPI_FMT_HEX, n_str, 0 );
   if (err) BUG ();
@@ -336,10 +354,6 @@ mpi_bench (void)
 
 
 }
-
-
-
-
 
 
 int

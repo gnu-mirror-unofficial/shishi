@@ -37,30 +37,30 @@
 #include "types.h"
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 5 )
-# define JNLIB_GCC_M_FUNCTION 1
-# define JNLIB_GCC_A_NR 	     __attribute__ ((noreturn))
-# define JNLIB_GCC_A_PRINTF( f, a )  __attribute__ ((format (printf,f,a)))
-# define JNLIB_GCC_A_NR_PRINTF( f, a ) \
+#define JNLIB_GCC_M_FUNCTION 1
+#define JNLIB_GCC_A_NR 	     __attribute__ ((noreturn))
+#define JNLIB_GCC_A_PRINTF( f, a )  __attribute__ ((format (printf,f,a)))
+#define JNLIB_GCC_A_NR_PRINTF( f, a ) \
 			    __attribute__ ((noreturn, format (printf,f,a)))
-# define GCC_ATTR_NORETURN  __attribute__ ((__noreturn__))
+#define GCC_ATTR_NORETURN  __attribute__ ((__noreturn__))
 #else
-# define JNLIB_GCC_A_NR
-# define JNLIB_GCC_A_PRINTF( f, a )
-# define JNLIB_GCC_A_NR_PRINTF( f, a )
-# define GCC_ATTR_NORETURN 
+#define JNLIB_GCC_A_NR
+#define JNLIB_GCC_A_PRINTF( f, a )
+#define JNLIB_GCC_A_NR_PRINTF( f, a )
+#define GCC_ATTR_NORETURN 
 #endif
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96 )
-# define GCC_ATTR_PURE  __attribute__ ((__pure__))
+#define GCC_ATTR_PURE  __attribute__ ((__pure__))
 #else
-# define GCC_ATTR_PURE
+#define GCC_ATTR_PURE
 #endif
 
 /* (The malloc attribute might be defined prior to 3.2 - I am just not sure) */
 #if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 2 )
-# define GCC_ATTR_MALLOC    __attribute__ ((__malloc__))
+#define GCC_ATTR_MALLOC    __attribute__ ((__malloc__))
 #else
-# define GCC_ATTR_MALLOC
+#define GCC_ATTR_MALLOC
 #endif
 
 #ifdef G10_I18N_H
@@ -69,10 +69,6 @@
 
 #define _(a)  _gcry_gettext(a)
 #define N_(a) (a)
-
-/*-- gcrypt/global.c --*/
-#define set_lasterr(a) _gcry_set_lasterr ((a))
-int _gcry_set_lasterr( int ec );
 
 void  _gcry_check_heap( const void *a );
 
@@ -102,9 +98,9 @@ void _gcry_set_log_verbosity( int level );
 int _gcry_log_verbosity( int level );
 
 #ifdef JNLIB_GCC_M_FUNCTION
-  #define BUG() _gcry_bug( __FILE__ , __LINE__, __FUNCTION__ )
+#define BUG() _gcry_bug( __FILE__ , __LINE__, __FUNCTION__ )
 #else
-  #define BUG() _gcry_bug( __FILE__ , __LINE__ )
+#define BUG() _gcry_bug( __FILE__ , __LINE__ )
 #endif
 
 #define log_hexdump _gcry_log_hexdump
@@ -120,30 +116,26 @@ int _gcry_log_verbosity( int level );
 
 /*-- cipher/pubkey.c --*/
 
+#if 0
 #ifndef DID_MPI_TYPEDEF
  typedef struct gcry_mpi * MPI;
- #define DID_MPI_TYPEDEF
+#define DID_MPI_TYPEDEF
+#endif
 #endif
 
 #ifndef mpi_powm
-   #define mpi_powm(w,b,e,m)   gcry_mpi_powm( (w), (b), (e), (m) )
+#define mpi_powm(w,b,e,m)   gcry_mpi_powm( (w), (b), (e), (m) )
 #endif
 
-int string_to_pubkey_algo( const char *string );
-const char * pubkey_algo_to_string( int algo );
-unsigned pubkey_nbits( int algo, MPI *pkey );
-
-
-
 /*-- primegen.c --*/
-MPI _gcry_generate_secret_prime (unsigned int nbits,
-                                 int (*extra_check)(void*, MPI),
+gcry_mpi_t _gcry_generate_secret_prime (unsigned int nbits,
+                                 int (*extra_check)(void*, gcry_mpi_t),
                                  void *extra_check_arg);
-MPI _gcry_generate_public_prime (unsigned int nbits,
-                                 int (*extra_check)(void*, MPI),
+gcry_mpi_t _gcry_generate_public_prime (unsigned int nbits,
+                                 int (*extra_check)(void*, gcry_mpi_t),
                                  void *extra_check_arg);
-MPI _gcry_generate_elg_prime( int mode, unsigned pbits, unsigned qbits,
-					   MPI g, MPI **factors );
+gcry_mpi_t _gcry_generate_elg_prime( int mode, unsigned pbits, unsigned qbits,
+					   gcry_mpi_t g, gcry_mpi_t **factors );
 
 
 
@@ -152,12 +144,6 @@ MPI _gcry_generate_elg_prime( int mode, unsigned pbits, unsigned qbits,
 #ifndef HAVE_STPCPY
 char *stpcpy (char *a, const char *b);
 #endif
-#ifndef HAVE_STRSEP
-char *strsep (char **stringp, const char *delim);
-#endif
-#ifndef HAVE_STRLWR
-char *strlwr (char *a);
-#endif
 #ifndef HAVE_STRCASECMP
 int strcasecmp (const char *a, const char *b) GCC_ATTR_PURE;
 #endif
@@ -165,25 +151,25 @@ int strcasecmp (const char *a, const char *b) GCC_ATTR_PURE;
 
 /* macros used to rename missing functions */
 #ifndef HAVE_STRTOUL
-  #define strtoul(a,b,c)  ((unsigned long)strtol((a),(b),(c)))
+#define strtoul(a,b,c)  ((unsigned long)strtol((a),(b),(c)))
 #endif
 #ifndef HAVE_MEMMOVE
-  #define memmove(d, s, n) bcopy((s), (d), (n))
+#define memmove(d, s, n) bcopy((s), (d), (n))
 #endif
 #ifndef HAVE_STRICMP
-  #define stricmp(a,b)	 strcasecmp( (a), (b) )
+#define stricmp(a,b)	 strcasecmp( (a), (b) )
 #endif
 #ifndef HAVE_ATEXIT
-  #define atexit(a)    (on_exit((a),0))
+#define atexit(a)    (on_exit((a),0))
 #endif
 #ifndef HAVE_RAISE
-  #define raise(a) kill(getpid(), (a))
+#define raise(a) kill(getpid(), (a))
 #endif
 
 
 /* some handy macros */
 #ifndef STR
-  #define STR(v) #v
+#define STR(v) #v
 #endif
 #define STR2(v) STR(v)
 #define DIM(v) (sizeof(v)/sizeof((v)[0]))
@@ -202,5 +188,54 @@ void _gcry_burn_stack (int bytes);
 #define hexdigitp(a) (digitp (a)                     \
                       || (*(a) >= 'A' && *(a) <= 'F')  \
                       || (*(a) >= 'a' && *(a) <= 'f'))
+
+/* Management for ciphers/digests/pubkey-ciphers.  */
+
+/* Structure for each registered `module'.  */
+struct gcry_module
+{
+  struct gcry_module *next;     /* List pointers.      */
+  struct gcry_module **prevp;
+  void *spec;			/* The acctual specs.  */
+  int flags;			/* Associated flags.   */
+  int counter;			/* Use counter.        */
+  unsigned int id;		/* ID of this module.  */
+};
+
+typedef struct gcry_module gcry_module_t;
+
+/* Flags for the `flags' member of gcry_module_t.  */
+#define FLAG_MODULE_DISABLED 1 << 0
+
+gpg_err_code_t _gcry_module_add (gcry_module_t **entries,
+				 unsigned int id,
+				 void *spec,
+				 gcry_module_t **module);
+
+typedef int (*gcry_module_lookup_t) (void *spec, void *data);
+
+/* Public function.  Lookup a module specification by it's ID.  After a
+   successfull lookup, the module has it's resource counter
+   incremented.  */
+gcry_module_t *_gcry_module_lookup_id (gcry_module_t *entries,
+				       unsigned int id);
+
+/* Internal function.  Lookup a module specification.  */
+gcry_module_t *_gcry_module_lookup (gcry_module_t *entries, void *data,
+				    gcry_module_lookup_t func);
+
+/* Public function.  Release a module.  In case the use-counter
+   reaches zero, destroy the module.  */
+void _gcry_module_release (gcry_module_t *entry);
+
+/* Public function.  Add a reference to a module.  */
+void _gcry_module_use (gcry_module_t *module);
+
+gpg_err_code_t _gcry_cipher_init (void);
+gpg_err_code_t _gcry_md_init (void);
+gpg_err_code_t _gcry_pk_init (void);
+
+gpg_err_code_t _gcry_pk_module_lookup (int id, gcry_module_t **module);
+void _gcry_pk_module_release (gcry_module_t *module);
 
 #endif /* G10LIB_H */

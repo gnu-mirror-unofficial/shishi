@@ -116,7 +116,7 @@
 #include <string.h>	       /* memcpy, memcmp */
 #include "types.h"             /* for byte and u32 typedefs */
 #include "g10lib.h"
-#include "des.h"
+#include "cipher.h"
 
 #if defined(__GNUC__) && defined(__GNU_LIBRARY__)
 #define working_memcmp memcmp
@@ -134,27 +134,6 @@ working_memcmp( const char *a, const char *b, size_t n )
     return 0;
 }
 #endif
-
-
-/* Some defines/checks to support standalone modules */
-
-#ifndef GCRY_CIPHER_3DES
-# define CIPHER_ALGO_3DES 2
-#elif GCRY_CIPHER_3DES != 2
-# error CIPHER_ALGO_3DES is defined to a wrong value.
-#endif
-
-#ifndef GCRY_CIPHER_DES
-# define CIPHER_ALGO_DES 302
-#elif GCRY_CIPHER_DES != 302
-# error CIPHER_ALGO_DES is defined to a wrong value.
-#endif
-
-
-/* Macros used by the info function. */
-#define FNCCAST_SETKEY(f)  ((int(*)(void*, byte*, unsigned))(f))
-#define FNCCAST_CRYPT(f)   ((void(*)(void*, byte*, byte*))(f))
-
 
 /*
  * Encryption/Decryption context of DES
@@ -176,8 +155,6 @@ typedef struct _tripledes_ctx
   }
 tripledes_ctx[1];
 
-static const char *selftest_failed;
-
 static void des_key_schedule (const byte *, u32 *);
 static int des_setkey (struct _des_ctx *, const byte *);
 static int des_ecb_crypt (struct _des_ctx *, const byte *, byte *, int);
@@ -187,7 +164,7 @@ static int tripledes_ecb_crypt (struct _tripledes_ctx *, const byte *, byte *, i
 static int is_weak_key ( const byte *key );
 static const char *selftest (void);
 
-
+static int initialized;
 
 
 
@@ -592,10 +569,19 @@ des_key_schedule (const byte * rawkey, u32 * subkey)
 static int
 des_setkey (struct _des_ctx *ctx, const byte * key)
 {
+  static const char *selftest_failed;
   int i;
 
-  if( selftest_failed )
-    return GCRYERR_SELFTEST;
+  if (! initialized)
+    {
+      initialized = 1;
+      selftest_failed = selftest ();
+
+      if (selftest_failed)
+	log_error ("%s\n", selftest_failed);
+    }
+  if (selftest_failed)
+    return GPG_ERR_SELFTEST_FAILED;
 
   des_key_schedule (key, ctx->encrypt_subkeys);
   _gcry_burn_stack (32);
@@ -690,7 +676,19 @@ tripledes_set3keys (struct _tripledes_ctx *ctx,
 		    const byte * key2,
 		    const byte * key3)
 {
+  static const char *selftest_failed;
   int i;
+
+  if (! initialized)
+    {
+      initialized = 1;
+      selftest_failed = selftest ();
+
+      if (selftest_failed)
+	log_error ("%s\n", selftest_failed);
+    }
+  if (selftest_failed)
+    return GPG_ERR_SELFTEST_FAILED;
 
   des_key_schedule (key1, ctx->encrypt_subkeys);
   des_key_schedule (key2, &(ctx->decrypt_subkeys[32]));
@@ -707,7 +705,7 @@ tripledes_set3keys (struct _tripledes_ctx *ctx,
 
       ctx->decrypt_subkeys[i+64] = ctx->encrypt_subkeys[30-i];
       ctx->decrypt_subkeys[i+65] = ctx->encrypt_subkeys[31-i];
-    }
+     }
 
   return 0;
 }
@@ -971,11 +969,11 @@ selftest (void)
   {
     int i;
     unsigned char *p;
+    gcry_md_hd_t h;
 
-    GCRY_MD_HD h = gcry_md_open (GCRY_MD_SHA1, 0);
-
-    if (!h)
+    if (gcry_md_open (&h, GCRY_MD_SHA1, 0))
       return "SHA1 not available";
+
     for (i = 0; i < 64; ++i)
       gcry_md_write (h, weak_keys[i], 8);
     p = gcry_md_read (h, GCRY_MD_SHA1);
@@ -993,129 +991,89 @@ selftest (void)
 }
 
 
-static int
-do_tripledes_setkey ( struct _tripledes_ctx *ctx, byte *key, unsigned keylen )
+static gpg_err_code_t
+do_tripledes_setkey ( void *context, const byte *key, unsigned keylen )
 {
-    if( selftest_failed )
-	return GCRYERR_SELFTEST;
+  struct _tripledes_ctx *ctx = (struct _tripledes_ctx *) context;
+
     if( keylen != 24 )
-	return GCRYERR_INV_KEYLEN;
+	return GPG_ERR_INV_KEYLEN;
 
     tripledes_set3keys ( ctx, key, key+8, key+16);
 
     if( is_weak_key( key ) || is_weak_key( key+8 ) || is_weak_key( key+16 ) ) {
         _gcry_burn_stack (64);
-	return GCRYERR_WEAK_KEY;
+	return GPG_ERR_WEAK_KEY;
     }
     _gcry_burn_stack (64);
 
-    return 0;
+    return GPG_ERR_NO_ERROR;
 }
 
 
 static void
-do_tripledes_encrypt( struct _tripledes_ctx *ctx, byte *outbuf, byte *inbuf )
+do_tripledes_encrypt( void *context, byte *outbuf, const byte *inbuf )
 {
-    tripledes_ecb_encrypt ( ctx, inbuf, outbuf );
-    _gcry_burn_stack (32);
+  struct _tripledes_ctx *ctx = (struct _tripledes_ctx *) context;
+
+  tripledes_ecb_encrypt ( ctx, inbuf, outbuf );
+  _gcry_burn_stack (32);
 }
 
 static void
-do_tripledes_decrypt( struct _tripledes_ctx *ctx, byte *outbuf, byte *inbuf )
+do_tripledes_decrypt( void *context, byte *outbuf, const byte *inbuf )
 {
-    tripledes_ecb_decrypt ( ctx, inbuf, outbuf );
-    _gcry_burn_stack (32);
+  struct _tripledes_ctx *ctx = (struct _tripledes_ctx *) context;
+  tripledes_ecb_decrypt ( ctx, inbuf, outbuf );
+  _gcry_burn_stack (32);
 }
 
-
-
-
-static int
-do_des_setkey ( struct _des_ctx *ctx, byte *key, unsigned keylen )
+static gpg_err_code_t
+do_des_setkey (void *context, const byte *key, unsigned keylen)
 {
-    if( selftest_failed )
-	return GCRYERR_SELFTEST;
-    if( keylen != 8 )
-	return GCRYERR_INV_KEYLEN;
+  struct _des_ctx *ctx = (struct _des_ctx *) context;
 
-    des_setkey (ctx, key);
+  if (keylen != 8)
+    return GPG_ERR_INV_KEYLEN;
 
-    if( is_weak_key( key ) ) {
-        _gcry_burn_stack (64);
-	return GCRYERR_WEAK_KEY;
-    }
+  des_setkey (ctx, key);
+
+  if (is_weak_key (key)) {
     _gcry_burn_stack (64);
+    return GPG_ERR_WEAK_KEY;
+  }
+  _gcry_burn_stack (64);
 
-    return 0;
+  return GPG_ERR_NO_ERROR;
 }
 
 
 static void
-do_des_encrypt( struct _des_ctx *ctx, byte *outbuf, byte *inbuf )
+do_des_encrypt( void *context, byte *outbuf, const byte *inbuf )
 {
-    des_ecb_encrypt ( ctx, inbuf, outbuf );
-    _gcry_burn_stack (32);
+  struct _des_ctx *ctx = (struct _des_ctx *) context;
+
+  des_ecb_encrypt ( ctx, inbuf, outbuf );
+  _gcry_burn_stack (32);
 }
 
 static void
-do_des_decrypt( struct _des_ctx *ctx, byte *outbuf, byte *inbuf )
+do_des_decrypt( void *context, byte *outbuf, const byte *inbuf )
 {
-    des_ecb_decrypt ( ctx, inbuf, outbuf );
-    _gcry_burn_stack (32);
+  struct _des_ctx *ctx = (struct _des_ctx *) context;
+
+  des_ecb_decrypt ( ctx, inbuf, outbuf );
+  _gcry_burn_stack (32);
 }
 
+gcry_cipher_spec_t cipher_spec_des =
+  {
+    "DES", GCRY_CIPHER_DES, 8, 64, sizeof (struct _des_ctx),
+    do_des_setkey, do_des_encrypt, do_des_decrypt
+  };
 
-/****************
- * Return some information about the algorithm.  We need algo here to
- * distinguish different flavors of the algorithm.
- * Returns: A pointer to string describing the algorithm or NULL if
- *	    the ALGO is invalid.
- */
-const char *
-_gcry_des_get_info( int algo, size_t *keylen,
-		   size_t *blocksize, size_t *contextsize,
-		   int	(**r_setkey)( void *c, byte *key, unsigned keylen ),
-		   void (**r_encrypt)( void *c, byte *outbuf, byte *inbuf ),
-		   void (**r_decrypt)( void *c, byte *outbuf, byte *inbuf )
-		 )
-{
-    static int did_selftest = 0;
-
-    if( !did_selftest ) {
-	const char *s = selftest();
-	did_selftest = 1;
-	if( s ) {
-	    log_error ("%s\n", s );
-	    selftest_failed = s;
-	    return NULL;
-	}
-    }
-
-
-    if( algo == GCRY_CIPHER_3DES ) {
-	*keylen = 192;
-	*blocksize = 8;
-	*contextsize = sizeof(struct _tripledes_ctx);
-	*(int  (**)(struct _tripledes_ctx*, byte*, unsigned))r_setkey
-							= do_tripledes_setkey;
-	*(void (**)(struct _tripledes_ctx*, byte*, byte*))r_encrypt
-							= do_tripledes_encrypt;
-	*(void (**)(struct _tripledes_ctx*, byte*, byte*))r_decrypt
-							= do_tripledes_decrypt;
-	return "3DES";
-    }
-    else if( algo == GCRY_CIPHER_DES ) {
-	*keylen = 64;
-	*blocksize = 8;
-	*contextsize = sizeof(struct _des_ctx);
-	*(int  (**)(struct _des_ctx*, byte*, unsigned))r_setkey
-							= do_des_setkey;
-	*(void (**)(struct _des_ctx*, byte*, byte*))r_encrypt
-							= do_des_encrypt;
-	*(void (**)(struct _des_ctx*, byte*, byte*))r_decrypt
-							= do_des_decrypt;
-	return "DES";
-    }
-    return NULL;
-}
-
+gcry_cipher_spec_t cipher_spec_tripledes =
+  {
+    "3DES", GCRY_CIPHER_3DES, 8, 192, sizeof (struct _tripledes_ctx),
+    do_tripledes_setkey, do_tripledes_encrypt, do_tripledes_decrypt
+  };

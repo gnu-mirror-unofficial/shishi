@@ -1,4 +1,4 @@
-# Copyright (C) 2001, 2002 Free Software Foundation, Inc.
+# Copyright (C) 2001, 2002, 2003 Free Software Foundation, Inc.
 #
 # This file is part of Libgcrypt.
 #
@@ -21,11 +21,14 @@
 
 # TESTS_ENVIRONMENT =  
 
-TESTS = basic tsexp keygen pubkey
+TESTS = ac basic tsexp keygen pubkey
 
 EXTRA_DIST = 
+
+LIBS = -lpthread
 
 INCLUDES = -I$(top_srcdir)/src
 LDADD = ../src/libgcrypt.la
 
 noinst_PROGRAMS = $(TESTS) 
+AM_CFLAGS = @GPG_ERROR_CFLAGS@

@@ -41,13 +41,7 @@
 #include <string.h>
 #include "g10lib.h"
 #include "types.h"
-#include "cast5.h"
-
-
-#define CIPHER_ALGO_CAST5	 3
-
-#define FNCCAST_SETKEY(f)  (int(*)(void*, byte*, unsigned))(f)
-#define FNCCAST_CRYPT(f)   (void(*)(void*, byte*, byte*))(f)
+#include "cipher.h"
 
 #define CAST5_BLOCKSIZE 8
 
@@ -56,9 +50,9 @@ typedef struct {
     byte Kr[16];
 } CAST5_context;
 
-static int  cast_setkey( CAST5_context *c, byte *key, unsigned keylen );
-static void encrypt_block( CAST5_context *bc, byte *outbuf, byte *inbuf );
-static void decrypt_block( CAST5_context *bc, byte *outbuf, byte *inbuf );
+static gpg_err_code_t cast_setkey (void *c, const byte *key, unsigned keylen);
+static void encrypt_block (void *c, byte *outbuf, const byte *inbuf);
+static void decrypt_block (void *c, byte *outbuf, const byte *inbuf);
 
 
 
@@ -347,7 +341,7 @@ rol(int n, u32 x)
 	return x;
 }
 #else
-  #define rol(n,x) ( ((x) << (n)) | ((x) >> (32-(n))) )
+#define rol(n,x) ( ((x) << (n)) | ((x) >> (32-(n))) )
 #endif
 
 #define F1(D,m,r)  (  (I = ((m) + (D))), (I=rol((r),I)),   \
@@ -358,7 +352,7 @@ rol(int n, u32 x)
     (((s1[I >> 24] + s2[(I>>16)&0xff]) ^ s3[(I>>8)&0xff]) - s4[I&0xff]) )
 
 static void
-do_encrypt_block( CAST5_context *c, byte *outbuf, byte *inbuf )
+do_encrypt_block( CAST5_context *c, byte *outbuf, const byte *inbuf )
 {
     u32 l, r, t;
     u32 I;   /* used by the Fx macros */
@@ -412,16 +406,17 @@ do_encrypt_block( CAST5_context *c, byte *outbuf, byte *inbuf )
 }
 
 static void
-encrypt_block( CAST5_context *c, byte *outbuf, byte *inbuf )
+encrypt_block (void *context , byte *outbuf, const byte *inbuf)
 {
-    do_encrypt_block (c, outbuf, inbuf);
-    _gcry_burn_stack (20+4*sizeof(void*));
+  CAST5_context *c = (CAST5_context *) context;
+  do_encrypt_block (c, outbuf, inbuf);
+  _gcry_burn_stack (20+4*sizeof(void*));
 }
 
 
 
 static void
-do_decrypt_block (CAST5_context *c, byte *outbuf, byte *inbuf )
+do_decrypt_block (CAST5_context *c, byte *outbuf, const byte *inbuf )
 {
     u32 l, r, t;
     u32 I;
@@ -462,10 +457,11 @@ do_decrypt_block (CAST5_context *c, byte *outbuf, byte *inbuf )
 }
 
 static void
-decrypt_block( CAST5_context *c, byte *outbuf, byte *inbuf )
+decrypt_block (void *context, byte *outbuf, const byte *inbuf)
 {
-    do_decrypt_block (c, outbuf, inbuf);
-    _gcry_burn_stack (20+4*sizeof(void*));
+  CAST5_context *c = (CAST5_context *) context;
+  do_decrypt_block (c, outbuf, inbuf);
+  _gcry_burn_stack (20+4*sizeof(void*));
 }
 
 
@@ -487,7 +483,7 @@ selftest(void)
     if( memcmp( buffer, plain, 8 ) )
 	return "2";
 
-  #if 0 /* full maintenance test */
+#if 0 /* full maintenance test */
     {
 	int i;
 	byte a0[16] = { 0x01,0x23,0x45,0x67,0x12,0x34,0x56,0x78,
@@ -511,7 +507,7 @@ selftest(void)
 	    return "3";
 
     }
-  #endif
+#endif
     return NULL;
 }
 
@@ -521,8 +517,8 @@ static void
 key_schedule( u32 *x, u32 *z, u32 *k )
 {
 
-  #define xi(i)   ((x[(i)/4] >> (8*(3-((i)%4)))) & 0xff)
-  #define zi(i)   ((z[(i)/4] >> (8*(3-((i)%4)))) & 0xff)
+#define xi(i)   ((x[(i)/4] >> (8*(3-((i)%4)))) & 0xff)
+#define zi(i)   ((z[(i)/4] >> (8*(3-((i)%4)))) & 0xff)
 
     z[0] = x[0] ^ s5[xi(13)]^s6[xi(15)]^s7[xi(12)]^s8[xi(14)]^s7[xi( 8)];
     z[1] = x[2] ^ s5[zi( 0)]^s6[zi( 2)]^s7[zi( 1)]^s8[zi( 3)]^s8[xi(10)];
@@ -560,13 +556,13 @@ key_schedule( u32 *x, u32 *z, u32 *k )
     k[14]= s5[xi(12)]^s6[xi(13)]^s7[xi( 3)]^s8[xi( 2)]^s7[xi( 8)];
     k[15]= s5[xi(14)]^s6[xi(15)]^s7[xi( 1)]^s8[xi( 0)]^s8[xi(13)];
 
-  #undef xi
-  #undef zi
+#undef xi
+#undef zi
 }
 
 
-static int
-do_cast_setkey( CAST5_context *c, byte *key, unsigned keylen )
+static gpg_err_code_t
+do_cast_setkey( CAST5_context *c, const byte *key, unsigned keylen )
 {
   static int initialized;
   static const char* selftest_failed;
@@ -582,10 +578,10 @@ do_cast_setkey( CAST5_context *c, byte *key, unsigned keylen )
 	    log_error ("CAST5 selftest failed (%s).\n", selftest_failed );
     }
     if( selftest_failed )
-	return GCRYERR_SELFTEST;
+      	return GPG_ERR_SELFTEST_FAILED;
 
     if( keylen != 16 )
-	return GCRYERR_INV_KEYLEN;
+	return GPG_ERR_INV_KEYLEN;
 
     x[0] = key[0]  << 24 | key[1]  << 16 | key[2]  << 8 | key[3];
     x[1] = key[4]  << 24 | key[5]  << 16 | key[6]  << 8 | key[7];
@@ -603,47 +599,23 @@ do_cast_setkey( CAST5_context *c, byte *key, unsigned keylen )
     memset(&z,0, sizeof z);
     memset(&k,0, sizeof k);
 
-  #undef xi
-  #undef zi
-    return 0;
+#undef xi
+#undef zi
+    return GPG_ERR_NO_ERROR;
 }
 
-static int
-cast_setkey( CAST5_context *c, byte *key, unsigned keylen )
+static gpg_err_code_t
+cast_setkey (void *context, const byte *key, unsigned keylen )
 {
-    int rc = do_cast_setkey (c, key, keylen);
-    _gcry_burn_stack (96+7*sizeof(void*));
-    return rc;
+  CAST5_context *c = (CAST5_context *) context;
+  gpg_err_code_t rc = do_cast_setkey (c, key, keylen);
+  _gcry_burn_stack (96+7*sizeof(void*));
+  return rc;
 }
 
 
-/****************
- * Return some information about the algorithm.  We need algo here to
- * distinguish different flavors of the algorithm.
- * Returns: A pointer to string describing the algorithm or NULL if
- *	    the ALGO is invalid.
- */
-const char *
-_gcry_cast5_get_info( int algo, size_t *keylen,
-		   size_t *blocksize, size_t *contextsize,
-		   int	(**r_setkey)( void *c, byte *key, unsigned keylen ),
-		   void (**r_encrypt)( void *c, byte *outbuf, byte *inbuf ),
-		   void (**r_decrypt)( void *c, byte *outbuf, byte *inbuf )
-		 )
-{
-    *keylen = 128;
-    *blocksize = CAST5_BLOCKSIZE;
-    *contextsize = sizeof(CAST5_context);
-    *(int  (**)(CAST5_context*, byte*, unsigned))r_setkey
-							= cast_setkey;
-    *(void (**)(CAST5_context*, byte*, byte*))r_encrypt
-							= encrypt_block;
-    *(void (**)(CAST5_context*, byte*, byte*))r_decrypt
-							= decrypt_block;
-
-
-    if( algo == CIPHER_ALGO_CAST5 )
-	return "CAST5";
-    return NULL;
-}
-
+gcry_cipher_spec_t cipher_spec_cast5 =
+  {
+    "CAST5", GCRY_CIPHER_CAST5, CAST5_BLOCKSIZE, 128, sizeof (CAST5_context),
+    cast_setkey, encrypt_block, decrypt_block,
+  };
