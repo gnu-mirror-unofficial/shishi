@@ -1,4 +1,4 @@
-/* crypto-des.c	DES related RFC 1510 crypto functions
+/* crypto-des.c	DES crypto functions
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -1042,7 +1042,6 @@ des_md5_checksum (Shishi * handle,
 static int
 des_crc_encrypt (Shishi * handle,
 	      int keyusage,
-	      int keytype,
 	      char *key,
 	      int keylen,
 	      char *in,
@@ -1072,7 +1071,6 @@ des_crc_encrypt (Shishi * handle,
 static int
 des_crc_decrypt (Shishi * handle,
 	      int keyusage,
-	      int keytype,
 	      char *key,
 	      int keylen,
 	      char *in,
@@ -1113,7 +1111,6 @@ des_crc_decrypt (Shishi * handle,
 static int
 des_md4_encrypt (Shishi * handle,
 	      int keyusage,
-	      int keytype,
 	      char *key,
 	      int keylen,
 	      char *in,
@@ -1143,7 +1140,6 @@ des_md4_encrypt (Shishi * handle,
 static int
 des_md4_decrypt (Shishi * handle,
 	      int keyusage,
-	      int keytype,
 	      char *key,
 	      int keylen,
 	      char *in,
@@ -1172,7 +1168,6 @@ des_md4_decrypt (Shishi * handle,
 static int
 des_md5_encrypt (Shishi * handle,
 	      int keyusage,
-	      int keytype,
 	      char *key,
 	      int keylen,
 	      char *in,
@@ -1202,7 +1197,6 @@ des_md5_encrypt (Shishi * handle,
 static int
 des_md5_decrypt (Shishi * handle,
 	      int keyusage,
-	      int keytype,
 	      char *key,
 	      int keylen,
 	      char *in,
@@ -1319,24 +1313,23 @@ des_cbc_check (char key[8], char *data, int n_data)
 
 static int
 des_random_to_key (Shishi * handle,
-		   int keytype,
 		   char *random,
 		   int randomlen,
 		   char *outkey)
 {
-  int keylen = shishi_cipher_keylen (keytype);
+  int keylen = shishi_cipher_keylen (SHISHI_DES_CBC_MD5);
 
   if (randomlen < keylen)
     return !SHISHI_OK;
 
   memcpy(outkey, random, keylen);
+  des_set_odd_key_parity (outkey);
 
   return SHISHI_OK;
 }
 
 static int
 des_string_to_key (Shishi * handle,
-		   int keytype,
 		   char *string,
 		   int stringlen,
 		   char *salt,

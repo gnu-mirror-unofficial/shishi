@@ -1,4 +1,4 @@
-/* crypto.c	RFC 1510 crypto functions
+/* crypto.c	crypto functions
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -163,10 +163,10 @@ simplified_dencrypt (Shishi * handle,
 }
 
 static int
-simplified_hmac (Shishi * handle, int keytype, 
-		 char *out, int outlen, 
+simplified_hmac (Shishi * handle, 
+		 int keytype, char *key, int keylen,
 		 char *in, int inlen,
-		 char *key, int keylen)
+		 char *out, int outlen)
 {
   GCRY_MD_HD mdh;
   int halg = GCRY_MD_SHA1;
@@ -199,16 +199,16 @@ simplified_hmac (Shishi * handle, int keytype,
 }
 
 static int
-simplified_hmac_verify (Shishi * handle, int keytype, 
-			char *hmac, int hmaclen, 
+simplified_hmac_verify (Shishi * handle, 
+			int keytype, char *key, int keylen,
 			char *in, int inlen,
-			char *key, int keylen)
+			char *hmac, int hmaclen)
 {
   char hash[MAX_HASH_LEN];
   int res;
 
-  res = simplified_hmac(handle, keytype, hash, hmaclen, 
-			in, inlen, key, keylen);
+  res = simplified_hmac(handle, keytype, key, keylen, in, inlen, 
+			hash, hmaclen);
   if (res != SHISHI_OK)
     return res;
 
@@ -313,8 +313,8 @@ simplified_encrypt (Shishi * handle,
       int derivedkeylen;
       char *buffer;
       int buflen;
-      int blen = _shishi_cipher_blocksize (keytype);
-      int halg = GCRY_MD_SHA1; /* XXX hide this in crypto-lowlevel.c */
+      int blen = shishi_cipher_blocksize (keytype);
+      int halg = GCRY_MD_SHA1;
       int hlen = gcry_md_get_algo_dlen(halg);
       int len;
 
@@ -350,8 +350,8 @@ simplified_encrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
       
-      res = simplified_hmac (handle, keytype, out + len, hlen,
-			     buffer, buflen, derivedkey, derivedkeylen);
+      res = simplified_hmac (handle, keytype, derivedkey, derivedkeylen, 
+			     buffer, buflen, out + len, hlen);
       if (res != SHISHI_OK)
 	return res;
 
@@ -383,8 +383,8 @@ simplified_decrypt (Shishi * handle,
     {
       char derivedkey[MAX_KEY_LEN];
       int derivedkeylen;
-      int blen = _shishi_cipher_blocksize (keytype);
-      int halg = GCRY_MD_SHA1; /* XXX hide this in crypto-lowlevel.c */
+      int blen = shishi_cipher_blocksize (keytype);
+      int halg = GCRY_MD_SHA1;
       int hlen = gcry_md_get_algo_dlen(halg);
       int len;
 
@@ -408,9 +408,9 @@ simplified_decrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      res = simplified_hmac_verify (handle, keytype, 
-				  in + inlen - hlen, hlen, out, len,
-				  derivedkey, derivedkeylen);
+      res = simplified_hmac_verify (handle, keytype, derivedkey, derivedkeylen,
+				    out, len, in + inlen - hlen, hlen);
+				  
       if (res != SHISHI_OK)
 	return res;
 
@@ -710,7 +710,7 @@ shishi_dr (Shishi * handle,
   char cipher[MAX_DR_CONSTANT];
   char plaintext[MAX_DR_CONSTANT];
   char nfoldconstant[MAX_DR_CONSTANT];
-  int blocksize = _shishi_cipher_blocksize (etype);
+  int blocksize = shishi_cipher_blocksize (etype);
   int len, totlen, cipherlen;
   int res;
 
@@ -857,13 +857,11 @@ shishi_dk (Shishi * handle,
 #include "crypto-aes.c"
 
 typedef int (*Shishi_random_to_key_function) (Shishi * handle,
-					      int keytype,
 					      char *random,
 					      int randomlen,
 					      char *outkey);
 
 typedef int (*Shishi_string_to_key_function) (Shishi * handle,
-					      int keytype,
 					      char *password,
 					      int passwordlen,
 					      char *salt,
@@ -873,7 +871,6 @@ typedef int (*Shishi_string_to_key_function) (Shishi * handle,
 
 typedef int (*Shishi_encrypt_function) (Shishi * handle,
 					int keyusage,
-					int keytype,
 					char *key,
 					int keylen,
 					char *in,
@@ -883,7 +880,6 @@ typedef int (*Shishi_encrypt_function) (Shishi * handle,
 
 typedef int (*Shishi_decrypt_function) (Shishi * handle,
 					int keyusage,
-					int keytype,
 					char *key,
 					int keylen,
 					char *in,
@@ -973,8 +969,8 @@ cipherinfo des3_cbc_sha1_kd_info = {
   SHISHI_HMAC_SHA1_DES3_KD,
   des3_random_to_key,
   des3_string_to_key,
-  simplified_encrypt,
-  simplified_decrypt
+  des3_encrypt,
+  des3_decrypt
 };
 
 cipherinfo aes128_cts_hmac_sha1_96_info = {
@@ -987,8 +983,8 @@ cipherinfo aes128_cts_hmac_sha1_96_info = {
   SHISHI_HMAC_SHA1_96_AES128,
   aes128_random_to_key,
   aes128_string_to_key,
-  simplified_encrypt,
-  simplified_decrypt
+  aes128_encrypt,
+  aes128_decrypt
 };
 
 cipherinfo aes256_cts_hmac_sha1_96_info = {
@@ -1001,8 +997,8 @@ cipherinfo aes256_cts_hmac_sha1_96_info = {
   SHISHI_HMAC_SHA1_96_AES256,
   aes256_random_to_key,
   aes256_string_to_key,
-  simplified_encrypt,
-  simplified_decrypt
+  aes256_encrypt,
+  aes256_decrypt
 };
 
 cipherinfo *ciphers[] = {
@@ -1035,8 +1031,8 @@ shishi_cipher_name (int type)
   return NULL;
 }
 
-static int
-_shishi_cipher_blocksize (int type)
+int
+shishi_cipher_blocksize (int type)
 {
   int i;
 
@@ -1047,8 +1043,8 @@ _shishi_cipher_blocksize (int type)
   return -1;
 }
 
-static int
-_shishi_cipher_minpadsize (int type)
+int
+shishi_cipher_minpadsize (int type)
 {
   int i;
 
@@ -1059,8 +1055,8 @@ _shishi_cipher_minpadsize (int type)
   return -1;
 }
 
-static int
-_shishi_cipher_confoundersize (int type)
+int
+shishi_cipher_confoundersize (int type)
 {
   int i;
 
@@ -1242,12 +1238,10 @@ shishi_string_to_key (Shishi * handle,
 			   keytype);
       return !SHISHI_OK;
     }
-  else
-    {
-      res = (*string2key) (handle, keytype, password, passwordlen, 
-			   salt, saltlen, parameter, outkey);
-      *outkeylen = shishi_cipher_keylen (keytype);
-    }
+
+  res = (*string2key) (handle, password, passwordlen, 
+		       salt, saltlen, parameter, outkey);
+  *outkeylen = shishi_cipher_keylen (keytype);
 
   if (DEBUGCRYPTO(handle))
     {
@@ -1314,11 +1308,9 @@ shishi_random_to_key (Shishi * handle,
 			   keytype);
       return !SHISHI_OK;
     }
-  else
-    {
-      res = (*random2key) (handle, keytype, random, randomlen, outkey);
-      *outkeylen = shishi_cipher_keylen (keytype);
-    }
+
+  res = (*random2key) (handle, random, randomlen, outkey);
+  *outkeylen = shishi_cipher_keylen (keytype);
 
   if (DEBUGCRYPTO(handle))
     {
@@ -1462,8 +1454,8 @@ shishi_checksum (Shishi * handle,
 	if (res != SHISHI_OK)
 	  return res;
 
-	res = simplified_hmac (handle, keytype, out, hlen,
-			       in, inlen, derivedkey, derivedkeylen);
+	res = simplified_hmac (handle, keytype, derivedkey, derivedkeylen, 
+			       in, inlen, out, hlen);
 	if (res != SHISHI_OK)
 	  {
 	    shishi_error_set (handle, "verify failed");
@@ -1552,7 +1544,7 @@ shishi_encrypt (Shishi * handle,
       return !SHISHI_OK;
     }
 
-  res = (*encrypt) (handle, keyusage, keytype, key, keylen, 
+  res = (*encrypt) (handle, keyusage, key, keylen, 
 		    in, inlen, out, outlen);
 
   if (DEBUGCRYPTO(handle))
@@ -1629,7 +1621,7 @@ shishi_decrypt (Shishi * handle,
       return !SHISHI_OK;
     }
 
-  res = (*decrypt) (handle, keyusage, keytype, key, keylen, 
+  res = (*decrypt) (handle, keyusage, key, keylen, 
 		    in, inlen, out, outlen);
 
   if (DEBUGCRYPTO(handle))

@@ -1,4 +1,4 @@
-/* crypto-3des.c	3DES related RFC 1510 crypto functions
+/* crypto-3des.c	3DES crypto functions
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -21,6 +21,34 @@
  *
  */
 
+static int
+des3_encrypt (Shishi * handle,
+	      int keyusage,
+	      char *key,
+	      int keylen,
+	      char *in, 
+	      int inlen, 
+	      char *out,
+	      int *outlen)
+{
+  return simplified_encrypt (handle, keyusage, SHISHI_DES3_CBC_HMAC_SHA1_KD, 
+			     key, keylen, in, inlen, out, outlen);
+}
+
+static int
+des3_decrypt (Shishi * handle,
+	      int keyusage,
+	      char *key,
+	      int keylen,
+	      char *in, 
+	      int inlen, 
+	      char *out,
+	      int *outlen)
+{
+  return simplified_decrypt (handle, keyusage, SHISHI_DES3_CBC_HMAC_SHA1_KD,
+			     key, keylen, in, inlen, out, outlen);
+}
+
 /* The 168 bits of random key data are converted to a protocol key
  * value as follows.  First, the 168 bits are divided into three
  * groups of 56 bits, which are expanded individually into 64 bits as
@@ -42,7 +70,6 @@
  */
 static int
 des3_random_to_key (Shishi * handle,
-		    int keytype,
 		    char random[168 / 8], 
 		    int randomlen,
 		    char key[3 * 8])
@@ -89,7 +116,6 @@ des3_random_to_key (Shishi * handle,
 
 static int
 des3_string_to_key (Shishi * handle,
-		    int keytype,
 		    char *string,
 		    int stringlen,
 		    char *salt,
@@ -105,7 +131,6 @@ des3_string_to_key (Shishi * handle,
   int i, j;
   char temp, temp2;
   int res;
-  int keylen = shishi_cipher_keylen (keytype);
 
   if (DEBUGCRYPTO(handle))
     {
@@ -133,7 +158,7 @@ des3_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = des3_random_to_key (handle, keytype, nfold, 168 / 8, key);
+  res = des3_random_to_key (handle, nfold, 168 / 8, key);
   if (res != SHISHI_OK)
     return res;
 

@@ -1,4 +1,4 @@
-/* crypto-null.c	NULL related RFC 1510 crypto functions
+/* crypto-null.c	NULL crypto functions
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -24,7 +24,6 @@
 static int
 null_encrypt (Shishi * handle,
 	      int keyusage,
-	      int keytype,
 	      char *key,
 	      int keylen,
 	      char *in, 
@@ -44,7 +43,6 @@ null_encrypt (Shishi * handle,
 static int
 null_decrypt (Shishi * handle,
 	      int keyusage,
-	      int keytype,
 	      char *key,
 	      int keylen,
 	      char *in,
@@ -63,7 +61,6 @@ null_decrypt (Shishi * handle,
 
 static int
 null_random_to_key (Shishi * handle,
-		    int keytype,
 		    char *random,
 		    int randomlen,
 		    char *outkey)
@@ -73,7 +70,6 @@ null_random_to_key (Shishi * handle,
 
 static int
 null_string_to_key_function (Shishi * handle,
-			     int keytype,
 			     char *password,
 			     int passwordlen,
 			     char *salt,

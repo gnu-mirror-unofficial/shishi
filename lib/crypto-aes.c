@@ -1,4 +1,4 @@
-/* crypto-aes.c	AES related RFC 1510 crypto functions
+/* crypto-aes.c		AES crypto functions
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -22,6 +22,62 @@
  */
 
 #include "pkcs5.h"
+
+static int
+aes128_encrypt (Shishi * handle,
+	     int keyusage,
+	     char *key,
+	     int keylen,
+	     char *in, 
+	     int inlen, 
+	     char *out,
+	     int *outlen)
+{
+  return simplified_encrypt (handle, keyusage, SHISHI_AES128_CTS_HMAC_SHA1_96,
+			     key, keylen, in, inlen, out, outlen);
+}
+
+static int
+aes128_decrypt (Shishi * handle,
+	     int keyusage,
+	     char *key,
+	     int keylen,
+	     char *in, 
+	     int inlen, 
+	     char *out,
+	     int *outlen)
+{
+  return simplified_decrypt (handle, keyusage, SHISHI_AES128_CTS_HMAC_SHA1_96,
+			     key, keylen, in, inlen, out, outlen);
+}
+
+static int
+aes256_encrypt (Shishi * handle,
+	     int keyusage,
+	     char *key,
+	     int keylen,
+	     char *in, 
+	     int inlen, 
+	     char *out,
+	     int *outlen)
+{
+  return simplified_encrypt (handle, keyusage, SHISHI_AES256_CTS_HMAC_SHA1_96,
+			     key, keylen, in, inlen, out, outlen);
+}
+
+static int
+aes256_decrypt (Shishi * handle,
+	     int keyusage,
+	     char *key,
+	     int keylen,
+	     char *in, 
+	     int inlen, 
+	     char *out,
+	     int *outlen)
+{
+  return simplified_decrypt (handle, keyusage, SHISHI_AES256_CTS_HMAC_SHA1_96,
+			     key, keylen, in, inlen, out, outlen);
+}
 
 static int
 aes_string_to_key (Shishi * handle,
@@ -86,7 +142,6 @@ aes_string_to_key (Shishi * handle,
 
 static int
 aes128_string_to_key (Shishi * handle,
-		      int keytype,
 		      char *password,
 		      int passwordlen,
 		      char *salt,
@@ -94,6 +149,7 @@ aes128_string_to_key (Shishi * handle,
 		      char *parameter,
 		      char *outkey)
 {
+  int keytype = SHISHI_AES128_CTS_HMAC_SHA1_96;
   int keylen = shishi_cipher_keylen (keytype);
 
   return aes_string_to_key (handle, keytype, password, passwordlen, 
@@ -102,7 +158,6 @@ aes128_string_to_key (Shishi * handle,
 
 static int
 aes256_string_to_key (Shishi * handle,
-		      int keytype,
 		      char *password,
 		      int passwordlen,
 		      char *salt,
@@ -110,6 +165,7 @@ aes256_string_to_key (Shishi * handle,
 		      char *parameter,
 		      char *outkey)
 {
+  int keytype = SHISHI_AES256_CTS_HMAC_SHA1_96;
   int keylen = shishi_cipher_keylen (keytype);
 
   return aes_string_to_key (handle, keytype, password, passwordlen, 
@@ -118,11 +174,11 @@ aes256_string_to_key (Shishi * handle,
 
 static int
 aes128_random_to_key (Shishi * handle,
-		      int keytype,
 		      char *random,
 		      int randomlen,
 		      char *outkey)
 {
+  int keytype = SHISHI_AES128_CTS_HMAC_SHA1_96;
   int keylen = shishi_cipher_keylen (keytype);
 
   if (randomlen < keylen)
@@ -135,11 +191,11 @@ aes128_random_to_key (Shishi * handle,
 
 static int
 aes256_random_to_key (Shishi * handle,
-		      int keytype,
 		      char *random,
 		      int randomlen,
 		      char *outkey)
 {
+  int keytype = SHISHI_AES256_CTS_HMAC_SHA1_96;
   int keylen = shishi_cipher_keylen (keytype);
 
   if (randomlen < keylen)
