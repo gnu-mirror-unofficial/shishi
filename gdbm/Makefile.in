@@ -240,6 +240,9 @@ dist:
 	gzip `cat .fname`.tar
 	rm -rf `cat .fname` .fname
 
+distdir distcheck:
+	:
+
 # dbm files
 dbminit.o:	autoconf.h gdbmdefs.h proto.h extern.h gdbmerrno.h
 delete.o:	autoconf.h gdbmdefs.h proto.h extern.h
