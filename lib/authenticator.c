@@ -755,7 +755,8 @@ int
 shishi_authenticator_add_authorizationdata (Shishi * handle,
 					    Shishi_asn1 authenticator,
 					    int32_t adtype,
-					    char *addata, size_t addatalen)
+					    const char *addata,
+					    size_t addatalen)
 {
   char *format;
   int res;
