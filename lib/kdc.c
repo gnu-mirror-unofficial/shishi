@@ -599,27 +599,39 @@ shishi_tgs_process (Shishi * handle,
     return res;
 
   if (etype != shishi_key_type (use_subkey ? subkey : tktkey))
-    return SHISHI_TGSREP_BAD_KEYTYPE;
+    res = SHISHI_TGSREP_BAD_KEYTYPE;
+  else
+    res = shishi_kdc_process (handle, tgsreq, tgsrep,
+			      use_subkey ? subkey : tktkey,
+			      use_subkey ?
+			      SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY :
+			      SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
+			      enckdcreppart);
 
-  res = shishi_kdc_process (handle, tgsreq, tgsrep,
-			    use_subkey ? subkey : tktkey,
-			    use_subkey ?
-			    SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY :
-			    SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
-			    enckdcreppart);
-  if (res == SHISHI_CRYPTO_ERROR && use_subkey)
+  /* Entire if statement to work around buggy KDCs. */
+  if (use_subkey && (res == SHISHI_CRYPTO_ERROR ||
+		     res == SHISHI_TGSREP_BAD_KEYTYPE))
     {
       int tmpres;
 
-      tmpres = shishi_kdc_process (handle, tgsreq, tgsrep, tktkey,
-				   SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
-				   enckdcreppart);
+      /* Try again using key from ticket instead of subkey */
+      if (etype != shishi_key_type (tktkey))
+	tmpres = SHISHI_TGSREP_BAD_KEYTYPE;
+      else
+	tmpres = shishi_kdc_process (handle, tgsreq, tgsrep, tktkey,
+				     SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY,
+				     enckdcreppart);
+
+      /* if bug workaround code didn't help, return original error. */
       if (tmpres != SHISHI_OK)
 	return res;
 
       shishi_warn (handle, "KDC bug: Reply encrypted using wrong key.");
+
+      res = tmpres;
     }
-  else if (res != SHISHI_OK)
+
+  if (res != SHISHI_OK)
     return res;
 
   return SHISHI_OK;
