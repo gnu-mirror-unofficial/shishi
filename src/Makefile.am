@@ -18,7 +18,7 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-LDADD = ../lib/libshishi.la
+LDADD = @LTLIBINTL@ ../lib/libshishi.la
 
 bin_PROGRAMS = shishi
 shishi_SOURCES = shishi.c data.h gettext.h \
