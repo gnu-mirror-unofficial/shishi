@@ -18,7 +18,7 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-INCLUDES = -I$(top_srcdir)/gl -I$(top_srcdir)/asn1 \
+INCLUDES = -I$(top_srcdir)/gl @LIBTASN1_CFLAGS@ \
 	@LIBGCRYPT_CFLAGS@ @CRYPTO_CFLAGS@ @LIBGNUTLS_CFLAGS@
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
