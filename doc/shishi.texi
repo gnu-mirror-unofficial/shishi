@@ -969,9 +969,9 @@ library.
 @menu
 * Preparation::                 What you should do before using the library.
 * Initialization Functions::    Creating library handle, configuration file.
-* Utility Functions::           Utilities for use in the global context.
 * Ticket Set Functions::        High-level ticket management functions.
-* AP-REQ and AP-REP Functions:: Client/Server functions.
+* AP-REQ and AP-REP Functions:: Client/Server authentication functions.
+* SAFE and PRIV Functions::     Client/Server session data functions.
 * Ticket Functions::            Medium-level ticket manipulation functions.
 * AS Functions::                Medium-level initial authentication functions.
 * TGS Functions::               Medium-level authentication functions.
@@ -979,6 +979,7 @@ library.
 * AS/TGS Functions::            Low-level KDC functions; AS and TGS.
 * Authenticator Functions::     Low-level authenticator functions.
 * Cryptographic Functions::     Low-level cryptographic functions.
+* Utility Functions::           Utilities for use in the global context.
 * Error Handling::              Error codes and such.
 * Examples::                    Example code.
 @end menu
@@ -1110,12 +1111,6 @@ gcc -o foo foo.c `pkg-config shishi --cflags --libs`
 @include shishi-api-init.texi
 
 
-@node Utility Functions
-@section Utility Functions
-
-@include shishi-api-utility.texi
-
-
 @node Ticket Set Functions
 @section Ticket Set Functions
 
@@ -1171,6 +1166,62 @@ EncAPRepPart	::= [APPLICATION 27] SEQUENCE {
 @end verbatim
 
 @include shishi-api-ap.texi
+
+
+@node SAFE and PRIV Functions
+@section SAFE and PRIV Functions
+
+The ``KRB-SAFE'' is an ASN.1 structure used by application client and
+servers to exchange integrity protected data.  The integrity
+protection is keyed, usually with a key agreed on via the AP exchange
+(@pxref{AP-REQ and AP-REP Functions}).  The following illustrates the
+KRB-SAFE ASN.1 structure.
+
+@verbatim
+   KRB-SAFE        ::= [APPLICATION 20] SEQUENCE {
+           pvno            [0] INTEGER (5),
+           msg-type        [1] INTEGER (20),
+           safe-body       [2] KRB-SAFE-BODY,
+           cksum           [3] Checksum
+   }
+
+   KRB-SAFE-BODY   ::= SEQUENCE {
+           user-data       [0] OCTET STRING,
+           timestamp       [1] KerberosTime OPTIONAL,
+           usec            [2] Microseconds OPTIONAL,
+           seq-number      [3] UInt32 OPTIONAL,
+           s-address       [4] HostAddress,
+           r-address       [5] HostAddress OPTIONAL
+   }
+@end verbatim
+
+@include shishi-api-safe.texi
+
+The ``KRB-PRIV'' is an ASN.1 structure used by application client and
+servers to exchange confidential data.  The confidentiality is keyed,
+usually with a key agreed on via the AP exchange (@pxref{AP-REQ and
+AP-REP Functions}).  The following illustrates the KRB-PRIV ASN.1
+structure.
+
+@verbatim
+   KRB-PRIV        ::= [APPLICATION 21] SEQUENCE {
+           pvno            [0] INTEGER (5),
+           msg-type        [1] INTEGER (21),
+                           -- NOTE: there is no [2] tag
+           enc-part        [3] EncryptedData -- EncKrbPrivPart
+   }
+
+   EncKrbPrivPart  ::= [APPLICATION 28] SEQUENCE {
+           user-data       [0] OCTET STRING,
+           timestamp       [1] KerberosTime OPTIONAL,
+           usec            [2] Microseconds OPTIONAL,
+           seq-number      [3] UInt32 OPTIONAL,
+           s-address       [4] HostAddress -- sender's addr --,
+           r-address       [5] HostAddress OPTIONAL -- recip's addr
+   }
+@end verbatim
+
+@c @include shishi-api-safe.texi
 
 
 @node Ticket Functions
@@ -1504,6 +1555,12 @@ decrypt data, calculate checksum on data etc.  All available functions
 are described now.
 
 @include shishi-api-crypto.texi
+
+
+@node Utility Functions
+@section Utility Functions
+
+@include shishi-api-utility.texi
 
 
 @node Error Handling
