@@ -226,14 +226,14 @@ if test "$with_system_libgcrypt" != "no" ; then
 	])
 fi
 if test "$with_system_libgcrypt" = "no"; then
-	AC_MSG_WARN([[
+  AC_MSG_WARN([[
 
 The system's libgcrypt 1.1.13 or later not used.  Using copy distributed
 with shishi instead. See <ftp://ftp.gnupg.org/pub/gcrypt/alpha/libgcrypt/>.
 ]])
-	LIBGCRYPT_CFLAGS="-I\$(top_srcdir)/crypto/src"
-	LIBGCRYPT_LIBS="\$(top_builddir)/crypto/src/libgcrypt.la"
-	CRYPTO="errcrypto crypto"
+  LIBGCRYPT_CFLAGS="-I\$(top_srcdir)/crypto/src -I\$(top_srcdir)/errcrypto/src"
+  LIBGCRYPT_LIBS="\$(top_builddir)/crypto/src/libgcrypt.la"
+  CRYPTO="errcrypto crypto"
 fi
 AC_SUBST(LIBGCRYPT_CFLAGS)
 AC_SUBST(LIBGCRYPT_LIBS)
