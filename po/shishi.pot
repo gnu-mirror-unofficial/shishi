@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-09-21 19:29+0200\n"
+"POT-Creation-Date: 2003-12-12 01:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -146,7 +146,7 @@ msgstr ""
 msgid "Reading EncAPRepPart from %s...done\n"
 msgstr ""
 
-#: lib/enckdcreppart.c:366 lib/ticket.c:146
+#: lib/enckdcreppart.c:366 lib/ticket.c:169
 #, c-format
 msgid "Could not set sname: %s\n"
 msgstr ""
@@ -251,7 +251,7 @@ msgstr ""
 msgid "Unknown KRB-ERROR error code %d."
 msgstr ""
 
-#: lib/principal.c:386
+#: lib/principal.c:468
 #, c-format
 msgid "Could not set principal name: %s\n"
 msgstr ""
@@ -286,42 +286,42 @@ msgstr ""
 msgid "Reading SAFE from %s...done\n"
 msgstr ""
 
-#: lib/tkt.c:1238
+#: lib/tkt.c:1278
 #, c-format
 msgid "Time of last initial request for a TGT:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1284
+#: lib/tkt.c:1325
 #, c-format
 msgid "Authtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1288
+#: lib/tkt.c:1332
 #, c-format
 msgid "Starttime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1293
+#: lib/tkt.c:1343
 #, c-format
 msgid "Endtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1300
+#: lib/tkt.c:1351
 #, c-format
 msgid "Renewable till:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1307
+#: lib/tkt.c:1358
 #, c-format
 msgid "Server:\t\t%s key %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1312
+#: lib/tkt.c:1363
 #, c-format
 msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1320
+#: lib/tkt.c:1371
 msgid "Ticket flags:\t"
 msgstr ""
 
