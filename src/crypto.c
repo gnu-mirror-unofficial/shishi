@@ -98,8 +98,8 @@ crypto (Shishi * handle, struct arguments arg)
     }
   else if (arg.readkeyfile)
     {
-      key = shishi_hostkeys_for_server_in_file (handle, arg.readkeyfile,
-						arg.cname);
+      key = shishi_keys_for_server_in_file (handle, arg.readkeyfile,
+					    arg.cname);
 #if 0
       shishi_key_from_file (handle, arg.writekeyfile, arg.algorithm, key,
 			    keylen, arg.kvno, arg.cname, arg.realm);
