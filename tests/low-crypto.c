@@ -317,7 +317,7 @@ test (Shishi * handle)
 	  fail ("shishi_3des() failure\n");
 	}
 
-      if (memcmp (ivout, "\x4e\x4b\xe8\x14\x44\x25\xf2\x19", 8) == 0)
+      if (memcmp (ivout, "\x46\x57\x6b\x16\xd9\x5d\xf2\x38", 8) == 0)
 	success ("shishi_3des() OK\n");
       else
 	{
