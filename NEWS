@@ -4,7 +4,11 @@ See the end for copying conditions.
 
 * Version 0.0.16 (unreleased)
 
-** Environment variable SHISHI_CONFIG override default system config filename.
+** New environment variables to override defaults.
+SHISHI_USER specifies default client username, SHISHI_HOME specifies
+user Shishi home directory (for configuration file, ticket cache,
+etc), SHISHI_TICKETS the ticket cache file, SHISHI_CONFIG for the
+system configuration file.
 
 * Version 0.0.15 (released 2004-04-18)
 
