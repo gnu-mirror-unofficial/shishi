@@ -895,10 +895,22 @@ extern int shishi_encrypt (Shishi * handle,
 			   Shishi_key * key,
 			   int keyusage,
 			   char *in, int inlen, char *out, int *outlen);
+extern int shishi_encrypt_iv (Shishi * handle,
+			      Shishi_key * key,
+			      int keyusage,
+			      char *iv, int ivlen,
+			      char *in, int inlen,
+			      char *out, int *outlen);
 extern int shishi_decrypt (Shishi * handle,
 			   Shishi_key * key,
 			   int keyusage,
 			   char *in, int inlen, char *out, int *outlen);
+extern int shishi_decrypt_iv (Shishi * handle,
+			      Shishi_key * key,
+			      int keyusage,
+			      char *iv, int ivlen,
+			      char *in, int inlen,
+			      char *out, int *outlen);
 extern int shishi_checksum (Shishi * handle,
 			    Shishi_key * key,
 			    int keyusage,

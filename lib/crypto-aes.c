@@ -27,48 +27,60 @@ static int
 aes128_encrypt (Shishi * handle,
 		Shishi_key *key,
 		int keyusage,
+		const char *iv,
+		size_t ivlen,
 		const char *in,
 		size_t inlen,
 		char *out,
 		size_t *outlen)
 {
-  return simplified_encrypt (handle, key, keyusage, in, inlen, out, outlen);
+  return simplified_encrypt (handle, key, keyusage, iv, ivlen,
+			     in, inlen, out, outlen);
 }
 
 static int
 aes128_decrypt (Shishi * handle,
 		Shishi_key *key,
 		int keyusage,
+		const char *iv,
+		size_t ivlen,
 		const char *in,
 		size_t inlen,
 		char *out,
 		size_t *outlen)
 {
-  return simplified_decrypt (handle, key, keyusage, in, inlen, out, outlen);
+  return simplified_decrypt (handle, key, keyusage, iv, ivlen,
+			     in, inlen, out, outlen);
 }
 
 static int
 aes256_encrypt (Shishi * handle,
 		Shishi_key *key,
 		int keyusage,
+		const char *iv,
+		size_t ivlen,
 		const char *in,
 		size_t inlen,
 		char *out,
 		size_t *outlen)
 {
-  return simplified_encrypt (handle, key, keyusage, in, inlen, out, outlen);
+  return simplified_encrypt (handle, key, keyusage, iv, ivlen,
+			     in, inlen, out, outlen);
 }
 
 static int
 aes256_decrypt (Shishi * handle,
 		Shishi_key *key,
 		int keyusage,
+		const char *iv,
+		size_t ivlen,
 		const char *in,
 		size_t inlen,
 		char *out,
 		size_t *outlen)
 {
-  return simplified_decrypt (handle, key, keyusage, in, inlen, out, outlen);
+  return simplified_decrypt (handle, key, keyusage, iv, ivlen,
+			     in, inlen, out, outlen);
 }
 
 static int
