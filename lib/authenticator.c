@@ -83,6 +83,9 @@ shishi_authenticator (Shishi * handle)
    */
   shishi_randomize (handle, 0, &seqnr, sizeof(seqnr));
 
+  /* XXX remove once libtasn1 _asn1_convert_integer is fixed. */
+  seqnr &= 0x7FFFFFFF;
+
   /*
    * Implementation note: as noted before, some implementations omit
    * the optional sequence number when its value would be zero.
