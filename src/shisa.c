@@ -166,12 +166,13 @@ main (int argc, char *argv[])
 	   args_info.library_options_arg, shisa_strerror (rc));
 
   if (args_info.list_given)
-    rc = list (dbh, args_info);
+    {
+      rc = list (dbh, args_info);
+      if (rc != SHISA_OK)
+	error (0, 0, "List failed: %s", shisa_strerror (rc));
+    }
   else
     rc = 1;
-
-  if (rc != SHISA_OK)
-    error (0, 0, "Operation failed: %s\n", shisa_strerror (rc));
 
   shisa_done (dbh);
 
