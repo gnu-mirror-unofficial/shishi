@@ -48,7 +48,21 @@ indent:
 	(cd src && make indent)
 	(cd tests && make indent)
 
-sign: $(distdir).tar.gz
+tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
+htmldir = ../www-$(PACKAGE)
+
+release:
+	cvs upd -p -r HEAD NEWS > /dev/null
+	if cvs upd -p -r $(tag) NEWS > /dev/null; then false else true; fi
+	rm -f ChangeLog && cvs upd ChangeLog
+	cvs commit
+	$(MAKE) distcheck
+	cvs commit -m "" ChangeLog
 	rm -f $(distdir).tar.gz.asc
 	gpg -a --sign --detach $(distdir).tar.gz
 	gpg --verify $(distdir).tar.gz.asc
+	scp $(distdir).tar.gz* josefsson.org:$(PACKAGE)/
+	test -d $(htmldir) && cp -v doc/$(PACKAGE).{ps,pdf,html} $(htmldir)/
+	test -d $(htmldir) && cd $(htmldir) && cvs commit -m "Update." \
+		$(PACKAGE).{ps,pdf,html}
+	cvs rtag $(tag) $(PACKAGE)
