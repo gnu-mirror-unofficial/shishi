@@ -149,17 +149,39 @@ A few implemented feature are mentioned below.
 @itemize @bullet
 
 @item Initial authentication (AS) from raw key or password.
+This step is typically used to acquire a ticket granting ticket and,
+less commonly, a server ticket.
 
 @item Subsequent authentication (TGS).
+This step is typically used to acquire a server ticket, by
+authenticating yourself using the ticket granting ticket.
 
 @item Client-Server authentication (AP).
+This step is used by clients and servers to prove to each other who
+they are, using negotiated tickets.
+
+@item Integrity protected communication (SAFE).
+This step is used by clients and servers to exchange integrity
+protected data with each other.  The key is typically agreed on using
+the Client-Server authentication step.
 
 @item Ticket cache, supporting multiple principals and realms.
+As tickets have a life time of typically several hours, they are
+managed in disk files.  There can be multiple ticket caches, and each
+ticket cache can store tickets for multiple clients (users), servers,
+encryption types, etc.  Functionality is provided for locating the
+proper ticket for every use.
 
-@item Most standard cryptographic primitives
+@item Most standard cryptographic primitives.
+The believed most secure algorithms are supported
 (@pxref{Cryptographic Overview}).
 
-@item Telnet client.
+@item Telnet client and server.
+This is used to remotely login to other machines, after authenticating
+yourself with a ticket.
+
+@item PAM module.
+This is used to login locally on a machine.
 
 @end itemize
 
@@ -189,6 +211,7 @@ know so work duplication can be avoided.
 @item KDC (initiated, weeks)
 
 @item PAM module (week)
+Finished.
 
 @item Set/Change password protocol (weeks?)
 
@@ -522,9 +545,7 @@ i386-unknown-freebsd4.7.
 @end enumerate
 
 If you use Shishi on, or port Shishi to, a new platform please report
-it to the author.  In particular, if someone has access to a machine
-running Microsoft Windows, a port to it and/or a Shishi maintainer for
-the platform would be gratefully accepted.
+it to the author (@pxref{Bug Reports}).
 
 @node Bug Reports
 @section Bug Reports
