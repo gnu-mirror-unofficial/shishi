@@ -34,7 +34,7 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	netio.c key.c keys.c hostkeys.c crypto.c pkcs5.c \
 	asn1.c kerberos5.c \
 	version.c password.c \
-	resolv.c
+	utils.c resolv.c
 libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
 	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
