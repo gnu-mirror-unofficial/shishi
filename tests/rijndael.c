@@ -91,8 +91,6 @@ test (Shishi * handle)
   size_t i;
   int err;
 
-  printf("foo: %s\n", KEY);
-
   if (debug)
     shishi_cfg (handle, strdup ("verbose-crypto"));
 
