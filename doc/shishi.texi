@@ -1541,6 +1541,9 @@ Several GNU packages simplified development considerably, those
 packages include Autoconf, Automake, Libtool, Gnulib, Gettext, Indent,
 CVS, Texinfo, Help2man and Emacs.
 
+Several people reported bugs, sent patches or suggested improvements,
+see the file THANKS.
+
 @c **********************************************************
 @c *******************  Appendices  *************************
 @c **********************************************************
