@@ -472,12 +472,23 @@ shishi_cfg_default_systemfile (Shishi * handle)
  * shishi_cfg_default_userdirectory:
  * @handle: Shishi library handle create by shishi_init().
  *
+ * The default user directory (used for, e.g. Shishi ticket cache) is
+ * normally computed by appending BASE_DIR ("/.shishi") to the content
+ * of the environment variable $HOME, but can be overridden by
+ * specifying the complete path in the environment variable
+ * SHISHI_HOME.
+ *
  * Return value: Return directory with configuration files etc.
  **/
 const char *
 shishi_cfg_default_userdirectory (Shishi * handle)
 {
   char *home;
+  char *envdir;
+
+  file = getenv ("SHISHI_HOME");
+  if (file)
+    return file;
 
   if (!handle->userdirectory)
     {
