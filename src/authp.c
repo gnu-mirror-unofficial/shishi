@@ -89,7 +89,7 @@ ap (Shishi * handle, struct arguments arg)
 	}
 
       if (arg.verbose)
-	shishi_ticket_print (ticket, stdout);
+	shishi_ticket_pretty_print (ticket, stdout);
 
       if (arg.authenticatordata)
 	{
