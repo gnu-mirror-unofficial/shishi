@@ -591,6 +591,32 @@ shishi_kdcreq_set_realmserver (Shishi * handle,
 }
 
 /**
+ * shishi_kdcreq_till:
+ * @handle: Shishi library handle create by shishi_init().
+ * @kdcreq: KDC-REQ variable to get client name from.
+ * @till: pointer to newly allocated zero terminated string containing
+ *   "till" field with generalized time.  May be %NULL (to only
+ *   populate @realmlen).
+ * @tilllen: pointer to length of @till on output, excluding
+ *   terminating zero.  May be %NULL (to only populate @tilllen).
+ *
+ * Get "till" field (i.e. "endtime") in KDC-REQ, as zero-terminated
+ * string.  The string is typically 15 characters long.  The string is
+ * allocate by this function, and it is the responsibility of the
+ * caller to deallocate it.  Note that the output length @realmlen
+ * does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcreq_till (Shishi * handle, Shishi_asn1 kdcreq,
+		    char **till, size_t * tilllen)
+{
+  return shishi_asn1_read2 (handle, kdcreq, "req-body.till",
+			    till, tilllen);
+}
+
+/**
  * shishi_kdcreq_etype:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ variable to get etype field from.
