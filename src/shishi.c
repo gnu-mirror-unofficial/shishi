@@ -111,6 +111,7 @@
 #endif
 
 #include "getdate.h"
+#include "xalloc.h"
 #include "error.h"
 
 #include <argp.h>
@@ -143,7 +144,6 @@ enum
   OPTION_FORCE_TGS,
   OPTION_CRYPTO_ENCRYPT,
   OPTION_CRYPTO_DECRYPT,
-  OPTION_CRYPTO_ALGORITHM,
   OPTION_CRYPTO_KEY_VERSION,
   OPTION_CRYPTO_KEY_USAGE,
   OPTION_CRYPTO_KEY_VALUE,
@@ -155,12 +155,13 @@ enum
   OPTION_CRYPTO_PARAMETER,
   OPTION_CRYPTO_PASSWORD,
   OPTION_CRYPTO_SALT,
+  OPTION_CRYPTO_STR2KEY,
   OPTION_CRYPTO_DEBUG,
   OPTION_CRYPTO_GENERATE_KEY,
+  OPTION_CRYPTO,
   OPTION_VERBOSE_LIBRARY,
   OPTION_LIST,
   OPTION_DESTROY,
-  OPTION_CRYPTO,
   OPTION_RENEW,
   OPTION_RENEWABLE,
   OPTION_STARTTIME,
@@ -238,11 +239,18 @@ crypto (Shishi * handle, struct arguments arg)
 
   if (arg.salt == NULL)
     {
-      arg.salt = malloc (strlen (arg.realm) + strlen (arg.cname) + 1);
-      if (!arg.salt)
-	return SHISHI_MALLOC_ERROR;
-      strcpy (arg.salt, arg.realm);
-      strcat (arg.salt, arg.cname);
+      char *cname, *tok, *tokptr;
+
+      cname = xstrdup(arg.cname);
+      arg.salt = xstrdup (arg.realm);
+      tok = strtok_r (cname, "/", &tokptr);
+      while (tok)
+	{
+	  arg.salt = xrealloc (arg.salt, strlen(arg.salt) + strlen(tok) + 1);
+	  strcat (arg.salt, tok);
+	  tok = strtok_r (NULL, "/", &tokptr);
+	}
+      free (cname);
     }
 
   rc = shishi_key (handle, &key);
@@ -316,11 +324,6 @@ crypto (Shishi * handle, struct arguments arg)
       fprintf (stderr, "Nothing to do.\n");
       return SHISHI_OK;
     }
-
-  if (shishi_key_type (key) == SHISHI_NULL && !arg.silent)
-    fprintf (stderr,
-	     "warning: using %s is silly, consider using --algorithm.\n",
-	     shishi_cipher_name (arg.algorithm));
 
   if (arg.verbose ||
       ((arg.password || arg.random || arg.keyvalue) &&
@@ -513,29 +516,15 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->ticketfile = strdup (arg);
       break;
 
-    case OPTION_CRYPTO_ALGORITHM:
-      if (arguments->command != OPTION_CRYPTO)
-	argp_error (state, _("Option `%s' only valid with CRYPTO."),
-		    state->argv[state->next - 1]);
-      arguments->algorithm = shishi_cipher_parse (arg);
-      if (arguments->algorithm == -1)
-	argp_error (state, _("Unknown encryption type in `%s'"),
-		    state->argv[state->next - 1]);
-      break;
-
     case OPTION_CRYPTO_ENCRYPT:
-      if (arguments->command != OPTION_CRYPTO)
-	argp_error (state, _("Option `%s' only valid with CRYPTO."),
-		    state->argv[state->next - 1]);
+      arguments->command = OPTION_CRYPTO;
       if (arguments->decrypt_p)
 	argp_error (state, _("Cannot both encrypt and decrypt."));
       arguments->encrypt_p = 1;
       break;
 
     case OPTION_CRYPTO_DECRYPT:
-      if (arguments->command != OPTION_CRYPTO)
-	argp_error (state, _("Option `%s' only valid with CRYPTO."),
-		    state->argv[state->next - 1]);
+      arguments->command = OPTION_CRYPTO;
       if (arguments->encrypt_p)
 	argp_error (state, _("Cannot both encrypt and decrypt."));
       arguments->decrypt_p = 1;
@@ -599,6 +588,13 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
       arguments->salt = strdup (arg);
+      break;
+
+    case OPTION_CRYPTO_STR2KEY:
+      if (arguments->password)
+	argp_error (state, _("Password specified twice."));
+      arguments->command = OPTION_CRYPTO;
+      arguments->password = strdup (arg);
       break;
 
     case OPTION_CRYPTO_WRITE_DATA_FILE:
@@ -665,10 +661,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
     case OPTION_TICKET_GRANTER:
       arguments->tgtname = strdup (arg);
-      break;
-
-    case OPTION_CRYPTO:
-      arguments->command = OPTION_CRYPTO;
       break;
 
     case 'l':
@@ -760,24 +752,14 @@ static struct argp_option options[] = {
   {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
    "Cipher key to decrypt response (discouraged)."},
 
-  {"password", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
-   "Password to decrypt response (discouraged).  Only for AS."},
-
   /************** CRYPTO */
 
   {0, 0, 0, 0,
    "Options for low-level cryptography (CRYPTO-OPTIONS):", 100},
 
-  {"algorithm", OPTION_CRYPTO_ALGORITHM, "ALGORITHM", 0,
-   "Cipher algorithm, expressed either as the etype integer or "
-   "the registered name."},
-
   {"client-name", OPTION_CLIENT_NAME, "NAME", 0,
    "Username. Default is login name."},
-
-  {"crypto", OPTION_CRYPTO, 0, 0,
-   "Select crypto operations."},
-
+#if 0
   {"decrypt", OPTION_CRYPTO_DECRYPT, 0, 0,
    "Decrypt data."},
 
@@ -787,7 +769,7 @@ static struct argp_option options[] = {
   {"key-usage", OPTION_CRYPTO_KEY_USAGE, "KEYUSAGE", 0,
    "Encrypt or decrypt using specified key usage.  Default is 0, which "
    "means no key derivation are performed."},
-
+#endif
   {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
    "Base64 encoded key value."},
 
@@ -795,24 +777,27 @@ static struct argp_option options[] = {
    "Version number of key."},
 
   {"password", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
-   "Password used to generate key.  --client-name and --realm also modify "
-   "the computed key value."},
+   "Password used to generate key (discouraged)."},
 
   {"random", OPTION_CRYPTO_RANDOM, 0, 0,
    "Generate key from random data."},
-
+#if 0
   {"read-key-file", OPTION_CRYPTO_READ_KEY_FILE, "FILE", 0,
    "Read cipher key from FILE"},
 
   {"read-data-file", OPTION_CRYPTO_READ_DATA_FILE, "[TYPE,]FILE", 0,
    "Read data from FILE in TYPE, BASE64, HEX or BINARY (default)."},
-
+#endif
   {"realm", OPTION_REALM, "REALM", 0,
    "Realm of principal. Defaults to DNS domain of local host. "},
 
   {"salt", OPTION_CRYPTO_SALT, "SALT", 0,
-   "Salt to use when --password is specified. Defaults to using the"
-   "username (--client-name) and realm (--realm)."},
+   "Salt to use for --string-to-key. Defaults to concatenation of "
+   "realm and (unwrapped) client name."},
+
+  {"string-to-key", OPTION_CRYPTO_STR2KEY, "PASSWORD", 0,
+   "Convert password into Kerberos key.  Note that --client-name, --realm, "
+   "and --salt influence the generated key."},
 
   {"parameter", OPTION_CRYPTO_PARAMETER, "STRING", 0,
    "String-to-key parameter to use when --password is specified. This data "
@@ -820,10 +805,10 @@ static struct argp_option options[] = {
 
   {"write-key-file", OPTION_CRYPTO_WRITE_KEY_FILE, "FILE", 0,
    "Append cipher key to FILE"},
-
+#if 0
   {"write-data-file", OPTION_CRYPTO_WRITE_DATA_FILE, "[TYPE,]FILE", 0,
    "Write data to FILE in TYPE, BASE64, HEX or BINARY (default)."},
-
+#endif
   /************** OTHER */
 
   {0, 0, 0, 0, "Other options:", 200},
@@ -892,12 +877,14 @@ main (int argc, char *argv[])
   struct arguments arg;
   Shishi *handle;
   int rc;
+  int32_t *etype;
 
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
   memset (&arg, 0, sizeof (arg));
+  arg.algorithm = -1;
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
   rc = shishi_init_with_paths (&handle, arg.ticketfile,
@@ -909,6 +896,9 @@ main (int argc, char *argv[])
   if (rc != SHISHI_OK)
     error (1, 0, "Could not set encryption types: %s\n",
 	   shishi_strerror (rc));
+
+  if (arg.algorithm == -1 && shishi_cfg_clientkdcetype (handle, &etype) > 0)
+    arg.algorithm = *etype;
 
   if (arg.client)
     {
@@ -1078,7 +1068,7 @@ main (int argc, char *argv[])
 	    if (rc == SHISHI_GOT_KRBERROR)
 	      shishi_krberror_pretty_print (handle, stdout,
 					    shishi_tgs_krberror (tgs));
-	    return NULL;
+	    break;
 	  }
 
 	tkt = shishi_tgs_tkt (tgs);
@@ -1086,7 +1076,7 @@ main (int argc, char *argv[])
 	  {
 	    printf ("No ticket in TGS-REP?!: %s\n",
 		    shishi_strerror_details (handle));
-	    return NULL;
+	    break;
 	  }
 
 	shishi_tkt_pretty_print (tkt, stdout);
