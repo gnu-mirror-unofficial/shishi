@@ -483,7 +483,7 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
   return SHISHI_OK;
 }
 
-static void
+static int
 asreq (Shishi * handle, struct arguments *arg,
        Shishi_asn1 kdcreq, char **out, size_t *outlen)
 {
@@ -498,7 +498,7 @@ asreq (Shishi * handle, struct arguments *arg,
       /* XXX hard coded KRB-ERROR? */
       *out = strdup ("foo");
       *outlen = strlen (*out);
-      return;
+      return rc;
     }
 
   shishi_as_req_set (as, kdcreq);
@@ -521,11 +521,12 @@ asreq (Shishi * handle, struct arguments *arg,
       /* XXX hard coded KRB-ERROR? */
       *out = strdup ("aaaaaa");
       *outlen = strlen (*out);
-      return;
+      return rc;
     }
 
-  return;
+  return SHISHI_OK;
 }
+
 static int
 tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 {
@@ -682,7 +683,7 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
   return SHISHI_OK;
 }
 
-static void
+static int
 tgsreq (Shishi * handle, struct arguments *arg,
 	Shishi_asn1 kdcreq, char **out, size_t *outlen)
 {
@@ -697,7 +698,7 @@ tgsreq (Shishi * handle, struct arguments *arg,
       /* XXX hard coded KRB-ERROR? */
       *out = strdup ("foo");
       *outlen = strlen (*out);
-      return;
+      return rc;
     }
 
   shishi_tgs_req_set (tgs, kdcreq);
@@ -720,27 +721,17 @@ tgsreq (Shishi * handle, struct arguments *arg,
       /* XXX hard coded KRB-ERROR? */
       *out = strdup ("aaaaaa");
       *outlen = strlen (*out);
-      return;
+      return rc;
     }
 
-  return;
-}
-
-static Shishi_msgtype
-get_msgtype (Shishi * handle, char *in, size_t inlen)
-{
-  if (inlen > 1 && *in >= 0x60 && (unsigned char) *in <= 0x7F)
-    return *in - 0x60;
-  else
-    return 0;
+  return SHISHI_OK;
 }
 
 static int
 process_1 (Shishi * handle, struct arguments *arg,
 	   char *in, size_t inlen, char **out, size_t * outlen)
 {
-  Shishi_asn1 kdcreq;
-  Shishi_msgtype msgtype;
+  Shishi_asn1 node;
   Shishi_asn1 krberr;
   int rc;
 
@@ -750,39 +741,31 @@ process_1 (Shishi * handle, struct arguments *arg,
 
   fprintf (stderr, "Processing %d bytes...\n", inlen);
 
-  msgtype = get_msgtype (handle, in, inlen);
+  node = shishi_der2asn1 (handle, in, inlen);
 
-  fprintf (stderr, "ASN.1 msg-type %d (0x%x)...\n", msgtype, msgtype);
+  fprintf (stderr, "ASN.1 msg-type %d (0x%x)...\n",
+	   shishi_asn1_msgtype (handle, node),
+	   shishi_asn1_msgtype (handle, node));
 
-  switch (msgtype)
+  switch (shishi_asn1_msgtype (handle, node))
     {
     case SHISHI_MSGTYPE_AS_REQ:
-      kdcreq = shishi_der2asn1_asreq (handle, in, inlen);
-      if (kdcreq)
-	{
-	  asreq (handle, arg, kdcreq, out, outlen);
-	  return SHISHI_OK;
-	}
-      else
+      rc = asreq (handle, arg, node, out, outlen);
+      if (rc != SHISHI_OK)
 	{
 	  rc = shishi_krberror_set_etext (handle, krberr,
-					  "Cannot parse AS-REQ");
+					  "Error responding to AS-REQ.");
 	  if (rc != SHISHI_OK)
 	    return rc;
 	}
       break;
 
     case SHISHI_MSGTYPE_TGS_REQ:
-      kdcreq = shishi_der2asn1_tgsreq (handle, in, inlen);
-      if (kdcreq)
-	{
-	  tgsreq (handle, arg, kdcreq, out, outlen);
-	  return SHISHI_OK;
-	}
-      else
+      rc = tgsreq (handle, arg, node, out, outlen);
+      if (rc != SHISHI_OK)
 	{
 	  rc = shishi_krberror_set_etext (handle, krberr,
-					  "Cannot parse TGS-REQ");
+					  "Error responding to TGS-REQ.");
 	  if (rc != SHISHI_OK)
 	    return rc;
 	}
