@@ -1,5 +1,5 @@
 /* kdc.c --- Process AS and TGS requests.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -422,7 +422,7 @@ asreq1 (Shishi_as * as)
       goto fatal;
     }
 
-  if (arg.verbose_flag)
+  if (arg.verbose_given)
     {
       shishi_kdcreq_print (handle, stderr, shishi_as_req (as));
       shishi_encticketpart_print (handle, stderr,
@@ -892,7 +892,7 @@ tgsreq1 (Shishi_tgs * tgs)
       goto fatal;
     }
 
-  if (arg.verbose_flag)
+  if (arg.verbose_given)
     {
       puts ("KDC-REQ in:");
       shishi_kdcreq_print (handle, stderr, shishi_tgs_req (tgs));
