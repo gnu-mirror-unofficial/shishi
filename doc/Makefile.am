@@ -82,6 +82,9 @@ shishi-api-key.texi: $(top_srcdir)/lib/key.c
 shishi-api-keys.texi: $(top_srcdir)/lib/keys.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
+shishi-api-hostkeys.texi: $(top_srcdir)/lib/hostkeys.c
+	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
+
 shishi-api-crypto.texi: $(top_srcdir)/lib/crypto.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
