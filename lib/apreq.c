@@ -650,10 +650,10 @@ shishi_apreq_options_remove (Shishi * handle,
 /**
  * shishi_apreq_get_authenticator_etype:
  * @handle: shishi handle as allocated by shishi_init().
- * @aprep: AP-REP variable to get value from.
+ * @apreq: AP-REQ variable to get value from.
  * @etype: output variable that holds the value.
  *
- * Extract AP-REP.authenticator.etype.
+ * Extract AP-REQ.authenticator.etype.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
