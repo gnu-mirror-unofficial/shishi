@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -85,7 +85,7 @@ AC_CHECK_SIZEOF(unsigned char, 1)
 # For gnulib stuff in gl/.
 gl_SOURCE_BASE(gl)
 gl_M4_BASE(gl/m4)
-gl_MODULES(error getopt realloc setenv strcase strchrnul strnlen strdup strndup xstrndup vasprintf vasnprintf xvasprintf xalloc getdate timegm gethostname xgethostname xgetdomainname getline xreadlink progname getsubopt getpass getaddrinfo strtok_r base64)
+gl_MODULES(error getopt realloc setenv strcase strchrnul strdup strndup xstrndup vasprintf vasnprintf xvasprintf xalloc getdate timegm gethostname xgethostname xgetdomainname getline xreadlink progname getsubopt getpass getaddrinfo strtok_r base64)
 gl_INIT
 
 # Checks for library functions.
