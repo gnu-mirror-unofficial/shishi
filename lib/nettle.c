@@ -55,7 +55,7 @@ int
 shishi_randomize (Shishi * handle, int strong, void *data, size_t datalen)
 {
   int fd;
-  char *device;
+  const char *device;
   size_t len = 0;
   int rc;
 
