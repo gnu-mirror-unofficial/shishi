@@ -708,15 +708,7 @@ process (char *in, int inlen, char **out, size_t * outlen)
     }
 }
 
-int quit = 0;
-
 static void
-ctrlc (int signum)
-{
-  quit = 1;
-}
-
-static int
 kdc_listen ()
 {
   struct listenspec *ls;
@@ -734,7 +726,8 @@ kdc_listen ()
 	{
 	  if (!arg.quiet_flag)
 	    printf ("failed\n");
-	  perror ("socket");
+	  error (0, errno, "Cannot listen on %s because socket failed",
+		 ls->str);
 	  ls->sockfd = 0;
 	  continue;
 	}
@@ -745,7 +738,8 @@ kdc_listen ()
 	{
 	  if (!arg.quiet_flag)
 	    printf ("failed\n");
-	  perror ("setsockopt");
+	  error (0, errno, "Cannot listen on %s because setsockopt failed",
+		 ls->str);
 	  close (ls->sockfd);
 	  ls->sockfd = 0;
 	  continue;
@@ -755,7 +749,8 @@ kdc_listen ()
 	{
 	  if (!arg.quiet_flag)
 	    printf ("failed\n");
-	  perror ("bind");
+	  error (0, errno, "Cannot listen on %s because bind failed",
+		 ls->str);
 	  close (ls->sockfd);
 	  ls->sockfd = 0;
 	  continue;
@@ -765,7 +760,8 @@ kdc_listen ()
 	{
 	  if (!arg.quiet_flag)
 	    printf ("failed\n");
-	  perror ("listen");
+	  error (0, errno, "Cannot listen on %s because listen failed",
+		 ls->str);
 	  close (ls->sockfd);
 	  ls->sockfd = 0;
 	  continue;
@@ -777,15 +773,10 @@ kdc_listen ()
     }
 
   if (maxfd == 0)
-    {
-      fprintf (stderr, "Failed to bind any ports.\n");
-      return 1;
-    }
+    error (EXIT_FAILURE, 0, "Failed to bind any ports.");
 
   if (!arg.quiet_flag)
     printf ("Listening on %d ports...\n", maxfd);
-
-  return 0;
 }
 
 static struct listenspec *
@@ -1009,15 +1000,26 @@ kdc_accept (struct listenspec *ls, struct listenspec *last)
 	    newls->sockfd, ls->sockfd, newls->str);
 }
 
+int quit = 0;
+
+static void
+ctrlc (int signum)
+{
+  quit = 1;
+}
+
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
-static int
+static void
 kdc_loop (void)
 {
   struct listenspec *ls, *last;
   fd_set readfds;
   int maxfd = 0, i;
   int rc;
+
+  signal (SIGINT, ctrlc);
+  signal (SIGTERM, ctrlc);
 
   while (!quit)
     {
@@ -1038,7 +1040,7 @@ kdc_loop (void)
       if (rc < 0)
 	{
 	  if (errno != EINTR)
-	    perror ("select");
+	    error (0, errno, "Error listening to sockets (%d)", rc);
 	  continue;
 	}
 
@@ -1051,48 +1053,113 @@ kdc_loop (void)
 	  else
 	    kdc_handle2 (ls);
     }
-
-  return 0;
 }
 
-static int
+static void
 kdc_setuid (void)
 {
   struct passwd *passwd;
   int rc;
 
   if (!arg.setuid_given)
-    return 0;
+    return;
 
   passwd = getpwnam (arg.setuid_arg);
   if (passwd == NULL)
-    {
-      perror ("setuid: getpwnam");
-      return 1;
-    }
+    if (errno)
+      error (EXIT_FAILURE, errno, "Cannot setuid because getpwnam failed");
+    else
+      error (EXIT_FAILURE, 0, "No such user `%s'.", arg.setuid_arg);
 
   rc = setuid (passwd->pw_uid);
   if (rc == -1)
-    {
-      perror ("setuid");
-      return 1;
-    }
+    error (EXIT_FAILURE, errno, "Cannot setuid");
 
   if (!arg.quiet_flag)
     printf ("User identity set to `%s' (%d)...\n",
 	    passwd->pw_name, passwd->pw_uid);
-
-  return 0;
 }
 
 static int
-launch (void)
+setup_fatal_krberror (Shishi * handle)
 {
+  Shishi_asn1 krberr;
   int rc;
 
-  rc = kdc_listen ();
-  if (rc != 0)
+  krberr = shishi_krberror (handle);
+  if (!krberr)
+    return SHISHI_MALLOC_ERROR;
+
+  rc = shishi_krberror_set_etext (handle, krberr,
+				  "Internal KDC error, contact administrator");
+  if (rc != SHISHI_OK)
     return rc;
+
+  rc = shishi_krberror_der (handle, krberr, &fatal_krberror,
+			    &fatal_krberror_len);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+static void
+doit (void)
+{
+  int err;
+
+  err = shishi_init_server_with_paths (&handle, arg.configuration_file_arg);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize Shishi: %s (%d)",
+	   shishi_strerror (err), err);
+
+  if (arg.verbose_flag > 1)
+    shishi_cfg (handle, "verbose");
+
+  if (arg.verbose_flag > 2)
+    shishi_cfg (handle, "verbose-noice");
+
+  if (arg.verbose_flag > 3)
+    shishi_cfg (handle, "verbose-asn1");
+
+  if (arg.verbose_flag > 4)
+    shishi_cfg (handle, "verbose-crypto");
+
+  err = shisa_init (&dbh);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize Shisa: %s (%d)",
+	   shisa_strerror (err), err);
+
+  err = setup_fatal_krberror (handle);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot allocate fatal error packet: %s (%d)",
+	   shisa_strerror (err), err);
+
+#ifdef USE_STARTTLS
+  if (!arg.quiet_flag)
+    printf ("Initializing GNUTLS...\n");
+  err = gnutls_global_init ();
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS: %s (%d)",
+	   gnutls_strerror (err), err);
+  err = gnutls_dh_params_init (&dh_params);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS DH parameters: %s (%d)",
+	   gnutls_strerror (err), err);
+  err = gnutls_dh_params_generate2 (dh_params, DH_BITS);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot generate GNUTLS DH parameters: %s (%d)",
+	   gnutls_strerror (err), err);
+  err = gnutls_anon_allocate_server_credentials (&anoncred);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot allocate GNUTLS credential: %s (%d)",
+	   gnutls_strerror (err), err);
+  gnutls_anon_set_server_dh_params (anoncred, dh_params);
+  if (!arg.quiet_flag)
+    printf ("Initializing GNUTLS...done\n");
+#endif
+
+  kdc_listen ();
 
 #ifdef LOG_PERROR
   openlog (PACKAGE, LOG_CONS | LOG_PERROR, LOG_DAEMON);
@@ -1100,20 +1167,22 @@ launch (void)
   openlog (PACKAGE, LOG_CONS, LOG_DAEMON);
 #endif
 
-  rc = kdc_setuid ();
-  if (rc != 0)
-    return rc;
+  kdc_setuid ();
 
-  signal (SIGINT, ctrlc);
-  signal (SIGTERM, ctrlc);
-
-  rc = kdc_loop ();
-  if (rc != 0)
-    return rc;
+  kdc_loop ();
 
   kdc_unlisten ();
 
-  return 0;
+#ifdef USE_STARTTLS
+  if (!arg.quiet_flag)
+    printf ("Deinitializing GNUTLS...\n");
+  gnutls_global_deinit ();
+  if (!arg.quiet_flag)
+    printf ("Deinitializing GNUTLS...done\n");
+#endif
+
+  shisa_done (dbh);
+  shishi_done (handle);
 }
 
 static void
@@ -1230,101 +1299,6 @@ parse_listen (char *listen)
     }
 }
 
-static int
-setup_fatal_krberror (Shishi * handle)
-{
-  Shishi_asn1 krberr;
-  int rc;
-
-  krberr = shishi_krberror (handle);
-  if (!krberr)
-    return SHISHI_MALLOC_ERROR;
-
-  rc = shishi_krberror_set_etext (handle, krberr,
-				  "Internal KDC error, contact administrator");
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_der (handle, krberr, &fatal_krberror,
-			    &fatal_krberror_len);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  return SHISHI_OK;
-}
-
-static int
-init (void)
-{
-  int err;
-
-  err = shishi_init_server_with_paths (&handle, arg.configuration_file_arg);
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot initialize Shishi: %s (%d)",
-	   shishi_strerror (err), err);
-
-  if (arg.verbose_flag > 1)
-    shishi_cfg (handle, "verbose");
-
-  if (arg.verbose_flag > 2)
-    shishi_cfg (handle, "verbose-noice");
-
-  if (arg.verbose_flag > 3)
-    shishi_cfg (handle, "verbose-asn1");
-
-  if (arg.verbose_flag > 4)
-    shishi_cfg (handle, "verbose-crypto");
-
-  err = shisa_init (&dbh);
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot initialize Shisa: %s (%d)",
-	   shisa_strerror (err), err);
-
-  err = setup_fatal_krberror (handle);
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot allocate fatal error packet: %s (%d)",
-	   shisa_strerror (err), err);
-
-#ifdef USE_STARTTLS
-  if (!arg.quiet_flag)
-    printf ("Initializing GNUTLS...\n");
-  err = gnutls_global_init ();
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS: %s (%d)",
-	   gnutls_strerror (err), err);
-  err = gnutls_dh_params_init (&dh_params);
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS DH parameters: %s (%d)",
-	   gnutls_strerror (err), err);
-  err = gnutls_dh_params_generate2 (dh_params, DH_BITS);
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot generate GNUTLS DH parameters: %s (%d)",
-	   gnutls_strerror (err), err);
-  err = gnutls_anon_allocate_server_credentials (&anoncred);
-  if (err)
-    error (EXIT_FAILURE, 0, "Cannot allocate GNUTLS credential: %s (%d)",
-	   gnutls_strerror (err), err);
-  gnutls_anon_set_server_dh_params (anoncred, dh_params);
-  if (!arg.quiet_flag)
-    printf ("Initializing GNUTLS...done\n");
-#endif
-
-  err = launch ();
-
-#ifdef USE_STARTTLS
-  if (!arg.quiet_flag)
-    printf ("Deinitializing GNUTLS...\n");
-  gnutls_global_deinit ();
-  if (!arg.quiet_flag)
-    printf ("Deinitializing GNUTLS...done\n");
-#endif
-
-  shisa_done (dbh);
-  shishi_done (handle);
-
-  return err;
-}
-
 int
 main (int argc, char *argv[])
 {
@@ -1354,12 +1328,12 @@ main (int argc, char *argv[])
     arg.listen_arg = strdup (LISTEN_DEFAULT);
   parse_listen (arg.listen_arg);
 
-  rc = init ();
+  doit ();
 
   free (arg.listen_arg);
   free (arg.configuration_file_arg);
   if (arg.setuid_arg)
     free (arg.setuid_arg);
 
-  return rc;
+  return EXIT_SUCCESS;
 }
