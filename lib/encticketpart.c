@@ -1,5 +1,5 @@
 /* encticketpart.c	encrypted ticket part handling
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -354,7 +354,7 @@ time_t
 shishi_encticketpart_authctime (Shishi * handle, Shishi_asn1 encticketpart)
 {
   char authtime[GENERALIZEDTIME_TIME_LEN + 1];
-  int authtimelen;
+  size_t authtimelen;
   time_t t;
   int res;
 
