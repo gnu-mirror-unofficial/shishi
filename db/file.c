@@ -62,6 +62,8 @@
 extern int errno;
 #endif
 
+#include "xreadlink.h"
+
 struct Shisa_file
 {
   char *path;
@@ -309,6 +311,130 @@ shisa_file_enumerate_principals (Shisa *dbh,
   return rc;
 }
 
+static time_t
+mtime (const char *file)
+{
+  struct stat buf;
+  int rc;
+
+  rc = stat (file, &buf);
+  if (rc != 0 || !S_ISREG(buf.st_mode))
+    return (time_t) -1;
+
+  return buf.st_atime;
+}
+
+static int
+mtime2 (const char *path1, const char *path2)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s", path1, path2);
+
+  rc = mtime (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+static int
+mtime3 (const char *path1, const char *path2, const char *path3)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
+
+  rc = mtime (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+static int
+mtime4 (const char *path1,
+	const char *path2,
+	const char *path3,
+	const char *path4)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
+
+  rc = mtime (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+static int
+isfile (const char *path)
+{
+  struct stat buf;
+  int rc;
+
+  rc = stat (path, &buf);
+  if (rc != 0 || !S_ISREG (buf.st_mode))
+    return 0;
+
+  return 1;
+}
+
+static int
+isfile4 (const char *path1,
+	const char *path2,
+	const char *path3,
+	const char *path4)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
+
+  rc = isfile (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+static uint32_t
+uint32link (const char *file)
+{
+  char *link;
+  uint32_t num;
+  char *endptr;
+
+  link = xreadlink (file);
+  if (link == NULL)
+    return 0;
+
+  return atol (link);
+}
+
+static int
+uint32link4 (const char *path1,
+	     const char *path2,
+	     const char *path3,
+	     const char *path4)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
+
+  rc = uint32link (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
 int
 shisa_file_principal_find (Shisa * dbh,
 			   void *state,
@@ -323,8 +449,30 @@ shisa_file_principal_find (Shisa * dbh,
     return SHISA_NO_PRINCIPAL;
 
   princ = xmalloc (sizeof (*princ));
+  princ->name = xstrdup (client);
+  princ->realm = xstrdup (realm);
+  princ->notusedbefore = mtime4 (info->path, realm,
+				 client, "validfrom.stamp");
+  princ->isdisabled = isfile4 (info->path, realm,
+			       client, "disabled.flag");
+  princ->kvno = uint32link4 (info->path, realm,
+			     client, "latest.key");
+  princ->lastinitialtgt = mtime4 (info->path, realm,
+				  client, "lastinittgt.stamp");
+  princ->lastinitialrequest = mtime4 (info->path, realm,
+				      client, "lastinitial.stamp");
+  princ->lasttgt = mtime4 (info->path, realm,
+			   client, "lasttgt.stamp");
+  princ->lastrenewal = mtime4 (info->path, realm,
+			       client, "lastrenewal.stamp");
+  princ->passwordexpire = mtime4 (info->path, realm,
+				  client, "passwordexpire.stamp");
+  princ->accountexpire = mtime4 (info->path, realm,
+				 client, "accountexpire.stamp");
 
-  return SHISA_INIT_ERROR;
+  *ph = princ;
+
+  return SHISA_OK;
 }
 
 void

@@ -50,9 +50,9 @@ struct Shisa_principal
 {
   char *name;
   char *realm;
-  time_t notusedbefore;
   int isdisabled;
   int32_t kvno;
+  time_t notusedbefore;
   time_t lastinitialtgt;	/* time of last initial request for a TGT */
   time_t lastinitialrequest;	/* time of last initial request */
   time_t lasttgt;		/* time of issue for the newest TGT used */

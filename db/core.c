@@ -75,7 +75,18 @@ shisa_principal_find (Shisa * dbh,
 		      const char *realm,
 		      Shisa_principal **ph)
 {
-  return SHISA_FIND_ERROR;
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      rc = db->backend->principal_find (dbh, db->state, client, realm, ph);
+      if (rc == SHISA_OK || (rc != SHISA_OK && rc != SHISA_NO_PRINCIPAL))
+	return rc;
+    }
+
+  return SHISA_NO_PRINCIPAL;
 }
 
 void

@@ -43,37 +43,84 @@
 
 #include "shisa_cmd.h"
 
-int
-list_realm_principal (Shisa *dbh,
-		      struct gengetopt_args_info args_info,
-		      const char *realm,
-		      const char *principal)
+void
+printfield (const char *fieldname, const char *value)
 {
-  Shisa_principal *ph;
+  printf ("\t%s %s.\n", fieldname, value);
+}
+
+void
+printtimefield (const char *fieldname, time_t t)
+{
+  char *p = ctime (&t);
+  p[strlen(p) - 1] = '\0';
+  printfield (fieldname, t == (time_t) -1 ? "N/A" : p);
+}
+
+void
+printuint32field (const char *fieldname, uint32_t num)
+{
+  char *p;
+  asprintf (&p, "%d (0x%x)", num, num);
+  printfield (fieldname, p);
+  free (p);
+}
+
+int
+dumplist_realm_principal (Shisa *dbh,
+			  struct gengetopt_args_info args_info,
+			  const char *realm,
+			  const char *principal)
+{
+  Shisa_principal *ph = NULL;
   int rc;
 
-  if (args_info.enabled_flag)
+  if (args_info.dump_given ||
+      args_info.enabled_flag ||
+      args_info.disabled_flag)
     {
       rc = shisa_principal_find (dbh, principal, realm, &ph);
       if (rc != SHISA_OK)
 	return rc;
-
-      if (ph->isdisabled)
-	return SHISA_OK;
     }
+
+  if (args_info.enabled_flag && ph->isdisabled)
+    return SHISA_OK;
+
+  if (args_info.disabled_flag && !ph->isdisabled)
+    return SHISA_OK;
 
   printf("%s@%s\n", principal, realm);
 
-  if (args_info.enabled_flag)
+  if (args_info.dump_given)
+    {
+      printfield ("Account is", ph->isdisabled ? "DISABLED" : "enabled");
+      printuint32field ("Current key version", ph->kvno);
+      if (ph->notusedbefore != (time_t) -1)
+	printtimefield ("Account not valid before", ph->notusedbefore);
+      if (ph->lastinitialtgt != (time_t) -1)
+	printtimefield ("Last initial TGT request at", ph->lastinitialtgt);
+      if (ph->lastinitialrequest != (time_t) -1)
+	printtimefield ("Last initial request at", ph->lastinitialrequest);
+      if (ph->lasttgt != (time_t) -1)
+	printtimefield ("Last TGT request at", ph->lasttgt);
+      if (ph->lastrenewal != (time_t) -1)
+	printtimefield ("Last ticket was renewed at", ph->lastrenewal);
+      if (ph-> passwordexpire!= (time_t) -1)
+	printtimefield ("Password expire on", ph->passwordexpire);
+      if (ph->accountexpire != (time_t) -1)
+	printtimefield ("Account expire on", ph->accountexpire);
+    }
+
+  if (ph != NULL)
     shisa_principal_free (ph);
 
   return SHISA_OK;
 }
 
 int
-list_realm (Shisa *dbh,
-	    struct gengetopt_args_info args_info,
-	    const char *realm)
+dumplist_realm (Shisa *dbh, struct gengetopt_args_info args_info,
+		const char *realm)
 {
   char **principals;
   size_t nprincipals;
@@ -87,7 +134,7 @@ list_realm (Shisa *dbh,
   for (i = 0; i < nprincipals; i++)
     {
       if (rc == SHISA_OK)
-	rc = list_realm_principal (dbh, args_info, realm, principals[i]);
+	rc = dumplist_realm_principal (dbh, args_info, realm, principals[i]);
       free (principals[i]);
     }
   free (principals);
@@ -96,15 +143,15 @@ list_realm (Shisa *dbh,
 }
 
 int
-list (Shisa *dbh, struct gengetopt_args_info args_info)
+dumplist (Shisa *dbh, struct gengetopt_args_info args_info)
 {
   int rc;
 
   if (args_info.inputs_num == 1)
-    rc = list_realm (dbh, args_info, args_info.inputs[0]);
+    rc = dumplist_realm (dbh, args_info, args_info.inputs[0]);
   else if (args_info.inputs_num == 2)
-    rc = list_realm_principal (dbh, args_info, args_info.inputs[0],
-			       args_info.inputs[1]);
+    rc = dumplist_realm_principal (dbh, args_info, args_info.inputs[0],
+				   args_info.inputs[1]);
   else
     {
       char **realms;
@@ -118,7 +165,7 @@ list (Shisa *dbh, struct gengetopt_args_info args_info)
       for (i = 0; i < nrealms; i++)
 	{
 	  if (rc == SHISA_OK)
-	    rc = list_realm (dbh, args_info, realms[i]);
+	    rc = dumplist_realm (dbh, args_info, realms[i]);
 	  free (realms[i]);
 	}
       free (realms);
@@ -165,9 +212,9 @@ main (int argc, char *argv[])
     error (1, 0, "Could not read library options `%s': %s",
 	   args_info.library_options_arg, shisa_strerror (rc));
 
-  if (args_info.list_given)
+  if (args_info.list_given || args_info.dump_given)
     {
-      rc = list (dbh, args_info);
+      rc = dumplist (dbh, args_info);
       if (rc != SHISA_OK)
 	error (0, 0, "List failed: %s", shisa_strerror (rc));
     }

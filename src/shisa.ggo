@@ -32,7 +32,8 @@ option "remove" r "Remove specified PRINCIPAL in REALM from database." no
 
 section "Parameters"
 option "force" f "Allow removal of non-empty realms." flag off
-option "enabled" e "Only dump or list enabled principals." flag off
+option "enabled" - "Only dump or list enabled principals." flag off
+option "disabled" - "Only dump or list disabled principals." flag off
 
 section "Other options"
 option "configuration-file" c "Use specified configuration file." string typestr="FILE" no
