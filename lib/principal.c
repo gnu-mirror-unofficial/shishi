@@ -185,15 +185,16 @@ shishi_principal_name_get (Shishi * handle,
 			   const char *namefield, char *out, size_t * outlen)
 {
   int res;
-  char format[BUFSIZ];
+  char *format;
   size_t totlen = 0;
   int len;
   int i, j, n;
 
   /* FIXME: allocate output instead of writing inline */
 
-  sprintf (format, "%s.name-string", namefield);
+  asprintf (&format, "%s.name-string", namefield);
   res = shishi_asn1_number_of_elements (handle, namenode, format, &n);
+  free (format);
   if (res != SHISHI_OK)
     return res;
 
@@ -201,8 +202,9 @@ shishi_principal_name_get (Shishi * handle,
   for (i = 1; i <= n; i++)
     {
       len = *outlen - totlen;
-      sprintf (format, "%s.name-string.?%d", namefield, i);
+      asprintf (&format, "%s.name-string.?%d", namefield, i);
       res = shishi_asn1_read (handle, namenode, format, &out[totlen], &len);
+      free (format);
       if (res != SHISHI_OK)
 	return res;
 
