@@ -1679,7 +1679,7 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 				       size_t authenticatorcksumdatalen);
 extern void
 shishi_ap_authenticator_cksumraw_set (Shishi_ap * ap,
-				      int32_t cksumtype,
+				      int32_t authenticatorcksumtype,
 				      const char *authenticatorcksumraw,
 				      size_t authenticatorcksumrawlen);
 extern int32_t shishi_ap_authenticator_cksumtype (Shishi_ap * ap);

@@ -617,9 +617,10 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 /**
  * shishi_ap_authenticator_cksumraw_set:
  * @ap: structure that holds information about AP exchange
- * @authenticatorcksumdata: input array with authenticator checksum
+ * @authenticatorcksumtype: authenticator checksum type to set in AP.
+ * @authenticatorcksumraw: input array with authenticator checksum
  *   field value to set in Authenticator in AP-REQ.
- * @authenticatorcksumdatalen: length of input array with
+ * @authenticatorcksumrawlen: length of input array with
  *   authenticator checksum field value to set in Authenticator in AP-REQ.
  *
  * Set the Authenticator Checksum Data in the AP exchange.  This is
