@@ -794,7 +794,7 @@ main (int argc, char *argv[])
   Shishi *handle;
   int rc;
 
-  openlog (PACKAGE, LOG_PERROR, LOG_AUTHPRIV);
+  openlog (PACKAGE, LOG_PERROR, LOG_DAEMON);
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
