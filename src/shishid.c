@@ -751,24 +751,24 @@ process_1 (Shishi * handle, struct arguments *arg,
     {
     case SHISHI_MSGTYPE_AS_REQ:
       rc = asreq (handle, arg, node, out, outlen);
+      if (rc == SHISHI_OK)
+	return rc;
+
+      rc = shishi_krberror_set_etext (handle, krberr,
+				      "Error responding to AS-REQ.");
       if (rc != SHISHI_OK)
-	{
-	  rc = shishi_krberror_set_etext (handle, krberr,
-					  "Error responding to AS-REQ.");
-	  if (rc != SHISHI_OK)
-	    return rc;
-	}
+	return rc;
       break;
 
     case SHISHI_MSGTYPE_TGS_REQ:
       rc = tgsreq (handle, arg, node, out, outlen);
+      if (rc == SHISHI_OK)
+	return rc;
+
+      rc = shishi_krberror_set_etext (handle, krberr,
+				      "Error responding to TGS-REQ.");
       if (rc != SHISHI_OK)
-	{
-	  rc = shishi_krberror_set_etext (handle, krberr,
-					  "Error responding to TGS-REQ.");
-	  if (rc != SHISHI_OK)
-	    return rc;
-	}
+	return rc;
       break;
 
     default:
