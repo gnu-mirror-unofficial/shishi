@@ -129,10 +129,10 @@ simplified_hmac (Shishi * handle,
 		 const char *in, size_t inlen,
 		 char **outhash, size_t * outhashlen)
 {
-  *outhashlen = 20;
-  return shishi_hmac_sha1 (handle,
-			   shishi_key_value (key), shishi_key_length (key),
-			   in, inlen, outhash);
+  *outhashlen = shishi_checksum_cksumlen
+    (shishi_cipher_defaultcksumtype (shishi_key_type (key)));
+  return shishi_hmac_sha1 (handle, shishi_key_value (key),
+			   shishi_key_length (key), in, inlen, outhash);
 }
 
 static int
@@ -380,7 +380,8 @@ _shishi_simplified_decrypt (Shishi * handle,
     {
       Shishi_key *privacykey = NULL, *integritykey = NULL;
       int blen = shishi_cipher_blocksize (shishi_key_type (key));
-      size_t hlen = 20;		/* XXX only works for SHA-1 */
+      size_t hlen = shishi_checksum_cksumlen
+	(shishi_cipher_defaultcksumtype (shishi_key_type (key)));
 
       res = _shishi_simplified_derivekey (handle, key, keyusage,
 					  SHISHI_DERIVEKEYMODE_PRIVACY,
