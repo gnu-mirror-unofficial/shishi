@@ -1,5 +1,5 @@
 /* password.c	get passwords from user
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -22,8 +22,10 @@
 /* XXX? zeroize password */
 
 #include "internal.h"
+#ifdef WITH_STRINGPREP
 #include <stringprep.h>
 #include <stringprep_kerberos5.h>
+#endif
 
 #if defined (HAVE_TERMIOS_H)
 
@@ -122,11 +124,13 @@ shishi_prompt_password (Shishi * handle,
   va_list ap;
   int rc;
 
+#ifdef WITH_STRINGPREP
   if (VERBOSE (handle))
     {
       printf ("Libstringprep thinks your locale is `%s'.\n",
 	      stringprep_locale_charset ());
     }
+#endif
 
   va_start (ap, format);
   vfprintf (out, format, ap);
@@ -151,6 +155,7 @@ shishi_prompt_password (Shishi * handle,
 
   if (handle->stringprocess
       && strcasecmp (handle->stringprocess, "none") != 0)
+#ifdef WITH_STRINGPREP
     {
       if (strcasecmp (handle->stringprocess, "stringprep") == 0)
 	p = stringprep_locale_to_utf8 (s);
@@ -193,6 +198,10 @@ shishi_prompt_password (Shishi * handle,
 
 	}
     }
+#else
+  shishi_warn (handle, "Password string processing (%s) disabled",
+	       handle->stringprocess);
+#endif
 
   return SHISHI_OK;
 }

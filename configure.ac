@@ -160,30 +160,17 @@ AC_MSG_RESULT($enable_ipv6)
 #AC_SUBST(LIBGDBM)
 
 # Check for idn
-AC_ARG_WITH(system-idn,
-  AC_HELP_STRING([--without-system-idn],
-		[don't use the system's libidn]))
-if test "$with_system_idn" != "no" ; then
-	PKG_CHECK_MODULES(LIBIDN, libidn >= 0.1.0,
-		with_system_idn=yes,
-		with_system_idn=no)
+AC_ARG_WITH(stringprep,
+  AC_HELP_STRING([--without-stringprep],
+		[don't use libidn even if available]))
+if test "$with_stringprep" != "no" ; then
+	PKG_CHECK_MODULES(LIBIDN, libidn >= 0.1.0,, with_stringprep=no)
 fi
-if test "$with_system_idn" = "no"; then
-	AC_MSG_WARN([[
-
-The system's libidn 0.1.0 or later not used.  Using copy distributed
-with Shishi instead.  See <http://www.gnu.org/software/libidn/>.
-]])
-	LIBIDN_CFLAGS="-I\$(top_srcdir)/libstringprep"
-	LIBIDN_LIBS="\$(top_builddir)/libstringprep/libidn.la"
-	LIBIDN=libstringprep
+if test "$with_stringprep" != "no"; then
+	AC_DEFINE(WITH_STRINGPREP, 1, [Define to 1 if you want to use libidn.])
+else
+	AC_MSG_WARN([[String processing disabled due to no libidn.]])
 fi
-AC_SUBST(LIBIDN_CFLAGS)
-AC_SUBST(LIBIDN_LIBS)
-AC_SUBST(LIBIDN)
-AC_MSG_CHECKING([if system's libidn should be used])
-AC_MSG_RESULT($with_system_idn)
-AC_CONFIG_SUBDIRS(libstringprep)
 
 # Check for libtasn1
 AC_ARG_WITH(system-libtasn1,

@@ -22,9 +22,9 @@ DISTCHECK_CONFIGURE_FLAGS = --without-included-gettext --disable-gtk-doc
 
 MOST_SUBDIRS = intl m4 po gl lib src tests doc extra
 
-DIST_SUBDIRS = errcrypto crypto asn1 libstringprep $(MOST_SUBDIRS)
+DIST_SUBDIRS = errcrypto crypto asn1 $(MOST_SUBDIRS)
 
-SUBDIRS = @CRYPTO@ @ASN1@ @LIBIDN@ $(MOST_SUBDIRS)
+SUBDIRS = @CRYPTO@ @ASN1@ $(MOST_SUBDIRS)
 
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4 -I crypto/src
 
