@@ -228,6 +228,12 @@ lib/crypto*.c.
 
 @item Add AP-REQ replay cache (week).
 
+@item Study benefits by introducing a PA-TGS-REP.
+This would provide mutual authentication of the KDC in a way that is
+easier to analyze.  Currently the mutual authentication property is
+only implicit from successful decryption of the KDC-REP and the 4 byte
+nonce.
+
 @end itemize
 
 @node Overview
