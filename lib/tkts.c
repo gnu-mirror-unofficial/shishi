@@ -111,6 +111,12 @@ shishi_tkts_default (Shishi * handle)
   return handle->tkts;
 }
 
+int
+shishi_tkts_default_to_file (Shishi_tkts * tkts)
+{
+  shishi_tkts_to_file (tkts, shishi_tkts_default_file (tkts->handle));
+}
+
 /**
  * shishi_tkts:
  * @handle: shishi handle as allocated by shishi_init().
