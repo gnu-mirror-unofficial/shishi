@@ -2019,12 +2019,12 @@ Some error values do not indicate a system error or an error in the
 operation, but the result of an operation that failed properly.
 
 @menu
-* Error values::                A list of all error values used.
+* Error Values::                A list of all error values used.
 * Error Functions::             Error handling related functions.
 @end menu
 
-@node Error values
-@subsection Error values
+@node Error Values
+@subsection Error Values
 
 Errors are returned as an @code{int}.  Except for the SHISHI_OK case,
 an application should always use the constants instead of their

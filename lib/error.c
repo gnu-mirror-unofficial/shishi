@@ -190,7 +190,7 @@ shishi_info (Shishi * handle, const char *fmt, ...)
  * @fmt: printf style format string.
  * @...: print style arguments.
  *
- * Print a warning to standard error.
+ * Print a warning to stderr.
  **/
 void
 shishi_warn (Shishi * handle, const char *fmt, ...)
