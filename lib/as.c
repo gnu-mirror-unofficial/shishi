@@ -45,9 +45,7 @@ shishi_as (Shishi * handle, Shishi_as ** as)
   Shishi_as *las;
   int res;
 
-  *as = malloc (sizeof (**as));
-  if (*as == NULL)
-    return SHISHI_MALLOC_ERROR;
+  *as = xmalloc (sizeof (**as));
   las = *as;
   memset (las, 0, sizeof (*las));
 
@@ -295,12 +293,8 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
   if (VERBOSEASN1 (as->handle))
     shishi_ticket_print (as->handle, stdout, ticket);
 
+  /* XXX */
   as->tkt = shishi_tkt2 (as->handle, ticket, kdcreppart, as->asrep);
-  if (as->tkt == NULL)
-    {
-      shishi_error_printf (as->handle, "Could not create ticket");
-      return SHISHI_MALLOC_ERROR;
-    }
 
   return SHISHI_OK;
 }

@@ -42,13 +42,7 @@ shishi (void)
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
-  handle = (Shishi *) malloc (sizeof (*handle));
-  if (!handle)
-    {
-      fprintf (stderr, "libshishi: error: %s\n",
-	       shishi_strerror (SHISHI_MALLOC_ERROR));
-      return NULL;
-    }
+  handle = (Shishi *) xmalloc (sizeof (*handle));
   memset ((void *) handle, 0, sizeof (*handle));
 
   if (_shishi_cipher_init () != SHISHI_OK)
@@ -68,13 +62,8 @@ shishi (void)
   handle->renewlife = RENEWLIFE;
 
   handle->nclientkdcetypes = 1;
-  handle->clientkdcetypes = malloc (sizeof (*handle->clientkdcetypes) *
-				    handle->nclientkdcetypes);
-  if (handle->clientkdcetypes == NULL)
-    {
-      shishi_warn (handle, "%s", shishi_strerror (SHISHI_MALLOC_ERROR));
-      return NULL;
-    }
+  handle->clientkdcetypes = xmalloc (sizeof (*handle->clientkdcetypes) *
+				     handle->nclientkdcetypes);
   handle->clientkdcetypes[0] = SHISHI_AES256_CTS_HMAC_SHA1_96;
 
   tmp = shishi_realm_default_guess ();

@@ -2191,10 +2191,7 @@ shishi_n_fold (Shishi * handle,
      to yield a n-bit result denoted <X>_n.
    */
 
-  a = (char *) malloc (m);
-  if (a == NULL)
-    return SHISHI_MALLOC_ERROR;
-  memcpy (a, in, m);
+  a = (char *) xmemdup (a, in, m);
 
   lcmmn = lcm (m, n);
 
@@ -2210,9 +2207,7 @@ shishi_n_fold (Shishi * handle,
       puts ("");
     }
 
-  buf = (char *) malloc (lcmmn);
-  if (buf == NULL)
-    return SHISHI_MALLOC_ERROR;
+  buf = (char *) xmalloc (lcmmn);
 
   /* Replicate the input th the LCMMN length */
   for (i = 0; i < (lcmmn / m); i++)

@@ -112,9 +112,7 @@ shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
       return SHISHI_ASN1_ERROR;
     }
 
-  *der = malloc (*len);
-  if (!*der)
-    return SHISHI_MALLOC_ERROR;
+  *der = xmalloc (*len);
 
   rc = asn1_der_coding (node, field, *der, len, errorDescription);
   if (rc != ASN1_SUCCESS)
