@@ -29,8 +29,7 @@ shishid_SOURCES = shishid.c
 
 localedir = $(datadir)/locale
 
-INCLUDES = -I../asn1/lib -I$(top_srcdir)/gl -I../lib -I../intl \
-	@LIBIDN_CFLAGS@
+INCLUDES = -I$(top_srcdir)/gl -I../lib -I../intl @LIBIDN_CFLAGS@
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
