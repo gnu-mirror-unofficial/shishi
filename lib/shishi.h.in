@@ -77,7 +77,8 @@ typedef enum
   SHISHI_PKCS5_DERIVED_KEY_TOO_LONG = 42,
   SHISHI_INVALID_PRINCIPAL_NAME = 43,
   SHISHI_INVALID_ARGUMENT = 44,
-  SHISHI_LAST_ERROR = 44
+  SHISHI_ASN1_NO_VALUE = 45,
+  SHISHI_LAST_ERROR = 45
 }
 Shishi_rc;
 
@@ -1145,8 +1146,8 @@ extern int shishi_krberror_set_sname (Shishi * handle,
 extern int shishi_krberror_server_set (Shishi * handle,
 				       Shishi_asn1 krberror,
 				       const char *server);
-extern int shishi_krberror_remove_server (Shishi * handle,
-					  Shishi_asn1 krberror);
+extern int shishi_krberror_remove_sname (Shishi * handle,
+					 Shishi_asn1 krberror);
 extern int shishi_krberror_ctime_get (Shishi * handle,
 				      Shishi_asn1 krberror, char *ctime);
 extern int shishi_krberror_ctime_set (Shishi * handle,
@@ -1174,12 +1175,14 @@ extern int shishi_krberror_errorcode_set (Shishi * handle,
 					  Shishi_asn1 krberror,
 					  int errorcode);
 extern int shishi_krberror_etext (Shishi * handle, Shishi_asn1 krberror,
-				  char *etext, size_t * etextlen);
+				  char **etext, size_t * etextlen);
 extern int shishi_krberror_set_etext (Shishi * handle,
 				      Shishi_asn1 krberror,
 				      const char *etext);
 extern int shishi_krberror_remove_etext (Shishi * handle,
 					 Shishi_asn1 krberror);
+extern int shishi_krberror_edata (Shishi * handle, Shishi_asn1 krberror,
+				  char **edata, size_t * edatalen);
 extern int shishi_krberror_set_edata (Shishi * handle,
 				      Shishi_asn1 krberror,
 				      const char *edata);

@@ -237,6 +237,150 @@ shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
 }
 
 /**
+ * shishi_krberror_build:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ *
+ * Finish KRB-ERROR, called before e.g. shishi_krberror_der.  This
+ * function removes empty but OPTIONAL fields (such as cname), and
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_build (Shishi * handle,
+		       Shishi_asn1 krberror)
+{
+  char time[GENERALIZEDTIME_TIME_LEN + 1];
+  size_t tmplen = sizeof(time);
+  char *tmp;
+  int32_t errc;
+  int usec;
+  int rc;
+
+  rc = shishi_krberror_ctime_get (handle, krberror, time);
+  if (rc != SHISHI_OK &&
+      rc != SHISHI_ASN1_NO_ELEMENT &&
+      rc != SHISHI_ASN1_NO_VALUE)
+    return rc;
+  if (rc == SHISHI_ASN1_NO_VALUE)
+    {
+      rc = shishi_krberror_remove_ctime (handle, krberror);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  rc = shishi_krberror_cusec_get (handle, krberror, &usec);
+  if (rc != SHISHI_OK &&
+      rc != SHISHI_ASN1_NO_ELEMENT &&
+      rc != SHISHI_ASN1_NO_VALUE)
+    return rc;
+  if (rc == SHISHI_ASN1_NO_VALUE)
+    {
+      rc = shishi_krberror_remove_cusec (handle, krberror);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  rc = shishi_krberror_crealm (handle, krberror, &tmp, &tmplen);
+  if (rc != SHISHI_OK &&
+      rc != SHISHI_ASN1_NO_ELEMENT &&
+      rc != SHISHI_ASN1_NO_VALUE)
+    return rc;
+  if (rc == SHISHI_OK)
+    free (tmp);
+  if (rc == SHISHI_ASN1_NO_VALUE)
+    {
+      rc = shishi_krberror_remove_crealm (handle, krberror);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  tmplen = sizeof(time);
+  rc = shishi_krberror_cname (handle, krberror, time, &tmplen);
+  if (rc != SHISHI_OK &&
+      rc != SHISHI_ASN1_NO_ELEMENT &&
+      rc != SHISHI_ASN1_NO_VALUE)
+    return rc;
+  if (rc == SHISHI_ASN1_NO_VALUE || (rc == SHISHI_OK && tmplen == 0))
+    {
+      rc = shishi_krberror_remove_cname (handle, krberror);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  rc = shishi_krberror_realm (handle, krberror, &tmp, &tmplen);
+  if (rc != SHISHI_OK &&
+      rc != SHISHI_ASN1_NO_VALUE)
+    return rc;
+  if (rc == SHISHI_OK)
+    free (tmp);
+  if (rc == SHISHI_ASN1_NO_VALUE)
+    {
+      rc = shishi_krberror_set_realm (handle, krberror, "");
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  tmplen = sizeof(time);
+  rc = shishi_krberror_sname (handle, krberror, time, &tmplen);
+  if (rc != SHISHI_OK &&
+      rc != SHISHI_ASN1_NO_VALUE)
+    return rc;
+  if (rc == SHISHI_ASN1_NO_VALUE || tmplen == 0)
+    {
+      rc = shishi_krberror_remove_sname (handle, krberror);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  rc = shishi_krberror_edata (handle, krberror, &tmp, &tmplen);
+  if (rc != SHISHI_OK &&
+      rc != SHISHI_ASN1_NO_ELEMENT &&
+      rc != SHISHI_ASN1_NO_VALUE)
+    return rc;
+  if (rc == SHISHI_OK)
+    free (tmp);
+  if (rc == SHISHI_ASN1_NO_VALUE || (rc == SHISHI_OK && tmplen == 0))
+    {
+      rc = shishi_krberror_remove_edata (handle, krberror);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  rc = shishi_krberror_errorcode (handle, krberror, &errc);
+  if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_VALUE)
+    return rc;
+  if (rc == SHISHI_ASN1_NO_VALUE)
+    {
+      rc = shishi_krberror_errorcode_set (handle, krberror,
+					  SHISHI_KRB_ERR_GENERIC);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  rc = shishi_krberror_etext (handle, krberror, &tmp, &tmplen);
+  if (rc != SHISHI_OK &&
+      rc != SHISHI_ASN1_NO_ELEMENT &&
+      rc != SHISHI_ASN1_NO_VALUE)
+    return rc;
+  if (rc == SHISHI_OK)
+    free (tmp);
+  if (rc == SHISHI_ASN1_NO_VALUE || (rc == SHISHI_OK && tmplen == 0))
+    {
+      if (shishi_krberror_errorcode_fast (handle, krberror) ==
+	  SHISHI_KRB_ERR_GENERIC)
+	rc = shishi_krberror_set_etext (handle, krberror,
+					"Uninitialized error");
+      else
+	rc = shishi_krberror_remove_etext (handle, krberror);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_krberror_der:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: krberror as allocated by shishi_krberror().
@@ -254,11 +398,34 @@ shishi_krberror_der (Shishi * handle,
 {
   int rc;
 
+  rc = shishi_krberror_build (handle, krberror);
+  if (rc != SHISHI_OK)
+    return rc;
+
   rc = shishi_new_a2d (handle, krberror, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_crealm:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @realm: output array with newly allocated name of realm in KRB-ERROR.
+ * @realmlen: size of output array.
+ *
+ * Extract client realm from KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_crealm (Shishi * handle,
+			Shishi_asn1 krberror,
+			char **realm, size_t *realmlen)
+{
+  return shishi_asn1_read2 (handle, krberror, "crealm", realm, realmlen);
 }
 
 /**
@@ -303,6 +470,32 @@ shishi_krberror_remove_crealm (Shishi * handle,
   res = shishi_asn1_write (handle, krberror, "crealm", NULL, 0);
   if (res != SHISHI_OK)
     return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_cname:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @out: output buffer that holds client name in KRB-ERROR.
+ * @outlen: on input, maximum size of output buffer,
+ *             on output, actual size of output buffer.
+ *
+ * Return client principal field in KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_cname (Shishi * handle,
+		       Shishi_asn1 krberror,
+		       char *out, size_t *outlen)
+{
+  int rc;
+
+  rc = shishi_principal_name_get (handle, krberror, "cname", out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
 
   return SHISHI_OK;
 }
@@ -382,6 +575,25 @@ shishi_krberror_client_set (Shishi * handle,
 }
 
 /**
+ * shishi_krberror_realm:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @realm: output array with newly allocated name of realm in KRB-ERROR.
+ * @realmlen: size of output array.
+ *
+ * Extract (server) realm from KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_realm (Shishi * handle,
+		       Shishi_asn1 krberror,
+		       char **realm, size_t *realmlen)
+{
+  return shishi_asn1_read2 (handle, krberror, "realm", realm, realmlen);
+}
+
+/**
  * shishi_krberror_set_realm:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: krberror as allocated by shishi_krberror().
@@ -405,6 +617,59 @@ shishi_krberror_set_realm (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_krberror_sname:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: krberror as allocated by shishi_krberror().
+ * @out: output buffer that holds server name in KRB-ERROR.
+ * @outlen: on input, maximum size of output buffer,
+ *             on output, actual size of output buffer.
+ *
+ * Return server principal field in KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_sname (Shishi * handle,
+		       Shishi_asn1 krberror,
+		       char *out, size_t *outlen)
+{
+  int rc;
+
+  rc = shishi_principal_name_get (handle, krberror, "sname", out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_remove_sname:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: Krberror to set server name field in.
+ *
+ * Remove server name field in KRB-ERROR.  (Since it is not marked
+ * OPTIONAL in the ASN.1 profile, what is done is to set the name-type
+ * to UNKNOWN and make sure the name-string sequence is empty.)
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_remove_sname (Shishi * handle, Shishi_asn1 krberror)
+{
+  int res;
+
+  res = shishi_asn1_write_int32 (handle, krberror, "sname.name-type",
+				 SHISHI_NT_UNKNOWN);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_write (handle, krberror, "sname.name-string", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
 
 /**
  * shishi_krberror_set_sname:
@@ -452,35 +717,6 @@ shishi_krberror_server_set (Shishi * handle,
   int res;
 
   res = shishi_principal_set (handle, krberror, "sname", server);
-  if (res != SHISHI_OK)
-    return res;
-
-  return SHISHI_OK;
-}
-
-/**
- * shishi_krberror_remove_server:
- * @handle: shishi handle as allocated by shishi_init().
- * @krberror: Krberror to set server name field in.
- *
- * Remove server name field in KRB-ERROR.  (Since it is not marked
- * OPTIONAL in the ASN.1 profile, what is done is to set the name-type
- * to UNKNOWN and make sure the name-string sequence is empty.)
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_krberror_remove_server (Shishi * handle,
-			       Shishi_asn1 krberror)
-{
-  int res;
-
-  res = shishi_asn1_write_int32 (handle, krberror, "sname.name-type",
-				 SHISHI_NT_UNKNOWN);
-  if (res != SHISHI_OK)
-    return res;
-
-  res = shishi_asn1_write (handle, krberror, "sname.name-string", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -787,9 +1023,8 @@ shishi_krberror_errorcode_set (Shishi * handle,
  * shishi_krberror_etext:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: KRB-ERROR structure with error code.
- * @etext: output array with error text.
- * @etextlen: on input, maximum size of output array with error text,
- *            on output, actual size of output array with error text.
+ * @etext: output array with newly allocated error text.
+ * @etextlen: output length of error text.
  *
  * Extract additional error text from server (possibly empty).
  *
@@ -797,10 +1032,9 @@ shishi_krberror_errorcode_set (Shishi * handle,
  **/
 int
 shishi_krberror_etext (Shishi * handle, Shishi_asn1 krberror,
-		       char *etext, size_t * etextlen)
+		       char **etext, size_t * etextlen)
 {
-  return shishi_asn1_read_optional (handle, krberror, "e-text",
-				    etext, etextlen);
+  return shishi_asn1_read2 (handle, krberror, "e-text", etext, etextlen);
 }
 
 /**
@@ -846,6 +1080,24 @@ shishi_krberror_remove_etext (Shishi * handle, Shishi_asn1 krberror)
     return res;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_krberror_edata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: KRB-ERROR structure with error code.
+ * @edata: output array with newly allocated error data.
+ * @edatalen: output length of error data.
+ *
+ * Extract additional error data from server (possibly empty).
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_edata (Shishi * handle, Shishi_asn1 krberror,
+		       char **edata, size_t * edatalen)
+{
+  return shishi_asn1_read2 (handle, krberror, "e-data", edata, edatalen);
 }
 
 /**
@@ -905,23 +1157,36 @@ shishi_krberror_remove_edata (Shishi * handle, Shishi_asn1 krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
-			      Shishi_asn1 krberror)
+shishi_krberror_pretty_print (Shishi * handle, FILE * fh, Shishi_asn1 krberror)
 {
-  char buf[BUFSIZ];
-  size_t len = BUFSIZ;
+  char *buf;
+  size_t len;
   int res;
 
   if (VERBOSEASN1 (handle))
     shishi_krberror_print (handle, fh, krberror);
 
-  fprintf (fh, "Kerberos error code from server:\n%s\n",
-	   shishi_krberror_message (handle, krberror));
+  if (shishi_krberror_errorcode_fast (handle, krberror) ==
+      SHISHI_KRB_ERR_GENERIC)
+    {
+      fprintf (fh, "Generic Kerberos error from server:\n");
 
-  res = shishi_krberror_etext (handle, krberror, buf, &len);
-  buf[len] = '\0';
-  if (res == SHISHI_OK && len > 0)
-    fprintf (fh, "Additional Kerberos error message from server:\n%s\n", buf);
+      res = shishi_krberror_etext (handle, krberror, &buf, &len);
+      buf[len] = '\0';
+      if (res == SHISHI_OK && len > 0)
+	fprintf (fh, "%s\n", buf);
+    }
+  else
+    {
+      fprintf (fh, "Kerberos error code from server:\n%s\n",
+	       shishi_krberror_message (handle, krberror));
+
+      res = shishi_krberror_etext (handle, krberror, &buf, &len);
+      buf[len] = '\0';
+      if (res == SHISHI_OK && len > 0)
+	fprintf (fh, "Additional Kerberos error message from server:\n%s\n",
+		 buf);
+    }
 
 
   return SHISHI_OK;
