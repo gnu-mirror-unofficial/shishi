@@ -2857,9 +2857,11 @@ Now server and client are partially authenticated.
 Client must now send 3 different null terminated strings (without
 lenght) :
 
-* remote user name (user identity on remote machine)
-* terminal type for rlogin or command for rsh
-* local user name (user identity on client machine)
+@itemize
+@item remote user name (user identity on remote machine)
+@item terminal type for rlogin or command for rsh
+@item local user name (user identity on client machine)
+@end itemize
 
 example for rsh :
 
