@@ -677,13 +677,12 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
   int res;
   char data[BUFSIZ];
   int datalen;
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
 
-  res = asn1_der_coding (apreq, "AP-REQ", data, &datalen, errorDescription);
-  if (res != ASN1_SUCCESS)
+  res = shishi_a2d (handle, apreq, data, &datalen);
+  if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode AP-REQ: %s\n",
-			   errorDescription);
+			   shishi_strerror(handle));
       return SHISHI_ASN1_ERROR;
     }
 

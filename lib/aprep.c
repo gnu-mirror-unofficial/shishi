@@ -281,7 +281,6 @@ shishi_aprep_enc_part_add (Shishi * handle,
 			   ASN1_TYPE encticketpart, ASN1_TYPE encapreppart)
 {
   int res = ASN1_SUCCESS;
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   char buf[BUFSIZ];
   size_t buflen;
   char der[BUFSIZ];
@@ -292,12 +291,11 @@ shishi_aprep_enc_part_add (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = asn1_der_coding (encapreppart, "EncAPRepPart", der, &derlen,
-			 errorDescription);
-  if (res != ASN1_SUCCESS)
+  res = shishi_a2d (handle, encapreppart, der, &derlen);
+  if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode authenticator: %s\n",
-			   errorDescription);
+			   shishi_strerror(res));
       return !SHISHI_OK;
     }
 
@@ -371,7 +369,7 @@ shishi_aprep_enc_part_make (Shishi * handle,
 int
 shishi_aprep_get_enc_part_etype (Shishi * handle, ASN1_TYPE aprep, int *etype)
 {
-  return _shishi_asn1_integer_field (handle, aprep, etype,
+  return shishi_asn1_integer_field (handle, aprep, etype,
 				     "AP-REP.enc-part.etype");
 }
 
@@ -398,7 +396,7 @@ shishi_aprep_decrypt (Shishi * handle,
     return SHISHI_APREP_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
-  res = _shishi_asn1_field (handle, aprep, cipher, &cipherlen,
+  res = shishi_asn1_field (handle, aprep, cipher, &cipherlen,
 			    "AP-REP.enc-part.cipher");
   if (res != SHISHI_OK)
     return res;

@@ -374,18 +374,16 @@ shishi_apreq_add_authenticator (Shishi * handle,
 				ASN1_TYPE authenticator)
 {
   int res = ASN1_SUCCESS;
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   char buf[BUFSIZ];
   int buflen;
   char der[BUFSIZ];
   size_t derlen;
 
-  res = asn1_der_coding (authenticator, "Authenticator", der, &derlen,
-			 errorDescription);
-  if (res != ASN1_SUCCESS)
+  res = shishi_a2d (handle, authenticator, der, &derlen);
+  if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode authenticator: %s\n",
-			   errorDescription);
+			   shishi_strerror(res));
       return !SHISHI_OK;
     }
 
@@ -519,7 +517,7 @@ shishi_apreq_options (Shishi * handle, ASN1_TYPE apreq, int *flags)
   int len = sizeof (*flags);
   int res;
   *flags = 0;
-  res = _shishi_asn1_field (handle, apreq, (char *) flags, &len,
+  res = shishi_asn1_field (handle, apreq, (char *) flags, &len,
 			    "AP-REQ.ap-options");
   return res;
 }
@@ -591,7 +589,7 @@ int
 shishi_apreq_get_authenticator_etype (Shishi * handle,
 				      ASN1_TYPE apreq, int *etype)
 {
-  return _shishi_asn1_integer_field (handle, apreq, etype,
+  return shishi_asn1_integer_field (handle, apreq, etype,
 				     "AP-REQ.authenticator.etype");
 }
 
@@ -737,7 +735,7 @@ shishi_apreq_decrypt (Shishi * handle,
     return SHISHI_APREQ_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
-  res = _shishi_asn1_field (handle, apreq, cipher, &cipherlen,
+  res = shishi_asn1_field (handle, apreq, cipher, &cipherlen,
 			    "AP-REQ.authenticator.cipher");
   if (res != SHISHI_OK)
     return res;

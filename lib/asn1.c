@@ -22,14 +22,15 @@
 #include "internal.h"
 
 int
-_shishi_a2d_field (Shishi *handle,
-		   ASN1_TYPE node, char *field,
-		   char *der, int *len)
+shishi_a2d_field (Shishi *handle,
+		  ASN1_TYPE node, char *field,
+		  char *der, int *len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   int rc;
 
-  rc = asn1_der_coding (node, field, der, len, errorDescription);
+  rc = asn1_der_coding (node, field, (unsigned char*)der, len,
+			errorDescription);
   if (rc != ASN1_SUCCESS)
     return SHISHI_ASN1_ERROR;
 
@@ -37,13 +38,13 @@ _shishi_a2d_field (Shishi *handle,
 }
 
 int
-_shishi_a2d (Shishi *handle, ASN1_TYPE node, char *der, int *len)
+shishi_a2d (Shishi *handle, ASN1_TYPE node, char *der, int *len)
 {
-  return _shishi_a2d_field (handle, node, node->name, der, len);
+  return shishi_a2d_field (handle, node, node->name, der, len);
 }
 
 int
-_shishi_asn1_done (Shishi * handle, ASN1_TYPE node)
+shishi_asn1_done (Shishi * handle, ASN1_TYPE node)
 {
 
   int rc;
@@ -58,14 +59,15 @@ _shishi_asn1_done (Shishi * handle, ASN1_TYPE node)
   return SHISHI_OK;
 }
 
-
 int
-_shishi_asn1_field (Shishi * handle,
-		    ASN1_TYPE node, char *data, size_t *datalen, char *field)
+shishi_asn1_field (Shishi * handle,
+		   ASN1_TYPE node,
+		   char *data, size_t *datalen,
+		   char *field)
 {
   int rc;
 
-  rc = asn1_read_value (node, field, data, datalen);
+  rc = asn1_read_value (node, field, (unsigned char*)data, (int*)datalen);
   if (rc != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (rc));
@@ -76,13 +78,14 @@ _shishi_asn1_field (Shishi * handle,
 }
 
 int
-_shishi_asn1_optional_field (Shishi * handle,
-			     ASN1_TYPE node,
-			     char *data, size_t *datalen, char *field)
+shishi_asn1_optional_field (Shishi * handle,
+			    ASN1_TYPE node,
+			    char *data, size_t *datalen,
+			    char *field)
 {
   int rc;
 
-  rc = asn1_read_value (node, field, data, datalen);
+  rc = asn1_read_value (node, field, (unsigned char*)data, (int*)datalen);
   if (rc != ASN1_SUCCESS && rc != ASN1_ELEMENT_NOT_FOUND)
     {
       shishi_error_set (handle, libtasn1_strerror (rc));
@@ -96,8 +99,10 @@ _shishi_asn1_optional_field (Shishi * handle,
 }
 
 int
-_shishi_asn1_integer_field (Shishi * handle, ASN1_TYPE node,
-			    int *i, char *field)
+shishi_asn1_integer_field (Shishi * handle,
+			   ASN1_TYPE node,
+			   int *i,
+			   char *field)
 {
   unsigned char buf[4];
   int buflen;
@@ -133,7 +138,7 @@ shishi_asn1_ticket (Shishi * handle)
     goto error;
 
   res = asn1_write_value (node, "Ticket.tkt-vno",
-			  SHISHI_TICKET_DEFAULT_TKTVNO,
+			  (const unsigned char*)SHISHI_TICKET_DEFAULT_TKTVNO,
 			  SHISHI_TICKET_DEFAULT_TKTVNO_LEN);
   if (res != ASN1_SUCCESS)
     goto error;
@@ -167,33 +172,27 @@ error:
   return NULL;
 }
 
-/** shishi_der2asn1_ticket
-
-name:Ticket  type:SEQUENCE
-  name:tkt-vno  type:INTEGER
-  name:realm  type:IDENTIFIER  value:Realm
-  name:sname  type:IDENTIFIER  value:PrincipalName
-  name:enc-part  type:IDENTIFIER  value:EncryptedData
-*/
 ASN1_TYPE
-shishi_d2a_ticket (Shishi *handle, char *der, int der_len)
+shishi_d2a (Shishi *handle,
+	    char *fieldname,
+	    char *nodename,
+	    const char *der,
+	    size_t derlen)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   ASN1_TYPE structure = ASN1_TYPE_EMPTY;
   int asn1_result = ASN1_SUCCESS;
 
-  asn1_result = asn1_create_element (handle->asn1,
-				     "Kerberos5.Ticket",
-				     &structure, "Ticket");
+  asn1_result = asn1_create_element (handle->asn1, fieldname,
+				     &structure, nodename);
   if (asn1_result != ASN1_SUCCESS)
     {
-      shishi_error_printf (handle, "asn1_create_element() failed: %s",
-			   libtasn1_strerror (asn1_result));
+      shishi_error_set (handle, libtasn1_strerror (asn1_result));
       return ASN1_TYPE_EMPTY;
     }
 
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
+  asn1_result = asn1_der_decoding (&structure, (const unsigned char*)der,
+				   (int)derlen, errorDescription);
   if (asn1_result != ASN1_SUCCESS)
     {
       asn1_delete_structure (&structure);
@@ -204,329 +203,70 @@ shishi_d2a_ticket (Shishi *handle, char *der, int der_len)
   return structure;
 }
 
-/** shishi_der2asn1_encticketpart
-
--- Encrypted part of ticket
-EncTicketPart   ::= [APPLICATION 3] SEQUENCE {
-        flags                   [0] TicketFlags,
-        key                     [1] EncryptionKey,
-        crealm                  [2] Realm,
-        cname                   [3] PrincipalName,
-        transited               [4] TransitedEncoding,
-        authtime                [5] KerberosTime,
-        starttime               [6] KerberosTime OPTIONAL,
-        endtime                 [7] KerberosTime,
-        renew-till              [8] KerberosTime OPTIONAL,
-        caddr                   [9] HostAddresses OPTIONAL,
-        authorization-data      [10] AuthorizationData OPTIONAL
-}
-*/
 ASN1_TYPE
-shishi_der2asn1_encticketpart (ASN1_TYPE definitions,
-			       char *der, int der_len, char *errorDescription)
+shishi_d2a_ticket (Shishi *handle, char *der, int derlen)
 {
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.EncTicketPart",
-				     &structure, "EncTicketPart");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.Ticket", "Ticket", der, derlen);
 }
 
 ASN1_TYPE
-shishi_d2a_encticketpart (Shishi * handle, char *der,
-			  int derlen, char *errorDescription)
+shishi_d2a_encticketpart (Shishi * handle, char *der, int derlen)
 {
-  ASN1_TYPE encticketpart;
-
-  encticketpart = shishi_der2asn1_encticketpart (handle->asn1, der,
-						 derlen, errorDescription);
-  if (encticketpart == ASN1_TYPE_EMPTY)
-    fprintf (stdout, "Could not DER deocde Ticket\n");
-
-  return encticketpart;
-}
-
-/** shishi_der2asn1_krb_error
-
-name:KRB-ERROR  type:SEQUENCE
-  name:pvno  type:INTEGER
-  name:msg-type  type:INTEGER
-  name:ctime  type:IDENTIFIER  value:KerberosTime
-  name:cusec  type:INTEGER
-  name:stime  type:IDENTIFIER  value:KerberosTime
-  name:susec  type:INTEGER
-  name:error-code  type:INTEGER
-  name:crealm  type:IDENTIFIER  value:Realm
-  name:cname  type:IDENTIFIER  value:PrincipalName
-  name:realm  type:IDENTIFIER  value:Realm
-  name:sname  type:IDENTIFIER  value:PrincipalName
-  name:e-text  type:GENERALSTRING
-  name:e-data  type:OCT_STR
-*/
-ASN1_TYPE
-shishi_der2asn1_krb_error (ASN1_TYPE definitions,
-			   char *der, int der_len, char *errorDescription)
-{
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.KRB-ERROR",
-				     &structure, "KRB-ERROR");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
-}
-
-/** shishi_der2asn1_as_req
-
-name:AS-REQ  type:IDENTIFIER  value:KDC-REQ
-*/
-ASN1_TYPE
-shishi_der2asn1_as_req (ASN1_TYPE definitions,
-			char *der, int der_len, char *errorDescription)
-{
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.AS-REQ",
-				     &structure, "KDC-REQ");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
-}
-
-/** shishi_der2asn1_tgs_req
-
-name:TGS-REQ  type:IDENTIFIER  value:KDC-REQ
-*/
-ASN1_TYPE
-shishi_der2asn1_tgs_req (ASN1_TYPE definitions,
-			 char *der, int der_len, char *errorDescription)
-{
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.TGS-REQ",
-				     &structure, "KDC-REQ");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.EncTicketPart", "EncTicketPart",
+		    der, derlen);
 }
 
 ASN1_TYPE
-shishi_der2asn1_as_rep (ASN1_TYPE definitions,
-			char *der, int der_len, char *errorDescription)
+shishi_d2a_asreq (Shishi *handle, char *der, int derlen)
 {
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.AS-REP",
-				     &structure, "KDC-REP");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.AS-REQ", "KDC-REQ", der, derlen);
 }
 
-/** shishi_der2asn1_tgs_rep
-
-name:TGS-REP  type:IDENTIFIER  value:KDC-REP
-*/
 ASN1_TYPE
-shishi_der2asn1_tgs_rep (ASN1_TYPE definitions,
-			 char *der, int der_len, char *errorDescription)
+shishi_d2a_tgsreq (Shishi *handle, char *der, int derlen)
 {
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.TGS-REP",
-				     &structure, "KDC-REP");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.TGS-REQ", "KDC-REQ", der, derlen);
 }
 
-/** shishi_der2asn1_kdc_req
-
-name:KDC-REQ  type:SEQUENCE
-  name:pvno  type:INTEGER
-  name:msg-type  type:INTEGER
-  name:padata  type:SEQ_OF
-    name:NULL  type:IDENTIFIER  value:PA-DATA
-  name:req-body  type:IDENTIFIER  value:KDC-REQ-BODY
-*/
 ASN1_TYPE
-shishi_der2asn1_kdc_req (ASN1_TYPE definitions,
-			 char *der, int der_len, char *errorDescription)
+shishi_d2a_asrep (Shishi *handle, char *der, int derlen)
 {
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.KDC-REQ",
-				     &structure, "KDC-REQ");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.AS-REP", "KDC-REP", der, derlen);
 }
 
-/** shishi_der2asn1_kdc_rep
-
-name:KDC-REP  type:SEQUENCE
-  name:pvno  type:INTEGER
-  name:msg-type  type:INTEGER
-  name:padata  type:SEQ_OF
-    name:NULL  type:IDENTIFIER  value:PA-DATA
-  name:crealm  type:IDENTIFIER  value:Realm
-  name:cname  type:IDENTIFIER  value:PrincipalName
-  name:ticket  type:IDENTIFIER  value:Ticket
-  name:enc-part  type:IDENTIFIER  value:EncryptedData
-*/
 ASN1_TYPE
-shishi_der2asn1_kdc_rep (ASN1_TYPE definitions,
-			 char *der, int der_len, char *errorDescription)
+shishi_d2a_tgsrep (Shishi *handle, char *der, int derlen)
 {
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
+  return shishi_d2a(handle, "Kerberos5.TGS-REP", "KDC-REP", der, derlen);
+}
 
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.KDC-REP",
-				     &structure, "KDC-REP");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+ASN1_TYPE
+shishi_d2a_kdcrep (Shishi *handle, char *der, int derlen)
+{
+  return shishi_d2a(handle, "Kerberos5.KDC-REP", "KDC-REP", der, derlen);
 }
 
 ASN1_TYPE
 shishi_d2a_kdcreq (Shishi * handle, char *der, int derlen)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
 
-  structure = shishi_der2asn1_as_req (handle->asn1, der,
-				      derlen, errorDescription);
+  structure = shishi_d2a_asreq (handle, der, derlen);
   if (structure == ASN1_TYPE_EMPTY)
     {
-      printf ("bad magic %s\n", errorDescription);
+      printf ("bad kdcreq magic\n");
       shishi_error_printf (handle, "Could not DER decode AS-REQ\n");
 
-      structure = shishi_der2asn1_tgs_req (handle->asn1, der,
-					   derlen, errorDescription);
+      structure = shishi_d2a_tgsreq (handle, der, derlen);
       if (structure == ASN1_TYPE_EMPTY)
 	{
-	  printf ("bad magic %s\n", errorDescription);
+	  printf ("bad kdcreq magic\n");
 	  shishi_error_printf (handle, "Could not DER decode TGS-REQ\n");
 
-	  structure = shishi_der2asn1_kdc_req (handle->asn1, der,
-					       derlen, errorDescription);
+	  structure = shishi_d2a_kdcreq (handle, der, derlen);
 	  if (structure == ASN1_TYPE_EMPTY)
 	    {
-	      printf ("bad magic %s\n", errorDescription);
+	      printf ("bad kdcreq magic\n");
 	      shishi_error_printf (handle, "Could not DER decode KDC-REQ\n");
 
 	      return ASN1_TYPE_EMPTY;
@@ -538,237 +278,56 @@ shishi_d2a_kdcreq (Shishi * handle, char *der, int derlen)
 }
 
 ASN1_TYPE
-shishi_d2a_encasreppart (Shishi * handle, char *der, int der_len)
+shishi_d2a_encasreppart (Shishi * handle, char *der, int derlen)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (handle->asn1,
-				     "Kerberos5.EncASRepPart",
-				     &structure, "EncKDCRepPart");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result =
-    asn1_der_decoding (&structure, der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      shishi_error_set (handle, errorDescription);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.EncASRepPart", "EncKDCRepPart",
+		    der, derlen);
 }
 
 ASN1_TYPE
-shishi_d2a_kdcrep (Shishi * handle, char *der, int der_len)
+shishi_d2a_enctgsreppart (Shishi * handle, char *der, int derlen)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (handle->asn1,
-				     "Kerberos5.KDC-REP",
-				     &structure, "KDC-REP");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result =
-    asn1_der_decoding (&structure, der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      shishi_error_set (handle, errorDescription);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.EncTGSRepPart", "EncKDCRepPart",
+		    der, derlen);
 }
 
 ASN1_TYPE
-shishi_d2a_asrep (Shishi * handle, char *der, int der_len)
+shishi_d2a_enckdcreppart (Shishi * handle, char *der, int derlen)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (handle->asn1,
-				     "Kerberos5.AS-REP",
-				     &structure, "KDC-REP");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result =
-    asn1_der_decoding (&structure, der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      shishi_error_set (handle, errorDescription);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.EncKDCRepPart", "EncKDCRepPart",
+		    der, derlen);
 }
 
 ASN1_TYPE
-shishi_d2a_tgsrep (Shishi * handle, char *der, int der_len)
+shishi_d2a_authenticator (Shishi * handle, char *der, int derlen)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (handle->asn1,
-				     "Kerberos5.TGS-REP",
-				     &structure, "KDC-REP");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result =
-    asn1_der_decoding (&structure, der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      shishi_error_set (handle, errorDescription);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
-}
-
-/** shishi_der2asn1_encasreppart
-
-name:EncASRepPart  type:IDENTIFIER  value:EncKDCRepPart
-*/
-ASN1_TYPE
-shishi_der2asn1_encasreppart (ASN1_TYPE definitions,
-			      char *der, int der_len, char *errorDescription)
-{
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.EncASRepPart",
-				     &structure, "EncKDCRepPart");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.Authenticator", "Authenticator",
+		    der, derlen);
 }
 
 ASN1_TYPE
-shishi_d2a_enctgsreppart (Shishi * handle, char *der, int der_len)
+shishi_d2a_krberror (Shishi * handle, char *der, int derlen)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (handle->asn1,
-				     "Kerberos5.EncTGSRepPart",
-				     &structure, "EncKDCRepPart");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result =
-    asn1_der_decoding (&structure, der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      shishi_error_set (handle, errorDescription);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.KRB-ERROR", "KRB-ERROR", der, derlen);
 }
 
-/** shishi_der2asn1_enctgsreppart
-
-name:EncTGSRepPart  type:IDENTIFIER  value:EncKDCRepPart
-*/
 ASN1_TYPE
-shishi_der2asn1_enctgsreppart (ASN1_TYPE definitions,
-			       char *der, int der_len, char *errorDescription)
+shishi_d2a_apreq (Shishi * handle, char *der, int derlen)
 {
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.EncTGSRepPart",
-				     &structure, "EncKDCRepPart");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+  return shishi_d2a(handle, "Kerberos5.AP-REQ", "AP-REQ", der, derlen);
 }
 
-/** shishi_der2asn1_enckdcreppart
-
-name:EncKDCRepPart  type:IDENTIFIER  value:EncKDCRepPart
-*/
 ASN1_TYPE
-shishi_d2a_enckdcreppart (Shishi * handle, char *der, int der_len)
+shishi_d2a_aprep (Shishi * handle, char *der, int derlen)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
+  return shishi_d2a(handle, "Kerberos5.AP-REP", "AP-REP", der, derlen);
+}
 
-  asn1_result = asn1_create_element (handle->asn1,
-				     "Kerberos5.EncKDCRepPart",
-				     &structure, "EncKDCRepPart");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      shishi_error_set (handle, errorDescription);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
+ASN1_TYPE
+shishi_d2a_encapreppart (Shishi * handle, char *der, int derlen)
+{
+  return shishi_d2a(handle, "Kerberos5.EncAPRepPart", "EncAPRepPart",
+		    der, derlen);
 }
 
 /*
@@ -841,7 +400,8 @@ shishi_principal_name_get (Shishi * handle,
     {
       len = *outlen - totlen;
       sprintf (format, "%s.name-string.?%d", namefield, i);
-      res = asn1_read_value (namenode, format, out + totlen, &len);
+      res = asn1_read_value (namenode, format,
+			     (unsigned char*) &out[totlen], &len);
       if (res != ASN1_SUCCESS)
 	{
 	  shishi_error_set (handle, libtasn1_strerror (res));
@@ -885,10 +445,8 @@ shishi_principal_name_realm_get (Shishi * handle,
 				 char *realmfield, char *out, int *outlen)
 {
   int res = ASN1_SUCCESS;
-  char format[BUFSIZ];
   int totlen = 0;
   int len;
-  int i, j, n;
 
   totlen = *outlen;
   shishi_principal_name_get (handle, namenode, namefield, out, &totlen);
@@ -912,7 +470,8 @@ shishi_principal_name_realm_get (Shishi * handle,
       totlen += strlen ("@");
 
       len = *outlen - totlen;
-      res = asn1_read_value (namenode, realmfield, out + totlen, &len);
+      res = asn1_read_value (namenode, realmfield,
+			     (unsigned char*) &out[totlen], &len);
       if (res == ASN1_ELEMENT_NOT_FOUND)
 	totlen--;
       else if (res != ASN1_SUCCESS)
@@ -927,199 +486,4 @@ shishi_principal_name_realm_get (Shishi * handle,
   *outlen = totlen;
 
   return SHISHI_OK;
-}
-
-ASN1_TYPE
-shishi_der2asn1_authenticator (ASN1_TYPE definitions,
-			       char *der, int der_len, char *errorDescription)
-{
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.Authenticator",
-				     &structure, "Authenticator");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
-}
-
-ASN1_TYPE
-shishi_der2asn1_krberror (ASN1_TYPE definitions,
-			       char *der, int der_len, char *errorDescription)
-{
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.KRB-ERROR",
-				     &structure, "KRB-ERROR");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
-}
-
-ASN1_TYPE
-shishi_d2a_authenticator (Shishi * handle, char *der,
-			  int derlen, char *errorDescription)
-{
-  ASN1_TYPE authenticator;
-
-  authenticator = shishi_der2asn1_authenticator (handle->asn1, der,
-						 derlen, errorDescription);
-  if (authenticator == ASN1_TYPE_EMPTY)
-    fprintf (stdout, "Could not DER deocde AP-REQ\n");
-
-  return authenticator;
-}
-
-/** shishi_der2asn1_ap_req
-
-name:AP-REQ  type:SEQUENCE
-  name:pvno  type:INTEGER
-  name:msg-type  type:INTEGER
-  name:ap-options  type:IDENTIFIER  value:APOptions
-  name:ticket  type:IDENTIFIER  value:Ticket
-  name:authenticator  type:IDENTIFIER  value:EncryptedData
-*/
-ASN1_TYPE
-shishi_der2asn1_ap_req (ASN1_TYPE definitions,
-			char *der, int der_len, char *errorDescription)
-{
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.AP-REQ",
-				     &structure, "AP-REQ");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
-}
-
-ASN1_TYPE
-shishi_d2a_apreq (Shishi * handle, char *der,
-		  int derlen, char *errorDescription)
-{
-  ASN1_TYPE apreq;
-
-  apreq = shishi_der2asn1_ap_req (handle->asn1, der,
-				  derlen, errorDescription);
-  if (apreq == ASN1_TYPE_EMPTY)
-    fprintf (stdout, "Could not DER deocde AP-REQ\n");
-
-  return apreq;
-}
-
-/** shishi_der2asn1_ap_rep
-
-   AP-REP ::=         [APPLICATION 15] SEQUENCE {
-              pvno[0]                   INTEGER,
-              msg-type[1]               INTEGER,
-              enc-part[2]               EncryptedData
-   }
-*/
-ASN1_TYPE
-shishi_der2asn1_ap_rep (ASN1_TYPE definitions,
-			char *der, int der_len, char *errorDescription)
-{
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (definitions,
-				     "Kerberos5.AP-REP",
-				     &structure, "AP-REP");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      strcpy (errorDescription, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result = asn1_der_decoding (&structure,
-				   der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
-}
-
-ASN1_TYPE
-shishi_d2a_aprep (Shishi * handle, char *der, int derlen)
-{
-  ASN1_TYPE aprep;
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-
-  aprep = shishi_der2asn1_ap_rep (handle->asn1, der,
-				  derlen, errorDescription);
-  if (aprep == ASN1_TYPE_EMPTY)
-    fprintf (stdout, "Could not DER deocde AP-REP: %s\n", errorDescription);
-
-  return aprep;
-}
-
-ASN1_TYPE
-shishi_d2a_encapreppart (Shishi * handle, char *der, int der_len)
-{
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-
-  asn1_result = asn1_create_element (handle->asn1,
-				     "Kerberos5.EncAPRepPart",
-				     &structure, "EncAPRepPart");
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  asn1_result =
-    asn1_der_decoding (&structure, der, der_len, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      asn1_delete_structure (&structure);
-      shishi_error_set (handle, errorDescription);
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return structure;
 }

@@ -369,7 +369,7 @@ int
 shishi_krberror_get_etext (Shishi *handle, ASN1_TYPE krberror,
 			   char *etext, size_t *etextlen)
 {
-  return _shishi_asn1_optional_field (handle, krberror, etext, etextlen,
+  return shishi_asn1_optional_field (handle, krberror, etext, etextlen,
 				      "KRB-ERROR.e-text");
 }
 
@@ -377,7 +377,7 @@ int
 shishi_krberror_get_errorcode (Shishi *handle, ASN1_TYPE krberror,
 			       int *errorcode)
 {
-  return _shishi_asn1_integer_field (handle, krberror, errorcode,
+  return shishi_asn1_integer_field (handle, krberror, errorcode,
 				     "KRB-ERROR.error-code");
 }
 

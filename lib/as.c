@@ -107,7 +107,7 @@ void
 shishi_as_req_set (Shishi_as * as, ASN1_TYPE asreq)
 {
   if (as->asreq)
-    _shishi_asn1_done(as->handle, as->asreq);
+    shishi_asn1_done(as->handle, as->asreq);
   as->asreq = asreq;
 }
 
@@ -224,7 +224,7 @@ void
 shishi_as_rep_set (Shishi_as * as, ASN1_TYPE asrep)
 {
   if (as->asrep)
-    _shishi_asn1_done(as->handle, as->asrep);
+    shishi_asn1_done(as->handle, as->asrep);
   as->asrep = asrep;
 }
 
@@ -252,7 +252,7 @@ void
 shishi_as_krberror_set (Shishi_as * as, ASN1_TYPE krberror)
 {
   if (as->krberror)
-    _shishi_asn1_done(as->handle, as->krberror);
+    shishi_asn1_done(as->handle, as->krberror);
   as->krberror = krberror;
 }
 

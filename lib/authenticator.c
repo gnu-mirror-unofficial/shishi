@@ -347,7 +347,7 @@ shishi_authenticator_ctime_get (Shishi * handle,
   int res;
 
   len = GENERALIZEDTIME_TIME_LEN + 1;
-  res = _shishi_asn1_field (handle, authenticator,
+  res = shishi_asn1_field (handle, authenticator,
 			    ctime, &len, "Authenticator.ctime");
   if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
     ctime[len] = '\0';
@@ -361,7 +361,7 @@ shishi_authenticator_cusec_get (Shishi * handle,
 {
   int res;
 
-  res = _shishi_asn1_integer_field (handle, authenticator, cusec,
+  res = shishi_asn1_integer_field (handle, authenticator, cusec,
 				    "Authenticator.cusec");
   *cusec = ntohl (*cusec);
 

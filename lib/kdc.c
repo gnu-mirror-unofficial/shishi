@@ -132,19 +132,18 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
   char realm[BUFSIZ];		/* XXX dynamically allocate this */
   int realmlen;
   int res;
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
 
-  res = asn1_der_coding (kdcreq, "KDC-REQ", der, &der_len, errorDescription);
-  if (res != ASN1_SUCCESS)
+  res = shishi_a2d (handle, kdcreq, der, &der_len);
+  if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode AS-REQ: %s\n",
-			   errorDescription);
+			   shishi_strerror(res));
       return !SHISHI_OK;
     }
 
   realmlen = sizeof (realm);
   res =
-    _shishi_asn1_field (handle, kdcreq, realm, &realmlen,
+    shishi_asn1_field (handle, kdcreq, realm, &realmlen,
 			"KDC-REQ.req-body.realm");
   if (res != SHISHI_OK)
     {
@@ -170,21 +169,18 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
   *kdcrep = shishi_d2a_asrep (handle, der, der_len);
   if (*kdcrep == ASN1_TYPE_EMPTY)
     {
-      *kdcrep = shishi_der2asn1_tgs_rep (handle->asn1, der,
-					 der_len, errorDescription);
+      *kdcrep = shishi_d2a_tgsrep (handle, der, der_len);
       if (*kdcrep == ASN1_TYPE_EMPTY)
 	{
-	  *kdcrep = shishi_der2asn1_kdc_rep (handle->asn1, der,
-					     der_len, errorDescription);
+	  *kdcrep = shishi_d2a_kdcrep (handle, der, der_len);
 	  if (*kdcrep == ASN1_TYPE_EMPTY)
 	    {
-	      *kdcrep = shishi_der2asn1_krb_error (handle->asn1, der,
-						   der_len, errorDescription);
+	      *kdcrep = shishi_d2a_krberror (handle, der, der_len);
 	      if (*kdcrep == ASN1_TYPE_EMPTY)
 		{
 		  shishi_error_printf
 		    (handle, "Could not DER decode AS-REP/KRB-ERROR: %s",
-		     errorDescription);
+		     shishi_strerror_details(handle));
 		  return !SHISHI_OK;
 		}
 
@@ -573,7 +569,7 @@ shishi_kdc_process (Shishi * handle,
   msgtype = 0;
   len = sizeof (msgtype);
   res =
-    _shishi_asn1_field (handle, kdcrep, &msgtype, &len, "KDC-REP.msg-type");
+    shishi_asn1_field (handle, kdcrep, &msgtype, &len, "KDC-REP.msg-type");
   if (res != SHISHI_OK)
     return res;
 

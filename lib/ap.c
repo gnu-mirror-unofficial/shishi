@@ -190,7 +190,7 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
   buf = malloc(BUFSIZ);
   buflen = BUFSIZ;
 
-  res = _shishi_a2d_field (ap->handle, node, field, buf, &buflen);
+  res = shishi_a2d_field (ap->handle, node, field, buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -406,7 +406,7 @@ void
 shishi_ap_authenticator_set (Shishi_ap * ap, ASN1_TYPE authenticator)
 {
   if (ap->authenticator)
-    _shishi_asn1_done(ap->handle, ap->authenticator);
+    shishi_asn1_done(ap->handle, ap->authenticator);
   ap->authenticator = authenticator;
 }
 
@@ -435,7 +435,7 @@ void
 shishi_ap_req_set (Shishi_ap * ap, ASN1_TYPE apreq)
 {
   if (ap->apreq)
-    _shishi_asn1_done(ap->handle, ap->apreq);
+    shishi_asn1_done(ap->handle, ap->apreq);
   ap->apreq = apreq;
 }
 
@@ -458,7 +458,7 @@ shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen)
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = _shishi_a2d (ap->handle, ap->apreq, out, outlen);
+  rc = shishi_a2d (ap->handle, ap->apreq, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -653,7 +653,7 @@ void
 shishi_ap_rep_set (Shishi_ap * ap, ASN1_TYPE aprep)
 {
   if (ap->aprep)
-    _shishi_asn1_done(ap->handle, ap->aprep);
+    shishi_asn1_done(ap->handle, ap->aprep);
   ap->aprep = aprep;
 }
 
@@ -835,7 +835,7 @@ void
 shishi_ap_encapreppart_set (Shishi_ap * ap, ASN1_TYPE encapreppart)
 {
   if (ap->encapreppart)
-    _shishi_asn1_done(ap->handle, ap->encapreppart);
+    shishi_asn1_done(ap->handle, ap->encapreppart);
   ap->encapreppart = encapreppart;
 }
 

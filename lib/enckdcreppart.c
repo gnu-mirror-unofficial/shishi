@@ -45,13 +45,13 @@ shishi_enckdcreppart_get_key (Shishi * handle,
   int buflen;
   int keytype;
 
-  res = _shishi_asn1_integer_field (handle, enckdcreppart, &keytype,
+  res = shishi_asn1_integer_field (handle, enckdcreppart, &keytype,
 				    "EncKDCRepPart.key.keytype");
   if (res != SHISHI_OK)
     return res;
 
   buflen = BUFSIZ;
-  res = _shishi_asn1_field (handle, enckdcreppart, buf, &buflen,
+  res = shishi_asn1_field (handle, enckdcreppart, buf, &buflen,
 			    "EncKDCRepPart.key.keyvalue");
   if (res != ASN1_SUCCESS)
     return res;
