@@ -262,9 +262,9 @@ AC_ARG_WITH(libgcrypt,
   AC_HELP_STRING([--with-libgcrypt], [use libgcrypt for low-level crypto]),
   libgcrypt=$withval, libgcrypt=yes)
 if test "$libgcrypt" != "no" ; then
-	AM_PATH_LIBGCRYPT(1.1.44, :, [
+	AM_PATH_LIBGCRYPT(1.1.43, :, [
 		libgcrypt=no
-		AC_MSG_WARN([Libgcrypt >= 1.1.44 not found.])
+		AC_MSG_WARN([Libgcrypt >= 1.1.43 not found.])
 	])
 fi
 AC_MSG_CHECKING([whether to use libgcrypt])
