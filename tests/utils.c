@@ -111,20 +111,6 @@ static int debug = 0;
 static int error_count = 0;
 static int break_on_error = 0;
 
-typedef void diefn (const char *fmt, ...);
-volatile diefn die;
-
-void
-die (const char *format, ...)
-{
-  va_list arg_ptr;
-
-  va_start (arg_ptr, format);
-  vfprintf (stderr, format, arg_ptr);
-  va_end (arg_ptr);
-  exit (1);
-}
-
 static void
 fail (const char *format, ...)
 {
