@@ -504,6 +504,48 @@ des_md5_decrypt (Shishi * handle,
 }
 
 static int
+des_none_encrypt (Shishi * handle,
+		  Shishi_key *key,
+		  int keyusage,
+		  const char *iv,
+		  size_t ivlen,
+		  const char *in,
+		  size_t inlen,
+		  char *out,
+		  size_t *outlen)
+{
+  int res;
+
+  res = simplified_encrypt (handle, key, 0, iv, ivlen,
+			    in, inlen, out, outlen);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+static int
+des_none_decrypt (Shishi * handle,
+		  Shishi_key *key,
+		  int keyusage,
+		  const char *iv,
+		  size_t ivlen,
+		  const char *in,
+		  size_t inlen,
+		  char *out,
+		  size_t *outlen)
+{
+  int res;
+
+  res = simplified_decrypt (handle, key, 0, iv, ivlen,
+			    in, inlen, out, outlen);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+static int
 des_set_odd_key_parity (char key[8])
 {
   int i, j;
