@@ -23,7 +23,7 @@ sbin_PROGRAMS = shishid
 
 shishi_SOURCES = shishi.c data.h gettext.h \
 	authp.c crypto.c client.c server.c
-shishi_LDADD = @LTLIBINTL@ ../gl/libfoo.a ../lib/libshishi.la
+shishi_LDADD = ../lib/libshishi.la
 
 shishid_SOURCES = shishid.c
 shishid_LDADD = ../lib/libshishi.la
