@@ -14,4 +14,4 @@ remove-potcdate.sed
 remove-potcdate.sin
 shishi.pot
 stamp-po
-sv.gmo
+*.gmo
