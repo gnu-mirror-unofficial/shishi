@@ -361,7 +361,7 @@ decryption are identity functions.  No integrity protection.  It is
 weak.  It is associated with the @code{NULL} checksum.
 
 @item arcfour-hmac
-@item arcfour-hmac-exp
+@itemx arcfour-hmac-exp
 
 @code{arcfour-hmac-*} are a proprietary stream cipher with 56 bit
 (@code{arcfour-hmac-exp}) or 128 bit (@code{arcfour-hmac}) keys, used
@@ -418,7 +418,7 @@ is not widely used outside of Kerberos, hence not widely studied.  It
 is associated with the @code{hmac-sha1-des3-kd} checksum.
 
 @item aes128-cts-hmac-sha1-96
-@item aes256-cts-hmac-sha1-96.
+@itemx aes256-cts-hmac-sha1-96
 
 @code{aes128-cts-hmac-sha1-96} and @code{aes256-cts-hmac-sha1-96} is
 AES encryption and decryption with 128 bit and 256 bit key,
@@ -511,7 +511,7 @@ function is good.  It is compatible with the @code{des3-cbc-sha1-kd}
 encryption mechanism.
 
 @item hmac-sha1-96-aes128
-@item hmac-sha1-96-aes256
+@itemx hmac-sha1-96-aes256
 
 @code{hmac-sha1-96-aes*} are keyed SHA1 hashes in HMAC mode computed
 over the message and then truncated to 96 bits.  The key is derived
@@ -524,6 +524,44 @@ mechanisms.
 
 @end table
 
+Several of the cipher suites have long names that can be hard to
+memorize.  For your convenience, the following short-hand aliases
+exists.
+
+@table @code
+
+@item arcfour
+
+Alias for @code{arcfour-hmac}.
+
+@item des-crc
+
+Alias for @code{des-cbc-crc}.
+
+@item des-md4
+
+Alias for @code{des-cbc-md4}.
+
+@item des-md5
+@itemx des
+
+Alias for @code{des-cbc-md5}.
+
+@item des3
+@itemx 3des
+
+Alias for @code{des3-cbc-sha1-kd}.
+
+@item aes128
+
+Alias for @code{aes128-cts-hmac-sha1-96}.
+
+@item aes
+@itemx aes256
+
+Alias for @code{aes256-cts-hmac-sha1-96}.
+
+@end table
 
 @node Supported Platforms
 @section Supported Platforms

@@ -4,6 +4,9 @@ See the end for copying conditions.
 
 * Version 0.0.7 (unreleased)
 
+** Encryption types can now be referred to using shorter aliases.
+E.g., you can write "aes" instead of "aes256-cts-hmac-sha1-96".
+
 ** ARCFOUR encryption support according to draft-brezak-win2k-krb-rc4-hmac-04.
 
 ** DES-CBC-CRC now works.

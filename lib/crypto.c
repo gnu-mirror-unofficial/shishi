@@ -257,7 +257,7 @@ _shishi_simplified_dencrypt (Shishi * handle,
       memset (pt + inlen, 0, padzerolen);
     }
   else
-    pt = in;
+    pt = (char*) in;
 
   switch (shishi_key_type (key))
     {
@@ -660,6 +660,22 @@ shishi_cipher_defaultcksumtype (int32_t type)
   return -1;
 }
 
+static struct {
+  char *name;
+  int type;
+} cipher_aliases[] = {
+  { "des-crc", SHISHI_DES_CBC_CRC },
+  { "des-md4", SHISHI_DES_CBC_MD4 },
+  { "des-md5", SHISHI_DES_CBC_MD5 },
+  { "des", SHISHI_DES_CBC_MD5 },
+  { "des3", SHISHI_DES3_CBC_HMAC_SHA1_KD },
+  { "3des", SHISHI_DES3_CBC_HMAC_SHA1_KD },
+  { "aes128", SHISHI_AES128_CTS_HMAC_SHA1_96 },
+  { "aes256", SHISHI_AES256_CTS_HMAC_SHA1_96 },
+  { "aes", SHISHI_AES256_CTS_HMAC_SHA1_96 },
+  { "arcfour", SHISHI_ARCFOUR_HMAC }
+};
+
 /**
  * shishi_cipher_parse:
  * @cipher: name of encryption type, e.g. "des3-cbc-sha1-kd".
@@ -680,6 +696,10 @@ shishi_cipher_parse (const char *cipher)
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (strcasecmp (cipher, ciphers[i]->name) == 0)
       return ciphers[i]->type;
+
+  for (i = 0; i < sizeof (cipher_aliases) / sizeof (cipher_aliases[0]); i++)
+    if (strcasecmp (cipher, cipher_aliases[i].name) == 0)
+      return cipher_aliases[i].type;
 
   return -1;
 }
