@@ -31,9 +31,18 @@
 void
 shishi_done (Shishi * handle)
 {
-  if (handle->asn1)
-    asn1_delete_structure (&handle->asn1);
+  if (handle->ticketset)
+    shishi_ticketset_done(handle, handle->ticketset);
+
   /*  if (handle->default_realm)
      free (handle->default_realm); */
+  if (handle->usercfgfile)
+    free (handle->usercfgfile);
+  if (handle->ticketsetfile)
+    free (handle->ticketsetfile);
+
+  if (handle->asn1)
+    asn1_delete_structure (&handle->asn1);
+
   free (handle);
 }
