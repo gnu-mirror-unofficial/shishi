@@ -106,6 +106,10 @@ dumplist_realm_principal (const char *realm, const char *principal)
 
   if (args_info.dump_given)
     {
+      Shisa_key **keys;
+      size_t nkeys;
+      size_t i;
+
       printfield ("Account is", ph.isdisabled ? "DISABLED" : "enabled");
       printuint32field ("Current key version", ph.kvno);
       if (ph.notusedbefore != (time_t) -1)
@@ -122,13 +126,6 @@ dumplist_realm_principal (const char *realm, const char *principal)
 	printtimefield ("Password expire on", ph.passwordexpire);
       if (ph.accountexpire != (time_t) -1)
 	printtimefield ("Account expire on", ph.accountexpire);
-    }
-
-  if (args_info.keys_given)
-    {
-      Shisa_key **keys;
-      size_t nkeys;
-      size_t i;
 
       printf ("\t\tKeys:\n");
 
@@ -140,10 +137,21 @@ dumplist_realm_principal (const char *realm, const char *principal)
 	      if (keys[i])
 		{
 		  printuint32field ("\tEtype", keys[i]->etype);
-		  printfield ("\tKey", keys[i]->key);
+		  if (args_info.keys_given)
+		    {
+		      Shishi_key *key;
+
+		      rc = shishi_key_from_value (sh, keys[i]->etype,
+						  keys[i]->key, &key);
+		      if (rc == SHISHI_OK)
+			shishi_key_print (sh, stdout, key);
+		      else
+			return SHISA_NO_KEY;
+		    }
 		  printfield ("\tSalt", keys[i]->salt);
 		  printfield ("\tS2K params", keys[i]->str2keyparam);
-		  printfield ("\tPassword", keys[i]->password);
+		  if (args_info.keys_given)
+		    printfield ("\tPassword", keys[i]->password);
 		  shisa_key_free (dbh, keys[i]);
 		}
 	      else
