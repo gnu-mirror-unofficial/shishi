@@ -196,6 +196,11 @@ shishi_sendrecv_tcp (Shishi * handle,
    pre authenticated principal.
 
    Derive Kerberos EncKDCRepPart key from TLS PRF?  Hm.
+
+   Simpler: Use leading reserved bit in TCP length field to mean
+   STARTTLS.  (Probably better to have it mean that a new octet is
+   present, and that a 0 in that field means STARTTLS, and all other
+   fields are reserved, for future extensions.)
 */
 
 static int
