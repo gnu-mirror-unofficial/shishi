@@ -451,10 +451,10 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
  * shishi_cfg_default_systemfile:
  * @handle: Shishi library handle create by shishi_init().
  *
- * The system configuration file path is decided at compile-time, but
+ * The system configuration file name is decided at compile-time, but
  * may be overridden by the environment variable SHISHI_CONFIG.
  *
- * Return value: Return system configuration filename.
+ * Return value: Return system configuration file name.
  **/
 const char *
 shishi_cfg_default_systemfile (Shishi * handle)
