@@ -39,7 +39,7 @@
 #endif
 
 #if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
-extern int h_errno;
+/* extern int h_errno; */
 #endif
 
 #ifdef HAVE_PWD_H
@@ -284,7 +284,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 #endif
 		sin->sin_addr.s_addr = htonl (INADDR_ANY);
 	    }
-	  else if (he = gethostbyname (val))
+	  else if ((he = gethostbyname (val)))
 	    {
 	      if (he->h_addrtype == AF_INET)
 		{
@@ -353,12 +353,9 @@ static struct argp argp = {
   "Shishid -- Key Distribution Center network daemon"
 };
 
-int
+static int
 asreq1 (Shishi * handle, Shishi_as * as)
 {
-  int rc;
-  int pos;
-  ssize_t n;
   Shishi_tkt *tkt;
   Shishi_key *sessionkey, *sessiontktkey, *userkey;
   int etype, i;
@@ -466,13 +463,11 @@ asreq1 (Shishi * handle, Shishi_as * as)
   return SHISHI_OK;
 }
 
-void
+static void
 asreq (Shishi * handle, Shishi_asn1 kdcreq, char **out, int *outlen)
 {
   Shishi_as *as;
   int rc;
-  ssize_t n;
-  int pos;
 
   rc = shishi_as (handle, &as);
   if (rc != SHISHI_OK)
@@ -521,7 +516,7 @@ asreq (Shishi * handle, Shishi_asn1 kdcreq, char **out, int *outlen)
   return;
 }
 
-void
+static void
 process (Shishi * handle,
 	 char *in, int inlen,
 	 char **out, int *outlen)
@@ -549,18 +544,19 @@ process (Shishi * handle,
 
 int quit = 0;
 
+void ctrlc (int signum);
+
 void
 ctrlc (int signum)
 {
   quit = 1;
 }
 
-int
+static int
 doit (Shishi * handle, struct arguments arg)
 {
   struct listenspec *ls;
   fd_set readfds;
-  struct timeval timeout;
   struct sockaddr addr;
   socklen_t length = sizeof (addr);
   int maxfd = 0;
@@ -743,7 +739,7 @@ doit (Shishi * handle, struct arguments arg)
 		    (ls->bufpos > 4 && ntohl (*(int *) ls->buf) == ls->bufpos))
 		  {
 		    char *p;
-		    size_t plen;
+		    int plen;
 
 		    process (handle, ls->buf, ls->bufpos, &p, &plen);
 

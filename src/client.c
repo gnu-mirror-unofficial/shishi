@@ -37,7 +37,9 @@ client (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      shishi_asprintf (&arg.sname, "host/www");
+      char *p;
+      shishi_asprintf (&p, "host/www");
+      arg.sname = p;
       if (arg.sname == NULL)
 	die ("Could not allocate server name.");
     }
@@ -99,7 +101,7 @@ client (Shishi * handle, struct arguments arg)
       return res;
     }
 
-  res = shishi_safe_print (handle, stdout, safe);
+  res = shishi_safe_print (handle, stdout, shishi_safe_safe(safe));
   if (res != SHISHI_OK)
     {
       printf ("Could not print SAFE: %s\n", shishi_strerror (res));

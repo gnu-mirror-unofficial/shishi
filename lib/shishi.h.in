@@ -478,7 +478,8 @@ extern int shishi_tkts_new (Shishi_tkts * tkts,
 extern int shishi_tkts_remove (Shishi_tkts * tkts, int ticketno);
 extern int shishi_tkts_expire (Shishi_tkts * tkts);
 extern int shishi_tkts_print_for_service (Shishi_tkts * tkts,
-					  FILE * fh, char *service);
+					  FILE * fh,
+					  const char *service);
 extern int shishi_tkts_print (Shishi_tkts * tkts, FILE * fh);
 extern int shishi_tkts_write (Shishi_tkts * tkts, FILE * fh);
 extern int shishi_tkts_to_file (Shishi_tkts * tkts, const char *filename);
@@ -1319,6 +1320,7 @@ extern time_t shishi_encticketpart_authctime (Shishi * handle,
 extern int shishi_safe (Shishi * handle, Shishi_safe ** safe);
 extern Shishi_key *shishi_safe_key (Shishi_safe * safe);
 extern void shishi_safe_key_set (Shishi_safe * safe, Shishi_key * key);
+extern Shishi_asn1 shishi_safe_safe (Shishi_safe * safe);
 extern int shishi_safe_print (Shishi * handle, FILE * fh, Shishi_asn1 safe);
 extern int shishi_safe_save (Shishi * handle, FILE * fh, Shishi_asn1 safe);
 extern int shishi_safe_to_file (Shishi * handle, Shishi_asn1 safe,

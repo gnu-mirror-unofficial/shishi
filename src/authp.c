@@ -35,7 +35,9 @@ ap (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      shishi_asprintf (&arg.sname, "host/www");
+      char *p;
+      shishi_asprintf (&p, "host/www");
+      arg.sname = p;
       if (arg.sname == NULL)
 	die ("Could not allocate server name.");
     }
