@@ -1,10 +1,10 @@
 \input texinfo   @c -*- mode: texinfo; coding: us-ascii; -*-
-@c This file is part of the GNU Shishi.
+@c This file is part of Shishi.
 @c See below for copyright and license.
 
 @setfilename shishi.info
 @include version.texi
-@settitle GNU Shishi
+@settitle Shishi
 @finalout
 
 @c Unify some of the indices.
@@ -39,7 +39,7 @@ Documentation License''.
 @end direntry
 
 @titlepage
-@title GNU Shishi
+@title Shishi
 @subtitle Kerberos 5 implementation for the GNU system
 @subtitle for version @value{VERSION}, @value{UPDATED}
 @author Simon Josefsson
@@ -52,7 +52,7 @@ Documentation License''.
 
 @ifnottex
 @node Top
-@top GNU Shishi
+@top Shishi
 @insertcopying
 @end ifnottex
 

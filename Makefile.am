@@ -101,7 +101,7 @@ release:
 	ncftpput ftp-upload.gnu.org /incoming/alpha \
 		$(distdir).tar.gz{,.sig,.directive.asc}
 	cd doc && ./gendocs.sh --html "--css-include=texinfo.css" \
-		-o ../$(htmldir)/manual/ $(PACKAGE) "GNU Shishi"
+		-o ../$(htmldir)/manual/ $(PACKAGE) "Shishi"
 	cp -v $(distdir).tar.gz{,.sig} $(htmldir)/releases/
 	cp -v doc/reference/*.{html,png} $(htmldir)/reference/
 	cd $(htmldir) && cvs add -kb releases/$(distdir).tar.gz{,.sig} && \
