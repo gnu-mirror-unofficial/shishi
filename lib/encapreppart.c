@@ -348,6 +348,30 @@ shishi_encapreppart_cusec_set (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_encapreppart_seqnumber_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encapreppart: EncAPRepPart as allocated by shishi_encapreppart().
+ * @seqnumber: output integer with sequence number field.
+ *
+ * Extract sequence number field from EncAPRepPart.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_encapreppart_seqnumber_get (Shishi * handle,
+				   Shishi_asn1 encapreppart, int *seqnumber)
+{
+  int res;
+
+  res = shishi_asn1_read_integer (handle, encapreppart,
+				  "seq-number", seqnumber);
+  if (res != SHISHI_OK)
+    return res;
+
+  return res;
+}
+
 int
 shishi_encapreppart_time_copy (Shishi * handle,
 			       Shishi_asn1 encapreppart,
