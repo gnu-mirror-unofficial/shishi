@@ -127,6 +127,7 @@
 
 #include "base64.h"
 #include "getdate.h"
+#include "linebuffer.h"
 #include "time_r.h"
 #include "timegm.h"
 #include "vasprintf.h"
