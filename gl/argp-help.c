@@ -70,11 +70,14 @@ char *alloca ();
 #endif
 
 #ifndef _LIBC
-# if !HAVE_DECL_STRERROR
-char *strerror (int errnum);
-# endif
-# if !HAVE_DECL_STRERROR_R
+# if HAVE_STRERROR_R
+#  if !HAVE_DECL_STRERROR_R
 char *strerror_r (int errnum, char *buf, size_t buflen);
+#  endif
+# else
+#  if !HAVE_DECL_STRERROR
+char *strerror (int errnum);
+#  endif
 # endif
 #endif
 
