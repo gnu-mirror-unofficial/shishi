@@ -33,7 +33,7 @@ AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
 AM_INIT_AUTOMAKE(gnits)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 
 # Checks for header files.
 AC_PROG_CC
@@ -56,8 +56,6 @@ AM_MISSING_PROG(ASN1PARSER, asn1Parser, $missing_dir)
 AM_WITH_DMALLOC
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_C_CONST
-AC_TYPE_SIZE_T
 AC_TYPE_UID_T
 AC_TYPE_SIGNAL
 AC_HEADER_TIME
@@ -118,7 +116,6 @@ gl_XALLOC
 gl_XSTRNDUP
 
 # Checks for library functions.
-AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(signal select ngettext gethostbyname)
 AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
 AC_SEARCH_LIBS(socket, socket)
