@@ -368,41 +368,8 @@ setup_fatal_krberror (Shishi * handle)
   if (!krberr)
     return SHISHI_MALLOC_ERROR;
 
-  rc = shishi_krberror_errorcode_set (handle, krberr,
-				      SHISHI_KRB_ERR_GENERIC);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_ctime (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_cusec (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_crealm (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_cname (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_set_realm (handle, krberr, "");
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_server (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
   rc = shishi_krberror_set_etext (handle, krberr,
 				  "Internal KDC error, contact administrator");
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_edata (handle, krberr);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -558,7 +525,7 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 {
   int rc;
   Shishi_tkt *tkt;
-  Shishi_key *sessionkey, *sessiontktkey, *serverkey, *subkey, **keytouse = &sessiontktkey;
+  Shishi_key *sessionkey, *sessiontktkey, *serverkey, *subkey, *keytouse;
   char buf[BUFSIZ];
   int buflen;
   int err;
@@ -656,18 +623,17 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
      shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
      &sessiontktkey);
 
-  err = shishi_authenticator_get_subkey (handle,
-				     shishi_ap_authenticator (shishi_tgs_ap (tgs)),
-				     &subkey);
-  if (err != SHISHI_OK)
-    {
-      if (err != SHISHI_ASN1_NO_ELEMENT)
-	return err;
-    }
-  else
-    keytouse = &subkey;
+  err = shishi_authenticator_get_subkey
+    (handle, shishi_ap_authenticator (shishi_tgs_ap (tgs)), &subkey);
+  if (err != SHISHI_OK && err != SHISHI_ASN1_NO_ELEMENT)
+    return err;
 
-  err = shishi_tgs_rep_build (tgs, *keytouse);
+  if (err == SHISHI_OK)
+    keytouse = subkey;
+  else
+    keytouse = sessiontktkey;
+
+  err = shishi_tgs_rep_build (tgs, keytouse);
   if (err)
     return err;
 
@@ -769,11 +735,6 @@ process_1 (Shishi * handle, struct arguments *arg,
   if (!krberr)
     return SHISHI_MALLOC_ERROR;
 
-  rc = shishi_krberror_errorcode_set (handle, krberr,
-				      SHISHI_KRB_ERR_GENERIC);
-  if (rc != SHISHI_OK)
-    return rc;
-
   fprintf (stderr, "Processing %d bytes...\n", inlen);
 
   msgtype = get_msgtype (handle, in, inlen);
@@ -821,34 +782,6 @@ process_1 (Shishi * handle, struct arguments *arg,
 	return rc;
       break;
     }
-
-  rc = shishi_krberror_remove_ctime (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_cusec (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_crealm (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_cname (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_set_realm (handle, krberr, "");
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_server (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_krberror_remove_edata (handle, krberr);
-  if (rc != SHISHI_OK)
-    return rc;
 
   rc = shishi_krberror_der (handle, krberr, out, outlen);
   if (rc != SHISHI_OK)
