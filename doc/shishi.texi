@@ -234,6 +234,12 @@ nonce.
 
 @item GUI applet for managing tickets.
 
+@item Authorization library (months?)
+The shishi_authorized_p() is not a good solution, better would be to
+have a generic and flexible authorization library.  Possibly based on
+S-EXP's in tickets?  Should support non-Kerberos uses as well, of
+course.
+
 @end itemize
 
 @node Overview

@@ -45,7 +45,7 @@ shishi_TEXINFOS = gpl.texi fdl.texi $(shishi_texi_auto_deps)
 shishi-api-init.texi: $(top_srcdir)/lib/init.c $(top_srcdir)/lib/cfg.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
-shishi-api-utility.texi: $(top_srcdir)/lib/realm.c $(top_srcdir)/lib/principal.c
+shishi-api-utility.texi: $(top_srcdir)/lib/realm.c $(top_srcdir)/lib/principal.c $(top_srcdir)/lib/authorize.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-ticket.texi: $(top_srcdir)/lib/ticket.c
