@@ -699,8 +699,8 @@ shishi_kdcrep_decrypt (Shishi * handle,
   int i;
   char *buf;
   size_t buflen;
-  unsigned char cipher[BUFSIZ];
-  int cipherlen;
+  char *cipher;
+  size_t cipherlen;
   int etype;
 
   res = shishi_kdcrep_get_enc_part_etype (handle, kdcrep, &etype);
@@ -710,14 +710,14 @@ shishi_kdcrep_decrypt (Shishi * handle,
   if (etype != shishi_key_type (key))
     return SHISHI_KDCREP_BAD_KEYTYPE;
 
-  cipherlen = BUFSIZ;
-  res = shishi_asn1_field (handle, kdcrep, cipher, &cipherlen,
-			   "enc-part.cipher");
+  res = shishi_asn1_read2 (handle, kdcrep, "enc-part.cipher",
+			   &cipher, &cipherlen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_decrypt (handle, key, keyusage,
 			cipher, cipherlen, &buf, &buflen);
+  free (cipher);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle,

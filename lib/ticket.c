@@ -25,7 +25,7 @@ int
 shishi_ticket_realm_get (Shishi * handle,
 			 Shishi_asn1 ticket, char *realm, int *realmlen)
 {
-  return shishi_asn1_field (handle, ticket, realm, realmlen, "realm");
+  return shishi_asn1_read (handle, ticket, "realm", realm, realmlen);
 }
 
 /**
@@ -202,7 +202,7 @@ shishi_ticket_decrypt (Shishi * handle,
   int i;
   char *buf;
   size_t buflen;
-  unsigned char cipher[BUFSIZ];
+  char *cipher;
   size_t cipherlen;
   int etype;
 
@@ -213,15 +213,14 @@ shishi_ticket_decrypt (Shishi * handle,
   if (etype != shishi_key_type (key))
     return SHISHI_TICKET_BAD_KEYTYPE;
 
-  cipherlen = BUFSIZ;
-  res = shishi_asn1_field (handle, ticket, cipher, &cipherlen,
-			   "enc-part.cipher");
+  res = shishi_asn1_read2 (handle, ticket, "enc-part.cipher",
+			   &cipher, &cipherlen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_decrypt (handle, key, SHISHI_KEYUSAGE_ENCTICKETPART,
 			cipher, cipherlen, &buf, &buflen);
-
+  free (cipher);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle,

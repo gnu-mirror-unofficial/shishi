@@ -80,8 +80,8 @@ shishi_enckdcreppart_get_key (Shishi * handle,
 			      Shishi_asn1 enckdcreppart, Shishi_key ** key)
 {
   int res;
-  char buf[BUFSIZ];
-  int buflen;
+  char *buf;
+  size_t buflen;
   int32_t keytype;
 
   res = shishi_asn1_read_int32 (handle, enckdcreppart,
@@ -89,13 +89,13 @@ shishi_enckdcreppart_get_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_field (handle, enckdcreppart, buf, &buflen,
-			   "key.keyvalue");
+  res = shishi_asn1_read2 (handle, enckdcreppart, "key.keyvalue",
+			   &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_key_from_value (handle, keytype, buf, key);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 

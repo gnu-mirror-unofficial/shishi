@@ -430,8 +430,8 @@ int
 shishi_krberror_etext (Shishi * handle, Shishi_asn1 krberror,
 		       char *etext, size_t * etextlen)
 {
-  return shishi_asn1_optional_field (handle, krberror, etext, etextlen,
-				     "e-text");
+  return shishi_asn1_read_optional (handle, krberror, "e-text",
+				    etext, etextlen);
 }
 
 /**

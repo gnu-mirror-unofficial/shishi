@@ -234,6 +234,39 @@ shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
 }
 
 int
+shishi_asn1_read2 (Shishi * handle,
+		   Shishi_asn1 node, const char *field,
+		   char **data, size_t * datalen)
+{
+  int rc;
+
+  *datalen = 0;
+  rc = asn1_read_value (node, field, NULL, (int *) datalen);
+  if (rc != ASN1_MEM_ERROR)
+    {
+      shishi_error_set (handle, libtasn1_strerror (rc));
+      if (rc == ASN1_ELEMENT_NOT_FOUND)
+	return SHISHI_ASN1_NO_ELEMENT;
+      else
+	return SHISHI_ASN1_ERROR;
+    }
+
+  *data = xmalloc (*datalen);
+
+  rc = asn1_read_value (node, field, *data, (int *) datalen);
+  if (rc != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (rc));
+      if (rc == ASN1_ELEMENT_NOT_FOUND)
+	return SHISHI_ASN1_NO_ELEMENT;
+      else
+	return SHISHI_ASN1_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+int
 shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 		  const char *field, char *data, size_t * datalen)
 {
@@ -309,7 +342,7 @@ shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
 
   memset (buf, 0, sizeof (buf));
   buflen = sizeof (buf);
-  res = shishi_asn1_field (handle, node, buf, &buflen, field);
+  res = shishi_asn1_read (handle, node, field, buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -329,45 +362,9 @@ shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
 }
 
 int
-shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
-				const char *field, int *n)
-{
-  int rc;
-
-  rc = asn1_number_of_elements (node, field, n);
-  if (rc != ASN1_SUCCESS)
-    {
-      if (rc == ASN1_ELEMENT_NOT_FOUND)
-	return SHISHI_ASN1_NO_ELEMENT;
-      else
-	return SHISHI_ASN1_ERROR;
-    }
-
-  return SHISHI_OK;
-}
-
-
-int
-shishi_asn1_field (Shishi * handle,
-		   Shishi_asn1 node, char *data, size_t * datalen,
-		   const char *field)
-{
-  int rc;
-
-  rc = asn1_read_value (node, field, (unsigned char *) data, (int *) datalen);
-  if (rc != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (rc));
-      return SHISHI_ASN1_ERROR;
-    }
-
-  return SHISHI_OK;
-}
-
-int
-shishi_asn1_optional_field (Shishi * handle,
-			    Shishi_asn1 node,
-			    char *data, size_t * datalen, const char *field)
+shishi_asn1_read_optional (Shishi * handle,
+			   Shishi_asn1 node, const char *field,
+			   char *data, size_t * datalen)
 {
   int rc;
 
@@ -385,21 +382,34 @@ shishi_asn1_optional_field (Shishi * handle,
 }
 
 int
-shishi_asn1_empty_field (Shishi * handle,
-			 Shishi_asn1 node,
-			 char *data, size_t * datalen, const char *field)
+shishi_asn1_read_empty_p (Shishi * handle,
+			  Shishi_asn1 node, const char *field)
+{
+  int rc;
+  int datalen;
+
+  datalen = 0;
+  rc = asn1_read_value (node, field, NULL, &datalen);
+  if (rc == ASN1_VALUE_NOT_FOUND)
+    return 1;
+
+  return 0;
+}
+
+int
+shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
+				const char *field, int *n)
 {
   int rc;
 
-  rc = asn1_read_value (node, field, (unsigned char *) data, (int *) datalen);
-  if (rc != ASN1_SUCCESS && rc != ASN1_VALUE_NOT_FOUND)
+  rc = asn1_number_of_elements (node, field, n);
+  if (rc != ASN1_SUCCESS)
     {
-      shishi_error_set (handle, libtasn1_strerror (rc));
-      return SHISHI_ASN1_ERROR;
+      if (rc == ASN1_ELEMENT_NOT_FOUND)
+	return SHISHI_ASN1_NO_ELEMENT;
+      else
+	return SHISHI_ASN1_ERROR;
     }
-
-  if (rc == ASN1_VALUE_NOT_FOUND)
-    *datalen = 0;
 
   return SHISHI_OK;
 }

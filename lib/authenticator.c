@@ -333,7 +333,7 @@ shishi_authenticator_ctime_get (Shishi * handle,
   int res;
 
   len = GENERALIZEDTIME_TIME_LEN + 1;
-  res = shishi_asn1_field (handle, authenticator, ctime, &len, "ctime");
+  res = shishi_asn1_read (handle, authenticator, "ctime", ctime, &len);
   if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
     ctime[len] = '\0';
 
@@ -471,8 +471,8 @@ shishi_authenticator_cksum (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_field (handle, authenticator, cksum, cksumlen,
-			   "cksum.checksum");
+  res = shishi_asn1_read (handle, authenticator, "cksum.checksum",
+			  cksum, cksumlen);
   if (res != SHISHI_OK)
     return res;
 
@@ -670,7 +670,7 @@ shishi_authenticator_authorizationdata (Shishi * handle,
     return res;
 
   asprintf (&format, "authorization-data.?%d.ad-data", i);
-  res = shishi_asn1_field (handle, authenticator, addata, addatalen, format);
+  res = shishi_asn1_read (handle, authenticator, format, addata, addatalen);
   free (format);
   if (res != SHISHI_OK)
     return res;

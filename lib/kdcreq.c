@@ -388,8 +388,8 @@ int
 shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
 			 char *realm, int *realmlen)
 {
-  return shishi_asn1_optional_field (handle, kdcreq, realm, realmlen,
-				     "req-body.realm");
+  return shishi_asn1_read_optional (handle, kdcreq, "req-body.realm",
+				    realm, realmlen);
 }
 
 /**
@@ -717,23 +717,12 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
 int
 shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  char buffer[BUFSIZ];		/* XXX dynamically allocate this */
-  int buflen;
   int res;
 
   if (VERBOSE (handle))
     printf ("Building KDC-REQ...\n");
 
-  buflen = sizeof(buffer);
-  res = shishi_asn1_empty_field (handle, kdcreq, buffer, &buflen,
-				 "req-body.rtime");
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not read rtime\n");
-      return res;
-    }
-
-  if (buflen == 0)
+  if (shishi_asn1_read_empty_p (handle, kdcreq, "req-body.rtime"))
     {
       res = shishi_asn1_write (handle, kdcreq, "req-body.rtime", NULL, 0);
       if (res != SHISHI_OK)
@@ -743,16 +732,7 @@ shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
 	}
     }
 
-  buflen = sizeof(buffer);
-  res = shishi_asn1_empty_field (handle, kdcreq, buffer, &buflen,
-				 "req-body.from");
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (handle, "Could not read from\n");
-      return res;
-    }
-
-  if (buflen == 0)
+  if (shishi_asn1_read_empty_p (handle, kdcreq, "req-body.from"))
     {
       res = shishi_asn1_write (handle, kdcreq, "req-body.from", NULL, 0);
       if (res != SHISHI_OK)

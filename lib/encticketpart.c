@@ -98,8 +98,8 @@ shishi_encticketpart_get_key (Shishi * handle,
 			      Shishi_asn1 encticketpart, Shishi_key ** key)
 {
   int res;
-  char buf[BUFSIZ];
-  int buflen;
+  char *buf;
+  size_t buflen;
   int32_t keytype;
 
   res = shishi_asn1_read_int32 (handle, encticketpart,
@@ -107,13 +107,13 @@ shishi_encticketpart_get_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  buflen = BUFSIZ;
-  res = shishi_asn1_field (handle, encticketpart, buf, &buflen,
-			   "key.keyvalue");
+  res = shishi_asn1_read2 (handle, encticketpart, "key.keyvalue",
+			   &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_key_from_value (handle, keytype, buf, key);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 
@@ -338,8 +338,8 @@ shishi_encticketpart_authtime (Shishi * handle,
 			       Shishi_asn1 encticketpart,
 			       char *authtime, int *authtimelen)
 {
-  return shishi_asn1_field (handle, encticketpart, authtime, authtimelen,
-			    "authtime");
+  return shishi_asn1_read (handle, encticketpart, "authtime",
+			   authtime, authtimelen);
 }
 
 time_t

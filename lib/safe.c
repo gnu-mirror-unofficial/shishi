@@ -389,7 +389,7 @@ shishi_safe_cksum (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_field (handle, safe, cksum, cksumlen, "cksum.checksum");
+  res = shishi_asn1_read (handle, safe, "cksum.checksum", cksum, cksumlen);
   if (res != SHISHI_OK)
     return res;
 

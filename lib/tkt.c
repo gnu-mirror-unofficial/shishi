@@ -743,8 +743,8 @@ shishi_tkt_lastreq_pretty_print (Shishi_tkt * tkt, FILE * fh)
 int
 shishi_tkt_authtime (Shishi_tkt * tkt, char *authtime, int *authtimelen)
 {
-  return shishi_asn1_field (tkt->handle, tkt->enckdcreppart,
-			    authtime, authtimelen, "authtime");
+  return shishi_asn1_read (tkt->handle, tkt->enckdcreppart, "authtime",
+			   authtime, authtimelen);
 }
 
 time_t
@@ -770,8 +770,8 @@ shishi_tkt_authctime (Shishi_tkt * tkt)
 int
 shishi_tkt_starttime (Shishi_tkt * tkt, char *starttime, int *starttimelen)
 {
-  return shishi_asn1_optional_field (tkt->handle, tkt->enckdcreppart,
-				     starttime, starttimelen, "starttime");
+  return shishi_asn1_read_optional (tkt->handle, tkt->enckdcreppart,
+				    "starttime", starttime, starttimelen);
 }
 
 time_t
@@ -797,8 +797,8 @@ shishi_tkt_startctime (Shishi_tkt * tkt)
 int
 shishi_tkt_endtime (Shishi_tkt * tkt, char *endtime, int *endtimelen)
 {
-  return shishi_asn1_field (tkt->handle, tkt->enckdcreppart,
-			    endtime, endtimelen, "endtime");
+  return shishi_asn1_read (tkt->handle, tkt->enckdcreppart, "endtime",
+			   endtime, endtimelen);
 }
 
 time_t
@@ -824,8 +824,8 @@ shishi_tkt_endctime (Shishi_tkt * tkt)
 int
 shishi_tkt_renew_till (Shishi_tkt * tkt, char *renewtill, int *renewtilllen)
 {
-  return shishi_asn1_optional_field (tkt->handle, tkt->enckdcreppart,
-				     renewtill, renewtilllen, "renew-till");
+  return shishi_asn1_read_optional (tkt->handle, tkt->enckdcreppart,
+				    "renew-till", renewtill, renewtilllen);
 }
 
 time_t
