@@ -3,5 +3,7 @@
 Makefile
 Makefile.in
 shisa
+shisa_cmd.h
+shisa_cmd.c
 shishi
 shishid
