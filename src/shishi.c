@@ -186,12 +186,14 @@ struct arguments
   int command;
   char *ticketfile;
   char *ticketwritefile;
-  const char *realm;
   char *systemcfgfile;
   char *usercfgfile;
   const char *client;
+  const char *crealm;
   const char *cname;
   const char *sname;
+  const char *srealm;
+  const char *server;
   char *tgtname;
   int forceas_p;
   int forcetgs_p;
@@ -234,15 +236,15 @@ crypto (Shishi * handle, struct arguments arg)
   if (arg.cname == NULL)
     arg.cname = shishi_principal_default (handle);
 
-  if (arg.realm == NULL)
-    arg.realm = shishi_realm_default (handle);
+  if (arg.crealm == NULL)
+    arg.crealm = shishi_realm_default (handle);
 
   if (arg.salt == NULL)
     {
       char *cname, *tok, *tokptr;
 
       cname = xstrdup(arg.cname);
-      arg.salt = xstrdup (arg.realm);
+      arg.salt = xstrdup (arg.crealm);
       tok = strtok_r (cname, "/", &tokptr);
       while (tok)
 	{
@@ -264,7 +266,7 @@ crypto (Shishi * handle, struct arguments arg)
   shishi_key_type_set (key, arg.algorithm);
   shishi_key_version_set (key, arg.kvno);
   shishi_key_principal_set (key, arg.cname);
-  shishi_key_realm_set (key, arg.realm);
+  shishi_key_realm_set (key, arg.crealm);
 
   if (arg.password)
     {
@@ -627,7 +629,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case OPTION_REALM:
-      arguments->realm = strdup (arg);
+      arguments->crealm = strdup (arg);
       break;
 
     case 'R':
@@ -677,10 +679,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case ARGP_KEY_ARG:
-      if (arguments->client)
+      if (arguments->server && arguments->client)
 	argp_error (state, _("Too many arguments: `%s'"), arg);
+      if (arguments->client)
+	arguments->server = strdup (arg);
       else
-	arguments->client = arg;
+	arguments->client = strdup (arg);
       break;
 
     default:
@@ -843,9 +847,13 @@ static struct argp_option options[] = {
   {"ticket-write-file", OPTION_WRITE_TICKET_FILE, "FILE", 0,
    "Write tickets to FILE.  Default is to write them back to ticket file."},
 
-  {"NAME", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
-   "Set client name and realm from NAME.  The --client-name and --realm can "
-   "be used to override part of NAME."},
+  {"CLIENT", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
+   "Set client name and realm from NAME.  The --client-name and --realm "
+   "parameters can be used to override part of NAME."},
+
+  {"SERVER", 0, 0, OPTION_DOC | OPTION_NO_USAGE,
+   "Set server name and realm from NAME.  The --server-name and "
+   "--server-realm parameters can be used to override part of SERVER."},
 
   /************** EXAMPLES */
 
@@ -868,9 +876,10 @@ static struct argp_option options[] = {
 static struct argp argp = {
   options,
   parse_opt,
-  "[NAME] [OPTION...]\n"
-    "--list [--server-name=NAME]\n"
-    "--destroy [--server-name=NAME]\n" "--crypto [CRYPTO-OPTION...]\n",
+  "[CLIENT [SERVER]] [OPTION...]\n"
+  "--list [CLIENT [SERVER]]\n"
+  "--destroy [CLIENT [SERVER]]\n"
+  "--string-to-key\n",
   "Shishi -- A Kerberos 5 implementation"
 };
 
@@ -907,10 +916,21 @@ main (int argc, char *argv[])
     {
       rc = shishi_parse_name (handle, arg.client,
 			      (char **) (arg.cname ? NULL : &arg.cname),
-			      (char **) (arg.realm ? NULL : &arg.realm));
+			      (char **) (arg.crealm ? NULL : &arg.crealm));
 
       if (rc != SHISHI_OK)
 	error (1, 0, "Could not parse principal \"%s\": %s\n", arg.client,
+	       shishi_strerror (rc));
+    }
+
+  if (arg.server)
+    {
+      rc = shishi_parse_name (handle, arg.server,
+			      (char **) (arg.sname ? NULL : &arg.sname),
+			      (char **) (arg.srealm ? NULL : &arg.srealm));
+
+      if (rc != SHISHI_OK)
+	error (1, 0, "Could not parse principal \"%s\": %s\n", arg.server,
 	       shishi_strerror (rc));
     }
 
@@ -947,8 +967,8 @@ main (int argc, char *argv[])
   if (arg.cname)
     shishi_principal_default_set (handle, arg.cname);
 
-  if (arg.realm)
-    shishi_realm_default_set (handle, arg.realm);
+  if (arg.crealm)
+    shishi_realm_default_set (handle, arg.crealm);
 
   if (!arg.tgtname)
     {
