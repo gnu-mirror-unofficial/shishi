@@ -121,8 +121,8 @@ kdc_response (Shishi * handle,
     res = shishi_tgs_process (handle, req, rep,
 			      shishi_ticket_enckdcreppart (handle, oldtkt),
 			      &kdcreppart);
-  else if (arg.stringtokey)
-    res = shishi_as_process (handle, req, rep, arg.stringtokey, &kdcreppart);
+  else if (arg.password)
+    res = shishi_as_process (handle, req, rep, arg.password, &kdcreppart);
   else if (isatty (fileno (stdin)))
     {
       char user[BUFSIZ];

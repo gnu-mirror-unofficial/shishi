@@ -151,10 +151,24 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->decrypt_p = 1;
       break;
 
-    case OPTION_AS_STRING_TO_KEY:
-    case OPTION_CRYPTO_STRING_TO_KEY:
-    case OPTION_KDC_STRING_TO_KEY:
-    case OPTION_SERVER_STRING_TO_KEY:
+    case OPTION_CRYPTO_SALT:
+      if (arguments->command != COMMAND_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->salt = strdup (arg);
+      break;
+
+    case OPTION_CRYPTO_PARAMETER:
+      if (arguments->command != COMMAND_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->parameter = strdup (arg);
+      break;
+
+    case OPTION_AS_PASSWORD:
+    case OPTION_CRYPTO_PASSWORD:
+    case OPTION_KDC_PASSWORD:
+    case OPTION_SERVER_PASSWORD:
       if (arguments->command != COMMAND_CRYPTO &&
 	  arguments->command != COMMAND_AS &&
 	  arguments->command != COMMAND_KDC &&
@@ -163,10 +177,17 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	  (state,
 	   _("Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."),
 	   state->argv[state->next - 1]);
-      arguments->stringtokey = strdup (arg);
+      arguments->password = strdup (arg);
       break;
 
-    case OPTION_CRYPTO_INPUT_FILE:
+    case OPTION_CRYPTO_RANDOM:
+      if (arguments->command != COMMAND_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->random = 1;
+      break;
+
+    case OPTION_CRYPTO_READ_DATA_FILE:
       if (arguments->command != COMMAND_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
@@ -176,7 +197,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	arguments->inputtype == SHISHI_FILETYPE_BINARY;
       break;
 
-    case OPTION_CRYPTO_OUTPUT_FILE:
+    case OPTION_CRYPTO_WRITE_DATA_FILE:
       if (arguments->command != COMMAND_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
@@ -260,6 +281,20 @@ parse_opt (int key, char *arg, struct argp_state *state)
 		    _("Option `%s' only valid with CRYPTO and KDC/AS/TGS."),
 		    state->argv[state->next - 1]);
       arguments->keyvalue = strdup (arg);
+      break;
+
+    case OPTION_CRYPTO_KEY_USAGE:
+      if (arguments->command != COMMAND_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->keyusage = atoi (arg);
+      break;
+
+    case OPTION_CRYPTO_KEY_VERSION:
+      if (arguments->command != COMMAND_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->kvno = atoi (arg);
       break;
 
     case OPTION_AP_SERVER_NAME:
@@ -477,7 +512,7 @@ static struct argp_option options[] = {
   {"realm", 'r', "REALM", 0,
    "Realm of client and server. Default is DNS domain of local host."},
 
-  {"string-to-key", OPTION_AS_STRING_TO_KEY, "PASSWORD", 0,
+  {"string-to-key", OPTION_AS_PASSWORD, "PASSWORD", 0,
    "Password to decrypt response (discouraged). Default is to prompt user."},
 
   /************** LIST */
@@ -544,7 +579,7 @@ static struct argp_option options[] = {
    "Name of server. Defaults to \"sample/REALM\" where REALM "
    "is realm of server (see --realm)."},
 
-  {"string-to-key", OPTION_SERVER_STRING_TO_KEY, "PASSWORD", 0,
+  {"string-to-key", OPTION_SERVER_PASSWORD, "PASSWORD", 0,
    "Password to decrypt response (discouraged)."},
 
   /************** AP */
@@ -588,36 +623,56 @@ static struct argp_option options[] = {
    "Options for low-level cryptography (CRYPTO-OPTIONS):", 700},
 
   {"algorithm", OPTION_CRYPTO_ALGORITHM, "ALGORITHM", 0,
-   "Use ciphering algorithm, expressed either as the etype integer or "
+   "Cipher algorithm, expressed either as the etype integer or "
    "the registered name."},
 
   {"client-name", OPTION_KDC_CLIENT_NAME, "NAME", 0,
-   "Client name. Default is login username. Used for generating cipher key."},
+   "Username. Default is login name."},
 
   {"decrypt", OPTION_CRYPTO_DECRYPT, 0, 0,
-   "Decrypt data"},
+   "Decrypt data."},
 
   {"encrypt", OPTION_CRYPTO_ENCRYPT, 0, 0,
-   "Encrypt data"},
+   "Encrypt data."},
 
-  {"input-file", OPTION_CRYPTO_INPUT_FILE, "[TYPE,]FILE", 0,
-   "Read data from FILE in TYPE, BASE64, HEX or BINARY (default)."},
-
-  {"key-file", OPTION_CRYPTO_KEY_FILE, "[TYPE,]FILE", 0,
-   "Read/write cipher key from/to FILE in TYPE"},
+  {"key-usage", OPTION_CRYPTO_KEY_USAGE, "KEYUSAGE", 0,
+   "Encrypt or decrypt using Kerberos Key Usage integer."},
 
   {"key-value", OPTION_CRYPTO_KEY_VALUE, "KEY", 0,
-   "Specify cipher key directly (discouraged)"},
+   "Base64 encoded key value."},
 
-  {"output-file", OPTION_CRYPTO_OUTPUT_FILE, "[TYPE,]FILE", 0,
-   "Write data to FILE in TYPE, BASE64, HEX or BINARY (default)."},
+  {"key-version", OPTION_CRYPTO_KEY_VERSION, "INTEGER", 0,
+   "Version number of key."},
+
+  {"password", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
+   "Password used to generate key.  --client-name and --realm also modify "
+   "the computed key value."},
+
+  {"random", OPTION_CRYPTO_RANDOM, 0, 0,
+   "Generate key from random data."},
+
+  {"read-key-file", OPTION_CRYPTO_READ_KEY_FILE, "FILE", 0,
+   "Read cipher key from FILE"},
+
+  {"read-data-file", OPTION_CRYPTO_READ_DATA_FILE, "[TYPE,]FILE", 0,
+   "Read data from FILE in TYPE, BASE64, HEX or BINARY (default)."},
 
   {"realm", 'r', "REALM", 0,
-   "Realm of principal. Defaults to DNS domain of local host. "
-   "Used for generating cipher key."},
+   "Realm of principal. Defaults to DNS domain of local host. "},
 
-  {"string-to-key", OPTION_CRYPTO_STRING_TO_KEY, "PASSWORD", 0,
-   "Convert password to key.  Client-name and realm also modify the key."},
+  {"salt", OPTION_CRYPTO_SALT, "SALT", 0,
+   "Salt to use when --password is specified. Defaults to using the"
+   "username (--client-name) and realm (--realm)."},
+
+  {"parameter", OPTION_CRYPTO_PARAMETER, "STRING", 0,
+   "String-to-key parameter to use when --password is specified. This data "
+   "is specific for each encryption algorithm and rarely needed."},
+
+  {"write-key-file", OPTION_CRYPTO_WRITE_KEY_FILE, "FILE", 0,
+   "Append cipher key to FILE"},
+
+  {"write-data-file", OPTION_CRYPTO_WRITE_DATA_FILE, "[TYPE,]FILE", 0,
+   "Write data to FILE in TYPE, BASE64, HEX or BINARY (default)."},
 
   /************** KDC */
 
@@ -671,7 +726,7 @@ static struct argp_option options[] = {
   {"sendrecv", OPTION_KDC_SENDRECV, 0, 0,
    "Only send request and receive response."},
 
-  {"string-to-key", OPTION_CRYPTO_STRING_TO_KEY, "PASSWORD", 0,
+  {"string-to-key", OPTION_CRYPTO_PASSWORD, "PASSWORD", 0,
    "Password to decrypt response (discouraged).  Only for AS."},
 
   {"write-ap-request-file", OPTION_KDC_WRITE_AP_REQUEST_FILE, "[TYPE,]FILE",
@@ -809,7 +864,6 @@ main (int argc, char *argv[])
       {
 	Shishi_as *as;
 	Shishi_ticket *tkt;
-	char password[BUFSIZ];
 
 	if (arg.cname != NULL)
 	  shishi_principal_default_set (handle, arg.cname);
@@ -817,7 +871,7 @@ main (int argc, char *argv[])
 	if (arg.realm != NULL)
 	  shishi_realm_default_set (handle, arg.realm);
 
-	rc = shishi_as (handle, arg.stringtokey, &as);
+	rc = shishi_as (handle, arg.password, &as);
 	if (rc != SHISHI_OK)
 	  {
 	    printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
@@ -851,6 +905,9 @@ main (int argc, char *argv[])
 
     case COMMAND_CRYPTO:
       rc = crypto (handle, arg);
+      if (rc != SHISHI_OK)
+	fprintf (stderr, "Operation failed:\n%s\n%s\n",
+		 shishi_strerror (rc), shishi_strerror_details (handle));
       break;
 
     case COMMAND_KDC:

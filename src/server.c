@@ -77,7 +77,7 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 		 shishi_cipher_name (arg.algorithm));
     }
 
-  if (arg.stringtokey)
+  if (arg.password)
     {
       if (strlen (arg.realm) + strlen (arg.sname) > sizeof (salt))
 	{
@@ -89,8 +89,8 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 
       res = shishi_string_to_key (handle,
 				  arg.algorithm,
-				  arg.stringtokey,
-				  strlen (arg.stringtokey),
+				  arg.password,
+				  strlen (arg.password),
 				  salt, strlen (salt), NULL, key, &keylen);
       if (res != SHISHI_OK)
 	{

@@ -19,7 +19,6 @@
  *
  */
 
-#include "shishi.h"
 #include "data.h"
 
 #include <errno.h>
@@ -28,16 +27,15 @@ extern int errno;
 int
 crypto (Shishi * handle, struct arguments arg)
 {
-  int res;
   FILE *infh, *outfh;
-  unsigned char key[BUFSIZ];
+  char key[BUFSIZ];
   int keylen = sizeof (key);
-  unsigned char data[BUFSIZ];
-  int datalen;
-  unsigned char encrypted[BUFSIZ];
-  int encryptedlen;
+  char out[BUFSIZ];
+  int outlen;
+  char in[BUFSIZ];
+  int inlen;
+  int rc;
   int i;
-  char salt[BUFSIZ];
 
   if (arg.cname == NULL)
     arg.cname = shishi_principal_default_get (handle);
@@ -45,43 +43,32 @@ crypto (Shishi * handle, struct arguments arg)
   if (arg.realm == NULL)
     arg.realm = shishi_realm_default_get (handle);
 
-  if (arg.verbose)
-    printf (_
-	    ("crypto alg=%d enc=%d dec=%d str2key=%s cname=%s realm=%s input=%s type=%d output=%s type=%d\n"),
-	    arg.algorithm, arg.encrypt_p, arg.decrypt_p, arg.stringtokey,
-	    arg.cname, arg.realm, arg.inputfile, arg.inputtype,
-	    arg.outputfile, arg.outputtype);
-
-  if (arg.algorithm == 0)
+  if (arg.salt == NULL)
     {
-      arg.algorithm = SHISHI_DES_CBC_MD5;
-
-      if (!arg.silent)
-	fprintf (stderr, "No algorithm specified, defaulting to %s\n",
-		 shishi_cipher_name (arg.algorithm));
+      arg.salt = malloc(strlen(arg.realm) + strlen(arg.cname) + 1);
+      if (!arg.salt)
+	return SHISHI_MALLOC_ERROR;
+      strcpy (arg.salt, arg.realm);
+      strcat (arg.salt, arg.cname);
     }
 
-  if (arg.stringtokey)
-    {
-      if (strlen (arg.realm) + strlen (arg.cname) > sizeof (salt))
-	{
-	  fprintf (stderr, _("Too long realm/principal...\n"));
-	  return 1;
-	}
-      strcpy (salt, arg.realm);
-      strcat (salt, arg.cname);
+  if (arg.algorithm == SHISHI_NULL && !arg.silent)
+    fprintf (stderr,
+	     "warning: using %s is silly, consider using --algorithm.\n",
+	     shishi_cipher_name (arg.algorithm));
 
-      res = shishi_string_to_key (handle,
-				  arg.stringtokey,
-				  strlen (arg.stringtokey),
-				  salt,
-				  strlen (salt),
-				  NULL, key, &keylen, arg.algorithm);
-      if (res != SHISHI_OK)
+  if (arg.password)
+    {
+      rc = shishi_string_to_key (handle, arg.algorithm,
+				 arg.password,
+				 strlen (arg.password),
+				 arg.salt,
+				 strlen(arg.salt),
+				 arg.parameter, key, &keylen);
+      if (rc != SHISHI_OK)
 	{
-	  fprintf (stderr, _("Error in string2key: %s\n"),
-		   shishi_strerror_details (handle));
-	  return 1;
+	  shishi_error_printf (handle, _("Error in string2key"));
+	  return rc;
 	}
 
     }
@@ -89,23 +76,43 @@ crypto (Shishi * handle, struct arguments arg)
     {
       if (strlen (arg.keyvalue) > sizeof (key))
 	{
-	  fprintf (stderr, "keyvalue too large\n");
-	  return 1;
+	  shishi_error_printf (handle, _("Value in --keyvalue too large."));
+	  return SHISHI_TOO_SMALL_BUFFER;
 	}
+
       keylen = shishi_from_base64 (key, arg.keyvalue);
       if (keylen <= 0)
 	{
-	  fprintf (stderr, "base64 decoding of key value failed\n");
-	  return 1;
+	  shishi_error_printf (handle, _("Value in --keyvalue invalid."));
+	  return SHISHI_BASE64_ERROR;
 	}
     }
-
-  if (arg.verbose || (!arg.encrypt_p && !arg.decrypt_p))
+  else if (arg.random)
     {
-      char b64der[BUFSIZ];
+      keylen = shishi_cipher_keylen (arg.algorithm);
+      rc = shishi_randomize(handle, key, keylen);
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+  else if (arg.readkeyfile)
+    {
+#if 0
+      shishi_key_from_file (handle, arg.writekeyfile, arg.algorithm, key,
+			  keylen, arg.kvno, arg.cname, arg.realm);
+#endif
+    }
+  else
+    {
+      fprintf(stderr, "Nothing to do.\n");
+      return SHISHI_OK;
+    }
 
-      shishi_to_base64 (b64der, key, keylen, sizeof (b64der));
-      fprintf (stderr, _("Key: %s\n"), b64der);
+  if (arg.verbose ||
+      ((arg.password || arg.random || arg.keyvalue) &&
+       !(arg.encrypt_p || arg.decrypt_p)))
+    {
+      shishi_key_print (handle, stdout, arg.algorithm, key, keylen, arg.kvno,
+			arg.cname, arg.realm);
     }
 
   if (arg.encrypt_p || arg.decrypt_p)
@@ -115,9 +122,9 @@ crypto (Shishi * handle, struct arguments arg)
 	  infh = fopen (arg.inputfile, "r");
 	  if (infh == NULL)
 	    {
-	      fprintf (stderr, _("Cannot open `%s': %s\n"),
-		       arg.inputfile, strerror (errno));
-	      return 1;
+	      shishi_error_printf (handle, _("`%s': %s\n"),
+				   arg.inputfile, strerror (errno));
+	      return SHISHI_FOPEN_ERROR;
 	    }
 	}
       else
@@ -128,76 +135,85 @@ crypto (Shishi * handle, struct arguments arg)
 	  outfh = fopen (arg.outputfile, "w");
 	  if (outfh == NULL)
 	    {
-	      fprintf (stderr, _("Cannot open `%s': %s\n"),
-		       arg.outputfile, strerror (errno));
-	      return 1;
+	      shishi_error_printf (handle, _("`%s': %s\n"),
+				   arg.inputfile, strerror (errno));
+	      return SHISHI_FOPEN_ERROR;
 	    }
 	}
       else
 	outfh = stdout;
 
-      datalen = fread (data, sizeof (data[0]),
-		       sizeof (data) / sizeof (data[0]), infh);
-      if (datalen == 0)
+      outlen = fread (out, sizeof (out[0]),
+		      sizeof (out) / sizeof (out[0]), infh);
+      if (outlen == 0)
 	{
 	  fprintf (stderr, _("Error reading `%s'\n"), arg.inputfile);
-	  return 1;
+	  return !SHISHI_OK;
 	}
-      printf (_("Read %d bytes...\n"), datalen);
+      if (arg.verbose)
+	printf (_("Read %d bytes...\n"), outlen);
 
+      inlen = sizeof (in);
       if (arg.encrypt_p)
+	rc = shishi_encrypt (handle, arg.keyusage, arg.algorithm,
+			     key, keylen, out, outlen, in, &inlen);
+      else
+	rc = shishi_decrypt (handle, arg.keyusage, arg.algorithm,
+			     key, keylen, in, inlen, out, &outlen);
+      if (rc != SHISHI_OK)
 	{
-	  encryptedlen = sizeof (encrypted);
-	  res = shishi_encrypt (handle, 0, encrypted, &encryptedlen,
-				data, datalen, key, keylen, arg.algorithm);
-	}
-      else if (arg.decrypt_p)
-	{
-	  encryptedlen = sizeof (encrypted);
-	  res = shishi_decrypt (handle, 0, encrypted, &encryptedlen,
-				data, datalen, key, keylen, arg.algorithm);
-	}
-
-      if (res != SHISHI_OK)
-	{
-	  fprintf (stderr, _("Error ciphering: %s\n"),
-		   shishi_strerror_details (handle));
-	  // return 1;
+	  shishi_error_printf (handle, _("Error ciphering\n"));
+	  return rc;
 	}
 
       if (arg.outputtype == SHISHI_FILETYPE_HEX)
 	{
-	  for (i = 0; i < encryptedlen; i++)
+	  for (i = 0; i < inlen; i++)
 	    {
 	      if ((i % 16) == 0)
 		fprintf (outfh, "\n");
-	      fprintf (outfh, "%02x ", encrypted[i]);
+	      fprintf (outfh, "%02x ", in[i]);
 	    }
 	  fprintf (outfh, "\n");
 	}
       else if (arg.outputtype == SHISHI_FILETYPE_BINARY)
 	{
-	  i = fwrite (encrypted, sizeof (encrypted[0]), encryptedlen, outfh);
-	  if (i != encryptedlen)
+	  i = fwrite (in, sizeof (in[0]), inlen, outfh);
+	  if (i != inlen)
 	    {
 	      fprintf (stderr, _("Short write (%d < %d)...\n"), i,
-		       encryptedlen);
+		       inlen);
 	      return 1;
 	    }
-	  printf (_("Wrote %d bytes...\n"), encryptedlen);
+	  printf (_("Wrote %d bytes...\n"), inlen);
+	}
+
+      if (arg.outputfile)
+	{
+	  rc = fclose (outfh);
+	  if (rc != 0)
+	    {
+	      shishi_error_printf (handle, _("`%s': %s\n"),
+				   arg.outputfile, strerror (errno));
+	      return SHISHI_FCLOSE_ERROR;
+	    }
 	}
 
       if (arg.inputfile)
 	{
-	  res = fclose (infh);
-	  if (res != 0)
+	  rc = fclose (infh);
+	  if (rc != 0)
 	    {
-	      fprintf (stderr, _("Could not close `%s': %s\n"),
-		       arg.inputfile, strerror (errno));
-	      return 1;
+	      shishi_error_printf (handle, _("`%s': %s\n"),
+				   arg.inputfile, strerror (errno));
+	      return SHISHI_FCLOSE_ERROR;
 	    }
 	}
     }
+
+  if (arg.writekeyfile)
+    shishi_key_to_file (handle, arg.writekeyfile, arg.algorithm, key,
+			keylen, arg.kvno, arg.cname, arg.realm);
 
   return 0;
 }
