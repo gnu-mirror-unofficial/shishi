@@ -22,11 +22,11 @@ DISTCHECK_CONFIGURE_FLAGS = --disable-gtk-doc
 
 MOST_SUBDIRS = m4 po gl lib src tests doc extra
 
-DIST_SUBDIRS = errcrypto crypto asn1 $(MOST_SUBDIRS)
+DIST_SUBDIRS = crypto asn1 $(MOST_SUBDIRS)
 
 SUBDIRS = @CRYPTO@ @ASN1@ $(MOST_SUBDIRS)
 
-ACLOCAL_AMFLAGS = -I m4 -I gl/m4 -I crypto/src
+ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = shishi.pc
