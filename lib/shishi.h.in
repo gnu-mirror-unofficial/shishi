@@ -869,10 +869,10 @@ extern int shishi_authenticator_client_set (Shishi * handle,
 					    const char *client);
 extern int shishi_authenticator_ctime (Shishi * handle,
 				       Shishi_asn1 authenticator,
-				       char **time);
+				       char **t);
 extern int shishi_authenticator_ctime_set (Shishi * handle,
 					   Shishi_asn1 authenticator,
-					   const char *time);
+					   const char *t);
 extern int shishi_authenticator_cusec_get (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   int *cusec);
@@ -1281,10 +1281,10 @@ extern int shishi_krberror_server_set (Shishi * handle,
 				       const char *server);
 extern int shishi_krberror_ctime (Shishi * handle,
 				  Shishi_asn1 krberror,
-				  char **time);
+				  char **t);
 extern int shishi_krberror_ctime_set (Shishi * handle,
 				      Shishi_asn1 krberror,
-				      const char *time);
+				      const char *t);
 extern int shishi_krberror_remove_ctime (Shishi * handle,
 					 Shishi_asn1 krberror);
 extern int shishi_krberror_cusec (Shishi * handle, Shishi_asn1 krberror,
@@ -1811,10 +1811,10 @@ extern int shishi_encapreppart_time_copy (Shishi * handle,
 					  Shishi_asn1 authenticator);
 extern int shishi_encapreppart_ctime (Shishi * handle,
 				      Shishi_asn1 encapreppart,
-				      char **time);
+				      char **t);
 extern int shishi_encapreppart_ctime_set (Shishi * handle,
 					  Shishi_asn1 encapreppart,
-					  const char *time);
+					  const char *t);
 extern int shishi_encapreppart_cusec_get (Shishi * handle,
 					  Shishi_asn1 encapreppart,
 					  int *cusec);
