@@ -391,6 +391,10 @@ be surprised.  Also keep in mind that the key size mentioned is the
 actual key size, not the effective key space as far as a brute force
 attack is concerned.
 
+As you may infer from the descriptions, there is currently no
+encryption algorithm and only one checksum algorithm that inspire
+great confidence in its design.  Hopefully this will change over time.
+
 @cindex DES
 @cindex 3DES
 @cindex AES
@@ -417,40 +421,59 @@ no salt.  Data is integrity protected with a keyed hash (HMAC-MD5),
 where the key is derived from the base key in a creative way.  It is
 weak.  It is associated with the @code{arcfour-hmac-md5} checksum.
 
+@item des-cbc-none
+
+@code{des-cbc-none} is DES encryption and decryption with 56 bit keys
+and 8 byte blocks in CBC mode, using a zero IV.  The keys can be
+derived from passwords by an obscure application specific algorithm.
+It is weak, because it offers no integrity protection.  This is
+typically only used by RFC 1964 GSS-API implementations (which try to
+protect integrity using an ad-hoc solution).  It is associated with
+the @code{NULL} checksum.
+
 @item des-cbc-crc
 
 @code{des-cbc-crc} is DES encryption and decryption with 56 bit keys
-and 8 byte blocks in CBC mode, using the key as IV. The keys can be
-derived from passwords by an obscure application specific
-algorithm. Data is integrity protected with an unkeyed but encrypted
+and 8 byte blocks in CBC mode, using the key as IV.  The keys can be
+derived from passwords by an obscure application specific algorithm.
+Data is integrity protected with an unkeyed but encrypted
 @code{CRC32}-like checksum.  It is weak. It is associated with the
 @code{rsa-md5-des} checksum.
 
 @item des-cbc-md4
 
 @code{des-cbc-md4} is DES encryption and decryption with 56 bit keys
-and 8 byte blocks in CBC mode, using a zero IV. The keys can be
-derived from passwords by an obscure application specific
-algorithm. Data is integrity protected with an unkeyed but encrypted
-MD4 hash.  It is weak. It is associated with the @code{rsa-md4-des}
-checksum.
+and 8 byte blocks in CBC mode, using a zero IV.  The keys can be
+derived from passwords by an obscure application specific algorithm.
+Data is integrity protected with an unkeyed but encrypted MD4 hash.
+It is weak. It is associated with the @code{rsa-md4-des} checksum.
 
 @item des-cbc-md5
 
 @code{des-cbc-md5} is DES encryption and decryption with 56 bit keys
 and 8 byte blocks in CBC mode, using a zero IV.  The keys can be
-derived from passwords by an obscure application specific
-algorithm. Data is integrity protected with an unkeyed but encrypted
-MD5 hash.  It is weak.  It is associated with the @code{rsa-md5-des}
-checksum.  This is the strongest RFC 1510 interoperable encryption
-mechanism.
+derived from passwords by an obscure application specific algorithm.
+Data is integrity protected with an unkeyed but encrypted MD5 hash.
+It is weak.  It is associated with the @code{rsa-md5-des} checksum.
+This is the strongest RFC 1510 interoperable encryption mechanism.
+
+@item des3-cbc-none
+
+@code{des3-cbc-none} is DES encryption and decryption with three 56
+bit keys (effective key size 112 bits) and 8 byte blocks in CBC mode.
+The keys can be derived from passwords by the same algorithm as
+@code{des3-cbc-sha1-kd}.  It is weak, because it offers no integrity
+protection.  This is typically only used by GSS-API implementations
+(which try to protect integrity using an ad-hoc solution) for
+interoperability with some existing Kerberos GSS implementations.  It
+is associated with the @code{NULL} checksum.
 
 @item des3-cbc-sha1-kd
 
 @code{des3-cbc-sha1-kd} is DES encryption and decryption with three 56
-bit keys (effective key size 112 bits) and 8 byte blocks in CBC
-mode. The keys can be derived from passwords by a algorithm based on
-the paper "A Better Key Schedule For DES-like Ciphers"
+bit keys (effective key size 112 bits) and 8 byte blocks in CBC mode.
+The keys can be derived from passwords by a algorithm based on the
+paper "A Better Key Schedule For DES-like Ciphers"
 @footnote{@url{http://www.research.att.com/~smb/papers/ides.pdf}} by
 Uri Blumenthal and Steven M. Bellovin (it is not clear if the
 algorithm, and the way it is used, is used by any other protocols,
@@ -490,7 +513,7 @@ mechanisms to use, so in most cases the associated checksum will be
 used.  However, checksum mechanisms can be used with other encryption
 mechanisms, as long as they are compatible in terms of key format etc.
 Here are the names of the supported checksum mechanisms, with some
-notes on their status and the compatible encryption mechanisms. They
+notes on their status and the compatible encryption mechanisms.  They
 are ordered by increased security as perceived by the author.
 
 @table @code
@@ -571,7 +594,7 @@ the @code{aes*-cts-hmac-sha1-96} encryption mechanisms.
 
 Several of the cipher suites have long names that can be hard to
 memorize.  For your convenience, the following short-hand aliases
-exists.
+exists.  They can be used wherever the full encryption names are used.
 
 @table @code
 
