@@ -949,7 +949,6 @@ extern int shishi_encrypt_etype (Shishi * handle,
 				 Shishi_key * key,
 				 int keyusage,
 				 int32_t etype,
-				 const char *iv, size_t ivlen,
 				 const char *in, size_t inlen,
 				 char **out, size_t * outlen);
 extern int shishi_encrypt_ivupdate (Shishi * handle,

@@ -1660,13 +1660,12 @@ shishi_encrypt_etype (Shishi * handle,
 		      Shishi_key * key,
 		      int keyusage,
 		      int32_t etype,
-		      const char *iv, size_t ivlen,
 		      const char *in, size_t inlen,
 		      char **out, size_t * outlen)
 {
   return shishi_encrypt_ivupdate_etype (handle, key, keyusage,
 					shishi_key_type (key),
-					iv, ivlen, NULL, NULL,
+					NULL, 0, NULL, NULL,
 					in, inlen, out, outlen);
 }
 
@@ -1953,7 +1952,6 @@ shishi_decrypt_ivupdate (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @key: key to decrypt with.
  * @keyusage: integer specifying what this key is decrypting.
- * @etype: integer specifying what cipher to use.
  * @iv: input array with initialization vector
  * @ivlen: size of input array with initialization vector.
  * @in: input array with data to decrypt.
