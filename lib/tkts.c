@@ -656,7 +656,7 @@ shishi_tkts_find (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 {
   int i;
 
-  if (VERBOSENOICE (tkts->handle))
+  if (VERBOSENOISE (tkts->handle))
     {
       fprintf (stderr, "Searching tickets... ");
       if (hint->server)
@@ -920,7 +920,7 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
       return NULL;
     }
 
-  if (VERBOSENOICE (tkts->handle))
+  if (VERBOSENOISE (tkts->handle))
     {
       printf ("Received ticket granting ticket:\n");
       shishi_tkt_pretty_print (tgt, stdout);
@@ -987,7 +987,7 @@ shishi_tkts_get_tgs (Shishi_tkts * tkts,
       return NULL;
     }
 
-  if (VERBOSENOICE (tkts->handle))
+  if (VERBOSENOISE (tkts->handle))
     {
       printf ("Received ticket:\n");
       shishi_tkt_pretty_print (tkt, stdout);

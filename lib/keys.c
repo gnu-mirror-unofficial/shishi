@@ -52,7 +52,7 @@ shishi_keys_for_serverrealm_in_file (Shishi * handle,
       if (res != SHISHI_OK || key == NULL)
 	break;
 
-      if (VERBOSENOICE (handle))
+      if (VERBOSENOISE (handle))
 	{
 	  printf ("Read key:\n");
 	  shishi_key_print (handle, stdout, key);

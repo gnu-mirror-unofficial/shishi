@@ -449,7 +449,7 @@ shishi_kdc_check_nonce_1 (Shishi * handle,
 			  char *reqnonce, size_t reqnoncelen,
 			  char *repnonce, size_t repnoncelen)
 {
-  if (VERBOSENOICE (handle))
+  if (VERBOSENOISE (handle))
     {
       size_t i;
 
@@ -670,7 +670,7 @@ shishi_as_process (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (VERBOSENOICE (handle))
+  if (VERBOSENOISE (handle))
     shishi_key_print (handle, stderr, key);
 
   res = shishi_kdc_process (handle, asreq, asrep, key,

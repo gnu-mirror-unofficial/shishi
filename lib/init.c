@@ -266,7 +266,7 @@ init_read (Shishi * handle,
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
-  if (VERBOSENOICE (handle))
+  if (VERBOSENOISE (handle))
     shishi_cfg_print (handle, stderr);
 
   return SHISHI_OK;

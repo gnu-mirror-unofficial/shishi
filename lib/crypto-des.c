@@ -254,7 +254,7 @@ des_decrypt_verify (Shishi * handle,
       return res;
     }
 
-  if (VERBOSECRYPTONOICE (handle))
+  if (VERBOSECRYPTONOISE (handle))
     {
       puts ("verify decrypted:");
       _shishi_escapeprint (*out, *outlen);
@@ -264,7 +264,7 @@ des_decrypt_verify (Shishi * handle,
   memcpy (incoming, *out + 8, hlen);
   memset (*out + 8, 0, hlen);
 
-  if (VERBOSECRYPTONOICE (handle))
+  if (VERBOSECRYPTONOISE (handle))
     {
       puts ("cksum pt:");
       _shishi_hexprint (*out, *outlen);
@@ -290,7 +290,7 @@ des_decrypt_verify (Shishi * handle,
       break;
     }
 
-  if (VERBOSECRYPTONOICE (handle))
+  if (VERBOSECRYPTONOISE (handle))
     {
       puts ("DES verify:");
       _shishi_hexprint (incoming, hlen);
@@ -420,7 +420,7 @@ des_key_correction (Shishi * handle, char key[8])
   for (i = 0; i < 16; i++)
     if (memcmp (key, weak_des_keys[i], 8) == 0)
       {
-	if (VERBOSECRYPTONOICE (handle))
+	if (VERBOSECRYPTONOISE (handle))
 	  printf ("\t ;; WEAK KEY (corrected)\n");
 	key[7] ^= 0xF0;
 	break;
@@ -477,7 +477,7 @@ des_string_to_key (Shishi * handle,
       _shishi_hexprint (salt, saltlen);
     }
 
-  if (VERBOSECRYPTONOICE (handle))
+  if (VERBOSECRYPTONOISE (handle))
     {
       printf ("odd = 1;\n");
       printf ("s = string | salt;\n");
@@ -497,7 +497,7 @@ des_string_to_key (Shishi * handle,
   memset (s + stringlen + saltlen, 0, n_s - stringlen - saltlen);
   memset (tempkey, 0, sizeof (tempkey));	/* tempkey = NULL; */
 
-  if (VERBOSECRYPTONOICE (handle))
+  if (VERBOSECRYPTONOISE (handle))
     {
       printf ("\t ;; s = pad(string|salt):\n");
       _shishi_escapeprint (s, n_s);
@@ -506,7 +506,7 @@ des_string_to_key (Shishi * handle,
 
   for (i = 0; i < n_s / 8; i++)
     {
-      if (VERBOSECRYPTONOICE (handle))
+      if (VERBOSECRYPTONOISE (handle))
 	{
 	  printf ("for (8byteblock in s) {\n");
 	  printf ("\t ;; loop iteration %d\n", i);
@@ -520,7 +520,7 @@ des_string_to_key (Shishi * handle,
       for (j = 0; j < 8; j++)
 	s[i * 8 + j] = s[i * 8 + j] & ~0x80;
 
-      if (VERBOSECRYPTONOICE (handle))
+      if (VERBOSECRYPTONOISE (handle))
 	{
 	  printf ("\t ;; 56bitstring:\n");
 	  _shishi_bin7print (&s[i * 8], 8);
@@ -550,7 +550,7 @@ des_string_to_key (Shishi * handle,
 	      s[i * 8 + j] = temp2;
 	      s[i * 8 + 7 - j] = temp;
 	    }
-	  if (VERBOSECRYPTONOICE (handle))
+	  if (VERBOSECRYPTONOISE (handle))
 	    {
 	      printf ("reverse(56bitstring)\n");
 	      printf ("\t ;; 56bitstring after reverse\n");
@@ -560,7 +560,7 @@ des_string_to_key (Shishi * handle,
 
       odd = !odd;
 
-      if (VERBOSECRYPTONOICE (handle))
+      if (VERBOSECRYPTONOISE (handle))
 	{
 	  printf ("odd = ! odd\n");
 	  printf ("tempstring = tempstring XOR 56bitstring;\n");
@@ -570,7 +570,7 @@ des_string_to_key (Shishi * handle,
       for (j = 0; j < 8; j++)
 	tempkey[j] ^= s[i * 8 + j];
 
-      if (VERBOSECRYPTONOICE (handle))
+      if (VERBOSECRYPTONOISE (handle))
 	{
 	  printf ("\t ;; tempstring\n");
 	  _shishi_bin7print (tempkey, 8);
@@ -580,7 +580,7 @@ des_string_to_key (Shishi * handle,
   for (j = 0; j < 8; j++)
     tempkey[j] = tempkey[j] << 1;
 
-  if (VERBOSECRYPTONOICE (handle))
+  if (VERBOSECRYPTONOISE (handle))
     {
       printf ("for (8byteblock in s) {\n");
       printf ("}\n");
@@ -596,7 +596,7 @@ des_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (VERBOSECRYPTONOICE (handle))
+  if (VERBOSECRYPTONOISE (handle))
     {
       printf ("\t ;; tempkey\n");
       _shishi_escapeprint (tempkey, 8);

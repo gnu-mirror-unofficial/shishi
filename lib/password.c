@@ -140,7 +140,7 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
   if (rc != SHISHI_OK)
     return rc;
 
-  if (VERBOSENOICE (handle))
+  if (VERBOSENOISE (handle))
     {
       size_t i;
       printf ("Read password (length %d): ", strlen (*s));
@@ -167,7 +167,7 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
       else
 	shishi_warn (handle, "Charset conversion of password failed");
 
-      if (VERBOSENOICE (handle))
+      if (VERBOSENOISE (handle))
 	{
 	  size_t i;
 	  printf ("Password converted to %s (length %d): ",
@@ -189,7 +189,7 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
 	  else
 	    shishi_warn (handle, "Stringprep conversion of password failed");
 
-	  if (VERBOSENOICE (handle))
+	  if (VERBOSENOISE (handle))
 	    {
 	      size_t i;
 	      printf ("Stringprep'ed password (length %d): ", strlen (*s));

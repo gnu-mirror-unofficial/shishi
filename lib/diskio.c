@@ -169,7 +169,7 @@ _shishi_read_armored_data (Shishi * handle,
 	  continue;
 	}
       line[strlen (line) - 1] = '\0';
-      if (VERBOSENOICE (handle))
+      if (VERBOSENOISE (handle))
 	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
 
       /* XXX check if all chars in line are b64 data, otherwise bail out */
@@ -817,7 +817,7 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 	  continue;
 	}
       line[strlen (line) - 1] = '\0';
-      if (VERBOSENOICE (handle))
+      if (VERBOSENOISE (handle))
 	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
 
       if (!in_key)
@@ -929,7 +929,7 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
     fprintf (fh, "\n");
 
 #if 0
-  if (VERBOSENOICE (handle))
+  if (VERBOSENOISE (handle))
     {
       for (i = 0; i < shishi_key_length (key); i++)
 	fprintf (stdout, "%02x", shishi_key_value (key)[i] & 0xFF);

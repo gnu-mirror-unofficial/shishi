@@ -1,5 +1,5 @@
 /* cfg.h --- Configuration file functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -36,10 +36,10 @@ enum
   TICKET_LIFE_OPTION,
   RENEW_LIFE_OPTION,
   AUTHORIZATION_TYPES_OPTION,
-  VERBOSE_CRYPTO_NOICE_OPTION,
+  VERBOSE_CRYPTO_NOISE_OPTION,
   VERBOSE_CRYPTO_OPTION,
   VERBOSE_ASN1_OPTION,
-  VERBOSE_NOICE_OPTION,
+  VERBOSE_NOISE_OPTION,
   VERBOSE_OPTION,
   STRINGPROCESS_OPTION,
   THE_END
@@ -56,10 +56,10 @@ static char *const _shishi_opts[] = {
   /* [TICKET_LIFE_OPTION] =          */ "ticket-life",
   /* [RENEW_LIFE_OPTION] =           */ "renew-life",
   /* [AUTHORIZATION_TYPES_OPTION] =  */ "authorization-types",
-  /* [VERBOSE_CRYPTO_NOICE_OPTION] = */ "verbose-crypto-noice",
+  /* [VERBOSE_CRYPTO_NOISE_OPTION] = */ "verbose-crypto-noise",
   /* [VERBOSE_CRYPTO_OPTION] =       */ "verbose-crypto",
   /* [VERBOSE_ASN1_OPTION] =         */ "verbose-asn1",
-  /* [VERBOSE_NOICE_OPTION] =        */ "verbose-noice",
+  /* [VERBOSE_NOISE_OPTION] =        */ "verbose-noise",
   /* [VERBOSE_OPTION] =              */ "verbose",
   /* [STRINGPROCESS_OPTION] =        */ "stringprocess",
   /* [THE_END] =                     */ NULL
@@ -239,8 +239,8 @@ shishi_cfg (Shishi * handle, char *option)
 	    ~0 & ~VERBOSES;
 	  break;
 
-	case VERBOSE_CRYPTO_NOICE_OPTION:
-	  handle->verbose |= SHISHI_VERBOSE_CRYPTO_NOICE;
+	case VERBOSE_CRYPTO_NOISE_OPTION:
+	  handle->verbose |= SHISHI_VERBOSE_CRYPTO_NOISE;
 	  break;
 
 	case VERBOSE_CRYPTO_OPTION:
@@ -251,8 +251,8 @@ shishi_cfg (Shishi * handle, char *option)
 	  handle->verbose |= SHISHI_VERBOSE_ASN1;
 	  break;
 
-	case VERBOSE_NOICE_OPTION:
-	  handle->verbose |= SHISHI_VERBOSE_NOICE;
+	case VERBOSE_NOISE_OPTION:
+	  handle->verbose |= SHISHI_VERBOSE_NOISE;
 	  break;
 
 	case -1:
