@@ -4400,6 +4400,12 @@ allow the application to define the key.  Verification of KRB_SAFE now
 require the key to be compatible with the (sub-)session key, in 1510
 the only requirement was that it was collision proof.
 
+Errors in clarifications.  Incorrectly remove the OPTIONAL flag on the
+KDC-REQ-BODY.enc-authorization-data field.
+
+Problems with clarifications.  Uses bignum INTEGER for TYPED-DATA and
+AD-AND-OR.
+
 @node Protocol Extensions
 @appendix Protocol Extensions
 
