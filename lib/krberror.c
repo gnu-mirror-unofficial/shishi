@@ -298,11 +298,12 @@ shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror)
 	return rc;
     }
 
-  tmplen = sizeof (t);
-  rc = shishi_krberror_cname (handle, krberror, t, &tmplen);
+  rc = shishi_krberror_cname (handle, krberror, &tmp, &tmplen);
   if (rc != SHISHI_OK &&
       rc != SHISHI_ASN1_NO_ELEMENT && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
+  if (rc == SHISHI_OK)
+    free (tmp);
   if (rc == SHISHI_ASN1_NO_VALUE || (rc == SHISHI_OK && tmplen == 0))
     {
       rc = shishi_krberror_remove_cname (handle, krberror);
@@ -322,10 +323,11 @@ shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror)
 	return rc;
     }
 
-  tmplen = sizeof (t);
-  rc = shishi_krberror_sname (handle, krberror, t, &tmplen);
+  rc = shishi_krberror_sname (handle, krberror, &tmp, &tmplen);
   if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
+  if (rc == SHISHI_OK)
+    free (tmp);
   if (rc == SHISHI_ASN1_NO_VALUE || tmplen == 0)
     {
       rc = shishi_krberror_remove_sname (handle, krberror);
@@ -472,9 +474,10 @@ shishi_krberror_set_crealm (Shishi * handle,
  * shishi_krberror_cname:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: krberror as allocated by shishi_krberror().
- * @out: output buffer that holds client name in KRB-ERROR.
- * @outlen: on input, maximum size of output buffer,
- *             on output, actual size of output buffer.
+ * @cname: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @clientlen).
+ * @cnamelen: pointer to length of @cname on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
  *
  * Return client principal field in KRB-ERROR.
  *
@@ -482,11 +485,12 @@ shishi_krberror_set_crealm (Shishi * handle,
  **/
 int
 shishi_krberror_cname (Shishi * handle,
-		       Shishi_asn1 krberror, char *out, size_t * outlen)
+		       Shishi_asn1 krberror,
+		       char **cname, size_t * cnamelen)
 {
   int rc;
 
-  rc = shishi_principal_name_get (handle, krberror, "cname", out, outlen);
+  rc = shishi_principal_name (handle, krberror, "cname", cname, cnamelen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -609,9 +613,10 @@ shishi_krberror_set_realm (Shishi * handle,
  * shishi_krberror_sname:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: krberror as allocated by shishi_krberror().
- * @out: output buffer that holds server name in KRB-ERROR.
- * @outlen: on input, maximum size of output buffer,
- *             on output, actual size of output buffer.
+ * @sname: pointer to newly allocated zero terminated string containing
+ *   server name.  May be %NULL (to only populate @clientlen).
+ * @snamelen: pointer to length of @sname on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
  *
  * Return server principal field in KRB-ERROR.
  *
@@ -619,11 +624,12 @@ shishi_krberror_set_realm (Shishi * handle,
  **/
 int
 shishi_krberror_sname (Shishi * handle,
-		       Shishi_asn1 krberror, char *out, size_t * outlen)
+		       Shishi_asn1 krberror,
+		       char **sname, size_t *snamelen)
 {
   int rc;
 
-  rc = shishi_principal_name_get (handle, krberror, "sname", out, outlen);
+  rc = shishi_principal_name (handle, krberror, "sname", sname, snamelen);
   if (rc != SHISHI_OK)
     return rc;
 

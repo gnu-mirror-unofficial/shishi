@@ -649,12 +649,6 @@ extern int shishi_principal_name_realm (Shishi * handle,
 extern int shishi_principal_name_get (Shishi * handle, Shishi_asn1 namenode,
 				      const char *namefield, char *out,
 				      size_t * outlen);
-extern int shishi_principal_name_realm_get (Shishi * handle,
-					    Shishi_asn1 namenode,
-					    const char *namefield,
-					    Shishi_asn1 realmnode,
-					    const char *realmfield,
-					    char *out, size_t * outlen);
 extern int shishi_principal_name_set (Shishi * handle,
 				      Shishi_asn1 namenode,
 				      const char *namefield,
@@ -1274,7 +1268,7 @@ extern int shishi_krberror_set_crealm (Shishi * handle,
 				       const char *crealm);
 extern int shishi_krberror_cname (Shishi * handle,
 				  Shishi_asn1 krberror,
-				  char *out, size_t * outlen);
+				  char **cname, size_t *cnamelen);
 extern int shishi_krberror_set_cname (Shishi * handle,
 				      Shishi_asn1 krberror,
 				      Shishi_name_type name_type,
@@ -1292,7 +1286,7 @@ extern int shishi_krberror_set_realm (Shishi * handle,
 				      const char *realm);
 extern int shishi_krberror_sname (Shishi * handle,
 				  Shishi_asn1 krberror,
-				  char *out, size_t * outlen);
+				  char **sname, size_t *snamelen);
 extern int shishi_krberror_remove_sname (Shishi * handle,
 					 Shishi_asn1 krberror);
 extern int shishi_krberror_set_sname (Shishi * handle,

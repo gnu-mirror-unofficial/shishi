@@ -406,58 +406,6 @@ shishi_principal_name_realm (Shishi * handle,
   return SHISHI_OK;
 }
 
-int
-shishi_principal_name_realm_get (Shishi * handle,
-				 Shishi_asn1 namenode,
-				 const char *namefield,
-				 Shishi_asn1 realmnode,
-				 const char *realmfield,
-				 char *out, size_t * outlen)
-{
-  int res;
-  size_t totlen = 0, len;
-
-  /* FIXME: allocate output instead of writing inline */
-
-  totlen = *outlen;
-  res = shishi_principal_name_get (handle, namenode, namefield, out, &totlen);
-  if (res != SHISHI_OK)
-    return res;
-
-  if (realmnode == NULL && realmfield)
-    {
-      if (totlen + strlen ("@") + strlen (realmfield) > *outlen)
-	return SHISHI_TOO_SMALL_BUFFER;
-
-      memcpy (out + totlen, "@", strlen ("@"));
-      totlen += strlen ("@");
-      memcpy (out + totlen, realmfield, strlen (realmfield));
-      totlen += strlen (realmfield);
-    }
-  else if (realmnode != NULL)
-    {
-      if (totlen + strlen ("@") > *outlen)
-	return SHISHI_TOO_SMALL_BUFFER;
-
-      memcpy (out + totlen, "@", strlen ("@"));
-      totlen += strlen ("@");
-
-      len = *outlen - totlen;
-      res = shishi_asn1_read_inline (handle, realmnode, realmfield,
-				     &out[totlen], &len);
-      if (res == SHISHI_ASN1_NO_ELEMENT)
-	totlen--;
-      else if (res != SHISHI_OK)
-	return res;
-      else
-	totlen += len;
-    }
-
-  *outlen = totlen;
-
-  return SHISHI_OK;
-}
-
 /**
  * shishi_principal_name_set:
  * @handle: shishi handle as allocated by shishi_init().
