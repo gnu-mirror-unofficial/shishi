@@ -1,5 +1,5 @@
 /* shishi.h --- Header file for Shishi library.                       -*- c -*-
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -285,6 +285,7 @@ typedef enum
   SHISHI_HMAC_SHA1_96_AES128 = 15,
   SHISHI_HMAC_SHA1_96_AES256 = 16,
   SHISHI_ARCFOUR_HMAC_MD5 = -138,
+  SHISHI_KRB5_GSSAPI_CKSUM = 8003,
   SHISHI_NO_CKSUMTYPE = -1
 }
 Shishi_cksumtype;
