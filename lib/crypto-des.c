@@ -544,27 +544,24 @@ des_cbc_check (char key[8], char *data, int n_data)
 {
   GCRY_CIPHER_HD ch;
   int res;
-  char ct[1024];
-  char iv[8];
 
-  ch = gcry_cipher_open (GCRY_CIPHER_DES, GCRY_CIPHER_MODE_CBC, 0);
+  ch = gcry_cipher_open (GCRY_CIPHER_DES,
+			 GCRY_CIPHER_MODE_CBC,
+			 GCRY_CIPHER_CBC_MAC);
   if (ch == NULL)
-    return !SHISHI_OK;
+    return SHISHI_GCRYPT_ERROR;
 
   res = gcry_cipher_setkey (ch, key, 8);
   if (res != GCRYERR_SUCCESS)
-    return !SHISHI_OK;
+    return SHISHI_GCRYPT_ERROR;
 
-  memset (iv, 0, 8);
   res = gcry_cipher_setiv (ch, key, 8);
   if (res != 0)
-    return !SHISHI_OK;
+    return SHISHI_GCRYPT_ERROR;
 
-  res = gcry_cipher_encrypt (ch, ct, sizeof (ct), data, n_data);
+  res = gcry_cipher_encrypt (ch, key, 8, data, n_data);
   if (res != 0)
-    return !SHISHI_OK;
-
-  memcpy (key, ct + n_data - 8, 8);
+    return SHISHI_GCRYPT_ERROR;
 
   gcry_cipher_close (ch);
 
