@@ -1057,6 +1057,12 @@ launch (void)
   if (rc != 0)
     return rc;
 
+#ifdef LOG_PERROR
+  openlog (PACKAGE, LOG_CONS | LOG_PERROR, LOG_DAEMON);
+#else
+  openlog (PACKAGE, LOG_CONS, LOG_DAEMON);
+#endif
+
   rc = kdc_setuid ();
   if (rc != 0)
     return rc;
@@ -1210,44 +1216,33 @@ setup_fatal_krberror (Shishi * handle)
 }
 
 static int
-setup (void)
-{
-  int rc;
-
-  rc = setup_fatal_krberror (handle);
-  if (rc != SHISHI_OK)
-    {
-      syslog (LOG_ERR, "Cannot allocate fatal error message\n");
-      return 1;
-    }
-
-  rc = launch ();
-
-  return rc;
-}
-
-static int
 init (void)
 {
-  int rc;
+  int err;
 
 #ifdef USE_STARTTLS
   if (!arg.quiet_flag)
     printf ("Initializing GNUTLS...\n");
-  fflush (stdout);
-  gnutls_global_init ();
-  gnutls_dh_params_init (&dh_params);
+  err = gnutls_global_init ();
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS: %s (%d)",
+	   gnutls_strerror (err), err);
+  err = gnutls_dh_params_init (&dh_params);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS DH parameters: %s (%d)",
+	   gnutls_strerror (err), err);
+  err = gnutls_dh_params_generate2 (dh_params, DH_BITS);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot generate GNUTLS DH parameters: %s (%d)",
+	   gnutls_strerror (err), err);
   if (!arg.quiet_flag)
     printf ("Initializing GNUTLS...done\n");
-  fflush (stdout);
 #endif
 
-  rc = shishi_init_server_with_paths (&handle, arg.configuration_file_arg);
-  if (rc != SHISHI_OK)
-    {
-      syslog (LOG_ERR, "Aborting due to library initialization failure\n");
-      return 1;
-    }
+  err = shishi_init_server_with_paths (&handle, arg.configuration_file_arg);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize Shishi: %s (%d)",
+	   shishi_strerror (err), err);
 
   if (arg.verbose_flag > 1)
     shishi_cfg (handle, "verbose");
@@ -1261,19 +1256,22 @@ init (void)
   if (arg.verbose_flag > 4)
     shishi_cfg (handle, "verbose-crypto");
 
-  rc = shisa_init (&dbh);
-  if (rc != SHISA_OK)
-    {
-      syslog (LOG_ERR, "Aborting due to Shisa initialization failure\n");
-      return 1;
-    }
+  err = shisa_init (&dbh);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot initialize Shisa: %s (%d)",
+	   shisa_strerror (err), err);
 
-  rc = setup ();
+  err = setup_fatal_krberror (handle);
+  if (err)
+    error (EXIT_FAILURE, 0, "Cannot allocate fatal error packet: %s (%d)",
+	   shisa_strerror (err), err);
+
+  err = launch ();
 
   shisa_done (dbh);
   shishi_done (handle);
 
-  return rc;
+  return err;
 }
 
 int
@@ -1305,20 +1303,12 @@ main (int argc, char *argv[])
     arg.listen_arg = strdup (LISTEN_DEFAULT);
   parse_listen (arg.listen_arg);
 
-#ifdef LOG_PERROR
-  openlog (PACKAGE, LOG_CONS | LOG_PERROR, LOG_DAEMON);
-#else
-  openlog (PACKAGE, LOG_CONS, LOG_DAEMON);
-#endif
-
   rc = init ();
 
   free (arg.listen_arg);
   free (arg.configuration_file_arg);
   if (arg.setuid_arg)
     free (arg.setuid_arg);
-
-  closelog ();
 
   return rc;
 }
