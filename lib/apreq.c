@@ -507,12 +507,31 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_apreq_options:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @apreq: AP-REQ to get options from.
+ * @flags: Output integer containing options from AP-REQ.
+ *
+ * Extract the AP-Options from AP-REQ into output integer.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq, int *flags)
 {
   return shishi_asn1_read_bitstring (handle, apreq, "ap-options", flags);
 }
 
+/**
+ * shishi_apreq_use_session_key_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @apreq: AP-REQ as allocated by shishi_apreq().
+ *
+ * Return non-0 iff the "Use session key" option is set in the AP-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_apreq_use_session_key_p (Shishi * handle, Shishi_asn1 apreq)
 {
@@ -523,6 +542,15 @@ shishi_apreq_use_session_key_p (Shishi * handle, Shishi_asn1 apreq)
   return options & SHISHI_APOPTIONS_USE_SESSION_KEY;
 }
 
+/**
+ * shishi_apreq_mutual_required_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @apreq: AP-REQ as allocated by shishi_apreq().
+ *
+ * Return non-0 iff the "Mutual required" option is set in the AP-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_apreq_mutual_required_p (Shishi * handle, Shishi_asn1 apreq)
 {
@@ -533,6 +561,16 @@ shishi_apreq_mutual_required_p (Shishi * handle, Shishi_asn1 apreq)
   return options & SHISHI_APOPTIONS_MUTUAL_REQUIRED;
 }
 
+/**
+ * shishi_apreq_options_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @apreq: AP-REQ as allocated by shishi_apreq().
+ * @options: Options to set in AP-REQ.
+ *
+ * Set the AP-Options in AP-REQ to indicate integer.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq, int options)
 {
@@ -545,6 +583,17 @@ shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq, int options)
   return SHISHI_OK;
 }
 
+/**
+ * shishi_apreq_options_add:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @apreq: AP-REQ as allocated by shishi_apreq().
+ * @option: Options to add in AP-REQ.
+ *
+ * Add the AP-Options in AP-REQ.  Options not set in input parameter
+ * @option are preserved in the AP-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq, int option)
 {
@@ -556,6 +605,36 @@ shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq, int option)
     return res;
 
   options |= option;
+
+  res = shishi_apreq_options_set (handle, apreq, options);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_apreq_options_remove:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @apreq: AP-REQ as allocated by shishi_apreq().
+ * @option: Options to remove from AP-REQ.
+ *
+ * Remove the AP-Options from AP-REQ.  Options not set in input
+ * parameter @option are preserved in the AP-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_apreq_options_remove (Shishi * handle, Shishi_asn1 apreq, int option)
+{
+  int options;
+  int res;
+
+  res = shishi_apreq_options (handle, apreq, &options);
+  if (res != SHISHI_OK)
+    return res;
+
+  options &= ~(options & option);
 
   res = shishi_apreq_options_set (handle, apreq, options);
   if (res != SHISHI_OK)
