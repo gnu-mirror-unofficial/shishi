@@ -34,7 +34,7 @@ void free ();
 #define _(msgid) gettext (msgid)
 #define N_(msgid) msgid
 
-#include "error.h"
+#include "err.h"
 #include "xalloc.h"
 
 #ifndef EXIT_FAILURE

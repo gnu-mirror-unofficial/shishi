@@ -1155,7 +1155,7 @@ extern void shishi_key_copy (Shishi_key * dstkey, Shishi_key * srckey);
 extern int shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key);
 extern int shishi_key_to_file (Shishi * handle,
 			       const char *filename, Shishi_key * key);
-extern int shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key);;
+extern int shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key);
 extern int shishi_key_random (Shishi * handle,
 			      int32_t type, Shishi_key ** key);
 extern int shishi_key_from_value (Shishi * handle,
