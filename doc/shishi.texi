@@ -496,6 +496,11 @@ GCC 2.96 and GNU Make. i686-pc-linux-gnu.
 
 GCC 3.2 and GNU Make. i686-pc-linux-gnu.
 
+@item Red Hat Advanced Server 2.1
+@cindex RedHat
+
+GCC 2.96 and GNU Make. ia64-unknown-linux-gnu (Intel Madison).
+
 @c @item IRIX 6.5
 @c @cindex IRIX
 @c
