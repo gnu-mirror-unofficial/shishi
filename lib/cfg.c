@@ -27,7 +27,7 @@ enum
   DEFAULT_PRINCIPAL_OPTION,
   CLIENT_KDC_ETYPES_OPTION,
   REALM_KDC_OPTION,
-  KDC_OPTION,
+  SERVER_REALM_OPTION,
   KDC_TIMEOUT_OPTION,
   KDC_RETRIES_OPTION,
   TICKET_LIFE_OPTION,
@@ -45,7 +45,7 @@ static char *const _shishi_opts[] = {
   /* [DEFAULT_PRINCIPAL_OPTION] = */ "default-principal",
   /* [CLIENT_KDC_ETYPES_OPTION] = */ "client-kdc-etypes",
   /* [REALM_KDC_OPTION] =         */ "realm-kdc",
-  /* [KDC_OPTION] =               */ "kdc",
+  /* [SERVER_REALM_OPTION] =      */ "server-realm",
   /* [KDC_TIMEOUT_OPTION] =       */ "kdc-timeout",
   /* [KDC_RETRIES_OPTION] =       */ "kdc-retries",
   /* [TICKET_LIFE_OPTION] =       */ "ticket-life",
@@ -70,6 +70,26 @@ shishi_realminfo (Shishi * handle, const char *realm)
       return &handle->realminfos[i];
 
   return NULL;
+}
+
+struct Shishi_realminfo *
+shishi_realminfo_new (Shishi * handle, char *realm)
+{
+  struct Shishi_realminfo *ri;
+
+  ri = shishi_realminfo (handle, realm);
+  if (ri)
+    return ri;
+
+  handle->realminfos = xrealloc (handle->realminfos,
+				 (++handle->nrealminfos) *
+				 sizeof (*handle->realminfos));
+
+  ri = &handle->realminfos[handle->nrealminfos - 1];
+  memset (ri, 0, sizeof (*ri));
+  ri->name = realm;
+
+  return ri;
 }
 
 /**
@@ -174,6 +194,17 @@ shishi_cfg (Shishi * handle, char *option)
 	  handle->nrealminfos++;
 	  break;
 
+	case SERVER_REALM_OPTION:
+	  {
+	    struct Shishi_realminfo *ri;
+	    ri = shishi_realminfo_new (handle, value);
+	    ri->serverwildcards = xrealloc (ri->serverwildcards,
+					    ++ri->nserverwildcards *
+					    sizeof(*ri->serverwildcards));
+	    ri->serverwildcards[ri->nserverwildcards - 1] = strdup (value);
+	  }
+	  break;
+
 	case DEFAULT_REALM_OPTION:
 	  handle->default_realm = strdup (value);
 	  break;
@@ -186,10 +217,6 @@ shishi_cfg (Shishi * handle, char *option)
 	  res = shishi_cfg_clientkdcetype_set (handle, value);
 	  if (res != SHISHI_OK)
 	    return res;
-	  break;
-
-	case KDC_OPTION:
-	  handle->kdc = strdup (value);
 	  break;
 
 	case STRINGPROCESS_OPTION:
