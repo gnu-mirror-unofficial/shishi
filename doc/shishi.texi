@@ -208,14 +208,15 @@ Shishi to implement the Kerberos 5 mechanism.
 
 @item Port to cyclone (cyclone need to mature first)
 
-@item Modularize ASN.1 library so it can be replaced (days)
+@item Modularize ASN.1 library so it can be replaced (days).
+Almost done, all ASN.1 functionality is found in lib/asn1.c.
 
-@item Modularize Crypto library so it can be replaced (days)
+@item Modularize Crypto library so it can be replaced (days).
+Nettle and libgcrypt are currently supported, but not via an abstract
+interface.  All crypto operations has been isolated into
+lib/crypto*.c.
 
 @item KDC (initiated, weeks)
-
-@item PAM module (week)
-Finished.
 
 @item Set/Change password protocol (weeks?)
 
@@ -225,7 +226,7 @@ Finished.
 
 @item Improve internationalization
 
-@item Add AP-REQ reply cache (week).
+@item Add AP-REQ replay cache (week).
 
 @end itemize
 
