@@ -1157,6 +1157,13 @@ static checksuminfo md5_info = {
   des_md5_checksum
 };
 
+static checksuminfo md5_gss_info = {
+  SHISHI_RSA_MD5_DES_GSS,
+  "rsa-md5-des-gss",
+  8,
+  gss_des_checksum
+};
+
 static checksuminfo hmac_sha1_des3_kd_info = {
   SHISHI_HMAC_SHA1_DES3_KD,
   "hmac-sha1-des3-kd",
@@ -1178,96 +1185,13 @@ static checksuminfo hmac_sha1_96_aes256_info = {
   aes256_checksum
 };
 
-int
-checksum_foo (Shishi * handle,
-	      Shishi_key * key,
-	      int keyusage,
-	      int cksumtype,
-	      char *in, size_t inlen,
-	      char **out, size_t * outlen)
-{
-#ifdef USE_GCRYPT
-  char buffer[BUFSIZ];
-  int buflen;
-  char *keyp;
-  char *p;
-  int i;
-  gcry_md_hd_t hd;
-  gcry_cipher_hd_t ch;
-  int res;
-
-  gcry_md_open (&hd, GCRY_MD_MD5, 0);
-  if (!hd)
-    return SHISHI_CRYPTO_INTERNAL_ERROR;
-
-  gcry_md_write (hd, in, inlen);
-  p = gcry_md_read (hd, GCRY_MD_MD5);
-
-  keyp = shishi_key_value (key);
-
-  gcry_cipher_open (&ch, GCRY_CIPHER_DES,
-		    GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
-  if (ch == NULL)
-    return SHISHI_CRYPTO_INTERNAL_ERROR;
-
-  res = gcry_cipher_setkey (ch, keyp, 8);
-  if (res != GPG_ERR_NO_ERROR)
-    return SHISHI_CRYPTO_INTERNAL_ERROR;
-
-  res = gcry_cipher_setiv (ch, NULL, 8);
-  if (res != 0)
-    return SHISHI_CRYPTO_INTERNAL_ERROR;
-
-  *outlen = 8;
-  *out = xmalloc (*outlen);
-
-  res = gcry_cipher_encrypt (ch, *out, *outlen, p, 16);
-  if (res != 0)
-    return SHISHI_CRYPTO_INTERNAL_ERROR;
-
-  gcry_cipher_close (ch);
-  gcry_md_close (hd);
-#else
-  struct md5_ctx md5;
-  struct CBC_MAC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
-  char digest[MD5_DIGEST_SIZE];
-  int rc;
-
-  md5_init (&md5);
-  md5_update (&md5, inlen, in);
-  md5_digest (&md5, sizeof(digest), digest);
-
-  rc = des_set_key (&des.ctx, shishi_key_value (key));
-  if (!rc)
-    {
-      shishi_error_printf (handle, "des_set_key() failed (%d)", rc);
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  memset(des.iv, 0, sizeof(des.iv));
-
-  *outlen = DES_BLOCK_SIZE;
-  *out = xmalloc (*outlen);
-
-  CBC_MAC (&des, des_encrypt, MD5_DIGEST_SIZE, *out, digest);
-#endif
-  return SHISHI_OK;
-}
-
-static checksuminfo foo_info = {
-  42,
-  "foo",
-  8,
-  checksum_foo
-};
-
 static checksuminfo *checksums[] = {
   &md4_info,
   &md5_info,
+  &md5_gss_info
   &hmac_sha1_des3_kd_info,
   &hmac_sha1_96_aes128_info,
   &hmac_sha1_96_aes256_info,
-  &foo_info
 };
 
 /**
