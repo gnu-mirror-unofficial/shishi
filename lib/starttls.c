@@ -43,7 +43,8 @@ _shishi_tls_done (Shishi * handle)
 {
   /* XXX call gnutls_global_deinit here.  But what if application uses
      tls?  what if more than one shishi handle is allocated? */
- }
+  return SHISHI_OK;
+}
 
 /*
  * Alternative approach: First send KDC-REQ in clear with PA-STARTTLS
