@@ -59,7 +59,7 @@ EXTRA_DIST = ANNOUNCE config.rpath mkinstalldirs \
 .PHONY: ChangeLog
 ChangeLog:
 	test ! -f .cvsusers || \
-	cvs2cl --fsf --usermap .cvsusers --no-times --no-common-dir \
+	cvs2cl --fsf --usermap .cvsusers --no-times --no-common-dir --prune \
  -I "ChangeLog|.cvsignore|.cvsusers|autogen.sh|doc/specification|libstringprep"
 
 indent:
