@@ -4372,25 +4372,28 @@ This manual borrows text from the Kerberos 5 specification.
 
 The intention with this section is to discuss various problems with
 Kerberos 5, so you can form a conscious decision how to deploy and use
-Shishi correctly in your organization.
+Shishi correctly in your organization.  Currently the issues below are
+very condensed, and is mostly useful as a reminder for the author
+until they can be elaborated.
 
-@verbatim
-* No encryption scheme with security proof.
+No encryption scheme with security proof.
 
-* No standardized API, and GSS mechanism lack important functionality.
+No standardized API, and GSS mechanism lack important functionality.
 
-* Lack of authorization system.  (krb5_kuserok())
+Lack of authorization system.  (krb5_kuserok())
 
-* Host to realm mapping relies on insecure DNS or static configuration files.
+Host to realm mapping relies on insecure DNS or static configuration
+files.
 
-* Informational model and user database administration.
+Informational model and user database administration.
 
-* Non-formal specification.  Unclear on the etype to use for session
+Non-formal specification.  Unclear on the etype to use for session
 keys (etype in request or database?).  Unclear on how to populate some
 ``evident'' fields (e.g., cname in tickets for AS-REQ).  Unclear error
 code semantics (e.g., logic for when to use S_PRINCIPAL_UNKNOWN
 absent).
-@end verbatim
+
+RFC 1510/1510bis incompatibilities.  NULL enctype removed.
 
 @node Protocol Extensions
 @appendix Protocol Extensions
