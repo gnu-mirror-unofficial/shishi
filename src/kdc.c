@@ -351,6 +351,14 @@ asreq1 (Shishi_as * as)
   if (shishi_kdcreq_allow_postdate_p (handle, shishi_as_req (as)))
     shishi_tkt_flags_add (tkt, SHISHI_TICKETFLAGS_MAY_POSTDATE);
 
+  if (shishi_kdcreq_postdated_p (handle, shishi_as_req (as)))
+    {
+      /* XXX policy check from time. */
+      shishi_tkt_flags_add (tkt, SHISHI_TICKETFLAGS_POSTDATED);
+      shishi_tkt_flags_add (tkt, SHISHI_TICKETFLAGS_INVALID);
+      /* XXX set starttime to from */
+    }
+
   if (shishi_kdcreq_proxiable_p (handle, shishi_as_req (as)))
     shishi_tkt_flags_add (tkt, SHISHI_TICKETFLAGS_PROXIABLE);
 
@@ -511,10 +519,21 @@ tgsreq1 (Shishi_tgs * tgs)
   syslog (LOG_DEBUG, "TGS-REQ uses ticket granter %s@%s", tgname, tgrealm);
 
   rc = shisa_principal_find (dbh, tgrealm, tgname, &krbtgt);
-  if (rc != SHISA_OK)
+  if (rc != SHISA_OK && rc != SHISA_NO_PRINCIPAL)
     {
       syslog (LOG_ERR, "shisa_principal_find(%s@%s) failed (%d): %s",
 	      tgname, tgrealm, rc, shisa_strerror (rc));
+      rc = SHISHI_INVALID_PRINCIPAL_NAME;
+      goto fatal;
+    }
+  if (rc == SHISA_NO_PRINCIPAL)
+    {
+      syslog (LOG_NOTICE, "TGS-REQ using %s@%s failed: no such tgt",
+	      tgname, tgrealm);
+      rc = shishi_krberror_errorcode_set (handle, shishi_tgs_krberror (tgs),
+					  SHISHI_KRB_AP_ERR_NOT_US);
+      if (rc != SHISHI_OK)
+	goto fatal;
       rc = SHISHI_INVALID_PRINCIPAL_NAME;
       goto fatal;
     }
