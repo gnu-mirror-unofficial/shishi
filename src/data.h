@@ -109,6 +109,13 @@ extern int h_errno;
 #include <netinet/in6.h>
 #endif
 
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
+
+#include <gettext.h>
+#include <shishi.h>
+
 #define _(String) gettext (String)
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
