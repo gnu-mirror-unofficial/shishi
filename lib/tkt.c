@@ -1033,12 +1033,13 @@ shishi_tkt_keytype_p (Shishi_tkt * tkt, int32_t etype)
 
 int
 shishi_tkt_lastreq (Shishi_tkt * tkt,
-		    char *lrtime, size_t * lrtimelen, int lrtype)
+		    char **lrtime, size_t * lrtimelen,
+		    int32_t lrtype)
 {
   char *format;
-  int tmplrtype;
+  int32_t tmplrtype;
+  size_t i, n;
   int res;
-  int i, n;
 
   res = shishi_asn1_number_of_elements (tkt->handle, tkt->enckdcreppart,
 					"last-req", &n);
@@ -1048,20 +1049,20 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
   for (i = 1; i <= n; i++)
     {
       asprintf (&format, "last-req.?%d.lr-type", i);
-      res = shishi_asn1_read_integer (tkt->handle, tkt->enckdcreppart,
-				      format, &tmplrtype);
+      res = shishi_asn1_read_int32 (tkt->handle, tkt->enckdcreppart,
+				    format, &tmplrtype);
       free (format);
       if (res != SHISHI_OK)
-	return SHISHI_ASN1_ERROR;
+	return res;
 
       if (lrtype == tmplrtype)
 	{
 	  asprintf (&format, "last-req.?%d.lr-value", i);
-	  res = shishi_asn1_read (tkt->handle, tkt->enckdcreppart,
-				  format, lrtime, lrtimelen);
+	  res = shishi_asn1_read2 (tkt->handle, tkt->enckdcreppart,
+				   format, lrtime, lrtimelen);
 	  free (format);
 	  if (res != SHISHI_OK)
-	    return SHISHI_ASN1_ERROR;
+	    return res;
 
 	  return SHISHI_OK;
 	}
@@ -1085,29 +1086,28 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
 time_t
 shishi_tkt_lastreqc (Shishi_tkt * tkt, Shishi_lrtype lrtype)
 {
-  char lrtime[GENERALIZEDTIME_TIME_LEN + 1];
+  char *lrtime;
   size_t lrtimelen;
-  time_t t;
+  time_t t = (time_t) -1;
   int res;
 
-  lrtimelen = sizeof (lrtime);
-  res = shishi_tkt_lastreq (tkt, lrtime, &lrtimelen, lrtype);
+  res = shishi_tkt_lastreq (tkt, &lrtime, &lrtimelen, lrtype);
   if (res != SHISHI_OK)
-    return (time_t) - 1;
+    return t;
 
-  lrtime[GENERALIZEDTIME_TIME_LEN] = '\0';
+  if (lrtimelen == GENERALIZEDTIME_TIME_LEN)
+    t = shishi_generalize_ctime (tkt->handle, lrtime);
 
-  t = shishi_generalize_ctime (tkt->handle, lrtime);
+  free (lrtime);
 
   return t;
 }
 
-
 int
-shishi_tkt_authtime (Shishi_tkt * tkt, char *authtime, size_t * authtimelen)
+shishi_tkt_authtime (Shishi_tkt * tkt, char **authtime, size_t * authtimelen)
 {
-  return shishi_asn1_read (tkt->handle, tkt->enckdcreppart, "authtime",
-			   authtime, authtimelen);
+  return shishi_asn1_read2 (tkt->handle, tkt->enckdcreppart, "authtime",
+			    authtime, authtimelen);
 }
 
 /**
@@ -1123,29 +1123,30 @@ shishi_tkt_authtime (Shishi_tkt * tkt, char *authtime, size_t * authtimelen)
 time_t
 shishi_tkt_authctime (Shishi_tkt * tkt)
 {
-  char authtime[GENERALIZEDTIME_TIME_LEN + 1];
+  char *authtime;
   size_t authtimelen;
-  time_t t;
+  time_t t = (time_t) -1;
   int res;
 
-  authtimelen = sizeof (authtime);
-  res = shishi_tkt_authtime (tkt, authtime, &authtimelen);
+  res = shishi_tkt_authtime (tkt, &authtime, &authtimelen);
   if (res != SHISHI_OK)
-    return (time_t) - 1;
+    return t;
 
-  authtime[GENERALIZEDTIME_TIME_LEN] = '\0';
+  if (authtimelen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+    t = shishi_generalize_ctime (tkt->handle, authtime);
 
-  t = shishi_generalize_ctime (tkt->handle, authtime);
+  free (authtime);
 
   return t;
 }
 
 int
-shishi_tkt_starttime (Shishi_tkt * tkt, char *starttime,
+shishi_tkt_starttime (Shishi_tkt * tkt,
+		      char **starttime,
 		      size_t * starttimelen)
 {
-  return shishi_asn1_read_optional (tkt->handle, tkt->enckdcreppart,
-				    "starttime", starttime, starttimelen);
+  return shishi_asn1_read2_optional (tkt->handle, tkt->enckdcreppart,
+				     "starttime", starttime, starttimelen);
 }
 
 /**
@@ -1161,28 +1162,28 @@ shishi_tkt_starttime (Shishi_tkt * tkt, char *starttime,
 time_t
 shishi_tkt_startctime (Shishi_tkt * tkt)
 {
-  char starttime[GENERALIZEDTIME_TIME_LEN + 1];
-  int starttimelen;
-  time_t t;
+  char *starttime;
+  size_t starttimelen;
+  time_t t = (time_t) -1;
   int res;
 
-  starttimelen = sizeof (starttime);
-  res = shishi_tkt_starttime (tkt, starttime, &starttimelen);
+  res = shishi_tkt_starttime (tkt, &starttime, &starttimelen);
   if (res != SHISHI_OK || starttimelen == 0)
-    return (time_t) - 1;
+    return t;
 
-  starttime[GENERALIZEDTIME_TIME_LEN] = '\0';
+  if (starttimelen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+    t = shishi_generalize_ctime (tkt->handle, starttime);
 
-  t = shishi_generalize_ctime (tkt->handle, starttime);
+  free (starttime);
 
   return t;
 }
 
 int
-shishi_tkt_endtime (Shishi_tkt * tkt, char *endtime, size_t * endtimelen)
+shishi_tkt_endtime (Shishi_tkt * tkt, char **endtime, size_t * endtimelen)
 {
-  return shishi_asn1_read (tkt->handle, tkt->enckdcreppart, "endtime",
-			   endtime, endtimelen);
+  return shishi_asn1_read2 (tkt->handle, tkt->enckdcreppart, "endtime",
+			    endtime, endtimelen);
 }
 
 /**
@@ -1197,29 +1198,30 @@ shishi_tkt_endtime (Shishi_tkt * tkt, char *endtime, size_t * endtimelen)
 time_t
 shishi_tkt_endctime (Shishi_tkt * tkt)
 {
-  char endtime[GENERALIZEDTIME_TIME_LEN + 1];
+  char *endtime;
   size_t endtimelen;
-  time_t t;
+  time_t t = (time_t) -1;
   int res;
 
-  endtimelen = sizeof (endtime);
-  res = shishi_tkt_endtime (tkt, endtime, &endtimelen);
+  res = shishi_tkt_endtime (tkt, &endtime, &endtimelen);
   if (res != SHISHI_OK)
-    return (time_t) - 1;
+    return t;
 
-  endtime[GENERALIZEDTIME_TIME_LEN] = '\0';
+  if (endtimelen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+    t = shishi_generalize_ctime (tkt->handle, endtime);
 
-  t = shishi_generalize_ctime (tkt->handle, endtime);
+  free (endtime);
 
   return t;
 }
 
 int
-shishi_tkt_renew_till (Shishi_tkt * tkt, char *renewtill,
+shishi_tkt_renew_till (Shishi_tkt * tkt,
+		       char **renewtill,
 		       size_t * renewtilllen)
 {
-  return shishi_asn1_read_optional (tkt->handle, tkt->enckdcreppart,
-				    "renew-till", renewtill, renewtilllen);
+  return shishi_asn1_read2_optional (tkt->handle, tkt->enckdcreppart,
+				     "renew-till", renewtill, renewtilllen);
 }
 
 /**
@@ -1234,19 +1236,19 @@ shishi_tkt_renew_till (Shishi_tkt * tkt, char *renewtill,
 time_t
 shishi_tkt_renew_tillc (Shishi_tkt * tkt)
 {
-  char renewtill[GENERALIZEDTIME_TIME_LEN + 1];
+  char *renewtill;
   size_t renewtilllen;
-  time_t t;
+  time_t t = (time_t) -1;
   int res;
 
-  renewtilllen = sizeof (renewtill);
-  res = shishi_tkt_renew_till (tkt, renewtill, &renewtilllen);
+  res = shishi_tkt_renew_till (tkt, &renewtill, &renewtilllen);
   if (res != SHISHI_OK || renewtilllen == 0)
-    return (time_t) - 1;
+    return t;
 
-  renewtill[GENERALIZEDTIME_TIME_LEN] = '\0';
+  if (renewtilllen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+    t = shishi_generalize_ctime (tkt->handle, renewtill);
 
-  t = shishi_generalize_ctime (tkt->handle, renewtill);
+  free (renewtill);
 
   return t;
 }

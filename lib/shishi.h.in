@@ -727,20 +727,21 @@ extern int shishi_tkt_serverrealm_set (Shishi_tkt * tkt,
 				       char *realm, char *server);
 extern int shishi_tkt_build (Shishi_tkt * tkt, Shishi_key * key);
 extern int shishi_tkt_lastreq (Shishi_tkt * tkt,
-			       char *lrtime, size_t * lrtimelen, int lrtype);
+			       char **lrtime, size_t * lrtimelen,
+			       int32_t lrtype);
 extern time_t shishi_tkt_lastreqc (Shishi_tkt * tkt, Shishi_lrtype lrtype);
 extern void shishi_tkt_lastreq_pretty_print (Shishi_tkt * tkt, FILE * fh);
 extern int shishi_tkt_authtime (Shishi_tkt * tkt,
-				char *authtime, size_t * authtimelen);
+				char **authtime, size_t * authtimelen);
 extern time_t shishi_tkt_authctime (Shishi_tkt * tkt);
 extern int shishi_tkt_starttime (Shishi_tkt * tkt,
-				 char *starttime, size_t * starttimelen);
+				 char **starttime, size_t * starttimelen);
 extern time_t shishi_tkt_startctime (Shishi_tkt * tkt);
 extern int shishi_tkt_endtime (Shishi_tkt * tkt,
-			       char *endtime, size_t * endtimelen);
+			       char **endtime, size_t * endtimelen);
 extern time_t shishi_tkt_endctime (Shishi_tkt * tkt);
 extern int shishi_tkt_renew_till (Shishi_tkt * tkt,
-				  char *renewtilltime, size_t * renewtilllen);
+				  char **renewtilltime, size_t * renewtilllen);
 extern time_t shishi_tkt_renew_tillc (Shishi_tkt * tkt);
 extern int shishi_tkt_keytype (Shishi_tkt * tkt, int32_t * etype);
 extern int32_t shishi_tkt_keytype_fast (Shishi_tkt * tkt);
@@ -756,9 +757,9 @@ extern int shishi_tkt_valid_now_p (Shishi_tkt * tkt);
 extern int shishi_tkt_expired_p (Shishi_tkt * tkt);
 extern int shishi_tkt_decrypt (Shishi_tkt * tkt, Shishi_key * key);
 extern void shishi_tkt_done (Shishi_tkt * tkt);
-extern int shishi_tkt_flags (Shishi_tkt * tkt, int *flags);
-extern int shishi_tkt_flags_set (Shishi_tkt * tkt, int flags);
-extern int shishi_tkt_flags_add (Shishi_tkt * tkt, int flag);
+extern int shishi_tkt_flags (Shishi_tkt * tkt, uint32_t *flags);
+extern int shishi_tkt_flags_set (Shishi_tkt * tkt, uint32_t flags);
+extern int shishi_tkt_flags_add (Shishi_tkt * tkt, uint32_t flag);
 extern int shishi_tkt_forwardable_p (Shishi_tkt * tkt);
 extern int shishi_tkt_forwarded_p (Shishi_tkt * tkt);
 extern int shishi_tkt_proxiable_p (Shishi_tkt * tkt);
