@@ -26,6 +26,8 @@
 
 #include "getsubopt.h"
 
+#define KDC_SERVICE_PORT "\x6b\x65\x72\x62\x65\x72\x6f\x73"
+
 enum
 {
   DEFAULT_REALM_OPTION = 0,
@@ -315,7 +317,7 @@ shishi_cfg (Shishi * handle, char *option)
 		memcpy (&sinaddr->sin_addr, he->h_addr_list[0], he->h_length);
 		if (port == -1)
 		  {
-		    se = getservbyname ("kerberos", NULL);
+		    se = getservbyname (KDC_SERVICE_PORT, NULL);
 		    if (se)
 		      sinaddr->sin_port = se->s_port;
 		    else
