@@ -12,7 +12,7 @@ implementations.
 ** Authenticator subkeys are supported, and is used by default in AP/TGS.
 Some KDCs does not understand subkeys in TGS requests, and use the
 session key instead.  Shishi detect and work around this problem but
-issues a warning.
+prints a warning.
 
 ** Simplistic key distribution center (KDC) is working.
 See the Administration Manual for a walk through on how to get it up
