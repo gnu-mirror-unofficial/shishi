@@ -212,6 +212,20 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	arguments->outputtype == SHISHI_FILETYPE_BINARY;
       break;
 
+    case OPTION_CRYPTO_READ_KEY_FILE:
+      if (arguments->command != COMMAND_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->readkeyfile = strdup(arg);
+      break;
+
+    case OPTION_CRYPTO_WRITE_KEY_FILE:
+      if (arguments->command != COMMAND_CRYPTO)
+	argp_error (state, _("Option `%s' only valid with CRYPTO."),
+		    state->argv[state->next - 1]);
+      arguments->writekeyfile = strdup(arg);
+      break;
+
       /* Authenticator */
 
     case OPTION_AP_AUTHENTICATOR_READ_FILE:
