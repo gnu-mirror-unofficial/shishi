@@ -349,19 +349,22 @@ shishi_authenticator_client_set (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_authenticator_ctime:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: Authenticator as allocated by shishi_authenticator().
+ * @ctime: newly allocated zero-terminated character array with client time.
+ *
+ * Extract client time from Authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_authenticator_ctime_get (Shishi * handle,
-				Shishi_asn1 authenticator, char *ctime)
+shishi_authenticator_ctime (Shishi * handle,
+			    Shishi_asn1 authenticator,
+			    char **ctime)
 {
-  int len;
-  int res;
-
-  len = GENERALIZEDTIME_TIME_LEN + 1;
-  res = shishi_asn1_read (handle, authenticator, "ctime", ctime, &len);
-  if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
-    ctime[len] = '\0';
-
-  return res;
+  return shishi_time (handle, authenticator, "ctime", ctime);
 }
 
 /**
