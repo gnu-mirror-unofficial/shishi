@@ -1,7 +1,6 @@
 Makefile
 Makefile.in
-*inetutils.info*
+gcrypt.info*
 stamp-vti
+version.sgml
 version.texi
-mdate-sh
-texinfo.tex

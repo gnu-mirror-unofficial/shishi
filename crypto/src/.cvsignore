@@ -1,0 +1,16 @@
+.deps
+.libs
+Makefile
+Makefile.in
+ath-pthread.lo
+ath.lo
+benchmark
+global.lo
+libgcrypt-config
+libgcrypt.la
+misc.lo
+missing-string.lo
+secmem.lo
+sexp.lo
+stdmem.lo
+testapi
