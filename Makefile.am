@@ -45,6 +45,7 @@ pkgdata_DATA = shishi.skel
 
 indent:
 	(cd lib && make indent)
+	(cd db && make indent)
 	(cd src && make indent)
 	(cd tests && make indent)
 
