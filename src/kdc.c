@@ -492,7 +492,7 @@ tgsreq1 (Shishi_tgs * tgs)
       goto fatal;
     }
 
-  /* We need to decrypt the ticket granting ticket, get key. */
+  syslog (LOG_DEBUG, "TGS-REQ uses ticket granter %s@%s", tgname, tgrealm);
 
   rc = shisa_keys_find (dbh, tgrealm, tgname, NULL, &tgkeys, &ntgkeys);
   if (rc != SHISA_OK)
@@ -514,8 +514,6 @@ tgsreq1 (Shishi_tgs * tgs)
       goto fatal;
     }
 
-  /* Decrypt incoming ticket with our key, and decrypt authenticator
-     using key stored in ticket. */
   rc = shishi_ap_req_process_keyusage
     (shishi_tgs_ap (tgs), tgkey, SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
   if (rc != SHISHI_OK)
@@ -589,8 +587,6 @@ tgsreq1 (Shishi_tgs * tgs)
    * requested by the client.
    */
 
-  /* Find the server, e.g., host/latte.josefsson.org@JOSEFSSON.ORG. */
-
   rc = shishi_kdcreq_realm (handle, shishi_tgs_req (tgs), &serverrealm, NULL);
   if (rc != SHISHI_OK)
     {
@@ -598,6 +594,8 @@ tgsreq1 (Shishi_tgs * tgs)
 	      rc, shishi_strerror (rc));
       goto fatal;
     }
+
+  /* XXX Do cross-realm handling. */
 
   rc = shishi_kdcreq_server (handle, shishi_tgs_req (tgs), &servername, NULL);
   if (rc != SHISHI_OK)
