@@ -23,7 +23,9 @@ EXTRA_DIST = utils.c
 TESTS = authenticator crypto gztime priv safe ticketset
 
 INCLUDES = -I$(top_srcdir)/lib -I../lib
-LDADD =  @LTLIBINTL@ ../lib/libshishi.la
+LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
+	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
+	-L../lib -lshishi
 
 check_PROGRAMS = $(TESTS)
 

@@ -18,12 +18,13 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-LDADD = @LTLIBINTL@ ../lib/libshishi.la -L../gl -lfoo
+INCLUDES = -I$(top_srcdir)/gl -I../lib
+LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
+	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
+	-L../lib -lshishi
 
 noinst_PROGRAMS = client client-cksum client-safe client-priv \
 	server
-
-INCLUDES = -I$(top_srcdir)/gl -I../lib
 
 indent:
 	indent $(SOURCES)
