@@ -28,7 +28,6 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DDMALLOC_FUNC_CHECK \
 	@DEFS@
 
-shishi_int = shishi-int.h
 BUILT_SOURCES = shishi-int.h kerberos5.c
 DISTCLEANFILES = shishi-int.h
 MAINTAINERCLEANFILES = kerberos5.c
@@ -45,7 +44,7 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	safe.c priv.c \
 	ticket.c encticketpart.c tkt.c tkts.c \
 	netio.c key.c keys.c hostkeys.c crypto.c crypto.h \
-	asn1.c kerberos5.asn1 \
+	asn1.c kerberos5.asn1 kerberos5.c \
 	version.c password.c \
 	utils.c resolv.c
 if NULL
