@@ -240,40 +240,64 @@ _shishi_simplified_dencrypt (Shishi * handle,
 			     char **out, size_t * outlen, int decryptp)
 {
   int rc;
+  char *pt;
+  size_t ptlen;
+  size_t padzerolen = 0;
 
-  if (outlen)
-    *outlen = inlen;
+  if ((inlen % 8) != 0)
+    while (((inlen + padzerolen) % 8) != 0)
+      padzerolen++;
+
+  ptlen = inlen + padzerolen;
+
+  if (padzerolen)
+    {
+      pt = xmalloc (ptlen);
+      memcpy (pt, in, inlen);
+      memset (pt + inlen, 0, padzerolen);
+    }
+  else
+    pt = in;
 
   switch (shishi_key_type (key))
     {
     case SHISHI_DES_CBC_CRC:
     case SHISHI_DES_CBC_MD4:
     case SHISHI_DES_CBC_MD5:
+      rc = shishi_des (handle, decryptp, shishi_key_value (key),
+		       iv, ivout, pt, ptlen, out);
       if (ivoutlen)
 	*ivoutlen = 8;
-      rc = shishi_des (handle, decryptp, shishi_key_value (key),
-		       iv, ivout, in, inlen, out);
+      if (outlen)
+	*outlen = ptlen;
       break;
 
     case SHISHI_DES3_CBC_HMAC_SHA1_KD:
+      rc = shishi_3des (handle, decryptp, shishi_key_value (key),
+			iv, ivout, pt, inlen + padzerolen, out);
       if (ivoutlen)
 	*ivoutlen = 8;
-      rc = shishi_3des (handle, decryptp, shishi_key_value (key),
-			iv, ivout, in, inlen, out);
+      if (outlen)
+	*outlen = ptlen;
       break;
 
     case SHISHI_AES128_CTS_HMAC_SHA1_96:
     case SHISHI_AES256_CTS_HMAC_SHA1_96:
-      if (ivoutlen)
-	*ivoutlen = 16;
       rc = shishi_aes_cts (handle, decryptp,
 			   shishi_key_value (key), shishi_key_length (key),
 			   iv, ivout, in, inlen, out);
+      if (ivoutlen)
+	*ivoutlen = 16;
+      if (outlen)
+	*outlen = inlen;
       break;
 
     default:
       rc = SHISHI_CRYPTO_ERROR;
     }
+
+  if (padzerolen)
+    free (pt);
 
   return rc;
 }
