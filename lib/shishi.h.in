@@ -823,13 +823,15 @@ extern int shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 			      const char *data, size_t datalen);
 extern int shishi_asn1_field (Shishi * handle,
 			      Shishi_asn1 node,
-			      char *data, size_t * datalen, char *field);
+			      char *data, size_t * datalen,
+			      const char *field);
 extern int shishi_asn1_optional_field (Shishi * handle,
 				       Shishi_asn1 node,
 				       char *data, size_t * datalen,
-				       char *field);
+				       const char *field);
 extern int shishi_asn1_integer_field (Shishi * handle,
-				      Shishi_asn1 node, int *i, char *field);
+				      Shishi_asn1 node, int *i,
+				      const char *field);
 extern Shishi_asn1 shishi_asn1_asreq (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asrep (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_tgsreq (Shishi * handle);

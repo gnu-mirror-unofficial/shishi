@@ -314,7 +314,8 @@ shishi_kdcrep_cname_set (Shishi * handle,
   i = 1;
   while (cname[i - 1])
     {
-      res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-string", "NEW", 1);
+      res = shishi_asn1_write (handle, kdcrep, "KDC-REP.cname.name-string",
+			       "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
@@ -502,7 +503,8 @@ shishi_kdcrep_get_ticket (Shishi * handle,
     goto error;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
-    res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.kvno", NULL, 0);
+    res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.kvno",
+			     NULL, 0);
   else
     res = shishi_asn1_write (handle, *ticket, "Ticket.enc-part.kvno",
 			     buf, buflen);
@@ -791,15 +793,18 @@ shishi_kdcrep_decrypt (Shishi * handle,
       if (VERBOSEASN1 (handle))
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
-      *enckdcreppart = shishi_d2a_encasreppart (handle, &buf[0], buflen - i);
+      *enckdcreppart = shishi_der2asn1_encasreppart (handle, &buf[0],
+						     buflen - i);
       if (*enckdcreppart != NULL)
 	break;
 
-      *enckdcreppart = shishi_d2a_enctgsreppart (handle, &buf[0], buflen - i);
+      *enckdcreppart = shishi_der2asn1_enctgsreppart (handle, &buf[0],
+						      buflen - i);
       if (*enckdcreppart != NULL)
 	break;
 
-      *enckdcreppart = shishi_d2a_enckdcreppart (handle, &buf[0], buflen - i);
+      *enckdcreppart = shishi_der2asn1_enckdcreppart (handle, &buf[0],
+						      buflen - i);
       if (*enckdcreppart != NULL)
 	break;
     }
