@@ -273,6 +273,12 @@ kdc_loop (void)
   signal (SIGINT, ctrlc);
   signal (SIGTERM, ctrlc);
 
+#ifdef USE_STARTTLS
+  syslog (LOG_DEBUG, "Starting (GNUTLS `%s')", gnutls_check_version (NULL));
+#else
+  syslog (LOG_DEBUG, "Starting (no TLS)");
+#endif
+
   while (!quit)
     {
       do
@@ -314,4 +320,6 @@ kdc_loop (void)
 	      }
 	  }
     }
+
+  syslog (LOG_DEBUG, "Shutting down");
 }
