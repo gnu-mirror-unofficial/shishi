@@ -164,6 +164,9 @@ enum
   OPTION_RENEW,
   OPTION_RENEWABLE,
   OPTION_PROXIABLE,
+  OPTION_PROXY,
+  OPTION_FORWARDABLE,
+  OPTION_FORWARDED,
   OPTION_STARTTIME,
   OPTION_ENDTIME,
   OPTION_RENEW_TILL,
@@ -200,6 +203,9 @@ struct arguments
   char *servername;
   int renewable;
   int proxiable;
+  int proxy;
+  int forwardable;
+  int forwarded;
   time_t starttime;
   char *endtime_str;
   time_t endtime;
@@ -626,8 +632,20 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->endtime_str = strdup (arg);
       break;
 
+    case OPTION_FORWARDABLE:
+      arguments->forwardable = 1;
+      break;
+
+    case OPTION_FORWARDED:
+      arguments->forwarded = 1;
+      break;
+
     case OPTION_PROXIABLE:
       arguments->proxiable = 1;
+      break;
+
+    case OPTION_PROXY:
+      arguments->proxy = 1;
       break;
 
     case OPTION_REALM:
@@ -724,12 +742,24 @@ static struct argp_option options[] = {
    "such as \"2001-02-03 04:05:06 CET\". The default is 8 hours after "
    "the start time.", 0},
 
+  {"forwardable", OPTION_FORWARDABLE, 0, 0,
+   "Get a forwardable ticket.  Only valid for initial authentication, or "
+   "when the ticket-granting ticket is forwardable.", 0},
+
+  {"forwarded", OPTION_FORWARDED, 0, 0,
+   "Get a forwarded ticket.  Only valid when the ticket-granting ticket is "
+   "forwardable.", 0},
+
   {"list", 'l', 0, 0,
    "List tickets in local cache, subject to --server-name limiting.", 0},
 
   {"proxiable", OPTION_PROXIABLE, 0, 0,
    "Get a proxiable ticket.  Only valid for initial authentication, or when "
    "the ticket-granting ticket is proxiable.", 0},
+
+  {"proxy", OPTION_PROXY, 0, 0,
+   "Get a proxy ticket.  Only valid when the ticket-granting ticket is "
+   "proxiable.", 0},
 
   {"renew", 'R', 0, 0,
    "Renew ticket.  Use --server-name to specify ticket, default is the "
@@ -1155,6 +1185,12 @@ main (int argc, char *argv[])
 	  hint.tktflags |= SHISHI_TICKETFLAGS_RENEWABLE;
 	if (arg.proxiable)
 	  hint.tktflags |= SHISHI_TICKETFLAGS_PROXIABLE;
+	if (arg.proxy)
+	  hint.tktflags |= SHISHI_TICKETFLAGS_PROXY;
+	if (arg.forwardable)
+	  hint.tktflags |= SHISHI_TICKETFLAGS_FORWARDABLE;
+	if (arg.forwarded)
+	  hint.tktflags |= SHISHI_TICKETFLAGS_FORWARDED;
 
 	tkt = shishi_tkts_get (shishi_tkts_default (handle), &hint);
 	if (!tkt)
