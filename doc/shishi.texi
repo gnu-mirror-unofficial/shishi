@@ -192,8 +192,6 @@ know so work duplication can be avoided.
 
 @itemize @bullet
 
-@item Telnet client causes Heimdal telnetd to crash. (Update: now it doesn't crash, but telnetd complains ``Read req failed: Decrypt integrity check failed''.  MIT telnetd works though.)
-
 @item Cross-realm support (week).
 
 @item Session keys in AP (week).
