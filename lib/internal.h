@@ -83,6 +83,8 @@ extern int h_errno;
 #include <signal.h>
 #endif
 
+#include "setenv.h"
+
 #include "libtasn1.h"
 
 #include "gettext.h"

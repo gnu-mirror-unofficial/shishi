@@ -1,23 +1,54 @@
-/* Copyright (C) 1992,95,96,97,98,99,2000,2001 Free Software Foundation, Inc.
+/* Copyright (C) 1992,1995-1999,2000-2002 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
+   modify it under the terms of the GNU Library General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
 
    The GNU C Library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+   Library General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA.  */
+   You should have received a copy of the GNU Library General Public
+   License along with the GNU C Library; see the file COPYING.LIB.  If not,
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.  */
 
 #if HAVE_CONFIG_H
 # include <config.h>
+#endif
+
+#ifdef __GNUC__
+# ifndef alloca
+#  define alloca __builtin_alloca
+# endif
+#else
+# ifdef _MSC_VER
+#  include <malloc.h>
+#  define alloca _alloca
+# else
+#  if HAVE_ALLOCA_H
+#   include <alloca.h>
+#  else
+#   ifdef _AIX
+ #pragma alloca
+#   else
+#    ifdef __hpux /* This section must match that of bison generated files. */
+#     ifdef __cplusplus
+extern "C" void *alloca (unsigned int);
+#     else /* not __cplusplus */
+void *alloca ();
+#     endif /* not __cplusplus */
+#    else /* not __hpux */
+#     ifndef alloca
+char *alloca ();
+#     endif
+#    endif /* __hpux */
+#   endif
+#  endif
+# endif
 #endif
 
 #include <errno.h>
@@ -59,7 +90,6 @@ __libc_lock_define_initialized (static, envlock)
 /* In the GNU C library we must keep the namespace clean.  */
 #ifdef _LIBC
 # define setenv __setenv
-# define unsetenv __unsetenv
 # define clearenv __clearenv
 # define tfind __tfind
 # define tsearch __tsearch
@@ -73,6 +103,7 @@ __libc_lock_define_initialized (static, envlock)
 		      && defined __GNUC__)
 # define USE_TSEARCH	1
 # include <search.h>
+typedef int (*compar_fn_t) (const void *, const void *);
 
 /* This is a pointer to the root of the search tree with the known
    values.  */
@@ -80,11 +111,11 @@ static void *known_values;
 
 # define KNOWN_VALUE(Str) \
   ({									      \
-    void *value = tfind (Str, &known_values, (__compar_fn_t) strcmp);	      \
+    void *value = tfind (Str, &known_values, (compar_fn_t) strcmp);	      \
     value != NULL ? *(char **) value : NULL;				      \
   })
 # define STORE_VALUE(Str) \
-  tsearch (Str, &known_values, (__compar_fn_t) strcmp)
+  tsearch (Str, &known_values, (compar_fn_t) strcmp)
 
 #else
 # undef USE_TSEARCH
@@ -107,11 +138,8 @@ static char **last_environ;
    to reuse values once generated for a `setenv' call since we can never
    free the strings.  */
 int
-__add_to_environ (name, value, combined, replace)
-     const char *name;
-     const char *value;
-     const char *combined;
-     int replace;
+__add_to_environ (const char *name, const char *value, const char *combined,
+		  int replace)
 {
   register char **ep;
   register size_t size;
@@ -142,8 +170,10 @@ __add_to_environ (name, value, combined, replace)
 #endif
 
       /* We allocated this space; we can extend it.  */
-      new_environ = (char **) realloc (last_environ,
-				       (size + 2) * sizeof (char *));
+      new_environ =
+	(char **) (last_environ == NULL
+		   ? malloc ((size + 2) * sizeof (char *))
+		   : realloc (last_environ, (size + 2) * sizeof (char *)));
       if (new_environ == NULL)
 	{
 	  UNLOCK;
@@ -255,49 +285,9 @@ __add_to_environ (name, value, combined, replace)
 }
 
 int
-setenv (name, value, replace)
-     const char *name;
-     const char *value;
-     int replace;
+setenv (const char *name, const char *value, int replace)
 {
   return __add_to_environ (name, value, NULL, replace);
-}
-
-int
-unsetenv (name)
-     const char *name;
-{
-  size_t len;
-  char **ep;
-
-  if (name == NULL || *name == '\0' || strchr (name, '=') != NULL)
-    {
-      __set_errno (EINVAL);
-      return -1;
-    }
-
-  len = strlen (name);
-
-  LOCK;
-
-  ep = __environ;
-  while (*ep != NULL)
-    if (!strncmp (*ep, name, len) && (*ep)[len] == '=')
-      {
-	/* Found it.  Remove this pointer by moving later ones back.  */
-	char **dp = ep;
-
-	do
-	  dp[0] = dp[1];
-	while (*dp++);
-	/* Continue the loop in case NAME appears again.  */
-      }
-    else
-      ++ep;
-
-  UNLOCK;
-
-  return 0;
 }
 
 /* The `clearenv' was planned to be added to POSIX.1 but probably
@@ -322,8 +312,10 @@ clearenv ()
 
   return 0;
 }
+
 #ifdef _LIBC
-libc_freeres_fn (free_mem)
+static void
+free_mem (void)
 {
   /* Remove all traces.  */
   clearenv ();
@@ -332,11 +324,11 @@ libc_freeres_fn (free_mem)
   __tdestroy (known_values, free);
   known_values = NULL;
 }
+text_set_element (__libc_subfreeres, free_mem);
+
 
 # undef setenv
-# undef unsetenv
 # undef clearenv
 weak_alias (__setenv, setenv)
-weak_alias (__unsetenv, unsetenv)
 weak_alias (__clearenv, clearenv)
 #endif
