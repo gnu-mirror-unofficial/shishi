@@ -1,7 +1,7 @@
  -- - This is Appendix A from RFC1510bis with some cosmetic changes
  -- - done in order to make it parse with the buggy libtasn1 parser.
  
-Kerberos5 {
+KerberosV5Spec2 {
         iso(1) identified-organization(3) dod(6) internet(1)
         security(5) kerberosV5(2) modules(4) krb5spec2(2)
 } DEFINITIONS EXPLICIT TAGS ::= BEGIN
@@ -19,16 +19,16 @@ id-krb5         OBJECT IDENTIFIER ::= {
         security(5) kerberosV5(2)
 }
 
-Int32           ::= INTEGER -- (-2147483648..2147483647)
+Int32           ::= INTEGER
                     -- signed values representable in 32 bits
 
-UInt32          ::= INTEGER -- (0..4294967295)
+UInt32          ::= INTEGER
                     -- unsigned 32 bit values
 
-Microseconds    ::= INTEGER -- (0..999999)
+Microseconds    ::= INTEGER
                     -- microseconds
 
-KerberosString  ::= GeneralString -- (IA5String)
+KerberosString  ::= GeneralString
 
 Realm           ::= KerberosString
 
@@ -63,7 +63,7 @@ PA-DATA         ::= SEQUENCE {
         padata-value    [2] OCTET STRING -- might be encoded AP-REQ
 }
 
-KerberosFlags   ::= BIT STRING -- (SIZE (32..MAX)) minimum number of bits
+KerberosFlags   ::= BIT STRING -- minimum number of bits
                     -- shall be sent, but no fewer than 32
 
 EncryptedData   ::= SEQUENCE {
@@ -83,7 +83,7 @@ Checksum        ::= SEQUENCE {
 }
 
 Ticket          ::= [APPLICATION 1] SEQUENCE {
-        tkt-vno         [0] INTEGER, -- (5) --
+        tkt-vno         [0] INTEGER,
         realm           [1] Realm,
         sname           [2] PrincipalName,
         enc-part        [3] EncryptedData -- EncTicketPart
@@ -133,8 +133,8 @@ TGS-REQ         ::= [APPLICATION 12] KDC-REQ
 
 KDC-REQ         ::= SEQUENCE {
         -- NOTE: first tag is [1], not [0]
-        pvno            [1] INTEGER, -- (5) --
-        msg-type        [2] INTEGER, -- (10 - - AS - - | 12 - - TGS - -) --
+        pvno            [1] INTEGER,
+        msg-type        [2] INTEGER,
         padata          [3] SEQUENCE OF PA-DATA OPTIONAL,
                             -- NOTE: not empty --
         req-body        [4] KDC-REQ-BODY
@@ -172,7 +172,7 @@ KDCOptions      ::= KerberosFlags
         -- renewable(8),
         -- unused9(9),
         -- unused10(10),
-        -- unused11(11),
+        -- opt-hardware-auth(11),
         -- unused12(12),
         -- unused13(13),
 -- 15 is reserved for canonicalize
@@ -190,8 +190,8 @@ AS-REP          ::= [APPLICATION 11] KDC-REP
 TGS-REP         ::= [APPLICATION 13] KDC-REP
 
 KDC-REP         ::= SEQUENCE {
-        pvno            [0] INTEGER, -- (5), --
-        msg-type        [1] INTEGER, -- (11 - - AS - - | 13 - - TGS - -), --
+        pvno            [0] INTEGER,
+        msg-type        [1] INTEGER,
         padata          [2] SEQUENCE OF PA-DATA OPTIONAL,
                                 -- NOTE: not empty --
         crealm          [3] Realm,
@@ -227,8 +227,8 @@ LastReq         ::=     SEQUENCE OF SEQUENCE {
 }
 
 AP-REQ          ::= [APPLICATION 14] SEQUENCE {
-        pvno            [0] INTEGER, -- (5), --
-        msg-type        [1] INTEGER, -- (14), --
+        pvno            [0] INTEGER,
+        msg-type        [1] INTEGER,
         ap-options      [2] APOptions,
         ticket          [3] Ticket,
         authenticator   [4] EncryptedData -- Authenticator
@@ -241,7 +241,7 @@ APOptions       ::= KerberosFlags
 
 -- Unencrypted authenticator
 Authenticator   ::= [APPLICATION 2] SEQUENCE  {
-        authenticator-vno       [0] INTEGER, -- (5), --
+        authenticator-vno       [0] INTEGER,
         crealm                  [1] Realm,
         cname                   [2] PrincipalName,
         cksum                   [3] Checksum OPTIONAL,
@@ -253,8 +253,8 @@ Authenticator   ::= [APPLICATION 2] SEQUENCE  {
 }
 
 AP-REP          ::= [APPLICATION 15] SEQUENCE {
-        pvno            [0] INTEGER, -- (5), --
-        msg-type        [1] INTEGER, -- (15), --
+        pvno            [0] INTEGER,
+        msg-type        [1] INTEGER,
         enc-part        [2] EncryptedData -- EncAPRepPart
 }
 
@@ -266,8 +266,8 @@ EncAPRepPart    ::= [APPLICATION 27] SEQUENCE {
 }
 
 KRB-SAFE        ::= [APPLICATION 20] SEQUENCE {
-        pvno            [0] INTEGER, -- (5), --
-        msg-type        [1] INTEGER, -- (20), --
+        pvno            [0] INTEGER,
+        msg-type        [1] INTEGER,
         safe-body       [2] KRB-SAFE-BODY,
         cksum           [3] Checksum
 }
@@ -282,8 +282,8 @@ KRB-SAFE-BODY   ::= SEQUENCE {
 }
 
 KRB-PRIV        ::= [APPLICATION 21] SEQUENCE {
-        pvno            [0] INTEGER, -- (5), --
-        msg-type        [1] INTEGER, -- (21), --
+        pvno            [0] INTEGER,
+        msg-type        [1] INTEGER,
                         -- NOTE: there is no [2] tag
         enc-part        [3] EncryptedData -- EncKrbPrivPart
 }
@@ -298,8 +298,8 @@ EncKrbPrivPart  ::= [APPLICATION 28] SEQUENCE {
 }
 
 KRB-CRED        ::= [APPLICATION 22] SEQUENCE {
-        pvno            [0] INTEGER, -- (5), --
-        msg-type        [1] INTEGER, -- (22), --
+        pvno            [0] INTEGER,
+        msg-type        [1] INTEGER,
         tickets         [2] SEQUENCE OF Ticket,
         enc-part        [3] EncryptedData -- EncKrbCredPart
 }
@@ -328,8 +328,8 @@ KrbCredInfo     ::= SEQUENCE {
 }
 
 KRB-ERROR       ::= [APPLICATION 30] SEQUENCE {
-        pvno            [0] INTEGER, -- (5), --
-        msg-type        [1] INTEGER, -- (30), --
+        pvno            [0] INTEGER,
+        msg-type        [1] INTEGER,
         ctime           [2] KerberosTime OPTIONAL,
         cusec           [3] Microseconds OPTIONAL,
         stime           [4] KerberosTime,
