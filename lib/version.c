@@ -1,5 +1,5 @@
-/* version.c	version handling
- * Copyright (C) 2002, 2003  Simon Josefsson
+/* version.c --- Version handling.
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  * Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
  *
  * This file is part of shishi.
@@ -67,11 +67,8 @@ _shishi_parse_version_string (const char *s, int *major, int *minor,
  * given as a string in @req_version.
  *
  * Return value: the actual version string of the library; NULL if the
- * condition is not met.  If %NULL is passed to this function no check
- * is done and only the version string is returned.  It is a pretty
- * good idea to run this function as soon as possible, because it may
- * also intializes some subsystems.  In a multithreaded environment if
- * should be called before any more threads are created.
+ *   condition is not met.  If %NULL is passed to this function no
+ *   check is done and only the version string is returned.
  **/
 const char *
 shishi_check_version (const char *req_version)
