@@ -25,6 +25,7 @@ kdcreq.lo
 libshishi.la
 netio.lo
 password.lo
+pkcs5.lo
 principal.lo
 realm.lo
 rfc1510_asn1_tab.c
@@ -33,4 +34,5 @@ shishi.h
 ticket.lo
 ticketset.lo
 tgs.lo
+vasprintf.lo
 version.lo
