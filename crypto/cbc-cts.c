@@ -111,5 +111,9 @@ cbc_cts_decrypt (void *ctx,
       memcpy (iv + restbytes, dst + restbytes, block_size - restbytes);
       f (ctx, block_size, dst, iv);
       memxor (dst, tmpiv, block_size);
+      if ((length % block_size) == 0)
+	memcpy (iv, src + block_size, block_size);
+      else
+	memcpy (iv, src + restbytes, block_size);
     }
 }
