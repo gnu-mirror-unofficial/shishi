@@ -510,30 +510,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
 int
 shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq, int *flags)
 {
-  unsigned char buf[4];
-  int buflen;
-  int i;
-  int res;
-
-  memset (buf, 0, sizeof (buf));
-  buflen = sizeof (buf);
-  res = shishi_asn1_field (handle, apreq, buf, &buflen, "ap-options");
-  if (res != SHISHI_OK)
-    return res;
-
-  *flags = 0;
-  for (i = 0; i < 4; i++)
-    {
-      *flags |= (((buf[i] >> 7) & 0x01) |
-		 ((buf[i] >> 5) & 0x02) |
-		 ((buf[i] >> 3) & 0x04) |
-		 ((buf[i] >> 1) & 0x08) |
-		 ((buf[i] << 1) & 0x10) |
-		 ((buf[i] << 3) & 0x20) |
-		 ((buf[i] << 5) & 0x40) | ((buf[i] << 7) & 0x80)) << (8 * i);
-    }
-
-  return SHISHI_OK;
+  return shishi_asn1_read_bitstring (handle, apreq, "ap-options", flags);
 }
 
 int
