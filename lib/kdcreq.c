@@ -365,6 +365,30 @@ shishi_kdcreq_set_cname (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_kdcreq_client:
+ * @handle: Shishi library handle create by shishi_init().
+ * @kdcreq: KDC-REQ variable to get client name from.
+ * @client: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @clientlen).
+ * @clientlen: pointer to length of @client on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
+ *
+ * Represent client principal name in KDC-REQ as zero-terminated
+ * string.  The string is allocate by this function, and it is the
+ * responsibility of the caller to deallocate it.  Note that the
+ * output length @clientlen does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcreq_client (Shishi * handle, Shishi_asn1 kdcreq,
+		      char **client, size_t *clientlen)
+{
+  return shishi_principal_name (handle, kdcreq, "req-body.cname",
+				client, clientlen);
+}
+
 int
 shishi_kdcreq_cname_get (Shishi * handle,
 			 Shishi_asn1 kdcreq, char *cname, size_t * cnamelen)
@@ -382,6 +406,30 @@ shishi_asreq_cnamerealm_get (Shishi * handle,
 					  "req-body.cname", asreq,
 					  "req-body.realm",
 					  cnamerealm, cnamerealmlen);
+}
+
+/**
+ * shishi_kdcreq_realm:
+ * @handle: Shishi library handle create by shishi_init().
+ * @kdcreq: KDC-REQ variable to get client name from.
+ * @realm: pointer to newly allocated zero terminated string containing
+ *   realm.  May be %NULL (to only populate @realmlen).
+ * @realmlen: pointer to length of @realm on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @realmlen).
+ *
+ * Get realm field in KDC-REQ as zero-terminated string.  The string
+ * is allocate by this function, and it is the responsibility of the
+ * caller to deallocate it.  Note that the output length @realmlen
+ * does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcreq_realm (Shishi * handle, Shishi_asn1 kdcreq,
+		     char **realm, size_t * realmlen)
+{
+  return shishi_asn1_read2_optional (handle, kdcreq, "req-body.realm",
+				     realm, realmlen);
 }
 
 int
@@ -413,6 +461,30 @@ shishi_kdcreq_set_realm (Shishi * handle, Shishi_asn1 kdcreq,
     return res;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_kdcreq_server:
+ * @handle: Shishi library handle create by shishi_init().
+ * @kdcreq: KDC-REQ variable to get server name from.
+ * @server: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @serverlen).
+ * @serverlen: pointer to length of @server on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @server).
+ *
+ * Represent server principal name in KDC-REQ as zero-terminated
+ * string.  The string is allocate by this function, and it is the
+ * responsibility of the caller to deallocate it.  Note that the
+ * output length @serverlen does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcreq_server (Shishi * handle, Shishi_asn1 kdcreq,
+		      char **server, size_t ** serverlen)
+{
+  return shishi_principal_name (handle, kdcreq, "req-body.sname",
+				server, serverlen);
 }
 
 int
