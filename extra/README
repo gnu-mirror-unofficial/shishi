@@ -5,6 +5,10 @@ See the end for copying conditions.
 The pam_shishi/ sub-directory contains a PAM module that uses Shishi
 for authenticating users.
 
+The rsh-redone/ sub-directory contains a Shishi port, by Nicolas
+Pouvesle <nico.pou@fnac.net>, of the rewrite of rsh/rlogin called
+rsh-redone, by Guus Sliepen <guus@sliepen.eu.org>.
+
 The inetutils.diff file contains a patch for GNU InetUtils to add
 Kerberos 5 authentication support for telnet client and telnetd server
 using Shishi.  Apply the patch and build InetUtils using
