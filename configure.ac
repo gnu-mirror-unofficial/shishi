@@ -81,6 +81,44 @@ AC_CHECK_SIZEOF(unsigned long int, 4)
 AC_CHECK_SIZEOF(unsigned int, 4)
 AC_CHECK_SIZEOF(unsigned short int, 2)
 AC_CHECK_SIZEOF(unsigned char, 1)
+# For gnulib stuff in gl/.
+gl_C_RESTRICT
+gl_FUNC_ALLOCA
+gl_ARGP
+gl_ERROR
+gl_EXITFAIL
+gl_GETDATE
+gl_FUNC_GETHOSTNAME
+gl_GETOPT
+jm_FUNC_MALLOC
+gl_FUNC_MEMMOVE
+gl_FUNC_MEMPCPY
+gl_FUNC_MEMSET
+gl_FUNC_MKTIME
+gl_FUNC_TIMEGM
+jm_FUNC_REALLOC
+gt_FUNC_SETENV
+gl_STRCASE
+gl_FUNC_STRCHRNUL
+gl_FUNC_STRDUP
+gl_FUNC_STRERROR
+gl_FUNC_STRNDUP
+gl_FUNC_STRNLEN
+gl_SYSEXITS
+jm_FUNC_GLIBC_UNLOCKED_IO
+gl_FUNC_VASNPRINTF
+gl_FUNC_VASPRINTF
+gl_XALLOC
+gl_XSTRNDUP
+gl_TIME_R
+
+# Checks for library functions.
+AC_FUNC_STRFTIME
+AC_CHECK_FUNCS(signal select ngettext gethostbyname)
+AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
+AC_SEARCH_LIBS(socket, socket)
+AC_SEARCH_LIBS(gethostbyname, nsl)
+AC_SEARCH_LIBS(syslog, syslog)
 
 # Check for PAM
 AC_ARG_ENABLE(pam,
@@ -165,14 +203,18 @@ AC_MSG_RESULT($enable_ipv6)
 # Check for idn
 AC_ARG_WITH(stringprep,
   AC_HELP_STRING([--without-stringprep],
-		[don't use libidn even if available]))
-if test "$with_stringprep" != "no" ; then
-	PKG_CHECK_MODULES(LIBIDN, libidn >= 0.1.0,, with_stringprep=no)
+		[don't use libidn for string processing even if available]),
+	stringprep=$withval, stringprep=yes)
+if test "$stringprep" != "no"; then
+	AC_CHECK_HEADER(stringprep.h,, stringprep=no)
 fi
-if test "$with_stringprep" != "no"; then
+if test "$stringprep" != "no"; then
+	AC_CHECK_LIB(idn, stringprep_check_version,,
+		stringprep=no
+		AC_MSG_WARN([Libidn not found.  String process disabled.]))
+fi
+if test "$stringprep" != "no"; then
 	AC_DEFINE(WITH_STRINGPREP, 1, [Define to 1 if you want to use libidn.])
-else
-	AC_MSG_WARN([[String processing disabled due to no libidn.]])
 fi
 
 # Check for libtasn1
@@ -183,15 +225,13 @@ if test "$system_asn1" != "no"; then
 	AC_CHECK_HEADER(libtasn1.h,, system_asn1=no)
 fi
 if test "$system_asn1" != "no"; then
-	AC_CHECK_LIB(tasn1, asn1_check_version, :,
+	AC_CHECK_LIB(tasn1, asn1_check_version,,
 		system_asn1=no
 		AC_MSG_WARN([Libtasn1 >=0.2.2 not found. Using included one.]))
 fi
 AC_MSG_CHECKING([whether to use the system's libtasn1])
 AC_MSG_RESULT($system_asn1)
-if test "$system_asn1" != "no"; then
- LIBTASN1_LIBS=-ltasn1
-else
+if test "$system_asn1" = "no"; then
  ASN1=asn1
  LIBTASN1_LIBS="\$(top_builddir)/asn1/libminitasn1.la"
 fi
@@ -223,12 +263,6 @@ AC_SUBST(CRYPTO)
 AC_SUBST(CRYPTO_CFLAGS)
 AC_SUBST(CRYPTO_LIBS)
 
-# Check for library
-AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
-AC_SEARCH_LIBS(socket, socket)
-AC_SEARCH_LIBS(gethostbyname, nsl)
-AC_SEARCH_LIBS(syslog, syslog)
-
 # Check for gnutls.
 AC_ARG_ENABLE(tls,
 	AC_HELP_STRING([--enable-tls], [enable unfinished TLS support]),
@@ -241,41 +275,6 @@ if test "$tls" != "no"; then
 fi
 AC_MSG_CHECKING([if unfinished TLS support should be enabled])
 AC_MSG_RESULT($tls)
-
-# For gnulib stuff in gl/.
-gl_C_RESTRICT
-gl_FUNC_ALLOCA
-gl_ARGP
-gl_ERROR
-gl_EXITFAIL
-gl_GETDATE
-gl_FUNC_GETHOSTNAME
-gl_GETOPT
-jm_FUNC_MALLOC
-gl_FUNC_MEMMOVE
-gl_FUNC_MEMPCPY
-gl_FUNC_MEMSET
-gl_FUNC_MKTIME
-gl_FUNC_TIMEGM
-jm_FUNC_REALLOC
-gt_FUNC_SETENV
-gl_STRCASE
-gl_FUNC_STRCHRNUL
-gl_FUNC_STRDUP
-gl_FUNC_STRERROR
-gl_FUNC_STRNDUP
-gl_FUNC_STRNLEN
-gl_SYSEXITS
-jm_FUNC_GLIBC_UNLOCKED_IO
-gl_FUNC_VASNPRINTF
-gl_FUNC_VASPRINTF
-gl_XALLOC
-gl_XSTRNDUP
-gl_TIME_R
-
-# Checks for library functions.
-AC_FUNC_STRFTIME
-AC_CHECK_FUNCS(signal select ngettext gethostbyname)
 
 # Check for gtk-doc.
 AC_ARG_WITH(html-dir, [  --with-html-dir=PATH path to installed docs ])
