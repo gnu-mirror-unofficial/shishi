@@ -28,9 +28,7 @@ shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
 	shishi-api-error.texi shishi-api-error-labels.texi \
 	shishi-api-version.texi
 
-generated = shishi.txt shishi.html shishi.ps shishi.pdf \
-	shishi.info shishi.info-1 shishi.info-2 \
-	$(shishi_texi_auto_deps)
+generated = shishi.txt shishi.html $(shishi_texi_auto_deps)
 
 man_MANS = shishi.1
 
@@ -41,6 +39,8 @@ DISTCLEANFILES = $(man_MANS)
 EXTRA_DIST = gdoc $(man_MANS) $(generated)
 
 info_TEXINFOS = shishi.texi
+ps_TEXINFOS = shishi.texi
+pdf_TEXINFOS = shishi.texi
 shishi_TEXINFOS = gpl.texi fdl.texi $(shishi_texi_auto_deps)
 
 shishi-api-init.texi: $(top_srcdir)/lib/init.c $(top_srcdir)/lib/done.c $(top_srcdir)/lib/cfg.c
@@ -97,6 +97,7 @@ shishi-api-version.texi: $(top_srcdir)/lib/version.c
 shishi.1: $(top_srcdir)/src/shishi.c $(top_builddir)/src/shishi
 	$(HELP2MAN) \
 		--name="kerberos 5 implementation" \
+		--help-option="--program-name shishi --help" \
 		--output=$@ $(top_builddir)/src/shishi
 
 # Texinfo:
@@ -106,8 +107,3 @@ shishi.txt: shishi.texi $(shishi_TEXINFOS)
 
 shishi.html: shishi.texi $(shishi_TEXINFOS)
 	$(MAKEINFO) --html --no-split --number-sections $<
-
-shishi.ps: shishi.texi $(shishi_TEXINFOS)
-
-shishi.pdf: shishi.texi $(shishi_TEXINFOS)
-	$(TEXI2PDF) $<
