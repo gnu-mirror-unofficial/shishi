@@ -372,8 +372,8 @@ Derivation Function
 which is provably secure in a random oracle model.  Data is integrity
 protected with a keyed (HMAC) SHA1 hash truncated to 96 bits.  There
 is no security proof, but the schemes are widely assumed to provide
-good security but has, as AES itself, yet to receive the test of time.
-It is associated with the @code{hmac-sha1-96-aes128} and
+good security, but has, as AES itself, yet to receive the test of
+time.  It is associated with the @code{hmac-sha1-96-aes128} and
 @code{hmac-sha1-96-aes256} checksums, respectively.
 
 @end table
@@ -415,21 +415,22 @@ mechanisms.
 @item hmac-sha1-des3-kd
 
 @code{hmac-sha1-des3-kd} is a keyed (HMAC) SHA1 hash computed over the
-message.  The key is derived from the base protocol by the key
-simplified key derivation function (similar to the password key
-derivation functions of @code{des3-cbc-sha1-kd}).  It has no security
-proof, but is widely assumed to provide good security.  It is
-compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
+message.  The key is derived from the base protocol by the simplified
+key derivation function (similar to the password key derivation
+functions of @code{des3-cbc-sha1-kd}).  It has no security proof, but
+is widely assumed to provide good security.  It is compatible with the
+@code{des3-cbc-sha1-kd} encryption mechanism.
 
 @item hmac-sha1-96-aes128
 @item hmac-sha1-96-aes256
 
-@code{hmac-sha1-des3-kd} is a keyed (HMAC) SHA1 hash computed over the
-message, truncated to 96 bits.  The key is derived from the base
-protocol by the key simplified key derivation function (similar to the
-password key derivation functions of @code{des3-cbc-sha1-kd}).  It has
-no security proof, but is widely assumed to provide good security. It
-is compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
+@code{hmac-sha1-96-aes*} are keyed (HMAC) SHA1 hashes computed over
+the message and then truncated to 96 bits.  The key is derived from
+the base protocol by the simplified key derivation function (similar
+to the password key derivation functions of @code{des3-cbc-sha1-kd}).
+It has no security proof, but is widely assumed to provide good
+security. It is compatible with the @code{des3-cbc-sha1-kd} encryption
+mechanism.
 
 @end table
 
@@ -442,26 +443,37 @@ platforms.
 
 @enumerate
 
+@item Debian GNU/Linux 3.0r0 (Woody)
+@cindex Debian
+
+GCC 2.95.4 and GNU Make. alphaev67-unknown-linux-gnu,
+alphaev6-unknown-linux-gnu, hppa64-unknown-linux-gnu,
+i686-pc-linux-gnu, ia64-unknown-linux-gnu.
+
 @item Tru64 UNIX
 @cindex Tru64
 
-alphaev68-dec-osf5.1, Tru64 UNIX C compiler, Tru64 Make.
+Tru64 UNIX C compiler and Tru64 Make. alphaev68-dec-osf5.1.
 
-@item Debian 3.0r0 (Woody)
-@cindex Debian
-
-i686-pc-linux-gnu, GCC 2.95.4, GNU Make. This is the main development
-host. alphaev67-unknown-linux-gnu
-
-@item SuSE 7.1
+@item SuSE Linux 7.1
 @cindex SuSE
 
-alphaev67-unknown-linux-gnu, GCC 2.96, GNU Make.
+GCC 2.96 and GNU Make. alphaev67-unknown-linux-gnu.
 
-@item RedHat 8.0
+@item SuSE Linux 7.2a
+@cindex SuSE Linux
+
+GCC 3.0 and GNU Make. ia64-unknown-linux-gnu.
+
+@item RedHat Linux 7.2
 @cindex RedHat
 
-i686-pc-linux-gnu, GCC 3.2, GNU Make.
+GCC 2.96 and GNU Make. i686-pc-linux-gnu.
+
+@item RedHat Linux 8.0
+@cindex RedHat
+
+GCC 3.2 and GNU Make. i686-pc-linux-gnu.
 
 @c @item IRIX 6.5
 @c @cindex IRIX
@@ -476,17 +488,31 @@ i686-pc-linux-gnu, GCC 3.2, GNU Make.
 @item HP-UX 11.11
 @cindex HP-UX
 
-hppa2.0w-hp-hpux11.11, HP-UX C compiler, HP Make.
+HP-UX C compiler and HP Make. hppa2.0w-hp-hpux11.11.
 
-@item Solaris 2.8
+@item SUN Solaris 2.8
 @cindex Solaris
 
-sparc-sun-solaris2.8, Sun WorkShop Compiler C 6.0, SUN Make.
+Sun WorkShop Compiler C 6.0 and SUN Make. sparc-sun-solaris2.8.
 
 @item NetBSD 1.6
 @cindex NetBSD
 
-alpha-unknown-netbsd1.6, GCC 2.95.3, GNU Make.
+GCC 2.95.3 and GNU Make. alpha-unknown-netbsd1.6,
+i386-unknown-netbsdelf1.6.
+
+@item OpenBSD 3.1
+@cindex OpenBSD
+
+GCC 2.95.3 and GNU Make.
+@c alpha-unknown-openbsd3.1, (alignment problems)
+i386-unknown-openbsd3.1.
+
+@item FreeBSD 4.7
+@cindex FreeBSD
+
+GCC 2.95.4 and GNU Make. alpha-unknown-freebsd4.7,
+i386-unknown-freebsd4.7.
 
 @end enumerate
 
