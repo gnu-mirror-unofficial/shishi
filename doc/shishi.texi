@@ -871,7 +871,7 @@ use some tokens in both files.  For example, the
 @samp{default-principal} is rarely useful in a system configuration
 file.
 
-@section @samp{default-realm}
+@subsection @samp{default-realm}
 Specify the default realm, by default the hostname of the host is
 used.  E.g.,
 
@@ -879,7 +879,7 @@ used.  E.g.,
 default-realm JOSEFSSON.ORG
 @end example
 
-@section @samp{default-principal}
+@subsection @samp{default-principal}
 
 Specify the default principal, by default the login username is
 used. E.g.,
@@ -888,7 +888,7 @@ used. E.g.,
 default-principal jas
 @end example
 
-@section @samp{client-kdc-etypes}
+@subsection @samp{client-kdc-etypes}
 
 Specify which encryption types client asks server to respond in during
 AS/TGS exchanges. List valid encryption types, in preference order.
@@ -905,7 +905,7 @@ includes aes256-cts-hmac-sha1-96, as suggested by RFC1510bis.  E.g.,
 client-kdc-etypes=aes256-cts-hmac-sha1-96 des3-cbc-sha1-kd des-cbc-md5
 @end example
 
-@section @samp{verbose}, @samp{verbose-asn1}, @samp{verbose-noice}, @samp{verbose-crypto}
+@subsection @samp{verbose}, @samp{verbose-asn1}, @samp{verbose-noice}, @samp{verbose-crypto}
 
 Enable verbose library messages.  E.g.,
 
@@ -914,7 +914,7 @@ verbose
 verbose-noice
 @end example
 
-@section @samp{realm-kdc}
+@subsection @samp{realm-kdc}
 
 Specify KDC addresses for realms.  Value is
 @samp{REALM,KDCADDRESS[/PROTOCOL][,KDCADDRESS[/PROTOCOL]...]}.
@@ -933,7 +933,7 @@ used during experiments, or to access badly maintained realms.
 realm-kdc=JOSEFSSON.ORG,ristretto.josefsson.org
 @end example
 
-@section @samp{server-realm}
+@subsection @samp{server-realm}
 
 Specify realm for servers. Value is
 @samp{REALM,SERVERREGEXP[,SERVERREGEXP...]}.
@@ -947,7 +947,7 @@ server-realm=JOSEFSSON.ORG,.josefsson.org
 
 Note: currently not used.
 
-@section @samp{kdc-timeout}, @samp{kdc-retries}
+@subsection @samp{kdc-timeout}, @samp{kdc-retries}
 
 How long shishi waits for a response from a KDC before continuing to
 next KDC for realm.  The default is 5 seconds.  E.g.,
@@ -963,7 +963,7 @@ default is 3 times.  E.g.,
 kdc-retries=5
 @end example
 
-@section @samp{stringprocess}
+@subsection @samp{stringprocess}
 
 How username and passwords entered from the terminal, or taken from
 the command line, are processed.
@@ -988,7 +988,7 @@ E.g.,
 stringprocess=UTF-8
 @end example
 
-@section @samp{ticket-life}
+@subsection @samp{ticket-life}
 Specify default ticket life time.
 
 The string can be in almost any common format.  It can contain month
@@ -1010,7 +1010,7 @@ E.g.,
 ticket-life=17:00
 @end example
 
-@section @samp{renew-life}
+@subsection @samp{renew-life}
 
 Specify how long a renewable ticket should remain renewable.
 
