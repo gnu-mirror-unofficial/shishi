@@ -48,6 +48,12 @@ cbc_cts_encrypt (void *ctx,
   unsigned restbytes = (length % block_size) == 0 ?
     block_size : length % block_size;
 
+  if (length > block_size)
+    {
+      if ((length % block_size) == 0)
+	nblocks--;
+    }
+
   for (; nblocks; nblocks--, src += block_size, dst += block_size)
     {
       memxor (iv, src, block_size);
@@ -63,6 +69,7 @@ cbc_cts_encrypt (void *ctx,
       memset (dst + restbytes, 0, block_size - restbytes);
       memxor (iv, dst, block_size);
       f (ctx, block_size, dst, iv);
+      memcpy (iv, dst, block_size);
     }
 }
 
