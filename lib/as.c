@@ -114,7 +114,7 @@ shishi_as_done (Shishi_as * as)
    arrays. */
 
 /**
- * shishi_as_asreq:
+ * shishi_as_req:
  * @as: structure that holds information about AS exchange
  *
  * Get ASN.1 AS-REQ structure from AS exchange.
@@ -441,7 +441,7 @@ shishi_as_rep_der_set (Shishi_as * as, char *der, size_t derlen)
 }
 
 /**
- * shishi_as_get_krberror:
+ * shishi_as_krberror:
  * @as: structure that holds information about AS exchange
  *
  * Get ASN.1 KRB-ERROR structure from AS exchange.
@@ -494,7 +494,7 @@ shishi_as_krberror_set (Shishi_as * as, Shishi_asn1 krberror)
 }
 
 /**
- * shishi_as_get_tkt:
+ * shishi_as_tkt:
  * @as: structure that holds information about AS exchange
  *
  * Get Ticket in AS exchange.

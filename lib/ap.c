@@ -570,7 +570,7 @@ shishi_ap_tkt_set (Shishi_ap * ap, Shishi_tkt * tkt)
 }
 
 /**
- * shishi_ap_authenticatorcksumdata:
+ * shishi_ap_authenticator_cksumdata:
  * @ap: structure that holds information about AP exchange
  * @out: output array that holds authenticator checksum data.
  * @len: on input, maximum length of output array that holds
@@ -643,7 +643,7 @@ shishi_ap_authenticator_cksumraw_set (Shishi_ap * ap,
 }
 
 /**
- * shishi_ap_authenticatorcksumtype:
+ * shishi_ap_authenticator_cksumtype:
  * @ap: structure that holds information about AP exchange
  *
  * Get the Authenticator Checksum Type in the AP exchange.

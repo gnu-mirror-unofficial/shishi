@@ -105,7 +105,7 @@ shishi_keys_for_server_in_file (Shishi * handle,
 }
 
 /**
- * shishi_keys_for_localservice_in_file
+ * shishi_keys_for_localservicerealm_in_file:
  * @handle: Shishi library handle create by shishi_init().
  * @filename: file to read keys from.
  * @service: service to get key for.

@@ -685,6 +685,8 @@ static struct Cipher_aliases cipher_aliases[] = {
  * shishi_cipher_parse:
  * @cipher: name of encryption type, e.g. "des3-cbc-sha1-kd".
  *
+ * Get cipher number by parsing string.
+ *
  * Return value: Return encryption type corresponding to a string.
  **/
 int
