@@ -20,9 +20,13 @@
 
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I../lib
 
+DEFS = -DLOCALEDIR=\"$(localedir)\" \
+	-DSYSTEMCFGFILE=\"$(sysconfdir)/shisa.conf\" \
+	@DEFS@
+
 include_HEADERS = shisa.h
 lib_LTLIBRARIES = libshisa.la
-libshisa_la_SOURCES = shisa.h db.c
+libshisa_la_SOURCES = shisa.h init.c cfg.c
 libshisa_la_LIBADD = ../gl/libfoo.la ../lib/libshishi.la 
 # XXX use different libtool version for this library?
 libshisa_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)

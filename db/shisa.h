@@ -26,6 +26,15 @@
 #include <time.h>		/* time_t */
 #include <shishi-int.h>		/* uint32_t */
 
+/* Error codes */
+enum Shisa_rc
+{
+  SHISA_OK = 0,
+  SHISA_IO_ERROR,
+  SHISA_HANDLE_ERROR
+};
+typedef enum Shisa_rc Shisa_rc;
+
 typedef struct Shisa		Shisa;
 typedef struct Shisa_realm	Shisa_realm;
 typedef struct Shisa_principal	Shisa_principal;
@@ -56,8 +65,13 @@ struct Shisa_key_info
 };
 typedef struct Shisa_key_info Shisa_key_info;
 
-/* Global operations. */
+/* init.c */
 extern Shisa *shisa (void);
+extern void shisa_done (Shisa * dbh);
+extern int shisa_init (Shisa ** dbh);
+extern int shisa_init_with_paths (Shisa ** dbh, const char *file);
+
+/* */
 extern int shisa_enumerate_realms (Shisa *dbh,
 				   char ***realms,
 				   size_t *nrealms);
