@@ -343,8 +343,7 @@ shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq,
 {
   int res;
 
-  res = shishi_asn1_integer2_field (handle, kdcreq, nonce,
-				    "req-body.nonce");
+  res = shishi_asn1_integer_field (handle, kdcreq, nonce, "req-body.nonce");
   if (res != SHISHI_OK)
     return res;
 
@@ -369,28 +368,8 @@ shishi_kdcreq_set_cname (Shishi * handle,
 			 Shishi_name_type name_type, const char *principal)
 {
   int res;
-  char buf[BUFSIZ];
 
-  sprintf (buf, "%d", name_type);
-
-  res = shishi_asn1_write (handle, kdcreq, "req-body.cname.name-type",
-			   buf, 0);
-  if (res != SHISHI_OK)
-    return res;
-
-  res = shishi_asn1_write (handle, kdcreq,
-			   "req-body.cname.name-string", NULL, 0);
-  if (res != SHISHI_OK)
-    return res;
-
-  res = shishi_asn1_write (handle, kdcreq,
-			   "req-body.cname.name-string", "NEW", 1);
-  if (res != SHISHI_OK)
-    return res;
-
-  res = shishi_asn1_write (handle, kdcreq,
-			   "req-body.cname.name-string.?1",
-			   principal, strlen (principal));
+  res = shishi_principal_set (handle, kdcreq, "req-body.cname", principal);
   if (res != SHISHI_OK)
     return res;
 
@@ -487,37 +466,11 @@ shishi_kdcreq_set_sname (Shishi * handle,
 			 Shishi_name_type name_type, const char *sname[])
 {
   int res;
-  char buf[BUFSIZ];
-  int i;
 
-  sprintf (buf, "%d", name_type);
-
-  res = shishi_asn1_write (handle, kdcreq, "req-body.sname.name-type",
-			   buf, 0);
+  res = shishi_principal_name_set (handle, kdcreq, "req-body.sname",
+				   name_type, sname);
   if (res != SHISHI_OK)
     return res;
-
-  res = shishi_asn1_write (handle, kdcreq,
-			   "req-body.sname.name-string", NULL, 0);
-  if (res != SHISHI_OK)
-    return res;
-
-  i = 1;
-  while (sname[i - 1])
-    {
-      res = shishi_asn1_write (handle, kdcreq,
-			       "req-body.sname.name-string", "NEW",
-			       1);
-      if (res != SHISHI_OK)
-	return res;
-
-      sprintf (buf, "req-body.sname.name-string.?%d", i);
-      res = shishi_asn1_write (handle, kdcreq, buf, sname[i - 1], 0);
-      if (res != SHISHI_OK)
-	return res;
-
-      i++;
-    }
 
   return SHISHI_OK;
 }
@@ -526,34 +479,11 @@ int
 shishi_kdcreq_set_server (Shishi * handle, Shishi_asn1 req,
 			  const char *server)
 {
-  char *tmpserver;
-  const char **serverbuf;
-  char *tokptr;
   int res;
-  int i;
 
-  tmpserver = strdup (server);
-  if (tmpserver == NULL)
-    return SHISHI_MALLOC_ERROR;
-
-  serverbuf = malloc (sizeof (*serverbuf));
-  for (i = 0;
-       (serverbuf[i] = strtok_r (i == 0 ? tmpserver : NULL, "/", &tokptr));
-       i++)
-    {
-      serverbuf = realloc (serverbuf, (i + 2) * sizeof (*serverbuf));
-      if (serverbuf == NULL)
-	return SHISHI_MALLOC_ERROR;
-    }
-  res = shishi_kdcreq_set_sname (handle, req, SHISHI_NT_PRINCIPAL, serverbuf);
+  res = shishi_principal_set (handle, req, "req-body.sname", server);
   if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not set sname: %s\n"),
-	       shishi_strerror_details (handle));
-      return res;
-    }
-  free (serverbuf);
-  free (tmpserver);
+    return res;
 
   return SHISHI_OK;
 }
