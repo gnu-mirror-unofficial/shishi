@@ -1,11 +1,13 @@
 .libs
 Makefile
 autoconf.h
+autoconf.h.in
 autom4te.cache
 bucket.lo
 close.lo
 config.log
 config.status
+configure
 dbmclose.lo
 dbmdelete.lo
 dbmdirfno.lo
@@ -38,6 +40,7 @@ hash.lo
 libgdbm.la
 libgdbm_compat.la
 libtool
+ltmain.sh
 seq.lo
 store.lo
 update.lo
