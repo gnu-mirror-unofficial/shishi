@@ -335,7 +335,7 @@ shishi_encapreppart_ctime_set (Shishi * handle,
   int res;
 
   res = shishi_asn1_write (handle, encapreppart, "ctime",
-			   t, GENERALIZEDTIME_TIME_LEN);
+			   t, SHISHI_GENERALIZEDTIME_LENGTH);
   if (res != SHISHI_OK)
     return res;
 

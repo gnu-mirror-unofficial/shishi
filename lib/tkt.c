@@ -1095,7 +1095,7 @@ shishi_tkt_lastreqc (Shishi_tkt * tkt, Shishi_lrtype lrtype)
   if (res != SHISHI_OK)
     return t;
 
-  if (lrtimelen == GENERALIZEDTIME_TIME_LEN)
+  if (lrtimelen == SHISHI_GENERALIZEDTIME_LENGTH)
     t = shishi_generalize_ctime (tkt->handle, lrtime);
 
   free (lrtime);
@@ -1132,7 +1132,7 @@ shishi_tkt_authctime (Shishi_tkt * tkt)
   if (res != SHISHI_OK)
     return t;
 
-  if (authtimelen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+  if (authtimelen == SHISHI_GENERALIZEDTIME_LENGTH + 1) /* XXX why +1 ? */
     t = shishi_generalize_ctime (tkt->handle, authtime);
 
   free (authtime);
@@ -1171,7 +1171,7 @@ shishi_tkt_startctime (Shishi_tkt * tkt)
   if (res != SHISHI_OK || starttimelen == 0)
     return t;
 
-  if (starttimelen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+  if (starttimelen == SHISHI_GENERALIZEDTIME_LENGTH + 1) /* XXX why +1 ? */
     t = shishi_generalize_ctime (tkt->handle, starttime);
 
   free (starttime);
@@ -1207,7 +1207,7 @@ shishi_tkt_endctime (Shishi_tkt * tkt)
   if (res != SHISHI_OK)
     return t;
 
-  if (endtimelen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+  if (endtimelen == SHISHI_GENERALIZEDTIME_LENGTH + 1) /* XXX why +1 ? */
     t = shishi_generalize_ctime (tkt->handle, endtime);
 
   free (endtime);
@@ -1245,7 +1245,7 @@ shishi_tkt_renew_tillc (Shishi_tkt * tkt)
   if (res != SHISHI_OK || renewtilllen == 0)
     return t;
 
-  if (renewtilllen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+  if (renewtilllen == SHISHI_GENERALIZEDTIME_LENGTH + 1) /* XXX why +1 ? */
     t = shishi_generalize_ctime (tkt->handle, renewtill);
 
   free (renewtill);

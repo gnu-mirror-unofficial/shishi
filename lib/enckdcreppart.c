@@ -201,7 +201,7 @@ shishi_enckdcreppart_endtime_set (Shishi * handle,
   int res;
 
   res = shishi_asn1_write (handle, enckdcreppart, "endtime",
-			   endtime, GENERALIZEDTIME_TIME_LEN);
+			   endtime, SHISHI_GENERALIZEDTIME_LENGTH);
   if (res != SHISHI_OK)
     return res;
 

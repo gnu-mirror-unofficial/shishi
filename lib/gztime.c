@@ -113,20 +113,20 @@ shishi_time (Shishi * handle, Shishi_asn1 node,
   size_t len;
   int res;
 
-  len = GENERALIZEDTIME_TIME_LEN + 1;
+  len = SHISHI_GENERALIZEDTIME_LENGTH + 1;
   *t = xmalloc (len);
 
   res = shishi_asn1_read (handle, node, field, *t, &len);
   if (res != SHISHI_OK)
     return res;
 
-  if (len <= GENERALIZEDTIME_TIME_LEN)
+  if (len <= SHISHI_GENERALIZEDTIME_LENGTH)
     {
       shishi_error_printf (handle, "Read time too short (%s)", *t);
       return SHISHI_ASN1_ERROR;
     }
 
-  (*t)[GENERALIZEDTIME_TIME_LEN] = '\0';
+  (*t)[SHISHI_GENERALIZEDTIME_LENGTH] = '\0';
 
   return SHISHI_OK;
 }

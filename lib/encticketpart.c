@@ -309,7 +309,7 @@ shishi_encticketpart_authtime_set (Shishi * handle,
   int res;
 
   res = shishi_asn1_write (handle, encticketpart, "authtime",
-			   authtime, GENERALIZEDTIME_TIME_LEN);
+			   authtime, SHISHI_GENERALIZEDTIME_LENGTH);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
@@ -334,7 +334,7 @@ shishi_encticketpart_endtime_set (Shishi * handle,
   int res;
 
   res = shishi_asn1_write (handle, encticketpart, "endtime",
-			   endtime, GENERALIZEDTIME_TIME_LEN);
+			   endtime, SHISHI_GENERALIZEDTIME_LENGTH);
   if (res != SHISHI_OK)
     return res;
 
@@ -353,7 +353,7 @@ shishi_encticketpart_authtime (Shishi * handle,
 time_t
 shishi_encticketpart_authctime (Shishi * handle, Shishi_asn1 encticketpart)
 {
-  char authtime[GENERALIZEDTIME_TIME_LEN + 1];
+  char authtime[SHISHI_GENERALIZEDTIME_LENGTH + 1];
   size_t authtimelen;
   time_t t;
   int res;
@@ -364,7 +364,7 @@ shishi_encticketpart_authctime (Shishi * handle, Shishi_asn1 encticketpart)
   if (res != SHISHI_OK)
     return (time_t) - 1;
 
-  authtime[GENERALIZEDTIME_TIME_LEN] = '\0';
+  authtime[SHISHI_GENERALIZEDTIME_LENGTH] = '\0';
 
   t = shishi_generalize_ctime (handle, authtime);
 

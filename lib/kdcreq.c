@@ -638,7 +638,7 @@ shishi_kdcreq_tillc (Shishi * handle, Shishi_asn1 kdcreq)
   if (res != SHISHI_OK)
     return t;
 
-  if (tilllen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+  if (tilllen == SHISHI_GENERALIZEDTIME_LENGTH + 1) /* XXX why +1 ? */
     t = shishi_generalize_ctime (handle, till);
 
   free (till);

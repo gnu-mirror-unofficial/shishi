@@ -134,7 +134,6 @@
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
 
-#define GENERALIZEDTIME_TIME_LEN 15
 #define MAX_KEY_LEN 32
 #define MAX_RANDOM_LEN 32
 #define MAX_HASH_LEN 32

@@ -743,7 +743,7 @@ shishi_krberror_ctime_set (Shishi * handle,
 
   if (t)
     res = shishi_asn1_write (handle, krberror, "ctime",
-			     t, GENERALIZEDTIME_TIME_LEN);
+			     t, SHISHI_GENERALIZEDTIME_LENGTH);
   else
     res = shishi_asn1_write (handle, krberror, "ctime", NULL, 0);
   if (res != SHISHI_OK)
@@ -873,7 +873,7 @@ shishi_krberror_stime_set (Shishi * handle,
   int res;
 
   res = shishi_asn1_write (handle, krberror, "stime",
-			   t, GENERALIZEDTIME_TIME_LEN);
+			   t, SHISHI_GENERALIZEDTIME_LENGTH);
   if (res != SHISHI_OK)
     return res;
 
