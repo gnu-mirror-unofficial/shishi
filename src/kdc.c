@@ -713,67 +713,36 @@ tgsreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
   return SHISHI_OK;
 }
 
-static int
-process_1 (char *in, size_t inlen, char **out, size_t * outlen)
+ssize_t
+process (const char *in, size_t inlen, char **out)
 {
   Shishi_asn1 node;
-  Shishi_asn1 krberr;
-  int rc;
-
-  krberr = shishi_krberror (handle);
-  if (!krberr)
-    return SHISHI_MALLOC_ERROR;
-
-  node = shishi_der2asn1 (handle, in, inlen);
-
-  fprintf (stderr, "ASN.1 msg-type %d (0x%x)...\n",
-	   shishi_asn1_msgtype (handle, node),
-	   shishi_asn1_msgtype (handle, node));
-
-  switch (shishi_asn1_msgtype (handle, node))
-    {
-    case SHISHI_MSGTYPE_AS_REQ:
-      puts ("Processing AS-REQ...");
-      rc = asreq (node, out, outlen);
-      break;
-
-    case SHISHI_MSGTYPE_TGS_REQ:
-      puts ("Processing TGS-REQ...");
-      rc = tgsreq (node, out, outlen);
-      break;
-
-    default:
-      rc = !SHISHI_OK;
-      break;
-    }
-
-  if (rc != SHISHI_OK)
-    {
-      rc = shishi_krberror_set_etext (handle, krberr, "General error");
-      if (rc != SHISHI_OK)
-	return rc;
-
-      rc = shishi_krberror_set_realm (handle, krberr, "unknown");
-      if (rc != SHISHI_OK)
-	return rc;
-
-      rc = shishi_krberror_der (handle, krberr, out, outlen);
-      if (rc != SHISHI_OK)
-	return rc;
-    }
-
-  return SHISHI_OK;
-}
-
-ssize_t
-process (char *in, int inlen, char **out)
-{
   size_t outlen;
   int rc;
 
   *out = NULL;
 
-  rc = process_1 (in, inlen, out, &outlen);
+  node = shishi_der2asn1 (handle, in, inlen);
+
+  switch (shishi_asn1_msgtype (handle, node))
+    {
+    case SHISHI_MSGTYPE_AS_REQ:
+      rc = asreq (node, out, &outlen);
+      break;
+
+    case SHISHI_MSGTYPE_TGS_REQ:
+      puts ("Processing TGS-REQ...");
+      rc = tgsreq (node, out, &outlen);
+      break;
+
+    default:
+      syslog (LOG_ERR, "Unsupported KDC message type %d (0x%x)",
+	      shishi_asn1_msgtype (handle, node),
+	      shishi_asn1_msgtype (handle, node));
+      rc = SHISHI_ASN1_ERROR;
+      break;
+    }
+
   if (rc != SHISHI_OK)
     return -1;
 

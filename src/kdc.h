@@ -176,7 +176,7 @@ extern gnutls_certificate_credentials x509cred;
 extern void kdc_loop (void);
 
 /* Interface between server.c and kdc.c. */
-extern ssize_t process (char *in, int inlen, char **out);
+extern ssize_t process (const char *in, size_t inlen, char **out);
 
 /* Interface between server.c and starttls.c. */
 extern void kdc_send1 (struct listenspec *ls);
