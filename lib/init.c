@@ -40,11 +40,19 @@ init_handle (int outputtype)
 
   shishi_error_set_outputtype (handle, outputtype);
 
+  if (!shishi_check_version (SHISHI_VERSION))
+    {
+      shishi_warn (handle, "Library and header version missmatch (%s vs %s).",
+		   shishi_check_version (NULL), SHISHI_VERSION);
+      free (handle);
+      return NULL;
+    }
+
   rc = _shishi_crypto_init (handle);
   if (rc != SHISHI_OK)
     {
-      free (handle);
       shishi_warn (handle, "Cannot initialize crypto library");
+      free (handle);
       return NULL;
     }
 
@@ -52,8 +60,8 @@ init_handle (int outputtype)
   rc = _shishi_tls_init (handle);
   if (rc != SHISHI_OK)
     {
-      free (handle);
       shishi_warn (handle, "Cannot initialize TLS library");
+      free (handle);
       return NULL;
     }
 #endif
@@ -61,8 +69,8 @@ init_handle (int outputtype)
   rc = _shishi_asn1_init (handle);
   if (rc != SHISHI_OK)
     {
-      free (handle);
       shishi_warn (handle, "%s", shishi_strerror (SHISHI_ASN1_ERROR));
+      free (handle);
       return NULL;
     }
 
