@@ -10,3 +10,4 @@ configure
 gcrypt-defs.h
 libtool
 stamp-h1
+INSTALL
