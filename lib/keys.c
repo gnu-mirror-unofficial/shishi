@@ -120,16 +120,16 @@ shishi_keys_for_localservicerealm_in_file (Shishi * handle,
 {
   char *hostname;
   char *server;
-  int rc;
+  Shishi_key *key;
 
   hostname = xgethostname ();
 
   asprintf (&server, "%s/%s", service, hostname);
 
-  rc = shishi_keys_for_serverrealm_in_file (handle, filename, server, realm);
+  key = shishi_keys_for_serverrealm_in_file (handle, filename, server, realm);
 
   free (server);
   free (hostname);
 
-  return rc;
+  return key;
 }
