@@ -1,0 +1,12 @@
+
+Thisdocument has been replaced by draft-ietf-krb-wg-kerberos-clarification-00.txt.
+For more information or a copy of the document, contact the author directly.
+
+Draft Author(s):
+
+T. Ts'o: tytso@mit.edu                                                           
+C. Neuman: bcn@isi.edu                                                             
+T. Yu: tlyu@mit.edu                                                            
+K. Raeburn: raeburn@mit.edu                                                         
+
+
