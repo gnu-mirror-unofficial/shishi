@@ -182,7 +182,7 @@ shishi_ticket_snamerealm_get (Shishi * handle,
 }
 
 int
-shishi_kdcreq_srealmserver_set (Shishi * handle,
+shishi_ticket_srealmserver_set (Shishi * handle,
 				ASN1_TYPE ticket, char *realm, char *server)
 {
   int res;
@@ -192,6 +192,59 @@ shishi_kdcreq_srealmserver_set (Shishi * handle,
     return res;
 
   res = shishi_ticket_set_server (handle, ticket, server);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+int
+shishi_ticket_clientrealm_set (Shishi_ticket * ticket,
+			       char *realm, char *client)
+{
+  int res;
+
+  res = shishi_encticketpart_crealm_set (ticket->handle,
+					 ticket->encticketpart,
+					 realm);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_encticketpart_cname_set (ticket->handle,
+					ticket->encticketpart,
+					SHISHI_NT_UNKNOWN, client);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+int
+shishi_ticket_serverrealm_set (Shishi_ticket * ticket,
+			       char *realm, char *server)
+{
+  int res;
+
+  res = shishi_ticket_srealmserver_set (ticket->handle, ticket->ticket,
+					realm, server);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_enckdcreppart_srealmserver_set
+    (ticket->handle, ticket->enckdcreppart, realm, server);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+int
+shishi_ticket_build (Shishi_ticket *ticket, Shishi_key *key)
+{
+  int res;
+
+  res = shishi_ticket_add_enc_part (ticket->handle, ticket->ticket,
+				    key, ticket->encticketpart);
   if (res != SHISHI_OK)
     return res;
 
@@ -296,6 +349,22 @@ shishi_ticket_enckdcreppart (Shishi_ticket * ticket)
 }
 
 /**
+ * shishi_ticket_encticketreppart_set:
+ * @as: structure that holds information about Ticket exchange
+ * @enckdcreppart: EncKDCRepPart to store in Ticket.
+ *
+ * Set the EncKDCRepPart in the Ticket.
+ **/
+void
+shishi_ticket_enckdcreppart_set (Shishi_ticket * ticket,
+				 ASN1_TYPE enckdcreppart)
+{
+  if (ticket->enckdcreppart)
+    shishi_asn1_done (ticket->handle, ticket->enckdcreppart);
+  ticket->enckdcreppart = enckdcreppart;
+}
+
+/**
  * shishi_ticket_kdcrep:
  * @ticket: input variable with ticket info.
  *
@@ -378,6 +447,12 @@ shishi_ticket_key_set (Shishi_ticket * ticket, Shishi_key * key)
   if (res != SHISHI_OK)
     return res;
 
+  res = shishi_enckdcreppart_key_set (ticket->handle,
+				      ticket->enckdcreppart,
+				      key);
+  if (res != SHISHI_OK)
+    return res;
+
   ticket->key = key;
 
   return SHISHI_OK;
@@ -427,6 +502,7 @@ int
 shishi_ticket2 (Shishi * handle, Shishi_ticket **ticket)
 {
   Shishi_ticket *tkt;
+  int res;
 
   tkt = malloc (sizeof (*tkt));
   if (tkt == NULL)
@@ -458,6 +534,24 @@ shishi_ticket2 (Shishi * handle, Shishi_ticket **ticket)
 			   shishi_strerror_details (handle));
       return SHISHI_ASN1_ERROR;
     }
+
+  res = shishi_encticketpart_transited_set (handle,
+					    tkt->encticketpart,
+					    SHISHI_TR_DOMAIN_X500_COMPRESS,
+					    "", 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_encticketpart_authtime_set
+    (handle, tkt->encticketpart, shishi_generalize_time (handle, time (NULL)));
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_encticketpart_endtime_set
+    (handle, tkt->encticketpart,
+     shishi_generalize_time (handle, time (NULL) + 1000));
+  if (res != SHISHI_OK)
+    return res;
 
   tkt->kdcrep = shishi_asrep (handle);
   if (tkt->kdcrep == NULL)
@@ -509,6 +603,24 @@ shishi_ticket_flags (Shishi_ticket * ticket, int *flags)
 		 ((buf[i] << 3) & 0x20) |
 		 ((buf[i] << 5) & 0x40) | ((buf[i] << 7) & 0x80)) << (8 * i);
     }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_ticket_flags_set (Shishi_ticket * ticket, int flags)
+{
+  int res;
+
+  res = shishi_encticketpart_flags_set (ticket->handle, ticket->encticketpart,
+					flags);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_enckdcreppart_flags_set (ticket->handle, ticket->enckdcreppart,
+					flags);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
