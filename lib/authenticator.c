@@ -888,16 +888,13 @@ shishi_authenticator_add_subkey (Shishi * handle,
 				 Shishi_key * subkey)
 {
   int res;
-  int *etypes;
-
-  res = shishi_cfg_clientkdcetype (handle, &etypes);
-  if (res != SHISHI_OK)
-    return res;
 
   res = shishi_authenticator_set_subkey (handle, authenticator,
 					 shishi_key_type (subkey),
 					 shishi_key_value (subkey),
 					 shishi_key_length (subkey));
+  if (res != SHISHI_OK)
+    return res;
 
-  return res;
+  return SHISHI_OK;
 }
