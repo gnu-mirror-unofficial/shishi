@@ -775,6 +775,9 @@ static struct argp_option options[] = {
   {"client-name", OPTION_CLIENT_NAME, "NAME", 0,
    "Username. Default is login name."},
 
+  {"crypto", OPTION_CRYPTO, 0, 0,
+   "Select crypto operations."},
+
   {"decrypt", OPTION_CRYPTO_DECRYPT, 0, 0,
    "Decrypt data."},
 
