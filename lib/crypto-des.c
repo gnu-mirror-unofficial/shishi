@@ -235,11 +235,8 @@ des_md4_checksum (Shishi * handle,
 {
   int res;
   char buffer[BUFSIZ];
-  char confounder[8];
-  char md[16];
   char *p;
   GCRY_MD_HD hd;
-  int i;
 
   if (inlen + 8 + 16 > BUFSIZ)
     {
@@ -329,11 +326,8 @@ des_md5_checksum (Shishi * handle,
 {
   int res;
   char buffer[BUFSIZ];
-  char confounder[8];
-  char md[16];
   char *p;
   GCRY_MD_HD hd;
-  int i;
 
   if (inlen + 8 + 16 > BUFSIZ)
     {
@@ -568,7 +562,6 @@ des_key_correction (Shishi * handle, char *key)
 {
   int res;
   GCRY_CIPHER_HD ch;
-  int j;
 
   /* fixparity(key); */
   des_set_odd_key_parity (key);
@@ -601,10 +594,8 @@ static int
 des_cbc_check (char key[8], char *data, int n_data)
 {
   GCRY_CIPHER_HD ch;
-  int j;
   int res;
   char ct[1024];
-  char final[2 * 8];
   char iv[8];
 
   ch = gcry_cipher_open (GCRY_CIPHER_DES, GCRY_CIPHER_MODE_CBC, 0);

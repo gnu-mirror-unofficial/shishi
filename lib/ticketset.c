@@ -339,7 +339,7 @@ int
 shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
 {
   Shishi_ticket *ticket;
-  int warn = 1;
+  int warn = 0;
   int res;
   int i;
 
@@ -347,8 +347,7 @@ shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
     {
       if (!shishi_ticket_valid_now_p (ticketset->tickets[i]))
 	{
-	  if (warn)
-	    fprintf (stderr, "warning: removing expired ticket\n"), warn = 0;
+	  warn++;
 	  continue;
 	}
 
@@ -386,6 +385,11 @@ shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
       fprintf (fh, "\n\n");
     }
 
+  if (warn)
+    shishi_warn (ticketset->handle,
+		 ngettext ("removed %d expired ticket\n",
+			   "removed %d expired tickets\n", warn), warn);
+
   return SHISHI_OK;
 }
 
@@ -399,7 +403,8 @@ shishi_ticketset_write (Shishi_ticketset * ticketset, FILE * fh)
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int
-shishi_ticketset_to_file (Shishi_ticketset * ticketset, char *filename)
+shishi_ticketset_to_file (Shishi_ticketset * ticketset,
+			  const char *filename)
 {
   FILE *fh;
   int res;

@@ -76,9 +76,7 @@ Shishi *
 shishi (void)
 {
   Shishi *handle;
-  char *value;
   char *tmp;
-  int res;
 
   handle = (Shishi *) malloc (sizeof (*handle));
   if (handle == NULL)

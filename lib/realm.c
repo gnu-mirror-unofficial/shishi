@@ -21,10 +21,6 @@
 
 #include "internal.h"
 
-#ifndef HOST_NAME_MAX
-#define HOST_NAME_MAX BUFSIZ
-#endif
-
 /**
  * shishi_realm_default_guess:
  *

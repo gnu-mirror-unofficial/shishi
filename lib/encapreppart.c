@@ -41,7 +41,7 @@ shishi_encapreppart (Shishi * handle)
     goto error;
 
   gettimeofday (&tv, &tz);
-  sprintf (usec, "%d", tv.tv_usec % 1000000);
+  sprintf (usec, "%ld", tv.tv_usec % 1000000);
   res = asn1_write_value (node, "EncAPRepPart.cusec", usec, 0);
   if (res != ASN1_SUCCESS)
     goto error;
@@ -249,7 +249,6 @@ shishi_encapreppart_get_key (Shishi * handle,
 			     unsigned char *keyvalue, int *keyvalue_len)
 {
   int res;
-  unsigned char buf[BUFSIZ];
   int buflen;
 
   *keytype = 0;

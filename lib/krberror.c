@@ -395,7 +395,7 @@ int
 shishi_krberror_pretty_print (Shishi *handle, FILE *fh, ASN1_TYPE krberror)
 {
   char buf[BUFSIZ];
-  int len = BUFSIZ;
+  size_t len = BUFSIZ;
   int res;
 
   if (VERBOSEASN1(handle))

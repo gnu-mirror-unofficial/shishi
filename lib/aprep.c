@@ -282,9 +282,9 @@ shishi_aprep_enc_part_add (Shishi * handle,
 {
   int res = ASN1_SUCCESS;
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  unsigned char buf[BUFSIZ];
-  int buflen;
-  unsigned char der[BUFSIZ];
+  char buf[BUFSIZ];
+  size_t buflen;
+  char der[BUFSIZ];
   int derlen;
   Shishi_key *key;
 
@@ -383,11 +383,10 @@ shishi_aprep_decrypt (Shishi * handle,
 		      ASN1_TYPE * encapreppart)
 {
   int res;
-  int i, len;
-  int buflen = BUFSIZ;
-  unsigned char buf[BUFSIZ];
-  unsigned char cipher[BUFSIZ];
-  int realmlen = BUFSIZ;
+  int i;
+  size_t buflen = BUFSIZ;
+  char buf[BUFSIZ];
+  char cipher[BUFSIZ];
   int cipherlen;
   int etype;
 

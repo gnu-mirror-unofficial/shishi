@@ -34,7 +34,6 @@ tty_set_echo (int echo)
 {
   struct termios termios_p;
   int fd = fileno (stdin);
-  int rc;
 
   if (tcgetattr (fd, &termios_p) != 0)
     return SHISHI_TTY_ERROR;
@@ -54,13 +53,14 @@ tty_set_echo (int echo)
 
 mail simon @ josefsson.org and tell what system this is
 #endif
-  RETSIGTYPE
+
+static RETSIGTYPE
 tty_echo (int signum)
 {
   tty_set_echo (1);
 }
 
-RETSIGTYPE
+static RETSIGTYPE
 tty_noecho (int signum)
 {
   tty_set_echo (0);

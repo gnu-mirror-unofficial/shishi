@@ -375,10 +375,10 @@ shishi_apreq_add_authenticator (Shishi * handle,
 {
   int res = ASN1_SUCCESS;
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  unsigned char buf[BUFSIZ];
+  char buf[BUFSIZ];
   int buflen;
-  unsigned char der[BUFSIZ];
-  int derlen;
+  char der[BUFSIZ];
+  size_t derlen;
 
   res = asn1_der_coding (authenticator, "Authenticator", der, &derlen,
 			 errorDescription);
@@ -722,11 +722,10 @@ shishi_apreq_decrypt (Shishi * handle,
 		      ASN1_TYPE * authenticator)
 {
   int res;
-  int i, len;
-  int buflen = BUFSIZ;
-  unsigned char buf[BUFSIZ];
-  unsigned char cipher[BUFSIZ];
-  int realmlen = BUFSIZ;
+  int i;
+  size_t buflen = BUFSIZ;
+  char buf[BUFSIZ];
+  char cipher[BUFSIZ];
   int cipherlen;
   int etype;
 

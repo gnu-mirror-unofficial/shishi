@@ -52,6 +52,7 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
 	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
 	-DHOSTKEYSFILE=\"$(sysconfdir)/shishi.keys\" \
+	-DDMALLOC_FUNC_CHECK \
 	@DEFS@
 
 rfc1510_asn1_tab.c: $(srcdir)/rfc1510.asn1

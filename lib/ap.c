@@ -202,6 +202,8 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
   if (res != SHISHI_OK)
     return res;
 
+  free(buf);
+
   ap->authenticatorcksumkeyusage = authenticatorcksumkeyusage;
   ap->authenticatorkeyusage = authenticatorkeyusage;
 
@@ -624,7 +626,6 @@ shishi_ap_rep_der_set (Shishi_ap * ap, char *der, int derlen)
 int
 shishi_ap_rep_verify (Shishi_ap * ap)
 {
-  int etype;
   int res;
 
   res = shishi_aprep_decrypt (ap->handle, ap->aprep,

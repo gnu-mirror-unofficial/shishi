@@ -61,7 +61,7 @@ _shishi_asn1_done (Shishi * handle, ASN1_TYPE node)
 
 int
 _shishi_asn1_field (Shishi * handle,
-		    ASN1_TYPE node, char *data, int *datalen, char *field)
+		    ASN1_TYPE node, char *data, size_t *datalen, char *field)
 {
   int rc;
 
@@ -78,7 +78,7 @@ _shishi_asn1_field (Shishi * handle,
 int
 _shishi_asn1_optional_field (Shishi * handle,
 			     ASN1_TYPE node,
-			     char *data, int *datalen, char *field)
+			     char *data, size_t *datalen, char *field)
 {
   int rc;
 

@@ -19,22 +19,22 @@
  *
  */
 
-/* 
+/*
  * This code is heavily modified from fetchmail (also GPL'd, of
  * course) by Brendan Cully <brendan@kublai.com>, via Mutt.
- * 
+ *
  * Original copyright notice:
- * 
+ *
  * The code in the fetchmail distribution is Copyright 1997 by Eric
  * S. Raymond.  Portions are also copyrighted by Carl Harris, 1993
  * and 1995.  Copyright retained for the purpose of protecting free
- * redistribution of source. 
- * 
+ * redistribution of source.
+ *
  */
 
 #include "internal.h"
 
-char B64Chars[64] = {
+static char B64Chars[64] = {
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
   'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd',
   'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',

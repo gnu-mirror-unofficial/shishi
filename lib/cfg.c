@@ -66,7 +66,6 @@ int
 shishi_cfg (Shishi * handle, char *option)
 {
   char *value;
-  char *tmp;
   char *realm = NULL;
   int res;
   int i;
@@ -213,9 +212,6 @@ int
 shishi_cfg_from_file (Shishi * handle, const char *cfg)
 {
   char line[BUFSIZ];
-  char *value;
-  char *tmp;
-  int res;
   FILE *fh;
 
   if (cfg == NULL)
@@ -359,7 +355,7 @@ shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
   if (value == NULL || *value == '\0')
     return SHISHI_OK;
 
-  for (i = 0; val = strtok_r (i == 0 ? value : NULL, ", \t", &ptrptr); i++)
+  for (i = 0; (val = strtok_r (i == 0 ? value : NULL, ", \t", &ptrptr)); i++)
     {
       int etype = shishi_cipher_parse (val);
 

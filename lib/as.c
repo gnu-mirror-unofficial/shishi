@@ -43,7 +43,6 @@ int
 shishi_as (Shishi * handle, Shishi_as ** as)
 {
   Shishi_as *las;
-  int res;
 
   *as = malloc (sizeof (**as));
   if (*as == NULL)

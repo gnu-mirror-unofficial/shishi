@@ -305,7 +305,6 @@ shishi_authenticator_set_cname (Shishi * handle,
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];
-  int i;
 
   sprintf (buf, "%d", name_type);
 

@@ -21,7 +21,7 @@
 
 #include "internal.h"
 
-char *
+const char *
 shishi_generalize_time (Shishi * handle, time_t time)
 {
   struct tm *tm;

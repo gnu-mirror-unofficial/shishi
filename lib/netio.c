@@ -99,7 +99,10 @@ shishi_sendrecv_udp (Shishi * handle,
 int
 shishi_kdc_sendrecv (Shishi * handle,
 		     char *realm,
-		     char *indata, int inlen, char *outdata, int *outlen)
+		     const char *indata,
+		     size_t inlen,
+		     char *outdata,
+		     size_t *outlen)
 {
   int i, j, k;
   int rc;

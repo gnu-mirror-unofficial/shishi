@@ -96,7 +96,7 @@ _shishi_kdcreq (Shishi * handle, int as)
     goto error;
 
   servicebuf[0] = "krbtgt";
-  servicebuf[1] = shishi_realm_default (handle);
+  servicebuf[1] = (char*) shishi_realm_default (handle);
   servicebuf[2] = NULL;
   res = shishi_kdcreq_set_sname (handle, node,
 				 SHISHI_NT_PRINCIPAL, servicebuf);
@@ -367,7 +367,6 @@ shishi_kdcreq_set_cname (Shishi * handle,
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];
-  int i;
 
   sprintf (buf, "%d", name_type);
 
@@ -407,7 +406,7 @@ shishi_kdcreq_set_cname (Shishi * handle,
 int
 shishi_kdcreq_cnamerealm_get (Shishi * handle,
 			      ASN1_TYPE kdcreq,
-			      char *cnamerealm, int *cnamerealmlen)
+			      char *cnamerealm, size_t *cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, kdcreq,
 					  "KDC-REQ.req-body.cname", kdcreq,
@@ -569,7 +568,8 @@ shishi_kdcreq_set_server (Shishi * handle, ASN1_TYPE req, const char *server)
 
   serverbuf = malloc (sizeof (*serverbuf));
   for (i = 0;
-       serverbuf[i] = strtok_r (i == 0 ? tmpserver : NULL, "/", &tokptr); i++)
+       (serverbuf[i] = strtok_r (i == 0 ? tmpserver : NULL, "/", &tokptr));
+       i++)
     {
       serverbuf = realloc (serverbuf, (i + 2) * sizeof (*serverbuf));
       if (serverbuf == NULL)
@@ -580,7 +580,7 @@ shishi_kdcreq_set_server (Shishi * handle, ASN1_TYPE req, const char *server)
     {
       fprintf (stderr, _("Could not set sname: %s\n"),
 	       shishi_strerror_details (handle));
-      return ASN1_TYPE_EMPTY;
+      return res;
     }
   free (serverbuf);
   free (tmpserver);
@@ -676,10 +676,8 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
 {
   int res;
   char data[BUFSIZ];
-  char buf[BUFSIZ];
   int datalen;
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  int i;
 
   res = asn1_der_coding (apreq, "AP-REQ", data, &datalen, errorDescription);
   if (res != ASN1_SUCCESS)

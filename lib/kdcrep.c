@@ -410,11 +410,10 @@ shishi_kdcrep_decrypt (Shishi * handle,
 		       ASN1_TYPE * enckdcreppart)
 {
   int res;
-  int i, len;
+  int i;
   int buflen = BUFSIZ;
   unsigned char buf[BUFSIZ];
   unsigned char cipher[BUFSIZ];
-  int realmlen = BUFSIZ;
   int cipherlen;
   int etype;
 
