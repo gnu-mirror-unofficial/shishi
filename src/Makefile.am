@@ -33,21 +33,18 @@ bin_PROGRAMS = shishi shisa
 sbin_PROGRAMS = shishid
 
 shishi_SOURCES = shishi.c
-shishi_LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
-	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
-	../lib/libshishi.la
+shishi_LDADD = ../gl/libfoo.la ../lib/libshishi.la @LTLIBINTL@
 
 shisa_SOURCES = shisa.c shisa.ggo shisa_cmd.h shisa_cmd.c
-shisa_LDADD = ../db/libshisa.la ../lib/libshishi.la
+shisa_LDADD = ../gl/libfoo.la ../db/libshisa.la ../lib/libshishi.la @LTLIBINTL@
 shisa_cmd.c shisa_cmd.h: shisa.ggo
 	gengetopt --unamed-opts --no-handle-help --no-handle-error \
 		 --input $< --file-name shisa_cmd
 	perl -pi -e 's/\[FILES\]/\[REALM \[PRINCIPAL\]\]/g' shisa_cmd.c
 
 shishid_SOURCES = shishid.c shishid.ggo shishid_cmd.h shishid_cmd.c
-shishid_LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
-	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
-	../lib/libshishi.la ../db/libshisa.la
+shishid_LDADD = ../gl/libfoo.la ../lib/libshishi.la ../db/libshisa.la \
+	@LIBGNUTLS_LIBS@ @LTLIBINTL@
 shishid_cmd.c shishid_cmd.h: shishid.ggo
 	gengetopt --no-handle-help --no-handle-error \
 		 --input $< --file-name shishid_cmd
