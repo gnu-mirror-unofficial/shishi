@@ -18,7 +18,8 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-CRYPTO_INCLUDES = crypto-null.c crypto-des.c crypto-3des.c crypto-aes.c
+CRYPTO_INCLUDES = crypto-null.c crypto-des.c crypto-3des.c crypto-aes.c \
+	crypto-md.c crypto-rc4.c
 
 EXTRA_DIST = kerberos5.asn1 $(CRYPTO_INCLUDES)
 
