@@ -41,7 +41,7 @@
 int
 shishi_as_derive_salt (Shishi * handle,
 		       Shishi_asn1 asreq,
-		       Shishi_asn1 asrep, char *salt, size_t *saltlen)
+		       Shishi_asn1 asrep, char *salt, size_t * saltlen)
 {
   int len = *saltlen;
   int tmplen;
@@ -83,8 +83,7 @@ shishi_as_derive_salt (Shishi * handle,
     return res;
 
   res = shishi_asn1_number_of_elements (handle, asreq,
-					"req-body.cname.name-string",
-					&n);
+					"req-body.cname.name-string", &n);
   if (res != SHISHI_OK)
     return res;
 
@@ -138,7 +137,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
     }
   realm[realmlen] = '\0';
 
-  out_len = sizeof(buffer);
+  out_len = sizeof (buffer);
   res = shishi_kdc_sendrecv (handle, realm, der, der_len, buffer, &out_len);
   if (res != SHISHI_OK)
     {
@@ -146,7 +145,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 			   shishi_strerror_details (handle));
       return res;
     }
-  free(der);
+  free (der);
 
   if (VERBOSEASN1 (handle))
     printf ("received %d bytes\n", out_len);
@@ -204,8 +203,7 @@ shishi_kdc_copy_crealm (Shishi * handle,
   buf[0] = '\0';		/* XXX if crealm is empty, buflen == 0 which
 				   causes libtasn1 to strlen(buf)... */
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "crealm",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "crealm", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -245,8 +243,7 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
       return res;
     }
 
-  res = shishi_asn1_read (handle, asrep, "crealm",
-			  reprealm, &reprealmlen);
+  res = shishi_asn1_read (handle, asrep, "crealm", reprealm, &reprealmlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not read reply realm: %s\n",
@@ -295,26 +292,22 @@ shishi_kdc_copy_cname (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, kdcrep, "cname.name-type",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, kdcrep, "cname.name-type", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_number_of_elements (handle, encticketpart,
-					"cname.name-string",
-					&n);
+					"cname.name-string", &n);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, kdcrep, "cname.name-string",
-			   NULL, 0);
+  res = shishi_asn1_write (handle, kdcrep, "cname.name-string", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
   for (i = 1; i <= n; i++)
     {
-      res = shishi_asn1_write (handle, kdcrep, "cname.name-string",
-			       "NEW", 1);
+      res = shishi_asn1_write (handle, kdcrep, "cname.name-string", "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
@@ -358,8 +351,7 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
   /* We do not compare msg-type as recommended on the ietf-krb-wg list */
 
   res = shishi_asn1_number_of_elements (handle, asreq,
-					"req-body.cname.name-string",
-					&i);
+					"req-body.cname.name-string", &i);
   if (res != SHISHI_OK)
     return res;
 
@@ -669,8 +661,7 @@ shishi_kdc_process (Shishi * handle,
    */
 
   msgtype = 0;
-  res = shishi_asn1_integer_field (handle, kdcrep,
-				   &msgtype, "msg-type");
+  res = shishi_asn1_integer_field (handle, kdcrep, &msgtype, "msg-type");
   if (res != SHISHI_OK)
     return res;
 

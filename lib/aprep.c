@@ -256,8 +256,7 @@ shishi_aprep_enc_part_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write (handle, aprep, "enc-part.cipher",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, aprep, "enc-part.cipher", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -367,8 +366,7 @@ shishi_aprep_enc_part_make (Shishi * handle,
  **/
 int
 shishi_aprep_get_enc_part_etype (Shishi * handle,
-				 Shishi_asn1 aprep,
-				 int32_t *etype)
+				 Shishi_asn1 aprep, int32_t * etype)
 {
   return shishi_asn1_read_int32 (handle, aprep, "enc-part.etype", etype);
 }

@@ -294,8 +294,7 @@ shishi_kdcrep_crealm_set (Shishi * handle,
 int
 shishi_kdcrep_cname_set (Shishi * handle,
 			 Shishi_asn1 kdcrep,
-			 Shishi_name_type name_type,
-			 const char *cname[])
+			 Shishi_name_type name_type, const char *cname[])
 {
   int res;
 
@@ -318,8 +317,7 @@ shishi_kdcrep_cname_set (Shishi * handle,
  **/
 int
 shishi_kdcrep_client_set (Shishi * handle,
-			  Shishi_asn1 kdcrep,
-			  const char *client)
+			  Shishi_asn1 kdcrep, const char *client)
 {
   int res;
 
@@ -360,7 +358,7 @@ shishi_kdcrep_crealmserver_set (Shishi * handle,
  **/
 int
 shishi_kdcrep_get_enc_part_etype (Shishi * handle,
-				  Shishi_asn1 kdcrep, int32_t *etype)
+				  Shishi_asn1 kdcrep, int32_t * etype)
 {
   return shishi_asn1_read_int32 (handle, kdcrep, "enc-part.etype", etype);
 }
@@ -392,8 +390,7 @@ shishi_kdcrep_get_ticket (Shishi * handle,
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, kdcrep, "ticket.tkt-vno",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, kdcrep, "ticket.tkt-vno", buf, &buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -402,8 +399,7 @@ shishi_kdcrep_get_ticket (Shishi * handle,
     goto error;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, kdcrep, "ticket.realm",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, kdcrep, "ticket.realm", buf, &buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -417,14 +413,12 @@ shishi_kdcrep_get_ticket (Shishi * handle,
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, *ticket, "sname.name-type",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, *ticket, "sname.name-type", buf, buflen);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_number_of_elements (handle, kdcrep,
-					"ticket.sname.name-string",
-					&n);
+					"ticket.sname.name-string", &n);
   if (res != SHISHI_OK)
     goto error;
 
@@ -453,8 +447,7 @@ shishi_kdcrep_get_ticket (Shishi * handle,
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, *ticket, "enc-part.etype",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, *ticket, "enc-part.etype", buf, buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -465,11 +458,9 @@ shishi_kdcrep_get_ticket (Shishi * handle,
     goto error;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
-    res = shishi_asn1_write (handle, *ticket, "enc-part.kvno",
-			     NULL, 0);
+    res = shishi_asn1_write (handle, *ticket, "enc-part.kvno", NULL, 0);
   else
-    res = shishi_asn1_write (handle, *ticket, "enc-part.kvno",
-			     buf, buflen);
+    res = shishi_asn1_write (handle, *ticket, "enc-part.kvno", buf, buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -479,8 +470,7 @@ shishi_kdcrep_get_ticket (Shishi * handle,
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, *ticket, "enc-part.cipher",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, *ticket, "enc-part.cipher", buf, buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -516,8 +506,7 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, kdcrep, "ticket.tkt-vno",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, kdcrep, "ticket.tkt-vno", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -526,14 +515,12 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, kdcrep, "ticket.realm",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, kdcrep, "ticket.realm", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, ticket, "sname.name-type",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, ticket, "sname.name-type", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -569,8 +556,7 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
     }
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, ticket, "enc-part.etype",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, ticket, "enc-part.etype", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -580,11 +566,9 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
     return res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, ticket, "enc-part.kvno",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, ticket, "enc-part.kvno", buf, &buflen);
   if (res != SHISHI_OK)
-    res = shishi_asn1_write (handle, kdcrep, "ticket.enc-part.kvno",
-			     NULL, 0);
+    res = shishi_asn1_write (handle, kdcrep, "ticket.enc-part.kvno", NULL, 0);
   else
     res = shishi_asn1_write (handle, kdcrep, "ticket.enc-part.kvno",
 			     buf, buflen);
@@ -592,8 +576,7 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
     return res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, ticket, "enc-part.cipher",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, ticket, "enc-part.cipher", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -639,8 +622,7 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
 
   if (kvno == 0)
     {
-      res = shishi_asn1_write (handle, kdcrep, "enc-part.kvno",
-			       NULL, 0);
+      res = shishi_asn1_write (handle, kdcrep, "enc-part.kvno", NULL, 0);
       if (res != SHISHI_OK)
 	return res;
     }
@@ -691,7 +673,7 @@ shishi_kdcrep_add_enc_part (Shishi * handle,
 
   res = shishi_encrypt (handle, key, keyusage, der, derlen, &buf, &buflen);
 
-  free(der);
+  free (der);
 
   if (res != SHISHI_OK)
     {
@@ -702,7 +684,7 @@ shishi_kdcrep_add_enc_part (Shishi * handle,
   res = shishi_kdcrep_set_enc_part (handle, kdcrep, shishi_key_type (key),
 				    shishi_key_version (key), buf, buflen);
 
-  free(buf);
+  free (buf);
 
   return res;
 }

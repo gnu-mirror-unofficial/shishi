@@ -77,8 +77,7 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
 
   gettimeofday (&tv, &tz);
   sprintf (usec, "%ld", tv.tv_usec % 1000000);
-  rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.usec",
-			  usec, 0);
+  rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.usec", usec, 0);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -87,15 +86,11 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_asn1_write (handle, lsafe->safe,
-			  "safe-body.s-address.addr-type",
-			  "3", 0); /* directional */
+  rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.s-address.addr-type", "3", 0);	/* directional */
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_asn1_write (handle, lsafe->safe,
-			  "safe-body.s-address.address",
-			  "\x00\x00\x00\x00", 4); /* sender */
+  rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.s-address.address", "\x00\x00\x00\x00", 4);	/* sender */
   if (rc != SHISHI_OK)
     return rc;
 
@@ -205,7 +200,7 @@ shishi_safe_safe_der_set (Shishi_safe * safe, char *der, size_t derlen)
   if (asn1safe == NULL)
     return SHISHI_ASN1_ERROR;
 
-  shishi_safe_safe_set(safe, asn1safe);
+  shishi_safe_safe_set (safe, asn1safe);
 
   return SHISHI_OK;
 }
@@ -386,8 +381,7 @@ shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
 int
 shishi_safe_cksum (Shishi * handle,
 		   Shishi_asn1 safe,
-		   int32_t *cksumtype,
-		   char *cksum, size_t * cksumlen)
+		   int32_t * cksumtype, char *cksum, size_t * cksumlen)
 {
   int res;
 
@@ -421,8 +415,7 @@ shishi_safe_cksum (Shishi * handle,
 int
 shishi_safe_set_cksum (Shishi * handle,
 		       Shishi_asn1 safe,
-		       int32_t cksumtype,
-		       char *cksum, size_t cksumlen)
+		       int32_t cksumtype, char *cksum, size_t cksumlen)
 {
   int res;
 
@@ -451,8 +444,7 @@ shishi_safe_set_cksum (Shishi * handle,
  **/
 int
 shishi_safe_user_data (Shishi * handle,
-		       Shishi_asn1 safe,
-		       char *userdata, size_t * userdatalen)
+		       Shishi_asn1 safe, char *userdata, size_t * userdatalen)
 {
   int res;
 
@@ -511,22 +503,23 @@ shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
   int cksumlen;
   int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
 
-  rc = shishi_safe_set_cksum(safe->handle, safe->safe, 0, "", 0);
+  rc = shishi_safe_set_cksum (safe->handle, safe->safe, 0, "", 0);
   if (rc != SHISHI_OK)
     return rc;
 
-  buflen = sizeof(buffer);
+  buflen = sizeof (buffer);
   rc = shishi_safe_safe_der (safe, buffer, &buflen);
   if (rc != SHISHI_OK)
     return rc;
 
   /* XXX check if keytype/cksumtype is suitable for SAFE */
 
-  if (VERBOSEASN1(safe->handle))
-    shishi_key_print(safe->handle, stdout, key);
+  if (VERBOSEASN1 (safe->handle))
+    shishi_key_print (safe->handle, stdout, key);
 
-  rc = shishi_checksum (safe->handle, key, SHISHI_KEYUSAGE_KRB_SAFE, cksumtype,
-			buffer, buflen, &cksum, &cksumlen);
+  rc =
+    shishi_checksum (safe->handle, key, SHISHI_KEYUSAGE_KRB_SAFE, cksumtype,
+		     buffer, buflen, &cksum, &cksumlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -563,7 +556,7 @@ shishi_safe_verify (Shishi_safe * safe, Shishi_key * key)
   int cksumtype2;
   int rc;
 
-  cksumlen = sizeof(cksum);
+  cksumlen = sizeof (cksum);
   rc = shishi_safe_cksum (safe->handle, safe->safe,
 			  &cksumtype, cksum, &cksumlen);
   if (rc != SHISHI_OK)
@@ -582,8 +575,7 @@ shishi_safe_verify (Shishi_safe * safe, Shishi_key * key)
   if (cksumtype != cksumtype2)
     return SHISHI_SAFE_BAD_KEYTYPE;
 
-  if (cksum2len != cksumlen ||
-      memcmp(cksum, cksum2, cksumlen) != 0)
+  if (cksum2len != cksumlen || memcmp (cksum, cksum2, cksumlen) != 0)
     return SHISHI_SAFE_VERIFY_FAILED;
 
   return SHISHI_OK;

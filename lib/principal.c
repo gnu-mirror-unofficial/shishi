@@ -137,8 +137,7 @@ shishi_principal_default_set (Shishi * handle, const char *principal)
 int
 shishi_principal_name_get (Shishi * handle,
 			   Shishi_asn1 namenode,
-			   const char *namefield,
-			   char *out, size_t * outlen)
+			   const char *namefield, char *out, size_t * outlen)
 {
   int res;
   char format[BUFSIZ];
@@ -257,8 +256,7 @@ int
 shishi_principal_name_set (Shishi * handle,
 			   Shishi_asn1 namenode,
 			   const char *namefield,
-			   Shishi_name_type name_type,
-			   const char *name[])
+			   Shishi_name_type name_type, const char *name[])
 {
   int res;
   char *buf, *asn1name;
@@ -267,14 +265,14 @@ shishi_principal_name_set (Shishi * handle,
   asprintf (&buf, "%d", name_type);
   asprintf (&asn1name, "%s.name-type", namefield);
   res = shishi_asn1_write (handle, namenode, asn1name, buf, 0);
-  free(asn1name);
-  free(buf);
+  free (asn1name);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 
   asprintf (&asn1name, "%s.name-string", namefield);
   res = shishi_asn1_write (handle, namenode, asn1name, NULL, 0);
-  free(asn1name);
+  free (asn1name);
   if (res != SHISHI_OK)
     return res;
 
@@ -283,13 +281,13 @@ shishi_principal_name_set (Shishi * handle,
     {
       asprintf (&asn1name, "%s.name-string", namefield);
       res = shishi_asn1_write (handle, namenode, asn1name, "NEW", 1);
-      free(asn1name);
+      free (asn1name);
       if (res != SHISHI_OK)
 	return res;
 
       asprintf (&asn1name, "%s.name-string.?%d", namefield, i);
       res = shishi_asn1_write (handle, namenode, asn1name, name[i - 1], 0);
-      free(asn1name);
+      free (asn1name);
       if (res != SHISHI_OK)
 	return res;
 
@@ -312,8 +310,7 @@ shishi_principal_name_set (Shishi * handle,
 int
 shishi_principal_set (Shishi * handle,
 		      Shishi_asn1 namenode,
-		      const char *namefield,
-		      const char *name)
+		      const char *namefield, const char *name)
 {
   char *tmpname;
   const char **namebuf;
@@ -330,8 +327,7 @@ shishi_principal_set (Shishi * handle,
     return SHISHI_MALLOC_ERROR;
 
   for (i = 0;
-       (namebuf[i] = strtok_r (i == 0 ? tmpname : NULL, "/", &tokptr));
-       i++)
+       (namebuf[i] = strtok_r (i == 0 ? tmpname : NULL, "/", &tokptr)); i++)
     {
       namebuf = realloc (namebuf, (i + 2) * sizeof (*namebuf));
       if (namebuf == NULL)

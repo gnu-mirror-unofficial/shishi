@@ -664,7 +664,7 @@ shishi_tkts_find (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 {
   int i;
 
-  if (VERBOSENOICE(tkts->handle))
+  if (VERBOSENOICE (tkts->handle))
     {
       fprintf (stderr, "Searching tickets... ");
       if (hint->server)
@@ -706,8 +706,8 @@ shishi_tkts_find_for_clientserver (Shishi_tkts * tkts,
   Shishi_tkt *tkt;
 
   memset (&hint, 0, sizeof (hint));
-  hint.server = (char*) server;
-  hint.client = (char*) client;
+  hint.server = (char *) server;
+  hint.client = (char *) client;
 
   tkt = shishi_tkts_find (tkts, &hint);
 
@@ -767,8 +767,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 
   /* Try to get cached TGT ... */
   memset (&lochint, 0, sizeof (lochint));
-  asprintf (&tgtname, "krbtgt/%s",
-		   shishi_realm_default (tkts->handle));
+  asprintf (&tgtname, "krbtgt/%s", shishi_realm_default (tkts->handle));
   lochint.server = tgtname;
   tgt = shishi_tkts_find (tkts, &lochint);
   if (tgt == NULL)
@@ -873,8 +872,8 @@ shishi_tkts_get_for_clientserver (Shishi_tkts * tkts,
   Shishi_tkt *tkt;
 
   memset (&hint, 0, sizeof (hint));
-  hint.client = (char*) client;
-  hint.server = (char*) server;
+  hint.client = (char *) client;
+  hint.server = (char *) server;
 
   tkt = shishi_tkts_get (tkts, &hint);
 
@@ -918,9 +917,9 @@ shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
     strcpy (&buf[strlen (service) + 1], "localhost");
 
   memset (&hint, 0, sizeof (hint));
-  hint.client = (char*) shishi_principal_default (tkts->handle);
+  hint.client = (char *) shishi_principal_default (tkts->handle);
   hint.server = buf;
-  hint.passwd = (char*) passwd;
+  hint.passwd = (char *) passwd;
 
   return shishi_tkts_get (tkts, &hint);
 }

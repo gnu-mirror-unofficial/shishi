@@ -33,8 +33,7 @@ shishi_enckdcreppart (Shishi * handle)
     return NULL;
 
   /* XXX remove these two: */
-  res = shishi_asn1_write (handle, node, "key-expiration",
-			   NULL, 0);
+  res = shishi_asn1_write (handle, node, "key-expiration", NULL, 0);
   if (res != SHISHI_OK)
     puts ("urk");
   res = shishi_asn1_write (handle, node, "caddr", NULL, 0);
@@ -55,8 +54,7 @@ shishi_encasreppart (Shishi * handle)
     return NULL;
 
   /* XXX remove these two: */
-  res = shishi_asn1_write (handle, node, "key-expiration",
-			   NULL, 0);
+  res = shishi_asn1_write (handle, node, "key-expiration", NULL, 0);
   if (res != SHISHI_OK)
     puts ("urk");
   res = shishi_asn1_write (handle, node, "caddr", NULL, 0);
@@ -149,8 +147,7 @@ shishi_enckdcreppart_key_set (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_nonce_set (Shishi * handle,
-				Shishi_asn1 enckdcreppart,
-				uint32_t nonce)
+				Shishi_asn1 enckdcreppart, uint32_t nonce)
 {
   int res;
 
@@ -206,62 +203,51 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
   int res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "flags",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "flags", buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = shishi_asn1_write (handle, enckdcreppart, "flags",
-			   buf, buflen);
-  if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "authtime",
-			  buf, &buflen);
-  if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  res = shishi_asn1_write (handle, enckdcreppart, "authtime",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, enckdcreppart, "flags", buf, buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "starttime",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "authtime", buf, &buflen);
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  res = shishi_asn1_write (handle, enckdcreppart, "authtime", buf, buflen);
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  buflen = BUFSIZ;
+  res = shishi_asn1_read (handle, encticketpart, "starttime", buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return SHISHI_ASN1_ERROR;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
-    res = shishi_asn1_write (handle, enckdcreppart, "starttime",
-			     NULL, 0);
+    res = shishi_asn1_write (handle, enckdcreppart, "starttime", NULL, 0);
   else
-    res = shishi_asn1_write (handle, enckdcreppart, "starttime",
-			     buf, buflen);
+    res = shishi_asn1_write (handle, enckdcreppart, "starttime", buf, buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "endtime",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "endtime", buf, &buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = shishi_asn1_write (handle, enckdcreppart, "endtime",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, enckdcreppart, "endtime", buf, buflen);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, encticketpart, "renew-till",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, encticketpart, "renew-till", buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return SHISHI_ASN1_ERROR;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
-    res = shishi_asn1_write (handle, enckdcreppart,
-			     "renew-till", NULL, 0);
+    res = shishi_asn1_write (handle, enckdcreppart, "renew-till", NULL, 0);
   else
     res = shishi_asn1_write (handle, enckdcreppart,
 			     "renew-till", buf, buflen);
@@ -290,8 +276,7 @@ shishi_enckdcreppart_srealm_set (Shishi * handle,
 {
   int res = SHISHI_OK;
 
-  res = shishi_asn1_write (handle, enckdcreppart,
-			   "srealm", srealm, 0);
+  res = shishi_asn1_write (handle, enckdcreppart, "srealm", srealm, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -340,7 +325,7 @@ shishi_enckdcreppart_sname_set (Shishi * handle,
 
       asprintf (&buf, "sname.name-string.?%d", i);
       res = shishi_asn1_write (handle, enckdcreppart, buf, sname[i - 1], 0);
-      free(buf);
+      free (buf);
       if (res != SHISHI_OK)
 	return res;
 

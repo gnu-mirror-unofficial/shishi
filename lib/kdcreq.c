@@ -123,20 +123,17 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "req-body.addresses",
-			   NULL, 0);
+  res = shishi_asn1_write (handle, node, "req-body.addresses", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_write (handle, node,
-			   "req-body.enc-authorization-data", NULL,
-			   0);
+			   "req-body.enc-authorization-data", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
 
   res =
-    shishi_asn1_write (handle, node, "req-body.additional-tickets",
-		       NULL, 0);
+    shishi_asn1_write (handle, node, "req-body.additional-tickets", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
 
@@ -338,7 +335,7 @@ shishi_kdcreq_from_file (Shishi * handle, Shishi_asn1 * kdcreq,
 }
 
 int
-shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq, uint32_t *nonce)
+shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq, uint32_t * nonce)
 {
   int res;
 
@@ -380,8 +377,7 @@ shishi_kdcreq_cname_get (Shishi * handle,
 			 Shishi_asn1 kdcreq, char *cname, size_t * cnamelen)
 {
   return shishi_principal_name_get (handle, kdcreq,
-				    "req-body.cname",
-				    cname, cnamelen);
+				    "req-body.cname", cname, cnamelen);
 }
 
 int
@@ -419,8 +415,7 @@ shishi_kdcreq_set_realm (Shishi * handle, Shishi_asn1 kdcreq,
 {
   int res;
 
-  res =
-    shishi_asn1_write (handle, kdcreq, "req-body.realm", realm, 0);
+  res = shishi_asn1_write (handle, kdcreq, "req-body.realm", realm, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -432,8 +427,7 @@ shishi_kdcreq_sname_get (Shishi * handle,
 			 Shishi_asn1 kdcreq, char *sname, size_t * snamelen)
 {
   return shishi_principal_name_get (handle, kdcreq,
-				    "req-body.sname",
-				    sname, snamelen);
+				    "req-body.sname", sname, snamelen);
 }
 
 int
@@ -518,7 +512,7 @@ shishi_kdcreq_set_realmserver (Shishi * handle,
  **/
 int
 shishi_kdcreq_etype (Shishi * handle,
-		     Shishi_asn1 kdcreq, int32_t *etype, int netype)
+		     Shishi_asn1 kdcreq, int32_t * etype, int netype)
 {
   char *buf;
   int res;
@@ -545,7 +539,7 @@ shishi_kdcreq_etype (Shishi * handle,
  **/
 int
 shishi_kdcreq_set_etype (Shishi * handle,
-			 Shishi_asn1 kdcreq, int32_t *etype, int netype)
+			 Shishi_asn1 kdcreq, int32_t * etype, int netype)
 {
   int res;
   char *buf;
@@ -557,13 +551,12 @@ shishi_kdcreq_set_etype (Shishi * handle,
 
   for (i = 1; i <= netype; i++)
     {
-      res = shishi_asn1_write (handle, kdcreq,
-			       "req-body.etype", "NEW", 1);
+      res = shishi_asn1_write (handle, kdcreq, "req-body.etype", "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
       asprintf (&buf, "req-body.etype.?%d", i);
-      res = shishi_asn1_write_int32 (handle, kdcreq, buf, etype[i-1]);
+      res = shishi_asn1_write_int32 (handle, kdcreq, buf, etype[i - 1]);
       free (buf);
       if (res != SHISHI_OK)
 	return res;
@@ -672,7 +665,7 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
 
   res = shishi_kdcreq_add_padata (handle, kdcreq,
 				  SHISHI_PA_TGS_REQ, data, datalen);
-  free(data);
+  free (data);
   if (res != SHISHI_OK)
     return res;
 

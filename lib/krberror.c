@@ -390,7 +390,7 @@ shishi_krberror_errorcode_message (Shishi * handle, int errorcode)
  **/
 int
 shishi_krberror_errorcode (Shishi * handle,
-			   Shishi_asn1 krberror, int32_t *errorcode)
+			   Shishi_asn1 krberror, int32_t * errorcode)
 {
   return shishi_asn1_read_int32 (handle, krberror, "error-code", errorcode);
 }

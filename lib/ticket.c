@@ -53,7 +53,7 @@ shishi_ticket_realm_set (Shishi * handle, Shishi_asn1 ticket,
 
 int
 shishi_ticket_sname_get (Shishi * handle,
-			 Shishi_asn1 ticket, char *server, size_t *serverlen)
+			 Shishi_asn1 ticket, char *server, size_t * serverlen)
 {
   return shishi_principal_name_get (handle, ticket, "sname",
 				    server, serverlen);
@@ -86,16 +86,14 @@ shishi_ticket_sname_set (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, ticket, "sname.name-string",
-			   NULL, 0);
+  res = shishi_asn1_write (handle, ticket, "sname.name-string", NULL, 0);
   if (res != SHISHI_OK)
     return res;
 
   i = 1;
   while (sname[i - 1])
     {
-      res = shishi_asn1_write (handle, ticket, "sname.name-string",
-			       "NEW", 1);
+      res = shishi_asn1_write (handle, ticket, "sname.name-string", "NEW", 1);
       if (res != SHISHI_OK)
 	return res;
 
@@ -186,7 +184,7 @@ shishi_ticket_srealmserver_set (Shishi * handle,
  **/
 int
 shishi_ticket_get_enc_part_etype (Shishi * handle,
-				  Shishi_asn1 ticket, int32_t *etype)
+				  Shishi_asn1 ticket, int32_t * etype)
 {
   int res;
 
@@ -226,7 +224,8 @@ shishi_ticket_decrypt (Shishi * handle,
 
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "Ticket decrypt failed, wrong password?\n");
+      shishi_error_printf (handle,
+			   "Ticket decrypt failed, wrong password?\n");
       return SHISHI_TICKET_DECRYPT_FAILED;
     }
 
@@ -330,18 +329,19 @@ shishi_ticket_add_enc_part (Shishi * handle,
   res = shishi_encrypt (handle, key, SHISHI_KEYUSAGE_ENCTICKETPART,
 			der, derlen, &buf, &buflen);
 
-  free(der);
+  free (der);
 
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "Cannot encrypt encrypted part of ticket\n");
+      shishi_error_printf (handle,
+			   "Cannot encrypt encrypted part of ticket\n");
       return res;
     }
 
   res = shishi_ticket_set_enc_part (handle, ticket, shishi_key_type (key),
 				    shishi_key_version (key), buf, buflen);
 
-  free(buf);
+  free (buf);
 
   return res;
 }

@@ -260,8 +260,7 @@ shishi_tkt_key (Shishi_tkt * tkt)
       int res;
 
       res = shishi_enckdcreppart_get_key (tkt->handle,
-					  tkt->enckdcreppart,
-					  &tkt->key);
+					  tkt->enckdcreppart, &tkt->key);
       if (res != SHISHI_OK)
 	return NULL;
     }
@@ -270,8 +269,7 @@ shishi_tkt_key (Shishi_tkt * tkt)
       int res;
 
       res = shishi_encticketpart_get_key (tkt->handle,
-					  tkt->encticketpart,
-					  &tkt->key);
+					  tkt->encticketpart, &tkt->key);
       if (res != SHISHI_OK)
 	return NULL;
     }
@@ -632,7 +630,7 @@ shishi_tkt_server_realm (Shishi_tkt * tkt,
 }
 
 int
-shishi_tkt_keytype (Shishi_tkt * tkt, int32_t *etype)
+shishi_tkt_keytype (Shishi_tkt * tkt, int32_t * etype)
 {
   return shishi_asn1_read_int32 (tkt->handle, tkt->enckdcreppart,
 				 "key.keytype", etype);
@@ -773,8 +771,7 @@ int
 shishi_tkt_starttime (Shishi_tkt * tkt, char *starttime, int *starttimelen)
 {
   return shishi_asn1_optional_field (tkt->handle, tkt->enckdcreppart,
-				     starttime, starttimelen,
-				     "starttime");
+				     starttime, starttimelen, "starttime");
 }
 
 time_t
@@ -828,8 +825,7 @@ int
 shishi_tkt_renew_till (Shishi_tkt * tkt, char *renewtill, int *renewtilllen)
 {
   return shishi_asn1_optional_field (tkt->handle, tkt->enckdcreppart,
-				     renewtill, renewtilllen,
-				     "renew-till");
+				     renewtill, renewtilllen, "renew-till");
 }
 
 time_t

@@ -334,7 +334,8 @@ shishi_apreq_set_authenticator (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write (handle, apreq, "authenticator.cipher", buf, buflen);
+  res =
+    shishi_asn1_write (handle, apreq, "authenticator.cipher", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -379,7 +380,7 @@ shishi_apreq_add_authenticator (Shishi * handle,
 
   res = shishi_encrypt (handle, key, keyusage, der, derlen, &buf, &buflen);
 
-  free(der);
+  free (der);
 
   if (res != SHISHI_OK)
     {
@@ -418,8 +419,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, apreq, "ticket.tkt-vno",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, apreq, "ticket.tkt-vno", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -433,8 +433,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
     return res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, ticket, "sname.name-type",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, ticket, "sname.name-type", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -470,8 +469,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
     }
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, ticket, "enc-part.etype",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, ticket, "enc-part.etype", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -481,14 +479,12 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
     return res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, ticket, "enc-part.kvno",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, ticket, "enc-part.kvno", buf, &buflen);
   if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
     return res;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
-    res = shishi_asn1_write (handle, apreq, "ticket.enc-part.kvno",
-			     NULL, 0);
+    res = shishi_asn1_write (handle, apreq, "ticket.enc-part.kvno", NULL, 0);
   else
     res = shishi_asn1_write (handle, apreq, "ticket.enc-part.kvno",
 			     buf, buflen);
@@ -496,8 +492,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
     return res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, ticket, "enc-part.cipher",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, ticket, "enc-part.cipher", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -578,8 +573,7 @@ shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq, int option)
  **/
 int
 shishi_apreq_get_authenticator_etype (Shishi * handle,
-				      Shishi_asn1 apreq,
-				      int32_t *etype)
+				      Shishi_asn1 apreq, int32_t * etype)
 {
   return shishi_asn1_read_int32 (handle, apreq, "authenticator.etype", etype);
 }
@@ -611,8 +605,7 @@ shishi_apreq_get_ticket (Shishi * handle,
     return SHISHI_ASN1_ERROR;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, apreq, "ticket.tkt-vno",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, apreq, "ticket.tkt-vno", buf, &buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -635,14 +628,12 @@ shishi_apreq_get_ticket (Shishi * handle,
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, *ticket, "sname.name-type",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, *ticket, "sname.name-type", buf, buflen);
   if (res != SHISHI_OK)
     goto error;
 
   res = shishi_asn1_number_of_elements (handle, apreq,
-					"ticket.sname.name-string",
-					&n);
+					"ticket.sname.name-string", &n);
   if (res != SHISHI_OK)
     goto error;
 
@@ -673,8 +664,7 @@ shishi_apreq_get_ticket (Shishi * handle,
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, *ticket, "enc-part.etype",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, *ticket, "enc-part.etype", buf, buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -685,11 +675,9 @@ shishi_apreq_get_ticket (Shishi * handle,
     goto error;
 
   if (res == SHISHI_ASN1_NO_ELEMENT)
-    res = shishi_asn1_write (handle, *ticket, "enc-part.kvno",
-			     NULL, 0);
+    res = shishi_asn1_write (handle, *ticket, "enc-part.kvno", NULL, 0);
   else
-    res = shishi_asn1_write (handle, *ticket, "enc-part.kvno",
-			     buf, buflen);
+    res = shishi_asn1_write (handle, *ticket, "enc-part.kvno", buf, buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -699,8 +687,7 @@ shishi_apreq_get_ticket (Shishi * handle,
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, *ticket, "enc-part.cipher",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, *ticket, "enc-part.cipher", buf, buflen);
   if (res != SHISHI_OK)
     goto error;
 
@@ -743,7 +730,8 @@ shishi_apreq_decrypt (Shishi * handle,
 
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "decrypt fail, most likely wrong password\n");
+      shishi_error_printf (handle,
+			   "decrypt fail, most likely wrong password\n");
       return SHISHI_APREQ_DECRYPT_FAILED;
     }
 

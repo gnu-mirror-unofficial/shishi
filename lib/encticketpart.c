@@ -50,8 +50,7 @@ shishi_encticketpart (Shishi * handle)
       return NULL;
     }
 
-  res = shishi_asn1_write (handle, node, "authorization-data",
-			   NULL, 0);
+  res = shishi_asn1_write (handle, node, "authorization-data", NULL, 0);
   if (res != SHISHI_OK)
     {
       shishi_asn1_done (handle, node);
@@ -74,7 +73,7 @@ shishi_encticketpart (Shishi * handle)
 int
 shishi_encticketpart_get_enc_part_etype (Shishi * handle,
 					 Shishi_asn1 encticketpart,
-					 int32_t *etype)
+					 int32_t * etype)
 {
   int res;
 
@@ -145,8 +144,7 @@ shishi_encticketpart_key_set (Shishi * handle,
 
   keytype = shishi_key_type (key);
   sprintf (buf, "%d", keytype);
-  res = shishi_asn1_write (handle, encticketpart, "key.keytype",
-			   buf, 0);
+  res = shishi_asn1_write (handle, encticketpart, "key.keytype", buf, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -177,8 +175,7 @@ shishi_encticketpart_flags_set (Shishi * handle,
   char buf[BUFSIZ];
 
   sprintf (buf, "%d", flags);
-  res = shishi_asn1_write (handle, encticketpart, "flags",
-			   buf, 0);
+  res = shishi_asn1_write (handle, encticketpart, "flags", buf, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -201,8 +198,7 @@ shishi_encticketpart_crealm_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write (handle, encticketpart, "crealm",
-			   realm, 0);
+  res = shishi_asn1_write (handle, encticketpart, "crealm", realm, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -232,8 +228,7 @@ shishi_encticketpart_cname_set (Shishi * handle,
 
   sprintf (buf, "%d", name_type);
 
-  res = shishi_asn1_write (handle, encticketpart,
-			   "cname.name-type", buf, 0);
+  res = shishi_asn1_write (handle, encticketpart, "cname.name-type", buf, 0);
   if (res != SHISHI_OK)
     return res;
 
@@ -284,8 +279,7 @@ shishi_encticketpart_transited_set (Shishi * handle,
     return res;
 
   res = shishi_asn1_write (handle, encticketpart,
-			   "transited.contents",
-			   trdata, trdatalen);
+			   "transited.contents", trdata, trdatalen);
   if (res != SHISHI_OK)
     return res;
 

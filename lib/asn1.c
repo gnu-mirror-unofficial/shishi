@@ -106,7 +106,7 @@ shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
   if (rc != ASN1_MEM_ERROR)
     return SHISHI_ASN1_ERROR;
 
-  *der = malloc(*len);
+  *der = malloc (*len);
   if (!*der)
     return SHISHI_MALLOC_ERROR;
 
@@ -165,7 +165,7 @@ shishi_asn1_write_uint32 (Shishi * handle, Shishi_asn1 node,
 
   asprintf (&buf, "%ud", n);
   res = shishi_asn1_write (handle, node, field, buf, 0);
-  free(buf);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 
@@ -181,7 +181,7 @@ shishi_asn1_write_int32 (Shishi * handle, Shishi_asn1 node,
 
   asprintf (&buf, "%d", n);
   res = shishi_asn1_write (handle, node, field, buf, 0);
-  free(buf);
+  free (buf);
   if (res != SHISHI_OK)
     return res;
 
@@ -192,7 +192,7 @@ int
 shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
 			   const char *field, int n)
 {
-  return shishi_asn1_write_int32 (handle, node, field, (int32_t)n);
+  return shishi_asn1_write_int32 (handle, node, field, (int32_t) n);
 }
 
 int
@@ -216,7 +216,7 @@ shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 
 int
 shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
-			const char *field, int32_t *i)
+			const char *field, int32_t * i)
 {
   unsigned char buf[4];
   int buflen;
@@ -234,7 +234,7 @@ shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
   if (buflen < 4)
     {
       memset (buf, 0, sizeof (buf));
-      rc = asn1_read_value (node, field, &buf[4-buflen], &buflen);
+      rc = asn1_read_value (node, field, &buf[4 - buflen], &buflen);
       if (rc != ASN1_SUCCESS)
 	{
 	  shishi_error_set (handle, libtasn1_strerror (rc));
@@ -248,16 +248,16 @@ shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
 
 int
 shishi_asn1_read_uint32 (Shishi * handle, Shishi_asn1 node,
-			 const char *field, uint32_t *i)
+			 const char *field, uint32_t * i)
 {
-  shishi_asn1_read_int32 (handle, node, field, (int32_t*)i);
+  shishi_asn1_read_int32 (handle, node, field, (int32_t *) i);
 }
 
 int
 shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
 			  const char *field, int *i)
 {
-  shishi_asn1_read_int32 (handle, node, field, (int32_t*)i);
+  shishi_asn1_read_int32 (handle, node, field, (int32_t *) i);
 }
 
 int
@@ -301,14 +301,14 @@ shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
 
   for (i = 0; i < 4; i++)
     {
-      buf[i] |= ((((flags & (0xFF << 8*i)) >> 7) & 0x01) |
-		 (((flags & (0xFF << 8*i)) >> 5) & 0x02) |
-		 (((flags & (0xFF << 8*i)) >> 3) & 0x04) |
-		 (((flags & (0xFF << 8*i)) >> 1) & 0x08) |
-		 (((flags & (0xFF << 8*i)) << 1) & 0x10) |
-		 (((flags & (0xFF << 8*i)) << 3) & 0x20) |
-		 (((flags & (0xFF << 8*i)) << 5) & 0x40) |
-		 (((flags & (0xFF << 8*i)) << 7) & 0x80)) << (8 * i);
+      buf[i] |= ((((flags & (0xFF << 8 * i)) >> 7) & 0x01) |
+		 (((flags & (0xFF << 8 * i)) >> 5) & 0x02) |
+		 (((flags & (0xFF << 8 * i)) >> 3) & 0x04) |
+		 (((flags & (0xFF << 8 * i)) >> 1) & 0x08) |
+		 (((flags & (0xFF << 8 * i)) << 1) & 0x10) |
+		 (((flags & (0xFF << 8 * i)) << 3) & 0x20) |
+		 (((flags & (0xFF << 8 * i)) << 5) & 0x40) |
+		 (((flags & (0xFF << 8 * i)) << 7) & 0x80)) << (8 * i);
     }
 
   buflen = sizeof (buf);
@@ -380,7 +380,7 @@ shishi_asn1_integer_field (Shishi * handle,
 			   Shishi_asn1 node, int *i, const char *field)
 {
   /* OBSOLETE */
-  return shishi_asn1_read_integer(handle, node, field, i);
+  return shishi_asn1_read_integer (handle, node, field, i);
 }
 
 #define SHISHI_TICKET_DEFAULT_TKTVNO "5"

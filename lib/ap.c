@@ -618,8 +618,7 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
     shishi_encticketpart_print (ap->handle, stdout,
 				shishi_tkt_encticketpart (tkt));
 
-  rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey,
-			     SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR, /* XXX */
+  rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey, SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR,	/* XXX */
 			     &authenticator);
   if (rc != SHISHI_OK)
     {
@@ -699,7 +698,7 @@ shishi_ap_rep_set (Shishi_ap * ap, Shishi_asn1 aprep)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ap_rep_der (Shishi_ap * ap, char *out, size_t *outlen)
+shishi_ap_rep_der (Shishi_ap * ap, char *out, size_t * outlen)
 {
   int rc;
 

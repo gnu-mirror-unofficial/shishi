@@ -240,9 +240,8 @@ shishi_encapreppart_from_file (Shishi * handle, Shishi_asn1 * encapreppart,
 int
 shishi_encapreppart_get_key (Shishi * handle,
 			     Shishi_asn1 encapreppart,
-			     int32_t *keytype,
-			     char *keyvalue,
-			     size_t *keyvalue_len)
+			     int32_t * keytype,
+			     char *keyvalue, size_t * keyvalue_len)
 {
   int res;
 
@@ -253,8 +252,7 @@ shishi_encapreppart_get_key (Shishi * handle,
     return res;
 
   res = shishi_asn1_read (handle, encapreppart,
-			  "subkey.keyvalue",
-			  keyvalue, keyvalue_len);
+			  "subkey.keyvalue", keyvalue, keyvalue_len);
   if (res != SHISHI_OK)
     return res;
 
@@ -269,8 +267,7 @@ shishi_encapreppart_ctime_get (Shishi * handle,
   int res;
 
   len = GENERALIZEDTIME_TIME_LEN + 1;
-  res = shishi_asn1_field (handle, encapreppart,
-			   ctime, &len, "ctime");
+  res = shishi_asn1_field (handle, encapreppart, ctime, &len, "ctime");
   if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
     ctime[len] = '\0';
 
@@ -336,8 +333,7 @@ shishi_encapreppart_cusec_get (Shishi * handle,
  **/
 int
 shishi_encapreppart_cusec_set (Shishi * handle,
-				Shishi_asn1 encapreppart,
-				int cusec)
+			       Shishi_asn1 encapreppart, int cusec)
 {
   int res;
 
@@ -382,24 +378,20 @@ shishi_encapreppart_time_copy (Shishi * handle,
   int res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, authenticator, "cusec",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, authenticator, "cusec", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, encapreppart, "cusec",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, encapreppart, "cusec", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
   buflen = BUFSIZ;
-  res = shishi_asn1_read (handle, authenticator, "ctime",
-			  buf, &buflen);
+  res = shishi_asn1_read (handle, authenticator, "ctime", buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, encapreppart, "ctime",
-			   buf, buflen);
+  res = shishi_asn1_write (handle, encapreppart, "ctime", buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
