@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-11-30 18:25+0100\n"
+"POT-Creation-Date: 2002-12-02 18:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,74 +15,74 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/shishi.c:128 src/shishi.c:138 src/shishi.c:147 src/shishi.c:156
-#: src/shishi.c:163 src/shishi.c:185 src/shishi.c:192 src/shishi.c:202
-#: src/shishi.c:288 src/shishi.c:295
+#: src/shishi.c:133 src/shishi.c:143 src/shishi.c:152 src/shishi.c:161
+#: src/shishi.c:168 src/shishi.c:190 src/shishi.c:197 src/shishi.c:207
+#: src/shishi.c:293 src/shishi.c:300
 #, c-format
 msgid "Option `%s' only valid with CRYPTO."
 msgstr ""
 
-#: src/shishi.c:132
+#: src/shishi.c:137
 #, c-format
 msgid "Unknown encryption type in `%s'"
 msgstr ""
 
-#: src/shishi.c:141 src/shishi.c:150
+#: src/shishi.c:146 src/shishi.c:155
 msgid "Cannot both encrypt and decrypt."
 msgstr ""
 
-#: src/shishi.c:178 src/shishi.c:250
+#: src/shishi.c:183 src/shishi.c:255
 #, c-format
 msgid "Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."
 msgstr ""
 
-#: src/shishi.c:214 src/shishi.c:222 src/shishi.c:229
+#: src/shishi.c:219 src/shishi.c:227 src/shishi.c:234
 #, c-format
 msgid "Option `%s' only valid with AP."
 msgstr ""
 
-#: src/shishi.c:268
+#: src/shishi.c:273
 #, c-format
 msgid "Option `%s' only valid with AP, CLIENT, CRYPTO and KDC/AS/TGS."
 msgstr ""
 
-#: src/shishi.c:281
+#: src/shishi.c:286
 #, c-format
 msgid "Option `%s' only valid with CRYPTO and KDC/AS/TGS."
 msgstr ""
 
-#: src/shishi.c:311 src/shishi.c:318
+#: src/shishi.c:316 src/shishi.c:323
 #, c-format
 msgid "Option `%s' only valid with KDC."
 msgstr ""
 
-#: src/shishi.c:327
+#: src/shishi.c:332
 #, c-format
 msgid "Option `%s' only valid with KDC/TGS."
 msgstr ""
 
-#: src/shishi.c:334 src/shishi.c:363 src/shishi.c:371 src/shishi.c:379
-#: src/shishi.c:387 src/shishi.c:395 src/shishi.c:402
+#: src/shishi.c:339 src/shishi.c:368 src/shishi.c:376 src/shishi.c:384
+#: src/shishi.c:392 src/shishi.c:400 src/shishi.c:407
 #, c-format
 msgid "Option `%s' only valid with KDC/AS/TGS."
 msgstr ""
 
-#: src/shishi.c:344 src/shishi.c:355
+#: src/shishi.c:349 src/shishi.c:360
 #, c-format
 msgid "Option `%s' only valid with AP and KDC/AS/TGS."
 msgstr ""
 
-#: src/shishi.c:409
+#: src/shishi.c:414
 #, c-format
 msgid "Too many arguments: `%s'"
 msgstr ""
 
-#: src/shishi.c:446
+#: src/shishi.c:451
 #, c-format
 msgid "Unknown command: '%s'"
 msgstr ""
 
-#: src/shishi.c:919
+#: src/shishi.c:934
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""

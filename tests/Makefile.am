@@ -22,7 +22,7 @@ TESTS = crypto
 EXTRA_DIST = 
 
 INCLUDES = -I$(top_srcdir)/asn1/lib -I$(top_srcdir)/lib
-LDADD = @LTLIBINTL@ ../lib/libshishi.la
+LDADD = ../lib/libshishi.la @LTLIBINTL@
 
 noinst_PROGRAMS = $(TESTS)
 

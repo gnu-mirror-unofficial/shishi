@@ -42,7 +42,7 @@ shishi_strerror_details (Shishi * handle)
 const char *
 shishi_strerror (int err)
 {
-  const char *p;
+  char *p;
 
   switch (err)
     {
@@ -136,18 +136,18 @@ shishi_strerror (int err)
 }
 
 void
+shishi_error_clear (Shishi * handle)
+{
+  handle->error[0] = '\0';
+}
+
+void
 shishi_error_set (Shishi * handle, const char *error)
 {
   if (error)
     strncpy (handle->error, error, sizeof (handle->error));
   else
     shishi_error_clear (handle);
-}
-
-void
-shishi_error_clear (Shishi * handle)
-{
-  handle->error[0] = '\0';
 }
 
 void

@@ -445,7 +445,7 @@ Shishi has been tested on the following platforms:
 @item Tru64 UNIX
 @cindex Tru64
 
-alphaev68-dec-osf5.1, Tru64 UNIX C compiler, and Tru64 Make.
+alphaev68-dec-osf5.1, Tru64 UNIX C compiler, Tru64 Make.
 
 @item Debian 3.0r0 (Woody)
 @cindex Debian
@@ -468,10 +468,20 @@ i686-pc-linux-gnu, GCC 3.2, GNU Make.
 @c
 @c rs6000-ibm-aix4.3.2.0, IBM C for AIX compiler, AIX Make.
 
+@item HP-UX 11.11
+@cindex HP-UX
+
+hppa2.0w-hp-hpux11.11, HP-UX C compiler, HP Make.
+
 @item Solaris 2.8
 @cindex Solaris
 
 sparc-sun-solaris2.8, Sun WorkShop Compiler C 6.0, SUN Make.
+
+@item NetBSD 1.6
+@cindex NetBSD
+
+alpha-unknown-netbsd1.6, GCC 2.95.3, GNU Make.
 
 @end enumerate
 

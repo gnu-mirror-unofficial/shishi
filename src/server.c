@@ -28,8 +28,7 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 {
   Shishi_ticket *tkt;
   ASN1_TYPE apreq, aprep, ticket, encticketpart, authenticator;
-  unsigned char key[BUFSIZ];
-  int keylen = sizeof (key);
+  Shishi_key *key, *key2;
   int keytype;
   char salt[BUFSIZ];
   int res;
@@ -87,11 +86,11 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       strcpy (salt, arg.realm);
       strcat (salt, arg.sname);
 
-      res = shishi_string_to_key (handle,
-				  arg.algorithm,
-				  arg.password,
-				  strlen (arg.password),
-				  salt, strlen (salt), NULL, key, &keylen);
+      res = shishi_key_from_string (handle,
+				    arg.algorithm,
+				    arg.password,
+				    strlen (arg.password),
+				    salt, strlen (salt), arg.parameter, &key);
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, _("Error in string2key: %s\n"),
@@ -102,17 +101,26 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     }
   else if (arg.keyvalue)
     {
-      if (strlen (arg.keyvalue) > sizeof (key))
+      unsigned char buf[BUFSIZ];
+      int keylen;
+      int keytype;
+      Shishi_key *key;
+
+      key = shishi_key(arg.algorithm, NULL);
+
+      if (strlen (arg.keyvalue) > sizeof (buf))
 	{
 	  fprintf (stderr, "keyvalue too large\n");
 	  return 1;
 	}
-      keylen = shishi_from_base64 (key, arg.keyvalue);
-      if (keylen <= 0)
+      keylen = shishi_from_base64 (buf, arg.keyvalue);
+      if (keylen != shishi_key_length(key))
 	{
 	  fprintf (stderr, "base64 decoding of key value failed\n");
 	  return 1;
 	}
+
+      shishi_key_value_set(key, buf);
     }
   else
     {
@@ -144,8 +152,7 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       shishi_asn1ticket_print (handle, stdout, ticket);
     }
 
-  res = shishi_ticket_decrypt (handle, ticket, arg.algorithm, key, keylen,
-			       &encticketpart);
+  res = shishi_ticket_decrypt (handle, ticket, key, &encticketpart);
   if (res != SHISHI_OK)
     {
       fprintf (stderr, _("Error decrypting ticket: %s\n"),
@@ -157,8 +164,7 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
     asn1_print_structure (stdout, encticketpart, encticketpart->name,
 			  ASN1_PRINT_NAME_TYPE_VALUE);
 
-  res = shishi_encticketpart_get_key (handle, encticketpart, &keytype,
-				      key, &keylen);
+  res = shishi_encticketpart_get_key (handle, encticketpart, &key2);
   if (res != SHISHI_OK)
     {
       fprintf (stderr, _("EncTicketPart get key failed: %s\n"),
@@ -166,8 +172,7 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       return 1;
     }
 
-  res = shishi_apreq_decrypt (handle, apreq, arg.algorithm, key, keylen,
-			      &authenticator);
+  res = shishi_apreq_decrypt (handle, apreq, key2, 0, &authenticator);
   if (res != SHISHI_OK)
     {
       fprintf (stderr, _("Error decrypting apreq:%s\n%s\n"),

@@ -62,7 +62,12 @@ AC_TYPE_UID_T
 AC_TYPE_SIGNAL
 AC_HEADER_TIME
 AC_CHECK_DECLS(h_errno)
-AC_CHECK_TYPE(socklen_t, size_t)
+AC_CHECK_TYPE([socklen_t],, [AC_DEFINE([socklen_t], [size_t],
+              [Define to `DEFAULT' if <sys/socket.h> does not define.])], [
+ #ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+])
 
 # Check for IPv6
 AC_ARG_ENABLE(ipv6,
@@ -117,11 +122,13 @@ if test "$with_system_argp" != "no" ; then
   AC_LIB_ARGP(,with_system_argp=no)
 fi
 if test "$with_system_argp" = "no" ; then
-  LIBS="$LIBS \$(top_builddir)/argp/libargp.a"
-  CFLAGS="$CFLAGS -I\$(top_srcdir)/argp"
+  ARGP_LIBS="${top_builddir}/argp/libargp.a"
+  ARGP_CFLAGS="-I${top_srcdir}/argp"
   ARGP=argp
 fi
 AC_SUBST(ARGP)
+AC_SUBST(ARGP_LIBS)
+AC_SUBST(ARGP_CFLAGS)
 AC_CONFIG_SUBDIRS(argp)
 
 # Check gdbm

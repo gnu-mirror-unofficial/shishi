@@ -1,4 +1,4 @@
-/* crypto.c	kerberos crypto self tests
+/* crypto.c	shishi crypto self tests
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.

@@ -22,14 +22,14 @@ sbin_PROGRAMS = shishid
 
 shishi_SOURCES = shishi.c data.h gettext.h \
 	kdc.c authp.c crypto.c client.c server.c
-shishi_LDADD = @LTLIBINTL@ ../lib/libshishi.la
+shishi_LDADD = @LTLIBINTL@ ../lib/libshishi.la @ARGP_LIBS@
 
 shishid_SOURCES = shishid.c
-shishid_LDADD = ../lib/libshishi.la
+shishid_LDADD = ../lib/libshishi.la @ARGP_LIBS@
 
 localedir = $(datadir)/locale
 
-INCLUDES = -I../asn1/lib -I../lib -I../argp -I../intl \
+INCLUDES = -I../asn1/lib -I../lib -I../intl @ARGP_CFLAGS@ \
 	-DLOCALEDIR=\"$(localedir)\"
 
 DEFS = -DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \

@@ -27,6 +27,7 @@ int
 client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 {
   Shishi_ticket *tkt, *tmptkt;
+  Shishi_ap *ap;
   ASN1_TYPE apreq;
   int res;
 
@@ -62,7 +63,6 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
       printf ("Service name: `%s'\n", arg.sname);
     }
 
-
   tkt = shishi_ticketset_find_ticket_for_clientserver (handle, ticketset,
 						       arg.cname, arg.sname);
   if (tkt == NULL)
@@ -96,8 +96,6 @@ client (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 	}
       tkt = tmptkt;
     }
-
-  puts ("foo");
 
   res = shishi_ticket_apreq_data (handle, tkt, NULL, 0, &apreq);
   if (res != SHISHI_OK)
