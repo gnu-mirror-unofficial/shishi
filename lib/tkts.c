@@ -816,6 +816,14 @@ act_hint_on_kdcreq (Shishi * handle,
 	goto done;
     }
 
+
+  if (hint->etype)
+    {
+      rc = shishi_kdcreq_set_etype (handle, kdcreq, &hint->etype, 1);
+      if (rc != SHISHI_OK)
+	goto done;
+    }
+
   return SHISHI_OK;
 
 done:
