@@ -20,7 +20,7 @@
 
 DISTCHECK_CONFIGURE_FLAGS = --disable-gtk-doc
 
-MOST_SUBDIRS = m4 po gl lib src tests doc extra
+MOST_SUBDIRS = m4 po gl lib src tests examples doc extra
 
 DIST_SUBDIRS = crypto asn1 $(MOST_SUBDIRS)
 

@@ -20,21 +20,9 @@
 
 LDADD = @LTLIBINTL@ ../lib/libshishi.la -L../gl -lfoo
 
-bin_PROGRAMS = shishi
-shishi_SOURCES = shishi.c gettext.h
-
-sbin_PROGRAMS = shishid
-shishid_SOURCES = shishid.c
-
-localedir = $(datadir)/locale
+noinst_PROGRAMS = client server client-cksum
 
 INCLUDES = -I$(top_srcdir)/gl -I../lib
-
-DEFS = -DLOCALEDIR=\"$(localedir)\" \
-	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
-	-DKDCKEYFILE=\"$(sysconfdir)/shishid.keys\" \
-	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
-	@DEFS@
 
 indent:
 	indent $(SOURCES)
