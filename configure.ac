@@ -80,8 +80,6 @@ dnl AC_CHECK_LIB([tasn1], libasn1_strerror,, AC_MSG_ERROR([libtasn1 is required]
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
-AC_FUNC_ALLOCA
-AC_FUNC_MALLOC
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -109,7 +107,7 @@ LIBARGP=""
 if test "$with_system_argp" = "no" ; then
   LIBARGP="\$(top_builddir)/argp/libargp.a"
   CFLAGS="$CFLAGS -I\$(top_srcdir)/argp"
-  ARGPP=argp
+  ARGP=argp
   AC_SUBST(ARGP)
 fi
 AC_SUBST(LIBARGP)
@@ -197,7 +195,7 @@ AC_CHECK_FUNCS(gethostname signal \
 		select ngettext \
 		strchr strdup strerror strstr strcasecmp)
 AC_FUNC_STRFTIME
-AC_REPLACE_FUNCS(setenv)
+AC_REPLACE_FUNCS(setenv unsetenv)
 
 # gdbm
 AC_CONFIG_SUBDIRS(asn1 crypto argp extra/inetutils)
