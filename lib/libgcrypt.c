@@ -97,8 +97,7 @@ shishi_md4 (Shishi * handle,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  *outlen = gcry_md_get_algo_dlen (GCRY_MD_MD4);
-  *out = xmemdup (p, *outlen);
+  *out = xmemdup (p, gcry_md_get_algo_dlen (GCRY_MD_MD4));
 
   gcry_md_close (hd);
 
@@ -142,8 +141,7 @@ shishi_md5 (Shishi * handle,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  *outlen = gcry_md_get_algo_dlen (GCRY_MD_MD5);
-  *out = xmemdup (p, *outlen);
+  *out = xmemdup (p, gcry_md_get_algo_dlen (GCRY_MD_MD5));
 
   gcry_md_close (hd);
 
@@ -199,8 +197,7 @@ shishi_hmac_sha1 (Shishi * handle,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  *outhashlen = hlen;
-  *outhash = xmemdup (hash, *outhashlen);
+  *outhash = xmemdup (hash, hlen);
 
   gcry_md_close (mdh);
 
@@ -275,16 +272,15 @@ shishi_des_cbc_mac (Shishi * handle,
 static int
 libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int decryptp,
 		    const char *key, size_t keylen,
-		    const char *iv, size_t ivlen,
-		    char **ivout, size_t * ivoutlen,
+		    const char *iv,
+		    char **ivout,
 		    const char *in, size_t inlen,
-		    char **out, size_t * outlen)
+		    char **out)
 {
+  size_t ivlen = gcry_cipher_get_algo_blklen (algo);
   gcry_cipher_hd_t ch;
   gpg_error_t err;
   int mode = GCRY_CIPHER_MODE_CBC;
-
-  *outlen = inlen;
 
   err = gcry_cipher_open (&ch, algo, mode, flags);
   if (err != GPG_ERR_NO_ERROR)
@@ -310,13 +306,13 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int decryptp,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  *out = xmalloc (*outlen);
+  *out = xmalloc (inlen);
 
   if (decryptp)
-    err = gcry_cipher_decrypt (ch, (unsigned char *) *out, *outlen,
+    err = gcry_cipher_decrypt (ch, (unsigned char *) *out, inlen,
 			       (const unsigned char *) in, inlen);
   else
-    err = gcry_cipher_encrypt (ch, (unsigned char *) *out, *outlen,
+    err = gcry_cipher_encrypt (ch, (unsigned char *) *out, inlen,
 			       (const unsigned char *) in, inlen);
   if (err != GPG_ERR_NO_ERROR)
     {
@@ -325,17 +321,18 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int decryptp,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  if (ivout && ivoutlen)
+  if (ivout)
     {
-      *ivoutlen = gcry_cipher_get_algo_blklen (alg);
-      *ivout = xmalloc (*ivoutlen);
+
+      *ivout = xmalloc (ivlen);
+
       if (decryptp)
-	memcpy (*ivout, in + inlen - *ivoutlen, *ivoutlen);
+	memcpy (*ivout, in + inlen - ivlen, ivlen);
       else
 	/* XXX what is the output iv for CBC-CTS mode?
 	   but is this value useful at all for that mode anyway?
 	   Mostly it is DES apps that want the updated iv, so this is ok. */
-	memcpy (*ivout, *out + *outlen - *ivoutlen, *ivoutlen);
+	memcpy (*ivout, *out + inlen - ivlen, ivlen);
     }
 
   gcry_cipher_close (ch);
@@ -366,13 +363,8 @@ shishi_des (Shishi * handle, int decryptp,
 	    const char *in, size_t inlen,
 	    char **out)
 {
-  return shishi_libgcrypt (handle, GCRY_CIPHER_DES, 0,
-			   decryptp,
-			   key, keylen,
-			   iv, ivlen,
-			   ivout, ivoutlen,
-			   in, inlen,
-			   out, outlen);
+  return libgcrypt_dencrypt (handle, GCRY_CIPHER_DES, 0,
+			     decryptp, key, 8, iv, ivout, in, inlen, out);
 }
 
 /**
@@ -398,13 +390,8 @@ shishi_3des (Shishi * handle, int decryptp,
 	     const char *in, size_t inlen,
 	     char **out)
 {
-  return shishi_libgcrypt (handle, GCRY_CIPHER_3DES, 0,
-			   decryptp,
-			   key, keylen,
-			   iv, ivlen,
-			   ivout, ivoutlen,
-			   in, inlen,
-			   out, outlen);
+  return libgcrypt_dencrypt (handle, GCRY_CIPHER_3DES, 0,
+			     decryptp, key, 24, iv, ivout, in, inlen, out);
 }
 
 /**
@@ -433,11 +420,6 @@ shishi_aes_cts (Shishi * handle, int decryptp,
 		const char *in, size_t inlen,
 		char **out)
 {
-  return shishi_libgcrypt (handle, GCRY_CIPHER_AES, GCRY_CIPHER_CBC_CTS,
-			   decryptp,
-			   key, keylen,
-			   iv, ivlen,
-			   ivout, ivoutlen,
-			   in, inlen,
-			   out, outlen);
+  return libgcrypt_dencrypt (handle, GCRY_CIPHER_AES, GCRY_CIPHER_CBC_CTS,
+			     decryptp, key, keylen, iv, ivout, in, inlen, out);
 }
