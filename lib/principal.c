@@ -372,7 +372,7 @@ shishi_principal_name_realm (Shishi * handle,
       tmp = xrealloc (tmp, tmplen + 1 + realmfieldlen + 1);
 
       tmp[tmplen] = '@';
-      memcpy (tmp + tmplen, realmfield, realmfieldlen);
+      memcpy (tmp + tmplen + 1, realmfield, realmfieldlen);
 
       tmplen += 1 + realmfieldlen;
 
@@ -393,7 +393,7 @@ shishi_principal_name_realm (Shishi * handle,
       tmp = xrealloc (tmp, tmplen + 1 + realmlen + 1);
 
       tmp[tmplen] = '@';
-      memcpy (tmp + tmplen, realm, realmlen);
+      memcpy (tmp + tmplen + 1, realm, realmlen);
 
       tmplen += 1 + realmlen;
 

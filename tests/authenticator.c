@@ -120,16 +120,18 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_client_set() failed\n");
 
-  /* shishi_authenticator_cname_get */
-  n = sizeof (buffer);
-  res = shishi_authenticator_cname_get (handle, a, buffer, &n);
+  /* shishi_authenticator_client */
+  res = shishi_authenticator_client (handle, a, &buf, &n);
   if (debug)
-    escapeprint (buffer, n);
+    escapeprint (buf, n);
   if (res == SHISHI_OK &&
-      n == strlen ("foo/bar/baz") && memcmp (buffer, "foo/bar/baz", n) == 0)
-    success ("shishi_authenticator_cname_get() OK\n");
+      n == strlen ("foo/bar/baz") && memcmp (buf, "foo/bar/baz", n) == 0)
+    {
+      success ("shishi_authenticator_client() OK\n");
+      free (buf);
+    }
   else
-    fail ("shishi_authenticator_cname_get() failed\n");
+    fail ("shishi_authenticator_client() failed\n");
 
   /* shishi_authenticator_client_set */
   res = shishi_authenticator_client_set (handle, a, "foo");
@@ -138,16 +140,18 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_client_set() failed\n");
 
-  /* shishi_authenticator_cname_get */
-  n = sizeof (buffer);
-  res = shishi_authenticator_cname_get (handle, a, buffer, &n);
+  /* shishi_authenticator_client */
+  res = shishi_authenticator_client (handle, a, &buf, &n);
   if (debug)
-    escapeprint (buffer, n);
+    escapeprint (buf, n);
   if (res == SHISHI_OK && n == strlen ("foo")
-      && memcmp (buffer, "foo", n) == 0)
-    success ("shishi_authenticator_cname_get() OK\n");
+      && memcmp (buf, "foo", n) == 0)
+    {
+      success ("shishi_authenticator_client() OK\n");
+      free (buf);
+    }
   else
-    fail ("shishi_authenticator_cname_get() failed\n");
+    fail ("shishi_authenticator_client() failed\n");
 
   /* shishi_authenticator_set_crealm */
   res = shishi_authenticator_set_crealm (handle, a, "bar");
@@ -156,16 +160,18 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator_set_crealm() failed\n");
 
-  /* shishi_authenticator_cnamerealm_get */
-  n = sizeof (buffer);
-  res = shishi_authenticator_cnamerealm_get (handle, a, buffer, &n);
+  /* shishi_authenticator_clientrealm */
+  res = shishi_authenticator_clientrealm (handle, a, &buf, &n);
   if (debug)
-    escapeprint (buffer, n);
+    escapeprint (buf, n);
   if (res == SHISHI_OK &&
-      n == strlen ("foo@bar") && memcmp (buffer, "foo@bar", n) == 0)
-    success ("shishi_authenticator_cnamerealm_get() OK\n");
+      n == strlen ("foo@bar") && memcmp (buf, "foo@bar", n) == 0)
+    {
+      success ("shishi_authenticator_clientrealm() OK\n");
+      free (buf);
+    }
   else
-    fail ("shishi_authenticator_cnamerealm_get() failed\n");
+    fail ("shishi_authenticator_clientrealm() failed\n");
 
   /* shishi_authenticator_add_authorizationdata */
   res = shishi_authenticator_add_authorizationdata (handle, a, 42, "baz", 3);
