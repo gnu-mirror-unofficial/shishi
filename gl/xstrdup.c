@@ -19,10 +19,10 @@
 # include <config.h>
 #endif
 
-#include <stddef.h>
-#include <string.h>
-
+/* Specification.  */
 #include "xalloc.h"
+
+#include <string.h>
 
 /* Return a newly allocated copy of STRING.  */
 
