@@ -22,13 +22,15 @@
 /* XXX several functions with out/outlen writes longer than the outlen */
 
 #include "internal.h"
+#ifdef USE_GCRYPT
 #include <gcrypt.h>
-
+#else
 #include "hmac.h"
 #include "des.h"
 #include "aes.h"
 #include "cbc.h"
 #include "cbc-cts.h"
+#endif
 
 static void
 escapeprint (const char *str, int len)
@@ -535,7 +537,6 @@ simplified_encrypt (Shishi * handle,
     {
       char *pt = NULL, *ct = NULL, *hmac = NULL;
       int blen = shishi_cipher_blocksize (shishi_key_type (key));
-      int halg = GCRY_MD_SHA1;
       size_t ctlen, ptlen, hmaclen;
       Shishi_key *privacykey = NULL, *integritykey = NULL;
 
