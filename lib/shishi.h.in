@@ -36,6 +36,7 @@ enum
   SHISHI_FOPEN_ERROR,
   SHISHI_FCLOSE_ERROR,
   SHISHI_MALLOC_ERROR,
+  SHISHI_BASE64_ERROR,
   SHISHI_REALM_MISMATCH,
   SHISHI_CNAME_MISMATCH,
   SHISHI_NONCE_MISMATCH,
@@ -470,9 +471,9 @@ extern int shishi_cipher_keylen (int type);
 extern int shishi_etype_parse (char *cipher);
 extern int
 shishi_string_to_key (Shishi * handle,
-		      int etype,
-		      char *string,
-		      int n_string,
+		      int keytype,
+		      char *password,
+		      int n_password,
 		      char *salt,
 		      int n_salt,
 		      char *parameter, char *outkey, int *outkeylen);
