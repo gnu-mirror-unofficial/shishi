@@ -66,9 +66,9 @@ int
 shishi_randomize (Shishi * handle, int strong, char *data, size_t datalen)
 {
   if (strong)
-    gcry_randomize (data, datalen, GCRY_STRONG_RANDOM);
-  else
     gcry_randomize (data, datalen, GCRY_VERY_STRONG_RANDOM);
+  else
+    gcry_randomize (data, datalen, GCRY_STRONG_RANDOM);
   return SHISHI_OK;
 }
 
