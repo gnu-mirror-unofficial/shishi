@@ -1,4 +1,4 @@
-# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm linebuffer
+# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm linebuffer xgethostname
 # + base64 (x)memdup
 
 # s/libfoo_a/libfoo_la/g
@@ -98,6 +98,8 @@ libfoo_la_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 libfoo_la_SOURCES += vasprintf.h
 
 libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
+
+libfoo_la_SOURCES += xgethostname.h xgethostname.c
 
 libfoo_la_SOURCES += xstrndup.h xstrndup.c
 
