@@ -32,8 +32,6 @@ main (int argc, char *argv[])
   char *p, *q;
   size_t l, m;
   int32_t t;
-  char buffer[BUFSIZ];
-  char buffer2[BUFSIZ];
   int res;
 
   do
@@ -187,18 +185,20 @@ main (int argc, char *argv[])
     }
 
   /* shishi_a2d() */
-  m = sizeof (buffer2);
-  res = shishi_a2d (handle, asn1safe, buffer2, &m);
+  res = shishi_new_a2d (handle, asn1safe, &q, &m);
   if (res == SHISHI_OK)
     success ("shishi_a2d() OK\n");
   else
     fail ("shishi_a2d() failed\n");
 
   /* Compare DER encodings of authenticators */
-  if (l > 0 && m > 0 && l == m && memcmp (p, buffer2, l) == 0)
+  if (l > 0 && m > 0 && l == m && memcmp (p, q, l) == 0)
     success ("DER comparison OK\n");
   else
     fail ("DER comparison failed\n");
+
+  free (q);
+  free (p);
 
   /* unlink() */
   res = unlink ("safe.tmp");
