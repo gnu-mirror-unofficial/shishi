@@ -710,12 +710,14 @@ extern int shishi_krberror_from_file (Shishi * handle, ASN1_TYPE * krberror,
 				      int filetype, char *filename);
 extern const char *shishi_krberror_errorcode_message (Shishi * handle,
 						      int errorcode);
-extern int shishi_krberror_get_etext (Shishi * handle, ASN1_TYPE krberror,
-				      char *etext, size_t * etextlen);
-extern int shishi_krberror_get_errorcode (Shishi * handle,
-					  ASN1_TYPE krberror, int *errorcode);
-extern int shishi_krberror_get_errorcode_fast (Shishi * handle,
-					       ASN1_TYPE krberror);
+extern const char *shishi_krberror_message (Shishi * handle,
+					    ASN1_TYPE krberror);
+extern int shishi_krberror_etext (Shishi * handle, ASN1_TYPE krberror,
+				  char *etext, size_t * etextlen);
+extern int shishi_krberror_errorcode (Shishi * handle,
+				      ASN1_TYPE krberror, int *errorcode);
+extern int shishi_krberror_errorcode_fast (Shishi * handle,
+					   ASN1_TYPE krberror);
 extern int shishi_krberror_pretty_print (Shishi * handle,
 					 FILE * fh, ASN1_TYPE krberror);
 
