@@ -1,5 +1,5 @@
 /* crypto-aes.c --- AES crypto functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -166,26 +166,26 @@ aes256_string_to_key (Shishi * handle,
 
 static int
 aes128_random_to_key (Shishi * handle,
-		      const char *random,
-		      size_t randomlen, Shishi_key * outkey)
+		      const char *rnd,
+		      size_t rndlen, Shishi_key * outkey)
 {
-  if (randomlen < shishi_key_length (outkey))
+  if (rndlen < shishi_key_length (outkey))
     return SHISHI_CRYPTO_ERROR;
 
-  shishi_key_value_set (outkey, random);
+  shishi_key_value_set (outkey, rnd);
 
   return SHISHI_OK;
 }
 
 static int
 aes256_random_to_key (Shishi * handle,
-		      const char *random,
-		      size_t randomlen, Shishi_key * outkey)
+		      const char *rnd,
+		      size_t rndlen, Shishi_key * outkey)
 {
-  if (randomlen < shishi_key_length (outkey))
+  if (rndlen < shishi_key_length (outkey))
     return SHISHI_CRYPTO_ERROR;
 
-  shishi_key_value_set (outkey, random);
+  shishi_key_value_set (outkey, rnd);
 
   return SHISHI_OK;
 }

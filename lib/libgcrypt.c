@@ -22,6 +22,7 @@
 /* Note: This file is only built if Shishi uses Libgcrypt. */
 
 #include "internal.h"
+#include "crypto.h"
 
 #include <gcrypt.h>
 
@@ -78,7 +79,7 @@ shishi_crc (Shishi * handle, const char *in, size_t inlen, char *out[4])
 {
   gcry_md_hd_t hd;
   gpg_error_t err;
-  char *p;
+  unsigned char *p;
 
   err = gcry_md_open (&hd, GCRY_MD_CRC32_RFC1510, 0);
   if (err != GPG_ERR_NO_ERROR)
@@ -114,7 +115,7 @@ shishi_md4 (Shishi * handle, const char *in, size_t inlen, char *out[16])
 {
   gcry_md_hd_t hd;
   gpg_error_t err;
-  char *p;
+  unsigned char *p;
 
   err = gcry_md_open (&hd, GCRY_MD_MD4, 0);
   if (err != GPG_ERR_NO_ERROR)
@@ -145,7 +146,7 @@ shishi_md5 (Shishi * handle, const char *in, size_t inlen, char *out[16])
 {
   gcry_md_hd_t hd;
   gpg_error_t err;
-  char *p;
+  unsigned char *p;
 
   err = gcry_md_open (&hd, GCRY_MD_MD5, 0);
   if (err != GPG_ERR_NO_ERROR)

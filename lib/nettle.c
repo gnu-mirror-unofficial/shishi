@@ -22,6 +22,7 @@
 /* Note: This file is only built if Shishi uses Nettle. */
 
 #include "internal.h"
+#include "crypto.h"
 
 #include "hmac.h"
 #include "arcfour.h"

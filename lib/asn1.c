@@ -22,6 +22,7 @@
 #include <libtasn1.h>
 #define _SHISHI_HAS_LIBTASN1_H 1
 #include "internal.h"
+#include "asn1.h"
 
 /* Defined in kerberos5.c, generated from kerberos5.asn1. */
 extern const ASN1_ARRAY_TYPE shishi_asn1_tab[];
@@ -134,13 +135,13 @@ shishi_asn1_read2 (Shishi * handle,
 
   if (data)
     {
-      size_t datalen = (size_t) len;
+      size_t dlen = (size_t) len;
 
       *data = xmalloc (len + 1);
 
       if (len > 0)
 	{
-	  rc = shishi_asn1_read (handle, node, field, *data, &datalen);
+	  rc = shishi_asn1_read (handle, node, field, *data, &dlen);
 	  if (rc != SHISHI_OK)
 	    return rc;
 	}
@@ -648,24 +649,26 @@ shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
 		      const char *field, char **der, size_t * len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
+  int mylen = 0;
   int rc;
 
-  *len = 0;
-  rc = asn1_der_coding (node, field, NULL, len, errorDescription);
+  rc = asn1_der_coding (node, field, NULL, &mylen, errorDescription);
   if (rc != ASN1_MEM_ERROR)
     {
       shishi_error_set (handle, errorDescription);
       return SHISHI_ASN1_ERROR;
     }
 
-  *der = xmalloc (*len);
+  *der = xmalloc (mylen);
 
-  rc = asn1_der_coding (node, field, *der, len, errorDescription);
+  rc = asn1_der_coding (node, field, *der, &mylen, errorDescription);
   if (rc != ASN1_SUCCESS)
     {
       shishi_error_set (handle, errorDescription);
       return SHISHI_ASN1_ERROR;
     }
+
+  *len = mylen;
 
   return SHISHI_OK;
 }

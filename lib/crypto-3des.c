@@ -1,5 +1,5 @@
 /* crypto-3des.c --- 3DES crypto functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -121,7 +121,7 @@ des3none_decrypt (Shishi * handle,
 }
 
 static void
-des_set_odd_key_parity (char key[8])
+des_set_odd_key_parity (unsigned char key[8])
 {
   int i, j;
 
@@ -160,25 +160,25 @@ des_set_odd_key_parity (char key[8])
  */
 static int
 des3_random_to_key (Shishi * handle,
-		    const char *random, size_t randomlen, Shishi_key * outkey)
+		    const char *rnd, size_t rndlen, Shishi_key * outkey)
 {
   unsigned char tmpkey[3 * 8];
   int i;
 
-  if (randomlen < 168 / 8)
+  if (rndlen < 168 / 8)
     return !SHISHI_OK;
 
   if (VERBOSECRYPTO (handle))
     {
       printf ("des3_random_to_key (random)\n");
       printf ("\t ;; random (length %d):\n", 168 / 8);
-      _shishi_hexprint (random, 168 / 8);
-      _shishi_binprint (random, 168 / 8);
+      _shishi_hexprint (rnd, 168 / 8);
+      _shishi_binprint (rnd, 168 / 8);
     }
 
-  memcpy (tmpkey, random, 7);
-  memcpy (tmpkey + 8, random + 7, 7);
-  memcpy (tmpkey + 16, random + 14, 7);
+  memcpy (tmpkey, rnd, 7);
+  memcpy (tmpkey + 8, rnd + 7, 7);
+  memcpy (tmpkey + 16, rnd + 14, 7);
   for (i = 0; i < 3; i++)
     {
       tmpkey[i * 8 + 7] =

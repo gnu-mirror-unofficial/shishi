@@ -114,7 +114,7 @@ typedef int (*Shishi_verify_function) (Shishi * handle,
 struct cipherinfo
 {
   int32_t type;
-  char *name;
+  const char *name;
   int blocksize;
   int confoundersize;
   int keylen;
@@ -130,7 +130,7 @@ typedef struct cipherinfo cipherinfo;
 struct checksuminfo
 {
   int32_t type;
-  char *name;
+  const char *name;
   int cksumlen;
   Shishi_checksum_function checksum;
   Shishi_verify_function verify;

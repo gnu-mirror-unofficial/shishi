@@ -1,5 +1,5 @@
 /* crypto-rc4.c --- draft-brezak-win2k-krb-rc4-hmac-04 crypto functions.
- * Copyright (C) 2003  Simon Josefsson
+ * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -466,16 +466,16 @@ done:
 
 static int
 arcfour_hmac_random_to_key (Shishi * handle,
-			    const char *random, size_t randomlen,
+			    const char *rnd, size_t rndlen,
 			    Shishi_key * outkey)
 {
-  if (randomlen != shishi_key_length (outkey))
+  if (rndlen != shishi_key_length (outkey))
     {
       shishi_error_printf (handle, "ARCFOUR random to key caller error");
       return SHISHI_CRYPTO_ERROR;
     }
 
-  shishi_key_value_set (outkey, random);
+  shishi_key_value_set (outkey, rnd);
 
   return SHISHI_OK;
 }
