@@ -1,4 +1,4 @@
-/* resolv.c	resolver glue.
+/* resolv.c --- Resolver glue.
  * Copyright (C) 2003  Simon Josefsson
  * Copyright (c) 2002 Jeremie Miller, Thomas Muldowney,
  *                    Ryan Eatmon, Robert Norris
@@ -21,10 +21,13 @@
  *
  */
 
+#include "internal.h"
+
 /* This file comes from jabberd - Jabber Open Source Server, licensed
    under GPL. http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/jabberd2/ */
 
-#include "internal.h"
+/* Get prototypes. */
+#include "resolver.h"
 
 #ifdef HAVE_LIBRESOLV
 

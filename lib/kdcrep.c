@@ -1,4 +1,4 @@
-/* kdcrep.c	Key distribution (AS/TGS) Reply functions
+/* kdcrep.c --- Key distribution (AS/TGS) Reply functions.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -20,6 +20,9 @@
  */
 
 #include "internal.h"
+
+/* Get _shishi_print_armored_data, etc. */
+#include "diskio.h"
 
 #define SHISHI_KDCREP_DEFAULT_PVNO      "5"
 #define SHISHI_KDCREP_DEFAULT_PVNO_LEN  0

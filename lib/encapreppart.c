@@ -1,4 +1,4 @@
-/* encapreppart.c	Key distribution encrypted reply part functions
+/* encapreppart.c --- Encrypted authentication reply part functions.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -20,6 +20,9 @@
  */
 
 #include "internal.h"
+
+/* Get _shishi_print_armored_data, etc. */
+#include "diskio.h"
 
 /**
  * shishi_encapreppart:

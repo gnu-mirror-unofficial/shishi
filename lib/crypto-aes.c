@@ -1,4 +1,4 @@
-/* crypto-aes.c		AES crypto functions
+/* crypto-aes.c --- AES crypto functions.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -21,7 +21,11 @@
 
 #include "internal.h"
 
+/* Get prototypes. */
 #include "crypto.h"
+
+/* Get _shishi_escapeprint, etc. */
+#include "utils.h"
 
 static int
 aes128_encrypt (Shishi * handle,

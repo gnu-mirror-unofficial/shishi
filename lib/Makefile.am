@@ -37,17 +37,17 @@ EXTRA_DIST = kerberos5.asn1
 include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = shishi.h.in internal.h \
-	init.c cfg.c realm.c principal.c error.c krberror.c \
-	gztime.c diskio.c authorize.c pki.c \
+	init.c cfg.c cfg.h realm.c principal.c error.c krberror.c \
+	gztime.c diskio.c diskio.h authorize.c pki.c \
 	authenticator.c \
 	kdc.c kdcreq.c kdcrep.c enckdcreppart.c as.c tgs.c \
 	ap.c apreq.c aprep.c encapreppart.c \
 	safe.c priv.c \
 	ticket.c encticketpart.c tkt.c tkts.c \
 	netio.c key.c keys.c hostkeys.c crypto.c crypto.h crypto-ctx.c \
-	asn1.c kerberos5.c \
+	asn1.c asn1.h kerberos5.c \
 	version.c password.c \
-	utils.c resolv.c
+	utils.c utils.h resolv.c resolver.h
 if NULL
 libshishi_la_SOURCES += crypto-null.c
 endif
@@ -73,7 +73,7 @@ if LIBGCRYPT
 libshishi_la_SOURCES += libgcrypt.c
 endif
 if STARTTLS
-libshishi_la_SOURCES += starttls.c
+libshishi_la_SOURCES += starttls.c starttls.h
 endif
 libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@

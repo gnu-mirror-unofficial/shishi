@@ -1,4 +1,4 @@
-/* netio.c	network I/O functions
+/* netio.c --- Network I/O functions.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -20,6 +20,18 @@
  */
 
 #include "internal.h"
+
+/* Get _shishi_sendrecv_tls, etc. */
+#include "starttls.h"
+
+/* Get _shishi_resolv, etc. */
+#include "resolver.h"
+
+/* Get _shishi_realminfo, etc. */
+#include "diskio.h"
+
+/* Get _shishi_realminfo. */
+#include "cfg.h"
 
 static int
 shishi_sendrecv_udp (Shishi * handle,
@@ -251,7 +263,7 @@ shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
   size_t j, k;
   int rc;
 
-  ri = shishi_realminfo (handle, realm);
+  ri = _shishi_realminfo (handle, realm);
   if (!ri)
     {
       shishi_error_printf (handle, "No KDC defined for realm %s", realm);

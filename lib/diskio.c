@@ -1,4 +1,4 @@
-/* diskio.c	read and write data structures from disk
+/* diskio.c --- Read and write data structures from disk.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.

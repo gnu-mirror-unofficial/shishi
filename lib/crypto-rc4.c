@@ -1,4 +1,4 @@
-/* crypto-rc4.c	draft-brezak-win2k-krb-rc4-hmac-04 crypto functions
+/* crypto-rc4.c --- draft-brezak-win2k-krb-rc4-hmac-04 crypto functions.
  * Copyright (C) 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -21,7 +21,11 @@
 
 #include "internal.h"
 
+/* Get prototypes. */
 #include "crypto.h"
+
+/* Get _shishi_escapeprint, etc. */
+#include "utils.h"
 
 static int
 arcfour_keyusage (int keyusage)

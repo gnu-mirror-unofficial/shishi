@@ -1,4 +1,4 @@
-/* gztime.c	convert into GeneralizedTime
+/* gztime.c --- Convertion functions for GeneralizedTime.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -20,6 +20,11 @@
  */
 
 #include "internal.h"
+
+/* Get xtime. */
+#include "utils.h"
+
+/* Get timegm. */
 #include "timegm.h"
 
 /**

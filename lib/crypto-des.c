@@ -1,4 +1,4 @@
-/* crypto-des.c	DES crypto functions
+/* crypto-des.c --- DES crypto functions.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -21,7 +21,11 @@
 
 #include "internal.h"
 
+/* Get prototypes. */
 #include "crypto.h"
+
+/* Get _shishi_escapeprint, etc. */
+#include "utils.h"
 
 static int
 raw_des_checksum0 (Shishi * handle, int algo,

@@ -1,4 +1,4 @@
-/* init.c	initialization functions
+/* init.c --- Initialization functions.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -20,6 +20,15 @@
  */
 
 #include "internal.h"
+
+/* Get _shishi_tls_init. */
+#include "starttls.h"
+
+/* Get _shishi_crypto_init. */
+#include "crypto.h"
+
+/* Get _shishi_asn1_init. */
+#include "asn1.h"
 
 static Shishi *
 init_handle (int outputtype)

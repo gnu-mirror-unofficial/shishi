@@ -1,4 +1,4 @@
-/* internal.h	internal header file for shishi
+/* internal.h --- Internal header file for Shishi.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -220,102 +220,5 @@ struct Shishi
 
 #define TICKETLIFE (60*60*8)	/* Work day */
 #define RENEWLIFE (60*60*24*7)	/* Week */
-
-extern int _shishi_crypto_init (Shishi * handle);
-extern int _shishi_asn1_init (Shishi * handle);
-
-int
-_shishi_print_armored_data (Shishi * handle,
-			    FILE * fh,
-			    Shishi_asn1 asn1, char *asn1type, char *headers);
-int
-_shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
-		   char *asn1type);
-
-int
-_shishi_authenticator_input (Shishi * handle,
-			     FILE * fh, Shishi_asn1 * authenticator,
-			     int type);
-int
-_shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
-		     int type);
-int _shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep,
-			 int type);
-int _shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq,
-			  int type);
-int _shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep,
-			  int type);
-int _shishi_krberror_input (Shishi * handle, FILE * fh,
-			    Shishi_asn1 * krberror, int type);
-int _shishi_encapreppart_input (Shishi * handle, FILE * fh,
-				Shishi_asn1 * encapreppart, int type);
-int _shishi_safe_input (Shishi * handle, FILE * fh,
-			Shishi_asn1 * safe, int type);
-int _shishi_priv_input (Shishi * handle, FILE * fh,
-			Shishi_asn1 * priv, int type);
-
-Shishi_asn1 _shishi_asn1_read (void);
-int _shishi_cipher_init (void);
-
-
-int
-shishi_asn1_integer2_field (Shishi * handle,
-			    Shishi_asn1 node, unsigned long *i,
-			    const char *field);
-
-/* starttls.c */
-extern int _shishi_tls_init (Shishi * handle);
-extern int _shishi_tls_done (Shishi * handle);
-extern int _shishi_sendrecv_tls (Shishi * handle,
-				 struct sockaddr *addr,
-				 const char *indata, int inlen,
-				 char **outdata, int *outlen, int timeout,
-				 Shishi_tkts_hint * hint);
-
-/* utils.c */
-extern void _shishi_escapeprint (const char *str, int len);
-extern void _shishi_hexprint (const char *str, int len);
-extern void _shishi_binprint (const char *str, int len);
-extern void _shishi_bin7print (const char *str, int len);
-extern time_t xtime (time_t * t);
-extern int xgettimeofday (struct timeval *tv, struct timezone *tz);
-
-extern struct Shishi_realminfo *shishi_realminfo (Shishi * handle,
-						  const char *realm);
-extern struct Shishi_realminfo *shishi_realminfo_new (Shishi * handle,
-						      char *realm);
-
-#if defined(WITH_DMALLOC) && WITH_DMALLOC
-#include <dmalloc.h>
-#endif
-
-/* older systems might not have these */
-#ifndef T_SRV
-# define T_SRV (33)
-#endif
-
-typedef struct dnshost_st
-{
-  struct dnshost_st *next;
-
-  unsigned int type;
-  unsigned int class;
-  unsigned int ttl;
-
-  void *rr;
-} *dnshost_t;
-
-typedef struct dns_srv_st
-{
-  unsigned int priority;
-  unsigned int weight;
-  unsigned int port;
-  unsigned int rweight;
-
-  char name[256];
-} *dns_srv_t;
-
-dnshost_t _shishi_resolv (const char *zone, unsigned int type);
-void _shishi_resolv_free (dnshost_t dns);
 
 #endif /* _INTERNAL_H */

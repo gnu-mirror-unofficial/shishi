@@ -1,4 +1,4 @@
-/* krberror.c	Functions related to KRB-ERROR packet.
+/* krberror.c --- Functions related to KRB-ERROR packet.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -20,6 +20,12 @@
  */
 
 #include "internal.h"
+
+/* Get xgettimeofday. */
+#include "utils.h"
+
+/* Get _shishi_print_armored_data, etc. */
+#include "diskio.h"
 
 #define SHISHI_KRB_ERROR_DEFAULT_PVNO      "5"
 #define SHISHI_KRB_ERROR_DEFAULT_PVNO_LEN  0

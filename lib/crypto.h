@@ -1,4 +1,4 @@
-/* crypto.h	internal crypto header file
+/* crypto.h --- Crypto prototypes.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -21,6 +21,8 @@
 
 #ifndef _CRYPTO_H
 #define _CRYPTO_H
+
+extern int _shishi_crypto_init (Shishi * handle);
 
 int
 _shishi_simplified_derivekey (Shishi * handle,

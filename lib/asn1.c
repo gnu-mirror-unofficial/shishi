@@ -1,4 +1,4 @@
-/* asn1.c	utilities to manipulate RFC 1510 ASN.1 types
+/* asn1.c --- Utilities to manipulate RFC 1510 ASN.1 types.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.

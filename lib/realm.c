@@ -1,4 +1,4 @@
-/* realm.c	realm related functions
+/* realm.c --- Realm related functions.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -20,6 +20,9 @@
  */
 
 #include "internal.h"
+
+/* Get _shishi_resolv, etc. */
+#include "resolver.h"
 
 /**
  * shishi_realm_default_guess:

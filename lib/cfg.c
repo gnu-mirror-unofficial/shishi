@@ -1,4 +1,4 @@
-/* cfg.c	configuration file functions.
+/* cfg.h --- Configuration file functions.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -20,6 +20,9 @@
  */
 
 #include "internal.h"
+
+/* Get prototypes. */
+#include "cfg.h"
 
 enum
 {
@@ -65,7 +68,7 @@ static char *const _shishi_opts[] = {
 int getsubopt (char **optionp, char *const *tokens, char **valuep);
 
 struct Shishi_realminfo *
-shishi_realminfo (Shishi * handle, const char *realm)
+_shishi_realminfo (Shishi * handle, const char *realm)
 {
   size_t i;
 
@@ -77,11 +80,11 @@ shishi_realminfo (Shishi * handle, const char *realm)
 }
 
 struct Shishi_realminfo *
-shishi_realminfo_new (Shishi * handle, char *realm)
+_shishi_realminfo_new (Shishi * handle, char *realm)
 {
   struct Shishi_realminfo *ri;
 
-  ri = shishi_realminfo (handle, realm);
+  ri = _shishi_realminfo (handle, realm);
   if (ri)
     return ri;
 
@@ -199,7 +202,7 @@ shishi_cfg (Shishi * handle, char *option)
 	case SERVER_REALM_OPTION:
 	  {
 	    struct Shishi_realminfo *ri;
-	    ri = shishi_realminfo_new (handle, value);
+	    ri = _shishi_realminfo_new (handle, value);
 	    ri->serverwildcards = xrealloc (ri->serverwildcards,
 					    ++ri->nserverwildcards *
 					    sizeof (*ri->serverwildcards));
