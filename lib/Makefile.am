@@ -37,7 +37,7 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	version.c password.c \
 	setenv.h
 libshishi_la_LIBADD = @LIBTASN1_LIBS@ @LIBGCRYPT_LIBS@ @LIBIDN_LIBS@ \
-	@LTLIBOBJS@ @LTLIBINTL@
+	@LTLIBINTL@ ../gl/libfoo.a
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 INCLUDES = -I../intl @LIBTASN1_CFLAGS@ @LIBGCRYPT_CFLAGS@ @LIBIDN_CFLAGS@

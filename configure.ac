@@ -50,6 +50,7 @@ AM_MISSING_PROG(ASN1PARSER, asn1Parser, $missing_dir)
 AM_WITH_DMALLOC
 
 # Checks for header files.
+AC_GNU_SOURCE
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
 AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
@@ -141,22 +142,6 @@ else
 fi
 AC_MSG_CHECKING([if IPv6 should be used])
 AC_MSG_RESULT($enable_ipv6)
-
-# Test if the libc includes a good enough argp.
-AC_ARG_WITH(system-argp,
-  AC_HELP_STRING([--without-system-argp], [Don't use the system's argp]))
-if test "$with_system_argp" != "no" ; then
-  AC_LIB_ARGP(,with_system_argp=no)
-fi
-if test "$with_system_argp" = "no" ; then
-  ARGP_LIBS="\$(top_builddir)/argp/libargp.a"
-  ARGP_CFLAGS="-I\$(top_srcdir)/argp"
-  ARGP=argp
-fi
-AC_SUBST(ARGP)
-AC_SUBST(ARGP_LIBS)
-AC_SUBST(ARGP_CFLAGS)
-AC_CONFIG_SUBDIRS(argp)
 
 # Check gdbm
 #AC_ARG_WITH(system-gdbm,
@@ -260,11 +245,30 @@ AC_MSG_CHECKING([if system's libgcrypt should be used])
 AC_MSG_RESULT($with_system_libgcrypt)
 AC_CONFIG_SUBDIRS(crypto)
 
+# For gnulib stuff in gl/.
+gl_FUNC_ALLOCA
+gl_ARGP
+gl_ERROR
+gl_FUNC_GETHOSTNAME
+gl_GETOPT
+jm_FUNC_MALLOC
+gl_FUNC_MEMMOVE
+gl_FUNC_MEMSET
+jm_FUNC_REALLOC
+gt_FUNC_SETENV
+gl_STRCASE
+gl_FUNC_STRCHRNUL
+gl_FUNC_STRDUP
+gl_FUNC_STRERROR
+gl_SYSEXITS
+jm_FUNC_GLIBC_UNLOCKED_IO
+gl_FUNC_VASNPRINTF
+gl_FUNC_VASPRINTF
+gl_XALLOC
+
 # Checks for library functions.
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(signal select ngettext gethostbyname)
-AC_REPLACE_FUNCS(setenv unsetenv strdup memmove memset strcasecmp \
-		strerror gethostname)
 
 # Configure extra tools
 enable_ftpd=no; export enable_ftpd 
@@ -331,7 +335,7 @@ AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
 AC_CONFIG_FILES(Makefile intl/Makefile po/Makefile.in m4/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
 	doc/reference/Makefile extra/Makefile extra/pam_shishi/Makefile \
-	shishi.pc shishi.conf shishi.skel)
+	gl/Makefile shishi.pc shishi.conf shishi.skel)
 
 # We are done
 AC_OUTPUT
