@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-11-28 06:03+0100\n"
+"POT-Creation-Date: 2002-11-29 07:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,27 +15,27 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/shishi.c:127 src/shishi.c:137 src/shishi.c:146 src/shishi.c:170
+#: src/shishi.c:128 src/shishi.c:138 src/shishi.c:147 src/shishi.c:171
 #: src/shishi.c:181
 #, c-format
 msgid "Option `%s' only valid with CRYPTO."
 msgstr ""
 
-#: src/shishi.c:131
+#: src/shishi.c:132
 #, c-format
 msgid "Unknown encryption type in `%s'"
 msgstr ""
 
-#: src/shishi.c:140 src/shishi.c:149
+#: src/shishi.c:141 src/shishi.c:150
 msgid "Cannot both encrypt and decrypt."
 msgstr ""
 
-#: src/shishi.c:163 src/shishi.c:229
+#: src/shishi.c:164 src/shishi.c:229
 #, c-format
 msgid "Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."
 msgstr ""
 
-#: src/shishi.c:194 src/shishi.c:202 src/shishi.c:209
+#: src/shishi.c:193 src/shishi.c:201 src/shishi.c:208
 #, c-format
 msgid "Option `%s' only valid with AP."
 msgstr ""
@@ -60,28 +60,28 @@ msgstr ""
 msgid "Option `%s' only valid with KDC/TGS."
 msgstr ""
 
-#: src/shishi.c:299 src/shishi.c:326 src/shishi.c:334 src/shishi.c:342
-#: src/shishi.c:350 src/shishi.c:358 src/shishi.c:365
+#: src/shishi.c:299 src/shishi.c:328 src/shishi.c:336 src/shishi.c:344
+#: src/shishi.c:352 src/shishi.c:360 src/shishi.c:367
 #, c-format
 msgid "Option `%s' only valid with KDC/AS/TGS."
 msgstr ""
 
-#: src/shishi.c:308 src/shishi.c:318
+#: src/shishi.c:309 src/shishi.c:320
 #, c-format
 msgid "Option `%s' only valid with AP and KDC/AS/TGS."
 msgstr ""
 
-#: src/shishi.c:372
+#: src/shishi.c:374
 #, c-format
 msgid "Too many arguments: `%s'"
 msgstr ""
 
-#: src/shishi.c:409
+#: src/shishi.c:411
 #, c-format
 msgid "Unknown command: '%s'"
 msgstr ""
 
-#: src/shishi.c:856
+#: src/shishi.c:859
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""
