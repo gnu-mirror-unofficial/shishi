@@ -384,9 +384,9 @@ the paper "A Better Key Schedule For DES-like Ciphers"
 Uri Blumenthal and Steven M. Bellovin (it is not clear if the
 algorithm, and the way it is used, is used by any other protocols,
 although it seems unlikely).  Data is integrity protected with a keyed
-(HMAC) SHA1 hash.  It has no security proof, but is assumed to provide
-adequate security in the sense that knowledge on how to crack it is
-not known to the public.  It is associated with the
+SHA1 hash in HMAC mode.  It has no security proof, but is assumed to
+provide adequate security in the sense that knowledge on how to crack
+it is not known to the public.  It is associated with the
 @code{hmac-sha1-des3-kd} checksum.
 
 @item aes128-cts-hmac-sha1-96
@@ -432,9 +432,9 @@ encryption mechanism.
 
 @code{rsa-md4} is a unkeyed MD4 hash computed over the message.  Since
 it is unkeyed, it is in general a weak checksum, however applications
-can, with care, use it non-weak ways (e.g., by including it other
-messages that are encrypted or checksummed).  It is compatible with
-all encryption mechanisms.
+can, with care, use it non-weak ways (e.g., by including the hash in
+other messages that are encrypted or checksummed).  It is compatible
+with all encryption mechanisms.
 
 @item rsa-md4-des
 
@@ -449,9 +449,9 @@ mechanisms.
 
 @code{rsa-md5} is a unkeyed MD5 hash computed over the message.  Since
 it is unkeyed, it is in general a weak checksum, however applications
-can, with care, use it non-weak ways (e.g., by including it other
-messages that are encrypted or checksummed).  It is compatible with
-all encryption mechanisms.
+can, with care, use it non-weak ways (e.g., by including the hash in
+other messages that are encrypted or checksummed).  It is compatible
+with all encryption mechanisms.
 
 @item rsa-md5-des
 
@@ -464,22 +464,23 @@ mechanisms.
 
 @item hmac-sha1-des3-kd
 
-@code{hmac-sha1-des3-kd} is a keyed (HMAC) SHA1 hash computed over the
-message.  The key is derived from the base protocol by the simplified
-key derivation function (similar to the password key derivation
-functions of @code{des3-cbc-sha1-kd}).  It has no security proof, but
-is assumed to provide good security.  It is compatible with the
-@code{des3-cbc-sha1-kd} encryption mechanism.
+@code{hmac-sha1-des3-kd} is a keyed SHA1 hash in HMAC mode computed
+over the message.  The key is derived from the base protocol by the
+simplified key derivation function (similar to the password key
+derivation functions of @code{des3-cbc-sha1-kd}).  It has no security
+proof, but is assumed to provide good security.  It is compatible with
+the @code{des3-cbc-sha1-kd} encryption mechanism.
 
 @item hmac-sha1-96-aes128
 @item hmac-sha1-96-aes256
 
-@code{hmac-sha1-96-aes*} are keyed (HMAC) SHA1 hashes computed over
-the message and then truncated to 96 bits.  The key is derived from
-the base protocol by the simplified key derivation function (similar
-to the password key derivation functions of @code{des3-cbc-sha1-kd}).
-It has no security proof, but is assumed to provide good security.  It
-is compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
+@code{hmac-sha1-96-aes*} are keyed SHA1 hashes in HMAC mode computed
+over the message and then truncated to 96 bits.  The key is derived
+from the base protocol by the simplified key derivation function
+(similar to the password key derivation functions of
+@code{des3-cbc-sha1-kd}).  It has no security proof, but is assumed to
+provide good security.  It is compatible with the
+@code{des3-cbc-sha1-kd} encryption mechanism.
 
 @end table
 
