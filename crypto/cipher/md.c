@@ -909,7 +909,7 @@ gcry_md_hash_buffer (int algo, void *digest, const void *buffer, size_t length)
 	 normal functions to do it */
       gcry_md_hd_t h;
       gpg_err_code_t err = md_open (&h, algo, 0, 0);
-      if(! err)
+      if (err)
 	/* FIXME?  */
 	BUG(); /* algo not available */
       md_write (h, (byte *) buffer, length);
