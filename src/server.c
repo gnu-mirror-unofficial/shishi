@@ -55,15 +55,6 @@ server (Shishi * handle, struct arguments arg)
       printf ("Service name: `%s'\n", arg.sname);
     }
 
-  if (arg.algorithm == 0)
-    {
-      arg.algorithm = SHISHI_DES_CBC_MD5;
-
-      if (!arg.silent)
-	fprintf (stderr, "No algorithm specified, defaulting to %s\n",
-		 shishi_cipher_name (arg.algorithm));
-    }
-
   if (arg.password)
     {
       if (strlen (arg.realm) + strlen (arg.sname) > sizeof (salt))
@@ -107,6 +98,16 @@ server (Shishi * handle, struct arguments arg)
 	  return 1;
 	}
     }
+
+  if (shishi_key_type(key) == SHISHI_NULL && !arg.silent)
+    fprintf (stderr,
+	     "warning: using %s is silly, consider using --algorithm.\n",
+	     shishi_cipher_name (arg.algorithm));
+
+  if (arg.verbose)
+    shishi_key_print (handle, stdout, key);
+
+  printf ("Waiting for AP-REQ from client...\n");
 
   res = shishi_apreq_parse (handle, stdin, &apreq);
   if (res != SHISHI_OK)
