@@ -1,3 +1,151 @@
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.13.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am:
+	(release): Use CSS.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gendocs.sh: Sync upstream.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am:
+	(release): Use binary PGP.  Add ftp-upload.gnu.org stuff.  Use
+	gendocs.sh.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: Generated.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* db/file.c:
+	(read_key): Handle leading whitespace in key material.  (But not for
+	old style keys.)
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c: Typo.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c: Fix salt computation for --password.
+
+2004-01-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-01-14  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c:
+	(main): Make sure apply_options receive realm/principal.
+
+2004-01-14  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c:
+	(kdc_listen): Improve error logic to fix segfault.
+
+2004-01-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c: Revert (for now).
+
+2004-01-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c:
+	(shishi_tkt_pretty_print): Use const.
+
+2004-01-14  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, m4/ac_compile_check_sizeof.m4,
+	m4/ax_create_stdint_h.m4: Update AX_CREATE_STDINT_H.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add key=ivec links.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add rlogin security links.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add Key=Ivec text.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Dist texinfo.css.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gendocs_template, doc/gendocs.sh: Sync with Texinfo.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Remove unused DocBook stuff.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix title.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Change title to include GNU.  Fix header.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am, doc/shishi.css, doc/texinfo.css: Rename
+	shishi.css to texinfo.css.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Use CSS for HTML.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.css: Add.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Only remove man pages on maintainerclean.  Make
+	man pages depend on ../configure.ac, for version number.
+
+2004-01-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Fix man page dependencies, reported by Adrian
+	Bunk <bunk@fs.tum.de>.
+
+2004-01-03  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Assume recent gengetopt.
+
+2004-01-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2004-01-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2004-01-03  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Don't use closelog.  Use syslog in kdc_unlisten.
+
+2004-01-03  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
 2004-01-02  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.12.
