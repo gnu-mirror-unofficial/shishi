@@ -531,20 +531,10 @@ main (int argc, char *argv[])
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
-  handle = shishi_init ();
-  if (handle == NULL)
+  rc = shishi_init_with_paths (&handle, NULL, arg.cfgfile, "");
+  if (rc != SHISHI_OK)
     {
       fprintf(stderr, "Could not initialize library\n");
-      return 1;
-    }
-
-  if (arg.cfgfile == NULL)
-    arg.cfgfile = SYSTEMCFGFILE;
-  rc = shishi_cfg_from_file (handle, arg.cfgfile);
-  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
-    {
-      fprintf(stderr, "Could not read configuration file `%s': %s\n", 
-	      arg.cfgfile, shishi_strerror (rc));
       return 1;
     }
 
