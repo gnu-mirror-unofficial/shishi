@@ -246,8 +246,7 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
   if (rc != 0)
     {
       shishi_error_printf (handle, "No direct realm host for realm %s", realm);
-      rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
-      goto done;
+      return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
     }
 
   if (VERBOSE (handle))
@@ -258,8 +257,8 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
 			    indata, inlen, outdata, outlen,
 			    handle->kdctimeout);
 
- done:
   freeaddrinfo (ai);
+
   return rc;
 }
 
