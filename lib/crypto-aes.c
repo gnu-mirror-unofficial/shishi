@@ -110,8 +110,8 @@ aes_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res =
-    shishi_key_from_value (handle, shishi_key_type (outkey), key, &tmpkey);
+  res = shishi_key_from_value (handle, shishi_key_type (outkey),
+			       key, &tmpkey);
   if (res != SHISHI_OK)
     return res;
 
