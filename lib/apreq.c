@@ -53,8 +53,7 @@
  * This function creates a new AP-REQ, populated with some default
  * values.
  *
- * Return value: Returns the authenticator or ASN1_TYPE_EMPTY on
- * failure.
+ * Return value: Returns the AP-REQ or ASN1_TYPE_EMPTY on failure.
  **/
 ASN1_TYPE
 shishi_apreq (Shishi * handle)

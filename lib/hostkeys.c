@@ -1,5 +1,5 @@
 /* hostkeys.c	Functions for managing keys stored in files.
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -179,7 +179,7 @@ shishi_hostkeys_for_serverrealm (Shishi * handle,
  * @realm: realm of server to get key for.
  *
  * Return value: Returns the key for the server
- * "SERVICE/HOSTNAME@@REALM" (where HOSTNAME is the current system's
+ * "SERVICE/HOSTNAME@REALM" (where HOSTNAME is the current system's
  * hostname), read from the default host keys file (see
  * shishi_hostkeys_default_file()), or NULL if no key could be found
  * or an error encountered.
