@@ -301,6 +301,14 @@ Shishi_filetype;
 
 typedef enum
 {
+  SHISHI_OUTPUTTYPE_NULL = 0,
+  SHISHI_OUTPUTTYPE_STDERR,
+  SHISHI_OUTPUTTYPE_SYSLOG
+}
+Shishi_outputtype;
+
+typedef enum
+{
   /* 1. AS-REQ PA-ENC-TIMESTAMP padata timestamp, encrypted with the
      client key */
   SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP = 1,
@@ -578,6 +586,8 @@ extern const char *shishi_error (Shishi * handle);
 extern void shishi_error_clear (Shishi * handle);
 extern void shishi_error_set (Shishi * handle, const char *error);
 extern void shishi_error_printf (Shishi * handle, const char *format, ...);
+extern int shishi_outputtype (Shishi * handle);
+extern void shishi_set_outputtype (Shishi * handle, int type);
 extern void shishi_info (Shishi * handle, const char *format, ...);
 extern void shishi_warn (Shishi * handle, const char *format, ...);
 

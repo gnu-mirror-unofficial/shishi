@@ -21,17 +21,8 @@
 
 #include "internal.h"
 
-
-/**
- * shishi:
- *
- * Initializes the Shishi library.  If this function fails, it may print
- * diagnostic errors to stderr.
- *
- * Return Value: Returns Shishi library handle, or %NULL on error.
- **/
 Shishi *
-shishi (void)
+_shishi (void)
 {
   Shishi *handle;
   char *tmp;
@@ -41,18 +32,6 @@ shishi (void)
 
   handle = (Shishi *) xmalloc (sizeof (*handle));
   memset ((void *) handle, 0, sizeof (*handle));
-
-  if (_shishi_crypto_init () != SHISHI_OK)
-    {
-      shishi_warn (handle, "Cannot initialize crypto library");
-      return NULL;
-    }
-
-  if ((handle->asn1 = _shishi_asn1_init ()) == NULL)
-    {
-      shishi_warn (handle, "%s", shishi_strerror (SHISHI_ASN1_ERROR));
-      return NULL;
-    }
 
   handle->kdctimeout = 5;
   handle->kdcretries = 3;
@@ -77,6 +56,68 @@ shishi (void)
     }
 
   return handle;
+}
+
+Shishi *
+_shishi_init (Shishi * handle)
+{
+  if (_shishi_crypto_init () != SHISHI_OK)
+    {
+      shishi_warn (handle, "Cannot initialize crypto library");
+      return NULL;
+    }
+
+  if ((handle->asn1 = _shishi_asn1_init ()) == NULL)
+    {
+      shishi_warn (handle, "%s", shishi_strerror (SHISHI_ASN1_ERROR));
+      return NULL;
+    }
+
+  return handle;
+}
+
+/**
+ * shishi:
+ *
+ * Initializes the Shishi library.  If this function fails, it may print
+ * diagnostic errors to stderr.
+ *
+ * Return Value: Returns Shishi library handle, or %NULL on error.
+ **/
+Shishi *
+shishi (void)
+{
+  Shishi *handle;
+
+  handle = _shishi();
+  if (handle == NULL)
+    return handle;
+
+  shishi_set_outputtype (handle, SHISHI_OUTPUTTYPE_STDERR);
+  
+  return _shishi_init(handle);
+}
+
+/**
+ * shishi_server:
+ *
+ * Initializes the Shishi library.  If this function fails, it may print
+ * diagnostic errors to syslog.
+ *
+ * Return Value: Returns Shishi library handle, or %NULL on error.
+ **/
+Shishi *
+shishi_server (void)
+{
+  Shishi *handle;
+
+  handle = _shishi();
+  if (handle == NULL)
+    return handle;
+
+  shishi_set_outputtype (handle, SHISHI_OUTPUTTYPE_SYSLOG);
+  
+  return _shishi_init(handle);
 }
 
 /**
@@ -291,7 +332,7 @@ shishi_init_server (Shishi ** handle)
 {
   int rc;
 
-  if (!handle || !(*handle = shishi ()))
+  if (!handle || !(*handle = shishi_server ()))
     return SHISHI_HANDLE_ERROR;
 
   rc =
@@ -323,8 +364,10 @@ shishi_init_server_with_paths (Shishi ** handle, const char *systemcfgfile)
 {
   int rc;
 
-  if (!handle || !(*handle = shishi ()))
+  if (!handle || !(*handle = shishi_server ()))
     return SHISHI_HANDLE_ERROR;
+
+  shishi_set_outputtype (*handle, SHISHI_OUTPUTTYPE_SYSLOG);
 
   if (!systemcfgfile)
     systemcfgfile = shishi_cfg_default_systemfile (*handle);

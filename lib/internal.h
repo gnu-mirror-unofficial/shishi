@@ -119,6 +119,10 @@
 #include <resolv.h>
 #endif
 
+#ifdef HAVE_SYSLOG_H 
+#include <syslog.h> 
+#endif 
+
 #include "gettext.h"
 
 #include "base64.h"
@@ -188,6 +192,7 @@ struct Shishi
 {
   Shishi_asn1 asn1;
   int verbose;
+  int outputtype;
   char *default_realm;
   char *default_principal;
   size_t kdctimeout;

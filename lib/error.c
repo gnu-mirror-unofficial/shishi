@@ -206,6 +206,33 @@ shishi_error_printf (Shishi * handle, const char *format, ...)
   va_end (ap);
 }
 
+/**
+ * shishi_outputtype:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Return output type (NULL, stderr or syslog) for informational
+ * and warning messages.
+ **/
+int
+shishi_outputtype (Shishi * handle)
+{
+  return handle->outputtype;
+}
+
+/**
+ * shishi_set_outputtype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @type: output type.
+ *
+ * Set output type (NULL, stderr or syslog) for informational
+ * and warning messages.
+ **/
+void
+shishi_set_outputtype (Shishi * handle, int type)
+{
+  handle->outputtype = type;
+}
+
 #define INFOSTR "libshishi: info: "
 #define WARNSTR "libshishi: warning: "
 
@@ -215,18 +242,32 @@ shishi_error_printf (Shishi * handle, const char *format, ...)
  * @format: printf style format string.
  * @...: print style arguments.
  *
- * Print informational message to stderr.
+ * Print informational message to output as defined in handle.
  **/
 void
 shishi_info (Shishi * handle, const char *format, ...)
 {
   va_list ap;
+  char * out;
+  int type;
+
   va_start (ap, format);
+  vasprintf (&out, format, ap);
 
-  fprintf (stderr, INFOSTR);
-  vfprintf (stderr, format, ap);
-  fprintf (stderr, "\n");
+  type = shishi_outputtype (handle);
+  switch (type)
+    {
+    case SHISHI_OUTPUTTYPE_STDERR:
+      fprintf (stderr, "%s%s\n", INFOSTR, out);
+      break;
+    case SHISHI_OUTPUTTYPE_SYSLOG:
+      syslog (LOG_ERR, "%s%s", INFOSTR, out);
+      break;
+    default:
+      break;
+    }
 
+  free (out);
   va_end (ap);
 }
 
@@ -236,17 +277,31 @@ shishi_info (Shishi * handle, const char *format, ...)
  * @format: printf style format string.
  * @...: print style arguments.
  *
- * Print a warning to stderr.
+ * Print a warning to output as defined in handle.
  **/
 void
 shishi_warn (Shishi * handle, const char *format, ...)
 {
   va_list ap;
+  char * out;
+  int type;
+
   va_start (ap, format);
+  vasprintf (&out, format, ap);
 
-  fprintf (stderr, WARNSTR);
-  vfprintf (stderr, format, ap);
-  fprintf (stderr, "\n");
+  type = shishi_outputtype (handle);
+  switch (type)
+    {
+    case SHISHI_OUTPUTTYPE_STDERR:
+      fprintf (stderr, "%s%s\n", WARNSTR, out);
+      break;
+    case SHISHI_OUTPUTTYPE_SYSLOG:
+      syslog (LOG_ERR, "%s%s", WARNSTR, out);
+      break;
+    default:
+      break;
+    }
 
+  free (out);
   va_end (ap);
 }
