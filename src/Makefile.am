@@ -22,8 +22,6 @@ AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_srcdir)/db -I../lib
 localedir = $(datadir)/locale
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
-	-DKDCKEYFILE=\"$(KEYDIR)/shishid.keys\" \
-	-DSKELCFGFILE=\"$(SKELDIR)/shishi.skel\" \
 	@DEFS@
 
 BUILT_SOURCES = shisa_cmd.c shisa_cmd.h shishid_cmd.c shishid_cmd.h
