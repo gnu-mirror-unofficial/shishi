@@ -4,6 +4,7 @@ Makefile.in
 html
 man
 mdate-sh
+shisa.1
 shishi-api-error-labels.texi
 shishi.1
 shishi.aux
