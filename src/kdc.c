@@ -423,10 +423,9 @@ tgsreq1 (Shishi_tgs * tgs)
   int rc;
   Shishi_tkt *tkt;
   Shishi_key *newsessionkey, *oldsessionkey, *serverkey, *subkey, *tgkey;
-  char *servername, *serverrealm, *tgname, *tgrealm, *client, *clientrealm;
+  char *servername, *serverrealm, *tgname = NULL, *tgrealm = NULL, *client, *clientrealm;
   Shisa_principal krbtgt;
-  Shishi_asn1 reqapticket;
-  Shisa_key **tgkeys;
+  Shisa_key **tgkeys = NULL;
   size_t ntgkeys;
   Shisa_key **serverkeys;
   size_t nserverkeys;
@@ -455,19 +454,23 @@ tgsreq1 (Shishi_tgs * tgs)
   if (rc != SHISHI_OK)
     return rc;
 
-  /* Get ticket used to authenticate request. */
-  reqapticket = shishi_tkt_ticket (shishi_ap_tkt (shishi_tgs_ap (tgs)));
-
   /* Find name of ticket granter, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
 
-  rc = shishi_ticket_realm_get (handle, reqapticket, &tgrealm, NULL);
+  rc = shishi_tkt_realm (shishi_ap_tkt (shishi_tgs_ap (tgs)), &tgrealm, NULL);
   if (rc != SHISHI_OK)
-    return rc;
-  printf ("tg realm %s\n", tgrealm);
+    {
+      syslog (LOG_ERR, "shishi_tkt_realm failed (%d): %s",
+	      rc, shishi_strerror (rc));
+      goto fatal;
+    }
 
-  rc = shishi_ticket_server (handle, reqapticket, &tgname, NULL);
+  rc = shishi_tkt_server (shishi_ap_tkt (shishi_tgs_ap (tgs)), &tgname, NULL);
   if (rc != SHISHI_OK)
-    return rc;
+    {
+      syslog (LOG_ERR, "shishi_tkt_server failed (%d): %s",
+	      rc, shishi_strerror (rc));
+      goto fatal;
+    }
   printf ("Found ticket granter name %s@%s...\n", tgname, tgrealm);
 
   /* We need to decrypt the ticket granting ticket, get key. */
@@ -537,6 +540,21 @@ tgsreq1 (Shishi_tgs * tgs)
   if (rc != SHISHI_OK)
     return rc;
 
+  /*
+   * Once the accompanying ticket has been decrypted, the user-supplied
+   * checksum in the Authenticator MUST be verified against the contents
+   * of the request, and the message rejected if the checksums do not
+   * match (with an error code of KRB_AP_ERR_MODIFIED) or if the checksum
+   * is not collision-proof (with an error code of
+   * KRB_AP_ERR_INAPP_CKSUM). If the checksum type is not supported, the
+   * KDC_ERR_SUMTYPE_NOSUPP error is returned. If the authorization-data
+   * are present, they are decrypted using the sub-session key from the
+   * Authenticator.
+   *
+   * If any of the decryptions indicate failed integrity checks, the
+   * KRB_AP_ERR_BAD_INTEGRITY error is returned.
+   */
+
   /* XXX check that checksum in authenticator match tgsreq.req-body */
 
   tkt = shishi_tgs_tkt (tgs);
@@ -600,6 +618,14 @@ tgsreq1 (Shishi_tgs * tgs)
   if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
     return rc;
 
+  /*
+   * As discussed in section 3.1.2, the KDC MUST send a valid KRB_TGS_REP
+   * message if it receives a KRB_TGS_REQ message identical to one it has
+   * recently processed. However, if the authenticator is a replay, but
+   * the rest of the request is not identical, then the KDC SHOULD return
+   * KRB_AP_ERR_REPEAT.
+   */
+
   /* Build TGS-REP. */
 
   if (rc == SHISHI_OK)
@@ -641,7 +667,17 @@ tgsreq1 (Shishi_tgs * tgs)
       shishi_kdcrep_print (handle, stderr, shishi_tgs_rep (tgs));
     }
 
-  return SHISHI_OK;
+  rc = SHISHI_OK;
+
+ fatal:
+  if (tgrealm)
+    free (tgrealm);
+  if (tgname)
+    free (tgname);
+  if (tgkeys)
+    shisa_keys_free (dbh, tgkeys, ntgkeys);
+
+  return rc;
 }
 
 static int
