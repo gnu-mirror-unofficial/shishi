@@ -641,7 +641,7 @@ main (int argc, char *argv[])
 	res = shishi_dr (handle, key, drdk[i].usage, drdk[i].nusage,
 			 out, strlen (drdk[i].dr));
 
-      shishi_key_done(key);
+      shishi_key_done(&key);
 
       if (res != SHISHI_OK)
 	{
@@ -700,7 +700,7 @@ main (int argc, char *argv[])
       if (res == SHISHI_OK)
 	res = shishi_dk (handle, key, drdk[i].usage, drdk[i].nusage, key2);
 
-      shishi_key_done(key);
+      shishi_key_done(&key);
 
       if (res != SHISHI_OK)
 	{
