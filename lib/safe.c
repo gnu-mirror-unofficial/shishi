@@ -372,18 +372,18 @@ shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
  * @handle: shishi handle as allocated by shishi_init().
  * @safe: safe as allocated by shishi_safe().
  * @cksumtype: output checksum type.
- * @cksum: output checksum data from SAFE.
- * @cksumlen: on input, maximum size of output checksum data buffer,
- *            on output, actual size of output checksum data buffer.
+ * @cksum: output array with newly allocated checksum data from SAFE.
+ * @cksumlen: output size of output checksum data buffer.
  *
- * Read checksum value from KRB-SAFE.
+ * Read checksum value from KRB-SAFE.  @cksum is allocated by this
+ * function, and it is the responsibility of caller to deallocate it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_safe_cksum (Shishi * handle,
 		   Shishi_asn1 safe,
-		   int32_t * cksumtype, char *cksum, size_t * cksumlen)
+		   int32_t * cksumtype, char **cksum, size_t * cksumlen)
 {
   int res;
 
@@ -391,7 +391,7 @@ shishi_safe_cksum (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_read (handle, safe, "cksum.checksum", cksum, cksumlen);
+  res = shishi_asn1_read2 (handle, safe, "cksum.checksum", cksum, cksumlen);
   if (res != SHISHI_OK)
     return res;
 
@@ -436,21 +436,21 @@ shishi_safe_set_cksum (Shishi * handle,
  * shishi_safe_user_data:
  * @handle: shishi handle as allocated by shishi_init().
  * @safe: safe as allocated by shishi_safe().
- * @userdata: output user data from KRB-SAFE.
- * @userdatalen: on input, maximum size of output user data buffer,
- *               on output, actual size of output user data buffer.
+ * @userdata: output array with newly allocated user data from KRB-SAFE.
+ * @userdatalen: output size of output user data buffer.
  *
- * Read user data value from KRB-SAFE.
+ * Read user data value from KRB-SAFE.  @userdata is allocated by this
+ * function, and it is the responsibility of caller to deallocate it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_safe_user_data (Shishi * handle,
-		       Shishi_asn1 safe, char *userdata, size_t * userdatalen)
+		       Shishi_asn1 safe, char **userdata, size_t * userdatalen)
 {
   int res;
 
-  res = shishi_asn1_read (handle, safe, "safe-body.user-data",
+  res = shishi_asn1_read2 (handle, safe, "safe-body.user-data",
 			  userdata, userdatalen);
   if (res != SHISHI_OK)
     return res;

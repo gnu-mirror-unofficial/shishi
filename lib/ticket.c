@@ -21,11 +21,23 @@
 
 #include "internal.h"
 
+/**
+ * shishi_ticket_realm_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ticket: input variable with ticket info.
+ * @realm: output array with newly allocated name of realm in ticket.
+ * @realmlen: size of output array.
+ *
+ * Extract realm from ticket.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_ticket_realm_get (Shishi * handle,
-			 Shishi_asn1 ticket, char *realm, int *realmlen)
+			 Shishi_asn1 ticket,
+			 char **realm, size_t *realmlen)
 {
-  return shishi_asn1_read (handle, ticket, "realm", realm, realmlen);
+  return shishi_asn1_read2 (handle, ticket, "realm", realm, realmlen);
 }
 
 /**

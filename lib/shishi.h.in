@@ -30,7 +30,7 @@
 #define SHISHI_VERSION "@PACKAGE_VERSION@"
 
 /* Error codes */
-enum
+typedef enum
 {
   SHISHI_OK = 0,
   SHISHI_ASN1_ERROR = 1,
@@ -76,8 +76,10 @@ enum
   SHISHI_PKCS5_INVALID_DERIVED_KEY_LENGTH = 41,
   SHISHI_PKCS5_DERIVED_KEY_TOO_LONG = 42,
   SHISHI_INVALID_PRINCIPAL_NAME = 43,
-  SHISHI_INVALID_ARGUMENT = 44
-};
+  SHISHI_INVALID_ARGUMENT = 44,
+  SHISHI_LAST_ERROR = 44
+}
+Shishi_rc;
 
 typedef enum
 {
@@ -604,8 +606,9 @@ extern int shishi_ticket_srealmserver_set (Shishi * handle,
 					   char *server);
 extern int shishi_ticket_set_server (Shishi * handle, Shishi_asn1 ticket,
 				     const char *server);
-extern int shishi_ticket_realm_get (Shishi * handle, Shishi_asn1 ticket,
-				    char *realm, int *realmlen);
+extern int shishi_ticket_realm_get (Shishi * handle,
+				    Shishi_asn1 ticket,
+				    char **realm, size_t *realmlen);
 extern int shishi_ticket_realm_set (Shishi * handle, Shishi_asn1 ticket,
 				    const char *realm);
 extern int shishi_ticket_get_enc_part_etype (Shishi * handle,
@@ -1770,14 +1773,15 @@ extern int shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
 extern int shishi_safe_cksum (Shishi * handle,
 			      Shishi_asn1 safe,
 			      int32_t * cksumtype,
-			      char *cksum, size_t * cksumlen);
+			      char **cksum, size_t * cksumlen);
 extern int shishi_safe_set_cksum (Shishi * handle,
 				  Shishi_asn1 safe,
 				  int32_t cksumtype,
 				  char *cksum, size_t cksumlen);
 extern int shishi_safe_user_data (Shishi * handle,
 				  Shishi_asn1 safe,
-				  char *userdata, size_t * userdatalen);
+				  char **userdata,
+				  size_t * userdatalen);
 extern int shishi_safe_set_user_data (Shishi * handle,
 				      Shishi_asn1 safe,
 				      char *userdata, size_t userdatalen);
