@@ -2389,14 +2389,15 @@ The simplest way to write a new backend is to start from the existing
 @samp{file} based database, in @file{db/file.c}, and modify the entry
 points as needed.
 
-Note that the current backend API will likely change several times
-before it is frozen.  We may describe it in detail here when it has
-matured.
+Note that the current backend API will likely change before it is
+frozen.  We may describe it in detail here when it has matured.
+However, currently it is similar to the external Shisa API
+(@pxref{Kerberos Database Functions}).
 
 There should be no need to modify anything else in the Shisa library,
 and certainly not in the Shishi library or the @file{shishid} server.
 
-Of course, we would appreciate if you would send us your new backend
+Naturally, we would appreciate if you would send us your new backend,
 if you believe it is generally useful (@pxref{Bug Reports}).
 
 @c **********************************************************
