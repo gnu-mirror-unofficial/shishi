@@ -1781,7 +1781,7 @@ shishi_n_fold (Shishi * handle,
      to yield a n-bit result denoted <X>_n.
    */
 
-  a = (char *) xmemdup (in, m);
+  a = xclone (in, m);
 
   lcmmn = lcm (m, n);
 

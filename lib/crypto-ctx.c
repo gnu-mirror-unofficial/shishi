@@ -72,7 +72,7 @@ shishi_crypto (Shishi * handle,
   ctx->keyusage = keyusage;
   ctx->etype = etype;
   if (iv)
-    ctx->iv = xmemdup (iv, ivlen);
+    ctx->iv = xclone (iv, ivlen);
   else
     ctx->iv = NULL;
   ctx->ivlen = ivlen;

@@ -125,7 +125,6 @@
 #include "timegm.h"
 #include "vasprintf.h"
 #include "xalloc.h"
-#include "xmemdup.h"
 #include "xgethostname.h"
 #include "xgetdomainname.h"
 #include "xstrndup.h"

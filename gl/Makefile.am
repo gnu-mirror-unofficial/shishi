@@ -4,7 +4,7 @@
 # alloca error getopt memmove memset realloc setenv strcase strchrnul strnlen strdup strndup xstrndup strerror vasprintf vasnprintf xalloc getdate timegm linebuffer gethostname xgethostname xgetdomainname getline xreadlink progname
 
 # Local not-yet-in-gnulib modules:
-# + base64 (x)memdup
+# + base64
 
 # After using gnulib-tool, do:
 # s/libfoo_a/libfoo_la/g
@@ -119,6 +119,4 @@ libfoo_la_SOURCES += xstrndup.h xstrndup.c
 # Local changes
 
 libfoo_la_SOURCES += base64.c base64.h
-libfoo_la_SOURCES += memdup.h memdup.c
-libfoo_la_SOURCES += xmemdup.h xmemdup.c
 EXTRA_DIST += README
