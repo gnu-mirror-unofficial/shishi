@@ -1,4 +1,4 @@
-/* tkts.c	Shishi ticketset self tests.
+/* ticketset.c	Shishi ticketset self tests.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
