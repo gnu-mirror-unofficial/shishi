@@ -24,7 +24,7 @@ EXTRA_DIST = kerberos5.asn1 $(CRYPTO_INCLUDES)
 
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = internal.h gettext.h \
-	init.c cfg.c done.c realm.c principal.c error.c krberror.c \
+	init.c cfg.c realm.c principal.c error.c krberror.c \
 	gztime.c diskio.c \
 	authenticator.c \
 	kdc.c kdcreq.c kdcrep.c enckdcreppart.c as.c tgs.c \

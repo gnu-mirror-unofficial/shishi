@@ -80,6 +80,44 @@ shishi (void)
   return handle;
 }
 
+/**
+ * shishi_done:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Deallocates the shishi library handle.  The handle must not be used
+ * in any calls to shishi functions after this.  If there is a default
+ * tkts, it is written to the default tkts file (call
+ * shishi_tkts_default_file_set() to change the default tkts
+ * file). If you do not wish to write the default tkts file,
+ * close the default tkts with shishi_tkts_done(handle,
+ * NULL) before calling this function.
+ **/
+void
+shishi_done (Shishi * handle)
+{
+  if (handle->tkts)
+    {
+      shishi_tkts_to_file (handle->tkts, shishi_tkts_default_file (handle));
+
+      shishi_tkts_done (&handle->tkts);
+    }
+
+  /*  if (handle->default_realm)
+      free (handle->default_realm); */
+  if (handle->usercfgfile)
+    free (handle->usercfgfile);
+  if (handle->tktsdefaultfile)
+    free (handle->tktsdefaultfile);
+  if (handle->hostkeysdefaultfile)
+    free (handle->hostkeysdefaultfile);
+  if (handle->clientkdcetypes)
+    free (handle->clientkdcetypes);
+
+  if (handle->asn1)
+    shishi_asn1_done (handle, handle->asn1);
+
+  free (handle);
+}
 
 static void
 _shishi_maybe_install_usercfg (Shishi * handle)
