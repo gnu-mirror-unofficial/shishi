@@ -6,14 +6,15 @@ See the end for copying conditions.
 
 ** The Shishi library now support X.509 authenticated KDC connections via TLS.
 The client currently do not check server authentication, however this
-is no worse than existing UDP/TCP connections.  If available, the
-X.509 client certificate is simply sent (via TLS handshake) to the KDC
-for possible pre-authentication purposes.
+is no worse than existing UDP/TCP connections.  If client certificates
+are available, the X.509 client certificate is simply sent (via TLS
+handshake) to the KDC for possible pre-authentication purposes.
 
 ** The KDC now support X.509 authentication.
-If server certificates are configured, X.509 authenticated TLS may be
-negotiated.  The server currently only use client certificate details
-for logging purposes.
+If server certificates are available, X.509 authenticated TLS may be
+negotiated.  The KDC currently only use the client certificate details
+for logging purposes.  However, it do verify client certificate
+against CA certificates, if those are available.
 
 ** The KDC has been cleaned up and the error handling is more robust.
 
