@@ -206,10 +206,6 @@ enum
 #define TYPE_BASE64_NAME "base64"
 #define TYPE_BINARY_NAME "binary"
 
-#define BASE_DIR "/.shishi"
-#define TICKET_FILE "/.shishi/tickets"
-#define USERCFG_FILE "/.shishi/config"
-
 struct arguments
 {
   int silent, verbose;
@@ -278,9 +274,6 @@ extern int ap (Shishi * handle, Shishi_ticketset * ticketset,
 
 extern int kdc (Shishi * handle, Shishi_ticketset * ticketset,
 		struct arguments arg);
-
-extern int list (Shishi * handle, Shishi_ticketset * ticketset,
-		 struct arguments arg);
 
 extern int client (Shishi * handle, Shishi_ticketset * ticketset,
 		   struct arguments arg);
