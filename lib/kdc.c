@@ -592,7 +592,7 @@ shishi_tgs_process (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (res == SHISHI_ASN1_NO_ELEMENT)
+  if (1) /* XXX MIT/Heimdal bug?! if (res == SHISHI_ASN1_NO_ELEMENT) */
     {
       res = shishi_enckdcreppart_get_key (handle, oldenckdcreppart, &key);
       if (res != SHISHI_OK)
