@@ -132,7 +132,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       if (arguments->command != COMMAND_CRYPTO)
 	argp_error (state, _("Option `%s' only valid with CRYPTO."),
 		    state->argv[state->next - 1]);
-      arguments->algorithm = shishi_etype_parse (arg);
+      arguments->algorithm = shishi_cipher_parse (arg);
       if (arguments->algorithm == -1)
 	argp_error (state, _("Unknown encryption type in `%s'"),
 		    state->argv[state->next - 1]);
