@@ -503,7 +503,7 @@ shishi_as_process (Shishi * handle,
   keylen = sizeof (key);
   res = shishi_string_to_key (handle, keytype,
 			      string, strlen (string),
-			      salt, saltlen, key, &keylen);
+			      salt, saltlen, NULL, key, &keylen);
   if (res != SHISHI_OK)
     return res;
 
