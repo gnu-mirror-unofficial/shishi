@@ -19,8 +19,211 @@
  *
  */
 
-#include "data.h"
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef STDC_HEADERS
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <ctype.h>
+#endif
+
+#if HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif
+
+#if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
+/* extern int h_errno; */
+#endif
+
+#ifdef HAVE_PWD_H
+#include <pwd.h>
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+#ifdef HAVE_SYS_SELECT_H
+#include <sys/select.h>
+#endif
+
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
+#endif
+
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
+
+#if HAVE_INTTYPES_H
+# include <inttypes.h>
+#else
+# if HAVE_STDINT_H
+#  include <stdint.h>
+# endif
+#endif
+
+#if TIME_WITH_SYS_TIME
+# include <sys/time.h>
+# include <time.h>
+#else
+# if HAVE_SYS_TIME_H
+#  include <sys/time.h>
+# else
+#  include <time.h>
+# endif
+#endif
+
+#if HAVE_STRING_H
+# if !STDC_HEADERS && HAVE_MEMORY_H
+#  include <memory.h>
+# endif
+# include <string.h>
+#endif
+#if HAVE_STRINGS_H
+# include <strings.h>
+#endif
+
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_NETINET_IN6_H
+#include <netinet/in6.h>
+#endif
+
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
+
 #include <argp.h>
+#include <gettext.h>
+#include <shishi.h>
+
+#define _(String) gettext (String)
+#define gettext_noop(String) String
+#define N_(String) gettext_noop (String)
+
+/* Long parameters only */
+enum
+  {
+    OPTION_REQUEST = 300,
+    OPTION_SENDRECV,
+    OPTION_RESPONSE,
+    OPTION_WRITE_AP_REQUEST_FILE,
+    OPTION_WRITE_AUTHENTICATOR_FILE,
+    OPTION_WRITE_REQUEST_FILE,
+    OPTION_WRITE_RESPONSE_FILE,
+    OPTION_READ_REQUEST_FILE,
+    OPTION_READ_RESPONSE_FILE,
+    OPTION_SERVER,
+    OPTION_CLIENT,
+    OPTION_CLIENT_NAME,
+    OPTION_REALM,
+    OPTION_SERVER_NAME,
+    OPTION_TICKET_GRANTER,
+    OPTION_FORCE_AS,
+    OPTION_FORCE_TGS,
+    OPTION_CRYPTO_ENCRYPT,
+    OPTION_CRYPTO_DECRYPT,
+    OPTION_CRYPTO_ALGORITHM,
+    OPTION_CRYPTO_KEY_VERSION,
+    OPTION_CRYPTO_KEY_USAGE,
+    OPTION_CRYPTO_KEY_VALUE,
+    OPTION_CRYPTO_READ_KEY_FILE,
+    OPTION_CRYPTO_WRITE_KEY_FILE,
+    OPTION_CRYPTO_READ_DATA_FILE,
+    OPTION_CRYPTO_WRITE_DATA_FILE,
+    OPTION_CRYPTO_RANDOM,
+    OPTION_CRYPTO_PARAMETER,
+    OPTION_CRYPTO_PASSWORD,
+    OPTION_CRYPTO_SALT,
+    OPTION_CRYPTO_DEBUG,
+    OPTION_CRYPTO_GENERATE_KEY,
+    OPTION_VERBOSE_LIBRARY,
+    OPTION_LIST,
+    OPTION_DESTROY,
+    OPTION_CRYPTO
+  };
+
+#define TYPE_TEXT_NAME "text"
+#define TYPE_DER_NAME "der"
+#define TYPE_HEX_NAME "hex"
+#define TYPE_BASE64_NAME "base64"
+#define TYPE_BINARY_NAME "binary"
+
+struct arguments
+{
+  int silent, verbose, verbose_library;
+  char *etypes;
+  char *lib_options;
+  int command;
+  char *ticketfile;
+  char *ticketwritefile;
+  const char *realm;
+  char *systemcfgfile;
+  char *usercfgfile;
+  /* get and ap */
+  char *authenticatorwritefile;
+  int authenticatorwritetype;
+  char *apreqwritefile;
+  int apreqwritetype;
+  /* get */
+  const char *client;
+  const char *cname;
+  const char *sname;
+  char *tgtname;
+  int forceas_p;
+  int forcetgs_p;
+  char *kdcreqwritefile;
+  int kdcreqwritetype;
+  char *kdcreqreadfile;
+  int kdcreqreadtype;
+  char *kdcrepwritefile;
+  int kdcrepwritetype;
+  char *kdcrepreadfile;
+  int kdcrepreadtype;
+  /* ap */
+  char *apreqreadfile;
+  int apreqreadtype;
+  char *servername;
+  char *authenticatorreadfile;
+  int authenticatorreadtype;
+  char *authenticatordatareadfile;
+  int authenticatordatareadtype;
+  char *authenticatordata;
+  /* crypto */
+  int algorithm;
+  int encrypt_p;
+  int decrypt_p;
+  char *password;
+  char *salt;
+  char *parameter;
+  int random;
+  int kvno;
+  char *keyvalue;
+  int keyusage;
+  char *readkeyfile;
+  char *writekeyfile;
+  char *inputfile;
+  int inputtype;
+  char *outputfile;
+  int outputtype;
+};
 
 int
 crypto (Shishi * handle, struct arguments arg)
