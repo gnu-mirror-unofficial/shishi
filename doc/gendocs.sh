@@ -30,7 +30,7 @@ scripturl="http://savannah.gnu.org/cgi-bin/viewcvs/texinfo/texinfo/util/gendocs.
 templateurl="http://savannah.gnu.org/cgi-bin/viewcvs/texinfo/texinfo/util/gendocs_template"
 
 : ${MAKEINFO="makeinfo"}
-: ${TEXI2DVI="texi2dvi"}
+: ${TEXI2DVI="texi2dvi -t @finalout"}
 : ${DVIPS="dvips"}
 : ${DOCBOOK2TXT="docbook2txt"}
 : ${DOCBOOK2HTML="docbook2html"}
