@@ -406,14 +406,15 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 /**
  * shishi_ap_authenticatorcksumtype:
  * @ap: structure that holds information about AP exchange
- * @cksumtype: ouput authenticator checksum type.
  *
  * Get the Authenticator Checksum Type in the AP exchange.
+ *
+ * Return value: Return the authenticator checksum type.
  **/
-void
-shishi_ap_authenticator_cksumtype (Shishi_ap * ap, int *cksumtype)
+int
+shishi_ap_authenticator_cksumtype (Shishi_ap * ap)
 {
-  *cksumtype = ap->authenticatorcksumtype;
+  return ap->authenticatorcksumtype;
 }
 
 /**
@@ -566,7 +567,7 @@ shishi_ap_req_build (Shishi_ap * ap)
       return res;
     }
 
-  shishi_ap_authenticator_cksumtype (ap, &cksumtype);
+  cksumtype = shishi_ap_authenticator_cksumtype (ap);
   if (cksumtype == SHISHI_NO_CKSUMTYPE)
     res = shishi_authenticator_add_cksum (ap->handle, ap->authenticator,
 					  shishi_tkt_key (ap->tkt),

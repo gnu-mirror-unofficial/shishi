@@ -1530,8 +1530,7 @@ extern void
 shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 				       char *authenticatorcksumdata,
 				       int authenticatorcksumdatalen);
-extern void shishi_ap_authenticator_cksumtype (Shishi_ap * ap,
-					       int *cksumtype);
+extern int shishi_ap_authenticator_cksumtype (Shishi_ap * ap);
 extern void shishi_ap_authenticator_cksumtype_set (Shishi_ap * ap,
 						   int cksumtype);
 
