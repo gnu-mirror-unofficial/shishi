@@ -21,10 +21,13 @@
  *
  */
 
+#include "internal.h"
+
+#include "crypto.h"
+
 static int
 raw_des_checksum0 (Shishi * handle, int algo,
-		   const char *in, size_t inlen,
-		   char *out, size_t * outlen)
+		   const char *in, size_t inlen, char *out, size_t * outlen)
 {
   char *tmp;
   size_t tmplen;
@@ -68,8 +71,7 @@ raw_des_checksum0 (Shishi * handle, int algo,
 
 static int
 raw_des_checksum1 (Shishi * handle, int algo,
-		   const char *in, size_t inlen,
-		   char *out, size_t * outlen)
+		   const char *in, size_t inlen, char *out, size_t * outlen)
 {
   char *tmp;
   size_t tmplen;
@@ -150,8 +152,9 @@ des_encrypt_checksum (Shishi * handle,
 
   free (inpad);
 
-  res = simplified_encrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
-			    pt, ptlen, out, outlen);
+  res =
+    _shishi_simplified_encrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
+				pt, ptlen, out, outlen);
 
   free (pt);
 
@@ -214,8 +217,8 @@ des_none_encrypt (Shishi * handle,
 		  char **ivout, size_t * ivoutlen,
 		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_encrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
-			     in, inlen, out, outlen);
+  return _shishi_simplified_encrypt (handle, key, 0, iv, ivlen, ivout,
+				     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -232,8 +235,9 @@ des_decrypt_verify (Shishi * handle,
   char *computed;
   size_t hlen = 16;
 
-  res = simplified_decrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
-			    in, inlen, out, outlen);
+  res =
+    _shishi_simplified_decrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
+				in, inlen, out, outlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "decrypt failed");
@@ -262,8 +266,8 @@ des_decrypt_verify (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       puts ("DES verify:");
-      hexprint (incoming, hlen);
-      hexprint (computed, hlen);
+      _shishi_hexprint (incoming, hlen);
+      _shishi_hexprint (computed, hlen);
     }
 
   if (memcmp (computed, incoming, hlen) != 0)
@@ -331,11 +335,11 @@ des_none_decrypt (Shishi * handle,
 		  char **ivout, size_t * ivoutlen,
 		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_decrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
-			     in, inlen, out, outlen);
+  return _shishi_simplified_decrypt (handle, key, 0, iv, ivlen, ivout,
+				     ivoutlen, in, inlen, out, outlen);
 }
 
-static int
+static void
 des_set_odd_key_parity (char key[8])
 {
   int i, j;
@@ -352,8 +356,6 @@ des_set_odd_key_parity (char key[8])
       if ((n_set_bits % 2) == 0)
 	key[i] |= 1;
     }
-
-  return SHISHI_OK;
 }
 
 static char weak_des_keys[16][8] = {
@@ -440,11 +442,11 @@ des_string_to_key (Shishi * handle,
     {
       printf ("des_string_to_key (string, salt)\n");
       printf ("\t ;; String:\n");
-      escapeprint (string, stringlen);
-      hexprint (string, stringlen);
+      _shishi_escapeprint (string, stringlen);
+      _shishi_hexprint (string, stringlen);
       printf ("\t ;; Salt:\n");
-      escapeprint (salt, saltlen);
-      hexprint (salt, saltlen);
+      _shishi_escapeprint (salt, saltlen);
+      _shishi_hexprint (salt, saltlen);
       printf ("odd = 1;\n");
       printf ("s = string | salt;\n");
       printf ("tempstring = 0; /* 56-bit string */\n");
@@ -466,8 +468,8 @@ des_string_to_key (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; s = pad(string|salt):\n");
-      escapeprint (s, n_s);
-      hexprint (s, n_s);
+      _shishi_escapeprint (s, n_s);
+      _shishi_hexprint (s, n_s);
     }
 
   for (i = 0; i < n_s / 8; i++)
@@ -477,9 +479,9 @@ des_string_to_key (Shishi * handle,
 	  printf ("for (8byteblock in s) {\n");
 	  printf ("\t ;; loop iteration %d\n", i);
 	  printf ("\t ;; 8byteblock:\n");
-	  escapeprint (&s[i * 8], 8);
-	  hexprint (&s[i * 8], 8);
-	  binprint (&s[i * 8], 8);
+	  _shishi_escapeprint (&s[i * 8], 8);
+	  _shishi_hexprint (&s[i * 8], 8);
+	  _shishi_binprint (&s[i * 8], 8);
 	  printf ("56bitstring = removeMSBits(8byteblock);\n");
 	}
 
@@ -489,7 +491,7 @@ des_string_to_key (Shishi * handle,
       if (VERBOSECRYPTO (handle))
 	{
 	  printf ("\t ;; 56bitstring:\n");
-	  bin7print (&s[i * 8], 8);
+	  _shishi_bin7print (&s[i * 8], 8);
 	  printf ("if (odd == 0) reverse(56bitstring);\t ;; odd=%d\n", odd);
 	}
 
@@ -520,7 +522,7 @@ des_string_to_key (Shishi * handle,
 	    {
 	      printf ("reverse(56bitstring)\n");
 	      printf ("\t ;; 56bitstring after reverse\n");
-	      bin7print (&s[i * 8], 8);
+	      _shishi_bin7print (&s[i * 8], 8);
 	    }
 	}
 
@@ -539,7 +541,7 @@ des_string_to_key (Shishi * handle,
       if (VERBOSECRYPTO (handle))
 	{
 	  printf ("\t ;; tempstring\n");
-	  bin7print (tempkey, 8);
+	  _shishi_bin7print (tempkey, 8);
 	}
     }
 
@@ -552,8 +554,8 @@ des_string_to_key (Shishi * handle,
       printf ("}\n");
       printf ("\t ;; for loop terminated\n");
       printf ("\t ;; tempstring as 64bitblock\n");
-      hexprint (tempkey, 8);
-      binprint (tempkey, 8);
+      _shishi_hexprint (tempkey, 8);
+      _shishi_binprint (tempkey, 8);
       printf ("/* add parity as low bit of each byte */\n");
       printf ("tempkey = key_correction(add_parity_bits(tempstring));\n");
     }
@@ -565,9 +567,9 @@ des_string_to_key (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; tempkey\n");
-      escapeprint (tempkey, 8);
-      hexprint (tempkey, 8);
-      binprint (tempkey, 8);
+      _shishi_escapeprint (tempkey, 8);
+      _shishi_hexprint (tempkey, 8);
+      _shishi_binprint (tempkey, 8);
       printf ("key = key_correction(DES-CBC-check(s,tempkey));\n");
     }
 
@@ -589,9 +591,9 @@ des_string_to_key (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; key\n");
-      escapeprint (tempkey, 8);
-      hexprint (tempkey, 8);
-      binprint (tempkey, 8);
+      _shishi_escapeprint (tempkey, 8);
+      _shishi_hexprint (tempkey, 8);
+      _shishi_binprint (tempkey, 8);
     }
 
   shishi_key_value_set (outkey, tempkey);
@@ -625,8 +627,8 @@ des_checksum (Shishi * handle,
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
 
-  res = simplified_dencrypt (handle, key, NULL, 0, NULL, NULL,
-			     cksum, cksumlen, out, outlen, 0);
+  res = _shishi_simplified_dencrypt (handle, key, NULL, 0, NULL, NULL,
+				     cksum, cksumlen, out, outlen, 0);
 
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
@@ -689,9 +691,8 @@ gss_des_checksum (Shishi * handle,
 
 static int
 des_verify (Shishi * handle, int algo,
-	    Shishi_key *key,
-	    const char *in, size_t inlen,
-	    const char *cksum, size_t cksumlen)
+	    Shishi_key * key,
+	    const char *in, size_t inlen, const char *cksum, size_t cksumlen)
 {
   char *out;
   size_t outlen;
@@ -716,8 +717,8 @@ des_verify (Shishi * handle, int algo,
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
 
-  res = simplified_decrypt (handle, key, 0, NULL, 0, NULL, NULL,
-			    cksum, cksumlen, &out, &outlen);
+  res = _shishi_simplified_decrypt (handle, key, 0, NULL, 0, NULL, NULL,
+				    cksum, cksumlen, &out, &outlen);
 
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
@@ -782,3 +783,86 @@ des_md5_verify (Shishi * handle,
   return des_verify (handle, SHISHI_RSA_MD5_DES, key,
 		     in, inlen, cksum, cksumlen);
 }
+
+cipherinfo des_cbc_crc_info = {
+  SHISHI_DES_CBC_CRC,
+  "des-cbc-crc",
+  8,
+  4,
+  8,
+  8,
+  8,
+  SHISHI_RSA_MD5_DES,
+  des_random_to_key,
+  des_string_to_key,
+  des_crc_encrypt,
+  des_crc_decrypt
+};
+
+cipherinfo des_cbc_md4_info = {
+  SHISHI_DES_CBC_MD4,
+  "des-cbc-md4",
+  8,
+  0,
+  8,
+  8,
+  8,
+  SHISHI_RSA_MD4_DES,
+  des_random_to_key,
+  des_string_to_key,
+  des_md4_encrypt,
+  des_md4_decrypt
+};
+
+cipherinfo des_cbc_md5_info = {
+  SHISHI_DES_CBC_MD5,
+  "des-cbc-md5",
+  8,
+  0,
+  8,
+  8,
+  8,
+  SHISHI_RSA_MD5_DES,
+  des_random_to_key,
+  des_string_to_key,
+  des_md5_encrypt,
+  des_md5_decrypt
+};
+
+cipherinfo des_cbc_none_info = {
+  SHISHI_DES_CBC_NONE,
+  "des-cbc-none",
+  8,
+  0,
+  8,
+  3 * 8,
+  3 * 8,
+  SHISHI_RSA_MD5_DES,
+  des_random_to_key,
+  des_string_to_key,
+  des_none_encrypt,
+  des_none_decrypt
+};
+
+checksuminfo md4_des_info = {
+  SHISHI_RSA_MD4_DES,
+  "rsa-md4-des",
+  24,
+  des_md4_checksum,
+  des_md4_verify
+};
+
+checksuminfo md5_des_info = {
+  SHISHI_RSA_MD5_DES,
+  "rsa-md5-des",
+  24,
+  des_md5_checksum,
+  des_md5_verify
+};
+
+checksuminfo md5_gss_info = {
+  SHISHI_RSA_MD5_DES_GSS,
+  "rsa-md5-des-gss",
+  8,
+  gss_des_checksum
+};

@@ -17,9 +17,11 @@
  * along with Shishi; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Note: This file is #include'd by crypto.c.
- *
  */
+
+#include "internal.h"
+
+#include "crypto.h"
 
 static int
 _des3_encrypt (Shishi * handle,
@@ -30,8 +32,8 @@ _des3_encrypt (Shishi * handle,
 	       char **ivout, size_t * ivoutlen,
 	       const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout,
-			     ivoutlen, in, inlen, out, outlen);
+  return _shishi_simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout,
+				     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -43,8 +45,8 @@ _des3_decrypt (Shishi * handle,
 	       char **ivout, size_t * ivoutlen,
 	       const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout,
-			     ivoutlen, in, inlen, out, outlen);
+  return _shishi_simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout,
+				     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -62,14 +64,16 @@ des3none_dencrypt (Shishi * handle,
     {
       Shishi_key *derivedkey;
 
-      res = simplified_derivekey (handle, key, keyusage,
-				  SHISHI_DERIVEKEYMODE_PRIVACY, &derivedkey);
+      res = _shishi_simplified_derivekey (handle, key, keyusage,
+					  SHISHI_DERIVEKEYMODE_PRIVACY,
+					  &derivedkey);
       if (res != SHISHI_OK)
 	return res;
 
       res =
-	simplified_dencrypt (handle, derivedkey, iv, ivlen, ivout, ivoutlen,
-			     in, inlen, out, outlen, direction);
+	_shishi_simplified_dencrypt (handle, derivedkey, iv, ivlen, ivout,
+				     ivoutlen, in, inlen, out, outlen,
+				     direction);
 
       shishi_key_done (derivedkey);
 
@@ -78,8 +82,9 @@ des3none_dencrypt (Shishi * handle,
     }
   else
     {
-      res = simplified_dencrypt (handle, key, iv, ivlen, ivout, ivoutlen,
-				 in, inlen, out, outlen, direction);
+      res =
+	_shishi_simplified_dencrypt (handle, key, iv, ivlen, ivout, ivoutlen,
+				     in, inlen, out, outlen, direction);
       if (res != SHISHI_OK)
 	return res;
     }
@@ -109,6 +114,25 @@ des3none_decrypt (Shishi * handle,
 {
   return des3none_dencrypt (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
 			    in, inlen, out, outlen, 1);
+}
+
+static void
+des_set_odd_key_parity (char key[8])
+{
+  int i, j;
+
+  for (i = 0; i < 8; i++)
+    {
+      int n_set_bits = 0;
+
+      for (j = 1; j < 8; j++)
+	if (key[i] & (1 << j))
+	  n_set_bits++;
+
+      key[i] &= ~1;
+      if ((n_set_bits % 2) == 0)
+	key[i] |= 1;
+    }
 }
 
 /* The 168 bits of random key data are converted to a protocol key
@@ -144,8 +168,8 @@ des3_random_to_key (Shishi * handle,
     {
       printf ("des3_random_to_key (random)\n");
       printf ("\t ;; random (length %d):\n", 168 / 8);
-      hexprint (random, 168 / 8);
-      binprint (random, 168 / 8);
+      _shishi_hexprint (random, 168 / 8);
+      _shishi_binprint (random, 168 / 8);
     }
 
   memcpy (tmpkey, random, 7);
@@ -169,8 +193,8 @@ des3_random_to_key (Shishi * handle,
     {
       printf ("key = des3_random_to_key (random)\n");
       printf ("\t ;; key:\n");
-      hexprint (tmpkey, 3 * 8);
-      binprint (tmpkey, 3 * 8);
+      _shishi_hexprint (tmpkey, 3 * 8);
+      _shishi_binprint (tmpkey, 3 * 8);
     }
 
   return SHISHI_OK;
@@ -195,11 +219,11 @@ des3_string_to_key (Shishi * handle,
     {
       printf ("des3_string_to_key (string, salt)\n");
       printf ("\t ;; String:\n");
-      escapeprint (string, stringlen);
-      hexprint (string, stringlen);
+      _shishi_escapeprint (string, stringlen);
+      _shishi_hexprint (string, stringlen);
       printf ("\t ;; Salt:\n");
-      escapeprint (salt, saltlen);
-      hexprint (salt, saltlen);
+      _shishi_escapeprint (salt, saltlen);
+      _shishi_hexprint (salt, saltlen);
     }
 
   /* s = passwordString + salt */
@@ -233,8 +257,10 @@ des3_string_to_key (Shishi * handle,
     {
       printf ("des3_string_to_key (string, salt)\n");
       printf ("\t ;; Key:\n");
-      hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
-      binprint (shishi_key_value (outkey), shishi_key_length (outkey));
+      _shishi_hexprint (shishi_key_value (outkey),
+			shishi_key_length (outkey));
+      _shishi_binprint (shishi_key_value (outkey),
+			shishi_key_length (outkey));
     }
 
   return SHISHI_OK;
@@ -247,6 +273,43 @@ des3_checksum (Shishi * handle,
 	       int cksumtype,
 	       const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_checksum (handle, key, keyusage, cksumtype,
-			      in, inlen, out, outlen);
+  return _shishi_simplified_checksum (handle, key, keyusage, cksumtype,
+				      in, inlen, out, outlen);
 }
+
+cipherinfo des3_cbc_none_info = {
+  SHISHI_DES3_CBC_NONE,
+  "des3-cbc-none",
+  8,
+  0,
+  8,
+  3 * 8,
+  3 * 8,
+  SHISHI_HMAC_SHA1_DES3_KD,
+  des3_random_to_key,
+  des3_string_to_key,
+  des3none_encrypt,
+  des3none_decrypt
+};
+
+cipherinfo des3_cbc_sha1_kd_info = {
+  SHISHI_DES3_CBC_HMAC_SHA1_KD,
+  "des3-cbc-sha1-kd",
+  8,
+  0,
+  8,
+  3 * 8,
+  3 * 8,
+  SHISHI_HMAC_SHA1_DES3_KD,
+  des3_random_to_key,
+  des3_string_to_key,
+  _des3_encrypt,
+  _des3_decrypt
+};
+
+checksuminfo hmac_sha1_des3_kd_info = {
+  SHISHI_HMAC_SHA1_DES3_KD,
+  "hmac-sha1-des3-kd",
+  20,
+  des3_checksum
+};

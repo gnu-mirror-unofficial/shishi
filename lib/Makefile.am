@@ -18,10 +18,7 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-CRYPTO_INCLUDES = crypto-null.c crypto-des.c crypto-3des.c crypto-aes.c \
-	crypto-md.c crypto-rc4.c
-
-EXTRA_DIST = kerberos5.asn1 $(CRYPTO_INCLUDES)
+EXTRA_DIST = kerberos5.asn1
 
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = internal.h gettext.h \
@@ -32,13 +29,37 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	ap.c apreq.c aprep.c encapreppart.c \
 	safe.c priv.c \
 	ticket.c encticketpart.c tkt.c tkts.c \
-	netio.c key.c keys.c hostkeys.c crypto.c \
+	netio.c key.c keys.c hostkeys.c crypto.c crypto.h \
 	asn1.c kerberos5.c \
 	version.c password.c \
 	utils.c resolv.c
 libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
 	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+
+if NULL
+libshishi_la_SOURCES += crypto-null.c
+endif
+
+if MD
+libshishi_la_SOURCES += crypto-md.c
+endif
+
+if DES
+libshishi_la_SOURCES += crypto-des.c
+endif
+
+if DES3
+libshishi_la_SOURCES += crypto-3des.c
+endif
+
+if AES
+libshishi_la_SOURCES += crypto-aes.c
+endif
+
+if ARCFOUR
+libshishi_la_SOURCES += crypto-rc4.c
+endif
 
 if NETTLE
 libshishi_la_SOURCES += nettle.c

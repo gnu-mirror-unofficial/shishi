@@ -17,9 +17,11 @@
  * along with Shishi; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Note: This file is #include'd by crypto.c.
- *
  */
+
+#include "internal.h"
+
+#include "crypto.h"
 
 static int
 null_encrypt (Shishi * handle,
@@ -76,3 +78,18 @@ null_string_to_key (Shishi * handle,
 {
   return SHISHI_OK;
 }
+
+cipherinfo null_info = {
+  SHISHI_NULL,
+  "NULL",
+  1,
+  0,
+  0,
+  0,
+  0,
+  SHISHI_RSA_MD5,
+  null_random_to_key,
+  null_string_to_key,
+  null_encrypt,
+  null_decrypt
+};

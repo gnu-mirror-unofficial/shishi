@@ -17,9 +17,11 @@
  * along with Shishi; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Note: This file is #include'd by crypto.c.
- *
  */
+
+#include "internal.h"
+
+#include "crypto.h"
 
 static int
 rc4_hmac_encrypt (Shishi * handle,
@@ -234,13 +236,13 @@ rc4_hmac_string_to_key (Shishi * handle,
   size_t tmplen, i;
   int rc;
 
-  tmplen = 2*stringlen;
+  tmplen = 2 * stringlen;
   tmp = xmalloc (tmplen);
 
   for (i = 0; i < stringlen; i++)
     {
-      tmp[2*i] = string[i];
-      tmp[2*i + 1] = '\x0';
+      tmp[2 * i] = string[i];
+      tmp[2 * i + 1] = '\x0';
     }
 
   rc = shishi_md4 (handle, tmp, tmplen, &md);
@@ -251,3 +253,40 @@ rc4_hmac_string_to_key (Shishi * handle,
 
   return SHISHI_OK;
 }
+
+cipherinfo rc4_hmac_info = {
+  SHISHI_RC4_HMAC,
+  "rc4-hmac",
+  16,
+  0,
+  16,
+  16,
+  16,
+  SHISHI_RC4_HMAC_MD5,
+  rc4_hmac_random_to_key,
+  rc4_hmac_string_to_key,
+  rc4_hmac_encrypt,
+  rc4_hmac_decrypt
+};
+
+cipherinfo rc4_hmac_exp_info = {
+  SHISHI_RC4_HMAC_EXP,
+  "rc4-hmac-exp",
+  16,
+  0,
+  16,
+  16,
+  16,
+  SHISHI_RC4_HMAC_MD5,
+  rc4_hmac_random_to_key,
+  rc4_hmac_string_to_key,
+  rc4_hmac_exp_encrypt,
+  rc4_hmac_exp_decrypt
+};
+
+checksuminfo rc4_hmac_md5_info = {
+  SHISHI_RC4_HMAC_MD5,
+  "rc4-hmac-md5",
+  16,
+  rc4_hmac_md5_checksum
+};

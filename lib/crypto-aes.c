@@ -17,9 +17,11 @@
  * along with Shishi; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Note: This file is #include'd by crypto.c.
- *
  */
+
+#include "internal.h"
+
+#include "crypto.h"
 
 static int
 aes128_encrypt (Shishi * handle,
@@ -29,8 +31,8 @@ aes128_encrypt (Shishi * handle,
 		char **ivout, size_t * ivoutlen,
 		const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout,
-			     ivoutlen, in, inlen, out, outlen);
+  return _shishi_simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout,
+				     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -41,8 +43,8 @@ aes128_decrypt (Shishi * handle,
 		char **ivout, size_t * ivoutlen,
 		const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout,
-			     ivoutlen, in, inlen, out, outlen);
+  return _shishi_simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout,
+				     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -53,8 +55,8 @@ aes256_encrypt (Shishi * handle,
 		char **ivout, size_t * ivoutlen,
 		const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout,
-			     ivoutlen, in, inlen, out, outlen);
+  return _shishi_simplified_encrypt (handle, key, keyusage, iv, ivlen, ivout,
+				     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -65,8 +67,8 @@ aes256_decrypt (Shishi * handle,
 		char **ivout, size_t * ivoutlen,
 		const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout,
-			     ivoutlen, in, inlen, out, outlen);
+  return _shishi_simplified_decrypt (handle, key, keyusage, iv, ivlen, ivout,
+				     ivoutlen, in, inlen, out, outlen);
 }
 
 static int
@@ -94,11 +96,11 @@ aes_string_to_key (Shishi * handle,
     {
       printf ("aes_string_to_key (password, salt)\n");
       printf ("\t ;; Password:\n");
-      escapeprint (password, passwordlen);
-      hexprint (password, passwordlen);
+      _shishi_escapeprint (password, passwordlen);
+      _shishi_hexprint (password, passwordlen);
       printf ("\t ;; Salt:\n");
-      escapeprint (salt, saltlen);
-      hexprint (salt, saltlen);
+      _shishi_escapeprint (salt, saltlen);
+      _shishi_hexprint (salt, saltlen);
       printf ("\t ;; Iteration count %d (%08x):\n", iterations, iterations);
     }
 
@@ -125,8 +127,10 @@ aes_string_to_key (Shishi * handle,
     {
       printf ("aes_string_to_key (password, salt)\n");
       printf ("\t ;; Key:\n");
-      hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
-      binprint (shishi_key_value (outkey), shishi_key_length (outkey));
+      _shishi_hexprint (shishi_key_value (outkey),
+			shishi_key_length (outkey));
+      _shishi_binprint (shishi_key_value (outkey),
+			shishi_key_length (outkey));
     }
 
   return SHISHI_OK;
@@ -189,8 +193,8 @@ aes128_checksum (Shishi * handle,
 		 int cksumtype,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_checksum (handle, key, keyusage, cksumtype,
-			      in, inlen, out, outlen);
+  return _shishi_simplified_checksum (handle, key, keyusage, cksumtype,
+				      in, inlen, out, outlen);
 }
 
 static int
@@ -200,6 +204,50 @@ aes256_checksum (Shishi * handle,
 		 int cksumtype,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_checksum (handle, key, keyusage, cksumtype,
-			      in, inlen, out, outlen);
+  return _shishi_simplified_checksum (handle, key, keyusage, cksumtype,
+				      in, inlen, out, outlen);
 }
+
+cipherinfo aes128_cts_hmac_sha1_96_info = {
+  SHISHI_AES128_CTS_HMAC_SHA1_96,
+  "aes128-cts-hmac-sha1-96",
+  16,
+  0,
+  16,
+  128 / 8,
+  128 / 8,
+  SHISHI_HMAC_SHA1_96_AES128,
+  aes128_random_to_key,
+  aes128_string_to_key,
+  aes128_encrypt,
+  aes128_decrypt
+};
+
+cipherinfo aes256_cts_hmac_sha1_96_info = {
+  SHISHI_AES256_CTS_HMAC_SHA1_96,
+  "aes256-cts-hmac-sha1-96",
+  16,
+  0,
+  16,
+  256 / 8,
+  256 / 8,
+  SHISHI_HMAC_SHA1_96_AES256,
+  aes256_random_to_key,
+  aes256_string_to_key,
+  aes256_encrypt,
+  aes256_decrypt
+};
+
+checksuminfo hmac_sha1_96_aes128_info = {
+  SHISHI_HMAC_SHA1_96_AES128,
+  "hmac-sha1-96-aes128",
+  96 / 8,
+  aes128_checksum
+};
+
+checksuminfo hmac_sha1_96_aes256_info = {
+  SHISHI_HMAC_SHA1_96_AES256,
+  "hmac-sha1-96-aes256",
+  96 / 8,
+  aes256_checksum
+};

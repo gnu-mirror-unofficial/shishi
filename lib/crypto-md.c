@@ -18,9 +18,11 @@
  * along with Shishi; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Note: This file is #include'd by crypto.c.
- *
  */
+
+#include "internal.h"
+
+#include "crypto.h"
 
 static int
 md4_checksum (Shishi * handle,
@@ -45,3 +47,17 @@ md5_checksum (Shishi * handle,
     *outlen = 16;
   return shishi_md5 (handle, in, inlen, out);
 }
+
+checksuminfo md4_info = {
+  SHISHI_RSA_MD4,
+  "rsa-md4",
+  16,
+  md4_checksum
+};
+
+checksuminfo md5_info = {
+  SHISHI_RSA_MD5,
+  "rsa-md5",
+  16,
+  md5_checksum
+};

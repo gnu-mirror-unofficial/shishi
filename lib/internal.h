@@ -257,6 +257,11 @@ shishi_asn1_integer2_field (Shishi * handle,
 			    Shishi_asn1 node, unsigned long *i,
 			    const char *field);
 
+/* utils.c */
+extern void _shishi_escapeprint (const char *str, int len);
+extern void _shishi_hexprint (const char *str, int len);
+extern void _shishi_binprint (const char *str, int len);
+extern void _shishi_bin7print (const char *str, int len);
 extern time_t xtime (time_t * t);
 extern int xgettimeofday (struct timeval *tv, struct timezone *tz);
 
