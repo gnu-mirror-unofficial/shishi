@@ -43,6 +43,9 @@
 /* Get getline, ssize_t. */
 #include "getline.h"
 
+/* Get getsubopt. */
+#include "getsubopt.h"
+
 /* Get prototypes. */
 #include "shisa.h"
 
@@ -134,9 +137,6 @@ struct Shisa
   _Shisa_db *dbs;
   size_t ndbs;
 };
-
-/* Make sure getsubopt is available. */
-#include <getsubopt.h>
 
 /* Return structure with function pointers implementing a Shisa
    backend, given a name (e.g., "file"). */
