@@ -19,6 +19,8 @@ of course).
 
 ** Libtasn1 updated and replaced by "minitasn1" from gnutls.
 
+** KDC addresses are now found via DNS SRV RRs as a last resort.
+
 ** Argp and other compatibility files replaced by gl/ directory.
 
 ** Cleanups, bug fixes and various improvements.
