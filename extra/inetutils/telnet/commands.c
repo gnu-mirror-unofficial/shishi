@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1988, 1990, 1993
+ * Copyright (c) 1988, 1990, 1993, 2003
  *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -2320,9 +2320,9 @@ tn(int argc, char *argv[])
 
 		if (_hostname)
 		    free (_hostname);
-		_hostname = malloc (strlen (host->h_name) + 1);
+		_hostname = malloc (strlen (hostp) + 1);
 		if (_hostname) {
-		    strcpy (_hostname, host->h_name);
+		    strcpy (_hostname, hostp);
 		    hostname = _hostname;
 		} else {
 		    printf ("Can't allocate memory to copy hostname\n");
