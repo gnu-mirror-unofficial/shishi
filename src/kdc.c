@@ -776,6 +776,18 @@ tgsreq1 (Shishi_tgs * tgs)
 
   /* XXX Copy more fields.  Move copying into lib/? */
 
+  rc = shishi_encticketpart_endtime_set
+    (handle, shishi_tkt_encticketpart (tkt),
+     shishi_generalize_time (handle,
+			     shishi_kdcreq_tillc (handle,
+						  shishi_tgs_req (tgs))));
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "shishi_encticketpart_endtime_set failed (%d): %s",
+	      rc, shishi_strerror (rc));
+      goto fatal;
+    }
+
   rc = shishi_tkt_key_set (tkt, newsessionkey);
   if (rc != SHISHI_OK)
   {
