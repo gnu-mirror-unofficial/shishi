@@ -51,9 +51,9 @@
 
 # Enable verbose library messages.
 #verbose
-
-# Enable debug library messages.
-#debug
+#verbose-asn1
+#verbose-noice
+#verbose-crypto
 
 # Specify KDC addresses for realms.
 # Value is REALM,KDCADDRESS[,KDCADDRESS...]
