@@ -396,23 +396,30 @@ shishi_encticketpart_client (Shishi * handle,
 				client, clientlen);
 }
 
+/**
+ * shishi_encticketpart_clientrealm:
+ * @handle: Shishi library handle create by shishi_init().
+ * @encticketpart: EncTicketPart variable to get client name and realm from.
+ * @client: pointer to newly allocated zero terminated string containing
+ *   principal name and realm.  May be %NULL (to only populate @clientlen).
+ * @clientlen: pointer to length of @client on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
+ *
+ * Convert cname and realm fields from EncTicketPart to printable
+ * principal name format.  The string is allocate by this function,
+ * and it is the responsibility of the caller to deallocate it.  Note
+ * that the output length @clientlen does not include the terminating
+ * zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_encticketpart_cname_get (Shishi * handle,
-				Shishi_asn1 encticketpart,
-				char *cname, size_t * cnamelen)
+shishi_encticketpart_clientrealm (Shishi * handle,
+				  Shishi_asn1 encticketpart,
+				  char **client, size_t *clientlen)
 {
-  return shishi_principal_name_get (handle, encticketpart,
-				    "cname", cname, cnamelen);
-}
-
-int
-shishi_encticketpart_cnamerealm_get (Shishi * handle,
-				     Shishi_asn1 encticketpart,
-				     char *cnamerealm, size_t * cnamerealmlen)
-{
-  return shishi_principal_name_realm_get (handle, encticketpart,
-					  "cname",
-					  encticketpart,
-					  "crealm",
-					  cnamerealm, cnamerealmlen);
+  return shishi_principal_name_realm (handle,
+				      encticketpart, "cname",
+				      encticketpart, "crealm",
+				      client, clientlen);
 }

@@ -145,14 +145,12 @@ shishi_authorization_parse (const char *authorization)
 int
 shishi_authorized_p (Shishi * handle, Shishi_tkt * tkt, const char *authzname)
 {
-  char cname[BUFSIZ];		/* XXX */
-  size_t cnamelen = sizeof (cname);
+  char *client;
   int rc;
   int i;
 
-  rc = shishi_encticketpart_cname_get (handle,
-				       shishi_tkt_encticketpart (tkt),
-				       cname, &cnamelen);
+  rc = shishi_encticketpart_client (handle, shishi_tkt_encticketpart (tkt),
+				    &client, NULL);
   if (rc != SHISHI_OK)
     return 0;
 
@@ -161,12 +159,12 @@ shishi_authorized_p (Shishi * handle, Shishi_tkt * tkt, const char *authzname)
       switch (handle->authorizationtypes[i])
 	{
 	case SHISHI_AUTHORIZATION_BASIC:
-	  if (shishi_authorize_strcmp (handle, cname, authzname))
+	  if (shishi_authorize_strcmp (handle, client, authzname))
 	    return 1;
 	  break;
 
 	case SHISHI_AUTHORIZATION_K5LOGIN:
-	  if (shishi_authorize_k5login (handle, cname, authzname))
+	  if (shishi_authorize_k5login (handle, client, authzname))
 	    return 1;
 	  break;
 	}
