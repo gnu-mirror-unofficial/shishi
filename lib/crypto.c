@@ -2316,7 +2316,8 @@ shishi_randomize (Shishi * handle, char *data, size_t datalen)
  **/
 int
 shishi_n_fold (Shishi * handle,
-	       char *in, size_t inlen, char *out, size_t outlen)
+	       const char *in, size_t inlen,
+	       char *out, size_t outlen)
 {
   int m = inlen;
   int n = outlen;
@@ -2452,7 +2453,7 @@ shishi_n_fold (Shishi * handle,
 int
 shishi_dr (Shishi * handle,
 	   Shishi_key * key,
-	   char *constant, size_t constantlen,
+	   const char *constant, size_t constantlen,
 	   char *derivedrandom, size_t derivedrandomlen)
 {
   char *cipher;
@@ -2551,7 +2552,8 @@ shishi_dr (Shishi * handle,
 int
 shishi_dk (Shishi * handle,
 	   Shishi_key * key,
-	   char *constant, int constantlen, Shishi_key * derivedkey)
+	   const char *constant, size_t constantlen,
+	   Shishi_key * derivedkey)
 {
   char random[MAX_RANDOM_LEN];
   int res;

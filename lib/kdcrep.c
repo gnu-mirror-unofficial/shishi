@@ -614,7 +614,8 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
 int
 shishi_kdcrep_set_enc_part (Shishi * handle,
 			    Shishi_asn1 kdcrep,
-			    int etype, int kvno, char *buf, int buflen)
+			    int etype, int kvno,
+			    const char *buf, size_t buflen)
 {
   int res = SHISHI_OK;
 

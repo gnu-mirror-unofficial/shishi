@@ -437,7 +437,7 @@ shishi_authenticator_cusec_set (Shishi * handle,
 int
 shishi_authenticator_cname_get (Shishi * handle,
 				Shishi_asn1 authenticator,
-				char *cname, int *cnamelen)
+				char *cname, size_t *cnamelen)
 {
   return shishi_principal_name_get (handle, authenticator,
 				    "cname", cname, cnamelen);
@@ -446,7 +446,7 @@ shishi_authenticator_cname_get (Shishi * handle,
 int
 shishi_authenticator_cnamerealm_get (Shishi * handle,
 				     Shishi_asn1 authenticator,
-				     char *cnamerealm, int *cnamerealmlen)
+				     char *cnamerealm, size_t *cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, authenticator,
 					  "cname",
@@ -557,7 +557,7 @@ int
 shishi_authenticator_add_cksum (Shishi * handle,
 				Shishi_asn1 authenticator,
 				Shishi_key * key,
-				int keyusage, char *data, int datalen)
+				int keyusage, char *data, size_t datalen)
 {
   return shishi_authenticator_add_cksum_type (handle, authenticator, key,
 					      keyusage,
@@ -585,14 +585,14 @@ shishi_authenticator_add_cksum_type (Shishi * handle,
 				     Shishi_asn1 authenticator,
 				     Shishi_key * key,
 				     int keyusage, int cksumtype,
-				     char *data, int datalen)
+				     char *data, size_t datalen)
 {
   int res;
 
   if (data && datalen > 0)
     {
       char *cksum;
-      int cksumlen;
+      size_t cksumlen;
 
       res = shishi_checksum (handle, key, keyusage, cksumtype,
 			     data, datalen, &cksum, &cksumlen);
@@ -648,7 +648,7 @@ int
 shishi_authenticator_add_authorizationdata (Shishi * handle,
 					    Shishi_asn1 authenticator,
 					    int adtype,
-					    char *addata, int addatalen)
+					    char *addata, size_t addatalen)
 {
   char *format;
   int res;
@@ -700,7 +700,8 @@ int
 shishi_authenticator_authorizationdata (Shishi * handle,
 					Shishi_asn1 authenticator,
 					int *adtype,
-					char *addata, int *addatalen, int nth)
+					char *addata, size_t *addatalen,
+					int nth)
 {
   char *format;
   int res;

@@ -622,7 +622,7 @@ extern int shishi_ticket_sname_set (Shishi * handle,
 				    char *sname[]);
 extern int shishi_ticket_snamerealm_get (Shishi * handle, Shishi_asn1 ticket,
 					 char *serverrealm,
-					 int *serverrealmlen);
+					 size_t *serverrealmlen);
 extern int shishi_ticket_srealmserver_set (Shishi * handle,
 					   Shishi_asn1 ticket, char *realm,
 					   char *server);
@@ -668,9 +668,10 @@ extern Shishi_tkt *shishi_tkt2 (Shishi * handle,
 extern int shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh);
 extern int shishi_tkt_realm (Shishi_tkt * tkt, char **realm, size_t *realmlen);
 extern int shishi_tkt_cnamerealm (Shishi_tkt * tkt,
-				  char *cnamerealm, int *cnamerealmlen);
+				  char *cnamerealm, size_t *cnamerealmlen);
 extern int shishi_tkt_cnamerealm_p (Shishi_tkt * tkt, const char *client);
-extern int shishi_tkt_client (Shishi_tkt * tkt, char *client, int *clientlen);
+extern int shishi_tkt_client (Shishi_tkt * tkt,
+			      char *client, size_t *clientlen);
 extern int shishi_tkt_client_p (Shishi_tkt * tkt, const char *client);
 extern int shishi_tkt_clientrealm_set (Shishi_tkt * tkt,
 				       char *realm, char *client);
@@ -678,28 +679,28 @@ extern int shishi_tkt_serverrealm_set (Shishi_tkt * tkt,
 				       char *realm, char *server);
 extern int shishi_tkt_build (Shishi_tkt * tkt, Shishi_key * key);
 extern int shishi_tkt_lastreq (Shishi_tkt * tkt,
-			       char *lrtime, int *lrtimelen, int lrtype);
+			       char *lrtime, size_t *lrtimelen, int lrtype);
 extern time_t shishi_tkt_lastreqc (Shishi_tkt * tkt, Shishi_lrtype lrtype);
 extern int shishi_tkt_lastreq_pretty_print (Shishi_tkt * tkt, FILE * fh);
 extern int shishi_tkt_authtime (Shishi_tkt * tkt,
-				char *authtime, int *authtimelen);
+				char *authtime, size_t *authtimelen);
 extern time_t shishi_tkt_authctime (Shishi_tkt * tkt);
 extern int shishi_tkt_starttime (Shishi_tkt * tkt,
-				 char *starttime, int *starttimelen);
+				 char *starttime, size_t *starttimelen);
 extern time_t shishi_tkt_startctime (Shishi_tkt * tkt);
 extern int shishi_tkt_endtime (Shishi_tkt * tkt,
-			       char *endtime, int *endtimelen);
+			       char *endtime, size_t *endtimelen);
 extern time_t shishi_tkt_endctime (Shishi_tkt * tkt);
 extern int shishi_tkt_renew_till (Shishi_tkt * tkt,
-				  char *renewtilltime, int *renewtilllen);
+				  char *renewtilltime, size_t *renewtilllen);
 extern time_t shishi_tkt_renew_tillc (Shishi_tkt * tkt);
 extern int shishi_tkt_keytype (Shishi_tkt * tkt, int32_t * etype);
 extern int shishi_tkt_keytype_p (Shishi_tkt * tkt, int32_t etype);
 extern int shishi_tkt_server (Shishi_tkt * tkt,
-			      char *service, int *servicelen);
+			      char *service, size_t *servicelen);
 extern int shishi_tkt_server_p (Shishi_tkt * tkt, const char *service);
 extern int shishi_tkt_server_realm (Shishi_tkt * tkt,
-				    char *serverrealm, int *serverrealmlen);
+				    char *serverrealm, size_t *serverrealmlen);
 extern int shishi_tkt_valid_at_time_p (Shishi_tkt * tkt, time_t now);
 extern int shishi_tkt_valid_now_p (Shishi_tkt * tkt);
 extern int shishi_tkt_decrypt (Shishi_tkt * tkt, Shishi_key * key);
@@ -823,11 +824,11 @@ extern int shishi_authenticator_cusec_set (Shishi * handle,
 					   int cusec);
 extern int shishi_authenticator_cname_get (Shishi * handle,
 					   Shishi_asn1 authenticator,
-					   char *cname, int *cnamelen);
+					   char *cname, size_t *cnamelen);
 extern int shishi_authenticator_cnamerealm_get (Shishi * handle,
 						Shishi_asn1 authenticator,
 						char *cnamerealm,
-						int *cnamerealmlen);
+						size_t *cnamerealmlen);
 extern int shishi_authenticator_remove_cksum (Shishi * handle,
 					      Shishi_asn1 authenticator);
 extern int shishi_authenticator_cksum (Shishi * handle,
@@ -842,12 +843,13 @@ extern int shishi_authenticator_add_cksum (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   Shishi_key * key,
 					   int keyusage,
-					   char *data, int datalen);
+					   char *data, size_t datalen);
 extern int
 shishi_authenticator_add_cksum_type (Shishi * handle,
 				     Shishi_asn1 authenticator,
 				     Shishi_key * key,
-				     int keyusage, int cksumtype, char *data, int datalen);
+				     int keyusage, int cksumtype,
+				     char *data, size_t datalen);
 extern int
 shishi_authenticator_remove_subkey (Shishi * handle,
 				    Shishi_asn1 authenticator);
@@ -876,12 +878,12 @@ extern int
 shishi_authenticator_add_authorizationdata (Shishi * handle,
 					    Shishi_asn1 authenticator,
 					    int adtype,
-					    char *addata, int addatalen);
+					    char *addata, size_t addatalen);
 extern int
 shishi_authenticator_authorizationdata (Shishi * handle,
 					Shishi_asn1 authenticator,
 					int *adtype,
-					char *addata, int *addatalen,
+					char *addata, size_t *addatalen,
 					int nth);
 extern int shishi_authenticator_read (Shishi * handle, FILE * fh,
 				      Shishi_asn1 * authenticator);
@@ -992,7 +994,7 @@ extern int shishi_kdcreq_set_sname (Shishi * handle, Shishi_asn1 kdcreq,
 				    Shishi_name_type name_type,
 				    const char *sname[]);
 extern int shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
-				    char *realm, int *realmlen);
+				    char *realm, size_t *realmlen);
 extern int shishi_kdcreq_set_realm (Shishi * handle, Shishi_asn1 kdcreq,
 				    const char *realm);
 extern int shishi_kdcreq_set_server (Shishi * handle, Shishi_asn1 req,
@@ -1020,7 +1022,8 @@ extern int shishi_kdcreq_get_padata_tgs (Shishi * handle,
 					 Shishi_asn1 *apreq);
 extern int shishi_kdcreq_add_padata (Shishi * handle,
 				     Shishi_asn1 kdcreq,
-				     int padatatype, char *data, int datalen);
+				     int padatatype,
+				     const char *data, size_t datalen);
 extern int shishi_kdcreq_add_padata_tgs (Shishi * handle,
 					 Shishi_asn1 kdcreq,
 					 Shishi_asn1 apreq);
@@ -1119,8 +1122,8 @@ extern int shishi_kdcrep_crealmserver_set (Shishi * handle,
 					   const char *crealm,
 					   const char *client);
 extern int shishi_kdcrep_set_enc_part (Shishi * handle, Shishi_asn1 kdcrep,
-				       int etype, int kvno, char *buf,
-				       int buflen);
+				       int etype, int kvno,
+				       const char *buf, size_t buflen);
 
 /* krberror.c */
 extern Shishi_asn1 shishi_krberror (Shishi * handle);
@@ -1351,13 +1354,13 @@ extern int shishi_verify (Shishi * handle,
 extern int shishi_randomize (Shishi * handle, char *data, size_t datalen);
 extern int shishi_dk (Shishi * handle,
 		      Shishi_key * key,
-		      char *constant, int constantlen,
+		      const char *constant, size_t constantlen,
 		      Shishi_key * derivedkey);
 extern int shishi_dr (Shishi * handle,
 		      Shishi_key * key,
-		      char *constant, size_t constantlen,
+		      const char *constant, size_t constantlen,
 		      char *derivedrandom, size_t derivedrandomlen);
-extern int shishi_n_fold (Shishi * handle, char *in, size_t inlen,
+extern int shishi_n_fold (Shishi * handle, const char *in, size_t inlen,
 			  char *out, size_t outlen);
 extern int shishi_pbkdf2_sha1 (const char *P, size_t Plen,
 			       const char *S, size_t Slen,

@@ -386,7 +386,7 @@ shishi_asreq_cnamerealm_get (Shishi * handle,
 
 int
 shishi_kdcreq_realm_get (Shishi * handle, Shishi_asn1 kdcreq,
-			 char *realm, int *realmlen)
+			 char *realm, size_t *realmlen)
 {
   return shishi_asn1_read_optional (handle, kdcreq, "req-body.realm",
 				    realm, realmlen);
@@ -743,7 +743,8 @@ shishi_kdcreq_get_padata_tgs (Shishi * handle,
 int
 shishi_kdcreq_add_padata (Shishi * handle,
 			  Shishi_asn1 kdcreq,
-			  int padatatype, char *data, int datalen)
+			  int padatatype,
+			  const char *data, size_t datalen)
 {
   char *format;
   int res;
