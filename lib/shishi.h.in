@@ -318,6 +318,7 @@ extern int shishi_init_with_paths (Shishi ** handle,
 extern int shishi_init_server (Shishi ** handle);
 extern int shishi_init_server_with_paths (Shishi ** handle,
 					  const char *systemcfgfile);
+extern void shishi_info (Shishi * handle, const char *fmt, ...);
 extern void shishi_warn (Shishi * handle, const char *fmt, ...);
 
 /* done.c */
@@ -328,6 +329,7 @@ extern int shishi_cfg (Shishi * handle, char *option);
 extern int shishi_cfg_from_file (Shishi * handle, const char *cfg);
 extern int shishi_cfg_print (Shishi * handle, FILE * fh);
 extern const char *shishi_cfg_default_systemfile (Shishi * handle);
+extern const char *shishi_cfg_default_userdirectory (Shishi * handle);
 extern const char *shishi_cfg_default_userfile (Shishi * handle);
 extern int shishi_cfg_clientkdcetype (Shishi * handle, int32_t ** etypes);
 extern int shishi_cfg_clientkdcetype_set (Shishi * handle, char *value);
