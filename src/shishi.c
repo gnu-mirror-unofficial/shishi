@@ -591,10 +591,13 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case OPTION_CRYPTO_STR2KEY:
-      if (arguments->password)
-	argp_error (state, _("Password specified twice."));
       arguments->command = OPTION_CRYPTO;
-      arguments->password = strdup (arg);
+      if (arg)
+	{
+	  if (arguments->password)
+	    argp_error (state, _("Password specified twice."));
+	  arguments->password = strdup (arg);
+	}
       break;
 
     case OPTION_CRYPTO_WRITE_DATA_FILE:
@@ -795,7 +798,7 @@ static struct argp_option options[] = {
    "Salt to use for --string-to-key. Defaults to concatenation of "
    "realm and (unwrapped) client name."},
 
-  {"string-to-key", OPTION_CRYPTO_STR2KEY, "PASSWORD", 0,
+  {"string-to-key", OPTION_CRYPTO_STR2KEY, "[PASSWORD]", OPTION_ARG_OPTIONAL,
    "Convert password into Kerberos key.  Note that --client-name, --realm, "
    "and --salt influence the generated key."},
 
