@@ -254,7 +254,7 @@ shishi_aprep_enc_part_set (Shishi * handle,
 			   Shishi_asn1 aprep,
 			   int etype, const char *buf, int buflen)
 {
-  char format[BUFSIZ];
+  char *format;
   int res;
 
   res = shishi_asn1_write (handle, aprep, "enc-part.cipher",
@@ -262,8 +262,9 @@ shishi_aprep_enc_part_set (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  sprintf (format, "%d", etype);
+  asprintf (&format, "%d", etype);
   res = shishi_asn1_write (handle, aprep, "enc-part.etype", format, 0);
+  free (format);
   if (res != SHISHI_OK)
     return res;
 
@@ -279,7 +280,7 @@ shishi_aprep_enc_part_add (Shishi * handle,
   int res;
   char buf[BUFSIZ];
   size_t buflen;
-  char der[BUFSIZ];
+  char *der;
   int derlen = BUFSIZ;
   Shishi_key *key;
 
@@ -287,7 +288,7 @@ shishi_aprep_enc_part_add (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_a2d (handle, encapreppart, der, &derlen);
+  res = shishi_new_a2d (handle, encapreppart, &der, &derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode authenticator: %s\n",
@@ -304,6 +305,7 @@ shishi_aprep_enc_part_add (Shishi * handle,
   buflen = BUFSIZ;
   res = shishi_encrypt (handle, key, SHISHI_KEYUSAGE_ENCAPREPPART,
 			der, derlen, buf, &buflen);
+  free(der);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "des_encrypt fail\n");
@@ -381,7 +383,7 @@ shishi_aprep_decrypt (Shishi * handle,
   int i;
   size_t buflen = BUFSIZ;
   char buf[BUFSIZ];
-  char cipher[BUFSIZ];
+  char *cipher;
   int cipherlen;
   int etype;
 
@@ -392,14 +394,14 @@ shishi_aprep_decrypt (Shishi * handle,
   if (etype != shishi_key_type (key))
     return SHISHI_APREP_BAD_KEYTYPE;
 
-  cipherlen = BUFSIZ;
-  res = shishi_asn1_field (handle, aprep, cipher, &cipherlen,
-			   "enc-part.cipher");
+  res = shishi_asn1_new_field (handle, aprep, &cipher, &cipherlen,
+			       "enc-part.cipher");
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_decrypt (handle, key, keyusage, cipher, cipherlen,
 			buf, &buflen);
+  free(cipher);
   if (res != SHISHI_OK)
     {
       if (VERBOSE (handle))

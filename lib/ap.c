@@ -183,10 +183,7 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
   int buflen;
   int res;
 
-  buf = malloc (BUFSIZ);
-  buflen = BUFSIZ;
-
-  res = shishi_a2d_field (ap->handle, node, field, buf, &buflen);
+  res = shishi_a2d_new_field (ap->handle, node, field, &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -614,7 +611,8 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
       return rc;
     }
 
-  rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey, SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR,	/* XXX */
+  rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey,
+			     SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR, /* XXX */
 			     &authenticator);
   if (rc != SHISHI_OK)
     {
