@@ -128,6 +128,8 @@
 #include "getdate.h"
 #include "base64.h"
 #include "xmemdup.h"
+#include "timegm.h"
+#include "time_r.h"
 
 #include "shishi.h"
 
