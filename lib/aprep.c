@@ -317,8 +317,9 @@ shishi_aprep_enc_part_add (Shishi * handle,
     }
 
   buflen = BUFSIZ;
-  res = shishi_encrypt (handle, keytype, buf, &buflen,
-			der, derlen, key, keylen);
+  res = shishi_encrypt (handle, SHISHI_KEYUSAGE_ENCAPREPPART, 
+			keytype, key, keylen, 
+			der, derlen, buf, &buflen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "des_encrypt fail\n");
