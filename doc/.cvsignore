@@ -1,7 +1,8 @@
 Makefile
+Makefile.gdoc
 Makefile.in
 mdate-sh
-shishi-api-*.texi
+shishi-api-error-labels.texi
 shishi.1
 shishi.aux
 shishi.cp
