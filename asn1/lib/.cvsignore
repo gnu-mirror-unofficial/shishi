@@ -1,0 +1,14 @@
+.deps
+.libs
+ASN1.lo
+Makefile
+Makefile.in
+asn1-api.tex
+coding.lo
+decoding.lo
+element.lo
+errors.lo
+gstr.lo
+libtasn1.la
+parser_aux.lo
+structure.lo
