@@ -579,7 +579,9 @@ shishi_tgs_process (Shishi * handle,
 		    Shishi_asn1 oldenckdcreppart,
 		    Shishi_asn1 * enckdcreppart)
 {
-  Shishi_key *key;
+  Shishi_key *tktkey;
+  Shishi_key *subkey;
+  int use_subkey;
   int etype;
   int res;
   int32_t keyusage;
@@ -588,31 +590,42 @@ shishi_tgs_process (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_authenticator_get_subkey (handle, authenticator, &key);
+  res = shishi_authenticator_get_subkey (handle, authenticator, &subkey);
   if (res != SHISHI_OK)
     return res;
 
-  if (res == SHISHI_ASN1_NO_ELEMENT) /* XXX Heimdal bug, needs 'if (1)' */
-    {
-      res = shishi_enckdcreppart_get_key (handle, oldenckdcreppart, &key);
-      if (res != SHISHI_OK)
-	return res;
+  res = shishi_enckdcreppart_get_key (handle, oldenckdcreppart, &tktkey);
+  if (res != SHISHI_OK)
+    return res;
 
-      if (etype != shishi_key_type (key))
+  use_subkey = (res = SHISHI_ASN1_NO_ELEMENT);
+
+  if (use_subkey)
+    {
+      if (etype != shishi_key_type (subkey))
 	return SHISHI_TGSREP_BAD_KEYTYPE;
 
       keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY;
     }
   else
     {
-      if (etype != shishi_key_type (key))
+      if (etype != shishi_key_type (tktkey))
 	return SHISHI_TGSREP_BAD_KEYTYPE;
 
       keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY;
     }
 
-  res = shishi_kdc_process (handle, tgsreq, tgsrep, key,
+  res = shishi_kdc_process (handle, tgsreq, tgsrep,
+			    use_subkey ? subkey : tktkey,
 			    keyusage, enckdcreppart);
+  if (res == SHISHI_CRYPTO_ERROR && use_subkey)
+    {
+      res = shishi_kdc_process (handle, tgsreq, tgsrep,
+				tktkey,
+				keyusage, enckdcreppart);
+      if (res == SHISHI_OK)
+	shishi_warn (handle, "KDC bug: Reply encrypted using wrong key.");
+    }
 
   return res;
 }
