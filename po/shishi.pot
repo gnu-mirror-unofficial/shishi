@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-09-06 18:46+0200\n"
+"POT-Creation-Date: 2003-09-06 23:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -106,47 +106,47 @@ msgstr ""
 msgid "Reading Authenticator from %s...done\n"
 msgstr ""
 
-#: lib/diskio.c:917
+#: lib/diskio.c:964
 #, c-format
 msgid "Writing KEY to %s...\n"
 msgstr ""
 
-#: lib/diskio.c:932
+#: lib/diskio.c:979
 #, c-format
 msgid "Writing KEY to %s...done\n"
 msgstr ""
 
-#: lib/encapreppart.c:118
+#: lib/encapreppart.c:128
 #, c-format
 msgid "Writing EncAPRepPart to %s...\n"
 msgstr ""
 
-#: lib/encapreppart.c:125
+#: lib/encapreppart.c:135
 #, c-format
 msgid "Writing EncAPRepPart in %s format...\n"
 msgstr ""
 
-#: lib/encapreppart.c:140
+#: lib/encapreppart.c:150
 #, c-format
 msgid "Writing EncAPRepPart to %s...done\n"
 msgstr ""
 
-#: lib/encapreppart.c:200
+#: lib/encapreppart.c:210
 #, c-format
 msgid "Reading EncAPRepPart from %s...\n"
 msgstr ""
 
-#: lib/encapreppart.c:207
+#: lib/encapreppart.c:217
 #, c-format
 msgid "Reading EncAPRepPart in %s format...\n"
 msgstr ""
 
-#: lib/encapreppart.c:222
+#: lib/encapreppart.c:232
 #, c-format
 msgid "Reading EncAPRepPart from %s...done\n"
 msgstr ""
 
-#: lib/enckdcreppart.c:366 lib/ticket.c:147
+#: lib/enckdcreppart.c:366 lib/ticket.c:146
 #, c-format
 msgid "Could not set sname: %s\n"
 msgstr ""
@@ -246,7 +246,7 @@ msgstr ""
 msgid "Reading KRB-ERROR from %s...done\n"
 msgstr ""
 
-#: lib/krberror.c:1294
+#: lib/krberror.c:1263
 #, c-format
 msgid "Unknown KRB-ERROR error code %d."
 msgstr ""
@@ -291,37 +291,37 @@ msgstr ""
 msgid "Time of last initial request for a TGT:\t%s"
 msgstr ""
 
-#: lib/tkt.c:877
+#: lib/tkt.c:879
 #, c-format
 msgid "Acquired:\t%s"
 msgstr ""
 
-#: lib/tkt.c:881
+#: lib/tkt.c:883
 #, c-format
 msgid "Valid from:\t%s"
 msgstr ""
 
-#: lib/tkt.c:886
+#: lib/tkt.c:888
 #, c-format
 msgid "Expires:\t%s"
 msgstr ""
 
-#: lib/tkt.c:893
+#: lib/tkt.c:895
 #, c-format
 msgid "Renewable till:\t%s"
 msgstr ""
 
-#: lib/tkt.c:904
+#: lib/tkt.c:906
 #, c-format
 msgid "Server:\t\t%s key %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:913
+#: lib/tkt.c:915
 #, c-format
 msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:923
+#: lib/tkt.c:925
 msgid "Ticket flags:\t"
 msgstr ""
 
@@ -398,17 +398,17 @@ msgstr ""
 msgid "Too many arguments: `%s'"
 msgstr ""
 
-#: src/shishi.c:964
+#: src/shishi.c:963
 #, c-format
 msgid "invalid --endtime date `%s'"
 msgstr ""
 
-#: src/shishi.c:971
+#: src/shishi.c:970
 #, c-format
 msgid "invalid --renew-till date `%s'"
 msgstr ""
 
-#: src/shishi.c:993
+#: src/shishi.c:992
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""
