@@ -248,6 +248,8 @@ the interface is rather libtasn1 centric.
 
 @item KDC (initiated, weeks)
 
+@item LDAP backend for Shisa.
+
 @item Set/Change password protocol (weeks?)
 
 @item Port applications to use Shishi (indefinite)
@@ -265,6 +267,8 @@ only implicit from successful decryption of the KDC-REP and the 4 byte
 nonce.
 
 @item GUI applet for managing tickets.
+This is supported via the ticket-applet, of which a Shishi port is
+published on the Shishi home page.
 
 @item Authorization library (months?)
 The shishi_authorized_p() is not a good solution, better would be to
