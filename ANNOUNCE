@@ -26,12 +26,12 @@ and the rsa-md4-des, rsa-md5-des, hmac-sha1-des3-kd,
 hmac-sha1-96-aes128, hmac-sha1-96-aes256 checksum types are supported.
 
 Shishi is developed for the GNU/Linux system, but runs on over 20
-platforms, including most major Unix platforms and Windows.
+platforms including most major Unix platforms and Windows.
 
 Shishi is free software licensed under the GNU Public License.
 
-The project page of the library is available at:
-http://www.josefsson.org/shishi/
+The project web page:
+http://josefsson.org/shishi/
 
 For more information see:
 http://www.ietf.org/rfc/rfc1510.txt
