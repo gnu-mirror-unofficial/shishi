@@ -1,9 +1,11 @@
-# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc getdate timegm
+# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm
 # + base64 (x)memdup
+
+# s/#libfoo_la_LIBADD = @LIBOBJS@/libfoo_la_LIBADD = @LTLIBOBJS@/g
 # s/libfoo_a/libfoo_la/g
 # s/libfoo.a/libfoo.la/
-# s/#libfoo_la_LIBADD = @LIBOBJS@/libfoo_la_LIBADD = @LTLIBOBJS@/g
 # s/EXTRA_DIST =/EXTRA_DIST = README/
+# s/noinst_LIBRARIES/noinst_LTLIBRARIES/g
 
 SUBDIRS = m4
 
@@ -14,7 +16,7 @@ AUTOMAKE_OPTIONS = 1.5 gnits no-dependencies
 noinst_LTLIBRARIES = libfoo.la
 
 libfoo_la_SOURCES =
-#libfoo_la_LIBADD = @LIBOBJS@
+#libfoo_a_LIBADD = @LIBOBJS@
 libfoo_la_LIBADD = @LTLIBOBJS@
 EXTRA_DIST = README
 BUILT_SOURCES =
@@ -41,6 +43,8 @@ libfoo_la_SOURCES += argp.h argp-ba.c argp-eexst.c \
            argp-namefrob.h argp-parse.c argp-pv.c argp-pvh.c argp-xinl.c
 
 
+libfoo_la_SOURCES += exit.h
+
 libfoo_la_SOURCES += exitfail.h exitfail.c
 
 
@@ -60,6 +64,7 @@ libfoo_la_SOURCES += mempcpy.h
 
 
 
+
 libfoo_la_SOURCES += setenv.h
 
 
@@ -67,6 +72,7 @@ libfoo_la_SOURCES += strchrnul.h
 
 
 
+libfoo_la_SOURCES += strndup.h
 
 
 EXTRA_DIST += sysexit_.h
@@ -79,6 +85,10 @@ sysexits.h: sysexit_.h
 	mv sysexits.h-t sysexits.h
 MOSTLYCLEANFILES += sysexits.h sysexits.h-t
 
+libfoo_la_SOURCES += timegm.h
+
+libfoo_la_SOURCES += time_r.h
+
 libfoo_la_SOURCES += unlocked-io.h
 
 libfoo_la_SOURCES += printf-args.h printf-parse.h vasnprintf.h
@@ -89,14 +99,7 @@ libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
 
 libfoo_la_SOURCES += xstrndup.h xstrndup.c
 
-libfoo_la_SOURCES += strndup.h
 
 libfoo_la_SOURCES += base64.c base64.h
-
-libfoo_la_SOURCES += timegm.h
-
-libfoo_la_SOURCES += time_r.h
-
 libfoo_la_SOURCES += memdup.h memdup.c
-
 libfoo_la_SOURCES += xmemdup.h xmemdup.c
