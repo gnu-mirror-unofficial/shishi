@@ -26,6 +26,9 @@
 
 #define SERVICE "sample"
 
+/* XXX remove this */
+const char *program_name = "client";
+
 int
 doit (Shishi * h, int verbose)
 {
