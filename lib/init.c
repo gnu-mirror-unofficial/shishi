@@ -136,19 +136,19 @@ shishi_server (void)
 void
 shishi_done (Shishi * handle)
 {
-#ifdef USE_STARTTLS
   int rc;
-
-  rc = _shishi_tls_done (handle);
-  if (rc != SHISHI_OK)
-    shishi_warn (handle, "Cannot deinitialize TLS library");
-#endif
 
   if (handle->tkts)
     {
       shishi_tkts_to_file (handle->tkts, shishi_tkts_default_file (handle));
       shishi_tkts_done (&handle->tkts);
     }
+
+#ifdef USE_STARTTLS
+  rc = _shishi_tls_done (handle);
+  if (rc != SHISHI_OK)
+    shishi_warn (handle, "Cannot deinitialize TLS library");
+#endif
 
   if (handle->default_realm)
     free (handle->default_realm);
