@@ -842,16 +842,6 @@ static struct argp argp = {
   "Shishi -- A RFC 1510(bis) implementation"
 };
 
-void
-die (char *fmt, ...)
-{
-  va_list ap;
-  va_start (ap, fmt);
-  vfprintf (stderr, fmt, ap);
-  va_end (ap);
-  exit (1);
-}
-
 int
 main (int argc, char *argv[])
 {
@@ -869,21 +859,22 @@ main (int argc, char *argv[])
   rc = shishi_init_with_paths (&handle, arg.ticketfile,
 			       arg.systemcfgfile, arg.usercfgfile);
   if (rc == SHISHI_HANDLE_ERROR)
-    die ("Internal error: could not initialize shishi\n");
+    error (1, 0, "Internal error: could not initialize shishi\n");
 
   rc = shishi_cfg_clientkdcetype_set (handle, arg.etypes);
   if (rc != SHISHI_OK)
-    die ("Could not set encryption types: %s\n", shishi_strerror (rc));
+    error (1, 0, "Could not set encryption types: %s\n", shishi_strerror (rc));
 
   rc = shishi_cfg (handle, arg.lib_options);
   if (rc != SHISHI_OK)
-    die ("Could not read library options: %s\n", shishi_strerror (rc));
+    error (1, 0, "Could not read library options: %s\n", shishi_strerror (rc));
 
   if (arg.verbose_library)
     {
       rc = shishi_cfg (handle, "verbose");
       if (rc != SHISHI_OK)
-	die ("Could not make library verbose: %s\n", shishi_strerror (rc));
+	error (1, 0, "Could not make library verbose: %s\n",
+	       shishi_strerror (rc));
     }
 
   if (arg.cname != NULL)
@@ -897,7 +888,7 @@ main (int argc, char *argv[])
       asprintf (&arg.tgtname, "krbtgt/%s",
 		       shishi_realm_default (handle));
       if (arg.tgtname == NULL)
-	die ("Could not allocate TGT name.");
+	error (1, 0, "Could not allocate TGT name.");
     }
 
   rc = 1;

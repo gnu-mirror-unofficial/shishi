@@ -42,7 +42,7 @@ client (Shishi * handle, struct arguments arg)
       asprintf (&p, "host/www");
       arg.sname = p;
       if (arg.sname == NULL)
-	die ("Could not allocate server name.");
+	error (1, 0, "Could not allocate server name.");
     }
 
   if (arg.verbose)

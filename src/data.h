@@ -272,9 +272,6 @@ struct arguments
   int apoptions;
 };
 
-typedef void diefn (char *fmt, ...);
-volatile diefn die;
-
 extern int ap (Shishi * handle, struct arguments arg);
 
 extern int kdc (Shishi * handle, struct arguments arg);
