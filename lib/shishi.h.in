@@ -702,7 +702,7 @@ extern int shishi_tkt_keytype (Shishi_tkt * tkt, int32_t * etype);
 extern int shishi_tkt_keytype_p (Shishi_tkt * tkt, int32_t etype);
 extern int shishi_tkt_server (Shishi_tkt * tkt,
 			      char *service, size_t * servicelen);
-extern int shishi_tkt_server_p (Shishi_tkt * tkt, const char *service);
+extern int shishi_tkt_server_p (Shishi_tkt * tkt, const char *server);
 extern int shishi_tkt_server_realm (Shishi_tkt * tkt,
 				    char *serverrealm,
 				    size_t * serverrealmlen);
@@ -1443,8 +1443,8 @@ extern int shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
 extern int shishi_asn1_read_optional (Shishi * handle,
 				      Shishi_asn1 node, const char *field,
 				      char *data, size_t * datalen);
-extern int shishi_asn1_read_empty_p (Shishi * handle,
-				     Shishi_asn1 node, const char *field);
+extern int shishi_asn1_empty_p (Shishi * handle, Shishi_asn1 node,
+				const char *field);
 extern int shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 			      const char *field,
 			      const char *data, size_t datalen);
