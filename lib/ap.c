@@ -800,7 +800,7 @@ shishi_ap_rep_set (Shishi_ap * ap, Shishi_asn1 aprep)
  * @out: output array with newly allocated DER encoding of AP-REP.
  * @outlen: length of output array with DER encoding of AP-REP.
  *
- * Build AP-REQ using shishi_ap_rep_build() and DER encode it.  @out
+ * Build AP-REP using shishi_ap_rep_build() and DER encode it.  @out
  * is allocated by this function, and it is the responsibility of
  * caller to deallocate it.
  *
@@ -853,7 +853,7 @@ shishi_ap_rep_der_set (Shishi_ap * ap, char *der, size_t derlen)
  * @ap: structure that holds information about AP exchange
  *
  * Checksum data in authenticator and add ticket and authenticator to
- * AP-REQ.
+ * AP-REP.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
