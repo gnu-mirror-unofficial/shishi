@@ -23,6 +23,17 @@ package "shisa"
 purpose "Manipulate information stored in the Kerberos 5 database
 used by Shishi."
 
+section "Operations"
+option "add" a "Add specified PRINCIPAL in REALM to database." no
+option "dump" d "Dump information from database." no
+option "list" l "List entries in database." no
+option "modify" m "Modify entry for specified PRINCIPAL in REALM in database." no
+option "remove" r "Remove specified PRINCIPAL in REALM from database." no
+
+section "Parameters"
+option "force" f "Allow removal of non-empty realms." flag off
+option "enabled" e "Only dump or list enabled principals." flag off
+
 section "Other options"
 option "configuration-file" c "Use specified configuration file." string typestr="FILE" no
 option "library-options" o "Parse string as configuration file statement." string typestr="STRING" no

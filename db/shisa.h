@@ -30,11 +30,16 @@
 enum Shisa_rc
 {
   SHISA_OK = 0,
-  SHISA_INIT_ERROR,
-  SHISA_CFG_NO_FILE,
-  SHISA_CFG_IO_ERROR,
-  SHISA_CFG_SYNTAX_ERROR,
-  SHISA_DB_OPEN_ERROR
+  SHISA_INIT_ERROR = 1,
+  SHISA_CFG_NO_FILE = 2,
+  SHISA_CFG_IO_ERROR = 3,
+  SHISA_CFG_SYNTAX_ERROR = 4,
+  SHISA_DB_OPEN_ERROR = 5,
+  SHISA_DB_NO_REALM = 6,
+  SHISA_DB_LIST_REALM_ERROR = 7,
+  SHISA_DB_NO_PRINCIPAL = 8,
+  SHISA_DB_LIST_PRINCIPAL_ERROR = 8,
+  SHISA_DB_FIND_ERROR = 9
 };
 typedef enum Shisa_rc Shisa_rc;
 
@@ -42,8 +47,8 @@ typedef struct Shisa		Shisa;
 
 struct Shisa_principal
 {
-  const char *name;
-  const char *realm;
+  char *name;
+  char *realm;
   time_t notusedbefore;
   time_t notusedafter;
   int isdisabled;
@@ -54,13 +59,13 @@ typedef struct Shisa_principal Shisa_principal;
 struct Shisa_key
 {
   int32_t etype;
-  const char *value;
+  char *value;
   size_t valuelen;
-  const char *saltvalue;
+  char *saltvalue;
   size_t saltvaluelen;
-  const char *str2keyparam;
+  char *str2keyparam;
   size_t str2keyparamlen;
-  const char *password;
+  char *password;
   time_t notusedafter;
   time_t notusedbefore;
   int isdisabled;
@@ -92,7 +97,7 @@ extern int shisa_principal_find (Shisa * dbh,
 				 const char *client,
 				 const char *realm,
 				 Shisa_principal **ph);
-extern int shisa_principal_free (Shisa_principal *ph);
+extern void shisa_principal_free (Shisa_principal *ph);
 extern int shisa_principal_set (Shisa * dbh, const Shisa_principal * ph);
 extern int shisa_principal_add (Shisa * dbh, const Shisa_principal * ph,
 				const Shisa_key *key);
@@ -100,7 +105,7 @@ extern int shisa_principal_remove (Shisa * dbh, const Shisa_principal * ph);
 
 extern int shisa_key_find (Shisa * dbh, const Shisa_principal * ph,
 			  Shisa_key **key);
-extern int shisa_key_free (Shisa_key **key);
+extern void shisa_key_free (Shisa_key *key);
 extern int shisa_key_set (Shisa * dbh, const Shisa_principal * ph,
 			  const Shisa_key *key);
 extern int shisa_key_add (Shisa * dbh, const Shisa_principal * ph,

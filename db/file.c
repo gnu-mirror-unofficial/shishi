@@ -21,10 +21,22 @@
 
 #include "internal.h"
 
+/* For stat. */
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+/* For readdir. */
+#include <dirent.h>
+
+#include <errno.h>
+#ifndef errno
+extern int errno;
+#endif
+
 struct Shisa_file
 {
   char *path;
-  FILE *fh;
   int readonly;
   int allowcreate;
 };
@@ -85,34 +97,151 @@ shisa_file_init (Shisa *dbh,
 		 void **state)
 {
   Shisa_file *info;
-  FILE *fh;
+  struct stat buf;
   int rc;
+
+  rc = stat (location, &buf);
+  if (rc != 0 || !S_ISDIR (buf.st_mode))
+    {
+      errno = ENOTDIR;
+      perror (location);
+      return SHISA_DB_OPEN_ERROR;
+    }
 
   *state = info = xcalloc (1, sizeof (*info));
   rc = shisa_file_cfg (dbh, info, options);
   if (rc != SHISA_OK)
     return rc;
 
-  if (info->readonly)
-    info->fh = fopen (location, "r");
-  else
-    info->fh = fopen (location, "r+");
-  if (info->fh == NULL && info->allowcreate)
-    {
-      info->fh = fopen (location, "w+");
-      if (info->fh != NULL)
-	shisa_info (dbh, "Created file database: `%s'.", location);
-    }
-  if (info->fh == NULL)
-    {
-      free (info);
-      perror(location);
-      return SHISA_DB_OPEN_ERROR;
-    }
-
   info->path = xstrdup (location);
 
   return SHISA_OK;
+}
+
+static int
+shisa_file_ls_1 (Shisa *dbh,
+		 char *path,
+		 char ***files,
+		 size_t *nfiles,
+		 DIR *dir)
+{
+  struct dirent *de;
+  int rc;
+
+  errno = 0;
+
+  while ((de = readdir (dir)) != NULL)
+    {
+      if (strcmp (de->d_name, ".") == 0 || strcmp (de->d_name, "..") == 0)
+	continue;
+      *files = xrealloc (*files, (*nfiles + 1) * sizeof (**files));
+      (*files)[(*nfiles)++] = xstrdup (de->d_name);
+    }
+
+  if (errno != 0)
+    {
+      size_t i;
+
+      perror(path);
+
+      for (i = 0; i < *nfiles; i++)
+	free (**files);
+      free (*files);
+
+      return SHISA_DB_LIST_REALM_ERROR;
+    }
+
+  return SHISA_OK;
+}
+
+static int
+shisa_file_ls (Shisa *dbh,
+	       char *path,
+	       char ***files,
+	       size_t *nfiles)
+{
+  struct dirent *de;
+  DIR *dir;
+  int rc, tmprc;
+
+  dir = opendir (path);
+  if (dir == NULL)
+    {
+      perror(path);
+      return SHISA_DB_LIST_REALM_ERROR;
+    }
+
+  rc = shisa_file_ls_1 (dbh, path, files, nfiles, dir);
+  if (rc != SHISA_OK)
+    {
+      rc = closedir (dir);
+      if (rc != 0)
+	perror (path);
+      return SHISA_DB_LIST_REALM_ERROR;
+    }
+
+  rc = closedir (dir);
+  if (rc != 0)
+    {
+      size_t i;
+
+      perror(path);
+
+      for (i = 0; i < *nfiles; i++)
+	free (**files);
+      free (*files);
+
+      return SHISA_DB_LIST_REALM_ERROR;
+    }
+
+  return SHISA_OK;
+}
+
+
+extern int
+shisa_file_enumerate_realms (Shisa *dbh,
+			     void *state,
+			     char ***realms,
+			     size_t *nrealms)
+{
+  Shisa_file *info = state;
+  int rc;
+
+  rc = shisa_file_ls (dbh, info->path, realms, nrealms);
+
+  return rc;
+}
+
+int
+shisa_file_enumerate_principals (Shisa *dbh,
+				 void *state,
+				 const char *realm,
+				 char ***principals,
+				 size_t *nprincipals)
+{
+  Shisa_file *info = state;
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s", info->path, realm);
+
+  rc = shisa_file_ls (dbh, tmp, principals, nprincipals);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
+shisa_file_principal_find (Shisa * dbh,
+			   void *state,
+			   const char *client,
+			   const char *realm,
+			   Shisa_principal **ph)
+{
+  Shisa_file *info = state;
+
+  return SHISA_INIT_ERROR;
 }
 
 void
@@ -120,13 +249,10 @@ shisa_file_done (Shisa *dbh, void *state)
 {
   Shisa_file *info = state;
 
-  if (!info)
-    return;
-
-  if (info->fh)
-    if (fclose (info->fh) != 0)
-      perror(info->path);
-  if (info->path)
-    free (info->path);
-  free (info);
+  if (info)
+    {
+      if (info->path)
+	free (info->path);
+      free (info);
+    }
 }

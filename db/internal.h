@@ -46,12 +46,29 @@ typedef int (*_Shisa_db_init) (Shisa *dbh,
 			       const char *location,
 			       const char *options,
 			       void **state);
+typedef int (*_Shisa_db_enumerate_realms) (Shisa *dbh,
+					   void *state,
+					   char ***realms,
+					   size_t *nrealms);
+typedef int (*_Shisa_db_enumerate_principals) (Shisa *dbh,
+					       void *state,
+					       const char *realm,
+					       char ***principals,
+					       size_t *nprincipals);
+typedef int (*_Shisa_db_principal_find) (Shisa * dbh,
+					 void *state,
+					 const char *client,
+					 const char *realm,
+					 Shisa_principal **ph);
 typedef void (*_Shisa_db_done) (Shisa *dbh, void *state);
 
 struct _Shisa_backend
 {
   char *name;
   _Shisa_db_init init;
+  _Shisa_db_enumerate_realms enumerate_realms;
+  _Shisa_db_enumerate_principals enumerate_principals;
+  _Shisa_db_principal_find principal_find;
   _Shisa_db_done done;
 };
 typedef struct _Shisa_backend _Shisa_backend;
@@ -73,6 +90,20 @@ extern int shisa_file_init (Shisa *dbh,
 			    const char *location,
 			    const char *options,
 			    void **state);
+extern int shisa_file_enumerate_realms (Shisa *dbh,
+					void *state,
+					char ***realms,
+					size_t *nrealms);
+extern int shisa_file_enumerate_principals (Shisa *dbh,
+					    void *state,
+					    const char *realm,
+					    char ***principals,
+					    size_t *nprincipals);
+extern int shisa_file_principal_find (Shisa * dbh,
+				      void *state,
+				      const char *client,
+				      const char *realm,
+				      Shisa_principal **ph);
 extern void shisa_file_done (Shisa *dbh, void *state);
 
 extern _Shisa_backend *_shisa_find_backend (const char *name);
