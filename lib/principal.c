@@ -88,6 +88,46 @@ shishi_principal_default_set (Shishi * handle, const char *principal)
     handle->default_principal = NULL;
 }
 
+int
+shishi_parse_name (Shishi * handle, const char *name,
+		   char **principal, char **realm)
+{
+  char *p = (char *) name;
+  char *q;
+  int escaped = 0;
+
+  if (!name)
+    return SHISHI_INVALID_PRINCIPAL_NAME;
+
+  while (*p && (*p != '@' || escaped))
+    if (escaped)
+      escaped = 0;
+    else if (*p++ == '\\')
+      escaped = 1;
+
+  if (principal)
+    *principal = xstrndup (p, p - name);
+
+  q = p;
+
+  while (*q && (*q != '@' || escaped))
+    if (escaped)
+      escaped = 0;
+    else if (*q++ == '\\')
+      escaped = 1;
+
+  if (escaped)
+    return SHISHI_INVALID_PRINCIPAL_NAME;
+
+  if (realm)
+    if (*q)
+      *realm = xstrdup (p + 1);
+    else
+      *realm = NULL;
+
+  return SHISHI_OK;
+}
+
 /*
   2.1.1. Kerberos Principal Name Form
 
