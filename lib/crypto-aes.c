@@ -25,11 +25,10 @@
 
 static int
 aes128_encrypt (Shishi * handle,
-		Shishi_key *key,
+		Shishi_key * key,
 		int keyusage,
 		const char *iv, size_t ivlen,
-		const char *in, size_t inlen,
-		char **out, size_t *outlen)
+		const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_encrypt (handle, key, keyusage, iv, ivlen,
 			     in, inlen, out, outlen);
@@ -37,11 +36,10 @@ aes128_encrypt (Shishi * handle,
 
 static int
 aes128_decrypt (Shishi * handle,
-		Shishi_key *key,
+		Shishi_key * key,
 		int keyusage,
 		const char *iv, size_t ivlen,
-		const char *in, size_t inlen,
-		char **out, size_t *outlen)
+		const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_decrypt (handle, key, keyusage, iv, ivlen,
 			     in, inlen, out, outlen);
@@ -49,11 +47,10 @@ aes128_decrypt (Shishi * handle,
 
 static int
 aes256_encrypt (Shishi * handle,
-		Shishi_key *key,
+		Shishi_key * key,
 		int keyusage,
 		const char *iv, size_t ivlen,
-		const char *in, size_t inlen,
-		char **out, size_t *outlen)
+		const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_encrypt (handle, key, keyusage, iv, ivlen,
 			     in, inlen, out, outlen);
@@ -61,11 +58,10 @@ aes256_encrypt (Shishi * handle,
 
 static int
 aes256_decrypt (Shishi * handle,
-		Shishi_key *key,
+		Shishi_key * key,
 		int keyusage,
 		const char *iv, size_t ivlen,
-		const char *in, size_t inlen,
-		char **out, size_t *outlen)
+		const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_decrypt (handle, key, keyusage, iv, ivlen,
 			     in, inlen, out, outlen);
@@ -76,27 +72,25 @@ aes_string_to_key (Shishi * handle,
 		   const char *password,
 		   size_t passwordlen,
 		   const char *salt,
-		   size_t saltlen,
-		   const char *parameter,
-		   Shishi_key *outkey)
+		   size_t saltlen, const char *parameter, Shishi_key * outkey)
 {
-  unsigned char key[256/8];
-  int keylen = shishi_key_length(outkey);
+  unsigned char key[256 / 8];
+  int keylen = shishi_key_length (outkey);
   Shishi_key *tmpkey;
   int iterations = 0x0000b000;
   int res;
 
   if (parameter)
     {
-      iterations  = (parameter[0] & 0xFF) << 24;
+      iterations = (parameter[0] & 0xFF) << 24;
       iterations |= (parameter[1] & 0xFF) << 16;
       iterations |= (parameter[2] & 0xFF) << 8;
-      iterations |=  parameter[3] & 0xFF;
+      iterations |= parameter[3] & 0xFF;
     }
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
-      puts("");
+      puts ("");
       printf ("aes_string_to_key (password, salt)\n");
       printf ("\t ;; Password:\n");
       escapeprint (password, passwordlen);
@@ -115,25 +109,26 @@ aes_string_to_key (Shishi * handle,
   if (res != PKCS5_OK)
     return res;
 
-  res = shishi_key_from_value(handle, shishi_key_type(outkey), key, &tmpkey);
+  res =
+    shishi_key_from_value (handle, shishi_key_type (outkey), key, &tmpkey);
   if (res != SHISHI_OK)
     return res;
 
   /* key = DK(tkey, "kerberos") */
   res = shishi_dk (handle, tmpkey, "kerberos", strlen ("kerberos"), outkey);
 
-  shishi_key_done(&tmpkey);
+  shishi_key_done (&tmpkey);
 
   if (res != SHISHI_OK)
     return res;
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("aes_string_to_key (password, salt)\n");
       printf ("\t ;; Key:\n");
-      hexprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
       puts ("");
-      binprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      binprint (shishi_key_value (outkey), shishi_key_length (outkey));
       puts ("");
     }
 
@@ -146,8 +141,7 @@ aes128_string_to_key (Shishi * handle,
 		      size_t passwordlen,
 		      const char *salt,
 		      size_t saltlen,
-		      const char *parameter,
-		      Shishi_key *outkey)
+		      const char *parameter, Shishi_key * outkey)
 {
   return aes_string_to_key (handle, password, passwordlen,
 			    salt, saltlen, parameter, outkey);
@@ -159,8 +153,7 @@ aes256_string_to_key (Shishi * handle,
 		      size_t passwordlen,
 		      const char *salt,
 		      size_t saltlen,
-		      const char *parameter,
-		      Shishi_key *outkey)
+		      const char *parameter, Shishi_key * outkey)
 {
   return aes_string_to_key (handle, password, passwordlen,
 			    salt, saltlen, parameter, outkey);
@@ -169,13 +162,12 @@ aes256_string_to_key (Shishi * handle,
 static int
 aes128_random_to_key (Shishi * handle,
 		      const char *random,
-		      size_t randomlen,
-		      Shishi_key *outkey)
+		      size_t randomlen, Shishi_key * outkey)
 {
-  if (randomlen < shishi_key_length(outkey))
+  if (randomlen < shishi_key_length (outkey))
     return !SHISHI_OK;
 
-  shishi_key_value_set(outkey, random);
+  shishi_key_value_set (outkey, random);
 
   return SHISHI_OK;
 }
@@ -183,13 +175,12 @@ aes128_random_to_key (Shishi * handle,
 static int
 aes256_random_to_key (Shishi * handle,
 		      const char *random,
-		      size_t randomlen,
-		      Shishi_key *outkey)
+		      size_t randomlen, Shishi_key * outkey)
 {
-  if (randomlen < shishi_key_length(outkey))
+  if (randomlen < shishi_key_length (outkey))
     return !SHISHI_OK;
 
-  shishi_key_value_set(outkey, random);
+  shishi_key_value_set (outkey, random);
 
   return SHISHI_OK;
 }

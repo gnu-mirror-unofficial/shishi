@@ -36,13 +36,13 @@ des_crc_verify (Shishi * handle, char *out, int *outlen)
 
   if (!hd)
     {
-      puts("CRC not available");
+      puts ("CRC not available");
       return !SHISHI_OK;
     }
 
   gcry_md_write (hd, out, *outlen);
   p = gcry_md_read (hd, GCRY_MD_CRC32_RFC1510);
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       int i;
 
@@ -62,7 +62,7 @@ des_crc_verify (Shishi * handle, char *out, int *outlen)
     }
   else
     {
-      if (VERBOSE(handle))
+      if (VERBOSE (handle))
 	printf ("des-cbc-crc verify fail\n");
       res = !SHISHI_OK;
     }
@@ -74,8 +74,7 @@ des_crc_verify (Shishi * handle, char *out, int *outlen)
 
 static int
 des_crc_checksum (Shishi * handle,
-		  char *out, size_t *outlen,
-		  const char *in, size_t inlen)
+		  char *out, size_t * outlen, const char *in, size_t inlen)
 {
   int res;
   char buffer[BUFSIZ];
@@ -127,13 +126,13 @@ des_md4_verify (Shishi * handle, char *out, int *outlen)
 
   if (!hd)
     {
-      puts("MD4 not available");
+      puts ("MD4 not available");
       return !SHISHI_OK;
     }
 
   gcry_md_write (hd, out, *outlen);
   p = gcry_md_read (hd, GCRY_MD_MD4);
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       int i;
 
@@ -153,7 +152,7 @@ des_md4_verify (Shishi * handle, char *out, int *outlen)
     }
   else
     {
-      if (VERBOSE(handle))
+      if (VERBOSE (handle))
 	printf ("des-cbc-md4 verify fail\n");
       res = !SHISHI_OK;
     }
@@ -165,8 +164,7 @@ des_md4_verify (Shishi * handle, char *out, int *outlen)
 
 static int
 des_md4_checksum (Shishi * handle,
-		  char *out, size_t *outlen,
-		  const char *in, size_t inlen)
+		  char *out, size_t * outlen, const char *in, size_t inlen)
 {
   int res;
   char buffer[BUFSIZ];
@@ -224,7 +222,7 @@ des_md5_verify (Shishi * handle, char *out, int *outlen)
 
   gcry_md_write (hd, out, *outlen);
   p = gcry_md_read (hd, GCRY_MD_MD5);
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       int i;
 
@@ -244,7 +242,7 @@ des_md5_verify (Shishi * handle, char *out, int *outlen)
     }
   else
     {
-      if (VERBOSE(handle))
+      if (VERBOSE (handle))
 	printf ("des-cbc-md5 verify fail\n");
       res = !SHISHI_OK;
     }
@@ -256,8 +254,7 @@ des_md5_verify (Shishi * handle, char *out, int *outlen)
 
 static int
 des_md5_checksum (Shishi * handle,
-		  char *out, size_t *outlen,
-		  const char *in, size_t inlen)
+		  char *out, size_t * outlen, const char *in, size_t inlen)
 {
   int res;
   char buffer[BUFSIZ];
@@ -296,11 +293,10 @@ des_md5_checksum (Shishi * handle,
 
 static int
 des_crc_encrypt (Shishi * handle,
-		 Shishi_key *key,
+		 Shishi_key * key,
 		 int keyusage,
 		 const char *iv, size_t ivlen,
-		 const char *in, size_t inlen,
-		 char **out, size_t *outlen)
+		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
@@ -308,12 +304,12 @@ des_crc_encrypt (Shishi * handle,
   int buf2len;
   int res;
 
-  memcpy(buffer2, in, inlen);
+  memcpy (buffer2, in, inlen);
   buf2len = inlen;
 
   while ((buf2len % 8) != 0)
     {
-      buffer2[buf2len] = '\0'; /* XXX */
+      buffer2[buf2len] = '\0';	/* XXX */
       buf2len++;
     }
 
@@ -329,15 +325,14 @@ des_crc_encrypt (Shishi * handle,
 
 static int
 des_crc_decrypt (Shishi * handle,
-		 Shishi_key *key,
+		 Shishi_key * key,
 		 int keyusage,
 		 const char *iv, size_t ivlen,
-		 const char *in, size_t inlen,
-		 char **out, size_t *outlen)
+		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   int res;
 
-  printf("in %d\n", inlen);
+  printf ("in %d\n", inlen);
   res = simplified_decrypt (handle, key, 0, iv, ivlen,
 			    in, inlen, out, outlen);
   if (res != SHISHI_OK)
@@ -346,16 +341,18 @@ des_crc_decrypt (Shishi * handle,
       return res;
     }
 #if 0
-  memcpy(out, "\x56\xcc\xa9\xd6\x67\x0a\xca\x0e\xbc\x58\xdc\x9b\x79\x81\xd3\x30\x81\xd0\xa0\x13\x30\x11\xa0\x03\x02\x01\x01\xa1\x0a\x04\x08\x8f\x75\x58\x45\x9d\x31\x6b\x1f\xa1\x1c\x30\x1a\x30\x18\xa0\x03\x02\x01\x00\xa1\x11\x18\x0f\x31\x39\x37\x30\x30\x31\x30\x31\x30\x30\x30\x30\x30\x30\x5a\xa2\x06\x02\x04\x3d\xdd\x3a\x46\xa4\x07\x03\x05\x00\x50\x40\x00\x00\xa5\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x32\x31\x31\x39\x35\x35\x35\x30\x5a\xa7\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x32\x32\x30\x35\x35\x35\x35\x30\x5a\xa9\x0f\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xaa\x22\x30\x20\xa0\x03\x02\x01\x00\xa1\x19\x30\x17\x1b\x06\x6b\x72\x62\x74\x67\x74\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xab\x2f\x30\x2d\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x01\x01\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x02\x01\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xd9\xd0\xac\x49\x00\x00\x00\x00\x00\x00", 232);
-   *outlen = 232;
+  memcpy (out,
+	  "\x56\xcc\xa9\xd6\x67\x0a\xca\x0e\xbc\x58\xdc\x9b\x79\x81\xd3\x30\x81\xd0\xa0\x13\x30\x11\xa0\x03\x02\x01\x01\xa1\x0a\x04\x08\x8f\x75\x58\x45\x9d\x31\x6b\x1f\xa1\x1c\x30\x1a\x30\x18\xa0\x03\x02\x01\x00\xa1\x11\x18\x0f\x31\x39\x37\x30\x30\x31\x30\x31\x30\x30\x30\x30\x30\x30\x5a\xa2\x06\x02\x04\x3d\xdd\x3a\x46\xa4\x07\x03\x05\x00\x50\x40\x00\x00\xa5\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x32\x31\x31\x39\x35\x35\x35\x30\x5a\xa7\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x32\x32\x30\x35\x35\x35\x35\x30\x5a\xa9\x0f\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xaa\x22\x30\x20\xa0\x03\x02\x01\x00\xa1\x19\x30\x17\x1b\x06\x6b\x72\x62\x74\x67\x74\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xab\x2f\x30\x2d\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x01\x01\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x02\x01\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xd9\xd0\xac\x49\x00\x00\x00\x00\x00\x00",
+	  232);
+  *outlen = 232;
 #endif
-    {
-      size_t i;
-      printf("decrypt %d\n", *outlen);
-      for(i=0; i < *outlen; i++)
-	printf("%02x ", ((char*)out)[i] & 0xFF);
-      printf("\n");
-    }
+  {
+    size_t i;
+    printf ("decrypt %d\n", *outlen);
+    for (i = 0; i < *outlen; i++)
+      printf ("%02x ", ((char *) out)[i] & 0xFF);
+    printf ("\n");
+  }
   res = des_crc_verify (handle, *out, outlen);
   if (res != SHISHI_OK)
     {
@@ -368,11 +365,10 @@ des_crc_decrypt (Shishi * handle,
 
 static int
 des_md4_encrypt (Shishi * handle,
-		 Shishi_key *key,
+		 Shishi_key * key,
 		 int keyusage,
 		 const char *iv, size_t ivlen,
-		 const char *in, size_t inlen,
-		 char **out, size_t *outlen)
+		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
@@ -380,11 +376,11 @@ des_md4_encrypt (Shishi * handle,
   size_t buf2len;
   int res;
 
-  memcpy(buffer2, in, inlen);
+  memcpy (buffer2, in, inlen);
   buf2len = inlen;
   while ((buf2len % 8) != 0)
     {
-      buffer2[buf2len] = '\0'; /* XXX */
+      buffer2[buf2len] = '\0';	/* XXX */
       buf2len++;
     }
 
@@ -400,14 +396,11 @@ des_md4_encrypt (Shishi * handle,
 
 static int
 des_md4_decrypt (Shishi * handle,
-		 Shishi_key *key,
+		 Shishi_key * key,
 		 int keyusage,
 		 const char *iv,
 		 size_t ivlen,
-		 const char *in,
-		 size_t inlen,
-		 char **out,
-		 size_t *outlen)
+		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   int res;
 
@@ -430,14 +423,11 @@ des_md4_decrypt (Shishi * handle,
 
 static int
 des_md5_encrypt (Shishi * handle,
-		 Shishi_key *key,
+		 Shishi_key * key,
 		 int keyusage,
 		 const char *iv,
 		 size_t ivlen,
-		 const char *in,
-		 size_t inlen,
-		 char **out,
-		 size_t *outlen)
+		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
@@ -445,12 +435,12 @@ des_md5_encrypt (Shishi * handle,
   size_t buf2len;
   int res;
 
-  memcpy(buffer2, in, inlen);
+  memcpy (buffer2, in, inlen);
   buf2len = inlen;
 
   while ((buf2len % 8) != 0)
     {
-      buffer2[buf2len] = '\0'; /* XXX */
+      buffer2[buf2len] = '\0';	/* XXX */
       buf2len++;
     }
 
@@ -466,14 +456,11 @@ des_md5_encrypt (Shishi * handle,
 
 static int
 des_md5_decrypt (Shishi * handle,
-		 Shishi_key *key,
+		 Shishi_key * key,
 		 int keyusage,
 		 const char *iv,
 		 size_t ivlen,
-		 const char *in,
-		 size_t inlen,
-		 char **out,
-		 size_t *outlen)
+		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   int res;
 
@@ -496,14 +483,11 @@ des_md5_decrypt (Shishi * handle,
 
 static int
 des_none_encrypt (Shishi * handle,
-		  Shishi_key *key,
+		  Shishi_key * key,
 		  int keyusage,
 		  const char *iv,
 		  size_t ivlen,
-		  const char *in,
-		  size_t inlen,
-		  char **out,
-		  size_t *outlen)
+		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
   int res;
 
@@ -517,14 +501,11 @@ des_none_encrypt (Shishi * handle,
 
 static int
 des_none_decrypt (Shishi * handle,
-		  Shishi_key *key,
+		  Shishi_key * key,
 		  int keyusage,
 		  const char *iv,
 		  size_t ivlen,
-		  const char *in,
-		  size_t inlen,
-		  char **out,
-		  size_t *outlen)
+		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
   int res;
 
@@ -575,9 +556,9 @@ des_key_correction (Shishi * handle, char *key)
   res = gcry_cipher_setkey (ch, key, 8);
   if (res != GPG_ERR_NO_ERROR)
     {
-      if (gpg_err_code(res) == GPG_ERR_WEAK_KEY)
+      if (gpg_err_code (res) == GPG_ERR_WEAK_KEY)
 	{
-	  if (VERBOSECRYPTO(handle))
+	  if (VERBOSECRYPTO (handle))
 	    printf ("\t ;; WEAK KEY (corrected)\n");
 	  key[7] ^= 0xF0;
 	}
@@ -597,8 +578,7 @@ des_cbc_check (char key[8], char *data, int n_data)
   int res;
 
   gcry_cipher_open (&ch, GCRY_CIPHER_DES,
-			 GCRY_CIPHER_MODE_CBC,
-			 GCRY_CIPHER_CBC_MAC);
+		    GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
   if (ch == NULL)
     return SHISHI_GCRYPT_ERROR;
 
@@ -621,20 +601,18 @@ des_cbc_check (char key[8], char *data, int n_data)
 
 static int
 des_random_to_key (Shishi * handle,
-		   const char *random,
-		   size_t randomlen,
-		   Shishi_key *outkey)
+		   const char *random, size_t randomlen, Shishi_key * outkey)
 {
   char tmp[MAX_RANDOM_LEN];
-  int keylen = shishi_cipher_keylen (shishi_key_type(outkey));
+  int keylen = shishi_cipher_keylen (shishi_key_type (outkey));
 
-  if (randomlen != shishi_key_length(outkey))
+  if (randomlen != shishi_key_length (outkey))
     return !SHISHI_OK;
 
-  memcpy(tmp, random, keylen);
+  memcpy (tmp, random, keylen);
   des_set_odd_key_parity (tmp);
 
-  shishi_key_value_set(outkey, tmp);
+  shishi_key_value_set (outkey, tmp);
 
   return SHISHI_OK;
 }
@@ -644,9 +622,7 @@ des_string_to_key (Shishi * handle,
 		   const char *string,
 		   size_t stringlen,
 		   const char *salt,
-		   size_t saltlen,
-		   const char *parameter,
-		   Shishi_key *outkey)
+		   size_t saltlen, const char *parameter, Shishi_key * outkey)
 {
   char *s;
   int n_s;
@@ -656,7 +632,7 @@ des_string_to_key (Shishi * handle,
   char temp, temp2;
   int res;
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("des_string_to_key (string, salt)\n");
 
@@ -692,7 +668,7 @@ des_string_to_key (Shishi * handle,
   memset (s + stringlen + saltlen, 0, n_s - stringlen - saltlen);
   memset (tempkey, 0, sizeof (tempkey));	/* tempkey = NULL; */
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; s = pad(string|salt):\n");
       escapeprint (s, n_s);
@@ -702,7 +678,7 @@ des_string_to_key (Shishi * handle,
 
   for (i = 0; i < n_s / 8; i++)
     {
-      if (VERBOSECRYPTO(handle))
+      if (VERBOSECRYPTO (handle))
 	{
 	  printf ("for (8byteblock in s) {\n");
 	  printf ("\t ;; loop iteration %d\n", i);
@@ -718,7 +694,7 @@ des_string_to_key (Shishi * handle,
       for (j = 0; j < 8; j++)
 	s[i * 8 + j] = s[i * 8 + j] & ~0x80;
 
-      if (VERBOSECRYPTO(handle))
+      if (VERBOSECRYPTO (handle))
 	{
 	  printf ("\t ;; 56bitstring:\n");
 	  bin7print (&s[i * 8], 8);
@@ -749,7 +725,7 @@ des_string_to_key (Shishi * handle,
 	      s[i * 8 + j] = temp2;
 	      s[i * 8 + 7 - j] = temp;
 	    }
-	  if (VERBOSECRYPTO(handle))
+	  if (VERBOSECRYPTO (handle))
 	    {
 	      printf ("reverse(56bitstring)\n");
 	      printf ("\t ;; 56bitstring after reverse\n");
@@ -760,7 +736,7 @@ des_string_to_key (Shishi * handle,
 
       odd = !odd;
 
-      if (VERBOSECRYPTO(handle))
+      if (VERBOSECRYPTO (handle))
 	{
 	  printf ("odd = ! odd\n");
 	  printf ("tempstring = tempstring XOR 56bitstring;\n");
@@ -770,7 +746,7 @@ des_string_to_key (Shishi * handle,
       for (j = 0; j < 8; j++)
 	tempkey[j] ^= s[i * 8 + j];
 
-      if (VERBOSECRYPTO(handle))
+      if (VERBOSECRYPTO (handle))
 	{
 	  printf ("\t ;; tempstring\n");
 	  bin7print (tempkey, 8);
@@ -782,7 +758,7 @@ des_string_to_key (Shishi * handle,
   for (j = 0; j < 8; j++)
     tempkey[j] = tempkey[j] << 1;
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("for (8byteblock in s) {\n");
       printf ("}\n");
@@ -800,7 +776,7 @@ des_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; tempkey\n");
       escapeprint (tempkey, 8);
@@ -825,7 +801,7 @@ des_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; key\n");
       escapeprint (tempkey, 8);
@@ -842,8 +818,7 @@ des_string_to_key (Shishi * handle,
 }
 
 static int
-checksum_md4 (Shishi * handle,
-	      char *out, int *outlen, char *in, int inlen)
+checksum_md4 (Shishi * handle, char *out, int *outlen, char *in, int inlen)
 {
   int res;
   char buffer[BUFSIZ];
@@ -908,8 +883,7 @@ checksum_md4 (Shishi * handle,
 }
 
 static int
-checksum_md5 (Shishi * handle,
-	      char *out, int *outlen, char *in, int inlen)
+checksum_md5 (Shishi * handle, char *out, int *outlen, char *in, int inlen)
 {
   int res;
   char buffer[BUFSIZ];

@@ -18,8 +18,9 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-EXTRA_DIST = rfc1510.asn1 rfc1510bis.asn1 \
-	crypto-null.c crypto-des.c crypto-3des.c crypto-aes.c
+CRYPTO_INCLUDES = crypto-null.c crypto-des.c crypto-3des.c crypto-aes.c
+
+EXTRA_DIST = rfc1510.asn1 rfc1510bis.asn1 $(CRYPTO_INCLUDES)
 
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = internal.h gettext.h \
@@ -53,4 +54,4 @@ rfc1510_asn1_tab.c: $(srcdir)/rfc1510.asn1
 	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $<
 
 indent:
-	indent $(SOURCES) shishi.h.in
+	indent $(SOURCES) $(CRYPTO_INCLUDES) shishi.h.in

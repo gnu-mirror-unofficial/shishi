@@ -23,14 +23,11 @@
 
 static int
 des3_encrypt (Shishi * handle,
-	      Shishi_key *key,
+	      Shishi_key * key,
 	      int keyusage,
 	      const char *iv,
 	      size_t ivlen,
-	      const char *in,
-	      size_t inlen,
-	      char **out,
-	      size_t *outlen)
+	      const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_encrypt (handle, key, keyusage, iv, ivlen,
 			     in, inlen, out, outlen);
@@ -38,14 +35,11 @@ des3_encrypt (Shishi * handle,
 
 static int
 des3_decrypt (Shishi * handle,
-	      Shishi_key *key,
+	      Shishi_key * key,
 	      int keyusage,
 	      const char *iv,
 	      size_t ivlen,
-	      const char *in,
-	      size_t inlen,
-	      char **out,
-	      size_t *outlen)
+	      const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_decrypt (handle, key, keyusage, iv, ivlen,
 			     in, inlen, out, outlen);
@@ -53,15 +47,12 @@ des3_decrypt (Shishi * handle,
 
 static int
 des3none_dencrypt (Shishi * handle,
-		   Shishi_key *key,
+		   Shishi_key * key,
 		   int keyusage,
 		   const char *iv,
 		   size_t ivlen,
 		   const char *in,
-		   size_t inlen,
-		   char **out,
-		   size_t *outlen,
-		   int direction)
+		   size_t inlen, char **out, size_t * outlen, int direction)
 {
   int res;
 
@@ -93,14 +84,11 @@ des3none_dencrypt (Shishi * handle,
 
 static int
 des3none_encrypt (Shishi * handle,
-		  Shishi_key *key,
+		  Shishi_key * key,
 		  int keyusage,
 		  const char *iv,
 		  size_t ivlen,
-		  const char *in,
-		  size_t inlen,
-		  char **out,
-		  size_t *outlen)
+		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return des3none_dencrypt (handle, key, keyusage,
 			    iv, ivlen, in, inlen, out, outlen, 0);
@@ -108,14 +96,11 @@ des3none_encrypt (Shishi * handle,
 
 static int
 des3none_decrypt (Shishi * handle,
-		  Shishi_key *key,
+		  Shishi_key * key,
 		  int keyusage,
 		  const char *iv,
 		  size_t ivlen,
-		  const char *in,
-		  size_t inlen,
-		  char **out,
-		  size_t *outlen)
+		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return des3none_dencrypt (handle, key, keyusage,
 			    iv, ivlen, in, inlen, out, outlen, 1);
@@ -142,17 +127,15 @@ des3none_decrypt (Shishi * handle,
  */
 static int
 des3_random_to_key (Shishi * handle,
-		    const char *random,
-		    size_t randomlen,
-		    Shishi_key *outkey)
+		    const char *random, size_t randomlen, Shishi_key * outkey)
 {
-  unsigned char tmpkey[3*8];
+  unsigned char tmpkey[3 * 8];
   int i;
 
   if (randomlen < 168 / 8)
     return !SHISHI_OK;
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("des3_random_to_key (random)\n");
       printf ("\t ;; random (length %d):\n", 168 / 8);
@@ -173,14 +156,13 @@ des3_random_to_key (Shishi * handle,
 	((tmpkey[i * 8 + 2] & 0x01) << 3) |
 	((tmpkey[i * 8 + 3] & 0x01) << 4) |
 	((tmpkey[i * 8 + 4] & 0x01) << 5) |
-	((tmpkey[i * 8 + 5] & 0x01) << 6) |
-	((tmpkey[i * 8 + 6] & 0x01) << 7);
+	((tmpkey[i * 8 + 5] & 0x01) << 6) | ((tmpkey[i * 8 + 6] & 0x01) << 7);
       des_set_odd_key_parity (tmpkey + i * 8);
     }
 
-  shishi_key_value_set(outkey, tmpkey);
+  shishi_key_value_set (outkey, tmpkey);
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("key = des3_random_to_key (random)\n");
       printf ("\t ;; key:\n");
@@ -199,8 +181,7 @@ des3_string_to_key (Shishi * handle,
 		    size_t stringlen,
 		    const char *salt,
 		    size_t saltlen,
-		    const char *parameter,
-		    Shishi_key *outkey)
+		    const char *parameter, Shishi_key * outkey)
 {
   char *s;
   int n_s;
@@ -209,7 +190,7 @@ des3_string_to_key (Shishi * handle,
   int nfoldlen = 168 / 8;
   int res;
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("des3_string_to_key (string, salt)\n");
       printf ("\t ;; String:\n");
@@ -230,11 +211,11 @@ des3_string_to_key (Shishi * handle,
 
   /* tmpKey = random-to-key(168-fold(s)) */
   res = shishi_n_fold (handle, s, n_s, nfold, nfoldlen);
-  free(s);
+  free (s);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_key_from_value(handle, shishi_key_type(outkey), NULL, &key);
+  res = shishi_key_from_value (handle, shishi_key_type (outkey), NULL, &key);
   if (res != SHISHI_OK)
     return res;
 
@@ -247,14 +228,14 @@ des3_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  shishi_key_done(&key);
+  shishi_key_done (&key);
 
-  if (VERBOSECRYPTO(handle))
+  if (VERBOSECRYPTO (handle))
     {
       printf ("des3_string_to_key (string, salt)\n");
       printf ("\t ;; Key:\n");
-      hexprint (shishi_key_value(outkey), shishi_key_length(outkey));
-      binprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
+      binprint (shishi_key_value (outkey), shishi_key_length (outkey));
       puts ("");
     }
 

@@ -661,7 +661,7 @@ shishi_kdc_process (Shishi * handle,
    */
 
   msgtype = 0;
-  res = shishi_asn1_integer_field (handle, kdcrep, &msgtype, "msg-type");
+  res = shishi_asn1_read_integer (handle, kdcrep, &msgtype, "msg-type");
   if (res != SHISHI_OK)
     return res;
 
