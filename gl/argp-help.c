@@ -1685,7 +1685,7 @@ char *__argp_basename (char *name)
 char *
 __argp_short_program_name (void)
 {
-#if HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME || defined _LIBC
+#if defined _LIBC || HAVE_DECL_PROGRAM_INVOCATION_SHORT_NAME
   return program_invocation_short_name;
 #elif HAVE_DECL_PROGRAM_INVOCATION_NAME
   return __argp_basename (program_invocation_name);
