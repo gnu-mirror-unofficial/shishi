@@ -225,7 +225,7 @@ _shishi_ticket_input (Shishi * handle,
       res = _shishi_read_armored_data (handle, fh, b64der, b64len, "Ticket");
       if (res != SHISHI_OK)
 	{
-	  printf ("armor data read fail\n");
+	  shishi_error_printf (handle, "armor data read fail\n");
 	  return res;
 	}
 
@@ -376,7 +376,7 @@ _shishi_kdcreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * asreq, int type)
       res = _shishi_read_armored_data (handle, fh, b64der, b64len, "KDC-REQ");
       if (res != SHISHI_OK)
 	{
-	  printf ("armor data read fail\n");
+	  shishi_error_printf (handle, "armor data read fail\n");
 	  return res;
 	}
 
@@ -441,7 +441,7 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, ASN1_TYPE * asrep, int type)
       res = _shishi_read_armored_data (handle, fh, b64der, b64len, "KDC-REP");
       if (res != SHISHI_OK)
 	{
-	  printf ("armor data read fail\n");
+	  shishi_error_printf (handle, "armor data read fail\n");
 	  return res;
 	}
 
@@ -487,9 +487,6 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, ASN1_TYPE * asrep, int type)
 	}
     }
 
-  asn1_print_structure (stdout, *asrep, (*asrep)->name,
-			ASN1_PRINT_NAME_TYPE_VALUE);
-
   return SHISHI_OK;
 }
 
@@ -513,7 +510,7 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, ASN1_TYPE * apreq, int type)
       res = _shishi_read_armored_data (handle, fh, b64der, b64len, "AP-REQ");
       if (res != SHISHI_OK)
 	{
-	  printf ("armor data read fail\n");
+	  shishi_error_printf (handle, "armor data read fail\n");
 	  return res;
 	}
 
@@ -565,7 +562,7 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type)
       res = _shishi_read_armored_data (handle, fh, b64der, b64len, "AP-REP");
       if (res != SHISHI_OK)
 	{
-	  printf ("armor data read fail\n");
+	  shishi_error_printf (handle, "armor data read fail\n");
 	  return res;
 	}
 
@@ -620,7 +617,7 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 				   "EncAPRepPart");
       if (res != SHISHI_OK)
 	{
-	  printf ("armor data read fail\n");
+	  shishi_error_printf (handle, "armor data read fail\n");
 	  return res;
 	}
 
@@ -673,7 +670,7 @@ _shishi_authenticator_input (Shishi * handle,
 				       "Authenticator");
       if (res != SHISHI_OK)
 	{
-	  printf ("armor data read fail\n");
+	  shishi_error_printf (handle, "armor data read fail\n");
 	  return res;
 	}
 
@@ -727,7 +724,7 @@ _shishi_krberror_input (Shishi * handle,
 				       "KRB-ERROR");
       if (res != SHISHI_OK)
 	{
-	  printf ("armor data read fail\n");
+	  shishi_error_printf (handle, "armor data read fail\n");
 	  return res;
 	}
 
