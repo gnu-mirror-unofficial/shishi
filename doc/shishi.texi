@@ -3410,6 +3410,7 @@ library.
 * Cryptographic Functions::     Low-level cryptographic functions.
 * X.509 Functions::             Utility functions for X.509 support.
 * Utility Functions::           Utilities for use in the global context.
+* ASN.1 Functions::             Perform low-level ASN.1 manipulations.
 * Error Handling::              Error codes and such.
 * Examples::                    Example code.
 * Kerberos Database Functions:: The Shisa generic database interface.
@@ -4109,6 +4110,11 @@ Shishi.
 @include texi/realm.c.texi
 @include texi/principal.c.texi
 @include texi/authorize.c.texi
+
+@node ASN.1 Functions
+@section ASN.1 Functions
+
+@include texi/asn1.c.texi
 
 
 @node Error Handling
