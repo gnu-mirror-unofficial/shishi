@@ -1435,15 +1435,17 @@ operation, but the result of an operation that failed properly.
 @node Error values
 @subsection Error values
 
-Errors are returned as an @code{int}.  Except for the OK case an
-application should always use the constants instead of their numeric
-value.  Applications are encouraged to use the constants even for OK
-as it improves readability.  Possible values are:
+Errors are returned as an @code{int}.  Except for the SHISHI_OK case,
+an application should always use the constants instead of their
+numeric value.  Applications are encouraged to use the constants even
+for SHISHI_OK as it improves readability.  Possible values are:
 
 @table @code
 @item SHISHI_OK
 This value indicates success.  The value of this error is guaranteed
-to always be @code{0}.
+to always be @code{0} so you may use it in boolean constructs.
+
+@include shishi-api-error-labels.texi
 
 @end table
 

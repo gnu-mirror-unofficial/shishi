@@ -22,7 +22,8 @@ shishi_texi_auto_deps = shishi-api-global.texi \
 	shishi-api-as.texi shishi-api-tgs.texi \
 	shishi-api-kdc.texi shishi-api-authenticator.texi shishi-api-ap.texi \
 	shishi-api-key.texi shishi-api-crypto.texi \
-	shishi-api-error.texi shishi-api-version.texi
+	shishi-api-error.texi shishi-api-error-labels.texi \
+	shishi-api-version.texi
 
 generated = shishi.txt shishi.html shishi.ps shishi.pdf \
 	shishi.info shishi.info-1 shishi.info-2 \
@@ -71,6 +72,9 @@ shishi-api-crypto.texi: $(top_srcdir)/lib/crypto.c
 
 shishi-api-error.texi: $(top_srcdir)/lib/error.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
+
+shishi-api-error-labels.texi: $(top_srcdir)/lib/error.c
+	$(PERL) $(srcdir)/gdoc-error -texinfo $^ > $@
 
 shishi-api-version.texi: $(top_srcdir)/lib/version.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
