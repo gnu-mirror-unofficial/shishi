@@ -295,8 +295,7 @@ shishi_key_from_value (Shishi * handle,
  * key value. KEY contains a newly allocated structure only if this
  * function is successful.
  *
- * Return value: Returns SHISHI_MALLOC_ERROR on memory allocation
- *               errors, SHISHI_INVALID_KEY if the base64 encoded key
+ * Return value: Returns SHISHI_INVALID_KEY if the base64 encoded key
  *               length doesn't match the key type, and SHISHI_OK on
  *               success.
  **/
