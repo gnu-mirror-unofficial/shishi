@@ -590,7 +590,9 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key *key)
       return rc;
     }
 
-  rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey, 0, &authenticator);
+  rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey,
+			     SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR, /* XXX */
+			     &authenticator);
   if (rc != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Error decrypting apreq: %s\n",
