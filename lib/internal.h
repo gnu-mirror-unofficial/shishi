@@ -108,6 +108,9 @@
 #ifdef HAVE_NETINET_IN6_H
 #include <netinet/in6.h>
 #endif
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
 
 #ifdef ENABLE_NLS
 extern char *_shishi_gettext (const char *str);
