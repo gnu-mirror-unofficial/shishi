@@ -22,14 +22,11 @@ Copyright @copyright{} 2002, 2003 Simon Josefsson.
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.1 or
 any later version published by the Free Software Foundation; with the
-Invariant Sections including ``Criticism of Kerberos'', with the
-Front-Cover Texts being ``A GNU Manual,'' and with the Back-Cover
-Texts as in (a) below.  A copy of the license is included in the
-section entitled ``GNU Free Documentation License.''
-
-(a) The FSF's Back-Cover Text is: ``You have freedom to copy and modify
-this GNU Manual, like GNU software.  Copies published by the Free
-Software Foundation raise funds for GNU development.''
+Invariant Sections being ``Commercial Support'' and ``Criticism of
+Kerberos'', the Front-Cover texts being ``A GNU Manual'', and with the
+Back-Cover Texts being ``You have freedom to copy and modify this GNU
+Manual, like GNU software''.  A copy of the license is included in the
+section entitled "GNU Free Documentation License".
 @end quotation
 @end copying
 
@@ -125,6 +122,7 @@ Shishi is free software licensed under the GNU General Public License.
 * Overview::
 * Cryptographic Overview::
 * Supported Platforms::
+* Commercial Support::
 * Downloading and Installing::
 * Bug Reports::
 * Contributing::
@@ -728,6 +726,42 @@ GCC 3.1 and GNU Make. @code{powerpc-apple-darwin6.5}.
 
 If you use Shishi on, or port Shishi to, a new platform please report
 it to the author (@pxref{Bug Reports}).
+
+@node Commercial Support
+@section Commercial Support
+
+Commercial support is available for users of Shishi.  The kind of
+support that can be purchased may include:
+
+@itemize
+
+@item Implement new features.
+Such as support for some optional part of the Kerberos standards,
+e.g. PKINIT, hardware token authentication.
+
+@item Port Shishi to new platforms.
+This could include porting Shishi to an embedded platforms that may
+need memory or size optimization.
+
+@item Integrate Kerberos 5 support in your existing project.
+
+@item System design of components related to Kerberos 5.
+
+@end itemize
+
+If you are interested, please write to:
+
+@verbatim
+Simon Josefsson Datakonsult
+Drottningholmsv. 70
+112 42 Stockholm
+Sweden
+
+E-mail: simon@josefsson.org
+@end verbatim
+
+If your company provide support related to Shishi and would like to be
+mentioned here, contact the author (@pxref{Bug Reports}).
 
 @node Downloading and Installing
 @section Downloading and Installing
