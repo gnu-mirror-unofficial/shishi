@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -33,18 +33,18 @@ AM_MAKEINFOHTMLFLAGS = --no-split --number-sections
 dist_man_MANS = shishi.1 shisa.1 shishid.1 $(gdoc_MANS)
 DISTCLEANFILES = $(dist_man_MANS)
 
-shishi.1: $(top_srcdir)/src/shishi.c $(top_builddir)/src/shishi
+shishi.1: $(top_srcdir)/src/shishi.c $(top_srcdir)/src/shishi.ggo
 	$(HELP2MAN) \
 		--name="kerberos 5 client tool" \
 		--output=$@ $(top_builddir)/src/shishi
 
-shisa.1: $(top_srcdir)/src/shisa.c $(top_builddir)/src/shisa
+shisa.1: $(top_srcdir)/src/shisa.c $(top_srcdir)/src/shisa.ggo
 	$(HELP2MAN) \
 		--name="kerberos 5 database interface" \
 		--info-page=shishi \
 		--output=$@ $(top_builddir)/src/shisa
 
-shishid.1: $(top_srcdir)/src/shishid.c $(top_builddir)/src/shishid
+shishid.1: $(top_srcdir)/src/shishid.c $(top_srcdir)/src/shishid.ggo
 	$(HELP2MAN) \
 		--name="kerberos 5 server" \
 		--output=$@ $(top_builddir)/src/shishid
