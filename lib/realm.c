@@ -38,20 +38,23 @@ char *
 shishi_realm_default_guess (void)
 {
   char buf[HOST_NAME_MAX];
+  char *realm;
   int ret;
 
+  /* XXX use a xgetdomainname() */
   ret = getdomainname (buf, sizeof (buf));
   buf[sizeof (buf) - 1] = '\0';
-  if (ret != 0 || strlen (buf) == 0 || strcmp (buf, "(none)") == 0)
-    {
-      ret = gethostname (buf, sizeof (buf));
-      buf[sizeof (buf) - 1] = '\0';
+  if (ret == 0 && strlen (buf) > 0 && strcmp (buf, "(none)") != 0)
+    return strdup(buf);
 
-      if (ret != 0)
-	strcpy (buf, "could-not-guess-default-realm");
+  realm = xgethostname ();
+  if (strlen (realm) == 0 || strcmp (realm, "(none)") == 0)
+    {
+      free (realm);
+      realm = strdup ("could-not-guess-default-realm");
     }
 
-  return xstrdup (buf);
+  return realm;
 }
 
 /**

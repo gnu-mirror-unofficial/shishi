@@ -118,19 +118,18 @@ shishi_keys_for_localservicerealm_in_file (Shishi * handle,
 					   const char *service,
 					   const char *realm)
 {
-  char server[HOST_NAME_MAX];
-  int ret;
+  char *hostname;
+  char *server;
+  int rc;
 
-  strcpy (server, service);
-  strcat (server, "/");
+  hostname = xgethostname ();
 
-  ret = gethostname (&server[strlen (service) + 1],
-		     sizeof (server) - strlen (service) - 1);
-  server[sizeof (server) - 1] = '\0';
+  asprintf (&server, "%s/%s", service, hostname);
 
-  if (ret != 0)
-    strcpy (&server[strlen (service) + 1], "localhost");
+  rc = shishi_keys_for_serverrealm_in_file (handle, filename, server, realm);
 
-  return shishi_keys_for_serverrealm_in_file (handle, filename, server,
-					      realm);
+  free (server);
+  free (hostname);
+
+  return rc;
 }

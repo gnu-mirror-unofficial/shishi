@@ -124,6 +124,7 @@
 #include "vasprintf.h"
 #include "xalloc.h"
 #include "xmemdup.h"
+#include "xgethostname.h"
 #include "xstrndup.h"
 
 #include "shishi.h"
