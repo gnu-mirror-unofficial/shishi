@@ -6,6 +6,7 @@ shishi-api-as.texi
 shishi-api-authenticator.texi
 shishi-api-crypto.texi
 shishi-api-error.texi
+shishi-api-error-labels.texi
 shishi-api-global.texi
 shishi-api-kdc.texi
 shishi-api-key.texi
