@@ -96,7 +96,7 @@ struct shishi_error_msgs _shishi_error_messages[] = {
 const char *
 shishi_strerror (int err)
 {
-  char *p = NULL;
+  const char *p = _("Unknown error");
   size_t i;
 
   for (i = 0; _shishi_error_messages[i].errorcode != -1; i++)
@@ -105,10 +105,6 @@ shishi_strerror (int err)
 	p = _(_shishi_error_messages[i].message);
 	break;
       }
-
-  if (!p)
-    /* XXX mem leak */
-    asprintf (&p, _("Unknown shishi error: %d"), err);
 
   return p;
 
