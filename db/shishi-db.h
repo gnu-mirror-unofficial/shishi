@@ -22,126 +22,144 @@
 #ifndef SHISHI_DB_H
 #define SHISHI_DB_H
 
-/* XXX perhaps move this into a separate standalone project? */
+#include <shishi.h>
 
 typedef struct Shishi_db	   Shishi_db;
-
-typedef struct Shishi_db_realm     Shishi_db_realm;
-typedef struct Shishi_db_principal Shishi_db_principal;
-typedef struct Shishi_db_keyset    Shishi_db_keyset;
-typedef struct Shishi_db_key       Shishi_db_key;
 
 /* Initialize Shishi database system. */
 extern Shishi_db *
 shishi_db (void);
 
-/*** CORE DATABASE PRIMITIVES. ***/
 
-/* Get realm handle. */
+
+/*** REALM API ***/
+
+typedef struct Shishi_db_realm     Shishi_db_realm;
+
+struct Shishi_db_realm_info
+{
+  const char *name;
+};
+typedef struct Shishi_db_realm_info Shishi_db_realm_info;
+
+/* Find realm in database. */
 extern Shishi_db_realm *
-shishi_db_realm (Shishi_db * dbh, const char *realm);
+shishi_db_realm_find (Shishi_db * dbh, const char *realm);
 
-/* Extract information from realm handle. */
+/* Get information about realm. */
 extern int
-shishi_db_realm_name (Shishi_db * dbh, char **realm);
+shishi_db_realm_info (Shishi_db_realm * dbr, Shishi_db_realm_info **info);
+
+/* XXX realm_info_set? */
 
 /* XXX add/remove principal in realm? */
 
-/* Get principal handle. */
-extern Shishi_db_principal *
-shishi_db_realm_principal (Shishi_db_realm * realm, const char *cname[]);
 
-/* Extract information from principal handle. */
+
+/*** PRINCIPAL API ***/
+
+typedef struct Shishi_db_principal Shishi_db_principal;
+
+struct Shishi_db_principal_info
+{
+  const char *name;
+  time_t notusedbefore;
+  time_t notusedafter;
+  int isdisabled;
+};
+typedef struct Shishi_db_principal_info Shishi_db_principal_info;
+
+/* Find principal in realm. */
+extern Shishi_db_principal *
+shishi_db_principal_find (Shishi_db_realm * realm, const char *cname[]);
+
+/* Get information about principal. */
 extern int
-shishi_db_principal_name (Shishi_db_principal * principal, char **cname[]);
-extern int
-shishi_db_principal_notusedbefore (Shishi_db_principal * principal, time_t *t);
-extern int
-shishi_db_principal_notusedafter (Shishi_db_principal * principal, time_t *t);
-extern int
-shishi_db_principal_isdisabled (Shishi_db_principal * principal, int *t);
+shishi_db_principal_info (Shishi_db_principal * principal,
+			  Shishi_db_principal_info **info);
 
 /* Set information in principal handle. */
 extern int
-shishi_db_principal_notusedbefore_set (Shishi_db_principal * principal,
-				       time_t t);
-extern int
-shishi_db_principal_notusedafter_set (Shishi_db_principal * principal,
-				      time_t t);
-extern int
-shishi_db_principal_isdisabled_set (Shishi_db_principal * principal, int t);
+shishi_db_principal_info_set (Shishi_db_principal * principal,
+			      Shishi_db_principal_info *info);
 
-/* Get keyset handle. */
+
+
+/*** KEYSET API ***/
+
+typedef struct Shishi_db_keyset    Shishi_db_keyset;
+
+struct Shishi_db_keyset_info
+{
+  int32_t kvno;
+};
+typedef struct Shishi_db_keyset_info Shishi_db_keyset_info;
+
+/* "Find" keyset handle. */
 extern Shishi_db_keyset *
-shishi_db_principal_keyset (Shishi_db_principal * principal);
+shishi_db_keyset_find (Shishi_db_principal * principal);
 
-/* Extract information from keyset handle. */
+/* Get information about keyset. */
 extern int
-shishi_db_keyset_kvno (Shishi_db_keyset * keyset, uint32_t *kvno);
+shishi_db_keyset_info (Shishi_db_keyset * keyset,
+		       Shishi_db_keyset_info **info);
 
 /* Set information in keyset handle. */
 extern int
-shishi_db_keyset_kvno_set (Shishi_db_keyset * keyset, uint32_t kvno);
-
-/* Get key handle. */
-extern Shishi_db_key *
-shishi_db_keyset_key (Shishi_db_keyset * keyset, int32_t etype);
+shishi_db_keyset_info_set (Shishi_db_keyset * keyset,
+			   Shishi_db_keyset_info *info);
 
 /* XXX Add/remove key in keyset? */
 
-/* Extract information from key handle. */
+
+
+/*** KEY API ***/
+
+typedef struct Shishi_db_key       Shishi_db_key;
+
+struct Shishi_db_key_info
+{
+  int32_t etype;
+  const char *value;
+  size_t valuelen;
+  const char *saltvalue;
+  size_t saltvaluelen;
+  const char *str2keyparam;
+  size_t str2keyparamlen;
+  time_t notusedafter;
+  time_t notusedbefore;
+  int isdisabled;
+};
+typedef struct Shishi_db_key_info Shishi_db_key_info;
+
+/* Find key handle. */
+extern Shishi_db_key *
+shishi_db_key_find (Shishi_db_keyset * keyset, int32_t etype /* XXX +salt? */);
+
+/* Get information about key. */
 extern int
-shishi_db_key_etype (Shishi_db_key * key, int32_t *etype);
-extern int
-shishi_db_key_value (Shishi_db_key * key, char **data, size_t *len);
-extern int
-shishi_db_key_saltvalue (Shishi_db_key * key, char **data, size_t *len);
-extern int
-shishi_db_key_str2keyparam (Shishi_db_key * key, char **data, size_t *len);
-extern int
-shishi_db_key_notusedafter (Shishi_db_key * key, time_t *t);
-extern int
-shishi_db_key_notusedbefore (Shishi_db_key * key, time_t *t);
-extern int
-shishi_db_key_isdisabled (Shishi_db_key * key, int *t);
+shishi_db_key_info (Shishi_db_key * key,
+		    Shishi_db_key_info **info);
 
 /* Set information in key handle. */
 extern int
-shishi_db_key_etype_set (Shishi_db_key * key, int32_t etype);
-extern int
-shishi_db_key_value_set (Shishi_db_key * key, char *data, size_t len);
-extern int
-shishi_db_key_saltvalue_set (Shishi_db_key * key, char *data, size_t len);
-extern int
-shishi_db_key_str2keyparam_set (Shishi_db_key * key, char *data, size_t len);
-extern int
-shishi_db_key_notusedafter_set (Shishi_db_key * key, time_t t);
-extern int
-shishi_db_key_notusedbefore_set (Shishi_db_key * key, time_t t);
-extern int
-shishi_db_key_isdisabled_set (Shishi_db_key * key, int t);
+shishi_db_key_info_set (Shishi_db_key * key,
+			Shishi_db_key_info *info);
+
+
 
 /*** UTILITY API ***/
 
-/* XXX depend on shishi.h? might be nice not to. */
-#include <shishi.h>
-
 extern Shishi_db_principal *
-shishi_db_realm_principal2 (Shishi_db_realm * realm, const char *client);
+shishi_db_search_principal (Shishi_db * dbh,
+			    const char *realm, const char *client);
 
 extern int
-shishi_db_principal_name2 (Shishi_db_principal * principal, char **client);
+shishi_db_principal_setpasswd (Shishi_db_principal * principal,
+			       const char *passwd);
 
 extern int
-shishi_db_principal_setpasswd (Shishi_db_principal * principal, char *passwd);
-
-extern int
-shishi_db_principal_disabled_p (Shishi_db_principal * principal);
-
-extern int
-shishi_db_key_disabled_p (Shishi_db_key * key);
-
-extern int
-shishi_db_key_extract (Shishi * handle, Shishi_db_key * key, Shishi_key **key);
+shishi_db_key_convert (Shishi * handle, Shishi_db_key_info * key,
+		       Shishi_key **key);
 
 #endif /* SHISHI_DB_H */
