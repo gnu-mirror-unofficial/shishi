@@ -144,6 +144,7 @@ clean-local:
 
 maintainer-clean-local: clean
 	cd $(srcdir) && rm -rf sgml html $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
+	cd $(srcdir) && rm -f shishi-sections.txt shishi-undocumented.txt shishi.types tmpl/shishi* && touch tmpl/shishi.sgml
 
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(TARGET_DIR)
