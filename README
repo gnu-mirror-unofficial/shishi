@@ -1,5 +1,5 @@
 Shishi README -- Important introductory notes.
-Copyright (C) 2002, 2003, 2004 Simon Josefsson
+Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson
 See the end for copying conditions.
 
 This directory holds Shishi, an implementation of the RFC 1510(bis)
@@ -17,6 +17,9 @@ Third party packages (asn1/, crypto/, and gl/) are distributed here
 for convenience, and they have their own respective licenses.
 
 For updates to the project, see <http://www.gnu.org/software/shishi/>.
+
+Report bugs to bug-shishi@gnu.org, but please read the section "Bug
+reports" in the manual first.
 
 ----------------------------------------------------------------------
 Copying and distribution of this file, with or without modification,
