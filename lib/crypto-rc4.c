@@ -302,6 +302,11 @@ arcfour_hmac_decrypt (Shishi * handle,
   if (err)
     goto done;
 
+  if (VERBOSECRYPTO (handle))
+    {
+      puts ("cksum pt"); _shishi_hexprint (pt, inlen - 16);
+    }
+
   err = shishi_hmac_md5 (handle, K2, 16, pt, inlen - 16, &cksum);
   if (err)
     goto done;

@@ -148,11 +148,9 @@ static uint32_t crc32_table[256] = {
 
 /*
  * The following function was extracted from RFC 1952 by Simon
- * Josefsson, for the Shishi project, and modified to be compatible
- * with the modified CRC-32 used by RFC 1510, and subsequently
- * modified for GNU Libgcrypt to allow it to be used for calculating
- * both unmodified CRC-32 and modified CRC-32 values.  Original
- * copyright and notice from the document follows:
+ * Josefsson, and modified to be compatible with the modified CRC-32
+ * used by RFC 1510, for the Shishi project.  Original copyright and
+ * notice from the document follows:
  *
  *    Copyright (c) 1996 L. Peter Deutsch
  *
@@ -400,12 +398,11 @@ shishi_arcfour (Shishi * handle, int decryptp,
 		char **out)
 {
   struct arcfour_ctx ctx;
-  int rc;
 
   *out = xmalloc (inlen);
 
   arcfour_set_key (&ctx, keylen, key);
-  arcfour_crypt (&ctx, inlen, in, *out);
+  arcfour_crypt (&ctx, inlen, *out, in);
 
   return SHISHI_OK;
 }
