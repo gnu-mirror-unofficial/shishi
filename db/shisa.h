@@ -131,7 +131,11 @@ extern int shisa_key_add (Shisa * dbh,
 			  const char *principal,
 			  uint32_t kvno,
 			  const Shisa_key * key);
-extern int shisa_key_free (Shisa * dbh, Shisa_key * key);
+extern void shisa_key_free (Shisa * dbh, Shisa_key * key);
+
+/* error.c */
+extern const char *shisa_strerror (int err);
+extern void shisa_info (Shisa * dbh, const char *format, ...);
 
 /* tool.c */
 extern int shisa_valid_principal_find (Shisa * dbh,

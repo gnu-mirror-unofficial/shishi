@@ -195,9 +195,10 @@ shisa_key_add (Shisa * dbh,
 	       uint32_t kvno,
 	       const Shisa_key * key)
 {
+  return SHISA_NO_KEY;
 }
 
-int
+void
 shisa_key_free (Shisa * dbh,
 		Shisa_key * key)
 {

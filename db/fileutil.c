@@ -397,8 +397,6 @@ static uint32_t
 uint32link (const char *file)
 {
   char *link;
-  uint32_t num;
-  char *endptr;
 
   link = xreadlink (file);
   if (link == NULL)
@@ -433,7 +431,6 @@ static int
 ls_1 (const char *path, int onlydir, char ***files, size_t *nfiles, DIR *dir)
 {
   struct dirent *de;
-  int rc;
 
   while (errno = 0, (de = readdir (dir)) != NULL)
     {
@@ -473,9 +470,8 @@ ls_1 (const char *path, int onlydir, char ***files, size_t *nfiles, DIR *dir)
 static int
 ls (const char *path, int onlydir, char ***files, size_t *nfiles)
 {
-  struct dirent *de;
   DIR *dir;
-  int rc, tmprc;
+  int rc;
 
   dir = opendir (path);
   if (dir == NULL)

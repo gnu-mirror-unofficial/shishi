@@ -56,7 +56,7 @@ void
 test (Shishi *handle)
 {
   Shishi_crypto *ctx, *ctx2;
-  Shishi_key *key, *key2;
+  Shishi_key *key;
   char *out, *out2;
   size_t i, j;
   size_t len, len2;

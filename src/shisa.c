@@ -49,6 +49,9 @@
 /* Get set_program_name and program_name. */
 #include "progname.h"
 
+/* Get error. */
+#include "error.h"
+
 #include <shisa.h>
 #include <shishi.h>
 

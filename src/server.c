@@ -97,7 +97,7 @@ kdc_close (struct listenspec *ls)
 static void
 kdc_send1 (struct listenspec *ls)
 {
-  ssize_t sent_bytes, read_bytes;
+  ssize_t sent_bytes;
 
   do
 #ifdef USE_STARTTLS
@@ -114,10 +114,10 @@ kdc_send1 (struct listenspec *ls)
 	    ls->bufpos, ls->str, ls->sockfd, strerror (errno));
   else if ((size_t) sent_bytes > ls->bufpos)
     syslog (LOG_ERR, "Overlong write (%d > %d) to %s on socket %d",
-	    sent_bytes, ls->bufpos);
+	    sent_bytes, ls->bufpos, ls->str, ls->sockfd);
   else if ((size_t) sent_bytes < ls->bufpos)
     syslog (LOG_ERR, "Short write (%d < %d) to %s on socket %d",
-	    sent_bytes, ls->bufpos);
+	    sent_bytes, ls->bufpos, ls->str, ls->sockfd);
 }
 
 /* Format response and send it to peer, via UDP/TCP/TLS, reporting any
@@ -159,7 +159,6 @@ kdc_send (struct listenspec *ls)
 static int
 kdc_extension (struct listenspec *ls)
 {
-  ssize_t sent_bytes, read_bytes;
   int rc;
 
 #ifdef USE_STARTTLS
@@ -286,10 +285,8 @@ kdc_ready (struct listenspec *ls)
 static void
 kdc_process (struct listenspec *ls)
 {
-  ssize_t sent_bytes, read_bytes;
-  int rc;
   char *p;
-  size_t plen;
+  ssize_t plen;
 
   syslog (LOG_DEBUG, "Processing %d from %s on socket %d",
 	  ls->bufpos, ls->str, ls->sockfd);
@@ -335,7 +332,7 @@ kdc_loop (void)
 {
   struct listenspec *ls;
   fd_set readfds;
-  int maxfd = 0, i;
+  int maxfd = 0;
   int rc;
 
   signal (SIGINT, ctrlc);
@@ -368,16 +365,18 @@ kdc_loop (void)
 
       for (ls = listenspec; ls; ls = ls->next)
 	if (FD_ISSET (ls->sockfd, &readfds))
-	  if (ls->type == SOCK_STREAM && ls->listening)
-	    kdc_accept (ls);
-	  else if (kdc_read (ls) < 0)
-	    ls = kdc_close (ls);
-	  else if (kdc_extension (ls) < 0)
-	    ls = kdc_close (ls);
-	  else if (kdc_ready (ls))
-	    {
-	      kdc_process (ls);
-	      kdc_send (ls);
-	    }
+	  {
+	    if (ls->type == SOCK_STREAM && ls->listening)
+	      kdc_accept (ls);
+	    else if (kdc_read (ls) < 0)
+	      ls = kdc_close (ls);
+	    else if (kdc_extension (ls) < 0)
+	      ls = kdc_close (ls);
+	    else if (kdc_ready (ls))
+	      {
+		kdc_process (ls);
+		kdc_send (ls);
+	      }
+	  }
     }
 }

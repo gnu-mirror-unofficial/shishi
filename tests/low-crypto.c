@@ -24,9 +24,7 @@
 void
 test (Shishi *handle)
 {
-  Shishi_key *key, *key2;
   char *out, *ivout;
-  size_t i;
   int err;
 
   if (debug)

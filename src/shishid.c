@@ -46,7 +46,6 @@ kdc_listen (void)
 {
   struct listenspec *ls, **last;
   int maxfd = 0;
-  int i;
   int yes;
 
   for (ls = listenspec, last = NULL; ls; last = &ls->next, ls = ls->next)
@@ -416,8 +415,6 @@ parse_listen (char *listen)
 int
 main (int argc, char *argv[])
 {
-  int rc;
-
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);

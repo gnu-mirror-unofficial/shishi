@@ -201,7 +201,6 @@ tgsreq1 (Shishi_tgs * tgs)
   size_t ntgkeys;
   Shisa_key **serverkeys;
   size_t nserverkeys;
-  int i;
 
   /* Extract pa-data and populate tgs->ap. */
   rc = shishi_tgs_req_process (tgs);

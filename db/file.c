@@ -87,7 +87,6 @@ shisa_file_cfg (Shisa *dbh,
   char *opt = option ? xstrdup (option) : NULL;
   char *p = opt;
   char *value;
-  int rc;
 
   while (p != NULL && *p != '\0')
     {
@@ -366,7 +365,6 @@ principal_remove (Shisa * dbh,
 		  const char *principal)
 {
   Shisa_file *info = state;
-  size_t nprincipals = 0;
   int rc;
 
   if (!_shisa_isdir2 (info->path, realm))
@@ -412,10 +410,7 @@ read_key (Shisa * dbh,
   Shisa_key tmpkey;
   FILE *fh;
   char *file;
-  char *line;
-  size_t linelen;
   unsigned passwdlen;
-  ssize_t len;
   int rc;
 
   asprintf (&file, "keys/%s", keyfile);

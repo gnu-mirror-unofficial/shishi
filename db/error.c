@@ -61,7 +61,6 @@ static struct shisa_error_msgs _shisa_error_messages[] = {
 const char *
 shisa_strerror (int err)
 {
-  char *p = NULL;
   size_t i;
 
   for (i = 0; i < sizeof (_shisa_error_messages) /
@@ -85,7 +84,6 @@ shisa_info (Shisa * dbh, const char *format, ...)
 {
   va_list ap;
   char *out;
-  int type;
 
   va_start (ap, format);
   vasprintf (&out, format, ap);

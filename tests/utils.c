@@ -106,6 +106,8 @@
 #include <netinet/in6.h>
 #endif
 
+#include "base64.h"
+
 #include <shishi.h>
 
 const char *program_name = PACKAGE;
