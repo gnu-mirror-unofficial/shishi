@@ -105,7 +105,6 @@ enum
   OPTION_KDC_WRITE_RESPONSE_FILE,
   OPTION_KDC_READ_REQUEST_FILE,
   OPTION_KDC_READ_RESPONSE_FILE,
-  OPTION_KDC_SHORT_NONCE,
   OPTION_KDC_SERVER,
   OPTION_KDC_CLIENT,
   OPTION_KDC_STRING_TO_KEY,
@@ -184,7 +183,6 @@ struct arguments
   char *cname;
   char *sname;
   char *tgtname;
-  int shortnonce_p;
   int forceas_p;
   int forcetgs_p;
   int request_p;

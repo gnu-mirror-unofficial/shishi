@@ -367,13 +367,6 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->response_p = 1;
       break;
 
-    case OPTION_KDC_SHORT_NONCE:
-      if (arguments->command != COMMAND_KDC)
-	argp_error (state, _("Option `%s' only valid with KDC/AS/TGS."),
-		    state->argv[state->next - 1]);
-      arguments->shortnonce_p = 1;
-      break;
-
     case ARGP_KEY_ARG:
       if (state->arg_num != 0)
 	argp_error (state, _("Too many arguments: `%s'"), arg);
@@ -650,9 +643,6 @@ static struct argp_option options[] = {
   {"server-name", OPTION_KDC_SERVER_NAME, "NAME", 0,
    "Server name. Default is \"krbtgt/REALM\" where REALM is server "
    "realm (see --realm)."},
-
-  {"short-nonce", OPTION_KDC_SHORT_NONCE, 0, 0,
-   "Use a 4 byte nonce. Required by some buggy servers."},
 
   {"ticket-granter", OPTION_KDC_TICKET_GRANTER, "NAME", 0,
    "Service name in ticket to use for authenticating request. Only for TGS. "
