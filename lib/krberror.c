@@ -33,21 +33,14 @@
 Shishi_asn1
 shishi_krberror (Shishi * handle)
 {
-  int res = ASN1_SUCCESS;
-  Shishi_asn1 node = NULL;
+  Shishi_asn1 node;
+  int res;
 
-  res = asn1_create_element (handle->asn1, "Kerberos5.KRB-ERROR", &node,
-			     "KRB-ERROR");
-  if (res != ASN1_SUCCESS)
-    goto error;
+  node = shishi_asn1_krberror (handle);
+  if (!node)
+    return NULL;
 
   return node;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != NULL)
-    asn1_delete_structure (&node);
-  return NULL;
 }
 
 /**
@@ -398,8 +391,7 @@ shishi_krberror_errorcode_message (Shishi * handle, int errorcode)
  **/
 int
 shishi_krberror_errorcode (Shishi * handle,
-			   Shishi_asn1 krberror,
-			   int *errorcode)
+			   Shishi_asn1 krberror, int *errorcode)
 {
   return shishi_asn1_integer_field (handle, krberror, errorcode,
 				    "KRB-ERROR.error-code");
@@ -475,7 +467,8 @@ shishi_krberror_message (Shishi * handle, Shishi_asn1 krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_pretty_print (Shishi * handle, FILE * fh, Shishi_asn1 krberror)
+shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
+			      Shishi_asn1 krberror)
 {
   char buf[BUFSIZ];
   size_t len = BUFSIZ;
