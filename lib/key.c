@@ -410,6 +410,8 @@ shishi_key_from_string (Shishi *handle,
 
   rc = shishi_string_to_key (handle, type, password, passwordlen,
 			     salt, saltlen, parameter, *key);
+  if (rc != SHISHI_OK)
+    return rc;
 
-  return rc;
+  return SHISHI_OK;
 }

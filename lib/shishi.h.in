@@ -62,7 +62,9 @@ enum
   SHISHI_HANDLE_ERROR = 28,
   SHISHI_INVALID_TICKETSET = 29,
   SHISHI_TICKET_BAD_KEYTYPE = 30,
-  SHISHI_INVALID_KEY = 31
+  SHISHI_INVALID_KEY = 31,
+  SHISHI_APREQ_DECRYPT_FAILED = 32,
+  SHISHI_TICKET_DECRYPT_FAILED = 33
 };
 
 /* This is not specified in the ASN.1 syntax for some reason. */
@@ -311,6 +313,7 @@ extern void shishi_principal_default_set (Shishi * handle,
 /* ticket.c */
 extern ASN1_TYPE shishi_ticket_ticket (Shishi_ticket * ticket);
 extern ASN1_TYPE shishi_ticket_enckdcreppart (Shishi_ticket * ticket);
+extern ASN1_TYPE shishi_ticket_encticketpart (Shishi_ticket * ticket);
 extern Shishi_key *shishi_ticket_key (Shishi_ticket * ticket);
 extern Shishi_ticket *shishi_ticket (Shishi * handle,
 				     ASN1_TYPE ticket,
@@ -346,6 +349,7 @@ extern int shishi_ticket_server_p (Shishi_ticket * ticket,
 				   const char *service);
 extern int shishi_ticket_valid_at_time_p (Shishi_ticket * ticket, time_t now);
 extern int shishi_ticket_valid_now_p (Shishi_ticket * ticket);
+extern int shishi_ticket_decrypt (Shishi_ticket * ticket, Shishi_key *key);
 
 /* ticketset.c */
 extern char *shishi_ticketset_default_file_guess (void);
@@ -788,6 +792,29 @@ extern int shishi_key_from_string (Shishi *handle,
 				   int saltlen,
 				   char *parameter,
 				   Shishi_key **outkey);
+
+/* hostkeys.c */
+extern const char *shishi_hostkeys_default_file (Shishi *handle);
+extern void shishi_hostkeys_default_file_set (Shishi * handle,
+					      const char *hostkeysfile);
+extern Shishi_key *
+shishi_hostkeys_for_serverrealm_in_file (Shishi *handle,
+					 const char *filename,
+					 const char *server,
+					 const char *realm);
+extern Shishi_key *shishi_hostkeys_for_server_in_file (Shishi *handle,
+						       const char *filename,
+						       const char *server);
+extern Shishi_key *shishi_hostkeys_for_server (Shishi *handle,
+					       const char *server);
+extern Shishi_key *shishi_hostkeys_for_serverrealm (Shishi *handle,
+						    const char *server,
+						    const char *realm);
+extern Shishi_key *shishi_hostkeys_for_localservicerealm (Shishi *handle,
+							  const char *service,
+							  const char *realm);
+extern Shishi_key *shishi_hostkeys_for_localservice (Shishi *handle,
+						     const char *service);
 
 /* encapreppart.c */
 extern ASN1_TYPE shishi_encapreppart (Shishi * handle);

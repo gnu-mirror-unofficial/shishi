@@ -751,7 +751,7 @@ shishi_apreq_decrypt (Shishi * handle,
 	printf ("decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
 			   "decrypt fail, most likely wrong password\n");
-      return res;
+      return SHISHI_APREQ_DECRYPT_FAILED;
     }
 
   /* The crypto is so 1980; no length indicator. Trim off pad bytes

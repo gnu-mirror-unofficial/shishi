@@ -27,6 +27,7 @@ struct Shishi_ticket
   ASN1_TYPE ticket;
   ASN1_TYPE kdcrep;
   ASN1_TYPE enckdcreppart;
+  ASN1_TYPE encticketpart;
   Shishi_key *key;
 };
 
@@ -131,6 +132,18 @@ ASN1_TYPE
 shishi_ticket_kdcrep (Shishi_ticket * ticket)
 {
   return ticket->kdcrep;
+}
+
+/**
+ * shishi_ticket_encticketpart:
+ * @ticket: input variable with ticket info.
+ *
+ * Return value: Returns EncTicketPart information.
+ **/
+ASN1_TYPE
+shishi_ticket_encticketpart (Shishi_ticket * ticket)
+{
+  return ticket->encticketpart;
 }
 
 /**
@@ -752,10 +765,27 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
 }
 
 int
-shishi_ticket_decrypt (Shishi * handle,
-		       ASN1_TYPE ticket,
-		       Shishi_key *key,
-		       ASN1_TYPE * encticketpart)
+shishi_ticket_decrypt (Shishi_ticket * ticket,
+		       Shishi_key *key)
+{
+  int rc;
+  ASN1_TYPE encticketpart;
+
+  rc = shishi_asn1ticket_decrypt(ticket->handle, ticket->ticket, key,
+				 &encticketpart);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  ticket->encticketpart = encticketpart;
+
+  return SHISHI_OK;
+}
+
+int
+shishi_asn1ticket_decrypt (Shishi * handle,
+			   ASN1_TYPE ticket,
+			   Shishi_key *key,
+			   ASN1_TYPE * encticketpart)
 {
   int res;
   int i, len;
@@ -788,7 +818,7 @@ shishi_ticket_decrypt (Shishi * handle,
 	printf ("des_decrypt failed: %s\n", shishi_strerror_details (handle));
       shishi_error_printf (handle,
 			   "des_decrypt fail, most likely wrong password\n");
-      return res;
+      return SHISHI_TICKET_DECRYPT_FAILED;
     }
 
   /* The crypto is so 1980; no length indicator. Trim off pad bytes

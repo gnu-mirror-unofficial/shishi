@@ -252,6 +252,10 @@ _shishi_kdcrep_input (Shishi * handle,
 int
 _shishi_krberror_input (Shishi * handle,
 			FILE * fh, ASN1_TYPE * krberror, int type);
+int
+shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key);
+int
+shishi_key_print (Shishi * handle, FILE * fh, Shishi_key *key);
 
 #if WITH_DMALLOC
 #include <dmalloc.h>

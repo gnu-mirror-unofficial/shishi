@@ -76,7 +76,6 @@ shishi_hostkeys_for_serverrealm_in_file (Shishi *handle,
 					 const char *realm)
 {
   Shishi_key *key = NULL;
-  char *clientname, *realm;
   FILE *fh;
   int res;
 
@@ -173,4 +172,53 @@ shishi_hostkeys_for_serverrealm (Shishi *handle,
 {
   return shishi_hostkeys_for_serverrealm_in_file
     (handle, shishi_hostkeys_default_file(handle), server, realm);
+}
+
+/**
+ * shishi_hostkeys_for_localservice
+ * @handle: Shishi library handle create by shishi_init().
+ * @service: service to get key for.
+ * @realm: realm of server to get key for.
+ *
+ * Return value: Returns the key for the server
+ * "SERVICE/HOSTNAME@@REALM" (where HOSTNAME is the current system's
+ * hostname), read from the default host keys file (see
+ * shishi_hostkeys_default_file()), or NULL if no key could be found
+ * or an error encountered.
+ **/
+Shishi_key *
+shishi_hostkeys_for_localservicerealm (Shishi *handle,
+				       const char *service,
+				       const char *realm)
+{
+  char buf[HOST_NAME_MAX];
+  int ret;
+
+  strcpy(buf, service);
+  strcat(buf, "/");
+
+  ret = gethostname (&buf[strlen(service) + 1],
+		     sizeof(buf) - strlen(service) - 1);
+  buf[sizeof(buf) - 1] = '\0';
+
+  if (ret != 0)
+    strcpy (&buf[strlen(service) + 1], "localhost");
+
+  return shishi_hostkeys_for_serverrealm (handle, buf, realm);
+}
+
+/**
+ * shishi_hostkeys_for_localservice
+ * @handle: Shishi library handle create by shishi_init().
+ * @service: service to get key for.
+ *
+ * Return value: Returns the key for the server "SERVICE/HOSTNAME"
+ * (where HOSTNAME is the current system's hostname), read from the
+ * default host keys file (see shishi_hostkeys_default_file()), or
+ * NULL if no key could be found or an error encountered.
+ **/
+Shishi_key *
+shishi_hostkeys_for_localservice (Shishi *handle, const char *service)
+{
+  return shishi_hostkeys_for_localservicerealm (handle, service, NULL);
 }

@@ -544,6 +544,67 @@ shishi_ap_req_build (Shishi_ap * ap)
 }
 
 /**
+ * shishi_ap_req_process:
+ * @ap: structure that holds information about AP exchange
+ *
+ * Decrypt ticket in AP-REQ using supplied key and decrypt
+ * Authenticator in AP-REQ using key in decrypted ticket, and on
+ * success set the Ticket and Authenticator fields in the AP exchange.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_req_process (Shishi_ap * ap, Shishi_key *key)
+{
+  ASN1_TYPE ticket, encticketpart, authenticator;
+  Shishi_ticket *tkt;
+  Shishi_key *tktkey;
+  int rc;
+
+  rc = shishi_apreq_get_ticket (ap->handle, ap->apreq, &ticket);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (ap->handle,
+			   "Could not extract ticket from AP-REQ: %s\n",
+			   shishi_strerror (rc));
+      return rc;
+    }
+
+  tkt = shishi_ticket(ap->handle, ticket, NULL, NULL);
+
+  rc = shishi_ticket_decrypt (tkt, key);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (ap->handle, "Error decrypting ticket: %s\n",
+			   shishi_strerror (rc));
+      return rc;
+    }
+
+  rc = shishi_encticketpart_get_key (ap->handle,
+				     shishi_ticket_encticketpart(tkt),
+				     &tktkey);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (ap->handle, "Could not get key from ticket: %s\n",
+			   shishi_strerror (rc));
+      return rc;
+    }
+
+  rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey, 0, &authenticator);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (ap->handle, "Error decrypting apreq: %s\n",
+			   shishi_strerror (rc));
+      return rc;
+    }
+
+  ap->ticket = tkt;
+  ap->authenticator = authenticator;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_ap_req_asn1:
  * @ap: structure that holds information about AP exchange
  * @apreq: output AP-REQ variable.
@@ -565,6 +626,7 @@ shishi_ap_req_asn1 (Shishi_ap * ap, ASN1_TYPE * apreq)
 
   return SHISHI_OK;
 }
+
 /**
  * shishi_ap_rep:
  * @ap: structure that holds information about AP exchange
@@ -608,6 +670,62 @@ int
 shishi_ap_rep_der_set (Shishi_ap * ap, char *der, int derlen)
 {
   ap->aprep = shishi_d2a_aprep (ap->handle, der, derlen);
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_ap_rep_build:
+ * @ap: structure that holds information about AP exchange
+ *
+ * Checksum data in authenticator and add ticket and authenticator to
+ * AP-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_rep_build (Shishi_ap * ap)
+{
+  ASN1_TYPE aprep;
+  int rc;
+
+  if (VERBOSE(ap->handle))
+    printf("Building AP-REP...\n");
+
+  aprep = shishi_aprep (ap->handle);
+  rc = shishi_aprep_enc_part_make (ap->handle, aprep, ap->authenticator,
+				   shishi_ticket_encticketpart(ap->ticket));
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (ap->handle, "Error creating AP-REP: %s\n",
+			   shishi_strerror (rc));
+      return rc;
+    }
+
+  shishi_ap_rep_set (ap, aprep);
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_ap_rep_asn1:
+ * @ap: structure that holds information about AP exchange
+ * @apreq: output AP-REP variable.
+ *
+ * Build AP-REP using shishi_ap_rep_build() and return it.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_rep_asn1 (Shishi_ap * ap, ASN1_TYPE * aprep)
+{
+  int rc;
+
+  rc = shishi_ap_rep_build(ap);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  *aprep = ap->aprep;
 
   return SHISHI_OK;
 }
