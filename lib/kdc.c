@@ -445,7 +445,7 @@ shishi_kdc_check_nonce_1 (Shishi * handle,
 {
   if (VERBOSEASN1 (handle))
     {
-      int i;
+      size_t i;
 
       printf ("request nonce (len=%d) ", reqnoncelen);
       for (i = 0; i < reqnoncelen; i++)
@@ -532,7 +532,7 @@ shishi_kdc_check_nonce (Shishi * handle,
 
   if (VERBOSEASN1 (handle))
     {
-      int i;
+      size_t i;
 
       printf ("request nonce (len=%d) ", reqnoncelen);
       for (i = 0; i < reqnoncelen; i++)

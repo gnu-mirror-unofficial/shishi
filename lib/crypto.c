@@ -1939,7 +1939,7 @@ shishi_dr (Shishi * handle,
   char *cipher;
   char plaintext[MAX_DR_CONSTANT];
   char nfoldconstant[MAX_DR_CONSTANT];
-  int blocksize = shishi_cipher_blocksize (shishi_key_type (key));
+  size_t blocksize = shishi_cipher_blocksize (shishi_key_type (key));
   size_t totlen, cipherlen;
   int res;
 

@@ -225,7 +225,7 @@ const char *program_name = PACKAGE;
 const char *argp_program_version = PACKAGE_STRING;
 const char *argp_program_bug_address = PACKAGE_BUGREPORT;
 
-int
+static int
 crypto (Shishi * handle, struct arguments arg)
 {
   Shishi_key *key;

@@ -29,7 +29,7 @@
 /* XXX remove this */
 const char *program_name = "client";
 
-int
+static int
 doit (Shishi * h, Shishi_ap * ap, int verbose)
 {
   char line[BUFSIZ];
@@ -100,7 +100,7 @@ doit (Shishi * h, Shishi_ap * ap, int verbose)
   return 0;
 }
 
-Shishi_ap *
+static Shishi_ap *
 auth (Shishi * h, int verbose, const char *cname, const char *sname)
 {
   Shishi_key *key;

@@ -92,8 +92,8 @@ int
 shishi_parse_name (Shishi * handle, const char *name,
 		   char **principal, char **realm)
 {
-  char *p = (char *) name;
-  char *q;
+  const char *p = name;
+  const char *q;
   int escaped = 0;
 
   if (!name)

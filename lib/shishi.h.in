@@ -503,6 +503,7 @@ extern const char *shishi_tkts_default_file (Shishi * handle);
 extern void shishi_tkts_default_file_set (Shishi * handle,
 					  const char *tktsfile);
 extern Shishi_tkts *shishi_tkts_default (Shishi * handle);
+extern int shishi_tkts_default_to_file (Shishi_tkts * tkts);
 extern int shishi_tkts (Shishi * handle, Shishi_tkts ** tkts);
 extern Shishi_tkt *shishi_tkts_nth (Shishi_tkts * tkts, int ticketno);
 extern int shishi_tkts_size (Shishi_tkts * tkts);

@@ -600,9 +600,6 @@ des_string_to_key (Shishi * handle,
 
     }
 
-  if (saltlen < 0)
-    saltlen = 0;
-
   odd = 1;
   n_s = stringlen + saltlen;
   if ((n_s % 8) != 0)
@@ -829,7 +826,7 @@ des_md5_checksum (Shishi * handle,
 		       SHISHI_DES_CBC_MD5);
 }
 
-int
+static int
 gss_des_checksum (Shishi * handle,
 		  Shishi_key * key,
 		  int keyusage,
