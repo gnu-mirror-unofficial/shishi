@@ -103,7 +103,7 @@ shishi_crypto_encrypt (Shishi_crypto * ctx,
 		       const char *in, size_t inlen,
 		       char **out, size_t * outlen)
 {
-  char *ivout;
+  char *ivout = NULL;
   size_t ivoutlen;
   int rc;
 
@@ -113,7 +113,8 @@ shishi_crypto_encrypt (Shishi_crypto * ctx,
 				      in, inlen, out, outlen);
   if (rc == SHISHI_OK)
     {
-      free (ctx->iv);
+      if (ctx->iv)
+	free (ctx->iv);
       ctx->iv = ivout;
       ctx->ivlen = ivoutlen;
     }
@@ -144,7 +145,7 @@ shishi_crypto_decrypt (Shishi_crypto * ctx,
 		       const char *in, size_t inlen,
 		       char **out, size_t * outlen)
 {
-  char *ivout;
+  char *ivout = NULL;
   size_t ivoutlen;
   int rc;
 
@@ -154,7 +155,8 @@ shishi_crypto_decrypt (Shishi_crypto * ctx,
 				      in, inlen, out, outlen);
   if (rc == SHISHI_OK)
     {
-      free (ctx->iv);
+      if (ctx->iv)
+	free (ctx->iv);
       ctx->iv = ivout;
       ctx->ivlen = ivoutlen;
     }
@@ -172,6 +174,7 @@ void
 shishi_crypto_close (Shishi_crypto * ctx)
 {
   shishi_key_done (ctx->key);
-  free (ctx->iv);
+  if (ctx->iv)
+    free (ctx->iv);
   free (ctx);
 }
