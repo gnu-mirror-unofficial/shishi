@@ -369,7 +369,9 @@ static struct argp argp = {
 
 static char *fatal_krberror;
 static size_t fatal_krberror_len;
+#ifdef USE_STARTTLS
 static gnutls_dh_params dh_params;
+#endif
 
 static int
 setup_fatal_krberror (Shishi * handle)
