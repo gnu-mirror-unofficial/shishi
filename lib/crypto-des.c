@@ -607,7 +607,10 @@ des_random_to_key (Shishi * handle,
   int keylen = shishi_cipher_keylen (shishi_key_type (outkey));
 
   if (randomlen != shishi_key_length (outkey))
-    return !SHISHI_OK;
+    {
+      shishi_error_printf (handle, "DES random to key caller error");
+      return SHISHI_CRYPTO_ERROR;
+    }
 
   memcpy (tmp, random, keylen);
   des_set_odd_key_parity (tmp);

@@ -222,11 +222,17 @@ simplified_hmac (Shishi * handle,
   gpg_error_t err;
 
   err = gcry_md_open (&mdh, halg, GCRY_MD_FLAG_HMAC);
-  if (err == GPG_ERR_NO_ERROR)
-    err =
-      gcry_md_setkey (mdh, shishi_key_value (key), shishi_key_length (key));
   if (err != GPG_ERR_NO_ERROR)
     {
+      shishi_error_printf (handle, "Libgcrypt md open failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      return SHISHI_GCRYPT_ERROR;
+    }
+
+  err = gcry_md_setkey (mdh, shishi_key_value (key), shishi_key_length (key));
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "Libgcrypt md setkey failed");
       shishi_error_set (handle, gpg_strerror (err));
       return SHISHI_GCRYPT_ERROR;
     }
