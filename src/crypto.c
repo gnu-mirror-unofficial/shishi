@@ -48,13 +48,15 @@ crypto (Shishi * handle, struct arguments arg)
       strcat (arg.salt, arg.cname);
     }
 
-  if (arg.algorithm == SHISHI_NULL && !arg.silent)
-    fprintf (stderr,
-	     "warning: using %s is silly, consider using --algorithm.\n",
-	     shishi_cipher_name (arg.algorithm));
+  rc = shishi_key(handle, &key);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (handle, _("Cannot create key: %s"),
+			   shishi_strerror(rc));
+      return rc;
+    }
 
-  key = shishi_key(arg.algorithm, NULL);
-
+  shishi_key_type_set(key, arg.algorithm);
   shishi_key_version_set(key, arg.kvno);
   shishi_key_principal_set(key, arg.cname);
   shishi_key_realm_set(key, arg.realm);
@@ -76,22 +78,13 @@ crypto (Shishi * handle, struct arguments arg)
     }
   else if (arg.keyvalue)
     {
-      char buf[BUFSIZ];
-      int buflen;
-
-      if (strlen (arg.keyvalue) > sizeof (buf))
+      rc = shishi_key_from_base64 (handle, arg.algorithm, arg.keyvalue, &key);
+      if (rc != SHISHI_OK)
 	{
-	  shishi_error_printf (handle, _("Value in --keyvalue too large."));
-	  return SHISHI_TOO_SMALL_BUFFER;
+	  fprintf (stderr, _("Could not create key: %s\n"),
+		   shishi_strerror (rc));
+	  return rc;
 	}
-
-      buflen = shishi_from_base64 (buf, arg.keyvalue);
-      if (buflen != shishi_key_length(key))
-	{
-	  shishi_error_printf (handle, _("Bad length of --keyvalue value."));
-	  return SHISHI_BASE64_ERROR;
-	}
-      shishi_key_value_set(key, buf);
     }
   else if (arg.random)
     {
@@ -108,16 +101,30 @@ crypto (Shishi * handle, struct arguments arg)
     }
   else if (arg.readkeyfile)
     {
+      key = shishi_hostkeys_for_server_in_file (handle, arg.readkeyfile,
+						arg.cname);
 #if 0
       shishi_key_from_file (handle, arg.writekeyfile, arg.algorithm, key,
 			  keylen, arg.kvno, arg.cname, arg.realm);
 #endif
+
+      if (key == NULL)
+	{
+	  fprintf (stderr, _("Could not find key: %s\n"),
+		   shishi_strerror_details (handle));
+	  return 1;
+	}
     }
   else
     {
       fprintf(stderr, "Nothing to do.\n");
       return SHISHI_OK;
     }
+
+  if (shishi_key_type(key) == SHISHI_NULL && !arg.silent)
+    fprintf (stderr,
+	     "warning: using %s is silly, consider using --algorithm.\n",
+	     shishi_cipher_name (arg.algorithm));
 
   if (arg.verbose ||
       ((arg.password || arg.random || arg.keyvalue) &&
@@ -223,7 +230,9 @@ crypto (Shishi * handle, struct arguments arg)
     }
 
   if (arg.writekeyfile)
-    shishi_key_to_file (handle, arg.writekeyfile, key, arg.cname, arg.realm);
+    {
+      shishi_key_to_file (handle, arg.writekeyfile, key, arg.cname, arg.realm);
+    }
 
   return 0;
 }
