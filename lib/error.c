@@ -141,6 +141,11 @@ shishi_strerror (int err)
 	    "This usually indicates an internal application error.");
       break;
 
+    case SHISHI_TICKET_DECRYPT_FAILED:
+      p = _("Could not decrypt Ticket using provided key. "
+	    "This usually indicates an internal application error.");
+      break;
+
     default:
       shishi_asprintf (&p, _("Unknown shishi error (%d)"), err);
       break;
