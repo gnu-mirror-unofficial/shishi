@@ -182,6 +182,47 @@ _shishi_init_read (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_init:
+ * @handle: pointer to handle to be created.
+ *
+ * Create a Shishi library handle and read the system configuration
+ * file, user configuration file and user tickets from the defaul
+ * paths.  The paths to the system configuration file is decided at
+ * compile time, and is $sysconfdir/shishi.conf.  The user
+ * configuration file is $HOME/.shishi/config, and the user ticket
+ * file is $HOME/.shishi/ticket.  The handle is allocated regardless
+ * of return values, except for SHISHI_HANDLE_ERROR which indicates a
+ * problem allocating the handle.  (The other error conditions comes
+ * from reading the files.)
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_init (Shishi ** handle)
+{
+  if (!handle || !(*handle = shishi ()))
+    return SHISHI_HANDLE_ERROR;
+
+  return _shishi_init_read (*handle, shishi_ticketset_default_file (*handle),
+			    shishi_cfg_default_systemfile (*handle),
+			    shishi_cfg_default_userfile (*handle));
+}
+
+/**
+ * shishi_init_with_paths:
+ * @handle: pointer to handle to be created.
+ * @ticketsetfile: Filename of ticket file, or NULL.
+ * @systemcfgfile: Filename of system configuration, or NULL.
+ * @usercfgfile: Filename of user configuration, or NULL.
+ *
+ * Like shishi_init() but use explicit paths.  Like shishi_init(), the
+ * handle is allocated regardless of return values, except for
+ * SHISHI_HANDLE_ERROR which indicates a problem allocating the
+ * handle.  (The other error conditions comes from reading the files.)
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_init_with_paths (Shishi ** handle,
 			const char *ticketsetfile,
@@ -192,17 +233,6 @@ shishi_init_with_paths (Shishi ** handle,
 
   return _shishi_init_read (*handle, ticketsetfile,
 			    systemcfgfile, usercfgfile);
-}
-
-int
-shishi_init (Shishi ** handle)
-{
-  if (!handle || !(*handle = shishi ()))
-    return SHISHI_HANDLE_ERROR;
-
-  return _shishi_init_read (*handle, shishi_ticketset_default_file (*handle),
-			    shishi_cfg_default_systemfile (*handle),
-			    shishi_cfg_default_userfile (*handle));
 }
 
 /* XXX remove these: */

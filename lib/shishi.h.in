@@ -267,9 +267,9 @@ extern int shishi_debug (Shishi * handle);
 extern int shishi_cfg (Shishi * handle, char *option);
 extern int shishi_cfg_from_file (Shishi * handle, const char *cfg);
 extern int shishi_cfg_print (Shishi * handle, FILE * fh);
-extern int shishi_cfg_clientkdcetype_set (Shishi * handle, char *value);
 extern const char *shishi_cfg_default_systemfile (Shishi * handle);
 extern const char *shishi_cfg_default_userfile (Shishi * handle);
+extern int shishi_cfg_clientkdcetype_set (Shishi * handle, char *value);
 
 /* error.c */
 extern const char *shishi_strerror (int err);

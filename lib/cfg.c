@@ -21,41 +21,6 @@
 
 #include "internal.h"
 
-int
-shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
-{
-  char *ptrptr;
-  char *val;
-  int i;
-  int tot = 0;
-
-  if (value == NULL || *value == '\0')
-    return SHISHI_OK;
-
-  for (i = 0; val = strtok_r (i == 0 ? value : NULL, ", \t", &ptrptr); i++)
-    {
-      int etype = shishi_cipher_parse (val);
-
-      if (etype == -1)
-	fprintf (stderr, "Ignoring unknown encryption type: `%s'\n", val);
-      else
-	{
-	  int *new;
-
-	  tot++;
-	  new = realloc (handle->clientkdcetypes,
-			 tot * sizeof (*handle->clientkdcetypes));
-	  if (handle->clientkdcetypes == NULL)
-	    return SHISHI_MALLOC_ERROR;
-	  handle->clientkdcetypes = new;
-	  handle->clientkdcetypes[tot - 1] = etype;
-	  handle->nclientkdcetypes = tot;
-	}
-    }
-
-  return SHISHI_OK;
-}
-
 enum
 {
   DEFAULT_REALM_OPTION = 0,
@@ -93,7 +58,7 @@ static const char *_shishi_opts[] = {
  * shishi_cfg:
  * @option: string with shishi library option.
  *
- * Configure shishi library with option..
+ * Configure shishi library with given option.
  *
  * Return Value: Returns SHISHI_OK if option was valid.
  **/
@@ -234,7 +199,7 @@ shishi_cfg (Shishi * handle, char *option)
 }
 
 /**
- * shishi_readcfg:
+ * shishi_cfg_from_file:
  * @cfg: filename to read configuration from.
  *
  * Configure shishi library using configuration file.
@@ -297,7 +262,9 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
 /**
  * shishi_cfg_print:
  * @handle: Shishi library handle create by shishi_init().
- * @fh: file descriptor to print verbose configuration information.
+ * @fh: file descriptor opened for writing.
+ *
+ * Print library configuration status, mostly for debugging purposes.
  *
  * Return Value: Returns SHISHI_OK.
  **/
@@ -330,12 +297,24 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
   return SHISHI_OK;
 }
 
+/**
+ * shishi_cfg_default_systemfile:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Return value: Return system configuration filename.
+ **/
 const char *
 shishi_cfg_default_systemfile (Shishi * handle)
 {
   return SYSTEMCFGFILE;
 }
 
+/**
+ * shishi_cfg_default_userfile:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Return value: Return user configuration filename.
+ **/
 const char *
 shishi_cfg_default_userfile (Shishi * handle)
 {
@@ -352,4 +331,51 @@ shishi_cfg_default_userfile (Shishi * handle)
     }
 
   return handle->usercfgfile;
+}
+
+/**
+ * shishi_cfg_clientkdcetype_set:
+ * @handle: Shishi library handle create by shishi_init().
+ * @value: string with encryption types.
+ *
+ * Set the "client-kdc-etypes" configuration option from given string.
+ * The string contains encryption types (integer or names) separated
+ * by comma or whitespace, e.g. "aes256-cts-hmac-sha1-96
+ * des3-cbc-sha1-kd des-cbc-md5".
+ *
+ * Return value: Return SHISHI_OK iff successful.
+ **/
+int
+shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
+{
+  char *ptrptr;
+  char *val;
+  int i;
+  int tot = 0;
+
+  if (value == NULL || *value == '\0')
+    return SHISHI_OK;
+
+  for (i = 0; val = strtok_r (i == 0 ? value : NULL, ", \t", &ptrptr); i++)
+    {
+      int etype = shishi_cipher_parse (val);
+
+      if (etype == -1)
+	fprintf (stderr, "Ignoring unknown encryption type: `%s'\n", val);
+      else
+	{
+	  int *new;
+
+	  tot++;
+	  new = realloc (handle->clientkdcetypes,
+			 tot * sizeof (*handle->clientkdcetypes));
+	  if (handle->clientkdcetypes == NULL)
+	    return SHISHI_MALLOC_ERROR;
+	  handle->clientkdcetypes = new;
+	  handle->clientkdcetypes[tot - 1] = etype;
+	  handle->nclientkdcetypes = tot;
+	}
+    }
+
+  return SHISHI_OK;
 }
