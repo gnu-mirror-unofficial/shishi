@@ -1679,13 +1679,13 @@ extern int shishi_key_random (Shishi * handle,
 			      int32_t type, Shishi_key ** key);
 extern int shishi_key_from_value (Shishi * handle,
 				  int32_t type,
-				  char *value, Shishi_key ** key);
+				  const char *value, Shishi_key ** key);
 extern int shishi_key_from_base64 (Shishi * handle,
 				   int32_t type,
-				   char *value, Shishi_key ** key);
+				   const char *value, Shishi_key ** key);
 extern int shishi_key_from_random (Shishi * handle,
 				   int32_t type,
-				   char *random, size_t randomlen,
+				   const char *random, size_t randomlen,
 				   Shishi_key ** outkey);
 extern int shishi_key_from_string (Shishi * handle,
 				   int32_t type,

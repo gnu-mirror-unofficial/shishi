@@ -268,7 +268,7 @@ shishi_key_copy (Shishi_key * dstkey, Shishi_key * srckey)
  **/
 int
 shishi_key_from_value (Shishi * handle,
-		       int32_t type, char *value, Shishi_key ** key)
+		       int32_t type, const char *value, Shishi_key ** key)
 {
   int rc;
 
@@ -300,7 +300,7 @@ shishi_key_from_value (Shishi * handle,
  **/
 int
 shishi_key_from_base64 (Shishi * handle,
-			int32_t type, char *value, Shishi_key ** key)
+			int32_t type, const char *value, Shishi_key ** key)
 {
   int rc;
 
@@ -384,7 +384,8 @@ shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
 int
 shishi_key_from_random (Shishi * handle,
 			int32_t type,
-			char *random, size_t randomlen, Shishi_key ** outkey)
+			const char *random, size_t randomlen,
+			Shishi_key ** outkey)
 {
   int rc;
 
