@@ -629,6 +629,96 @@ shishi_kdcreq_clear_padata (Shishi * handle, Shishi_asn1 kdcreq)
 }
 
 /**
+ * shishi_kdcreq_get_padata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ to get PA-DATA from.
+ * @padatatype: type of PA-DATA, see Shishi_padata_type.
+ * @data: output array with newly allocated PA-DATA value.
+ * @datalen: size of output array with PA-DATA value.
+ *
+ * Get pre authentication data (PA-DATA) from KDC-REQ.  Pre
+ * authentication data is used to pass various information to KDC,
+ * such as in case of a SHISHI_PA_TGS_REQ padatatype the AP-REQ that
+ * authenticates the user to get the ticket.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcreq_get_padata (Shishi * handle,
+			  Shishi_asn1 kdcreq,
+			  Shishi_padata_type padatatype,
+			  char **out, size_t *outlen)
+{
+  char *format;
+  int res;
+  size_t i, n;
+
+  res = shishi_asn1_number_of_elements (handle, kdcreq, "padata", &n);
+  if (res != SHISHI_OK)
+    return res;
+
+  for (i = 1; i <= n; i++)
+    {
+      int32_t patype;
+
+      asprintf (&format, "padata.?%d.padata-type", i);
+      res = shishi_asn1_read_int32 (handle, kdcreq, format, &patype);
+      free (format);
+      if (res != SHISHI_OK)
+	return res;
+
+      printf("pa type %d\n", patype);
+      if (patype == padatatype)
+	{
+	  puts("ok");
+
+	  asprintf (&format, "padata.?%d.padata-value", i);
+	  res = shishi_asn1_read2 (handle, kdcreq, format, out, outlen);
+	  free (format);
+	  if (res != SHISHI_OK)
+	    return res;
+	  break;
+	}
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_kdcreq_get_padata_tgs:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ to get PA-TGS-REQ from.
+ * @apreq: Output variable with newly allocated AP-REQ.
+ *
+ * Extract TGS pre-authentication data from KDC-REQ.  The data is an
+ * AP-REQ that authenticates the request.  This function call
+ * shishi_kdcreq_get_padata() with a SHISHI_PA_TGS_REQ padatatype and
+ * DER decode the result (if any).
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcreq_get_padata_tgs (Shishi * handle,
+			      Shishi_asn1 kdcreq,
+			      Shishi_asn1 *apreq)
+{
+  char *der;
+  size_t derlen;
+  int rc;
+
+  rc = shishi_kdcreq_get_padata (handle, kdcreq, SHISHI_PA_TGS_REQ,
+				 &der, &derlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  *apreq = shishi_der2asn1_apreq (handle, der, derlen);
+  if (!*apreq)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_kdcreq_add_padata:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ to add PA-DATA to.

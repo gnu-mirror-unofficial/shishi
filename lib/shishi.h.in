@@ -964,6 +964,13 @@ extern int shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq,
 extern int shishi_kdcreq_options_add (Shishi * handle, Shishi_asn1 kdcreq,
 				      int option);
 extern int shishi_kdcreq_clear_padata (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_get_padata (Shishi * handle,
+				     Shishi_asn1 kdcreq,
+				     Shishi_padata_type padatatype,
+				     char **out, size_t *outlen);
+extern int shishi_kdcreq_get_padata_tgs (Shishi * handle,
+					 Shishi_asn1 kdcreq,
+					 Shishi_asn1 *apreq);
 extern int shishi_kdcreq_add_padata (Shishi * handle,
 				     Shishi_asn1 kdcreq,
 				     int padatatype, char *data, int datalen);
