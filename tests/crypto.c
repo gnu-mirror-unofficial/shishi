@@ -20,7 +20,6 @@
  */
 
 #include <shishi.h>
-#include <gcrypt.h>
 #include <pkcs5.h>
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -290,6 +289,7 @@ struct str2key {
   char *salt;
   char *key;
   int etype;
+  char *parameters;
 } str2key[] = { 
 #define ESZETT "\xC3\x9F"
 #define S_CARON "\xC5\xA1"
@@ -343,7 +343,84 @@ struct str2key {
     "EXAMPLE.COMpianist",
     "\x85\x76\x37\x26\x58\x5d\xbc\x1c\xce\x6e\xc4\x3e"
     "\x1f\x75\x1f\x07\xf1\xc4\xcb\xb0\x98\xf4\x0b\x19",
-    SHISHI_DES3_CBC_HMAC_SHA1_KD }
+    SHISHI_DES3_CBC_HMAC_SHA1_KD },
+  { "password",
+    "ATHENA.MIT.EDUraeburn",
+    "\x42\x26\x3c\x6e\x89\xf4\xfc\x28\xb8\xdf\x68\xee\x09\x79\x9f\x15",
+    SHISHI_AES128_CTS_HMAC_SHA1_96,
+    "\x00\x00\x00\x01" },
+  { "password",
+    "ATHENA.MIT.EDUraeburn",
+    "\xfe\x69\x7b\x52\xbc\x0d\x3c\xe1\x44\x32\xba\x03\x6a\x92\xe6\x5b"
+    "\xbb\x52\x28\x09\x90\xa2\xfa\x27\x88\x39\x98\xd7\x2a\xf3\x01\x61",
+    SHISHI_AES256_CTS_HMAC_SHA1_96,
+    "\x00\x00\x00\x01" },
+  { "password",
+    "ATHENA.MIT.EDUraeburn",
+    "\xc6\x51\xbf\x29\xe2\x30\x0a\xc2\x7f\xa4\x69\xd6\x93\xbd\xda\x13",
+    SHISHI_AES128_CTS_HMAC_SHA1_96,
+    "\x00\x00\x00\x02" },
+  { "password",
+    "ATHENA.MIT.EDUraeburn",
+    "\xa2\xe1\x6d\x16\xb3\x60\x69\xc1\x35\xd5\xe9\xd2\xe2\x5f\x89\x61"
+    "\x02\x68\x56\x18\xb9\x59\x14\xb4\x67\xc6\x76\x22\x22\x58\x24\xff",
+    SHISHI_AES256_CTS_HMAC_SHA1_96,
+    "\x00\x00\x00\x02" },
+  { "password",
+    "ATHENA.MIT.EDUraeburn",
+    "\x4c\x01\xcd\x46\xd6\x32\xd0\x1e\x6d\xbe\x23\x0a\x01\xed\x64\x2a",
+    SHISHI_AES128_CTS_HMAC_SHA1_96,
+    "\x00\x00\x04\xB0" },
+  { "password",
+    "ATHENA.MIT.EDUraeburn",
+    "\x55\xa6\xac\x74\x0a\xd1\x7b\x48\x46\x94\x10\x51\xe1\xe8\xb0\xa7"
+    "\x54\x8d\x93\xb0\xab\x30\xa8\xbc\x3f\xf1\x62\x80\x38\x2b\x8c\x2a",
+    SHISHI_AES256_CTS_HMAC_SHA1_96,
+    "\x00\x00\x04\xB0" },
+  { "password",
+    "\x12\x34\x56\x78\x78\x56\x34\x12",
+    "\xe9\xb2\x3d\x52\x27\x37\x47\xdd\x5c\x35\xcb\x55\xbe\x61\x9d\x8e",
+    SHISHI_AES128_CTS_HMAC_SHA1_96,
+    "\x00\x00\x00\x05" },
+  { "password",
+    "\x12\x34\x56\x78\x78\x56\x34\x12",
+    "\x97\xa4\xe7\x86\xbe\x20\xd8\x1a\x38\x2d\x5e\xbc\x96\xd5\x90\x9c"
+    "\xab\xcd\xad\xc8\x7c\xa4\x8f\x57\x45\x04\x15\x9f\x16\xc3\x6e\x31",
+    SHISHI_AES256_CTS_HMAC_SHA1_96,
+    "\x00\x00\x00\x05" },
+  { "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "pass phrase equals block size",
+    "\x59\xd1\xbb\x78\x9a\x82\x8b\x1a\xa5\x4e\xf9\xc2\x88\x3f\x69\xed",
+    SHISHI_AES128_CTS_HMAC_SHA1_96,
+    "\x00\x00\x04\xB0" },
+  { "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "pass phrase equals block size",
+    "\x89\xad\xee\x36\x08\xdb\x8b\xc7\x1f\x1b\xfb\xfe\x45\x94\x86\xb0"
+    "\x56\x18\xb7\x0c\xba\xe2\x20\x92\x53\x4e\x56\xc5\x53\xba\x4b\x34",
+    SHISHI_AES256_CTS_HMAC_SHA1_96,
+    "\x00\x00\x04\xB0" },
+  { "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "pass phrase exceeds block size",
+    "\xcb\x80\x05\xdc\x5f\x90\x17\x9a\x7f\x02\x10\x4c\x00\x18\x75\x1d",
+    SHISHI_AES128_CTS_HMAC_SHA1_96,
+    "\x00\x00\x04\xB0" },
+  { "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "pass phrase exceeds block size",
+    "\xd7\x8c\x5c\x9c\xb8\x72\xa8\xc9\xda\xd4\x69\x7f\x0b\xb5\xb2\xd2"
+    "\x14\x96\xc8\x2b\xeb\x2c\xae\xda\x21\x12\xfc\xee\xa0\x57\x40\x1b",
+    SHISHI_AES256_CTS_HMAC_SHA1_96,
+    "\x00\x00\x04\xB0" },
+  { G_CLEF,
+    "EXAMPLE.COMpianist",
+    "\xf1\x49\xc1\xf2\xe1\x54\xa7\x34\x52\xd4\x3e\x7f\xe6\x2a\x56\xe5",
+    SHISHI_AES128_CTS_HMAC_SHA1_96,
+    "\x00\x00\x00\x32" },
+  { G_CLEF,
+    "EXAMPLE.COMpianist",
+    "\x4b\x6d\x98\x39\xf8\x44\x06\xdf\x1f\x09\xcc\x16\x6d\xb4\xb8\x3c"
+    "\x57\x18\x48\xb7\x84\xa3\xd6\xbd\xc3\x46\x58\x9a\x3e\x39\x3f\x9e",
+    SHISHI_AES256_CTS_HMAC_SHA1_96,
+    "\x00\x00\x00\x32" },
 };
 
 struct pkcs5 {
@@ -390,16 +467,17 @@ struct pkcs5 {
   { 50, G_CLEF "\x00", "EXAMPLE.COMpianist", PKCS5_PRF_SHA1, 32, 
     "\x6b\x9c\xf2\x6d\x45\x45\x5a\x43\xa5\xb8\xbb\x27\x6a\x40\x3b\x39"
     "\xe7\xfe\x37\xa0\xc4\x1e\x02\xc2\x81\xff\x30\x69\xe1\xe9\x4f\x52" },
-  { 500, "All n-entities must communicate with other n-entities via n-1 entiteeheehees", "\x12\x34\x56\x78\x78\x56\x34\x12\x00", PKCS5_PRF_SHA1, 16, 
+  { 500, "All n-entities must communicate with other n-entities via n-1 "
+    "entiteeheehees", "\x12\x34\x56\x78\x78\x56\x34\x12\x00", 
+    PKCS5_PRF_SHA1, 16, 
     "\x6A\x89\x70\xBF\x68\xC9\x2C\xAE\xA8\x4A\x8D\xF2\x85\x10\x85\x86" }
-
 };
 
 int
 main (int argc, char *argv[])
 {
   Shishi *handle;
-  unsigned char key[3*8];
+  unsigned char key[32];
   unsigned char out[BUFSIZ];
   int i,j;
   int res;
@@ -421,7 +499,7 @@ main (int argc, char *argv[])
       }
   while (argc-- > 1);
 
-  handle = shishi_init ();
+  handle = shishi ();
   if (handle == NULL)
     {
       fail("Could not initialize shishi\n");
@@ -583,7 +661,9 @@ main (int argc, char *argv[])
 
       res = shishi_string_to_key (handle, str2key[i].etype,
 				  str2key[i].password, n_password,
-				  str2key[i].salt, saltlen, key, &keylen);
+				  str2key[i].salt, saltlen, 
+				  str2key[i].parameters,
+				  key, &keylen);
       if (res != SHISHI_OK)
 	{
 	  fail("shishi_string_to_key() entry %d failed (%s)\n", 
@@ -657,10 +737,6 @@ main (int argc, char *argv[])
 	printf("OK\n");
     }
 
-  res = gcry_control (GCRYCTL_INIT_SECMEM, 512, 0);
-  if (res != GCRYERR_SUCCESS)
-    fail("gcrypt failed to initialize secure memory");
-
   for (i = 0; i < sizeof(pkcs5) / sizeof(pkcs5[0]); i++)
     {
       if (verbose)
@@ -674,7 +750,6 @@ main (int argc, char *argv[])
 		    pkcs5[i].iterations, 
 		    pkcs5[i].dklen, 
 		    out);
-
       if (res != PKCS5_OK)
 	{
 	  fail("PKCS5 entry %d failed fatally: %d\n", i, res);
