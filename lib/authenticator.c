@@ -480,23 +480,16 @@ shishi_authenticator_add_cksum (Shishi * handle,
     {
       char cksum[BUFSIZ];
       int cksumlen;
+      int cksumtype = shishi_cipher_defaultcksumtype (keytype);
 
       cksumlen = sizeof (cksum);
-      res = shishi_derive_checksum (handle, 
-				    SHISHI_RSA_MD4_DES, 
-				    //SHISHI_RSA_MD5_DES, 
-				    //SHISHI_HMAC_SHA1_DES3_KD,
-				    keyusage,
-				    cksum, &cksumlen, data, datalen, 
-				    key, keylen);
+      res = shishi_checksum (handle, cksumtype, keyusage, keytype, key, keylen,
+			     data, datalen, cksum, &cksumlen);
       if (res != SHISHI_OK)
 	return res;
 
       res = shishi_authenticator_set_cksum (handle, authenticator,
-					    //SHISHI_HMAC_SHA1_DES3_KD,
-					    SHISHI_RSA_MD4_DES,
-					    //SHISHI_RSA_MD5_DES,
-					    cksum, cksumlen);
+					    cksumtype, cksum, cksumlen);
     }
   else
     res = shishi_authenticator_remove_cksum (handle, authenticator);
