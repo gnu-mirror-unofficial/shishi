@@ -855,26 +855,19 @@ shishi_authenticator_add_random_subkey (Shishi * handle,
 int
 shishi_authenticator_add_subkey (Shishi * handle,
 				 Shishi_asn1 authenticator,
-				 Shishi_asn1 * subkey)
+				 Shishi_key * subkey)
 {
   int res;
   int * etypes;
-  Shishi_key * subkey;
 
   res = shishi_cfg_clientkdcetype (handle, &etypes);
   if (res != SHISHI_OK)
       return res;
 
-  res = shishi_key_random (handle, etypes[0], &subkey);
-  if (res != SHISHI_OK)
-    return res;
-
   res = shishi_authenticator_set_subkey (handle, authenticator,
 					 shishi_key_type (subkey),
 					 shishi_key_value (subkey),
 					 shishi_key_length (subkey));
-
-  shishi_key_done (&subkey);
 
   return res;
 }
