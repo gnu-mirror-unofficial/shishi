@@ -19,8 +19,6 @@
  *
  */
 
-/* XXX several functions with out/outlen writes longer than the outlen */
-
 #include "internal.h"
 #ifdef USE_GCRYPT
 #include <gcrypt.h>
