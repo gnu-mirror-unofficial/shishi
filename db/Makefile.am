@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -19,7 +19,7 @@
 # Boston, MA 02111-1307, USA.
 
 # -I../lib is to get shishi-int.h and uint32_t.
-AM_CPPFLAGS = -I$(top_srcdir)/gl -I../lib
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../lib
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shisa.conf\" \

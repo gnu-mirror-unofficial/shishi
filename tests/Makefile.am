@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -20,7 +20,8 @@
 
 EXTRA_DIST = utils.c shisa.sh
 
-AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_srcdir)/lib -I../lib
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
+	-I$(top_srcdir)/lib -I../lib
 AM_LDFLAGS = -no-install
 LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	@LTLIBINTL@ ../gl/libgnu.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \

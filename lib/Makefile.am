@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -19,7 +19,8 @@
 # Boston, MA 02111-1307, USA.
 
 INCLUDES = @LIBTASN1_CFLAGS@ @LIBGCRYPT_CFLAGS@ \
-	@CRYPTO_CFLAGS@ @LIBGNUTLS_CFLAGS@ -I$(top_srcdir)/gl
+	@CRYPTO_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
+	-I$(top_srcdir)/gl -I$(top_builddir)/gl
 
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2005 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -18,7 +18,7 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-INCLUDES = -I$(top_srcdir)/gl -I../lib
+INCLUDES = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../lib
 LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
 	../lib/libshishi.la ../gl/libfoo.la
 
