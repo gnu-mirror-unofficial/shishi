@@ -1476,6 +1476,9 @@ extern int shishi_ap_req_der_set (Shishi_ap * ap, char *der, size_t derlen);
 extern int shishi_ap_req_build (Shishi_ap * ap);
 extern int shishi_ap_req_asn1 (Shishi_ap * ap, Shishi_asn1 * apreq);
 extern int shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key);
+extern int shishi_ap_req_process_keyusage (Shishi_ap * ap,
+					   Shishi_key * key,
+					   int32_t keyusage);
 extern int shishi_ap_req_build (Shishi_ap * ap);
 
 extern Shishi_asn1 shishi_ap_rep (Shishi_ap * ap);

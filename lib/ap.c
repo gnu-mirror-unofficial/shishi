@@ -540,9 +540,13 @@ shishi_ap_req_build (Shishi_ap * ap)
 }
 
 /**
- * shishi_ap_req_process:
+ * shishi_ap_req_process_keyusage:
  * @ap: structure that holds information about AP exchange
  * @key: cryptographic key used to decrypt ticket in AP-REQ.
+ * @keyusage: key usage to use during decryption, for normal
+ *   AP-REQ's this is normally SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR,
+ *   for AP-REQ's part of TGS-REQ's, this is normally
+ *   SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR.
  *
  * Decrypt ticket in AP-REQ using supplied key and decrypt
  * Authenticator in AP-REQ using key in decrypted ticket, and on
@@ -551,7 +555,9 @@ shishi_ap_req_build (Shishi_ap * ap)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
+shishi_ap_req_process_keyusage (Shishi_ap * ap,
+				Shishi_key * key,
+				int32_t keyusage)
 {
   Shishi_asn1 ticket, authenticator;
   Shishi_tkt *tkt;
@@ -596,8 +602,8 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
     shishi_encticketpart_print (ap->handle, stdout,
 				shishi_tkt_encticketpart (tkt));
 
-  rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey, SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR,	/* XXX */
-			     &authenticator);
+  rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey,
+			     keyusage, &authenticator);
   if (rc != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Error decrypting apreq: %s\n",
@@ -612,6 +618,24 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
   ap->authenticator = authenticator;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_ap_req_process:
+ * @ap: structure that holds information about AP exchange
+ * @key: cryptographic key used to decrypt ticket in AP-REQ.
+ *
+ * Decrypt ticket in AP-REQ using supplied key and decrypt
+ * Authenticator in AP-REQ using key in decrypted ticket, and on
+ * success set the Ticket and Authenticator fields in the AP exchange.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
+{
+  return shishi_ap_req_process_keyusage (ap, key,
+					 SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR);
 }
 
 /**

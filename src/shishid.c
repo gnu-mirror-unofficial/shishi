@@ -599,7 +599,9 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
   /* XXX check if ticket is for our tgt key */
 
   /* decrypt ticket with our key, and decrypt authenticator using key in tkt */
-  rc = shishi_ap_req_process (shishi_tgs_ap (tgs), arg->tgskey);
+  rc = shishi_ap_req_process_keyusage
+    (shishi_tgs_ap (tgs), arg->tgskey,
+     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
   if (rc != SHISHI_OK)
     return rc;
 
