@@ -4,6 +4,12 @@ See the end for copying conditions.
 
 * Version 0.0.21 (unreleased)
 
+** Libtasn1 updated to 0.2.13.
+
+** Gnulib files updated.
+
+** Fix srcdir != objdir building, reported by Mike Castle.
+
 * Version 0.0.20 (released 2004-11-21)
 
 ** Fix formatting of man pages, based on warnings from Doclifter.
