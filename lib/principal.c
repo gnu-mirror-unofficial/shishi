@@ -329,6 +329,83 @@ shishi_principal_name_get (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_principal_name_realm:
+ * @handle: Shishi library handle create by shishi_init().
+ * @namenode: ASN.1 structure with principal name in @namefield.
+ * @namefield: name of field in @namenode containing principal name.
+ * @realmnode: ASN.1 structure with principal realm in @realmfield.
+ * @realmfield: name of field in @realmnode containing principal realm.
+ * @out: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @outlen).
+ * @outlen: pointer to length of @out on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @out).
+ *
+ * Represent principal name and realm in ASN.1 structure as
+ * zero-terminated string.  The string is allocate by this function,
+ * and it is the responsibility of the caller to deallocate it.  Note
+ * that the output length @outlen does not include the terminating
+ * zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_principal_name_realm (Shishi * handle,
+			     Shishi_asn1 namenode,
+			     const char *namefield,
+			     Shishi_asn1 realmnode,
+			     const char *realmfield,
+			     char **out, size_t * outlen)
+{
+  char *tmp;
+  size_t tmplen;
+  int rc;
+
+  rc = shishi_principal_name (handle, namenode, namefield, tmp, &tmplen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  if (realmnode == NULL && realmfield)
+    {
+      size_t realmfieldlen = strlen (realmfield);
+
+      tmp = xrealloc (tmp, tmplen + 1 + realmfieldlen + 1);
+
+      tmp[tmplen] = '@';
+      memcpy (tmp + tmplen, realmfield, realmfieldlen);
+
+      tmplen += 1 + realmfieldlen;
+
+      tmp[tmplen] = '\0';
+    }
+  else if (realmnode != NULL)
+    {
+      char *realm;
+      size_t realmlen;
+
+      rc = shishi_asn1_read (handle, realmnode, realmfield, &realm, &realmlen);
+      if (rc != SHISHI_OK)
+	{
+	  free (tmp);
+	  return rc;
+	}
+
+      tmp = xrealloc (tmp, tmplen + 1 + realmlen + 1);
+
+      tmp[tmplen] = '@';
+      memcpy (tmp + tmplen, realm, realmlen);
+
+      tmplen += 1 + realmlen;
+
+      tmp[tmplen] = '\0';
+    }
+
+  *out = tmp;
+  *outlen = tmplen;
+
+  return SHISHI_OK;
+}
+
 int
 shishi_principal_name_realm_get (Shishi * handle,
 				 Shishi_asn1 namenode,
