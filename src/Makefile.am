@@ -45,9 +45,9 @@ shishid_LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 localedir = $(datadir)/locale
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
-	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
-	-DKDCKEYFILE=\"$(sysconfdir)/shishid.keys\" \
-	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
+	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
+	-DKDCKEYFILE=\"$(KEYDIR)/shishid.keys\" \
+	-DSKELCFGFILE=\"$(SKELDIR)/shishi.skel\" \
 	@DEFS@
 
 indent:

@@ -21,8 +21,8 @@
 AM_CPPFLAGS = -I$(top_srcdir)/gl
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
-	-DSYSTEMCFGFILE=\"$(sysconfdir)/shisa.conf\" \
-	-DDEFAULTDBPATH=\"$(localstatedir)/$(PACKAGE)\" \
+	-DSYSTEMCFGFILE=\"$(CONFDIR)/shisa.conf\" \
+	-DDEFAULTDBPATH=\"$(DBDIR)\" \
 	@DEFS@
 
 include_HEADERS = shisa.h

@@ -366,6 +366,50 @@ fi
 AC_MSG_CHECKING([if ARCFOUR encryption/checksum type should be used])
 AC_MSG_RESULT($enable_arcfour)
 
+AC_SUBST(CONFDIR, "\$(sysconfdir)/\$(PACKAGE)")
+AC_ARG_WITH(conf-dir,
+            AS_HELP_STRING([--with-conf-dir=DIR],
+                           [store configuration in DIR [[PREFIX/etc/shishi]]]),
+            [case "${withval}" in
+            /*) CONFDIR="${withval}";;
+            ./*|../*) AC_MSG_ERROR(Bad value for --with-conf-dir);;
+            *)  CONFDIR="\$(sysconfdir)/${withval}";;
+            esac])
+AC_MSG_NOTICE([configuration files will be stored in $CONFDIR])
+
+AC_SUBST(SKELDIR, "\$(sysconfdir)/\$(PACKAGE)")
+AC_ARG_WITH(skel-dir,
+            AS_HELP_STRING([--with-skel-dir=DIR],
+                           [store template cfg in DIR [[PREFIX/etc/shishi]]]),
+            [case "${withval}" in
+            /*) SKELDIR="${withval}";;
+            ./*|../*) AC_MSG_ERROR(Bad value for --with-skel-dir);;
+            *)  SKELDIR="\$(sysconfdir)/${withval}";;
+            esac])
+AC_MSG_NOTICE([user template configuration file in $SKELDIR])
+
+AC_SUBST(KEYDIR, "\$(sysconfdir)/\$(PACKAGE)")
+AC_ARG_WITH(key-dir,
+            AS_HELP_STRING([--with-key-dir=DIR],
+                           [store host keys in DIR [[PREFIX/etc/shishi]]]),
+            [case "${withval}" in
+            /*) KEYDIR="${withval}";;
+            ./*|../*) AC_MSG_ERROR(Bad value for --with-key-dir);;
+            *)  KEYDIR="\$(sysconfdir)/${withval}";;
+            esac])
+AC_MSG_NOTICE([host keys will be stored in $KEYDIR])
+
+AC_SUBST(DBDIR, "\$(localstatedir)/\$(PACKAGE)")
+AC_ARG_WITH(db-dir,
+            AC_HELP_STRING([--with-db-dir=DIR],
+                           [Shisa database in DIR [[PREFIX/var/shishi]])]),
+            [case "${withval}" in
+            /*) DBDIR="${withval}";;
+            ./*|../*) AC_MSG_ERROR(Bad value for --with-db-dir);;
+            *)  DBDIR="\$(localstatedir)/${withval}";;
+            esac])
+AC_MSG_NOTICE([user database root path $DBDIR])
+
 AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile \
 	asn1/Makefile crypto/Makefile examples/Makefile \
 	lib/Makefile lib/shishi.h db/Makefile src/Makefile tests/Makefile \

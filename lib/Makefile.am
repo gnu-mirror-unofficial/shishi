@@ -22,10 +22,9 @@ INCLUDES = -I$(top_srcdir)/gl @LIBTASN1_CFLAGS@ \
 	@LIBGCRYPT_CFLAGS@ @CRYPTO_CFLAGS@ @LIBGNUTLS_CFLAGS@
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
-	-DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
-	-DSKELCFGFILE=\"$(pkgdatadir)/shishi.skel\" \
-	-DHOSTKEYSFILE=\"$(sysconfdir)/shishi.keys\" \
-	-DDMALLOC_FUNC_CHECK \
+	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
+	-DSKELCFGFILE=\"$(SKELDIR)/shishi.skel\" \
+	-DHOSTKEYSFILE=\"$(KEYDIR)/shishi.keys\" \
 	@DEFS@
 
 BUILT_SOURCES = shishi-int.h kerberos5.c
