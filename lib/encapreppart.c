@@ -298,7 +298,7 @@ shishi_encapreppart_get_key (Shishi * handle,
  * shishi_encapreppart_ctime:
  * @handle: shishi handle as allocated by shishi_init().
  * @encapreppart: EncAPRepPart as allocated by shishi_encapreppart().
- * @time: newly allocated zero-terminated character array with client time.
+ * @t: newly allocated zero-terminated character array with client time.
  *
  * Extract client time from EncAPRepPart.
  *
@@ -307,16 +307,16 @@ shishi_encapreppart_get_key (Shishi * handle,
 int
 shishi_encapreppart_ctime (Shishi * handle,
 			   Shishi_asn1 encapreppart,
-			   char **time)
+			   char **t)
 {
-  return shishi_time (handle, encapreppart, "ctime", time);
+  return shishi_time (handle, encapreppart, "ctime", t);
 }
 
 /**
  * shishi_encapreppart_ctime_set:
  * @handle: shishi handle as allocated by shishi_init().
  * @encapreppart: EncAPRepPart as allocated by shishi_encapreppart().
- * @time: string with generalized time value to store in EncAPRepPart.
+ * @t: string with generalized time value to store in EncAPRepPart.
  *
  * Store client time in EncAPRepPart.
  *
@@ -325,12 +325,12 @@ shishi_encapreppart_ctime (Shishi * handle,
 int
 shishi_encapreppart_ctime_set (Shishi * handle,
 			       Shishi_asn1 encapreppart,
-			       const char *time)
+			       const char *t)
 {
   int res;
 
   res = shishi_asn1_write (handle, encapreppart, "ctime",
-			   time, GENERALIZEDTIME_TIME_LEN);
+			   t, GENERALIZEDTIME_TIME_LEN);
   if (res != SHISHI_OK)
     return res;
 
