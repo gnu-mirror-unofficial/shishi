@@ -564,16 +564,45 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
   Shishi_key *tgskey;
   int rc;
   Shishi_tkt *tkt;
-  Shishi_key *sessiontktkey, *userkey;
+  Shishi_key *sessionkey, *sessiontktkey, *userkey;
   char buf[BUFSIZ];
   int buflen;
   int err;
-  char *servername, *realm;
+  char *username, *servername, *realm;
+  int32_t etype;
+  int i;
+
+  tkt = shishi_tgs_tkt (tgs);
+  if (!tkt)
+    return SHISHI_MALLOC_ERROR;
+
+  i = 1;
+  do
+    {
+      err = shishi_kdcreq_etype (handle, shishi_tgs_req (tgs), &etype, i);
+      if (err == SHISHI_OK && shishi_cipher_supported_p (etype))
+	break;
+    }
+  while (err == SHISHI_OK);
+  if (err != SHISHI_OK)
+    return err;
+
+  /* XXX use a "preferred server kdc etype" from shishi instead? */
+
+  err = shishi_key_random (handle, etype, &sessionkey);
+  if (err)
+    return err;
+
+  err = shishi_tkt_key_set (tkt, sessionkey);
+  if (err)
+    return err;
 
   /* extract pa-data and populate tgs->ap */
   rc = shishi_tgs_req_process (tgs);
   if (rc != SHISHI_OK)
     return rc;
+
+  /* XXX check if ticket is for our tgt key */
 
   tgskey = shishi_keys_for_serverrealm_in_file (handle,
 						arg->keyfile,
@@ -588,6 +617,21 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
     return rc;
 
   /* XXX check that checksum in authenticator match tgsreq.req-body */
+
+  shishi_ticket_print (handle, stdout, shishi_tkt_ticket (tkt));
+  shishi_encticketpart_print
+    (handle, stdout,
+     shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))));
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_encticketpart_cname_get
+    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
+     buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  username = strdup (buf);
+  printf ("username %s\n", username);
 
   buflen = sizeof (buf) - 1;
   err = shishi_kdcreq_sname_get (handle, shishi_tgs_req (tgs), buf, &buflen);
@@ -605,43 +649,32 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
   realm = strdup (buf);
   printf ("server realm %s\n", realm);
 
-  tkt = shishi_tgs_tkt (tgs);
-  if (!tkt)
-    return SHISHI_MALLOC_ERROR;
+  err = shishi_tkt_clientrealm_set (tkt, realm, username);
+  if (err)
+    return err;
 
   err = shishi_tkt_serverrealm_set (tkt, realm, servername);
   if (err)
     return err;
-  shishi_tgs_tkt_set (tgs, shishi_ap_tkt (shishi_tgs_ap (tgs)));
 
   userkey = shishi_keys_for_serverrealm_in_file (handle,
 						 arg->keyfile,
-						 "simon", realm);
+						 username, realm);
   if (!userkey)
     return !SHISHI_OK;
 
-  sessiontktkey = shishi_keys_for_serverrealm_in_file
-    (handle, arg->keyfile, "krbtgt/latte.josefsson.org",
-     "latte.josefsson.org");
-  if (!userkey)
-    return !SHISHI_OK;
-
-  if (arg->verbose)
-    {
-      shishi_kdcreq_print (handle, stderr, shishi_tgs_req (tgs));
-      shishi_encticketpart_print (handle, stderr,
-				  shishi_tkt_encticketpart (tkt));
-      shishi_ticket_print (handle, stderr, shishi_tkt_ticket (tkt));
-      shishi_enckdcreppart_print (handle, stderr,
-				  shishi_tkt_enckdcreppart (tkt));
-      shishi_kdcrep_print (handle, stderr, shishi_tgs_rep (tgs));
-    }
+  err = shishi_encticketpart_get_key
+    (handle,
+     shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
+     &sessiontktkey);
 
   err = shishi_tkt_build (tkt, sessiontktkey);
   if (err)
     return err;
 
-  err = shishi_tgs_rep_build (tgs, userkey);
+  shishi_ticket_print (handle, stdout, shishi_tkt_ticket (tkt));
+
+  err = shishi_tgs_rep_build (tgs, sessiontktkey);
   if (err)
     return err;
 
