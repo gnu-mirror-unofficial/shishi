@@ -18,97 +18,35 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-SUBDIRS = reference man
+SUBDIRS = reference
 
-shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
-	shishi-api-ticket.texi shishi-api-tkt.texi shishi-api-tkts.texi \
-	shishi-api-as.texi shishi-api-tgs.texi \
-	shishi-api-safe.texi shishi-api-priv.texi \
-	shishi-api-kdc.texi shishi-api-authenticator.texi shishi-api-ap.texi \
-	shishi-api-key.texi shishi-api-keys.texi shishi-api-hostkeys.texi \
-	shishi-api-crypto.texi shishi-api-nettle.texi shishi-api-version.texi \
-	shishi-api-crypto-ctx.texi \
-	shishi-api-error.texi shishi-api-error-labels.texi
-
-generated = shishi.txt shishi.html shishi.ps shishi.pdf \
-	$(shishi_texi_auto_deps)
-
-MAINTAINERCLEANFILES = $(generated)
-
-EXTRA_DIST = gdoc $(generated)
+EXTRA_DIST = gdoc shishi.txt shishi.html shishi.ps shishi.pdf
 
 info_TEXINFOS = shishi.texi
 ps_TEXINFOS = shishi.texi
 pdf_TEXINFOS = shishi.texi
-shishi_TEXINFOS = gpl.texi fdl.texi $(shishi_texi_auto_deps)
-
-shishi-api-init.texi: $(top_srcdir)/lib/init.c $(top_srcdir)/lib/cfg.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-utility.texi: $(top_srcdir)/lib/realm.c $(top_srcdir)/lib/principal.c $(top_srcdir)/lib/authorize.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-ticket.texi: $(top_srcdir)/lib/ticket.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-tkt.texi: $(top_srcdir)/lib/tkt.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-tkts.texi: $(top_srcdir)/lib/tkts.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-safe.texi: $(top_srcdir)/lib/safe.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-priv.texi: $(top_srcdir)/lib/priv.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-as.texi: $(top_srcdir)/lib/as.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-tgs.texi: $(top_srcdir)/lib/tgs.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-kdc.texi: $(top_srcdir)/lib/kdc.c $(top_srcdir)/lib/kdcreq.c $(top_srcdir)/lib/kdcrep.c $(top_srcdir)/lib/enckdcreppart.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-authenticator.texi: $(top_srcdir)/lib/authenticator.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-ap.texi: $(top_srcdir)/lib/ap.c $(top_srcdir)/lib/apreq.c $(top_srcdir)/lib/aprep.c $(top_srcdir)/lib/encapreppart.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-key.texi: $(top_srcdir)/lib/key.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-keys.texi: $(top_srcdir)/lib/keys.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-hostkeys.texi: $(top_srcdir)/lib/hostkeys.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-crypto.texi: $(top_srcdir)/lib/crypto.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-crypto-ctx.texi: $(top_srcdir)/lib/crypto-ctx.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-nettle.texi: $(top_srcdir)/lib/nettle.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-error.texi: $(top_srcdir)/lib/error.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-shishi-api-error-labels.texi: $(top_srcdir)/lib/error.c
-	$(PERL) $(srcdir)/gdoc-error $^ > $@
-
-shishi-api-version.texi: $(top_srcdir)/lib/version.c
-	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
-
-# Texinfo:
+shishi_TEXINFOS = gpl.texi fdl.texi $(gdoc_TEXINFOS) \
+	shishi-api-error-labels.texi
 
 shishi.txt: shishi.texi $(shishi_TEXINFOS)
 	$(MAKEINFO) --no-header $< > $@
 
 shishi.html: shishi.texi $(shishi_TEXINFOS)
 	$(MAKEINFO) --html --no-split --number-sections $<
+
+dist_man_MANS = shishi.1 $(gdoc_MANS)
+DISTCLEANFILES = $(dist_man_MANS)
+
+shishi.1: $(top_srcdir)/src/shishi.c $(top_builddir)/src/shishi
+	$(HELP2MAN) \
+		--name="kerberos 5 implementation" \
+		--help-option="--program-name shishi --help" \
+		--output=$@ $(top_builddir)/src/shishi
+
+GDOC_SRC = $(top_srcdir)/lib/*.c
+GDOC_TEXI_PREFIX = texi/
+GDOC_MAN_PREFIX = man/
+include $(srcdir)/Makefile.gdoci
+
+shishi-api-error-labels.texi: $(top_srcdir)/lib/error.c
+	$(PERL) $(srcdir)/gdoc-error $^ > $@

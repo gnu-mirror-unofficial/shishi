@@ -1676,7 +1676,7 @@ compatibility new features may have been introduced but due to problem
 with the dynamic linker an old version is actually used.  So you may
 want to check that the version is okay right after program startup.
 
-@include shishi-api-version.texi
+@include texi/shishi_check_version.texi
 
 The normal way to use the function is to put something similar to the
 following early in your @code{main}:
@@ -1817,7 +1817,8 @@ developer.
 @node Initialization Functions
 @section Initialization Functions
 
-@include shishi-api-init.texi
+@include texi/init.c.texi
+@include texi/cfg.c.texi
 
 
 @node Ticket Set Functions
@@ -1835,7 +1836,7 @@ ticket in the ticket set are also provided.
 To manipulate each individual ticket, @xref{Ticket Functions}.  For
 low-level ASN.1 manipulation see @xref{Ticket (ASN.1) Functions}.
 
-@include shishi-api-tkts.texi
+@include texi/tkts.c.texi
 
 
 @node AP-REQ and AP-REP Functions
@@ -1874,7 +1875,10 @@ EncAPRepPart	::= [APPLICATION 27] SEQUENCE {
 }
 @end verbatim
 
-@include shishi-api-ap.texi
+@include texi/ap.c.texi
+@include texi/apreq.c.texi
+@include texi/aprep.c.texi
+@include texi/encapreppart.c.texi
 
 
 @node SAFE and PRIV Functions
@@ -1904,7 +1908,7 @@ KRB-SAFE ASN.1 structure.
    }
 @end verbatim
 
-@include shishi-api-safe.texi
+@include texi/safe.c.texi
 
 The ``KRB-PRIV'' is an ASN.1 structure used by application client and
 servers to exchange confidential data.  The confidentiality is keyed,
@@ -1930,13 +1934,13 @@ structure.
    }
 @end verbatim
 
-@include shishi-api-priv.texi
+@include texi/priv.c.texi
 
 
 @node Ticket Functions
 @section Ticket Functions
 
-@include shishi-api-tkt.texi
+@include texi/tkt.c.texi
 
 
 @node AS Functions
@@ -2015,7 +2019,7 @@ EncKDCRepPart	::= SEQUENCE {
 }
 @end verbatim
 
-@include shishi-api-as.texi
+@include texi/as.c.texi
 
 
 @node TGS Functions
@@ -2096,13 +2100,13 @@ EncKDCRepPart	::= SEQUENCE {
 }
 @end verbatim
 
-@include shishi-api-tgs.texi
+@include texi/tgs.c.texi
 
 
 @node Ticket (ASN.1) Functions
 @section Ticket (ASN.1) Functions
 
-@include shishi-api-ticket.texi
+@include texi/ticket.c.texi
 
 @node AS/TGS Functions
 @section AS/TGS Functions
@@ -2195,7 +2199,10 @@ EncKDCRepPart	::= SEQUENCE {
 }
 @end verbatim
 
-@include shishi-api-kdc.texi
+@include texi/kdc.c.texi
+@include texi/kdcreq.c.texi
+@include texi/kdcrep.c.texi
+@include texi/enckdcreppart.c.texi
 
 
 @node Authenticator Functions
@@ -2221,7 +2228,7 @@ Authenticator	::= [APPLICATION 2] SEQUENCE  {
 }
 @end verbatim
 
-@include shishi-api-authenticator.texi
+@include texi/authenticator.c.texi
 
 
 @node Cryptographic Functions
@@ -2248,7 +2255,7 @@ struct Shishi_key
 
 All functions that operate on this data structure are described now.
 
-@include shishi-api-key.texi
+@include texi/key.c.texi
 
 Applications that run uninteractively may need keying material.  In
 these cases, the keys are stored in a file, a file that is normally
@@ -2257,7 +2264,7 @@ unauthorized access.  The file is in ASCII format and contains keys as
 outputed by @code{shishi_key_print}.  All functions that handle these
 keys sets are described now.
 
-@include shishi-api-keys.texi
+@include texi/keys.c.texi
 
 The previous functions require that the filename is known.  For some
 applications, servers, it makes sense to provide a system default.
@@ -2265,13 +2272,13 @@ These key sets used by server applications are known as ``hostkeys''.
 Here are the functions that operate on hostkeys (they are mostly
 wrappers around generic key sets).
 
-@include shishi-api-hostkeys.texi
+@include texi/hostkeys.c.texi
 
 After creating the key structure, it can be used to encrypt and
 decrypt data, calculate checksum on data etc.  All available functions
 are described now.
 
-@include shishi-api-crypto.texi
+@include texi/crypto.c.texi
 
 An easier way to use encryption and decryption if your application
 repeatedly calls, e.g., @code{shishi_encrypt_ivupdate}, is to use the
@@ -2279,20 +2286,22 @@ following functions.  They store the key, initialization vector, etc,
 in a context, and the encryption and decryption operations update the
 IV within the context automatically.
 
-@include shishi-api-crypto-ctx.texi
+@include texi/crypto-ctx.c.texi
 
 Also included in Shishi is an interface to the really low-level
 cryptographic primitives.  They map directly on the underlying
 cryptographic library used (e.g., Nettle) and is used internally by
 Shishi.
 
-@include shishi-api-nettle.texi
+@include texi/nettle.c.texi
 
 
 @node Utility Functions
 @section Utility Functions
 
-@include shishi-api-utility.texi
+@include texi/realm.c.texi
+@include texi/principal.c.texi
+@include texi/authorize.c.texi
 
 
 @node Error Handling
@@ -2333,7 +2342,7 @@ to always be @code{0} so you may use it in boolean constructs.
 @node Error Functions
 @subsection Error Functions
 
-@include shishi-api-error.texi
+@include texi/error.c.texi
 
 @node Examples
 @section Examples
