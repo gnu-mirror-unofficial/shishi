@@ -42,8 +42,8 @@ AC_CHECK_HEADERS([sys/types.h])
 AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
 AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
 	sys/time.h sys/select.h sys/socket.h sys/stat.h stdint.h termios.h \
-	signal.h pwd.h errno.h syslog.h locale.h arpa/nameser.h)
-AC_CHECK_HEADERS(netinet/in.h netinet/in6.h arpa/inet.h inttypes.h resolv.h)
+	signal.h pwd.h errno.h syslog.h locale.h arpa/nameser.h \
+	netinet/in.h netinet/in6.h arpa/inet.h inttypes.h resolv.h fcntl.h)
 
 # Checks for programs.
 AC_PROG_LIBTOOL
@@ -79,6 +79,12 @@ AC_CHECK_TYPE([socklen_t],, [AC_DEFINE([socklen_t], [size_t],
 #include <netdb.h>
 #endif
 ])
+# For libtasn1
+AC_CHECK_SIZEOF(unsigned long long, 8)
+AC_CHECK_SIZEOF(unsigned long int, 4)
+AC_CHECK_SIZEOF(unsigned int, 4)
+AC_CHECK_SIZEOF(unsigned short int, 2)
+AC_CHECK_SIZEOF(unsigned char, 1)
 
 # Check for PAM
 AC_ARG_ENABLE(pam,
@@ -193,42 +199,28 @@ fi
 AC_SUBST(ASN1)
 AC_SUBST(LIBTASN1_LIBS)
 
-# For libtasn1
-AC_CHECK_SIZEOF(unsigned long long, 8)
-AC_CHECK_SIZEOF(unsigned long int, 4)
-AC_CHECK_SIZEOF(unsigned int, 4)
-AC_CHECK_SIZEOF(unsigned short int, 2)
-AC_CHECK_SIZEOF(unsigned char, 1)
-
 # Check for libgcrypt
-AC_ARG_WITH(system-libgcrypt,
-  AC_HELP_STRING([--without-system-libgcrypt],
-		[don't use the system's libgcrypt]))
-if test "$with_system_libgcrypt" != "no" ; then
-	AM_PATH_LIBGCRYPT(1.1.42, [
-		with_system_libgcrypt=yes
-	], [
-		with_system_libgcrypt=no
+AC_ARG_WITH(libgcrypt,
+  AC_HELP_STRING([--with-libgcrypt], [use libgcrypt for low-level crypto]),
+  libgcrypt=$withval, libgcrypt=no)
+if test "$libgcrypt" != "no" ; then
+	AM_PATH_LIBGCRYPT(1.1.42, :, [
+		libgcrypt=no
+		AC_MSG_WARN([Libgcrypt >= 1.1.42 not found.])
 	])
 fi
-if test "$with_system_libgcrypt" = "no"; then
-  AC_MSG_WARN([[
-
-The system's libgcrypt 1.1.42 or later not used.  Using copy distributed
-with shishi instead. See <ftp://ftp.gnupg.org/pub/gcrypt/alpha/libgcrypt/>.
-]])
-  LIBGCRYPT_CFLAGS="-I\$(top_srcdir)/crypto/src -I\$(top_srcdir)/errcrypto/src"
-  LIBGCRYPT_LIBS="\$(top_builddir)/crypto/src/libgcrypt.la"
-  CRYPTO="errcrypto crypto"
+AC_MSG_CHECKING([whether to use libgcrypt])
+AC_MSG_RESULT($libgcrypt)
+if test "$libgcrypt" != "no" ; then
+	AC_DEFINE(USE_GCRYPT, 1, [Define to 1 if you want to use libgcrypt.])
+else
+	CRYPTO=crypto
+	CRYPTO_CFLAGS="-I../crypto"
+	CRYPTO_LIBS="-L../crypto -lnettle"
 fi
-AC_SUBST(LIBGCRYPT_CFLAGS)
-AC_SUBST(LIBGCRYPT_LIBS)
 AC_SUBST(CRYPTO)
-AC_MSG_CHECKING([if system's libgcrypt should be used])
-AC_MSG_RESULT($with_system_libgcrypt)
-GPG_ERROR_CONFIG=`pwd`/errcrypto/src/gpg-error-config; export GPG_ERROR_CONFIG
-enable_ld_version_script=no; export enable_ld_version_script
-AC_CONFIG_SUBDIRS(errcrypto crypto)
+AC_SUBST(CRYPTO_CFLAGS)
+AC_SUBST(CRYPTO_LIBS)
 
 # Check for resolver.
 AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
@@ -296,7 +288,8 @@ if test x$enable_gtk_doc = xauto ; then
 fi
 AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
 
-AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile asn1/Makefile \
+AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile \
+	asn1/Makefile crypto/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
 	doc/reference/Makefile extra/Makefile extra/pam_shishi/Makefile \
 	gl/Makefile gl/m4/Makefile shishi.pc shishi.conf shishi.skel)
