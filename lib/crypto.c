@@ -19,6 +19,8 @@
  *
  */
 
+/* XXX several functions with out/outlen writes longer than the outlen */
+
 #include "internal.h"
 #include <gcrypt.h>
 
@@ -1084,6 +1086,8 @@ shishi_checksum (Shishi * handle,
   if (cksumtype == 0)
     cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type(key));
 
+  /* XXX create a dispatcher instead of hardcoding this */
+
   switch (cksumtype)
     {
     case SHISHI_RSA_MD4_DES:
@@ -1157,6 +1161,17 @@ shishi_checksum (Shishi * handle,
     case SHISHI_HMAC_SHA1_DES3_KD:
       res = simplified_checksum(handle, key, keyusage, in, inlen, out, outlen);
       break;
+
+    case SHISHI_HMAC_SHA1_96_AES128:
+      res = simplified_checksum(handle, key, keyusage, in, inlen, out, outlen);
+      *outlen = 96/8;
+      break;
+
+    case SHISHI_HMAC_SHA1_96_AES256:
+      res = simplified_checksum(handle, key, keyusage, in, inlen, out, outlen);
+      *outlen = 96/8;
+      break;
+
 
     default:
       res = !SHISHI_OK;

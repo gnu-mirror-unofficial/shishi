@@ -71,9 +71,9 @@ error:
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @encapreppart: EncAPRepPart to print.
- * 
+ *
  * Print ASCII armored DER encoding of EncAPRepPart to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -88,9 +88,9 @@ shishi_encapreppart_print (Shishi * handle, FILE * fh, ASN1_TYPE encapreppart)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @encapreppart: EncAPRepPart to save.
- * 
+ *
  * Save DER encoding of EncAPRepPart to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -106,10 +106,10 @@ shishi_encapreppart_save (Shishi * handle, FILE * fh, ASN1_TYPE encapreppart)
  * @filetype: input variable specifying type of file to be written,
  *            see Shishi_filetype.
  * @filename: input variable with filename to write to.
- * 
+ *
  * Write EncAPRepPart to file in specified TYPE.  The file will be
  * truncated if it exists.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -152,10 +152,10 @@ shishi_encapreppart_to_file (Shishi * handle, ASN1_TYPE encapreppart,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @encapreppart: output variable with newly allocated EncAPRepPart.
- * 
+ *
  * Read ASCII armored DER encoded EncAPRepPart from file and populate given
  * variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -170,9 +170,9 @@ shishi_encapreppart_parse (Shishi * handle, FILE * fh,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @encapreppart: output variable with newly allocated EncAPRepPart.
- * 
+ *
  * Read DER encoded EncAPRepPart from file and populate given variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -189,9 +189,9 @@ shishi_encapreppart_read (Shishi * handle, FILE * fh,
  * @filetype: input variable specifying type of file to be read,
  *            see Shishi_filetype.
  * @filename: input variable with filename to read from.
- * 
+ *
  * Read EncAPRepPart from file in specified TYPE.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -237,9 +237,9 @@ shishi_encapreppart_from_file (Shishi * handle, ASN1_TYPE * encapreppart,
  * @keyvalue: output array with key.
  * @keyvalue_len: on input, maximum size of output array with key,
  *                on output, holds the actual size of output array with key.
- * 
+ *
  * Extract the subkey from the encrypted AP-REP part.
- * 
+ *
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int
@@ -305,13 +305,10 @@ int
 shishi_encapreppart_cusec_get (Shishi * handle,
 			       ASN1_TYPE encapreppart, int *cusec)
 {
-  int len;
   int res;
 
-  len = sizeof (*cusec);
-  *cusec = 0;
-  res = _shishi_asn1_field (handle, encapreppart, cusec, &len,
-			    "EncAPRepPart.cusec");
+  res = _shishi_asn1_integer_field (handle, encapreppart, cusec,
+				    "EncAPRepPart.cusec");
   *cusec = ntohl (*cusec);
 
   return res;
