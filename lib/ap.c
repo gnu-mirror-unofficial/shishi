@@ -48,8 +48,7 @@ int
 shishi_ap (Shishi * handle, Shishi_ap ** ap)
 {
   Shishi_ap *lap;
-  int res;
-  
+
   *ap = malloc (sizeof (**ap));
   if (*ap == NULL)
     return SHISHI_MALLOC_ERROR;
@@ -67,7 +66,7 @@ shishi_ap (Shishi * handle, Shishi_ap ** ap)
 			   shishi_strerror_details (handle));
       return SHISHI_ASN1_ERROR;
     }
-    
+
   lap->apreq = shishi_apreq (handle);
   if (lap->apreq == NULL)
     {
@@ -108,7 +107,7 @@ int
 shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
 {
   int res;
-  
+
   res = shishi_ap (handle, ap);
   if (res != SHISHI_OK)
     {
@@ -116,14 +115,15 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
 			   shishi_strerror_details (handle));
       return res;
     }
-  
-  res = shishi_authenticator_remove_subkey ( handle,
-					     shishi_ap_authenticator (*ap));
+
+  res = shishi_authenticator_remove_subkey (handle,
+					    shishi_ap_authenticator (*ap));
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (handle, "Could not remove subkey from Authenticator: %s\n",
+      shishi_error_printf (handle,
+			   "Could not remove subkey from Authenticator: %s\n",
 			   shishi_strerror_details (handle));
-      return res;  
+      return res;
     }
 
   return SHISHI_OK;
