@@ -466,7 +466,7 @@ simplified_encrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      shishi_key_done(derivedkey);
+      shishi_key_done(&derivedkey);
 
       *outlen = buflen + hlen;
     }
@@ -524,7 +524,7 @@ simplified_decrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      shishi_key_done(derivedkey);
+      shishi_key_done(&derivedkey);
 
       memmove (out, out + blen, len - blen);
       *outlen = len - blen;
@@ -567,7 +567,7 @@ simplified_checksum (Shishi * handle,
     }
   *outlen = hlen;
 
-  shishi_key_done(derivedkey);
+  shishi_key_done(&derivedkey);
 
   return SHISHI_OK;
 }

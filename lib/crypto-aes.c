@@ -122,7 +122,7 @@ aes_string_to_key (Shishi * handle,
   /* key = DK(tkey, "kerberos") */
   res = shishi_dk (handle, tmpkey, "kerberos", strlen ("kerberos"), outkey);
 
-  shishi_key_done(tmpkey);
+  shishi_key_done(&tmpkey);
 
   if (res != SHISHI_OK)
     return res;

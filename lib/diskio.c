@@ -168,7 +168,7 @@ _shishi_read_armored_data (Shishi * handle,
 	  continue;
 	}
       line[strlen (line) - 1] = '\0';
-      if (VERBOSE (handle))
+      if (VERBOSENOICE (handle))
 	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
 
       /* XXX check if all chars in line are b64 data, otherwise bail out */
@@ -718,24 +718,23 @@ _shishi_krberror_input (Shishi * handle,
 
   return SHISHI_OK;
 }
+
 int
 shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 {
   int lno = 0;
   char line[BUFSIZ];
+  char buffer[BUFSIZ];
   char armorbegin[BUFSIZ];
   char armorend[BUFSIZ];
-  int in_data = 0, in_body = 0;
+  int in_key = 0, in_body = 0;
   int res;
-  Shishi_key *lkey;
-
-  res = shishi_key (handle, &lkey);
-  if (res != SHISHI_OK)
-    return res;
+  size_t len, buflen;
+  Shishi_key *lkey = NULL;
 
   sprintf (armorbegin, HEADERBEG, "KEY");
   sprintf (armorend, HEADEREND, "KEY");
-#if 0
+
   len = 0;
   while (fgets (line, sizeof (line), fh))
     {
@@ -747,53 +746,64 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 	  continue;
 	}
       line[strlen (line) - 1] = '\0';
-      if (VERBOSE (handle))
+      if (VERBOSENOICE (handle))
 	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
 
-      /* XXX check if all chars in line are b64 data, otherwise bail out */
+      if (!in_key)
+	{
+	  in_key = strncmp (line, armorbegin, strlen (armorbegin)) == 0;
+	  if (in_key)
+	    {
+	      res = shishi_key (handle, &lkey);
+	      if (res != SHISHI_OK)
+		return res;
 
-      if (in_data)
-	{
-	  if (strncmp (line, armorend, strlen (armorend)) == 0)
-	    break;
-	}
-      else
-	{
-	  in_data = strncmp (line, armorbegin, strlen (armorbegin)) == 0;
+	    }
 	  continue;
 	}
 
+      if (strcmp (line, armorend) == 0)
+	break;
+
       if (in_body)
 	{
-	  keylen = shishi_from_base64 (line, strlen(line));
+	  buflen = shishi_from_base64 (buffer, line);
+	  shishi_key_value_set(lkey, buffer);
 	}
-
-      if (len + strlen (line) >= maxsize)
+      else
 	{
-	  shishi_error_printf (handle, "too large input size on line %d\n",
-			       lno);
-	  return !SHISHI_OK;
-	}
+	  if (in_body == 0 && strcmp (line, "") == 0)
+	    in_body = 1;
 
-      memcpy (buffer + len, line, strlen (line));
-      len += strlen (line);
+	  if (strncmp(line, "Keytype: ", strlen("Keytype: ")) == 0)
+	    {
+	      int type;
+	      if (sscanf(line, "Keytype: %d (", &type) == 1)
+		shishi_key_type_set(lkey, type);
+	    }
+	  else if (strncmp(line, "Key-Version-Number: ",
+			   strlen("Key-Version-Number: ")) == 0)
+	    {
+	      int type;
+	      if (sscanf(line, "Key-Version-Number: %d", &type) == 1)
+		shishi_key_version_set(lkey, type);
+	    }
+	  else if (strncmp(line, "Realm: ", strlen("Realm: ")) == 0)
+	    {
+	      shishi_key_realm_set(lkey, line + strlen("Realm: "));
+	    }
+	  else if (strncmp(line, "Principal: ", strlen("Principal: ")) == 0)
+	    {
+	      shishi_key_principal_set(lkey, line + strlen("Principal: "));
+	    }
+	}
     }
 
-  if (len <= 0)
-    return !SHISHI_OK;
+  if (!lkey)
+    return SHISHI_OK;
 
-  buffer[len] = '\0';
+  *key = lkey;
 
-  return SHISHI_OK;
-
-      b64len = sizeof (b64der);
-      res = _shishi_read_armored_data (handle, fh, b64der, b64len, "Ticket");
-      if (res != SHISHI_OK)
-	{
-	  shishi_error_printf (handle, "armor data read fail\n");
-	  return res;
-	}
-#endif
   return SHISHI_OK;
 }
 

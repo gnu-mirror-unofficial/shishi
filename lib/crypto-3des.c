@@ -173,7 +173,7 @@ des3_string_to_key (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  shishi_key_done(key);
+  shishi_key_done(&key);
 
   if (VERBOSECRYPTO(handle))
     {

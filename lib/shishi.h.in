@@ -201,7 +201,7 @@ typedef enum
     /* 1. AS-REQ PA-ENC-TIMESTAMP padata timestamp, encrypted with the
        client key */
     SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP = 1,
-    /* 2. AS-REP Ticket and TGS-REP Ticket (includes TGS session key or 
+    /* 2. AS-REP Ticket and TGS-REP Ticket (includes TGS session key or
        application session key), encrypted with the service key  */
     SHISHI_KEYUSAGE_KDCREP_TICKET = 2,
     /* 3. AS-REP encrypted part (includes TGS session key or application
@@ -765,7 +765,7 @@ extern size_t shishi_key_length (Shishi_key * key);
 extern int shishi_key_version (Shishi_key * key);
 extern void shishi_key_version_set (Shishi_key * key, int version);
 extern int shishi_key (Shishi *handle, Shishi_key **key);
-extern void shishi_key_done (Shishi_key *key);
+extern void shishi_key_done (Shishi_key **key);
 extern void shishi_key_copy (Shishi_key * dstkey, Shishi_key *srckey);
 extern int shishi_key_from_value (Shishi *handle,
 				  int type,
