@@ -50,8 +50,8 @@ shishid_SOURCES = shishid.c server.c kdc.h kdc.c \
 if STARTTLS
 shishid_SOURCES += starttls.c resume.c
 endif
-shishid_LDADD = ../gl/libfoo.la ../lib/libshishi.la ../db/libshisa.la \
-	@LIBGNUTLS_LIBS@ @LTLIBINTL@
+shishid_LDADD = ../gl/libfoo.la ../lib/libshishi.la \
+	../db/libshisa.la @LIBGNUTLS_LIBS@ @LTLIBINTL@
 shishid_cmd.c shishid_cmd.h: shishid.ggo
 	gengetopt --no-handle-help --no-handle-error \
 		 --input $< --file-name shishid_cmd

@@ -18,14 +18,13 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-INCLUDES = -I$(top_srcdir)/gl @LIBTASN1_CFLAGS@ \
-	@LIBGCRYPT_CFLAGS@ @CRYPTO_CFLAGS@ @LIBGNUTLS_CFLAGS@
+INCLUDES = @LIBTASN1_CFLAGS@ @LIBGCRYPT_CFLAGS@ \
+	@CRYPTO_CFLAGS@ @LIBGNUTLS_CFLAGS@ -I$(top_srcdir)/gl
 
-DEFS = -DLOCALEDIR=\"$(localedir)\" \
+DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
 	-DSKELCFGFILE=\"$(SKELDIR)/shishi.skel\" \
-	-DHOSTKEYSFILE=\"$(KEYDIR)/shishi.keys\" \
-	@DEFS@
+	-DHOSTKEYSFILE=\"$(KEYDIR)/shishi.keys\"
 
 BUILT_SOURCES = shishi-int.h kerberos5.c
 DISTCLEANFILES = shishi-int.h
