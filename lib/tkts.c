@@ -592,6 +592,14 @@ shishi_tkt_match_p (Shishi_tkt * tkt, Shishi_tkts_hint * hint)
       !shishi_tkt_valid_now_p (tkt))
     return 0;
 
+  if ((hint->tktflags & SHISHI_TICKETFLAGS_RENEWABLE) &&
+      !shishi_tkt_renewable_p (tkt))
+    return 0;
+
+  if ((hint->tktflags & SHISHI_TICKETFLAGS_PROXIABLE) &&
+      !shishi_tkt_proxiable_p (tkt))
+    return 0;
+
   if (hint->etype && !shishi_tkt_keytype_p (tkt, hint->etype))
     return 0;
 
@@ -796,7 +804,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 	    }
 	}
 
-      if (hint->flags & SHISHI_TKTSHINTFLAGS_RENEWABLE_TICKET)
+      if (hint->tktflags & SHISHI_TICKETFLAGS_RENEWABLE)
 	{
 	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req (as),
 					  SHISHI_KDCOPTIONS_RENEWABLE);
@@ -819,7 +827,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 	    }
 	}
 
-      if (hint->flags & SHISHI_TKTSHINTFLAGS_PROXIABLE_TICKET)
+      if (hint->tktflags & SHISHI_TICKETFLAGS_PROXIABLE)
 	{
 	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req (as),
 					  SHISHI_KDCOPTIONS_PROXIABLE);

@@ -1270,7 +1270,8 @@ Usage: lt-shishi [OPTION...] [CLIENT [SERVER]] [OPTION...]
                              is /usr/local/etc/shishi.conf.
       --ticket-write-file=FILE   Write tickets to FILE.  Default is to write
                              them back to ticket file.
-  -v, --verbose              Produce verbose output.
+  -v, --verbose              Produce verbose output.  Use multiple times to
+                             increase amount of verbose output.
       --verbose-library      Produce verbose output in the library.
   CLIENT                     Set client name and realm from NAME.  The
                              --client-name and --realm parameters can be used

@@ -159,7 +159,6 @@ enum
   OPTION_CRYPTO_DEBUG,
   OPTION_CRYPTO_GENERATE_KEY,
   OPTION_CRYPTO,
-  OPTION_VERBOSE_LIBRARY,
   OPTION_LIST,
   OPTION_DESTROY,
   OPTION_RENEW,
@@ -181,7 +180,7 @@ enum
 
 struct arguments
 {
-  int silent, verbose, verbose_library;
+  int silent, verbose;
   char *etypes;
   char *lib_options;
   int command;
@@ -490,11 +489,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case 'v':
-      arguments->verbose = 1;
-      break;
-
-    case OPTION_VERBOSE_LIBRARY:
-      arguments->verbose_library = 1;
+      arguments->verbose++;
       break;
 
     case 'o':
@@ -832,10 +827,8 @@ static struct argp_option options[] = {
   {0, 0, 0, 0, "Other options:", 200},
 
   {"verbose", 'v', 0, 0,
-   "Produce verbose output.", 0},
-
-  {"verbose-library", OPTION_VERBOSE_LIBRARY, 0, 0,
-   "Produce verbose output in the library.", 0},
+   "Produce verbose output.  Use multiple times to increase amount of "
+   "verbose output.", 0},
 
   {"quiet", 'q', 0, 0,
    "Don't produce any output.", 0},
@@ -955,9 +948,33 @@ main (int argc, char *argv[])
     error (1, 0, "Could not read library options: %s\n",
 	   shishi_strerror (rc));
 
-  if (arg.verbose_library)
+  if (arg.verbose > 1)
     {
       rc = shishi_cfg (handle, "verbose");
+      if (rc != SHISHI_OK)
+	error (1, 0, "Could not make library verbose: %s\n",
+	       shishi_strerror (rc));
+    }
+
+  if (arg.verbose > 2)
+    {
+      rc = shishi_cfg (handle, "verbose-noice");
+      if (rc != SHISHI_OK)
+	error (1, 0, "Could not make library verbose: %s\n",
+	       shishi_strerror (rc));
+    }
+
+  if (arg.verbose > 3)
+    {
+      rc = shishi_cfg (handle, "verbose-asn1");
+      if (rc != SHISHI_OK)
+	error (1, 0, "Could not make library verbose: %s\n",
+	       shishi_strerror (rc));
+    }
+
+  if (arg.verbose > 4)
+    {
+      rc = shishi_cfg (handle, "verbose-crypto");
       if (rc != SHISHI_OK)
 	error (1, 0, "Could not make library verbose: %s\n",
 	       shishi_strerror (rc));
@@ -1033,12 +1050,15 @@ main (int argc, char *argv[])
 	    i--;
 	    removed++;
 	  }
-	if (removed == 0)
-	  printf ("No tickets removed.\n");
-	else if (removed == 1)
-	  printf ("1 ticket removed.\n");
-	else
-	  printf ("%d tickets removed.\n", removed);
+	if (!arg.silent)
+	  {
+	    if (removed == 0)
+	      printf ("No tickets removed.\n");
+	    else if (removed == 1)
+	      printf ("1 ticket removed.\n");
+	    else
+	      printf ("%d tickets removed.\n", removed);
+	  }
 	rc = SHISHI_OK;
       }
       break;
@@ -1064,15 +1084,11 @@ main (int argc, char *argv[])
 	hint.starttime = arg.starttime;
 	hint.endtime = arg.endtime;
 	hint.renew_till = arg.renew_till;
-	if (arg.renewable)
-	  hint.flags |= SHISHI_TKTSHINTFLAGS_RENEWABLE_TICKET;
-	if (arg.proxiable)
-	  hint.flags |= SHISHI_TKTSHINTFLAGS_PROXIABLE_TICKET;
 
 	tkt = shishi_tkts_find (shishi_tkts_default (handle), &hint);
 	if (!tkt)
 	  {
-	    printf ("Could not get ticket for `%s'.\n", hint.server);
+	    fprintf (stderr, "Could not get ticket for `%s'.\n", hint.server);
 	    rc = !SHISHI_OK;
 	  }
 	else
@@ -1099,7 +1115,8 @@ main (int argc, char *argv[])
 	  rc = shishi_tgs_rep_process (tgs);
 	if (rc != SHISHI_OK)
 	  {
-	    printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
+	    fprintf (stderr, "TGS exchange failed: %s\n%s\n",
+		     shishi_strerror (rc),
 		    shishi_error (handle));
 	    if (rc == SHISHI_GOT_KRBERROR)
 	      shishi_krberror_pretty_print (handle, stdout,
@@ -1110,7 +1127,8 @@ main (int argc, char *argv[])
 	tkt = shishi_tgs_tkt (tgs);
 	if (!tkt)
 	  {
-	    printf ("No ticket in TGS-REP?!: %s\n", shishi_error (handle));
+	    fprintf (stderr, "No ticket in TGS-REP?!: %s\n",
+		     shishi_error (handle));
 	    break;
 	  }
 
@@ -1118,7 +1136,7 @@ main (int argc, char *argv[])
 
 	rc = shishi_tkts_add (shishi_tkts_default (handle), tkt);
 	if (rc != SHISHI_OK)
-	  printf ("Could not add ticket: %s", shishi_strerror (rc));
+	  fprintf (stderr, "Could not add ticket: %s", shishi_strerror (rc));
       }
       break;
 
@@ -1134,14 +1152,14 @@ main (int argc, char *argv[])
 	hint.endtime = arg.endtime;
 	hint.renew_till = arg.renew_till;
 	if (arg.renewable)
-	  hint.flags |= SHISHI_TKTSHINTFLAGS_RENEWABLE_TICKET;
+	  hint.tktflags |= SHISHI_TICKETFLAGS_RENEWABLE;
 	if (arg.proxiable)
-	  hint.flags |= SHISHI_TKTSHINTFLAGS_PROXIABLE_TICKET;
+	  hint.tktflags |= SHISHI_TICKETFLAGS_PROXIABLE;
 
 	tkt = shishi_tkts_get (shishi_tkts_default (handle), &hint);
 	if (!tkt)
 	  {
-	    printf ("Could not get ticket for `%s'.\n", hint.server);
+	    fprintf (stderr, "Could not get ticket for `%s'.\n", hint.server);
 	    rc = !SHISHI_OK;
 	  }
 	else
