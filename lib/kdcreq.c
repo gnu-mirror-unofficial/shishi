@@ -629,7 +629,7 @@ shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq, int options)
  * shishi_kdcreq_options_add:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ variable to set etype field in.
- * @options: integer with flags to add in KDC-REQ.
+ * @option: integer with options to add in KDC-REQ.
  *
  * Add KDC-Option to KDC-REQ.  This preserves all existing options.
  *
