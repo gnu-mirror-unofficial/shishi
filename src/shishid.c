@@ -71,6 +71,11 @@
 # include <sys/socket.h>
 #endif
 
+/* Used for the backlog argument to listen. */
+#ifndef SOMAXCONN
+# define SOMAXCONN INT_MAX
+#endif
+
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
 #endif
@@ -170,7 +175,10 @@ struct listenspec
 {
   char *str;
   int family;
+  int listening;
   struct sockaddr addr;
+  socklen_t addrlen;
+  struct sockaddr_in *sin;
   int port;
   int type;
   int sockfd;
@@ -179,13 +187,13 @@ struct listenspec
 #ifdef USE_STARTTLS
   gnutls_session session;
 #endif
+  struct listenspec *next;
 };
 
 Shishi * handle;
 Shisa * dbh;
 struct gengetopt_args_info arg;
 struct listenspec *listenspec;
-int nlistenspec;
 
 static int
 asreq1 (Shishi_as * as)
@@ -716,10 +724,8 @@ kdc_listen ()
   int i;
   int yes;
 
-  for (i = 0; i < nlistenspec; i++)
+  for (ls = listenspec; ls; ls = ls->next)
     {
-      ls = &listenspec[i];
-
       if (!arg.quiet_flag)
 	printf ("Listening on %s...", ls->str);
 
@@ -755,7 +761,7 @@ kdc_listen ()
 	  continue;
 	}
 
-      if (ls->type == SOCK_STREAM && listen (ls->sockfd, 512) != 0)
+      if (ls->type == SOCK_STREAM && listen (ls->sockfd, SOMAXCONN) != 0)
 	{
 	  if (!arg.quiet_flag)
 	    printf ("failed\n");
@@ -782,17 +788,236 @@ kdc_listen ()
   return 0;
 }
 
+static struct listenspec *
+kdc_close (struct listenspec *ls)
+{
+  struct listenspec *tmp;
+  int rc;
+
+  if (ls->sockfd)
+    {
+      if (!arg.quiet_flag)
+	printf ("Closing %s...", ls->str);
+      rc = close (ls->sockfd);
+      if (rc != 0)
+	{
+	  if (!arg.quiet_flag)
+	    printf ("failed\n");
+	  perror ("close");
+	}
+      else if (!arg.quiet_flag)
+	printf ("done\n");
+    }
+
+  if (ls->str)
+    free (ls->str);
+
+  tmp = ls->next;
+
+  free (ls);
+
+  return tmp;
+}
+
+static void
+kdc_unlisten (void)
+{
+  struct listenspec *ls = listenspec;
+
+  while (ls)
+    ls = kdc_close (ls);
+
+  listenspec = NULL;
+}
+
+static void
+kdc_handle2 (struct listenspec *ls)
+{
+  ssize_t sent_bytes, read_bytes;
+  struct sockaddr addr;
+  int rc;
+
+#ifdef USE_STARTTLS
+  if (ls->type == SOCK_STREAM &&
+      ls->bufpos == 4 &&
+      memcmp (ls->buf, "\x70\x00\x00\x01", 4) == 0)
+    {
+      const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
+
+      if (!arg.quiet_flag)
+	printf ("Trying to upgrade to TLS...\n");
+
+      sent_bytes = sendto (ls->sockfd, "\x70\x00\x00\x02", 4,
+			   0, &ls->addr, ls->addrlen);
+
+      rc = gnutls_init (&ls->session, GNUTLS_SERVER);
+      if (rc != GNUTLS_E_SUCCESS)
+	error (EXIT_FAILURE, 0, "gnutls_init %d", rc);
+      rc = gnutls_set_default_priority (ls->session);
+      if (rc != GNUTLS_E_SUCCESS)
+	error (EXIT_FAILURE, 0, "gnutls_sdp %d", rc);
+      rc = gnutls_kx_set_priority (ls->session, kx_prio);
+      if (rc != GNUTLS_E_SUCCESS)
+	error (EXIT_FAILURE, 0, "gnutls_ksp %d", rc);
+      rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_ANON,
+				   anoncred);
+      if (rc != GNUTLS_E_SUCCESS)
+	error (EXIT_FAILURE, 0, "gnutls_cs %d", rc);
+      gnutls_dh_set_prime_bits (ls->session, DH_BITS);
+      gnutls_transport_set_ptr (ls->session,
+				(gnutls_transport_ptr)
+				ls->sockfd);
+
+      rc = gnutls_handshake (ls->session);
+      if (rc < 0)
+	printf ("Handshake has failed %d: %s\n",
+		rc, gnutls_strerror (rc));
+      else
+	{
+	  if (!arg.quiet_flag)
+	    printf ("TLS successful\n");
+
+	  rc = gnutls_record_recv (ls->session, ls->buf,
+				   sizeof (ls->buf) - 1);
+
+	  if (rc == 0)
+	    {
+	      printf ("Peer has closed the GNUTLS connection\n");
+	    }
+	  else if (rc < 0)
+	    {
+	      printf ("Corrupted data(%d).\n", rc);
+	    }
+	  else if (rc > 0)
+	    {
+	      char *p;
+	      size_t plen;
+
+	      process (ls->buf, rc, &p, &plen);
+
+	      printf ("TLS process %d sending %d\n", rc, plen);
+
+	      gnutls_record_send (ls->session, p, plen);
+
+	      if (p != fatal_krberror)
+		free (p);
+	    }
+	  ls->bufpos = 0;
+	}
+      gnutls_bye (ls->session, GNUTLS_SHUT_WR);
+      gnutls_deinit (ls->session);
+    }
+  else
+#endif
+    if (ls->type == SOCK_DGRAM ||
+	(ls->bufpos > 4 &&
+	 ntohl (*(int *) ls->buf) + 4 == ls->bufpos))
+      {
+	char *p;
+	size_t plen;
+
+	if (ls->type == SOCK_STREAM)
+	  process (ls->buf + 4, ls->bufpos - 4, &p, &plen);
+	else
+	  process (ls->buf, ls->bufpos, &p, &plen);
+
+	if (p && plen > 0)
+	  {
+	    if (ls->type == SOCK_STREAM)
+	      {
+		uint32_t len = htonl (plen) + 4;
+		do
+		  sent_bytes = sendto (ls->sockfd, &len, 4,
+				       0, &ls->addr, ls->addrlen);
+		while (sent_bytes == -1 && errno == EAGAIN);
+	      }
+
+	    do
+	      sent_bytes = sendto (ls->sockfd, p, plen,
+				   0, &ls->addr, ls->addrlen);
+	    while (sent_bytes == -1 && errno == EAGAIN);
+
+	    if (sent_bytes < 0)
+	      perror ("write");
+	    else if ((size_t) sent_bytes > plen)
+	      fprintf (stderr, "wrote %db but buffer only %db",
+		       sent_bytes, plen);
+	    else if ((size_t) sent_bytes < plen)
+	      fprintf (stderr,
+		       "short write (%db) writing %d bytes\n",
+		       sent_bytes, plen);
+
+	    if (p != fatal_krberror)
+	      free (p);
+	  }
+
+	ls->bufpos = 0;
+      }
+}
+
+static void
+kdc_read (struct listenspec *ls, struct listenspec *last)
+{
+  ssize_t read_bytes;
+
+  read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
+			 sizeof(ls->buf) - ls->bufpos, 0,
+			 &ls->addr, &ls->addrlen);
+
+  if (read_bytes < 0 || (read_bytes == 0 && ls->type == SOCK_STREAM))
+    {
+      if (read_bytes == 0)
+	{
+	  if (!arg.quiet_flag)
+	    printf ("Peer %s disconnected\n", ls->str);
+	}
+      else
+	error (0, errno, "Error from recvfrom (%d)", read_bytes);
+      last->next = kdc_close (ls);
+      return;
+    }
+
+  ls->bufpos += read_bytes;
+  ls->buf[ls->bufpos] = '\0';
+
+  if (!arg.quiet_flag)
+    printf ("Has %d bytes from %s on socket %d\n",
+	    ls->bufpos, ls->str, ls->sockfd);
+
+  kdc_handle2 (ls);
+}
+
+static void
+kdc_accept (struct listenspec *ls, struct listenspec *last)
+{
+  struct listenspec *newls;
+
+  newls = xzalloc (sizeof (*newls));
+  newls->next = ls->next;
+  ls->next = newls;
+
+  newls->bufpos = 0;
+  newls->type = ls->type;
+  newls->addrlen = sizeof (newls->addr);
+  newls->sockfd = accept (ls->sockfd, &newls->addr, &newls->addrlen);
+  newls->sin = (struct sockaddr_in *) &newls->addr;
+  asprintf (&newls->str, "%s peer %s", ls->str,
+	    inet_ntoa (newls->sin->sin_addr));
+
+  if (!arg.quiet_flag)
+    printf ("Accepted socket %d from socket %d as %s\n",
+	    newls->sockfd, ls->sockfd, newls->str);
+}
+
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
+
 static int
 kdc_loop (void)
 {
-  struct listenspec *ls;
+  struct listenspec *ls, *last;
   fd_set readfds;
-  struct sockaddr addr;
-  socklen_t length = sizeof (addr);
-  int maxfd = 0;
+  int maxfd = 0, i;
   int rc;
-  int i;
-  ssize_t sent_bytes, read_bytes;
 
   while (!quit)
     {
@@ -800,11 +1025,12 @@ kdc_loop (void)
 	{
 	  FD_ZERO (&readfds);
 	  maxfd = 0;
-	  for (i = 0; i < nlistenspec; i++)
+	  for (ls = listenspec; ls; ls = ls->next)
 	    {
-	      if (listenspec[i].sockfd >= maxfd)
-		maxfd = listenspec[i].sockfd + 1;
-	      FD_SET (listenspec[i].sockfd, &readfds);
+	      maxfd = MAX(maxfd, ls->sockfd + 1);
+	      if (!arg.quiet_flag)
+		printf ("Listening on socket %d\n", ls->sockfd);
+	      FD_SET (ls->sockfd, &readfds);
 	    }
 	}
       while ((rc = select (maxfd, &readfds, NULL, NULL, NULL)) == 0);
@@ -816,176 +1042,12 @@ kdc_loop (void)
 	  continue;
 	}
 
-      for (i = 0; i < nlistenspec; i++)
-	if (FD_ISSET (listenspec[i].sockfd, &readfds))
-	  {
-	    if (listenspec[i].type == SOCK_STREAM &&
-		listenspec[i].family != -1)
-	      {
-		struct sockaddr_in *sin;
-		char *str;
-
-		fprintf (stderr, "New connection on %s...",
-			 listenspec[i].str);
-
-		/* XXX search for closed fd's before allocating new entry */
-		listenspec = xrealloc (listenspec, sizeof (*listenspec) *
-				       (nlistenspec + 1));
-
-		nlistenspec++;
-		ls = &listenspec[nlistenspec - 1];
-		ls->bufpos = 0;
-		ls->type = listenspec[i].type;
-		ls->family = -1;
-		length = sizeof (ls->addr);
-		ls->sockfd = accept (listenspec[i].sockfd, &ls->addr, &length);
-		sin = (struct sockaddr_in *) &ls->addr;
-		str = inet_ntoa (sin->sin_addr);
-		asprintf (&ls->str, "%s peer %s", listenspec[i].str, str);
-		puts (ls->str);
-	      }
-	    else
-	      {
-		ls = &listenspec[i];
-
-		read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
-				       BUFSIZ - ls->bufpos, 0, &addr,
-				       &length);
-
-		if (listenspec[i].type == SOCK_STREAM &&
-		    listenspec[i].family == -1 && read_bytes == 0)
-		  {
-		    printf ("Peer %s disconnected\n", ls->str);
-		    close (ls->sockfd);
-		    ls->sockfd = 0;
-		  }
-		else if (read_bytes > 0)
-		  {
-		    ls->bufpos += read_bytes;
-		    ls->buf[ls->bufpos] = '\0';
-		  }
-
-		printf ("Has %d bytes from %s\n", ls->bufpos, ls->str);
-
-#ifdef USE_STARTTLS
-		if (listenspec[i].type == SOCK_STREAM &&
-		    ls->bufpos == 4 &&
-		    memcmp (ls->buf, "\x70\x00\x00\x01", 4) == 0)
-		  {
-		    const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
-
-		    if (!arg.quiet_flag)
-		      printf ("Trying to upgrade to TLS...\n");
-
-		    sent_bytes = sendto (ls->sockfd, "\x70\x00\x00\x02", 4,
-					 0, &addr, length);
-
-		    rc = gnutls_init (&ls->session, GNUTLS_SERVER);
-		    if (rc != GNUTLS_E_SUCCESS)
-		      error (EXIT_FAILURE, 0, "gnutls_init %d", rc);
-		    rc = gnutls_set_default_priority (ls->session);
-		    if (rc != GNUTLS_E_SUCCESS)
-		      error (EXIT_FAILURE, 0, "gnutls_sdp %d", rc);
-		    rc = gnutls_kx_set_priority (ls->session, kx_prio);
-		    if (rc != GNUTLS_E_SUCCESS)
-		      error (EXIT_FAILURE, 0, "gnutls_ksp %d", rc);
-		    rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_ANON,
-						 anoncred);
-		    if (rc != GNUTLS_E_SUCCESS)
-		      error (EXIT_FAILURE, 0, "gnutls_cs %d", rc);
-		    gnutls_dh_set_prime_bits (ls->session, DH_BITS);
-		    gnutls_transport_set_ptr (ls->session,
-					      (gnutls_transport_ptr)
-					      ls->sockfd);
-
-		    rc = gnutls_handshake (ls->session);
-		    if (rc < 0)
-		      printf ("Handshake has failed %d: %s\n",
-			      rc, gnutls_strerror (rc));
-		    else
-		      {
-			if (!arg.quiet_flag)
-			  printf ("TLS successful\n");
-
-			bzero (ls->buf, BUFSIZ);
-			rc = gnutls_record_recv (ls->session, ls->buf,
-						 sizeof (ls->buf) - 1);
-
-			if (rc == 0)
-			  {
-			    printf ("- Peer has closed the GNUTLS connection\n");
-			  }
-			else if (rc < 0)
-			  {
-			    printf ("*** Corrupted data(%d). Closing.\n\n", rc);
-			  }
-			else if (rc > 0)
-			  {
-			    char *p;
-			    size_t plen;
-
-			    process (ls->buf, rc, &p, &plen);
-
-			    printf ("TLS process %d sending %d\n", rc, plen);
-
-			    gnutls_record_send (ls->session, p, plen);
-
-			    if (p != fatal_krberror)
-			      free (p);
-			  }
-			ls->bufpos = 0;
-		      }
-		    gnutls_bye (ls->session, GNUTLS_SHUT_WR);
-		    gnutls_deinit (ls->session);
-		  }
-		else
-#endif
-		if (listenspec[i].type == SOCK_DGRAM ||
-		      (ls->bufpos > 4 &&
-			 ntohl (*(int *) ls->buf) + 4 == ls->bufpos))
-		  {
-		    char *p;
-		    size_t plen;
-
-		    if (listenspec[i].type == SOCK_STREAM)
-		      process (ls->buf + 4, ls->bufpos - 4, &p, &plen);
-		    else
-		      process (ls->buf, ls->bufpos, &p, &plen);
-
-		    if (p && plen > 0)
-		      {
-			if (listenspec[i].type == SOCK_STREAM)
-			  {
-			    uint32_t len = htonl (plen) + 4;
-			    do
-			      sent_bytes = sendto (ls->sockfd, &len, 4,
-						   0, &addr, length);
-			    while (sent_bytes == -1 && errno == EAGAIN);
-			  }
-
-			do
-			  sent_bytes = sendto (ls->sockfd, p, plen,
-					       0, &addr, length);
-			while (sent_bytes == -1 && errno == EAGAIN);
-
-			if (sent_bytes < 0)
-			  perror ("write");
-			else if ((size_t) sent_bytes > plen)
-			  fprintf (stderr, "wrote %db but buffer only %db",
-				   sent_bytes, plen);
-			else if ((size_t) sent_bytes < plen)
-			  fprintf (stderr,
-				   "short write (%db) writing %d bytes\n",
-				   sent_bytes, plen);
-
-			if (p != fatal_krberror)
-			  free (p);
-		      }
-
-		    ls->bufpos = 0;
-		  }
-	      }
-	  }
+      for (ls = listenspec, last = NULL; ls; last = ls, ls = ls->next)
+	if (FD_ISSET (ls->sockfd, &readfds))
+	  if (ls->type == SOCK_STREAM && ls->listening)
+	    kdc_accept (ls, last);
+	  else
+	    kdc_read (ls, last);
     }
 
   return 0;
@@ -1019,29 +1081,6 @@ kdc_setuid (void)
 	    passwd->pw_name, passwd->pw_uid);
 
   return 0;
-}
-
-static void
-kdc_unlisten (void)
-{
-  int i;
-  int rc;
-
-  for (i = 0; i < nlistenspec; i++)
-    if (listenspec[i].sockfd)
-      {
-	if (!arg.quiet_flag)
-	  printf ("Closing %s...", listenspec[i].str);
-	rc = close (listenspec[i].sockfd);
-	if (rc != 0)
-	  {
-	    if (!arg.quiet_flag)
-	      printf ("failed\n");
-	    perror ("close");
-	  }
-	else if (!arg.quiet_flag)
-	  printf ("done\n");
-      }
 }
 
 static int
@@ -1093,12 +1132,13 @@ parse_listen (char *listen)
       struct sockaddr_in6 *sin6;
 #endif
 
-      nlistenspec++;
-      listenspec = xrealloc (listenspec, sizeof (*listenspec) * nlistenspec);
-      ls = &listenspec[nlistenspec - 1];
-      memset (ls, 0, sizeof (*ls));
+      ls = xzalloc (sizeof (*ls));
+      ls->next = listenspec;
+      listenspec = ls;
+
       ls->str = strdup (val);
       ls->bufpos = 0;
+      ls->listening = 1;
       sin = (struct sockaddr_in *) &ls->addr;
 #ifdef WITH_IPV6
       sin6 = (struct sockaddr_in6 *) &ls->addr;
