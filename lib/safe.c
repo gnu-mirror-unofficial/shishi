@@ -123,6 +123,8 @@ shishi_safe_done (Shishi_safe * safe)
  * shishi_safe_key:
  * @safe: structure that holds information about SAFE exchange
  *
+ * Get key structured from SAFE exchange.
+ *
  * Return value: Returns the key used in the SAFE exchange, or NULL if
  *               not yet set or an error occured.
  **/
@@ -148,6 +150,8 @@ shishi_safe_key_set (Shishi_safe * safe, Shishi_key * key)
 /**
  * shishi_safe_safe:
  * @safe: structure that holds information about SAFE exchange
+ *
+ * Get ASN.1 SAFE structured from SAFE exchange.
  *
  * Return value: Returns the ASN.1 safe in the SAFE exchange, or NULL if
  *               not yet set or an error occured.

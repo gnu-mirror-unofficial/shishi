@@ -1,4 +1,4 @@
-/* encticketpart.c	encrypted ticket part handling
+/* encticketpart.c --- Encrypted ticket part handling.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.

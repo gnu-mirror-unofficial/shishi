@@ -107,6 +107,8 @@ static const struct Authorization_aliases authorization_aliases[] = {
  * shishi_authorization_parse:
  * @authorization: name of authorization type, e.g. "basic".
  *
+ * Parse authorization type name.
+ *
  * Return value: Return authorization type corresponding to a string.
  **/
 int

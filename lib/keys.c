@@ -1,5 +1,5 @@
-/* keys.c	Functions for managing keys stored in files.
- * Copyright (C) 2002, 2003  Simon Josefsson
+/* keys.c --- Functions for managing keys stored in files.
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -27,6 +27,9 @@
  * @filename: file to read keys from.
  * @server: server name to get key for.
  * @realm: realm of server to get key for.
+ *
+ * Get keys that match specified @server and @realm from the key set
+ * file @filename.
  *
  * Return value: Returns the key for specific server and realm, read
  * from the indicated file, or NULL if no key could be found or an
@@ -88,9 +91,11 @@ shishi_keys_for_serverrealm_in_file (Shishi * handle,
  * @filename: file to read keys from.
  * @server: server name to get key for.
  *
+ * Get key for specified @server from @filename.
+ *
  * Return value: Returns the key for specific server, read from the
- * indicated file, or NULL if no key could be found or an error
- * encountered.
+ *   indicated file, or NULL if no key could be found or an error
+ *   encountered.
  **/
 Shishi_key *
 shishi_keys_for_server_in_file (Shishi * handle,
@@ -105,6 +110,8 @@ shishi_keys_for_server_in_file (Shishi * handle,
  * @filename: file to read keys from.
  * @service: service to get key for.
  * @realm: realm of server to get key for, or NULL for default realm.
+ *
+ * Get key for specified @service and @realm from @filename.
  *
  * Return value: Returns the key for the server
  * "SERVICE/HOSTNAME@REALM" (where HOSTNAME is the current system's

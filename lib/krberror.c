@@ -953,6 +953,8 @@ shishi_krberror_errorcode (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: KRB-ERROR structure with error code.
  *
+ * Get error code from KRB-ERROR, without error checking.
+ *
  * Return value: Return error code (see shishi_krberror_errorcode())
  *               directly, or -1 on error.
  **/
@@ -1257,6 +1259,8 @@ struct krb_error_msgs _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
  * shishi_krberror_errorcode_message:
  * @handle: shishi handle as allocated by shishi_init().
  * @errorcode: integer KRB-ERROR error code.
+ *
+ * Get human readable string describing KRB-ERROR code.
  *
  * Return value: Return a string describing error code.  This function
  *               will always return a string even if the error code

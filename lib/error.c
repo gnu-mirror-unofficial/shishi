@@ -1,4 +1,4 @@
-/* error.c	error handling functions
+/* error.c --- Error handling functions.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -85,7 +85,9 @@ struct shishi_error_msgs _shishi_error_messages[] = {
 
 /**
  * shishi_strerror:
- * @err: shishi error code
+ * @err: shishi error code.
+ *
+ * Convert return code to human readable string.
  *
  * Return value: Returns a pointer to a statically allocated string
  * containing a description of the error with the error value @err.

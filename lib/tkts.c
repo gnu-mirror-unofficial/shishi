@@ -1,4 +1,4 @@
-/* tkts.c	Ticket set handling.
+/* tkts.c --- Ticket set handling.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -585,6 +585,8 @@ shishi_tkts_print (Shishi_tkts * tkts, FILE * fh)
  * shishi_tkt_match_p:
  * @tkt: ticket to test hints on.
  * @hint: structure with characteristics of ticket to be found.
+ *
+ * Test if a ticket matches specified hints.
  *
  * Return value: Returns 0 iff ticket fails to match given criteria.
  **/

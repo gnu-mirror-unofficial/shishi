@@ -1,4 +1,4 @@
-/* key.c	Key related functions.
+/* key.c --- Key related functions.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -35,6 +35,9 @@ struct Shishi_key
  * shishi_key_principal:
  * @key: structure that holds key information
  *
+ * Get the principal part of the key owner principal name, i.e.,
+ * except the realm.
+ *
  * Return value: Returns the principal owning the key.  (Not a copy of
  * it, so don't modify or deallocate it.)
  **/
@@ -67,6 +70,8 @@ shishi_key_principal_set (Shishi_key * key, const char *principal)
 /**
  * shishi_key_realm:
  * @key: structure that holds key information
+ *
+ * Get the realm part of the key owner principal name.
  *
  * Return value: Returns the realm for the principal owning the key.
  * (Not a copy of it, so don't modify or deallocate it.)
@@ -101,6 +106,8 @@ shishi_key_realm_set (Shishi_key * key, const char *realm)
  * shishi_key_type:
  * @key: structure that holds key information
  *
+ * Get key type.
+ *
  * Return value: Returns the type of key as an integer as described in
  * the standard.
  **/
@@ -126,6 +133,8 @@ shishi_key_type_set (Shishi_key * key, int32_t type)
 /**
  * shishi_key_value:
  * @key: structure that holds key information
+ *
+ * Get the raw key bytes.
  *
  * Return value: Returns the key value as a pointer which is valid
  * throughout the lifetime of the key structure.
@@ -155,6 +164,8 @@ shishi_key_value_set (Shishi_key * key, const char *value)
 /**
  * shishi_key_version:
  * @key: structure that holds key information
+ *
+ * Get the "kvno" (key version) of key.
  *
  * Return value: Returns the version of key ("kvno").
  **/

@@ -96,7 +96,7 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
 }
 
 /**
- * shishi_time_get:
+ * shishi_time:
  * @handle: shishi handle as allocated by shishi_init().
  * @node: ASN.1 node to get time from.
  * @field: Name of field in ASN.1 node to get time from.

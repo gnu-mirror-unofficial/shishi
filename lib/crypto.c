@@ -516,6 +516,8 @@ static cipherinfo *ciphers[] = {
  * shishi_cipher_supported_p:
  * @type: encryption type, see Shishi_etype.
  *
+ * Find out if cipher is supported.
+ *
  * Return value: Return 0 iff cipher is unsupported.
  **/
 int
@@ -533,6 +535,8 @@ shishi_cipher_supported_p (int32_t type)
 /**
  * shishi_cipher_name:
  * @type: encryption type, see Shishi_etype.
+ *
+ * Read humanly readable string for cipher.
  *
  * Return value: Return name of encryption type,
  * e.g. "des3-cbc-sha1-kd", as defined in the standards.
@@ -557,6 +561,8 @@ shishi_cipher_name (int32_t type)
  * shishi_cipher_blocksize:
  * @type: encryption type, see Shishi_etype.
  *
+ * Get block size for cipher.
+ *
  * Return value: Return block size for encryption type, as defined in
  * the standards.
  **/
@@ -575,6 +581,8 @@ shishi_cipher_blocksize (int32_t type)
 /**
  * shishi_cipher_confoundersize:
  * @type: encryption type, see Shishi_etype.
+ *
+ * Get length of confounder for cipher.
  *
  * Return value: Returns the size of the confounder (random data) for
  * encryption type, as defined in the standards.
@@ -595,6 +603,8 @@ shishi_cipher_confoundersize (int32_t type)
  * shishi_cipher_keylen:
  * @type: encryption type, see Shishi_etype.
  *
+ * Get key length for cipher.
+ *
  * Return value: Return length of key used for the encryption type, as
  * defined in the standards.
  **/
@@ -614,6 +624,8 @@ shishi_cipher_keylen (int32_t type)
  * shishi_cipher_randomlen:
  * @type: encryption type, see Shishi_etype.
  *
+ * Get length of random data for cipher.
+ *
  * Return value: Return length of random used for the encryption type,
  * as defined in the standards.
  **/
@@ -632,6 +644,8 @@ shishi_cipher_randomlen (int32_t type)
 /**
  * shishi_cipher_defaultcksumtype:
  * @type: encryption type, see Shishi_etype.
+ *
+ * Get the default checksum associated with cipher.
  *
  * Return value: Return associated checksum mechanism for the
  * encryption type, as defined in the standards.
@@ -776,6 +790,8 @@ static checksuminfo *checksums[] = {
  * shishi_checksum_supported_p:
  * @type: checksum type, see Shishi_cksumtype.
  *
+ * Find out whether checksum is supported.
+ *
  * Return value: Return 0 iff checksum is unsupported.
  **/
 int
@@ -793,6 +809,8 @@ shishi_checksum_supported_p (int32_t type)
 /**
  * shishi_checksum_name:
  * @type: checksum type, see Shishi_cksumtype.
+ *
+ * Get name of checksum.
  *
  * Return value: Return name of checksum type,
  * e.g. "hmac-sha1-96-aes256", as defined in the standards.
@@ -817,6 +835,8 @@ shishi_checksum_name (int32_t type)
  * shishi_checksum_cksumlen:
  * @type: checksum type, see Shishi_cksumtype.
  *
+ * Get length of checksum output.
+ *
  * Return value: Return length of checksum used for the checksum type,
  * as defined in the standards.
  **/
@@ -835,6 +855,8 @@ shishi_checksum_cksumlen (int32_t type)
 /**
  * shishi_checksum_parse:
  * @checksum: name of checksum type, e.g. "hmac-sha1-96-aes256".
+ *
+ * Get checksum number by parsing a string.
  *
  * Return value: Return checksum type, see Shishi_cksumtype,
  * corresponding to a string.

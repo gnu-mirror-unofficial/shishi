@@ -1,4 +1,4 @@
-/* enckdcreppart.c	Key distribution encrypted reply part functions
+/* enckdcreppart.c --- Key distribution encrypted reply part functions
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.

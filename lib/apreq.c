@@ -648,12 +648,12 @@ shishi_apreq_options_remove (Shishi * handle,
 }
 
 /**
- * shishi_kdcrep_get_enc_part_etype:
+ * shishi_apreq_get_authenticator_etype:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcrep: KDC-REP variable to get value from.
+ * @aprep: AP-REP variable to get value from.
  * @etype: output variable that holds the value.
  *
- * Extract KDC-REP.enc-part.etype.
+ * Extract AP-REP.authenticator.etype.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/

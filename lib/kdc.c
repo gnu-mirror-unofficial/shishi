@@ -1,4 +1,4 @@
-/* kdc.c	Key distribution (AS/TGS) functions
+/* kdc.c --- Key distribution (AS/TGS) functions.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.

@@ -1,4 +1,4 @@
-/* crypto-null.c	NULL crypto functions
+/* crypto-null.c --- NULL crypto functions
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.

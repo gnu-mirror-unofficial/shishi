@@ -169,6 +169,8 @@ shishi_tkt_build (Shishi_tkt * tkt, Shishi_key * key)
  * shishi_tkt_ticket:
  * @tkt: input variable with ticket info.
  *
+ * Get ASN.1 Ticket structure from ticket.
+ *
  * Return value: Returns actual ticket.
  **/
 Shishi_asn1
@@ -196,6 +198,8 @@ shishi_tkt_ticket_set (Shishi_tkt * tkt, Shishi_asn1 ticket)
  * shishi_tkt_enckdcreppart:
  * @tkt: input variable with ticket info.
  *
+ * Get ASN.1 EncKDCRepPart structure from ticket.
+ *
  * Return value: Returns auxilliary ticket information.
  **/
 Shishi_asn1
@@ -205,7 +209,7 @@ shishi_tkt_enckdcreppart (Shishi_tkt * tkt)
 }
 
 /**
- * shishi_tkt_encticketreppart_set:
+ * shishi_tkt_enckdcreppart_set:
  * @tkt: structure that holds information about Ticket exchange
  * @enckdcreppart: EncKDCRepPart to store in Ticket.
  *
@@ -223,6 +227,8 @@ shishi_tkt_enckdcreppart_set (Shishi_tkt * tkt, Shishi_asn1 enckdcreppart)
  * shishi_tkt_kdcrep:
  * @tkt: input variable with ticket info.
  *
+ * Get ASN.1 KDCRep structure from ticket.
+ *
  * Return value: Returns KDC-REP information.
  **/
 Shishi_asn1
@@ -234,6 +240,8 @@ shishi_tkt_kdcrep (Shishi_tkt * tkt)
 /**
  * shishi_tkt_encticketpart:
  * @tkt: input variable with ticket info.
+ *
+ * Get ASN.1 EncTicketPart structure from ticket.
  *
  * Return value: Returns EncTicketPart information.
  **/
@@ -262,7 +270,12 @@ shishi_tkt_encticketpart_set (Shishi_tkt * tkt, Shishi_asn1 encticketpart)
  * shishi_tkt_key:
  * @tkt: input variable with ticket info.
  *
- * Return value: Returns key extracted from enckdcreppart.
+ * Get key used in ticket, by looking first in EncKDCRepPart and then
+ * in EncTicketPart.  If key is already populated, it is not extracted
+ * again.
+ *
+ * Return value: Returns key extracted from EncKDCRepPart or
+ * EncTicketPart.
  **/
 Shishi_key *
 shishi_tkt_key (Shishi_tkt * tkt)

@@ -1,4 +1,4 @@
-/* ticket.c	low-level ASN.1 Ticket handling
+/* ticket.c --- Low-level ASN.1 Ticket handling.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.

@@ -507,6 +507,9 @@ shishi_cfg_default_userdirectory (Shishi * handle)
  * @handle: Shishi library handle create by shishi_init().
  * @file: basename of file to find in user directory.
  *
+ * Get the full path to specified @file in the users' configuration
+ * directory.
+ *
  * Return value: Return full path to given relative filename, relative
  *   to the user specific Shishi configuration directory as returned
  *   by shishi_cfg_default_userdirectory() (typically $HOME/.shishi).
@@ -526,6 +529,9 @@ shishi_cfg_userdirectory_file (Shishi * handle, const char *file)
 /**
  * shishi_cfg_default_userfile:
  * @handle: Shishi library handle create by shishi_init().
+ *
+ * Get filename of default user configuration file, typically
+ * $HOME/shishi.conf.
  *
  * Return value: Return user configuration filename.
  **/

@@ -1,4 +1,4 @@
-/* ap.c	AP functions
+/* ap.c --- AP functions
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -545,6 +545,8 @@ shishi_ap_tktoptionsasn1usage (Shishi * handle,
  * shishi_ap_tkt:
  * @ap: structure that holds information about AP exchange
  *
+ * Get Ticket from AP exchange.
+ *
  * Return value: Returns the ticket from the AP exchange, or NULL if
  *               not yet set or an error occured.
  **/
@@ -574,6 +576,8 @@ shishi_ap_tkt_set (Shishi_ap * ap, Shishi_tkt * tkt)
  * @len: on input, maximum length of output array that holds
  *       authenticator checksum data, on output actual length of
  *       output array that holds authenticator checksum data.
+ *
+ * Get checksum data from Authenticator.
  *
  * Return value: Returns SHISHI_OK if successful, or
  * SHISHI_TOO_SMALL_BUFFER if buffer provided was too small.
@@ -669,6 +673,8 @@ shishi_ap_authenticator_cksumtype_set (Shishi_ap * ap, int32_t cksumtype)
  * shishi_ap_authenticator:
  * @ap: structure that holds information about AP exchange
  *
+ * Get ASN.1 Authenticator structure from AP exchange.
+ *
  * Return value: Returns the Authenticator from the AP exchange, or
  *               NULL if not yet set or an error occured.
  **/
@@ -697,6 +703,8 @@ shishi_ap_authenticator_set (Shishi_ap * ap, Shishi_asn1 authenticator)
 /**
  * shishi_ap_req:
  * @ap: structure that holds information about AP exchange
+ *
+ * Get ASN.1 AP-REQ structure from AP exchange.
  *
  * Return value: Returns the AP-REQ from the AP exchange, or NULL if
  *               not yet set or an error occured.
@@ -1046,6 +1054,8 @@ shishi_ap_key (Shishi_ap * ap)
  * shishi_ap_rep:
  * @ap: structure that holds information about AP exchange
  *
+ * Get ASN.1 AP-REP structure from AP exchange.
+ *
  * Return value: Returns the AP-REP from the AP exchange, or NULL if
  *               not yet set or an error occured.
  **/
@@ -1278,8 +1288,10 @@ shishi_ap_rep_verify_asn1 (Shishi_ap * ap, Shishi_asn1 aprep)
 }
 
 /**
- * shishi_ap_rep:
+ * shishi_ap_encapreppart:
  * @ap: structure that holds information about AP exchange
+ *
+ * Get ASN.1 EncAPRepPart structure from AP exchange.
  *
  * Return value: Returns the EncAPREPPart from the AP exchange, or
  *               NULL if not yet set or an error occured.

@@ -135,6 +135,8 @@ shishi_priv_done (Shishi_priv * priv)
  * shishi_priv_key:
  * @priv: structure that holds information about PRIV exchange
  *
+ * Get key from PRIV exchange.
+ *
  * Return value: Returns the key used in the PRIV exchange, or NULL if
  *               not yet set or an error occured.
  **/
@@ -160,6 +162,8 @@ shishi_priv_key_set (Shishi_priv * priv, Shishi_key * key)
 /**
  * shishi_priv_priv:
  * @priv: structure that holds information about PRIV exchange
+ *
+ * Get ASN.1 PRIV structure in PRIV exchange.
  *
  * Return value: Returns the ASN.1 priv in the PRIV exchange, or NULL if
  *               not yet set or an error occured.
@@ -238,6 +242,8 @@ shishi_priv_priv_der_set (Shishi_priv * priv, char *der, size_t derlen)
 /**
  * shishi_priv_encprivpart:
  * @priv: structure that holds information about PRIV exchange
+ *
+ * Get ASN.1 EncPrivPart structure from PRIV exchange.
  *
  * Return value: Returns the ASN.1 encprivpart in the PRIV exchange, or NULL if
  *               not yet set or an error occured.

@@ -1,4 +1,4 @@
-/* tgs.c	High level client TGS functions
+/* tgs.c --- High level client TGS functions.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -91,11 +91,11 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
 }
 
 /**
- * shishi_as_done:
- * @as: structure that holds information about AS exchange
+ * shishi_tgs_done:
+ * @tgs: structure that holds information about AS exchange
  *
- * Deallocate resources associated with AS exchange.  This should be
- * called by the application when it no longer need to utilize the AS
+ * Deallocate resources associated with TGS exchange.  This should be
+ * called by the application when it no longer need to utilize the TGS
  * exchange handle.
  **/
 void
@@ -112,6 +112,8 @@ shishi_tgs_done (Shishi_tgs * tgs)
 /**
  * shishi_tgs_tgtkt:
  * @tgs: structure that holds information about TGS exchange
+ *
+ * Get Ticket-granting-ticket from TGS exchange.
  *
  * Return value: Returns the ticket-granting-ticket used in the TGS
  *               exchange, or NULL if not yet set or an error occured.
@@ -139,6 +141,8 @@ shishi_tgs_tgtkt_set (Shishi_tgs * tgs, Shishi_tkt * tgtkt)
  * shishi_tgs_ap:
  * @tgs: structure that holds information about TGS exchange
  *
+ * Get the AP from TGS exchange.
+ *
  * Return value: Returns the AP exchange (part of TGS-REQ) from the
  *               TGS exchange, or NULL if not yet set or an error
  *               occured.
@@ -152,6 +156,8 @@ shishi_tgs_ap (Shishi_tgs * tgs)
 /**
  * shishi_tgs_req:
  * @tgs: structure that holds information about TGS exchange
+ *
+ * Get the TGS-REQ from TGS exchange.
  *
  * Return value: Returns the generated TGS-REQ from the TGS exchange,
  *               or NULL if not yet set or an error occured.
@@ -325,6 +331,8 @@ shishi_tgs_req_build (Shishi_tgs * tgs)
  * shishi_tgs_rep:
  * @tgs: structure that holds information about TGS exchange
  *
+ * Get TGS-REP from TGS exchange.
+ *
  * Return value: Returns the received TGS-REP from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
@@ -473,6 +481,8 @@ shishi_tgs_rep_build (Shishi_tgs * tgs, int keyusage, Shishi_key * key)
  * shishi_tgs_krberror:
  * @tgs: structure that holds information about TGS exchange
  *
+ * Get KRB-ERROR from TGS exchange.
+ *
  * Return value: Returns the received TGS-REP from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
@@ -523,6 +533,8 @@ shishi_tgs_krberror_set (Shishi_tgs * tgs, Shishi_asn1 krberror)
 /**
  * shishi_tgs_tkt:
  * @tgs: structure that holds information about TGS exchange
+ *
+ * Get Ticket from TGS exchange.
  *
  * Return value: Returns the newly aquired ticket from the TGS
  *               exchange, or NULL if not yet set or an error occured.

@@ -1,4 +1,4 @@
-/* as.c		High level client AS functions
+/* as.c --- High level client AS functions
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -117,6 +117,8 @@ shishi_as_done (Shishi_as * as)
  * shishi_as_asreq:
  * @as: structure that holds information about AS exchange
  *
+ * Get ASN.1 AS-REQ structure from AS exchange.
+ *
  * Return value: Returns the generated AS-REQ packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
@@ -213,6 +215,8 @@ shishi_as_req_der_set (Shishi_as * as, char *der, size_t derlen)
 /**
  * shishi_as_rep:
  * @as: structure that holds information about AS exchange
+ *
+ * Get ASN.1 AS-REP structure from AS exchange.
  *
  * Return value: Returns the received AS-REP packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
@@ -440,6 +444,8 @@ shishi_as_rep_der_set (Shishi_as * as, char *der, size_t derlen)
  * shishi_as_get_krberror:
  * @as: structure that holds information about AS exchange
  *
+ * Get ASN.1 KRB-ERROR structure from AS exchange.
+ *
  * Return value: Returns the received KRB-ERROR packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
@@ -490,6 +496,8 @@ shishi_as_krberror_set (Shishi_as * as, Shishi_asn1 krberror)
 /**
  * shishi_as_get_tkt:
  * @as: structure that holds information about AS exchange
+ *
+ * Get Ticket in AS exchange.
  *
  * Return value: Returns the newly aquired tkt from the AS
  *               exchange, or NULL if not yet set or an error occured.

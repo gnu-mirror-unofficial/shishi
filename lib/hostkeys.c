@@ -1,4 +1,4 @@
-/* hostkeys.c	Functions for managing hostkeys stored in files.
+/* hostkeys.c --- Functions for managing hostkeys stored in files.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -24,6 +24,8 @@
 /**
  * shishi_hostkeys_default_file:
  * @handle: Shishi library handle create by shishi_init().
+ *
+ * Get file name of default host key file.
  *
  * Return value: Returns the default host key filename used in the
  * library.  (Not a copy of it, so don't modify or deallocate it.)
@@ -69,6 +71,8 @@ shishi_hostkeys_default_file_set (Shishi * handle, const char *hostkeysfile)
  * @handle: Shishi library handle create by shishi_init().
  * @server: server name to get key for
  *
+ * Get host key for @server.
+ *
  * Return value: Returns the key for specific server, read from the
  * default host keys file (see shishi_hostkeys_default_file()), or
  * NULL if no key could be found or an error encountered.
@@ -86,6 +90,8 @@ shishi_hostkeys_for_server (Shishi * handle, const char *server)
  * @handle: Shishi library handle create by shishi_init().
  * @server: server name to get key for
  * @realm: realm of server to get key for.
+ *
+ * Get host key for @server in @realm.
  *
  * Return value: Returns the key for specific server and realm, read
  * from the default host keys file (see
@@ -106,6 +112,8 @@ shishi_hostkeys_for_serverrealm (Shishi * handle,
  * @service: service to get key for.
  * @realm: realm of server to get key for, or NULL for default realm.
  *
+ * Get host key for @service on current host in @realm.
+ *
  * Return value: Returns the key for the server
  * "SERVICE/HOSTNAME@REALM" (where HOSTNAME is the current system's
  * hostname), read from the default host keys file (see
@@ -124,6 +132,8 @@ shishi_hostkeys_for_localservicerealm (Shishi * handle,
  * shishi_hostkeys_for_localservice
  * @handle: Shishi library handle create by shishi_init().
  * @service: service to get key for.
+ *
+ * Get host key for @service on current host in default realm.
  *
  * Return value: Returns the key for the server "SERVICE/HOSTNAME"
  * (where HOSTNAME is the current system's hostname), read from the
