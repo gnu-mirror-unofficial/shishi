@@ -494,10 +494,6 @@ OM_uint32 gss_wrap
                gss_buffer_t            /* output_message_buffer */
               );
 
-
-
-
-
 OM_uint32 gss_unwrap
               (OM_uint32 *,             /* minor_status */
                const gss_ctx_id_t,     /* context_handle */
@@ -506,8 +502,6 @@ OM_uint32 gss_unwrap
                int *,                  /* conf_state */
                gss_qop_t *             /* qop_state */
               );
-
-
 
 OM_uint32 gss_display_status
               (OM_uint32 *,             /* minor_status */
@@ -543,8 +537,6 @@ OM_uint32 gss_import_name
                const gss_OID,          /* input_name_type */
                gss_name_t *            /* output_name */
               );
-
-
 
 OM_uint32 gss_export_name
               (OM_uint32 *,            /* minor_status */
@@ -587,12 +579,6 @@ OM_uint32 gss_inquire_context (
                int *,                  /* locally_initiated */
                int *                   /* open */
               );
-
-
-
-
-
-
 
 OM_uint32 gss_wrap_size_limit (
                OM_uint32 *,            /* minor_status */
@@ -638,9 +624,6 @@ OM_uint32 gss_import_sec_context (
                const gss_buffer_t,     /* interprocess_token */
                gss_ctx_id_t *          /* context_handle */
               );
-
-
-
 
 OM_uint32 gss_create_empty_oid_set (
                OM_uint32 *,            /* minor_status */
