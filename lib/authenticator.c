@@ -584,7 +584,8 @@ int
 shishi_authenticator_add_cksum_type (Shishi * handle,
 				     Shishi_asn1 authenticator,
 				     Shishi_key * key,
-				     int keyusage, int cksumtype, char *data, int datalen)
+				     int keyusage, int cksumtype,
+				     char *data, int datalen)
 {
   int res;
 
