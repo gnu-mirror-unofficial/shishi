@@ -1897,7 +1897,7 @@ extern int shishi_priv_enc_part_etype (Shishi * handle,
 				       int32_t * etype);
 extern int shishi_priv_set_enc_part (Shishi * handle,
 				     Shishi_asn1 priv,
-				     int etype,
+				     int32_t etype,
 				     const char *encpart, size_t encpartlen);
 extern int shishi_encprivpart_user_data (Shishi * handle,
 					 Shishi_asn1 encprivpart,
