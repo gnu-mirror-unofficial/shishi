@@ -1,3 +1,223 @@
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix make distcheck.
+
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.19.
+
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: Fix mem leak.  Fix warning.
+
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getopt.c, gl/getopt1.c, gl/getopt_.h, gl/getopt_int.h,
+	gl/strtok_r.c: Update.
+
+2004-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getopt_.h, gl/m4/getopt.m4: Update.
+
+2004-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/strtok_r.c: Update.
+
+2004-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Include strtok_r.h.
+
+2004-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/strtok_r.c, gl/strtok_r.h, gl/m4/gnulib.m4,
+	gl/m4/strtok_r.m4: Add strtok_r.
+
+2004-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Need strtok_r, for Mac OS X.
+
+2004-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/alloca_.h, gl/allocsa.h, gl/getdate.y, gl/mktime.c: Update.
+
+2004-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/getopt.m4: Update.
+
+2004-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Don't use gettext if it doesn't have ngettext.
+
+2004-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-11-10  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getaddrinfo.c, gl/m4/getaddrinfo.m4: Update.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* lib/utils.c: Fix.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, lib/Makefile.am: Fix namespace of xalloc_die.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Use -export-symbols-regex, but export xalloc_die
+	until I figure it out.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Build components.png earlier.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: We won't be using gdbm, remove.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/shishi-docs.sgml, doc/reference/Makefile.am: Add.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Build here before reference/.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Fix dia invocation, see
+	<http://bugzilla.gnome.org/show_bug.cgi?id=155495>.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/as.c, lib/crypto.c, lib/keys.c: Doc fix.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encticketpart.c, lib/shishi.h.in: Remove.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* lib/apreq.c: Doc fix.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/apreq.c, lib/as.c, lib/authorize.c, lib/cfg.c,
+	lib/crypto-md.c, lib/crypto-null.c, lib/crypto.c,
+	lib/enckdcreppart.c, lib/encticketpart.c, lib/error.c,
+	lib/gztime.c, lib/hostkeys.c, lib/kdc.c, lib/key.c, lib/keys.c,
+	lib/krberror.c, lib/priv.c, lib/realm.c, lib/safe.c, lib/tgs.c,
+	lib/ticket.c, lib/tkt.c, lib/tkts.c: Doc fix.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* lib/pki.c, lib/tkts.c: Doc fix.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/nettle-meta.h: Sync upstream.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/coding.c, asn1/decoding.c, asn1/element.c, asn1/errors.c,
+	asn1/errors.h, asn1/errors_int.h, asn1/gstr.c, asn1/gstr.h,
+	asn1/int.h, asn1/libtasn1.h, asn1/parser_aux.c, asn1/structure.c,
+	crypto/macros.h: Sync upstream.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/shishi-docs.sgml, doc/reference/shishi-docs.tmpl,
+	doc/reference/Makefile.am: Fix.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c, lib/resolv.c, lib/shishi.h.in: Doc fix.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/Makefile.am: Fixes.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gendocs.sh, doc/gendocs_template: Update.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/Makefile.am: Rewrite, to align with up-stream
+	examples.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am, doc/getdate.texi, doc/shishi.texi: Add
+	getdate.texi.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/gai_strerror.c, gl/getaddrinfo.c,
+	gl/getaddrinfo.h, gl/m4/getaddrinfo.m4, gl/m4/gnulib.m4,
+	gl/m4/sockpfaf.m4: Add getaddrinfo.
+
+2004-11-09  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Need getaddrinfo too.
+
+2004-11-08  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/allocsa.h, gl/allocsa.valgrind, gl/getdate.y,
+	gl/getpass.c, gl/mktime.c, gl/readlink.c, gl/setenv.h,
+	gl/xreadlink.c, gl/m4/getopt.m4, gl/m4/getpass.m4, gl/m4/gnulib.m4,
+	gl/m4/setenv.m4: Update.
+
+2004-11-07  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha: Fix.
+
+2004-11-07  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS: Fix PGP key.
+
+2004-10-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/version.c: Doc fix.
+
+2004-10-28  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc: Sync with libidn.
+
+2004-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2004-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.fms: Update.
+
 2004-10-15  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po, po/sv.po: Generated.
