@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.16 (unreleased)
 
+** Environment variable SHISHI_CONFIG override default system config path.
+
 * Version 0.0.15 (released 2004-04-18)
 
 ** Sequence numbers in Authenticator and EncAPRepPart are now randomized.
