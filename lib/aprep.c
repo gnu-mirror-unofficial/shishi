@@ -261,7 +261,7 @@ shishi_aprep_enc_part_set (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write_integer (handle, aprep, "enc-part.etype", 0);
+  res = shishi_asn1_write_integer (handle, aprep, "enc-part.etype", etype);
   if (res != SHISHI_OK)
     return res;
 
