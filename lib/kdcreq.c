@@ -520,25 +520,6 @@ shishi_kdcreq_server (Shishi * handle, Shishi_asn1 kdcreq,
 				server, serverlen);
 }
 
-int
-shishi_kdcreq_sname_get (Shishi * handle,
-			 Shishi_asn1 kdcreq, char *sname, size_t * snamelen)
-{
-  return shishi_principal_name_get (handle, kdcreq,
-				    "req-body.sname", sname, snamelen);
-}
-
-int
-shishi_kdcreq_snamerealm_get (Shishi * handle,
-			      Shishi_asn1 kdcreq,
-			      char *snamerealm, size_t * snamerealmlen)
-{
-  return shishi_principal_name_realm_get (handle, kdcreq,
-					  "req-body.sname", kdcreq,
-					  "req-body.realm",
-					  snamerealm, snamerealmlen);
-}
-
 /**
  * shishi_kdcreq_set_sname:
  * @handle: shishi handle as allocated by shishi_init().
