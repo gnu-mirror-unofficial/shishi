@@ -183,6 +183,8 @@ yourself with a ticket.
 @item PAM module.
 This is used to login locally on a machine.
 
+@item KDC addresses located using DNS SRV RRs.
+
 @end itemize
 
 The following table summarize what the current objectives are (i.e.,
