@@ -36,15 +36,11 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	rfc1510_asn1_tab.c asn1.c \
 	version.c password.c \
 	setenv.h
-libshishi_la_LIBADD = @LIBGCRYPT_BUILD_LIBS@ @LIBIDN_LIBS@ \
-	../asn1/lib/ASN1.lo ../asn1/lib/decoding.lo ../asn1/lib/gstr.lo \
-	../asn1/lib/errors.lo ../asn1/lib/parser_aux.lo \
-	../asn1/lib/structure.lo ../asn1/lib/element.lo ../asn1/lib/coding.lo \
+libshishi_la_LIBADD = @LIBTASN1_LIBS@ @LIBGCRYPT_LIBS@ @LIBIDN_LIBS@ \
 	@LTLIBOBJS@ @LTLIBINTL@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-INCLUDES = -I../asn1/lib -I../intl \
-	@LIBGCRYPT_BUILD_CFLAGS@ @LIBIDN_CFLAGS@
+INCLUDES = -I../intl @LIBTASN1_CFLAGS@ @LIBGCRYPT_CFLAGS@ @LIBIDN_CFLAGS@
 
 include_HEADERS = shishi.h
 

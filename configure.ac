@@ -184,26 +184,50 @@ fi
 if test "$with_system_idn" = "no"; then
 	AC_MSG_WARN([[
 
-The system's GNU Libidn 0.1.0 or later not used. Using copy
-distributed with Shishi instead.
+The system's libidn 0.1.0 or later not used.  Using copy distributed
+with Shishi instead.  See <http://www.gnu.org/software/libidn/>.
 
-See <http://www.gnu.org/software/libidn/>.
-
-Don't worry.
 ]])
 	LIBIDN_CFLAGS="-I\$(top_srcdir)/libstringprep"
 	LIBIDN_LIBS="\$(top_builddir)/libstringprep/libidn.la"
 	LIBIDN=libstringprep
 fi
-AC_SUBST(LIBIDN)
 AC_SUBST(LIBIDN_CFLAGS)
 AC_SUBST(LIBIDN_LIBS)
+AC_SUBST(LIBIDN)
 AC_MSG_CHECKING([if system's libidn should be used])
 AC_MSG_RESULT($with_system_idn)
 AC_CONFIG_SUBDIRS(libstringprep)
 
-dnl libtasn1 will be built
-dnl AC_CHECK_LIB([tasn1], libasn1_strerror,, AC_MSG_ERROR([libtasn1 is required]))
+# Check for libtasn1
+AC_ARG_WITH(system-libtasn1,
+  AC_HELP_STRING([--without-system-libtasn1],
+		[don't use the system's libtasn1]))
+if test "$with_system_libtasn1" != "no" ; then
+	AC_CHECK_LIB(tasn1, asn1_read_tag, [
+		LIBTASN1_LIBS="-ltasn1"
+		LIBTASN1_CFLAGS=""
+		with_system_libtasn1=yes
+	], [
+		with_system_libtasn1=no
+	])
+fi
+if test "$with_system_libtasn1" = "no"; then
+	AC_MSG_WARN([[
+
+The system's libtasn1 0.2.0 or later not used.  Using copy distributed
+with Shishi instead.  See <http://www.gnu.org/software/gnutls/>.
+
+]])
+	LIBTASN1_CFLAGS="-I\$(top_srcdir)/asn1/lib"
+	LIBTASN1_LIBS="\$(top_builddir)/asn1/lib/libtasn1.la"
+	ASN1=asn1
+fi
+AC_SUBST(LIBTASN1_CFLAGS)
+AC_SUBST(LIBTASN1_LIBS)
+AC_SUBST(ASN1)
+AC_MSG_CHECKING([if system's libtasn1 should be used])
+AC_MSG_RESULT($with_system_libtasn1)
 AC_CONFIG_SUBDIRS(asn1)
 
 # Check for libgcrypt
@@ -212,8 +236,6 @@ AC_ARG_WITH(system-libgcrypt,
 		[don't use the system's libgcrypt]))
 if test "$with_system_libgcrypt" != "no" ; then
 	AM_PATH_LIBGCRYPT(1.1.13, [
-		LIBGCRYPT_BUILD_LIBS="$LIBGCRYPT_LIBS"
-		LIBGCRYPT_BUILD_CFLAGS="$LIBGCRYPT_CFLAGS"
 		with_system_libgcrypt=yes
 	], [
 		with_system_libgcrypt=no
@@ -222,23 +244,16 @@ fi
 if test "$with_system_libgcrypt" = "no"; then
 	AC_MSG_WARN([[
 
-The system's libgcrypt 1.1.13 or later not used. Using copy
-distributed with shishi instead.
+The system's libgcrypt 1.1.13 or later not used.  Using copy distributed
+with shishi instead. See <ftp://ftp.gnupg.org/pub/gcrypt/alpha/libgcrypt/>.
 
-See <ftp://ftp.gnupg.org/pub/gcrypt/alpha/libgcrypt/>.
-
-Don't worry.
 ]])
-	LIBGCRYPT_BUILD_CFLAGS="-I\$(top_srcdir)/crypto/src"
-	LIBGCRYPT_BUILD_LIBS="\$(top_builddir)/crypto/src/libgcrypt.la"
-	LIBGCRYPT_CFLAGS=""
-	AC_SUBST(LIBGCRYPT_CFLAGS)
-	LIBGCRYPT_LIBS="-lgcrypt"
-	AC_SUBST(LIBGCRYPT_LIBS)
+	LIBGCRYPT_CFLAGS="-I\$(top_srcdir)/crypto/src"
+	LIBGCRYPT_LIBS="\$(top_builddir)/crypto/src/libgcrypt.la"
 	CRYPTO=crypto
 fi
-AC_SUBST(LIBGCRYPT_BUILD_CFLAGS)
-AC_SUBST(LIBGCRYPT_BUILD_LIBS)
+AC_SUBST(LIBGCRYPT_CFLAGS)
+AC_SUBST(LIBGCRYPT_LIBS)
 AC_SUBST(CRYPTO)
 AC_MSG_CHECKING([if system's libgcrypt should be used])
 AC_MSG_RESULT($with_system_libgcrypt)
