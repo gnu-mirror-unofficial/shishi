@@ -20,12 +20,10 @@
  */
 
 #include "utils.c"
-#include <shishi.h>
 
-int
-main (int argc, char *argv[])
+void
+test (Shishi * handle)
 {
-  Shishi *handle;
   Shishi_priv *priv;
   Shishi_key *key;
   Shishi_asn1 asn1priv;
@@ -35,42 +33,8 @@ main (int argc, char *argv[])
   int32_t t;
   int res;
 
-  do
-    if (strcmp (argv[argc - 1], "-v") == 0 ||
-	strcmp (argv[argc - 1], "--verbose") == 0)
-      verbose = 1;
-    else if (strcmp (argv[argc - 1], "-d") == 0 ||
-	     strcmp (argv[argc - 1], "--debug") == 0)
-      debug = 1;
-    else if (strcmp (argv[argc - 1], "-b") == 0 ||
-	     strcmp (argv[argc - 1], "--break-on-error") == 0)
-      break_on_error = 1;
-    else if (strcmp (argv[argc - 1], "-h") == 0 ||
-	     strcmp (argv[argc - 1], "-?") == 0 ||
-	     strcmp (argv[argc - 1], "--help") == 0)
-      {
-	printf ("Usage: %s [-vdbh?] [--verbose] [--debug] "
-		"[--break-on-error] [--help]\n", argv[0]);
-	return 1;
-      }
-  while (argc-- > 1);
-
-  handle = shishi ();
-  if (handle == NULL)
-    {
-      fail ("Could not initialize shishi\n");
-      return 1;
-    }
-
   if (debug)
-    {
-      shishi_cfg (handle, strdup ("verbose"));
-      shishi_cfg (handle, strdup ("verbose-crypto"));
-    }
-
-  escapeprint (NULL, 0);
-  hexprint (NULL, 0);
-  binprint (NULL, 0);
+    shishi_cfg (handle, strdup ("verbose-crypto"));
 
   /* shishi_priv() */
   res = shishi_priv (handle, &priv);
@@ -200,11 +164,4 @@ main (int argc, char *argv[])
     success ("unlink() OK\n");
   else
     fail ("unlink() failed\n");
-
-  shishi_done (handle);
-
-  if (verbose)
-    printf ("PRIV self tests done with %d errors\n", error_count);
-
-  return error_count ? 1 : 0;
 }

@@ -20,7 +20,6 @@
  */
 
 #include "utils.c"
-#include <shishi.h>
 
 static const char authenticator[] = {
   '\x62', '\x4b', '\x30', '\x49', '\xa0', '\x03', '\x02', '\x01',
@@ -49,49 +48,14 @@ static const char authenticator2[] = {
 #define AUTHENTICATOR_LEN 77
 #define AUTHENTICATOR2_LEN 59
 
-int
-main (int argc, char *argv[])
+void
+test (Shishi * handle)
 {
-  Shishi *handle;
   Shishi_asn1 a;
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
   char *p;
   int n, m, res;
-
-  do
-    if (strcmp (argv[argc - 1], "-v") == 0 ||
-	strcmp (argv[argc - 1], "--verbose") == 0)
-      verbose = 1;
-    else if (strcmp (argv[argc - 1], "-d") == 0 ||
-	     strcmp (argv[argc - 1], "--debug") == 0)
-      debug = 1;
-    else if (strcmp (argv[argc - 1], "-b") == 0 ||
-	     strcmp (argv[argc - 1], "--break-on-error") == 0)
-      break_on_error = 1;
-    else if (strcmp (argv[argc - 1], "-h") == 0 ||
-	     strcmp (argv[argc - 1], "-?") == 0 ||
-	     strcmp (argv[argc - 1], "--help") == 0)
-      {
-	printf ("Usage: %s [-vdbh?] [--verbose] [--debug] "
-		"[--break-on-error] [--help]\n", argv[0]);
-	return 1;
-      }
-  while (argc-- > 1);
-
-  handle = shishi ();
-  if (handle == NULL)
-    {
-      fail ("Could not initialize shishi\n");
-      return 1;
-    }
-
-  if (debug)
-    shishi_cfg (handle, strdup ("verbose"));
-
-  escapeprint (NULL, 0);
-  hexprint (NULL, 0);
-  binprint (NULL, 0);
 
   /* shishi_authenticator() */
   a = shishi_authenticator (handle);
@@ -342,11 +306,4 @@ main (int argc, char *argv[])
     success ("unlink() OK\n");
   else
     fail ("unlink() failed\n");
-
-  shishi_done (handle);
-
-  if (verbose)
-    printf ("Authenticator self tests done with %d errors\n", error_count);
-
-  return error_count ? 1 : 0;
 }

@@ -20,7 +20,6 @@
  */
 
 #include "utils.c"
-#include <shishi.h>
 
 static const char tkt1kdcrepb64[] =
   "a4ICITCCAh2gAwIBBaEDAgELow8bDUpPU0VGU1NPTi5PUkekEDAOoAMCAQGhBzAF"
@@ -80,10 +79,9 @@ static const char tkt2ticketb64[] =
   "zNj0Cw+6fqyDJIt6PmRpUe/yGZe6hSQkrqgQuBhpAHZF4/aoWqOmNufTdGa+5gHz"
   "qcEmQerWD8YhImeD+Xe5citg92XTPx2nHiNMBMmwgWJHf1TjddiwsQ==";
 
-int
-main (int argc, char *argv[])
+void
+test (Shishi * handle)
 {
-  Shishi *handle;
   Shishi_tkts *tktset;
   Shishi_tkts_hint hint;
   Shishi_tkt *t1, *t2, *t3;
@@ -93,40 +91,6 @@ main (int argc, char *argv[])
   char *p, *q;
   size_t n;
   int res;
-
-  do
-    if (strcmp (argv[argc - 1], "-v") == 0 ||
-	strcmp (argv[argc - 1], "--verbose") == 0)
-      verbose = 1;
-    else if (strcmp (argv[argc - 1], "-d") == 0 ||
-	     strcmp (argv[argc - 1], "--debug") == 0)
-      debug = 1;
-    else if (strcmp (argv[argc - 1], "-b") == 0 ||
-	     strcmp (argv[argc - 1], "--break-on-error") == 0)
-      break_on_error = 1;
-    else if (strcmp (argv[argc - 1], "-h") == 0 ||
-	     strcmp (argv[argc - 1], "-?") == 0 ||
-	     strcmp (argv[argc - 1], "--help") == 0)
-      {
-	printf ("Usage: %s [-vdbh?] [--verbose] [--debug] "
-		"[--break-on-error] [--help]\n", argv[0]);
-	return 1;
-      }
-  while (argc-- > 1);
-
-  handle = shishi ();
-  if (handle == NULL)
-    {
-      fail ("Could not initialize shishi\n");
-      return 1;
-    }
-
-  if (debug)
-    shishi_cfg (handle, strdup ("verbose"));
-
-  escapeprint (NULL, 0);
-  hexprint (NULL, 0);
-  binprint (NULL, 0);
 
   /* shishi_tkts_default_file() */
   p = strdup (shishi_tkts_default_file (handle));
@@ -637,11 +601,4 @@ main (int argc, char *argv[])
   /* shishi_tkts_done () */
   shishi_tkts_done (&tktset);
   success ("shishi_tkts_done() OK\n");
-
-  shishi_done (handle);
-
-  if (verbose)
-    printf ("Ticket set self tests done with %d errors\n", error_count);
-
-  return error_count ? 1 : 0;
 }
