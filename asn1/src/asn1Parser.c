@@ -30,6 +30,9 @@
 #include <libtasn1.h>
 #include <malloc.h>
 #include <config.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #ifdef HAVE_GETOPT_H
   #include <getopt.h>

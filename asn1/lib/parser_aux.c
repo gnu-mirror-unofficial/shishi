@@ -40,7 +40,7 @@ typedef struct list_struct{
 
 
 /* Pointer to the first element of the list */
-list_type *firstElement=NULL;
+static list_type *firstElement=NULL;
 
 /******************************************************/
 /* Function : _asn1_add_node                          */
