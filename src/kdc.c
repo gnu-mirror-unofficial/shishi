@@ -274,9 +274,9 @@ kdc (Shishi * handle, struct arguments arg)
   else if (arg.request_p)
     {
       if (oldtkt == NULL)
-	req = shishi_asreq (handle, arg.realm, arg.sname, arg.cname);
+	req = shishi_asreq_rsc (handle, arg.realm, arg.sname, arg.cname);
       else
-	req = shishi_tgsreq (handle, arg.realm, arg.sname, oldtkt);
+	req = shishi_tgsreq_rst (handle, arg.realm, arg.sname, oldtkt);
 
       if (req == ASN1_TYPE_EMPTY)
 	{

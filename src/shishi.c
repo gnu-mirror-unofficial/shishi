@@ -899,24 +899,28 @@ main (int argc, char *argv[])
 	Shishi_as *as;
 	Shishi_ticket *tkt;
 
-	rc = shishi_as (handle, arg.password, &as);
+	rc = shishi_as (handle, &as);
+	if (rc == SHISHI_OK)
+	  rc = shishi_as_sendrecv (as);
+	if (rc == SHISHI_OK)
+	  rc = shishi_as_rep_process (as, NULL, arg.password);
 	if (rc != SHISHI_OK)
 	  {
 	    printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
 		    shishi_strerror_details (handle));
 	    if (rc == SHISHI_GOT_KRBERROR)
 	      shishi_krberror_pretty_print(handle, stdout,
-					   shishi_as_get_krberror(as));
+					   shishi_as_krberror(as));
 	    break;
 	  }
 
 	if (arg.verbose)
 	  {
-	    shishi_kdcreq_print (handle, stdout, shishi_as_get_asreq (as));
-	    shishi_kdcrep_print (handle, stdout, shishi_as_get_asrep (as));
+	    shishi_kdcreq_print (handle, stdout, shishi_as_req (as));
+	    shishi_kdcrep_print (handle, stdout, shishi_as_rep (as));
 	  }
 
-	tkt = shishi_as_get_ticket (as);
+	tkt = shishi_as_ticket (as);
 
 	if (!arg.silent)
 	  shishi_ticket_print (tkt, stdout);
