@@ -3,19 +3,20 @@
    This file is part of the GNU C Library.
    Written by Miles Bader <miles@gnu.ai.mit.edu>.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   The GNU C Library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, write to the Free
+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+   02111-1307 USA.  */
 
 #if !_LIBC
 /* This code is written for inclusion in gnu-libc, and uses names in the
@@ -43,10 +44,6 @@
 #define __argp_state_help argp_state_help
 #undef __argp_usage
 #define __argp_usage argp_usage
-#undef __argp_basename
-#define __argp_basename _argp_basename
-#undef __argp_short_program_name
-#define __argp_short_program_name _argp_short_program_name
 
 /* argp-fmtstream functions */
 #undef __argp_make_fmtstream
@@ -93,6 +90,10 @@
 #define __mempcpy mempcpy
 #undef __strndup
 #define __strndup strndup
+#undef __flockfile
+#define __flockfile flockfile
+#undef __funlockfile
+#define __funlockfile funlockfile
 
 #if defined(HAVE_DECL_CLEARERR_UNLOCKED) && !HAVE_DECL_CLEARERR_UNLOCKED
 # define clearerr_unlocked(x) clearerr (x)
