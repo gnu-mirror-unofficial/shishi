@@ -1,5 +1,5 @@
 /* enckdcreppart.c	Key distribution encrypted reply part functions
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -184,85 +184,26 @@ shishi_enckdcreppart_flags_set (Shishi * handle,
 }
 
 /**
- * shishi_enckdcreppart_populate_encticketpart:
+ * shishi_enckdcreppart_endtime_set:
  * @handle: shishi handle as allocated by shishi_init().
  * @enckdcreppart: input EncKDCRepPart variable.
- * @encticketpart: input EncTicketPart variable.
+ * @endtime: character buffer containing a generalized time string.
  *
- * Set the flags, authtime, starttime, endtime, renew-till and caddr
- * fields of the EncKDCRepPart to the corresponding values in the
- * EncTicketPart.
+ * Set the EncTicketPart.endtime to supplied value.
  *
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int
-shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
-					     Shishi_asn1 enckdcreppart,
-					     Shishi_asn1 encticketpart)
+shishi_enckdcreppart_endtime_set (Shishi * handle,
+				  Shishi_asn1 enckdcreppart,
+				  const char *endtime)
 {
-  char *buf;
-  size_t buflen;
   int res;
 
-  res = shishi_asn1_read2 (handle, encticketpart, "flags", &buf, &buflen);
+  res = shishi_asn1_write (handle, enckdcreppart, "endtime",
+			   endtime, GENERALIZEDTIME_TIME_LEN);
   if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  res = shishi_asn1_write (handle, enckdcreppart, "flags", buf, buflen);
-  free (buf);
-  if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  res = shishi_asn1_read2 (handle, encticketpart, "authtime", &buf, &buflen);
-  if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  res = shishi_asn1_write (handle, enckdcreppart, "authtime", buf, buflen);
-  free (buf);
-  if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  res = shishi_asn1_read2 (handle, encticketpart, "starttime", &buf, &buflen);
-  if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
-    return SHISHI_ASN1_ERROR;
-
-  if (res == SHISHI_ASN1_NO_ELEMENT)
-    res = shishi_asn1_write (handle, enckdcreppart, "starttime", NULL, 0);
-  else
-    {
-      res = shishi_asn1_write (handle, enckdcreppart, "starttime",
-			       buf, buflen);
-      free (buf);
-    }
-  if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  res = shishi_asn1_read2 (handle, encticketpart, "endtime", &buf, &buflen);
-  if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  res = shishi_asn1_write (handle, enckdcreppart, "endtime", buf, buflen);
-  free (buf);
-  if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  res =
-    shishi_asn1_read2 (handle, encticketpart, "renew-till", &buf, &buflen);
-  if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
-    return SHISHI_ASN1_ERROR;
-
-  if (res == SHISHI_ASN1_NO_ELEMENT)
-    res = shishi_asn1_write (handle, enckdcreppart, "renew-till", NULL, 0);
-  else
-    {
-      res = shishi_asn1_write (handle, enckdcreppart,
-			       "renew-till", buf, buflen);
-      free (buf);
-    }
-  if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
-
-  /* XXX copy caddr too */
+    return res;
 
   return SHISHI_OK;
 }
@@ -390,6 +331,90 @@ shishi_enckdcreppart_srealmserver_set (Shishi * handle,
   res = shishi_enckdcreppart_server_set (handle, enckdcreppart, server);
   if (res != SHISHI_OK)
     return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_enckdcreppart_populate_encticketpart:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @enckdcreppart: input EncKDCRepPart variable.
+ * @encticketpart: input EncTicketPart variable.
+ *
+ * Set the flags, authtime, starttime, endtime, renew-till and caddr
+ * fields of the EncKDCRepPart to the corresponding values in the
+ * EncTicketPart.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
+					     Shishi_asn1 enckdcreppart,
+					     Shishi_asn1 encticketpart)
+{
+  char *buf;
+  size_t buflen;
+  int res;
+
+  res = shishi_asn1_read2 (handle, encticketpart, "flags", &buf, &buflen);
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  res = shishi_asn1_write (handle, enckdcreppart, "flags", buf, buflen);
+  free (buf);
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  res = shishi_asn1_read2 (handle, encticketpart, "authtime", &buf, &buflen);
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  res = shishi_asn1_write (handle, enckdcreppart, "authtime", buf, buflen);
+  free (buf);
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  res = shishi_asn1_read2 (handle, encticketpart, "starttime", &buf, &buflen);
+  if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
+    return SHISHI_ASN1_ERROR;
+
+  if (res == SHISHI_ASN1_NO_ELEMENT)
+    res = shishi_asn1_write (handle, enckdcreppart, "starttime", NULL, 0);
+  else
+    {
+      res = shishi_asn1_write (handle, enckdcreppart, "starttime",
+			       buf, buflen);
+      free (buf);
+    }
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  res = shishi_asn1_read2 (handle, encticketpart, "endtime", &buf, &buflen);
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  res = shishi_asn1_write (handle, enckdcreppart, "endtime", buf, buflen);
+  free (buf);
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  res =
+    shishi_asn1_read2 (handle, encticketpart, "renew-till", &buf, &buflen);
+  if (res != SHISHI_OK && res != SHISHI_ASN1_NO_ELEMENT)
+    return SHISHI_ASN1_ERROR;
+
+  if (res == SHISHI_ASN1_NO_ELEMENT)
+    res = shishi_asn1_write (handle, enckdcreppart, "renew-till", NULL, 0);
+  else
+    {
+      res = shishi_asn1_write (handle, enckdcreppart,
+			       "renew-till", buf, buflen);
+      free (buf);
+    }
+  if (res != SHISHI_OK)
+    return SHISHI_ASN1_ERROR;
+
+  /* XXX copy caddr too */
 
   return SHISHI_OK;
 }
