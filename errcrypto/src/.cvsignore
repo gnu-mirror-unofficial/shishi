@@ -1,0 +1,14 @@
+.deps
+.libs
+Makefile
+Makefile.in
+code-from-errno.h
+code-from-errno.lo
+code-to-errno.h
+code-to-errno.lo
+err-codes.h
+err-sources.h
+gpg-error-config
+libgpg-error.la
+strerror.lo
+strsource.lo

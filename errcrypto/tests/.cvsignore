@@ -2,8 +2,4 @@
 .libs
 Makefile
 Makefile.in
-basic
-keygen
-tsexp
-ac
-pubkey
+t-strerror

@@ -27,3 +27,6 @@ rsa.lo
 sha1.lo
 sha256.lo
 twofish.lo
+ac.lo
+sha512.lo
+tiger.lo
