@@ -835,8 +835,98 @@ Usage: shishi [OPTION...] [NAME] [OPTION...]
 @node Administration Manual
 @chapter Administration Manual
 
-TBW.
+The Shishi KDC currently only answer AS-REQs.  This section describe
+how you get the server up and running to answer queries from clients.
 
+First you must create a user database.  Currently this is rather
+simplistic, use the @samp{shishi --crypt} command to generate keys,
+and store them in the @file{shishid.keys} file.  The file path is
+@file{/usr/local/etc/shishid.keys} by default, although you can use
+@samp{shishid -k} to specify another location.
+
+Create a random key for the Kerberos Ticket Granting Service for your
+realm:
+
+@example
+@cartouche
+$ shishi --string-to-key --random \
+krbtgt/latte.josefsson.org@@latte.josefsson.org | tee --append \
+/usr/local/etc/shishid.keys
+-----BEGIN SHISHI KEY-----
+Keytype: 18 (aes256-cts-hmac-sha1-96)
+Principal: krbtgt/latte.josefsson.org
+Realm: latte.josefsson.org
+
+oconxMTf59B5bvTylY+KE4mchA/gtmYI2Qok+48tnSM=
+-----END SHISHI KEY-----
+$
+@end cartouche
+@end example
+
+Create a key for a user from a specified password:
+
+@example
+@cartouche
+$ shishi --string-to-key=fnord \
+simon@@latte.josefsson.org | tee --append \
+/usr/local/etc/shishid.keys
+-----BEGIN SHISHI KEY-----
+Keytype: 18 (aes256-cts-hmac-sha1-96)
+Principal: simon
+Realm: latte.josefsson.org
+
+c1rqwvYwuDFrABvqWVq9bWUsQWg/xbErsIUmLN+3lYM=
+-----END SHISHI KEY-----
+$
+@end cartouche
+@end example
+
+There is nothing special with a ticket granting key, you could have
+created from a password similar to the key for a user.  However,
+please keep in mind that passwords typically have little entropy.
+
+Finally, create a random key for a service:
+
+@example
+@cartouche
+$ shishi --string-to-key --random \
+imap/latte.josefsson.org@@latte.josefsson.org | tee --append \
+/usr/local/etc/shishid.keys
+-----BEGIN SHISHI KEY-----
+Keytype: 18 (aes256-cts-hmac-sha1-96)
+Principal: imap/latte.josefsson.org
+Realm: latte.josefsson.org
+
+ts2v0QHWyW9FyXbWtCvLPqdEc60qPq5Yvat3p82rp5c=
+-----END SHISHI KEY-----
+$
+@end cartouche
+@end example
+
+You are now ready to start the KDC:
+
+@example
+@cartouche
+$ shishid
+@end cartouche
+@end example
+
+Then you can use @samp{shishi} as usual to acquire tickets
+(@pxref{User Manual}).
+
+@example
+@cartouche
+$ shishi simon@@latte.josefsson.org
+Enter password for `simon@@latte.josefsson.org':
+simon@@latte.josefsson.org:
+Acquired:       Tue Aug 26 07:22:35 2003
+Expires:        Tue Aug 26 07:39:15 2003
+Server:         krbtgt/latte.josefsson.org key aes256-cts-hmac-sha1-96 (18)
+Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
+Ticket flags:   FORWARDED PROXIABLE (12)
+$
+@end cartouche
+@end example
 
 @c **********************************************************
 @c ***************  Programming Manual  *********************
