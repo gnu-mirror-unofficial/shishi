@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.0.14\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2004-04-18 16:38+0200\n"
+"POT-Creation-Date: 2004-08-01 16:38+0200\n"
 "PO-Revision-Date: 2004-02-22 21:54+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -144,7 +144,7 @@ msgstr "Odczytywanie EncAPRepPart w formacie %s...\n"
 msgid "Reading EncAPRepPart from %s...done\n"
 msgstr "Odczytywanie EncAPRepPart z %s... zakoñczone\n"
 
-#: lib/enckdcreppart.c:370 lib/ticket.c:204
+#: lib/enckdcreppart.c:311 lib/ticket.c:204
 #, c-format
 msgid "Could not set sname: %s\n"
 msgstr "Nie mo¿na ustawiæ sname: %s\n"
@@ -249,7 +249,7 @@ msgstr "Odczytywanie KRB-ERROR z %s... zakoñczone\n"
 msgid "Unknown KRB-ERROR error code %d."
 msgstr "Nieznany kod b³êdu KRB-ERROR %d."
 
-#: lib/principal.c:465
+#: lib/principal.c:475
 #, c-format
 msgid "Could not set principal name: %s\n"
 msgstr "Nie mo¿na ustawiæ nazwy g³ównej: %s\n"

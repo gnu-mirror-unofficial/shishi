@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2004-04-18 16:38+0200\n"
+"POT-Creation-Date: 2004-08-01 16:38+0200\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -147,7 +147,7 @@ msgstr ""
 msgid "Reading EncAPRepPart from %s...done\n"
 msgstr ""
 
-#: lib/enckdcreppart.c:370 lib/ticket.c:204
+#: lib/enckdcreppart.c:311 lib/ticket.c:204
 #, c-format
 msgid "Could not set sname: %s\n"
 msgstr ""
@@ -252,7 +252,7 @@ msgstr ""
 msgid "Unknown KRB-ERROR error code %d."
 msgstr ""
 
-#: lib/principal.c:465
+#: lib/principal.c:475
 #, c-format
 msgid "Could not set principal name: %s\n"
 msgstr ""
