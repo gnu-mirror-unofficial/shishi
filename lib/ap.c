@@ -202,8 +202,6 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
   if (res != SHISHI_OK)
     return res;
 
-  free(buf);
-
   ap->authenticatorcksumkeyusage = authenticatorcksumkeyusage;
   ap->authenticatorkeyusage = authenticatorkeyusage;
 
