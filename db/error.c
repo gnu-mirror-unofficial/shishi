@@ -33,7 +33,7 @@ static struct shisa_error_msgs _shisa_error_messages[] = {
   {SHISA_CFG_NO_FILE, "The Shisa configuration file does not exist."},
   {SHISA_CFG_IO_ERROR, "File I/O error for Shisa configuration file."},
   {SHISA_CFG_SYNTAX_ERROR, "Syntax error in Shisa configuration token."},
-  {SHISA_DB_OPEN_ERROR, "Shisa database could not be opened."},
+  {SHISA_OPEN_ERROR, "Shisa database could not be opened."},
 };
 
 /**

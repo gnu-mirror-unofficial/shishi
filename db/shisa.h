@@ -34,25 +34,31 @@ enum Shisa_rc
   SHISA_CFG_NO_FILE = 2,
   SHISA_CFG_IO_ERROR = 3,
   SHISA_CFG_SYNTAX_ERROR = 4,
-  SHISA_DB_OPEN_ERROR = 5,
-  SHISA_DB_NO_REALM = 6,
-  SHISA_DB_LIST_REALM_ERROR = 7,
-  SHISA_DB_NO_PRINCIPAL = 8,
-  SHISA_DB_LIST_PRINCIPAL_ERROR = 8,
-  SHISA_DB_FIND_ERROR = 9
+  SHISA_OPEN_ERROR = 5,
+  SHISA_NO_REALM = 6,
+  SHISA_LIST_REALM_ERROR = 7,
+  SHISA_NO_PRINCIPAL = 8,
+  SHISA_LIST_PRINCIPAL_ERROR = 8,
+  SHISA_FIND_ERROR = 9,
+  SHISA_NO_KEY = 10
 };
 typedef enum Shisa_rc Shisa_rc;
 
-typedef struct Shisa		Shisa;
+typedef struct Shisa Shisa;
 
 struct Shisa_principal
 {
   char *name;
   char *realm;
   time_t notusedbefore;
-  time_t notusedafter;
   int isdisabled;
   int32_t kvno;
+  time_t lastinitialtgt;	/* time of last initial request for a TGT */
+  time_t lastinitialrequest;	/* time of last initial request */
+  time_t lasttgt;		/* time of issue for the newest TGT used */
+  time_t lastrenewal;		/* time of the last renewal */
+  time_t passwordexpire;	/* time when the password will expire */
+  time_t accountexpire;		/* time when the account will expire. */
 };
 typedef struct Shisa_principal Shisa_principal;
 
@@ -85,35 +91,38 @@ extern int shisa_cfg_from_file (Shisa * dbh, const char *cfg);
 extern const char *shisa_cfg_default_systemfile (Shisa * dbh);
 
 /* Core API. */
-extern int shisa_enumerate_realms (Shisa *dbh,
-				   char ***realms,
-				   size_t *nrealms);
-extern int shisa_enumerate_principals (Shisa *dbh,
+extern int shisa_enumerate_realms (Shisa * dbh,
+				   char ***realms, size_t * nrealms);
+extern int shisa_enumerate_principals (Shisa * dbh,
 				       const char *realm,
 				       char ***principals,
-				       size_t *nprincipals);
+				       size_t * nprincipals);
 
 extern int shisa_principal_find (Shisa * dbh,
 				 const char *client,
-				 const char *realm,
-				 Shisa_principal **ph);
-extern void shisa_principal_free (Shisa_principal *ph);
+				 const char *realm, Shisa_principal ** ph);
+extern void shisa_principal_free (Shisa_principal * ph);
 extern int shisa_principal_set (Shisa * dbh, const Shisa_principal * ph);
 extern int shisa_principal_add (Shisa * dbh, const Shisa_principal * ph,
-				const Shisa_key *key);
+				const Shisa_key * key);
 extern int shisa_principal_remove (Shisa * dbh, const Shisa_principal * ph);
 
 extern int shisa_key_find (Shisa * dbh, const Shisa_principal * ph,
-			  Shisa_key **key);
-extern void shisa_key_free (Shisa_key *key);
+			   Shisa_key ** key);
+extern void shisa_key_free (Shisa_key * key);
 extern int shisa_key_set (Shisa * dbh, const Shisa_principal * ph,
-			  const Shisa_key *key);
+			  const Shisa_key * key);
 extern int shisa_key_add (Shisa * dbh, const Shisa_principal * ph,
-			  const Shisa_key *key);
+			  const Shisa_key * key);
 extern int shisa_key_remove (Shisa * dbh, const Shisa_principal * ph,
-			     const Shisa_key *key);
+			     const Shisa_key * key);
 
 /* Utility API. */
+extern int shisa_principal_find_enabled (Shisa * dbh,
+					 const char *client,
+					 const char *realm,
+					 time_t t,
+					 Shisa_principal ** ph);
 extern int shisa_addpasswd (Shisa * dbh, Shisa_principal * ph,
 			    const char *passwd);
 

@@ -32,20 +32,18 @@
  * Where LOCATION is a path name, e.g. /var/shisa.  No OPTIONS are
  * currently implemented.
  *
- * Realms are directories in LOCATION that contain a file called
- * "info.txt".  Principals are directories in realm directories that
- * contain a file called "info.txt".  Characters outside A-Za-z0-9_-
- * are escaped using the URL encoding, e.g. example/host%2fwww denote
- * the "host/www" principal in the "example" realm.
+ * Realms are directories in LOCATION.  Principals are directories in
+ * realm directories.  Characters outside A-Za-z0-9_- are escaped
+ * using the URL encoding, e.g. example/host%2fwww denote the
+ * "host/www" principal in the "example" realm.
  *
  * Example file tree:
  *
  * LOCATION/EXAMPLE.ORG
- * LOCATION/EXAMPLE.ORG/info.txt
  * LOCATION/EXAMPLE.ORG/krbtgt%2fEXAMPLE.ORG
- * LOCATION/EXAMPLE.ORG/krbtgt%2fEXAMPLE.ORG/info.txt
  * LOCATION/EXAMPLE.ORG/host%2fkerberos.example.org
- * LOCATION/EXAMPLE.ORG/host%2fkerberos.example.org/info.txt
+ * LOCATION/EXAMPLE.NET
+ * LOCATION/EXAMPLE.NET/krbtgt%2fEXAMPLE.NET
  *
  */
 
@@ -120,6 +118,49 @@ shisa_file_cfg (Shisa *dbh,
   return SHISA_OK;
 }
 
+static int
+isdir (const char *path)
+{
+  struct stat buf;
+  int rc;
+
+  rc = stat (path, &buf);
+  if (rc != 0 || !S_ISDIR (buf.st_mode))
+    return 0;
+
+  return 1;
+}
+
+static int
+isdir2 (const char *path1, const char *path2)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s", path1, path2);
+
+  rc = isdir (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+static int
+isdir3 (const char *path1, const char *path2, const char *path3)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
+
+  rc = isdir (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
 int
 shisa_file_init (Shisa *dbh,
 		 const char *location,
@@ -127,15 +168,13 @@ shisa_file_init (Shisa *dbh,
 		 void **state)
 {
   Shisa_file *info;
-  struct stat buf;
   int rc;
 
-  rc = stat (location, &buf);
-  if (rc != 0 || !S_ISDIR (buf.st_mode))
+  if (!isdir (location))
     {
       errno = ENOTDIR;
       perror (location);
-      return SHISA_DB_OPEN_ERROR;
+      return SHISA_OPEN_ERROR;
     }
 
   *state = info = xcalloc (1, sizeof (*info));
@@ -148,23 +187,11 @@ shisa_file_init (Shisa *dbh,
   return SHISA_OK;
 }
 
-static int
-has_info_txt (char *path, char *directory)
+static char *
+unescape_filename (const char *path)
 {
-  struct stat buf;
-  char *tmp;
-  int rc;
-
-  asprintf (&tmp, "%s/%s/info.txt", path, directory);
-
-  rc = stat (tmp, &buf);
-
-  free (tmp);
-
-  if (rc != 0 || !S_ISREG (buf.st_mode))
-    return 0;
-
-  return 1;
+  /* XXX fix. */
+  return xstrdup (path);
 }
 
 static int
@@ -181,10 +208,10 @@ shisa_file_ls_1 (Shisa *dbh,
     {
       if (strcmp (de->d_name, ".") == 0 || strcmp (de->d_name, "..") == 0)
 	continue;
-      if (has_info_txt (path, de->d_name))
+      if (isdir2 (path, de->d_name))
 	{
 	  *files = xrealloc (*files, (*nfiles + 1) * sizeof (**files));
-	  (*files)[(*nfiles)++] = xstrdup (de->d_name);
+	  (*files)[(*nfiles)++] = unescape_filename (de->d_name);
 	}
     }
 
@@ -198,7 +225,7 @@ shisa_file_ls_1 (Shisa *dbh,
 	free (**files);
       free (*files);
 
-      return SHISA_DB_LIST_REALM_ERROR;
+      return SHISA_LIST_REALM_ERROR;
     }
 
   return SHISA_OK;
@@ -218,7 +245,7 @@ shisa_file_ls (Shisa *dbh,
   if (dir == NULL)
     {
       perror(path);
-      return SHISA_DB_LIST_REALM_ERROR;
+      return SHISA_LIST_REALM_ERROR;
     }
 
   rc = shisa_file_ls_1 (dbh, path, files, nfiles, dir);
@@ -227,7 +254,7 @@ shisa_file_ls (Shisa *dbh,
       rc = closedir (dir);
       if (rc != 0)
 	perror (path);
-      return SHISA_DB_LIST_REALM_ERROR;
+      return SHISA_LIST_REALM_ERROR;
     }
 
   rc = closedir (dir);
@@ -241,7 +268,7 @@ shisa_file_ls (Shisa *dbh,
 	free (**files);
       free (*files);
 
-      return SHISA_DB_LIST_REALM_ERROR;
+      return SHISA_LIST_REALM_ERROR;
     }
 
   return SHISA_OK;
@@ -290,6 +317,12 @@ shisa_file_principal_find (Shisa * dbh,
 			   Shisa_principal **ph)
 {
   Shisa_file *info = state;
+  Shisa_principal *princ;
+
+  if (!isdir3 (info->path, realm, client))
+    return SHISA_NO_PRINCIPAL;
+
+  princ = xmalloc (sizeof (*princ));
 
   return SHISA_INIT_ERROR;
 }
@@ -305,4 +338,23 @@ shisa_file_done (Shisa *dbh, void *state)
 	free (info->path);
       free (info);
     }
+}
+
+static int
+has_info_txt (char *path, char *directory)
+{
+  struct stat buf;
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/info.txt", path, directory);
+
+  rc = stat (tmp, &buf);
+
+  free (tmp);
+
+  if (rc != 0 || !S_ISREG (buf.st_mode))
+    return 0;
+
+  return 1;
 }

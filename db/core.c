@@ -75,7 +75,7 @@ shisa_principal_find (Shisa * dbh,
 		      const char *realm,
 		      Shisa_principal **ph)
 {
-  return SHISA_DB_FIND_ERROR;
+  return SHISA_FIND_ERROR;
 }
 
 void
