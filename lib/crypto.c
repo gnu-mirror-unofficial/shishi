@@ -1021,6 +1021,7 @@ const char *
 shishi_cipher_name (int type)
 {
   int i;
+  char *p;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     {
@@ -1028,7 +1029,7 @@ shishi_cipher_name (int type)
 	return ciphers[i]->name;
     }
 
-  return NULL;
+  shishi_asprintf (&p, "unknown cipher %d", type);
 }
 
 int
