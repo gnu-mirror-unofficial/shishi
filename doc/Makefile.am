@@ -18,7 +18,9 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+if ENABLE_GTK_DOC
 SUBDIRS = reference
+endif
 
 EXTRA_DIST = gdoc shishi.html shishi.pdf shishi.ps
 
