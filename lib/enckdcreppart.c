@@ -21,6 +21,63 @@
 
 #include "internal.h"
 
+
+Shishi_asn1
+shishi_enckdcreppart (Shishi * handle)
+{
+  int res = ASN1_SUCCESS;
+  Shishi_asn1 node = NULL;
+
+  res = asn1_create_element (handle->asn1, "Kerberos5.EncKDCRepPart",
+			     &node, "EncKDCRepPart");
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  /* XXX remove these two: */
+  res = asn1_write_value (node, "EncKDCRepPart.key-expiration", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    goto error;
+  res = asn1_write_value (node, "EncKDCRepPart.caddr", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  return node;
+
+ error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  if (node != NULL)
+    asn1_delete_structure (&node);
+  return NULL;
+}
+
+Shishi_asn1
+shishi_encasreppart (Shishi * handle)
+{
+  int res = ASN1_SUCCESS;
+  Shishi_asn1 node = NULL;
+
+  res = asn1_create_element (handle->asn1, "Kerberos5.EncASRepPart",
+			     &node, "EncKDCRepPart");
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  /* XXX remove these two: */
+  res = asn1_write_value (node, "EncKDCRepPart.key-expiration", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    goto error;
+  res = asn1_write_value (node, "EncKDCRepPart.caddr", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  return node;
+
+ error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  if (node != NULL)
+    asn1_delete_structure (&node);
+  return NULL;
+}
+
 /**
  * shishi_enckdcreppart_get_key:
  * @handle: shishi handle as allocated by shishi_init().
@@ -37,7 +94,7 @@
  **/
 int
 shishi_enckdcreppart_get_key (Shishi * handle,
-			      ASN1_TYPE enckdcreppart, Shishi_key ** key)
+			      Shishi_asn1 enckdcreppart, Shishi_key ** key)
 {
   int res;
   char buf[BUFSIZ];
@@ -75,7 +132,7 @@ shishi_enckdcreppart_get_key (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_key_set (Shishi * handle,
-			      ASN1_TYPE enckdcreppart, Shishi_key * key)
+			      Shishi_asn1 enckdcreppart, Shishi_key * key)
 {
   int res;
   char buf[BUFSIZ];
@@ -107,7 +164,7 @@ shishi_enckdcreppart_key_set (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_nonce_set (Shishi * handle,
-				ASN1_TYPE enckdcreppart, unsigned long nonce)
+				Shishi_asn1 enckdcreppart, unsigned long nonce)
 {
   int res;
   char buf[BUFSIZ];
@@ -132,7 +189,7 @@ shishi_enckdcreppart_nonce_set (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_flags_set (Shishi * handle,
-				ASN1_TYPE enckdcreppart, int flags)
+				Shishi_asn1 enckdcreppart, int flags)
 {
   int res;
   char buf[BUFSIZ];
@@ -159,8 +216,8 @@ shishi_enckdcreppart_flags_set (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
-					     ASN1_TYPE enckdcreppart,
-					     ASN1_TYPE encticketpart)
+					     Shishi_asn1 enckdcreppart,
+					     Shishi_asn1 encticketpart)
 {
   unsigned char buf[BUFSIZ];
   int buflen;
@@ -244,7 +301,7 @@ shishi_enckdcreppart_populate_encticketpart (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_srealm_set (Shishi * handle,
-				 ASN1_TYPE enckdcreppart, const char *srealm)
+				 Shishi_asn1 enckdcreppart, const char *srealm)
 {
   int res = ASN1_SUCCESS;
 
@@ -273,7 +330,7 @@ shishi_enckdcreppart_srealm_set (Shishi * handle,
  **/
 int
 shishi_enckdcreppart_sname_set (Shishi * handle,
-				ASN1_TYPE enckdcreppart,
+				Shishi_asn1 enckdcreppart,
 				Shishi_name_type name_type, char *sname[])
 {
   int res = ASN1_SUCCESS;
@@ -327,7 +384,7 @@ shishi_enckdcreppart_sname_set (Shishi * handle,
 
 int
 shishi_enckdcreppart_server_set (Shishi * handle,
-				 ASN1_TYPE enckdcreppart, const char *server)
+				 Shishi_asn1 enckdcreppart, const char *server)
 {
   char *tmpserver;
   char **serverbuf;
@@ -364,7 +421,7 @@ shishi_enckdcreppart_server_set (Shishi * handle,
 
 int
 shishi_enckdcreppart_srealmserver_set (Shishi * handle,
-				       ASN1_TYPE enckdcreppart,
+				       Shishi_asn1 enckdcreppart,
 				       const char *srealm, const char *server)
 {
   int res;
@@ -378,60 +435,4 @@ shishi_enckdcreppart_srealmserver_set (Shishi * handle,
     return res;
 
   return SHISHI_OK;
-}
-
-ASN1_TYPE
-shishi_enckdcreppart (Shishi * handle)
-{
-  int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
-
-  res = asn1_create_element (handle->asn1, "Kerberos5.EncKDCRepPart",
-			     &node, "EncKDCRepPart");
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  /* XXX remove these two: */
-  res = asn1_write_value (node, "EncKDCRepPart.key-expiration", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
-  res = asn1_write_value (node, "EncKDCRepPart.caddr", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  return node;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
-    asn1_delete_structure (&node);
-  return NULL;
-}
-
-ASN1_TYPE
-shishi_encasreppart (Shishi * handle)
-{
-  int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
-
-  res = asn1_create_element (handle->asn1, "Kerberos5.EncASRepPart",
-			     &node, "EncKDCRepPart");
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  /* XXX remove these two: */
-  res = asn1_write_value (node, "EncKDCRepPart.key-expiration", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
-  res = asn1_write_value (node, "EncKDCRepPart.caddr", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  return node;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
-    asn1_delete_structure (&node);
-  return NULL;
 }

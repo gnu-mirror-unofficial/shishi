@@ -40,8 +40,8 @@
  **/
 int
 shishi_as_derive_salt (Shishi * handle,
-		       ASN1_TYPE asreq,
-		       ASN1_TYPE asrep, char *salt, int *saltlen)
+		       Shishi_asn1 asreq,
+		       Shishi_asn1 asrep, char *salt, int *saltlen)
 {
   int len = *saltlen;
   int tmplen;
@@ -123,7 +123,7 @@ shishi_as_derive_salt (Shishi * handle,
 }
 
 int
-shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
+shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq, Shishi_asn1 * kdcrep)
 {
   char der[BUFSIZ];		/* XXX dynamically allocate this */
   int der_len, out_len;
@@ -165,16 +165,16 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
     printf ("received %d bytes\n", der_len);
 
   *kdcrep = shishi_d2a_asrep (handle, der, der_len);
-  if (*kdcrep == ASN1_TYPE_EMPTY)
+  if (*kdcrep == NULL)
     {
       *kdcrep = shishi_d2a_tgsrep (handle, der, der_len);
-      if (*kdcrep == ASN1_TYPE_EMPTY)
+      if (*kdcrep == NULL)
 	{
 	  *kdcrep = shishi_d2a_kdcrep (handle, der, der_len);
-	  if (*kdcrep == ASN1_TYPE_EMPTY)
+	  if (*kdcrep == NULL)
 	    {
 	      *kdcrep = shishi_d2a_krberror (handle, der, der_len);
-	      if (*kdcrep == ASN1_TYPE_EMPTY)
+	      if (*kdcrep == NULL)
 		{
 		  shishi_error_printf
 		    (handle, "Could not DER decode AS-REP/KRB-ERROR: %s",
@@ -208,7 +208,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
  **/
 int
 shishi_kdc_copy_crealm (Shishi * handle,
-			ASN1_TYPE kdcrep, ASN1_TYPE encticketpart)
+			Shishi_asn1 kdcrep, Shishi_asn1 encticketpart)
 {
   unsigned char buf[BUFSIZ];
   int buflen;
@@ -243,7 +243,7 @@ shishi_kdc_copy_crealm (Shishi * handle,
  * SHISHI_REALM_MISMATCH if the values differ, or an error code.
  **/
 int
-shishi_as_check_crealm (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
+shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 {
   char reqrealm[BUFSIZ], reprealm[BUFSIZ];
   int reqrealmlen = BUFSIZ, reprealmlen = BUFSIZ;
@@ -293,7 +293,7 @@ shishi_as_check_crealm (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
  **/
 int
 shishi_kdc_copy_cname (Shishi * handle,
-		       ASN1_TYPE kdcrep, ASN1_TYPE encticketpart)
+		       Shishi_asn1 kdcrep, Shishi_asn1 encticketpart)
 {
   unsigned char buf[BUFSIZ];
   char format[BUFSIZ];
@@ -356,7 +356,7 @@ shishi_kdc_copy_cname (Shishi * handle,
  * SHISHI_CNAME_MISMATCH if the values differ, or an error code.
  **/
 int
-shishi_as_check_cname (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
+shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 {
   char reqcname[BUFSIZ], repcname[BUFSIZ];
   int reqcnamelen, repcnamelen;
@@ -434,7 +434,7 @@ shishi_as_check_cname (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
  **/
 int
 shishi_kdc_copy_nonce (Shishi * handle,
-		       ASN1_TYPE kdcreq, ASN1_TYPE enckdcreppart)
+		       Shishi_asn1 kdcreq, Shishi_asn1 enckdcreppart)
 {
   int res;
   unsigned long nonce;
@@ -467,7 +467,7 @@ shishi_kdc_copy_nonce (Shishi * handle,
  **/
 int
 shishi_kdc_check_nonce (Shishi * handle,
-			ASN1_TYPE kdcreq, ASN1_TYPE enckdcreppart)
+			Shishi_asn1 kdcreq, Shishi_asn1 enckdcreppart)
 {
   unsigned char reqnonce[BUFSIZ];
   unsigned char repnonce[BUFSIZ];
@@ -555,9 +555,9 @@ shishi_kdc_check_nonce (Shishi * handle,
  **/
 int
 shishi_tgs_process (Shishi * handle,
-		    ASN1_TYPE tgsreq,
-		    ASN1_TYPE tgsrep,
-		    ASN1_TYPE oldenckdcreppart, ASN1_TYPE * enckdcreppart)
+		    Shishi_asn1 tgsreq,
+		    Shishi_asn1 tgsrep,
+		    Shishi_asn1 oldenckdcreppart, Shishi_asn1 * enckdcreppart)
 {
   Shishi_key *key;
   int etype;
@@ -599,8 +599,8 @@ shishi_tgs_process (Shishi * handle,
  **/
 int
 shishi_as_process (Shishi * handle,
-		   ASN1_TYPE asreq,
-		   ASN1_TYPE asrep, char *string, ASN1_TYPE * enckdcreppart)
+		   Shishi_asn1 asreq,
+		   Shishi_asn1 asrep, char *string, Shishi_asn1 * enckdcreppart)
 {
   unsigned char salt[BUFSIZ];
   int saltlen;
@@ -660,9 +660,9 @@ shishi_as_process (Shishi * handle,
  **/
 int
 shishi_kdc_process (Shishi * handle,
-		    ASN1_TYPE kdcreq,
-		    ASN1_TYPE kdcrep,
-		    Shishi_key * key, int keyusage, ASN1_TYPE * enckdcreppart)
+		    Shishi_asn1 kdcreq,
+		    Shishi_asn1 kdcrep,
+		    Shishi_key * key, int keyusage, Shishi_asn1 * enckdcreppart)
 {
   int res;
   int msgtype;

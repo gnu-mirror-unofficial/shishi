@@ -25,7 +25,7 @@ struct Shishi_safe
 {
   Shishi *handle;
   Shishi_key *key;
-  ASN1_TYPE safe;
+  Shishi_asn1 safe;
 };
 
 /**
@@ -35,14 +35,14 @@ struct Shishi_safe
  * This function creates a new KRB-SAFE structure, populated with some
  * default values.
  *
- * Return value: Returns the authenticator or ASN1_TYPE_EMPTY on
+ * Return value: Returns the authenticator or NULL on
  * failure.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_krbsafe (Shishi * handle)
 {
   int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  Shishi_asn1 node = NULL;
 
   res = asn1_create_element (handle->asn1, "Kerberos5.KRB-SAFE", &node,
 			     "KRB-SAFE");
@@ -63,9 +63,9 @@ shishi_krbsafe (Shishi * handle)
 
 error:
   shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
+  if (node != NULL)
     asn1_delete_structure (&node);
-  return ASN1_TYPE_EMPTY;
+  return NULL;
 }
 
 /**
@@ -95,7 +95,7 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
     return rc;
 
   lsafe->safe = shishi_krbsafe (handle);
-  if (lsafe->safe == ASN1_TYPE_EMPTY)
+  if (lsafe->safe == NULL)
     return SHISHI_ASN1_ERROR;
 
   return SHISHI_OK;
@@ -138,7 +138,7 @@ shishi_safe_key_set (Shishi_safe * safe, Shishi_key * key)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_safe_print (Shishi * handle, FILE * fh, ASN1_TYPE safe)
+shishi_safe_print (Shishi * handle, FILE * fh, Shishi_asn1 safe)
 {
   return _shishi_print_armored_data (handle, fh, safe, "SAFE", NULL);
 }
@@ -154,7 +154,7 @@ shishi_safe_print (Shishi * handle, FILE * fh, ASN1_TYPE safe)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_safe_save (Shishi * handle, FILE * fh, ASN1_TYPE safe)
+shishi_safe_save (Shishi * handle, FILE * fh, Shishi_asn1 safe)
 {
   return _shishi_save_data (handle, fh, safe, "SAFE");
 }
@@ -173,7 +173,7 @@ shishi_safe_save (Shishi * handle, FILE * fh, ASN1_TYPE safe)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_safe_to_file (Shishi * handle, ASN1_TYPE safe,
+shishi_safe_to_file (Shishi * handle, Shishi_asn1 safe,
 		     int filetype, char *filename)
 {
   FILE *fh;
@@ -219,7 +219,7 @@ shishi_safe_to_file (Shishi * handle, ASN1_TYPE safe,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_safe_parse (Shishi * handle, FILE * fh, ASN1_TYPE * safe)
+shishi_safe_parse (Shishi * handle, FILE * fh, Shishi_asn1 * safe)
 {
   return _shishi_safe_input (handle, fh, safe, 0);
 }
@@ -235,7 +235,7 @@ shishi_safe_parse (Shishi * handle, FILE * fh, ASN1_TYPE * safe)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_safe_read (Shishi * handle, FILE * fh, ASN1_TYPE * safe)
+shishi_safe_read (Shishi * handle, FILE * fh, Shishi_asn1 * safe)
 {
   return _shishi_safe_input (handle, fh, safe, 1);
 }
@@ -253,7 +253,7 @@ shishi_safe_read (Shishi * handle, FILE * fh, ASN1_TYPE * safe)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_safe_from_file (Shishi * handle, ASN1_TYPE * safe,
+shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
 		       int filetype, char *filename)
 {
   int res;

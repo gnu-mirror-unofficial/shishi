@@ -21,10 +21,10 @@
 
 #include "internal.h"
 
-ASN1_TYPE
+Shishi_asn1
 shishi_encticketpart (Shishi * handle)
 {
-  ASN1_TYPE node;
+  Shishi_asn1 node;
   int res;
 
   node = shishi_asn1_encticketpart (handle);
@@ -60,7 +60,7 @@ shishi_encticketpart (Shishi * handle)
  **/
 int
 shishi_encticketpart_get_enc_part_etype (Shishi * handle,
-					 ASN1_TYPE encticketpart, int *etype)
+					 Shishi_asn1 encticketpart, int *etype)
 {
   int buflen;
   int res;
@@ -88,7 +88,7 @@ shishi_encticketpart_get_enc_part_etype (Shishi * handle,
  **/
 int
 shishi_encticketpart_get_key (Shishi * handle,
-			      ASN1_TYPE encticketpart, Shishi_key ** key)
+			      Shishi_asn1 encticketpart, Shishi_key ** key)
 {
   int res;
   char buf[BUFSIZ];
@@ -126,7 +126,7 @@ shishi_encticketpart_get_key (Shishi * handle,
  **/
 int
 shishi_encticketpart_key_set (Shishi * handle,
-			      ASN1_TYPE encticketpart, Shishi_key * key)
+			      Shishi_asn1 encticketpart, Shishi_key * key)
 {
   int res;
   char buf[BUFSIZ];
@@ -158,7 +158,7 @@ shishi_encticketpart_key_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_flags_set (Shishi * handle,
-				ASN1_TYPE encticketpart, int flags)
+				Shishi_asn1 encticketpart, int flags)
 {
   int res;
   char buf[BUFSIZ];
@@ -183,7 +183,7 @@ shishi_encticketpart_flags_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_crealm_set (Shishi * handle,
-				 ASN1_TYPE encticketpart, const char *realm)
+				 Shishi_asn1 encticketpart, const char *realm)
 {
   int res = ASN1_SUCCESS;
 
@@ -208,7 +208,7 @@ shishi_encticketpart_crealm_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_cname_set (Shishi * handle,
-				ASN1_TYPE encticketpart,
+				Shishi_asn1 encticketpart,
 				Shishi_name_type name_type,
 				const char *principal)
 {
@@ -267,7 +267,7 @@ shishi_encticketpart_cname_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_transited_set (Shishi * handle,
-				    ASN1_TYPE encticketpart,
+				    Shishi_asn1 encticketpart,
 				    int trtype,
 				    char *trdata, size_t trdatalen)
 {
@@ -300,7 +300,7 @@ shishi_encticketpart_transited_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_authtime_set (Shishi * handle,
-				   ASN1_TYPE encticketpart, char *authtime)
+				   Shishi_asn1 encticketpart, char *authtime)
 {
   int res;
 
@@ -324,7 +324,7 @@ shishi_encticketpart_authtime_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_endtime_set (Shishi * handle,
-				  ASN1_TYPE encticketpart, char *endtime)
+				  Shishi_asn1 encticketpart, char *endtime)
 {
   int res;
 
@@ -338,7 +338,7 @@ shishi_encticketpart_endtime_set (Shishi * handle,
 
 int
 shishi_encticketpart_authtime (Shishi * handle,
-			       ASN1_TYPE encticketpart,
+			       Shishi_asn1 encticketpart,
 			       char *authtime, int *authtimelen)
 {
   return shishi_asn1_field (handle, encticketpart, authtime, authtimelen,
@@ -346,7 +346,7 @@ shishi_encticketpart_authtime (Shishi * handle,
 }
 
 time_t
-shishi_encticketpart_authctime (Shishi * handle, ASN1_TYPE encticketpart)
+shishi_encticketpart_authctime (Shishi * handle, Shishi_asn1 encticketpart)
 {
   char authtime[GENERALIZEDTIME_TIME_LEN + 1];
   int authtimelen;
@@ -368,7 +368,7 @@ shishi_encticketpart_authctime (Shishi * handle, ASN1_TYPE encticketpart)
 
 int
 shishi_encticketpart_cname_get (Shishi * handle,
-				ASN1_TYPE encticketpart,
+				Shishi_asn1 encticketpart,
 				char *cname, int *cnamelen)
 {
   return shishi_principal_name_get (handle, encticketpart,
@@ -377,7 +377,7 @@ shishi_encticketpart_cname_get (Shishi * handle,
 
 int
 shishi_encticketpart_cnamerealm_get (Shishi * handle,
-				     ASN1_TYPE encticketpart,
+				     Shishi_asn1 encticketpart,
 				     char *cnamerealm, int *cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, encticketpart,

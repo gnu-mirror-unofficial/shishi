@@ -24,10 +24,10 @@
 struct Shishi_tkt
 {
   Shishi *handle;
-  ASN1_TYPE ticket;
-  ASN1_TYPE kdcrep;
-  ASN1_TYPE enckdcreppart;
-  ASN1_TYPE encticketpart;
+  Shishi_asn1 ticket;
+  Shishi_asn1 kdcrep;
+  Shishi_asn1 enckdcreppart;
+  Shishi_asn1 encticketpart;
   Shishi_key *key;
 };
 
@@ -134,7 +134,7 @@ shishi_tkt_cnamerealm_p (Shishi_tkt * tkt, const char *client)
  *
  * Return value: Returns actual ticket.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_tkt_ticket (Shishi_tkt * tkt)
 {
   return tkt->ticket;
@@ -146,7 +146,7 @@ shishi_tkt_ticket (Shishi_tkt * tkt)
  *
  * Return value: Returns auxilliary ticket information.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_tkt_enckdcreppart (Shishi_tkt * tkt)
 {
   return tkt->enckdcreppart;
@@ -160,7 +160,7 @@ shishi_tkt_enckdcreppart (Shishi_tkt * tkt)
  * Set the EncKDCRepPart in the Ticket.
  **/
 void
-shishi_tkt_enckdcreppart_set (Shishi_tkt * tkt, ASN1_TYPE enckdcreppart)
+shishi_tkt_enckdcreppart_set (Shishi_tkt * tkt, Shishi_asn1 enckdcreppart)
 {
   if (tkt->enckdcreppart)
     shishi_asn1_done (tkt->handle, tkt->enckdcreppart);
@@ -173,7 +173,7 @@ shishi_tkt_enckdcreppart_set (Shishi_tkt * tkt, ASN1_TYPE enckdcreppart)
  *
  * Return value: Returns KDC-REP information.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_tkt_kdcrep (Shishi_tkt * tkt)
 {
   return tkt->kdcrep;
@@ -185,7 +185,7 @@ shishi_tkt_kdcrep (Shishi_tkt * tkt)
  *
  * Return value: Returns EncTicketPart information.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_tkt_encticketpart (Shishi_tkt * tkt)
 {
   return tkt->encticketpart;
@@ -199,7 +199,7 @@ shishi_tkt_encticketpart (Shishi_tkt * tkt)
  * Set the EncTicketPart in the Ticket.
  **/
 void
-shishi_tkt_encticketpart_set (Shishi_tkt * tkt, ASN1_TYPE encticketpart)
+shishi_tkt_encticketpart_set (Shishi_tkt * tkt, Shishi_asn1 encticketpart)
 {
   if (tkt->encticketpart)
     shishi_asn1_done (tkt->handle, tkt->encticketpart);
@@ -269,7 +269,7 @@ shishi_tkt_key_set (Shishi_tkt * tkt, Shishi_key * key)
  **/
 Shishi_tkt *
 shishi_tkt2 (Shishi * handle,
-	     ASN1_TYPE ticket, ASN1_TYPE enckdcreppart, ASN1_TYPE kdcrep)
+	     Shishi_asn1 ticket, Shishi_asn1 enckdcreppart, Shishi_asn1 kdcrep)
 {
   Shishi_tkt *tkt;
 
@@ -317,7 +317,8 @@ shishi_tkt (Shishi * handle, Shishi_tkt ** tkt)
       return SHISHI_ASN1_ERROR;
     }
 
-  t->enckdcreppart = shishi_enckdcreppart (handle);
+  /* XXX what about tgs's? */
+  t->enckdcreppart = shishi_encasreppart (handle);
   if (t->enckdcreppart == NULL)
     {
       shishi_error_printf (handle, "Could not create EncKDCRepPart: %s\n",
@@ -637,10 +638,10 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
   int res;
   int i, n;
 
-  res = asn1_number_of_elements (tkt->enckdcreppart,
-				 "EncKDCRepPart.last-req", &n);
-  if (res != ASN1_SUCCESS)
-    return SHISHI_ASN1_ERROR;
+  res = shishi_asn1_number_of_elements (tkt->handle, tkt->enckdcreppart,
+					"EncKDCRepPart.last-req", &n);
+  if (res != SHISHI_OK)
+    return res;
 
   for (i = 1; i <= n; i++)
     {
@@ -949,7 +950,7 @@ int
 shishi_tkt_decrypt (Shishi_tkt * tkt, Shishi_key * key)
 {
   int rc;
-  ASN1_TYPE encticketpart;
+  Shishi_asn1 encticketpart;
 
   rc = shishi_ticket_decrypt (tkt->handle, tkt->ticket, key, &encticketpart);
   if (rc != SHISHI_OK)

@@ -23,7 +23,7 @@
 
 int
 shishi_ticket_realm_get (Shishi * handle,
-			 ASN1_TYPE ticket, char *realm, int *realmlen)
+			 Shishi_asn1 ticket, char *realm, int *realmlen)
 {
   return shishi_asn1_field (handle, ticket, realm, realmlen, "Ticket.realm");
 }
@@ -39,7 +39,8 @@ shishi_ticket_realm_get (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ticket_realm_set (Shishi * handle, ASN1_TYPE ticket, const char *realm)
+shishi_ticket_realm_set (Shishi * handle, Shishi_asn1 ticket,
+			 const char *realm)
 {
   int res = ASN1_SUCCESS;
 
@@ -52,7 +53,7 @@ shishi_ticket_realm_set (Shishi * handle, ASN1_TYPE ticket, const char *realm)
 
 int
 shishi_ticket_sname_get (Shishi * handle,
-			 ASN1_TYPE ticket, char *server, int *serverlen)
+			 Shishi_asn1 ticket, char *server, int *serverlen)
 {
   return shishi_principal_name_get (handle, ticket, "Ticket.sname",
 				    server, serverlen);
@@ -72,7 +73,7 @@ shishi_ticket_sname_get (Shishi * handle,
  **/
 int
 shishi_ticket_sname_set (Shishi * handle,
-			 ASN1_TYPE ticket,
+			 Shishi_asn1 ticket,
 			 Shishi_name_type name_type, char *sname[])
 {
   int res = ASN1_SUCCESS;
@@ -121,7 +122,7 @@ shishi_ticket_sname_set (Shishi * handle,
 
 int
 shishi_ticket_set_server (Shishi * handle,
-			  ASN1_TYPE ticket, const char *server)
+			  Shishi_asn1 ticket, const char *server)
 {
   char *tmpserver;
   char **serverbuf;
@@ -158,7 +159,7 @@ shishi_ticket_set_server (Shishi * handle,
 
 int
 shishi_ticket_snamerealm_get (Shishi * handle,
-			      ASN1_TYPE ticket,
+			      Shishi_asn1 ticket,
 			      char *serverrealm, int *serverrealmlen)
 {
   return shishi_principal_name_realm_get (handle, ticket, "Ticket.sname",
@@ -168,7 +169,7 @@ shishi_ticket_snamerealm_get (Shishi * handle,
 
 int
 shishi_ticket_srealmserver_set (Shishi * handle,
-				ASN1_TYPE ticket, char *realm, char *server)
+				Shishi_asn1 ticket, char *realm, char *server)
 {
   int res;
 
@@ -195,7 +196,7 @@ shishi_ticket_srealmserver_set (Shishi * handle,
  **/
 int
 shishi_ticket_get_enc_part_etype (Shishi * handle,
-				  ASN1_TYPE ticket, int *etype)
+				  Shishi_asn1 ticket, int *etype)
 {
   int buflen;
   int res;
@@ -210,8 +211,8 @@ shishi_ticket_get_enc_part_etype (Shishi * handle,
 
 int
 shishi_ticket_decrypt (Shishi * handle,
-		       ASN1_TYPE ticket,
-		       Shishi_key * key, ASN1_TYPE * encticketpart)
+		       Shishi_asn1 ticket,
+		       Shishi_key * key, Shishi_asn1 * encticketpart)
 {
   int res;
   int i;
@@ -254,11 +255,11 @@ shishi_ticket_decrypt (Shishi * handle,
 	printf ("Trying with %d pad in enckdcrep...\n", i);
 
       *encticketpart = shishi_d2a_encticketpart (handle, &buf[0], buflen - i);
-      if (*encticketpart != ASN1_TYPE_EMPTY)
+      if (*encticketpart != NULL)
 	break;
     }
 
-  if (*encticketpart == ASN1_TYPE_EMPTY)
+  if (*encticketpart == NULL)
     {
       shishi_error_printf (handle, "Could not DER decode EncTicketPart. "
 			   "Password probably correct (decrypt ok) though\n");
@@ -287,7 +288,7 @@ shishi_ticket_decrypt (Shishi * handle,
  **/
 int
 shishi_ticket_set_enc_part (Shishi * handle,
-			    ASN1_TYPE ticket,
+			    Shishi_asn1 ticket,
 			    int etype, int kvno, char *buf, int buflen)
 {
   char format[BUFSIZ];
@@ -337,8 +338,8 @@ error:
  **/
 int
 shishi_ticket_add_enc_part (Shishi * handle,
-			    ASN1_TYPE ticket,
-			    Shishi_key * key, ASN1_TYPE encticketpart)
+			    Shishi_asn1 ticket,
+			    Shishi_key * key, Shishi_asn1 encticketpart)
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];

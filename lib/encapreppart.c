@@ -1,5 +1,5 @@
 /* encapreppart.c	Key distribution encrypted reply part functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,46 +21,43 @@
 
 #include "internal.h"
 
-ASN1_TYPE
+Shishi_asn1
 shishi_encapreppart (Shishi * handle)
 {
   int res;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  Shishi_asn1 node = NULL;
   struct timeval tv;
   struct timezone tz;
   char usec[BUFSIZ];
 
-  res = asn1_create_element (handle->asn1, "Kerberos5.EncAPRepPart",
-			     &node, "EncAPRepPart");
-  if (res != ASN1_SUCCESS)
-    goto error;
+  node = shishi_asn1_encapreppart (handle);
+  if (!node)
+    return NULL;
 
-  res = asn1_write_value (node, "EncAPRepPart.ctime",
+  res = shishi_asn1_write (handle, node, "EncAPRepPart.ctime",
 			  shishi_generalize_time (handle, time (NULL)), 0);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     goto error;
 
   gettimeofday (&tv, &tz);
   sprintf (usec, "%ld", tv.tv_usec % 1000000);
-  res = asn1_write_value (node, "EncAPRepPart.cusec", usec, 0);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, node, "EncAPRepPart.cusec", usec, 0);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "EncAPRepPart.subkey", NULL, 0);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, node, "EncAPRepPart.subkey", NULL, 0);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "EncAPRepPart.seq-number", NULL, 0);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, node, "EncAPRepPart.seq-number", NULL, 0);
+  if (res != SHISHI_OK)
     goto error;
 
   return node;
 
 error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
-    asn1_delete_structure (&node);
-  return ASN1_TYPE_EMPTY;
+  shishi_asn1_done (handle, node);
+  return NULL;
 }
 
 /**
@@ -74,7 +71,8 @@ error:
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_encapreppart_print (Shishi * handle, FILE * fh, ASN1_TYPE encapreppart)
+shishi_encapreppart_print (Shishi * handle, FILE * fh,
+			   Shishi_asn1 encapreppart)
 {
   return _shishi_print_armored_data (handle, fh, encapreppart,
 				     "EncAPRepPart", NULL);
@@ -91,7 +89,7 @@ shishi_encapreppart_print (Shishi * handle, FILE * fh, ASN1_TYPE encapreppart)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_encapreppart_save (Shishi * handle, FILE * fh, ASN1_TYPE encapreppart)
+shishi_encapreppart_save (Shishi * handle, FILE * fh, Shishi_asn1 encapreppart)
 {
   return _shishi_save_data (handle, fh, encapreppart, "EncAPRepPart");
 }
@@ -110,7 +108,7 @@ shishi_encapreppart_save (Shishi * handle, FILE * fh, ASN1_TYPE encapreppart)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_encapreppart_to_file (Shishi * handle, ASN1_TYPE encapreppart,
+shishi_encapreppart_to_file (Shishi * handle, Shishi_asn1 encapreppart,
 			     int filetype, char *filename)
 {
   FILE *fh;
@@ -157,7 +155,7 @@ shishi_encapreppart_to_file (Shishi * handle, ASN1_TYPE encapreppart,
  **/
 int
 shishi_encapreppart_parse (Shishi * handle, FILE * fh,
-			   ASN1_TYPE * encapreppart)
+			   Shishi_asn1 * encapreppart)
 {
   return _shishi_encapreppart_input (handle, fh, encapreppart, 0);
 }
@@ -174,7 +172,7 @@ shishi_encapreppart_parse (Shishi * handle, FILE * fh,
  **/
 int
 shishi_encapreppart_read (Shishi * handle, FILE * fh,
-			  ASN1_TYPE * encapreppart)
+			  Shishi_asn1 * encapreppart)
 {
   return _shishi_encapreppart_input (handle, fh, encapreppart, 1);
 }
@@ -192,7 +190,7 @@ shishi_encapreppart_read (Shishi * handle, FILE * fh,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_encapreppart_from_file (Shishi * handle, ASN1_TYPE * encapreppart,
+shishi_encapreppart_from_file (Shishi * handle, Shishi_asn1 * encapreppart,
 			       int filetype, char *filename)
 {
   int res;
@@ -241,7 +239,7 @@ shishi_encapreppart_from_file (Shishi * handle, ASN1_TYPE * encapreppart,
  **/
 int
 shishi_encapreppart_get_key (Shishi * handle,
-			     ASN1_TYPE encapreppart,
+			     Shishi_asn1 encapreppart,
 			     int *keytype,
 			     unsigned char *keyvalue, int *keyvalue_len)
 {
@@ -250,15 +248,14 @@ shishi_encapreppart_get_key (Shishi * handle,
 
   *keytype = 0;
   buflen = sizeof (*keytype);
-  res = shishi_asn1_field (handle, encapreppart,
-			   keytype, &buflen, "EncAPRepPart.subkey.keytype");
+  res = shishi_asn1_read (handle, encapreppart, "EncAPRepPart.subkey.keytype",
+			  keytype, &buflen);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_field (handle, encapreppart,
-			   keyvalue, keyvalue_len,
-			   "EncAPRepPart.subkey.keyvalue");
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_read (handle, encapreppart, "EncAPRepPart.subkey.keyvalue",
+			  keyvalue, keyvalue_len);
+  if (res != SHISHI_OK)
     return res;
 
   return SHISHI_OK;
@@ -266,7 +263,7 @@ shishi_encapreppart_get_key (Shishi * handle,
 
 int
 shishi_encapreppart_ctime_get (Shishi * handle,
-			       ASN1_TYPE encapreppart, char *ctime)
+			       Shishi_asn1 encapreppart, char *ctime)
 {
   int len;
   int res;
@@ -282,24 +279,21 @@ shishi_encapreppart_ctime_get (Shishi * handle,
 
 int
 shishi_encapreppart_ctime_set (Shishi * handle,
-			       ASN1_TYPE encapreppart, char *ctime)
+			       Shishi_asn1 encapreppart, char *ctime)
 {
   int res;
 
-  res = asn1_write_value (encapreppart, "EncAPRepPart.ctime",
-			  ctime, strlen (ctime));
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+  res = shishi_asn1_write (handle, encapreppart, "EncAPRepPart.ctime",
+			   ctime, strlen (ctime));
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
 
 int
 shishi_encapreppart_cusec_get (Shishi * handle,
-			       ASN1_TYPE encapreppart, int *cusec)
+			       Shishi_asn1 encapreppart, int *cusec)
 {
   int res;
 
@@ -312,53 +306,49 @@ shishi_encapreppart_cusec_get (Shishi * handle,
 
 int
 shishi_encapreppart_cusec_set (Shishi * handle,
-			       ASN1_TYPE encapreppart, int cusec)
+			       Shishi_asn1 encapreppart, int cusec)
 {
   char usec[BUFSIZ];
   int res;
 
   sprintf (usec, "%d", cusec);
-  res = asn1_write_value (encapreppart, "EncAPRepPart.cusec", usec, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+  res = shishi_asn1_write (handle, encapreppart, "EncAPRepPart.cusec",
+			   usec, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
 
 int
 shishi_encapreppart_time_copy (Shishi * handle,
-			       ASN1_TYPE encapreppart,
-			       ASN1_TYPE authenticator)
+			       Shishi_asn1 encapreppart,
+			       Shishi_asn1 authenticator)
 {
   char buf[BUFSIZ];
   int buflen;
   int res;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (authenticator, "Authenticator.cusec", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, authenticator, "Authenticator.cusec",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (encapreppart, "EncAPRepPart.cusec", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (encapreppart, "EncAPRepPart.cusec", buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   buflen = BUFSIZ;
-  res = asn1_read_value (authenticator, "Authenticator.ctime", buf, &buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_read (handle, authenticator, "Authenticator.ctime",
+			  buf, &buflen);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (encapreppart, "EncAPRepPart.ctime", buf, buflen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, encapreppart, "EncAPRepPart.ctime",
+			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
-
-error:
-  shishi_error_printf (handle, "shishi_encapreppart_time_copy() failure: %s",
-		       libtasn1_strerror (res));
-  return SHISHI_ASN1_ERROR;
 }

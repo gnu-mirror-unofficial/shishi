@@ -27,11 +27,11 @@
 struct Shishi_tgs
 {
   Shishi *handle;
-  ASN1_TYPE tgsreq;
+  Shishi_asn1 tgsreq;
   Shishi_tkt *tgtkt;
   Shishi_ap *ap;
-  ASN1_TYPE tgsrep;
-  ASN1_TYPE krberror;
+  Shishi_asn1 tgsrep;
+  Shishi_asn1 krberror;
   Shishi_tkt *tkt;
 };
 
@@ -136,7 +136,7 @@ shishi_tgs_ap (Shishi_tgs * tgs)
  * Return value: Returns the generated TGS-REQ from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_tgs_req (Shishi_tgs * tgs)
 {
   return tgs->tgsreq;
@@ -209,7 +209,7 @@ shishi_tgs_req_build (Shishi_tgs * tgs)
  * Return value: Returns the received TGS-REP from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_tgs_rep (Shishi_tgs * tgs)
 {
   return tgs->tgsrep;
@@ -227,7 +227,7 @@ shishi_tgs_rep (Shishi_tgs * tgs)
 int
 shishi_tgs_rep_process (Shishi_tgs * tgs)
 {
-  ASN1_TYPE kdcreppart, ticket;
+  Shishi_asn1 kdcreppart, ticket;
   int res;
 
   if (VERBOSE (tgs->handle))
@@ -281,7 +281,7 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
  * Return value: Returns the received TGS-REP from the TGS exchange,
  *               or NULL if not yet set or an error occured.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_tgs_krberror (Shishi_tgs * tgs)
 {
   return tgs->krberror;

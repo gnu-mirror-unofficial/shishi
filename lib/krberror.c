@@ -28,13 +28,13 @@
  * This function creates a new KRB-ERROR, populated with some default
  * values.
  *
- * Return value: Returns the KRB-ERROR or ASN1_TYPE_EMPTY on failure.
+ * Return value: Returns the KRB-ERROR or NULL on failure.
  **/
-ASN1_TYPE
+Shishi_asn1
 shishi_krberror (Shishi * handle)
 {
   int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  Shishi_asn1 node = NULL;
 
   res = asn1_create_element (handle->asn1, "Kerberos5.KRB-ERROR", &node,
 			     "KRB-ERROR");
@@ -45,7 +45,7 @@ shishi_krberror (Shishi * handle)
 
 error:
   shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
+  if (node != NULL)
     asn1_delete_structure (&node);
   return NULL;
 }
@@ -61,7 +61,7 @@ error:
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_print (Shishi * handle, FILE * fh, ASN1_TYPE krberror)
+shishi_krberror_print (Shishi * handle, FILE * fh, Shishi_asn1 krberror)
 {
   return _shishi_print_armored_data (handle, fh, krberror, "KRB-ERROR", NULL);
 }
@@ -77,7 +77,7 @@ shishi_krberror_print (Shishi * handle, FILE * fh, ASN1_TYPE krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_save (Shishi * handle, FILE * fh, ASN1_TYPE krberror)
+shishi_krberror_save (Shishi * handle, FILE * fh, Shishi_asn1 krberror)
 {
   return _shishi_save_data (handle, fh, krberror, "KRB-ERROR");
 }
@@ -96,7 +96,7 @@ shishi_krberror_save (Shishi * handle, FILE * fh, ASN1_TYPE krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_to_file (Shishi * handle, ASN1_TYPE krberror,
+shishi_krberror_to_file (Shishi * handle, Shishi_asn1 krberror,
 			 int filetype, char *filename)
 {
   FILE *fh;
@@ -142,7 +142,7 @@ shishi_krberror_to_file (Shishi * handle, ASN1_TYPE krberror,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_parse (Shishi * handle, FILE * fh, ASN1_TYPE * krberror)
+shishi_krberror_parse (Shishi * handle, FILE * fh, Shishi_asn1 * krberror)
 {
   return _shishi_krberror_input (handle, fh, krberror, 0);
 }
@@ -158,7 +158,7 @@ shishi_krberror_parse (Shishi * handle, FILE * fh, ASN1_TYPE * krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_read (Shishi * handle, FILE * fh, ASN1_TYPE * krberror)
+shishi_krberror_read (Shishi * handle, FILE * fh, Shishi_asn1 * krberror)
 {
   return _shishi_krberror_input (handle, fh, krberror, 1);
 }
@@ -176,7 +176,7 @@ shishi_krberror_read (Shishi * handle, FILE * fh, ASN1_TYPE * krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_from_file (Shishi * handle, ASN1_TYPE * krberror,
+shishi_krberror_from_file (Shishi * handle, Shishi_asn1 * krberror,
 			   int filetype, char *filename)
 {
   int res;
@@ -398,7 +398,7 @@ shishi_krberror_errorcode_message (Shishi * handle, int errorcode)
  **/
 int
 shishi_krberror_errorcode (Shishi * handle,
-			   ASN1_TYPE krberror,
+			   Shishi_asn1 krberror,
 			   int *errorcode)
 {
   return shishi_asn1_integer_field (handle, krberror, errorcode,
@@ -414,7 +414,7 @@ shishi_krberror_errorcode (Shishi * handle,
  *               directly, or -1 on error.
  **/
 int
-shishi_krberror_errorcode_fast (Shishi * handle, ASN1_TYPE krberror)
+shishi_krberror_errorcode_fast (Shishi * handle, Shishi_asn1 krberror)
 {
   int i;
 
@@ -437,7 +437,7 @@ shishi_krberror_errorcode_fast (Shishi * handle, ASN1_TYPE krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_etext (Shishi * handle, ASN1_TYPE krberror,
+shishi_krberror_etext (Shishi * handle, Shishi_asn1 krberror,
 		       char *etext, size_t * etextlen)
 {
   return shishi_asn1_optional_field (handle, krberror, etext, etextlen,
@@ -457,7 +457,7 @@ shishi_krberror_etext (Shishi * handle, ASN1_TYPE krberror,
  *               isn't known.
  **/
 const char *
-shishi_krberror_message (Shishi * handle, ASN1_TYPE krberror)
+shishi_krberror_message (Shishi * handle, Shishi_asn1 krberror)
 {
   return shishi_krberror_errorcode_message
     (handle, shishi_krberror_errorcode_fast (handle, krberror));
@@ -475,7 +475,7 @@ shishi_krberror_message (Shishi * handle, ASN1_TYPE krberror)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_pretty_print (Shishi * handle, FILE * fh, ASN1_TYPE krberror)
+shishi_krberror_pretty_print (Shishi * handle, FILE * fh, Shishi_asn1 krberror)
 {
   char buf[BUFSIZ];
   size_t len = BUFSIZ;
