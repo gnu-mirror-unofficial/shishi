@@ -376,27 +376,30 @@ weak.  It is associated with the @code{arcfour-hmac-md5} checksum.
 @item des-cbc-crc
 
 @code{des-cbc-crc} is DES encryption and decryption with 56 bit keys
-and 8 byte blocks in CBC mode. The keys can be derived from passwords
-by an obscure application specific algorithm. Data is integrity
-protected with an unkeyed but encrypted @code{CRC32}-like checksum.
-It is weak. It is associated with the @code{rsa-md5-des} checksum.
+and 8 byte blocks in CBC mode, using the key as IV. The keys can be
+derived from passwords by an obscure application specific
+algorithm. Data is integrity protected with an unkeyed but encrypted
+@code{CRC32}-like checksum.  It is weak. It is associated with the
+@code{rsa-md5-des} checksum.
 
 @item des-cbc-md4
 
 @code{des-cbc-md4} is DES encryption and decryption with 56 bit keys
-and 8 byte blocks in CBC mode. The keys can be derived from passwords
-by an obscure application specific algorithm. Data is integrity
-protected with an unkeyed but encrypted MD4 hash.  It is weak. It is
-associated with the @code{rsa-md4-des} checksum.
+and 8 byte blocks in CBC mode, using a zero IV. The keys can be
+derived from passwords by an obscure application specific
+algorithm. Data is integrity protected with an unkeyed but encrypted
+MD4 hash.  It is weak. It is associated with the @code{rsa-md4-des}
+checksum.
 
 @item des-cbc-md5
 
 @code{des-cbc-md5} is DES encryption and decryption with 56 bit keys
-and 8 byte blocks in CBC mode.  The keys can be derived from passwords
-by an obscure application specific algorithm. Data is integrity
-protected with an unkeyed but encrypted MD5 hash.  It is weak.  It is
-associated with the @code{rsa-md5-des} checksum.  This is the
-strongest RFC 1510 interoperable mechanism.
+and 8 byte blocks in CBC mode, using a zero IV.  The keys can be
+derived from passwords by an obscure application specific
+algorithm. Data is integrity protected with an unkeyed but encrypted
+MD5 hash.  It is weak.  It is associated with the @code{rsa-md5-des}
+checksum.  This is the strongest RFC 1510 interoperable encryption
+mechanism.
 
 @item des3-cbc-sha1-kd
 

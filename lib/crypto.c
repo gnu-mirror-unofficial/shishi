@@ -1450,6 +1450,12 @@ shishi_decrypt_ivupdate_etype (Shishi * handle,
       printf ("\t ;; in (%d):\n", inlen);
       _shishi_escapeprint (in, inlen);
       _shishi_hexprint (in, inlen);
+      if (iv)
+	{
+	  printf ("\t ;; iv (%d):\n", ivlen);
+	  _shishi_escapeprint (iv, ivlen);
+	  _shishi_hexprint (iv, ivlen);
+	}
     }
 
   decrypt = _shishi_cipher_decrypt (etype);

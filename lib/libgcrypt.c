@@ -73,6 +73,45 @@ shishi_randomize (Shishi * handle, int strong, char *data, size_t datalen)
 }
 
 int
+shishi_crc (Shishi * handle,
+	    const char *in, size_t inlen,
+	    char *out[4])
+{
+  gcry_md_hd_t hd;
+  gpg_error_t err;
+  char T[4];
+  char *p;
+
+  err = gcry_md_open (&hd, GCRY_MD_CRC32_RFC1510, 0);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "Libgcrypt cannot open CRC handle");
+      shishi_error_set (handle, gpg_strerror (err));
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  gcry_md_write (hd, in, inlen);
+
+  p = gcry_md_read (hd, GCRY_MD_CRC32_RFC1510);
+  if (p == NULL)
+    {
+      shishi_error_printf (handle, "Libgcrypt failed to compute hash");
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  *out = xmalloc (4);
+  /* XXX */
+  (*out)[0] = p[3];
+  (*out)[1] = p[2];
+  (*out)[2] = p[1];
+  (*out)[3] = p[0];
+
+  gcry_md_close (hd);
+
+  return SHISHI_OK;
+}
+
+int
 shishi_md4 (Shishi * handle,
 	    const char *in, size_t inlen,
 	    char *out[16])

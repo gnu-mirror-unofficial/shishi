@@ -31,7 +31,7 @@ raw_des_checksum0 (Shishi * handle, int algo,
   size_t tmplen;
   char *p;
   int blen = 8;
-  int hlen = 16;
+  int hlen = (algo == SHISHI_DES_CBC_CRC) ? 4 : 16;
   int rc;
 
   rc = shishi_randomize (handle, 0, out, blen);
@@ -46,6 +46,10 @@ raw_des_checksum0 (Shishi * handle, int algo,
 
   switch (algo)
     {
+    case SHISHI_DES_CBC_CRC:
+      rc = shishi_crc (handle, tmp, tmplen, &p);
+      break;
+
     case SHISHI_DES_CBC_MD4:
       rc = shishi_md4 (handle, tmp, tmplen, &p);
       break;
@@ -75,7 +79,7 @@ raw_des_checksum1 (Shishi * handle, int algo,
   size_t tmplen;
   char *p;
   int blen = 8;
-  int hlen = 16;
+  int hlen = (algo == SHISHI_DES_CBC_CRC) ? 4 : 16;
   int rc;
 
   rc = shishi_randomize (handle, 0, out, blen);
@@ -92,6 +96,10 @@ raw_des_checksum1 (Shishi * handle, int algo,
 
   switch (algo)
     {
+    case SHISHI_DES_CBC_CRC:
+      rc = shishi_crc (handle, tmp, tmplen, &p);
+      break;
+
     case SHISHI_DES_CBC_MD4:
       rc = shishi_md4 (handle, tmp, tmplen, &p);
       break;
@@ -126,10 +134,11 @@ des_encrypt_checksum (Shishi * handle,
   char *inpad;
   char *pt;
   size_t inpadlen, padzerolen = 0, ptlen, cksumlen;
+  int hlen = (algo == SHISHI_DES_CBC_CRC) ? 4 : 16;
   int res;
 
-  if (inlen % 8)
-    padzerolen = 8 - (inlen % 8);
+  if ((inlen + hlen) % 8)
+    padzerolen = 8 - ((inlen + hlen) % 8);
   inpadlen = inlen + padzerolen;
   inpad = xmalloc (inpadlen);
 
@@ -150,9 +159,8 @@ des_encrypt_checksum (Shishi * handle,
 
   free (inpad);
 
-  res =
-    _shishi_simplified_encrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
-				pt, ptlen, out, outlen);
+  res = _shishi_simplified_encrypt (handle, key, 0, iv, ivlen,
+				    ivout, ivoutlen, pt, ptlen, out, outlen);
 
   free (pt);
 
@@ -173,8 +181,9 @@ des_crc_encrypt (Shishi * handle,
 		 char **ivout, size_t * ivoutlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen, ivout,
-			       ivoutlen, in, inlen, out, outlen,
+  return des_encrypt_checksum (handle, key, keyusage,
+			       shishi_key_value (key), shishi_key_length (key),
+			       ivout, ivoutlen, in, inlen, out, outlen,
 			       SHISHI_DES_CBC_CRC);
 }
 
@@ -231,22 +240,38 @@ des_decrypt_verify (Shishi * handle,
   int res;
   char incoming[16];
   char *computed;
-  size_t hlen = 16;
+  size_t hlen = (algo == SHISHI_DES_CBC_CRC) ? 4 : 16;
 
-  res =
-    _shishi_simplified_decrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
-				in, inlen, out, outlen);
+  res = _shishi_simplified_decrypt (handle, key, 0, iv, ivlen,
+				    ivout, ivoutlen, in, inlen, out, outlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "decrypt failed");
       return res;
     }
 
+  if (VERBOSECRYPTO (handle))
+    {
+      puts ("verify decrypted:");
+      _shishi_escapeprint (*out, *outlen);
+      _shishi_hexprint (*out, *outlen);
+    }
+
   memcpy (incoming, *out + 8, hlen);
   memset (*out + 8, 0, hlen);
 
+  if (VERBOSECRYPTO (handle))
+    {
+      puts ("cksum pt:");
+      _shishi_hexprint (*out, *outlen);
+    }
+
   switch (algo)
     {
+    case SHISHI_DES_CBC_CRC:
+      shishi_crc (handle, *out, *outlen, &computed);
+      break;
+
     case SHISHI_DES_CBC_MD4:
       shishi_md4 (handle, *out, *outlen, &computed);
       break;
@@ -291,8 +316,9 @@ des_crc_decrypt (Shishi * handle,
 		 char **ivout, size_t * ivoutlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_decrypt_verify (handle, key, keyusage, iv, ivlen, ivout,
-			     ivoutlen, in, inlen, out, outlen,
+  return des_decrypt_verify (handle, key, keyusage,
+			     shishi_key_value (key), shishi_key_length (key),
+			     ivout, ivoutlen, in, inlen, out, outlen,
 			     SHISHI_DES_CBC_CRC);
 }
 
