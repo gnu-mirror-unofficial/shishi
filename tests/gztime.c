@@ -58,15 +58,15 @@ main (int argc, char *argv[])
   if (debug)
     shishi_cfg (handle, strdup ("verbose"));
 
-  escapeprint(NULL, 0);
-  hexprint(NULL, 0);
-  binprint(NULL, 0);
+  escapeprint (NULL, 0);
+  hexprint (NULL, 0);
+  binprint (NULL, 0);
 
   /* shishi_authenticator_ctime_set() */
   p = shishi_generalize_time (handle, (time_t) 4711);
   if (debug)
-    escapeprint(p, 15);
-  if (p && memcmp(p, "19700101011831Z", 15) == 0)
+    escapeprint (p, 15);
+  if (p && memcmp (p, "19700101011831Z", 15) == 0)
     success ("shishi_generalize_time() OK\n");
   else
     fail ("shishi_generalize_time() failed\n");

@@ -122,12 +122,12 @@ main (int argc, char *argv[])
   if (debug)
     shishi_cfg (handle, strdup ("verbose"));
 
-  escapeprint(NULL, 0);
-  hexprint(NULL, 0);
-  binprint(NULL, 0);
+  escapeprint (NULL, 0);
+  hexprint (NULL, 0);
+  binprint (NULL, 0);
 
   /* shishi_tkts_default_file() */
-  p = strdup(shishi_tkts_default_file (handle));
+  p = strdup (shishi_tkts_default_file (handle));
   if (debug)
     printf ("shishi_tkts_default_file () => `%s'.\n", p ? p : "<null>");
   if (p)
@@ -137,7 +137,7 @@ main (int argc, char *argv[])
 
   /* shishi_tkts_default_file_set() */
   shishi_tkts_default_file_set (handle, "foo");
-  q = strdup(shishi_tkts_default_file (handle));
+  q = strdup (shishi_tkts_default_file (handle));
   if (debug)
     printf ("shishi_tkts_default_file () => `%s'.\n", q ? q : "<null>");
   if (q && strcmp (q, "foo") == 0)
@@ -148,7 +148,7 @@ main (int argc, char *argv[])
 
   /* shishi_tkts_default_file_set() */
   shishi_tkts_default_file_set (handle, NULL);
-  q = strdup(shishi_tkts_default_file (handle));
+  q = strdup (shishi_tkts_default_file (handle));
   if (debug)
     printf ("shishi_tkts_default_file () => `%s'.\n", q ? q : "<null>");
   if (p && q && strcmp (p, q) == 0)
@@ -356,7 +356,7 @@ main (int argc, char *argv[])
     fail ("shishi_tkts_nth() failed\n");
 
   /* shishi_tkts_find () */
-  memset(&hint, 0, sizeof(hint));
+  memset (&hint, 0, sizeof (hint));
   hint.server = "host/latte.josefsson.org";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
@@ -368,7 +368,7 @@ main (int argc, char *argv[])
     fail ("shishi_tkts_find() for server failed\n");
 
   /* shishi_tkts_find () */
-  memset(&hint, 0, sizeof(hint));
+  memset (&hint, 0, sizeof (hint));
   hint.server = "krbtgt/JOSEFSSON.ORG";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
@@ -378,7 +378,7 @@ main (int argc, char *argv[])
     fail ("shishi_tkts_find() for server failed\n");
 
   /* shishi_tkts_find () */
-  memset(&hint, 0, sizeof(hint));
+  memset (&hint, 0, sizeof (hint));
   hint.client = "jas";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
@@ -390,7 +390,7 @@ main (int argc, char *argv[])
     fail ("shishi_tkts_find() for client failed\n");
 
   /* shishi_tkts_find () */
-  memset(&hint, 0, sizeof(hint));
+  memset (&hint, 0, sizeof (hint));
   hint.client = "jas";
   t3 = shishi_tkts_find (tktset, &hint);
   if (debug)
@@ -434,7 +434,7 @@ main (int argc, char *argv[])
   else
     fail ("shishi_tkts_remove() failed\n");
 
-  memset(&hint, 0, sizeof(hint));
+  memset (&hint, 0, sizeof (hint));
   hint.server = "host/latte.josefsson.org";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
@@ -443,7 +443,7 @@ main (int argc, char *argv[])
   else
     fail ("shishi_tkts_find() for server failed\n");
 
-  memset(&hint, 0, sizeof(hint));
+  memset (&hint, 0, sizeof (hint));
   hint.server = "krbtgt/JOSEFSSON.ORG";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
