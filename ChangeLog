@@ -1,3 +1,54 @@
+2004-11-21  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2004-11-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.20.
+
+2004-11-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc: Make sure all man pages follow 'foo -- purpose of foo'
+	format, even if there is no purpose description available.
+
+2004-11-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, shishi.fms: Add.
+
+2004-11-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc: Improve man pages, from libidn.
+
+2004-11-21  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getopt_.h: Update.
+
+2004-11-19  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getdate.y, gl/getopt.c, gl/getopt1.c, gl/getopt_.h,
+	gl/getopt_int.h, gl/realloc.c, gl/strtok_r.c, doc/getdate.texi,
+	gl/strtok_r.h: Update.
+
+2004-11-19  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* gl/progname.c, gl/progname.h, src/shishid.c: Fix progname usage.
+
+2004-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.fms: Update.
+
 2004-11-12  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po, po/sv.po: Generated.
