@@ -180,6 +180,10 @@ maybe_install_usercfg (Shishi * handle)
   int rc;
   int c;
 
+  /* Don't create anything if non-standard home is used. */
+  if (getenv ("SHISHI_HOME"))
+    return;
+
   fh = fopen (usercfg, "r");
   if (fh)
     {
