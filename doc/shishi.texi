@@ -64,7 +64,7 @@ Free Software Foundation raise funds for GNU development.''
 
 @menu
 * Introduction::                How to use this manual.
-* User Manual::                 Using Shishi as a user.
+* User Manual::                 Using Shishi as end-user.
 * Administration Manual::       Administrating server aspects of Shishi.
 * Programming Manual::          Calling Shishi from a programming language.
 * Acknowledgements::            Whom to blame.
@@ -96,6 +96,8 @@ Kerberos 5.
 * Features and Project Status::                    
 * Overview::                    
 * Cryptographic Overview::                    
+* Supported Platforms::
+* Bug Reports::
 @end menu
 
 @node Getting Started
@@ -351,10 +353,9 @@ Password Based Key Derivation Function
 which is provably secure in a random oracle model.  Data is integrity
 protected with a keyed (HMAC) SHA1 hash truncated to 96 bits.  There
 is no security proof, but the schemes are widely assumed to provide
-good security although it is still young and, as AES itself, yet to
-receive the test of time.  It is associated with the
-@code{hmac-sha1-96-aes128} and @code{hmac-sha1-96-aes256} checksums,
-respectively.
+good security but has, as AES itself, yet to receive the test of time.
+It is associated with the @code{hmac-sha1-96-aes128} and
+@code{hmac-sha1-96-aes256} checksums, respectively.
 
 @end table
 
@@ -412,6 +413,64 @@ no security proof, but is widely assumed to provide good security. It
 is compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
 
 @end table
+
+
+@node Supported Platforms
+@section Supported Platforms
+
+Shishi has been tested on the following platforms:
+
+@enumerate
+@item alphaev67-dec-osf5.0 (Tru64 UNIX C, Tru64 make)
+@item i686-pc-linux-gnu (Debian unstable)
+@item i686-pc-linux-gnu (RedHat 7.2)
+@item mips-sgi-irix6.5 (MIPS C compiler, IRIX make)
+@item rs6000-ibm-aix4.3.2.0 (GCC 2.9-aix43-000718, GNU make)
+@item rs6000-ibm-aix4.3.2.0 (IBM C for AIX compiler, AIX make)
+@item sparc-sun-solaris2.6 (Sun WorkShop Compiler C 5.0, SUN make)
+@item sparc-sun-solaris2.8 (Sun WorkShop Compiler C 6.0, SUN make)
+@end enumerate
+
+If you use Shishi on, or port Shishi to, a new platform please report it
+the author.
+
+@node Bug Reports
+@section Bug Reports
+
+If you think you have found a bug in Shishi, please investigate it and
+report it.
+
+@itemize @bullet
+
+@item Please make sure that the bug is really in Shishi, and preferably also
+check that it isn't fixed in the latest version.
+
+@item You have to send us a test case that makes it possible for us to
+reproduce the bug.
+
+@item You also have to explain what is wrong; if you get a crash, or if the
+results printed are not good and in that case, in what way.
+Make sure that the bug report includes all information you would
+need to fix this kind of bug for someone else.  
+
+@end itemize
+
+Please make an effort to produce a self-contained report, with
+something definite that can be tested or debugged.  Vague queries or
+piecemeal messages are difficult to act on and don't help the
+development effort.
+
+If your bug report is good, we will do our best to help you to get a
+corrected version of the library; if the bug report is poor, we won't do
+anything about it (apart from asking you to send better bug reports).
+
+Send your bug report to:
+
+@center @samp{bug-shishi@@josefsson.org}
+
+If you think something in this manual is unclear, or downright
+incorrect, or if the language needs to be improved, please send a note
+to the same address.
 
 
 @c **********************************************************
@@ -1331,8 +1390,7 @@ This chapter does not contain example code which illustrate how
 Simon Josefsson created Shishi autumn 2002.
 
 Shishi uses Libgcrypt by Werner Koch et al and Libtasn1 by Fabio
-Fiorina et al.  Ken Raeburn and Sam Hartman answered questions
-regarding specification issues.
+Fiorina et al.
 
 @c **********************************************************
 @c *******************  Appendices  *************************
