@@ -170,6 +170,8 @@ shishi_done (Shishi * handle)
     free (handle->clientkdcetypes);
   if (handle->authorizationtypes)
     free (handle->authorizationtypes);
+  if (handle->stringprocess)
+    free (handle->stringprocess);
 
   if (handle->asn1)
     shishi_asn1_done (handle, handle->asn1);
