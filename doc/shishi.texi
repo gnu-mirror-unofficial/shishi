@@ -193,6 +193,8 @@ know so work duplication can be avoided.
 
 @itemize @bullet
 
+@item Pre-authentication support (week).
+
 @item Cross-realm support (week).
 
 @item Session keys in AP (week).
