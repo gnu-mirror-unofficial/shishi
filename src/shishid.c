@@ -133,6 +133,8 @@
 #define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
 #endif
 
+#define DH_BITS 1024
+
 const char *program_name = PACKAGE;
 
 struct listenspec
@@ -367,6 +369,7 @@ static struct argp argp = {
 
 static char *fatal_krberror;
 static size_t fatal_krberror_len;
+static gnutls_dh_params dh_params;
 
 static int
 setup_fatal_krberror (Shishi * handle)
@@ -878,40 +881,6 @@ kdc_listen (struct arguments *arg)
   return 0;
 }
 
-
-#define KEYFILE "key.pem"
-#define CERTFILE "cert.pem"
-#define CAFILE "ca.pem"
-#define CRLFILE "crl.pem"
-
-/* This is a sample TLS 1.0 echo server.
- */
-
-
-#define SA struct sockaddr
-#define SOCKET_ERR(err,s) if(err==-1) {perror(s);return(1);}
-#define MAX_BUF 1024
-#define PORT 5556		/* listen to 5556 port */
-#define DH_BITS 1024
-
-static gnutls_dh_params dh_params;
-
-static int
-generate_dh_params (void)
-{
-
-  /* Generate Diffie Hellman parameters - for use with DHE
-   * kx algorithms. These should be discarded and regenerated
-   * once a day, once a week or once a month. Depending on the
-   * security requirements.
-   */
-  gnutls_dh_params_init (&dh_params);
-  gnutls_dh_params_generate2 (dh_params, DH_BITS);
-
-  return 0;
-}
-
-
 static int
 kdc_loop (Shishi * handle, struct arguments *arg)
 {
@@ -1016,7 +985,7 @@ kdc_loop (Shishi * handle, struct arguments *arg)
 		    int client_len;
 		    char topbuf[512];
 		    gnutls_session session;
-		    char buffer[MAX_BUF + 1];
+		    char buffer[BUFSIZ + 1];
 		    int optval = 1;
 		    const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
 		    gnutls_anon_server_credentials anoncred;
@@ -1053,8 +1022,8 @@ kdc_loop (Shishi * handle, struct arguments *arg)
 		    if (!arg->silent)
 		      printf ("TLS successful\n");
 
-		    bzero (buffer, MAX_BUF + 1);
-		    ret = gnutls_record_recv (session, buffer, MAX_BUF);
+		    bzero (buffer, BUFSIZ + 1);
+		    ret = gnutls_record_recv (session, buffer, BUFSIZ);
 
 		    if (ret == 0)
 		      {
@@ -1248,7 +1217,8 @@ init (struct arguments *arg)
     printf ("Initializing GNUTLS...\n");
   fflush (stdout);
   gnutls_global_init ();
-  generate_dh_params ();
+  gnutls_dh_params_init (&dh_params);
+  gnutls_dh_params_generate2 (dh_params, DH_BITS);
   if (!arg->silent)
     printf ("Initializing GNUTLS...done\n");
   fflush (stdout);
