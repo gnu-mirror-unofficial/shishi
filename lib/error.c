@@ -30,6 +30,68 @@ shishi_strerror_details (Shishi * handle)
     "error condition";
 }
 
+struct shishi_error_msgs
+{
+  int errorcode;
+  char *message;
+};
+
+struct shishi_error_msgs _shishi_error_messages[] = {
+  { SHISHI_OK,
+    "Shishi success" },
+  { SHISHI_ASN1_ERROR,
+    "Error in ASN.1 data, probably due to corrupt data." },
+  { SHISHI_FOPEN_ERROR,
+    "Could not open file." },
+  { SHISHI_FCLOSE_ERROR,
+    "Could not close file." },
+  { SHISHI_MALLOC_ERROR,
+    "Memory allocation error in shishi library." },
+  { SHISHI_BASE64_ERROR,
+    "Base64 encoding or decoding failed. Data corrupt?" },
+  { SHISHI_REALM_MISMATCH,
+    "Client realm value differ between request and reply." },
+  { SHISHI_CNAME_MISMATCH,
+    "Client name value differ between request and reply." },
+  { SHISHI_NONCE_MISMATCH,
+    "Replay protection value (nonce) differ between request and reply." },
+  { SHISHI_TICKET_BAD_KEYTYPE,
+    "Keytype used to encrypt ticket doesn't match provided key. "
+    "This usually indicates an internal application error." },
+  { SHISHI_CRYPTO_INTERNAL_ERROR,
+    "Internal error in low-level crypto routines." },
+  { SHISHI_CRYPTO_ERROR,
+    "Low-level cryptographic primitive failed.  This usually indicates "
+    "bad password or data corruption." },
+  { SHISHI_KDC_TIMEOUT,
+    "Timedout talking to KDC. This usually indicates a network "
+    "or KDC address problem." },
+  { SHISHI_KDC_NOT_KNOWN_FOR_REALM,
+    "No KDC for realm known." },
+  { SHISHI_SOCKET_ERROR,
+    "The system call socket() failed.  This usually indicates that "
+    "your system does not support the socket type." },
+  { SHISHI_BIND_ERROR,
+    "The system call bind() failed.  This usually indicates "
+    "insufficient permissions." },
+  { SHISHI_SENDTO_ERROR,
+    "The system call sendto() failed." },
+  { SHISHI_CLOSE_ERROR,
+    "The system call close() failed." },
+  { SHISHI_GOT_KRBERROR,
+    "Server replied with an error message to request." },
+  { SHISHI_INVALID_TKTS,
+    "Ticketset not initialized.  This usually indicates an internal "
+    "application error." },
+  { SHISHI_APREQ_DECRYPT_FAILED,
+    "Could not decrypt AP-REQ using provided key. "
+    "This usually indicates an internal application error." },
+  { SHISHI_TICKET_DECRYPT_FAILED,
+    "Could not decrypt Ticket using provided key. "
+    "This usually indicates an internal application error." },
+  { -1, NULL }
+};
+
 /**
  * shishi_strerror:
  * @err: shishi error code
@@ -41,115 +103,19 @@ shishi_strerror_details (Shishi * handle)
 const char *
 shishi_strerror (int err)
 {
-  char *p;
+  char *p = NULL;
+  size_t i;
 
-  switch (err)
-    {
-    case SHISHI_OK:
-      p = _("Shishi success");
-      break;
+  for (i = 0; _shishi_error_messages[i].errorcode != -1; i++)
+    if (i == _shishi_error_messages[i].errorcode)
+      {
+	p = _(_shishi_error_messages[i].message);
+	break;
+      }
 
-    case SHISHI_MALLOC_ERROR:
-      p = _("Memory allocation error in shishi library.");
-      break;
-
-    case SHISHI_BASE64_ERROR:
-      p = _("Base64 encoding or decoding failed.  This usually means the "
-	    "data is corrupt.");
-      break;
-
-    case SHISHI_FOPEN_ERROR:
-      p = _("Could not open file.");
-      break;
-
-    case SHISHI_FCLOSE_ERROR:
-      p = _("Could not close file.");
-      break;
-
-    case SHISHI_CRYPTO_INTERNAL_ERROR:
-      p = _("Internal error in low-level crypto routines.");
-      break;
-
-    case SHISHI_NONCE_MISMATCH:
-      p =
-	_
-	("Replay protection value (nonce) differ between request and reply.");
-      break;
-
-    case SHISHI_REALM_MISMATCH:
-      p = _("Client realm value differ between request and reply.");
-      break;
-
-    case SHISHI_CNAME_MISMATCH:
-      p = _("Client name value differ between request and reply.");
-      break;
-
-    case SHISHI_ASN1_ERROR:
-      p = _("Error in ASN.1 data, probably due to corrupt data.");
-      break;
-
-    case SHISHI_CRYPTO_ERROR:
-      p =
-	_
-	("Low-level cryptographic primitive failed.  This usually indicates "
-	 "bad password or data corruption.");
-      break;
-
-    case SHISHI_KDC_TIMEOUT:
-      p = _("Timedout talking to KDC. This usually indicates a network "
-	    "or KDC address problem.");
-      break;
-
-    case SHISHI_KDC_NOT_KNOWN_FOR_REALM:
-      p = _("No KDC for realm known.");
-      break;
-
-    case SHISHI_SOCKET_ERROR:
-      p = _("The system call socket() failed.  This usually indicates that "
-	    "your system does not support the socket type.");
-      break;
-
-    case SHISHI_BIND_ERROR:
-      p = _("The system call bind() failed.  This usually indicates "
-	    "insufficient permissions.");
-      break;
-
-    case SHISHI_SENDTO_ERROR:
-      p = _("The system call sendto() failed.");
-      break;
-
-    case SHISHI_CLOSE_ERROR:
-      p = _("The system call close() failed.");
-      break;
-
-    case SHISHI_GOT_KRBERROR:
-      p = _("Server replied with an error message to request.");
-      break;
-
-    case SHISHI_INVALID_TKTS:
-      p = _("Ticketset not initialized.  This usually indicates an internal "
-	    "application error.");
-      break;
-
-    case SHISHI_TICKET_BAD_KEYTYPE:
-      p = _("Keytype used to encrypt ticket doesn't match provided key. "
-	    "This usually indicates an internal application error.");
-      break;
-
-    case SHISHI_APREQ_DECRYPT_FAILED:
-      p = _("Could not decrypt AP-REQ using provided key. "
-	    "This usually indicates an internal application error.");
-      break;
-
-    case SHISHI_TICKET_DECRYPT_FAILED:
-      p = _("Could not decrypt Ticket using provided key. "
-	    "This usually indicates an internal application error.");
-      break;
-
-    default:
-      asprintf (&p, _("Unknown shishi error (%d)"), err);
-      break;
-    }
+  if (!p)
+    /* XXX mem leak */
+    asprintf(&p, _("Unknown shishi error: %d"), err);
 
   return p;
 
