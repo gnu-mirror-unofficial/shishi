@@ -91,7 +91,8 @@ main (int argc, char *argv[])
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
   char *p, *q;
-  int n, res;
+  size_t n;
+  int res;
 
   do
     if (strcmp (argv[argc - 1], "-v") == 0 ||
