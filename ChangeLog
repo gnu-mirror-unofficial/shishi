@@ -1,3 +1,169 @@
+2003-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.7.
+
+2003-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: Generated.
+
+2003-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, doc/shishi.texi, lib/crypto.c: Support encryption type name
+	aliases.
+
+2003-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/nettle.c: API fix.
+
+2003-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in:
+	(shishi_arcfour): Add.
+
+2003-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/libgcrypt.c: API fix.
+
+2003-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/nettle.c, lib/crypto-rc4.c: Doc fix.
+
+2003-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-rc4.c, lib/nettle.c: Support ARCFOUR "iv", from
+	Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* doc/man/Makefile.am: Generated.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/nettle.c: Doc fix.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c, lib/crypto-des.c, lib/crypto-rc4.c, lib/crypto.c,
+	lib/internal.h, src/shishi.c: Add "verbose-crypto-noice" cfg token,
+	and use it where appropriate.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c:
+	(_shishi_simplified_dencrypt): Add zero pad for (3)DES ciphers, to
+	make des_checksum work for CRC.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c, lib/crypto.c, lib/crypto.h: Fix CRC32 checksum,
+	from Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/libgcrypt.c: Fix, from Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-rc4.c, lib/nettle.c: Fix ARCFOUR.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c, doc/shishi.texi, lib/crypto.c, lib/libgcrypt.c,
+	lib/nettle.c, lib/shishi.h.in: Fix des-cbc-crc.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Only require libgcrypt 1.1.43 or later.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Revert.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* ANNOUNCE: Fix.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, doc/shishi.texi: ARCFOUR fixes.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac, lib/crypto-rc4.c: Fix and enable ARCFOUR.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/libgcrypt.c: Fix ARCFOUR.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Fix AES checksum length, from Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-aes.c:
+	(aes_string_to_key): Use 0x00001000 as default iteration count (sync
+	with -05 draft).  From Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/libgcrypt.c:
+	(shishi_hmac_sha1): Fix prototype, from Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/int.h, asn1/libtasn1.h: Upstream sync (parses constraints).
+
+2003-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.asn1: Sync with draft, now only 3 modifications are
+	made.  Requires latest libtasn1.
+
+2003-09-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c, lib/crypto-rc4.c, lib/crypto.c, lib/kdcreq.c,
+	lib/key.c, lib/libgcrypt.c, lib/nettle.c, lib/shishi.h.in,
+	src/shishi.c:
+	(shishi_randomize): Add 'strong' parameter.  Fix callers.
+
+2003-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* README: Typo.
+
+2003-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/argp.h, gl/error.c, gl/exit.h,
+	gl/exitfail.c, gl/getopt.c, gl/getopt.h, gl/getopt1.c, gl/malloc.c,
+	gl/memmove.c, gl/memset.c, gl/mktime.c, gl/realloc.c, gl/setenv.c,
+	gl/strchrnul.c, gl/strdup.c, gl/strndup.c, gl/strnlen.c,
+	gl/unsetenv.c, gl/vasnprintf.c, gl/xmalloc.c, gl/m4/Makefile.am,
+	gl/m4/error.m4, gl/m4/exitfail.m4, gl/m4/extensions.m4,
+	gl/m4/getopt.m4, gl/m4/mktime.m4, gl/m4/setenv.m4,
+	gl/m4/strchrnul.m4, gl/m4/strdup.m4, gl/m4/strndup.m4,
+	gl/m4/strnlen.m4, gl/m4/xalloc.m4: Upstream sync.
+
+2003-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* tests/crypto.c: Fix API.
+
+2003-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
 2003-09-14  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.6.
