@@ -352,105 +352,166 @@ tgsreq1 (Shishi_tgs * tgs)
 {
   int rc;
   Shishi_tkt *tkt;
-  Shishi_key *sessionkey, *sessiontktkey, *serverkey, *subkey, *keytouse;
+  Shishi_key *newsessionkey, *oldsessionkey, *serverkey, *subkey, *keytouse, *tgkey;
   char buf[BUFSIZ];
   int buflen;
   int err;
-  char *username, *servername, *realm;
-  int32_t etype, keyusage;
+  char *username, *servername, *tgname, *tgrealm, *client, *clientrealm, *serverrealm;
+  size_t usernamelen, tgnamelen, tgrealmlen, clientlen, clientrealmlen;
+  int32_t keyusage;
+  Shisa_principal krbtgt;
+  Shisa_principal user;
+  Shishi_asn1 reqapticket;
   int i;
+  Shisa_key **tgkeys;
+  size_t ntgkeys;
+  Shisa_key **serverkeys;
+  size_t nserverkeys;
 
-  buflen = sizeof (buf) - 1;
-  err = shishi_encticketpart_cname_get
-    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
-     buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-  buf[buflen] = '\0';
-  username = strdup (buf);
-  printf ("username %s\n", username);
-
-  buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_sname_get (handle, shishi_tgs_req (tgs), buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-  buf[buflen] = '\0';
-  servername = strdup (buf);
-  printf ("servername %s\n", servername);
-
-  buflen = sizeof (buf) - 1;
-  err = shishi_kdcreq_realm_get (handle, shishi_tgs_req (tgs), buf, &buflen);
-  if (err != SHISHI_OK)
-    return err;
-  buf[buflen] = '\0';
-  realm = strdup (buf);
-  printf ("server realm %s\n", realm);
-
-  tkt = shishi_tgs_tkt (tgs);
-  if (!tkt)
-    return SHISHI_MALLOC_ERROR;
-
-  i = 1;
-  do
-    {
-      err = shishi_kdcreq_etype (handle, shishi_tgs_req (tgs), &etype, i);
-      if (err == SHISHI_OK && shishi_cipher_supported_p (etype))
-	break;
-    }
-  while (err == SHISHI_OK);
-  if (err != SHISHI_OK)
-    return err;
-
-  /* XXX use a "preferred server kdc etype" from shishi instead? */
-
-  err = shishi_key_random (handle, etype, &sessionkey);
-  if (err)
-    return err;
-
-  err = shishi_tkt_key_set (tkt, sessionkey);
-  if (err)
-    return err;
-
-  /* extract pa-data and populate tgs->ap */
+  /* Extract pa-data and populate tgs->ap. */
   rc = shishi_tgs_req_process (tgs);
   if (rc != SHISHI_OK)
     return rc;
 
-  /* XXX check if ticket is for our tgt key */
-
-#if 0
-  /* decrypt ticket with our key, and decrypt authenticator using key in tkt */
-  rc = shishi_ap_req_process_keyusage
-    (shishi_tgs_ap (tgs), arg.tgskey,
-     SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
+  /* Get ticket used to authenticate request. */
+  rc = shishi_apreq_get_ticket (handle, shishi_ap_req (shishi_tgs_ap (tgs)),
+				&reqapticket);
   if (rc != SHISHI_OK)
     return rc;
-#endif
+
+  /* Find name of ticket granter, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
+
+  err = shishi_ticket_realm_get (handle, reqapticket, &tgrealm, NULL);
+  if (err != SHISHI_OK)
+    return err;
+  printf ("tg realm %s\n", tgrealm);
+
+  rc = shishi_ticket_server (handle, reqapticket, &tgname, &tgnamelen);
+  if (rc != SHISHI_OK)
+    return rc;
+  printf ("Found ticket granter name %s@%s...\n", tgname, tgrealm);
+
+  /* We need to decrypt the ticket granting ticket, get key. */
+
+  rc = shisa_enumerate_keys (dbh, tgrealm, tgname, &tgkeys, &ntgkeys);
+  if (err != SHISA_OK)
+    {
+      printf ("Error getting keys for %s@%s\n", tgname, tgrealm);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
+  printf ("Found keys for ticket granter %s@%s...\n", tgname, tgrealm);
+
+  /* XXX use etype/kvno to select key. */
+
+  err = shishi_key_from_value (handle, tgkeys[0]->etype,
+			       tgkeys[0]->key, &tgkey);
+  if (err != SHISHI_OK)
+    return err;
+
+  shishi_key_print (handle, stdout, tgkey);
+
+  /* Find the server, e.g., host/latte.josefsson.org@JOSEFSSON.ORG. */
+
+  err = shishi_kdcreq_realm (handle, shishi_tgs_req (tgs), &serverrealm, NULL);
+  if (err != SHISHI_OK)
+    return err;
+  printf ("server realm %s\n", serverrealm);
+
+  err = shishi_kdcreq_server (handle, shishi_tgs_req (tgs), &servername, NULL);
+  if (err != SHISHI_OK)
+    return err;
+  printf ("servername %s\n", servername);
+
+  err = shisa_principal_find (dbh, serverrealm, servername, &krbtgt);
+  if (err != SHISA_OK)
+    {
+      printf ("server %s@%s not found\n", servername, serverrealm);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
+  printf ("Found server %s@%s...\n", servername, serverrealm);
+
+  /* Get key for server, used to encrypt new ticket. */
+
+  rc = shisa_enumerate_keys (dbh, serverrealm, servername,
+			     &serverkeys, &nserverkeys);
+  if (err != SHISA_OK)
+    {
+      printf ("Error getting keys for %s@%s\n", servername, serverrealm);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
+  printf ("Found keys for server %s@%s...\n", servername, serverrealm);
+
+  /* XXX select "best" available key (highest kvno, best algorithm?) here. */
+
+  err = shishi_key_from_value (handle, serverkeys[0]->etype,
+			       serverkeys[0]->key, &serverkey);
+  if (err != SHISHI_OK)
+    return err;
+
+  shishi_key_print (handle, stdout, serverkey);
+
+  /* Decrypt incoming ticket with our key, and decrypt authenticator
+     using key stored in ticket. */
+  rc = shishi_ap_req_process_keyusage
+    (shishi_tgs_ap (tgs), tgkey, SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR);
+  if (rc != SHISHI_OK)
+    return rc;
 
   /* XXX check that checksum in authenticator match tgsreq.req-body */
 
-  err = shishi_tkt_clientrealm_set (tkt, realm, username);
+  tkt = shishi_tgs_tkt (tgs);
+
+  /* Generate session key for the newly generated ticket, of same key
+     type as the selected long-term server key. */
+
+  err = shishi_key_random (handle, shishi_key_type (serverkey),
+			   &newsessionkey);
   if (err)
     return err;
 
-  err = shishi_tkt_serverrealm_set (tkt, realm, servername);
+  err = shishi_tkt_key_set (tkt, newsessionkey);
   if (err)
     return err;
-#if 0
-  serverkey = shishi_keys_for_serverrealm_in_file (handle,
-						   arg.keyfile,
-						   servername, realm);
-  if (!serverkey)
-    return !SHISHI_OK;
-#endif
+
+  /* In the new ticket, store identity of the client, taken from the
+     decrypted incoming ticket. */
+
+  err = shishi_encticketpart_crealm
+    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
+     &clientrealm, &clientrealmlen);
+  if (err != SHISHI_OK)
+    return err;
+  printf ("userrealm %s\n", clientrealm);
+
+  err = shishi_encticketpart_client
+    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
+     &client, &clientlen);
+  if (err != SHISHI_OK)
+    return err;
+  printf ("username %s\n", client);
+
+  err = shishi_tkt_clientrealm_set (tkt, clientrealm, client);
+  if (err)
+    return err;
+
+  err = shishi_tkt_serverrealm_set (tkt, serverrealm, servername);
+  if (err)
+    return err;
+
+  /* Build new key, using the server's key. */
+
   err = shishi_tkt_build (tkt, serverkey);
   if (err)
     return err;
 
+  /* The TGS-REP need to be encrypted, decide which key to use.
+     Either it is the session key in the incoming ticket, or it is the
+     sub-key in the authenticator. */
+
   err = shishi_encticketpart_get_key
     (handle,
      shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
-     &sessiontktkey);
+     &oldsessionkey);
 
   err = shishi_authenticator_get_subkey
     (handle, shishi_ap_authenticator (shishi_tgs_ap (tgs)), &subkey);
@@ -465,8 +526,10 @@ tgsreq1 (Shishi_tgs * tgs)
   else
     {
       keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY;
-      keytouse = sessiontktkey;
+      keytouse = oldsessionkey;
     }
+
+  /* Build TGS-REP. */
 
   err = shishi_tgs_rep_build (tgs, keyusage, keytouse);
   if (err)
