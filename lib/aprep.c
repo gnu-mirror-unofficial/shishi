@@ -367,3 +367,151 @@ shishi_aprep_enc_part_make (Shishi * handle,
 
   return SHISHI_OK;
 }
+
+/**
+ * shishi_aprep_get_enc_part_etype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @aprep: AP-REP variable to get value from.
+ * @etype: output variable that holds the value.
+ * 
+ * Extract AP-REP.enc-part.etype.
+ * 
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_aprep_get_enc_part_etype (Shishi * handle,
+				 ASN1_TYPE aprep, int *etype)
+{
+  int buflen;
+  int res;
+
+  *etype = 0;
+  buflen = sizeof (*etype);
+  res = _shishi_asn1_field (handle, aprep,
+			    etype, &buflen, "AP-REP.enc-part.etype");
+
+  return res;
+}
+
+int
+shishi_aprep_decrypt (Shishi * handle,
+		      ASN1_TYPE aprep,
+		      int keyusage,
+		      int keytype,
+		      char *key, 
+		      int keylen, 
+		      ASN1_TYPE * encapreppart)
+{
+  int res;
+  int i, len;
+  int buflen = BUFSIZ;
+  unsigned char buf[BUFSIZ];
+  unsigned char cipher[BUFSIZ];
+  int realmlen = BUFSIZ;
+  int cipherlen;
+  unsigned char etype;
+
+  res = shishi_aprep_get_enc_part_etype (handle, aprep, &etype);
+  if (res != SHISHI_OK)
+    return res;
+
+  if (etype != keytype)
+    return SHISHI_APREP_BAD_KEYTYPE;
+
+  cipherlen = BUFSIZ;
+  res = _shishi_asn1_field (handle, aprep, cipher, &cipherlen,
+			    "AP-REP.enc-part.cipher");
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_decrypt (handle, keyusage, etype,
+			key, keylen, cipher, cipherlen, buf, &buflen);
+  if (res != SHISHI_OK)
+    {
+      if (!SILENT(handle))
+	printf ("decrypt failed: %s\n", shishi_strerror_details (handle));
+      shishi_error_printf (handle,
+			   "decrypt fail, most likely wrong password\n");
+      return res;
+    }
+
+  /* The crypto is so 1980; no length indicator. Trim off pad bytes
+     until we can parse it. */
+  for (i = 0; i < 8; i++)
+    {
+      if (DEBUG (handle))
+	printf ("Trying with %d pad in enckdcrep...\n", i);
+
+      *encapreppart = shishi_d2a_encapreppart (handle, &buf[0], buflen - i);
+      if (*encapreppart != ASN1_TYPE_EMPTY)
+	break;
+    }
+
+  if (*encapreppart == ASN1_TYPE_EMPTY)
+    {
+      shishi_error_printf (handle, "Could not DER decode EncAPRepPart. "
+			   "Password probably correct (decrypt ok) though\n");
+      return SHISHI_ASN1_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_aprep_verify (Shishi * handle,
+		     ASN1_TYPE authenticator, 
+		     ASN1_TYPE encapreppart)
+{
+  char authenticatorctime[GENERALIZEDTIME_TIME_LEN + 1];
+  char encapreppartctime[GENERALIZEDTIME_TIME_LEN + 1];
+  int authenticatorcusec;
+  int encapreppartcusec;
+  int res;
+
+  /*
+    3.2.5. Receipt of KRB_AP_REP message
+
+    If a KRB_AP_REP message is returned, the client uses the session key from
+    the credentials obtained for the server[3.10] to decrypt the message, and
+    verifies that the timestamp and microsecond fields match those in the
+    Authenticator it sent to the server. If they match, then the client is
+    assured that the server is genuine. The sequence number and subkey (if
+    present) are retained for later use.
+
+  */
+
+  res = shishi_authenticator_ctime_get (handle, authenticator, 
+					authenticatorctime);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_authenticator_cusec_get (handle, authenticator, 
+					&authenticatorcusec);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_encapreppart_ctime_get (handle, encapreppart, 
+				       encapreppartctime);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_encapreppart_cusec_get (handle, encapreppart, 
+				       &encapreppartcusec);
+  if (res != SHISHI_OK)
+    return res;
+
+  if (DEBUG(handle))
+    {
+      printf ("authenticator cusec %d ctime %s\n", authenticatorcusec,
+	      authenticatorctime);
+      printf ("encapreppart cusec %d ctime %s\n", encapreppartcusec,
+	      encapreppartctime);
+    }
+
+
+  if (authenticatorcusec != encapreppartcusec ||
+      strcmp (authenticatorctime, encapreppartctime) != 0)
+    return SHISHI_APREP_VERIFY_FAILED;
+
+  return SHISHI_OK;
+}

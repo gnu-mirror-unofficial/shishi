@@ -215,6 +215,15 @@ struct Shishi_tgs
   Shishi_ticket * ticket;
 };
 
+struct Shishi_ap
+{
+  Shishi_ticket * ticket;
+  ASN1_TYPE authenticator;
+  ASN1_TYPE apreq;
+  ASN1_TYPE aprep;
+  ASN1_TYPE encapreppart;
+};
+
 struct Shishi
 {
   ASN1_TYPE asn1;

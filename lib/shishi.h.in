@@ -41,6 +41,8 @@ enum {
   SHISHI_NONCE_LENGTH_MISMATCH,
   SHISHI_TGSREP_BAD_KEYTYPE,
   SHISHI_KDCREP_BAD_KEYTYPE,
+  SHISHI_APREP_BAD_KEYTYPE,
+  SHISHI_APREP_VERIFY_FAILED,
   SHISHI_APREQ_BAD_KEYTYPE,
   SHISHI_TOO_SMALL_BUFFER,
   SHISHI_DERIVEDKEY_TOO_SMALL,
@@ -158,6 +160,7 @@ typedef struct Shishi_ticket Shishi_ticket;
 typedef struct Shishi_ticketset Shishi_ticketset;
 typedef struct Shishi_as Shishi_as;
 typedef struct Shishi_tgs Shishi_tgs;
+typedef struct Shishi_ap Shishi_ap;
 
 /* init.c */
 extern Shishi* shishi (void);
@@ -616,5 +619,46 @@ shishi_prompt_password (FILE *in, char * s, int size,
 /* asn1.c */
 extern ASN1_TYPE
 shishi_d2a_aprep (Shishi * handle, char *der, int derlen);
+
+/* ap.c */
+extern Shishi_ticket *
+shishi_ap_get_ticket (Shishi_ap *ap);
+extern ASN1_TYPE
+shishi_ap_get_authenticator (Shishi_ap *ap);
+extern ASN1_TYPE
+shishi_ap_get_apreq (Shishi_ap *ap);
+extern ASN1_TYPE
+shishi_ap_get_aprep (Shishi_ap *ap);
+extern ASN1_TYPE
+shishi_ap_get_encapreppart (Shishi_ap *ap);
+extern int
+shishi_ap (Shishi * handle,
+	   Shishi_ticket *ticket,
+	   Shishi_ap ** ap);
+extern int
+shishi_ap_data (Shishi * handle,
+		Shishi_ticket *ticket,
+		char *data,
+		int datalen,
+		Shishi_ap ** ap);
+extern int
+shishi_ap_request_get_der (Shishi * handle,
+			   Shishi_ap *ap,
+			   char *out,
+			   int *outlen);
+extern int
+shishi_ap_reply_set_der (Shishi * handle,
+			 Shishi_ap *ap,
+			 char *der,
+			 int derlen);
+extern int
+shishi_ap_reply_verify_der (Shishi * handle,
+			    Shishi_ap *ap,
+			    char *der,
+			    int derlen);
+extern int
+shishi_ap_reply_verify (Shishi * handle,
+			Shishi_ap *ap,
+			ASN1_TYPE aprep);
 
 #endif

@@ -43,6 +43,9 @@ _shishi_print_armored_data (Shishi * handle,
   int i;
   char *tmp;
 
+  if (asn1 == ASN1_TYPE_EMPTY)
+    return !SHISHI_OK;
+
   asn1_print_structure (fh, asn1, asn1->name, ASN1_PRINT_NAME_TYPE_VALUE);
 
   res = asn1_der_coding (asn1, asn1type, der, &derlen, errorDescription);
