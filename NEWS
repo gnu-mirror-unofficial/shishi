@@ -6,6 +6,8 @@ See the end for copying conditions.
 
 ** Passwords are processed with SASLprep instead of KRBprep.
 
+** Authorization improvements.
+
 ** Documentation additions.
 Protocol descriptions for STARTTLS, AES-CCM encrypted telnet, and
 Kerberos rsh/rlogin.
