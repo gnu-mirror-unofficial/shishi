@@ -42,7 +42,7 @@ Free Software Foundation raise funds for GNU development.''
 
 @dircategory Net Utilities
 @direntry
-* shishi: (shishi)		An RFC 1510 implementation
+* shishi: (shishi).		An RFC 1510 implementation
 @end direntry
 
 @titlepage
