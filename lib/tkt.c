@@ -178,6 +178,21 @@ shishi_tkt_ticket (Shishi_tkt * tkt)
 }
 
 /**
+ * shishi_tkt_ticket_set:
+ * @tkt: input variable with ticket info.
+ * @ticket: ASN.1 Ticket to store in ticket.
+ *
+ * Set the EncKDCRepPart in the Ticket.
+ **/
+void
+shishi_tkt_ticket_set (Shishi_tkt * tkt, Shishi_asn1 ticket)
+{
+  if (tkt->ticket)
+    shishi_asn1_done (tkt->handle, tkt->ticket);
+  tkt->ticket = ticket;
+}
+
+/**
  * shishi_tkt_enckdcreppart:
  * @tkt: input variable with ticket info.
  *
@@ -191,7 +206,7 @@ shishi_tkt_enckdcreppart (Shishi_tkt * tkt)
 
 /**
  * shishi_tkt_encticketreppart_set:
- * @as: structure that holds information about Ticket exchange
+ * @tkt: structure that holds information about Ticket exchange
  * @enckdcreppart: EncKDCRepPart to store in Ticket.
  *
  * Set the EncKDCRepPart in the Ticket.

@@ -720,6 +720,45 @@ shishi_ap_req_build (Shishi_ap * ap)
 }
 
 /**
+ * shishi_ap_req_decode:
+ * @ap: structure that holds information about AP exchange
+ *
+ * Decode ticket in AP-REQ and set the Ticket fields in the AP
+ * exchange.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_req_decode (Shishi_ap * ap)
+{
+  Shishi_asn1 ticket;
+  int rc;
+
+  if (VERBOSEASN1 (ap->handle))
+    shishi_apreq_print (ap->handle, stdout, ap->apreq);
+
+  rc = shishi_apreq_get_ticket (ap->handle, ap->apreq, &ticket);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (ap->handle,
+			   "Could not extract ticket from AP-REQ: %s\n",
+			   shishi_strerror (rc));
+      return rc;
+    }
+
+  if (VERBOSEASN1 (ap->handle))
+    shishi_ticket_print (ap->handle, stdout, ticket);
+
+  rc = shishi_tkt (ap->handle, &ap->tkt);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  shishi_tkt_ticket_set (ap->tkt, ticket);
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_ap_req_process_keyusage:
  * @ap: structure that holds information about AP exchange
  * @key: cryptographic key used to decrypt ticket in AP-REQ.
@@ -738,29 +777,19 @@ int
 shishi_ap_req_process_keyusage (Shishi_ap * ap,
 				Shishi_key * key, int32_t keyusage)
 {
-  Shishi_asn1 ticket, authenticator;
-  Shishi_tkt *tkt;
+  Shishi_asn1 authenticator;
   Shishi_key *tktkey;
   int rc;
 
-  if (VERBOSEASN1 (ap->handle))
-    shishi_apreq_print (ap->handle, stdout, ap->apreq);
-
-  rc = shishi_apreq_get_ticket (ap->handle, ap->apreq, &ticket);
+  rc = shishi_ap_req_decode (ap);
   if (rc != SHISHI_OK)
     {
-      shishi_error_printf (ap->handle,
-			   "Could not extract ticket from AP-REQ: %s\n",
+      shishi_error_printf (ap->handle, "Error decoding ticket: %s\n",
 			   shishi_strerror (rc));
       return rc;
     }
 
-  if (VERBOSEASN1 (ap->handle))
-    shishi_ticket_print (ap->handle, stdout, ticket);
-
-  tkt = shishi_tkt2 (ap->handle, ticket, NULL, NULL);
-
-  rc = shishi_tkt_decrypt (tkt, key);
+  rc = shishi_tkt_decrypt (ap->tkt, key);
   if (rc != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Error decrypting ticket: %s\n",
@@ -769,7 +798,8 @@ shishi_ap_req_process_keyusage (Shishi_ap * ap,
     }
 
   rc = shishi_encticketpart_get_key (ap->handle,
-				     shishi_tkt_encticketpart (tkt), &tktkey);
+				     shishi_tkt_encticketpart (ap->tkt),
+				     &tktkey);
   if (rc != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Could not get key from ticket: %s\n",
@@ -779,7 +809,7 @@ shishi_ap_req_process_keyusage (Shishi_ap * ap,
 
   if (VERBOSEASN1 (ap->handle))
     shishi_encticketpart_print (ap->handle, stdout,
-				shishi_tkt_encticketpart (tkt));
+				shishi_tkt_encticketpart (ap->tkt));
 
   rc = shishi_apreq_decrypt (ap->handle, ap->apreq, tktkey,
 			     keyusage, &authenticator);
@@ -795,7 +825,6 @@ shishi_ap_req_process_keyusage (Shishi_ap * ap,
   if (VERBOSEASN1 (ap->handle))
     shishi_authenticator_print (ap->handle, stdout, authenticator);
 
-  ap->tkt = tkt;
   ap->authenticator = authenticator;
 
   return SHISHI_OK;

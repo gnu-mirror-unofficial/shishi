@@ -695,6 +695,7 @@ extern int shishi_ticket_decrypt (Shishi * handle, Shishi_asn1 ticket,
 
 /* tkt.c */
 extern Shishi_asn1 shishi_tkt_ticket (Shishi_tkt * tkt);
+extern void shishi_tkt_ticket_set (Shishi_tkt * tkt, Shishi_asn1 ticket);
 extern Shishi_asn1 shishi_tkt_kdcrep (Shishi_tkt * tkt);
 extern Shishi_asn1 shishi_tkt_enckdcreppart (Shishi_tkt * tkt);
 extern void shishi_tkt_enckdcreppart_set (Shishi_tkt * tkt,
@@ -1664,6 +1665,7 @@ extern int shishi_ap_req_der_set (Shishi_ap * ap, char *der, size_t derlen);
 extern int shishi_ap_req_build (Shishi_ap * ap);
 extern int shishi_ap_req_asn1 (Shishi_ap * ap, Shishi_asn1 * apreq);
 extern Shishi_key *shishi_ap_key (Shishi_ap * ap);
+extern int shishi_ap_req_decode (Shishi_ap * ap);
 extern int shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key);
 extern int shishi_ap_req_process_keyusage (Shishi_ap * ap,
 					   Shishi_key * key,
