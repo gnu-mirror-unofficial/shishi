@@ -8,6 +8,13 @@ See the end for copying conditions.
 
 ** Libidn copy removed (it is optional but recommended, used when present).
 
+** Gettext not included.
+Due to some conflicts between libtool and gettext, if you want i18n on
+platforms that does not already have a useful gettext implementation,
+you can install GNU gettext before building this package.  If you
+don't care about i18n, this package should work fine (except for i18n,
+of course).
+
 ** Libtasn1 and Libgcrypt updated (libpgp-error added in errcrypto/).
 
 ** Argp and other compatibility files replaced by gl/ directory.

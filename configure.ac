@@ -47,7 +47,7 @@ AC_CHECK_HEADERS(netinet/in.h netinet/in6.h arpa/inet.h)
 
 # Checks for programs.
 AC_PROG_LIBTOOL
-AM_GNU_GETTEXT(use-libtool, need-ngettext)
+AM_GNU_GETTEXT(external)
 AM_GNU_GETTEXT_VERSION(0.12.1)
 AM_MISSING_PROG(PERL, perl, $missing_dir)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
@@ -295,7 +295,7 @@ if test x$enable_gtk_doc = xauto ; then
 fi
 AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
 
-AC_CONFIG_FILES(Makefile intl/Makefile po/Makefile.in m4/Makefile \
+AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
 	doc/reference/Makefile extra/Makefile extra/pam_shishi/Makefile \
 	gl/Makefile gl/m4/Makefile shishi.pc shishi.conf shishi.skel)
