@@ -636,7 +636,7 @@ shishi_kdcreq_set_etype (Shishi * handle,
 /**
  * shishi_kdcreq_options:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: KDC-REQ variable to set etype field in.
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
  * @flags: pointer to output integer with flags.
  *
  * Extract KDC-Options from KDC-REQ.
@@ -651,9 +651,159 @@ shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq, uint32_t * flags)
 }
 
 /**
+ * shishi_kdcreq_forwardable_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option forwardable flag is set.
+ *
+ * The FORWARDABLE option indicates that the ticket to be issued is to
+ * have its forwardable flag set. It may only be set on the initial
+ * request, or in a subsequent request if the ticket-granting ticket
+ * on which it is based is also forwardable.
+ *
+ * Return value: Returns non-0 iff forwardable flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_forwardable_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_FORWARDABLE;
+}
+
+/**
+ * shishi_kdcreq_forwarded_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option forwarded flag is set.
+ *
+ * The FORWARDED option is only specified in a request to the
+ * ticket-granting server and will only be honored if the
+ * ticket-granting ticket in the request has its FORWARDABLE bit
+ * set. This option indicates that this is a request for
+ * forwarding. The address(es) of the host from which the resulting
+ * ticket is to be valid are included in the addresses field of the
+ * request.
+ *
+ * Return value: Returns non-0 iff forwarded flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_forwarded_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_FORWARDED;
+}
+
+/**
+ * shishi_kdcreq_proxiable_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option proxiable flag is set.
+ *
+ * The PROXIABLE option indicates that the ticket to be issued is to
+ * have its proxiable flag set. It may only be set on the initial
+ * request, or in a subsequent request if the ticket-granting ticket
+ * on which it is based is also proxiable.
+ *
+ * Return value: Returns non-0 iff proxiable flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_proxiable_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_PROXIABLE;
+}
+
+/**
+ * shishi_kdcreq_proxy_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option proxy flag is set.
+ *
+ * The PROXY option indicates that this is a request for a proxy. This
+ * option will only be honored if the ticket-granting ticket in the
+ * request has its PROXIABLE bit set.  The address(es) of the host
+ * from which the resulting ticket is to be valid are included in the
+ * addresses field of the request.
+ *
+ * Return value: Returns non-0 iff proxy flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_proxy_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_PROXY;
+}
+
+/**
+ * shishi_kdcreq_allow_postdate_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option allow-postdate flag is set.
+ *
+ * The ALLOW-POSTDATE option indicates that the ticket to be issued is
+ * to have its MAY-POSTDATE flag set. It may only be set on the
+ * initial request, or in a subsequent request if the ticket-granting
+ * ticket on which it is based also has its MAY-POSTDATE flag set.
+ *
+ * Return value: Returns non-0 iff allow-postdate flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_allow_postdate_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_ALLOW_POSTDATE;
+}
+
+/**
+ * shishi_kdcreq_postdated_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option postdated flag is set.
+ *
+ * The POSTDATED option indicates that this is a request for a
+ * postdated ticket. This option will only be honored if the
+ * ticket-granting ticket on which it is based has its MAY-POSTDATE
+ * flag set. The resulting ticket will also have its INVALID flag set,
+ * and that flag may be reset by a subsequent request to the KDC after
+ * the starttime in the ticket has been reached.
+ *
+ * Return value: Returns non-0 iff postdated flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_postdated_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_POSTDATED;
+}
+
+/**
  * shishi_kdcreq_renewable_p:
  * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: KDC-REQ variable to set etype field in.
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
  *
  * Determine if KDC-Option renewable flag is set.
  *
@@ -674,6 +824,145 @@ shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq)
   shishi_kdcreq_options (handle, kdcreq, &options);
 
   return options & SHISHI_KDCOPTIONS_RENEWABLE;
+}
+
+/**
+ * shishi_kdcreq_disable_transited_check_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option disable-transited-check flag is set.
+ *
+ * By default the KDC will check the transited field of a
+ * ticket-granting-ticket against the policy of the local realm before
+ * it will issue derivative tickets based on the ticket-granting
+ * ticket. If this flag is set in the request, checking of the
+ * transited field is disabled. Tickets issued without the performance
+ * of this check will be noted by the reset (0) value of the
+ * TRANSITED-POLICY-CHECKED flag, indicating to the application server
+ * that the tranisted field must be checked locally. KDCs are
+ * encouraged but not required to honor the DISABLE-TRANSITED-CHECK
+ * option.
+ *
+ * This flag is new since RFC 1510
+ *
+ * Return value: Returns non-0 iff disable-transited-check flag is set
+ *   in KDC-REQ.
+ **/
+int
+shishi_kdcreq_disable_transited_check_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_DISABLE_TRANSITED_CHECK;
+}
+
+/**
+ * shishi_kdcreq_renewable_ok_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option renewable-ok flag is set.
+ *
+ * The RENEWABLE-OK option indicates that a renewable ticket will be
+ * acceptable if a ticket with the requested life cannot otherwise be
+ * provided. If a ticket with the requested life cannot be provided,
+ * then a renewable ticket may be issued with a renew-till equal to
+ * the requested endtime. The value of the renew-till field may still
+ * be limited by local limits, or limits selected by the individual
+ * principal or server.
+ *
+ * Return value: Returns non-0 iff renewable-ok flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_renewable_ok_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_RENEWABLE_OK;
+}
+
+/**
+ * shishi_kdcreq_enc_tkt_in_skey_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option enc-tkt-in-skey flag is set.
+ *
+ * This option is used only by the ticket-granting service. The
+ * ENC-TKT-IN-SKEY option indicates that the ticket for the end server
+ * is to be encrypted in the session key from the additional
+ * ticket-granting ticket provided.
+ *
+ * Return value: Returns non-0 iff enc-tkt-in-skey flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_enc_tkt_in_skey_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_ENC_TKT_IN_SKEY;
+}
+
+/**
+ * shishi_kdcreq_renew_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option renew flag is set.
+ *
+ * This option is used only by the ticket-granting service. The RENEW
+ * option indicates that the present request is for a renewal. The
+ * ticket provided is encrypted in the secret key for the server on
+ * which it is valid. This option will only be honored if the ticket
+ * to be renewed has its RENEWABLE flag set and if the time in its
+ * renew-till field has not passed. The ticket to be renewed is passed
+ * in the padata field as part of the authentication header.
+ *
+ * Return value: Returns non-0 iff renew flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_renew_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_RENEW;
+}
+
+/**
+ * shishi_kdcreq_validate_p:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ variable to get kdc-options field from.
+ *
+ * Determine if KDC-Option validate flag is set.
+ *
+ * This option is used only by the ticket-granting service. The
+ * VALIDATE option indicates that the request is to validate a
+ * postdated ticket. It will only be honored if the ticket presented
+ * is postdated, presently has its INVALID flag set, and would be
+ * otherwise usable at this time. A ticket cannot be validated before
+ * its starttime. The ticket presented for validation is encrypted in
+ * the key of the server for which it is valid and is passed in the
+ * padata field as part of the authentication header.
+ *
+ * Return value: Returns non-0 iff validate flag is set in KDC-REQ.
+ **/
+int
+shishi_kdcreq_validate_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_VALIDATE;
 }
 
 /**

@@ -87,10 +87,6 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_tkt_flags_set (ltgs->tkt, SHISHI_TICKETFLAGS_INITIAL);
-  if (res != SHISHI_OK)
-    return res;
-
   return SHISHI_OK;
 }
 

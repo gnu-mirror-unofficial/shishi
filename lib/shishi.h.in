@@ -1077,7 +1077,21 @@ extern int shishi_kdcreq_set_etype (Shishi * handle, Shishi_asn1 kdcreq,
 				    int32_t * etype, int netype);
 extern int shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq,
 				  uint32_t * flags);
+extern int shishi_kdcreq_forwardable_p (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_forwarded_p (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_proxiable_p (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_proxy_p (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_allow_postdate_p (Shishi * handle,
+					   Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_postdated_p (Shishi * handle, Shishi_asn1 kdcreq);
 extern int shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_disable_transited_check_p (Shishi * handle,
+						    Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_renewable_ok_p (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_enc_tkt_in_skey_p (Shishi * handle,
+					    Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_renew_p (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_validate_p (Shishi * handle, Shishi_asn1 kdcreq);
 extern int shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq,
 				      uint32_t options);
 extern int shishi_kdcreq_options_add (Shishi * handle, Shishi_asn1 kdcreq,
