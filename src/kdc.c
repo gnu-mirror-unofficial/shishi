@@ -365,7 +365,7 @@ asreq1 (Shishi_as * as)
   if (shishi_kdcreq_renewable_p (handle, shishi_as_req (as)))
     {
       shishi_tkt_flags_add (tkt, SHISHI_TICKETFLAGS_RENEWABLE);
-      /* XXX set rtime */
+      /* XXX set renew-till from rtime */
     }
 
   /*
