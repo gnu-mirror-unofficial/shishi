@@ -1,4 +1,21 @@
 # List of source files containing translatable strings for shishi.
-# Copyright (c) 2002 by Simon Josefsson
-
+# Copyright (c) 2002, 2003 by Simon Josefsson
+lib/aprep.c
+lib/apreq.c
+lib/authenticator.c
+lib/diskio.c
+lib/encapreppart.c
+lib/enckdcreppart.c
+lib/error.c
+lib/kdcrep.c
+lib/kdcreq.c
+lib/krberror.c
+lib/principal.c
+lib/safe.c
+lib/ticket.c
+lib/tkt.c
+src/authp.c
+src/crypto.c
+src/kdc.c
+src/server.c
 src/shishi.c
