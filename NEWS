@@ -5,8 +5,8 @@ See the end for copying conditions.
 * Version 0.0.12 (unreleased)
 
 ** The user database library Shisa has been improved.
-Shisa now support multiple keys for users, and can selectively add and
-remove new keys via the command line interface.
+Shisa now support multiple keys for users, and you can now selectively
+add and remove keys via the command line interface.
 
 ** The Shisa programming API is documented in the manual.
 
