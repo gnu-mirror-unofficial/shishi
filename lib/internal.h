@@ -29,7 +29,12 @@
 #ifdef STDC_HEADERS
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdarg.h>
+#endif
+
+#if __STDC__
+# include <stdarg.h>
+#else
+# include <varargs.h>
 #endif
 
 #include <unistd.h>
@@ -97,7 +102,7 @@ typedef enum {
   SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP = 1,
   /* 2. AS-REP Ticket and TGS-REP Ticket (includes TGS session key or 
      application session key), encrypted with the service key  */
-  SHISHI_KEYUSAGE_ASREP_TICKET = 2,
+  SHISHI_KEYUSAGE_KDCREP_TICKET = 2,
   /* 3. AS-REP encrypted part (includes TGS session key or application
      session key), encrypted with the client key */
   SHISHI_KEYUSAGE_ENCASREPPART = 3,
@@ -224,11 +229,19 @@ struct Shishi
   char error[1024];
   char *gztime_buf[40];
   int shortnonceworkaround;
+  char *usercfgfile;
+  char *ticketsetfile;
+  Shishi_ticketset *ticketset;
+  /* XXX remove these: */
   ASN1_TYPE lastauthenticator;
   ASN1_TYPE lastapreq;
   ASN1_TYPE lastaprep;
   ASN1_TYPE lastencapreppart;
 };
+
+#define BASE_DIR "/.shishi"
+#define TICKET_FILE BASE_DIR "/tickets"
+#define USERCFG_FILE BASE_DIR "/config"
 
 /* asn1.c */
 int
