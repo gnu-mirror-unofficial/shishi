@@ -364,6 +364,43 @@ shishi_ap_tktoptionsdata (Shishi * handle,
 }
 
 /**
+ * shishi_ap_etype_tktoptionsdata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ap: pointer to new structure that holds information about AP exchange
+ * @etype: encryption type of newly generated random subkey.
+ * @tkt: ticket to set in newly created AP.
+ * @options: AP-REQ options to set in newly created AP.
+ * @data: input array with data to checksum in Authenticator.
+ * @len: length of input array with data to checksum in Authenticator.
+ *
+ * Create a new AP exchange using shishi_ap(), and set the ticket,
+ * AP-REQ apoptions and the Authenticator checksum data using
+ * shishi_ap_set_tktoptionsdata(). A random session key is added to
+ * the authenticator, using the same keytype as the ticket.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_etype_tktoptionsdata (Shishi * handle,
+				Shishi_ap ** ap,
+				int32_t etype,
+				Shishi_tkt * tkt, int options,
+				const char *data, size_t len)
+{
+  int rc;
+
+  rc = shishi_ap_etype (handle, ap, etype);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_ap_set_tktoptionsdata (*ap, tkt, options, data, len);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_ap_tktoptionsasn1usage:
  * @handle: shishi handle as allocated by shishi_init().
  * @ap: pointer to new structure that holds information about AP exchange

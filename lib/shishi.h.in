@@ -1601,6 +1601,11 @@ extern int shishi_ap_set_tktoptions (Shishi_ap * ap,
 extern int shishi_ap_tktoptions (Shishi * handle,
 				 Shishi_ap ** ap,
 				 Shishi_tkt * tkt, int options);
+extern int shishi_ap_etype_tktoptionsdata (Shishi * handle,
+					   Shishi_ap ** ap,
+					   int32_t etype,
+					   Shishi_tkt * tkt, int options,
+					   const char *data, size_t len);
 extern int shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
 					 Shishi_tkt * tkt,
 					 int options,
