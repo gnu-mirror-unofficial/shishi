@@ -1,5 +1,5 @@
 /* apreq.c --- AP-REQ functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -415,8 +415,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
   int res;
   char *format;
   char *buf;
-  size_t buflen;
-  int i, n;
+  size_t buflen, i, n;
 
   res = shishi_asn1_read2 (handle, ticket, "tkt-vno", &buf, &buflen);
   if (res != SHISHI_OK)
@@ -521,7 +520,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq, int *flags)
+shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq, uint32_t *flags)
 {
   return shishi_asn1_read_bitstring (handle, apreq, "ap-options", flags);
 }
@@ -538,7 +537,7 @@ shishi_apreq_options (Shishi * handle, Shishi_asn1 apreq, int *flags)
 int
 shishi_apreq_use_session_key_p (Shishi * handle, Shishi_asn1 apreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_apreq_options (handle, apreq, &options);
 
@@ -557,7 +556,7 @@ shishi_apreq_use_session_key_p (Shishi * handle, Shishi_asn1 apreq)
 int
 shishi_apreq_mutual_required_p (Shishi * handle, Shishi_asn1 apreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_apreq_options (handle, apreq, &options);
 
@@ -575,7 +574,7 @@ shishi_apreq_mutual_required_p (Shishi * handle, Shishi_asn1 apreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq, int options)
+shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq, uint32_t options)
 {
   int res;
 
@@ -598,9 +597,9 @@ shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq, int options)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq, int option)
+shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq, uint32_t option)
 {
-  int options;
+  uint32_t options;
   int res;
 
   res = shishi_apreq_options (handle, apreq, &options);
@@ -628,9 +627,11 @@ shishi_apreq_options_add (Shishi * handle, Shishi_asn1 apreq, int option)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_apreq_options_remove (Shishi * handle, Shishi_asn1 apreq, int option)
+shishi_apreq_options_remove (Shishi * handle,
+			     Shishi_asn1 apreq,
+			     uint32_t option)
 {
-  int options;
+  uint32_t options;
   int res;
 
   res = shishi_apreq_options (handle, apreq, &options);
@@ -679,9 +680,8 @@ shishi_apreq_get_ticket (Shishi * handle,
 {
   char *buf;
   char *format;
-  size_t buflen;
+  size_t buflen, i, n;
   int res;
-  int i, n;
 
   /* there's GOT to be an easier way to do this */
 
