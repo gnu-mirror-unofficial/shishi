@@ -6,7 +6,7 @@
 
 /* nettle, low-level cryptographics library
  *
- * Copyright (C) 2002, 2004 Niels Möller
+ * Copyright (C) 2002 Niels Möller
  *  
  * The nettle library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +27,8 @@
 #ifndef NETTLE_INTERNAL_H_INCLUDED
 #define NETTLE_INTERNAL_H_INCLUDED
 
+#include "nettle-meta.h"
+
 /* Temporary allocation, for systems that don't support alloca. Note
  * that the allocation requests should always be reasonably small, so
  * that they can fit on the stack. For non-alloca systems, we use a
@@ -40,8 +42,6 @@
 # define TMP_ALLOC(name, size) \
 do { if (size > (sizeof(name) / sizeof(name[0]))) abort(); } while (0)
 #endif 
-
-#include "nettle-meta.h"
 
 /* Arbitrary limits which apply to systems that don't have alloca */
 #define NETTLE_MAX_BIGNUM_BITS 10000
