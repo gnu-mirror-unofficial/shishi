@@ -1004,9 +1004,10 @@ main (int argc, char *argv[])
 	for (i = 0; i < shishi_ticketset_size (handle, NULL); i++)
 	  {
 	    if (arg.sname &&
-		shishi_ticket_server_p (handle,
-					shishi_ticketset_get (handle, NULL, i),
-					arg.sname))
+		!shishi_ticket_server_p (handle,
+					 shishi_ticketset_get (handle,
+							       NULL, i),
+					 arg.sname))
 	      continue;
 
 	    if (arg.verbose)
