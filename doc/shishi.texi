@@ -67,6 +67,7 @@ Free Software Foundation raise funds for GNU development.''
 * User Manual::                 Using Shishi as end-user.
 * Administration Manual::       Administrating server aspects of Shishi.
 * Programming Manual::          Calling Shishi from a programming language.
+* Generic Security Services::   Programming Shishi through the GSS-API.
 * Acknowledgements::            Whom to blame.
 
 Appendices
@@ -224,11 +225,6 @@ Finished.
 @item Fix fixed size buffers.
 
 @end itemize
-
-@cindex GSSAPI
-Shishi will not contain a GSSAPI library, but a separate project to
-create a GSSAPI library is being considered and would contain a Shishi
-backend.
 
 @node Overview
 @section Overview
@@ -1630,6 +1626,189 @@ to always be @code{0} so you may use it in boolean constructs.
 
 This chapter does not contain example code which illustrate how
 `Shishi' can be used when writing your own application.
+
+@c **********************************************************
+@c ************** Generic Security Services  ****************
+@c **********************************************************
+@node Generic Security Services
+@chapter Generic Security Services
+
+As an alternative to the native Shishi programming API
+(@pxref{Programming Manual}), it is possible to program Shishi through
+the Generic Security Services (GSS) API.  The advantage of using
+GSS-API in your security application, instead of the native Shishi
+API, is that it will be easier to port your application between
+different Kerberos 5 implementations, and even beyond Kerberos 5 to
+different security systems, that support GSS-API.
+
+In the free software world, however, the only widely used security
+system that supports GSS-API is Kerberos 5, so this advantage is
+somewhat academic.  But if you are porting applications using GSS-API
+for other Kerberos 5 implementations, or want a more mature and stable
+API than the native Shishi API, you may find using Shishi's GSS-API
+interface compelling.  Note that GSS-API only offer basic services,
+for more advanced uses you must use the native API.
+
+The remaining part of this section assume you are familiar with
+GSS-API in general, and only describe how to hook up your application
+written using GSS-API with Shishi.  For general GSS-API information,
+and some programming examples, a good guide is available online at
+@url{http://docs.sun.com/db/doc/816-1331}.
+
+Shishi exposes the GSS-API through the standard `gssapi.h' header file
+and the library `libshishi-gss'.  To avoid conflicting with other
+GSS-API implementations on your system, the header file is installed
+in a sub-directory `shishi/' under the header file location specified
+when building Shishi.  You must include this in all programs using the
+library, either directly or through some other header file, like this:
+
+@example
+#include <shishi/gssapi.h>
+@end example
+
+The library `libshishi-gss' is installed in the normal object code
+library location.
+
+To facilitate finding the proper parameters for your compiler, the
+@command{pkg-config} tool can be used.  Compile your application
+@file{foo.c} with the Shishi GSS interface like this:
+
+@example
+gcc -o foo foo.c `pkg-config shishi-gss --cflags --libs`
+@end example
+
+Of course you do not need to use both @option{--cflags} and
+@option{--libs} at the same time, see the full discussion elsewhere in
+this manual (@pxref{Building the source}), but note that you must use
+`shishi-gss' instead of `shishi' as the library parameter to
+@command{pkg-config}.
+
+@menu
+* Credential Management::	Standard GSS credential functions.
+* Context-Level Routines::	Standard GSS context functions.
+* Per-Message Routines::	Standard GSS per-message functions.
+* Name Manipulation::		Standard GSS name manipulation functions.
+* Miscellaneous Routines::	Standard miscellaneous functions.
+@end menu
+
+@node Credential Management
+@section Credential Management
+
+@verbatim
+   Table 2-1  GSS-API Credential-management Routines
+
+   Routine                Section              Function
+   -------                -------              --------
+   gss_acquire_cred           5.2  Assume a global identity; Obtain
+                                   a GSS-API credential handle for
+                                   pre-existing credentials.
+   gss_add_cred               5.3  Construct credentials
+                                   incrementally
+   gss_inquire_cred           5.21 Obtain information about a
+                                   credential
+   gss_inquire_cred_by_mech   5.22 Obtain per-mechanism information
+                                   about a credential.
+   gss_release_cred           5.27 Discard a credential handle.
+@end verbatim
+
+@node Context-Level Routines
+@section Context-Level Routines
+
+@verbatim
+   Table 2-2  GSS-API Context-Level Routines
+
+   Routine                 Section              Function
+   -------                 -------              --------
+   gss_init_sec_context       5.19 Initiate a security context with
+                                   a peer application
+   gss_accept_sec_context     5.1  Accept a security context
+                                   initiated by a
+                                   peer application
+   gss_delete_sec_context     5.9  Discard a security context
+   gss_process_context_token  5.25 Process a token on a security
+                                   context from a peer application
+   gss_context_time           5.7  Determine for how long a context
+                                   will remain valid
+   gss_inquire_context        5.20 Obtain information about a
+                                   security context
+   gss_wrap_size_limit        5.34 Determine token-size limit for
+                                   gss_wrap on a context
+   gss_export_sec_context     5.14 Transfer a security context to
+                                   another process
+   gss_import_sec_context     5.17 Import a transferred context
+@end verbatim
+
+@node Per-Message Routines
+@section Per-Message Routines
+
+@verbatim
+   Table 2-3  GSS-API Per-message Routines
+
+   Routine                 Section              Function
+   -------                 -------              --------
+   gss_get_mic                5.15 Calculate a cryptographic message
+                                   integrity code (MIC) for a
+                                   message; integrity service
+   gss_verify_mic             5.32 Check a MIC against a message;
+                                   verify integrity of a received
+                                   message
+   gss_wrap                   5.33 Attach a MIC to a message, and
+                                   optionally encrypt the message
+                                   content;
+                                   confidentiality service
+   gss_unwrap                 5.31 Verify a message with attached
+                                   MIC, and decrypt message content
+                                   if necessary.
+@end verbatim
+
+@node Name Manipulation
+@section Name Manipulation
+
+@verbatim
+   Table 2-4  GSS-API Name manipulation Routines
+
+   Routine                 Section              Function
+   -------                 -------              --------
+   gss_import_name            5.16 Convert a contiguous string name
+                                   to internal-form
+   gss_display_name           5.10 Convert internal-form name to
+                                   text
+   gss_compare_name           5.6  Compare two internal-form names
+
+   gss_release_name           5.28 Discard an internal-form name
+   gss_inquire_names_for_mech 5.24 List the name-types supported by
+                                   the specified mechanism
+   gss_inquire_mechs_for_name 5.23 List mechanisms that support the
+                                   specified name-type
+   gss_canonicalize_name      5.5  Convert an internal name to an MN
+   gss_export_name            5.13 Convert an MN to export form
+   gss_duplicate_name         5.12 Create a copy of an internal name
+@end verbatim
+
+@include shishi-api-gss-name.texi
+
+@node Miscellaneous Routines
+@section Miscellaneous Routines
+
+@verbatim
+   Table 2-5  GSS-API Miscellaneous Routines
+
+   Routine                Section              Function
+   -------                -------              --------
+   gss_add_oid_set_member    5.4  Add an object identifier to
+                                  a set
+   gss_display_status        5.11 Convert a GSS-API status code
+                                  to text
+   gss_indicate_mechs        5.18 Determine available underlying
+                                  authentication mechanisms
+   gss_release_buffer        5.26 Discard a buffer
+   gss_release_oid_set       5.29 Discard a set of object
+                                  identifiers
+   gss_create_empty_oid_set  5.8  Create a set containing no
+                                  object identifiers
+   gss_test_oid_set_member   5.30 Determines whether an object
+                                       identifier is a member of a set.
+@end verbatim
 
 @c **********************************************************
 @c *******************  Acknowledgements  *******************

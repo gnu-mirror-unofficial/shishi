@@ -18,16 +18,16 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-EXTRA_DIST = utils.c
+lib_LTLIBRARIES = libshishi-gss.la
+libshishi_gss_la_SOURCES = internal.h oid.c name.c
+libshishi_gss_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
-TESTS = crypto ticketset authenticator gztime gss
+INCLUDES = -I../intl -I../lib \
+	@LIBTASN1_CFLAGS@ @LIBGCRYPT_CFLAGS@ @LIBIDN_CFLAGS@
 
-INCLUDES = -I$(top_srcdir)/lib
-LDADD = ../lib/libshishi.la
+pkginclude_HEADERS = gssapi.h
 
-gss_LDADD = ../gss/libshishi-gss.la
-
-noinst_PROGRAMS = $(TESTS)
+DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 indent:
 	indent $(SOURCES)

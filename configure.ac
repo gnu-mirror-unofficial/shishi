@@ -330,7 +330,7 @@ AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
 AC_CONFIG_FILES(Makefile intl/Makefile po/Makefile.in m4/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
 	doc/reference/Makefile extra/Makefile extra/pam_shishi/Makefile \
-	shishi.pc shishi.conf shishi.skel)
+	shishi.pc shishi.conf shishi.skel gss/Makefile)
 
 # We are done
 AC_OUTPUT
