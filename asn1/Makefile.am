@@ -2,6 +2,7 @@ INCLUDES = -I../
 EXTRA_DIST = libtasn1.h der.h mem.h gstr.h errors.h \
              int.h parser_aux.h structure.h errors_int.h \
              element.h README
+EXTRA_DIST += defines.h
 
 noinst_LTLIBRARIES = libminitasn1.la
 
