@@ -373,11 +373,33 @@ delete_principal (const char *realm, const char *principal)
 {
   int rc;
 
+  if (principal == NULL && args_info.force_flag)
+    {
+      char **principals;
+      size_t nprincipals;
+      size_t i;
+
+      rc = shisa_enumerate_principals (dbh, realm, &principals, &nprincipals);
+      if (rc != SHISA_OK)
+	return rc;
+
+      for (i = 0; i < nprincipals; i++)
+	{
+	  if (rc == SHISA_OK)
+	    rc = delete_principal (realm, principals[i]);
+	  free (principals[i]);
+	}
+      if (nprincipals > 0)
+	free (principals);
+
+      if (rc != SHISA_OK)
+	return rc;
+    }
+
   if (principal == NULL)
-    printf ("Removing realm `%s'...", realm);
+    printf ("Removing realm `%s'...\n", realm);
   else
-    printf ("Removing principal `%s@%s'...", principal, realm);
-  fflush (stdout);
+    printf ("Removing principal `%s@%s'...\n", principal, realm);
 
   rc = shisa_principal_remove (dbh, realm, principal);
   if (rc != SHISA_OK)
@@ -386,7 +408,10 @@ delete_principal (const char *realm, const char *principal)
       return EXIT_FAILURE;
     }
 
-  printf ("done\n");
+  if (principal == NULL)
+    printf ("Removing realm `%s'...done\n", realm);
+  else
+    printf ("Removing principal `%s@%s'...done\n", principal, realm);
 
   return EXIT_SUCCESS;
 }
