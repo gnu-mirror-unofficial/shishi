@@ -1,5 +1,6 @@
 /*
  *      Copyright (C) 2002 Fabio Fiorina
+ *      Copyright (C) 2004 Simon Josefsson
  *
  * This file is part of LIBASN1.
  *
@@ -489,23 +490,26 @@ _asn1_get_indefinite_length_string(const unsigned char* der,int* len)
 
 /**
   * asn1_der_decoding - Fill the structure *ELEMENT with values of a DER encoding string.
-  * @element: pointer to an ASN1 structure
-  * @ider: vector that contains the DER encoding. 
-  * @len: number of bytes of *der: der[0]..der[len-1]
-  * @errorDescription: null-terminated string contains details when an error occurred.
+  * @element: pointer to an ASN1 structure.
+  * @ider: vector that contains the DER encoding.
+  * @len: number of bytes of *@ider: @ider[0]..@ider[len-1].
+  * @errorDescription: null-terminated string contains details when an
+  *   error occurred.
   *
-  * Fill the structure *ELEMENT with values of a DER encoding string. The sructure must just be
-  * created with function 'create_stucture'.
-  * If an error occurs during the decoding procedure, the *ELEMENT is deleted
-  * and set equal to ASN1_TYPE_EMPTY.
+  * Fill the structure *ELEMENT with values of a DER encoding
+  * string. The sructure must just be created with function
+  * 'create_stucture'.  If an error occurs during the decoding
+  * procedure, the *ELEMENT is deleted and set equal to
+  * %ASN1_TYPE_EMPTY.
   *
   * Returns:
   *
-  *   ASN1_SUCCESS\: DER encoding OK
+  *   ASN1_SUCCESS: DER encoding OK.
   *
-  *   ASN1_ELEMENT_NOT_FOUND\: ELEMENT is ASN1_TYPE_EMPTY.
+  *   ASN1_ELEMENT_NOT_FOUND: ELEMENT is ASN1_TYPE_EMPTY.
   *
-  *   ASN1_TAG_ERROR,ASN1_DER_ERROR\: the der encoding doesn't match the structure NAME. *ELEMENT deleted. 
+  *   ASN1_TAG_ERROR,ASN1_DER_ERROR: The der encoding doesn't match
+  *     the structure NAME. *ELEMENT deleted.
   **/
 
 asn1_retCode
@@ -514,7 +518,7 @@ asn1_der_decoding(ASN1_TYPE *element,const void *ider,int len,
 {
   node_asn *node,*p,*p2,*p3;
   char temp[128];
-  int counter,len2,len3,len4,move,ris;
+  int counter,len2,len3,len4,move,ris,tlen;
   unsigned char class,*temp2;
   unsigned int tag;
   int indefinite, result;
@@ -686,7 +690,9 @@ asn1_der_decoding(ASN1_TYPE *element,const void *ider,int len,
 	break;
       case TYPE_OBJECT_ID:
 	_asn1_get_objectid_der(der+counter,&len2, temp, sizeof(temp));
-	_asn1_set_value(p,temp,strlen(temp)+1);
+	tlen = strlen(temp);
+	if( tlen > 0)
+	   _asn1_set_value(p,temp,tlen+1);
 	counter+=len2;
 	move=RIGHT;
       break;
@@ -696,7 +702,9 @@ asn1_der_decoding(ASN1_TYPE *element,const void *ider,int len,
 		asn1_delete_structure(element);
 	        return result;
 	}
-	_asn1_set_value(p,temp,strlen(temp)+1);
+	tlen = strlen(temp);
+	if (tlen > 0)
+	   _asn1_set_value(p,temp,tlen+1);
 	counter+=len2;
 	move=RIGHT;
 	break;
@@ -743,7 +751,9 @@ asn1_der_decoding(ASN1_TYPE *element,const void *ider,int len,
 	  counter+=len2;
 	  if(len3>0){
 	    _asn1_ltostr(counter+len3,temp);
-	    _asn1_set_value(p,temp,strlen(temp)+1);
+	    tlen = strlen(temp);
+	    if (tlen > 0)
+	       _asn1_set_value(p,temp,tlen+1);
 	    move=DOWN; 
 	  }
 	  else if(len3==0){
@@ -801,7 +811,10 @@ asn1_der_decoding(ASN1_TYPE *element,const void *ider,int len,
 	  if(len3){
 	    if(len3>0){ /* definite length method */
 	    _asn1_ltostr(counter+len3,temp);
-	    _asn1_set_value(p,temp,strlen(temp)+1);
+	    tlen = strlen(temp);
+	    
+	    if (tlen > 0)
+	       _asn1_set_value(p,temp,tlen+1);
 	    }
 	    else { /* indefinite length method */
 	      _asn1_set_value(p,"-1",3);	      
@@ -910,25 +923,27 @@ asn1_der_decoding(ASN1_TYPE *element,const void *ider,int len,
   * asn1_der_decoding_element - Fill the element named ELEMENTNAME of the structure STRUCTURE with values of a DER encoding string.
   * @structure: pointer to an ASN1 structure
   * @elementName: name of the element to fill
-  * @ider: vector that contains the DER encoding of the whole structure. 
+  * @ider: vector that contains the DER encoding of the whole structure.
   * @len: number of bytes of *der: der[0]..der[len-1]
-  * @errorDescription: null-terminated string contains details when an error occurred.
-  * 
-  * Description:
+  * @errorDescription: null-terminated string contains details when an
+  *   error occurred.
   *
-  * Fill the element named ELEMENTNAME with values of a DER encoding string. 
-  * The sructure must just be created with function 'create_stucture'.
-  * The DER vector must contain the encoding string of the whole STRUCTURE.
-  * If an error occurs during the decoding procedure, the *STRUCTURE is deleted
-  * and set equal to ASN1_TYPE_EMPTY.
+  * Fill the element named ELEMENTNAME with values of a DER encoding
+  * string.  The sructure must just be created with function
+  * 'create_stucture'.  The DER vector must contain the encoding
+  * string of the whole STRUCTURE.  If an error occurs during the
+  * decoding procedure, the *STRUCTURE is deleted and set equal to
+  * %ASN1_TYPE_EMPTY.
   *
   * Returns:
   *
-  *   ASN1_SUCCESS\: DER encoding OK
+  *   ASN1_SUCCESS: DER encoding OK.
   *
-  *   ASN1_ELEMENT_NOT_FOUND\: ELEMENT is ASN1_TYPE_EMPTY or elementName == NULL.
+  *   ASN1_ELEMENT_NOT_FOUND: ELEMENT is ASN1_TYPE_EMPTY or
+  *     elementName == NULL.
   *
-  *   ASN1_TAG_ERROR,ASN1_DER_ERROR\: the der encoding doesn't match the structure STRUCTURE. *ELEMENT deleted. 
+  *   ASN1_TAG_ERROR,ASN1_DER_ERROR: The der encoding doesn't match
+  *   the structure STRUCTURE. *ELEMENT deleted.
   *
   **/
 asn1_retCode
@@ -938,7 +953,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
   node_asn *node,*p,*p2,*p3,*nodeFound=ASN1_TYPE_EMPTY;
   char temp[128],currentName[MAX_NAME_SIZE*10],*dot_p,*char_p;
   int nameLen=MAX_NAME_SIZE*10-1,state;
-  int counter,len2,len3,len4,move,ris;
+  int counter,len2,len3,len4,move,ris, tlen;
   unsigned char class,*temp2;
   unsigned int tag;
   int indefinite, result;
@@ -1153,7 +1168,10 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
       case TYPE_OBJECT_ID:
 	if(state==FOUND){
 	  _asn1_get_objectid_der(der+counter,&len2, temp, sizeof(temp));
-	  _asn1_set_value(p,temp,strlen(temp)+1);
+	  tlen = strlen(temp);
+	  
+	  if (tlen > 0)
+	     _asn1_set_value(p,temp,tlen+1);
 	  
 	  if(p==nodeFound) state=EXIT;
 	}
@@ -1173,7 +1191,9 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 	        return result;
 	  }
 
-	  _asn1_set_value(p,temp,strlen(temp)+1);
+	  tlen = strlen(temp);
+	  if (tlen > 0)
+  	     _asn1_set_value(p,temp,tlen+1);
 	  
 	  if(p==nodeFound) state=EXIT;
 	}
@@ -1249,7 +1269,10 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 	    counter+=len2;
 	    if(len3>0){
 	      _asn1_ltostr(counter+len3,temp);
-	      _asn1_set_value(p,temp,strlen(temp)+1);
+	      tlen = strlen(temp);
+	      
+	      if(tlen > 0)
+	          _asn1_set_value(p,temp,tlen+1);
 	      move=DOWN;
 	    }
 	    else if(len3==0){
@@ -1301,7 +1324,10 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 	    counter+=len2;
 	    if(len3){
 	      _asn1_ltostr(counter+len3,temp);
-	      _asn1_set_value(p,temp,strlen(temp)+1);
+	      tlen = strlen(temp);
+	      
+	      if (tlen > 0)
+	          _asn1_set_value(p,temp,tlen+1);
 	      p2=p->down;
 	      while((type_field(p2->type)==TYPE_TAG) || (type_field(p2->type)==TYPE_SIZE)) p2=p2->right;
 	      if(p2->right==NULL) _asn1_append_sequence_set(p);
@@ -1489,26 +1515,31 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 /**
   * asn1_der_decoding_startEnd - Find the start and end point of an element in a DER encoding string.
   * @element: pointer to an ASN1 element
-  * @ider: vector that contains the DER encoding. 
-  * @len: number of bytes of *der: der[0]..der[len-1]
+  * @ider: vector that contains the DER encoding.
+  * @len: number of bytes of *@ider: @ider[0]..@ider[len-1]
   * @name_element: an element of NAME structure.
-  * @start: the position of the first byte of NAME_ELEMENT decoding (der[*start]) 
-  * @end: the position of the last byte of NAME_ELEMENT decoding (der[*end])
-  * Description:
-  * 
-  * Find the start and end point of an element in a DER encoding string. I mean that if you
-  * have a der encoding and you have already used the function "asn1_der_decoding" to fill a structure, it may
-  * happen that you want to find the piece of string concerning an element of the structure.
-  * 
+  * @start: the position of the first byte of NAME_ELEMENT decoding
+  *   (@ider[*start])
+  * @end: the position of the last byte of NAME_ELEMENT decoding
+  *  (@ider[*end])
+  *
+  * Find the start and end point of an element in a DER encoding
+  * string. I mean that if you have a der encoding and you have
+  * already used the function "asn1_der_decoding" to fill a structure,
+  * it may happen that you want to find the piece of string concerning
+  * an element of the structure.
+  *
   * Example: the sequence "tbsCertificate" inside an X509 certificate.
   *
   * Returns:
   *
-  *   ASN1_SUCCESS\: DER encoding OK
+  *   ASN1_SUCCESS: DER encoding OK.
   *
-  *   ASN1_ELEMENT_NOT_FOUND\: ELEMENT is ASN1_TYPE EMPTY  or NAME_ELEMENT is not a valid element.
+  *   ASN1_ELEMENT_NOT_FOUND: ELEMENT is ASN1_TYPE EMPTY or
+  *   NAME_ELEMENT is not a valid element.
   *
-  *   ASN1_TAG_ERROR,ASN1_DER_ERROR\: the der encoding doesn't match the structure ELEMENT.
+  *   ASN1_TAG_ERROR,ASN1_DER_ERROR: the der encoding doesn't match
+  *   the structure ELEMENT.
   *
   **/
 asn1_retCode
@@ -1745,7 +1776,6 @@ asn1_der_decoding_startEnd(ASN1_TYPE element,const void *ider,int len,
   * asn1_expand_any_defined_by - Expand "ANY DEFINED BY" fields in structure.
   * @definitions: ASN1 definitions
   * @element: pointer to an ASN1 structure
-  * Description:
   *
   * Expands every "ANY DEFINED BY" element of a structure created from
   * a DER decoding process (asn1_der_decoding function). The element ANY
@@ -1756,11 +1786,12 @@ asn1_der_decoding_startEnd(ASN1_TYPE element,const void *ider,int len,
   *
   * Returns:
   *
-  *   ASN1_SUCCESS\: substitution OK
+  *   ASN1_SUCCESS: Substitution OK.
   *
-  *   ASN1_ERROR_TYPE_ANY\: some "ANY DEFINED BY" element couldn't be expanded
-  *   due to a problem in OBJECT_ID -> TYPE association. 
-  *   other errors\: result of der decoding process. 
+  *   ASN1_ERROR_TYPE_ANY: Some "ANY DEFINED BY" element couldn't be
+  *   expanded due to a problem in OBJECT_ID -> TYPE association.
+  *
+  *   other errors: Result of der decoding process.
   **/
 
 asn1_retCode
@@ -1943,28 +1974,26 @@ asn1_expand_any_defined_by(ASN1_TYPE definitions,ASN1_TYPE *element)
   * @octetName: name of the OCTECT STRING field to expand.
   * @objectName: name of the OBJECT IDENTIFIER field to use to define
   *    the type for expansion.
-  * 
-  * Description:
   *
-  * Expands an "OCTET STRING" element of a structure created from
-  * a DER decoding process (asn1_der_decoding function). The type used 
-  * for expansion is the first one following the definition of
-  * the actual value of the OBJECT IDENTIFIER indicated by OBJECTNAME.
+  * Expands an "OCTET STRING" element of a structure created from a
+  * DER decoding process (asn1_der_decoding function). The type used
+  * for expansion is the first one following the definition of the
+  * actual value of the OBJECT IDENTIFIER indicated by OBJECTNAME.
   *
   * Returns:
   *
-  *   ASN1_SUCCESS\: substitution OK
+  *   ASN1_SUCCESS: Substitution OK.
   *
-  *   ASN1_ELEMENT_NOT_FOUND\: OBJECTNAME or OCTETNAME are not correct.
+  *   ASN1_ELEMENT_NOT_FOUND: OBJECTNAME or OCTETNAME are not correct.
   *
-  *   ASN1_VALUE_NOT_VALID\: wasn't possible to find the type to use
+  *   ASN1_VALUE_NOT_VALID: Wasn't possible to find the type to use
   *       for expansion.
-  *    
-  *   other errors\: result of der decoding process. 
+  *
+  *   other errors: result of der decoding process.
   **/
 asn1_retCode
 asn1_expand_octet_string(ASN1_TYPE definitions,ASN1_TYPE *element,
-                         const char *octetName,const char *objectName)
+			 const char *octetName,const char *objectName)
 {
   char name[2*MAX_NAME_SIZE+1],value[MAX_NAME_SIZE];
   asn1_retCode retCode=ASN1_SUCCESS,result;
