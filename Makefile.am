@@ -100,12 +100,12 @@ release:
 	rm -f ChangeLog
 	$(MAKE) ChangeLog distcheck
 	cvs commit -m "" ChangeLog
-	rm -f $(distdir).tar.gz.asc
-	gpg -a --sign --detach $(distdir).tar.gz
-	gpg --verify $(distdir).tar.gz.asc
 	cvs rtag $(tag) $(PACKAGE)
-	test -d $(htmldir) && cp -v doc/$(PACKAGE).{ps,pdf,html} $(htmldir)/
-	test -d $(htmldir)/reference && \
-		cp -v doc/reference/*.html $(htmldir)/reference/
-	test -d $(htmldir) && cd $(htmldir) && cvs commit -m "Update." \
-		$(PACKAGE).{ps,pdf,html} reference/*.html
+	gpg -b $(distdir).tar.gz
+	gpg --verify $(distdir).tar.gz.sig
+	echo "directory: $(PACKAGE)" > $(distdir).tar.gz.directive
+	gpg --clearsign $(distdir).tar.gz.directive
+	cd doc && ./gendocs.sh -o ../$(htmldir)/manual/ $(PACKAGE) "GNU Shishi"
+	ncftpput ftp-upload.gnu.org /incoming/alpha $(distdir).tar.gz{,.sig,.directive.asc}
+	cp -v doc/reference/*.html $(htmldir)/reference/
+	cd $(htmldir) && cvs commit -m "Update." manual reference/*.html
