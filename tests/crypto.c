@@ -635,10 +635,11 @@ main (int argc, char *argv[])
       if (verbose)
 	printf ("DR entry %d\n", i);
 
-      key = shishi_key (drdk[i].type, drdk[i].key);
+      res = shishi_key_from_value (handle, drdk[i].type, drdk[i].key, &key);
 
-      res = shishi_dr (handle, key, drdk[i].usage, drdk[i].nusage,
-		       out, strlen (drdk[i].dr));
+      if (res == SHISHI_OK)
+	res = shishi_dr (handle, key, drdk[i].usage, drdk[i].nusage,
+			 out, strlen (drdk[i].dr));
 
       shishi_key_done(key);
 
@@ -691,10 +692,13 @@ main (int argc, char *argv[])
       else if (verbose)
 	printf ("OK\n");
 
-      key = shishi_key (drdk[i].type, drdk[i].key);
-      key2 = shishi_key (drdk[i].type, NULL);
+      res = shishi_key_from_value (handle, drdk[i].type, drdk[i].key, &key);
 
-      res = shishi_dk (handle, key, drdk[i].usage, drdk[i].nusage, key2);
+      if (res == SHISHI_OK)
+	res = shishi_key_from_value (handle, drdk[i].type, NULL, &key2);
+
+      if (res == SHISHI_OK)
+	res = shishi_dk (handle, key, drdk[i].usage, drdk[i].nusage, key2);
 
       shishi_key_done(key);
 
@@ -809,12 +813,10 @@ main (int argc, char *argv[])
 	printf ("STRING-TO-KEY entry %d (key type %s)\n", i,
 		name ? name : "NO NAME");
 
-      key = shishi_key (str2key[i].etype, NULL);
-
-      res = shishi_string_to_key (handle, str2key[i].etype,
-				  str2key[i].password, n_password,
-				  str2key[i].salt, saltlen,
-				  str2key[i].parameters, key);
+      res = shishi_key_from_string (handle, str2key[i].etype,
+				    str2key[i].password, n_password,
+				    str2key[i].salt, saltlen,
+				    str2key[i].parameters, &key);
       if (res != SHISHI_OK)
 	{
 	  fail ("shishi_string_to_key() entry %d failed (%s)\n",

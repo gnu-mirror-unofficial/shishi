@@ -100,21 +100,13 @@ kdc_response (Shishi * handle,
       int keytype;
       Shishi_key *key;
 
-      key = shishi_key(arg.algorithm, NULL);
-
-      if (strlen (arg.keyvalue) > sizeof (buf))
+      res = shishi_key_from_base64 (handle, arg.algorithm, arg.keyvalue, &key);
+      if (res != SHISHI_OK)
 	{
-	  fprintf (stderr, "keyvalue too large\n");
-	  return 1;
+	  fprintf (stderr, _("Could not create key: %s\n"),
+		   shishi_strerror (res));
+	  return res;
 	}
-      keylen = shishi_from_base64 (buf, arg.keyvalue);
-      if (keylen != shishi_key_length(key))
-	{
-	  fprintf (stderr, "base64 decoding of key value failed\n");
-	  return 1;
-	}
-
-      shishi_key_value_set(key, buf);
 
       res = shishi_kdc_process (handle, req, rep, key,
 				oldtkt ? 3 : 8, &kdcreppart);

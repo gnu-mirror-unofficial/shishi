@@ -56,6 +56,8 @@ crypto (Shishi * handle, struct arguments arg)
   key = shishi_key(arg.algorithm, NULL);
 
   shishi_key_version_set(key, arg.kvno);
+  shishi_key_principal_set(key, arg.cname);
+  shishi_key_realm_set(key, arg.realm);
 
   if (arg.password)
     {
@@ -121,7 +123,7 @@ crypto (Shishi * handle, struct arguments arg)
       ((arg.password || arg.random || arg.keyvalue) &&
        !(arg.encrypt_p || arg.decrypt_p)))
     {
-      shishi_key_print (handle, stdout, key, arg.cname, arg.realm);
+      shishi_key_print (handle, stdout, key);
     }
 
   if (arg.encrypt_p || arg.decrypt_p)
