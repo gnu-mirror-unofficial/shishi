@@ -532,8 +532,8 @@ shisa_file_key_add (Shisa * dbh,
       _shisa_mkdir4 (info->path, realm, principal, "keys"))
     return SHISA_NO_KEY;
 
-  asprintf (&file, "%s/%s/%s/keys/%d.key", info->path, realm, principal, kvno);
-  fh = fopen (file, "w");
+  asprintf (&file, "keys/%d.key", kvno);
+  fh = _shisa_fopen4 (info->path, realm, principal, file, "w");
   free (file);
   if (!fh)
     {

@@ -1,3 +1,6 @@
+/* Get fopen. */
+#include <stdio.h>
+
 extern int _shisa_isdir (const char *path);
 extern int _shisa_isdir2 (const char *path1, const char *realm);
 extern int _shisa_isdir3 (const char *path1, const char *realm,
@@ -38,3 +41,6 @@ extern int _shisa_rm4 (const char *path1, const char *realm,
 		       const char *principal, const char *path4);
 extern int _shisa_rm5 (const char *path1, const char *path2, const char *path3,
 		       const char *path4, const char *path5);
+extern FILE *_shisa_fopen4 (const char *path1, const char *realm,
+			    const char *principal, const char *path4,
+			    const char *mode);

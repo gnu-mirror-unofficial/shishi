@@ -658,3 +658,24 @@ _shisa_rm5 (const char *path1, const char *realm, const char *principal,
 
   return rc;
 }
+
+FILE *
+_shisa_fopen4 (const char *path1, const char *realm,
+	       const char *principal, const char *path4,
+	       const char *mode)
+{
+  char *saferealm = escape_filename (realm);
+  char *safeprincipal = escape_filename (principal);
+  char *tmp;
+  FILE *fh;
+
+  asprintf (&tmp, "%s/%s/%s/%s", path1, saferealm, safeprincipal, path4);
+  free (saferealm);
+  free (safeprincipal);
+
+  fh = fopen (tmp, mode);
+
+  free (tmp);
+
+  return fh;
+}
