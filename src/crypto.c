@@ -21,9 +21,6 @@
 
 #include "data.h"
 
-#include <errno.h>
-extern int errno;
-
 int
 crypto (Shishi * handle, struct arguments arg)
 {

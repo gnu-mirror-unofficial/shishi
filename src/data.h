@@ -23,24 +23,51 @@
 #define DATA_H
 
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #ifdef STDC_HEADERS
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <ctype.h>
 #endif
 
+#if HAVE_UNISTD_H
 #include <unistd.h>
-#include <ctype.h>
+#endif
+
+#ifdef HAVE_NETDB_H
 #include <netdb.h>
+#endif
+
+#if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
+extern int h_errno;
+#endif
+
+#ifdef HAVE_PWD_H
 #include <pwd.h>
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
+#endif
 
-#include <argp.h>
-#include <locale.h>
+#ifdef HAVE_SYS_SELECT_H
+#include <sys/select.h>
+#endif
 
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
+#endif
+
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
 
 #if HAVE_INTTYPES_H
 # include <inttypes.h>
@@ -60,6 +87,7 @@
 #  include <time.h>
 # endif
 #endif
+
 #if HAVE_STRING_H
 # if !STDC_HEADERS && HAVE_MEMORY_H
 #  include <memory.h>
@@ -70,12 +98,17 @@
 # include <strings.h>
 #endif
 
-#include <errno.h>
-extern int errno;
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
 
-#include "shishi.h"
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+#ifdef HAVE_NETINET_IN6_H
+#include <netinet/in6.h>
+#endif
 
-#include "gettext.h"
 #define _(String) gettext (String)
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
