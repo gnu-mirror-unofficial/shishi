@@ -33,7 +33,7 @@ HFILE_GLOB=$(top_srcdir)/lib/*.h
 CFILE_GLOB=$(top_srcdir)/lib/*.c
 
 # Header files to ignore when scanning.
-IGNORE_HFILES=internal.h gettext.h setenv.h pkcs5.h
+IGNORE_HFILES=internal.h gettext.h setenv.h pkcs5.h shishi-int.h
 
 # Images to copy into HTML directory.
 HTML_IMAGES =
