@@ -421,8 +421,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
     case ARGP_KEY_END:
       if (state->arg_num < 1)
-	/* Not enough arguments. */
-	argp_usage (state);
+	/* No arguments supplied. */
+	arguments->command = COMMAND_AS;
       break;
 
     default:
@@ -466,6 +466,8 @@ static struct argp_option options[] = {
   {"kdc", 0, 0, OPTION_DOC, 
    "Key Distribution Center Services; Authentication Service (AS) "
    "and Ticket-Granting Service (TGS)."},
+
+  {0, 0, 0, 0, "If no command is given, Shishi invokes the AS command.", 40},
 
   /************** AS */
 
@@ -746,14 +748,14 @@ static struct argp argp = {
   options,
   parse_opt,
   "COMMAND [COMMAND-OPTION...]\n"
-  "ap [AP-OPTION...]\n"
-  "as [AS-OPTION...]\n"
-  "client [CLIENT-OPTION...]\n"
-  "crypto [CRYPTO-OPTION...]\n"
-  "kdc [KDC-OPTION...]\n" 
+  "[as] [AS-OPTION...]\n"
   "list [LIST-OPTION...]\n"
+  "tgs [TGS-OPTION...]\n"
+  "client [CLIENT-OPTION...]\n"
   "server [SERVER-OPTION...]\n"
-  "tgs [TGS-OPTION...]",
+  "ap [AP-OPTION...]\n"
+  "crypto [CRYPTO-OPTION...]\n"
+  "kdc [KDC-OPTION...]",
   "Shishi -- An implementation of Kerberos 5"
 };
 
