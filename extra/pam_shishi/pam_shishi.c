@@ -55,7 +55,7 @@
 #define DEBUG
 #include <security/_pam_macros.h>
 #else
-#define D(x) /* nothing */
+#define D(x)			/* nothing */
 #endif
 
 #ifndef PAM_EXTERN
@@ -87,11 +87,11 @@ pam_sm_authenticate (pam_handle_t * pamh,
   for (i = 0; i < argc; i++)
     D (("argv[%d]=%s", i, argv[i]));
 
-  rc = shishi_init(&h);
+  rc = shishi_init (&h);
   if (rc != SHISHI_OK)
     {
       h = NULL;
-      D (("shishi_init() failed: %s", shishi_strerror(retval)));
+      D (("shishi_init() failed: %s", shishi_strerror (retval)));
       retval = PAM_AUTHINFO_UNAVAIL;
       goto done;
     }
@@ -104,9 +104,9 @@ pam_sm_authenticate (pam_handle_t * pamh,
     }
   D (("get user returned: %s", user));
 
-  shishi_principal_default_set(h, user);
+  shishi_principal_default_set (h, user);
 
-  retval = pam_get_item(pamh, PAM_AUTHTOK, (const void **)&password);
+  retval = pam_get_item (pamh, PAM_AUTHTOK, (const void **) &password);
   if (retval != PAM_SUCCESS)
     {
       D (("get password returned error: %s", pam_strerror (pamh, retval)));
@@ -116,7 +116,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 
   if (password == NULL)
     {
-      retval = pam_get_item(pamh, PAM_CONV, (const void **) &conv);
+      retval = pam_get_item (pamh, PAM_CONV, (const void **) &conv);
       if (retval != PAM_SUCCESS)
 	{
 	  D (("get conv returned error: %s", pam_strerror (pamh, retval)));
@@ -124,16 +124,15 @@ pam_sm_authenticate (pam_handle_t * pamh,
 	}
 
       pmsg[0] = &msg[0];
-      asprintf ((char**)&msg[0].msg, "Password for `%s@%s': ",
-		shishi_principal_default (h),
-		shishi_realm_default (h));
+      asprintf ((char **) &msg[0].msg, "Password for `%s@%s': ",
+		shishi_principal_default (h), shishi_realm_default (h));
       msg[0].msg_style = PAM_PROMPT_ECHO_ON;
       resp = NULL;
 
-      retval = conv->conv(nargs, (const struct pam_message **) pmsg,
-			  &resp, conv->appdata_ptr);
+      retval = conv->conv (nargs, (const struct pam_message **) pmsg,
+			   &resp, conv->appdata_ptr);
 
-      free ((char*)msg[0].msg);
+      free ((char *) msg[0].msg);
 
       if (retval != PAM_SUCCESS)
 	{
@@ -146,7 +145,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
       password = resp->resp;
     }
 
-  tkt2 = shishi_tkts_get_for_localservicepasswd (shishi_tkts_default(h),
+  tkt2 = shishi_tkts_get_for_localservicepasswd (shishi_tkts_default (h),
 						 "host", password);
   if (tkt2 == NULL)
     {
@@ -173,10 +172,10 @@ pam_sm_authenticate (pam_handle_t * pamh,
 
   retval = PAM_SUCCESS;
 
- done:
+done:
   if (h)
-    shishi_done(h);
-  pam_set_data(pamh, "shishi_setcred_return", (void *) retval, NULL);
+    shishi_done (h);
+  pam_set_data (pamh, "shishi_setcred_return", (void *) retval, NULL);
   D (("done. [%s]", pam_strerror (pamh, retval)));
 
   return retval;
@@ -190,8 +189,8 @@ pam_sm_setcred (pam_handle_t * pamh, int flags, int argc, const char **argv)
 
   D (("called."));
 
-  retval = pam_get_data(pamh, "shishi_setcred_return",
-			(const void **) &auth_retval);
+  retval = pam_get_data (pamh, "shishi_setcred_return",
+			 (const void **) &auth_retval);
   if (retval != PAM_SUCCESS)
     return PAM_CRED_UNAVAIL;
 
