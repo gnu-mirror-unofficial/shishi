@@ -433,6 +433,49 @@ shishi_authenticator_set_cname (Shishi * handle,
 
 extern ASN1_TYPE shishi_authenticator (Shishi * handle);
 
+/* as.c */
+extern ASN1_TYPE shishi_as_get_asreq (Shishi_as * as);
+extern ASN1_TYPE shishi_as_get_asrep (Shishi_as * as);
+extern ASN1_TYPE shishi_as_get_krberror (Shishi_as * as);
+extern Shishi_ticket *shishi_as_get_ticket (Shishi_as * as);
+extern int shishi_as (Shishi * handle, char *password, Shishi_as ** as);
+extern int shishi_as_password_cnamerealmsname (Shishi * handle,
+					       char *password,
+					       Shishi_as ** as,
+					       char *cname,
+					       char *realm,
+					       char *sname);
+extern int shishi_as_key_cnamerealmsname (Shishi * handle,
+					  Shishi_key *key,
+					  Shishi_as ** as,
+					  char *cname,
+					  char *realm,
+					  char *sname);
+extern int shishi_as_cnamerealmsname (Shishi * handle,
+				      char *password,
+				      Shishi_key *key,
+				      Shishi_as ** as,
+				      char *cname,
+				      char *realm,
+				      char *sname);
+
+/* tgs.c */
+extern ASN1_TYPE shishi_tgs_get_tgsreq (Shishi_tgs * tgs);
+extern Shishi_ticket *shishi_tgs_get_tgticket (Shishi_tgs * tgs);
+extern ASN1_TYPE shishi_tgs_get_authenticator (Shishi_tgs * tgs);
+extern ASN1_TYPE shishi_tgs_get_apreq (Shishi_tgs * tgs);
+extern ASN1_TYPE shishi_tgs_get_tgsrep (Shishi_tgs * tgs);
+extern ASN1_TYPE shishi_tgs_get_krberror (Shishi_tgs * tgs);
+extern Shishi_ticket *shishi_tgs_get_ticket (Shishi_tgs * tgs);
+extern int shishi_tgs (Shishi * handle,
+		       Shishi_ticket * tgticket,
+		       Shishi_tgs ** tgs,
+		       char *server);
+extern int shishi_tgs_realmsname (Shishi * handle,
+			    Shishi_ticket * tgticket,
+			    Shishi_tgs ** tgs,
+				  char *realm,
+				  char *sname);
 
 /* kdc.c */
 extern int
