@@ -30,6 +30,7 @@
 #include <ctype.h>
 #endif
 
+#include <vasprintf.h>
 #include <shishi.h>
 
 /* Libtool defines PIC for shared objects */
@@ -123,16 +124,16 @@ pam_sm_authenticate (pam_handle_t * pamh,
 	}
 
       pmsg[0] = &msg[0];
-      shishi_asprintf(&msg[0].msg, "Password for `%s@%s': ",
-		      shishi_principal_default(h),
-		      shishi_realm_default(h));
+      asprintf ((char**)&msg[0].msg, "Password for `%s@%s': ",
+		shishi_principal_default (h),
+		shishi_realm_default (h));
       msg[0].msg_style = PAM_PROMPT_ECHO_ON;
       resp = NULL;
 
       retval = conv->conv(nargs, (const struct pam_message **) pmsg,
 			  &resp, conv->appdata_ptr);
 
-      free(msg[0].msg);
+      free ((char*)msg[0].msg);
 
       if (retval != PAM_SUCCESS)
 	{
