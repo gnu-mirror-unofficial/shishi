@@ -164,6 +164,7 @@ enum
   OPTION_DESTROY,
   OPTION_RENEW,
   OPTION_RENEWABLE,
+  OPTION_PROXIABLE,
   OPTION_STARTTIME,
   OPTION_ENDTIME,
   OPTION_RENEW_TILL,
@@ -199,6 +200,7 @@ struct arguments
   int forcetgs_p;
   char *servername;
   int renewable;
+  int proxiable;
   time_t starttime;
   char *endtime_str;
   time_t endtime;
@@ -629,6 +631,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
       arguments->endtime_str = strdup (arg);
       break;
 
+    case OPTION_PROXIABLE:
+      arguments->proxiable = 1;
+      break;
+
     case OPTION_REALM:
       arguments->crealm = strdup (arg);
       break;
@@ -725,6 +731,10 @@ static struct argp_option options[] = {
 
   {"list", 'l', 0, 0,
    "List tickets in local cache, subject to --server-name limiting.", 0},
+
+  {"proxiable", OPTION_PROXIABLE, 0, 0,
+   "Get a proxiable ticket.  Only valid for initial authentication, or when "
+   "the ticket-granting ticket is proxiable.", 0},
 
   {"renew", 'R', 0, 0,
    "Renew ticket.  Use --server-name to specify ticket, default is the "
@@ -1054,7 +1064,10 @@ main (int argc, char *argv[])
 	hint.starttime = arg.starttime;
 	hint.endtime = arg.endtime;
 	hint.renew_till = arg.renew_till;
-	hint.renewable = arg.renewable;
+	if (arg.renewable)
+	  hint.flags |= SHISHI_TKTSHINTFLAGS_RENEWABLE_TICKET;
+	if (arg.proxiable)
+	  hint.flags |= SHISHI_TKTSHINTFLAGS_PROXIABLE_TICKET;
 
 	tkt = shishi_tkts_find (shishi_tkts_default (handle), &hint);
 	if (!tkt)
@@ -1120,7 +1133,10 @@ main (int argc, char *argv[])
 	hint.starttime = arg.starttime;
 	hint.endtime = arg.endtime;
 	hint.renew_till = arg.renew_till;
-	hint.renewable = arg.renewable;
+	if (arg.renewable)
+	  hint.flags |= SHISHI_TKTSHINTFLAGS_RENEWABLE_TICKET;
+	if (arg.proxiable)
+	  hint.flags |= SHISHI_TKTSHINTFLAGS_PROXIABLE_TICKET;
 
 	tkt = shishi_tkts_get (shishi_tkts_default (handle), &hint);
 	if (!tkt)
