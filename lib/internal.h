@@ -264,6 +264,11 @@ int
 shishi_asn1_integer2_field (Shishi * handle,
 			    Shishi_asn1 node, unsigned long *i,
 			    const char *field);
+int
+_shishi_sendrecv_tls (Shishi * handle,
+		      struct sockaddr *addr,
+		      const char *indata, int inlen,
+		      char **outdata, int *outlen, int timeout);
 
 /* utils.c */
 extern void _shishi_escapeprint (const char *str, int len);

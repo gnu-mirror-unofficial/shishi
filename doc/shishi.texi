@@ -72,6 +72,7 @@ Free Software Foundation raise funds for GNU development.''
 
 Appendices
 
+* Protocol Extensions::         Description of protocol extensions used.
 * Copying This Manual::         How you can copy and share this manual.
 * Copying::                     How you can copy and share the source.
 
@@ -2409,6 +2410,155 @@ This manual borrows text from the Kerberos 5 specification.
 @c **********************************************************
 @c *******************  Appendices  *************************
 @c **********************************************************
+
+@node Protocol Extensions
+@appendix Protocol Extensions
+
+This appendix specifies the non-standard protocol elements implemented
+by Shishi.
+
+@menu
+* STARTTLS protected KDC exchanges::	How Shishi talks to KDC protected by TLS.
+@end menu
+
+@node STARTTLS protected KDC exchanges
+@section STARTTLS protected KDC exchanges
+
+Shishi is able to ``upgrade'' TCP communications with the KDC to use
+the Transport Layer Security (TLS) protocol.  The TLS protocol offers
+integrity and privacy protected exchanges.  TLS also offers
+authentication using username and passwords, X.509 certificates, or
+OpenPGP certificates.  Kerberos 5 claims to offer some of these
+features, although it is not as rich as the TLS protocol.  An
+inconclusive list of the motivation for using TLS is given below.
+
+@itemize @bullet
+
+@item Server authentication of the KDC to the client.
+In traditional Kerberos 5, KDC authentication is only proved as a side
+effect that the KDC knows your encryption key (i.e., your password).
+
+@item Client authentication against KDC.
+Kerberos 5 assume the user knows a key (usually in the form of a
+password).  Sometimes external factors make this hard to fulfill.  In
+some situations, users are equipped with smart cards with a RSA
+authentication key.  In others, users have a OpenPGP client on their
+desktop, with a public OpenPGP key known to the server.  In some
+situations, the policy may be that password authentication may only be
+done through SRP.
+
+@item Kerberos exchanges are privacy protected.
+Part of many Kerberos packets are transfered without privacy
+protection (i.e., encryption).  That part contains information, such
+as the client principal name, the server principal name, the
+encryption types supported by the client, the lifetime of tickets,
+etc.  Revealing such information is, in some threat models, considered
+a problem.  Thus, this enables ``anonymity''.
+
+@item Prevents downgrade attacks affecting encryption types.
+The encryption type of the ticket in KDC-REQ are sent in the clear in
+Kerberos 5.  This allows an attacker to replace the encryption type
+with a compromised mechanisms, e.g. 56-bit DES.  Since clients in
+general cannot know the encryption types other servers support, it is
+difficult for the client to detect if there was a man-in-the-middle or
+if the remote server simply did not support a stronger mechanism.
+Clients may chose to refuse 56-bit DES altogether, but in some
+environments this leads to operational difficulties.
+
+@item TLS is well-proved and the protocol is studied by many parties.
+This is an advantage in network design, where TLS is often already
+assumed as part of the solution since it is used to protect HTTP,
+IMAP, SMTP etc.  In some threat models, the designer prefer to reduce
+the number of protocols that can hurt the overall system security if
+they are compromised.
+
+@end itemize
+
+Other reasons for using TLS exists.
+
+@subsection TCP/IP transport with TLS upgrade (STARTTLS)
+
+RFC 1510bis requires Kerberos servers (KDCs) to accept TCP requests.
+Each request and response is prefixed by a 4 octet integer in network
+byte order, indicating the length of the packet.  The high bit of the
+length was reserved for future expansion, and servers that do not
+understand how to interpret a set high bit must return a
+@code{KRB-ERROR} with a @code{KRB_ERR_FIELD_TOOLONG} and close the TCP
+stream.
+
+The TCP/IP transport with TLS upgrade (STARTTLS) uses this reserved
+bit as follows.  First we define a new extensible typed hole for
+Kerberos 5 messages, because we used the only reserved bit.  It is
+thus prudent to offer future extensions on our proposal.  Secondly we
+reserve two values in this new typed hole, and described how they are
+used to implement STARTTLS.
+
+@subsubsection Extensible typed hole based on reserved high bit
+
+When the high bit is set, the remaining 31 bits of the 4 octets are
+treated as an extensible typed hole, and thus form a 31 bit integer
+enumerating various extensions.  Each of the values indicate a
+specific extended operation mode, two of which are used and defined
+here, and the rest are left for others to use.  If the KDC do not
+understand a requested extension, it MUST return a @code{KRB-ERROR}
+with a @code{KRB_ERR_FIELD_TOOLONG} value and close the TCP stream,
+where the 4 octet length integer MUST have the high bit set, to
+indicate support for the extensible typed hole construct itself, and
+the remaining 31 bits indicate the length of the packet, as normal.
+
+Meaning of the 31 lower bits in the 4 octet field, when the high bit
+is set:
+
+@verbatim
+ 0               RESERVED.
+ 1               STARTTLS requested by client.
+ 2               STARTTLS request accepted by server.
+ 3...2147483647  AVAILABLE for registration (via bug-shishi@josefsson.org).
+ 2147483648      RESERVED.
+@end verbatim
+
+@subsubsection STARTTLS requested by client (extension mode 1)
+
+When this is sent by the client, the client is requesting the server
+to start TLS negotiation on the TCP stream.  The client MUST NOT start
+TLS negotiation immediately.  The client should wait for either a
+KRB-ERROR (sent normally, prefixed by a 4 octet length integer)
+indicating it does not understand the set high bit, or 4 octet which
+is to interpreted as an integer in network byte order, where the high
+bit is set and the remaining 31 bit are interpreted as an integer
+specifying the ``STARTTLS request accepted by server''.  In the first
+case, the client infer that the server do not understand (or wish to
+support) STARTTLS, and can re-try using normal TCP, if unprotected
+Kerberos 5 exchanges are allowed by client policy.  In the latter
+case, it should invoke TLS negotiation on the stream.  If any other
+data is received, the client MUST close the TCP stream.
+
+@subsubsection STARTTLS request accepted by server (extension mode 2)
+
+This 4 octet message should be sent by the server when it has received
+the previous 4 octet message.  The message is an acknowledgment of the
+client's request to initiate STARTTLS on the channel.  The server MUST
+then invoke a TLS negotiation.
+
+@subsubsection Proceeding after successful TLS negotiation
+
+If the TLS negotiation ended successfully, possibly also considering
+client or server policies, the exchange within the TLS protected
+stream is performed like normal UDP Kerberos 5 exchanges, i.e., there
+is no TCP 4 octet length field before each packet.
+
+The server MAY consider the authentication performed by the TLS
+exchange as sufficient to issue Kerberos 5 tickets to the client,
+without requiring pre-authentication or the like.  However, it is not
+an error to carry out pre-authentication as well.  We are currently
+experimenting with this mode of operation.
+
+@subsubsection Proceeding after failed TLS negotiation
+
+If the TLS negotiation fails, possibly due to client or server policy
+(e.g., inadequate support of encryption types in TLS, or lack of
+client or server authentication) the entity that detect the failure
+should abort or re-try as appropriate, up to local policy.
 
 @node Copying This Manual
 @appendix Copying This Manual

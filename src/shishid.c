@@ -114,6 +114,10 @@
 #include <syslog.h>
 #endif
 
+#ifdef USE_STARTTLS
+#include <gnutls/gnutls.h>
+#endif
+
 #include <shishi.h>
 #include <argp.h>
 
@@ -214,7 +218,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	  if (arguments->listenspec == NULL)
 	    argp_error (state, "Fatal memory allocation error");
 	  ls = &arguments->listenspec[arguments->nlistenspec - 1];
-	  memset (ls, 0, sizeof(*ls));
+	  memset (ls, 0, sizeof (*ls));
 	  ls->str = strdup (val);
 	  ls->bufpos = 0;
 	  sin = (struct sockaddr_in *) &ls->addr;
@@ -485,7 +489,7 @@ asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
 
 static int
 asreq (Shishi * handle, struct arguments *arg,
-       Shishi_asn1 kdcreq, char **out, size_t *outlen)
+       Shishi_asn1 kdcreq, char **out, size_t * outlen)
 {
   Shishi_as *as;
   int rc;
@@ -685,7 +689,7 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 
 static int
 tgsreq (Shishi * handle, struct arguments *arg,
-	Shishi_asn1 kdcreq, char **out, size_t *outlen)
+	Shishi_asn1 kdcreq, char **out, size_t * outlen)
 {
   Shishi_tgs *tgs;
   int rc;
@@ -874,6 +878,40 @@ kdc_listen (struct arguments *arg)
   return 0;
 }
 
+
+#define KEYFILE "key.pem"
+#define CERTFILE "cert.pem"
+#define CAFILE "ca.pem"
+#define CRLFILE "crl.pem"
+
+/* This is a sample TLS 1.0 echo server.
+ */
+
+
+#define SA struct sockaddr
+#define SOCKET_ERR(err,s) if(err==-1) {perror(s);return(1);}
+#define MAX_BUF 1024
+#define PORT 5556		/* listen to 5556 port */
+#define DH_BITS 1024
+
+static gnutls_dh_params dh_params;
+
+static int
+generate_dh_params (void)
+{
+
+  /* Generate Diffie Hellman parameters - for use with DHE
+   * kx algorithms. These should be discarded and regenerated
+   * once a day, once a week or once a month. Depending on the
+   * security requirements.
+   */
+  gnutls_dh_params_init (&dh_params);
+  gnutls_dh_params_generate2 (dh_params, DH_BITS);
+
+  return 0;
+}
+
+
 static int
 kdc_loop (Shishi * handle, struct arguments *arg)
 {
@@ -966,9 +1004,90 @@ kdc_loop (Shishi * handle, struct arguments *arg)
 
 		printf ("Has %d bytes from %s\n", ls->bufpos, ls->str);
 
+#ifdef USE_STARTTLS
+		if (arg->listenspec[i].type == SOCK_STREAM &&
+		    ls->bufpos == 4 &&
+		    memcmp (ls->buf, "\x70\x00\x00\x01", 4) == 0)
+		  {
+		    int err, i;
+		    int ret;
+		    struct sockaddr_in sa_serv;
+		    struct sockaddr_in sa_cli;
+		    int client_len;
+		    char topbuf[512];
+		    gnutls_session session;
+		    char buffer[MAX_BUF + 1];
+		    int optval = 1;
+		    const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
+		    gnutls_anon_server_credentials anoncred;
+
+		    if (!arg->silent)
+		      printf ("Trying to upgrade to TLS...\n");
+
+		    sent_bytes = sendto (ls->sockfd, "\x70\x00\x00\x02", 4,
+					 0, &addr, length);
+
+		    gnutls_anon_allocate_server_credentials (&anoncred);
+		    gnutls_anon_set_server_dh_params (anoncred, dh_params);
+		    gnutls_init (&session, GNUTLS_SERVER);
+		    gnutls_set_default_priority (session);
+		    gnutls_kx_set_priority (session, kx_prio);
+		    gnutls_credentials_set (session, GNUTLS_CRD_ANON,
+					    anoncred);
+		    gnutls_certificate_server_set_request (session,
+							   GNUTLS_CERT_REQUEST);
+		    gnutls_dh_set_prime_bits (session, DH_BITS);
+		    gnutls_transport_set_ptr (session,
+					      (gnutls_transport_ptr) ls->
+					      sockfd);
+
+		    ret = gnutls_handshake (session);
+		    if (ret < 0)
+		      {
+			gnutls_deinit (session);
+			if (!arg->silent)
+			  printf ("Handshake has failed %d...\n",
+				  gnutls_strerror (ret));
+		      }
+
+		    if (!arg->silent)
+		      printf ("TLS successful\n");
+
+		    bzero (buffer, MAX_BUF + 1);
+		    ret = gnutls_record_recv (session, buffer, MAX_BUF);
+
+		    if (ret == 0)
+		      {
+			printf ("- Peer has closed the GNUTLS connection\n");
+		      }
+		    else if (ret < 0)
+		      {
+			printf ("*** Corrupted data(%d). Closing.\n\n", ret);
+		      }
+		    else if (ret > 0)
+		      {
+			char *p;
+			size_t plen;
+
+			process (handle, arg, buffer, ret, &p, &plen);
+
+			printf ("TLS process %d sending %d\n", ret, plen);
+
+			gnutls_record_send (session, p, plen);
+
+			if (p != fatal_krberror)
+			  free (p);
+		      }
+		    ls->bufpos = 0;
+		    gnutls_bye (session, GNUTLS_SHUT_WR);
+		    gnutls_deinit (session);
+		    gnutls_global_deinit ();
+		  }
+		else
+#endif
 		if (arg->listenspec[i].type == SOCK_DGRAM ||
-		    (ls->bufpos > 4 &&
-		     ntohl (*(int *) ls->buf) + 4 == ls->bufpos))
+		      (ls->bufpos > 4 &&
+			 ntohl (*(int *) ls->buf) + 4 == ls->bufpos))
 		  {
 		    char *p;
 		    size_t plen;
@@ -1123,6 +1242,17 @@ init (struct arguments *arg)
 {
   Shishi *handle;
   int rc;
+
+#ifdef USE_STARTTLS
+  if (!arg->silent)
+    printf ("Initializing GNUTLS...\n");
+  fflush (stdout);
+  gnutls_global_init ();
+  generate_dh_params ();
+  if (!arg->silent)
+    printf ("Initializing GNUTLS...done\n");
+  fflush (stdout);
+#endif
 
   rc = shishi_init_server_with_paths (&handle, arg->cfgfile);
   if (rc != SHISHI_OK)
