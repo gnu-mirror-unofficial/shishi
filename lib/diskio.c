@@ -141,60 +141,64 @@ _shishi_read_armored_data (Shishi * handle,
 			   FILE * fh, char *buffer, size_t len,
 			   const char *tag)
 {
-  int lno = 0;
-  size_t maxsize = len;
-  char line[BUFSIZ];
-  char armorbegin[BUFSIZ];
-  char armorend[BUFSIZ];
-  int in_data = 0;
+  char *line = NULL;
+  size_t linelen = 0;
+  char *armorbegin, *armorend;
+  int phase = 0;
+  int res = SHISHI_OK;
 
-  sprintf (armorbegin, HEADERBEG, tag);
-  sprintf (armorend, HEADEREND, tag);
+  armorbegin = xasprintf (HEADERBEG, tag);
+  armorend = xasprintf (HEADEREND, tag);
 
-  len = 0;
-  while (fgets (line, sizeof (line), fh))
+  while (getline (&line, &linelen, fh) > 0)
     {
-      lno++;
-      line[sizeof (line) - 1] = '\0';
-      if (!*line || line[strlen (line) - 1] != '\n')
-	{
-	  fprintf (stderr, "input line %u too long or missing LF\n", lno);
-	  continue;
-	}
-      line[strlen (line) - 1] = '\0';
-      if (VERBOSENOISE (handle))
-	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
+      if (line[strlen (line) - 1] == '\r')
+	line[strlen (line) - 1] = '\0';
+      if (line[strlen (line) - 1] == '\n')
+	line[strlen (line) - 1] = '\0';
 
-      /* XXX check if all chars in line are b64 data, otherwise bail out */
-
-      if (in_data)
+      if (phase == 1)
 	{
-	  if (strncmp (line, armorend, strlen (armorend)) == 0)
-	    break;
+	  if (strcmp (line, armorend) == 0)
+	    {
+	      phase = 2;
+	      break;
+	    }
 	}
       else
 	{
-	  in_data = strncmp (line, armorbegin, strlen (armorbegin)) == 0;
+	  if (strcmp (line, armorbegin) == 0)
+	    phase = 1;
 	  continue;
 	}
 
-      if (len + strlen (line) >= maxsize)
+      if (len <= strlen (line))
 	{
-	  shishi_error_printf (handle, "too large input size on line %d\n",
-			       lno);
-	  return !SHISHI_OK;
+	  res = SHISHI_TOO_SMALL_BUFFER;
+	  goto done;
 	}
 
-      memcpy (buffer + len, line, strlen (line));
-      len += strlen (line);
+      memcpy (buffer, line, strlen (line));
+      buffer += strlen (line);
+      len -= strlen (line);
     }
 
-  if (len <= 0)
-    return !SHISHI_OK;
+  if (len == 0)
+    res = SHISHI_TOO_SMALL_BUFFER;
+  else
+    *buffer = '\0';
 
-  buffer[len] = '\0';
+  if (phase != 2)
+    res = SHISHI_IO_ERROR;
 
-  return SHISHI_OK;
+ done:
+
+  free (armorbegin);
+  free (armorend);
+  if (line)
+    free (line);
+
+  return res;
 }
 
 static int
@@ -217,7 +221,9 @@ _shishi_ticket_input (Shishi * handle,
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -272,7 +278,9 @@ _shishi_enckdcreppart_input (Shishi * handle,
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -349,7 +357,9 @@ _shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq,
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -410,7 +420,9 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep,
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -470,7 +482,9 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -517,7 +531,9 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep,
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -566,7 +582,9 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -614,7 +632,9 @@ _shishi_authenticator_input (Shishi * handle,
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -662,7 +682,9 @@ _shishi_krberror_input (Shishi * handle,
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -709,7 +731,9 @@ _shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe, int type)
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -756,7 +780,9 @@ _shishi_priv_input (Shishi * handle, FILE * fh, Shishi_asn1 * priv, int type)
 	  return res;
 	}
 
-      derlen = base64_from (&der[0], b64der);
+      derlen = sizeof (der);
+      if (!base64_decode (b64der, strlen (b64der), der, &derlen))
+	return SHISHI_BASE64_ERROR;
     }
   else
     {
@@ -788,7 +814,7 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 {
   int lno = 0;
   char line[BUFSIZ];
-  char buffer[BUFSIZ];
+  char *b64buffer;
   char armorbegin[BUFSIZ];
   char armorend[BUFSIZ];
   int in_key = 0, in_body = 0;
@@ -831,8 +857,10 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 
       if (in_body)
 	{
-	  buflen = base64_from (buffer, line);
-	  shishi_key_value_set (lkey, buffer);
+	  int ok = base64_decode_alloc (line, strlen (line), &b64buffer, NULL);
+	  if (!ok)
+	    return SHISHI_BASE64_ERROR;
+	  shishi_key_value_set (lkey, b64buffer);
 	}
       else
 	{
@@ -894,11 +922,14 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 int
 shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
 {
-  char b64key[BUFSIZ];
+  char *b64key;
   size_t i;
 
-  base64_to (b64key, shishi_key_value (key),
-	     shishi_key_length (key), sizeof (b64key));
+  base64_encode_alloc (shishi_key_value (key), shishi_key_length (key),
+		       &b64key);
+
+  if (!b64key)
+    return SHISHI_MALLOC_ERROR;
 
   fprintf (fh, HEADERBEG "\n", "KEY");
 
@@ -920,6 +951,8 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
     }
   if ((i + 1) % 64 != 0)
     fprintf (fh, "\n");
+
+  free (b64key);
 
 #if 0
   if (VERBOSENOISE (handle))
