@@ -360,6 +360,7 @@ shishi_tgs_rep_process (Shishi_tgs * tgs)
     printf ("Processing TGS-REQ and TGS-REP...\n");
 
   res = shishi_tgs_process (tgs->handle, tgs->tgsreq, tgs->tgsrep,
+			    shishi_ap_authenticator (tgs->ap),
 			    shishi_tkt_enckdcreppart (tgs->tgtkt),
 			    &kdcreppart);
   if (res != SHISHI_OK)
