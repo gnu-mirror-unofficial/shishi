@@ -7,7 +7,7 @@ See the end for copying conditions.
 ** Sequence numbers in Authenticator and EncAPRepPart are now randomized.
 
 ** Low-level fixes of AES Cipher Text Stealing mode.
-Also added new self test that checks test vectors from specification.
+Also added more AES/CTS self tests.
 
 ** Configuration tokens spelled correctly ("verbose-noice" -> "verbose-noise").
 
