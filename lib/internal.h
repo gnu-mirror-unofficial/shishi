@@ -242,6 +242,8 @@ int _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 				Shishi_asn1 * encapreppart, int type);
 int _shishi_safe_input (Shishi * handle, FILE * fh,
 			Shishi_asn1 * safe, int type);
+int _shishi_priv_input (Shishi * handle, FILE * fh,
+			Shishi_asn1 * priv, int type);
 
 Shishi_asn1 _shishi_asn1_read (void);
 int _shishi_cipher_init (void);

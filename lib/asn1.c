@@ -527,6 +527,19 @@ shishi_asn1_krbsafe (Shishi * handle)
 }
 
 Shishi_asn1
+shishi_asn1_priv (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.KRB-PRIV", "KRB-PRIV");
+}
+
+Shishi_asn1
+shishi_asn1_encprivpart (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.EncKrbPrivPart",
+			  "EncKrbPrivPart");
+}
+
+Shishi_asn1
 shishi_der2asn1_ticket (Shishi * handle, const char *der, size_t derlen)
 {
   return shishi_der2asn1 (handle, "Kerberos5.Ticket", "Ticket", der, derlen);
@@ -648,6 +661,20 @@ Shishi_asn1
 shishi_der2asn1_krbsafe (Shishi * handle, const char *der, size_t derlen)
 {
   return shishi_der2asn1 (handle, "Kerberos5.KRB-SAFE", "KRB-SAFE",
+			  der, derlen);
+}
+
+Shishi_asn1
+shishi_der2asn1_priv (Shishi * handle, const char *der, size_t derlen)
+{
+  return shishi_der2asn1 (handle, "Kerberos5.KRB-PRIV", "KRB-PRIV",
+			  der, derlen);
+}
+
+Shishi_asn1
+shishi_der2asn1_encprivpart (Shishi * handle, const char *der, size_t derlen)
+{
+  return shishi_der2asn1 (handle, "Kerberos5.EncKrbPrivPart", "EncKrbPrivPart",
 			  der, derlen);
 }
 
