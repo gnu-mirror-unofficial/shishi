@@ -50,3 +50,7 @@ EXTRA_DIST += xalloc.m4
 EXTRA_DIST += mempcpy.m4
 EXTRA_DIST += strndup.m4
 EXTRA_DIST += strnlen.m4
+EXTRA_DIST += bison.m4
+EXTRA_DIST += getdate.m4
+EXTRA_DIST += mktime.m4
+EXTRA_DIST += tm_gmtoff.m4
