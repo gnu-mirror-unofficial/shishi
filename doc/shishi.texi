@@ -839,9 +839,9 @@ The Shishi KDC currently only answer AS-REQs.  This section describe
 how you get the server up and running to answer queries from clients.
 
 First you must create a user database.  Currently this is rather
-simplistic, use the @samp{shishi --crypt} command to generate keys,
-and store them in the @file{shishid.keys} file.  The file path is
-@file{/usr/local/etc/shishid.keys} by default, although you can use
+simplistic, use the @samp{shishi --string-to-key} command to generate
+keys, and store them in the @file{shishid.keys} file.  The file path
+is @file{/usr/local/etc/shishid.keys} by default, although you can use
 @samp{shishid -k} to specify another location.
 
 Create a random key for the Kerberos Ticket Granting Service for your
@@ -850,8 +850,8 @@ realm:
 @example
 @cartouche
 $ shishi --string-to-key --random \
-krbtgt/latte.josefsson.org@@latte.josefsson.org | tee --append \
-/usr/local/etc/shishid.keys
+krbtgt/latte.josefsson.org@@latte.josefsson.org | \
+tee /usr/local/etc/shishid.keys
 -----BEGIN SHISHI KEY-----
 Keytype: 18 (aes256-cts-hmac-sha1-96)
 Principal: krbtgt/latte.josefsson.org
@@ -882,7 +882,7 @@ $
 @end example
 
 There is nothing special with a ticket granting key, you could have
-created from a password similar to the key for a user.  However,
+created it based on a password similar to the user key.  However,
 please keep in mind that passwords typically have little entropy.
 
 Finally, create a random key for a service:
@@ -890,8 +890,8 @@ Finally, create a random key for a service:
 @example
 @cartouche
 $ shishi --string-to-key --random \
-imap/latte.josefsson.org@@latte.josefsson.org | tee --append \
-/usr/local/etc/shishid.keys
+imap/latte.josefsson.org@@latte.josefsson.org | \
+tee --append /usr/local/etc/shishid.keys
 -----BEGIN SHISHI KEY-----
 Keytype: 18 (aes256-cts-hmac-sha1-96)
 Principal: imap/latte.josefsson.org
