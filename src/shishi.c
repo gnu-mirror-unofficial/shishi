@@ -923,7 +923,10 @@ main (int argc, char *argv[])
 	tkt = shishi_as_ticket (as);
 
 	if (!arg.silent)
-	  shishi_ticket_print (tkt, stdout);
+	  {
+	    shishi_ticket_pretty_print (tkt, stdout);
+	    shishi_ticket_lastreq_pretty_print (tkt, stdout);
+	  }
 
 	rc = shishi_ticketset_add (handle, NULL, tkt);
 	if (rc != SHISHI_OK)
@@ -972,7 +975,10 @@ main (int argc, char *argv[])
 	tkt = shishi_tgs_get_ticket (tgs);
 
 	if (!arg.silent)
-	  shishi_ticket_print (tkt, stdout);
+	  {
+	    shishi_ticket_lastreq_pretty_print (tkt, stdout);
+	    shishi_ticket_pretty_print (tkt, stdout);
+	  }
 
 	rc = shishi_ticketset_add (handle, NULL, tkt);
 	if (rc != SHISHI_OK)
@@ -1005,8 +1011,9 @@ main (int argc, char *argv[])
 	    if (arg.verbose)
 	      {
 		printf("Removing ticket:\n");
-		shishi_ticket_print(shishi_ticketset_get (handle, NULL, i),
-				    stdout);
+		shishi_ticket_pretty_print(shishi_ticketset_get (handle,
+								 NULL, i),
+					   stdout);
 	      }
 
 	    rc = shishi_ticketset_remove (handle, NULL, i);
@@ -1046,7 +1053,7 @@ main (int argc, char *argv[])
       break;
 
     case COMMAND_KDC:
-      rc = kdc (handle, arg);
+      //rc = kdc (handle, arg);
       break;
 
     default:
