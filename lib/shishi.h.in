@@ -1275,6 +1275,10 @@ extern int shishi_hmac_sha1 (Shishi * handle, const char *key, size_t keylen,
 extern int shishi_des_cbc_mac (Shishi * handle, const char key[8],
 			       const char iv[8], const char *in, size_t inlen,
 			       char *out[8]);
+extern int shishi_arcfour (Shishi * handle, int decryptp,
+			   const char *key, size_t keylen,
+			   const char iv[258], char *ivout[258],
+			   const char *in, size_t inlen, char **out);
 extern int shishi_des (Shishi * handle, int decryptp, const char key[8],
 		       const char iv[8], char *ivout[8],
 		       const char *in, size_t inlen, char **out);
