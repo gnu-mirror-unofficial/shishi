@@ -196,6 +196,10 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
 void
 shishi_ap_done (Shishi_ap * ap)
 {
+  if (ap->authenticatorcksumdata)
+    free (ap->authenticatorcksumdata);
+  if (ap->authenticatorcksumraw)
+    free (ap->authenticatorcksumraw);
   shishi_asn1_done (ap->handle, ap->authenticator);
   shishi_asn1_done (ap->handle, ap->apreq);
   shishi_asn1_done (ap->handle, ap->aprep);
@@ -272,6 +276,7 @@ shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
  * @ap: structure that holds information about AP exchange
  * @tkt: ticket to set in AP.
  * @options: AP-REQ options to set in AP.
+ * @cksumtype: authenticator checksum type to set in AP.
  * @data: input array with data to store in checksum field in Authenticator.
  * @len: length of input array with data to store in checksum field in
  *   Authenticator.
@@ -285,7 +290,9 @@ shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
 int
 shishi_ap_set_tktoptionsraw (Shishi_ap * ap,
 			     Shishi_tkt * tkt,
-			     int options, const char *data, size_t len)
+			     int options,
+			     int32_t cksumtype,
+			     const char *data, size_t len)
 {
   int rc;
 
@@ -298,7 +305,7 @@ shishi_ap_set_tktoptionsraw (Shishi_ap * ap,
       return rc;
     }
 
-  shishi_ap_authenticator_cksumraw_set (ap, data, len);
+  shishi_ap_authenticator_cksumraw_set (ap, cksumtype, data, len);
 
   return SHISHI_OK;
 }
@@ -422,6 +429,7 @@ shishi_ap_tktoptionsdata (Shishi * handle,
  * @ap: pointer to new structure that holds information about AP exchange
  * @tkt: ticket to set in newly created AP.
  * @options: AP-REQ options to set in newly created AP.
+ * @cksumtype: authenticator checksum type to set in AP.
  * @data: input array with data to store in checksum field in Authenticator.
  * @len: length of input array with data to store in checksum field in
  *   Authenticator.
@@ -437,6 +445,7 @@ int
 shishi_ap_tktoptionsraw (Shishi * handle,
 			 Shishi_ap ** ap,
 			 Shishi_tkt * tkt, int options,
+			 int32_t cksumtype,
 			 const char *data, size_t len)
 {
   int rc;
@@ -445,7 +454,7 @@ shishi_ap_tktoptionsraw (Shishi * handle,
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_ap_set_tktoptionsraw (*ap, tkt, options, data, len);
+  rc = shishi_ap_set_tktoptionsraw (*ap, tkt, options, cksumtype, data, len);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -600,7 +609,8 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
 				       const char *authenticatorcksumdata,
 				       size_t authenticatorcksumdatalen)
 {
-  ap->authenticatorcksumdata = authenticatorcksumdata;
+  ap->authenticatorcksumdata = xclone (authenticatorcksumdata,
+				       authenticatorcksumdatalen);
   ap->authenticatorcksumdatalen = authenticatorcksumdatalen;
 }
 
@@ -619,10 +629,13 @@ shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
  **/
 void
 shishi_ap_authenticator_cksumraw_set (Shishi_ap * ap,
+				      int32_t authenticatorcksumtype,
 				      const char *authenticatorcksumraw,
 				      size_t authenticatorcksumrawlen)
 {
-  ap->authenticatorcksumraw = authenticatorcksumraw;
+  shishi_ap_authenticator_cksumtype_set (ap, authenticatorcksumtype);
+  ap->authenticatorcksumraw = xclone (authenticatorcksumraw,
+				      authenticatorcksumrawlen);
   ap->authenticatorcksumrawlen = authenticatorcksumrawlen;
 }
 
@@ -943,6 +956,9 @@ shishi_ap_req_process_keyusage (Shishi_ap * ap,
 
   if (VERBOSEASN1 (ap->handle))
     shishi_authenticator_print (ap->handle, stdout, authenticator);
+
+  if (ap->authenticatorcksumdata)
+    free (ap->authenticatorcksumdata);
 
   rc = shishi_authenticator_cksum (ap->handle, authenticator,
 				   &ap->authenticatorcksumtype,
