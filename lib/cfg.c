@@ -237,7 +237,7 @@ shishi_cfg (Shishi * handle, char *option)
  * Return Value: Returns SHISHI_OK iff succesful.
  **/
 int
-shishi_cfg_from_file (Shishi * handle, char *cfg)
+shishi_cfg_from_file (Shishi * handle, const char *cfg)
 {
   char line[BUFSIZ];
   char *value;
@@ -322,4 +322,28 @@ shishi_cfg_print (Shishi * handle, FILE *fh)
     }
 
   return SHISHI_OK;
+}
+
+const char *
+shishi_cfg_default_systemfile (Shishi *handle)
+{
+  return SYSTEMCFGFILE;
+}
+
+const char *
+shishi_cfg_default_userfile (Shishi *handle)
+{
+  char *home;
+
+  if (!handle->usercfgfile)
+    {
+      home = getenv ("HOME");
+
+      if (home == NULL)
+	home = "";
+
+      shishi_asprintf (&handle->usercfgfile, "%s%s", home, USERCFG_FILE);
+    }
+
+  return handle->usercfgfile;
 }
