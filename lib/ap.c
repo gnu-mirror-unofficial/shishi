@@ -34,7 +34,7 @@ struct Shishi_ap
   int authenticatorkeyusage;
   int authenticatorcksumtype;
   char *authenticatorcksumdata;
-  int authenticatorcksumdatalen;
+  size_t authenticatorcksumdatalen;
 };
 
 /**
@@ -190,7 +190,8 @@ shishi_ap_set_tktoptions (Shishi_ap * ap, Shishi_tkt * tkt, int options)
 int
 shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
 			      Shishi_tkt * tkt,
-			      int options, char *data, int len)
+			      int options,
+			      const char *data, size_t len)
 {
   int rc;
 
@@ -302,7 +303,8 @@ shishi_ap_tktoptions (Shishi * handle,
 int
 shishi_ap_tktoptionsdata (Shishi * handle,
 			  Shishi_ap ** ap,
-			  Shishi_tkt * tkt, int options, char *data, int len)
+			  Shishi_tkt * tkt, int options,
+			  const char *data, size_t len)
 {
   int rc;
 
@@ -398,7 +400,7 @@ shishi_ap_tkt_set (Shishi_ap * ap, Shishi_tkt * tkt)
  * SHISHI_TOO_SMALL_BUFFER if buffer provided was too small.
  **/
 int
-shishi_ap_authenticator_cksumdata (Shishi_ap * ap, char *out, int *len)
+shishi_ap_authenticator_cksumdata (Shishi_ap * ap, char *out, size_t *len)
 {
   if (*len < ap->authenticatorcksumdatalen)
     return SHISHI_TOO_SMALL_BUFFER;
@@ -420,8 +422,8 @@ shishi_ap_authenticator_cksumdata (Shishi_ap * ap, char *out, int *len)
  **/
 void
 shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
-				       char *authenticatorcksumdata,
-				       int authenticatorcksumdatalen)
+				       const char *authenticatorcksumdata,
+				       size_t authenticatorcksumdatalen)
 {
   ap->authenticatorcksumdata = authenticatorcksumdata;
   ap->authenticatorcksumdatalen = authenticatorcksumdatalen;

@@ -252,7 +252,8 @@ shishi_aprep_from_file (Shishi * handle, Shishi_asn1 * aprep,
 int
 shishi_aprep_enc_part_set (Shishi * handle,
 			   Shishi_asn1 aprep,
-			   int etype, const char *buf, int buflen)
+			   int etype,
+			   const char *buf, size_t buflen)
 {
   int res;
 

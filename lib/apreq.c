@@ -330,12 +330,13 @@ shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
 int
 shishi_apreq_set_authenticator (Shishi * handle,
 				Shishi_asn1 apreq,
-				int32_t etype, char *buf, int buflen)
+				int32_t etype,
+				const char *buf, size_t buflen)
 {
   int res;
 
-  res =
-    shishi_asn1_write (handle, apreq, "authenticator.cipher", buf, buflen);
+  res = shishi_asn1_write (handle, apreq, "authenticator.cipher",
+			   buf, buflen);
   if (res != SHISHI_OK)
     return res;
 

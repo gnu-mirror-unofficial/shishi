@@ -1382,9 +1382,9 @@ shishi_prompt_password (Shishi * handle,
 /* asn1.c */
 extern int shishi_a2d_field (Shishi * handle,
 			     Shishi_asn1 node,
-			     const char *field, char *der, int *len);
+			     const char *field, char *der, size_t *len);
 extern int shishi_a2d (Shishi * handle, Shishi_asn1 node,
-		       char *der, int *len);
+		       char *der, size_t *len);
 extern int shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
 				 const char *field, char **der, size_t *len);
 extern int shishi_new_a2d (Shishi * handle, Shishi_asn1 node,
@@ -1492,11 +1492,13 @@ extern int shishi_ap_tktoptions (Shishi * handle,
 				 Shishi_tkt * tkt, int options);
 extern int shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
 					 Shishi_tkt * tkt,
-					 int options, char *data, int len);
+					 int options,
+					 const char *data, size_t len);
 extern int shishi_ap_tktoptionsdata (Shishi * handle,
 				     Shishi_ap ** ap,
 				     Shishi_tkt * tkt,
-				     int options, char *data, int len);
+				     int options,
+				     const char *data, size_t len);
 extern int shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
 					      Shishi_tkt * tkt,
 					      int options,
@@ -1517,11 +1519,11 @@ extern Shishi_tkt *shishi_ap_tkt (Shishi_ap * ap);
 extern void shishi_ap_tkt_set (Shishi_ap * ap, Shishi_tkt * tkt);
 
 extern int shishi_ap_authenticator_cksumdata (Shishi_ap * ap,
-					      char *out, int *len);
+					      char *out, size_t *len);
 extern void
 shishi_ap_authenticator_cksumdata_set (Shishi_ap * ap,
-				       char *authenticatorcksumdata,
-				       int authenticatorcksumdatalen);
+				       const char *authenticatorcksumdata,
+				       size_t authenticatorcksumdatalen);
 extern int shishi_ap_authenticator_cksumtype (Shishi_ap * ap);
 extern void shishi_ap_authenticator_cksumtype_set (Shishi_ap * ap,
 						   int cksumtype);
@@ -1690,7 +1692,7 @@ extern int shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
 				    Shishi_asn1 ticket);
 extern int shishi_apreq_set_authenticator (Shishi * handle, Shishi_asn1 apreq,
 					   int32_t etype,
-					   char *buf, int buflen);
+					   const char *buf, size_t buflen);
 extern int shishi_apreq_add_authenticator (Shishi * handle, Shishi_asn1 apreq,
 					   Shishi_key * key, int keyusage,
 					   Shishi_asn1 authenticator);
@@ -1753,7 +1755,8 @@ extern int shishi_aprep_decrypt (Shishi * handle, Shishi_asn1 aprep,
 extern int shishi_aprep_verify (Shishi * handle, Shishi_asn1 authenticator,
 				Shishi_asn1 encapreppart);
 extern int shishi_aprep_enc_part_set (Shishi * handle, Shishi_asn1 aprep,
-				      int etype, const char *buf, int buflen);
+				      int etype,
+				      const char *buf, size_t buflen);
 extern int shishi_aprep_enc_part_add (Shishi * handle, Shishi_asn1 aprep,
 				      Shishi_asn1 encticketpart,
 				      Shishi_asn1 encapreppart);
@@ -1785,7 +1788,7 @@ extern int shishi_encticketpart_crealm_set (Shishi * handle,
 					    const char *realm);
 extern int shishi_encticketpart_cname_get (Shishi * handle,
 					   Shishi_asn1 encticketpart,
-					   char *cname, int *cnamelen);
+					   char *cname, size_t *cnamelen);
 extern int shishi_encticketpart_cname_set (Shishi * handle,
 					   Shishi_asn1 encticketpart,
 					   Shishi_name_type name_type,
@@ -1793,7 +1796,7 @@ extern int shishi_encticketpart_cname_set (Shishi * handle,
 extern int shishi_encticketpart_cnamerealm_get (Shishi * handle,
 						Shishi_asn1 encticketpart,
 						char *cnamerealm,
-						int *cnamerealmlen);
+						size_t *cnamerealmlen);
 extern int shishi_encticketpart_print (Shishi * handle, FILE * fh,
 				       Shishi_asn1 encticketpart);
 extern int shishi_encticketpart_flags_set (Shishi * handle,
@@ -1812,7 +1815,7 @@ extern int shishi_encticketpart_endtime_set (Shishi * handle,
 					     const char *endtime);
 extern int shishi_encticketpart_authtime (Shishi * handle,
 					  Shishi_asn1 encticketpart,
-					  char *authtime, int *authtimelen);
+					  char *authtime, size_t *authtimelen);
 extern time_t shishi_encticketpart_authctime (Shishi * handle,
 					      Shishi_asn1 encticketpart);
 
