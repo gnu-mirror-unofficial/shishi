@@ -441,9 +441,12 @@ tgsreq1 (Shishi_tgs * tgs)
 {
   int rc;
   Shishi_tkt *tkt;
-  Shishi_key *newsessionkey, *oldsessionkey = NULL, *serverkey = NULL, *subkey = NULL, *tgkey;
-  char *servername = NULL, *serverrealm = NULL, *tgname = NULL, *tgrealm = NULL, *client, *clientrealm;
-  Shisa_principal krbtgt;
+  Shishi_key *newsessionkey = NULL, *oldsessionkey = NULL;
+  Shishi_key *serverkey = NULL, *subkey = NULL, *tgkey = NULL;
+  char *servername = NULL, *serverrealm = NULL;
+  char *tgname = NULL, *tgrealm = NULL;
+  char *clientname = NULL, *clientrealm = NULL;
+  Shisa_principal krbtgt, server;
   Shisa_key **tgkeys = NULL, **serverkeys = NULL;
   size_t ntgkeys, nserverkeys;
 
@@ -612,7 +615,7 @@ tgsreq1 (Shishi_tgs * tgs)
       goto fatal;
     }
 
-  rc = shisa_principal_find (dbh, serverrealm, servername, &krbtgt);
+  rc = shisa_principal_find (dbh, serverrealm, servername, &server);
   if (rc != SHISA_OK && rc != SHISA_NO_PRINCIPAL)
     {
       syslog (LOG_ERR, "shisa_principal_find(%s@%s) failed (%d): %s",
@@ -655,8 +658,6 @@ tgsreq1 (Shishi_tgs * tgs)
   if (rc)
     return rc;
 
-  syslog (LOG_DEBUG, "TGS-REQ for %s@%s", servername, serverrealm);
-
   /*
    * By default, the address field, the client's name and realm, the list
    * of transited realms, the time of initial authentication, the
@@ -681,7 +682,7 @@ tgsreq1 (Shishi_tgs * tgs)
 
   rc = shishi_encticketpart_client
     (handle, shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
-     &client, NULL);
+     &clientname, NULL);
   if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_encticketpart_client failed (%d): %s",
@@ -689,7 +690,7 @@ tgsreq1 (Shishi_tgs * tgs)
       goto fatal;
     }
 
-  rc = shishi_tkt_clientrealm_set (tkt, clientrealm, client);
+  rc = shishi_tkt_clientrealm_set (tkt, clientrealm, clientname);
   if (rc != SHISHI_OK)
     {
       syslog (LOG_ERR, "shishi_tkt_clientrealm_set failed (%d): %s",
@@ -714,6 +715,9 @@ tgsreq1 (Shishi_tgs * tgs)
 	      rc, shishi_strerror (rc));
       goto fatal;
     }
+
+  syslog (LOG_DEBUG, "TGS-REQ from %s@%s for %s@%s",
+	  clientname, clientrealm, servername, serverrealm);
 
   /*
    * If the request specifies an endtime, then the endtime of the new
@@ -877,12 +881,20 @@ tgsreq1 (Shishi_tgs * tgs)
     free (servername);
   if (serverrealm)
     free (serverrealm);
+  if (clientname)
+    free (clientname);
+  if (clientrealm)
+    free (clientrealm);
   if (tgkeys)
     shisa_keys_free (dbh, tgkeys, ntgkeys);
   if (serverkeys)
     shisa_keys_free (dbh, serverkeys, nserverkeys);
+  if (tgkey)
+    shishi_key_done (tgkey);
   if (serverkey)
     shishi_key_done (serverkey);
+  if (newsessionkey)
+    shishi_key_done (newsessionkey);
   if (oldsessionkey)
     shishi_key_done (oldsessionkey);
   if (subkey)
