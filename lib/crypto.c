@@ -1570,7 +1570,7 @@ shishi_encrypt_iv (Shishi * handle,
 		   char *in, size_t inlen, char **out, size_t * outlen)
 {
   return shishi_encrypt_iv_etype (handle, key, keyusage,
-				  shishi_key_type (key), NULL, 0, in, inlen,
+				  shishi_key_type (key), iv, ivlen, in, inlen,
 				  out, outlen);
 }
 
