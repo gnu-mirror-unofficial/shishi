@@ -607,6 +607,7 @@ struct cipherinfo
   int minpadsize;
   int confoundersize;
   int keylen;
+  int randomlen;
   int defaultcksumtype;
   Shishi_random_to_key_function random2key;
   Shishi_string_to_key_function string2key;
@@ -619,6 +620,7 @@ cipherinfo null_info = {
   0,
   "NULL",
   1,
+  0,
   0,
   0,
   0,
@@ -636,6 +638,7 @@ cipherinfo des_cbc_crc_info = {
   4,
   8,
   8,
+  8,
   SHISHI_RSA_MD5_DES,
   des_random_to_key,
   des_string_to_key,
@@ -648,6 +651,7 @@ cipherinfo des_cbc_md4_info = {
   "des-cbc-md4",
   8,
   0,
+  8,
   8,
   8,
   SHISHI_RSA_MD4_DES,
@@ -664,6 +668,7 @@ cipherinfo des_cbc_md5_info = {
   0,
   8,
   8,
+  8,
   SHISHI_RSA_MD5_DES,
   des_random_to_key,
   des_string_to_key,
@@ -677,6 +682,7 @@ cipherinfo des3_cbc_sha1_kd_info = {
   8,
   0,
   8,
+  3 * 8,
   3 * 8,
   SHISHI_HMAC_SHA1_DES3_KD,
   des3_random_to_key,
@@ -692,6 +698,7 @@ cipherinfo aes128_cts_hmac_sha1_96_info = {
   0,
   16,
   128 / 8,
+  128 / 8,
   SHISHI_HMAC_SHA1_96_AES128,
   aes128_random_to_key,
   aes128_string_to_key,
@@ -705,6 +712,7 @@ cipherinfo aes256_cts_hmac_sha1_96_info = {
   16,
   0,
   16,
+  256 / 8,
   256 / 8,
   SHISHI_HMAC_SHA1_96_AES256,
   aes256_random_to_key,
@@ -818,6 +826,25 @@ shishi_cipher_keylen (int type)
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
     if (type == ciphers[i]->type)
       return ciphers[i]->keylen;
+
+  return -1;
+}
+
+/**
+ * shishi_cipher_randomlen:
+ * @type: encryption type, see Shishi_etype.
+ *
+ * Return value: Return length of random used for the encryption type,
+ * as defined in the standards.
+ **/
+size_t
+shishi_cipher_randomlen (int type)
+{
+  int i;
+
+  for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)
+    if (type == ciphers[i]->type)
+      return ciphers[i]->randomlen;
 
   return -1;
 }
@@ -999,10 +1026,10 @@ shishi_string_to_key (Shishi * handle,
  **/
 int
 shishi_random_to_key (Shishi * handle,
-		       int keytype,
-		       char *random,
-		       int randomlen,
-		       Shishi_key *outkey)
+		      int keytype,
+		      char *random,
+		      int randomlen,
+		      Shishi_key *outkey)
 {
   Shishi_random_to_key_function random2key;
   int res;
