@@ -128,6 +128,22 @@ shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 }
 
 int
+shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
+			   const char *field, int n)
+{
+  char *buf;
+  int res;
+
+  shishi_asprintf (&buf, "%d", n);
+  res = shishi_asn1_write (handle, node, field, buf, 0);
+  free(buf);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+int
 shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 		  const char *field, char *data, size_t * datalen)
 {
@@ -162,8 +178,17 @@ shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
       shishi_error_set (handle, libtasn1_strerror (rc));
       return SHISHI_ASN1_ERROR;
     }
-
-  *i = buf[0] | buf[1] << 8 | buf[2] << 16 | buf[3] << 24;
+  if (buflen < 4)
+    {
+      memset (buf, 0, sizeof (buf));
+      rc = asn1_read_value (node, field, &buf[4-buflen], &buflen);
+      if (rc != ASN1_SUCCESS)
+	{
+	  shishi_error_set (handle, libtasn1_strerror (rc));
+	  return SHISHI_ASN1_ERROR;
+	}
+    }
+  *i = buf[3] | (buf[2] << 8) | (buf[1] << 16) | (buf[0] << 24);
 
   return SHISHI_OK;
 }
@@ -228,45 +253,7 @@ int
 shishi_asn1_integer_field (Shishi * handle,
 			   Shishi_asn1 node, int *i, const char *field)
 {
-  unsigned char buf[4];
-  int buflen;
-  int rc;
-
-  memset (buf, 0, sizeof (buf));
-  buflen = sizeof (buf);
-  rc = asn1_read_value (node, field, buf, &buflen);
-  if (rc != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (rc));
-      return SHISHI_ASN1_ERROR;
-    }
-
-  *i = buf[0] | buf[1] << 8 | buf[2] << 16 | buf[3] << 24;
-
-  return SHISHI_OK;
-}
-
-int
-shishi_asn1_integer2_field (Shishi * handle,
-			    Shishi_asn1 node, unsigned long *i,
-			    const char *field)
-{
-  unsigned char buf[4];
-  int buflen;
-  int rc;
-
-  memset (buf, 0, sizeof (buf));
-  buflen = sizeof (buf);
-  rc = asn1_read_value (node, field, buf, &buflen);
-  if (rc != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (rc));
-      return SHISHI_ASN1_ERROR;
-    }
-
-  *i = buf[3] | buf[2] << 8 | buf[1] << 16 | buf[0] << 24;
-
-  return SHISHI_OK;
+  return shishi_asn1_read_integer(handle, node, field, i);
 }
 
 #define SHISHI_TICKET_DEFAULT_TKTVNO "5"
