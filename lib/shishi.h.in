@@ -1052,9 +1052,9 @@ extern int shishi_kdcreq_read (Shishi * handle, FILE * fh,
 			       Shishi_asn1 * kdcreq);
 extern int shishi_kdcreq_from_file (Shishi * handle, Shishi_asn1 * kdcreq,
 				    int filetype, const char *filename);
-extern int shishi_asreq_cnamerealm_get (Shishi * handle, Shishi_asn1 kdcreq,
-					char *cnamerealm,
-					size_t * cnamerealmlen);
+extern int shishi_asreq_clientrealm (Shishi * handle,
+				     Shishi_asn1 asreq,
+				     char **client, size_t * clientlen);
 extern int shishi_kdcreq_nonce (Shishi * handle, Shishi_asn1 kdcreq,
 				uint32_t * nonce);
 extern int shishi_kdcreq_nonce_set (Shishi * handle,

@@ -414,15 +414,31 @@ shishi_kdcreq_client (Shishi * handle, Shishi_asn1 kdcreq,
 				client, clientlen);
 }
 
+/**
+ * shishi_asreq_clientrealm:
+ * @handle: Shishi library handle create by shishi_init().
+ * @asreq: AS-REQ variable to get client name and realm from.
+ * @client: pointer to newly allocated zero terminated string containing
+ *   principal name and realm.  May be %NULL (to only populate @clientlen).
+ * @clientlen: pointer to length of @client on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
+ *
+ * Convert cname and realm fields from AS-REQ to printable principal
+ * name format.  The string is allocate by this function, and it is
+ * the responsibility of the caller to deallocate it.  Note that the
+ * output length @clientlen does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_asreq_cnamerealm_get (Shishi * handle,
-			     Shishi_asn1 asreq,
-			     char *cnamerealm, size_t * cnamerealmlen)
+shishi_asreq_clientrealm (Shishi * handle,
+			  Shishi_asn1 asreq,
+			  char **client, size_t * clientlen)
 {
-  return shishi_principal_name_realm_get (handle, asreq,
-					  "req-body.cname", asreq,
-					  "req-body.realm",
-					  cnamerealm, cnamerealmlen);
+  return shishi_principal_name_realm (handle,
+				      asreq, "req-body.cname",
+				      asreq, "req-body.realm",
+				      client, clientlen);
 }
 
 /**

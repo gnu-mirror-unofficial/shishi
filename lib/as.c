@@ -239,8 +239,6 @@ int
 shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
 {
   Shishi_asn1 ticket, kdcreppart;
-  char user[BUFSIZ];
-  size_t userlen;
   int res;
 
   if (VERBOSE (as->handle))
@@ -252,23 +250,25 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
   if (VERBOSEASN1 (as->handle))
     shishi_kdcrep_print (as->handle, stdout, as->asrep);
 
-  userlen = sizeof (user);
-  res = shishi_asreq_cnamerealm_get (as->handle, as->asreq, user, &userlen);
-  if (res != SHISHI_OK)
-    {
-      shishi_error_printf (as->handle, "Could not extract cname and "
-			   "realm from AS-REQ: %s\n", shishi_strerror (res),
-			   shishi_error (as->handle));
-      return res;
-    }
-  user[userlen] = '\0';
-
   if (key == NULL && password == NULL)
     {
       char *passwd;
+      char *user;
+      size_t userlen;
+
+      res = shishi_asreq_clientrealm (as->handle, as->asreq, &user, &userlen);
+      if (res != SHISHI_OK)
+	{
+	  shishi_error_printf (as->handle, "Could not extract cname and "
+			       "realm from AS-REQ: %s\n",
+			       shishi_strerror (res),
+			       shishi_error (as->handle));
+	  return res;
+	}
 
       res = shishi_prompt_password (as->handle, &passwd,
 				    "Enter password for `%s': ", user);
+      free (user);
       if (res != SHISHI_OK)
 	{
 	  shishi_error_printf (as->handle, "Reading password failed: %s\n",
