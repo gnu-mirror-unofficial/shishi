@@ -557,6 +557,7 @@ typedef struct Shishi_priv Shishi_priv;
 typedef struct node_asn_struct *ASN1_TYPE;
 #endif
 typedef ASN1_TYPE Shishi_asn1;
+typedef struct Shishi_crypto Shishi_crypto;
 
 /* init.c */
 extern Shishi *shishi (void);
@@ -1417,6 +1418,20 @@ extern int shishi_pbkdf2_sha1 (Shishi * handle,
 			       const char *P, size_t Plen,
 			       const char *S, size_t Slen,
 			       unsigned int c, unsigned int dkLen, char *DK);
+
+/* crypto-ctx.c */
+extern Shishi_crypto *shishi_crypto_init (Shishi * handle,
+					  Shishi_key * key,
+					  int keyusage,
+					  int32_t etype,
+					  const char * iv, size_t ivlen);
+extern void shishi_crypto_close (Shishi_crypto * ctx);
+extern int shishi_crypto_encrypt (Shishi_crypto * ctx,
+				  const char *in, size_t inlen,
+				  char **out, size_t * outlen);
+extern int shishi_crypto_decrypt (Shishi_crypto * ctx,
+				  const char *in, size_t inlen,
+				  char **out, size_t * outlen);
 
 /* version.c */
 extern const char *shishi_check_version (const char *req_version);
