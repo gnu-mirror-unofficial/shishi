@@ -22,12 +22,10 @@ sbin_PROGRAMS = shishid
 
 shishi_SOURCES = shishi.c data.h gettext.h \
 	kdc.c authp.c crypto.c client.c server.c
-shishi_LDADD = @LIBARGP@ @LTLIBINTL@ @LIBGCRYPT@ \
-	../lib/libshishi.la ../asn1/lib/libtasn1.la
+shishi_LDADD = @LIBARGP@ @LTLIBINTL@ ../lib/libshishi.la
 
 shishid_SOURCES = shishid.c
-shishid_LDADD = @LIBARGP@ @LIBGCRYPT@ \
-	../lib/libshishi.la ../asn1/lib/libtasn1.la
+shishid_LDADD = @LIBARGP@ ../lib/libshishi.la
 
 localedir = $(datadir)/locale
 
