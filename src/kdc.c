@@ -336,6 +336,29 @@ asreq1 (Shishi_as * as)
     goto fatal;
   }
 
+  {
+    char *till;
+    size_t tilllen;
+
+    rc = shishi_kdcreq_till (handle, shishi_as_req (as), &till, &tilllen);
+    if (rc != SHISHI_OK)
+      {
+	syslog (LOG_ERR, "shishi_kdcreq_till failed (%d): %s",
+		rc, shishi_strerror (rc));
+	goto fatal;
+      }
+
+    if (tilllen != 16 || strnlen (till, tilllen) != 15)
+      {
+	syslog (LOG_ERR, "Invalid 'till' field in request (%d): %s", tilllen, till);
+	goto fatal;
+      }
+
+    rc = shishi_encticketpart_endtime_set (handle, shishi_tkt_encticketpart (tkt), till);
+
+    free (till);
+  }
+
   /* XXX Do the time stuff above. */
 
   /*
