@@ -1688,8 +1688,10 @@ section, we start the server listen on port 4711 via UDP on IPv4.
 jas@@latte:~$ /usr/local/sbin/shishid -l IPv4:*:4711/udp
 Initializing GNUTLS...
 Initializing GNUTLS...done
-Listening on IPv4:*:4711/udp...done
+Listening on *:4711/tcp...
 Listening on 1 ports...
+shishid: Starting (GNUTLS `1.0.4')
+shishid: Listening on *:4711/tcp socket 4
 @end example
 
 If you have set up the Shisa database as in the previous example, you
@@ -1711,19 +1713,14 @@ jas@@latte:~$
 The output from Shishid on a successful invocation would look like:
 
 @example
-Has 131 bytes from IPv4:*:4711/udp
-ASN.1 msg-type 10 (0xa)...
-Processing AS-REQ...
-servername krbtgt/EXAMPLE.ORG
-client & server realm EXAMPLE.ORG
-Found server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
-username simon
-Found user simon@@EXAMPLE.ORG...
-Found keys for server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
-Found keys for user simon@@EXAMPLE.ORG...
-Trying etype 18...
-Matching against server etype 18...
-Matching against user etype 18...
+shishid: Has 131 bytes from *:4711/udp on socket 4
+shishid: Processing 131 from *:4711/udp on socket 4
+shishid: Trying AS-REQ
+shishid: AS-REQ from simon@@EXAMPLE.ORG for krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG
+shishid: Matching client etype 18 against user key etype 18
+shishid: Have 511 bytes for *:4711/udp on socket 4
+shishid: Sending 511 bytes to *:4711/udp socket 4 via UDP
+shishid: Listening on *:4711/udp socket 4
 @end example
 
 You may use the '-v' parameter for Shishid and Shishi to generate more
@@ -1892,24 +1889,22 @@ done in the configuration file with the @samp{/tls} parameter for
 placing the KDC address in DNS using the @samp{_tls} SRV record
 (@pxref{Configuring DNS for KDC}).
 
-To continue our example from previous sections, recall we started
-Shishid as follows.
+Let's start Shishid, listening on a TCP socket.  TLS require TCP.  TCP
+sockets are automatically upgraded to TLS if the client request it.
 
 @example
-jas@@latte:~$ /usr/local/sbin/shishid -l IPv4:*:4711/udp
-Initializing GNUTLS...
-Generating Diffie-Hellman parameters...
+jas@@latte:~$ /usr/local/sbin/shishid -l IPv4:*:4711/tcp
 Initializing GNUTLS...done
 Listening on IPv4:*:4711/tcp...
 Listening on 1 ports...
-shishid: Starting (GNUTLS `1.0.3')
+shishid: Starting (GNUTLS `1.0.4')
 shishid: Listening on IPv4:*:4711/tcp socket 4
 @end example
 
 Let's use the client to talk with it, using TLS.
 
 @example
-jas@@latte:~$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711/tcp' \
+jas@@latte:~$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711/tls \
     simon@@EXAMPLE.ORG
 Enter password for `simon@@EXAMPLE.ORG':
 simon@@EXAMPLE.ORG:
@@ -1929,30 +1924,17 @@ shishid: Listening on IPv4:*:4711/tcp socket 4
 shishid: Listening on IPv4:*:4711/tcp peer 127.0.0.1 socket 6
 shishid: Has 4 bytes from IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
 shishid: Trying STARTTLS
-shishid: TLS handshake negotiated protocol `TLS 1.0', key exchange \
- `Anon DH', certficate type `X.509', cipher `AES 256 CBC', mac `SHA', \
- compression `NULL'
+shishid: TLS handshake negotiated protocol `TLS 1.0', key exchange `Anon DH', certficate type `X.509', cipher `AES 256 CBC', mac `SHA', compression `NULL', session not resumed
 shishid: TLS anonymous authentication with 1024 bit Diffie-Hellman
 shishid: Listening on IPv4:*:4711/tcp socket 4
 shishid: Listening on IPv4:*:4711/tcp peer 127.0.0.1 socket 6
-shishid: Has 138 bytes from IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
-shishid: Processing 138 from IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
-ASN.1 msg-type 10 (0xa)...
-Processing AS-REQ...
-servername krbtgt/EXAMPLE.ORG
-client & server realm EXAMPLE.ORG
-Found server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
-username simon
-Found user simon@@EXAMPLE.ORG...
-Found keys for server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
-Found keys for user simon@@EXAMPLE.ORG...
-Trying etype 18...
-Matching against server etype 18...
-Matching against user etype 18...
-Trying etype 16...
-Trying etype 3...
-shishid: Have 505 bytes for IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
-shishid: Sending 505 bytes to IPv4:*:4711/tcp peer 127.0.0.1 socket 6 via TLS
+shishid: Has 131 bytes from IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Processing 131 from IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Trying AS-REQ
+shishid: AS-REQ from simon@@EXAMPLE.ORG for krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG
+shishid: Matching client etype 18 against user key etype 18
+shishid: Have 511 bytes for IPv4:*:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Sending 511 bytes to IPv4:*:4711/tcp peer 127.0.0.1 socket 6 via TLS
 shishid: Listening on IPv4:*:4711/tcp socket 4
 shishid: Listening on IPv4:*:4711/tcp peer 127.0.0.1 socket 6
 shishid: Peer IPv4:*:4711/tcp peer 127.0.0.1 disconnected on socket 6
@@ -2207,7 +2189,7 @@ Generating Diffie-Hellman parameters...
 Initializing GNUTLS...done
 Listening on *:4711/tcp...
 Listening on 1 ports...
-shishid: Starting (GNUTLS `1.0.2')
+shishid: Starting (GNUTLS `1.0.4')
 shishid: Listening on *:4711/tcp socket 4
 @end example
 
@@ -2237,35 +2219,17 @@ shishid: Listening on *:4711/tcp socket 4
 shishid: Listening on *:4711/tcp peer 127.0.0.1 socket 6
 shishid: Has 4 bytes from *:4711/tcp peer 127.0.0.1 on socket 6
 shishid: Trying STARTTLS
-shishid: TLS handshake negotiated protocol `TLS 1.0', key exchange \
- `RSA', certficate type `X.509', cipher `AES 256 CBC', mac `SHA', \
-  compression `NULL'
-shishid: TLS client certificate `C=SE,O=Shishi Example Client,CN=Client',\
- issued by `C=SE,O=Shishi Example CA,CN=CA', serial number `00', MD5 \
- fingerprint `a5:d3:1f:58:76:e3:58:cd:2d:eb:f7:45:a2:4b:52:f9:', \
- activated `Sun Dec 21 11:04:00 2003', expires \
- `Fri Jun 18 12:04:00 2004', version #3, key RSA modulus 1024 bits, \
- currently valid
+shishid: TLS handshake negotiated protocol `TLS 1.0', key exchange `RSA', certficate type `X.509', cipher `AES 256 CBC', mac `SHA', compression `NULL', session not resumed
+shishid: TLS client certificate `C=SE,O=Shishi Example Client,CN=Client', issued by `C=SE,O=Shishi Example CA,CN=CA', serial number `00', MD5 fingerprint `a5:d3:1f:58:76:e3:58:cd:2d:eb:f7:45:a2:4b:52:f9:', activated `Sun Dec 21 11:04:00 2003', expires `Fri Jun 18 12:04:00 2004', version #3, key RSA modulus 1024 bits, currently EXPIRED
 shishid: Listening on *:4711/tcp socket 4
 shishid: Listening on *:4711/tcp peer 127.0.0.1 socket 6
-shishid: Has 138 bytes from *:4711/tcp peer 127.0.0.1 on socket 6
-shishid: Processing 138 from *:4711/tcp peer 127.0.0.1 on socket 6
-ASN.1 msg-type 10 (0xa)...
-Processing AS-REQ...
-servername krbtgt/EXAMPLE.ORG
-client & server realm EXAMPLE.ORG
-Found server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
-username simon
-Found user simon@@EXAMPLE.ORG...
-Found keys for server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
-Found keys for user simon@@EXAMPLE.ORG...
-Trying etype 18...
-Matching against server etype 18...
-Matching against user etype 18...
-Trying etype 16...
-Trying etype 3...
-shishid: Have 505 bytes for *:4711/tcp peer 127.0.0.1 on socket 6
-shishid: Sending 505 bytes to *:4711/tcp peer 127.0.0.1 socket 6 via TLS
+shishid: Has 131 bytes from *:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Processing 131 from *:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Trying AS-REQ
+shishid: AS-REQ from simon@@EXAMPLE.ORG for krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG
+shishid: Matching client etype 18 against user key etype 18
+shishid: Have 511 bytes for *:4711/tcp peer 127.0.0.1 on socket 6
+shishid: Sending 511 bytes to *:4711/tcp peer 127.0.0.1 socket 6 via TLS
 shishid: Listening on *:4711/tcp socket 4
 shishid: Listening on *:4711/tcp peer 127.0.0.1 socket 6
 shishid: Peer *:4711/tcp peer 127.0.0.1 disconnected on socket 6
