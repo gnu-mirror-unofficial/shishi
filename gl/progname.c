@@ -51,3 +51,15 @@ set_program_name (const char *argv0)
     argv0 = base + 3;
   program_name = argv0;
 }
+
+/* Return short program name of the current executable, based on the
+   earlier call to set_program_name.  Return NULL if unknown.  The
+   short program name is computed by removing all directory names and
+   path separators. */
+char *
+get_short_program_name (void)
+{
+  const char *slash;
+  slash = strrchr (program_name, '/');
+  return slash != NULL ? slash + 1 : program_name;
+}
