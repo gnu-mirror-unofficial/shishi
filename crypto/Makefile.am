@@ -18,8 +18,8 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
 
-DIST_SUBDIRS = mpi cipher src doc tests w32-dll
-SUBDIRS = mpi cipher src doc tests
+DIST_SUBDIRS = mpi cipher src doc tests w32-dll tests
+SUBDIRS = mpi cipher src doc
 EXTRA_DIST = README-alpha BUGS autogen.sh COPYING.DOC
 DISTCLEANFILES = gcrypt-defs.h 
 
