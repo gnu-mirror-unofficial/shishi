@@ -57,3 +57,4 @@ EXTRA_DIST += wchar_t.m4
 EXTRA_DIST += wint_t.m4
 EXTRA_DIST += xalloc.m4
 EXTRA_DIST += xstrndup.m4
+EXTRA_DIST += timegm.m4

@@ -20,6 +20,7 @@
  */
 
 #include "internal.h"
+#include "timegm.h"
 
 const char *
 shishi_generalize_time (Shishi * handle, time_t t)
@@ -41,24 +42,6 @@ shishi_generalize_now (Shishi * handle)
   return shishi_generalize_time (handle, t);
 }
 
-static time_t
-my_timegm (struct tm *tm)
-{
-  time_t ret;
-  char *tz;
-
-  tz = getenv ("TZ");
-  setenv ("TZ", "UTC", 1);
-  tzset ();
-  ret = mktime (tm);
-  if (tz)
-    setenv ("TZ", tz, 1);
-  else
-    unsetenv ("TZ");
-  tzset ();
-  return ret;
-}
-
 time_t
 shishi_generalize_ctime (Shishi * handle, const char *t)
 {
@@ -73,7 +56,7 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
   tm.tm_year -= 1900;
   tm.tm_mon--;
 
-  ct = my_timegm (&tm);
+  ct = timegm (&tm);
 
   return ct;
 }
