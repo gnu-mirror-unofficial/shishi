@@ -3407,6 +3407,7 @@ library.
 * Ticket (ASN.1) Functions::    Low-level Ticket functions.
 * AS/TGS Functions::            Low-level KDC functions; AS and TGS.
 * Authenticator Functions::     Low-level authenticator functions.
+* KRB-ERROR Functions::         Low-level KRB-ERROR functions.
 * Cryptographic Functions::     Low-level cryptographic functions.
 * X.509 Functions::             Utility functions for X.509 support.
 * Utility Functions::           Utilities for use in the global context.
@@ -3909,6 +3910,7 @@ EncKDCRepPart	::= SEQUENCE {
 @section Ticket (ASN.1) Functions
 
 @include texi/ticket.c.texi
+@include texi/encticketpart.c.texi
 
 @node AS/TGS Functions
 @section AS/TGS Functions
@@ -4010,11 +4012,12 @@ EncKDCRepPart	::= SEQUENCE {
 @node Authenticator Functions
 @section Authenticator Functions
 
-An ``Authenticator'' is a ASN.1 structure that work as a proof that an
-entity owns a ticket.  It is usually embedded in the AP-REQ structure
-(@pxref{AP-REQ and AP-REP Functions}), and you most likely want to use
-an AP-REQ instead of a Authenticator in normal applications.  The
-following illustrates the Authenticator ASN.1 structure.
+An ``Authenticator'' is an ASN.1 structure that work as a proof that
+an entity owns a ticket.  It is usually embedded in the AP-REQ
+structure (@pxref{AP-REQ and AP-REP Functions}), and you most likely
+want to use an AP-REQ instead of a Authenticator in normal
+applications.  The following illustrates the Authenticator ASN.1
+structure.
 
 @verbatim
 Authenticator	::= [APPLICATION 2] SEQUENCE  {
@@ -4032,6 +4035,36 @@ Authenticator	::= [APPLICATION 2] SEQUENCE  {
 
 @include texi/authenticator.c.texi
 
+
+@node KRB-ERROR Functions
+@section KRB-ERROR Functions
+
+The ``KRB-ERROR'' is an ASN.1 structure that can be returned, instead
+of, e.g., KDC-REP or AP-REP, to indicate various error conditions.
+Unfortunately, the semantics of several of the fields are ill
+specified, so the typically procedure is to extract ``e-text'' and/or
+``e-data'' and show it to the user.  The following illustrates the
+KRB-ERROR ASN.1 structure.
+
+@verbatim
+KRB-ERROR       ::= [APPLICATION 30] SEQUENCE {
+        pvno            [0] INTEGER (5),
+        msg-type        [1] INTEGER (30),
+        ctime           [2] KerberosTime OPTIONAL,
+        cusec           [3] Microseconds OPTIONAL,
+        stime           [4] KerberosTime,
+        susec           [5] Microseconds,
+        error-code      [6] Int32,
+        crealm          [7] Realm OPTIONAL,
+        cname           [8] PrincipalName OPTIONAL,
+        realm           [9] Realm -- service realm --,
+        sname           [10] PrincipalName -- service name --,
+        e-text          [11] KerberosString OPTIONAL,
+        e-data          [12] OCTET STRING OPTIONAL
+}
+@end verbatim
+
+@include texi/krberror.c.texi
 
 @node Cryptographic Functions
 @section Cryptographic Functions
@@ -4110,6 +4143,8 @@ Shishi.
 @include texi/realm.c.texi
 @include texi/principal.c.texi
 @include texi/authorize.c.texi
+@include texi/gztime.c.texi
+@include texi/password.c.texi
 
 @node ASN.1 Functions
 @section ASN.1 Functions
