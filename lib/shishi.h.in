@@ -619,6 +619,8 @@ shishi_prompt_password (FILE *in, char * s, int size,
 /* asn1.c */
 extern ASN1_TYPE
 shishi_d2a_aprep (Shishi * handle, char *der, int derlen);
+extern ASN1_TYPE
+shishi_d2a_encapreppart (Shishi * handle, char *der, int der_len);
 
 /* ap.c */
 extern Shishi_ticket *
