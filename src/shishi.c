@@ -195,7 +195,6 @@ struct arguments
   int forceas_p;
   int forcetgs_p;
   char *servername;
-  int renew;
   int renewable;
   time_t starttime;
   char *endtime_str;
@@ -635,7 +634,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
     case 'R':
     case OPTION_RENEW:
-      arguments->renew = 1;
+      arguments->command = OPTION_RENEW;
       break;
 
     case OPTION_RENEW_TILL:
@@ -1017,6 +1016,82 @@ main (int argc, char *argv[])
       if (rc != SHISHI_OK)
 	fprintf (stderr, "Operation failed:\n%s\n%s\n",
 		 shishi_strerror (rc), shishi_strerror_details (handle));
+      break;
+
+    case OPTION_RENEW:
+      {
+	Shishi_tkt *tkt;
+	Shishi_tkts_hint hint;
+	Shishi_tgs *tgs;
+
+	/* This doesn't work */
+
+	memset (&hint, 0, sizeof (hint));
+	hint.client = (char *) arg.cname;
+	hint.server = (char *) (arg.sname ? arg.sname : arg.tgtname);
+	hint.starttime = arg.starttime;
+	hint.endtime = arg.endtime;
+	hint.renew_till = arg.renew_till;
+	hint.renewable = arg.renewable;
+
+	tkt = shishi_tkts_find (shishi_tkts_default (handle), &hint);
+	if (!tkt)
+	  {
+	    printf ("Could not get ticket for `%s'.\n", hint.server);
+	    rc = !SHISHI_OK;
+	  }
+	else
+	  {
+	    rc = shishi_tkt_pretty_print (tkt, stdout);
+	    if (rc != SHISHI_OK)
+	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
+		       shishi_strerror (rc), shishi_strerror_details (handle));
+	  }
+
+	/* Get ticket using TGT ... */
+	rc = shishi_tgs (handle, &tgs);
+	shishi_tgs_tgtkt_set (tgs, tkt);
+	if (rc == SHISHI_OK)
+	  rc = shishi_tgs_set_server (tgs, hint.server);
+	rc = shishi_kdcreq_options_add (handle, shishi_tgs_req(tgs),
+					SHISHI_KDCOPTIONS_RENEWABLE|
+					SHISHI_KDCOPTIONS_RENEW);
+	if (rc == SHISHI_OK)
+	  rc = shishi_asn1_write (handle, shishi_tgs_req(tgs),
+				  "req-body.rtime",
+				  shishi_generalize_time
+				  (handle, hint.renew_till),
+				  0);
+	if (rc == SHISHI_OK)
+	  rc = shishi_tgs_req_build (tgs);
+	if (rc == SHISHI_OK)
+	  rc = shishi_tgs_sendrecv (tgs);
+	if (rc == SHISHI_OK)
+	  rc = shishi_tgs_rep_process (tgs);
+	if (rc != SHISHI_OK)
+	  {
+	    printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
+		    shishi_strerror_details (handle));
+	    if (rc == SHISHI_GOT_KRBERROR)
+	      shishi_krberror_pretty_print (handle, stdout,
+					    shishi_tgs_krberror (tgs));
+	    return NULL;
+	  }
+
+	tkt = shishi_tgs_tkt (tgs);
+	if (!tkt)
+	  {
+	    printf ("No ticket in TGS-REP?!: %s\n",
+		    shishi_strerror_details (handle));
+	    return NULL;
+	  }
+
+	shishi_tkt_pretty_print (tkt, stdout);
+
+	rc = shishi_tkts_add (shishi_tkts_default (handle), tkt);
+	if (rc != SHISHI_OK)
+	  printf ("Could not add ticket: %s", shishi_strerror (rc));
+      }
       break;
 
     default:
