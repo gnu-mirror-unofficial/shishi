@@ -253,8 +253,10 @@ shishi_asn1_integer2_field (Shishi * handle,
 extern time_t xtime (time_t * t);
 extern int xgettimeofday (struct timeval *tv, struct timezone *tz);
 
-struct Shishi_realminfo *
-shishi_realminfo (Shishi * handle, const char *realm);
+extern struct Shishi_realminfo *shishi_realminfo (Shishi * handle,
+						  const char *realm);
+extern struct Shishi_realminfo *shishi_realminfo_new (Shishi * handle,
+						      char *realm);
 
 #if defined(WITH_DMALLOC) && WITH_DMALLOC
 #include <dmalloc.h>
