@@ -637,7 +637,7 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
  * @adtype: output authorization data type.
  * @addata: output authorization data.
  * @addatalen: on input, maximum size of output authorization data,
-               on output, actual size of authorization data.
+ *             on output, actual size of authorization data.
  * @nth: element number of authorization-data to extract.
  *
  * Extract n:th authorization data from authenticator.  The first
