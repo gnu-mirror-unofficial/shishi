@@ -76,7 +76,8 @@ libshishi_la_SOURCES += starttls.c starttls.h
 endif
 libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	@LTLIBINTL@ ../gl/libgnu.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@
-libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+libshishi_la_LDFLAGS = -export-symbols-regex '^(shishi|xalloc_die).*' \
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 kerberos5.c: $(srcdir)/kerberos5.asn1
 	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $^
