@@ -1,0 +1,11 @@
+Project: shishi
+Home-Page-URL: http://www.gnu.org/software/shishi/
+Gzipped-Tar-URL: http://josefsson.org/shishi/releases/
+Changelog-URL: http://josefsson.org/cgi-bin/viewcvs.cgi/shishi/ChangeLog?rev=HEAD&content-type=text/vnd.viewcvs-markup
+BSD-Port-URL: http://www.freshports.org/devel/shishi/
+CVS-URL: http://josefsson.org/cgi-bin/viewcvs.cgi/shishi/
+Mirror-Site-URL: http://josefsson.org/shishi
+Version: 0.0.17
+Release-Focus: Minor feature enhancements
+
+Revamp of gnulib compatibility files.  Fix warnings.
