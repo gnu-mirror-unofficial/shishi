@@ -643,7 +643,7 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
   char buf[BUFSIZ];
   char *p;
   int buflen;
-  int etype, flags;
+  int keytype, etype, flags;
   int res;
   time_t t;
 
@@ -676,10 +676,17 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
   buf[buflen] = '\0';
   printf (_("Service:\t%s\n"), buf);
 
-  res = shishi_ticket_keytype (ticket, &etype);
+  res = shishi_ticket_keytype (ticket, &keytype);
   if (res != SHISHI_OK)
     return res;
-  printf (_("Key type:\t%s (%d)\n"), shishi_cipher_name (etype), etype);
+  res = shishi_asn1ticket_get_enc_part_etype (ticket->handle, ticket->ticket,
+					      &etype);
+    if (res != SHISHI_OK)
+      return res;
+  printf (_("Key type:\t%s (%d) protected by %s (%d)\n"),
+	  shishi_cipher_name (keytype), keytype,
+	  shishi_cipher_name (etype), etype);
+
 
   res = shishi_ticket_flags (ticket, &flags);
   if (res != SHISHI_OK)
