@@ -110,6 +110,7 @@ extern int errno;
 
 #ifdef USE_STARTTLS
 # include <gnutls/gnutls.h>
+# include <gnutls/x509.h>
 #endif
 
 /* Setup i18n. */
@@ -175,3 +176,7 @@ extern void kdc_loop (void);
 
 /* Interface between server.c and kdc.c. */
 extern ssize_t process (char *in, int inlen, char **out);
+
+/* Interface between server.c and starttls.c. */
+extern void kdc_send1 (struct listenspec *ls);
+extern int kdc_extension (struct listenspec *ls);

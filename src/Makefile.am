@@ -47,6 +47,9 @@ shisa_cmd.c shisa_cmd.h: shisa.ggo
 
 shishid_SOURCES = shishid.c server.c kdc.c \
 	shishid.ggo shishid_cmd.h shishid_cmd.c
+if STARTTLS
+shishid_SOURCES += starttls.c
+endif
 shishid_LDADD = ../gl/libfoo.la ../lib/libshishi.la ../db/libshisa.la \
 	@LIBGNUTLS_LIBS@ @LTLIBINTL@
 shishid_cmd.c shishid_cmd.h: shishid.ggo

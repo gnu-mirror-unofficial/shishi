@@ -94,7 +94,7 @@ kdc_close (struct listenspec *ls)
 }
 
 /* Send string to peer, via UDP/TCP/TLS, reporting any errors. */
-static void
+void
 kdc_send1 (struct listenspec *ls)
 {
   ssize_t sent_bytes;
@@ -136,7 +136,7 @@ kdc_send (struct listenspec *ls)
 	      ls->bufpos, ls->str, ls->sockfd);
 
       if (ls->bufpos + 4 >= sizeof (ls->buf))
-	ls->bufpos = sizeof(ls->buf) - 4;
+	ls->bufpos = sizeof (ls->buf) - 4;
 
       memmove (ls->buf + 4, ls->buf, ls->bufpos);
       memcpy (ls->buf, &len, 4);
@@ -151,83 +151,14 @@ kdc_send (struct listenspec *ls)
   ls->bufpos = 0;
 }
 
-#define STARTTLS_CLIENT_REQUEST "\x70\x00\x00\x01"
-#define STARTTLS_SERVER_ACCEPT "\x70\x00\x00\x02"
-#define STARTTLS_LEN 4
-
-/* Handle the high TCP length bit, currently only used for STARTTLS. */
+#ifndef USE_STARTTLS
+/* Dummy function to replace starttls.c functionality. */
 static int
 kdc_extension (struct listenspec *ls)
 {
-  int rc;
-
-#ifdef USE_STARTTLS
-  if (!ls->usetls && ls->type == SOCK_STREAM && ls->bufpos == 4 &&
-      memcmp (ls->buf, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN) == 0)
-    {
-      const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
-
-      syslog (LOG_INFO, "Trying STARTTLS");
-
-      memcpy (ls->buf, STARTTLS_SERVER_ACCEPT, STARTTLS_LEN);
-      ls->bufpos = STARTTLS_LEN;
-
-      kdc_send1 (ls);
-
-      rc = gnutls_init (&ls->session, GNUTLS_SERVER);
-      if (rc != GNUTLS_E_SUCCESS)
-	{
-	  syslog (LOG_ERR, "TLS initialization failed (%d): %s", rc,
-		  gnutls_strerror (rc));
-	  return -1;
-	}
-
-      rc = gnutls_set_default_priority (ls->session);
-      if (rc != GNUTLS_E_SUCCESS)
-	{
-	  syslog (LOG_ERR, "TLS failed, gnutls_sdp %d: %s", rc,
-		  gnutls_strerror (rc));
-	  return -1;
-	}
-
-      rc = gnutls_kx_set_priority (ls->session, kx_prio);
-      if (rc != GNUTLS_E_SUCCESS)
-	{
-	  syslog (LOG_ERR, "TLS failed, gnutls_ksp %d: %s", rc,
-		  gnutls_strerror (rc));
-	  return -1;
-	}
-
-      rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_ANON,
-				   anoncred);
-      if (rc != GNUTLS_E_SUCCESS)
-	{
-	  syslog (LOG_ERR, "TLS failed, gnutls_cs %d: %s", rc,
-		  gnutls_strerror (rc));
-	  return -1;
-	}
-
-      gnutls_dh_set_prime_bits (ls->session, DH_BITS);
-      gnutls_transport_set_ptr (ls->session,
-				(gnutls_transport_ptr) ls->sockfd);
-
-      rc = gnutls_handshake (ls->session);
-      if (rc < 0)
-	{
-	  syslog (LOG_ERR, "TLS handshake failed (%d): %s\n",
-		  rc, gnutls_strerror (rc));
-	  return -1;
-	}
-
-      syslog (LOG_INFO, "TLS successful");
-
-      ls->bufpos = 0;
-      ls->usetls = 1;
-    }
-#endif
-
   return 0;
 }
+#endif
 
 /* Read data from peer, reporting any errors. */
 static int
@@ -236,19 +167,23 @@ kdc_read (struct listenspec *ls)
   ssize_t read_bytes;
 
   ls->addrlen = sizeof (ls->addr);
+#ifdef USE_STARTTLS
   if (ls->usetls)
-    read_bytes = gnutls_record_recv (ls->session, ls->buf,
-				     sizeof (ls->buf));
+    read_bytes = gnutls_record_recv (ls->session, ls->buf, sizeof (ls->buf));
   else
+#endif
     read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
-			   sizeof(ls->buf) - ls->bufpos, 0,
+			   sizeof (ls->buf) - ls->bufpos, 0,
 			   &ls->addr, &ls->addrlen);
   if (read_bytes < 0)
     {
+#ifdef USE_STARTTLS
       if (ls->usetls)
 	syslog (LOG_ERR, "Corrupt TLS data from %s on socket %d (%d): %s",
-		ls->str, ls->sockfd, read_bytes, gnutls_strerror (read_bytes));
+		ls->str, ls->sockfd, read_bytes,
+		gnutls_strerror (read_bytes));
       else
+#endif
 	syslog (LOG_ERR, "Error reading from %s on socket %d (%d): %s",
 		ls->str, ls->sockfd, read_bytes, strerror (read_bytes));
       return -1;
@@ -346,7 +281,7 @@ kdc_loop (void)
 	  maxfd = 0;
 	  for (ls = listenspec; ls; ls = ls->next)
 	    {
-	      maxfd = MAX(maxfd, ls->sockfd + 1);
+	      maxfd = MAX (maxfd, ls->sockfd + 1);
 	      if (!arg.quiet_flag)
 		syslog (LOG_DEBUG, "Listening on %s socket %d\n",
 			ls->str, ls->sockfd);
