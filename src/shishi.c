@@ -1063,12 +1063,7 @@ main (int argc, char *argv[])
 	    rc = !SHISHI_OK;
 	  }
 	else
-	  {
-	    rc = shishi_tkt_pretty_print (tkt, stdout);
-	    if (rc != SHISHI_OK)
-	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
-		       shishi_strerror (rc), shishi_error (handle));
-	  }
+	  shishi_tkt_pretty_print (tkt, stdout);
 
 	/* Get ticket using TGT ... */
 	rc = shishi_tgs (handle, &tgs);
@@ -1134,12 +1129,7 @@ main (int argc, char *argv[])
 	    rc = !SHISHI_OK;
 	  }
 	else
-	  {
-	    rc = shishi_tkt_pretty_print (tkt, stdout);
-	    if (rc != SHISHI_OK)
-	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
-		       shishi_strerror (rc), shishi_error (handle));
-	  }
+	  shishi_tkt_pretty_print (tkt, stdout);
       }
       break;
     }

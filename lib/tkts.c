@@ -537,10 +537,7 @@ shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh,
 	}
 
       printf ("\n");
-      res = shishi_tkt_pretty_print (shishi_tkts_nth (tkts, i), fh);
-      if (res != SHISHI_OK)
-	goto done;
-
+      shishi_tkt_pretty_print (shishi_tkts_nth (tkts, i), fh);
       found++;
     }
 

@@ -668,7 +668,7 @@ extern Shishi_tkt *shishi_tkt2 (Shishi * handle,
 				Shishi_asn1 ticket,
 				Shishi_asn1 enckdcreppart,
 				Shishi_asn1 kdcrep);
-extern int shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh);
+extern void shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh);
 extern int shishi_tkt_realm (Shishi_tkt * tkt, char **realm,
 			     size_t * realmlen);
 extern int shishi_tkt_cnamerealm (Shishi_tkt * tkt, char *cnamerealm,
@@ -685,7 +685,7 @@ extern int shishi_tkt_build (Shishi_tkt * tkt, Shishi_key * key);
 extern int shishi_tkt_lastreq (Shishi_tkt * tkt,
 			       char *lrtime, size_t * lrtimelen, int lrtype);
 extern time_t shishi_tkt_lastreqc (Shishi_tkt * tkt, Shishi_lrtype lrtype);
-extern int shishi_tkt_lastreq_pretty_print (Shishi_tkt * tkt, FILE * fh);
+extern void shishi_tkt_lastreq_pretty_print (Shishi_tkt * tkt, FILE * fh);
 extern int shishi_tkt_authtime (Shishi_tkt * tkt,
 				char *authtime, size_t * authtimelen);
 extern time_t shishi_tkt_authctime (Shishi_tkt * tkt);
