@@ -270,65 +270,6 @@ shishi_principal_name (Shishi * handle,
   return SHISHI_OK;
 }
 
-int
-shishi_principal_name_get (Shishi * handle,
-			   Shishi_asn1 namenode,
-			   const char *namefield, char *out, size_t * outlen)
-{
-  int res;
-  char *format;
-  size_t totlen = 0;
-  size_t i, j, n, len;
-
-  /* FIXME: allocate output instead of writing inline */
-
-  asprintf (&format, "%s.name-string", namefield);
-  res = shishi_asn1_number_of_elements (handle, namenode, format, &n);
-  free (format);
-  if (res != SHISHI_OK)
-    return res;
-
-  totlen = 0;
-  for (i = 1; i <= n; i++)
-    {
-      len = *outlen - totlen;
-      asprintf (&format, "%s.name-string.?%d", namefield, i);
-      res =
-	shishi_asn1_read_inline (handle, namenode, format, &out[totlen],
-				 &len);
-      free (format);
-      if (res != SHISHI_OK)
-	return res;
-
-      for (j = 0; j < len; j++)
-	{
-	  if (out[totlen] == '@' || out[totlen] == '/' || out[totlen] == '\\')
-	    {
-	      if (totlen + strlen ("\\") > *outlen)
-		return SHISHI_TOO_SMALL_BUFFER;
-	      out[totlen + 1] = out[totlen];
-	      out[totlen] = '\\';
-	      len++;
-	      totlen++;
-	      j++;
-	    }
-	  totlen++;
-	}
-
-      if (i < n)
-	{
-	  if (totlen + strlen ("/") > *outlen)
-	    return SHISHI_TOO_SMALL_BUFFER;
-	  out[totlen] = '/';
-	  totlen++;
-	}
-    }
-
-  *outlen = totlen;
-
-  return SHISHI_OK;
-}
-
 /**
  * shishi_principal_name_realm:
  * @handle: Shishi library handle create by shishi_init().

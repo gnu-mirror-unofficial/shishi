@@ -646,9 +646,6 @@ extern int shishi_principal_name_realm (Shishi * handle,
 					Shishi_asn1 realmnode,
 					const char *realmfield,
 					char **out, size_t * outlen);
-extern int shishi_principal_name_get (Shishi * handle, Shishi_asn1 namenode,
-				      const char *namefield, char *out,
-				      size_t * outlen);
 extern int shishi_principal_name_set (Shishi * handle,
 				      Shishi_asn1 namenode,
 				      const char *namefield,
