@@ -47,7 +47,7 @@ shishi_realm_default_guess (void)
     free (realm);
 
   realm = xgethostname ();
-  if (realm && strlen (realm) > 0 || strcmp (realm, "(none)") != 0)
+  if (realm && strlen (realm) > 0 && strcmp (realm, "(none)") != 0)
     return realm;
 
   if (realm)

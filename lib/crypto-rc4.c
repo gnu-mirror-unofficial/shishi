@@ -250,7 +250,6 @@ arcfour_hmac_decrypt (Shishi * handle,
   char K2[16];
   char *K3 = NULL;
   char *cksum = NULL;
-  char *ct = NULL;
   char *pt = NULL;
   int offset;
   int err;

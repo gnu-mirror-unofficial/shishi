@@ -78,7 +78,6 @@ shishi_crc (Shishi * handle, const char *in, size_t inlen, char *out[4])
 {
   gcry_md_hd_t hd;
   gpg_error_t err;
-  char T[4];
   char *p;
 
   err = gcry_md_open (&hd, GCRY_MD_CRC32_RFC1510, 0);
