@@ -18,7 +18,8 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-DISTCHECK_CONFIGURE_FLAGS = --disable-gtk-doc
+DISTCHECK_CONFIGURE_FLAGS = \
+	--disable-gtk-doc --without-system-asn1 --without-libgcrypt
 
 MOST_SUBDIRS = m4 po gl lib src tests doc
 
