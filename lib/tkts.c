@@ -492,7 +492,7 @@ shishi_tkts_to_file (Shishi_tkts * tkts, const char *filename)
  * @tkts: ticket set handle as allocated by shishi_tkts().
  * @fh: file descriptor to print to.
  * @service: service to limit tickets printed to, or NULL.
-
+ *
  * Print description of tickets for specified service to file
  * descriptor.  If service is NULL, all tickets are printed.
  *
