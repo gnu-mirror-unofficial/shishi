@@ -1,5 +1,5 @@
 /* kdcreq.c --- Key distribution (AS/TGS) request functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -667,7 +667,7 @@ shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq, uint32_t * flags)
 int
 shishi_kdcreq_forwardable_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -694,7 +694,7 @@ shishi_kdcreq_forwardable_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_forwarded_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -718,7 +718,7 @@ shishi_kdcreq_forwarded_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_proxiable_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -743,7 +743,7 @@ shishi_kdcreq_proxiable_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_proxy_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -767,7 +767,7 @@ shishi_kdcreq_proxy_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_allow_postdate_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -793,7 +793,7 @@ shishi_kdcreq_allow_postdate_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_postdated_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -819,7 +819,7 @@ shishi_kdcreq_postdated_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -852,7 +852,7 @@ shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_disable_transited_check_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -879,7 +879,7 @@ shishi_kdcreq_disable_transited_check_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_renewable_ok_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -903,7 +903,7 @@ shishi_kdcreq_renewable_ok_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_enc_tkt_in_skey_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -930,7 +930,7 @@ shishi_kdcreq_enc_tkt_in_skey_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_renew_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -958,7 +958,7 @@ shishi_kdcreq_renew_p (Shishi * handle, Shishi_asn1 kdcreq)
 int
 shishi_kdcreq_validate_p (Shishi * handle, Shishi_asn1 kdcreq)
 {
-  int options = 0;
+  uint32_t options = 0;
 
   shishi_kdcreq_options (handle, kdcreq, &options);
 
@@ -1159,7 +1159,7 @@ shishi_kdcreq_add_padata (Shishi * handle,
 {
   char *format;
   int res;
-  int i;
+  size_t i;
 
   res = shishi_asn1_write (handle, kdcreq, "padata", "NEW", 1);
   if (res != SHISHI_OK)
