@@ -4182,6 +4182,8 @@ functionality, see @ref{Kerberos via TLS}.
 @include texi/authorize.c.texi
 @include texi/gztime.c.texi
 @include texi/password.c.texi
+@include texi/resolv.c.texi
+
 
 @node ASN.1 Functions
 @section ASN.1 Functions
