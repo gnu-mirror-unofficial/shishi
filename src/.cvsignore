@@ -6,6 +6,8 @@ shisa
 shisa_cmd.h
 shisa_cmd.c
 shishi
+shishi_cmd.h
+shishi_cmd.c
 shishid
 shishid_cmd.h
 shishid_cmd.c
