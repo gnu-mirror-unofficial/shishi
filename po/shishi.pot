@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-12-28 17:52+0100\n"
+"POT-Creation-Date: 2004-01-15 05:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -322,6 +322,7 @@ msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr ""
 
 #: lib/tkt.c:1415
+#, c-format
 msgid "Ticket flags:\t"
 msgstr ""
 
