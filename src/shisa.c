@@ -39,13 +39,12 @@
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
 
+#include "progname.h"
+
 #include <shisa.h>
 #include <shishi.h>
 
 #include "shisa_cmd.h"
-
-/* The name the program was run with, stripped of any leading path. */
-char *program_name;
 
 Shishi *sh;
 Shisa *dbh;
@@ -227,54 +226,55 @@ apply_options (const char *realm,
   int32_t etype;
   int rc;
 
-  if (args_info.encryption_type_given)
+  if (principal != NULL)
     {
-      rc = shishi_cfg_clientkdcetype_set (sh, args_info.encryption_type_arg);
-      if (rc != SHISHI_OK)
-	return EXIT_FAILURE;
-    }
-  etype = shishi_cfg_clientkdcetype_fast (sh);
+      etype = shishi_cfg_clientkdcetype_fast (sh);
 
-  if (salt == NULL)
-    asprintf (&salt, "%s%s", realm, principal);
+      if (salt == NULL)
+	asprintf (&salt, "%s%s", realm, principal);
 
-  if (args_info.string_to_key_parameter_given)
-    {
-      /* XXX */
-    }
-
-  if (args_info.password_given)
-    {
-      if (!passwd)
+      if (args_info.string_to_key_parameter_given)
 	{
-	  rc = shishi_prompt_password (sh, &passwd, "Password for `%s@%s': ",
-				       principal, realm);
-	  if (rc != SHISHI_OK)
-	    return EXIT_FAILURE;
+	  /* XXX */
 	}
 
-      rc = shishi_key_from_string (sh, etype,
-				   passwd, strlen (passwd),
-				   salt, strlen (salt),
-				   str2keyparam,
-				   &key);
+      if (args_info.password_given)
+	{
+	  if (!passwd)
+	    {
+	      rc = shishi_prompt_password (sh, &passwd,
+					   "Password for `%s@%s': ",
+					   principal, realm);
+	      if (rc != SHISHI_OK)
+		return EXIT_FAILURE;
+	    }
+
+	  rc = shishi_key_from_string (sh, etype,
+				       passwd, strlen (passwd),
+				       salt, strlen (salt),
+				       str2keyparam,
+				       &key);
+	}
+      else
+	rc = shishi_key_random (sh, etype, &key);
+      if (rc != SHISHI_OK)
+	return EXIT_FAILURE;
+
+      shishi_key_realm_set (key, realm);
+      shishi_key_principal_set (key, principal);
+
+      if (!args_info.quiet_flag)
+	shishi_key_print (sh, stdout, key);
+
+      dbkey->etype = etype;
+      dbkey->key = shishi_key_value (key);
+      dbkey->keylen = shishi_key_length (key);
+      dbkey->salt = salt;
+      dbkey->saltlen = strlen (salt);
+      dbkey->str2keyparam = str2keyparam;
+      dbkey->str2keyparamlen = str2keyparamlen;
+      dbkey->password = passwd;
     }
-  else
-    rc = shishi_key_random (sh, etype, &key);
-  if (rc != SHISHI_OK)
-    return EXIT_FAILURE;
-
-  if (!args_info.quiet_flag)
-    shishi_key_print (sh, stdout, key);
-
-  dbkey->etype = etype;
-  dbkey->key = shishi_key_value (key);
-  dbkey->keylen = shishi_key_length (key);
-  dbkey->salt = salt;
-  dbkey->saltlen = strlen (salt);
-  dbkey->str2keyparam = str2keyparam;
-  dbkey->str2keyparamlen = str2keyparamlen;
-  dbkey->password = passwd;
 
   return EXIT_SUCCESS;
 }
@@ -443,7 +443,7 @@ main (int argc, char *argv[])
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
-  program_name = argv[0];
+  set_program_name (argv[0]);
 
   if (cmdline_parser (argc, argv, &args_info) != 0)
     {
@@ -463,16 +463,11 @@ main (int argc, char *argv[])
       args_info.modify_given + args_info.remove_given != 1)
     {
       cmdline_parser_print_help ();
-      printf("\nMandatory arguments to long options are "
-	     "mandatory for short options too.\n\n"
-	     "Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
+      printf ("\nMandatory arguments to long options are "
+	      "mandatory for short options too.\n\n");
+      printf ("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
       return 1;
     }
-
-  puts ("WARNING: The on-disk database format is not stable.");
-  puts ("WARNING: It will likely change in the next release.");
-  puts ("WARNING: The old format will not be recognized.");
-  puts ("");
 
   rc = shisa_init_with_paths (&dbh, args_info.configuration_file_arg);
   if (rc != SHISA_OK)
