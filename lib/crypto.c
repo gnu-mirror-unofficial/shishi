@@ -1188,10 +1188,10 @@ static checksuminfo hmac_sha1_96_aes256_info = {
 static checksuminfo *checksums[] = {
   &md4_info,
   &md5_info,
-  &md5_gss_info
+  &md5_gss_info,
   &hmac_sha1_des3_kd_info,
   &hmac_sha1_96_aes128_info,
-  &hmac_sha1_96_aes256_info,
+  &hmac_sha1_96_aes256_info
 };
 
 /**
