@@ -235,10 +235,9 @@ des3_string_to_key (Shishi * handle,
 
   /* tmpKey = random-to-key(168-fold(s)) */
   res = shishi_n_fold (handle, s, n_s, nfold, nfoldlen);
+  free(s);
   if (res != SHISHI_OK)
     return res;
-
-  free(s);
 
   res = shishi_key_from_value(handle, shishi_key_type(outkey), NULL, &key);
   if (res != SHISHI_OK)
