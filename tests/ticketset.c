@@ -218,23 +218,23 @@ main (int argc, char *argv[])
     fail ("shishi_tkts_remove() failed\n");
 
   /* create ticket */
-  n = shishi_from_base64 (buffer, tkt1ticketb64);
+  n = base64_from (buffer, tkt1ticketb64);
   if (n == -1)
-    die ("shishi_from_base64() failed\n");
+    die ("base64_from() failed\n");
   n1 = shishi_der2asn1_ticket (handle, buffer, n);
   if (!n1)
     die ("shishi_der2asn1_ticket() failed\n");
 
-  n = shishi_from_base64 (buffer, tkt1enckdcreppartb64);
+  n = base64_from (buffer, tkt1enckdcreppartb64);
   if (n == -1)
-    die ("shishi_from_base64() failed\n");
+    die ("base64_from() failed\n");
   n2 = shishi_der2asn1_encasreppart (handle, buffer, n);
   if (!n2)
     die ("shishi_der2asn1_encasreppart() failed\n");
 
-  n = shishi_from_base64 (buffer, tkt1kdcrepb64);
+  n = base64_from (buffer, tkt1kdcrepb64);
   if (n == -1)
-    die ("shishi_from_base64() failed\n");
+    die ("base64_from() failed\n");
   n3 = shishi_der2asn1_asrep (handle, buffer, n);
   if (!n3)
     die ("shishi_der2asn1_asrep() failed\n");
@@ -307,23 +307,23 @@ main (int argc, char *argv[])
     fail ("shishi_tkts_size() failed\n");
 
   /* create ticket */
-  n = shishi_from_base64 (buffer, tkt2ticketb64);
+  n = base64_from (buffer, tkt2ticketb64);
   if (n == -1)
-    die ("shishi_from_base64() failed\n");
+    die ("base64_from() failed\n");
   n1 = shishi_der2asn1_ticket (handle, buffer, n);
   if (!n1)
     die ("shishi_der2asn1_ticket() failed\n");
 
-  n = shishi_from_base64 (buffer, tkt2enckdcreppartb64);
+  n = base64_from (buffer, tkt2enckdcreppartb64);
   if (n == -1)
-    die ("shishi_from_base64() failed\n");
+    die ("base64_from() failed\n");
   n2 = shishi_der2asn1_enctgsreppart (handle, buffer, n);
   if (!n2)
     die ("shishi_der2asn1_enctgsreppart() failed\n");
 
-  n = shishi_from_base64 (buffer, tkt2kdcrepb64);
+  n = base64_from (buffer, tkt2kdcrepb64);
   if (n == -1)
-    die ("shishi_from_base64() failed\n");
+    die ("base64_from() failed\n");
   n3 = shishi_der2asn1_tgsrep (handle, buffer, n);
   if (!n3)
     die ("shishi_der2asn1_kdcrep() failed\n");
@@ -537,7 +537,7 @@ main (int argc, char *argv[])
   else
     n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  base64_to (buffer2, buffer, n, BUFSIZ);
   if (strlen (buffer2) == strlen (tkt1ticketb64) &&
       memcmp (buffer2, tkt1ticketb64, strlen (tkt1ticketb64)) == 0)
     success ("Ticket read OK\n");
@@ -551,7 +551,7 @@ main (int argc, char *argv[])
   else
     n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  base64_to (buffer2, buffer, n, BUFSIZ);
   if (strlen (buffer2) == strlen (tkt1enckdcreppartb64) &&
       memcmp (buffer2, tkt1enckdcreppartb64,
 	      strlen (tkt1enckdcreppartb64)) == 0)
@@ -566,7 +566,7 @@ main (int argc, char *argv[])
   else
     n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  base64_to (buffer2, buffer, n, BUFSIZ);
   if (strlen (buffer2) == strlen (tkt1kdcrepb64) &&
       memcmp (buffer2, tkt1kdcrepb64, strlen (tkt1kdcrepb64)) == 0)
     success ("KDC-REP read OK\n");
@@ -580,7 +580,7 @@ main (int argc, char *argv[])
   else
     n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  base64_to (buffer2, buffer, n, BUFSIZ);
   if (strlen (buffer2) == strlen (tkt2ticketb64) &&
       memcmp (buffer2, tkt2ticketb64, strlen (tkt2ticketb64)) == 0)
     success ("Ticket 2 read OK\n");
@@ -594,7 +594,7 @@ main (int argc, char *argv[])
   else
     n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  base64_to (buffer2, buffer, n, BUFSIZ);
   if (strlen (buffer2) == strlen (tkt2enckdcreppartb64) &&
       memcmp (buffer2, tkt2enckdcreppartb64,
 	      strlen (tkt2enckdcreppartb64)) == 0)
@@ -609,7 +609,7 @@ main (int argc, char *argv[])
   else
     n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  base64_to (buffer2, buffer, n, BUFSIZ);
   if (strlen (buffer2) == strlen (tkt2kdcrepb64) &&
       memcmp (buffer2, tkt2kdcrepb64, strlen (tkt2kdcrepb64)) == 0)
     success ("KDC-REP 2 read OK\n");
