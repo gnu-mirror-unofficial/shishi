@@ -1,17 +1,18 @@
 Shishi ANNOUNCE -- Overview to attract interest.
 See the end for copying conditions.
 
-Shishi is an (still incomplete) implementation of the RFC 1510 and RFC
+Shishi is a (still incomplete) implementation of the RFC 1510 and RFC
 1510bis network authentication system.  RFC 1510 can be used to
 authenticate users in distributed systems.
 
-Shishi contains a library ('libgsasl') that can be used by application
-developers to add support for RFC 1510.  Shishi contains a command
-line utility ('shishi') that is used by users to interface with the
-library, to acquire and manage tickets (and more).  Included are also
-a TELNET client and server (based on GNU InetUtils) for remote network
-login, and a PAM module for host security.  Of course, a manual
-documenting user aspects as well as the programming API is included.
+Shishi contains a library ('libshishi') that can be used by
+application developers to add support for RFC 1510.  Shishi contains a
+command line utility ('shishi') that is used by users to interface
+with the library, to acquire and manage tickets (and more).  Included
+are also a TELNET client and server (based on GNU InetUtils) for
+remote network login, and a PAM module for host security.  Of course,
+a manual documenting user aspects as well as the programming API is
+included.
 
 Shishi currently supports AS/TGS exchanges for acquiring tickets, and
 the AP exchange for performing client and server authentication.
