@@ -1,5 +1,5 @@
 /* crypto-null.c	NULL crypto functions
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -65,7 +65,7 @@ null_decrypt (Shishi * handle,
 
 static int
 null_random_to_key (Shishi * handle,
-		    const char *random, size_t randomlen, Shishi_key * outkey)
+		    const char *rnd, size_t rndlen, Shishi_key * outkey)
 {
   return SHISHI_OK;
 }

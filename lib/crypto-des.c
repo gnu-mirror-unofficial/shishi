@@ -1,5 +1,5 @@
 /* crypto-des.c --- DES crypto functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -431,18 +431,18 @@ des_key_correction (Shishi * handle, char key[8])
 
 static int
 des_random_to_key (Shishi * handle,
-		   const char *random, size_t randomlen, Shishi_key * outkey)
+		   const char *rnd, size_t rndlen, Shishi_key * outkey)
 {
   char tmp[MAX_RANDOM_LEN];
   int keylen = shishi_cipher_keylen (shishi_key_type (outkey));
 
-  if (randomlen != shishi_key_length (outkey))
+  if (rndlen != shishi_key_length (outkey))
     {
       shishi_error_printf (handle, "DES random to key caller error");
       return SHISHI_CRYPTO_ERROR;
     }
 
-  memcpy (tmp, random, keylen);
+  memcpy (tmp, rnd, keylen);
   des_set_odd_key_parity (tmp);
 
   shishi_key_value_set (outkey, tmp);

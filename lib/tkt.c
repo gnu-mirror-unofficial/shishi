@@ -1359,7 +1359,8 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
   char *buf2;
   char *p;
   size_t buflen;
-  int keytype, etype, flags;
+  int keytype, etype;
+  uint32_t flags;
   int res;
   time_t t;
   time_t now = time (NULL);
