@@ -1467,8 +1467,42 @@ to always be @code{0} so you may use it in boolean constructs.
 @section Examples
 @cindex Examples
 
-This chapter does not contain example code which illustrate how
-`Shishi' can be used when writing your own application.
+This section will be extended to contain walk-throughs of example code
+that demonstrate how `Shishi' is used to write your own applications
+that support Kerberos 5.  The rest of the current section are simply
+some crude hints for the example client/server applications that is
+part of Shishi, taken from an email but saved here for lack of a place
+to store it.
+
+There are two programs: 'client' and 'server' in src/.
+
+The client output an AP-REQ, waits for an AP-REP, and then simply
+reads data from stdin.
+
+The server waits for an AP-REQ, parses it and prints an AP-REP, and
+then read data from stdin.
+
+Both programs accept a Kerberos server name as the first command line
+argument.  Your KDC must know this server, since the client tries to
+get a ticket for it (first it gets a ticket granting ticket for the
+default username), and you must write the key for the server into
+/usr/local/etc/shishi.keys on the Shishi format, e.g.:
+
+-----BEGIN SHISHI KEY-----
+Keytype: 16 (des3-cbc-sha1-kd)
+Principal: sample/latte.josefsson.org
+Realm: JOSEFSSON.ORG
+ 
+8W0VrQQBpxlACPQEqN91EHxbvFFo2ltt
+-----END SHISHI KEY-----
+
+You must extract the proper encryption key from the KDC in some way.
+(This part will be easier when Shishi include a KDC, a basic one isn't
+far away, give me a week or to.)
+
+The intention is that the data read, after the authentication phase,
+should be protected using KRB_SAFE (see RFC) but I haven't added this
+yet.
 
 @node Generic Security Service
 @section Generic Security Service
