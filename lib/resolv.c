@@ -93,8 +93,9 @@ _txt_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
   size_t len = (size_t)**scan;
   char *p;
 
-  p = xmalloc (len);
+  p = xmalloc (len + 1);
   memcpy (p, *scan + 1, len);
+  p[len] = '\0';
   *scan += (unsigned char) (len + 1);
 
   return p;
