@@ -75,7 +75,7 @@ shishi_cfg (Shishi * handle, char *option)
   char *value;
   char *realm = NULL;
   int res;
-  int i;
+  size_t i;
 
   while (option != NULL && *option != '\0')
     {
@@ -161,36 +161,46 @@ shishi_cfg (Shishi * handle, char *option)
 	  handle->realminfos[handle->nrealminfos].nkdcaddresses = 0;
 	  handle->nrealminfos++;
 	  break;
+
 	case DEFAULT_REALM_OPTION:
 	  handle->default_realm = strdup (value);
 	  break;
+
 	case DEFAULT_PRINCIPAL_OPTION:
 	  handle->default_principal = strdup (value);
 	  break;
+
 	case CLIENT_KDC_ETYPES_OPTION:
 	  res = shishi_cfg_clientkdcetype_set (handle, value);
 	  if (res != SHISHI_OK)
 	    return res;
 	  break;
+
 	case KDC_OPTION:
 	  handle->kdc = strdup (value);
 	  break;
+
 	case STRINGPROCESS_OPTION:
 	  handle->stringprocess = strdup (value);
 	  break;
+
 	case VERBOSE_OPTION:
 	  handle->verbose = value && atoi (value) ? atoi (value) :
 	    ~0 & ~VERBOSES;
 	  break;
+
 	case VERBOSE_CRYPTO_OPTION:
 	  handle->verbose |= SHISHI_VERBOSE_CRYPTO;
 	  break;
+
 	case VERBOSE_ASN1_OPTION:
 	  handle->verbose |= SHISHI_VERBOSE_ASN1;
 	  break;
+
 	case VERBOSE_NOICE_OPTION:
 	  handle->verbose |= SHISHI_VERBOSE_NOICE;
 	  break;
+
 	case -1:
 	  if (!value)
 	    break;
@@ -312,7 +322,7 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
 int
 shishi_cfg_print (Shishi * handle, FILE * fh)
 {
-  int i, j;
+  size_t i, j;
   time_t tmp, now = time (NULL);
 
   fprintf (fh, "Shishi initial library configuration:\n");

@@ -177,7 +177,7 @@ struct Shishi_realminfo
 {
   char *name;
   struct Shishi_kdcinfo *kdcaddresses;
-  int nkdcaddresses;
+  size_t nkdcaddresses;
 };
 
 struct Shishi
@@ -191,9 +191,9 @@ struct Shishi
   int ticketlife;
   int renewlife;
   int32_t *clientkdcetypes;
-  int nclientkdcetypes;
+  size_t nclientkdcetypes;
   struct Shishi_realminfo *realminfos;
-  int nrealminfos;
+  size_t nrealminfos;
   char *kdc;
   char error[1024];
   char gztime_buf[40];
