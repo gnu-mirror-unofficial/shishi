@@ -37,7 +37,7 @@ static _Shisa_backend _shisa_backends[] = {
    shisa_file_keys_find,
    shisa_file_key_add,
    shisa_file_key_update,
-   shisa_file_key_remove }
+   shisa_file_key_remove}
 };
 
 _Shisa_backend *

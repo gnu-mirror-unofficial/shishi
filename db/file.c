@@ -201,14 +201,12 @@ shisa_file_principal_find (Shisa * dbh,
     _shisa_mtime4 (info->path, realm, principal, "validfrom.stamp");
   ph->isdisabled =
     _shisa_isfile4 (info->path, realm, principal, "disabled.flag");
-  ph->kvno =
-    _shisa_uint32link4 (info->path, realm, principal, "latest.key");
+  ph->kvno = _shisa_uint32link4 (info->path, realm, principal, "latest.key");
   ph->lastinitialtgt =
     _shisa_mtime4 (info->path, realm, principal, "lastinitaltgt.stamp");
   ph->lastinitialrequest =
     _shisa_mtime4 (info->path, realm, principal, "lastinitial.stamp");
-  ph->lasttgt =
-    _shisa_mtime4 (info->path, realm, principal, "lasttgt.stamp");
+  ph->lasttgt = _shisa_mtime4 (info->path, realm, principal, "lasttgt.stamp");
   ph->lastrenewal =
     _shisa_mtime4 (info->path, realm, principal, "lastrenewal.stamp");
   ph->passwordexpire =
@@ -571,8 +569,7 @@ int
 shisa_file_key_add (Shisa * dbh,
 		    void *state,
 		    const char *realm,
-		    const char *principal,
-		    const Shisa_key * key)
+		    const char *principal, const Shisa_key * key)
 {
   Shisa_file *info = state;
   size_t passwdlen = key && key->password ? strlen (key->password) : 0;
@@ -587,11 +584,13 @@ shisa_file_key_add (Shisa * dbh,
       _shisa_mkdir4 (info->path, realm, principal, "keys"))
     return SHISA_NO_KEY;
 
-  do {
-    if (file)
-      free (file);
-    asprintf (&file, "keys/%d-%d-%d.key", key->kvno, key->etype, num++);
-  } while (_shisa_isfile4 (info->path, realm, principal, file));
+  do
+    {
+      if (file)
+	free (file);
+      asprintf (&file, "keys/%d-%d-%d.key", key->kvno, key->etype, num++);
+    }
+  while (_shisa_isfile4 (info->path, realm, principal, file));
   fh = _shisa_fopen4 (info->path, realm, principal, file, "w");
   free (file);
   if (!fh)
@@ -624,12 +623,11 @@ shisa_file_key_update (Shisa * dbh,
 		       void *state,
 		       const char *realm,
 		       const char *principal,
-		       const Shisa_key * oldkey,
-		       const Shisa_key * newkey)
+		       const Shisa_key * oldkey, const Shisa_key * newkey)
 {
   Shisa_file *info = state;
 
-  puts("fku");
+  puts ("fku");
 
   return SHISA_NO_KEY;
 }
@@ -641,8 +639,7 @@ int
 shisa_file_key_remove (Shisa * dbh,
 		       void *state,
 		       const char *realm,
-		       const char *principal,
-		       const Shisa_key * key)
+		       const char *principal, const Shisa_key * key)
 {
   Shisa_file *info = state;
   Shisa_key *tmpkey;

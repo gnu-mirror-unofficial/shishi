@@ -186,9 +186,7 @@ int
 shisa_keys_find (Shisa * dbh,
 		 const char *realm,
 		 const char *principal,
-		 const Shisa_key *hint,
-		 Shisa_key ***keys,
-		 size_t * nkeys)
+		 const Shisa_key * hint, Shisa_key *** keys, size_t * nkeys)
 {
   _Shisa_db *db;
   size_t i;
@@ -213,8 +211,7 @@ shisa_keys_find (Shisa * dbh,
 int
 shisa_key_add (Shisa * dbh,
 	       const char *realm,
-	       const char *principal,
-	       const Shisa_key * key)
+	       const char *principal, const Shisa_key * key)
 {
   _Shisa_db *db;
   size_t i;
@@ -235,8 +232,7 @@ int
 shisa_key_update (Shisa * dbh,
 		  const char *realm,
 		  const char *principal,
-		  const Shisa_key * oldkey,
-		  const Shisa_key * newkey)
+		  const Shisa_key * oldkey, const Shisa_key * newkey)
 {
   _Shisa_db *db;
   size_t i;
@@ -256,8 +252,7 @@ shisa_key_update (Shisa * dbh,
 int
 shisa_key_remove (Shisa * dbh,
 		  const char *realm,
-		  const char *principal,
-		  const Shisa_key * key)
+		  const char *principal, const Shisa_key * key)
 {
   _Shisa_db *db;
   size_t i;
