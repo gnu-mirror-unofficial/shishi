@@ -731,6 +731,7 @@ extern int shishi_tkt_renew_till (Shishi_tkt * tkt,
 				  char *renewtilltime, size_t * renewtilllen);
 extern time_t shishi_tkt_renew_tillc (Shishi_tkt * tkt);
 extern int shishi_tkt_keytype (Shishi_tkt * tkt, int32_t * etype);
+extern int32_t shishi_tkt_keytype_fast (Shishi_tkt * tkt);
 extern int shishi_tkt_keytype_p (Shishi_tkt * tkt, int32_t etype);
 extern int shishi_tkt_server (Shishi_tkt * tkt,
 			      char *service, size_t * servicelen);
@@ -909,6 +910,10 @@ shishi_authenticator_set_subkey (Shishi * handle,
 extern int
 shishi_authenticator_add_random_subkey (Shishi * handle,
 					Shishi_asn1 authenticator);
+extern int
+shishi_authenticator_add_random_subkey_etype (Shishi * handle,
+					      Shishi_asn1 authenticator,
+					      int etype);
 extern int
 shishi_authenticator_add_subkey (Shishi * handle,
 				 Shishi_asn1 authenticator,
@@ -1572,8 +1577,9 @@ extern Shishi_asn1 shishi_der2asn1_encprivpart (Shishi * handle,
 
 /* ap.c */
 extern int shishi_ap (Shishi * handle, Shishi_ap ** ap);
-extern void shishi_ap_done (Shishi_ap * ap);
+extern int shishi_ap_etype (Shishi * handle, Shishi_ap ** ap, int etype);
 extern int shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap);
+extern void shishi_ap_done (Shishi_ap * ap);
 extern int shishi_ap_set_tktoptions (Shishi_ap * ap,
 				     Shishi_tkt * tkt, int options);
 extern int shishi_ap_tktoptions (Shishi * handle,
