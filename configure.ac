@@ -238,6 +238,7 @@ AC_MSG_CHECKING([if unfinished TLS support should be enabled])
 AC_MSG_RESULT($tls)
 
 # For gnulib stuff in gl/.
+gl_C_RESTRICT
 gl_FUNC_ALLOCA
 gl_ARGP
 gl_ERROR
@@ -265,6 +266,7 @@ gl_FUNC_VASNPRINTF
 gl_FUNC_VASPRINTF
 gl_XALLOC
 gl_XSTRNDUP
+gl_TIME_R
 
 # Checks for library functions.
 AC_FUNC_STRFTIME
