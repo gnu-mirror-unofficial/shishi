@@ -290,7 +290,7 @@ shishi_asn1_write_uint32 (Shishi * handle, Shishi_asn1 node,
   char *buf;
   int res;
 
-  asprintf (&buf, "%ul", n);
+  asprintf (&buf, "%lu", n);
   res = shishi_asn1_write (handle, node, field, buf, 0);
   free (buf);
   if (res != SHISHI_OK)
@@ -306,7 +306,7 @@ shishi_asn1_write_int32 (Shishi * handle, Shishi_asn1 node,
   char *buf;
   int res;
 
-  asprintf (&buf, "%d", n);
+  asprintf (&buf, "%ld", n);
   res = shishi_asn1_write (handle, node, field, buf, 0);
   free (buf);
   if (res != SHISHI_OK)
