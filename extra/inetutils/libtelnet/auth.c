@@ -628,7 +628,7 @@ auth_finished(ap, result)
 	Authenticator *ap;
 	int result;
 {
-  if (ap->cleanup)
+  if (ap && ap->cleanup)
     (*ap->cleanup) (ap);
 	if (!(authenticated = ap))
 		authenticated = &NoAuth;
