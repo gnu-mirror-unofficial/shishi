@@ -19,11 +19,10 @@
 @syncodeindex pg fn
 
 @copying
-This is @cite{The Shishi Manual}, last updated
-@value{UPDATED}, for Version @value{VERSION} of the @acronym{Shishi}
-library.
+This is @cite{The Shishi Manual}, last updated @value{UPDATED}, for
+Version @value{VERSION} of Shishi.
 
-Copyright @copyright{} 2002 Simon Josefsson.
+Copyright @copyright{} 2002, 2003 Simon Josefsson.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -1469,10 +1468,10 @@ to always be @code{0} so you may use it in boolean constructs.
 
 This section will be extended to contain walk-throughs of example code
 that demonstrate how `Shishi' is used to write your own applications
-that support Kerberos 5.  The rest of the current section are simply
+that support Kerberos 5.  The rest of the current section consists of
 some crude hints for the example client/server applications that is
-part of Shishi, taken from an email but saved here for lack of a place
-to store it.
+part of Shishi, taken from an email but saved here for lack of a
+better place to put it.
 
 There are two programs: 'client' and 'server' in src/.
 
@@ -1488,6 +1487,7 @@ get a ticket for it (first it gets a ticket granting ticket for the
 default username), and you must write the key for the server into
 /usr/local/etc/shishi.keys on the Shishi format, e.g.:
 
+@example
 -----BEGIN SHISHI KEY-----
 Keytype: 16 (des3-cbc-sha1-kd)
 Principal: sample/latte.josefsson.org
@@ -1495,6 +1495,7 @@ Realm: JOSEFSSON.ORG
  
 8W0VrQQBpxlACPQEqN91EHxbvFFo2ltt
 -----END SHISHI KEY-----
+@end example
 
 You must extract the proper encryption key from the KDC in some way.
 (This part will be easier when Shishi include a KDC, a basic one isn't
