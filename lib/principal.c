@@ -448,6 +448,18 @@ shishi_principal_set (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_server_for_local_service:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @service: zero terminated string with name of service, e.g., "host".
+ *
+ * Construct a service principal (e.g., "imap/yxa.extuno.com") based
+ * on supplied service name (i.e., "imap") and the system hostname as
+ * returned by hostname() (i.e., "yxa.extundo.com").  The string must
+ * be deallocated by the caller.
+ *
+ * Return value: Return newly allocated service name string.
+ **/
 char *
 shishi_server_for_local_service (Shishi * handle, const char *service)
 {
