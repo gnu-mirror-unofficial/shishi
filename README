@@ -5,8 +5,11 @@ This directory holds an implementation of RFC 1510 (aka Kerberos 5).
 
 Shishi is unstable.  You should expect it to not work.  You should
 expect it to have security problems.  The API will likely change.
-This is the development release. A proper release will be made in due
+This is the development release.  A proper release will be made in due
 time.
+
+Installation instructions are found in the INSTALL file in this
+directory.  Further instructions are found in doc/shishi.info.
 
 The library (lib/) is licensed under the GNU Lesser Public License
 license (see COPYING.LIB), the application (src/) is licensed under
@@ -14,8 +17,6 @@ the GNU Public License (see COPYING), and the documentation (doc/) is
 licensed under the GNU Free Documentation License (see COPYING.DOC).
 
 For updates to the project, see <URL:http://josefsson.org/shishi/>.
-
-Send all bug reports by electronic mail to bug-shishi@josefsson.org.
 
 ----------------------------------------------------------------------
 Copyright information:
