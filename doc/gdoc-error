@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (C) 2002 Simon Josefsson.
+# Copyright (C) 2002, 2004 Simon Josefsson.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@ my ($label, $txt);
 while (<>) {
     if ($inerror) {
 	$txt .= $1 if (m,"(.*)",);
-	$inerror = 0 if m,break;,;
+	$inerror = 0 if m/},/;
 	if (!$inerror) {
 	    print "\@item $label\n";
 	    print $txt, "\n\n";
 	}
     } else {
-	next unless m,case (.*):,;
-	next if $1 =~ m,[^_]+_OK,;
+	next unless m/{(SHISHI.*),/;
+	next if $1 =~ m,SHISHI_OK,; # Handled separately.
 	$inerror = 1;
 	$label = $1;
 	$txt = "";

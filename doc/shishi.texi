@@ -3479,7 +3479,7 @@ compatibility new features may have been introduced but due to problem
 with the dynamic linker an old version is actually used.  So you may
 want to check that the version is okay right after program startup.
 
-@include texi/shishi_check_version.texi
+@include texi/version.c.texi
 
 The normal way to use the function is to put something similar to the
 following early in your @code{main}:
