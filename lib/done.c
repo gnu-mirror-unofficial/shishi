@@ -26,13 +26,26 @@
  * @handle: shishi handle as allocated by shishi_init().
  *
  * Deallocates the shishi library handle.  The handle must not be used
- * in any calls to shishi functions after this.
+ * in any calls to shishi functions after this.  If there is a default
+ * ticketset, it is written to the default ticketset file (call
+ * shishi_ticketset_default_file_set() to change the default ticketset
+ * file). If you do not wish to write the default ticketset file,
+ * close the default ticketset with shishi_ticketset_done(handle,
+ * NULL) before calling this function.
  **/
 void
 shishi_done (Shishi * handle)
 {
+  int rc;
+
   if (handle->ticketset)
-    shishi_ticketset_done (handle, handle->ticketset);
+    {
+      shishi_ticketset_to_file (handle, handle->ticketset,
+				shishi_ticketset_default_file (handle));
+
+      if (handle->ticketset)
+	shishi_ticketset_done (handle, handle->ticketset);
+    }
 
   /*  if (handle->default_realm)
      free (handle->default_realm); */
