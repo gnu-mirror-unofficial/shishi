@@ -431,6 +431,8 @@ tgsreq1 (Shishi_tgs * tgs)
   Shisa_key **serverkeys;
   size_t nserverkeys;
 
+  puts ("Processing TGS-REQ...");
+
   /*
    * The KRB_TGS_REQ message is processed in a manner similar to the
    * KRB_AS_REQ message, but there are many additional checks to be
@@ -654,7 +656,7 @@ asreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
   rc = shishi_as (handle, &as);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR, "Cannot create AS: %s\n", shishi_strerror (rc));
+      syslog (LOG_ERR, "shishi_as failed (%d): %s", rc, shishi_strerror (rc));
       return rc;
     }
 
@@ -663,8 +665,7 @@ asreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
   rc = asreq1 (as);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_NOTICE, "Could not answer request: %s: %s\n",
-	      shishi_strerror (rc),
+      syslog (LOG_NOTICE, "AS-REQ failing with KRB-ERROR: %s",
 	      shishi_krberror_message (handle, shishi_as_krberror (as)));
       rc = shishi_as_krberror_der (as, out, outlen);
     }
@@ -672,7 +673,8 @@ asreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
     rc = shishi_as_rep_der (as, out, outlen);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR, "Cannot DER encode reply: %s\n", shishi_strerror (rc));
+      syslog (LOG_ERR, "shishi_as_rep_der failed (%d): %s",
+	      rc, shishi_strerror (rc));
       return rc;
     }
 
@@ -688,7 +690,7 @@ tgsreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
   rc = shishi_tgs (handle, &tgs);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR, "Cannot create TGS: %s\n", shishi_strerror (rc));
+      syslog (LOG_ERR, "shishi_tgs failed (%d): %s", rc, shishi_strerror (rc));
       return rc;
     }
 
@@ -697,8 +699,7 @@ tgsreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
   rc = tgsreq1 (tgs);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_NOTICE, "Could not answer request: %s: %s\n",
-	      shishi_strerror (rc),
+      syslog (LOG_NOTICE, "TGS-REQ failing with KRB-ERROR: %s",
 	      shishi_krberror_message (handle, shishi_tgs_krberror (tgs)));
       rc = shishi_tgs_krberror_der (tgs, out, outlen);
     }
@@ -706,7 +707,8 @@ tgsreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
     rc = shishi_tgs_rep_der (tgs, out, outlen);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR, "Cannot DER encode reply: %s\n", shishi_strerror (rc));
+      syslog (LOG_ERR, "shishi_tgs_rep_der failed (%d): %s",
+	      rc, shishi_strerror (rc));
       return rc;
     }
 
@@ -720,9 +722,12 @@ process (const char *in, size_t inlen, char **out)
   size_t outlen;
   int rc;
 
-  *out = NULL;
-
   node = shishi_der2asn1 (handle, in, inlen);
+  if (node == NULL)
+    {
+      syslog (LOG_ERR, "Received %d bytes of non-Kerberos 5 data", inlen);
+      return -1;
+    }
 
   switch (shishi_asn1_msgtype (handle, node))
     {
@@ -731,7 +736,6 @@ process (const char *in, size_t inlen, char **out)
       break;
 
     case SHISHI_MSGTYPE_TGS_REQ:
-      puts ("Processing TGS-REQ...");
       rc = tgsreq (node, out, &outlen);
       break;
 
@@ -744,7 +748,11 @@ process (const char *in, size_t inlen, char **out)
     }
 
   if (rc != SHISHI_OK)
-    return -1;
+    {
+      syslog (LOG_ERR, "Fatal error answering request (%d): %s",
+	      rc, shishi_strerror (rc));
+      return -1;
+    }
 
   return outlen;
 }
