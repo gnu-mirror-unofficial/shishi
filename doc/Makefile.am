@@ -92,7 +92,7 @@ shishi-api-error.texi: $(top_srcdir)/lib/error.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-error-labels.texi: $(top_srcdir)/lib/error.c
-	$(PERL) $(srcdir)/gdoc-error -texinfo $^ > $@
+	$(PERL) $(srcdir)/gdoc-error $^ > $@
 
 shishi-api-version.texi: $(top_srcdir)/lib/version.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
