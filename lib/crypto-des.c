@@ -584,7 +584,6 @@ des_key_correction (Shishi * handle, char *key)
   res = gcry_cipher_setkey (ch, key, 8);
   if (res != GPG_ERR_NO_ERROR)
     {
-      printf("hepp %d\n", gpg_err_code(res));
       if (gpg_err_code(res) == GPG_ERR_WEAK_KEY)
 	{
 	  if (VERBOSECRYPTO(handle))
