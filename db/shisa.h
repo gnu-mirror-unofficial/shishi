@@ -81,20 +81,18 @@ extern int shisa_cfg_from_file (Shisa * dbh, const char *cfg);
 extern void shisa_cfg_print (Shisa * dbh, FILE * fh);
 extern const char *shisa_cfg_default_systemfile (Shisa * dbh);
 
-/* */
-extern int shisa_enumerate_principals (Shisa *dbh,
-				       char ***principals,
-				       size_t *nprincipals);
-
 /* Core API. */
-extern int shisa_principal_create (Shisa * dbh,
-				   const char *name,
-				   const char *realm,
-				   Shisa_principal **ph);
 extern int shisa_principal_find (Shisa * dbh,
 				 const char *name,
 				 const char *realm,
 				 Shisa_principal **ph);
+extern int shisa_enumerate_principals (Shisa *dbh,
+				       char ***principals,
+				       size_t *nprincipals);
+extern int shisa_principal_create (Shisa * dbh,
+				   const char *name,
+				   const char *realm,
+				   Shisa_principal **ph);
 extern int shisa_principal_info_get (Shisa_principal * ph,
 				     Shisa_principal_info *info);
 extern int shisa_principal_info_free (Shisa_principal * ph,
@@ -110,9 +108,6 @@ extern int shisa_principal_key_add (Shisa_principal * ph,
 				    const Shisa_key_info *keyinfo);
 
 /* Utility API. */
-extern Shisa_principal *shisa_principal (Shisa * dbh,
-					 const char *realm,
-					 const char *principal);
 extern int shisa_setpasswd (Shisa_principal * principal, const char *passwd);
 
 #endif /* SHISA_H */
