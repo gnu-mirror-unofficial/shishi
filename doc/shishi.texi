@@ -354,7 +354,7 @@ the paper "A Better Key Schedule For DES-like Ciphers"
 Uri Blumenthal and Steven M. Bellovin (it is not clear if the
 algorithm, and the way it is used, is used by any other protocols,
 although it seems unlikely).  Data is integrity protected with a keyed
-(HMAC) SHA1 hash.  It has no security proof, and is assumed to provide
+(HMAC) SHA1 hash.  It has no security proof, but is assumed to provide
 adequate security in the sense that knowledge on how to crack it is
 not known to the public.  It is associated with the
 @code{hmac-sha1-des3-kd} checksum.
