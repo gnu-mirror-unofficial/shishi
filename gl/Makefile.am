@@ -24,7 +24,7 @@ alloca.h: alloca_.h
 	mv $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
-libfoo_la_LIBADD += @LTALLOCA@
+libfoo_la_LIBADD += @ALLOCA@
 libfoo_la_SOURCES += allocsa.h allocsa.c
 
 
