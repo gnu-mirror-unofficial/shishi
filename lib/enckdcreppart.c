@@ -43,12 +43,9 @@ shishi_enckdcreppart_get_key (Shishi * handle,
 {
   int res;
   unsigned char buf[BUFSIZ];
-  int buflen;
 
-  *keytype = 0;
-  buflen = sizeof (*keytype);
-  res = _shishi_asn1_field (handle, enckdcreppart,
-			    keytype, &buflen, "EncKDCRepPart.key.keytype");
+  res = _shishi_asn1_integer_field (handle, enckdcreppart,
+				    keytype, "EncKDCRepPart.key.keytype");
   if (res != SHISHI_OK)
     return res;
 

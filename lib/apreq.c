@@ -692,15 +692,8 @@ int
 shishi_apreq_get_authenticator_etype (Shishi * handle,
 				      ASN1_TYPE apreq, int *etype)
 {
-  int buflen;
-  int res;
-
-  *etype = 0;
-  buflen = sizeof (*etype);
-  res = _shishi_asn1_field (handle, apreq,
-			    etype, &buflen, "AP-REQ.authenticator.etype");
-
-  return res;
+  return _shishi_asn1_integer_field (handle, apreq, etype,
+				     "AP-REQ.authenticator.etype");
 }
 
 /**

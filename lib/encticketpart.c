@@ -67,12 +67,9 @@ shishi_encticketpart_get_key (Shishi * handle,
 {
   int res;
   unsigned char buf[BUFSIZ];
-  int buflen;
 
-  *keytype = 0;
-  buflen = sizeof (*keytype);
-  res = _shishi_asn1_field (handle, encticketpart,
-			    keytype, &buflen, "EncTicketPart.key.keytype");
+  res = _shishi_asn1_integer_field (handle, encticketpart, keytype, 
+				    "EncTicketPart.key.keytype");
   if (res != SHISHI_OK)
     return res;
 

@@ -382,15 +382,8 @@ int
 shishi_aprep_get_enc_part_etype (Shishi * handle,
 				 ASN1_TYPE aprep, int *etype)
 {
-  int buflen;
-  int res;
-
-  *etype = 0;
-  buflen = sizeof (*etype);
-  res = _shishi_asn1_field (handle, aprep,
-			    etype, &buflen, "AP-REP.enc-part.etype");
-
-  return res;
+  return _shishi_asn1_integer_field (handle, aprep, etype,
+				     "AP-REP.enc-part.etype");
 }
 
 int
@@ -409,7 +402,7 @@ shishi_aprep_decrypt (Shishi * handle,
   unsigned char cipher[BUFSIZ];
   int realmlen = BUFSIZ;
   int cipherlen;
-  unsigned char etype;
+  int etype;
 
   res = shishi_aprep_get_enc_part_etype (handle, aprep, &etype);
   if (res != SHISHI_OK)
