@@ -45,11 +45,11 @@ gnutls_anon_server_credentials x509cred;
 static void
 kdc_listen (void)
 {
-  struct listenspec *ls, **last;
+  struct listenspec *ls, *tmp;
   int maxfd = 0;
   int yes;
 
-  for (ls = listenspec, last = NULL; ls; last = &ls->next, ls = ls->next)
+  for (ls = listenspec; ls; ls = ls->next)
     {
       if (!arg.quiet_flag)
 	printf ("Listening on %s...\n", ls->str);
@@ -91,12 +91,14 @@ kdc_listen (void)
     errorclose:
       close (ls->sockfd);
     error:
+      tmp = ls->next;
+      if (listenspec == ls)
+	listenspec = tmp;
       free (ls->str);
-      if (last)
-	*last = ls->next;
-      else
-	listenspec = ls->next;
       free (ls);
+      ls = tmp;
+      if (!ls)
+	break;
     }
 
   if (maxfd == 0)
