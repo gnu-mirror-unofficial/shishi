@@ -471,11 +471,25 @@ shishi_tkt_realm (Shishi_tkt * tkt, char **realm, size_t * realmlen)
   return shishi_ticket_realm_get (tkt->handle, tkt->ticket, realm, realmlen);
 }
 
+/**
+ * shishi_tkt_server:
+ * @tkt: input variable with ticket info.
+ * @server: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @serverlen).
+ * @serverlen: pointer to length of @server on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @server).
+ *
+ * Represent server principal name in Ticket as zero-terminated
+ * string.  The string is allocate by this function, and it is the
+ * responsibility of the caller to deallocate it.  Note that the
+ * output length @serverlen does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_tkt_server (Shishi_tkt * tkt, char *server, size_t * serverlen)
+shishi_tkt_server (Shishi_tkt * tkt, char **server, size_t * serverlen)
 {
-  return shishi_ticket_sname_get (tkt->handle, tkt->ticket,
-				  server, serverlen);
+  return shishi_ticket_server (tkt->handle, tkt->ticket, server, serverlen);
 }
 
 /**
@@ -491,29 +505,17 @@ int
 shishi_tkt_server_p (Shishi_tkt * tkt, const char *server)
 {
   char *buf;
-  size_t buflen;
   int res;
 
-  buflen = strlen (server) + 1;
-  buf = xmalloc (buflen);
-
-  res = shishi_tkt_server (tkt, buf, &buflen);
+  res = shishi_tkt_server (tkt, &buf, NULL);
   if (res != SHISHI_OK)
-    {
-      free (buf);
-      return 0;
-    }
-  buf[buflen] = '\0';
+    return 0;
 
-  if (strcmp (server, buf) != 0)
-    {
-      free (buf);
-      return 0;
-    }
+  res = strcmp (server, buf) == 0;
 
   free (buf);
 
-  return 1;
+  return res;
 }
 
 int
@@ -1323,6 +1325,7 @@ void
 shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
 {
   char buf[BUFSIZ];
+  char *buf2;
   char *p;
   size_t buflen;
   int keytype, etype, flags;
@@ -1365,12 +1368,9 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
   if (t != (time_t) - 1)
     fprintf (fh, _("Renewable till:\t%s"), ctime (&t));
 
-  buflen = sizeof (buf);
-  buf[0] = '\0';
-  res = shishi_tkt_server (tkt, buf, &buflen);
-  buf[buflen] = '\0';
+  res = shishi_tkt_server (tkt, &buf2, NULL);
   res = shishi_ticket_get_enc_part_etype (tkt->handle, tkt->ticket, &keytype);
-  fprintf (fh, _("Server:\t\t%s key %s (%d)\n"), buf,
+  fprintf (fh, _("Server:\t\t%s key %s (%d)\n"), buf2,
 	   shishi_cipher_name (keytype), keytype);
 
   res = shishi_tkt_keytype (tkt, &keytype);

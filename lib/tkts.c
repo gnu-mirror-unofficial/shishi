@@ -515,18 +515,10 @@ shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh,
       if (service)
 	{
 	  char *buf;
-	  int buflen;
 
-	  buflen = strlen (service) + 1;
-	  buf = xmalloc (buflen);
-
-	  res = shishi_tkt_server (tkt, buf, &buflen);
+	  res = shishi_tkt_server (tkt, &buf, NULL);
 	  if (res != SHISHI_OK)
-	    {
-	      free (buf);
-	      continue;
-	    }
-	  buf[buflen] = '\0';
+	    continue;
 
 	  if (strcmp (service, buf) != 0)
 	    {

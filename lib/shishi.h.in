@@ -744,7 +744,7 @@ extern int shishi_tkt_keytype (Shishi_tkt * tkt, int32_t * etype);
 extern int32_t shishi_tkt_keytype_fast (Shishi_tkt * tkt);
 extern int shishi_tkt_keytype_p (Shishi_tkt * tkt, int32_t etype);
 extern int shishi_tkt_server (Shishi_tkt * tkt,
-			      char *service, size_t * servicelen);
+			      char **server, size_t * serverlen);
 extern int shishi_tkt_server_p (Shishi_tkt * tkt, const char *server);
 extern int shishi_tkt_server_realm (Shishi_tkt * tkt,
 				    char *serverrealm,
