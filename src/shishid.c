@@ -558,7 +558,7 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
 {
   int rc;
   Shishi_tkt *tkt;
-  Shishi_key *sessionkey, *sessiontktkey, *serverkey;
+  Shishi_key *sessionkey, *sessiontktkey, *serverkey, *subkey, **keytouse = &sessiontktkey;
   char buf[BUFSIZ];
   int buflen;
   int err;
@@ -656,7 +656,18 @@ tgsreq1 (Shishi * handle, struct arguments *arg, Shishi_tgs * tgs)
      shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
      &sessiontktkey);
 
-  err = shishi_tgs_rep_build (tgs, sessiontktkey);
+  err = shishi_authenticator_get_subkey (handle,
+				     shishi_ap_authenticator (shishi_tgs_ap (tgs)),
+				     &subkey);
+  if (err != SHISHI_OK)
+    {
+      if (err != SHISHI_ASN1_NO_ELEMENT)
+	return err;
+    }
+  else
+    keytouse = &subkey;
+
+  err = shishi_tgs_rep_build (tgs, *keytouse);
   if (err)
     return err;
 

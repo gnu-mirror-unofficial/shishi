@@ -822,6 +822,27 @@ extern int shishi_authenticator_add_cksum (Shishi * handle,
 					   int keyusage,
 					   char *data, int datalen);
 extern int
+shishi_authenticator_remove_subkey (Shishi * handle,
+				    Shishi_asn1 authenticator);
+extern Shishi_asn1
+shishi_authenticator_subkey (Shishi * handle);
+extern int
+shishi_authenticator_get_subkey (Shishi * handle,
+			    Shishi_asn1 authenticator,
+			    Shishi_key ** subkey);
+extern int
+shishi_authenticator_set_subkey (Shishi * handle,
+				Shishi_asn1 authenticator,
+				int32_t subkeytype,
+				 char *subkey, size_t subkeylen);
+extern int
+shishi_authenticator_add_random_subkey (Shishi * handle,
+				 Shishi_asn1 authenticator);
+extern int
+shishi_authenticator_add_subkey (Shishi * handle,
+				 Shishi_asn1 authenticator,
+				 Shishi_asn1 * subkey);
+extern int
 shishi_authenticator_clear_authorizationdata (Shishi * handle,
 					      Shishi_asn1 authenticator);
 extern int
@@ -1427,6 +1448,7 @@ extern const char *shishi_ap_option2string (int option);
 extern int shishi_ap_string2option (const char *str);
 
 extern int shishi_ap (Shishi * handle, Shishi_ap ** ap);
+extern int shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap);
 extern int shishi_ap_set_tktoptions (Shishi_ap * ap,
 				     Shishi_tkt * tkt, int options);
 extern int shishi_ap_tktoptions (Shishi * handle,

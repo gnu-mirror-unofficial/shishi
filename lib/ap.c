@@ -48,7 +48,8 @@ int
 shishi_ap (Shishi * handle, Shishi_ap ** ap)
 {
   Shishi_ap *lap;
-
+  int res;
+  
   *ap = malloc (sizeof (**ap));
   if (*ap == NULL)
     return SHISHI_MALLOC_ERROR;
@@ -59,14 +60,14 @@ shishi_ap (Shishi * handle, Shishi_ap ** ap)
   lap->authenticatorcksumkeyusage = SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR_CKSUM;
   lap->authenticatorkeyusage = SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR;
 
-  lap->authenticator = shishi_authenticator (handle);
+  lap->authenticator = shishi_authenticator_subkey (handle);
   if (lap->authenticator == NULL)
     {
       shishi_error_printf (handle, "Could not create Authenticator: %s\n",
 			   shishi_strerror_details (handle));
       return SHISHI_ASN1_ERROR;
     }
-
+    
   lap->apreq = shishi_apreq (handle);
   if (lap->apreq == NULL)
     {
@@ -89,6 +90,40 @@ shishi_ap (Shishi * handle, Shishi_ap ** ap)
       shishi_error_printf (handle, "Could not create EncAPRepPart: %s\n",
 			   shishi_strerror_details (handle));
       return SHISHI_ASN1_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_ap_nosubkey:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ap: pointer to new structure that holds information about AP exchange
+ *
+ * Create a new AP exchange without subkey in authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
+{
+  int res;
+  
+  res = shishi_ap (handle, ap);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not create Authenticator: %s\n",
+			   shishi_strerror_details (handle));
+      return res;
+    }
+  
+  res = shishi_authenticator_remove_subkey ( handle,
+					     shishi_ap_authenticator (*ap));
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not remove subkey from Authenticator: %s\n",
+			   shishi_strerror_details (handle));
+      return res;  
     }
 
   return SHISHI_OK;

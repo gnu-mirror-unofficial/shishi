@@ -68,10 +68,6 @@ shishi_authenticator (Shishi * handle)
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "subkey", NULL, 0);
-  if (res != SHISHI_OK)
-    goto error;
-
   res = shishi_asn1_write (handle, node, "seq-number", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
@@ -676,4 +672,209 @@ shishi_authenticator_authorizationdata (Shishi * handle,
     return res;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_authenticator_remove_subkey:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ *
+ * Remove subkey from the authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_remove_subkey (Shishi * handle, Shishi_asn1 authenticator)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, authenticator, "subkey", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_authenticator_subkey:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * This function creates a new Authenticator, populated with some
+ * default values.  It uses the current time as returned by the system
+ * for the ctime and cusec fields. It adds a random subkey.
+ *
+ * Return value: Returns the authenticator or NULL on
+ * failure.
+ **/
+Shishi_asn1
+shishi_authenticator_subkey (Shishi * handle)
+{
+  Shishi_asn1 node;
+  int res;
+
+  node = shishi_authenticator (handle);
+  if (node == NULL)
+    return NULL;
+
+  res = shishi_authenticator_add_random_subkey (handle, node);
+  if (res != SHISHI_OK)
+    return NULL;
+
+  return node;
+}
+
+/**
+ * shishi_authenticator_get_subkey:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @subkey: output newly allocated subkey from authenticator.
+ *
+ * Read subkey value from authenticator.
+ *
+ * Return value: Returns SHISHI_OK if successful or SHISHI_ASN1_NO_ELEMENT
+ *               if subkey is not present.
+ **/
+int
+shishi_authenticator_get_subkey (Shishi * handle,
+				 Shishi_asn1 authenticator,
+				 Shishi_key ** subkey)
+{
+  int res;
+  int subkeytype;
+  char * subkeyvalue;
+  size_t subkeylen;
+  int n;
+  
+  res = shishi_asn1_number_of_elements (handle, authenticator,
+					"subkey", &n);
+  if (res != SHISHI_OK)
+    return res;
+  
+  res = shishi_asn1_read_int32 (handle, authenticator,
+				"subkey.keytype", &subkeytype);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_read2 (handle, authenticator, "subkey.keyvalue",
+			  &subkeyvalue, &subkeylen);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_key (handle, subkey);
+  if (res != SHISHI_OK)
+    return res;
+  
+  shishi_key_type_set (*subkey, subkeytype);
+  shishi_key_value_set (*subkey, subkeyvalue);
+  
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_authenticator_set_subkey:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @subkeytype: input subkey type to store in authenticator.
+ * @subkey: input subkey data to store in authenticator.
+ * @subkeylen: size of input subkey data to store in authenticator.
+ *
+ * Store subkey value in authenticator.  A subkey is usually created
+ * by calling shishi_key_random() using the default encryption type of
+ * the key from the ticket that is being used.  To save time, you may
+ * want to use shishi_authenticator_add_subkey() instead, which calculates
+ * the subkey and calls this function in one step.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_set_subkey (Shishi * handle,
+				Shishi_asn1 authenticator,
+				int32_t subkeytype,
+				char *subkey, size_t subkeylen)
+{
+  int res;
+
+  res = shishi_asn1_write_int32 (handle, authenticator,
+				 "subkey.keytype", subkeytype);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_write (handle, authenticator, "subkey.keyvalue",
+			   subkey, subkeylen);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_authenticator_add_random_subkey:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ *
+ * Generate random subkey and store it in the authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_add_random_subkey (Shishi * handle,
+					Shishi_asn1 authenticator)
+{
+  int res;
+  int * etypes;
+  Shishi_key * subkey;
+  
+  res = shishi_cfg_clientkdcetype (handle, &etypes);
+  if (!res)
+      return res;
+   
+  res = shishi_key_random (handle, etypes[0], &subkey);
+  if (res != SHISHI_OK)
+    return res;
+  
+  res = shishi_authenticator_set_subkey (handle, authenticator,
+					 shishi_key_type (subkey),
+					 shishi_key_value (subkey),
+					 shishi_key_length (subkey));
+  
+  shishi_key_done (&subkey);
+  
+  return res;
+}
+
+/**
+ * shishi_authenticator_add_subkey:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @subkey: subkey to add to authenticator.
+ *
+ * Store subkey in the authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_add_subkey (Shishi * handle,
+				 Shishi_asn1 authenticator,
+				 Shishi_asn1 * subkey)
+{
+  int res;
+  int * etypes;
+  Shishi_key * subkey;
+  
+  res = shishi_cfg_clientkdcetype (handle, &etypes);
+  if (!res)
+      return res;
+   
+  res = shishi_key_random (handle, etypes[0], &subkey);
+  if (res != SHISHI_OK)
+    return res;
+  
+  res = shishi_authenticator_set_subkey (handle, authenticator,
+					 shishi_key_type (subkey),
+					 shishi_key_value (subkey),
+					 shishi_key_length (subkey));
+  
+  shishi_key_done (&subkey);
+  
+  return res;
 }
