@@ -1,5 +1,5 @@
 /* ticket.c	ticket handling
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,6 +21,11 @@
 
 #include "internal.h"
 
+/* XXX rename shishi_asn1ticket_* to something better
+   maybe shishi_ticket_* and rename current shishi_ticket_* to shishi_tkt_*?
+   and then rename shishi_ticketset_* to shishi_tkts_*?
+   sounds like a plan */
+
 struct Shishi_ticket
 {
   Shishi *handle;
@@ -38,12 +43,136 @@ shishi_ticket_realm_get (Shishi * handle,
   return shishi_asn1_field (handle, ticket, realm, realmlen, "Ticket.realm");
 }
 
+/**
+ * shishi_ticket_realm_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ticket: input variable with ticket info.
+ * @realm: input array with name of realm.
+ *
+ * Set the realm field in the Ticket.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ticket_realm_set (Shishi * handle,
+			 ASN1_TYPE ticket,
+			 const char *realm)
+{
+  int res = ASN1_SUCCESS;
+
+  res = asn1_write_value (ticket, "Ticket.realm", realm, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
 int
 shishi_ticket_sname_get (Shishi * handle,
 			 ASN1_TYPE ticket, char *server, int *serverlen)
 {
   return shishi_principal_name_get (handle, ticket, "Ticket.sname",
 				    server, serverlen);
+}
+
+/**
+ * shishi_ticket_sname_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ticket: Ticket variable to set server name field in.
+ * @name_type: type of principial, see Shishi_name_type, usually
+ *             SHISHI_NT_UNKNOWN.
+ * @sname: input array with principal name.
+ *
+ * Set the server name field in the Ticket.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ticket_sname_set (Shishi * handle,
+			 ASN1_TYPE ticket,
+			 Shishi_name_type name_type, char *sname[])
+{
+  int res = ASN1_SUCCESS;
+  char buf[BUFSIZ];
+  int i;
+
+  sprintf (buf, "%d", name_type);
+
+  res = asn1_write_value (ticket, "Ticket.sname.name-type", buf, 0);
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return !SHISHI_OK;
+    }
+
+  res = asn1_write_value (ticket, "Ticket.sname.name-string", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return !SHISHI_OK;
+    }
+
+  i = 1;
+  while (sname[i - 1])
+    {
+      res = asn1_write_value (ticket, "Ticket.sname.name-string",
+			      "NEW", 1);
+      if (res != ASN1_SUCCESS)
+	{
+	  shishi_error_set (handle, libtasn1_strerror (res));
+	  return !SHISHI_OK;
+	}
+
+      sprintf (buf, "Ticket.sname.name-string.?%d", i);
+      res = asn1_write_value (ticket, buf, sname[i - 1], 0);
+      if (res != ASN1_SUCCESS)
+	{
+	  shishi_error_set (handle, libtasn1_strerror (res));
+	  return !SHISHI_OK;
+	}
+
+      i++;
+    }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_ticket_set_server (Shishi * handle,
+			  ASN1_TYPE ticket,
+			  const char *server)
+{
+  char *tmpserver;
+  char **serverbuf;
+  char *tokptr;
+  int res;
+  int i;
+
+  tmpserver = strdup (server);
+  if (tmpserver == NULL)
+    return SHISHI_MALLOC_ERROR;
+
+  serverbuf = malloc (sizeof (*serverbuf));
+  for (i = 0;
+       (serverbuf[i] = strtok_r (i == 0 ? tmpserver : NULL, "/", &tokptr));
+       i++)
+    {
+      serverbuf = realloc (serverbuf, (i + 2) * sizeof (*serverbuf));
+      if (serverbuf == NULL)
+	return SHISHI_MALLOC_ERROR;
+    }
+  res = shishi_ticket_sname_set (handle, ticket,
+				 SHISHI_NT_PRINCIPAL, serverbuf);
+  if (res != SHISHI_OK)
+    {
+      fprintf (stderr, _("Could not set sname: %s\n"),
+	       shishi_strerror_details (handle));
+      return res;
+    }
+  free (serverbuf);
+  free (tmpserver);
+
+  return SHISHI_OK;
 }
 
 int
@@ -54,6 +183,25 @@ shishi_ticket_snamerealm_get (Shishi * handle,
   return shishi_principal_name_realm_get (handle, ticket, "Ticket.sname",
 					  ticket, "Ticket.realm",
 					  serverrealm, serverrealmlen);
+}
+
+int
+shishi_kdcreq_srealmserver_set (Shishi * handle,
+				ASN1_TYPE ticket,
+				char *realm,
+				char *server)
+{
+  int res;
+
+  res = shishi_ticket_realm_set (handle, ticket, realm);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_ticket_set_server (handle, ticket, server);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
 }
 
 /**
@@ -175,6 +323,22 @@ ASN1_TYPE
 shishi_ticket_encticketpart (Shishi_ticket * ticket)
 {
   return ticket->encticketpart;
+}
+
+/**
+ * shishi_ticket_encticketpart_set:
+ * @ticket: input variable with ticket info.
+ * @encticketpart: encticketpart to store in ticket.
+ *
+ * Set the EncTicketPart in the Ticket.
+ **/
+void
+shishi_ticket_encticketpart_set (Shishi_ticket * ticket,
+				 ASN1_TYPE encticketpart)
+{
+  if (ticket->encticketpart)
+    shishi_asn1_done(ticket->handle, ticket->encticketpart);
+  ticket->encticketpart = encticketpart;
 }
 
 /**
@@ -829,7 +993,7 @@ shishi_asn1ticket_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_decrypt (handle, key, SHISHI_KEYUSAGE_KDCREP_TICKET,
+  res = shishi_decrypt (handle, key, SHISHI_KEYUSAGE_ENCTICKETPART,
 			cipher, cipherlen, buf, &buflen);
 
   if (res != SHISHI_OK)
@@ -878,4 +1042,106 @@ shishi_ticket_decrypt (Shishi_ticket * ticket,
   ticket->encticketpart = encticketpart;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_ticket_set_enc_part:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ticket: Ticket to add enc-part field to.
+ * @etype: encryption type used to encrypt enc-part.
+ * @kvno: key version number.
+ * @buf: input array with encrypted enc-part.
+ * @buflen: size of input array with encrypted enc-part.
+ *
+ * Set the encrypted enc-part field in the Ticket.  The encrypted data
+ * is usually created by calling shishi_encrypt() on the DER encoded
+ * enc-part.  To save time, you may want to use
+ * shishi_ticket_add_encpart() instead, which calculates the encrypted
+ * data and calls this function in one step.
+ *
+ * Return value:
+ **/
+int
+shishi_ticket_set_enc_part (Shishi * handle,
+			    ASN1_TYPE ticket,
+			    int etype, int kvno, char *buf, int buflen)
+{
+  char format[BUFSIZ];
+  int res = ASN1_SUCCESS;
+
+  res = asn1_write_value (ticket, "Ticket.enc-part.cipher", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  sprintf (format, "%d", etype);
+  res = asn1_write_value (ticket, "Ticket.enc-part.etype", format, 0);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  if (kvno == 0)
+    {
+      res = asn1_write_value (ticket, "Ticket.enc-part.kvno", NULL, 0);
+      if (res != ASN1_SUCCESS)
+	goto error;
+    }
+  else
+    {
+      shishi_asprintf (&format, "%d", etype);
+      res = asn1_write_value (ticket, "Ticket.enc-part.kvno", format, 0);
+      if (res != ASN1_SUCCESS)
+	goto error;
+    }
+
+  return SHISHI_OK;
+
+ error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  return SHISHI_ASN1_ERROR;
+}
+
+/**
+ * shishi_ticket_add_enc_part:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ticket: Ticket to add enc-part field to.
+ * @key: key used to encrypt enc-part.
+ * @encticketpart: EncTicketPart as allocated by shishi_authenticator().
+ *
+ * Encrypts DER encoded authenticator using key from ticket and store
+ * it in the AP-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ticket_add_enc_part (Shishi * handle,
+			    ASN1_TYPE ticket,
+			    Shishi_key *key,
+			    ASN1_TYPE encticketpart)
+{
+  int res = ASN1_SUCCESS;
+  char buf[BUFSIZ];
+  int buflen;
+  char der[BUFSIZ];
+  size_t derlen;
+
+  res = shishi_a2d (handle, encticketpart, der, &derlen);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not DER encode encticketpart: %s\n",
+			   shishi_strerror(res));
+      return !SHISHI_OK;
+    }
+
+  buflen = BUFSIZ;
+  res = shishi_encrypt (handle, key, SHISHI_KEYUSAGE_ENCTICKETPART,
+			der, derlen, buf, &buflen);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "des_encrypt fail\n");
+      return res;
+    }
+
+  res = shishi_ticket_set_enc_part (handle, ticket, shishi_key_type(key),
+				    shishi_key_version(key), buf, buflen);
+
+  return res;
 }

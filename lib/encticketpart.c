@@ -25,10 +25,27 @@ ASN1_TYPE
 shishi_encticketpart (Shishi * handle)
 {
   ASN1_TYPE node;
+  int res;
 
   node = shishi_asn1_encticketpart (handle);
-  if (node == ASN1_TYPE_EMPTY)
+
+  res = asn1_write_value (node, "EncTicketPart.starttime", NULL, 0);
+  if (res != ASN1_SUCCESS)
     return SHISHI_ASN1_ERROR;
+
+  res = asn1_write_value (node, "EncTicketPart.renew-till", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  res = asn1_write_value (node, "EncTicketPart.caddr", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  res = asn1_write_value (node, "EncTicketPart.authorization-data", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return node;
 }
 
 /**
@@ -95,6 +112,266 @@ shishi_encticketpart_get_key (Shishi * handle,
     return res;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_encticketpart_key_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encticketpart: input EncTicketPart variable.
+ * @key: key handle with information to store in encticketpart.
+ *
+ * Set the EncTicketPart.key field to key type and value of supplied
+ * key.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_encticketpart_key_set (Shishi * handle,
+			      ASN1_TYPE encticketpart,
+			      Shishi_key *key)
+{
+  int res;
+  char buf[BUFSIZ];
+  int keytype;
+
+  keytype = shishi_key_type (key);
+  sprintf(buf, "%d", keytype);
+  res = asn1_write_value (encticketpart, "EncTicketPart.key.keytype", buf, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  res = asn1_write_value (encticketpart, "EncTicketPart.key.keyvalue",
+			  shishi_key_value (key),
+			  shishi_key_length (key));
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_encticketpart_flags_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encticketpart: input EncTicketPart variable.
+ * @flags: flags to set in encticketpart.
+ *
+ * Set the EncTicketPart.flags to supplied value.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_encticketpart_flags_set (Shishi * handle,
+				ASN1_TYPE encticketpart,
+				int flags)
+{
+  int res;
+  char buf[BUFSIZ];
+
+  sprintf(buf, "%d", flags);
+  res = asn1_write_value (encticketpart, "EncTicketPart.flags", buf, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_encticketpart_crealm_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encticketpart: input EncTicketPart variable.
+ * @realm: input array with name of realm.
+ *
+ * Set the realm field in the KDC-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_encticketpart_crealm_set (Shishi * handle,
+				 ASN1_TYPE encticketpart,
+				 const char *realm)
+{
+  int res = ASN1_SUCCESS;
+
+  res = asn1_write_value (encticketpart, "EncTicketPart.crealm", realm, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_encticketpart_cname_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encticketpart: input EncTicketPart variable.
+ * @name_type: type of principial, see Shishi_name_type, usually
+ *             SHISHI_NT_UNKNOWN.
+ * @principal: input array with principal name.
+ *
+ * Set the client name field in the EncTicketPart.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_encticketpart_cname_set (Shishi * handle,
+				ASN1_TYPE encticketpart,
+				Shishi_name_type name_type,
+				const char *principal)
+{
+  int res = ASN1_SUCCESS;
+  char buf[BUFSIZ];
+
+  sprintf (buf, "%d", name_type);
+
+  res = asn1_write_value (encticketpart, "EncTicketPart.cname.name-type",
+			  buf, 0);
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return !SHISHI_OK;
+    }
+
+  res =
+    asn1_write_value (encticketpart, "EncTicketPart.cname.name-string",
+		      NULL, 0);
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return !SHISHI_OK;
+    }
+
+  res =
+    asn1_write_value (encticketpart, "EncTicketPart.cname.name-string",
+		      "NEW", 1);
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return !SHISHI_OK;
+    }
+  res = asn1_write_value (encticketpart, "EncTicketPart.cname.name-string.?1",
+			  principal, strlen (principal));
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return !SHISHI_OK;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_encticketpart_transited_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encticketpart: input EncTicketPart variable.
+ * @trtype: transitedencoding type, e.g. SHISHI_TR_DOMAIN_X500_COMPRESS.
+ * @trdata: actual transited realm data.
+ * @trdatalen: length of actual transited realm data.
+ *
+ * Set the EncTicketPart.transited field to supplied value.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_encticketpart_transited_set (Shishi * handle,
+				    ASN1_TYPE encticketpart,
+				    int trtype,
+				    char *trdata,
+				    size_t trdatalen)
+{
+  int res;
+  char buf[BUFSIZ];
+
+  sprintf(buf, "%d", trtype);
+  res = asn1_write_value (encticketpart, "EncTicketPart.transited.tr-type",
+			  buf, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  res = asn1_write_value (encticketpart, "EncTicketPart.transited.contents",
+			  trdata, trdatalen);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_encticketpart_authtime_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encticketpart: input EncTicketPart variable.
+ * @authtime: character buffer containing a generalized time string.
+ *
+ * Set the EncTicketPart.authtime to supplied value.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_encticketpart_authtime_set (Shishi * handle,
+				   ASN1_TYPE encticketpart,
+				   char *authtime)
+{
+  int res;
+
+  res = asn1_write_value (encticketpart, "EncTicketPart.authtime",
+			  authtime, GENERALIZEDTIME_TIME_LEN);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_encticketpart_endtime_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encticketpart: input EncTicketPart variable.
+ * @endtime: character buffer containing a generalized time string.
+ *
+ * Set the EncTicketPart.endtime to supplied value.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_encticketpart_endtime_set (Shishi * handle,
+				  ASN1_TYPE encticketpart,
+				  char *endtime)
+{
+  int res;
+
+  res = asn1_write_value (encticketpart, "EncTicketPart.endtime",
+			  endtime, GENERALIZEDTIME_TIME_LEN);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+int
+shishi_encticketpart_authtime (Shishi *handle,
+			       ASN1_TYPE encticketpart,
+			       char *authtime, int *authtimelen)
+{
+  return shishi_asn1_field (handle, encticketpart, authtime, authtimelen,
+			    "EncTicketPart.authtime");
+}
+
+time_t
+shishi_encticketpart_authctime (Shishi *handle, ASN1_TYPE encticketpart)
+{
+  char authtime[GENERALIZEDTIME_TIME_LEN + 1];
+  int authtimelen;
+  time_t t;
+  int res;
+
+  authtimelen = sizeof (authtime);
+  res = shishi_encticketpart_authtime (handle, encticketpart,
+				       authtime, &authtimelen);
+  if (res != SHISHI_OK)
+    return (time_t) - 1;
+
+  authtime[GENERALIZEDTIME_TIME_LEN] = '\0';
+
+  t = shishi_generalize_ctime (handle, authtime);
+
+  return t;
 }
 
 int

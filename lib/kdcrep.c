@@ -1,5 +1,5 @@
 /* kdcrep.c	Key distribution (AS/TGS) Reply functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -400,6 +400,117 @@ error:
   if (*ticket != ASN1_TYPE_EMPTY)
     asn1_delete_structure (ticket);
   return SHISHI_ASN1_ERROR;
+}
+
+/**
+ * shishi_kdcrep_set_ticket:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcrep: KDC-REP to add ticket field to.
+ * @ticket: input ticket to copy into KDC-REP ticket field.
+ *
+ * Copy ticket into KDC-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcrep_set_ticket (Shishi * handle, ASN1_TYPE kdcrep, ASN1_TYPE ticket)
+{
+  int res = ASN1_SUCCESS;
+  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  unsigned char format[BUFSIZ];
+  unsigned char buf[BUFSIZ];
+  int buflen;
+  int i, n;
+
+  buflen = BUFSIZ;
+  res = asn1_read_value (ticket, "Ticket.tkt-vno", buf, &buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  res = asn1_write_value (kdcrep, "KDC-REP.ticket.tkt-vno", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  buflen = BUFSIZ;
+  res = asn1_read_value (ticket, "Ticket.realm", buf, &buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  res = asn1_write_value (kdcrep, "KDC-REP.ticket.realm", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  buflen = BUFSIZ;
+  res = asn1_read_value (ticket, "Ticket.sname.name-type", buf, &buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  res =
+    asn1_write_value (kdcrep, "KDC-REP.ticket.sname.name-type", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  res = asn1_number_of_elements (ticket, "Ticket.sname.name-string", &n);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  for (i = 1; i <= n; i++)
+    {
+      res = asn1_write_value (kdcrep, "KDC-REP.ticket.sname.name-string",
+			      "NEW", 1);
+      if (res != ASN1_SUCCESS)
+	goto error;
+
+      sprintf (format, "Ticket.sname.name-string.?%d", i);
+
+      buflen = BUFSIZ;
+      res = asn1_read_value (ticket, format, buf, &buflen);
+      if (res != ASN1_SUCCESS)
+	goto error;
+
+      sprintf (format, "KDC-REP.ticket.sname.name-string.?%d", i);
+
+      res = asn1_write_value (kdcrep, format, buf, buflen);
+      if (res != ASN1_SUCCESS)
+	goto error;
+    }
+
+  buflen = BUFSIZ;
+  res = asn1_read_value (ticket, "Ticket.enc-part.etype", buf, &buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  res = asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.etype", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  buflen = BUFSIZ;
+  res = asn1_read_value (ticket, "Ticket.enc-part.kvno", buf, &buflen);
+  if (res != ASN1_SUCCESS)
+    res = asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.kvno", NULL, 0);
+  else
+    res =
+      asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.kvno", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  buflen = BUFSIZ;
+  res = asn1_read_value (ticket, "Ticket.enc-part.cipher", buf, &buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  res =
+    asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.cipher", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  return SHISHI_OK;
+
+ error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  if (node != ASN1_TYPE_EMPTY)
+    asn1_delete_structure (&node);
+  return !SHISHI_OK;
 }
 
 int
