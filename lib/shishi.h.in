@@ -882,6 +882,11 @@ extern int shishi_authenticator_cusec_set (Shishi * handle,
 extern int shishi_authenticator_seqnumber_get (Shishi * handle,
 					       Shishi_asn1 authenticator,
 					       uint32_t * seqnumber);
+extern int shishi_authenticator_seqnumber_remove (Shishi * handle,
+						  Shishi_asn1 authenticator);
+extern int shishi_authenticator_seqnumber_set (Shishi * handle,
+					       Shishi_asn1 authenticator,
+					       uint32_t seqnumber);
 extern int shishi_authenticator_cname_get (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   char *cname, size_t * cnamelen);
