@@ -1,5 +1,5 @@
 /* ap.c	AP functions
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -30,9 +30,9 @@ struct Shishi_ap
   Shishi_asn1 apreq;
   Shishi_asn1 aprep;
   Shishi_asn1 encapreppart;
-  int authenticatorcksumkeyusage;
   int authenticatorkeyusage;
-  int authenticatorcksumtype;
+  int authenticatorcksumkeyusage;
+  int32_t authenticatorcksumtype;
   char *authenticatorcksumdata;
   size_t authenticatorcksumdatalen;
 };
@@ -824,6 +824,18 @@ shishi_ap_req_process_keyusage (Shishi_ap * ap,
 
   if (VERBOSEASN1 (ap->handle))
     shishi_authenticator_print (ap->handle, stdout, authenticator);
+
+  rc = shishi_authenticator_cksum (ap->handle, authenticator,
+				   &ap->authenticatorcksumtype,
+				   &ap->authenticatorcksumdata,
+				   &ap->authenticatorcksumdatalen);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (ap->handle,
+			   "Error extracting authenticator checksum: %s\n",
+			   shishi_strerror (rc));
+      return rc;
+    }
 
   ap->authenticator = authenticator;
 
