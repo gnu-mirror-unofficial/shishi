@@ -18,9 +18,9 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-TESTS = crypto
+EXTRA_DIST = utils.c
 
-EXTRA_DIST = 
+TESTS = crypto ticketset
 
 INCLUDES = -I$(top_srcdir)/asn1/lib -I$(top_srcdir)/lib
 LDADD = ../lib/libshishi.la

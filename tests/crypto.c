@@ -1,4 +1,4 @@
-/* crypto.c	shishi crypto self tests
+/* crypto.c	Shishi crypto self tests.
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -19,114 +19,8 @@
  *
  */
 
-#include <shishi.h>
+#include "utils.c"
 #include <pkcs5.h>
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#else
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif
-#endif
-#include <stdarg.h>
-
-static int verbose = 0;
-static int debug = 0;
-static int error_count = 0;
-static int break_on_error = 0;
-
-static void
-fail (const char *format, ...)
-{
-  va_list arg_ptr;
-
-  va_start (arg_ptr, format);
-  vfprintf (stderr, format, arg_ptr);
-  va_end (arg_ptr);
-  error_count++;
-  if (break_on_error)
-    exit (1);
-}
-
-static void
-escapeprint (unsigned char *str, int len)
-{
-  int i;
-
-  printf ("\t ;; `");
-  for (i = 0; i < len; i++)
-    if ((str[i] >= 'A' && str[i] <= 'Z') ||
-	(str[i] >= 'a' && str[i] <= 'z') ||
-	(str[i] >= '0' && str[i] <= '9') || str[i] == '.')
-      printf ("%c", str[i]);
-    else
-      printf ("\\x%02x", str[i]);
-  printf ("' (length %d bytes)\n", len);
-}
-
-static void
-hexprint (unsigned char *str, int len)
-{
-  int i;
-
-  printf ("\t ;; ");
-  for (i = 0; i < len; i++)
-    {
-      printf ("%02x ", str[i]);
-      if ((i + 1) % 8 == 0)
-	printf (" ");
-      if ((i + 1) % 16 == 0 && i + 1 < len)
-	printf ("\n\t ;; ");
-    }
-}
-
-static void
-binprint (unsigned char *str, int len)
-{
-  int i;
-
-  printf ("\t ;; ");
-  for (i = 0; i < len; i++)
-    {
-      printf ("%d%d%d%d%d%d%d%d ",
-	      str[i] & 0x80 ? 1 : 0,
-	      str[i] & 0x40 ? 1 : 0,
-	      str[i] & 0x20 ? 1 : 0,
-	      str[i] & 0x10 ? 1 : 0,
-	      str[i] & 0x08 ? 1 : 0,
-	      str[i] & 0x04 ? 1 : 0,
-	      str[i] & 0x02 ? 1 : 0, str[i] & 0x01 ? 1 : 0);
-      if ((i + 1) % 3 == 0)
-	printf (" ");
-      if ((i + 1) % 6 == 0 && i + 1 < len)
-	printf ("\n\t ;; ");
-    }
-}
-
-static void
-bin7print (unsigned char *str, int len)
-{
-  int i;
-
-  printf ("\t ;; ");
-  for (i = 0; i < len; i++)
-    {
-      printf ("%d%d%d%d%d%d%d ",
-	      str[i] & 0x40 ? 1 : 0,
-	      str[i] & 0x20 ? 1 : 0,
-	      str[i] & 0x10 ? 1 : 0,
-	      str[i] & 0x08 ? 1 : 0,
-	      str[i] & 0x04 ? 1 : 0,
-	      str[i] & 0x02 ? 1 : 0, str[i] & 0x01 ? 1 : 0);
-      if ((i + 1) % 3 == 0)
-	printf (" ");
-      if ((i + 1) % 6 == 0 && i + 1 < len)
-	printf ("\n\t ;; ");
-    }
-}
 
 struct drdk
 {
