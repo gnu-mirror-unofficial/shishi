@@ -53,7 +53,7 @@ section entitled "GNU Free Documentation License".
 
 @ifnottex
 @node Top
-@top Shishi
+@top GNU Shishi
 @insertcopying
 @end ifnottex
 
