@@ -617,6 +617,7 @@ shishi_ticketset_get_ticket_for_clientserver (Shishi * handle,
 	  if (rc == SHISHI_GOT_KRBERROR)
 	    shishi_krberror_pretty_print(handle, stdout,
 					 shishi_as_get_krberror(as));
+	  return NULL;
 	}
 
       tgt = shishi_as_get_ticket (as);
@@ -644,6 +645,7 @@ shishi_ticketset_get_ticket_for_clientserver (Shishi * handle,
       if (rc == SHISHI_GOT_KRBERROR)
 	shishi_krberror_pretty_print(handle, stdout,
 				     shishi_tgs_get_krberror(tgs));
+      return NULL;
     }
 
   tkt = shishi_tgs_get_ticket (tgs);
