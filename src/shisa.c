@@ -286,7 +286,7 @@ modify_principal (const char *realm, const char *principal)
   Shisa_principal ph;
   int rc;
 
-  printf ("Modifying principal `%s@%s'...", principal, realm); fflush (stdout);
+  printf ("Modifying principal `%s@%s'...\n", principal, realm);
 
   rc = shisa_principal_update (dbh, realm, principal, &ph);
   if (rc != SHISA_OK)
@@ -295,7 +295,7 @@ modify_principal (const char *realm, const char *principal)
       return EXIT_FAILURE;
     }
 
-  printf ("done\n");
+  printf ("Modifying principal `%s@%s'...done\n", principal, realm);
 
   return EXIT_SUCCESS;
 }
@@ -331,11 +331,9 @@ add_principal (const char *realm, const char *principal)
     return EXIT_FAILURE;
 
   if (principal == NULL)
-    printf ("Adding realm `%s'...", realm);
+    printf ("Adding realm `%s'...\n", realm);
   else
-    printf ("Adding principal `%s@%s'...", principal, realm);
-
-  fflush (stdout);
+    printf ("Adding principal `%s@%s'...\n", principal, realm);
 
   rc = shisa_principal_add (dbh, realm, principal, &ph, &key);
   if (rc != SHISA_OK)
@@ -344,7 +342,10 @@ add_principal (const char *realm, const char *principal)
       return EXIT_FAILURE;
     }
 
-  printf ("done\n");
+  if (principal == NULL)
+    printf ("Adding realm `%s'...done\n", realm);
+  else
+    printf ("Adding principal `%s@%s'...done\n", principal, realm);
 
   return EXIT_SUCCESS;
 }
