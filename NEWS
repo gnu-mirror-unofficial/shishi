@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.17 (unreleased)
 
+** Revamp of gnulib compatibility files.
+
+** Fix warnings.
+
 * Version 0.0.16 (released 2004-08-01)
 
 ** New environment variables to override defaults in Shishi library.
