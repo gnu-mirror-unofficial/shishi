@@ -28,23 +28,24 @@ raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
   char md[MAX_HASH_LEN];
   gcry_md_hd_t hd;
   gpg_error_t err;
-  int hlen = gcry_md_get_algo_dlen (algo);
+  int alg = (algo == SHISHI_DES_CBC_MD4) ? GCRY_MD_MD4 : GCRY_MD_MD5;
+  int hlen = gcry_md_get_algo_dlen (alg);
   int ok;
   char *p;
 
   memcpy (md, out + 8, hlen);
   memset (out + 8, 0, hlen);
 
-  err = gcry_md_open (&hd, algo, 0);
+  err = gcry_md_open (&hd, alg, 0);
   if (err != GPG_ERR_NO_ERROR)
     {
-      shishi_error_printf (handle, "Algo %d not available in libgcrypt", algo);
+      shishi_error_printf (handle, "Algo %d not available in libgcrypt", alg);
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   gcry_md_write (hd, out, *outlen);
 
-  p = gcry_md_read (hd, algo);
+  p = gcry_md_read (hd, alg);
   if (p == NULL)
     {
       shishi_error_printf (handle, "Libgcrypt failed to compute hash");
@@ -54,8 +55,8 @@ raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
   if (VERBOSECRYPTO (handle))
     {
       puts("DES verify:");
-      hexprint(md, hlen);
-      hexprint (p, hlen);
+      hexprint(md, hlen); puts("");
+      hexprint (p, hlen); puts("");
     }
 
   ok = memcmp (p, md, hlen) == 0;
@@ -72,34 +73,48 @@ raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
   *outlen -= 8 + hlen;
 #else
   struct md5_ctx md5;
-  char incoming[MD5_DIGEST_SIZE];
-  char computed[MD5_DIGEST_SIZE];
+  struct md4_ctx md4;
+  char incoming[MAX_HASH_LEN];
+  char computed[MAX_HASH_LEN];
+  int hlen;
   int rc;
 
-  memcpy (incoming, out + 8, MD5_DIGEST_SIZE);
-  memset (out + 8, 0, MD5_DIGEST_SIZE);
+  switch (algo)
+    {
+    case SHISHI_DES_CBC_MD4:
+      memcpy (incoming, out + 8, MD4_DIGEST_SIZE);
+      memset (out + 8, 0, MD4_DIGEST_SIZE);
+      md4_init (&md4);
+      md4_update (&md4, *outlen, out);
+      md4_digest (&md4, MD4_DIGEST_SIZE, computed);
+      hlen = MD4_DIGEST_SIZE;
+      break;
 
-  md5_init (&md5);
-  md5_update (&md5, *outlen, out);
-  md5_digest (&md5, sizeof(computed), computed);
-
+    case SHISHI_DES_CBC_MD5:
+      memcpy (incoming, out + 8, MD5_DIGEST_SIZE);
+      memset (out + 8, 0, MD5_DIGEST_SIZE);
+      md5_init (&md5);
+      md5_update (&md5, *outlen, out);
+      md5_digest (&md5, MD5_DIGEST_SIZE, computed);
+      hlen = MD5_DIGEST_SIZE;
+      break;
+    }
 
   if (VERBOSECRYPTO (handle))
     {
       puts("DES verify:");
-      hexprint(incoming, MD5_DIGEST_SIZE);
-      hexprint (computed, MD5_DIGEST_SIZE);
+      hexprint(incoming, hlen); puts("");
+      hexprint (computed, hlen); puts("");
     }
 
-
-  if (memcmp (computed, incoming, MD5_DIGEST_SIZE) != 0)
+  if (memcmp (computed, incoming, hlen) != 0)
     {
-      shishi_error_printf (handle, "DES verify failed");
+      shishi_error_printf (handle, "DES hash verify failed");
       return SHISHI_CRYPTO_ERROR;
     }
 
-  memmove (out, out + 8 + MD5_DIGEST_SIZE, *outlen - 8 - MD5_DIGEST_SIZE);
-  *outlen -= 8 + MD5_DIGEST_SIZE;
+  memmove (out, out + 8 + hlen, *outlen - 8 - hlen);
+  *outlen -= 8 + hlen;
 #endif
 
   return SHISHI_OK;
@@ -114,16 +129,17 @@ raw_des_checksum (Shishi * handle,
 {
 #ifdef USE_GCRYPT
   gpg_error_t err;
-  int hlen = gcry_md_get_algo_dlen (algo);
+  int alg = (alg == SHISHI_DES_CBC_MD4) ? GCRY_MD_MD4 : GCRY_MD_MD5;
+  int hlen = gcry_md_get_algo_dlen (alg);
   char buffer[8 + MAX_HASH_LEN];
   char *p;
   gcry_md_hd_t hd;
   int res;
 
-  err = gcry_md_open (&hd, algo, 0);
+  err = gcry_md_open (&hd, alg, 0);
   if (err != GPG_ERR_NO_ERROR)
     {
-      shishi_error_printf (handle, "MD %d not available in libgcrypt", algo);
+      shishi_error_printf (handle, "MD %d not available in libgcrypt", alg);
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
@@ -139,7 +155,7 @@ raw_des_checksum (Shishi * handle,
     gcry_md_write (hd, buffer, 8);
   gcry_md_write (hd, in, inlen);
 
-  p = gcry_md_read (hd, algo);
+  p = gcry_md_read (hd, alg);
   if (p == NULL)
     {
       shishi_error_printf (handle, "Libgcrypt failed to compute hash");
@@ -154,38 +170,59 @@ raw_des_checksum (Shishi * handle,
   *outlen = 8 + hlen;
 #else
   struct md5_ctx md5;
+  struct md4_ctx md4;
+  int hlen;
   int rc;
 
   rc = shishi_randomize (handle, out, 8);
   if (rc != SHISHI_OK)
     return rc;
 
-  memset (out + 8, 0, MD5_DIGEST_SIZE);
+  switch (algo)
+    {
+    case SHISHI_DES_CBC_MD4:
+      memset (out + 8, 0, MD4_DIGEST_SIZE);
+      md4_init (&md4);
+      if (hashzeros)
+	md4_update (&md4, 8 + MD4_DIGEST_SIZE, out);
+      else
+	md4_update (&md4, 8, out);
+      md4_update (&md4, inlen, in);
 
-  md5_init (&md5);
+      md4_digest (&md4, MD4_DIGEST_SIZE, out + 8);
 
-  if (hashzeros)
-    md5_update (&md5, 8 + MD5_DIGEST_SIZE, out);
-  else
-    md5_update (&md5, 8, out);
-  md5_update (&md5, inlen, in);
+      hlen = MD4_DIGEST_SIZE;
+      break;
 
-  md5_digest (&md5, MD5_DIGEST_SIZE, out + 8);
+    case SHISHI_DES_CBC_MD5:
+      memset (out + 8, 0, MD5_DIGEST_SIZE);
+      md5_init (&md5);
+      if (hashzeros)
+	md5_update (&md5, 8 + MD5_DIGEST_SIZE, out);
+      else
+	md5_update (&md5, 8, out);
+      md5_update (&md5, inlen, in);
 
-  *outlen = 8 + MD5_DIGEST_SIZE;
+      md5_digest (&md5, MD5_DIGEST_SIZE, out + 8);
+
+      hlen = MD5_DIGEST_SIZE;
+      break;
+    }
+
+  *outlen = 8 + hlen;
 #endif
 
   return SHISHI_OK;
 }
 
 static int
-_des_encrypt (Shishi * handle,
-	     Shishi_key * key,
-	     int keyusage,
-	     const char *iv,
-	     size_t ivlen,
-	     const char *in, size_t inlen, char **out, size_t * outlen,
-	     int algo)
+des_encrypt_checksum (Shishi * handle,
+		      Shishi_key * key,
+		      int keyusage,
+		      const char *iv,
+		      size_t ivlen,
+		      const char *in, size_t inlen, char **out, size_t * outlen,
+		      int algo)
 {
   char cksum[8 + MAX_HASH_LEN];
   char *inpad;
@@ -237,8 +274,8 @@ des_crc_encrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return _des_encrypt (handle, key, keyusage, iv, ivlen,
-		       in, inlen, out, outlen, SHISHI_DES_CBC_CRC);
+  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen,
+			       in, inlen, out, outlen, SHISHI_DES_CBC_CRC);
 }
 
 static int
@@ -249,8 +286,8 @@ des_md4_encrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return _des_encrypt (handle, key, keyusage, iv, ivlen,
-		       in, inlen, out, outlen, SHISHI_DES_CBC_MD4);
+  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen,
+			       in, inlen, out, outlen, SHISHI_DES_CBC_MD4);
 }
 
 static int
@@ -261,8 +298,8 @@ des_md5_encrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return _des_encrypt (handle, key, keyusage, iv, ivlen,
-		       in, inlen, out, outlen, SHISHI_DES_CBC_MD5);
+  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen,
+			       in, inlen, out, outlen, SHISHI_DES_CBC_MD5);
 }
 
 static int
@@ -278,13 +315,13 @@ des_none_encrypt (Shishi * handle,
 }
 
 static int
-_des_decrypt (Shishi * handle,
-	     Shishi_key * key,
-	     int keyusage,
-	     const char *iv, size_t ivlen,
-	     const char *in, size_t inlen,
-	     char **out, size_t * outlen,
-	     int algo)
+des_decrypt_verify (Shishi * handle,
+		    Shishi_key * key,
+		    int keyusage,
+		    const char *iv, size_t ivlen,
+		    const char *in, size_t inlen,
+		    char **out, size_t * outlen,
+		    int algo)
 {
   int res;
 
@@ -314,8 +351,8 @@ des_crc_decrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return _des_decrypt (handle, key, keyusage, iv, ivlen,
-		       in, inlen, out, outlen, SHISHI_DES_CBC_CRC);
+  return des_decrypt_verify (handle, key, keyusage, iv, ivlen,
+			     in, inlen, out, outlen, SHISHI_DES_CBC_CRC);
 }
 
 static int
@@ -326,8 +363,8 @@ des_md4_decrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return _des_decrypt (handle, key, keyusage, iv, ivlen,
-		       in, inlen, out, outlen, SHISHI_DES_CBC_MD4);
+  return des_decrypt_verify (handle, key, keyusage, iv, ivlen,
+			     in, inlen, out, outlen, SHISHI_DES_CBC_MD4);
 }
 
 static int
@@ -338,8 +375,8 @@ des_md5_decrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return _des_decrypt (handle, key, keyusage, iv, ivlen,
-		       in, inlen, out, outlen, SHISHI_DES_CBC_MD5);
+  return des_decrypt_verify (handle, key, keyusage, iv, ivlen,
+			     in, inlen, out, outlen, SHISHI_DES_CBC_MD5);
 }
 
 static int
