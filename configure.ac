@@ -283,18 +283,18 @@ AC_SUBST(CRYPTO_CFLAGS)
 AC_SUBST(CRYPTO_LIBS)
 
 # Check for gnutls.
-AC_ARG_ENABLE(tls,
-	AC_HELP_STRING([--enable-tls], [enable non-standard TLS support]),
-	tls=$enableval, tls=yes)
-if test "$tls" != "no"; then
-	AM_PATH_LIBGNUTLS(0.8.8, tls=yes, tls=no)
+AC_ARG_ENABLE(starttls,
+	AC_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
+	starttls=$enableval, starttls=yes)
+if test "$starttls" != "no"; then
+	AM_PATH_LIBGNUTLS(0.8.8, starttls=yes, starttls=no)
 fi
-AC_MSG_CHECKING([if non-standard TLS support should be enabled])
-AC_MSG_RESULT($tls)
-if test "$tls" != "no"; then
+AC_MSG_CHECKING([if non-standard STARTTLS support should be enabled])
+AC_MSG_RESULT($starttls)
+if test "$starttls" != "no"; then
 	AC_DEFINE(USE_STARTTLS, 1, [Define to 1 if you want STARTTLS.])
 fi
-AM_CONDITIONAL(STARTTLS, test "$tls" != "no")
+AM_CONDITIONAL(STARTTLS, test "$starttls" != "no")
 
 # Check for gtk-doc.
 AC_ARG_WITH(html-dir, [  --with-html-dir=PATH path to installed docs ])
