@@ -4,6 +4,6 @@ Makefile
 Makefile.in
 authenticator
 crypto
-gss
 gztime
 ticketset
+safe
