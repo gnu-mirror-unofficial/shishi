@@ -1,0 +1,7 @@
+The inetutils/ sub-directory contains a stripped down GNU Inetutils
+containing a telnet implementation with Shishi support.  Ideally I
+would like to see GNU Inetutils incorporate this feature, but until or
+unless that happens the work can be found in this directory.
+
+A patch that applies to GNU Inetutils is found in inetutils.diff in
+this directory.
