@@ -23,7 +23,7 @@
 
 int
 shishi_a2d_field (Shishi * handle,
-		  ASN1_TYPE node, char *field, char *der, int *len)
+		  Shishi_asn1 node, char *field, char *der, int *len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
   int rc;
@@ -37,13 +37,13 @@ shishi_a2d_field (Shishi * handle,
 }
 
 int
-shishi_a2d (Shishi * handle, ASN1_TYPE node, char *der, int *len)
+shishi_a2d (Shishi * handle, Shishi_asn1 node, char *der, int *len)
 {
   return shishi_a2d_field (handle, node, node->name, der, len);
 }
 
 int
-shishi_asn1_done (Shishi * handle, ASN1_TYPE node)
+shishi_asn1_done (Shishi * handle, Shishi_asn1 node)
 {
 
   int rc;
@@ -59,8 +59,63 @@ shishi_asn1_done (Shishi * handle, ASN1_TYPE node)
 }
 
 int
+shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
+		   const char *field,
+		   const char *data, size_t datalen)
+{
+  int rc;
+
+  rc = asn1_write_value (node, field, (unsigned char *) data, (int) datalen);
+  if (rc != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (rc));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
+		  const char *field,
+		  const char *data, size_t * datalen)
+{
+  int rc;
+
+  rc = asn1_read_value (node, field, (unsigned char *) data, (int *) datalen);
+  if (rc != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (rc));
+      if (rc == ASN1_ELEMENT_NOT_FOUND)
+	return SHISHI_ASN1_NO_ELEMENT;
+      else
+	return SHISHI_ASN1_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_asn1_number_of_elements (Shishi * handle, Shishi_asn1 node,
+				const char *field,
+				int *n)
+{
+  int rc;
+
+  rc = asn1_number_of_elements (node, field, n);
+  if (rc != ASN1_SUCCESS)
+    if (rc == ASN1_ELEMENT_NOT_FOUND)
+      return SHISHI_ASN1_NO_ELEMENT;
+    else
+      return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+
+int
 shishi_asn1_field (Shishi * handle,
-		   ASN1_TYPE node, char *data, size_t * datalen, char *field)
+		   Shishi_asn1 node, char *data, size_t * datalen, char *field)
 {
   int rc;
 
@@ -76,7 +131,7 @@ shishi_asn1_field (Shishi * handle,
 
 int
 shishi_asn1_optional_field (Shishi * handle,
-			    ASN1_TYPE node,
+			    Shishi_asn1 node,
 			    char *data, size_t * datalen, char *field)
 {
   int rc;
@@ -96,7 +151,7 @@ shishi_asn1_optional_field (Shishi * handle,
 
 int
 shishi_asn1_integer_field (Shishi * handle,
-			   ASN1_TYPE node, int *i, char *field)
+			   Shishi_asn1 node, int *i, char *field)
 {
   unsigned char buf[4];
   int buflen;
@@ -118,7 +173,7 @@ shishi_asn1_integer_field (Shishi * handle,
 
 int
 shishi_asn1_integer2_field (Shishi * handle,
-			    ASN1_TYPE node, unsigned long *i, char *field)
+			    Shishi_asn1 node, unsigned long *i, char *field)
 {
   unsigned char buf[4];
   int buflen;
@@ -141,7 +196,7 @@ shishi_asn1_integer2_field (Shishi * handle,
 #define SHISHI_TICKET_DEFAULT_TKTVNO "5"
 #define SHISHI_TICKET_DEFAULT_TKTVNO_LEN 0
 
-ASN1_TYPE
+Shishi_asn1
 shishi_asn1_ticket (Shishi * handle)
 {
   int res = ASN1_SUCCESS;
@@ -152,27 +207,29 @@ shishi_asn1_ticket (Shishi * handle)
   if (res != ASN1_SUCCESS)
     goto error;
 
+#if 1
   res = asn1_write_value (node, "Ticket.tkt-vno",
 			  (const unsigned char *)
 			  SHISHI_TICKET_DEFAULT_TKTVNO,
 			  SHISHI_TICKET_DEFAULT_TKTVNO_LEN);
   if (res != ASN1_SUCCESS)
     goto error;
+#endif
 
-  return node;
+  return (Shishi_asn1) node;
 
 error:
   shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
+  if (node != NULL)
     asn1_delete_structure (&node);
   return NULL;
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_asn1_encticketpart (Shishi * handle)
 {
   int res = ASN1_SUCCESS;
-  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  Shishi_asn1 node = NULL;
 
   res = asn1_create_element (handle->asn1, "Kerberos5.EncTicketPart",
 			     &node, "EncTicketPart");
@@ -183,17 +240,45 @@ shishi_asn1_encticketpart (Shishi * handle)
 
 error:
   shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != ASN1_TYPE_EMPTY)
+  if (node != NULL)
     asn1_delete_structure (&node);
   return NULL;
 }
 
-ASN1_TYPE
+Shishi_asn1
+shishi_asn1_new (Shishi * handle, const char *field, const char *name)
+{
+  ASN1_TYPE node = ASN1_TYPE_EMPTY;
+  int res;
+
+  res = asn1_create_element (handle->asn1, field, &node, name);
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return NULL;
+    }
+
+  return (Shishi_asn1) node;
+}
+
+Shishi_asn1
+shishi_asn1_apreq (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.AP-REQ", "AP-REQ");
+}
+
+Shishi_asn1
+shishi_asn1_aprep (Shishi * handle)
+{
+  return shishi_asn1_new (handle, "Kerberos5.AP-REP", "AP-REP");
+}
+
+Shishi_asn1
 shishi_d2a (Shishi * handle,
 	    char *fieldname, char *nodename, const char *der, size_t derlen)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
+  Shishi_asn1 structure = NULL;
   int asn1_result = ASN1_SUCCESS;
 
   asn1_result = asn1_create_element (handle->asn1, fieldname,
@@ -201,7 +286,7 @@ shishi_d2a (Shishi * handle,
   if (asn1_result != ASN1_SUCCESS)
     {
       shishi_error_set (handle, libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
+      return NULL;
     }
 
   asn1_result = asn1_der_decoding (&structure, (const unsigned char *) der,
@@ -210,79 +295,79 @@ shishi_d2a (Shishi * handle,
     {
       asn1_delete_structure (&structure);
       shishi_error_set (handle, errorDescription);
-      return ASN1_TYPE_EMPTY;
+      return NULL;
     }
 
   return structure;
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_ticket (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.Ticket", "Ticket", der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_encticketpart (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.EncTicketPart", "EncTicketPart",
 		     der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_asreq (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.AS-REQ", "KDC-REQ", der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_tgsreq (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.TGS-REQ", "KDC-REQ", der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_asrep (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.AS-REP", "KDC-REP", der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_tgsrep (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.TGS-REP", "KDC-REP", der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_kdcrep (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.KDC-REP", "KDC-REP", der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_kdcreq (Shishi * handle, char *der, int derlen)
 {
-  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
+  Shishi_asn1 structure = NULL;
 
   structure = shishi_d2a_asreq (handle, der, derlen);
-  if (structure == ASN1_TYPE_EMPTY)
+  if (structure == NULL)
     {
       printf ("d2a_kdcreq: not asreq\n");
       shishi_error_printf (handle, "Could not DER decode AS-REQ\n");
 
       structure = shishi_d2a_tgsreq (handle, der, derlen);
-      if (structure == ASN1_TYPE_EMPTY)
+      if (structure == NULL)
 	{
 	  printf ("d2a_kdcreq: not tgsreq\n");
 	  shishi_error_printf (handle, "Could not DER decode TGS-REQ\n");
 
 	  structure = shishi_d2a_kdcreq (handle, der, derlen);
-	  if (structure == ASN1_TYPE_EMPTY)
+	  if (structure == NULL)
 	    {
 	      printf ("d2a_kdcreq: not kdcreq\n");
 	      shishi_error_printf (handle, "Could not DER decode KDC-REQ\n");
 
-	      return ASN1_TYPE_EMPTY;
+	      return NULL;
 	    }
 	  else
 	    printf ("d2a_kdcreq: kdcreq!!\n");
@@ -292,53 +377,53 @@ shishi_d2a_kdcreq (Shishi * handle, char *der, int derlen)
   return structure;
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_encasreppart (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.EncASRepPart", "EncKDCRepPart",
 		     der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_enctgsreppart (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.EncTGSRepPart", "EncKDCRepPart",
 		     der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_enckdcreppart (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.EncKDCRepPart", "EncKDCRepPart",
 		     der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_authenticator (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.Authenticator", "Authenticator",
 		     der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_krberror (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.KRB-ERROR", "KRB-ERROR", der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_apreq (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.AP-REQ", "AP-REQ", der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_aprep (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.AP-REP", "AP-REP", der, derlen);
 }
 
-ASN1_TYPE
+Shishi_asn1
 shishi_d2a_encapreppart (Shishi * handle, char *der, int derlen)
 {
   return shishi_d2a (handle, "Kerberos5.EncAPRepPart", "EncAPRepPart",
@@ -393,7 +478,7 @@ shishi_d2a_encapreppart (Shishi * handle, char *der, int derlen)
 
 int
 shishi_principal_name_get (Shishi * handle,
-			   ASN1_TYPE namenode,
+			   Shishi_asn1 namenode,
 			   char *namefield, char *out, int *outlen)
 {
   int res = ASN1_SUCCESS;
@@ -454,9 +539,9 @@ shishi_principal_name_get (Shishi * handle,
 
 int
 shishi_principal_name_realm_get (Shishi * handle,
-				 ASN1_TYPE namenode,
+				 Shishi_asn1 namenode,
 				 char *namefield,
-				 ASN1_TYPE realmnode,
+				 Shishi_asn1 realmnode,
 				 char *realmfield, char *out, int *outlen)
 {
   int res = ASN1_SUCCESS;
@@ -466,7 +551,7 @@ shishi_principal_name_realm_get (Shishi * handle,
   totlen = *outlen;
   shishi_principal_name_get (handle, namenode, namefield, out, &totlen);
 
-  if (realmnode == ASN1_TYPE_EMPTY && realmfield)
+  if (realmnode == NULL && realmfield)
     {
       if (totlen + strlen ("@") + strlen (realmfield) > *outlen)
 	return SHISHI_TOO_SMALL_BUFFER;
@@ -476,7 +561,7 @@ shishi_principal_name_realm_get (Shishi * handle,
       memcpy (out + totlen, realmfield, strlen (realmfield));
       totlen += strlen (realmfield);
     }
-  else if (realmnode != ASN1_TYPE_EMPTY)
+  else if (realmnode != NULL)
     {
       if (totlen + strlen ("@") > *outlen)
 	return SHISHI_TOO_SMALL_BUFFER;
