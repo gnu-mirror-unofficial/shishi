@@ -61,7 +61,6 @@ libgnu_la_SOURCES += getaddrinfo.h
 
 ## begin gnulib module getdate
 
-libgnu_la_SOURCES += getdate.h getdate.y
 BUILT_SOURCES += getdate.c
 MAINTAINERCLEANFILES += getdate.c
 
@@ -75,7 +74,6 @@ libgnu_la_SOURCES += getdomainname.h
 
 ## begin gnulib module getline
 
-libgnu_la_SOURCES += getline.h
 EXTRA_DIST += getndelim2.h getndelim2.c
 
 ## end   gnulib module getline
@@ -94,12 +92,6 @@ getopt.h: getopt_.h
 MOSTLYCLEANFILES += getopt.h getopt.h-t
 
 ## end   gnulib module getopt
-
-## begin gnulib module getpass
-
-libgnu_la_SOURCES += getpass.h
-
-## end   gnulib module getpass
 
 ## begin gnulib module getsubopt
 
@@ -152,18 +144,6 @@ libgnu_la_SOURCES += strchrnul.h
 
 ## end   gnulib module strchrnul
 
-## begin gnulib module strdup
-
-libgnu_la_SOURCES += strdup.h
-
-## end   gnulib module strdup
-
-## begin gnulib module strndup
-
-libgnu_la_SOURCES += strndup.h
-
-## end   gnulib module strndup
-
 ## begin gnulib module strtok_r
 
 libgnu_la_SOURCES += strtok_r.h
@@ -182,12 +162,6 @@ libgnu_la_SOURCES += time_r.h
 
 ## end   gnulib module time_r
 
-## begin gnulib module timespec
-
-libgnu_la_SOURCES += timespec.h
-
-## end   gnulib module timespec
-
 ## begin gnulib module vasnprintf
 
 libgnu_la_SOURCES += printf-args.h printf-parse.h vasnprintf.h
@@ -199,12 +173,6 @@ libgnu_la_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 libgnu_la_SOURCES += vasprintf.h
 
 ## end   gnulib module vasprintf
-
-## begin gnulib module xalloc
-
-libgnu_la_SOURCES += xalloc.h xmalloc.c
-
-## end   gnulib module xalloc
 
 ## begin gnulib module xgetdomainname
 
