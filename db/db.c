@@ -40,6 +40,8 @@ static _Shisa_backend _shisa_backends[] = {
    shisa_file_key_remove}
 };
 
+/* Return structure with function pointers implementing a Shisa
+   backend, given a name (e.g., "file"). */
 _Shisa_backend *
 _shisa_find_backend (const char *name)
 {

@@ -104,7 +104,6 @@ typedef int (*_Shisa_db_key_remove) (Shisa * dbh,
 				     const char *principal,
 				     const Shisa_key * key);
 
-
 struct _Shisa_backend
 {
   char *name;
@@ -138,7 +137,8 @@ struct Shisa
 
 extern int getsubopt (char **optionp, char *const *tokens, char **valuep);
 
-/* db.c */
+/* Return structure with function pointers implementing a Shisa
+   backend, given a name (e.g., "file"). */
 extern _Shisa_backend *_shisa_find_backend (const char *name);
 
 #endif /* _INTERNAL_H */
