@@ -596,6 +596,9 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
       return rc;
     }
 
+  if (VERBOSEASN1 (ap->handle))
+    shishi_ticket_print (ap->handle, stdout, ticket);
+
   tkt = shishi_tkt2 (ap->handle, ticket, NULL, NULL);
 
   rc = shishi_tkt_decrypt (tkt, key);
@@ -629,7 +632,7 @@ shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key)
     }
 
   if (VERBOSEASN1 (ap->handle))
-    shishi_authenticator_print (ap->handle, stdout, ap->authenticator);
+    shishi_authenticator_print (ap->handle, stdout, authenticator);
 
   ap->tkt = tkt;
   ap->authenticator = authenticator;
