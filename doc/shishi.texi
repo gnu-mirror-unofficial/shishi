@@ -3987,17 +3987,17 @@ is set:
 
 When this is sent by the client, the client is requesting the server
 to start TLS negotiation on the TCP stream.  The client MUST NOT start
-TLS negotiation immediately.  The client should wait for either a
+TLS negotiation immediately.  Instead, the client wait for either a
 KRB-ERROR (sent normally, prefixed by a 4 octet length integer)
-indicating it does not understand the set high bit, or 4 octet which
-is to interpreted as an integer in network byte order, where the high
-bit is set and the remaining 31 bit are interpreted as an integer
+indicating the server do not understand the set high bit, or 4 octet
+which is to interpreted as an integer in network byte order, where the
+high bit is set and the remaining 31 bit are interpreted as an integer
 specifying the ``STARTTLS request accepted by server''.  In the first
 case, the client infer that the server do not understand (or wish to
 support) STARTTLS, and can re-try using normal TCP, if unprotected
-Kerberos 5 exchanges are allowed by client policy.  In the latter
-case, it should invoke TLS negotiation on the stream.  If any other
-data is received, the client MUST close the TCP stream.
+Kerberos 5 exchanges are acceptable to the client policy.  In the
+latter case, it should invoke TLS negotiation on the stream.  If any
+other data is received, the client MUST close the TCP stream.
 
 @subsection STARTTLS request accepted by server (extension mode 2)
 
@@ -4015,18 +4015,13 @@ is no TCP 4 octet length field before each packet.  Instead each
 Kerberos packet MUST be sent within one TLS record, so the application
 can use the TLS record length as the Kerberos 5 packet length.
 
-The server MAY consider the authentication performed by the TLS
-exchange as sufficient to issue Kerberos 5 tickets to the client,
-without requiring pre-authentication or the like.  However, it is not
-an error to carry out pre-authentication as well.  We are currently
-experimenting with this mode of operation.
-
 @subsection Proceeding after failed TLS negotiation
 
 If the TLS negotiation fails, possibly due to client or server policy
 (e.g., inadequate support of encryption types in TLS, or lack of
 client or server authentication) the entity that detect the failure
-should abort or re-try as appropriate, up to local policy.
+MUST disconnected the connection.  It is expected that any error
+messages that explain the error condition is transfered by TLS.
 
 @subsection Interaction with KDC addresses in DNS
 
@@ -4037,15 +4032,38 @@ TLS, but do not reference any work that describe how KDCs uses TLS.
 Until further clarified, consider the TLS field in that document to
 refer to implementation supporting this STARTTLS protocol.
 
-@subsection Security considerations
+@subsection Using TLS authentication logic in Kerberos
 
-No channel bindings are provided in the Kerberos messages.  It is an
-open question whether, and how, this should be fixed.
+The server MAY consider the authentication performed by the TLS
+exchange as sufficient to issue Kerberos 5 tickets to the client,
+without requiring, e.g., pre-authentication.  However, it is not an
+error to require or use pre-authentication as well.
+
+The client may also indicate that it wishes to use TLS both for
+authentication and data protection by using the @samp{NULL} encryption
+type in its request.  The server can decide from its local policy
+whether or not issuing tickets based solely on TLS authentication, and
+whether @samp{NULL} encryption within TLS, is acceptable or not.  This
+mode is currently under investigation.
+
+@subsection Security considerations
 
 Because the initial token is not protected, it is possible for an
 active attacker to make it appear to the client that the server do not
 support this extension.  It is up to client configuration to disallow
-non-TLS connections, if this is deemed unacceptable.
+non-TLS connections, if this vulnerability is deemed unacceptable.
+For interoperability, we suggest the default behaviour should be to
+allow automatic fallback to TCP or UDP.
+
+The security considerations of both TLS and Kerberos 5 are inherited.
+Using TLS for authentication and/or data protection together with
+Kerberos alter the authentication logic fundamentally.  Thus, it may
+be that even if the TLS and Kerberos 5 protocols and implementations
+were secure, the combination of TLS and Kerberos 5 described here
+could be insecure.
+
+No channel bindings are provided in the Kerberos messages.  It is an
+open question whether, and how, this should be fixed.
 
 @node Telnet encryption with AES-CCM
 @section Telnet encryption with AES-CCM
