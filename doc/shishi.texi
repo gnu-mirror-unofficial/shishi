@@ -2428,6 +2428,7 @@ is experimental.  Comments and feedback is appreciated.
 
 @menu
 * STARTTLS protected KDC exchanges::	How Shishi talks to KDC protected by TLS.
+* Telnet encryption with AES-CCM::      Integrity and privacy protected telnet.
 @end menu
 
 @node STARTTLS protected KDC exchanges
@@ -2568,6 +2569,184 @@ If the TLS negotiation fails, possibly due to client or server policy
 (e.g., inadequate support of encryption types in TLS, or lack of
 client or server authentication) the entity that detect the failure
 should abort or re-try as appropriate, up to local policy.
+
+@node Telnet encryption with AES-CCM
+@section Telnet encryption with AES-CCM
+
+This appendix describe how Shishi use the Advanced Encryption Standard
+(AES) encryption algorithm in Counter with CBC-MAC mode (RFC 3610)
+with the telnet encryption option (RFC 2946).
+
+@subsection Command Names and Codes
+
+@verbatim
+Encryption Type
+
+      AES_CCM          TBD
+
+Suboption Commands
+
+      AES_CCM_INFO         1
+      AES_CCM_INFO_OK      2
+      AES_CCM_INFO_BAD     3
+@end verbatim
+
+@subsection Command Meanings
+
+@verbatim
+   IAC SB ENCRYPT IS AES_CCM AES_CCM_INFO <M> <L> <nonce> IAC SE
+@end verbatim
+
+The sender of this command select desired M and L parameters, and
+nonce, as described in RFC 3610, and sends it to the other side of the
+connection.  The parameters and the nonce are sent in clear text.
+Only the side of the connection that is WILL ENCRYPT may send the
+AES_CCM_INFO command.
+
+@verbatim
+   IAC SB ENCRYPT REPLY AES_CCM AES_CCM_INFO_BAD IAC SE
+@end verbatim
+
+The sender of this command reject the parameters received in the
+AES_CCM_INFO command.  Only the side of the connection that is DO
+ENCRYPT may send the AES_CCM_INFO_BAD command.  The command MUST be
+sent if the nonce field length does not match the selected value for
+L.  The command MAY be sent if the receiver do not accept the
+parameters for reason such as policy.  No capability is provided to
+negotiate these parameters.
+
+@verbatim
+   IAC SB ENCRYPT REPLY AES_CCM AES_CCM_INFO_OK IAC SE
+@end verbatim
+
+The sender of this command accepts the parameters received in the
+AES_CCM_INFO command.  Only the side of the connection that is DO
+ENCRYPT may send the AES_CCM_INFO_BAD command.  The command MUST NOT
+be sent if the nonce field length does not match the selected value
+for L.
+
+@subsection Implementation Rules
+
+Once a AES_CCM_INFO_OK command has been received, the WILL ENCRYPT
+side of the connection should do keyid negotiation using the ENC_KEYID
+command.  Once the keyid negotiation has successfully identified a
+common keyid, then START and END commands may be sent by the side of
+the connection that is WILL ENCRYPT.  Data will be encrypted using the
+AES-CCM algorithm, with the negotiated nonce and parameters M and L.
+After each successful encryption and decryption, the nonce is treated
+as an integer in network byte order, and incremented by one.
+
+If encryption (decryption) is turned off and back on again, and the
+same keyid is used when re-starting the encryption (decryption), the
+intervening clear text must not change the state of the encryption
+(decryption) machine.  In particular, the AES-CCM nonce must not be
+re-set.
+
+If a START command is sent (received) with a different keyid, the
+encryption (decryption) machine must be re-initialized immediately
+following the end of the START command with the new key and the
+parameters sent (received) in the last AES_CCM_INFO command.
+
+If a new AES_CCM_INFO command is sent (received), and encryption
+(decryption) is enabled, the encryption (decryption) machine must be
+re-initialized immediately following the end of the AES_CCM_INFO
+command with the new nonce and parameters, and the keyid sent
+(received) in the last START command.
+
+If encryption (decryption) is not enabled when a AES_CCM_INFO command
+is sent (received), the encryption (decryption) machine must be re-
+initialized after the next START command, with the keyid sent
+(received) in that START command, and the nonce and parameters sent
+(received) in this AES_CCM_INFO command.
+
+At all times MUST each end make sure that a AES-CCM nonce is not used
+twice under the same encryption key.  The rules above help accomplish
+this in an interoperable way.
+
+@subsection Integration with the AUTHENTICATION telnet option
+
+<<This section is slightly complicated.  Can't we simplify this?>>
+
+As noted in the telnet ENCRYPTION option specifications, a keyid value
+of zero indicates the default encryption key, as might be derived from
+the telnet AUTHENTICATION option.  If the default encryption key
+negotiated as a result of the telnet AUTHENTICATION option contains
+less than 32 bytes (corresponding to two 128 bit keys), then the
+AES_CCM option MUST NOT be offered or used as a valid telnet
+encryption option.  Furthermore, depending on policy for key lengths,
+the AES_CCM option MAY be disabled if the default encryption key
+contain less than 48 bytes (for two 192 bit keys), or less than 64
+bytes (for two 256 bit keys), as well.
+
+The available encrypt key data is divided on two halves, where the
+first half is used to encrypt data sent from the server (decrypt data
+received by the client), and the second half is used to encrypt data
+sent from the client (decrypt data received by the server).
+
+Note that the above algorithm assumes that the AUTHENTICATION
+mechanism generate keying material suitable for AES-CCM as used in
+this specification.  This is not necessarily true in general, but we
+specify this behaviour as the default since it is true for most
+authentication systems in popular use today.  New telnet
+AUTHENTICATION mechanisms may specify alternative methods for
+determining the keys to be used for this cipher suite in their
+specification, if the session key negotiated by that authentication
+mechanism is not a DES key and and where this algorithm may not be
+safely used.
+
+Kerberos 5 authentication clarification: The key used to encrypt data
+from the client to the server is taken from the sub-session key in the
+AP-REQ.  The key used to decrypt data from the server to the client is
+taken from the sub-session key in the AP-REP.  If mutual
+authentication is not negotiated, the key used to encrypt data from
+the client to the server is taken from the session key in the ticket,
+and the key used to decrypt data from the server to the client is
+taken from the sub-session key in the AP-REQ.  Leaving the AP-REQ
+sub-key field empty MUST disable the AES_CCM option.
+
+@subsection Security Considerations
+
+The protocol must be properly and securely implemented.  For example,
+an implementation should not be vulnerable to various
+implementation-specific attacks such as buffer overflows or
+side-channel analysis.
+
+We wish to repeat the suggestion from RFC 2946, to investigate in a
+STARTTLS approach for Telnet encryption (and also authentication),
+when the security level provided by this specification is not
+adequate.
+
+@subsubsection Telnet Encryption Protocol Security Considerations
+
+The security consideration of the Telnet encryption protocol are
+inherited.
+
+It should be noted that the it is up to the authentication protocol
+used, if any, to bind the authenticity of the peers to a specific
+session.
+
+The Telnet encryption protocol does not, in general, protect against
+possibly malicious downgrading to any mutually acceptable, but not
+preferred, encryption type.  This places a requirement on each peer to
+only accept encryption types it trust fully.  In other words, the
+Telnet encryption protocol do not guarantee that the strongest
+mutually acceptable encryption type is always selected.
+
+@subsubsection AES-CCM Security Considerations
+
+The integrity and privacy claims are inherited from AES-CCM.  In
+particular, the implementation must make sure a nonce is not used more
+than once together with the same key.
+
+Furthermore, the encryption key is assumed to be random, i.e., it
+should not be possible to guess it with probability of success higher
+than guessing any uniformly selected random key.  RFC 1750 gives an
+overview of issues and recommendations related to randomness.
+
+@subsection Acknowledgments
+
+This document is based on the various Telnet Encryption RFCs (RFC
+2946, RFC 2947, RFC 2948, RFC 2952 and RFC 2953).
 
 @node Copying This Manual
 @appendix Copying This Manual
