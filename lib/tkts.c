@@ -878,6 +878,8 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   Shishi_tkt *tgt;
   int rc;
 
+  /* XXX cross-realm operation */
+
   memset (&lochint, 0, sizeof (lochint));
   asprintf (&lochint.server, "krbtgt/%s", hint->serverrealm ?
 	    hint->serverrealm : shishi_realm_default (tkts->handle));
@@ -1009,8 +1011,9 @@ shishi_tkts_get_tgs (Shishi_tkts * tkts,
  * looks in the ticket set for the ticket, then tries to find a
  * suitable TGT, possibly via an AS exchange, using
  * shishi_tkts_get_tgt(), and then use that TGT in a TGS exchange to
- * get the ticket.  Currently this function do not implement cross
- * realm logic.
+ * get the ticket.
+ *
+ * Currently this function do not implement cross realm logic.
  *
  * Return value: Returns a ticket if found, or NULL if this function
  *               is unable to get the ticket.
