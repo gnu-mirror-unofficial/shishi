@@ -409,7 +409,7 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
 			 Shishi_asn1 ticket)
 {
   int res;
-  unsigned char format[BUFSIZ];
+  unsigned char *format;
   unsigned char buf[BUFSIZ];
   int buflen;
   int i, n;
@@ -456,14 +456,16 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (format, "sname.name-string.?%d", i);
       buflen = BUFSIZ;
+      asprintf (&format, "sname.name-string.?%d", i);
       res = shishi_asn1_read (handle, ticket, format, buf, &buflen);
+      free (format);
       if (res != SHISHI_OK)
 	return res;
 
-      sprintf (format, "ticket.sname.name-string.?%d", i);
+      asprintf (&format, "ticket.sname.name-string.?%d", i);
       res = shishi_asn1_write (handle, apreq, format, buf, buflen);
+      free (format);
       if (res != SHISHI_OK)
 	return res;
     }
@@ -598,7 +600,7 @@ shishi_apreq_get_ticket (Shishi * handle,
 			 Shishi_asn1 apreq, Shishi_asn1 * ticket)
 {
   unsigned char buf[BUFSIZ];
-  unsigned char format[BUFSIZ];
+  unsigned char *format;
   int buflen;
   int res;
   int i, n;
@@ -652,14 +654,16 @@ shishi_apreq_get_ticket (Shishi * handle,
       if (res != SHISHI_OK)
 	goto error;
 
-      sprintf (format, "ticket.sname.name-string.?%d", i);
       buflen = BUFSIZ;
+      asprintf (&format, "ticket.sname.name-string.?%d", i);
       res = shishi_asn1_read (handle, apreq, format, buf, &buflen);
+      free (format);
       if (res != SHISHI_OK)
 	goto error;
 
-      sprintf (format, "sname.name-string.?%d", i);
+      asprintf (&format, "sname.name-string.?%d", i);
       res = shishi_asn1_write (handle, *ticket, format, buf, buflen);
+      free (format);
       if (res != SHISHI_OK)
 	goto error;
     }
