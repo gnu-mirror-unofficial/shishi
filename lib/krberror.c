@@ -1180,10 +1180,12 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh, Shishi_asn1 krberror)
 	       shishi_krberror_message (handle, krberror));
 
       res = shishi_krberror_etext (handle, krberror, &buf, &len);
-      buf[len] = '\0';
       if (res == SHISHI_OK && len > 0)
-	fprintf (fh, "Additional Kerberos error message from server:\n%s\n",
-		 buf);
+	{
+	  buf[len] = '\0';
+	  fprintf (fh, "Additional Kerberos error message from server:\n%s\n",
+		   buf);
+	}
     }
 
 
