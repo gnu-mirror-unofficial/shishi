@@ -68,6 +68,9 @@ test (Shishi * handle)
   else
     fail ("shishi_authenticator() failed\n");
 
+  if (debug)
+    shishi_authenticator_print (handle, stdout, a);
+
   res = shishi_authenticator_remove_subkey (handle, a);
   if (res == SHISHI_OK)
     success ("shishi_authenticator_remove_subkey() OK\n");
