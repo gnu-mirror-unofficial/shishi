@@ -2102,4 +2102,7 @@ extern void shishi_x509key_default_file_set (Shishi * handle,
 					     const char *x509keyfile);
 extern const char *shishi_x509key_default_file (Shishi * handle);
 
+/* utils.c */
+extern time_t shishi_get_date (const char *p, const time_t *now);
+
 #endif
