@@ -352,9 +352,8 @@ tgsreq1 (Shishi_tgs * tgs)
 {
   int rc;
   Shishi_tkt *tkt;
-  Shishi_key *newsessionkey, *oldsessionkey, *serverkey, *subkey, *keytouse, *tgkey;
+  Shishi_key *newsessionkey, *oldsessionkey, *serverkey, *subkey, *tgkey;
   char *servername, *serverrealm, *tgname, *tgrealm, *client, *clientrealm;
-  int32_t keyusage;
   Shisa_principal krbtgt;
   Shishi_asn1 reqapticket;
   Shisa_key **tgkeys;
@@ -507,26 +506,22 @@ tgsreq1 (Shishi_tgs * tgs)
     (handle,
      shishi_tkt_encticketpart (shishi_ap_tkt (shishi_tgs_ap (tgs))),
      &oldsessionkey);
+  if (rc != SHISHI_OK)
+    return rc;
 
   rc = shishi_authenticator_get_subkey
     (handle, shishi_ap_authenticator (shishi_tgs_ap (tgs)), &subkey);
   if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
     return rc;
 
-  if (rc == SHISHI_OK)
-    {
-      keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY;
-      keytouse = subkey;
-    }
-  else
-    {
-      keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY;
-      keytouse = oldsessionkey;
-    }
-
   /* Build TGS-REP. */
 
-  rc = shishi_tgs_rep_build (tgs, keyusage, keytouse);
+  if (rc == SHISHI_OK)
+    rc = shishi_tgs_rep_build
+      (tgs, SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY, subkey);
+  else
+    rc = shishi_tgs_rep_build
+      (tgs, SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY, oldsessionkey);
   if (rc)
     return rc;
 
