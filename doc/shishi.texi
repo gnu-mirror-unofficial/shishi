@@ -96,6 +96,7 @@ Shishi implements the Kerberos 5 network security system.
 * Cryptographic Overview::
 * Supported Platforms::
 * Bug Reports::
+* Contributing::
 @end menu
 
 @node Getting Started
@@ -598,6 +599,61 @@ Send your bug report to:
 
 @center @samp{bug-shishi@@josefsson.org}
 
+@node Contributing
+@section Contributing
+@cindex Contributing
+@cindex Hacking
+
+If you want to submit a patch for inclusion -- from solve a typo you
+discovered, up to adding support for a new feature -- you should
+submit it as a bug report (@pxref{Bug Reports}).  There are some
+things that you can do to increase the chances for it to be included
+in the official package.
+
+Unless your patch is very small (say, under 10 lines) we require that
+you assign the copyright of your work to the FSF.  This is to protect
+the freedom of the project.  If you have already signed papers, we
+will send you the necessary information when you submit your
+contribution.
+
+For contributions that doesn't consist of actual programming code, the
+only guidelines are common sense.  Use it.
+
+For code contributions, a number of style guides will help you:
+
+@itemize @bullet
+
+@item Coding Style.
+Follow the GNU Standards document (@pxref{top, GNU Coding Standards,,
+standards}).
+
+If you normally code using another coding standard, there is no
+problem, but you should use @samp{indent} to reformat the code
+(@pxref{top, GNU Indent,, indent}) before submitting your work.
+
+@item Use the unified diff format @samp{diff -u}.
+
+@item Return errors.
+The only valid reason for ever aborting the execution of the program
+is due to memory allocation errors, but for that you should call
+@samp{xalloc_die} to allow the application to recover if it wants to.
+
+@item Design with thread safety in mind.
+Don't use global variables.  Don't even write to per-handle global
+variables unless the documented behaviour of the function you write is
+to write to the per-handle global variable.
+
+@item Avoid using the C math library.
+It causes problems for embedded implementations, and in most
+situations it is very easy to avoid using it.
+
+@item Document your functions.
+Use comments before each function headers, that, if properly
+formatted, are extracted into Texinfo manuals and GTK-DOC web pages.
+
+@item Supply a ChangeLog and NEWS entries, where appropriate.
+
+@end itemize
 
 @c **********************************************************
 @c ********************  User Manual  **********************
