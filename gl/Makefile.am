@@ -4,6 +4,7 @@
 # s/libfoo_a/libfoo_la/g
 # s/libfoo.a/libfoo.la/
 # s/#libfoo_la_LIBADD = @LIBOBJS@/libfoo_la_LIBADD = @LTLIBOBJS@/g
+# s/EXTRA_DIST =/EXTRA_DIST = README/
 
 SUBDIRS = m4
 
@@ -16,7 +17,7 @@ noinst_LTLIBRARIES = libfoo.la
 libfoo_la_SOURCES =
 #libfoo_la_LIBADD = @LIBOBJS@
 libfoo_la_LIBADD = @LTLIBOBJS@
-EXTRA_DIST =
+EXTRA_DIST = README
 BUILT_SOURCES =
 SUFFIXES =
 MOSTLYCLEANFILES =
