@@ -325,7 +325,7 @@ shishi_cfg (Shishi * handle, char *option)
 int
 shishi_cfg_from_file (Shishi * handle, const char *cfg)
 {
-  char line[BUFSIZ];
+  struct linebuffer lb;
   FILE *fh;
 
   if (cfg == NULL)
@@ -338,30 +338,32 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
       return SHISHI_FOPEN_ERROR;
     }
 
-  while (!feof (fh) && !ferror (fh))
+  initbuffer (&lb);
+
+  while (readlinebuffer (&lb, fh))
     {
-      if (!fgets (line, sizeof (line), fh))
+      char *p = lb.buffer;
+      char *q;
+
+      p[lb.length - 1] = '\0';
+
+      while (*p && strchr (" \t\r\n", *p))
+	p++;
+
+      if (*p == '\0' || *p == '#')
 	continue;
 
-      line[strlen (line) - 1] = '\0';
+      q = strchr (p, ' ');
+      if (q && (strchr (p, '=') == NULL || q < strchr (p, '=')))
+	*q = '=';
 
-      while (line[0] && strchr (" \t\r\n", line[0]))
-	memmove (line, line + 1, strlen (line));
-
-      if (line[0] == '#' || line[0] == '\0')
-	continue;
-
-      if (strchr (line, ' ') && (strchr (line, '=') == NULL ||
-				 strchr (line, ' ') < strchr (line, '=')))
-	{
-	  char *p = strchr (line, ' ');
-	  while (*(p + 1) == ' ' || *(p + 1) == '=')
-	    memmove (p, p + 1, strlen (p + 1) + 1);
-	  *p = '=';
-	}
-
-      shishi_cfg (handle, line);
+      shishi_cfg (handle, p);
     }
+
+  if (ferror (fh))
+    shishi_error_printf (handle, "Error reading configuration file");
+
+  freebuffer (&lb);
 
   if (fclose (fh) != 0)
     return SHISHI_FCLOSE_ERROR;
