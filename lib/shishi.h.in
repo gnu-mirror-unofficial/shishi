@@ -976,6 +976,10 @@ extern int shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
 extern int shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 			      const char *field,
 			      const char *data, size_t datalen);
+extern int shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
+				      const char *field, int n);
+extern int shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
+					const char *field, int flags);
 extern int shishi_asn1_field (Shishi * handle,
 			      Shishi_asn1 node,
 			      char *data, size_t * datalen,
