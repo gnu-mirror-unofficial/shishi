@@ -5,3 +5,4 @@ sysexits.h
 *.lo
 *.la
 .libs
+getdate.c
