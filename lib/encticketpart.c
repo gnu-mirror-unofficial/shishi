@@ -355,6 +355,31 @@ shishi_encticketpart_authctime (Shishi * handle, Shishi_asn1 encticketpart)
   return t;
 }
 
+/**
+ * shishi_encticketpart_client:
+ * @handle: Shishi library handle create by shishi_init().
+ * @encticketpart: EncTicketPart variable to get client name from.
+ * @client: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @clientlen).
+ * @clientlen: pointer to length of @client on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
+ *
+ * Represent client principal name in EncTicketPart as zero-terminated
+ * string.  The string is allocate by this function, and it is the
+ * responsibility of the caller to deallocate it.  Note that the
+ * output length @clientlen does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_encticketpart_client (Shishi * handle,
+			     Shishi_asn1 encticketpart,
+			     char **client, size_t * clientlen)
+{
+  return shishi_principal_name (handle, encticketpart, "cname",
+				client, clientlen);
+}
+
 int
 shishi_encticketpart_cname_get (Shishi * handle,
 				Shishi_asn1 encticketpart,
