@@ -149,7 +149,7 @@ fi
 if test "$with_system_stringprep" = "no"; then
 	AC_MSG_WARN([[
 
-The system's libstringprep 0.0.02 or later not used. Using copy
+The system's libstringprep 0.0.1 or later not used. Using copy
 distributed with shishi instead.
 
 See <http://josefsson.org/libstringprep/>.
