@@ -399,7 +399,6 @@ shishi_aprep_decrypt (Shishi * handle,
 
   res = shishi_decrypt (handle, key, keyusage, cipher, cipherlen,
 			buf, &buflen);
-  free(cipher);
   if (res != SHISHI_OK)
     {
       if (VERBOSE (handle))
