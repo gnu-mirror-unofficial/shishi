@@ -147,6 +147,7 @@ struct arguments
 {
   int silent, verbose;
   char *cfgfile;
+  char *keyfile;
   char *setuid;
   struct listenspec *listenspec;
   int nlistenspec;
@@ -178,6 +179,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
     case 'c':
       arguments->cfgfile = strdup (arg);
+      break;
+
+    case 'k':
+      arguments->keyfile = strdup (arg);
       break;
 
     case 'u':
@@ -335,6 +340,9 @@ static struct argp_option options[] = {
    "indicates all addresses on the local host. "
    "The default is \"" LISTEN_DEFAULT "\"."},
 
+  {"key-file", 'k', "FILE", 0,
+   "Read keys from file.  Default is " KDCKEYFILE "."},
+
   {"setuid", 'u', "NAME", 0,
    "After binding socket, set user identity."},
 
@@ -349,7 +357,7 @@ static struct argp argp = {
 };
 
 static int
-asreq1 (Shishi * handle, Shishi_as * as)
+asreq1 (Shishi * handle, struct arguments arg, Shishi_as * as)
 {
   Shishi_tkt *tkt;
   Shishi_key *sessionkey, *sessiontktkey, *userkey;
@@ -358,7 +366,6 @@ asreq1 (Shishi * handle, Shishi_as * as)
   int buflen;
   int err;
   char *username, *servername, *serverrealm;
-  char *password;
 
   tkt = shishi_as_tkt (as);
   if (!tkt)
@@ -411,8 +418,6 @@ asreq1 (Shishi * handle, Shishi_as * as)
   serverrealm = strdup (buf);
   printf ("serverrealm %s\n", serverrealm);
 
-  password = "foo";
-
   err = shishi_tkt_clientrealm_set (tkt, serverrealm, username);
   if (err)
     return err;
@@ -427,13 +432,11 @@ asreq1 (Shishi * handle, Shishi_as * as)
   if (err != SHISHI_OK)
     return err;
 
-  err = shishi_key_from_string (handle,
-				etype,
-				password,
-				strlen (password),
-				buf, buflen, NULL, &userkey);
-  if (err != SHISHI_OK)
-    return err;
+  userkey = shishi_keys_for_serverrealm_in_file (handle,
+						 arg.keyfile,
+						 username, serverrealm);
+  if (!userkey)
+    return !SHISHI_OK;
 
   err = shishi_tkt_build (tkt, sessiontktkey);
   if (err)
@@ -458,7 +461,8 @@ asreq1 (Shishi * handle, Shishi_as * as)
 }
 
 static void
-asreq (Shishi * handle, Shishi_asn1 kdcreq, char **out, int *outlen)
+asreq (Shishi * handle, struct arguments arg,
+       Shishi_asn1 kdcreq, char **out, int *outlen)
 {
   Shishi_as *as;
   int rc;
@@ -487,7 +491,7 @@ asreq (Shishi * handle, Shishi_asn1 kdcreq, char **out, int *outlen)
     }
   *outlen = BUFSIZ;
 
-  rc = asreq1 (handle, as);
+  rc = asreq1 (handle, arg, as);
   if (rc != SHISHI_OK)
     {
       syslog (LOG_NOTICE, "Could not answer request: %s: %s\n",
@@ -521,7 +525,8 @@ get_msgtype (Shishi * handle, char *in, size_t inlen)
 }
 
 static void
-process (Shishi * handle, char *in, int inlen, char **out, int *outlen)
+process (Shishi * handle, struct arguments arg,
+	 char *in, int inlen, char **out, int *outlen)
 {
   Shishi_asn1 kdcreq;
   Shishi_msgtype msgtype;
@@ -539,7 +544,7 @@ process (Shishi * handle, char *in, int inlen, char **out, int *outlen)
       if (kdcreq)
 	{
 	  shishi_kdcreq_print (handle, stdout, kdcreq);
-	  asreq (handle, kdcreq, out, outlen);
+	  asreq (handle, arg, kdcreq, out, outlen);
 	}
       else
 	{
@@ -767,7 +772,7 @@ doit (Shishi * handle, struct arguments arg)
 		    char *p;
 		    int plen;
 
-		    process (handle, ls->buf, ls->bufpos, &p, &plen);
+		    process (handle, arg, ls->buf, ls->bufpos, &p, &plen);
 
 		    if (p && plen > 0)
 		      {
@@ -835,7 +840,16 @@ main (int argc, char *argv[])
       return 1;
     }
 
+  if (!arg.keyfile)
+    arg.keyfile = strdup (KDCKEYFILE);
+
   rc = doit (handle, arg);
+
+  free (arg.keyfile);
+  if (arg.cfgfile)
+    free (arg.cfgfile);
+  if (arg.setuid)
+    free (arg.setuid);
 
   shishi_done (handle);
   closelog ();
