@@ -19,7 +19,7 @@
 
 MOST_SUBDIRS = intl m4 po asn1 lib src test doc
 
-DIST_SUBDIRS = crypto argp gdbm $(MOST_SUBDIRS)
+DIST_SUBDIRS = crypto argp $(MOST_SUBDIRS)
 
 SUBDIRS = @CRYPTO@ @ARGP@ @GDBM@ $(MOST_SUBDIRS)
 
@@ -32,7 +32,25 @@ sysconf_DATA = shishi.conf
 pkgdata_DATA = shishi.skel
 
 EXTRA_DIST = config.rpath mkinstalldirs \
-	shishi.conf.in shishi.skel.in shishi.pc.in
+	shishi.conf.in shishi.skel.in shishi.pc.in \
+	gdbm/COPYING gdbm/ChangeLog gdbm/INSTALL gdbm/Makefile.in gdbm/NEWS \
+	gdbm/README gdbm/aclocal.m4 gdbm/autoconf.h.in \
+	gdbm/bucket.c gdbm/close.c gdbm/config.guess \
+	gdbm/config.sub gdbm/configure gdbm/configure.in \
+	gdbm/conv2gdbm.c gdbm/dbm.h gdbm/dbmclose.c gdbm/dbmdelete.c \
+	gdbm/dbmdirfno.c gdbm/dbmfetch.c gdbm/dbminit.c gdbm/dbmopen.c \
+	gdbm/dbmpagfno.c gdbm/dbmrdonly.c gdbm/dbmseq.c gdbm/dbmstore.c \
+	gdbm/delete.c gdbm/extern.h gdbm/falloc.c gdbm/fetch.c \
+	gdbm/findkey.c gdbm/gdbm.3 gdbm/gdbm.info gdbm/gdbm.proto \
+	gdbm/gdbm.proto2 gdbm/gdbm.texinfo gdbm/gdbmclose.c gdbm/gdbmconst.h \
+	gdbm/gdbmdefs.h gdbm/gdbmdelete.c gdbm/gdbmerrno.c \
+	gdbm/gdbmerrno.h gdbm/gdbmexists.c gdbm/gdbmfdesc.c gdbm/gdbmfetch.c \
+	gdbm/gdbmopen.c gdbm/gdbmreorg.c gdbm/gdbmseq.c gdbm/gdbmsetopt.c \
+	gdbm/gdbmstore.c gdbm/gdbmsync.c gdbm/getopt.c gdbm/getopt.h \
+	gdbm/global.c gdbm/hash.c gdbm/install-sh gdbm/ltmain.sh \
+	gdbm/mkinstalldirs gdbm/ndbm.h gdbm/proto.h gdbm/seq.c gdbm/store.c \
+	gdbm/systems.h gdbm/testdbm.c gdbm/testgdbm.c gdbm/testndbm.c \
+	gdbm/update.c gdbm/version.c
 
 ChangeLog:
 	cvs2cl --fsf --usermap .cvsusers --separate-header -I \
