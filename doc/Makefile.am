@@ -39,7 +39,7 @@ DISTCLEANFILES = $(man_MANS)
 EXTRA_DIST = gdoc $(man_MANS) $(generated)
 
 info_TEXINFOS = shishi.texi
-shishi_TEXINFOS = lgpl.texi gpl.texi fdl.texi $(shishi_texi_auto_deps)
+shishi_TEXINFOS = gpl.texi fdl.texi $(shishi_texi_auto_deps)
 
 shishi-api-init.texi: $(top_srcdir)/lib/init.c $(top_srcdir)/lib/done.c $(top_srcdir)/lib/cfg.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@

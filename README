@@ -11,9 +11,8 @@ time.  Let me repeat that, SHISHI IS MOST LIKELY INSECURE.
 Installation instructions are found in the INSTALL file in this
 directory.  Further instructions are found in doc/shishi.info.
 
-The library (lib/) is licensed under the GNU Lesser Public License
-license (see COPYING.LIB), the application (src/) is licensed under
-the GNU Public License (see COPYING), and the documentation (doc/) is
+The library and application (lib/, src/) are licensed under the GNU
+Public License license (see COPYING), and the documentation (doc/) is
 licensed under the GNU Free Documentation License (see COPYING.DOC).
 Third party packages (asn1/, crypto/, argp/, libstringprep/, and
 extra/inetutils/) are distributed here for convenience, and they have
