@@ -10,6 +10,10 @@ See the end for copying conditions.
 Example code of a client using integrity protected application data
 exchanges is in examples/client-safe.c and examples/server.c.
 
+** Documentation improvements.
+E.g., a reference manual was added, that document the configuration
+file, and the shishi and shishid parameters.
+
 ** Various API changes.
 
 * Version 0.0.4 (released 2003-08-31)
