@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.10 (unreleased)
 
+** All command line interfaces now uses getopt instead of argp.
+
 * Version 0.0.9 (released 2003-12-12)
 
 ** A Kerberos 5 information storage system added, called Shisa.

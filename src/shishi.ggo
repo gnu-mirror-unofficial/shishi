@@ -40,7 +40,7 @@ option "renewable" - "Get a renewable ticket." flag off
 
 section "Options"
 option "client-name" - "Client name. Default is login username." string typestr="NAME" no
-option "encryption-type" E "Encryption types to use.  ETYPE is either registered name or integer." string typestr="ETYPE,[ETYPE...]" no
+option "encryption-type" E "Encryption types to use.  ETYPE is either registered name or integer.  Valid values include 'aes128', 'aes256', 'aes' (same as 'aes256'), '3des', 'des-md5', 'des-md4', 'des-crc', 'des' (same as 'des-md5'), and 'arcfour'." string typestr="ETYPE,[ETYPE...]" no
 option "endtime" e "Specify when ticket validity should expire.  The time syntax may be relative (to the start time), such as '20 hours', or absolute, such as '2001-02-03 04:05:06 CET'. The default is 8 hours after the start time." string typestr="STRING" no
 option "realm" - "Set default realm." string typestr="STRING" no
 option "renew-till" - "Specify renewable life of ticket.  Implies --renewable.  Accepts same time syntax as --endtime.  If --renewable is specified, the default is 1 week after the start time." string typestr="STRING" no
