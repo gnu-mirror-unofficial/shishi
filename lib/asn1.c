@@ -121,7 +121,7 @@ shishi_asn1_read2 (Shishi * handle,
   int len = 0;
 
   rc = asn1_read_value (node, field, NULL, &len);
-  if (rc != ASN1_MEM_ERROR)
+  if (rc != ASN1_SUCCESS && rc != ASN1_MEM_ERROR)
     {
       shishi_error_set (handle, libtasn1_strerror (rc));
       if (rc == ASN1_ELEMENT_NOT_FOUND)
@@ -138,9 +138,12 @@ shishi_asn1_read2 (Shishi * handle,
 
       *data = xmalloc (len + 1);
 
-      rc = shishi_asn1_read (handle, node, field, *data, &datalen);
-      if (rc != SHISHI_OK)
-	return rc;
+      if (len > 0)
+	{
+	  rc = shishi_asn1_read (handle, node, field, *data, &datalen);
+	  if (rc != SHISHI_OK)
+	    return rc;
+	}
 
       (*data)[len] = '\0';
     }
