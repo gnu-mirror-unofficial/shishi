@@ -149,6 +149,8 @@ shishi_cfg (Shishi * handle, char *option)
 	  handle->verbose |= SHISHI_VERBOSE_NOICE;
 	  break;
 	case -1:
+	  if (!value)
+	    break;
 	  for (i = 0; i < handle->nrealminfos; i++)
 	    if (realm && handle->realminfos[i].name == realm)
 	      {
