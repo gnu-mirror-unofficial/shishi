@@ -22,40 +22,36 @@
 #include "internal.h"
 
 OM_uint32
-gss_get_mic (OM_uint32		*minor_status,
-	     const gss_ctx_id_t	context_handle,
-	     gss_qop_t		qop_req,
-	     const gss_buffer_t	message_buffer,
-	     gss_buffer_t	message_token)
+gss_get_mic (OM_uint32 * minor_status,
+	     const gss_ctx_id_t context_handle,
+	     gss_qop_t qop_req,
+	     const gss_buffer_t message_buffer, gss_buffer_t message_token)
 {
 }
 
 OM_uint32
-gss_verify_mic (OM_uint32		*minor_status,
-		const gss_ctx_id_t	context_handle,
-		const gss_buffer_t	message_buffer,
-		const gss_buffer_t	token_buffer,
-		gss_qop_t *		qop_state)
+gss_verify_mic (OM_uint32 * minor_status,
+		const gss_ctx_id_t context_handle,
+		const gss_buffer_t message_buffer,
+		const gss_buffer_t token_buffer, gss_qop_t * qop_state)
 {
 }
 
 OM_uint32
-gss_wrap (OM_uint32		*minor_status,
-	  const gss_ctx_id_t	context_handle,
-	  int			conf_req_flag,
-	  gss_qop_t		qop_req,
-	  const gss_buffer_t	input_message_buffer,
-	  int			*conf_state,
-	  gss_buffer_t		output_message_buffer)
+gss_wrap (OM_uint32 * minor_status,
+	  const gss_ctx_id_t context_handle,
+	  int conf_req_flag,
+	  gss_qop_t qop_req,
+	  const gss_buffer_t input_message_buffer,
+	  int *conf_state, gss_buffer_t output_message_buffer)
 {
 }
 
 OM_uint32
-gss_unwrap (OM_uint32		*minor_status,
-	    const gss_ctx_id_t	context_handle,
-	    const gss_buffer_t	input_message_buffer,
-	    gss_buffer_t	output_message_buffer,
-	    int			*conf_state,
-	    gss_qop_t		*qop_state)
+gss_unwrap (OM_uint32 * minor_status,
+	    const gss_ctx_id_t context_handle,
+	    const gss_buffer_t input_message_buffer,
+	    gss_buffer_t output_message_buffer,
+	    int *conf_state, gss_qop_t * qop_state)
 {
 }

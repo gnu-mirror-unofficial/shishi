@@ -50,74 +50,66 @@
  *                   input-name is not supported
  **/
 OM_uint32
-gss_import_name (OM_uint32		*minor_status,
-		 const gss_buffer_t	input_name_buffer,
-		 const gss_OID		input_name_type,
-		 gss_name_t		*output_name)
+gss_import_name (OM_uint32 * minor_status,
+		 const gss_buffer_t input_name_buffer,
+		 const gss_OID input_name_type, gss_name_t * output_name)
 {
 }
 
 OM_uint32
-gss_display_name (OM_uint32		*minor_status,
-		  const gss_name_t	input_name,
-		  gss_buffer_t		output_name_buffer,
-		  gss_OID		*output_name_type)
+gss_display_name (OM_uint32 * minor_status,
+		  const gss_name_t input_name,
+		  gss_buffer_t output_name_buffer, gss_OID * output_name_type)
 {
-  
+
 }
 
 OM_uint32
-gss_compare_name (OM_uint32		*minor_status,
-		  const gss_name_t	name1,
-		  const gss_name_t	name2,
-		  int			*name_equal)
+gss_compare_name (OM_uint32 * minor_status,
+		  const gss_name_t name1,
+		  const gss_name_t name2, int *name_equal)
 {
-  
+
 }
 
 OM_uint32
-gss_release_name (OM_uint32		*minor_status,
-		  gss_name_t		*input_name)
+gss_release_name (OM_uint32 * minor_status, gss_name_t * input_name)
 {
-  
+
 }
 
 OM_uint32
-gss_inquire_names_for_mech (OM_uint32		*minor_status,
-			    const gss_OID	mechanism,
-			    gss_OID_set		*name_types)
+gss_inquire_names_for_mech (OM_uint32 * minor_status,
+			    const gss_OID mechanism, gss_OID_set * name_types)
 {
-  
+
 }
 
 OM_uint32
-gss_inquire_mechs_for_name (OM_uint32		*minor_status,
-			    const gss_name_t	input_name,
-			    gss_OID_set		*mech_types)
+gss_inquire_mechs_for_name (OM_uint32 * minor_status,
+			    const gss_name_t input_name,
+			    gss_OID_set * mech_types)
 {
-  
+
 }
 
 OM_uint32
-gss_export_name (OM_uint32		*minor_status,
-		 const gss_name_t	input_name,
-		 gss_buffer_t		exported_name)
+gss_export_name (OM_uint32 * minor_status,
+		 const gss_name_t input_name, gss_buffer_t exported_name)
 {
 }
 
 OM_uint32
-gss_canonicalize_name (OM_uint32		*minor_status,
-		       const gss_name_t		input_name,
-		       const gss_OID		mech_type,
-		       gss_name_t *		output_name)
+gss_canonicalize_name (OM_uint32 * minor_status,
+		       const gss_name_t input_name,
+		       const gss_OID mech_type, gss_name_t * output_name)
 {
-  
+
 }
 
 OM_uint32
-gss_duplicate_name (OM_uint32		*minor_status,
-		    const gss_name_t	src_name,
-		    gss_name_t *	dest_name)
+gss_duplicate_name (OM_uint32 * minor_status,
+		    const gss_name_t src_name, gss_name_t * dest_name)
 {
-  
+
 }

@@ -33,7 +33,7 @@
  * to that gss_OID_desc.
  */
 gss_OID_desc shishi_GSS_C_NT_USER_NAME = {
-  10, (void *)"\x2a\x86\x48\x86\xf7\x12\x01\x02\x01\x01"
+  10, (void *) "\x2a\x86\x48\x86\xf7\x12\x01\x02\x01\x01"
 };
 gss_OID GSS_C_NT_USER_NAME = &shishi_GSS_C_NT_USER_NAME;
 
@@ -49,7 +49,7 @@ gss_OID GSS_C_NT_USER_NAME = &shishi_GSS_C_NT_USER_NAME;
  * initialized to point to that gss_OID_desc.
  */
 gss_OID_desc shishi_GSS_C_NT_MACHINE_UID_NAME = {
-  10, (void *)"\x2a\x86\x48\x86\xf7\x12\x01\x02\x01\x02"
+  10, (void *) "\x2a\x86\x48\x86\xf7\x12\x01\x02\x01\x02"
 };
 gss_OID GSS_C_NT_MACHINE_UID_NAME = &shishi_GSS_C_NT_MACHINE_UID_NAME;
 
@@ -65,7 +65,7 @@ gss_OID GSS_C_NT_MACHINE_UID_NAME = &shishi_GSS_C_NT_MACHINE_UID_NAME;
  * initialized to point to that gss_OID_desc.
  */
 gss_OID_desc shishi_GSS_C_NT_STRING_UID_NAME = {
-  10, (void *)"\x2a\x86\x48\x86\xf7\x12\x01\x02\x01\x03"
+  10, (void *) "\x2a\x86\x48\x86\xf7\x12\x01\x02\x01\x03"
 };
 gss_OID GSS_C_NT_STRING_UID_NAME = &shishi_GSS_C_NT_STRING_UID_NAME;
 
@@ -87,7 +87,7 @@ gss_OID GSS_C_NT_STRING_UID_NAME = &shishi_GSS_C_NT_STRING_UID_NAME;
  * implementations
  */
 gss_OID_desc shishi_GSS_C_NT_HOSTBASED_SERVICE_X = {
-  6, (void *)"\x2b\x06\x01\x05\x06\x02"
+  6, (void *) "\x2b\x06\x01\x05\x06\x02"
 };
 gss_OID GSS_C_NT_HOSTBASED_SERVICE_X = &shishi_GSS_C_NT_HOSTBASED_SERVICE_X;
 
@@ -103,7 +103,7 @@ gss_OID GSS_C_NT_HOSTBASED_SERVICE_X = &shishi_GSS_C_NT_HOSTBASED_SERVICE_X;
  * to point to that gss_OID_desc.
  */
 gss_OID_desc shishi_GSS_C_NT_HOSTBASED_SERVICE = {
-  10, (void *)"\x2a\x86\x48\x86\xf7\x12\x01\x02\x01\x04"
+  10, (void *) "\x2a\x86\x48\x86\xf7\x12\x01\x02\x01\x04"
 };
 gss_OID GSS_C_NT_HOSTBASED_SERVICE = &shishi_GSS_C_NT_HOSTBASED_SERVICE;
 
@@ -118,7 +118,7 @@ gss_OID GSS_C_NT_HOSTBASED_SERVICE = &shishi_GSS_C_NT_HOSTBASED_SERVICE;
  * to that gss_OID_desc.
  */
 gss_OID_desc shishi_GSS_C_NT_ANONYMOUS = {
-  6, (void *)"\x2b\x06\01\x05\x06\x03"
+  6, (void *) "\x2b\x06\01\x05\x06\x03"
 };
 gss_OID GSS_C_NT_ANONYMOUS = &shishi_GSS_C_NT_ANONYMOUS;
 
@@ -134,6 +134,6 @@ gss_OID GSS_C_NT_ANONYMOUS = &shishi_GSS_C_NT_ANONYMOUS;
  * to that gss_OID_desc.
  */
 gss_OID_desc shishi_GSS_C_NT_EXPORT_NAME = {
-  6, (void *)"\x2b\x06\x01\x05\x06\x04"
+  6, (void *) "\x2b\x06\x01\x05\x06\x04"
 };
 gss_OID GSS_C_NT_EXPORT_NAME = &shishi_GSS_C_NT_EXPORT_NAME;

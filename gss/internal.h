@@ -25,15 +25,18 @@
 #include "../lib/internal.h"
 #include "gssapi.h"
 
-struct gss_ctx_id_t {
+struct gss_ctx_id_t
+{
   int foo;
 };
 
-struct gss_cred_id_t {
+struct gss_cred_id_t
+{
   int foo;
 };
 
-struct gss_name_t {
+struct gss_name_t
+{
   int foo;
 };
 

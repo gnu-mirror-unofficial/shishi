@@ -22,91 +22,86 @@
 #include "internal.h"
 
 OM_uint32
-gss_init_sec_context (OM_uint32				*minor_status,
-		      const gss_cred_id_t		initiator_cred_handle,
-		      gss_ctx_id_t			*context_handle,
-		      const gss_name_t			target_name,
-		      const gss_OID			mech_type,
-		      OM_uint32				req_flags,
-		      OM_uint32				time_req,
-		      const gss_channel_bindings_t	input_chan_bindings,
-		      const gss_buffer_t		input_token,
-		      gss_OID				*actual_mech_type,
-		      gss_buffer_t			output_token,
-		      OM_uint32				*ret_flags,
-		      OM_uint32				*time_rec)
+gss_init_sec_context (OM_uint32 * minor_status,
+		      const gss_cred_id_t initiator_cred_handle,
+		      gss_ctx_id_t * context_handle,
+		      const gss_name_t target_name,
+		      const gss_OID mech_type,
+		      OM_uint32 req_flags,
+		      OM_uint32 time_req,
+		      const gss_channel_bindings_t input_chan_bindings,
+		      const gss_buffer_t input_token,
+		      gss_OID * actual_mech_type,
+		      gss_buffer_t output_token,
+		      OM_uint32 * ret_flags, OM_uint32 * time_rec)
 {
 }
 
 OM_uint32
-gss_accept_sec_context (OM_uint32			*minor_status,
-			gss_ctx_id_t			*context_handle,
-			const gss_cred_id_t		acceptor_cred_handle,
-			const gss_buffer_t		input_token_buffer,
-			const gss_channel_bindings_t	input_chan_bindings,
-			gss_name_t			*src_name,
-			gss_OID				*mech_type,
-			gss_buffer_t			output_token,
-			OM_uint32			*ret_flags,
-			OM_uint32			*time_rec,
-			gss_cred_id_t			*delegated_cred_handle)
+gss_accept_sec_context (OM_uint32 * minor_status,
+			gss_ctx_id_t * context_handle,
+			const gss_cred_id_t acceptor_cred_handle,
+			const gss_buffer_t input_token_buffer,
+			const gss_channel_bindings_t input_chan_bindings,
+			gss_name_t * src_name,
+			gss_OID * mech_type,
+			gss_buffer_t output_token,
+			OM_uint32 * ret_flags,
+			OM_uint32 * time_rec,
+			gss_cred_id_t * delegated_cred_handle)
 {
 }
 
 OM_uint32
-gss_delete_sec_context (OM_uint32		*minor_status,
-			gss_ctx_id_t		*context_handle,
-			gss_buffer_t		output_token)
+gss_delete_sec_context (OM_uint32 * minor_status,
+			gss_ctx_id_t * context_handle,
+			gss_buffer_t output_token)
 {
 }
 
 OM_uint32
-gss_process_context_token (OM_uint32		*minor_status,
-			   const gss_ctx_id_t	context_handle,
-			   const gss_buffer_t	token_buffer)
+gss_process_context_token (OM_uint32 * minor_status,
+			   const gss_ctx_id_t context_handle,
+			   const gss_buffer_t token_buffer)
 {
 }
 
 OM_uint32
-gss_context_time (OM_uint32		*minor_status,
-		  const gss_ctx_id_t	context_handle,
-		  OM_uint32		*time_rec)
+gss_context_time (OM_uint32 * minor_status,
+		  const gss_ctx_id_t context_handle, OM_uint32 * time_rec)
 {
 }
 
 OM_uint32
-gss_inquire_context (OM_uint32		*minor_status,
-		     const gss_ctx_id_t	context_handle,
-		     gss_name_t		*src_name,
-		     gss_name_t		*targ_name,
-		     OM_uint32		*lifetime_rec,
-		     gss_OID		*mech_type,
-		     OM_uint32		*ctx_flags,
-		     int		*locally_initiated,
-		     int		*open)
+gss_inquire_context (OM_uint32 * minor_status,
+		     const gss_ctx_id_t context_handle,
+		     gss_name_t * src_name,
+		     gss_name_t * targ_name,
+		     OM_uint32 * lifetime_rec,
+		     gss_OID * mech_type,
+		     OM_uint32 * ctx_flags, int *locally_initiated, int *open)
 {
 }
 
 OM_uint32
-gss_wrap_size_limit (OM_uint32		*minor_status,
-		     const gss_ctx_id_t	context_handle,
-		     int		conf_req_flag,
-		     gss_qop_t		qop_req,
-		     OM_uint32		req_output_size,
-		     OM_uint32		*max_input_size)
+gss_wrap_size_limit (OM_uint32 * minor_status,
+		     const gss_ctx_id_t context_handle,
+		     int conf_req_flag,
+		     gss_qop_t qop_req,
+		     OM_uint32 req_output_size, OM_uint32 * max_input_size)
 {
 }
 
 OM_uint32
-gss_export_sec_context (OM_uint32	*minor_status,
-			gss_ctx_id_t	*context_handle,
-			gss_buffer_t	interprocess_token)
+gss_export_sec_context (OM_uint32 * minor_status,
+			gss_ctx_id_t * context_handle,
+			gss_buffer_t interprocess_token)
 {
 }
 
 OM_uint32
-gss_import_sec_context (OM_uint32		*minor_status,
-			const gss_buffer_t	interprocess_token,
-			gss_ctx_id_t		*context_handle)
+gss_import_sec_context (OM_uint32 * minor_status,
+			const gss_buffer_t interprocess_token,
+			gss_ctx_id_t * context_handle)
 {
 }
