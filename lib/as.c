@@ -43,6 +43,7 @@ int
 shishi_as (Shishi * handle, Shishi_as ** as)
 {
   Shishi_as *las;
+  int res;
 
   *as = malloc (sizeof (**as));
   if (*as == NULL)
@@ -61,7 +62,7 @@ shishi_as (Shishi * handle, Shishi_as ** as)
     }
 
   las->asrep = shishi_asrep (handle);
-  if (las->asreq == NULL)
+  if (las->asrep == NULL)
     {
       shishi_error_printf (handle, "Could not create AS-REP: %s\n",
 			   shishi_strerror_details (handle));
@@ -75,6 +76,14 @@ shishi_as (Shishi * handle, Shishi_as ** as)
 			   shishi_strerror_details (handle));
       return SHISHI_ASN1_ERROR;
     }
+
+  res = shishi_ticket2 (handle, &las->ticket);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_ticket_flags_set (las->ticket, SHISHI_TICKETFLAGS_INITIAL);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
@@ -109,6 +118,54 @@ shishi_as_req_set (Shishi_as * as, ASN1_TYPE asreq)
   if (as->asreq)
     shishi_asn1_done (as->handle, as->asreq);
   as->asreq = asreq;
+}
+
+/**
+ * shishi_as_req_der:
+ * @as: structure that holds information about AS exchange
+ * @out: output array with der encoding of AS-REQ.
+ * @outlen: length of output array with der encoding of AS-REQ.
+ *
+ * DER encode AS-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_as_req_der (Shishi_as * as, char *out, int *outlen)
+{
+  int rc;
+
+  rc = shishi_a2d (as->handle, as->asreq, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_as_req_der_set:
+ * @as: structure that holds information about AS exchange
+ * @der: input array with DER encoded AP-REQ.
+ * @derlen: length of input array with DER encoded AP-REQ.
+ *
+ * DER decode AS-REQ and set it AS exchange.  If decoding fails, the
+ * AS-REQ in the AS exchange remains.
+ *
+ * Return value: Returns SHISHI_OK.
+ **/
+int
+shishi_as_req_der_set (Shishi_as * as, char *der, int derlen)
+{
+  ASN1_TYPE asreq;
+
+  asreq = shishi_d2a_asreq (as->handle, der, derlen);
+
+  if (asreq == ASN1_TYPE_EMPTY)
+    return SHISHI_ASN1_ERROR;
+
+  as->asreq = asreq;
+
+  return SHISHI_OK;
 }
 
 /**
@@ -215,6 +272,83 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char *password)
       shishi_error_printf (as->handle, "Could not create ticket");
       return SHISHI_MALLOC_ERROR;
     }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_as_rep_build:
+ * @as: structure that holds information about AS exchange
+ *
+ * Build AS-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_as_rep_build (Shishi_as * as, Shishi_key *key)
+{
+  int rc;
+
+  /* XXX there are reasons for having padata in AS-REP */
+  rc = shishi_kdcrep_clear_padata (as->handle, as->asrep);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_enckdcreppart_populate_encticketpart
+    (as->handle, shishi_ticket_enckdcreppart (as->ticket),
+     shishi_ticket_encticketpart (as->ticket));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdc_copy_nonce (as->handle, as->asreq,
+			      shishi_ticket_enckdcreppart(as->ticket));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdcrep_add_enc_part (as->handle,
+				   as->asrep,
+				   key,
+				   SHISHI_KEYUSAGE_ENCASREPPART,
+				   shishi_ticket_enckdcreppart (as->ticket));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdcrep_set_ticket (as->handle, as->asrep,
+				 shishi_ticket_ticket(as->ticket));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdc_copy_crealm (as->handle, as->asrep,
+			       shishi_ticket_encticketpart(as->ticket));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_kdc_copy_cname (as->handle, as->asrep,
+			      shishi_ticket_encticketpart(as->ticket));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_as_rep_der:
+ * @as: structure that holds information about AS exchange
+ * @out: output array with der encoding of AS-REP.
+ * @outlen: length of output array with der encoding of AS-REP.
+ *
+ * DER encode AS-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_as_rep_der (Shishi_as * as, char *out, int *outlen)
+{
+  int rc;
+
+  rc = shishi_a2d (as->handle, as->asrep, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
 
   return SHISHI_OK;
 }
