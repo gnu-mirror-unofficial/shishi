@@ -592,19 +592,85 @@ shishi_ticketset_find_ticket_for_server (Shishi * handle,
 Shishi_ticket *
 shishi_ticketset_get_ticket_for_clientserver (Shishi * handle,
 					      Shishi_ticketset * ticketset,
-					      char *client, char *service)
+					      const char *client,
+					      const char *server)
 {
-  Shishi_ticket *tkt;
+  Shishi_tgs *tgs;
+  Shishi_ticket *tgt;
+  Shishi_ticket *tkt = NULL;
+  char *tgtname;
+  int rc;
 
-  return 0;
+  asprintf(&tgtname, "krbtgt/%s", shishi_realm_default (handle));
+
+  tgt = shishi_ticketset_find_ticket_for_clientserver
+    (handle, ticketset, client, tgtname);
+  if (tgt == NULL)
+    {
+      Shishi_as *as;
+
+      rc = shishi_as (handle, NULL, &as);
+      if (rc != SHISHI_OK)
+	{
+	  printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
+		  shishi_strerror_details (handle));
+	  if (rc == SHISHI_GOT_KRBERROR)
+	    shishi_krberror_pretty_print(handle, stdout,
+					 shishi_as_get_krberror(as));
+	}
+
+      tgt = shishi_as_get_ticket (as);
+
+      if (VERBOSEASN1(handle))
+	{
+	  shishi_kdcreq_print (handle, stdout, shishi_as_get_asreq (as));
+	  shishi_kdcrep_print (handle, stdout, shishi_as_get_asrep (as));
+	  shishi_ticket_print (handle, tgt, stdout);
+	}
+
+      rc = shishi_ticketset_add (handle, ticketset, tgt);
+      if (rc != SHISHI_OK)
+	printf ("Could not add ticket: %s", shishi_strerror (rc));
+
+      if (!tgt)
+	return NULL;
+    }
+
+  rc = shishi_tgs (handle, tgt, &tgs, server);
+  if (rc != SHISHI_OK)
+    {
+      printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
+	      shishi_strerror_details (handle));
+      if (rc == SHISHI_GOT_KRBERROR)
+	shishi_krberror_pretty_print(handle, stdout,
+				     shishi_tgs_get_krberror(tgs));
+    }
+
+  tkt = shishi_tgs_get_ticket (tgs);
+
+  if (VERBOSEASN1(handle))
+    {
+      shishi_authenticator_print (handle, stdout,
+				  shishi_tgs_get_authenticator (tgs));
+      shishi_apreq_print (handle, stdout, shishi_tgs_get_apreq (tgs));
+      shishi_kdcreq_print (handle, stdout, shishi_tgs_get_tgsreq (tgs));
+      shishi_kdcrep_print (handle, stdout, shishi_tgs_get_tgsrep (tgs));
+      shishi_ticket_print (handle, tkt, stdout);
+    }
+
+  rc = shishi_ticketset_add (handle, ticketset, tkt);
+  if (rc != SHISHI_OK)
+    printf ("Could not add ticket: %s", shishi_strerror (rc));
+
+  return tkt;
 }
 
 Shishi_ticket *
 shishi_ticketset_get_ticket_for_server (Shishi * handle,
 					Shishi_ticketset * ticketset,
-					char *server)
+					const char *server)
 {
-  return shishi_ticketset_find_ticket_for_clientserver
+  return shishi_ticketset_get_ticket_for_clientserver
     (handle, ticketset, shishi_principal_default (handle), server);
 }
 
