@@ -1,5 +1,5 @@
 /* apreq.c	AP-REQ functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -369,9 +369,8 @@ error:
 int
 shishi_apreq_add_authenticator (Shishi * handle,
 				ASN1_TYPE apreq,
-				Shishi_key *key,
-				int keyusage,
-				ASN1_TYPE authenticator)
+				Shishi_key * key,
+				int keyusage, ASN1_TYPE authenticator)
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];
@@ -383,7 +382,7 @@ shishi_apreq_add_authenticator (Shishi * handle,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode authenticator: %s\n",
-			   shishi_strerror(res));
+			   shishi_strerror (res));
       return !SHISHI_OK;
     }
 
@@ -395,7 +394,7 @@ shishi_apreq_add_authenticator (Shishi * handle,
       return res;
     }
 
-  res = shishi_apreq_set_authenticator (handle, apreq, shishi_key_type(key),
+  res = shishi_apreq_set_authenticator (handle, apreq, shishi_key_type (key),
 					buf, buflen);
 
   return res;
@@ -485,10 +484,13 @@ shishi_apreq_set_ticket (Shishi * handle, ASN1_TYPE apreq, ASN1_TYPE ticket)
 
   buflen = BUFSIZ;
   res = asn1_read_value (ticket, "Ticket.enc-part.kvno", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  if (res != ASN1_SUCCESS && res != ASN1_ELEMENT_NOT_FOUND)
     goto error;
 
-  res = asn1_write_value (apreq, "AP-REQ.ticket.enc-part.kvno", buf, buflen);
+  if (res == ASN1_ELEMENT_NOT_FOUND)
+    res = asn1_write_value (apreq, "AP-REQ.ticket.enc-part.kvno", NULL, 0);
+  else
+    res = asn1_write_value (apreq, "AP-REQ.ticket.enc-part.kvno", buf, buflen);
   if (res != ASN1_SUCCESS)
     goto error;
 
@@ -518,7 +520,7 @@ shishi_apreq_options (Shishi * handle, ASN1_TYPE apreq, int *flags)
   int res;
   *flags = 0;
   res = shishi_asn1_field (handle, apreq, (char *) flags, &len,
-			    "AP-REQ.ap-options");
+			   "AP-REQ.ap-options");
   return res;
 }
 
@@ -590,7 +592,7 @@ shishi_apreq_get_authenticator_etype (Shishi * handle,
 				      ASN1_TYPE apreq, int *etype)
 {
   return shishi_asn1_integer_field (handle, apreq, etype,
-				     "AP-REQ.authenticator.etype");
+				    "AP-REQ.authenticator.etype");
 }
 
 /**
@@ -685,10 +687,13 @@ shishi_apreq_get_ticket (Shishi * handle, ASN1_TYPE apreq, ASN1_TYPE * ticket)
 
   buflen = BUFSIZ;
   res = asn1_read_value (apreq, "AP-REQ.ticket.enc-part.kvno", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  if (res != ASN1_SUCCESS && res != ASN1_ELEMENT_NOT_FOUND)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", buf, buflen);
+  if (res == ASN1_ELEMENT_NOT_FOUND)
+    res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", NULL, 0);
+  else
+    res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", buf, buflen);
   if (res != ASN1_SUCCESS)
     goto error;
 
@@ -715,9 +720,8 @@ error:
 int
 shishi_apreq_decrypt (Shishi * handle,
 		      ASN1_TYPE apreq,
-		      Shishi_key *key,
-		      int keyusage,
-		      ASN1_TYPE * authenticator)
+		      Shishi_key * key,
+		      int keyusage, ASN1_TYPE * authenticator)
 {
   int res;
   int i;
@@ -731,12 +735,12 @@ shishi_apreq_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (etype != shishi_key_type(key))
+  if (etype != shishi_key_type (key))
     return SHISHI_APREQ_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
   res = shishi_asn1_field (handle, apreq, cipher, &cipherlen,
-			    "AP-REQ.authenticator.cipher");
+			   "AP-REQ.authenticator.cipher");
   if (res != SHISHI_OK)
     return res;
 
