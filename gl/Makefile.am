@@ -98,7 +98,7 @@ EXTRA_DIST += sysexit_.h
 
 # We need the following in order to create a <sysexits.h> when the system
 # doesn't have one that works with the given compiler.
-all-local $(libfoo_la_OBJECTS): @SYSEXITS_H@
+all-local $(libfoo_la_OBJECTS): $(SYSEXITS_H)
 sysexits.h: sysexit_.h
 	cp $(srcdir)/sysexit_.h sysexits.h-t
 	mv sysexits.h-t sysexits.h
