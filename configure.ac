@@ -41,8 +41,8 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([sys/types.h])
 AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
 AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
-	sys/time.h sys/select.h sys/socket.h sys/stat.h stdint.h \
-	termios.h signal.h pwd.h errno.h syslog.h locale.h)
+	sys/time.h sys/select.h sys/socket.h sys/stat.h stdint.h termios.h \
+	signal.h pwd.h errno.h syslog.h locale.h arpa/nameser.h resolv.h)
 AC_CHECK_HEADERS(netinet/in.h netinet/in6.h arpa/inet.h)
 
 # Checks for programs.
@@ -231,6 +231,9 @@ AC_MSG_RESULT($with_system_libgcrypt)
 GPG_ERROR_CONFIG=`pwd`/errcrypto/src/gpg-error-config; export GPG_ERROR_CONFIG
 enable_ld_version_script=no; export enable_ld_version_script
 AC_CONFIG_SUBDIRS(errcrypto crypto)
+
+# Check for resolver.
+AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
 
 # For gnulib stuff in gl/.
 gl_FUNC_STRNLEN

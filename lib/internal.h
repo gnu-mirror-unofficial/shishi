@@ -116,6 +116,13 @@
 #include <arpa/inet.h>
 #endif
 
+#ifdef HAVE_ARPA_NAMESER_H
+#include <arpa/nameser.h>
+#endif
+#ifdef HAVE_RESOLV_H
+#include <resolv.h>
+#endif
+
 #ifdef ENABLE_NLS
 extern char *_shishi_gettext (const char *str);
 #define _(String) _shishi_gettext (String)
@@ -233,5 +240,34 @@ shishi_asn1_integer2_field (Shishi * handle,
 #if defined(WITH_DMALLOC) && WITH_DMALLOC
 #include <dmalloc.h>
 #endif
+
+/* older systems might not have these */
+#ifndef T_SRV
+# define T_SRV (33)
+#endif
+
+typedef struct dnshost_st
+{
+  struct dnshost_st   *next;
+
+  unsigned int        type;
+  unsigned int        class;
+  unsigned int        ttl;
+
+  void                *rr;
+} *dnshost_t;
+
+typedef struct dns_srv_st
+{
+  unsigned int        priority;
+  unsigned int        weight;
+  unsigned int        port;
+  unsigned int        rweight;
+
+  char                name[256];
+} *dns_srv_t;
+
+dnshost_t _shishi_resolv (const char *zone, unsigned int type);
+void _shishi_resolv_free (dnshost_t dns);
 
 #endif /* _INTERNAL_H */

@@ -102,6 +102,8 @@ shishi_kdc_sendrecv (Shishi * handle,
 {
   int i, j, k;
   int rc;
+  dnshost_t rrs;
+  char *tmp;
 
   for (i = 0; i < handle->nrealminfos; i++)
     if (realm && strcmp (handle->realminfos[i].name, realm) == 0)
@@ -129,6 +131,58 @@ shishi_kdc_sendrecv (Shishi * handle,
 	shishi_error_clear (handle);
 	return SHISHI_KDC_TIMEOUT;
       }
+
+  if (VERBOSE (handle))
+    printf ("Finding SRV RRs for %s...\n", realm);
+
+  asprintf (&tmp, "_kerberos._udp.%s", realm);
+  rrs = _shishi_resolv(tmp, T_SRV);
+  free (tmp);
+
+  for (; rrs; rrs = rrs->next)
+    {
+      dns_srv_t srv = (dns_srv_t) rrs->rr;;
+      struct addrinfo hints;
+      struct addrinfo *ai;
+      char *port;
+
+      if (rrs->class != C_IN)
+	continue;
+      if (rrs->type != T_SRV)
+	continue;
+
+      if (VERBOSE (handle))
+	printf ("Located SRV RRs server %s:%d...\n", srv->name, srv->port);
+
+      memset (&hints, 0, sizeof(hints));
+      hints.ai_socktype = SOCK_DGRAM;
+      asprintf (&port, "%d", srv->port);
+      rc = getaddrinfo (srv->name, port, &hints, &ai);
+      free (port);
+
+      if (rc != 0)
+	{
+	  shishi_warn (handle, "Unknown KDC host `%s' (gai rc %d)",
+		       srv->name, rc);
+	  freeaddrinfo (ai);
+	  continue;
+	}
+
+      if (VERBOSE (handle))
+	printf ("Sending to %s:%d (%s)...\n", srv->name, srv->port,
+		inet_ntoa (((struct sockaddr_in *)ai->ai_addr)->sin_addr));
+
+      rc = shishi_sendrecv_udp (handle, ai->ai_addr,
+				indata, inlen, outdata, outlen,
+				handle->kdctimeout);
+
+      freeaddrinfo (ai);
+
+      if (rc != SHISHI_KDC_TIMEOUT)
+	return rc;
+    }
+
+  _shishi_resolv_free (rrs);
 
   shishi_error_printf (handle, "No KDC defined for realm %s\n", realm);
   return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
