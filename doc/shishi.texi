@@ -201,7 +201,7 @@ know so work duplication can be avoided.
 
 @item PKINIT (use libksba, weeks)
 
-@item GSSAPI (separate project, months)
+@item Improve GSSAPI support (weeks)
 
 @item Port to cyclone (cyclone need to mature first)
 
