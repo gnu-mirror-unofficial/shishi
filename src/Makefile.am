@@ -21,7 +21,7 @@
 LDADD = @LTLIBINTL@ ../lib/libshishi.la -L../gl -lfoo
 
 bin_PROGRAMS = shishi
-shishi_SOURCES = shishi.c data.h gettext.h
+shishi_SOURCES = shishi.c gettext.h
 
 sbin_PROGRAMS = shishid
 shishid_SOURCES = shishid.c
