@@ -357,6 +357,15 @@ extern int shishi_principal_name_realm_get (Shishi * handle,
 					    Shishi_asn1 realmnode,
 					    const char *realmfield,
 					    char *out, size_t * outlen);
+extern int shishi_principal_name_set (Shishi * handle,
+				      Shishi_asn1 namenode,
+				      const char *namefield,
+				      Shishi_name_type name_type,
+				      const char *name[]);
+extern int shishi_principal_set (Shishi * handle,
+				 Shishi_asn1 namenode,
+				 const char *namefield,
+				 const char *name);
 
 /* ticket.c */
 extern int shishi_ticket_sname_get (Shishi * handle,
@@ -547,9 +556,12 @@ extern int shishi_authenticator_set_crealm (Shishi * handle,
 					    Shishi_asn1 node,
 					    const char *crealm);
 extern int shishi_authenticator_set_cname (Shishi * handle,
-					   Shishi_asn1 node,
+					   Shishi_asn1 authenticator,
 					   Shishi_name_type name_type,
-					   const char *principal);
+					   const char *cname[]);
+extern int shishi_authenticator_client_set (Shishi * handle,
+					    Shishi_asn1 authenticator,
+					    const char *client);
 extern int shishi_authenticator_ctime_get (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   char *ctime);
@@ -852,8 +864,8 @@ extern int shishi_from_base64 (unsigned char *out, const unsigned char *in);
 extern int shishi_asprintf (char **result, char *format, ...);
 
 /* gztime.c */
-const char *shishi_generalize_time (Shishi * handle, time_t time);
-extern time_t shishi_generalize_ctime (Shishi * handle, char *now);
+extern const char *shishi_generalize_time (Shishi * handle, time_t t);
+extern time_t shishi_generalize_ctime (Shishi * handle, const char *t);
 
 /* crypto.c */
 extern int shishi_cipher_supported_p (int type);
