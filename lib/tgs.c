@@ -50,7 +50,7 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
   Shishi_tgs *ltgs;
   int res;
 
-  *tgs = xcmalloc (1, sizeof (**tgs));
+  *tgs = xcalloc (1, sizeof (**tgs));
   ltgs = *tgs;
 
   ltgs->handle = handle;
