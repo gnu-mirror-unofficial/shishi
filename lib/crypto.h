@@ -158,8 +158,8 @@ extern cipherinfo aes256_cts_hmac_sha1_96_info;
 extern checksuminfo hmac_sha1_96_aes128_info;
 extern checksuminfo hmac_sha1_96_aes256_info;
 
-extern cipherinfo rc4_hmac_info;
-extern cipherinfo rc4_hmac_exp_info;
-extern checksuminfo rc4_hmac_md5_info;
+extern cipherinfo arcfour_hmac_info;
+extern cipherinfo arcfour_hmac_exp_info;
+extern checksuminfo arcfour_hmac_md5_info;
 
 #endif

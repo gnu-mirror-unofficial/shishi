@@ -23,8 +23,60 @@
 
 #include "crypto.h"
 
+static int arcfour_keyusage (int keyusage)
+{
+  /*
+   *    1.  AS-REQ PA-ENC-TIMESTAMP padata timestamp, encrypted with
+   *    the client key (T=1)
+   *    2.  AS-REP Ticket and TGS-REP Ticket (includes TGS session key
+   *    or application session key), encrypted with the service key
+   *    (T=2)
+   *    3.  AS-REP encrypted part (includes TGS session key or
+   *    application session key), encrypted with the client key (T=8)
+   *    4.  TGS-REQ KDC-REQ-BODY AuthorizationData, encrypted with the
+   *    TGS session key (T=4)
+   *    5.  TGS-REQ KDC-REQ-BODY AuthorizationData, encrypted with the
+   *    TGS authenticator subkey (T=5)
+   *    6.  TGS-REQ PA-TGS-REQ padata AP-REQ Authenticator cksum, keyed
+   *    with the TGS session key (T=6)
+   *    7.  TGS-REQ PA-TGS-REQ padata AP-REQ Authenticator (includes
+   *    TGS authenticator subkey), encrypted with the TGS session key
+   *    (T=7)
+   *    8.  TGS-REP encrypted part (includes application session key),
+   *    encrypted with the TGS session key (T=8)
+   *    9.  TGS-REP encrypted part (includes application session key),
+   *    encrypted with the TGS authenticator subkey (T=8)
+   *    10.  AP-REQ Authenticator cksum, keyed with the application
+   *    session key (T=10)
+   *    11.  AP-REQ Authenticator (includes application authenticator
+   *    subkey), encrypted with the application session key (T=11)
+   *    12.  AP-REP encrypted part (includes application session
+   *    subkey), encrypted with the application session key (T=12)
+   *    13.  KRB-PRIV encrypted part, encrypted with a key chosen by
+   *    the application. Also for data encrypted with GSS Wrap (T=13)
+   *    14.  KRB-CRED encrypted part, encrypted with a key chosen by
+   *    the application (T=14)
+   *    15.  KRB-SAFE cksum, keyed with a key chosen by the
+   *    application. Also for data signed in GSS MIC (T=15)
+   *
+   *    Relative to RFC-1964 key uses:
+   *
+   *    T = 0 in the generation of sequence number for the MIC token
+   *    T = 0 in the generation of sequence number for the WRAP token
+   *    T = 0 in the generation of encrypted data for the WRAPPED token
+   *
+   */
+
+  if (keyusage == 3)
+    return 8;
+  else if (keyusage == 9)
+    return 8;
+
+  return keyusage;
+}
+
 static int
-rc4_hmac_encrypt (Shishi * handle,
+arcfour_hmac_encrypt (Shishi * handle,
 		  Shishi_key * key,
 		  int keyusage,
 		  const char *iv,
@@ -32,44 +84,74 @@ rc4_hmac_encrypt (Shishi * handle,
 		  char **ivout, size_t * ivoutlen,
 		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
-#if 0
+  int export = shishi_key_type (key) == SHISHI_ARCFOUR_HMAC_EXP;
+  int arcfourkeyusage = arcfour_keyusage (keyusage);
   char L40[14] = "fortybits";
-  char SK = "signaturekey";
-  char T[4];
+  uint8_t T[4];
+  char *K1 = NULL;
+  char K2[16];
+  char *K3 = NULL;
+  char *pt = NULL;
+  char *cksum = NULL;
+  int offset;
+  int err;
 
-  T[0] = keyusage & 0xFF;
-  T[1] = (keyusage >> 8) & 0xFF;
-  T[2] = (keyusage >> 16) & 0xFF;
-  T[3] = (keyusage >> 24) & 0xFF;
+  T[0] = arcfourkeyusage & 0xFF;
+  T[1] = (arcfourkeyusage >> 8) & 0xFF;
+  T[2] = (arcfourkeyusage >> 16) & 0xFF;
+  T[3] = (arcfourkeyusage >> 24) & 0xFF;
 
-  if (shishi_key_type (key) == SHISHI_RC4_HMAC_EXP)
-    {
-      memcpy (L40 + 10, T, 4);
-      HMAC (K, L40, 10 + 4, K1);
-    }
+  memcpy (L40 + 10, T, 4);
+
+  if (export)
+    offset = 10;
   else
-    {
-      HMAC (K, &T, 4, K1);
-    }
+    offset = 0;
+
+  err = shishi_hmac_md5 (handle,
+			 shishi_key_value (key), shishi_key_length (key),
+			 L40 + offset, 14 - offset, &K1);
+  if (err)
+    goto done;
+
   memcpy (K2, K1, 16);
   if (export)
     memset (K1 + 7, 0xAB, 9);
 
-  nonce (edata.Confounder, 8);
-  memcpy (edata.Data, data);
+  pt = xmalloc (16 + 8 + inlen);
 
-  edata.Checksum = HMAC (K2, edata);
-  K3 = HMAC (K1, edata.Checksum);
+  memset (pt, 0, 16);
+  err = shishi_randomize (handle, pt + 16, 8);
+  if (err)
+    goto done;
+  memcpy (pt + 16 + 8, in, inlen);
 
-  RC4 (K3, edata.Confounder);
-  RC4 (K3, data.Data);
-#endif
+  err = shishi_hmac_md5 (handle, K2, 16, pt, 16 + 8 + inlen, &cksum);
+  if (err)
+    goto done;
+  err = shishi_hmac_md5 (handle, K1, 16, cksum, 16, &K3);
+  if (err)
+    goto done;
 
-  return SHISHI_OK;
+  *outlen = 8 + inlen;
+  err = shishi_arcfour (handle, 0, K3, 16, pt + 16, 8 + inlen, out);
+  if (err)
+    goto done;
+
+  memcpy (out, cksum, 16);
+
+  err = SHISHI_OK;
+
+ done:
+  free (cksum);
+  free (K3);
+  free (pt);
+  free (K1);
+  return err;
 }
 
 static int
-rc4_hmac_decrypt (Shishi * handle,
+arcfour_hmac_decrypt (Shishi * handle,
 		  Shishi_key * key,
 		  int keyusage,
 		  const char *iv,
@@ -77,11 +159,72 @@ rc4_hmac_decrypt (Shishi * handle,
 		  char **ivout, size_t * ivoutlen,
 		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return SHISHI_OK;
+  int export = shishi_key_type (key) == SHISHI_ARCFOUR_HMAC_EXP;
+  int arcfourkeyusage = arcfour_keyusage (keyusage);
+  char L40[14] = "fortybits";
+  uint8_t T[4];
+  char *K1 = NULL;
+  char K2[16];
+  char *K3 = NULL;
+  char *pt = NULL;
+  char *cksum = NULL;
+  int offset;
+  int err;
+
+  T[0] = arcfourkeyusage & 0xFF;
+  T[1] = (arcfourkeyusage >> 8) & 0xFF;
+  T[2] = (arcfourkeyusage >> 16) & 0xFF;
+  T[3] = (arcfourkeyusage >> 24) & 0xFF;
+
+  memcpy (L40 + 10, T, 4);
+
+  if (export)
+    offset = 10;
+  else
+    offset = 0;
+
+  err = shishi_hmac_md5 (handle,
+			 shishi_key_value (key), shishi_key_length (key),
+			 L40 + offset, 14 - offset, &K1);
+  if (err)
+    goto done;
+
+  memcpy (K2, K1, 16);
+  if (export)
+    memset (K1 + 7, 0xAB, 9);
+
+  pt = xmalloc (16 + 8 + inlen);
+
+  memset (pt, 0, 16);
+  err = shishi_randomize (handle, pt + 16, 8);
+  if (err)
+    goto done;
+  memcpy (pt + 16 + 8, in, inlen);
+
+  err = shishi_hmac_md5 (handle, K2, 16, pt, 16 + 8 + inlen, &cksum);
+  if (err)
+    goto done;
+  err = shishi_hmac_md5 (handle, K1, 16, cksum, 16, &K3);
+  if (err)
+    goto done;
+
+  *outlen = 8 + inlen;
+  err = shishi_arcfour (handle, 0, K3, 16, pt + 16, 8 + inlen, out);
+  if (err)
+    goto done;
+
+  err = SHISHI_OK;
+
+ done:
+  free (cksum);
+  free (K3);
+  free (pt);
+  free (K1);
+  return err;
 }
 
 static int
-rc4_hmac_exp_encrypt (Shishi * handle,
+arcfour_hmac_exp_encrypt (Shishi * handle,
 		      Shishi_key * key,
 		      int keyusage,
 		      const char *iv,
@@ -90,10 +233,13 @@ rc4_hmac_exp_encrypt (Shishi * handle,
 		      const char *in, size_t inlen,
 		      char **out, size_t * outlen)
 {
+  return arcfour_hmac_encrypt (handle, key, keyusage, iv, ivlen,
+			       ivout, ivoutlen, in, inlen, out, outlen);
+
 }
 
 static int
-rc4_hmac_exp_decrypt (Shishi * handle,
+arcfour_hmac_exp_decrypt (Shishi * handle,
 		      Shishi_key * key,
 		      int keyusage,
 		      const char *iv,
@@ -102,120 +248,64 @@ rc4_hmac_exp_decrypt (Shishi * handle,
 		      const char *in, size_t inlen,
 		      char **out, size_t * outlen)
 {
+  return arcfour_hmac_decrypt (handle, key, keyusage, iv, ivlen,
+			       ivout, ivoutlen, in, inlen, out, outlen);
 }
 
-#define RC4_HMAC_CKSUM_KEY_DERIVE_CONSTANT "signaturekey"
+#define ARCFOUR_HMAC_CKSUM_KEY_DERIVE_CONSTANT "signaturekey"
 
 static int
-rc4_hmac_md5_checksum (Shishi * handle,
+arcfour_hmac_md5_checksum (Shishi * handle,
 		       Shishi_key * key,
 		       int keyusage,
 		       int cksumtype,
 		       const char *in, size_t inlen,
 		       char **out, size_t * outlen)
 {
-#if 0
-#if USE_GCRYPT
-  gcry_md_hd_t mdh, mdh2;
-  int halg = GCRY_MD_MD5;
-  size_t hlen = gcry_md_get_algo_dlen (halg);
-  unsigned char *hash;
-  gpg_error_t err;
+  int arcfourkeyusage = arcfour_keyusage (keyusage);
+  char *Ksign = NULL;
+  char *pt = NULL;
   char T[4];
+  int err;
 
-  T[0] = keyusage & 0xFF;
-  T[1] = (keyusage >> 8) & 0xFF;
-  T[2] = (keyusage >> 16) & 0xFF;
-  T[3] = (keyusage >> 24) & 0xFF;
+  T[0] = arcfourkeyusage & 0xFF;
+  T[1] = (arcfourkeyusage >> 8) & 0xFF;
+  T[2] = (arcfourkeyusage >> 16) & 0xFF;
+  T[3] = (arcfourkeyusage >> 24) & 0xFF;
 
-  err = gcry_md_open (&mdh, halg, GCRY_MD_FLAG_HMAC);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "Libgcrypt md open failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
+  err = shishi_hmac_md5 (handle,
+			 shishi_key_value (key), shishi_key_length (key),
+			 ARCFOUR_HMAC_CKSUM_KEY_DERIVE_CONSTANT,
+			 strlen (ARCFOUR_HMAC_CKSUM_KEY_DERIVE_CONSTANT) + 1,
+			 &Ksign);
+  if (err)
+    goto done;
 
-  err = gcry_md_setkey (mdh, shishi_key_value (key), shishi_key_length (key));
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "Libgcrypt md setkey failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
+  pt = xmalloc (4 + inlen);
+  memcpy (pt, T, 4);
+  memcpy (pt + 4, in, inlen);
 
-  gcry_md_write (mdh, RC4_HMAC_CKSUM_KEY_DERIVE_CONSTANT,
-		 strlen (RC4_HMAC_CKSUM_KEY_DERIVE_CONSTANT) + 1);
+  *outlen = 16;
+  err = shishi_hmac_md5 (handle, Ksign, 16, in, inlen, out);
+  if (err)
+    goto done;
 
-  err = gcry_md_open (&mdh2, halg, GCRY_MD_FLAG_HMAC);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "Libgcrypt md open failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
+  err = SHISHI_OK;
 
-  err = gcry_md_setkey (mdh2, gcry_md_read (mdh, halg), hlen);
-  if (err != GPG_ERR_NO_ERROR)
-    {
-      shishi_error_printf (handle, "Libgcrypt md setkey failed");
-      shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  gcry_md_close (mdh);
-
-  gcry_md_write (mdh2, T, 4);
-  gcry_md_write (mdh2, in, inlen);
-
-  hash = gcry_md_read (mdh2, halg);
-  if (hash == NULL)
-    {
-      shishi_error_printf (handle, "Libgcrypt failed to compute hash");
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
-  *outlen = hlen;
-  *out = xmemdup (hash, *outlen);
-
-  gcry_md_close (mdh2);
-#else
-  struct hmac_md5_ctx ctx;
-  char Ksign[MD5_DIGEST_SIZE];
-  char T[4];
-
-  T[0] = keyusage & 0xFF;
-  T[1] = (keyusage >> 8) & 0xFF;
-  T[2] = (keyusage >> 16) & 0xFF;
-  T[3] = (keyusage >> 24) & 0xFF;
-
-  hmac_md5_set_key (&ctx, shishi_key_length (key), shishi_key_value (key));
-  hmac_md5_update (&ctx, strlen (RC4_HMAC_CKSUM_KEY_DERIVE_CONSTANT) + 1,
-		   RC4_HMAC_CKSUM_KEY_DERIVE_CONSTANT);
-  hmac_md5_digest (&ctx, MD5_DIGEST_SIZE, Ksign);
-
-  hmac_md5_set_key (&ctx, MD5_DIGEST_SIZE, Ksign);
-
-  hmac_md5_update (&ctx, 4, T);
-  hmac_md5_update (&ctx, inlen, in);
-
-  *outlen = MD5_DIGEST_SIZE;
-  *out = xmalloc (*outlen);
-
-  hmac_md5_digest (&ctx, *outlen, *out);
-#endif
-#endif
-  return SHISHI_OK;
+ done:
+  free (Ksign);
+  free (pt);
+  return err;
 }
 
 static int
-rc4_hmac_random_to_key (Shishi * handle,
+arcfour_hmac_random_to_key (Shishi * handle,
 			const char *random, size_t randomlen,
 			Shishi_key * outkey)
 {
   if (randomlen != shishi_key_length (outkey))
     {
-      shishi_error_printf (handle, "RC4 random to key caller error");
+      shishi_error_printf (handle, "ARCFOUR random to key caller error");
       return SHISHI_CRYPTO_ERROR;
     }
 
@@ -225,7 +315,7 @@ rc4_hmac_random_to_key (Shishi * handle,
 }
 
 static int
-rc4_hmac_string_to_key (Shishi * handle,
+arcfour_hmac_string_to_key (Shishi * handle,
 			const char *string,
 			size_t stringlen,
 			const char *salt,
@@ -255,39 +345,39 @@ rc4_hmac_string_to_key (Shishi * handle,
   return SHISHI_OK;
 }
 
-cipherinfo rc4_hmac_info = {
-  SHISHI_RC4_HMAC,
-  "rc4-hmac",
+cipherinfo arcfour_hmac_info = {
+  SHISHI_ARCFOUR_HMAC,
+  "arcfour-hmac",
   16,
   0,
   16,
   16,
   16,
-  SHISHI_RC4_HMAC_MD5,
-  rc4_hmac_random_to_key,
-  rc4_hmac_string_to_key,
-  rc4_hmac_encrypt,
-  rc4_hmac_decrypt
+  SHISHI_ARCFOUR_HMAC_MD5,
+  arcfour_hmac_random_to_key,
+  arcfour_hmac_string_to_key,
+  arcfour_hmac_encrypt,
+  arcfour_hmac_decrypt
 };
 
-cipherinfo rc4_hmac_exp_info = {
-  SHISHI_RC4_HMAC_EXP,
-  "rc4-hmac-exp",
+cipherinfo arcfour_hmac_exp_info = {
+  SHISHI_ARCFOUR_HMAC_EXP,
+  "arcfour-hmac-exp",
   16,
   0,
   16,
   16,
   16,
-  SHISHI_RC4_HMAC_MD5,
-  rc4_hmac_random_to_key,
-  rc4_hmac_string_to_key,
-  rc4_hmac_exp_encrypt,
-  rc4_hmac_exp_decrypt
+  SHISHI_ARCFOUR_HMAC_MD5,
+  arcfour_hmac_random_to_key,
+  arcfour_hmac_string_to_key,
+  arcfour_hmac_exp_encrypt,
+  arcfour_hmac_exp_decrypt
 };
 
-checksuminfo rc4_hmac_md5_info = {
-  SHISHI_RC4_HMAC_MD5,
-  "rc4-hmac-md5",
+checksuminfo arcfour_hmac_md5_info = {
+  SHISHI_ARCFOUR_HMAC_MD5,
+  "arcfour-hmac-md5",
   16,
-  rc4_hmac_md5_checksum
+  arcfour_hmac_md5_checksum
 };

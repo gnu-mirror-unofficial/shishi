@@ -475,8 +475,8 @@ static cipherinfo *ciphers[] = {
   &aes256_cts_hmac_sha1_96_info,
 #endif
 #if WITH_ARCFOUR
-  &rc4_hmac_info,
-  &rc4_hmac_exp_info
+  &arcfour_hmac_info,
+  &arcfour_hmac_exp_info
 #endif
 };
 
@@ -729,7 +729,7 @@ static checksuminfo *checksums[] = {
   &hmac_sha1_96_aes256_info,
 #endif
 #if WITH_ARCFOUR
-  &rc4_hmac_md5_info
+  &arcfour_hmac_md5_info
 #endif
 };
 
