@@ -32,63 +32,54 @@ const char *program_name = "client";
 static int
 doit (Shishi * h, Shishi_ap * ap, int verbose)
 {
+  Shishi_asn1 asn1safe;
+  Shishi_safe *safe;
+  char *userdata;
+  size_t userdatalen;
   char line[BUFSIZ];
-
-#if 0
-  res = shishi_encticketpart_get_key
-    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (ap)), &tktkey);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not extract key:\n%s\n%s\n"),
-	       shishi_strerror (res), shishi_strerror_details (handle));
-      return 1;
-    }
-
-  res = shishi_safe_parse (handle, stdin, &asn1safe);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not read SAFE:\n%s\n%s\n"),
-	       shishi_strerror (res), shishi_strerror_details (handle));
-      return 1;
-    }
-
-  res = shishi_safe (handle, &safe);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not create SAFE:\n%s\n%s\n"),
-	       shishi_strerror (res), shishi_strerror_details (handle));
-      return 1;
-    }
-
-  shishi_safe_safe_set (safe, asn1safe);
-
-  res = shishi_safe_verify (safe, tktkey);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not verify SAFE:\n%s\n%s\n"),
-	       shishi_strerror (res), shishi_strerror_details (handle));
-      return 1;
-    }
-
-  printf ("Verified SAFE successfully...\n");
-
-  userdatalen = sizeof (userdata);
-  res = shishi_safe_user_data (handle, asn1safe, userdata, &userdatalen);
-  if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not extract user data:\n%s\n%s\n"),
-	       shishi_strerror (res), shishi_strerror_details (handle));
-      return 1;
-    }
-  userdata[userdatalen] = '\0';
-  printf ("user data: `%s'\n", userdata);
-#endif
+  int res;
 
   printf ("Application exchange start.  Press ^D to finish.\n");
 
-  while (fgets (line, sizeof (line), stdin))
+  while ((res = shishi_safe_parse (h, stdin, &asn1safe)) == SHISHI_OK)
     {
-      printf ("read: %s", line);
+      if (res != SHISHI_OK)
+	{
+	  fprintf (stderr, "Could not read SAFE:\n%s\n%s\n",
+		   shishi_strerror (res), shishi_strerror_details (h));
+	  return 1;
+	}
+
+      res = shishi_safe (h, &safe);
+      if (res != SHISHI_OK)
+	{
+	  fprintf (stderr, "Could not create SAFE:\n%s\n%s\n",
+		   shishi_strerror (res), shishi_strerror_details (h));
+	  return 1;
+	}
+
+      shishi_safe_safe_set (safe, asn1safe);
+
+      res = shishi_safe_verify (safe, shishi_ap_key (ap));
+      if (res != SHISHI_OK)
+	{
+	  fprintf (stderr, "Could not verify SAFE:\n%s\n%s\n",
+		   shishi_strerror (res), shishi_strerror_details (h));
+	  return 1;
+	}
+
+      printf ("Verified SAFE successfully...\n");
+
+      res = shishi_safe_user_data (h, asn1safe, &userdata, &userdatalen);
+      if (res != SHISHI_OK)
+	{
+	  fprintf (stderr, "Could not extract user data:\n%s\n%s\n",
+		   shishi_strerror (res), shishi_strerror_details (h));
+	  return 1;
+	}
+      userdata[userdatalen] = '\0';
+      printf ("user data: `%s'\n", userdata);
+
     }
 
   if (ferror (stdin))
@@ -126,6 +117,8 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
     shishi_key_print (h, stderr, key);
 
   /* Read Authentication request from client */
+
+  printf ("Waiting for client to authenticate itself...\n");
 
   rc = shishi_apreq_parse (h, stdin, &apreq);
   if (rc != SHISHI_OK)

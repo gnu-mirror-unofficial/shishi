@@ -34,44 +34,45 @@ static int
 doit (Shishi * handle, Shishi_ap * ap, int verbose)
 {
   char line[BUFSIZ];
-
-#if 0
-  /* XXX Unfinished application-level security */
-  res = shishi_safe (handle, &safe);
-  if (res != SHISHI_OK)
-    {
-      printf ("Could not build SAFE: %s\n", shishi_strerror (res));
-      return res;
-    }
-
-  res = shishi_safe_set_user_data (handle, shishi_safe_safe (safe), "foo", 0);
-  if (res != SHISHI_OK)
-    {
-      printf ("Could not set application data in SAFE: %s\n",
-	      shishi_strerror (res));
-      return res;
-    }
-
-  res = shishi_safe_build (safe, key);
-  if (res != SHISHI_OK)
-    {
-      printf ("Could not build SAFE: %s\n", shishi_strerror (res));
-      return res;
-    }
-
-  res = shishi_safe_print (handle, stdout, shishi_safe_safe (safe));
-  if (res != SHISHI_OK)
-    {
-      printf ("Could not print SAFE: %s\n", shishi_strerror (res));
-      return res;
-    }
-#endif
+  int res;
 
   printf ("Application exchange start.  Press ^D to finish.\n");
 
   while (fgets (line, sizeof (line), stdin))
     {
+      Shishi_safe *safe;
+
       printf ("read: %s", line);
+
+      res = shishi_safe (handle, &safe);
+      if (res != SHISHI_OK)
+	{
+	  printf ("Could not build SAFE: %s\n", shishi_strerror (res));
+	  return res;
+	}
+
+      res = shishi_safe_set_user_data (handle, shishi_safe_safe (safe),
+				       line, strlen (line));
+      if (res != SHISHI_OK)
+	{
+	  printf ("Could not set application data in SAFE: %s\n",
+		  shishi_strerror (res));
+	  return res;
+	}
+
+      res = shishi_safe_build (safe, shishi_ap_key (ap));
+      if (res != SHISHI_OK)
+	{
+	  printf ("Could not build SAFE: %s\n", shishi_strerror (res));
+	  return res;
+	}
+
+      res = shishi_safe_print (handle, stdout, shishi_safe_safe (safe));
+      if (res != SHISHI_OK)
+	{
+	  printf ("Could not print SAFE: %s\n", shishi_strerror (res));
+	  return res;
+	}
     }
 
   if (ferror (stdin))
