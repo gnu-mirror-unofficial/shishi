@@ -21,6 +21,18 @@
 
 #include "internal.h"
 
+/**
+ * shisa_enumerate_realms:
+ * @dbh: Shisa library handle created by shisa().
+ * @realms: pointer to newly allocated array of newly allocated
+ *   zero-terminated UTF-8 strings indicating name of realm.
+ * @nrealms: pointer to number indicating number of allocated realm strings.
+ *
+ * Extract a list of all realm names in backend, as zero-terminated
+ * UTF-8 strings.  The caller must deallocate the strings.
+ *
+ * Return value: Returns SHISA_OK on success, or error code.
+ **/
 int
 shisa_enumerate_realms (Shisa * dbh, char ***realms, size_t * nrealms)
 {
@@ -43,6 +55,22 @@ shisa_enumerate_realms (Shisa * dbh, char ***realms, size_t * nrealms)
   return SHISA_OK;
 }
 
+/**
+ * shisa_enumerate_principals:
+ * @dbh: Shisa library handle created by shisa().
+ * @realm: name of realm, as zero-terminated UTF-8 string.
+ * @principal: pointer to newly allocated array of newly allocated
+ *   zero-terminated UTF-8 strings indicating name of principal.
+ * @nprincipals: pointer to number indicating number of allocated
+ *   realm strings.
+ *
+ * Extract a list of all principal names in realm in backend, as
+ * zero-terminated UTF-8 strings.  The caller must deallocate the
+ * strings.
+ *
+ * Return value: Returns SHISA_OK on success, SHISA_NO_REALM if the
+ *   specified realm does not exist, or error code.
+ **/
 int
 shisa_enumerate_principals (Shisa * dbh,
 			    const char *realm,
@@ -155,10 +183,12 @@ shisa_principal_remove (Shisa * dbh, const char *realm, const char *principal)
 }
 
 int
-shisa_enumerate_keys (Shisa * dbh,
-		      const char *realm,
-		      const char *principal,
-		      Shisa_key *** keys, size_t * nkeys)
+shisa_keys_find (Shisa * dbh,
+		 const char *realm,
+		 const char *principal,
+		 Shisa_key *hint,
+		 Shisa_key ***keys,
+		 size_t * nkeys)
 {
   _Shisa_db *db;
   size_t i;
@@ -170,8 +200,8 @@ shisa_enumerate_keys (Shisa * dbh,
 
   for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
     {
-      rc = db->backend->enumerate_keys (dbh, db->state, realm, principal,
-					keys, nkeys);
+      rc = db->backend->keys_find (dbh, db->state, realm, principal, hint,
+				   keys, nkeys);
       if (rc != SHISA_OK)
 	/* XXX mem leak. */
 	return rc;
@@ -183,7 +213,51 @@ shisa_enumerate_keys (Shisa * dbh,
 int
 shisa_key_add (Shisa * dbh,
 	       const char *realm,
-	       const char *principal, uint32_t kvno, const Shisa_key * key)
+	       const char *principal,
+	       const Shisa_key * key)
+{
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      rc = db->backend->key_add (dbh, db->state, realm, principal, key);
+      if (rc != SHISA_OK)
+	return rc;
+    }
+
+  return SHISA_OK;
+}
+
+
+int
+shisa_key_update (Shisa * dbh,
+		  const char *realm,
+		  const char *principal,
+		  const Shisa_key * oldkey,
+		  const Shisa_key * newkey)
+{
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      rc = db->backend->key_update (dbh, db->state, realm, principal,
+				    oldkey, newkey);
+      if (rc != SHISA_OK)
+	return rc;
+    }
+
+  return SHISA_OK;
+}
+
+int
+shisa_key_remove (Shisa * dbh,
+		  const char *realm,
+		  const char *principal,
+		  const Shisa_key * key)
 {
   return SHISA_NO_KEY;
 }
@@ -200,4 +274,14 @@ shisa_key_free (Shisa * dbh, Shisa_key * key)
   if (key->password)
     free (key->password);
   free (key);
+}
+
+
+void
+shisa_keys_free (Shisa * dbh, Shisa_key ** keys, size_t nkeys)
+{
+  size_t i;
+
+  for (i = 0; i < nkeys; i++)
+    shisa_key_free (dbh, keys[i]);
 }

@@ -51,7 +51,9 @@ enum Shisa_rc
   SHISA_ADD_PRINCIPAL_EXISTS = 16,
   SHISA_ADD_PRINCIPAL_ERROR = 17,
   SHISA_REMOVE_PRINCIPAL_NONEMPTY = 18,
-  SHISA_REMOVE_PRINCIPAL_ERROR = 19
+  SHISA_REMOVE_PRINCIPAL_ERROR = 19,
+  SHISA_ADD_KEY_ERROR = 20,
+  SHISA_REMOVE_KEY_ERROR = 21
 };
 typedef enum Shisa_rc Shisa_rc;
 
@@ -73,6 +75,7 @@ typedef struct Shisa_principal Shisa_principal;
 
 struct Shisa_key
 {
+  uint32_t kvno;
   int32_t etype;
   char *key;
   size_t keylen;
@@ -96,50 +99,86 @@ extern int shisa_cfg_db (Shisa * dbh, char *value);
 extern int shisa_cfg_from_file (Shisa * dbh, const char *cfg);
 extern const char *shisa_cfg_default_systemfile (Shisa * dbh);
 
-/* core.c. */
+/* error.c */
+extern const char *shisa_strerror (int err);
+extern void shisa_info (Shisa * dbh, const char *format, ...);
+
+/* core.c */
+extern void shisa_key_free (Shisa * dbh, Shisa_key * key);
+extern void shisa_keys_free (Shisa * dbh, Shisa_key ** keys, size_t nkeys);
+
+/************************************************************** Enumerators. */
+
+/* Return a list of all realm names in backend, as zero-terminated
+   UTF-8 strings.  The caller must deallocate the strings. */
 extern int shisa_enumerate_realms (Shisa * dbh,
 				   char ***realms, size_t * nrealms);
+
+/* Return a list of all principals in realm in backend, as
+   zero-terminated UTF-8 strings.  The caller must deallocate the
+   strings. */
 extern int shisa_enumerate_principals (Shisa * dbh,
 				       const char *realm,
 				       char ***principals,
 				       size_t * nprincipals);
 
+/**************************************** Functions operating on principals. */
+
+/* Return information about specified PRINCIPAL@REALM.  Can also be
+   used check existence of principal entry, with a NULL PH. */
 extern int shisa_principal_find (Shisa * dbh,
 				 const char *realm,
 				 const char *principal, Shisa_principal * ph);
-extern int shisa_principal_update (Shisa * dbh,
-				   const char *realm,
-				   const char *principal,
-				   const Shisa_principal * ph);
+
+/* Add new PRINCIPAL@REALM with specified information and key.  If
+   PRINCIPAL is NULL, then add realm REALM. */
 extern int shisa_principal_add (Shisa * dbh,
 				const char *realm,
 				const char *principal,
 				const Shisa_principal * ph,
 				const Shisa_key * key);
+
+/* Modify information for specified PRINCIPAL@REALM.  */
+extern int shisa_principal_update (Shisa * dbh,
+				   const char *realm,
+				   const char *principal,
+				   const Shisa_principal * ph);
+
+/* Remove PRINCIPAL@REALM, or REALM if PRINCIPAL is NULL.  Realms must
+   be empty for them to be successfully removed.  */
 extern int shisa_principal_remove (Shisa * dbh,
 				   const char *realm, const char *principal);
 
-extern int shisa_enumerate_keys (Shisa * dbh,
-				 const char *realm,
-				 const char *principal,
-				 Shisa_key *** keys, size_t * nkeys);
+/********************************************** Functions operating on keys. */
+
+/* Get all keys matching HINT for specified PRINCIPAL@REALM.  The
+   caller must deallocate the returned keys.  If HINT is NULL, then
+   all keys are returned. */
+extern int shisa_keys_find (Shisa * dbh,
+			    const char *realm,
+			    const char *principal,
+			    Shisa_key * hint,
+			    Shisa_key *** keys, size_t * nkeys);
+
+/* Add key for PRINCIPAL@REALM. */
 extern int shisa_key_add (Shisa * dbh,
 			  const char *realm,
-			  const char *principal,
-			  uint32_t kvno, const Shisa_key * key);
-extern void shisa_key_free (Shisa * dbh, Shisa_key * key);
+			  const char *principal, const Shisa_key * key);
 
-/* error.c */
-extern const char *shisa_strerror (int err);
-extern void shisa_info (Shisa * dbh, const char *format, ...);
+/* Update a key for PRINCIPAL@REALM.  The OLDKEY must uniquely
+   determine the key to update, i.e., shishi_keys_find using OLDKEY as
+   HINT must return exactly 1 key.  */
+extern int shisa_key_update (Shisa * dbh,
+			     const char *realm,
+			     const char *principal,
+			     const Shisa_key * oldkey,
+			     const Shisa_key * newkey);
 
-/* tool.c */
-extern int shisa_valid_principal_find (Shisa * dbh,
-				       const char *client,
-				       const char *realm,
-				       time_t t, Shisa_principal * ph);
-extern int shisa_valid_key_find (Shisa * dbh,
-				 const Shisa_principal * ph,
-				 time_t t, Shisa_key ** key);
+/* Remove a key for PRINCIPAL@REALM.  The KEY must uniquely determine
+   the key to remove, i.e., shishi_keys_find using KEY as HINT must
+   return exactly 1 key.  */
+extern int shisa_key_remove (Shisa * dbh,
+			     const char *realm,
+			     const char *principal, const Shisa_key * key);
 
 #endif /* SHISA_H */

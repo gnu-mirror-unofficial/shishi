@@ -49,6 +49,8 @@
 typedef int (*_Shisa_db_init) (Shisa * dbh,
 			       const char *location,
 			       const char *options, void **state);
+typedef void (*_Shisa_db_done) (Shisa * dbh, void *state);
+
 typedef int (*_Shisa_db_enumerate_realms) (Shisa * dbh,
 					   void *state,
 					   char ***realms, size_t * nrealms);
@@ -57,6 +59,7 @@ typedef int (*_Shisa_db_enumerate_principals) (Shisa * dbh,
 					       const char *realm,
 					       char ***principals,
 					       size_t * nprincipals);
+
 typedef int (*_Shisa_db_principal_find) (Shisa * dbh,
 					 void *state,
 					 const char *realm,
@@ -77,31 +80,46 @@ typedef int (*_Shisa_db_principal_remove) (Shisa * dbh,
 					   void *state,
 					   const char *realm,
 					   const char *principal);
-typedef int (*_Shisa_db_enumerate_keys) (Shisa * dbh,
-					 void *state,
-					 const char *realm,
-					 const char *principal,
-					 Shisa_key *** keys, size_t * nkeys);
+
+typedef int (*_Shisa_db_keys_find) (Shisa * dbh,
+				    void *state,
+				    const char *realm,
+				    const char *principal,
+				    Shisa_key *hint,
+				    Shisa_key ***keys, size_t * nkeys);
 typedef int (*_Shisa_db_key_add) (Shisa * dbh,
 				  void *state,
 				  const char *realm,
 				  const char *principal,
-				  uint32_t kvno, const Shisa_key * key);
-typedef void (*_Shisa_db_done) (Shisa * dbh, void *state);
+				  const Shisa_key * key);
+typedef int (*_Shisa_db_key_update) (Shisa * dbh,
+				     void *state,
+				     const char *realm,
+				     const char *principal,
+				     const Shisa_key * oldkey,
+				     const Shisa_key * newkey);
+typedef int (*_Shisa_db_key_remove) (Shisa * dbh,
+				     void *state,
+				     const char *realm,
+				     const char *principal,
+				     const Shisa_key * key);
+
 
 struct _Shisa_backend
 {
   char *name;
   _Shisa_db_init init;
+  _Shisa_db_done done;
   _Shisa_db_enumerate_realms enumerate_realms;
   _Shisa_db_enumerate_principals enumerate_principals;
   _Shisa_db_principal_find principal_find;
   _Shisa_db_principal_update principal_update;
   _Shisa_db_principal_add principal_add;
   _Shisa_db_principal_remove principal_remove;
-  _Shisa_db_enumerate_keys enumerate_keys;
+  _Shisa_db_keys_find keys_find;
   _Shisa_db_key_add key_add;
-  _Shisa_db_done done;
+  _Shisa_db_key_update key_update;
+  _Shisa_db_key_remove key_remove;
 };
 typedef struct _Shisa_backend _Shisa_backend;
 
@@ -122,49 +140,5 @@ extern int getsubopt (char **optionp, char *const *tokens, char **valuep);
 
 /* db.c */
 extern _Shisa_backend *_shisa_find_backend (const char *name);
-
-/* file.c */
-extern int shisa_file_init (Shisa * dbh,
-			    const char *location,
-			    const char *options, void **state);
-extern int shisa_file_enumerate_realms (Shisa * dbh,
-					void *state,
-					char ***realms, size_t * nrealms);
-extern int shisa_file_enumerate_principals (Shisa * dbh,
-					    void *state,
-					    const char *realm,
-					    char ***principals,
-					    size_t * nprincipals);
-extern int shisa_file_principal_find (Shisa * dbh,
-				      void *state,
-				      const char *realm,
-				      const char *principal,
-				      Shisa_principal * ph);
-extern int shisa_file_principal_update (Shisa * dbh,
-					void *state,
-					const char *realm,
-					const char *principal,
-					const Shisa_principal * ph);
-extern int shisa_file_principal_add (Shisa * dbh,
-				     void *state,
-				     const char *realm,
-				     const char *principal,
-				     const Shisa_principal * ph,
-				     const Shisa_key * key);
-extern int shisa_file_principal_remove (Shisa * dbh,
-					void *state,
-					const char *realm,
-					const char *principal);
-extern int shisa_file_enumerate_keys (Shisa * dbh,
-				      void *state,
-				      const char *realm,
-				      const char *principal,
-				      Shisa_key *** keys, size_t * nkeys);
-extern int shisa_file_key_add (Shisa * dbh,
-			       void *state,
-			       const char *realm,
-			       const char *principal,
-			       uint32_t kvno, const Shisa_key * key);
-extern void shisa_file_done (Shisa * dbh, void *state);
 
 #endif /* _INTERNAL_H */

@@ -51,6 +51,10 @@
 
 #include "internal.h"
 
+/* Get prototypes. */
+#include "file.h"
+
+/* Get low-level file utilities. */
 #include "fileutil.h"
 
 struct Shisa_file
@@ -106,6 +110,8 @@ shisa_file_cfg (Shisa * dbh, Shisa_file * info, const char *option)
   return SHISA_OK;
 }
 
+/* Initialize file backend, i.e., parse options and check if file root
+   exists and allocate backend handle. */
 int
 shisa_file_init (Shisa * dbh,
 		 const char *location, const char *options, void **state)
@@ -127,6 +133,22 @@ shisa_file_init (Shisa * dbh,
   return SHISA_OK;
 }
 
+/* Destroy backend handle. */
+void
+shisa_file_done (Shisa * dbh, void *state)
+{
+  Shisa_file *info = state;
+
+  if (info)
+    {
+      if (info->path)
+	free (info->path);
+      free (info);
+    }
+}
+
+/* Return a list of all realm names in backend, as zero-terminated
+   UTF-8 strings.  The caller must deallocate the strings. */
 int
 shisa_file_enumerate_realms (Shisa * dbh,
 			     void *state, char ***realms, size_t * nrealms)
@@ -139,6 +161,9 @@ shisa_file_enumerate_realms (Shisa * dbh,
   return SHISA_OK;
 }
 
+/* Return a list of all principals in realm in backend, as
+   zero-terminated UTF-8 strings.  The caller must deallocate the
+   strings. */
 int
 shisa_file_enumerate_principals (Shisa * dbh,
 				 void *state,
@@ -156,6 +181,8 @@ shisa_file_enumerate_principals (Shisa * dbh,
   return SHISA_OK;
 }
 
+/* Return information about specified PRINCIPAL@REALM.  Can also be
+   used check existence of principal entry, with a NULL PH. */
 int
 shisa_file_principal_find (Shisa * dbh,
 			   void *state,
@@ -167,34 +194,27 @@ shisa_file_principal_find (Shisa * dbh,
   if (!_shisa_isdir3 (info->path, realm, principal))
     return SHISA_NO_PRINCIPAL;
 
+  if (!ph)
+    return SHISA_OK;
+
   ph->notusedbefore =
     _shisa_mtime4 (info->path, realm, principal, "validfrom.stamp");
   ph->isdisabled =
     _shisa_isfile4 (info->path, realm, principal, "disabled.flag");
-  ph->kvno = _shisa_uint32link4 (info->path, realm, principal, "latest.key");
+  ph->kvno =
+    _shisa_uint32link4 (info->path, realm, principal, "latest.key");
   ph->lastinitialtgt =
     _shisa_mtime4 (info->path, realm, principal, "lastinitaltgt.stamp");
   ph->lastinitialrequest =
     _shisa_mtime4 (info->path, realm, principal, "lastinitial.stamp");
-  ph->lasttgt = _shisa_mtime4 (info->path, realm, principal, "lasttgt.stamp");
+  ph->lasttgt =
+    _shisa_mtime4 (info->path, realm, principal, "lasttgt.stamp");
   ph->lastrenewal =
     _shisa_mtime4 (info->path, realm, principal, "lastrenewal.stamp");
   ph->passwordexpire =
     _shisa_mtime4 (info->path, realm, principal, "passwordexpire.stamp");
   ph->accountexpire =
     _shisa_mtime4 (info->path, realm, principal, "accountexpire.stamp");
-
-  return SHISA_OK;
-}
-
-int
-shisa_file_principal_update (Shisa * dbh,
-			     void *state,
-			     const char *realm,
-			     const char *principal,
-			     const Shisa_principal * ph)
-{
-  Shisa_file *info = state;
 
   return SHISA_OK;
 }
@@ -236,11 +256,13 @@ principal_add (Shisa * dbh,
     shisa_file_principal_update (dbh, state, realm, principal, ph);
 
   if (key)
-    shisa_file_key_add (dbh, state, realm, principal, ph->kvno, key);
+    shisa_file_key_add (dbh, state, realm, principal, key);
 
   return SHISA_OK;
 }
 
+/* Add new PRINCIPAL@REALM with specified information and key.  If
+   PRINCIPAL is NULL, then add realm REALM. */
 int
 shisa_file_principal_add (Shisa * dbh,
 			  void *state,
@@ -256,6 +278,19 @@ shisa_file_principal_add (Shisa * dbh,
     rc = principal_add (dbh, state, realm, principal, ph, key);
 
   return rc;
+}
+
+/* Modify information for specified PRINCIPAL@REALM.  */
+int
+shisa_file_principal_update (Shisa * dbh,
+			     void *state,
+			     const char *realm,
+			     const char *principal,
+			     const Shisa_principal * ph)
+{
+  Shisa_file *info = state;
+
+  return SHISA_OK;
 }
 
 static int
@@ -363,6 +398,8 @@ principal_remove (Shisa * dbh,
   return SHISA_OK;
 }
 
+/* Remove PRINCIPAL@REALM, or REALM if PRINCIPAL is NULL.  Realms must
+   be empty for them to be successfully removed.  */
 int
 shisa_file_principal_remove (Shisa * dbh,
 			     void *state,
@@ -448,12 +485,16 @@ read_key (Shisa * dbh,
   return SHISA_OK;
 }
 
+/* Get all keys matching HINT for specified PRINCIPAL@REALM.  The
+   caller must deallocate the returned keys.  If HINT is NULL, then
+   all keys are returned. */
 int
-shisa_file_enumerate_keys (Shisa * dbh,
-			   void *state,
-			   const char *realm,
-			   const char *principal,
-			   Shisa_key *** keys, size_t * nkeys)
+shisa_file_keys_find (Shisa * dbh,
+		      void *state,
+		      const char *realm,
+		      const char *principal,
+		      Shisa_key * hint,
+		      Shisa_key *** keys, size_t * nkeys)
 {
   Shisa_file *info = state;
   char **files;
@@ -487,16 +528,18 @@ shisa_file_enumerate_keys (Shisa * dbh,
   return SHISA_OK;
 }
 
+/* Add key for PRINCIPAL@REALM. */
 int
 shisa_file_key_add (Shisa * dbh,
 		    void *state,
 		    const char *realm,
 		    const char *principal,
-		    uint32_t kvno, const Shisa_key * key)
+		    const Shisa_key * key)
 {
   Shisa_file *info = state;
   size_t passwdlen = key && key->password ? strlen (key->password) : 0;
-  char *file;
+  char *file = NULL;
+  size_t num = 0;
   FILE *fh;
 
   if (!key)
@@ -506,13 +549,17 @@ shisa_file_key_add (Shisa * dbh,
       _shisa_mkdir4 (info->path, realm, principal, "keys"))
     return SHISA_NO_KEY;
 
-  asprintf (&file, "keys/%d.key", kvno);
+  do {
+    if (file)
+      free (file);
+    asprintf (&file, "keys/%d-%d-%d.key", key->kvno, key->etype, num++);
+  } while (_shisa_isfile4 (info->path, realm, principal, file));
   fh = _shisa_fopen4 (info->path, realm, principal, file, "w");
   free (file);
   if (!fh)
     {
       perror (file);
-      return SHISA_NO_KEY;
+      return SHISA_ADD_KEY_ERROR;
     }
 
   fprintf (fh, "%u %u %u %u %u\n", key->etype, key->keylen,
@@ -531,15 +578,37 @@ shisa_file_key_add (Shisa * dbh,
   return SHISA_OK;
 }
 
-void
-shisa_file_done (Shisa * dbh, void *state)
+/* Update a key for PRINCIPAL@REALM.  The OLDKEY must uniquely
+   determine the key to update, i.e., shishi_keys_find using OLDKEY as
+   HINT must return exactly 1 key.  */
+int
+shisa_file_key_update (Shisa * dbh,
+		       void *state,
+		       const char *realm,
+		       const char *principal,
+		       const Shisa_key * oldkey,
+		       const Shisa_key * newkey)
 {
   Shisa_file *info = state;
 
-  if (info)
-    {
-      if (info->path)
-	free (info->path);
-      free (info);
-    }
+  puts("fku");
+
+  return SHISA_NO_KEY;
+}
+
+/* Remove a key for PRINCIPAL@REALM.  The KEY must uniquely determine
+   the key to remove, i.e., shishi_keys_find using KEY as HINT must
+   return exactly 1 key.  */
+int
+shisa_file_key_remove (Shisa * dbh,
+		       void *state,
+		       const char *realm,
+		       const char *principal,
+		       const Shisa_key * key)
+{
+  Shisa_file *info = state;
+
+  puts("fkr");
+
+  return SHISA_NO_KEY;
 }
