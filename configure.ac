@@ -26,8 +26,8 @@ AC_INIT(shishi, 0.0.8, bug-shishi@josefsson.org)
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 LT_CURRENT=0
-LT_REVISION=0
-LT_AGE=8
+LT_REVISION=8
+LT_AGE=0
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
