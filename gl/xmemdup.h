@@ -18,4 +18,4 @@
 #include <stddef.h>
 
 /* Duplicate N bytes of data buffer, with out-of-memory checking. */
-extern void *xmemdup (void *dest, const void *src, size_t n);
+extern void *xmemdup (const void *src, size_t n);

@@ -18,4 +18,4 @@
 #include <stddef.h>
 
 /* Duplicate N bytes of data buffer. */
-extern void *memdup (void *dest, const void *src, size_t n);
+extern void *memdup (const void *src, size_t n);

@@ -30,11 +30,12 @@
 
 /* Duplicate N bytes of data buffer. */
 extern void *
-memdup (void *dest, const void *src, size_t n)
+memdup (const void *src, size_t n)
 {
+  void *dest;
   dest = malloc (n);
   if (!dest)
-    return dest;
+    return NULL;
   memcpy (dest, src, n);
   return dest;
 }
