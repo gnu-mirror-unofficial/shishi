@@ -162,6 +162,55 @@ shishi_safe_safe_set (Shishi_safe * safe, Shishi_asn1 asn1safe)
 }
 
 /**
+ * shishi_safe_safe_der:
+ * @safe: safe as allocated by shishi_safe().
+ * @out: output array with der encoding of SAFE.
+ * @outlen: length of output array with der encoding of SAFE.
+ *
+ * DER encode SAFE structure.  Typically shishi_safe_build() is used
+ * instead to build the SAFE structure first.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_safe_safe_der (Shishi_safe * safe, char *out, int *outlen)
+{
+  int rc;
+
+  rc = shishi_a2d (safe->handle, safe->safe, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_safe_safe_der_set:
+ * @safe: safe as allocated by shishi_safe().
+ * @der: input array with DER encoded KRB-SAFE.
+ * @derlen: length of input array with DER encoded KRB-SAFE.
+ *
+ * DER decode KRB-SAFE and set it SAFE exchange.  If decoding fails, the
+ * KRB-SAFE in the SAFE exchange remains.
+ *
+ * Return value: Returns SHISHI_OK.
+ **/
+int
+shishi_safe_safe_der_set (Shishi_safe * safe, char *der, int derlen)
+{
+  Shishi_asn1 asn1safe;
+
+  safe = shishi_der2asn1_krbsafe (safe->handle, der, derlen);
+
+  if (asn1safe == NULL)
+    return SHISHI_ASN1_ERROR;
+
+  shishi_safe_safe_set(safe, asn1safe);
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_safe_print:
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
@@ -322,29 +371,6 @@ shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
 }
 
 /**
- * shishi_safe_safe_der:
- * @safe: safe as allocated by shishi_safe().
- * @out: output array with der encoding of SAFE.
- * @outlen: length of output array with der encoding of SAFE.
- *
- * DER encode SAFE structure.  Typically shishi_safe_build() is used
- * instead to build the SAFE structure first.
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_safe_safe_der (Shishi_safe * safe, char *out, int *outlen)
-{
-  int rc;
-
-  rc = shishi_a2d (safe->handle, safe->safe, out, outlen);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  return SHISHI_OK;
-}
-
-/**
  * shishi_safe_cksum:
  * @handle: shishi handle as allocated by shishi_init().
  * @safe: safe as allocated by shishi_safe().
@@ -499,7 +525,9 @@ shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
     return rc;
 
   /* XXX check if keytype/cksumtype is suitable for SAFE */
-  shishi_key_print(safe->handle, stdout, key);
+
+  if (VERBOSEASN1(safe->handle))
+    shishi_key_print(safe->handle, stdout, key);
 
   cksumlen = sizeof (cksum);
   rc = shishi_checksum (safe->handle, key, SHISHI_KEYUSAGE_KRB_SAFE, cksumtype,
