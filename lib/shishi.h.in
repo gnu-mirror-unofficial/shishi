@@ -1188,20 +1188,26 @@ extern int shishi_key_from_string (Shishi * handle,
 				   const char *parameter,
 				   Shishi_key ** outkey);
 
+/* keys.c */
+extern Shishi_key *
+shishi_keys_for_serverrealm_in_file (Shishi * handle,
+				     const char *filename,
+				     const char *server,
+				     const char *realm);
+extern Shishi_key *
+shishi_keys_for_server_in_file (Shishi * handle,
+				const char *filename,
+				const char *server);
+extern Shishi_key *
+shishi_keys_for_localservicerealm_in_file (Shishi * handle,
+					   const char *filename,
+					   const char *service,
+					   const char *realm);
+
 /* hostkeys.c */
 extern const char *shishi_hostkeys_default_file (Shishi * handle);
 extern void shishi_hostkeys_default_file_set (Shishi * handle,
 					      const char *hostkeysfile);
-extern Shishi_key *shishi_hostkeys_for_serverrealm_in_file (Shishi * handle,
-							    const char
-							    *filename,
-							    const char
-							    *server,
-							    const char
-							    *realm);
-extern Shishi_key *shishi_hostkeys_for_server_in_file (Shishi * handle,
-						       const char *filename,
-						       const char *server);
 extern Shishi_key *shishi_hostkeys_for_server (Shishi * handle,
 					       const char *server);
 extern Shishi_key *shishi_hostkeys_for_serverrealm (Shishi * handle,
