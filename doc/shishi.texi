@@ -222,10 +222,13 @@ implement a few APIs to DES, AES, MD5, SHA1, HMAC, etc, look at
 
 The following table summarize what the current objectives are (i.e.,
 the todo list) and an estimate on how long it will take to implement
-the feature.  If you like to start working on anything, please let me
-know so work duplication can be avoided.
+the feature, including some reasonable startup-time to get familiar
+with Shishi in general.  If you like to start working on anything,
+please let me know so work duplication can be avoided.
 
 @itemize @bullet
+
+@item Parse @file{/etc/krb5.keytab} to extract keys to use for telnetd etc (week)
 
 @item Pre-authentication support (week).
 
