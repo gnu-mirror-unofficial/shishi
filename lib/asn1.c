@@ -384,6 +384,26 @@ shishi_asn1_optional_field (Shishi * handle,
   return SHISHI_OK;
 }
 
+int
+shishi_asn1_empty_field (Shishi * handle,
+			 Shishi_asn1 node,
+			 char *data, size_t * datalen, const char *field)
+{
+  int rc;
+
+  rc = asn1_read_value (node, field, (unsigned char *) data, (int *) datalen);
+  if (rc != ASN1_SUCCESS && rc != ASN1_VALUE_NOT_FOUND)
+    {
+      shishi_error_set (handle, libtasn1_strerror (rc));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  if (rc == ASN1_VALUE_NOT_FOUND)
+    *datalen = 0;
+
+  return SHISHI_OK;
+}
+
 #define SHISHI_TICKET_DEFAULT_TKTVNO "5"
 #define SHISHI_TICKET_DEFAULT_TKTVNO_LEN 0
 
