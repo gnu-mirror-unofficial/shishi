@@ -1,5 +1,5 @@
 /* server.c --- Handle KDC sessions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -153,7 +153,7 @@ kdc_send (struct listenspec *ls)
 
 #ifndef USE_STARTTLS
 /* Dummy function to replace starttls.c functionality. */
-static int
+int
 kdc_extension (struct listenspec *ls)
 {
   return 0;

@@ -1,5 +1,5 @@
 /* init.c --- Initialization functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -136,9 +136,9 @@ shishi_server (void)
 void
 shishi_done (Shishi * handle)
 {
+#ifdef USE_STARTTLS
   int rc;
 
-#ifdef USE_STARTTLS
   rc = _shishi_tls_done (handle);
   if (rc != SHISHI_OK)
     shishi_warn (handle, "Cannot deinitialize TLS library");
