@@ -14,7 +14,7 @@ See the end for copying conditions.
 
 ** Included libtasn1 updated to 0.2.11.
 
-** ASN.1 cleanup:
+** ASN.1 API cleanup:
 shishi_new_a2d: RENAMED to shishi_asn1_to_der.
 shishi_a2d_new_field: RENAMED to shishi_asn1_to_der_field.
 shishi_a2d, shishi_a2d_field: REMOVED.
