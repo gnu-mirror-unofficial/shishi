@@ -99,7 +99,7 @@ shishi_a2d (Shishi * handle, Shishi_asn1 node, char *der, int *len)
 
 int
 shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
-		      const char *field, char **der, int *len)
+		      const char *field, char **der, size_t *len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
   int rc;
@@ -127,7 +127,7 @@ shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
 }
 
 int
-shishi_new_a2d (Shishi * handle, Shishi_asn1 node, char **der, int *len)
+shishi_new_a2d (Shishi * handle, Shishi_asn1 node, char **der, size_t *len)
 {
   return shishi_a2d_new_field (handle, node, "", der, len);
 }

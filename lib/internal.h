@@ -131,6 +131,7 @@
 #include "vasprintf.h"
 #include "gettext.h"
 #include "xalloc.h"
+#include "xstrndup.h"
 #include "getdate.h"
 #include "shishi.h"
 

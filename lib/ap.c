@@ -430,32 +430,6 @@ shishi_ap_req_set (Shishi_ap * ap, Shishi_asn1 apreq)
 /**
  * shishi_ap_req_der:
  * @ap: structure that holds information about AP exchange
- * @out: output array with der encoding of AP-REQ.
- * @outlen: length of output array with der encoding of AP-REQ.
- *
- * Build AP-REQ using shishi_ap_req_build() and DER encode it.
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen)
-{
-  int rc;
-
-  rc = shishi_ap_req_build (ap);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  rc = shishi_a2d (ap->handle, ap->apreq, out, outlen);
-  if (rc != SHISHI_OK)
-    return rc;
-
-  return SHISHI_OK;
-}
-
-/**
- * shishi_ap_req_der_new:
- * @ap: structure that holds information about AP exchange
  * @out: pointer to output array with der encoding of AP-REQ.
  * @outlen: pointer to length of output array with der encoding of AP-REQ.
  *
@@ -466,7 +440,7 @@ shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ap_req_der_new (Shishi_ap * ap, char **out, int *outlen)
+shishi_ap_req_der (Shishi_ap * ap, char **out, size_t *outlen)
 {
   int rc;
 
@@ -694,15 +668,17 @@ shishi_ap_rep_set (Shishi_ap * ap, Shishi_asn1 aprep)
 /**
  * shishi_ap_rep_der:
  * @ap: structure that holds information about AP exchange
- * @out: output array with der encoding of AP-REP.
- * @outlen: length of output array with der encoding of AP-REP.
+ * @out: output array with newly allocated DER encoding of AP-REP.
+ * @outlen: length of output array with DER encoding of AP-REP.
  *
- * Build AP-REP using shishi_ap_rep_build() and DER encode it.
+ * Build AP-REQ using shishi_ap_rep_build() and DER encode it.  @out
+ * is allocated by this function, and it is the responsibility of
+ * caller to deallocate it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_ap_rep_der (Shishi_ap * ap, char *out, size_t * outlen)
+shishi_ap_rep_der (Shishi_ap * ap, char **out, size_t * outlen)
 {
   int rc;
 
@@ -710,7 +686,7 @@ shishi_ap_rep_der (Shishi_ap * ap, char *out, size_t * outlen)
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_a2d (ap->handle, ap->aprep, out, outlen);
+  rc = shishi_new_a2d (ap->handle, ap->aprep, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 

@@ -851,18 +851,18 @@ extern int shishi_authenticator_save (Shishi * handle, FILE * fh,
 extern Shishi_asn1 shishi_as_req (Shishi_as * as);
 extern int shishi_as_req_build (Shishi_as * as);
 extern void shishi_as_req_set (Shishi_as * as, Shishi_asn1 asreq);
-extern int shishi_as_req_der (Shishi_as * as, char *out, int *outlen);
+extern int shishi_as_req_der (Shishi_as * as, char **out, size_t *outlen);
 extern int shishi_as_req_der_set (Shishi_as * as, char *der, size_t derlen);
 extern Shishi_asn1 shishi_as_rep (Shishi_as * as);
 extern void shishi_as_rep_set (Shishi_as * as, Shishi_asn1 asrep);
 extern int shishi_as_rep_build (Shishi_as * as, Shishi_key * key);
-extern int shishi_as_rep_der (Shishi_as * as, char *out, int *outlen);
+extern int shishi_as_rep_der (Shishi_as * as, char **out, size_t *outlen);
 extern int shishi_as_rep_der_set (Shishi_as * as, char *der, size_t derlen);
 extern Shishi_asn1 shishi_as_encasreppart (Shishi_as * as);
 extern void shishi_as_encasreppart_set (Shishi_as * as,
 					Shishi_asn1 encasreppart);
 extern Shishi_asn1 shishi_as_krberror (Shishi_as * as);
-extern int shishi_as_krberror_der (Shishi_as * as, char *out, int *outlen);
+extern int shishi_as_krberror_der (Shishi_as * as, char **out, size_t *outlen);
 extern void shishi_as_krberror_set (Shishi_as * as, Shishi_asn1 krberror);
 extern Shishi_tkt *shishi_as_tkt (Shishi_as * as);
 extern void shishi_as_tkt_set (Shishi_as * as, Shishi_tkt * tkt);
@@ -892,10 +892,14 @@ extern Shishi_tkt *shishi_tgs_tgtkt (Shishi_tgs * tgs);
 extern void shishi_tgs_tgtkt_set (Shishi_tgs * tgs, Shishi_tkt * tgtkt);
 extern Shishi_ap *shishi_tgs_ap (Shishi_tgs * tgs);
 extern Shishi_asn1 shishi_tgs_req (Shishi_tgs * tgs);
+extern int shishi_tgs_req_der (Shishi_tgs * tgs, char **out, size_t *outlen);
 extern int shishi_tgs_req_build (Shishi_tgs * tgs);
 extern Shishi_asn1 shishi_tgs_rep (Shishi_tgs * tgs);
+extern int shishi_tgs_rep_der (Shishi_tgs * tgs, char **out, size_t *outlen);
 extern int shishi_tgs_rep_process (Shishi_tgs * tgs);
 extern Shishi_asn1 shishi_tgs_krberror (Shishi_tgs * tgs);
+extern int shishi_tgs_krberror_der (Shishi_tgs * tgs, char **out,
+				    size_t *outlen);
 extern Shishi_tkt *shishi_tgs_tkt (Shishi_tgs * tgs);
 extern void shishi_tgs_tkt_set (Shishi_tgs * tgs, Shishi_tkt * tkt);
 extern int shishi_tgs_sendrecv (Shishi_tgs * tgs);
@@ -1322,9 +1326,9 @@ extern int shishi_a2d_field (Shishi * handle,
 extern int shishi_a2d (Shishi * handle, Shishi_asn1 node,
 		       char *der, int *len);
 extern int shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
-				 const char *field, char **der, int *len);
+				 const char *field, char **der, size_t *len);
 extern int shishi_new_a2d (Shishi * handle, Shishi_asn1 node,
-			   char **der, int *len);
+			   char **der, size_t *len);
 extern int shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
 extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 			     const char *field, char *data, size_t * datalen);
@@ -1466,9 +1470,8 @@ extern void shishi_ap_authenticator_set (Shishi_ap * ap,
 
 extern Shishi_asn1 shishi_ap_req (Shishi_ap * ap);
 extern void shishi_ap_req_set (Shishi_ap * ap, Shishi_asn1 apreq);
-extern int shishi_ap_req_der (Shishi_ap * ap, char *out, int *outlen);
+extern int shishi_ap_req_der (Shishi_ap * ap, char **out, size_t *outlen);
 extern int shishi_ap_req_der_set (Shishi_ap * ap, char *der, size_t derlen);
-extern int shishi_ap_req_der_new (Shishi_ap * ap, char **out, int *outlen);
 extern int shishi_ap_req_build (Shishi_ap * ap);
 extern int shishi_ap_req_asn1 (Shishi_ap * ap, Shishi_asn1 * apreq);
 extern int shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key);
@@ -1476,7 +1479,7 @@ extern int shishi_ap_req_build (Shishi_ap * ap);
 
 extern Shishi_asn1 shishi_ap_rep (Shishi_ap * ap);
 extern void shishi_ap_rep_set (Shishi_ap * ap, Shishi_asn1 aprep);
-extern int shishi_ap_rep_der (Shishi_ap * ap, char *out, size_t * outlen);
+extern int shishi_ap_rep_der (Shishi_ap * ap, char **out, size_t * outlen);
 extern int shishi_ap_rep_der_set (Shishi_ap * ap, char *der, size_t derlen);
 extern int shishi_ap_rep_verify (Shishi_ap * ap);
 extern int shishi_ap_rep_verify_der (Shishi_ap * ap, char *der,
@@ -1752,7 +1755,8 @@ extern Shishi_key *shishi_safe_key (Shishi_safe * safe);
 extern void shishi_safe_key_set (Shishi_safe * safe, Shishi_key * key);
 extern Shishi_asn1 shishi_safe_safe (Shishi_safe * safe);
 extern void shishi_safe_safe_set (Shishi_safe * safe, Shishi_asn1 asn1safe);
-extern int shishi_safe_safe_der (Shishi_safe * safe, char *out, int *outlen);
+extern int shishi_safe_safe_der (Shishi_safe * safe, char **out,
+				 size_t *outlen);
 extern int shishi_safe_safe_der_set (Shishi_safe * safe,
 				     char *der, size_t derlen);
 extern int shishi_safe_print (Shishi * handle, FILE * fh, Shishi_asn1 safe);

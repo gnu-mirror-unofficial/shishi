@@ -160,20 +160,21 @@ shishi_safe_safe_set (Shishi_safe * safe, Shishi_asn1 asn1safe)
 /**
  * shishi_safe_safe_der:
  * @safe: safe as allocated by shishi_safe().
- * @out: output array with der encoding of SAFE.
- * @outlen: length of output array with der encoding of SAFE.
+ * @out: output array with newly allocated DER encoding of SAFE.
+ * @outlen: length of output array with DER encoding of SAFE.
  *
  * DER encode SAFE structure.  Typically shishi_safe_build() is used
- * instead to build the SAFE structure first.
+ * to build the SAFE structure first.  @out is allocated by this
+ * function, and it is the responsibility of caller to deallocate it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_safe_safe_der (Shishi_safe * safe, char *out, int *outlen)
+shishi_safe_safe_der (Shishi_safe * safe, char **out, size_t *outlen)
 {
   int rc;
 
-  rc = shishi_a2d (safe->handle, safe->safe, out, outlen);
+  rc = shishi_new_a2d (safe->handle, safe->safe, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -498,8 +499,8 @@ int
 shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
 {
   int rc;
-  char buffer[BUFSIZ];
-  int buflen;
+  char *buffer;
+  size_t buflen;
   char *cksum;
   int cksumlen;
   int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
@@ -508,8 +509,7 @@ shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
   if (rc != SHISHI_OK)
     return rc;
 
-  buflen = sizeof (buffer);
-  rc = shishi_safe_safe_der (safe, buffer, &buflen);
+  rc = shishi_safe_safe_der (safe, &buffer, &buflen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -518,9 +518,9 @@ shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
   if (VERBOSEASN1 (safe->handle))
     shishi_key_print (safe->handle, stdout, key);
 
-  rc =
-    shishi_checksum (safe->handle, key, SHISHI_KEYUSAGE_KRB_SAFE, cksumtype,
-		     buffer, buflen, &cksum, &cksumlen);
+  rc = shishi_checksum (safe->handle, key, SHISHI_KEYUSAGE_KRB_SAFE,
+			cksumtype, buffer, buflen, &cksum, &cksumlen);
+  free (buffer);
   if (rc != SHISHI_OK)
     return rc;
 

@@ -168,19 +168,20 @@ shishi_tgs_req_set (Shishi_tgs * tgs, Shishi_asn1 tgsreq)
 /**
  * shishi_tgs_req_der:
  * @tgs: structure that holds information about TGS exchange
- * @out: output array with der encoding of TGS-REQ.
- * @outlen: length of output array with der encoding of TGS-REQ.
+ * @out: output array with newly allocated DER encoding of TGS-REQ.
+ * @outlen: length of output array with DER encoding of TGS-REQ.
  *
- * DER encode TGS-REQ.
+ * DER encode TGS-REQ. @out is allocated by this function, and it is
+ * the responsibility of caller to deallocate it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tgs_req_der (Shishi_tgs * tgs, char *out, int *outlen)
+shishi_tgs_req_der (Shishi_tgs * tgs, char **out, size_t *outlen)
 {
   int rc;
 
-  rc = shishi_a2d (tgs->handle, tgs->tgsreq, out, outlen);
+  rc = shishi_new_a2d (tgs->handle, tgs->tgsreq, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -322,19 +323,20 @@ shishi_tgs_rep (Shishi_tgs * tgs)
 /**
  * shishi_tgs_rep_der:
  * @tgs: structure that holds information about TGS exchange
- * @out: output array with der encoding of TGS-REP.
- * @outlen: length of output array with der encoding of TGS-REP.
+ * @out: output array with newly allocated DER encoding of TGS-REP.
+ * @outlen: length of output array with DER encoding of TGS-REP.
  *
- * DER encode TGS-REP.
+ * DER encode TGS-REP. @out is allocated by this function, and it is
+ * the responsibility of caller to deallocate it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tgs_rep_der (Shishi_tgs * tgs, char *out, int *outlen)
+shishi_tgs_rep_der (Shishi_tgs * tgs, char **out, size_t *outlen)
 {
   int rc;
 
-  rc = shishi_a2d (tgs->handle, tgs->tgsrep, out, outlen);
+  rc = shishi_new_a2d (tgs->handle, tgs->tgsrep, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -472,19 +474,20 @@ shishi_tgs_krberror (Shishi_tgs * tgs)
 /**
  * shishi_tgs_krberror_der:
  * @tgs: structure that holds information about TGS exchange
- * @out: output array with der encoding of KRB-ERROR.
- * @outlen: length of output array with der encoding of KRB-ERROR.
+ * @out: output array with newly allocated DER encoding of KRB-ERROR.
+ * @outlen: length of output array with DER encoding of KRB-ERROR.
  *
- * DER encode KRB-ERROR.
+ * DER encode KRB-ERROR.  @out is allocated by this function, and it is
+ * the responsibility of caller to deallocate it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_tgs_krberror_der (Shishi_tgs * tgs, char *out, int *outlen)
+shishi_tgs_krberror_der (Shishi_tgs * tgs, char **out, size_t *outlen)
 {
   int rc;
 
-  rc = shishi_a2d (tgs->handle, tgs->krberror, out, outlen);
+  rc = shishi_new_a2d (tgs->handle, tgs->krberror, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
 

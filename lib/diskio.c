@@ -37,8 +37,8 @@ _shishi_print_armored_data (Shishi * handle,
 			    FILE * fh,
 			    Shishi_asn1 asn1, char *asn1type, char *headers)
 {
-  char der[BUFSIZ];
-  int derlen = BUFSIZ;
+  char *der;
+  size_t derlen;
   char b64der[BUFSIZ];
   int res;
   size_t i;
@@ -48,7 +48,7 @@ _shishi_print_armored_data (Shishi * handle,
 
   asn1_print_structure (fh, asn1, "", ASN1_PRINT_NAME_TYPE_VALUE);
 
-  res = shishi_a2d_field (handle, asn1, "", der, &derlen);
+  res = shishi_new_a2d (handle, asn1, &der, &derlen);
   if (res != ASN1_SUCCESS)
     {
       shishi_error_printf (handle, "Could not DER encode %s: %s\n",
@@ -84,18 +84,18 @@ int
 _shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
 		   char *asn1type)
 {
-  char der[BUFSIZ];
-  int derlen;
+  char *der;
+  size_t derlen;
   int res;
   int i;
 
   derlen = sizeof (der);
-  res = shishi_a2d_field (handle, asn1, asn1type, der, &derlen);
+  res = shishi_a2d_new_field (handle, asn1, asn1type, &der, &derlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode %s: %s\n",
 			   asn1type, shishi_strerror (res));
-      return !SHISHI_OK;
+      return SHISHI_ASN1_ERROR;
     }
 
   i = fwrite (der, sizeof (der[0]), derlen, fh);
