@@ -1,4 +1,4 @@
-/* tkt.c	ticket handling
+/* tkt.c --- Ticket handling.
  * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -370,7 +370,7 @@ shishi_tkt_serverrealm_set (Shishi_tkt * tkt,
  * and it is the responsibility of the caller to deallocate it.  Note
  * that the output length @clientlen does not include the terminating
  * zero.
-
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
