@@ -1852,6 +1852,30 @@ or SRP (i.e., any mechanism supported by TLS) to authenticate
 themselves to the Kerberos server.  For details on the implementation,
 @xref{STARTTLS protected KDC exchanges}.
 
+@subsection Setting up TLS resume
+@cindex tls resume
+
+Resuming earlier TLS session is supported and enabled by default.
+This improves the speed of the TLS handshake, because results from
+earlier negotiations can be re-used.  Currently the TLS resume
+database is stored in memory (in constract to storing it on disk), in
+both the client and in the server.  Because the server typically runs
+for a long time, this is not a problem for that side.  The client is
+typically not a long-running process though; the client usually is
+invoked as part of applications like @samp{telnet} or @samp{login}.
+However, because each use of the client library typically result in a
+ticket, which is stored on disk and re-used by later processes, this
+is likely not a serious problem because the number of different
+tickets required by a user is usually quite small.  For the client,
+TLS resume is typically only useful when you perform an initial
+authentication (using a password) followed by a ticket request for a
+service, in the same process.
+
+You can configure the server, @samp{shishid} to never use TLS resume,
+or to increase or decrease the number of distinct TLS connections that
+can be resumed before they are garbage collected, see the
+@samp{--resume-limit} parameter (@pxref{Parameters for shishid}).
+
 @subsection Setting up Anonymous TLS
 @cindex anonymous tls
 @cindex Diffie Hellman key exchange
@@ -3285,6 +3309,9 @@ TLS settings:
                                           certificates, in PEM format.
       --x509keyfile=FILE                X.509 server certificate key, in PEM
                                           format.
+       --resume-limit=SHORT             Keep track of up to this many TLS
+                                         sessions for resume purposes (0 to
+                                         disable TLS resume).  (default=`50')
  
 Other options:
   -c, --configuration-file=FILE         Use specified configuration file.
