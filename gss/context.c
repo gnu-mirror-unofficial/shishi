@@ -454,7 +454,7 @@ gss_export_sec_context (OM_uint32 * minor_status,
 			gss_ctx_id_t * context_handle,
 			gss_buffer_t interprocess_token)
 {
-  return GSS_S_FAILURE;
+  return GSS_S_UNAVAILABLE;
 }
 
 OM_uint32
@@ -462,5 +462,5 @@ gss_import_sec_context (OM_uint32 * minor_status,
 			const gss_buffer_t interprocess_token,
 			gss_ctx_id_t * context_handle)
 {
-  return GSS_S_FAILURE;
+  return GSS_S_UNAVAILABLE;
 }

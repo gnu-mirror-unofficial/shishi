@@ -532,7 +532,7 @@ OM_uint32 gss_export_name (OM_uint32 *,	/* minor_status */
   );
 
 OM_uint32 gss_release_name (OM_uint32 *,	/* minor_status */
-			    gss_name_t *	/* input_name */
+			    gss_name_t *	/* name */
   );
 
 OM_uint32 gss_release_buffer (OM_uint32 *,	/* minor_status */

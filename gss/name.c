@@ -125,18 +125,72 @@ gss_display_name (OM_uint32 * minor_status,
   return GSS_S_COMPLETE;
 }
 
+/**
+ * gss_compare_name:
+ * @minor_status: Mechanism specific status code.
+ * @name1: Internal-form name.
+ * @name2: Internal-form name.
+ * @name_equal: non-zero if names refer to same entity.
+ *
+ * Allows an application to compare two internal-form names to
+ * determine whether they refer to the same entity.
+ *
+ * If either name presented to gss_compare_name denotes an anonymous
+ * principal, the routines should indicate that the two names do not
+ * refer to the same identity.
+ *
+ * Return value: Returns GSS_S_COMPLETE for successful completion,
+ * GSS_S_BAD_NAMETYPE when the two names were of incomparable types,
+ * and GSS_S_BAD_NAME if one or both of name1 or name2 was ill-formed.
+ *
+ **/
 OM_uint32
 gss_compare_name (OM_uint32 * minor_status,
 		  const gss_name_t name1,
 		  const gss_name_t name2, int *name_equal)
 {
-  return GSS_S_FAILURE;
+  if (!name1 || !name2)
+    return GSS_S_BAD_NAME;
+
+  if (name1->type != name2->type) /* XXX only compares pointers */
+    return GSS_S_BAD_NAMETYPE;
+
+  name_equal == (name1->length == name2->length) &&
+    memcmp(name1->value, name2->value, name1->length) == 0;
+
+  if (minor_status)
+    *minor_status = 0;
+  return GSS_S_COMPLETE;
 }
 
+/**
+ * gss_release_name:
+ * @minor_status: Mechanism specific status code.
+ * @name: The name to be deleted.
+ *
+ * Free GSSAPI-allocated storage associated with an internal-form
+ * name.  Implementations are encouraged to set the name to
+ * GSS_C_NO_NAME on successful completion of this call.
+ *
+ * Return value: Returns GSS_S_COMPLETE for successful completion, and
+ *   GSS_S_BAD_NAME when the name parameter did not contain a valid
+ *   name.
+ **/
 OM_uint32
-gss_release_name (OM_uint32 * minor_status, gss_name_t * input_name)
+gss_release_name (OM_uint32 * minor_status, gss_name_t * name)
 {
-  return GSS_S_FAILURE;
+  if (!name || *name == GSS_C_NO_NAME)
+    return GSS_S_BAD_NAME;
+
+  if ((*name)->value)
+    free ((*name)->value);
+
+  free(*name);
+  *name = GSS_C_NO_NAME;
+
+  if (minor_status)
+    *minor_status = 0;
+  return GSS_S_COMPLETE;
 }
 
 OM_uint32
@@ -169,9 +223,40 @@ gss_canonicalize_name (OM_uint32 * minor_status,
   return GSS_S_FAILURE;
 }
 
+/**
+ * gss_duplicate_name:
+ * @minor_status: Mechanism specific status code.
+ * @src_name: Internal name to be duplicated.
+ * @dest_name: The resultant copy of <src_name>.  Storage associated
+ *   with this name must be freed by the application after use with a
+ *   call to gss_release_name().
+ *
+ * Create an exact duplicate of the existing internal name src_name.
+ * The new dest_name will be independent of src_name (i.e. src_name
+ * and dest_name must both be released, and the release of one shall
+ * not affect the validity of the other).
+ *
+ * Return value: Returns GSS_S_COMPLETE for successful completion, and
+ * GSS_S_BAD_NAME when the src_name parameter was ill-formed.
+ **/
 OM_uint32
 gss_duplicate_name (OM_uint32 * minor_status,
 		    const gss_name_t src_name, gss_name_t * dest_name)
 {
-  return GSS_S_FAILURE;
+  if (src_name == GSS_C_NO_NAME)
+    return GSS_S_BAD_NAME;
+
+  if (!dest_name || !*dest_name)
+    return GSS_S_FAILURE;
+
+  (*dest_name)->type = src_name->type;
+  (*dest_name)->length = src_name->length;
+  (*dest_name)->value = malloc(src_name->length);
+  if (!(*dest_name)->value)
+    return GSS_S_FAILURE;
+  memcpy((*dest_name)->value, src_name->value, src_name->length);
+
+  if (minor_status)
+    *minor_status = 0;
+  return GSS_S_COMPLETE;
 }
