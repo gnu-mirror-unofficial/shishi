@@ -592,12 +592,24 @@ shishi_tkt_match_p (Shishi_tkt * tkt, Shishi_tkts_hint * hint)
       !shishi_tkt_valid_now_p (tkt))
     return 0;
 
+  if ((hint->tktflags & SHISHI_TICKETFLAGS_FORWARDABLE) &&
+      !shishi_tkt_forwardable_p (tkt))
+    return 0;
+
+  if ((hint->tktflags & SHISHI_TICKETFLAGS_FORWARDED) &&
+      !shishi_tkt_forwarded_p (tkt))
+    return 0;
+
   if ((hint->tktflags & SHISHI_TICKETFLAGS_RENEWABLE) &&
       !shishi_tkt_renewable_p (tkt))
     return 0;
 
   if ((hint->tktflags & SHISHI_TICKETFLAGS_PROXIABLE) &&
       !shishi_tkt_proxiable_p (tkt))
+    return 0;
+
+  if ((hint->tktflags & SHISHI_TICKETFLAGS_PROXY) &&
+      !shishi_tkt_proxy_p (tkt))
     return 0;
 
   if (hint->etype && !shishi_tkt_keytype_p (tkt, hint->etype))
@@ -719,168 +731,233 @@ shishi_tkts_find_for_server (Shishi_tkts * tkts, const char *server)
     (tkts, shishi_principal_default (tkts->handle), server);
 }
 
+static int
+act_hint_on_kdcreq (Shishi * handle,
+		    Shishi_tkts_hint * hint,
+		    Shishi_asn1 kdcreq)
+{
+  time_t starttime = hint->starttime ? hint->starttime : time (NULL);
+  time_t endtime = hint->endtime ? hint->endtime :
+    starttime + handle->ticketlife;
+  time_t renew_till = hint->renew_till ? hint->renew_till :
+    starttime + handle->renewlife;
+  int rc;
+
+  if (hint->starttime)
+    {
+      rc = shishi_asn1_write (handle, kdcreq, "req-body.from",
+			      shishi_generalize_time (handle, starttime), 0);
+      if (rc != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, "Cannot set starttime: %s",
+			       shishi_strerror (rc));
+	  return rc;
+	}
+    }
+
+  if (hint->endtime)
+    {
+      rc = shishi_asn1_write (handle, kdcreq, "req-body.till",
+			      shishi_generalize_time (handle, endtime), 0);
+      if (rc != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, "Cannot set endtime: %s",
+			       shishi_strerror (rc));
+	  return rc;
+	}
+    }
+
+  if (hint->tktflags & SHISHI_TICKETFLAGS_FORWARDABLE)
+    {
+      rc = shishi_kdcreq_options_add (handle, kdcreq,
+				      SHISHI_KDCOPTIONS_FORWARDABLE);
+      if (rc != SHISHI_OK)
+	goto done;
+    }
+
+  if (hint->tktflags & SHISHI_TICKETFLAGS_FORWARDED)
+    {
+      rc = shishi_kdcreq_options_add (handle, kdcreq,
+				      SHISHI_KDCOPTIONS_FORWARDED);
+      if (rc != SHISHI_OK)
+	goto done;
+    }
+
+  if (hint->tktflags & SHISHI_TICKETFLAGS_RENEWABLE)
+    {
+      rc = shishi_kdcreq_options_add (handle, kdcreq,
+				      SHISHI_KDCOPTIONS_RENEWABLE);
+      if (rc != SHISHI_OK)
+	goto done;
+
+      rc = shishi_asn1_write (handle, kdcreq, "req-body.rtime",
+			      shishi_generalize_time (handle, renew_till), 0);
+      if (rc != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, "Cannot set renewtill: %s",
+			       shishi_strerror (rc));
+	  return rc;
+	}
+    }
+
+  if (hint->tktflags & SHISHI_TICKETFLAGS_PROXIABLE)
+    {
+      rc = shishi_kdcreq_options_add (handle, kdcreq,
+				      SHISHI_KDCOPTIONS_PROXIABLE);
+      if (rc != SHISHI_OK)
+	goto done;
+    }
+
+  if (hint->tktflags & SHISHI_TICKETFLAGS_PROXY)
+    {
+      rc = shishi_kdcreq_options_add (handle, kdcreq,
+				      SHISHI_KDCOPTIONS_PROXY);
+      if (rc != SHISHI_OK)
+	goto done;
+    }
+
+  return SHISHI_OK;
+
+ done:
+  shishi_error_printf (handle, "Cannot set KDC Options: %s",
+		       shishi_strerror (rc));
+  return rc;
+}
+
+/* Make sure the ticket granting ticket is suitable for the wanted
+   ticket.  E.g., if the wanted ticket should be a PROXY ticket, the
+   ticket granting ticket must be a PROXIABLE ticket for things to
+   work. */
+static void
+set_tgtflags_based_on_hint (Shishi_tkts_hint * tkthint,
+			    Shishi_tkts_hint * tgthint)
+{
+  if (tkthint->tktflags & SHISHI_TICKETFLAGS_FORWARDABLE)
+    tgthint->tktflags |= SHISHI_TICKETFLAGS_FORWARDABLE;
+
+  if (tkthint->tktflags & SHISHI_TICKETFLAGS_FORWARDED)
+    tgthint->tktflags |= SHISHI_TICKETFLAGS_FORWARDABLE;
+
+  if (tkthint->tktflags & SHISHI_TICKETFLAGS_PROXIABLE)
+    tgthint->tktflags |= SHISHI_TICKETFLAGS_PROXIABLE;
+
+  if (tkthint->tktflags & SHISHI_TICKETFLAGS_PROXY)
+    tgthint->tktflags |= SHISHI_TICKETFLAGS_PROXIABLE;
+
+  if (tkthint->tktflags & SHISHI_TICKETFLAGS_RENEWABLE)
+    tgthint->tktflags |= SHISHI_TICKETFLAGS_RENEWABLE;
+
+  if (tkthint->kdcoptions & SHISHI_KDCOPTIONS_RENEW)
+    tgthint->tktflags |= SHISHI_TICKETFLAGS_RENEWABLE;
+}
+
 /**
- * shishi_tkts_get:
+ * shishi_tkts_get_tgt:
  * @tkts: ticket set handle as allocated by shishi_tkts().
  * @hint: structure with characteristics of ticket to begot.
  *
- * Get a ticket matching given characteristics.  This function first
- * looks in the ticket set for the ticket, then tries to find a TGT
- * for the realm (possibly by using an AS exchange) and then use the
- * TGT in a TGS exchange to get the ticket.  Currently this function
- * do not implement cross realm logic.
+ * Get a ticket granting ticket (TGT) suitable for acquiring ticket
+ * matching the hint.  I.e., get a TGT for the server realm in the
+ * hint structure (hint->serverrealm), or the default realm if the
+ * serverrealm field is NULL.  Can result in AS exchange.
  *
- * Return value: Returns a ticket if found, or NULL if this function
- *               is unable to get the ticket.
+ * Currently this function do not implement cross realm logic.
+ *
+ * This function is used by shishi_tkts_get(), which is probably what
+ * you really want to use unless you have special needs.
+ *
+ * Return value: Returns a ticket granting ticket if successful, or
+ *   NULL if this function is unable to acquire on.
  **/
 Shishi_tkt *
-shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
+shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 {
   Shishi_tkts_hint lochint;
-  Shishi_tkt *tkt, *tgt;
-  Shishi_tgs *tgs;
-  char *tgtname;
-  int pos;
+  Shishi_as *as;
+  Shishi_tkt *tgt;
   int rc;
 
-  pos = hint->startpos;
-
-  /* Try to get cached ticket ... */
-  tkt = shishi_tkts_find (tkts, hint);
-  if (tkt)
-    return tkt;
-
-  hint->startpos = pos;
-
-  /* Try to get cached TGT ... */
   memset (&lochint, 0, sizeof (lochint));
-  asprintf (&tgtname, "krbtgt/%s", shishi_realm_default (tkts->handle));
-  lochint.server = tgtname;
+  asprintf (&lochint.server, "krbtgt/%s", hint->serverrealm ?
+	    hint->serverrealm : shishi_realm_default (tkts->handle));
+  set_tgtflags_based_on_hint (hint, &lochint);
+
   tgt = shishi_tkts_find (tkts, &lochint);
-  if (tgt == NULL)
-    {
-      Shishi_as *as;
-      time_t starttime = hint->starttime ? hint->starttime : time (NULL);
-      time_t endtime = hint->endtime ? hint->endtime :
-	starttime + tkts->handle->ticketlife;
-      time_t renew_till = hint->renew_till ? hint->renew_till :
-	starttime + tkts->handle->renewlife;
 
-      /* Get TGT ... XXX cross realm */
+  free (lochint.server);
 
-      rc = shishi_as (tkts->handle, &as);
-      if (rc != SHISHI_OK)
-	{
-	  shishi_error_printf (tkts->handle, "Cannot create AS: %s",
-			       shishi_strerror (rc));
-	  return NULL;
-	}
-
-      if (hint->starttime)
-	{
-	  rc = shishi_asn1_write (tkts->handle, shishi_as_req (as),
-				  "req-body.from",
-				  shishi_generalize_time (tkts->handle,
-							  starttime), 0);
-	  if (rc != SHISHI_OK)
-	    {
-	      shishi_error_printf (tkts->handle, "Cannot set starttime: %s",
-				   shishi_strerror (rc));
-	      return NULL;
-	    }
-	}
-
-      if (hint->endtime)
-	{
-	  rc = shishi_asn1_write (tkts->handle, shishi_as_req (as),
-				  "req-body.till",
-				  shishi_generalize_time (tkts->handle,
-							  endtime), 0);
-	  if (rc != SHISHI_OK)
-	    {
-	      shishi_error_printf (tkts->handle, "Cannot set starttime: %s",
-				   shishi_strerror (rc));
-	      return NULL;
-	    }
-	}
-
-      if (hint->tktflags & SHISHI_TICKETFLAGS_RENEWABLE)
-	{
-	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req (as),
-					  SHISHI_KDCOPTIONS_RENEWABLE);
-	  if (rc != SHISHI_OK)
-	    {
-	      shishi_error_printf (tkts->handle, "Cannot set KDC Options: %s",
-				   shishi_strerror (rc));
-	      return NULL;
-	    }
-
-	  rc = shishi_asn1_write (tkts->handle, shishi_as_req (as),
-				  "req-body.rtime",
-				  shishi_generalize_time
-				  (tkts->handle, renew_till), 0);
-	  if (rc != SHISHI_OK)
-	    {
-	      shishi_error_printf (tkts->handle, "Cannot set KDC Options: %s",
-				   shishi_strerror (rc));
-	      return NULL;
-	    }
-	}
-
-      if (hint->tktflags & SHISHI_TICKETFLAGS_PROXIABLE)
-	{
-	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req (as),
-					  SHISHI_KDCOPTIONS_PROXIABLE);
-	  if (rc != SHISHI_OK)
-	    {
-	      shishi_error_printf (tkts->handle, "Cannot set KDC Options: %s",
-				   shishi_strerror (rc));
-	      return NULL;
-	    }
-	}
-
-      if (rc == SHISHI_OK)
-	rc = shishi_as_req_build (as);
-      if (rc == SHISHI_OK)
-	rc = shishi_as_sendrecv (as);
-      if (rc == SHISHI_OK)
-	rc = shishi_as_rep_process (as, NULL, hint->passwd);
-      if (rc != SHISHI_OK)
-	{
-	  shishi_error_printf (tkts->handle,
-			       "AS exchange failed: %s\n%s\n",
-			       shishi_strerror (rc),
-			       shishi_error (tkts->handle));
-	  if (rc == SHISHI_GOT_KRBERROR)
-	    shishi_krberror_pretty_print (tkts->handle, stdout,
-					  shishi_as_krberror (as));
-	  return NULL;
-	}
-
-      tgt = shishi_as_tkt (as);
-
-      if (!tgt)
-	{
-	  shishi_error_printf (tkts->handle, "No ticket in AS-REP");
-	  return NULL;
-	}
-
-      if (VERBOSEASN1 (tkts->handle))
-	shishi_tkt_pretty_print (tgt, stdout);
-
-      rc = shishi_tkts_add (tkts, tgt);
-      if (rc != SHISHI_OK)
-	printf ("Could not add ticket: %s", shishi_strerror (rc));
-
-    }
-
-  /* Maybe user asked for TGT ... */
-  if (shishi_tkt_match_p (tgt, hint))
+  if (tgt)
     return tgt;
 
-  /* Get ticket using TGT ... */
+  rc = shishi_as (tkts->handle, &as);
+  if (rc == SHISHI_OK)
+    rc = act_hint_on_kdcreq (tkts->handle, &lochint, shishi_as_req (as));
+  if (rc == SHISHI_OK)
+    rc = shishi_as_req_build (as);
+  if (rc == SHISHI_OK)
+    rc = shishi_as_sendrecv (as);
+  if (rc == SHISHI_OK)
+    rc = shishi_as_rep_process (as, NULL, hint->passwd);
+  if (rc != SHISHI_OK)
+    {
+      shishi_error_printf (tkts->handle,
+			   "AS exchange failed: %s\n%s\n",
+			   shishi_strerror (rc),
+			   shishi_error (tkts->handle));
+      if (rc == SHISHI_GOT_KRBERROR)
+	shishi_krberror_pretty_print (tkts->handle, stdout,
+				      shishi_as_krberror (as));
+      return NULL;
+    }
+
+  tgt = shishi_as_tkt (as);
+  if (!tgt)
+    {
+      shishi_error_printf (tkts->handle, "No ticket in AS-REP");
+      return NULL;
+    }
+
+  if (VERBOSENOICE (tkts->handle))
+    {
+      printf ("Received ticket granting ticket:\n");
+      shishi_tkt_pretty_print (tgt, stdout);
+    }
+
+  rc = shishi_tkts_add (tkts, tgt);
+  if (rc != SHISHI_OK)
+    printf ("Could not add ticket: %s", shishi_strerror (rc));
+
+  return tgt;
+}
+
+/**
+ * shishi_tkts_get_tgs:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ * @hint: structure with characteristics of ticket to begot.
+ * @tgt: ticket granting ticket to use.
+ *
+ * Get a ticket via TGS exchange using specified ticket granting
+ * ticket.
+ *
+ * This function is used by shishi_tkts_get(), which is probably what
+ * you really want to use unless you have special needs.
+ *
+ * Return value: Returns a ticket if successful, or NULL if this
+ *   function is unable to acquire on.
+ **/
+Shishi_tkt *
+shishi_tkts_get_tgs (Shishi_tkts * tkts,
+		     Shishi_tkts_hint * hint,
+		     Shishi_tkt *tgt)
+{
+  Shishi_tgs *tgs;
+  Shishi_tkt *tkt;
+  int rc;
+
   rc = shishi_tgs (tkts->handle, &tgs);
   shishi_tgs_tgtkt_set (tgs, tgt);
+  if (rc == SHISHI_OK)
+    rc = act_hint_on_kdcreq (tkts->handle, hint, shishi_tgs_req (tgs));
   if (rc == SHISHI_OK)
     rc = shishi_tgs_set_server (tgs, hint->server);
   if (rc == SHISHI_OK)
@@ -891,8 +968,10 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
     rc = shishi_tgs_rep_process (tgs);
   if (rc != SHISHI_OK)
     {
-      printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
-	      shishi_error (tkts->handle));
+      shishi_error_printf (tkts->handle,
+			   "TGS exchange failed: %s\n%s\n",
+			   shishi_strerror (rc),
+			   shishi_error (tkts->handle));
       if (rc == SHISHI_GOT_KRBERROR)
 	shishi_krberror_pretty_print (tkts->handle, stdout,
 				      shishi_tgs_krberror (tgs));
@@ -900,19 +979,69 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
     }
 
   tkt = shishi_tgs_tkt (tgs);
-
   if (!tkt)
     {
-      printf ("No ticket in TGS-REP?!: %s\n", shishi_error (tkts->handle));
+      shishi_error_printf (tkts->handle, "No ticket in TGS-REP?!: %s",
+			   shishi_error (tkts->handle));
       return NULL;
     }
 
-  if (VERBOSEASN1 (tkts->handle))
-    shishi_tkt_pretty_print (tkt, stdout);
+  if (VERBOSENOICE (tkts->handle))
+    {
+      printf ("Received ticket:\n");
+      shishi_tkt_pretty_print (tkt, stdout);
+    }
 
   rc = shishi_tkts_add (tkts, tkt);
   if (rc != SHISHI_OK)
     printf ("Could not add ticket: %s", shishi_strerror (rc));
+
+  return tkt;
+}
+
+/**
+ * shishi_tkts_get:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ * @hint: structure with characteristics of ticket to begot.
+ *
+ * Get a ticket matching given characteristics.  This function first
+ * looks in the ticket set for the ticket, then tries to find a
+ * suitable TGT, possibly via an AS exchange, using
+ * shishi_tkts_get_tgt(), and then use that TGT in a TGS exchange to
+ * get the ticket.  Currently this function do not implement cross
+ * realm logic.
+ *
+ * Return value: Returns a ticket if found, or NULL if this function
+ *               is unable to get the ticket.
+ **/
+Shishi_tkt *
+shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
+{
+  Shishi_tkt *tkt, *tgt;
+  int rc;
+
+  /* If we already have a matching ticket, avoid getting a new one. */
+  hint->startpos = 0;
+  tkt = shishi_tkts_find (tkts, hint);
+  if (tkt)
+    return tkt;
+
+  tgt = shishi_tkts_get_tgt (tkts, hint);
+  if (!tgt)
+    {
+      shishi_error_printf (tkts->handle, "Could not get TGT for ticket.");
+      return NULL;
+    }
+
+  if (shishi_tkt_match_p (tgt, hint))
+    return tgt;
+
+  tkt = shishi_tkts_get_tgs (tkts, hint, tgt);
+  if (!tkt)
+    {
+      shishi_error_printf (tkts->handle, "Could not get ticket using TGT.");
+      return NULL;
+    }
 
   return tkt;
 }
