@@ -30,7 +30,9 @@ if NETTLE
 SUBDIRS += crypto
 endif
 
-SUBDIRS += lib src tests doc examples extra
+SUBDIRS += lib src tests doc
+
+DIST_SUBDIRS = $(SUBDIRS) examples extra
 
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 
