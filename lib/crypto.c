@@ -650,11 +650,11 @@ shishi_cipher_defaultcksumtype (int32_t type)
 
 struct Cipher_aliases
 {
-  char *name;
+  const char *name;
   int type;
 };
 
-static Cipher_aliases cipher_aliases[] = {
+static struct Cipher_aliases cipher_aliases[] = {
   {"des-crc", SHISHI_DES_CBC_CRC},
   {"des-md4", SHISHI_DES_CBC_MD4},
   {"des-md5", SHISHI_DES_CBC_MD5},
