@@ -1,4 +1,4 @@
-INCLUDES = -I. -I$(top_builddir)/lib
+INCLUDES = -I. -I$(top_builddir)/../../asn1/lib -I$(top_builddir)/../../lib
 
 noinst_LIBRARIES = libtelnet.a
 
