@@ -161,6 +161,8 @@ Don't worry.
 	STRINGPREP=libstringprep
 fi
 AC_SUBST(STRINGPREP)
+AC_SUBST(STRINGPREP_CFLAGS)
+AC_SUBST(STRINGPREP_LIBS)
 AC_MSG_CHECKING([if system's libstringprep should be used])
 AC_MSG_RESULT($with_system_stringprep)
 AC_CONFIG_SUBDIRS(libstringprep)
