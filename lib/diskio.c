@@ -584,7 +584,7 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, ASN1_TYPE * aprep, int type)
 	}
     }
 
-  *aprep = shishi_der2asn1_ap_req (handle->asn1, der,
+  *aprep = shishi_der2asn1_ap_rep (handle->asn1, der,
 				   derlen, errorDescription);
   if (*aprep == ASN1_TYPE_EMPTY)
     {
