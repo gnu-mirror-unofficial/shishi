@@ -752,7 +752,7 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
 {
   char *format;
   int res;
-  int i;
+  size_t i;
 
   res = shishi_asn1_write (handle, authenticator,
 			   "authorization-data", "NEW", 1);
@@ -805,7 +805,7 @@ shishi_authenticator_authorizationdata (Shishi * handle,
 {
   char *format;
   int res;
-  int i;
+  size_t i;
 
   res = shishi_asn1_number_of_elements (handle, authenticator,
 					"authorization-data", &i);
@@ -872,11 +872,6 @@ shishi_authenticator_get_subkey (Shishi * handle,
   int subkeytype;
   char *subkeyvalue;
   size_t subkeylen;
-  int n;
-
-  res = shishi_asn1_number_of_elements (handle, authenticator, "subkey", &n);
-  if (res != SHISHI_OK)
-    return res;
 
   res = shishi_asn1_read_int32 (handle, authenticator,
 				"subkey.keytype", &subkeytype);
