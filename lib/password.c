@@ -54,9 +54,7 @@ tty_set_echo (int echo)
 #else
 
 mail simon @ josefsson.org and tell what system this is
-
 #endif
-
 static RETSIGTYPE
 tty_echo (int signum)
 {
@@ -87,7 +85,7 @@ read_password (char **s)
   fgets (buf, sizeof (buf), stdin);
   buf[strlen (buf) - 1] = '\0';
 
-  *s = strdup(buf);
+  *s = strdup (buf);
 
 #ifdef HAVE_SIGNAL
   signal (SIGQUIT, SIG_DFL);
@@ -151,7 +149,8 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
       printf ("\n");
     }
 
-  if (handle->stringprocess && strcasecmp (handle->stringprocess, "none") != 0)
+  if (handle->stringprocess
+      && strcasecmp (handle->stringprocess, "none") != 0)
 #ifdef WITH_STRINGPREP
     {
       if (strcasecmp (handle->stringprocess, "stringprep") == 0)

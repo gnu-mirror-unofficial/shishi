@@ -279,7 +279,7 @@ str2key[] =
       "EXAMPLE.COMpianist",
       "\x85\x76\x37\x26\x58\x5d\xbc\x1c\xce\x6e\xc4\x3e"
       "\x1f\x75\x1f\x07\xf1\xc4\xcb\xb0\x98\xf4\x0b\x19",
-  SHISHI_DES3_CBC_HMAC_SHA1_KD},
+      SHISHI_DES3_CBC_HMAC_SHA1_KD},
 #endif
 #if WITH_AES
   {

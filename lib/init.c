@@ -190,8 +190,7 @@ maybe_install_usercfg (Shishi * handle)
 static int
 init_read (Shishi * handle,
 	   const char *tktsfile,
-	   const char *systemcfgfile,
-	   const char *usercfgfile)
+	   const char *systemcfgfile, const char *usercfgfile)
 {
   int rc = SHISHI_OK;
 

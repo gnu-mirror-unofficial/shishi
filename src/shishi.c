@@ -1152,8 +1152,7 @@ main (int argc, char *argv[])
 	if (rc != SHISHI_OK)
 	  {
 	    fprintf (stderr, "TGS exchange failed: %s\n%s\n",
-		     shishi_strerror (rc),
-		    shishi_error (handle));
+		     shishi_strerror (rc), shishi_error (handle));
 	    if (rc == SHISHI_GOT_KRBERROR)
 	      shishi_krberror_pretty_print (handle, stdout,
 					    shishi_tgs_krberror (tgs));

@@ -1,28 +1,108 @@
--- kerberos.asn1   Kerberos ASN.1 Module
--- Copyright (C) 2002, 2003  Simon Josefsson
---
--- This file is part of Shishi.
---
--- Shishi is free software; you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 2 of the License, or
--- (at your option) any later version.
---
--- Shishi is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with Shishi; if not, write to the Free Software
--- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
---
-
--- This module is based on the one given in appendix A of RFC1510bis
--- (draft-ietf-krb-wg-kerberos-clarifications-04.txt) which exhibits
--- no copyright notice, but is presumable owned by ISOC via IETF.
-
--- The modifications are to make libtasn1's parser accept it.
+-- kerberos.asn1 Kerberos ASN .1 Module-- Copyright (C) 2002,
+  2003 Simon Josefsson-- -- This file is part of Shishi. --
+  --Shishi is free software;
+     you can redistribute it
+       and /
+       or
+       modify--
+       it
+       under
+       the
+       terms
+       of
+       the
+       GNU
+       General
+       Public
+       License
+       as
+       published
+       by--
+       the
+       Free
+       Software
+       Foundation;
+     either
+       version
+       2
+       of
+       the
+       License,
+     or-- (at your option)
+     any later
+     version. -- --
+       Shishi
+       is
+       distributed
+       in
+       the
+       hope
+       that
+       it
+       will
+       be
+     useful, --
+       but
+       WITHOUT
+       ANY
+       WARRANTY;
+     without even the implied warranty
+       of--
+       MERCHANTABILITY
+       or
+       FITNESS
+       FOR
+       A
+       PARTICULAR
+       PURPOSE.
+       See
+       the--
+       GNU
+       General
+       Public
+       License for
+       more
+     details. -- --
+       You
+       should
+       have
+       received
+       a
+       copy
+       of
+       the
+       GNU
+       General
+       Public
+       License--
+       along
+       with
+       Shishi; if not
+     , write to the Free Software-- Foundation, Inc., 59 Temple Place,
+	 Suite 330, Boston,
+	 MA 02111 - 1307 USA-- --
+	 This module is based on the one given in appendix A of
+	 RFC1510bis-- (draft - ietf - krb - wg - kerberos - clarifications -
+			 04. txt) which
+       exhibits--
+       no
+       copyright
+       notice,
+       but
+       is
+       presumable
+       owned
+       by
+       ISOC
+       via
+       IETF. --
+       The
+       modifications
+       are
+       to
+       make
+       libtasn1
+       's parser accept it.
 
 Kerberos5 {
         iso(1) identified-organization(3) dod(6) internet(1)
@@ -168,8 +248,12 @@ KDC-REQ-BODY    ::= SEQUENCE {
         cname                   [1] PrincipalName OPTIONAL
                                     -- Used only in AS-REQ --,
         realm                   [2] Realm
-                                    -- Server's realm
-                                    -- Also client's in AS-REQ --,
+                                    -- Server'
+       s
+       realm--
+       Also
+       client
+       's in AS-REQ --,
         sname                   [3] PrincipalName OPTIONAL,
         from                    [4] KerberosTime OPTIONAL,
         till                    [5] KerberosTime,
@@ -317,8 +401,14 @@ EncKrbPrivPart  ::= [APPLICATION 28] SEQUENCE {
         timestamp       [1] KerberosTime OPTIONAL,
         usec            [2] Microseconds OPTIONAL,
         seq-number      [3] UInt32 OPTIONAL,
-        s-address       [4] HostAddress -- sender's addr --,
-        r-address       [5] HostAddress OPTIONAL -- recip's addr
+        s-address       [4] HostAddress -- sender'
+       s
+       addr--,
+       r -
+     address[5] HostAddress
+       OPTIONAL--
+       recip
+       's addr
 }
 
 KRB-CRED        ::= [APPLICATION 22] SEQUENCE {
@@ -379,39 +469,37 @@ TYPED-DATA      ::= SEQUENCE SIZE (1..MAX) OF SEQUENCE {
 PA-ENC-TIMESTAMP        ::= EncryptedData -- PA-ENC-TS-ENC
 
 PA-ENC-TS-ENC           ::= SEQUENCE {
-        patimestamp     [0] KerberosTime -- client's time --,
-        pausec          [1] Microseconds OPTIONAL
+        patimestamp     [0] KerberosTime -- client'
+       s
+       time--,
+     pausec[1] Microseconds
+     OPTIONAL}
+
+ETYPE -
+  INFO -
+  ENTRY:: = SEQUENCE {
+  etype[0] Int32,
+  salt[1] OCTET STRING OPTIONAL
 }
 
-ETYPE-INFO-ENTRY        ::= SEQUENCE {
-        etype           [0] Int32,
-        salt            [1] OCTET STRING OPTIONAL
+ETYPE - INFO:: = SEQUENCE OF ETYPE - INFO - ENTRY
+  ETYPE - INFO2 - ENTRY:: = SEQUENCE {
+  etype[0] Int32,
+  salt[1] KerberosString OPTIONAL,
+  s2kparams[2] OCTET STRING OPTIONAL
 }
 
-ETYPE-INFO              ::= SEQUENCE OF ETYPE-INFO-ENTRY
-
-ETYPE-INFO2-ENTRY       ::= SEQUENCE {
-        etype           [0] Int32,
-        salt            [1] KerberosString OPTIONAL,
-        s2kparams       [2] OCTET STRING OPTIONAL
+ETYPE - INFO2:: = SEQUENCE SIZE (1..MAX) OF ETYPE - INFO2 - ENTRY
+  AD - IF - RELEVANT:: = AuthorizationData AD - KDCIssued:: = SEQUENCE {
+  ad - checksum[0] Checksum,
+  i - realm[1] Realm OPTIONAL,
+  i - sname[2] PrincipalName OPTIONAL,
+  elements[3] AuthorizationData
 }
 
-ETYPE-INFO2             ::= SEQUENCE SIZE (1..MAX) OF ETYPE-INFO2-ENTRY
-
-AD-IF-RELEVANT          ::= AuthorizationData
-
-AD-KDCIssued            ::= SEQUENCE {
-        ad-checksum     [0] Checksum,
-        i-realm         [1] Realm OPTIONAL,
-        i-sname         [2] PrincipalName OPTIONAL,
-        elements        [3] AuthorizationData
+AD - AND - OR:: = SEQUENCE {
+  condition - count[0] INTEGER,
+  elements[1] AuthorizationData
 }
 
-AD-AND-OR               ::= SEQUENCE {
-        condition-count [0] INTEGER,
-        elements        [1] AuthorizationData
-}
-
-AD-MANDATORY-FOR-KDC    ::= AuthorizationData
-
-END
+AD - MANDATORY - FOR - KDC:: = AuthorizationData END

@@ -783,7 +783,7 @@ extern Shishi_tkt *shishi_tkts_get_tgt (Shishi_tkts * tkts,
 					Shishi_tkts_hint * hint);
 extern Shishi_tkt *shishi_tkts_get_tgs (Shishi_tkts * tkts,
 					Shishi_tkts_hint * hint,
-					Shishi_tkt *tgt);
+					Shishi_tkt * tgt);
 extern Shishi_tkt *shishi_tkts_get_for_clientserver (Shishi_tkts * tkts,
 						     const char *client,
 						     const char *server);
@@ -1037,7 +1037,7 @@ extern int shishi_kdcreq_etype (Shishi * handle, Shishi_asn1 kdcreq,
 extern int shishi_kdcreq_set_etype (Shishi * handle, Shishi_asn1 kdcreq,
 				    int32_t * etype, int netype);
 extern int shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq,
-				  uint32_t *flags);
+				  uint32_t * flags);
 extern int shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq);
 extern int shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq,
 				      uint32_t options);
@@ -1429,7 +1429,7 @@ extern int shishi_pbkdf2_sha1 (Shishi * handle,
 extern Shishi_crypto *shishi_crypto (Shishi * handle,
 				     Shishi_key * key, int keyusage,
 				     int32_t etype,
-				     const char * iv, size_t ivlen);
+				     const char *iv, size_t ivlen);
 extern void shishi_crypto_close (Shishi_crypto * ctx);
 extern int shishi_crypto_encrypt (Shishi_crypto * ctx,
 				  const char *in, size_t inlen,
@@ -1468,7 +1468,7 @@ extern int shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
 extern int shishi_asn1_read_uint32 (Shishi * handle, Shishi_asn1 node,
 				    const char *field, uint32_t * i);
 extern int shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
-				       const char *field, uint32_t *flags);
+				       const char *field, uint32_t * flags);
 extern int shishi_asn1_read_optional (Shishi * handle,
 				      Shishi_asn1 node, const char *field,
 				      char *data, size_t * datalen);
@@ -1959,8 +1959,7 @@ extern int shishi_priv_read (Shishi * handle, FILE * fh, Shishi_asn1 * priv);
 extern int shishi_priv_from_file (Shishi * handle, Shishi_asn1 * priv,
 				  int filetype, const char *filename);
 extern int shishi_priv_enc_part_etype (Shishi * handle,
-				       Shishi_asn1 priv,
-				       int32_t * etype);
+				       Shishi_asn1 priv, int32_t * etype);
 extern int shishi_priv_set_enc_part (Shishi * handle,
 				     Shishi_asn1 priv,
 				     int32_t etype,
@@ -1978,7 +1977,6 @@ extern int shishi_priv_process (Shishi_priv * priv, Shishi_key * key);
 
 /* authorize.c */
 extern int shishi_authorized_p (Shishi * handle,
-				Shishi_tkt * tkt,
-				const char *authzname);
+				Shishi_tkt * tkt, const char *authzname);
 
 #endif

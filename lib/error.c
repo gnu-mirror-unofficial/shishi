@@ -248,7 +248,7 @@ void
 shishi_info (Shishi * handle, const char *format, ...)
 {
   va_list ap;
-  char * out;
+  char *out;
   int type;
 
   va_start (ap, format);
@@ -283,7 +283,7 @@ void
 shishi_warn (Shishi * handle, const char *format, ...)
 {
   va_list ap;
-  char * out;
+  char *out;
   int type;
 
   va_start (ap, format);

@@ -43,7 +43,7 @@ _shishi_crypto_init (Shishi * handle)
 	}
 
       err = gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0);
-      if (err  != GPG_ERR_NO_ERROR)
+      if (err != GPG_ERR_NO_ERROR)
 	{
 	  shishi_warn (handle, "gcry_control (GCRYCTL_DISABLE_SECMEM)"
 		       " failed: %s", gcry_strerror (err));
@@ -51,9 +51,10 @@ _shishi_crypto_init (Shishi * handle)
 	}
 
       err = gcry_control (GCRYCTL_INITIALIZATION_FINISHED, NULL, 0);
-      if (err  != GPG_ERR_NO_ERROR)
+      if (err != GPG_ERR_NO_ERROR)
 	{
-	  shishi_warn (handle, "gcry_control (GCRYCTL_INITIALIZATION_FINISHED)"
+	  shishi_warn (handle,
+		       "gcry_control (GCRYCTL_INITIALIZATION_FINISHED)"
 		       " failed: %s", gcry_strerror (err));
 	  return SHISHI_CRYPTO_INTERNAL_ERROR;
 	}
@@ -73,9 +74,7 @@ shishi_randomize (Shishi * handle, int strong, char *data, size_t datalen)
 }
 
 int
-shishi_crc (Shishi * handle,
-	    const char *in, size_t inlen,
-	    char *out[4])
+shishi_crc (Shishi * handle, const char *in, size_t inlen, char *out[4])
 {
   gcry_md_hd_t hd;
   gpg_error_t err;
@@ -112,9 +111,7 @@ shishi_crc (Shishi * handle,
 }
 
 int
-shishi_md4 (Shishi * handle,
-	    const char *in, size_t inlen,
-	    char *out[16])
+shishi_md4 (Shishi * handle, const char *in, size_t inlen, char *out[16])
 {
   gcry_md_hd_t hd;
   gpg_error_t err;
@@ -145,9 +142,7 @@ shishi_md4 (Shishi * handle,
 }
 
 int
-shishi_md5 (Shishi * handle,
-	    const char *in, size_t inlen,
-	    char *out[16])
+shishi_md5 (Shishi * handle, const char *in, size_t inlen, char *out[16])
 {
   gcry_md_hd_t hd;
   gpg_error_t err;
@@ -179,9 +174,8 @@ shishi_md5 (Shishi * handle,
 
 int
 shishi_hmac_md5 (Shishi * handle,
-		  const char *key, size_t keylen,
-		  const char *in, size_t inlen,
-		  char *outhash[16])
+		 const char *key, size_t keylen,
+		 const char *in, size_t inlen, char *outhash[16])
 {
   gcry_md_hd_t mdh;
   size_t hlen = gcry_md_get_algo_dlen (GCRY_MD_MD5);
@@ -223,8 +217,7 @@ shishi_hmac_md5 (Shishi * handle,
 int
 shishi_hmac_sha1 (Shishi * handle,
 		  const char *key, size_t keylen,
-		  const char *in, size_t inlen,
-		  char *outhash[20])
+		  const char *in, size_t inlen, char *outhash[20])
 {
   gcry_md_hd_t mdh;
   size_t hlen = gcry_md_get_algo_dlen (GCRY_MD_SHA1);
@@ -267,8 +260,7 @@ int
 shishi_des_cbc_mac (Shishi * handle,
 		    const char key[8],
 		    const char iv[8],
-		    const char *in, size_t inlen,
-		    char *out[8])
+		    const char *in, size_t inlen, char *out[8])
 {
   gcry_cipher_hd_t ch;
   gpg_error_t err;
@@ -310,7 +302,7 @@ shishi_des_cbc_mac (Shishi * handle,
 
   return SHISHI_OK;
 
- done:
+done:
   gcry_cipher_close (ch);
   return res;
 }
@@ -320,9 +312,7 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int mode,
 		    int decryptp,
 		    const char *key, size_t keylen,
 		    const char *iv,
-		    char **ivout,
-		    const char *in, size_t inlen,
-		    char **out)
+		    char **ivout, const char *in, size_t inlen, char **out)
 {
   size_t ivlen = gcry_cipher_get_algo_blklen (algo);
   gcry_cipher_hd_t ch;
@@ -390,8 +380,7 @@ int
 shishi_arcfour (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
 		const char iv[258], char *ivout[258],
-		const char *in, size_t inlen,
-		char **out)
+		const char *in, size_t inlen, char **out)
 {
   /* XXX Support iv/ivout. */
   return libgcrypt_dencrypt (handle, GCRY_CIPHER_ARCFOUR, 0,
@@ -403,9 +392,7 @@ int
 shishi_des (Shishi * handle, int decryptp,
 	    const char key[8],
 	    const char iv[8],
-	    char *ivout[8],
-	    const char *in, size_t inlen,
-	    char **out)
+	    char *ivout[8], const char *in, size_t inlen, char **out)
 {
   return libgcrypt_dencrypt (handle, GCRY_CIPHER_DES, 0, GCRY_CIPHER_MODE_CBC,
 			     decryptp, key, 8, iv, ivout, in, inlen, out);
@@ -415,21 +402,18 @@ int
 shishi_3des (Shishi * handle, int decryptp,
 	     const char key[24],
 	     const char iv[8],
-	     char *ivout[8],
-	     const char *in, size_t inlen,
-	     char **out)
+	     char *ivout[8], const char *in, size_t inlen, char **out)
 {
-  return libgcrypt_dencrypt (handle, GCRY_CIPHER_3DES, 0, GCRY_CIPHER_MODE_CBC,
-			     decryptp, key, 24, iv, ivout, in, inlen, out);
+  return libgcrypt_dencrypt (handle, GCRY_CIPHER_3DES, 0,
+			     GCRY_CIPHER_MODE_CBC, decryptp, key, 24, iv,
+			     ivout, in, inlen, out);
 }
 
 int
 shishi_aes_cts (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
 		const char iv[16],
-		char *ivout[16],
-		const char *in, size_t inlen,
-		char **out)
+		char *ivout[16], const char *in, size_t inlen, char **out)
 {
   return libgcrypt_dencrypt (handle, GCRY_CIPHER_AES, GCRY_CIPHER_CBC_CTS,
 			     GCRY_CIPHER_MODE_CBC, decryptp,

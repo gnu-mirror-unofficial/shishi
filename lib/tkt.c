@@ -145,9 +145,9 @@ void
 shishi_tkt_done (Shishi_tkt * tkt)
 {
   /*   XXX need to always copy key into ticket before we can do
-       XXX this, compare shishi_tkt_key_set().
-       if (tkt->key)
-       shishi_key_done (tkt->key); */
+     XXX this, compare shishi_tkt_key_set().
+     if (tkt->key)
+     shishi_key_done (tkt->key); */
   free (tkt);
 }
 

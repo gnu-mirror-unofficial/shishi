@@ -37,8 +37,8 @@
 int
 shishi_authorized_p (Shishi * handle, Shishi_tkt * tkt, const char *authzname)
 {
-  char cname[BUFSIZ]; /* XXX */
-  size_t cnamelen = sizeof(cname);
+  char cname[BUFSIZ];		/* XXX */
+  size_t cnamelen = sizeof (cname);
   int rc;
 
   rc = shishi_encticketpart_cname_get (handle,

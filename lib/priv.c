@@ -104,8 +104,7 @@ shishi_priv (Shishi * handle, Shishi_priv ** priv)
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_asn1_write (handle, lpriv->encprivpart, "r-address",
-			  NULL, 0);
+  rc = shishi_asn1_write (handle, lpriv->encprivpart, "r-address", NULL, 0);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -484,8 +483,7 @@ shishi_priv_from_file (Shishi * handle, Shishi_asn1 * priv,
  **/
 int
 shishi_priv_enc_part_etype (Shishi * handle,
-			    Shishi_asn1 priv,
-			    int32_t * etype)
+			    Shishi_asn1 priv, int32_t * etype)
 {
   return shishi_asn1_read_int32 (handle, priv, "enc-part.etype", etype);
 }
@@ -620,8 +618,7 @@ shishi_priv_build (Shishi_priv * priv, Shishi_key * key)
     }
 
   res = shishi_priv_set_enc_part (priv->handle, priv->priv,
-				  shishi_key_type (key),
-				  buf, buflen);
+				  shishi_key_type (key), buf, buflen);
   if (res != SHISHI_OK)
     return res;
 
@@ -668,7 +665,8 @@ shishi_priv_process (Shishi_priv * priv, Shishi_key * key)
   free (cipher);
   if (res != SHISHI_OK)
     {
-      shishi_error_printf (priv->handle, "PRIV decryption failed, bad key?\n");
+      shishi_error_printf (priv->handle,
+			   "PRIV decryption failed, bad key?\n");
       return res;
     }
 

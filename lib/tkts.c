@@ -734,8 +734,7 @@ shishi_tkts_find_for_server (Shishi_tkts * tkts, const char *server)
 /* Set flags and times in KDC-REQ based on hint. */
 static int
 act_hint_on_kdcreq (Shishi * handle,
-		    Shishi_tkts_hint * hint,
-		    Shishi_asn1 kdcreq)
+		    Shishi_tkts_hint * hint, Shishi_asn1 kdcreq)
 {
   time_t starttime = hint->starttime ? hint->starttime : time (NULL);
   time_t endtime = hint->endtime ? hint->endtime :
@@ -819,7 +818,7 @@ act_hint_on_kdcreq (Shishi * handle,
 
   return SHISHI_OK;
 
- done:
+done:
   shishi_error_printf (handle, "Cannot set KDC Options: %s",
 		       shishi_strerror (rc));
   return rc;
@@ -905,8 +904,7 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
     {
       shishi_error_printf (tkts->handle,
 			   "AS exchange failed: %s\n%s\n",
-			   shishi_strerror (rc),
-			   shishi_error (tkts->handle));
+			   shishi_strerror (rc), shishi_error (tkts->handle));
       if (rc == SHISHI_GOT_KRBERROR)
 	shishi_krberror_pretty_print (tkts->handle, stdout,
 				      shishi_as_krberror (as));
@@ -950,8 +948,7 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
  **/
 Shishi_tkt *
 shishi_tkts_get_tgs (Shishi_tkts * tkts,
-		     Shishi_tkts_hint * hint,
-		     Shishi_tkt *tgt)
+		     Shishi_tkts_hint * hint, Shishi_tkt * tgt)
 {
   Shishi_tgs *tgs;
   Shishi_tkt *tkt;
@@ -973,8 +970,7 @@ shishi_tkts_get_tgs (Shishi_tkts * tkts,
     {
       shishi_error_printf (tkts->handle,
 			   "TGS exchange failed: %s\n%s\n",
-			   shishi_strerror (rc),
-			   shishi_error (tkts->handle));
+			   shishi_strerror (rc), shishi_error (tkts->handle));
       if (rc == SHISHI_GOT_KRBERROR)
 	shishi_krberror_pretty_print (tkts->handle, stdout,
 				      shishi_tgs_krberror (tgs));

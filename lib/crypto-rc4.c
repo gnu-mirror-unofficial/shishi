@@ -23,7 +23,8 @@
 
 #include "crypto.h"
 
-static int arcfour_keyusage (int keyusage)
+static int
+arcfour_keyusage (int keyusage)
 {
   /* From draft-brezak-win2k-krb-rc4-hmac-04.txt:
    *
@@ -88,12 +89,13 @@ static int arcfour_keyusage (int keyusage)
 
 static int
 arcfour_hmac_encrypt (Shishi * handle,
-		  Shishi_key * key,
-		  int keyusage,
-		  const char *iv,
-		  size_t ivlen,
-		  char **ivout, size_t * ivoutlen,
-		  const char *in, size_t inlen, char **out, size_t * outlen)
+		      Shishi_key * key,
+		      int keyusage,
+		      const char *iv,
+		      size_t ivlen,
+		      char **ivout, size_t * ivoutlen,
+		      const char *in, size_t inlen, char **out,
+		      size_t * outlen)
 {
   int export = shishi_key_type (key) == SHISHI_ARCFOUR_HMAC_EXP;
   int arcfourkeyusage = arcfour_keyusage (keyusage);
@@ -176,7 +178,8 @@ arcfour_hmac_encrypt (Shishi * handle,
 
   if (VERBOSECRYPTONOICE (handle))
     {
-      puts ("random"); _shishi_hexprint (pt, 8);
+      puts ("random");
+      _shishi_hexprint (pt, 8);
     }
 
   err = shishi_hmac_md5 (handle, K2, 16, pt, ptlen, &cksum);
@@ -185,7 +188,8 @@ arcfour_hmac_encrypt (Shishi * handle,
 
   if (VERBOSECRYPTONOICE (handle))
     {
-      puts ("cksum"); _shishi_hexprint (cksum, 16);
+      puts ("cksum");
+      _shishi_hexprint (cksum, 16);
     }
 
   err = shishi_hmac_md5 (handle, K1, 16, cksum, 16, &K3);
@@ -215,11 +219,11 @@ arcfour_hmac_encrypt (Shishi * handle,
 
   if (ivoutlen)
     /* size = sbox[256] + int8_t i + int8_t j */
-    *ivoutlen = 256 + 2*8;
+    *ivoutlen = 256 + 2 * 8;
 
   err = SHISHI_OK;
 
- done:
+done:
   free (cksum);
   free (K3);
   free (pt);
@@ -230,12 +234,13 @@ arcfour_hmac_encrypt (Shishi * handle,
 
 static int
 arcfour_hmac_decrypt (Shishi * handle,
-		  Shishi_key * key,
-		  int keyusage,
-		  const char *iv,
-		  size_t ivlen,
-		  char **ivout, size_t * ivoutlen,
-		  const char *in, size_t inlen, char **out, size_t * outlen)
+		      Shishi_key * key,
+		      int keyusage,
+		      const char *iv,
+		      size_t ivlen,
+		      char **ivout, size_t * ivoutlen,
+		      const char *in, size_t inlen, char **out,
+		      size_t * outlen)
 {
   int export = shishi_key_type (key) == SHISHI_ARCFOUR_HMAC_EXP;
   int arcfourkeyusage = arcfour_keyusage (keyusage);
@@ -302,13 +307,15 @@ arcfour_hmac_decrypt (Shishi * handle,
       _shishi_hexprint (K3, 16);
     }
 
-  err = shishi_arcfour (handle, 1, K3, 16, iv, ivout, in + 16, inlen - 16, &pt);
+  err =
+    shishi_arcfour (handle, 1, K3, 16, iv, ivout, in + 16, inlen - 16, &pt);
   if (err)
     goto done;
 
   if (VERBOSECRYPTONOICE (handle))
     {
-      puts ("cksum pt"); _shishi_hexprint (pt, inlen - 16);
+      puts ("cksum pt");
+      _shishi_hexprint (pt, inlen - 16);
     }
 
   err = shishi_hmac_md5 (handle, K2, 16, pt, inlen - 16, &cksum);
@@ -317,8 +324,10 @@ arcfour_hmac_decrypt (Shishi * handle,
 
   if (VERBOSECRYPTONOICE (handle))
     {
-      puts ("cksum"); _shishi_hexprint (cksum, 16);
-      puts ("cksumin"); _shishi_hexprint (in, 16);
+      puts ("cksum");
+      _shishi_hexprint (cksum, 16);
+      puts ("cksumin");
+      _shishi_hexprint (in, 16);
     }
 
   if (memcmp (cksum, in, 16) != 0)
@@ -333,11 +342,11 @@ arcfour_hmac_decrypt (Shishi * handle,
 
   if (ivoutlen)
     /* size = sbox[256] + int8_t i + int8_t j */
-    *ivoutlen = 256 + 2*8;
+    *ivoutlen = 256 + 2 * 8;
 
   err = SHISHI_OK;
 
- done:
+done:
   free (cksum);
   free (K3);
   free (K1);
@@ -347,13 +356,13 @@ arcfour_hmac_decrypt (Shishi * handle,
 
 static int
 arcfour_hmac_exp_encrypt (Shishi * handle,
-		      Shishi_key * key,
-		      int keyusage,
-		      const char *iv,
-		      size_t ivlen,
-		      char **ivout, size_t * ivoutlen,
-		      const char *in, size_t inlen,
-		      char **out, size_t * outlen)
+			  Shishi_key * key,
+			  int keyusage,
+			  const char *iv,
+			  size_t ivlen,
+			  char **ivout, size_t * ivoutlen,
+			  const char *in, size_t inlen,
+			  char **out, size_t * outlen)
 {
   return arcfour_hmac_encrypt (handle, key, keyusage, iv, ivlen,
 			       ivout, ivoutlen, in, inlen, out, outlen);
@@ -362,13 +371,13 @@ arcfour_hmac_exp_encrypt (Shishi * handle,
 
 static int
 arcfour_hmac_exp_decrypt (Shishi * handle,
-		      Shishi_key * key,
-		      int keyusage,
-		      const char *iv,
-		      size_t ivlen,
-		      char **ivout, size_t * ivoutlen,
-		      const char *in, size_t inlen,
-		      char **out, size_t * outlen)
+			  Shishi_key * key,
+			  int keyusage,
+			  const char *iv,
+			  size_t ivlen,
+			  char **ivout, size_t * ivoutlen,
+			  const char *in, size_t inlen,
+			  char **out, size_t * outlen)
 {
   return arcfour_hmac_decrypt (handle, key, keyusage, iv, ivlen,
 			       ivout, ivoutlen, in, inlen, out, outlen);
@@ -378,11 +387,11 @@ arcfour_hmac_exp_decrypt (Shishi * handle,
 
 static int
 arcfour_hmac_md5_checksum (Shishi * handle,
-		       Shishi_key * key,
-		       int keyusage,
-		       int cksumtype,
-		       const char *in, size_t inlen,
-		       char **out, size_t * outlen)
+			   Shishi_key * key,
+			   int keyusage,
+			   int cksumtype,
+			   const char *in, size_t inlen,
+			   char **out, size_t * outlen)
 {
   int arcfourkeyusage = arcfour_keyusage (keyusage);
   char *Ksign = NULL;
@@ -407,7 +416,8 @@ arcfour_hmac_md5_checksum (Shishi * handle,
 
   if (VERBOSECRYPTONOICE (handle))
     {
-      puts ("Ksign"); _shishi_hexprint (Ksign, 16);
+      puts ("Ksign");
+      _shishi_hexprint (Ksign, 16);
     }
 
   ptlen = 4 + inlen;
@@ -417,7 +427,8 @@ arcfour_hmac_md5_checksum (Shishi * handle,
 
   if (VERBOSECRYPTONOICE (handle))
     {
-      puts ("pt"); _shishi_hexprint (pt, ptlen);
+      puts ("pt");
+      _shishi_hexprint (pt, ptlen);
     }
 
   err = shishi_md5 (handle, pt, ptlen, &tmp);
@@ -426,7 +437,8 @@ arcfour_hmac_md5_checksum (Shishi * handle,
 
   if (VERBOSECRYPTONOICE (handle))
     {
-      puts ("md"); _shishi_hexprint (tmp, 16);
+      puts ("md");
+      _shishi_hexprint (tmp, 16);
     }
 
   *outlen = 16;
@@ -436,12 +448,13 @@ arcfour_hmac_md5_checksum (Shishi * handle,
 
   if (VERBOSECRYPTONOICE (handle))
     {
-      puts ("hmac"); _shishi_hexprint (*out, 16);
+      puts ("hmac");
+      _shishi_hexprint (*out, 16);
     }
 
   err = SHISHI_OK;
 
- done:
+done:
   free (Ksign);
   free (pt);
   free (tmp);
@@ -450,8 +463,8 @@ arcfour_hmac_md5_checksum (Shishi * handle,
 
 static int
 arcfour_hmac_random_to_key (Shishi * handle,
-			const char *random, size_t randomlen,
-			Shishi_key * outkey)
+			    const char *random, size_t randomlen,
+			    Shishi_key * outkey)
 {
   if (randomlen != shishi_key_length (outkey))
     {
@@ -466,11 +479,11 @@ arcfour_hmac_random_to_key (Shishi * handle,
 
 static int
 arcfour_hmac_string_to_key (Shishi * handle,
-			const char *string,
-			size_t stringlen,
-			const char *salt,
-			size_t saltlen,
-			const char *parameter, Shishi_key * outkey)
+			    const char *string,
+			    size_t stringlen,
+			    const char *salt,
+			    size_t saltlen,
+			    const char *parameter, Shishi_key * outkey)
 {
   char *tmp, *md;
   size_t tmplen, i;

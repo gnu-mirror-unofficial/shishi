@@ -228,7 +228,7 @@ shishi_crc (Shishi * handle, const char *in, size_t inlen, char *out[4])
 
   *out = xmalloc (4);
   (*out)[0] = crc & 0xFF;
-  (*out)[1] = (crc >>  8) & 0xFF;
+  (*out)[1] = (crc >> 8) & 0xFF;
   (*out)[2] = (crc >> 16) & 0xFF;
   (*out)[3] = (crc >> 24) & 0xFF;
 
@@ -249,8 +249,7 @@ shishi_crc (Shishi * handle, const char *in, size_t inlen, char *out[4])
  **/
 int
 shishi_md4 (Shishi * handle,
-	    const char *in, size_t inlen,
-	    char *out[MD4_DIGEST_SIZE])
+	    const char *in, size_t inlen, char *out[MD4_DIGEST_SIZE])
 {
   struct md4_ctx md4;
 
@@ -276,8 +275,7 @@ shishi_md4 (Shishi * handle,
  **/
 int
 shishi_md5 (Shishi * handle,
-	    const char *in, size_t inlen,
-	    char *out[MD5_DIGEST_SIZE])
+	    const char *in, size_t inlen, char *out[MD5_DIGEST_SIZE])
 {
   struct md5_ctx md5;
 
@@ -305,9 +303,8 @@ shishi_md5 (Shishi * handle,
  **/
 int
 shishi_hmac_md5 (Shishi * handle,
-		  const char *key, size_t keylen,
-		  const char *in, size_t inlen,
-		  char *outhash[MD5_DIGEST_SIZE])
+		 const char *key, size_t keylen,
+		 const char *in, size_t inlen, char *outhash[MD5_DIGEST_SIZE])
 {
   struct hmac_md5_ctx ctx;
 
@@ -367,8 +364,7 @@ int
 shishi_des_cbc_mac (Shishi * handle,
 		    const char key[DES_KEY_SIZE],
 		    const char iv[DES_BLOCK_SIZE],
-		    const char *in, size_t inlen,
-		    char *out[DES_BLOCK_SIZE])
+		    const char *in, size_t inlen, char *out[DES_BLOCK_SIZE])
 {
   struct CBC_MAC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
   int rc;
@@ -418,8 +414,7 @@ int
 shishi_arcfour (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
 		const char iv[258], char *ivout[258],
-		const char *in, size_t inlen,
-		char **out)
+		const char *in, size_t inlen, char **out)
 {
   struct arcfour_ctx ctx;
 
@@ -462,8 +457,7 @@ shishi_des (Shishi * handle, int decryptp,
 	    const char key[DES_KEY_SIZE],
 	    const char iv[DES_BLOCK_SIZE],
 	    char *ivout[DES_BLOCK_SIZE],
-	    const char *in, size_t inlen,
-	    char **out)
+	    const char *in, size_t inlen, char **out)
 {
   struct CBC_CTX (struct des_ctx, DES_BLOCK_SIZE) des;
   int rc;
@@ -514,8 +508,7 @@ shishi_3des (Shishi * handle, int decryptp,
 	     const char key[DES3_KEY_SIZE],
 	     const char iv[DES3_BLOCK_SIZE],
 	     char *ivout[DES3_BLOCK_SIZE],
-	     const char *in, size_t inlen,
-	     char **out)
+	     const char *in, size_t inlen, char **out)
 {
   struct CBC_CTX (struct des3_ctx, DES3_BLOCK_SIZE) des3;
   int rc;
@@ -569,8 +562,7 @@ shishi_aes_cts (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
 		const char iv[AES_BLOCK_SIZE],
 		char *ivout[AES_BLOCK_SIZE],
-		const char *in, size_t inlen,
-		char **out)
+		const char *in, size_t inlen, char **out)
 {
   struct CBC_CTS_CTX (struct aes_ctx, AES_BLOCK_SIZE) aes;
 

@@ -23,11 +23,11 @@
 
 struct Shishi_crypto
 {
-  Shishi * handle;
-  Shishi_key * key;
+  Shishi *handle;
+  Shishi_key *key;
   int keyusage;
   int32_t etype;
-  char * iv;
+  char *iv;
   size_t ivlen;
 };
 
@@ -56,9 +56,7 @@ struct Shishi_crypto
 Shishi_crypto *
 shishi_crypto (Shishi * handle,
 	       Shishi_key * key,
-	       int keyusage,
-	       int32_t etype,
-	       const char * iv, size_t ivlen)
+	       int keyusage, int32_t etype, const char *iv, size_t ivlen)
 {
   Shishi_crypto *ctx;
   int rc;
@@ -110,10 +108,9 @@ shishi_crypto_encrypt (Shishi_crypto * ctx,
   int rc;
 
   rc = shishi_encrypt_ivupdate_etype (ctx->handle, ctx->key, ctx->keyusage,
-				       ctx->etype, ctx->iv, ctx->ivlen,
-				       &ivout, &ivoutlen,
-				       in, inlen,
-				       out, outlen);
+				      ctx->etype, ctx->iv, ctx->ivlen,
+				      &ivout, &ivoutlen,
+				      in, inlen, out, outlen);
   if (rc == SHISHI_OK)
     {
       free (ctx->iv);
@@ -154,8 +151,7 @@ shishi_crypto_decrypt (Shishi_crypto * ctx,
   rc = shishi_decrypt_ivupdate_etype (ctx->handle, ctx->key, ctx->keyusage,
 				      ctx->etype, ctx->iv, ctx->ivlen,
 				      &ivout, &ivoutlen,
-				      in, inlen,
-				      out, outlen);
+				      in, inlen, out, outlen);
   if (rc == SHISHI_OK)
     {
       free (ctx->iv);

@@ -182,9 +182,9 @@ des_crc_encrypt (Shishi * handle,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return des_encrypt_checksum (handle, key, keyusage,
-			       shishi_key_value (key), shishi_key_length (key),
-			       ivout, ivoutlen, in, inlen, out, outlen,
-			       SHISHI_DES_CBC_CRC);
+			       shishi_key_value (key),
+			       shishi_key_length (key), ivout, ivoutlen, in,
+			       inlen, out, outlen, SHISHI_DES_CBC_CRC);
 }
 
 static int
