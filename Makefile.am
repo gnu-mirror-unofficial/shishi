@@ -29,13 +29,13 @@ SUBDIRS = @CRYPTO@ @ASN1@ @ARGP@ @LIBIDN@ $(MOST_SUBDIRS)
 ACLOCAL_AMFLAGS = -I m4 -I crypto/src
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = shishi.pc
+pkgconfig_DATA = shishi.pc shishi-gss.pc
 
 sysconf_DATA = shishi.conf
 pkgdata_DATA = shishi.skel
 
 EXTRA_DIST = ANNOUNCE config.rpath mkinstalldirs \
-	shishi.conf.in shishi.skel.in shishi.pc.in
+	shishi.conf.in shishi.skel.in shishi.pc.in shishi-gss.pc.in
 
 .PHONY: ChangeLog
 ChangeLog:
