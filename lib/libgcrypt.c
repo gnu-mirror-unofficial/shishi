@@ -60,6 +60,17 @@ shishi_randomize (Shishi * handle, char *data, size_t datalen)
   return SHISHI_OK;
 }
 
+/**
+ * shishi_md4:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @in: input character array of data to hash.
+ * @inlen: length of input character array of data to hash.
+ * @out: newly allocated character array with hash of data.
+ *
+ * Compute hash of data using MD4.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_md4 (Shishi * handle,
 	    const char *in, size_t inlen,
@@ -94,6 +105,17 @@ shishi_md4 (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_md5:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @in: input character array of data to hash.
+ * @inlen: length of input character array of data to hash.
+ * @out: newly allocated character array with hash of data.
+ *
+ * Compute hash of data using MD5.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_md5 (Shishi * handle,
 	    const char *in, size_t inlen,
@@ -128,6 +150,19 @@ shishi_md5 (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_hmac_sha1:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: input character array with key to use.
+ * @keylen: length of input character array with key to use.
+ * @in: input character array of data to hash.
+ * @inlen: length of input character array of data to hash.
+ * @out: newly allocated character array with keyed hash of data.
+ *
+ * Compute keyed checksum of data using HMAC-SHA1
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_hmac_sha1 (Shishi * handle,
 		  const char *key, size_t keylen,
@@ -172,6 +207,19 @@ shishi_hmac_sha1 (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_des_cbc_mac:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: input character array with key to use.
+ * @iv: input character array with initialization vector to use, can be NULL.
+ * @in: input character array of data to hash.
+ * @inlen: length of input character array of data to hash.
+ * @out: newly allocated character array with keyed hash of data.
+ *
+ * Computed keyed checksum of data using DES-CBC-MAC.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_des_cbc_mac (Shishi * handle,
 		    const char key[8],
@@ -295,6 +343,21 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int decryptp,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_des:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
+ * @key: input character array with key to use.
+ * @iv: input character array with initialization vector to use, or NULL.
+ * @ivout: output character array with updated initialization vector, or NULL.
+ * @in: input character array of data to encrypt/decrypt.
+ * @inlen: length of input character array of data to encrypt/decrypt.
+ * @out: newly allocated character array with encrypted/decrypted data.
+ *
+ * Encrypt or decrypt data (depending on DECRYPTP) using DES in CBC mode.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_des (Shishi * handle, int decryptp,
 	    const char key[8],
@@ -312,6 +375,21 @@ shishi_des (Shishi * handle, int decryptp,
 			   out, outlen);
 }
 
+/**
+ * shishi_3des:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
+ * @key: input character array with key to use.
+ * @iv: input character array with initialization vector to use, or NULL.
+ * @ivout: output character array with updated initialization vector, or NULL.
+ * @in: input character array of data to encrypt/decrypt.
+ * @inlen: length of input character array of data to encrypt/decrypt.
+ * @out: newly allocated character array with encrypted/decrypted data.
+ *
+ * Encrypt or decrypt data (depending on DECRYPTP) using 3DES in CBC mode.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_3des (Shishi * handle, int decryptp,
 	     const char key[24],
@@ -329,6 +407,21 @@ shishi_3des (Shishi * handle, int decryptp,
 			   out, outlen);
 }
 
+/**
+ * shishi_aes_cts:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
+ * @key: input character array with key to use.
+ * @iv: input character array with initialization vector to use, or NULL.
+ * @ivout: output character array with updated initialization vector, or NULL.
+ * @in: input character array of data to encrypt/decrypt.
+ * @inlen: length of input character array of data to encrypt/decrypt.
+ * @out: newly allocated character array with encrypted/decrypted data.
+ *
+ * Encrypt or decrypt data (depending on DECRYPTP) using AES in CBC-CTS mode.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
 shishi_aes_cts (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
