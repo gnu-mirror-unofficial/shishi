@@ -19,3 +19,4 @@ uintmax_t.m4
 ulonglong.m4
 nls.m4
 po.m4
+libtool.m4
