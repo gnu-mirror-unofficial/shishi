@@ -214,6 +214,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	  if (arguments->listenspec == NULL)
 	    argp_error (state, "Fatal memory allocation error");
 	  ls = &arguments->listenspec[arguments->nlistenspec - 1];
+	  memset (ls, 0, sizeof(*ls));
 	  ls->str = strdup (val);
 	  ls->bufpos = 0;
 	  sin = (struct sockaddr_in *) &ls->addr;
