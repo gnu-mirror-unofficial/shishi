@@ -1,5 +1,5 @@
 /* key.c	Key related functions.
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -342,6 +342,41 @@ shishi_key_from_base64 (Shishi *handle,
 
       free(buf);
     }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_key_random
+ * @handle: Shishi library handle create by shishi_init().
+ * @type: type of key.
+ *
+ * Create a new Key information structure for the key type and some
+ * random data.  KEY contains a newly allocated structure only if this
+ * function is successful.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_key_random (Shishi *handle,
+		   int type,
+		   Shishi_key **key)
+{
+  char buf[MAX_RANDOM_LEN];
+  int len = shishi_cipher_randomlen(type);
+  int rc;
+
+  rc = shishi_key (handle, key);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_randomize(handle, buf, len);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_random_to_key (handle, type, buf, len, *key);
+  if (rc != SHISHI_OK)
+    return rc;
 
   return SHISHI_OK;
 }
