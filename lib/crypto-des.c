@@ -108,6 +108,84 @@ shishi_mod_crc32 (char *buf, int len)
 }
 
 static int
+gcrypt (Shishi * handle,
+	int alg,
+	char *out,
+	int *outlen,
+	char *in,
+	int inlen, char *key, int keylen, int direction)
+{
+  int res;
+  GCRY_CIPHER_HD ch;
+  int j;
+  char iv[MAX_BLOCK_LEN];
+  char *tmp;
+  int tmplen;
+
+  ch = gcry_cipher_open (alg, GCRY_CIPHER_MODE_CBC, 0);
+  if (ch == NULL)
+    {
+      puts ("open fail");
+      return !SHISHI_OK;
+    }
+
+  res = gcry_cipher_setkey (ch, key, keylen);
+  if (res != GCRYERR_SUCCESS)
+    {
+      if (res == GCRYERR_WEAK_KEY)
+	{
+	  printf ("weak key\n");
+	}
+      else
+	{
+	  puts ("setkey fail");
+	}
+      return !SHISHI_OK;
+    }
+
+  if (gcry_cipher_get_algo_blklen(alg) > MAX_BLOCK_LEN)
+    return !SHISHI_OK;
+  memset (iv, 0, MAX_BLOCK_LEN);
+  res = gcry_cipher_setiv (ch, iv, gcry_cipher_get_algo_blklen(alg));
+  if (res != 0)
+    {
+      printf ("iv res %d err %s\n", res, gcry_strerror (res));
+    }
+
+  if ((inlen % 8) != 0)
+    {
+      tmplen = inlen;
+      tmplen += 8 - tmplen % 8;
+      tmp = (char *) malloc (tmplen);
+      memcpy (tmp, in, inlen);
+      memset (tmp + inlen, 0, tmplen - inlen);
+    }
+  else
+    {
+      tmp = in;
+      tmplen = inlen;
+    }
+
+  if (direction)
+    res = gcry_cipher_decrypt (ch, out, *outlen, tmp, tmplen);
+  else
+    res = gcry_cipher_encrypt (ch, out, *outlen, tmp, tmplen);
+
+  if ((inlen % 8) != 0)
+    free (tmp);
+
+  if (res != 0)
+    {
+      printf ("crypt res %d err %s\n", res, gcry_strerror (res));
+    }
+  *outlen = tmplen;
+
+  gcry_cipher_close (ch);
+
+  return SHISHI_OK;
+}
+
+static int
 des_encrypt (Shishi * handle,
 	     char *out,
 	     int *outlen, char *in, int inlen, char key[8])
@@ -129,8 +207,9 @@ des_crc_verify (Shishi * handle, char *out, int *outlen)
   uint32_t crc, crc2;
   int i;
 
+  printf("crc %d: ", *outlen);
   for (i = 8; i < 8+4; i++)
-    printf ("%02X ", out[i]);
+    printf ("%02X ", out[i] & 0xFF);
   printf ("\n");
 
   memcpy((char*)&crc, &out[8], 4);
@@ -141,9 +220,9 @@ des_crc_verify (Shishi * handle, char *out, int *outlen)
 
   memset((char*)&out[8], 0, 4);
 
-  printf("crc %d:\n", *outlen);
+  printf("crc %d: ", *outlen);
   for (i = 0; i < *outlen; i++)
-    printf ("%02X ", out[i]);
+    printf ("%02X ", out[i] & 0xFF);
   printf ("\n");
 
   crc2 = shishi_mod_crc32(out, *outlen);
@@ -153,7 +232,7 @@ des_crc_verify (Shishi * handle, char *out, int *outlen)
 
   printf("str %d: ", *outlen);
   for (i = 0; i < *outlen; i++)
-    printf ("%02X ", out[i]);
+    printf ("%02X ", out[i] & 0xFF);
   printf ("\n");
 
   memmove (out, out + 8 + 4, *outlen - 8 - 4);
@@ -205,7 +284,7 @@ des_crc_checksum (Shishi * handle,
 #endif
 
 /* POINTER defines a generic pointer type */
-typedef char *POINTER;
+typedef unsigned char *POINTER;
 
 /* UINT2 defines a two byte word */
 typedef unsigned short int UINT2;
@@ -255,13 +334,13 @@ typedef unsigned long int UINT4;
 typedef struct {
   UINT4 state[4];                                   /* state (ABCD) */
   UINT4 count[2];        /* number of bits, modulo 2^64 (lsb first) */
-  char buffer[64];                         /* input buffer */
+  unsigned char buffer[64];                         /* input buffer */
 } MD4_CTX;
 
 void MD4Init PROTO_LIST ((MD4_CTX *));
 void MD4Update PROTO_LIST
-  ((MD4_CTX *, char *, unsigned int));
-void MD4Final PROTO_LIST ((char [16], MD4_CTX *));
+  ((MD4_CTX *, unsigned char *, unsigned int));
+void MD4Final PROTO_LIST ((unsigned char [16], MD4_CTX *));
 
 /* MD4C.C - RSA Data Security, Inc., MD4 message-digest algorithm
  */
@@ -305,15 +384,15 @@ void MD4Final PROTO_LIST ((char [16], MD4_CTX *));
 #define S33 11
 #define S34 15
 
-static void MD4Transform PROTO_LIST ((UINT4 [4], char [64]));
+static void MD4Transform PROTO_LIST ((UINT4 [4], unsigned char [64]));
 static void Encode PROTO_LIST
-  ((char *, UINT4 *, unsigned int));
+  ((unsigned char *, UINT4 *, unsigned int));
 static void Decode PROTO_LIST
-  ((UINT4 *, char *, unsigned int));
+  ((UINT4 *, unsigned char *, unsigned int));
 static void MD4_memcpy PROTO_LIST ((POINTER, POINTER, unsigned int));
 static void MD4_memset PROTO_LIST ((POINTER, int, unsigned int));
 
-static char PADDING[64] = {
+static unsigned char PADDING[64] = {
   0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -368,7 +447,7 @@ MD4_CTX *context;                                        /* context */
  */
 void MD4Update (context, input, inputLen)
 MD4_CTX *context;                                        /* context */
-char *input;                                /* input block */
+unsigned char *input;                                /* input block */
 unsigned int inputLen;                     /* length of input block */
 {
   unsigned int i, index, partLen;
@@ -410,10 +489,10 @@ unsigned int inputLen;                     /* length of input block */
      the message digest and zeroizing the context.
  */
 void MD4Final (digest, context)
-char digest[16];                         /* message digest */
+unsigned char digest[16];                         /* message digest */
 MD4_CTX *context;                                        /* context */
 {
-  char bits[8];
+  unsigned char bits[8];
   unsigned int index, padLen;
 
   /* Save number of bits */
@@ -442,7 +521,7 @@ MD4_CTX *context;                                        /* context */
  */
 static void MD4Transform (state, block)
 UINT4 state[4];
-char block[64];
+unsigned char block[64];
 {
   UINT4 a = state[0], b = state[1], c = state[2], d = state[3], x[16];
 
@@ -513,25 +592,25 @@ char block[64];
   MD4_memset ((POINTER)x, 0, sizeof (x));
 }
 
-/* Encodes input (UINT4) into output (char). Assumes len is
+/* Encodes input (UINT4) into output (unsigned char). Assumes len is
      a multiple of 4.
  */
 static void Encode (output, input, len)
-char *output;
+unsigned char *output;
 UINT4 *input;
 unsigned int len;
 {
   unsigned int i, j;
 
   for (i = 0, j = 0; j < len; i++, j += 4) {
-    output[j] = (char)(input[i] & 0xff);
-    output[j+1] = (char)((input[i] >> 8) & 0xff);
-    output[j+2] = (char)((input[i] >> 16) & 0xff);
-    output[j+3] = (char)((input[i] >> 24) & 0xff);
+    output[j] = (unsigned char)(input[i] & 0xff);
+    output[j+1] = (unsigned char)((input[i] >> 8) & 0xff);
+    output[j+2] = (unsigned char)((input[i] >> 16) & 0xff);
+    output[j+3] = (unsigned char)((input[i] >> 24) & 0xff);
   }
 }
 
-/* Decodes input (char) into output (UINT4). Assumes len is
+/* Decodes input (unsigned char) into output (UINT4). Assumes len is
      a multiple of 4.
 
 
@@ -539,7 +618,7 @@ unsigned int len;
 static void Decode (output, input, len)
 
 UINT4 *output;
-char *input;
+unsigned char *input;
 unsigned int len;
 {
   unsigned int i, j;
@@ -572,7 +651,7 @@ unsigned int len;
   unsigned int i;
 
   for (i = 0; i < len; i++)
-    ((char *)output)[i] = (char)value;
+    ((unsigned char *)output)[i] = (unsigned char)value;
 }
 
 /* MDDRIVER.C - test driver for MD2, MD4 and MD5
@@ -610,12 +689,12 @@ unsigned int len;
 #define TEST_BLOCK_LEN 1000
 #define TEST_BLOCK_COUNT 1000
 
-static void MDString PROTO_LIST ((char *));
+static void MDString PROTO_LIST ((unsigned char *));
 static void MDTimeTrial PROTO_LIST ((void));
 static void MDTestSuite PROTO_LIST ((void));
-static void MDFile PROTO_LIST ((char *));
+static void MDFile PROTO_LIST ((unsigned char *));
 static void MDFilter PROTO_LIST ((void));
-static void MDPrint PROTO_LIST ((char [16]));
+static void MDPrint PROTO_LIST ((unsigned char [16]));
 
 #define MD_CTX MD4_CTX
 #define MDInit MD4Init
@@ -625,10 +704,10 @@ static void MDPrint PROTO_LIST ((char [16]));
 /* Digests a string and prints the result.
  */
 static void MDString (string)
-char *string;
+unsigned char *string;
 {
   MD_CTX context;
-  char digest[16];
+  unsigned char digest[16];
   unsigned int len = strlen (string);
 
   MDInit (&context);
@@ -647,7 +726,7 @@ static void MDTimeTrial ()
 {
   MD_CTX context;
   time_t endTime, startTime;
-  char block[TEST_BLOCK_LEN], digest[16];
+  unsigned char block[TEST_BLOCK_LEN], digest[16];
   unsigned int i;
 
   printf
@@ -656,7 +735,7 @@ static void MDTimeTrial ()
 
   /* Initialize block */
   for (i = 0; i < TEST_BLOCK_LEN; i++)
-    block[i] = (char)(i & 0xff);
+    block[i] = (unsigned char)(i & 0xff);
 
   /* Start timer */
   time (&startTime);
@@ -704,12 +783,12 @@ static void MDTestSuite ()
 /* Digests a file and prints the result.
  */
 static void MDFile (filename)
-char *filename;
+unsigned char *filename;
 {
   FILE *file;
   MD_CTX context;
   int len;
-  char buffer[1024], digest[16];
+  unsigned char buffer[1024], digest[16];
 
   if ((file = fopen (filename, "rb")) == NULL)
     printf ("%s can't be opened\n", filename);
@@ -735,7 +814,7 @@ static void MDFilter ()
 {
   MD_CTX context;
   int len;
-  char buffer[16], digest[16];
+  unsigned char buffer[16], digest[16];
 
   MDInit (&context);
   while (len = fread (buffer, 1, 16, stdin))
@@ -749,13 +828,13 @@ static void MDFilter ()
 /* Prints a message digest in hexadecimal.
  */
 static void MDPrint (digest)
-char digest[16];
+unsigned char digest[16];
 
 {
   unsigned int i;
 
   for (i = 0; i < 16; i++)
-    printf ("%02x", digest[i]);
+    printf ("%02x", digest[i] & 0xFF);
 }
 
 static int
@@ -781,10 +860,10 @@ des_md4_verify (Shishi * handle, char *out, int *outlen)
       int i;
 
       for (i = 0; i < 16; i++)
-	printf ("%02X ", md[i]);
+	printf ("%02X ", md[i] & 0xFF);
       printf ("\n");
       for (i = 0; i < 16; i++)
-	printf ("%02X ", p[i]);
+	printf ("%02X ", p[i] & 0xFF);
       printf ("\n");
     }
 
@@ -1040,9 +1119,14 @@ des_md5_checksum (Shishi * handle,
 
 static int
 des_crc_encrypt (Shishi * handle,
-		 char *out,
-		 int *outlen,
-		 char *in, int inlen, char *key)
+	      int keyusage,
+	      int keytype,
+	      char *key,
+	      int keylen,
+	      char *in,
+	      int inlen,
+	      char *out,
+	      int *outlen)
 {
   char buffer[BUFSIZ];
   int buflen;
@@ -1059,25 +1143,33 @@ des_crc_encrypt (Shishi * handle,
 
 static int
 des_crc_decrypt (Shishi * handle,
-		 char *out,
-		 int *outlen,
-		 char *in, int inlen, char *key)
+	      int keyusage,
+	      int keytype,
+	      char *key,
+	      int keylen,
+	      char *in,
+	      int inlen,
+	      char *out,
+	      int *outlen)
 {
   int res;
 
+  printf("in %d\n", inlen);
   res = des_decrypt (handle, out, outlen, in, inlen, key);
   if (res != SHISHI_OK)
     {
       shishi_error_set (handle, "decrypt failed");
       return res;
     }
-  /*    memcpy(out, "\x84\x73\x36\x1a\xaa\x9f\x67\xee\x16\xa0\x52\xb2\x79\x81\xd3\x30\x81\xd0\xa0\x13\x30\x11\xa0\x03\x02\x01\x01\xa1\x0a\x04\x08\xe9\xb3\xc7\x7c\xcb\x01\x80\xf2\xa1\x1c\x30\x1a\x30\x18\xa0\x03\x02\x01\x00\xa1\x11\x18\x0f\x31\x39\x37\x30\x30\x31\x30\x31\x30\x30\x30\x30\x30\x30\x5a\xa2\x06\x02\x04\x8b\xc4\x64\x92\xa4\x07\x03\x05\x00\x50\x40\x00\x00\xa5\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x30\x33\x30\x32\x35\x31\x30\x30\x5a\xa7\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x30\x33\x31\x32\x35\x31\x30\x30\x5a\xa9\x0f\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xaa\x22\x30\x20\xa0\x03\x02\x01\x01\xa1\x19\x30\x17\x1b\x06\x6b\x72\x62\x74\x67\x74\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xab\x2f\x30\x2d\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x01\x01\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xd9\xd0\xae\xe8\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x02\x01\x00\x00\x00\x00\x00\x00", 232);
-   *outlen = 232;*/
+#if 0
+  memcpy(out, "\x56\xcc\xa9\xd6\x67\x0a\xca\x0e\xbc\x58\xdc\x9b\x79\x81\xd3\x30\x81\xd0\xa0\x13\x30\x11\xa0\x03\x02\x01\x01\xa1\x0a\x04\x08\x8f\x75\x58\x45\x9d\x31\x6b\x1f\xa1\x1c\x30\x1a\x30\x18\xa0\x03\x02\x01\x00\xa1\x11\x18\x0f\x31\x39\x37\x30\x30\x31\x30\x31\x30\x30\x30\x30\x30\x30\x5a\xa2\x06\x02\x04\x3d\xdd\x3a\x46\xa4\x07\x03\x05\x00\x50\x40\x00\x00\xa5\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x32\x31\x31\x39\x35\x35\x35\x30\x5a\xa7\x11\x18\x0f\x32\x30\x30\x32\x31\x31\x32\x32\x30\x35\x35\x35\x35\x30\x5a\xa9\x0f\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xaa\x22\x30\x20\xa0\x03\x02\x01\x00\xa1\x19\x30\x17\x1b\x06\x6b\x72\x62\x74\x67\x74\x1b\x0d\x4a\x4f\x53\x45\x46\x53\x53\x4f\x4e\x2e\x4f\x52\x47\xab\x2f\x30\x2d\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x01\x01\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xc0\xa8\x02\x01\x30\x0d\xa0\x03\x02\x01\x02\xa1\x06\x04\x04\xd9\xd0\xac\x49\x00\x00\x00\x00\x00\x00", 232);
+   *outlen = 232;
+#endif
     {
       int i;
       printf("decrypt %d\n", *outlen);
       for(i=0; i < *outlen; i++)
-	printf("%02x ", ((char*)out)[i]);
+	printf("%02x ", ((char*)out)[i] & 0xFF);
       printf("\n");
     }
   res = des_crc_verify (handle, out, outlen);
@@ -1092,9 +1184,14 @@ des_crc_decrypt (Shishi * handle,
 
 static int
 des_md4_encrypt (Shishi * handle,
-		 char *out,
-		 int *outlen,
-		 char *in, int inlen, char *key)
+	      int keyusage,
+	      int keytype,
+	      char *key,
+	      int keylen,
+	      char *in,
+	      int inlen,
+	      char *out,
+	      int *outlen)
 {
   char buffer[BUFSIZ];
   int buflen;
@@ -1111,9 +1208,14 @@ des_md4_encrypt (Shishi * handle,
 
 static int
 des_md4_decrypt (Shishi * handle,
-		 char *out,
-		 int *outlen,
-		 char *in, int inlen, char *key)
+	      int keyusage,
+	      int keytype,
+	      char *key,
+	      int keylen,
+	      char *in,
+	      int inlen,
+	      char *out,
+	      int *outlen)
 {
   int res;
 
@@ -1135,9 +1237,14 @@ des_md4_decrypt (Shishi * handle,
 
 static int
 des_md5_encrypt (Shishi * handle,
-		 char *out,
-		 int *outlen,
-		 char *in, int inlen, char *key)
+	      int keyusage,
+	      int keytype,
+	      char *key,
+	      int keylen,
+	      char *in,
+	      int inlen,
+	      char *out,
+	      int *outlen)
 {
   char buffer[BUFSIZ];
   int buflen;
@@ -1154,9 +1261,14 @@ des_md5_encrypt (Shishi * handle,
 
 static int
 des_md5_decrypt (Shishi * handle,
-		 char *out,
-		 int *outlen,
-		 char *in, int inlen, char *key)
+	      int keyusage,
+	      int keytype,
+	      char *key,
+	      int keylen,
+	      char *in,
+	      int inlen,
+	      char *out,
+	      int *outlen)
 {
   int res;
 
@@ -1265,13 +1377,32 @@ des_cbc_check (char key[8], char *data, int n_data)
   return SHISHI_OK;
 }
 
+static int
+des_random_to_key (Shishi * handle,
+		   int keytype,
+		   char *random,
+		   int randomlen,
+		   char *outkey)
+{
+  int keylen = shishi_cipher_keylen (keytype);
+
+  if (randomlen < keylen)
+    return !SHISHI_OK;
+
+  memcpy(outkey, random, keylen);
+
+  return SHISHI_OK;
+}
 
 static int
 des_string_to_key (Shishi * handle,
+		   int keytype,
 		   char *string,
 		   int stringlen,
-		   char *salt, int saltlen, 
-		   char *parameter, char outkey[8])
+		   char *salt,
+		   int saltlen,
+		   char *parameter,
+		   char *outkey)
 {
   char *s;
   int n_s;

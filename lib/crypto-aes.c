@@ -24,6 +24,66 @@
 #include "pkcs5.h"
 
 static int
+simplified_lowlevel_cipher (Shishi * handle,
+			    int etype,
+			    char *out,
+			    int *outlen,
+			    char *in,
+			    int inlen,
+			    char *key,
+			    int keylen)
+{
+  int res;
+  GCRY_MD_HD hd;
+  int i;
+  char *p;
+  GCRY_CIPHER_HD ch;
+  int j;
+  char *tmp;
+
+  ch = gcry_cipher_open (GCRY_CIPHER_AES,
+			 GCRY_CIPHER_MODE_CBC,
+			 GCRY_CIPHER_CBC_CTS);
+  if (ch == NULL)
+    {
+      puts ("open fail");
+      return !SHISHI_OK;
+    }
+
+  res = gcry_cipher_setkey (ch, key, keylen);
+  if (res != GCRYERR_SUCCESS)
+    {
+      if (res == GCRYERR_WEAK_KEY)
+	{
+	  printf ("weak key\n");
+	}
+      else
+	{
+	  puts ("setkey fail");
+	}
+      return !SHISHI_OK;
+    }
+
+  res = gcry_cipher_setiv (ch, NULL, 0);
+  if (res != 0)
+    {
+      printf ("iv res %d err %s\n", res, gcry_strerror (res));
+    }
+
+  res = gcry_cipher_encrypt (ch, out, *outlen, in, inlen);
+  if (res != 0)
+    {
+      printf ("crypt res %d err %s\n", res, gcry_strerror (res));
+    }
+
+  gcry_cipher_close (ch);
+
+  *outlen = inlen;
+
+  return SHISHI_OK;
+}
+
+static int
 simplified_cipher (Shishi * handle,
 		   int etype,
 		   char *out,
@@ -130,35 +190,8 @@ simplified_cipher (Shishi * handle,
 }
 
 static int
-aes128_encrypt (Shishi * handle,
-		char *out,
-		int *outlen,
-		char *in,
-		int inlen, 
-		char *key)
-{
-  return simplified_cipher (handle, SHISHI_AES128_CTS_HMAC_SHA1_96, 
-			    out, outlen, 
-			    in, inlen, 
-			    key, 128/8);
-}
-
-static int
-aes256_encrypt (Shishi * handle,
-		char *out,
-		int *outlen,
-		char *in,
-		int inlen, 
-		char *key)
-{
-  return simplified_cipher (handle, SHISHI_AES256_CTS_HMAC_SHA1_96, 
-			    out, outlen, 
-			    in, inlen, 
-			    key, 256/8);
-}
-
-static int
 aes_string_to_key (Shishi * handle,
+		   int keytype,
 		   char *password,
 		   int passwordlen,
 		   char *salt,
@@ -200,10 +233,8 @@ aes_string_to_key (Shishi * handle,
   if (res != PKCS5_OK)
   return res;
 
-  res = shishi_dk (handle, SHISHI_AES128_CTS_HMAC_SHA1_96,
-		   key, keylen, "kerberoskerberos", 
-		   strlen ("kerberoskerberos"), 
-		   outkey, keylen);
+  res = shishi_dk (handle, keytype, key, keylen, 
+		   "kerberos", strlen ("kerberos"), outkey, keylen);
   if (res != SHISHI_OK)
     return res;
 
@@ -221,6 +252,7 @@ aes_string_to_key (Shishi * handle,
 
 static int
 aes128_string_to_key (Shishi * handle,
+		      int keytype,
 		      char *password,
 		      int passwordlen,
 		      char *salt,
@@ -228,12 +260,15 @@ aes128_string_to_key (Shishi * handle,
 		      char *parameter,
 		      char *outkey)
 {
-  return aes_string_to_key (handle, password, passwordlen, salt, saltlen, 
-			    parameter, outkey, 128/8);
+  int keylen = shishi_cipher_keylen (keytype);
+
+  return aes_string_to_key (handle, keytype, password, passwordlen, 
+			    salt, saltlen, parameter, outkey, keylen);
 }
 
 static int
 aes256_string_to_key (Shishi * handle,
+		      int keytype,
 		      char *password,
 		      int passwordlen,
 		      char *salt,
@@ -241,6 +276,42 @@ aes256_string_to_key (Shishi * handle,
 		      char *parameter,
 		      char *outkey)
 {
-  return aes_string_to_key (handle, password, passwordlen, salt, saltlen, 
-			    parameter, outkey, 256/8);
+  int keylen = shishi_cipher_keylen (keytype);
+
+  return aes_string_to_key (handle, keytype, password, passwordlen, 
+			    salt, saltlen, parameter, outkey, keylen);
+}
+
+static int
+aes128_random_to_key (Shishi * handle,
+		      int keytype,
+		      char *random,
+		      int randomlen,
+		      char *outkey)
+{
+  int keylen = shishi_cipher_keylen (keytype);
+
+  if (randomlen < keylen)
+    return !SHISHI_OK;
+
+  memcpy(outkey, random, keylen);
+
+  return SHISHI_OK;
+}
+
+static int
+aes256_random_to_key (Shishi * handle,
+		      int keytype,
+		      char *random,
+		      int randomlen,
+		      char *outkey)
+{
+  int keylen = shishi_cipher_keylen (keytype);
+
+  if (randomlen < keylen)
+    return !SHISHI_OK;
+
+  memcpy(outkey, random, keylen);
+
+  return SHISHI_OK;
 }
