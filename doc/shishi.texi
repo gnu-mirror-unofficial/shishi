@@ -4276,6 +4276,12 @@ Shishi correctly in your organization.
 * Host to realm mapping relies on insecure DNS or static configuration files.
 
 * Informational model and user database administration.
+
+* Non-formal specification.  Unclear on the etype to use for session
+keys (etype in request or database?).  Unclear on how to populate some
+``evident'' fields (e.g., cname in tickets for AS-REQ).  Unclear error
+code semantics (e.g., logic for when to use S_PRINCIPAL_UNKNOWN
+absent).
 @end verbatim
 
 @node Protocol Extensions
