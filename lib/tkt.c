@@ -255,13 +255,23 @@ shishi_tkt_encticketpart_set (Shishi_tkt * tkt, Shishi_asn1 encticketpart)
 Shishi_key *
 shishi_tkt_key (Shishi_tkt * tkt)
 {
-  if (!tkt->key)
+  if (!tkt->key && tkt->enckdcreppart)
     {
       int res;
 
       res = shishi_enckdcreppart_get_key (tkt->handle,
-					  shishi_tkt_enckdcreppart
-					  (tkt), &tkt->key);
+					  tkt->enckdcreppart,
+					  &tkt->key);
+      if (res != SHISHI_OK)
+	return NULL;
+    }
+  else if (!tkt->key && tkt->encticketpart)
+    {
+      int res;
+
+      res = shishi_encticketpart_get_key (tkt->handle,
+					  tkt->encticketpart,
+					  &tkt->key);
       if (res != SHISHI_OK)
 	return NULL;
     }
