@@ -385,13 +385,13 @@ test (Shishi * handle)
 
   err = shishi_aes_cts (handle, 0, "keykeykeykeykeyk", 16,
 			"iviviviviviviviv", &ivout,
-			"abcdefghijklmnopqrstuvx", 25, &out);
+			"abcdefghijklmnopqrstuvxyz", 25, &out);
   if (err)
     fail ("shishi_aes_cts(25) failed: %d\n", err);
   else
     {
-      if (memcmp (out, "\x4f\x76\x9d\xb0\x8c\x81\xbc\x1a"
-		  "\xe9\x80\x45\x85\xde\x30\x00\xf8"
+      if (memcmp (out, "\xa9\x50\xdd\xcb\xa8\x5b\x5c\xb6"
+		  "\x84\x7d\x38\x65\x4a\xc1\x63\xd7"
 		  "\x89\xee\x53\x33\x54\xa8\xb0\xb7\xb6", 25) == 0)
 	success ("shishi_aes_cts(25) OK\n");
       else
@@ -400,8 +400,8 @@ test (Shishi * handle)
 	  fail ("shishi_aes_cts(25) failure\n");
 	}
 
-      if (memcmp (ivout, "\x4f\x76\x9d\xb0\x8c\x81\xbc\x1a"
-		  "\xe9\x80\x45\x85\xde\x30\x00\xf8", 16) == 0)
+      if (memcmp (ivout, "\xa9\x50\xdd\xcb\xa8\x5b\x5c\xb6"
+		  "\x84\x7d\x38\x65\x4a\xc1\x63\xd7", 16) == 0)
 	success ("shishi_aes_cts(25) OK IV\n");
       else
 	{
