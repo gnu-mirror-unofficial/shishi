@@ -3250,29 +3250,42 @@ too.
 
 @example
 Usage: shishid [OPTIONS]...
-
-  -h, --help                                  Print help and exit
-  -V, --version                               Print version and exit
-  -c, --configuration-file=FILE               Use specified configuration
-                                                file.
-  -l, --listen=[FAMILY:]ADDRESS:SERVICE/TYPE  Sockets to listen for queries
-                                                on.  Family is `IPv4' or
-                                                `IPv6', if absent the family
-                                                is decided by
-                                                gethostbyname(ADDRESS). An
-                                                address of `*' indicates all
-                                                addresses on the local host.
-                                                The default is
-                                                `IPv4:*:kerberos/udp,
-                                                IPv4:*:kerberos/tcp,
-                                                IPv6:*:kerberos/udp,
-                                                IPv6:*:kerberos/tcp'.
-  -u, --setuid=NAME                           After binding socket, set user
-                                                identity.
-  -v, --verbose                               Produce verbose output.
-                                                  (default=off)
-  -q, --quiet                                 Don't produce any diagnostic output.
-                                                  (default=off)
+ 
+  -h, --help                            Print help and exit
+  -V, --version                         Print version and exit
+ 
+Commands:
+  -l, --listen=[FAMILY:]ADDR:PORT/TYPE  Sockets to listen for queries on.
+                                          Family is `IPv4' or `IPv6', if
+                                          absent the family is decided by
+                                          gethostbyname(ADDR). An address of
+                                          `*' indicates all addresses on the
+                                          local host. The default is
+                                          `IPv4:*:kerberos/udp,
+                                          IPv4:*:kerberos/tcp,
+                                          IPv6:*:kerberos/udp,
+                                          IPv6:*:kerberos/tcp'.
+  -u, --setuid=NAME                     After binding socket, set user
+                                          identity.
+ 
+TLS settings:
+      --x509cafile=FILE                 X.509 certificate authorities used to
+                                          verify client certificates, in PEM
+                                          format.
+      --x509certfile=FILE               X.509 server certificate, in PEM
+                                          format.
+      --x509crlfile=FILE                X.509 certificate revocation list to
+                                          check for revoked client
+                                          certificates, in PEM format.
+      --x509keyfile=FILE                X.509 server certificate key, in PEM
+                                          format.
+ 
+Other options:
+  -c, --configuration-file=FILE         Use specified configuration file.
+  -v, --verbose                         Produce verbose output.
+                                            (default=off)
+  -q, --quiet                           Don't produce any diagnostic output.
+                                            (default=off)
 @end example
 
 @node Parameters for shisa
