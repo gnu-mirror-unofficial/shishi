@@ -267,7 +267,7 @@ simplified_hmac_verify (Shishi * handle,
   if (memcmp (hash, hmac, hmaclen) != 0)
     {
       if (VERBOSE (handle))
-	printf ("verify fail\n");
+	printf ("simplified hmac verify fail\n");
       return SHISHI_CRYPTO_ERROR;
     }
 
@@ -311,11 +311,11 @@ simplified_derivekey (Shishi * handle,
       uint32_t tmp = htonl (keyusage);
       memcpy (constant, &tmp, 4);
       if (derivekeymode == SHISHI_DERIVEKEYMODE_CHECKSUM)
-	constant[4] = '\0x99';
+	constant[4] = '\x99';
       else if (derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY)
-	constant[4] = '\0x55';
+	constant[4] = '\x55';
       else /* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
-	constant[4] = '\0xAA';
+	constant[4] = '\xAA';
 
       res = shishi_dk (handle, key, constant, 5, derivedkey);
     }
@@ -508,6 +508,7 @@ simplified_decrypt (Shishi * handle,
 	return res;
 
       len = *outlen;
+      *outlen = 0;
       res = simplified_dencrypt (handle, derivedkey, in, inlen - hlen,
 				 out, &len, 1);
       if (res != SHISHI_OK)

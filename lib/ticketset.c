@@ -638,10 +638,11 @@ shishi_ticketset_find_for_server_all (Shishi_ticketset * ticketset,
 }
 
 Shishi_ticket *
-shishi_ticketset_get_for_clientserveretype (Shishi_ticketset * ticketset,
-					    const char *client,
-					    const char *server,
-					    int etype)
+shishi_ticketset_get_for_clientserverpasswdetype (Shishi_ticketset * ticketset,
+						  const char *client,
+						  const char *server,
+						  const char *passwd,
+						  int etype)
 {
   Shishi_tgs *tgs;
   Shishi_ticket *tgt;
@@ -658,8 +659,7 @@ shishi_ticketset_get_for_clientserveretype (Shishi_ticketset * ticketset,
   shishi_asprintf(&tgtname, "krbtgt/%s",
 		  shishi_realm_default (ticketset->handle));
 
-  tgt = shishi_ticketset_find_for_clientserver (ticketset,
-						       client, tgtname);
+  tgt = shishi_ticketset_find_for_clientserver (ticketset, client, tgtname);
   if (tgt == NULL)
     {
       Shishi_as *as;
@@ -668,7 +668,7 @@ shishi_ticketset_get_for_clientserveretype (Shishi_ticketset * ticketset,
       if (rc == SHISHI_OK)
 	rc = shishi_as_sendrecv (as);
       if (rc == SHISHI_OK)
-	rc = shishi_as_rep_process (as, NULL, NULL);
+	rc = shishi_as_rep_process (as, NULL, passwd);
       if (rc != SHISHI_OK)
 	{
 	  printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
@@ -738,6 +738,19 @@ shishi_ticketset_get_for_clientserveretype (Shishi_ticketset * ticketset,
 }
 
 Shishi_ticket *
+shishi_ticketset_get_for_clientserveretype (Shishi_ticketset * ticketset,
+					    const char *client,
+					    const char *server,
+					    int etype)
+{
+  return shishi_ticketset_get_for_clientserverpasswdetype (ticketset,
+							   client,
+							   server,
+							   NULL,
+							   etype);
+}
+
+Shishi_ticket *
 shishi_ticketset_get_for_clientserver (Shishi_ticketset * ticketset,
 				       const char *client,
 				       const char *server)
@@ -752,6 +765,28 @@ shishi_ticketset_get_for_server (Shishi_ticketset * ticketset,
 {
   return shishi_ticketset_get_for_clientserver
     (ticketset, shishi_principal_default (ticketset->handle), server);
+}
+
+Shishi_ticket *
+shishi_ticketset_get_for_localservicepasswd (Shishi_ticketset * ticketset,
+					     const char *service,
+					     const char *passwd)
+{
+  char buf[HOST_NAME_MAX];
+  int ret;
+
+  strcpy(buf, service);
+  strcat(buf, "/");
+
+  ret = gethostname (&buf[strlen(service) + 1],
+		     sizeof(buf) - strlen(service) - 1);
+  buf[sizeof(buf) - 1] = '\0';
+
+  if (ret != 0)
+    strcpy (&buf[strlen(service) + 1], "localhost");
+
+  return shishi_ticketset_get_for_clientserverpasswdetype
+    (ticketset, shishi_principal_default (ticketset->handle), buf, passwd, -1);
 }
 
 Shishi_ticket *

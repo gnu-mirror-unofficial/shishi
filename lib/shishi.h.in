@@ -1,4 +1,4 @@
-/* shishi.h	header file for shishi library -*- c -*-
+/* shishi.h	Header file for Shishi library.                       -*- c -*-
  * Copyright (C) 2002  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -360,7 +360,8 @@ extern int shishi_ticket_snamerealm_get (Shishi * handle,
 					 ASN1_TYPE ticket,
 					 char *serverrealm,
 					 int *serverrealmlen);
-extern int shishi_ticket_realm_get (Shishi_ticket * ticket,
+extern int shishi_ticket_realm_get (Shishi * handle,
+				    ASN1_TYPE ticket,
 				    char *realm, int *realmlen);
 extern int shishi_ticket_valid_at_time_p (Shishi_ticket * ticket, time_t now);
 extern int shishi_ticket_valid_now_p (Shishi_ticket * ticket);
@@ -452,6 +453,10 @@ extern Shishi_ticket *
 shishi_ticketset_get_for_serveretype (Shishi_ticketset * ticketset,
 				      const char *server,
 				      int etype);
+extern Shishi_ticket *
+shishi_ticketset_get_for_localservicepasswd (Shishi_ticketset * ticketset,
+					     const char *service,
+					     const char *passwd);
 
 /* diskio.c */
 extern int
