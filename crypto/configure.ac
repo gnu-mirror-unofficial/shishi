@@ -396,6 +396,8 @@ AC_DEFINE_UNQUOTED(NAME_OF_DEV_URANDOM, "$NAME_OF_DEV_URANDOM",
 AM_PATH_GPG_ERROR(0.1)
 AC_DEFINE(GPG_ERR_SOURCE_DEFAULT, GPG_ERR_SOURCE_GCRYPT,
           [The default error source for libgcrypt.])
+CFLAGS="$CFLAGS -I\$(top_srcdir)/../errcrypto/src"
+LDFLAGS="$LDFLAGS -L\$(top_srcdir)/../errcrypto/src"
 
 # Solaris needs -lsocket and -lnsl. Unisys system includes
 # gethostbyname in libsocket but needs libnsl for socket.
