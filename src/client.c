@@ -30,7 +30,7 @@
 const char *program_name = "client";
 
 int
-doit (Shishi * h, int verbose)
+doit (Shishi * handle, Shishi_ap *ap, int verbose)
 {
   char line[BUFSIZ];
 
@@ -83,7 +83,7 @@ doit (Shishi * h, int verbose)
   return 0;
 }
 
-int
+Shishi_ap *
 auth (Shishi * h, int verbose, const char *cname, const char *sname)
 {
   Shishi_ap *ap;
@@ -105,7 +105,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
   if (!tkt)
     {
       printf ("cannot find ticket for \"%s\"\n", sname);
-      return 1;
+      return NULL;
     }
 
   if (verbose)
@@ -117,7 +117,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
   if (rc != SHISHI_OK)
     {
       printf ("cannot create authentication context\n");
-      return 1;
+      return NULL;
     }
 
   /* Build Authentication request */
@@ -127,7 +127,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
     {
       printf ("cannot build authentication request: %s\n",
 	      shishi_strerror (rc));
-      return 1;
+      return NULL;
     }
 
   if (verbose)
@@ -158,7 +158,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
 	{
 	  printf ("Cannot parse AP-REP from server: %s\n",
 		  shishi_strerror (rc));
-	  return 1;
+	  return NULL;
 	}
 
       rc = shishi_ap_rep_verify_asn1 (ap, aprep);
@@ -170,7 +170,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
 	    printf ("AP-REP verification failed...\n");
 	  else
 	    printf ("AP-REP verification error: %s\n", shishi_strerror (rc));
-	  return 1;
+	  return NULL;
 	}
 
       /* The server is authenticated. */
@@ -180,13 +180,14 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
   /* We are now authenticated. */
   printf ("User authenticated.\n");
 
-  return doit (h, verbose);
+  return ap;
 }
 
 int
 main (int argc, char *argv[])
 {
   Shishi *h;
+  Shishi_ap *ap;
   char *sname;
   int rc;
 
@@ -211,9 +212,14 @@ main (int argc, char *argv[])
   else
     sname = shishi_server_for_local_service (h, SERVICE);
 
-  auth (h, 1, shishi_principal_default (h), sname);
+  ap = auth (h, 1, shishi_principal_default (h), sname);
+
+  if (ap)
+    rc = doit (h, ap, 1);
+  else
+    rc = 1;
 
   shishi_done (h);
 
-  return 0;
+  return rc;
 }
