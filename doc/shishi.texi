@@ -1261,10 +1261,380 @@ $
 @node Administration Manual
 @chapter Administration Manual
 
+Here you will learn how to set up, run and maintain the Shishi
+Kerberos server.  Kerberos is incompatible with the standard Unix
+@file{/etc/passwd} password database@footnote{And besides, Shishi is
+intended to work on non-Unix platforms as well.}, therefor the first
+step will be to create a Kerberos user database.  Shishi's user
+database system is called Shisa.  Once Shisa is configured, you can
+then start the server and begin issuing Kerberos tickets to your
+users.  The Shishi server is called @file{shishid}.  After getting the
+server up and running, we discuss how you can set up multiple Kerberos
+servers, to increase availability or offer load-balancing.  Finally,
+we include some information intended for developers, that will enable
+you to customize Shisa to use an external user database, such as a
+@acronym{LDAP} server or @acronym{SQL} database.
+
+@menu
+* Introduction to Shisa::       Explanation of the Shishi user database.
+* Configuring Shisa::           Define the user database in Shisa.
+* Using Shisa::                 How to add realms and principals to database.
+* Starting Shishid::            Issue Kerberos tickets to your users.
+* Multiple servers::            High availability and load-balancing.
+* Developer information::       Writing your own Shisa database backend.
+* Old Approach::                
+@end menu
+
+@node Introduction to Shisa
+@section Introduction to Shisa
+
+Shisa is the user database part of Shishi.  It is responsible for
+storing the name of your realms, the name of your principals (users),
+accounting information for the users (i.e., when each account start to
+be valid and when it expire), and the cryptographic keys each user
+have.  Some Kerberos internal data can also be stored, such as the key
+version number, the last dates for when various ticket requests were
+made, the cryptographic salt, string-to-key parameters and password
+for each user.  Not all information need to be stored.  For example,
+in some situations it is prudent to leave the password field empty, so
+that somebody who manage to steal the user database will only be able
+to compromise your system, and not other systems were your user may
+have re-used the same password.  On the other hand, you may already
+store the password in your customized database, in which case being
+able to change it via the Shisa interface can be useful.
+
+Shisa is a small (a few thousand lines of C code) standalone library.
+Shisa does not depend on the Shishi library.  Because a user database
+with passwords may be useful for other applications as well (e.g.,
+@acronym{GNU} @acronym{SASL}), it may be separated into its own
+project later on.  You should keep this in mind, so that you don't
+consider writing a Shisa backend for your own database a purely Shishi
+specific project.  You may, for example, chose to use the Shisa
+interface in your own applications to have a simple interface to your
+user database.  Your experience and feedback is appreciated if you
+chose to explore this.
+
+Note that the Shisa database does not expose everything you may want
+to know about a user, such as its full human name, telephone number or
+even the user's login account name or home directory.  It only store
+what is needed to authenticate a peer claiming to be an entity.  Thus
+it does not make sense to replace your current user database or
+@file{/etc/passwd} with data derived from the Shisa database.
+Instead, it is intended that you write a Shisa backend that export
+@i{some} of the information stored in your user database.  You may be
+able to replace some existing functionality, such as the password
+field in @file{/etc/passwd} with a Kerberos PAM module, but there is
+no requirement for doing so.
+
+@node Configuring Shisa
+@section Configuring Shisa
+
+The configuration file for Shisa is typically stored in
+@file{/usr/local/etc/shishi/shisa.conf}.  You do not have to configure
+this file, the defaults should be acceptable to first-time users.  The
+file is used to define where you user database reside, and some
+options such as making the database read-only or whether errors
+detected when accessing the database should be ignored.  (The latter
+may be useful if the server is a remote @acronym{LDAP} server that may
+be unavailable, and you want to fail over to a local copy of the
+database.)
+
+The default will store the user database using directories and files,
+rooted by default in @file{/usr/local/var/shishi}.  You may use
+standard file permission settings to control access to the directory
+hierarchy.  It is strongly recommended to restrict access to the
+directory.  Storing the directory on local storage (i.e., hard disk or
+removal media) is recommended.  We discourage placing the database on
+a network file system, but realize it can be useful in some situations
+(@pxref{Multiple servers}).
+
+See the reference manual (@pxref{Shisa Configuration}) for the details
+of the configuration file.  Again, you are not expected to need to
+modify anything unless you are an experienced Shishi administrator.
+
+@node Using Shisa
+@section Using Shisa
+
+There is a command line interface to the Shisa library, aptly named
+@file{shisa}.  You will use this tool to add, remove and change
+information stored in the database about realms, principals and keys.
+The tool can also be used to ``dump'' all information in the database,
+for backup or debugging purposes.  (Currently the output format cannot
+be read by any tool, but functionality to do this will be added in the
+future, possibly as a read-only file-based Shisa database backend.)
+
+The reference manual (@pxref{Parameters for shisa}) explains all
+parameters, but here we will give you a walk-through of the typical
+uses of the tool.
+
+Installing Shishi usually create a realm with two principals; one
+ticket granting ticket, and one administrator principal with a random
+password.  This is what you typically need to get started, but it
+doesn't serve our purposes.  So we start by removing the principals
+and the realm.  To do that, we need to figure out the name of the
+realm.  The @samp{--list} or @samp{--dump} parameters can be used for
+this.  (Most ``long'' parameters, like @samp{--dump}, have shorter
+names as well, in this case @samp{-d}, @ref{Parameters for shisa}).
+
+@example
+jas@@latte:~/src/shishi$ shisa -d
+latte
+        krbtgt
+                Account is enabled.
+                Current key version 0 (0x0).
+        admin
+                Account is enabled.
+                Current key version 0 (0x0).
+jas@@latte:~/src/shishi$
+@end example
+
+The realm names are printed at column 0, the principal names are
+indented with one @samp{TAB} character (aka @samp{\t} or ASCII 0x09
+Horizontal Tabulation), and the information about each principal are
+indented with two @samp{TAB} characters.  The above output means that
+there is one realm @samp{latte} with two principals; @samp{krbtgt} and
+@samp{admin}.
+
+If the installation did not create a default database for you, you
+might get an error similar to the following.
+
+@example
+jas@@latte:~/src/shishi$ shisa -l
+shisa: Cannot initialize `file' database backend.
+Location `/usr/local/var/shishi' and options `N/A'.
+shisa: Initialization failed:
+Shisa database could not be opened.
+jas@@latte:~/src/shishi$
+@end example
+
+This indicate the database do not exist.  For a file database, you can
+create it by simply creating the directory.  Note the access
+permission change.  Typically the @samp{root} user would own the
+files, but as these examples demonstrate, setting up a Kerberos server
+does require root access.  It may be useful to run all Shishi
+applications as a special non-@samp{root} user, so that any security
+vulnerabilities does not leading to a system compromise.  (However, if
+the user database is lost, system compromises of other systems may be
+possible if you use, e.g., Kerberos Telnet.)
+
+@example
+jas@@latte:~/src/shishi$ rmdir /usr/local/var/shishi
+jas@@latte:~/src/shishi$ mkdir /usr/local/var/shishi
+jas@@latte:~/src/shishi$ chmod 0700 /usr/local/var/shishi
+jas@@latte:~/src/shishi$ ls -la /usr/local/var/shishi
+total 8
+drwx------    2 jas      jas          4096 Dec  9 08:57 .
+drwxr-xr-x    5 jas      jas          4096 Dec  9 08:57 ..
+jas@@latte:~/src/shishi$
+@end example
+
+Back to the first example, where you have a realm @samp{latte} with
+some principals.  We want to remove the realm to demonstrate how you
+create a realm from scratch.  The @samp{--remove} parameter is used
+for this purpose, as follows.
+
+@example
+jas@@latte:~/src/shishi$ shisa -r latte admin
+Removing principal `admin@@latte'...
+Removing principal `admin@@latte'...done
+jas@@latte:~/src/shishi$ shisa -r latte krbtgt
+Removing principal `krbtgt@@latte'...
+Removing principal `krbtgt@@latte'...done
+jas@@latte:~/src/shishi$ shisa -r latte
+Removing realm `latte'...
+Removing realm `latte'...done
+jas@@latte:~/src/shishi$
+@end example
+
+You may be asking yourself ``What if the realm has many more
+principals?''.  If you fear manual labor (or a small @samp{sed}
+script, recall the format of @samp{--list}?), don't worry, there is a
+@samp{--force} (short form @samp{-f}) flag.  Here is a faster way to
+do the above:
+
+@example
+jas@@latte:~/src/shishi$ shisa -r latte -f
+Removing principal `krbtgt@@latte'...
+Removing principal `krbtgt@@latte'...done
+Removing principal `admin@@latte'...
+Removing principal `admin@@latte'...done
+Removing realm `latte'...
+Removing realm `latte'...done
+jas@@latte:~/src/shishi$
+@end example
+
+TBW
+
+@node Starting Shishid
+@section Starting Shishid
+
+TBW
+
+@node Multiple servers
+@section Multiple servers
+@cindex remote databases
+@cindex LDAP
+@cindex SQL
+
+@cindex NFS
+@cindex IPSEC
+@cindex rsync
+Setting up multiple servers is as easy as replicating the user
+database.  Since the default @samp{file} user database is stored in
+the normal file system, you can use any common tools to replicate a
+file system.  Network file system like @acronym{NFS} (properly secured
+by, e.g., a point-to-point symmetrically encrypted @acronym{IPSEC}
+connection) and file synchronizing tools like @samp{rsync} are typical
+choices.
+
+@cindex master server
+@cindex secondary server
+The secondary server should be configured just like the master server.
+If you use the @samp{file} database over @acronym{NFS} you do not have
+to make any modifications.  If you use, e.g., a cron job to
+@samp{rsync} the directory every hour or so, you may want to add a
+@samp{--read-only} flag to the Shisa @samp{db} definition
+(@pxref{Shisa Configuration}).  That way, nobody will be lured into
+creating or changing information in the database on the secondary
+server, which only would be overwritten during the next
+synchronization.
+
+@example
+db --read-only file /usr/local/var/backup-shishi
+@end example
+
+@cindex concurrent writers
+The @samp{file} database is designed so it doesn't require file
+locking in the file system, which may be unreliable in some network
+file systems or implementations.  It is also designed so that multiple
+concurrent readers and writers may access the database without causing
+corruption.
+
+@strong{Warning:} The last paragraph is currently not completely
+accurate.  There may be race conditions with concurrent writers.  None
+should cause infinite loops or data loss.  However, unexpected results
+might occur if two writers try to update information about a principal
+simultaneous.
+
+If you use a remote @acronym{LDAP} server or @acronym{SQL} database to
+store the user database, and access it via a Shisa backend, you have
+make sure your Shisa backend handle concurrent writers properly.  If
+you use a modern @acronym{SQL} database, this probably is not a
+concern.  If it is a problem, you may be able to work around it by
+implementing some kind of synchronization or semaphore mechanism.  If
+all else sounds too complicated, you can set up the secondary servers
+as @samp{--read-only} servers, although you will lose some
+functionality (like changing passwords via the secondary server, or
+updating timestamps when the last ticket request occurred).
+
+One function that is of particular use for users with remote databases
+(be it @acronym{LDAP} or @acronym{SQL}) is the ``database override''
+feature.  Using this you can have the security critical principals
+(such as the ticket granting ticket) stored on local file system
+storage, but use the remote database for user principals.  Of course,
+you must keep the local file system storage synchronized between all
+servers, as before.  Here is an example configuration.
+
+@example
+db --read-only file /var/local/master
+db ldap kdc.example.org ca=/etc/shisa/kdc-ca.pem
+@end example
+
+This instruct the Shisa library to access the two databases
+sequentially, for each query using the first database that know about
+the requested principal.  If you put the @samp{krbtgt/REALM} principal
+in the local @samp{file} database, this will override the
+@acronym{LDAP} interface.  Naturally, you can have as many @samp{db}
+definition lines as you wish.
+
+@cindex High Availability
+Users with remote databases can also investigate a so called @i{High
+Availability} mode.  This is useful if you wish to have your Kerberos
+servers be able to continue to operate even when the remote database
+is offline.  This is achieved via the @samp{--ignore-errors} flag in
+the database definition.  Here is a sample configuration.
+
+@example
+db --ignore-errors ldap kdc.example.org ca=/etc/shisa/kdc-ca.pem
+db --read-only file /var/cache/ldap-copy
+@end example
+
+This instruct the Shisa library to try the @acronym{LDAP} backend
+first, but if it fails, instead of returning an error, continue to try
+the operation on a read only local @samp{file} based database.  Of
+course, write requests will still fail, but it may be better than
+halting the server completely.  To make this work, you first need to
+set up a cron job on a, say, hourly basis, to make a copy of the
+remote database and store it in the local file database.  That way,
+when the remote server goes away, fairly current information will
+still be available locally.
+
+@cindex fail over
+If you also wish to experiment with read-write fail over, here is an
+idea for the configuration.
+
+@example
+db --ignore-errors ldap kdc.example.org ca=/etc/shisa/kdc-ca.pem
+db --ignore-errors --read-only file /var/cache/ldap-copy
+db file /var/cache/local-updates
+@end example
+
+This is similar to the previous, but it will ignore errors reading and
+writing from the first two databases, ultimately causing write
+attempts to end up in the final @samp{file} based database.  Of
+course, you would need to create tools to feed back any local updates
+made while the remote server was down.  It may also be necessary to
+create a special backend for this purpose, which can auto create
+principals that are used.
+
+We finish with an example that demonstrate all the ideas presented.
+
+@example
+db --read-only file /var/local/master
+db --ignore-errors ldap kdc.example.org ca=/etc/shisa/kdc-ca.pem
+db --ignore-errors --read-only file /var/cache/ldap-copy
+db file /var/cache/local-updates
+@end example
+
+@node Developer information
+@section Developer information
+
+Adding a new backend is straight forward.  You need to implement the
+backend API function set, add the list of API functions to
+@file{db/db.c} and possibly also add any library dependencies to the
+Makefile.
+
+The simplest way to write a new backend is to start from the existing
+@samp{file} based database, in @file{db/file.c}, and modify the entry
+points as needed.
+
+Note that the current backend API will likely change several times
+before it is frozen.  We may describe it in detail here when it has
+matured.
+
+There should be no need to modify anything else in the Shisa library,
+and certainly not in the Shishi library or the @file{shishid} server.
+
+Of course, we would appreciate if you would send us your new backend
+if you believe it is generally useful (@pxref{Bug Reports}).
+
+@node Old Approach
+@section Old Approach
+
+@strong{Warning!}  This document the earlier user database system.  It
+is no longer used and this section will be removed eventually.
+
 This section describe how you get the KDC server up and running to
 answer queries from clients.
 
-First you must create a user database.  Currently this is rather
+First you must create a user database.  The user database part of
+Shishi is called Shisa.  The Shisa library is independent of the core
+Shishi library, and may be separated into a standalone project once it
+mature.  The Shisa library's sole purpose is to provide a simple API
+for Shishi applications to retrieve 
+
+
+Currently this is rather
 simplistic, and the database only contains cryptographic keys.  Use
 the @samp{shishi --string-to-key} command to generate keys, and store
 them in the @file{shishid.keys} file.  The file path is
@@ -1368,22 +1738,30 @@ This chapter describes in high detail all parameters, configuration
 file verbs, etc.
 
 @menu
-* Configuration file::          Meaning of tokens used in configuration file.
+* Shishi Configuration::        Explains the Core Shishi configuration file.
+* Shisa Configuration::         Explains the Shisa database definition file.
 * Parameters for shishi::       Command line parameters for 'shishi'.
 * Parameters for shishid::      Command line parameters for 'shishid'.
+* Parameters for shisa::        Command line parameters for 'shisa'.
 @end menu
 
-@node Configuration file
-@section Configuration file
+@node Shishi Configuration
+@section Shishi Configuration
+@cindex configuration file
 
 The valid configuration file tokens are described here.  The user
 configuration file is typically located in
 @file{~/.shishi/shishi.conf} (compare @samp{shishi
---configuration-file}) and the system configuration is typicall
-located in @file{/usr/local/etc/shishi.conf}.  All tokens are valid in
-both files, and have the same meaning.  However, as the system file is
+--configuration-file}) and the system configuration is typically
+located in @file{/usr/local/etc/shishi/shishi.conf} (compare
+@samp{shishi --system-configuration-file}).  If the first non white
+space character of a line is a '#', the line is ignored.  Empty lines
+are also ignored.
+
+All tokens are valid in both the system and the user configuration
+files, and have the same meaning.  However, as the system file is
 supposed to apply to all users on a system, it would not make sense to
-use some tokens in both files.  For example, the
+use some tokens in that file.  For example, the
 @samp{default-principal} is rarely useful in a system configuration
 file.
 
@@ -1543,6 +1921,85 @@ E.g.,
 renew-life=sunday
 @end example
 
+@node Shisa Configuration
+@section Shisa Configuration
+@cindex database definition
+@cindex specifying user database
+@cindex user database definition
+
+The configuration file for Shisa is typically stored in
+@file{/usr/local/etc/shishi/shisa.conf}.  If the first non white space
+character of a line is a '#', the line is ignored.  Empty lines are
+also ignored.
+
+@subsection @samp{db}
+
+Currently the only configuration options available is the @code{db}
+token that define the databases to use.  The syntax is:
+
+@example
+db [OPTIONS] <TYPE> [LOCATION] [PARAMETERS ...]
+@end example
+
+Specify the data sources for Kerberos 5 data.  Multiple entries,
+even of the same data source type, are allowed.  The data sources
+are accessed in the same sequence as they are defined here.  If an
+entry is found in one data source, it will be used for the
+operations, without searching the remaining data sources.  Valid
+OPTIONS include:
+
+@example
+--read-only       No data is written to this data source.
+--ignore-errors   Ignore failures in this backend.
+@end example
+
+The default (when the configuration file is empty) uses one "file"
+data source (see below), but for a larger installation you may want to
+combine several data sources.  Here is an example.
+
+@example
+db --read-only file /var/local/master
+db --ignore-errors ldap kdc.example.org ca=/etc/shisa/kdc-ca.pem
+db --read-only file /var/cache/ldap-copy
+@end example
+
+This demonstrate how you can store critical principals on local disk
+(the first entry, /var/local/master) that will always be found without
+looking in the LDAP directory.  The critical principals could be,
+e.g., krbtgt/EXAMPLE.ORG.  The second entry denote a LDAP server that
+could hold user principals.  As you can see, Shisa will not let the
+caller know about errors with the LDAP source (they will be logged,
+however).  Instead, if for instance the LDAP server has crashed, Shisa
+would continue and read from the /var/cache/ldap-copy file source.
+That file source may have been set up to contain a copy of the data in
+the LDAP server, perhaps made on an hourly basis, so that your server
+will be able to serve recent data even in case of a crash.  Any
+updates or passwords change requests will however not be possible
+while the LDAP server is inaccessible, to reduce the problem of
+synchronizing data back into the LDAP server once it is online again.
+
+Currently only the "file" data source is supported, and denote a
+data source that use the standard file system for storage.
+
+Valid syntaxes for the "file" database:
+
+@example
+db file PATH
+@end example
+
+Examples:
+
+@example
+db file /var/shishi
+db file /usr/share/shishi read-only
+@end example
+
+If no @samp{db} tokens are present, the default will be:
+
+@example
+db file /usr/local/var/shishi
+@end example
+
 @node Parameters for shishi
 @section Parameters for shishi
 
@@ -1678,6 +2135,67 @@ for any corresponding short options.
   -?, --help                 Give this help list
       --usage                Give a short usage message
   -V, --version              Print program version
+@end example
+
+@node Parameters for shisa
+@section Parameters for shisa
+
+The purpose of @samp{shisa} is to manipulate information stored in the
+Kerberos 5 database used by Shishi.
+
+Mandatory or optional arguments to long options are also mandatory or
+optional for any corresponding short options.
+
+@example
+Usage: shisa [OPTIONS]... [REALM [PRINCIPAL]]...
+
+  -h, --help                         Print help and exit
+  -V, --version                      Print version and exit
+
+Operations:
+  -a, --add                          Add realm or principal to database.
+  -d, --dump                         Dump entries in database.
+  -l, --list                         List entries in database.
+  -m, --modify                       Modify principal entry in database.
+  -r, --remove                       Remove realm or principal from database.
+
+Parameters:
+  -f, --force                        Allow removal of non-empty realms.
+                                         (default=off)
+      --enabled                      Only dump or list enabled principals.
+                                         (default=off)
+      --disabled                     Only dump or list disabled principals.
+                                         (default=off)
+      --keys                         Dump or list keys as well.
+                                         (default=off)
+
+Values (for --add and --modify):
+  -E, --encryption-type=STRING       Override default key encryption type.  
+                                       Valid values include 'aes128', 
+                                       'aes256', 'aes' (same as 'aes256'), 
+                                       '3des', 'des-md5', 'des-md4', 
+                                       'des-crc', 'des' (same as 'des-md5'), 
+                                       and 'arcfour'.
+      --random                       Use a random key.  (default)
+      --password[=STRING]            Derive key from this password.
+      --salt=STRING                  Use specified salt for deriving key.  
+                                       Defaults to concatenation of realm and 
+                                       (unwrapped) principal name.
+      --string-to-key-parameter=HEX  Encryption algorithm specific parameter 
+                                       for password derivation.  Currently 
+                                       only the AES algorithm can utilize 
+                                       this, where it is interpreted as the 
+                                       iteration count of the PKCS#5 PBKDF2 
+                                       key deriver.
+
+Other options:
+  -c, --configuration-file=FILE      Use specified configuration file.
+  -o, --library-options=STRING       Parse string as configuration file 
+                                       statement.
+  -v, --verbose                      Produce verbose output.
+                                         (default=off)
+  -q, --quiet                        Don't produce any diagnostic output.
+                                         (default=off)
 @end example
 
 @c **********************************************************
