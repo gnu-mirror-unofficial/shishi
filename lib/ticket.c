@@ -698,7 +698,7 @@ shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
 					      ticket->ticket, &keytype);
   if (res != SHISHI_OK)
     return res;
-  printf (_("Server:\t%s using key %s (%d)\n"), buf,
+  printf (_("Server:\t\t%s using key %s (%d)\n"), buf,
 	  shishi_cipher_name (keytype), keytype);
 
   res = shishi_ticket_keytype (ticket, &keytype);
