@@ -61,6 +61,11 @@ shishi_as (Shishi * handle, Shishi_as ** as)
       return SHISHI_ASN1_ERROR;
     }
 
+  /* XXX there are reasons for having padata in AS-REQ */
+  res = shishi_kdcreq_clear_padata (las->handle, las->asreq);
+  if (res != SHISHI_OK)
+    return res;
+
   las->asrep = shishi_asrep (handle);
   if (las->asrep == NULL)
     {
@@ -208,7 +213,7 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, char *password)
     shishi_kdcrep_print (as->handle, stdout, as->asrep);
 
   userlen = sizeof (user);
-  res = shishi_kdcreq_cnamerealm_get (as->handle, as->asreq, user, &userlen);
+  res = shishi_asreq_cnamerealm_get (as->handle, as->asreq, user, &userlen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (as->handle, "Could not extract cname and "
@@ -405,6 +410,28 @@ ASN1_TYPE
 shishi_as_krberror (Shishi_as * as)
 {
   return as->krberror;
+}
+
+/**
+ * shishi_as_krberror_der:
+ * @as: structure that holds information about AS exchange
+ * @out: output array with der encoding of KRB-ERROR.
+ * @outlen: length of output array with der encoding of KRB-ERROR.
+ *
+ * DER encode KRB-ERROR.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_as_krberror_der (Shishi_as * as, char *out, int *outlen)
+{
+  int rc;
+
+  rc = shishi_a2d (as->handle, as->krberror, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
 }
 
 /**
