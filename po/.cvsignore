@@ -6,6 +6,10 @@ Makevars.template
 POTFILES
 Rules-quot
 boldquot.sed
+en@boldquot.insert-header
+en@boldquot.po
+en@quot.insert-header
+en@quot.po
 en@boldquot.header
 en@quot.header
 insert-header.sin
