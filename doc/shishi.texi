@@ -4393,7 +4393,12 @@ keys (etype in request or database?).  Unclear on how to populate some
 code semantics (e.g., logic for when to use S_PRINCIPAL_UNKNOWN
 absent).
 
-RFC 1510/1510bis incompatibilities.  NULL enctype removed.
+RFC 1510/1510bis incompatibilities.  NULL enctype removed.  KRB_SAFE
+text (3.4.1) now says the checksum is generated using the session or
+sub-session key, which contradicts itself (3.2.6) and 1510 which both
+allow the application to define the key.  Verification of KRB_SAFE now
+require the key to be compatible with the (sub-)session key, in 1510
+the only requirement was that it was collision proof.
 
 @node Protocol Extensions
 @appendix Protocol Extensions
