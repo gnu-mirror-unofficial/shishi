@@ -116,8 +116,9 @@ kdc_unlisten (void)
   for (ls = listenspec; ls; ls = ls->next)
     {
       if (!ls->listening)
-	error (0, 0, "Unclosed outstanding connection to %s on socket %d?!",
-	       ls->str, ls->sockfd);
+	syslog (LOG_NOTICE,
+		"Closing outstanding connection to %s on socket %d",
+		ls->str, ls->sockfd);
 
       if (ls->sockfd)
 	{
@@ -125,8 +126,8 @@ kdc_unlisten (void)
 	    printf ("Closing %s...\n", ls->str);
 	  rc = close (ls->sockfd);
 	  if (rc != 0)
-	    error (0, errno, "Could not close %s on socket %d",
-		   ls->str, ls->sockfd);
+	    syslog (LOG_ERR, "Could not close %s on socket %d: %s (%d)",
+		    ls->str, ls->sockfd, strerror (errno), errno);
 	}
 
       if (ls->str)
@@ -321,8 +322,6 @@ doit (void)
   kdc_setuid ();
 
   kdc_loop ();
-
-  closelog ();
 
   kdc_unlisten ();
 
