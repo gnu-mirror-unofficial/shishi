@@ -24,10 +24,10 @@
 
 static int
 md4_checksum (Shishi * handle,
-		  Shishi_key * key,
-		  int keyusage,
-		  int cksumtype,
-		  char *in, size_t inlen, char **out, size_t * outlen)
+	      Shishi_key * key,
+	      int keyusage,
+	      int cksumtype,
+	      const char *in, size_t inlen, char **out, size_t * outlen)
 {
 #ifdef USE_GCRYPT
   char *hash;
@@ -39,7 +39,7 @@ md4_checksum (Shishi * handle,
 
   gcry_md_write (hd, in, inlen);
   hash = gcry_md_read (hd, GCRY_MD_MD4);
-    if (hash == NULL)
+  if (hash == NULL)
     {
       shishi_error_printf (handle, "Libgcrypt failed to compute hash");
       return SHISHI_CRYPTO_INTERNAL_ERROR;
@@ -66,10 +66,10 @@ md4_checksum (Shishi * handle,
 
 static int
 md5_checksum (Shishi * handle,
-		  Shishi_key * key,
-		  int keyusage,
-		  int cksumtype,
-		  char *in, size_t inlen, char **out, size_t * outlen)
+	      Shishi_key * key,
+	      int keyusage,
+	      int cksumtype,
+	      const char *in, size_t inlen, char **out, size_t * outlen)
 {
 #ifdef USE_GCRYPT
   char *hash;
@@ -81,7 +81,7 @@ md5_checksum (Shishi * handle,
 
   gcry_md_write (hd, in, inlen);
   hash = gcry_md_read (hd, GCRY_MD_MD5);
-    if (hash == NULL)
+  if (hash == NULL)
     {
       shishi_error_printf (handle, "Libgcrypt failed to compute hash");
       return SHISHI_CRYPTO_INTERNAL_ERROR;
@@ -105,4 +105,3 @@ md5_checksum (Shishi * handle,
 #endif
   return SHISHI_OK;
 }
-

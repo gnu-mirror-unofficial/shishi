@@ -781,7 +781,8 @@ des_checksum (Shishi * handle,
 	      Shishi_key * key,
 	      int keyusage,
 	      int cksumtype,
-	      char *in, size_t inlen, char **out, size_t * outlen, int algo)
+	      const char *in, size_t inlen,
+	      char **out, size_t * outlen, int algo)
 {
   char cksum[8 + MAX_HASH_LEN];
   size_t cksumlen;
@@ -821,7 +822,7 @@ des_md4_checksum (Shishi * handle,
 		  Shishi_key * key,
 		  int keyusage,
 		  int cksumtype,
-		  char *in, size_t inlen, char **out, size_t * outlen)
+		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return des_checksum (handle, key, keyusage, cksumtype,
 		       in, inlen, out, outlen, SHISHI_DES_CBC_MD4);
@@ -832,7 +833,7 @@ des_md5_checksum (Shishi * handle,
 		  Shishi_key * key,
 		  int keyusage,
 		  int cksumtype,
-		  char *in, size_t inlen, char **out, size_t * outlen)
+		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return des_checksum (handle, key, keyusage, cksumtype,
 		       in, inlen, out, outlen, SHISHI_DES_CBC_MD5);
@@ -843,7 +844,7 @@ gss_des_checksum (Shishi * handle,
 		  Shishi_key * key,
 		  int keyusage,
 		  int cksumtype,
-		  char *in, size_t inlen, char **out, size_t * outlen)
+		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
 #ifdef USE_GCRYPT
   char *keyp;

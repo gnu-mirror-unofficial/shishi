@@ -28,8 +28,7 @@ rc4_hmac_encrypt (Shishi * handle,
 		  const char *iv,
 		  size_t ivlen,
 		  char **ivout, size_t * ivoutlen,
-		  const char *in, size_t inlen,
-		  char **out, size_t * outlen)
+		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
 #if 0
   char L40[14] = "fortybits";
@@ -43,7 +42,7 @@ rc4_hmac_encrypt (Shishi * handle,
 
   if (shishi_key_type (key) == SHISHI_RC4_HMAC_EXP)
     {
-      memcpy(L40 + 10, T, 4);
+      memcpy (L40 + 10, T, 4);
       HMAC (K, L40, 10 + 4, K1);
     }
   else
@@ -51,7 +50,8 @@ rc4_hmac_encrypt (Shishi * handle,
       HMAC (K, &T, 4, K1);
     }
   memcpy (K2, K1, 16);
-  if (export) memset (K1+7, 0xAB, 9);
+  if (export)
+    memset (K1 + 7, 0xAB, 9);
 
   nonce (edata.Confounder, 8);
   memcpy (edata.Data, data);
@@ -73,33 +73,32 @@ rc4_hmac_decrypt (Shishi * handle,
 		  const char *iv,
 		  size_t ivlen,
 		  char **ivout, size_t * ivoutlen,
-		  const char *in, size_t inlen,
-		  char **out, size_t * outlen)
+		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return SHISHI_OK;
 }
 
 static int
 rc4_hmac_exp_encrypt (Shishi * handle,
-		  Shishi_key * key,
-		  int keyusage,
-		  const char *iv,
-		  size_t ivlen,
-		  char **ivout, size_t * ivoutlen,
-		  const char *in, size_t inlen,
-		  char **out, size_t * outlen)
+		      Shishi_key * key,
+		      int keyusage,
+		      const char *iv,
+		      size_t ivlen,
+		      char **ivout, size_t * ivoutlen,
+		      const char *in, size_t inlen,
+		      char **out, size_t * outlen)
 {
 }
 
 static int
 rc4_hmac_exp_decrypt (Shishi * handle,
-		  Shishi_key * key,
-		  int keyusage,
-		  const char *iv,
-		  size_t ivlen,
-		  char **ivout, size_t * ivoutlen,
-		  const char *in, size_t inlen,
-		  char **out, size_t * outlen)
+		      Shishi_key * key,
+		      int keyusage,
+		      const char *iv,
+		      size_t ivlen,
+		      char **ivout, size_t * ivoutlen,
+		      const char *in, size_t inlen,
+		      char **out, size_t * outlen)
 {
 }
 
@@ -110,7 +109,7 @@ rc4_hmac_md5_checksum (Shishi * handle,
 		       Shishi_key * key,
 		       int keyusage,
 		       int cksumtype,
-		       char *in, size_t inlen,
+		       const char *in, size_t inlen,
 		       char **out, size_t * outlen)
 {
 
@@ -189,7 +188,7 @@ rc4_hmac_md5_checksum (Shishi * handle,
   T[3] = (keyusage >> 24) & 0xFF;
 
   hmac_md5_set_key (&ctx, shishi_key_length (key), shishi_key_value (key));
-  hmac_md5_update (&ctx, strlen(RC4_HMAC_CKSUM_KEY_DERIVE_CONSTANT) + 1,
+  hmac_md5_update (&ctx, strlen (RC4_HMAC_CKSUM_KEY_DERIVE_CONSTANT) + 1,
 		   RC4_HMAC_CKSUM_KEY_DERIVE_CONSTANT);
   hmac_md5_digest (&ctx, MD5_DIGEST_SIZE, Ksign);
 
@@ -228,8 +227,7 @@ rc4_hmac_string_to_key (Shishi * handle,
 			size_t stringlen,
 			const char *salt,
 			size_t saltlen,
-			const char *parameter,
-			Shishi_key * outkey)
+			const char *parameter, Shishi_key * outkey)
 {
 #ifdef USE_GCRYPT
   char *hash;

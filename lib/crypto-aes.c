@@ -192,7 +192,7 @@ aes128_checksum (Shishi * handle,
 		 Shishi_key * key,
 		 int keyusage,
 		 int cksumtype,
-		 char *in, size_t inlen, char **out, size_t * outlen)
+		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_checksum (handle, key, keyusage, cksumtype,
 			      in, inlen, out, outlen);
@@ -203,7 +203,7 @@ aes256_checksum (Shishi * handle,
 		 Shishi_key * key,
 		 int keyusage,
 		 int cksumtype,
-		 char *in, size_t inlen, char **out, size_t * outlen)
+		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   return simplified_checksum (handle, key, keyusage, cksumtype,
 			      in, inlen, out, outlen);

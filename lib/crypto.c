@@ -1547,8 +1547,7 @@ shishi_checksum (Shishi * handle,
 		 Shishi_key * key,
 		 int keyusage,
 		 int cksumtype,
-		 const char *in, size_t inlen,
-		 char **out, size_t * outlen)
+		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
   Shishi_checksum_function checksum;
   int res;
@@ -1600,8 +1599,8 @@ shishi_checksum (Shishi * handle,
  * @cksumtype: the checksum algorithm to use.
  * @in: input array with data that was integrity protected.
  * @inlen: size of input array with data that was integrity protected.
- * @out: input array with alleged checksum of data.
- * @outlen: size of input array with alleged checksum of data.
+ * @cksum: input array with alleged checksum of data.
+ * @cksumlen: size of input array with alleged checksum of data.
  *
  * Verify checksum of data using key, possibly altered by supplied key
  * usage.  If key usage is 0, no key derivation is used.
@@ -1621,8 +1620,7 @@ shishi_verify (Shishi * handle,
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("verify (%s, %d, in, out)\n",
-	      shishi_key_name (key), cksumtype);
+      printf ("verify (%s, %d, in, out)\n", shishi_key_name (key), cksumtype);
       printf ("\t ;; key (%d):\n", shishi_key_length (key));
       hexprint (shishi_key_value (key), shishi_key_length (key));
       puts ("");
