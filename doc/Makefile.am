@@ -28,7 +28,7 @@ shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
 	shishi-api-error.texi shishi-api-error-labels.texi \
 	shishi-api-version.texi
 
-generated = shishi.txt shishi.html $(shishi_texi_auto_deps)
+generated = shishi.txt shishi.html shishi.ps shishi.pdf $(shishi_texi_auto_deps)
 
 man_MANS = shishi.1
 
