@@ -842,23 +842,23 @@ shishi_krberror_remove_cusec (Shishi * handle, Shishi_asn1 krberror)
  * shishi_krberror_stime:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: Krberror to set client name field in.
- * @stime: newly allocated zero-terminated output array with server time.
+ * @t: newly allocated zero-terminated output array with server time.
  *
  * Extract server time from KRB-ERROR.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_stime (Shishi * handle, Shishi_asn1 krberror, char **stime)
+shishi_krberror_stime (Shishi * handle, Shishi_asn1 krberror, char **t)
 {
-  return shishi_time (handle, krberror, "stime", stime);
+  return shishi_time (handle, krberror, "stime", t);
 }
 
 /**
  * shishi_krberror_stime_set:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: Krberror as allocated by shishi_krberror().
- * @stime: string with generalized time value to store in Krberror.
+ * @t: string with generalized time value to store in Krberror.
  *
  * Store server time in Krberror.
  *
@@ -866,12 +866,12 @@ shishi_krberror_stime (Shishi * handle, Shishi_asn1 krberror, char **stime)
  **/
 int
 shishi_krberror_stime_set (Shishi * handle,
-			   Shishi_asn1 krberror, const char *stime)
+			   Shishi_asn1 krberror, const char *t)
 {
   int res;
 
   res = shishi_asn1_write (handle, krberror, "stime",
-			   stime, GENERALIZEDTIME_TIME_LEN);
+			   t, GENERALIZEDTIME_TIME_LEN);
   if (res != SHISHI_OK)
     return res;
 
