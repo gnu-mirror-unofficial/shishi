@@ -174,20 +174,21 @@ else
 fi
 
 # Check for libtasn1
-AC_ARG_WITH(included-libtasn1,
-	AC_HELP_STRING([--with-included-libtasn1], [Use the included libtasn1]),
-	minitasn1_enabled=$withval,
-	minitasn1_enabled=no
+AC_ARG_WITH(system-asn1,
+	AC_HELP_STRING([--with-system-asn1], [Use the system's libtasn1]),
+	system_asn1=$withval, system_asn1=no)
+if test "$system_asn1" = "yes"; then
 	AC_CHECK_LIB(tasn1, asn1_read_tag, :,
-		minitasn1_enabled=yes
-		AC_MSG_WARN([Libtasn1 0.2.x not found. Using included one.])))
-AC_MSG_CHECKING([whether to use the included tasn1])
-AC_MSG_RESULT($minitasn1_enabled)
-if test x"$minitasn1_enabled" = xyes; then
+		system_asn1=no
+		AC_MSG_WARN([Libtasn1 0.2.x not found. Using included one.]))
+fi
+AC_MSG_CHECKING([whether to use the system's libtasn1])
+AC_MSG_RESULT($system_asn1)
+if test "$system_asn1" = "yes"; then
+ LIBTASN1_LIBS=-ltasn1
+else
  ASN1=asn1
  LIBTASN1_LIBS="-L../asn1 -lminitasn1"
-else
- LIBTASN1_LIBS=-ltasn1
 fi
 AC_SUBST(ASN1)
 AC_SUBST(LIBTASN1_LIBS)
