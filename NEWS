@@ -4,6 +4,11 @@ See the end for copying conditions.
 
 * Version 0.0.13 (unreleased)
 
+** Fixed salt calculation in shisa.
+The earlier salt computed was incorrect, so existing keys in your
+Shisa database, that were derived from passwords, are incorrect, and
+should be changed.
+
 ** Fix shishid crash on startup when sockets can't be opened.
 
 ** Various minor bugfixes.
