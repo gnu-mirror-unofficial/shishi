@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-08-31 14:31+0200\n"
+"POT-Creation-Date: 2003-09-06 18:46+0200\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -147,12 +147,12 @@ msgstr ""
 msgid "Reading EncAPRepPart from %s...done\n"
 msgstr ""
 
-#: lib/enckdcreppart.c:369 lib/ticket.c:151
+#: lib/enckdcreppart.c:366 lib/ticket.c:147
 #, c-format
 msgid "Could not set sname: %s\n"
 msgstr ""
 
-#: lib/error.c:118
+#: lib/error.c:109
 #, c-format
 msgid "Unknown shishi error: %d"
 msgstr ""
@@ -257,72 +257,72 @@ msgstr ""
 msgid "Could not set principal name: %s\n"
 msgstr ""
 
-#: lib/safe.c:263
+#: lib/safe.c:276
 #, c-format
 msgid "Writing SAFE to %s...\n"
 msgstr ""
 
-#: lib/safe.c:270
+#: lib/safe.c:283
 #, c-format
 msgid "Writing SAFE in %s format...\n"
 msgstr ""
 
-#: lib/safe.c:285
+#: lib/safe.c:298
 #, c-format
 msgid "Writing SAFE to %s...done\n"
 msgstr ""
 
-#: lib/safe.c:343
+#: lib/safe.c:356
 #, c-format
 msgid "Reading SAFE from %s...\n"
 msgstr ""
 
-#: lib/safe.c:350
+#: lib/safe.c:363
 #, c-format
 msgid "Reading SAFE in %s format...\n"
 msgstr ""
 
-#: lib/safe.c:365
+#: lib/safe.c:378
 #, c-format
 msgid "Reading SAFE from %s...done\n"
 msgstr ""
 
-#: lib/tkt.c:719
+#: lib/tkt.c:707
 #, c-format
 msgid "Time of last initial request for a TGT:\t%s"
 msgstr ""
 
-#: lib/tkt.c:889
+#: lib/tkt.c:877
 #, c-format
 msgid "Acquired:\t%s"
 msgstr ""
 
-#: lib/tkt.c:893
+#: lib/tkt.c:881
 #, c-format
 msgid "Valid from:\t%s"
 msgstr ""
 
-#: lib/tkt.c:898
+#: lib/tkt.c:886
 #, c-format
 msgid "Expires:\t%s"
 msgstr ""
 
-#: lib/tkt.c:905
+#: lib/tkt.c:893
 #, c-format
 msgid "Renewable till:\t%s"
 msgstr ""
 
-#: lib/tkt.c:916
+#: lib/tkt.c:904
 #, c-format
 msgid "Server:\t\t%s key %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:925
+#: lib/tkt.c:913
 #, c-format
 msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:935
+#: lib/tkt.c:923
 msgid "Ticket flags:\t"
 msgstr ""
 
