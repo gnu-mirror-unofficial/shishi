@@ -27,8 +27,12 @@ shishi_LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
 	../lib/libshishi.la
 
-shisa_SOURCES = shisa.c gettext.h
+BUILT_SOURCES = shisa_cmd.c shisa_cmd.h
+shisa_SOURCES = shisa.c gettext.h shisa.ggo $(BUILT_SOURCES)
 shisa_LDADD = ../db/libshisa.la
+
+$(BUILT_SOURCES): shisa.ggo
+	gengetopt --input $< --file-name shisa_cmd
 
 sbin_PROGRAMS = shishid
 shishid_SOURCES = shishid.c
