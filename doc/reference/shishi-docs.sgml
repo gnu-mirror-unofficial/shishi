@@ -39,6 +39,18 @@ and the rsa-md4-des, rsa-md5-des, hmac-sha1-des3-kd,
 hmac-sha1-96-aes128, hmac-sha1-96-aes256 checksum types are supported.
     </para>
 
+    <para>
+The internal source code layout of Shishi is illustrated in <xref
+linkend="components"/>.  It is primarily intended for Shishi
+developers, but may assist in getting a in-depth understanding of the
+API.
+    </para>
+
+    <figure id="components">
+      <title>Source code layout of Shishi</title>
+      <graphic fileref="components.png" format="PNG"></graphic>
+    </figure>
+
     <xi:include href="xml/shishi.xml"/>
   </chapter>
 </book>
