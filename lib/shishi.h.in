@@ -723,12 +723,12 @@ extern int shishi_tkt_cnamerealm (Shishi_tkt * tkt, char *cnamerealm,
 				  size_t * cnamerealmlen);
 extern int shishi_tkt_cnamerealm_p (Shishi_tkt * tkt, const char *client);
 extern int shishi_tkt_client (Shishi_tkt * tkt,
-			      char *client, size_t * clientlen);
+			      char **client, size_t * clientlen);
 extern int shishi_tkt_client_p (Shishi_tkt * tkt, const char *client);
 extern int shishi_tkt_clientrealm_set (Shishi_tkt * tkt,
-				       char *realm, char *client);
+				       const char *realm, const char *client);
 extern int shishi_tkt_serverrealm_set (Shishi_tkt * tkt,
-				       char *realm, char *server);
+				       const char *realm, const char *server);
 extern int shishi_tkt_build (Shishi_tkt * tkt, Shishi_key * key);
 extern int shishi_tkt_lastreq (Shishi_tkt * tkt,
 			       char **lrtime, size_t * lrtimelen,
@@ -1065,11 +1065,6 @@ extern int shishi_kdcreq_set_cname (Shishi * handle, Shishi_asn1 kdcreq,
 				    const char *principal);
 extern int shishi_kdcreq_server (Shishi * handle, Shishi_asn1 kdcreq,
 				 char **server, size_t * serverlen);
-extern int shishi_kdcreq_sname_get (Shishi * handle, Shishi_asn1 kdcreq,
-				    char *sname, size_t * snamelen);
-extern int shishi_kdcreq_snamerealm_get (Shishi * handle, Shishi_asn1 kdcreq,
-					 char *snamerealm,
-					 size_t * snamerealmlen);
 extern int shishi_kdcreq_set_sname (Shishi * handle, Shishi_asn1 kdcreq,
 				    Shishi_name_type name_type,
 				    const char *sname[]);
