@@ -339,7 +339,8 @@ shishi_apreq_set_authenticator (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write_integer (handle, apreq, "authenticator.etype", 0);
+  res = shishi_asn1_write_integer (handle, apreq, "authenticator.etype",
+				   etype);
   if (res != SHISHI_OK)
     return res;
 
@@ -538,9 +539,7 @@ shishi_apreq_options_set (Shishi * handle, Shishi_asn1 apreq, int options)
 {
   int res;
 
-  res = shishi_asn1_write (handle, apreq, "ap-options",
-			   (char *) &options,
-			   SHISHI_APREQ_DEFAULT_AP_OPTIONS_LEN);
+  res = shishi_asn1_write_bitstring (handle, apreq, "ap-options", options);
   if (res != SHISHI_OK)
     return res;
 
