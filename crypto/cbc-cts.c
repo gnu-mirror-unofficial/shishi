@@ -5,7 +5,7 @@
 
 /* nettle, low-level cryptographics library
  *
- * Copyright (C) 2003 Simon Josefsson
+ * Copyright (C) 2003, 2004 Simon Josefsson
  *
  * The nettle library is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -69,7 +69,7 @@ cbc_cts_encrypt (void *ctx,
       memset (dst + restbytes, 0, block_size - restbytes);
       memxor (iv, dst, block_size);
       f (ctx, block_size, dst, iv);
-      memcpy (iv, dst + restbytes, block_size);
+      memcpy (iv, dst, block_size);
     }
 }
 
@@ -112,9 +112,6 @@ cbc_cts_decrypt (void *ctx,
       memcpy (iv + restbytes, dst + restbytes, block_size - restbytes);
       f (ctx, block_size, dst, iv);
       memxor (dst, tmpiv, block_size);
-      if ((length % block_size) == 0)
-	memcpy (iv, src + block_size, block_size);
-      else
-	memcpy (iv, src + restbytes, block_size);
+      memcpy (iv, src, block_size);
     }
 }
