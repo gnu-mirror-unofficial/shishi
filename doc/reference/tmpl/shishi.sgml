@@ -9,12 +9,10 @@ RFC 1510(bis) network authentication system implementation.
 Header file for the Shishi library.
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
-
 
 <!-- ##### MACRO SHISHI_VERSION ##### -->
 <para>
