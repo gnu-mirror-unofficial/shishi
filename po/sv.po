@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-12-16 07:52+0100\n"
+"POT-Creation-Date: 2003-12-28 17:52+0100\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -17,92 +17,92 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/aprep.c:145
+#: lib/aprep.c:148
 #, c-format
 msgid "Writing AP-REP to %s...\n"
 msgstr ""
 
-#: lib/aprep.c:152
+#: lib/aprep.c:155
 #, c-format
 msgid "Writing AP-REP in %s format...\n"
 msgstr ""
 
-#: lib/aprep.c:167
+#: lib/aprep.c:170
 #, c-format
 msgid "Writing AP-REP to %s...done\n"
 msgstr ""
 
-#: lib/aprep.c:225
+#: lib/aprep.c:228
 #, c-format
 msgid "Reading AP-REP from %s...\n"
 msgstr ""
 
-#: lib/aprep.c:232
+#: lib/aprep.c:235
 #, c-format
 msgid "Reading AP-REP in %s format...\n"
 msgstr ""
 
-#: lib/aprep.c:247
+#: lib/aprep.c:250
 #, c-format
 msgid "Reading AP-REP from %s...done\n"
 msgstr ""
 
-#: lib/apreq.c:207
+#: lib/apreq.c:210
 #, c-format
 msgid "Writing AP-REQ to %s...\n"
 msgstr ""
 
-#: lib/apreq.c:214
+#: lib/apreq.c:217
 #, c-format
 msgid "Writing AP-REQ in %s format...\n"
 msgstr ""
 
-#: lib/apreq.c:229
+#: lib/apreq.c:232
 #, c-format
 msgid "Writing AP-REQ to %s...done\n"
 msgstr ""
 
-#: lib/apreq.c:287
+#: lib/apreq.c:290
 #, c-format
 msgid "Reading AP-REQ from %s...\n"
 msgstr ""
 
-#: lib/apreq.c:294
+#: lib/apreq.c:297
 #, c-format
 msgid "Reading AP-REQ in %s format...\n"
 msgstr ""
 
-#: lib/apreq.c:309
+#: lib/apreq.c:312
 #, c-format
 msgid "Reading AP-REQ from %s...done\n"
 msgstr ""
 
-#: lib/authenticator.c:166
+#: lib/authenticator.c:169
 #, c-format
 msgid "Writing Authenticator to %s...\n"
 msgstr ""
 
-#: lib/authenticator.c:173
+#: lib/authenticator.c:176
 #, c-format
 msgid "Writing Authenticator in %s format...\n"
 msgstr ""
 
-#: lib/authenticator.c:188
+#: lib/authenticator.c:191
 #, c-format
 msgid "Writing Authenticator to %s...done\n"
 msgstr ""
 
-#: lib/authenticator.c:249
+#: lib/authenticator.c:252
 #, c-format
 msgid "Reading Authenticator from %s...\n"
 msgstr ""
 
-#: lib/authenticator.c:256
+#: lib/authenticator.c:259
 #, c-format
 msgid "Reading Authenticator in %s format...\n"
 msgstr ""
 
-#: lib/authenticator.c:271
+#: lib/authenticator.c:274
 #, c-format
 msgid "Reading Authenticator from %s...done\n"
 msgstr ""
@@ -117,37 +117,37 @@ msgstr ""
 msgid "Writing KEY to %s...done\n"
 msgstr ""
 
-#: lib/encapreppart.c:128
+#: lib/encapreppart.c:131
 #, c-format
 msgid "Writing EncAPRepPart to %s...\n"
 msgstr ""
 
-#: lib/encapreppart.c:135
+#: lib/encapreppart.c:138
 #, c-format
 msgid "Writing EncAPRepPart in %s format...\n"
 msgstr ""
 
-#: lib/encapreppart.c:150
+#: lib/encapreppart.c:153
 #, c-format
 msgid "Writing EncAPRepPart to %s...done\n"
 msgstr ""
 
-#: lib/encapreppart.c:210
+#: lib/encapreppart.c:213
 #, c-format
 msgid "Reading EncAPRepPart from %s...\n"
 msgstr ""
 
-#: lib/encapreppart.c:217
+#: lib/encapreppart.c:220
 #, c-format
 msgid "Reading EncAPRepPart in %s format...\n"
 msgstr ""
 
-#: lib/encapreppart.c:232
+#: lib/encapreppart.c:235
 #, c-format
 msgid "Reading EncAPRepPart from %s...done\n"
 msgstr ""
 
-#: lib/enckdcreppart.c:366 lib/ticket.c:169
+#: lib/enckdcreppart.c:370 lib/ticket.c:204
 #, c-format
 msgid "Could not set sname: %s\n"
 msgstr ""
@@ -157,172 +157,172 @@ msgstr ""
 msgid "Unknown shishi error: %d"
 msgstr ""
 
-#: lib/kdcrep.c:152
+#: lib/kdcrep.c:155
 #, c-format
 msgid "Writing KDC-REP to %s...\n"
 msgstr ""
 
-#: lib/kdcrep.c:159
+#: lib/kdcrep.c:162
 #, c-format
 msgid "Writing KDC-REP in %s format...\n"
 msgstr ""
 
-#: lib/kdcrep.c:174
+#: lib/kdcrep.c:177
 #, c-format
 msgid "Writing KDC-REP to %s...done\n"
 msgstr ""
 
-#: lib/kdcrep.c:232
+#: lib/kdcrep.c:235
 #, c-format
 msgid "Reading KDC-REP from %s...\n"
 msgstr ""
 
-#: lib/kdcrep.c:239
+#: lib/kdcrep.c:242
 #, c-format
 msgid "Reading KDC-REP in %s format...\n"
 msgstr ""
 
-#: lib/kdcrep.c:254
+#: lib/kdcrep.c:257
 #, c-format
 msgid "Reading KDC-REP from %s...done\n"
 msgstr ""
 
-#: lib/kdcreq.c:223
+#: lib/kdcreq.c:226
 #, c-format
 msgid "Writing KDC-REQ to %s...\n"
 msgstr ""
 
-#: lib/kdcreq.c:230
+#: lib/kdcreq.c:233
 #, c-format
 msgid "Writing KDC-REQ in %s format...\n"
 msgstr ""
 
-#: lib/kdcreq.c:245
+#: lib/kdcreq.c:248
 #, c-format
 msgid "Writing KDC-REQ to %s...done\n"
 msgstr ""
 
-#: lib/kdcreq.c:303
+#: lib/kdcreq.c:306
 #, c-format
 msgid "Reading KDC-REQ from %s...\n"
 msgstr ""
 
-#: lib/kdcreq.c:310
+#: lib/kdcreq.c:313
 #, c-format
 msgid "Reading KDC-REQ in %s format...\n"
 msgstr ""
 
-#: lib/kdcreq.c:325
+#: lib/kdcreq.c:328
 #, c-format
 msgid "Reading KDC-REQ from %s...done\n"
 msgstr ""
 
-#: lib/krberror.c:132
+#: lib/krberror.c:138
 #, c-format
 msgid "Writing KRB-ERROR to %s...\n"
 msgstr ""
 
-#: lib/krberror.c:139
+#: lib/krberror.c:145
 #, c-format
 msgid "Writing KRB-ERROR in %s format...\n"
 msgstr ""
 
-#: lib/krberror.c:154
+#: lib/krberror.c:160
 #, c-format
 msgid "Writing KRB-ERROR to %s...done\n"
 msgstr ""
 
-#: lib/krberror.c:212
+#: lib/krberror.c:218
 #, c-format
 msgid "Reading KRB-ERROR from %s...\n"
 msgstr ""
 
-#: lib/krberror.c:219
+#: lib/krberror.c:225
 #, c-format
 msgid "Reading KRB-ERROR in %s format...\n"
 msgstr ""
 
-#: lib/krberror.c:234
+#: lib/krberror.c:240
 #, c-format
 msgid "Reading KRB-ERROR from %s...done\n"
 msgstr ""
 
-#: lib/krberror.c:1263
+#: lib/krberror.c:1269
 #, c-format
 msgid "Unknown KRB-ERROR error code %d."
 msgstr ""
 
-#: lib/principal.c:468
+#: lib/principal.c:467
 #, c-format
 msgid "Could not set principal name: %s\n"
 msgstr ""
 
-#: lib/safe.c:276
+#: lib/safe.c:279
 #, c-format
 msgid "Writing SAFE to %s...\n"
 msgstr ""
 
-#: lib/safe.c:283
+#: lib/safe.c:286
 #, c-format
 msgid "Writing SAFE in %s format...\n"
 msgstr ""
 
-#: lib/safe.c:298
+#: lib/safe.c:301
 #, c-format
 msgid "Writing SAFE to %s...done\n"
 msgstr ""
 
-#: lib/safe.c:356
+#: lib/safe.c:359
 #, c-format
 msgid "Reading SAFE from %s...\n"
 msgstr ""
 
-#: lib/safe.c:363
+#: lib/safe.c:366
 #, c-format
 msgid "Reading SAFE in %s format...\n"
 msgstr ""
 
-#: lib/safe.c:378
+#: lib/safe.c:381
 #, c-format
 msgid "Reading SAFE from %s...done\n"
 msgstr ""
 
-#: lib/tkt.c:1278
+#: lib/tkt.c:1324
 #, c-format
 msgid "Time of last initial request for a TGT:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1325
+#: lib/tkt.c:1372
 #, c-format
 msgid "Authtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1332
+#: lib/tkt.c:1379
 #, c-format
 msgid "Starttime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1343
+#: lib/tkt.c:1390
 #, c-format
 msgid "Endtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1351
+#: lib/tkt.c:1398
 #, c-format
 msgid "Renewable till:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1358
+#: lib/tkt.c:1402
 #, c-format
 msgid "Server:\t\t%s key %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1363
+#: lib/tkt.c:1407
 #, c-format
 msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1371
+#: lib/tkt.c:1415
 msgid "Ticket flags:\t"
 msgstr ""
 
