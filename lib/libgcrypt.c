@@ -42,7 +42,7 @@ _shishi_crypto_init (void)
   return SHISHI_OK;
 }
 
-/**
+/*
  * shishi_randomize:
  * @handle: shishi handle as allocated by shishi_init().
  * @data: output array to be filled with random data.
@@ -60,7 +60,7 @@ shishi_randomize (Shishi * handle, char *data, size_t datalen)
   return SHISHI_OK;
 }
 
-/**
+/*
  * shishi_md4:
  * @handle: shishi handle as allocated by shishi_init().
  * @in: input character array of data to hash.
@@ -104,7 +104,7 @@ shishi_md4 (Shishi * handle,
   return SHISHI_OK;
 }
 
-/**
+/*
  * shishi_md5:
  * @handle: shishi handle as allocated by shishi_init().
  * @in: input character array of data to hash.
@@ -148,7 +148,7 @@ shishi_md5 (Shishi * handle,
   return SHISHI_OK;
 }
 
-/**
+/*
  * shishi_hmac_sha1:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: input character array with key to use.
@@ -204,7 +204,7 @@ shishi_hmac_sha1 (Shishi * handle,
   return SHISHI_OK;
 }
 
-/**
+/*
  * shishi_des_cbc_mac:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: input character array with key to use.
@@ -340,7 +340,7 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int decryptp,
   return SHISHI_OK;
 }
 
-/**
+/*
  * shishi_des:
  * @handle: shishi handle as allocated by shishi_init().
  * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
@@ -367,7 +367,7 @@ shishi_des (Shishi * handle, int decryptp,
 			     decryptp, key, 8, iv, ivout, in, inlen, out);
 }
 
-/**
+/*
  * shishi_3des:
  * @handle: shishi handle as allocated by shishi_init().
  * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
@@ -394,7 +394,7 @@ shishi_3des (Shishi * handle, int decryptp,
 			     decryptp, key, 24, iv, ivout, in, inlen, out);
 }
 
-/**
+/*
  * shishi_aes_cts:
  * @handle: shishi handle as allocated by shishi_init().
  * @decryptp: 0 to indicate encryption, non-0 to indicate decryption.
