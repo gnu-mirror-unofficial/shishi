@@ -82,12 +82,53 @@ shishi_tkt_build (Shishi_tkt * tkt, Shishi_key * key)
 }
 
 /**
- * shishi_ticket_cnamerealm:
+ * shishi_tkt_cname:
  * @ticket: input variable with ticket info.
- * XXX
+ * @client: output buffer that holds client name of ticket.
+ * @clientlen: on input, maximum size of output buffer,
+ *             on output, actual size of output buffer.
  *
- * Return value: Returns client principal and realm of ticket.
+ * Return value: Returns client principal of ticket.
  **/
+int
+shishi_tkt_client (Shishi_tkt * tkt, char *client, int *clientlen)
+{
+  return shishi_principal_name_get (tkt->handle, tkt->kdcrep,
+				    "KDC-REP.cname",
+				    client, clientlen);
+}
+
+int
+shishi_tkt_client_p (Shishi_tkt * tkt, const char *client)
+{
+  char *buf;
+  int buflen;
+  int res;
+
+  buflen = strlen (client) + 1;
+  buf = malloc (buflen);
+  if (buf == NULL)
+    return 0;
+
+  res = shishi_tkt_client (tkt, buf, &buflen);
+  if (res != SHISHI_OK)
+    {
+      free (buf);
+      return 0;
+    }
+  buf[buflen] = '\0';
+
+  if (strcmp (client, buf) != 0)
+    {
+      free (buf);
+      return 0;
+    }
+
+  free (buf);
+
+  return 1;
+}
+
 int
 shishi_tkt_cnamerealm (Shishi_tkt * tkt, char *cnamerealm, int *cnamerealmlen)
 {
@@ -269,7 +310,8 @@ shishi_tkt_key_set (Shishi_tkt * tkt, Shishi_key * key)
  **/
 Shishi_tkt *
 shishi_tkt2 (Shishi * handle,
-	     Shishi_asn1 ticket, Shishi_asn1 enckdcreppart, Shishi_asn1 kdcrep)
+	     Shishi_asn1 ticket, Shishi_asn1 enckdcreppart,
+	     Shishi_asn1 kdcrep)
 {
   Shishi_tkt *tkt;
 
