@@ -26,7 +26,7 @@
 #include <gcrypt.h>
 
 int
-shishi_crypto_init (void)
+_shishi_crypto_init (void)
 {
   if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
     {
@@ -95,7 +95,7 @@ shishi_md4 (Shishi * handle,
 }
 
 int
-shishi_md4 (Shishi * handle,
+shishi_md5 (Shishi * handle,
 	    const char *in, size_t inlen,
 	    char **out, size_t *outlen)
 {
