@@ -24,11 +24,11 @@ purpose "Manipulate information stored in the Kerberos 5 database
 used by Shishi."
 
 section "Operations"
-option "add" a "Add specified PRINCIPAL in REALM to database." no
-option "dump" d "Dump information from database." no
+option "add" a "Add realm or principal to database." no
+option "dump" d "Dump entries in database." no
 option "list" l "List entries in database." no
-option "modify" m "Modify entry for specified PRINCIPAL in REALM in database." no
-option "remove" r "Remove specified PRINCIPAL in REALM from database." no
+option "modify" m "Modify principal entry in database." no
+option "remove" r "Remove realm or principal from database." no
 
 section "Parameters"
 option "force" f "Allow removal of non-empty realms.\n" flag off
@@ -36,9 +36,11 @@ option "enabled" - "Only dump or list enabled principals.\n" flag off
 option "disabled" - "Only dump or list disabled principals.\n" flag off
 
 section "Values (for --add and --modify)"
-option "encryption-type" E "Specify the encryption type of key.  Valid values include 'aes' and '3des'." string no
+option "encryption-type" E "Override default key encryption type.  Valid values include 'aes128', 'aes256', 'aes' (same as 'aes256'), '3des', 'des-md5', 'des-md4', 'des-crc', 'des' (same as 'des-md5'), and 'arcfour'." string no
+option "random" - "Use a random key.  (default)" no
 option "password" - "Derive key from this password." string no
-option "random" - "Use a random key." no
+option "salt" - "Use specified salt for deriving key.  Defaults to concatenation of realm and (unwrapped) principal name." string no
+option "string-to-key-parameter" - "Encryption algorithm specific parameter for password derivation.  Currently only the AES algorithm can utilize this, where it is interpreted as the iteration count of the PKCS#5 PBKDF2 key deriver." string no
 
 section "Other options"
 option "configuration-file" c "Use specified configuration file." string typestr="FILE" no
