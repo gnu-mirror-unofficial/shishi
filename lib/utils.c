@@ -142,6 +142,8 @@ shishi_get_date (const char *p, const time_t *now)
 
   if (now)
     nowspec.tv_sec = *now;
+  else
+    nowspec.tv_sec = time (NULL);
 
   if (!get_date (&thenspec, p, &nowspec))
     {
