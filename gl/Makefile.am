@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in.
 
+SUBDIRS = m4
+
 AUTOMAKE_OPTIONS = 1.5 gnits no-dependencies
 
 noinst_LIBRARIES = libfoo.a
