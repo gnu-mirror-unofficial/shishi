@@ -775,7 +775,7 @@ extern int shishi_tkt_transited_policy_checked_p (Shishi_tkt * tkt);
 extern int shishi_tkt_ok_as_delegate_p (Shishi_tkt * tkt);
 
 /* tkts.c */
-extern char *shishi_tkts_default_file_guess (void);
+extern char *shishi_tkts_default_file_guess (Shishi * handle);
 extern const char *shishi_tkts_default_file (Shishi * handle);
 extern void shishi_tkts_default_file_set (Shishi * handle,
 					  const char *tktsfile);
