@@ -85,7 +85,7 @@ main (int argc, char *argv[])
   Shishi *handle;
   Shishi_tkts *tktset;
   Shishi_tkt *t1, *t2, *t3;
-  ASN1_TYPE n1, n2, n3;
+  Shishi_asn1 n1, n2, n3;
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
   char *p, *q;
@@ -214,23 +214,23 @@ main (int argc, char *argv[])
   n = shishi_from_base64 (buffer, tkt1ticketb64);
   if (n == -1)
     die ("shishi_from_base64() failed\n");
-  n1 = shishi_d2a_ticket (handle, buffer, n);
-  if (n1 == ASN1_TYPE_EMPTY)
-    die ("shishi_d2a_ticket() failed\n");
+  n1 = shishi_der2asn1_ticket (handle, buffer, n);
+  if (!n1)
+    die ("shishi_der2asn1_ticket() failed\n");
 
   n = shishi_from_base64 (buffer, tkt1enckdcreppartb64);
   if (n == -1)
     die ("shishi_from_base64() failed\n");
-  n2 = shishi_d2a_encasreppart (handle, buffer, n);
-  if (n2 == ASN1_TYPE_EMPTY)
-    die ("shishi_d2a_encasreppart() failed\n");
+  n2 = shishi_der2asn1_encasreppart (handle, buffer, n);
+  if (!n2)
+    die ("shishi_der2asn1_encasreppart() failed\n");
 
   n = shishi_from_base64 (buffer, tkt1kdcrepb64);
   if (n == -1)
     die ("shishi_from_base64() failed\n");
-  n3 = shishi_d2a_asrep (handle, buffer, n);
-  if (n3 == ASN1_TYPE_EMPTY)
-    die ("shishi_d2a_asrep() failed\n");
+  n3 = shishi_der2asn1_asrep (handle, buffer, n);
+  if (!n3)
+    die ("shishi_der2asn1_asrep() failed\n");
 
   /* shishi_tkts_new() */
   res = shishi_tkts_new (tktset, n1, n2, n3);
@@ -303,23 +303,23 @@ main (int argc, char *argv[])
   n = shishi_from_base64 (buffer, tkt2ticketb64);
   if (n == -1)
     die ("shishi_from_base64() failed\n");
-  n1 = shishi_d2a_ticket (handle, buffer, n);
-  if (n1 == ASN1_TYPE_EMPTY)
-    die ("shishi_d2a_ticket() failed\n");
+  n1 = shishi_der2asn1_ticket (handle, buffer, n);
+  if (!n1)
+    die ("shishi_der2asn1_ticket() failed\n");
 
   n = shishi_from_base64 (buffer, tkt2enckdcreppartb64);
   if (n == -1)
     die ("shishi_from_base64() failed\n");
-  n2 = shishi_d2a_enctgsreppart (handle, buffer, n);
-  if (n2 == ASN1_TYPE_EMPTY)
-    die ("shishi_d2a_enctgsreppart() failed\n");
+  n2 = shishi_der2asn1_enctgsreppart (handle, buffer, n);
+  if (!n2)
+    die ("shishi_der2asn1_enctgsreppart() failed\n");
 
   n = shishi_from_base64 (buffer, tkt2kdcrepb64);
   if (n == -1)
     die ("shishi_from_base64() failed\n");
-  n3 = shishi_d2a_tgsrep (handle, buffer, n);
-  if (n3 == ASN1_TYPE_EMPTY)
-    die ("shishi_d2a_kdcrep() failed\n");
+  n3 = shishi_der2asn1_tgsrep (handle, buffer, n);
+  if (!n3)
+    die ("shishi_der2asn1_kdcrep() failed\n");
 
   /* shishi_tkts_new() */
   res = shishi_tkts_new (tktset, n1, n2, n3);

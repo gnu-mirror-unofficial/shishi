@@ -222,7 +222,7 @@ krb5shishi_send (Authenticator *ap)
 
       apreq_len = sizeof(apreq);
       rc = shishi_ap_req_der (auth_handle, apreq, &apreq_len);
-      if (rc != ASN1_SUCCESS)
+      if (rc != SHISHI_OK)
 	{
 	  DEBUG(("telnet: Kerberos V5: could not DER encode (%s)\r\n",
 		 shishi_strerror (rc)));
@@ -410,7 +410,7 @@ krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
 
   if (shishi_apreq_mutual_required_p (shishi_handle, shishi_ap_req(ap)))
     {
-      ASN1_TYPE aprep;
+      Shishi_asn1 aprep;
       char der[BUFSIZ];
       int derlen = BUFSIZ;;
 

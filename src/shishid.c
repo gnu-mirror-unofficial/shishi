@@ -106,6 +106,10 @@ extern int h_errno;
 #include <netinet/in6.h>
 #endif
 
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
+
 #ifdef HAVE_SYSLOG_H
 #include <syslog.h>
 #endif
@@ -463,9 +467,9 @@ asreq1 (Shishi * handle, Shishi_as * as)
 }
 
 void
-asreq (Shishi * handle, ASN1_TYPE kdcreq, char **out, int *outlen)
+asreq (Shishi * handle, Shishi_asn1 kdcreq, char **out, int *outlen)
 {
-  Shishi *as;
+  Shishi_as *as;
   int rc;
   ssize_t n;
   int pos;
@@ -500,7 +504,7 @@ asreq (Shishi * handle, ASN1_TYPE kdcreq, char **out, int *outlen)
       syslog(LOG_NOTICE, "Could not answer request: %s: %s\n",
 	     shishi_strerror(rc),
 	     shishi_krberror_message (handle, shishi_as_krberror(as)));
-      rc = shishi_as_krberror_der (as, out, outlen);
+      rc = shishi_as_krberror_der (as, *out, outlen);
     }
   else
     rc = shishi_as_rep_der (as, *out, outlen);
@@ -522,19 +526,19 @@ process (Shishi * handle,
 	 char *in, int inlen,
 	 char **out, int *outlen)
 {
-  ASN1_TYPE kdcreq;
+  Shishi_asn1 kdcreq;
 
   fprintf (stderr, "Processing %d bytes...\n", inlen);
 
-  kdcreq = shishi_d2a_asreq (handle, in, inlen);
-  if (kdcreq != ASN1_TYPE_EMPTY)
+  kdcreq = shishi_der2asn1_asreq (handle, in, inlen);
+  if (!kdcreq)
     {
       asreq(handle, kdcreq, out, outlen);
       return;
     }
 
-  kdcreq = shishi_d2a_tgsreq (handle, in, inlen);
-  if (kdcreq != ASN1_TYPE_EMPTY)
+  kdcreq = shishi_der2asn1_tgsreq (handle, in, inlen);
+  if (!kdcreq)
     {
       fprintf(stderr, "tgs-req...\n");
     }
