@@ -124,38 +124,34 @@
 enum
 {
   COMMAND_AP = 1,
-  COMMAND_AS,
-  COMMAND_CLIENT,
   COMMAND_CRYPTO,
-  COMMAND_KDC,
+  COMMAND_GET,
   COMMAND_LIST,
-  COMMAND_DESTROY,
-  COMMAND_SERVER,
-  COMMAND_TGS
+  COMMAND_DESTROY
 };
 
 /* Long parameters only */
 enum
 {
-  OPTION_KDC_REQUEST = 300,
-  OPTION_KDC_SENDRECV,
-  OPTION_KDC_RESPONSE,
-  OPTION_KDC_WRITE_AP_REQUEST_FILE,
-  OPTION_KDC_WRITE_AUTHENTICATOR_FILE,
-  OPTION_KDC_WRITE_REQUEST_FILE,
-  OPTION_KDC_WRITE_RESPONSE_FILE,
-  OPTION_KDC_READ_REQUEST_FILE,
-  OPTION_KDC_READ_RESPONSE_FILE,
-  OPTION_KDC_SERVER,
-  OPTION_KDC_CLIENT,
-  OPTION_KDC_PASSWORD,
-  OPTION_KDC_CLIENT_NAME,
-  OPTION_KDC_KEY_VALUE,
-  OPTION_KDC_REALM,
-  OPTION_KDC_SERVER_NAME,
-  OPTION_KDC_TICKET_GRANTER,
-  OPTION_KDC_FORCE_AS,
-  OPTION_KDC_FORCE_TGS,
+  OPTION_GET_REQUEST = 300,
+  OPTION_GET_SENDRECV,
+  OPTION_GET_RESPONSE,
+  OPTION_GET_WRITE_AP_REQUEST_FILE,
+  OPTION_GET_WRITE_AUTHENTICATOR_FILE,
+  OPTION_GET_WRITE_REQUEST_FILE,
+  OPTION_GET_WRITE_RESPONSE_FILE,
+  OPTION_GET_READ_REQUEST_FILE,
+  OPTION_GET_READ_RESPONSE_FILE,
+  OPTION_GET_SERVER,
+  OPTION_GET_CLIENT,
+  OPTION_GET_PASSWORD,
+  OPTION_GET_CLIENT_NAME,
+  OPTION_GET_KEY_VALUE,
+  OPTION_GET_REALM,
+  OPTION_GET_SERVER_NAME,
+  OPTION_GET_TICKET_GRANTER,
+  OPTION_GET_FORCE_AS,
+  OPTION_GET_FORCE_TGS,
   OPTION_AP_AUTHENTICATOR_READ_FILE,
   OPTION_AP_AUTHENTICATOR_WRITE_FILE,
   OPTION_AP_AUTHENTICATOR_DATA,
@@ -184,22 +180,6 @@ enum
   OPTION_CRYPTO_GENERATE_KEY,
   OPTION_LIST_SERVER_NAME,
   OPTION_DESTROY_SERVER_NAME,
-  OPTION_CLIENT_REALM,
-  OPTION_CLIENT_SERVER_NAME,
-  OPTION_CLIENT_AP_OPTIONS,
-  OPTION_SERVER_REALM,
-  OPTION_SERVER_CLIENT_NAME,
-  OPTION_SERVER_SERVER_NAME,
-  OPTION_SERVER_KEY_FILE,
-  OPTION_SERVER_KEY_VALUE,
-  OPTION_SERVER_PASSWORD,
-  OPTION_AS_REALM,
-  OPTION_AS_CLIENT_NAME,
-  OPTION_AS_PASSWORD,
-  OPTION_TGS_REALM,
-  OPTION_TGS_TICKET_GRANTER,
-  OPTION_TGS_CLIENT_NAME,
-  OPTION_TGS_SERVER_NAME,
   OPTION_VERBOSE_LIBRARY
 };
 
@@ -220,12 +200,13 @@ struct arguments
   const char *realm;
   char *systemcfgfile;
   char *usercfgfile;
-  /* kdc/as/tgs and ap */
+  /* get and ap */
   char *authenticatorwritefile;
   int authenticatorwritetype;
   char *apreqwritefile;
   int apreqwritetype;
-  /* kdc/as/tgs */
+  /* get */
+  const char *client;
   const char *cname;
   const char *sname;
   char *tgtname;
@@ -268,17 +249,11 @@ struct arguments
   int inputtype;
   char *outputfile;
   int outputtype;
-  /* client */
-  int apoptions;
 };
 
 extern int ap (Shishi * handle, struct arguments arg);
 
 extern int kdc (Shishi * handle, struct arguments arg);
-
-extern int client (Shishi * handle, struct arguments arg);
-
-extern int server (Shishi * handle, struct arguments arg);
 
 extern int crypto (Shishi * handle, struct arguments arg);
 
