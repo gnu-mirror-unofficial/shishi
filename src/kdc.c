@@ -29,7 +29,7 @@ asreq1 (Shishi_as * as)
 {
   Shishi_tkt *tkt;
   Shishi_key *serverkey = NULL, *sessionkey = NULL, *userkey = NULL;
-  Shisa_key *serverdbkey = NULL, *userdbkey = NULL;
+  Shisa_key *userdbkey = NULL;
   Shisa_key **serverkeys = NULL, **userkeys = NULL;
   size_t nserverkeys, nuserkeys;
   int rc;
@@ -326,11 +326,6 @@ asreq1 (Shishi_as * as)
    *   * The start time of the ticket plus the maximum renewable
    * lifetime set by the policy of the local realm.
    *
-   * The flags field of the new ticket will have the following options set
-   * if they have been requested and if the policy of the local realm
-   * allows: FORWARDABLE, MAY-POSTDATE, POSTDATED, PROXIABLE, RENEWABLE.
-   * If the new ticket is postdated (the start time is in the future), its
-   * INVALID flag will also be set.
    */
 
   tkt = shishi_as_tkt (as);
@@ -341,6 +336,29 @@ asreq1 (Shishi_as * as)
   }
 
   /* XXX Do the time stuff above. */
+
+  /*
+   * The flags field of the new ticket will have the following options set
+   * if they have been requested and if the policy of the local realm
+   * allows: FORWARDABLE, MAY-POSTDATE, POSTDATED, PROXIABLE, RENEWABLE.
+   * If the new ticket is postdated (the start time is in the future), its
+   * INVALID flag will also be set.
+   */
+
+  if (shishi_kdcreq_forwardable_p (handle, shishi_as_req (as)))
+    shishi_tkt_flags_add (tkt, SHISHI_TICKETFLAGS_FORWARDABLE);
+
+  if (shishi_kdcreq_allow_postdate_p (handle, shishi_as_req (as)))
+    shishi_tkt_flags_add (tkt, SHISHI_TICKETFLAGS_MAY_POSTDATE);
+
+  if (shishi_kdcreq_proxiable_p (handle, shishi_as_req (as)))
+    shishi_tkt_flags_add (tkt, SHISHI_TICKETFLAGS_PROXIABLE);
+
+  if (shishi_kdcreq_renewable_p (handle, shishi_as_req (as)))
+    {
+      shishi_tkt_flags_add (tkt, SHISHI_TICKETFLAGS_RENEWABLE);
+      /* XXX set rtime */
+    }
 
   /*
    * If all of the above succeed, the server will encrypt the ciphertext
