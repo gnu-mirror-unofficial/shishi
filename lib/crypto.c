@@ -530,7 +530,7 @@ ocadd (unsigned char *add1, unsigned char *add2, unsigned char *sum, int len)
  * @inlen: size of input array with data to decrypt ("M").
  * @out: output array with decrypted data.
  * @outlen: size of output array ("N").
- * 
+ *
  * Fold data into a fixed length output array, with the intent to give
  * each input bit approximately equal weight in determining the value
  * of each output bit.
@@ -553,7 +553,7 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
   int i = 0;
   int k = 0;
 
-  /* 
+  /*
      To n-fold a number X, replicate the input value to a length that is
      the least common multiple of n and the length of X. Before each
      repetition, the input is rotated to the right by 13 bit
@@ -613,8 +613,8 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
       printf ("sum = 0\n");
     }
 
-  /* Now we view the buf as set of n-byte strings 
-     Add the n-byte long chunks together, using 
+  /* Now we view the buf as set of n-byte strings
+     Add the n-byte long chunks together, using
      one's complement addition, storing the
      result in the output string. */
 
@@ -677,9 +677,9 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
  * @constantlen: size of input array with the constant string.
  * @derivedrandom: output array with derived random data.
  * @derivedrandomlen: size of output array with derived random data.
- * 
+ *
  * Derive "random" data from a key and a constant thusly:
- * DR(KEY, CONSTANT) = TRUNCATE(DERIVEDRANDOMLEN, 
+ * DR(KEY, CONSTANT) = TRUNCATE(DERIVEDRANDOMLEN,
  *                              SHISHI_ENCRYPT(KEY, CONSTANT)).
  *
  * Return value: Returns %SHISHI_OK iff successful.
@@ -780,7 +780,7 @@ shishi_dr (Shishi * handle,
  * @constantlen: size of input array with the constant string.
  * @derivedkey: output array with derived key.
  * @derivedkeylen: size of output array with derived key.
- * 
+ *
  * Derive a key from a key and a constant thusly:
  * DK(KEY, CONSTANT) = SHISHI_RANDOM-TO-KEY(SHISHI_DR(KEY, CONSTANT)).
  *
@@ -890,8 +890,8 @@ cipherinfo null_info = {
   0,
   0,
   SHISHI_RSA_MD5,
-  NULL,
-  NULL,
+  null_random_to_key,
+  null_string_to_key,
   null_encrypt,
   null_decrypt
 };
@@ -904,7 +904,7 @@ cipherinfo des_cbc_crc_info = {
   8,
   8,
   SHISHI_RSA_MD5_DES,
-  NULL,
+  des_random_to_key,
   des_string_to_key,
   des_crc_encrypt,
   des_crc_decrypt
@@ -918,7 +918,7 @@ cipherinfo des_cbc_md4_info = {
   8,
   8,
   SHISHI_RSA_MD4_DES,
-  NULL,
+  des_random_to_key,
   des_string_to_key,
   des_md4_encrypt,
   des_md4_decrypt
@@ -932,7 +932,7 @@ cipherinfo des_cbc_md5_info = {
   8,
   8,
   SHISHI_RSA_MD5_DES,
-  NULL,
+  des_random_to_key,
   des_string_to_key,
   des_md5_encrypt,
   des_md5_decrypt
@@ -993,7 +993,7 @@ cipherinfo *ciphers[] = {
 /**
  * shishi_cipher_name:
  * @type: encryption type, see Shishi_etype.
- * 
+ *
  * Return name of encryption type, e.g. "des3-cbc-sha1-kd".
  **/
 const char *
@@ -1051,7 +1051,7 @@ shishi_cipher_confoundersize (int type)
 /**
  * shishi_cipher_keylen:
  * @type: encryption type, see Shishi_etype.
- * 
+ *
  * Return length of key used in the encryption type.
  **/
 int
@@ -1069,7 +1069,7 @@ shishi_cipher_keylen (int type)
 /**
  * shishi_cipher_defaultcksumtype:
  * @type: encryption type, see Shishi_etype.
- * 
+ *
  * Return associated checksum mechanism for the encryption type.
  **/
 int
@@ -1135,7 +1135,7 @@ _shishi_cipher_decrypt (int type)
 /**
  * shishi_etype_parse:
  * @cipher: name of encryption type, e.g. "des3-cbc-sha1-kd".
- * 
+ *
  * Return encryption type corresponding to a string.
  **/
 int
@@ -1167,7 +1167,7 @@ shishi_etype_parse (char *cipher)
  * @outkey: output array with key.
  * @outkeylen: on input, holds maximum size of output array, on output
  *             holds actual size of output array.
- * 
+ *
  * Convert a string (password) and some salt (realm and principal)
  * into a cryptographic key.  The parameter can be, and often is, NULL.
  *
@@ -1243,9 +1243,9 @@ shishi_string_to_key (Shishi * handle,
  * @outkey: output array with key.
  * @outkeylen: on input, holds maximum size of output array, on output
  *             holds actual size of output array.
- * 
+ *
  * Convert random data into a cryptographic key.
- * 
+ *
  * If OUTKEY is NULL, this functions only set OUTKEYLEN.  This usage
  * may be used by the caller to allocate the proper buffer size.
  *
@@ -1468,7 +1468,7 @@ shishi_checksum (Shishi * handle,
  * @keylen: size of input array with cryptographic key.
  *
  * Encrypts data using a cryptographic encryption suite.
- * 
+ *
  * If OUT is NULL, this functions only set OUTLEN.  This usage may be
  * used by the caller to allocate the proper buffer size.
  *
@@ -1602,9 +1602,9 @@ shishi_decrypt (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @data: output array to be filled with random data.
  * @datalen: size of output array.
- * 
+ *
  * Store cryptographically strong random data in the provided buffer.
- * 
+ *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
@@ -1616,10 +1616,11 @@ shishi_randomize (Shishi * handle, char *data, int datalen)
 
   gcry_randomize (data, datalen, GCRY_WEAK_RANDOM);
 
-  if (memcmp (data, tmp, datalen < BUFSIZ ? datalen : BUFSIZ) == 0)
+  if (datalen > 0 &&
+      memcmp (data, tmp, datalen < BUFSIZ ? datalen : BUFSIZ) == 0)
     {
-      shishi_error_set (handle, "gcry_randomize() failed to provide entropy");
-      return !SHISHI_OK;
+      shishi_error_set (handle, "No random data collected.");
+      return SHISHI_GCRYPT_ERROR;
     }
 
   return SHISHI_OK;
