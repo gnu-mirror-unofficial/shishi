@@ -212,16 +212,12 @@ shishi_key_length (Shishi_key * key)
  *
  * Create a new Key information structure.
  *
- * Return value: Returns SHISHI_MALLOC_ERROR on memory allocation
- *               errors, and SHISHI_OK on success.
+ * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_key (Shishi * handle, Shishi_key ** key)
 {
-  *key = malloc (sizeof (**key));
-  if (!*key)
-    return SHISHI_MALLOC_ERROR;
-  memset (*key, 0, sizeof (**key));
+  *key = xcalloc (1, sizeof (**key));
 
   (*key)->handle = handle;
 
@@ -269,8 +265,7 @@ shishi_key_copy (Shishi_key * dstkey, Shishi_key * srckey)
  * key value. KEY contains a newly allocated structure only if this
  * function is successful.
  *
- * Return value: Returns SHISHI_MALLOC_ERROR on memory allocation
- *               errors, and SHISHI_OK on success.
+ * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_key_from_value (Shishi * handle,
@@ -322,9 +317,7 @@ shishi_key_from_base64 (Shishi * handle,
       size_t len;
       char *buf;
 
-      buf = malloc (strlen (value) + 1);
-      if (!buf)
-	return SHISHI_MALLOC_ERROR;
+      buf = xmalloc (strlen (value) + 1);
 
       len = base64_from (buf, value);
 
@@ -388,8 +381,7 @@ shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
  * key value using shishi_random_to_key().  KEY contains a newly
  * allocated structure only if this function is successful.
  *
- * Return value: Returns SHISHI_MALLOC_ERROR on memory allocation
- *               errors, and SHISHI_OK on success.
+ * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_key_from_random (Shishi * handle,
@@ -422,8 +414,7 @@ shishi_key_from_random (Shishi * handle,
  * key value using shishi_string_to_key().  KEY contains a newly
  * allocated structure only if this function is successful.
  *
- * Return value: Returns SHISHI_MALLOC_ERROR on memory allocation
- *               errors, and SHISHI_OK on success.
+ * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_key_from_string (Shishi * handle,

@@ -83,11 +83,8 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
 {
   Shishi_ap *lap;
 
-  *ap = malloc (sizeof (**ap));
-  if (*ap == NULL)
-    return SHISHI_MALLOC_ERROR;
+  *ap = xcalloc (1, sizeof (**ap));
   lap = *ap;
-  memset (lap, 0, sizeof (*lap));
 
   lap->handle = handle;
   lap->authenticatorcksumkeyusage = SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR_CKSUM;

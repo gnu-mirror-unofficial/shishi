@@ -322,11 +322,7 @@ shishi_tkt2 (Shishi * handle,
 {
   Shishi_tkt *tkt;
 
-  tkt = malloc (sizeof (*tkt));
-  if (tkt == NULL)
-    return NULL;
-
-  memset (tkt, 0, sizeof (*tkt));
+  tkt = xcalloc (1, sizeof (*tkt));
 
   tkt->handle = handle;
   tkt->ticket = ticket;
