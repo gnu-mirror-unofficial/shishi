@@ -1,5 +1,5 @@
 /* kdcreq.c	Key distribution (AS/TGS) request functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -90,13 +90,12 @@ _shishi_kdcreq (Shishi * handle, int as)
 	goto error;
     }
 
-  res = shishi_kdcreq_set_realm (handle, node,
-				 shishi_realm_default (handle));
+  res = shishi_kdcreq_set_realm (handle, node, shishi_realm_default (handle));
   if (res != SHISHI_OK)
     goto error;
 
   servicebuf[0] = "krbtgt";
-  servicebuf[1] = (char*) shishi_realm_default (handle);
+  servicebuf[1] = (char *) shishi_realm_default (handle);
   servicebuf[2] = NULL;
   res = shishi_kdcreq_set_sname (handle, node,
 				 SHISHI_NT_PRINCIPAL, servicebuf);
@@ -347,6 +346,21 @@ shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
   return SHISHI_OK;
 }
 
+int
+shishi_kdcreq_nonce (Shishi * handle,
+		     ASN1_TYPE kdcreq,
+		     unsigned long *nonce)
+{
+  int res;
+
+  res = shishi_asn1_integer2_field (handle, kdcreq, nonce,
+				    "KDC-REQ.req-body.nonce");
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
 /**
  * shishi_kdcreq_set_cname:
  * @handle: shishi handle as allocated by shishi_init().
@@ -362,8 +376,7 @@ shishi_kdcreq_from_file (Shishi * handle, ASN1_TYPE * kdcreq,
 int
 shishi_kdcreq_set_cname (Shishi * handle,
 			 ASN1_TYPE kdcreq,
-			 Shishi_name_type name_type,
-			 const char *principal)
+			 Shishi_name_type name_type, const char *principal)
 {
   int res = ASN1_SUCCESS;
   char buf[BUFSIZ];
@@ -404,9 +417,19 @@ shishi_kdcreq_set_cname (Shishi * handle,
 }
 
 int
+shishi_kdcreq_cname_get (Shishi * handle,
+			 ASN1_TYPE kdcreq,
+			 char *cname, size_t * cnamelen)
+{
+  return shishi_principal_name_get (handle, kdcreq,
+				    "KDC-REQ.req-body.cname",
+				    cname, cnamelen);
+}
+
+int
 shishi_kdcreq_cnamerealm_get (Shishi * handle,
 			      ASN1_TYPE kdcreq,
-			      char *cnamerealm, size_t *cnamerealmlen)
+			      char *cnamerealm, size_t * cnamerealmlen)
 {
   return shishi_principal_name_realm_get (handle, kdcreq,
 					  "KDC-REQ.req-body.cname", kdcreq,
@@ -682,7 +705,7 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode AP-REQ: %s\n",
-			   shishi_strerror(res));
+			   shishi_strerror (res));
       return SHISHI_ASN1_ERROR;
     }
 
