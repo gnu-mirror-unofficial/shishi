@@ -629,6 +629,28 @@ shishi_kdcreq_set_realmserver (Shishi * handle,
 }
 
 /**
+ * shishi_kdcreq_clear_padata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ to remove PA-DATA from.
+ *
+ * Remove the padata field from KDC-REQ.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcreq_clear_padata (Shishi * handle,
+			    ASN1_TYPE kdcreq)
+{
+  int res;
+
+  res = asn1_write_value (kdcreq, "KDC-REQ.padata", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_kdcreq_add_padata:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ to add PA-DATA to.
