@@ -218,8 +218,11 @@ AC_SUBST(CRYPTO)
 AC_SUBST(CRYPTO_CFLAGS)
 AC_SUBST(CRYPTO_LIBS)
 
-# Check for resolver.
+# Check for library
 AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
+AC_SEARCH_LIBS(socket, socket)
+AC_SEARCH_LIBS(gethostbyname, nsl)
+AC_SEARCH_LIBS(syslog, syslog)
 
 # For gnulib stuff in gl/.
 gl_FUNC_ALLOCA
