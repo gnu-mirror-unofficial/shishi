@@ -52,7 +52,7 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
 AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
 	sys/time.h sys/types.h sys/select.h sys/socket.h sys/stat.h stdint.h \
-	termios.h signal.h)
+	termios.h signal.h pwd.h errno.h)
 AC_CHECK_HEADERS(netinet/in.h netinet/in6.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -61,6 +61,7 @@ AC_TYPE_SIZE_T
 AC_TYPE_UID_T
 AC_TYPE_SIGNAL
 AC_HEADER_TIME
+AC_CHECK_DECLS(h_errno)
 
 # Check for IPv6
 AC_ARG_ENABLE(ipv6,
