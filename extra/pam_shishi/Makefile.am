@@ -27,7 +27,8 @@ pam_shishi_la_LDFLAGS = -module
 
 INCLUDES = -I../asn1/lib -I../lib
 
-DEFS = -DDEBUG
+# -DDEBUG_PAM
+DEFS = @DEFS@
 
 indent:
 	indent $(SOURCES)

@@ -76,6 +76,22 @@ AC_CHECK_TYPE([socklen_t],, [AC_DEFINE([socklen_t], [size_t],
 #endif
 ])
 
+# Check for PAM
+AC_ARG_ENABLE(pam,
+  AC_HELP_STRING([--disable-pam], [Don't use PAM even if available]))
+if test "$enable_pam" != "no"; then
+  AC_CHECK_HEADERS(security/pam_modules.h security/_pam_macros.h)
+  enable_pam=$ac_cv_header_security_pam_modules_h
+fi
+if test "$enable_pam" != "no"; then
+	PAM_SHISHI=pam_shishi
+else
+	AC_MSG_WARN([[The Shishi PAM module will not be built.]])
+fi
+AC_SUBST(PAM_SHISHI)
+AC_MSG_CHECKING([if PAM should be used])
+AC_MSG_RESULT($enable_pam)
+
 # Check for IPv6
 AC_ARG_ENABLE(ipv6,
   AC_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
@@ -113,11 +129,7 @@ fi
 if test "$enable_ipv6" != "no"; then
   AC_DEFINE(WITH_IPV6, 1, [Define to 1 if you want IPv6.])
 else
-	AC_MSG_WARN([[
-
-IPv6 support is disabled.
-
-]])
+  AC_MSG_WARN([[IPv6 support is disabled.]])
 fi
 AC_MSG_CHECKING([if IPv6 should be used])
 AC_MSG_RESULT($enable_ipv6)
@@ -260,7 +272,8 @@ AC_CONFIG_SUBDIRS(extra/inetutils)
 
 AC_CONFIG_FILES(Makefile intl/Makefile po/Makefile.in m4/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
-	extra/Makefile shishi.pc shishi.conf shishi.skel)
+	extra/Makefile extra/pam_shishi/Makefile \
+	shishi.pc shishi.conf shishi.skel)
 
 # We are done
 AC_OUTPUT

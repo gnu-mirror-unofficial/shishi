@@ -32,13 +32,18 @@
 
 #include <shishi.h>
 
+/* These #defines must be present according to PAM documentation. */
 #define PAM_SM_AUTH
 #define PAM_SM_ACCOUNT
 #define PAM_SM_SESSION
 #define PAM_SM_PASSWORD
-#include <security/pam_modules.h>
 
-#ifdef DEBUG
+#ifdef HAVE_SECURITY_PAM_MODULES_H
+#include <security/pam_modules.h>
+#endif
+
+#if defined(DEBUG_PAM) && defined(HAVE_SECURITY__PAM_MACROS_H)
+#define DEBUG
 #include <security/_pam_macros.h>
 #else
 #define D(x) /* nothing */
