@@ -263,6 +263,155 @@ shishi_kdcrep_from_file (Shishi * handle, ASN1_TYPE * kdcrep,
 }
 
 /**
+ * shishi_kdcrep_crealm_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcrep: Kdcrep variable to set realm field in.
+ * @crealm: input array with name of realm.
+ *
+ * Set the client realm field in the KDC-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcrep_crealm_set (Shishi * handle,
+			  ASN1_TYPE kdcrep,
+			  const char *crealm)
+{
+  int res = ASN1_SUCCESS;
+
+  res = asn1_write_value (kdcrep, "KDC-REP.crealm", crealm, 0);
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return !SHISHI_OK;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_kdcrep_cname_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcrep: Kdcrep variable to set server name field in.
+ * @name_type: type of principial, see Shishi_name_type, usually
+ *             SHISHI_NT_UNKNOWN.
+ * @cname: input array with principal name.
+ *
+ * Set the server name field in the KDC-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcrep_cname_set (Shishi * handle,
+			 ASN1_TYPE kdcrep,
+			 Shishi_name_type name_type, char *cname[])
+{
+  int res = ASN1_SUCCESS;
+  char buf[BUFSIZ];
+  int i;
+
+  sprintf (buf, "%d", name_type);
+
+  res = asn1_write_value (kdcrep,
+			  "KDC-REP.cname.name-type", buf, 0);
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return !SHISHI_OK;
+    }
+
+  res =
+    asn1_write_value (kdcrep,
+		      "KDC-REP.cname.name-string", NULL, 0);
+  if (res != ASN1_SUCCESS)
+    {
+      shishi_error_set (handle, libtasn1_strerror (res));
+      return !SHISHI_OK;
+    }
+
+  i = 1;
+  while (cname[i - 1])
+    {
+      res = asn1_write_value (kdcrep, "KDC-REP.cname.name-string",
+			      "NEW", 1);
+      if (res != ASN1_SUCCESS)
+	{
+	  shishi_error_set (handle, libtasn1_strerror (res));
+	  return !SHISHI_OK;
+	}
+
+      sprintf (buf, "KDC-REP.cname.name-string.?%d", i);
+      res = asn1_write_value (kdcrep, buf, cname[i - 1], 0);
+      if (res != ASN1_SUCCESS)
+	{
+	  shishi_error_set (handle, libtasn1_strerror (res));
+	  return !SHISHI_OK;
+	}
+
+      i++;
+    }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_kdcrep_client_set (Shishi * handle,
+			  ASN1_TYPE kdcrep,
+			  const char *client)
+{
+  char *tmpclient;
+  char **clientbuf;
+  char *tokptr;
+  int res;
+  int i;
+
+  tmpclient = strdup (client);
+  if (tmpclient == NULL)
+    return SHISHI_MALLOC_ERROR;
+
+  clientbuf = malloc (sizeof (*clientbuf));
+  for (i = 0;
+       (clientbuf[i] = strtok_r (i == 0 ? tmpclient : NULL, "/", &tokptr));
+       i++)
+    {
+      clientbuf = realloc (clientbuf, (i + 2) * sizeof (*clientbuf));
+      if (clientbuf == NULL)
+	return SHISHI_MALLOC_ERROR;
+    }
+  res = shishi_kdcrep_cname_set (handle, kdcrep,
+				 SHISHI_NT_PRINCIPAL, clientbuf);
+  if (res != SHISHI_OK)
+    {
+      fprintf (stderr, _("Could not set cname: %s\n"),
+	       shishi_strerror_details (handle));
+      return res;
+    }
+  free (clientbuf);
+  free (tmpclient);
+
+  return SHISHI_OK;
+}
+
+int
+shishi_kdcrep_crealmserver_set (Shishi * handle,
+				ASN1_TYPE kdcrep,
+				const char *crealm,
+				const char *client)
+{
+  int res;
+
+  res = shishi_kdcrep_crealm_set (handle, kdcrep, crealm);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_kdcrep_client_set (handle, kdcrep, client);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_kdcrep_get_enc_part_etype:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcrep: KDC-REP variable to get value from.
@@ -277,7 +426,7 @@ shishi_kdcrep_get_enc_part_etype (Shishi * handle,
 				  ASN1_TYPE kdcrep, int *etype)
 {
   return shishi_asn1_integer_field (handle, kdcrep, etype,
-				     "KDC-REP.enc-part.etype");
+				    "KDC-REP.enc-part.etype");
 }
 
 /**
@@ -375,10 +524,13 @@ shishi_kdcrep_get_ticket (Shishi * handle,
   buflen = BUFSIZ;
   res =
     asn1_read_value (kdcrep, "KDC-REP.ticket.enc-part.kvno", buf, &buflen);
-  if (res != ASN1_SUCCESS)
+  if (res != ASN1_SUCCESS && res != ASN1_ELEMENT_NOT_FOUND)
     goto error;
 
-  res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", buf, buflen);
+  if (res == ASN1_ELEMENT_NOT_FOUND)
+    res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", NULL, 0);
+  else
+    res = asn1_write_value (*ticket, "Ticket.enc-part.kvno", buf, buflen);
   if (res != ASN1_SUCCESS)
     goto error;
 
@@ -480,7 +632,8 @@ shishi_kdcrep_set_ticket (Shishi * handle, ASN1_TYPE kdcrep, ASN1_TYPE ticket)
   if (res != ASN1_SUCCESS)
     goto error;
 
-  res = asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.etype", buf, buflen);
+  res =
+    asn1_write_value (kdcrep, "KDC-REP.ticket.enc-part.etype", buf, buflen);
   if (res != ASN1_SUCCESS)
     goto error;
 
@@ -506,19 +659,123 @@ shishi_kdcrep_set_ticket (Shishi * handle, ASN1_TYPE kdcrep, ASN1_TYPE ticket)
 
   return SHISHI_OK;
 
- error:
+error:
   shishi_error_set (handle, libtasn1_strerror (res));
   if (node != ASN1_TYPE_EMPTY)
     asn1_delete_structure (&node);
   return !SHISHI_OK;
 }
 
+/**
+ * shishi_kdcrep_set_enc_part:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcrep: KDC-REP to add enc-part field to.
+ * @etype: encryption type used to encrypt enc-part.
+ * @kvno: key version number.
+ * @buf: input array with encrypted enc-part.
+ * @buflen: size of input array with encrypted enc-part.
+ *
+ * Set the encrypted enc-part field in the KDC-REP.  The encrypted
+ * data is usually created by calling shishi_encrypt() on the DER
+ * encoded enc-part.  To save time, you may want to use
+ * shishi_kdcrep_add_enc_part() instead, which calculates the
+ * encrypted data and calls this function in one step.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcrep_set_enc_part (Shishi * handle,
+			    ASN1_TYPE kdcrep,
+			    int etype, int kvno, char *buf, int buflen)
+{
+  char format[BUFSIZ];
+  int res = ASN1_SUCCESS;
+
+  res = asn1_write_value (kdcrep, "KDC-REP.enc-part.cipher", buf, buflen);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  sprintf (format, "%d", etype);
+  res = asn1_write_value (kdcrep, "KDC-REP.enc-part.etype", format, 0);
+  if (res != ASN1_SUCCESS)
+    goto error;
+
+  if (kvno == 0)
+    {
+      res = asn1_write_value (kdcrep, "KDC-REP.enc-part.kvno", NULL, 0);
+      if (res != ASN1_SUCCESS)
+	goto error;
+    }
+  else
+    {
+      shishi_asprintf (&format, "%d", etype);
+      res = asn1_write_value (kdcrep, "KDC-REP.enc-part.kvno", format, 0);
+      if (res != ASN1_SUCCESS)
+	goto error;
+    }
+
+  return SHISHI_OK;
+
+ error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  return SHISHI_ASN1_ERROR;
+}
+
+/**
+ * shishi_kdcrep_add_enc_part:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcrep: KDC-REP to add enc-part field to.
+ * @key: key used to encrypt enc-part.
+ * @keyusage: key usage to use, normally SHISHI_KEYUSAGE_ENCASREPPART,
+ *            SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY or
+ *            SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY.
+ * @enckdcreppart: EncKDCRepPart to add.
+ *
+ * Encrypts DER encoded EncKDCRepPart using key and stores it in the
+ * KDC-REP.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_kdcrep_add_enc_part (Shishi * handle,
+			    ASN1_TYPE kdcrep,
+			    Shishi_key * key,
+			    int keyusage,
+			    ASN1_TYPE enckdcreppart)
+{
+  int res = ASN1_SUCCESS;
+  char buf[BUFSIZ];
+  int buflen;
+  char der[BUFSIZ];
+  size_t derlen;
+
+  res = shishi_a2d (handle, enckdcreppart, der, &derlen);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "Could not DER encode enckdcreppart: %s\n",
+			   shishi_strerror (res));
+      return !SHISHI_OK;
+    }
+
+  buflen = BUFSIZ;
+  res = shishi_encrypt (handle, key, keyusage, der, derlen, buf, &buflen);
+  if (res != SHISHI_OK)
+    {
+      shishi_error_printf (handle, "des_encrypt fail\n");
+      return res;
+    }
+
+  res = shishi_kdcrep_set_enc_part (handle, kdcrep, shishi_key_type (key),
+				    shishi_key_version (key), buf, buflen);
+
+  return res;
+}
+
 int
 shishi_kdcrep_decrypt (Shishi * handle,
 		       ASN1_TYPE kdcrep,
-		       Shishi_key *key,
-		       int keyusage,
-		       ASN1_TYPE * enckdcreppart)
+		       Shishi_key * key,
+		       int keyusage, ASN1_TYPE * enckdcreppart)
 {
   int res;
   int i;
@@ -532,12 +789,12 @@ shishi_kdcrep_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (etype != shishi_key_type(key))
+  if (etype != shishi_key_type (key))
     return SHISHI_KDCREP_BAD_KEYTYPE;
 
   cipherlen = BUFSIZ;
   res = shishi_asn1_field (handle, kdcrep, cipher, &cipherlen,
-			    "KDC-REP.enc-part.cipher");
+			   "KDC-REP.enc-part.cipher");
   if (res != SHISHI_OK)
     return res;
 
@@ -564,6 +821,10 @@ shishi_kdcrep_decrypt (Shishi * handle,
 	break;
 
       *enckdcreppart = shishi_d2a_enctgsreppart (handle, &buf[0], buflen - i);
+      if (*enckdcreppart != ASN1_TYPE_EMPTY)
+	break;
+
+      *enckdcreppart = shishi_d2a_enckdcreppart (handle, &buf[0], buflen - i);
       if (*enckdcreppart != ASN1_TYPE_EMPTY)
 	break;
     }
