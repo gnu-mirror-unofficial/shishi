@@ -107,7 +107,7 @@ shishi_strerror (int err)
   size_t i;
 
   for (i = 0; _shishi_error_messages[i].errorcode != -1; i++)
-    if (i == _shishi_error_messages[i].errorcode)
+    if (_shishi_error_messages[i].errorcode == err)
       {
 	p = _(_shishi_error_messages[i].message);
 	break;
