@@ -73,7 +73,17 @@ shishi_encapreppart (Shishi * handle)
    */
   shishi_randomize (handle, 0, &seqnr, sizeof(seqnr));
 
-  res = shishi_asn1_write_uint32 (handle, node, "seq-number", seqnr);
+  /*
+   * Implementation note: as noted before, some implementations omit
+   * the optional sequence number when its value would be zero.
+   * Implementations MAY accept an omitted sequence number when
+   * expecting a value of zero, and SHOULD NOT transmit an
+   * Authenticator with a initial sequence number of zero.
+   */
+  if (seqnr == 0)
+    seqnr++;
+
+  res = shishi_encapreppart_seqnumber_set (handle, node, seqnr);
   if (res != SHISHI_OK)
     goto error;
 
@@ -394,6 +404,53 @@ shishi_encapreppart_seqnumber_get (Shishi * handle,
     return res;
 
   return res;
+}
+
+/**
+ * shishi_encapreppart_seqnumber_remove:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encapreppart: encapreppart as allocated by shishi_encapreppart().
+ *
+ * Remove sequence number field in EncAPRepPart.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_encapreppart_seqnumber_remove (Shishi * handle,
+				      Shishi_asn1 encapreppart)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, encapreppart, "seq-number", NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_encapreppart_seqnumber_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @encapreppart: encapreppart as allocated by shishi_encapreppart().
+ * @seqnumber: integer with sequence number field to store in encapreppart.
+ *
+ * Store sequence number field in EncAPRepPart.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_encapreppart_seqnumber_set (Shishi * handle,
+				   Shishi_asn1 encapreppart,
+				   uint32_t seqnumber)
+{
+  int res;
+
+  res = shishi_asn1_write_uint32 (handle, encapreppart,
+				  "seq-number", seqnumber);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
 }
 
 /**
