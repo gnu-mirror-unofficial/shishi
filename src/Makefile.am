@@ -19,8 +19,8 @@
 # Boston, MA 02111-1307, USA.
 
 LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
-	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
-	-L../lib -lshishi
+	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
+	../lib/libshishi.la
 
 bin_PROGRAMS = shishi
 shishi_SOURCES = shishi.c gettext.h

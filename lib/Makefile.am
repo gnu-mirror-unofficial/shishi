@@ -72,7 +72,7 @@ if LIBGCRYPT
 libshishi_la_SOURCES += libgcrypt.c
 endif
 libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
-	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@
+	@LTLIBINTL@ ../gl/libfoo.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 kerberos5.c: $(srcdir)/kerberos5.asn1

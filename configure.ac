@@ -190,7 +190,7 @@ if test "$system_asn1" = "yes"; then
  LIBTASN1_LIBS=-ltasn1
 else
  ASN1=asn1
- LIBTASN1_LIBS="-L../asn1 -lminitasn1"
+ LIBTASN1_LIBS="../asn1/libminitasn1.la"
 fi
 AC_SUBST(ASN1)
 AC_SUBST(LIBTASN1_LIBS)
@@ -212,7 +212,7 @@ if test "$libgcrypt" != "no" ; then
 else
 	CRYPTO=crypto
 	CRYPTO_CFLAGS="-I\$(top_srcdir)/crypto"
-	CRYPTO_LIBS="-L../crypto -lnettle"
+	CRYPTO_LIBS="../crypto/libnettle.la"
 fi
 AM_CONDITIONAL(LIBGCRYPT, test "$libgcrypt" != "no")
 AM_CONDITIONAL(NETTLE, test "$libgcrypt" = "no")
