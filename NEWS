@@ -4,6 +4,11 @@ See the end for copying conditions.
 
 * Version 0.0.14 (unreleased)
 
+** High-level AP interface now support setting raw checksum field values.
+This is needed for certain applications that, like GSS-API, put
+non-standard data in the checksum field of the Authenticator in a
+AP-REQ.
+
 * Version 0.0.13 (released 2004-01-15)
 
 ** Fixed salt calculation in shisa.
