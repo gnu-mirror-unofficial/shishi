@@ -4210,6 +4210,55 @@ For two real world examples on using the Shisa library, refer to
 @file{src/shisa.c} (Shisa command line tool) and @file{src/kdc.c}
 (part of Shishid server).
 
+Shisa uses two @samp{struct}s to carry information.  The first,
+@code{Shisa_principal}, is used to hold information about principals.
+The struct does not contain pointers to strings etc, so the library
+assumes the caller is responsible for allocating and deallocating the
+struct itself.  Each such struct is (uniquely) identified by the
+combination of principal name and realm name.
+
+@example
+struct Shisa_principal
+@{
+  int isdisabled;
+  uint32_t kvno;
+  time_t notusedbefore;
+  time_t lastinitialtgt;      /* time of last initial request for a TGT */
+  time_t lastinitialrequest;  /* time of last initial request */
+  time_t lasttgt;             /* time of issue for the newest TGT used */
+  time_t lastrenewal;         /* time of the last renewal */
+  time_t passwordexpire;      /* time when the password will expire */
+  time_t accountexpire;       /* time when the account will expire. */
+@};
+typedef struct Shisa_principal Shisa_principal;
+@end example
+
+The second structure is called @code{Shisa_key} and hold information
+about cryptographic keys.  Because the struct contain pointers, and
+the caller cannot know how many keys a principal have, the Shisa
+library manages memory for the struct.  The library allocate the
+structs, and the pointers within them.  The caller may deallocate
+them, but it is recommended to use @code{shisa_key_free} or
+@code{shisa_keys_free} instead.  Note that each principal may have
+multiple keys.
+
+@example
+struct Shisa_key
+@{
+  uint32_t kvno;
+  int32_t etype;
+  int priority;
+  char *key;
+  size_t keylen;
+  char *salt;
+  size_t saltlen;
+  char *str2keyparam;
+  size_t str2keyparamlen;
+  char *password;
+@};
+typedef struct Shisa_key Shisa_key;
+@end example
+
 Shisa is typically initialized by calling @code{shisa_init}, and
 deinitialized (when the application no longer need to use Shisa,
 typically when it shuts down) by calling @code{shisa_done}, but here
