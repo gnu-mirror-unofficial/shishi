@@ -153,6 +153,8 @@ PBKDF2 (int PRF,
    */
 
   prf = gcry_md_open (PRF, GCRY_MD_FLAG_HMAC);
+  if (prf == NULL)
+    return PKCS5_INVALID_PRF;
 
   for (i = 1; i <= l; i++)
     {
@@ -165,6 +167,9 @@ PBKDF2 (int PRF,
 	  gcry_md_reset(prf);
 
 	  rc = gcry_md_setkey (prf, P, Plen);
+	  if (rc != GCRYERR_SUCCESS)
+	    return PKCS5_INVALID_PRF;
+
 	  if (u == 1)
 	    {
 	      char tmp[4];
