@@ -480,14 +480,14 @@ main (int argc, char *argv[])
       return EXIT_FAILURE;
     }
 
-  memset (&ph, 0, sizeof (ph));
-  memset (&key, 0, sizeof (key));
-  apply_options (realm, principal, &ph, &key);
-
   if (args.inputs_num > 0)
     realm = args.inputs[0];
   if (args.inputs_num > 1)
     principal = args.inputs[1];
+
+  memset (&ph, 0, sizeof (ph));
+  memset (&key, 0, sizeof (key));
+  apply_options (realm, principal, &ph, &key);
 
   if (args.list_given || args.dump_given)
     rc = dumplist ();
