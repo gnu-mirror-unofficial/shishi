@@ -793,7 +793,7 @@ struct cipherinfo
 typedef struct cipherinfo cipherinfo;
 
 static cipherinfo null_info = {
-  0,
+  SHISHI_NULL,
   "NULL",
   1,
   0,
@@ -808,7 +808,7 @@ static cipherinfo null_info = {
 };
 
 static cipherinfo des_cbc_crc_info = {
-  1,
+  SHISHI_DES_CBC_CRC,
   "des-cbc-crc",
   8,
   4,
@@ -823,7 +823,7 @@ static cipherinfo des_cbc_crc_info = {
 };
 
 static cipherinfo des_cbc_md4_info = {
-  2,
+  SHISHI_DES_CBC_MD4,
   "des-cbc-md4",
   8,
   0,
@@ -838,7 +838,7 @@ static cipherinfo des_cbc_md4_info = {
 };
 
 static cipherinfo des_cbc_md5_info = {
-  3,
+  SHISHI_DES_CBC_MD5,
   "des-cbc-md5",
   8,
   0,
@@ -853,7 +853,7 @@ static cipherinfo des_cbc_md5_info = {
 };
 
 static cipherinfo des_cbc_none_info = {
-  4,
+  SHISHI_DES_CBC_NONE,
   "des-cbc-none",
   8,
   0,
@@ -867,23 +867,8 @@ static cipherinfo des_cbc_none_info = {
   des_none_decrypt
 };
 
-static cipherinfo des3_cbc_sha1_kd_info = {
-  16,
-  "des3-cbc-sha1-kd",
-  8,
-  0,
-  8,
-  3 * 8,
-  3 * 8,
-  SHISHI_HMAC_SHA1_DES3_KD,
-  des3_random_to_key,
-  des3_string_to_key,
-  _des3_encrypt,
-  _des3_decrypt
-};
-
 static cipherinfo des3_cbc_none_info = {
-  6,
+  SHISHI_DES3_CBC_NONE,
   "des3-cbc-none",
   8,
   0,
@@ -897,8 +882,23 @@ static cipherinfo des3_cbc_none_info = {
   des3none_decrypt
 };
 
+static cipherinfo des3_cbc_sha1_kd_info = {
+  SHISHI_DES3_CBC_HMAC_SHA1_KD,
+  "des3-cbc-sha1-kd",
+  8,
+  0,
+  8,
+  3 * 8,
+  3 * 8,
+  SHISHI_HMAC_SHA1_DES3_KD,
+  des3_random_to_key,
+  des3_string_to_key,
+  _des3_encrypt,
+  _des3_decrypt
+};
+
 static cipherinfo aes128_cts_hmac_sha1_96_info = {
-  17,
+  SHISHI_AES128_CTS_HMAC_SHA1_96,
   "aes128-cts-hmac-sha1-96",
   16,
   0,
@@ -913,7 +913,7 @@ static cipherinfo aes128_cts_hmac_sha1_96_info = {
 };
 
 static cipherinfo aes256_cts_hmac_sha1_96_info = {
-  18,
+  SHISHI_AES256_CTS_HMAC_SHA1_96,
   "aes256-cts-hmac-sha1-96",
   16,
   0,
