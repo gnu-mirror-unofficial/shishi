@@ -1,0 +1,12 @@
+Version 0.1.2
+- Added GeneralString type
+- Fixed a DER encoding bug when nested tags are used
+
+Version 0.1.1
+- Renamed to libtasn1
+- Functions which return a string for error description
+  now accept a NULL argument.
+- License is now GNU Lesser GPL
+
+Version 0.1.0
+- Initial release
