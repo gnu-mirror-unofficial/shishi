@@ -132,6 +132,9 @@ extern int errno;
 /* Get error. */
 #include "error.h"
 
+/* Get asprintf. */
+#include "vasprintf.h"
+
 /* Get program_name, etc. */
 #include "progname.h"
 
@@ -170,7 +173,7 @@ struct listenspec
   int port;
   int type;
   int sockfd;
-  char buf[BUFSIZ];
+  char buf[BUFSIZ]; /* XXX */
   size_t bufpos;
 };
 
@@ -292,11 +295,7 @@ asreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
   rc = shishi_as (handle, &as);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR, "Incoming request failed: Cannot create AS: %s\n",
-	      shishi_strerror (rc));
-      /* XXX hard coded KRB-ERROR? */
-      *out = strdup ("foo");
-      *outlen = strlen (*out);
+      syslog (LOG_ERR, "Cannot create AS: %s\n", shishi_strerror (rc));
       return rc;
     }
 
@@ -314,12 +313,7 @@ asreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
     rc = shishi_as_rep_der (as, out, outlen);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR,
-	      "Incoming request failed: Cannot DER encode reply: %s\n",
-	      shishi_strerror (rc));
-      /* XXX hard coded KRB-ERROR? */
-      *out = strdup ("aaaaaa");
-      *outlen = strlen (*out);
+      syslog (LOG_ERR, "Cannot DER encode reply: %s\n", shishi_strerror (rc));
       return rc;
     }
 
@@ -547,10 +541,12 @@ process_1 (char *in, size_t inlen, char **out, size_t * outlen)
   switch (shishi_asn1_msgtype (handle, node))
     {
     case SHISHI_MSGTYPE_AS_REQ:
+      puts ("Processing AS-REQ...");
       rc = asreq (node, out, outlen);
       break;
 
     case SHISHI_MSGTYPE_TGS_REQ:
+      puts ("Processing TGS-REQ...");
       rc = tgsreq (node, out, outlen);
       break;
 
@@ -562,6 +558,10 @@ process_1 (char *in, size_t inlen, char **out, size_t * outlen)
   if (rc != SHISHI_OK)
     {
       rc = shishi_krberror_set_etext (handle, krberr, "General error");
+      if (rc != SHISHI_OK)
+	return rc;
+
+      rc = shishi_krberror_set_realm (handle, krberr, "unknown");
       if (rc != SHISHI_OK)
 	return rc;
 
@@ -731,10 +731,7 @@ kdc_loop (void)
 		ls->sockfd = accept (listenspec[i].sockfd, &ls->addr, &length);
 		sin = (struct sockaddr_in *) &ls->addr;
 		str = inet_ntoa (sin->sin_addr);
-		ls->str = xmalloc (strlen (listenspec[i].str) +
-				   strlen (" peer ") + strlen (str) + 1);
-		sprintf (ls->str, "%s peer %s", listenspec[i].str,
-			 str);
+		asprintf (&ls->str, "%s peer %s", listenspec[i].str, str);
 		puts (ls->str);
 	      }
 	    else
@@ -855,6 +852,15 @@ kdc_loop (void)
 
 		    if (p && plen > 0)
 		      {
+			if (listenspec[i].type == SOCK_STREAM)
+			  {
+			    uint32_t len = htonl (plen) + 4;
+			    do
+			      sent_bytes = sendto (ls->sockfd, &len, 4,
+						   0, &addr, length);
+			    while (sent_bytes == -1 && errno == EAGAIN);
+			  }
+
 			do
 			  sent_bytes = sendto (ls->sockfd, p, plen,
 					       0, &addr, length);
