@@ -1666,7 +1666,7 @@ extern int shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
 					      Shishi_tkt * tkt,
 					      int options,
 					      Shishi_asn1 node,
-					      char *field,
+					      const char *field,
 					      int authenticatorcksumkeyusage,
 					      int authenticatorkeyusage);
 extern int shishi_ap_tktoptionsasn1usage (Shishi * handle,
@@ -1674,7 +1674,7 @@ extern int shishi_ap_tktoptionsasn1usage (Shishi * handle,
 					  Shishi_tkt * tkt,
 					  int options,
 					  Shishi_asn1 node,
-					  char *field,
+					  const char *field,
 					  int authenticatorcksumkeyusage,
 					  int authenticatorkeyusage);
 
