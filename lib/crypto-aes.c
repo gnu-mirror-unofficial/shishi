@@ -28,8 +28,8 @@ aes128_encrypt (Shishi * handle,
 	     int keyusage,
 	     char *key,
 	     int keylen,
-	     char *in, 
-	     int inlen, 
+	     char *in,
+	     int inlen,
 	     char *out,
 	     int *outlen)
 {
@@ -42,8 +42,8 @@ aes128_decrypt (Shishi * handle,
 	     int keyusage,
 	     char *key,
 	     int keylen,
-	     char *in, 
-	     int inlen, 
+	     char *in,
+	     int inlen,
 	     char *out,
 	     int *outlen)
 {
@@ -56,8 +56,8 @@ aes256_encrypt (Shishi * handle,
 	     int keyusage,
 	     char *key,
 	     int keylen,
-	     char *in, 
-	     int inlen, 
+	     char *in,
+	     int inlen,
 	     char *out,
 	     int *outlen)
 {
@@ -70,8 +70,8 @@ aes256_decrypt (Shishi * handle,
 	     int keyusage,
 	     char *key,
 	     int keylen,
-	     char *in, 
-	     int inlen, 
+	     char *in,
+	     int inlen,
 	     char *out,
 	     int *outlen)
 {
@@ -85,7 +85,7 @@ aes_string_to_key (Shishi * handle,
 		   char *password,
 		   int passwordlen,
 		   char *salt,
-		   int saltlen, 
+		   int saltlen,
 		   char *parameter,
 		   char *outkey,
 		   int keylen)
@@ -118,19 +118,22 @@ aes_string_to_key (Shishi * handle,
       iterations |=  parameter[3] & 0xFF;
     }
 
+  /* tkey = random2key(PBKDF2(passphrase, salt, iter_count, keylength)) */
   res = PBKDF2 (PKCS5_PRF_SHA1, password, passwordlen, salt, saltlen,
 		iterations, keylen, key);
   if (res != PKCS5_OK)
   return res;
 
-  res = shishi_dk (handle, keytype, key, keylen, 
+  /* key = DK(tkey, "kerberos") */
+  res = shishi_dk (handle, keytype, key, keylen,
 		   "kerberos", strlen ("kerberos"), outkey, keylen);
   if (res != SHISHI_OK)
     return res;
 
   if (VERBOSECRYPTO(handle))
     {
-      printf ("\t;; aes_string_to_key key:\n");
+      printf ("aes_string_to_key (password, salt)\n");
+      printf ("\t ;; Key:\n");
       hexprint (outkey, keylen);
       puts ("");
       binprint (outkey, keylen);
@@ -145,14 +148,14 @@ aes128_string_to_key (Shishi * handle,
 		      char *password,
 		      int passwordlen,
 		      char *salt,
-		      int saltlen, 
+		      int saltlen,
 		      char *parameter,
 		      char *outkey)
 {
   int keytype = SHISHI_AES128_CTS_HMAC_SHA1_96;
   int keylen = shishi_cipher_keylen (keytype);
 
-  return aes_string_to_key (handle, keytype, password, passwordlen, 
+  return aes_string_to_key (handle, keytype, password, passwordlen,
 			    salt, saltlen, parameter, outkey, keylen);
 }
 
@@ -161,14 +164,14 @@ aes256_string_to_key (Shishi * handle,
 		      char *password,
 		      int passwordlen,
 		      char *salt,
-		      int saltlen, 
+		      int saltlen,
 		      char *parameter,
 		      char *outkey)
 {
   int keytype = SHISHI_AES256_CTS_HMAC_SHA1_96;
   int keylen = shishi_cipher_keylen (keytype);
 
-  return aes_string_to_key (handle, keytype, password, passwordlen, 
+  return aes_string_to_key (handle, keytype, password, passwordlen,
 			    salt, saltlen, parameter, outkey, keylen);
 }
 

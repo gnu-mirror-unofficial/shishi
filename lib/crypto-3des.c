@@ -26,12 +26,12 @@ des3_encrypt (Shishi * handle,
 	      int keyusage,
 	      char *key,
 	      int keylen,
-	      char *in, 
-	      int inlen, 
+	      char *in,
+	      int inlen,
 	      char *out,
 	      int *outlen)
 {
-  return simplified_encrypt (handle, keyusage, SHISHI_DES3_CBC_HMAC_SHA1_KD, 
+  return simplified_encrypt (handle, keyusage, SHISHI_DES3_CBC_HMAC_SHA1_KD,
 			     key, keylen, in, inlen, out, outlen);
 }
 
@@ -40,8 +40,8 @@ des3_decrypt (Shishi * handle,
 	      int keyusage,
 	      char *key,
 	      int keylen,
-	      char *in, 
-	      int inlen, 
+	      char *in,
+	      int inlen,
 	      char *out,
 	      int *outlen)
 {
@@ -70,7 +70,7 @@ des3_decrypt (Shishi * handle,
  */
 static int
 des3_random_to_key (Shishi * handle,
-		    char random[168 / 8], 
+		    char random[168 / 8],
 		    int randomlen,
 		    char key[3 * 8])
 {
@@ -125,11 +125,10 @@ des3_string_to_key (Shishi * handle,
 {
   char *s;
   int n_s;
-  int odd;
   char key[3 * 8];
+  int keylen = 3 * 8;
   char nfold[168 / 8];
-  int i, j;
-  char temp, temp2;
+  int nfoldlen = 168 / 8;
   int res;
 
   if (VERBOSECRYPTO(handle))
@@ -154,19 +153,32 @@ des3_string_to_key (Shishi * handle,
   memcpy (s, string, stringlen);
   memcpy (s + stringlen, salt, saltlen);
 
-  res = shishi_n_fold (handle, s, n_s, nfold, 168 / 8);
+  /* tmpKey = random-to-key(168-fold(s)) */
+  res = shishi_n_fold (handle, s, n_s, nfold, nfoldlen);
   if (res != SHISHI_OK)
     return res;
 
-  res = des3_random_to_key (handle, nfold, 168 / 8, key);
+  free(s);
+
+  res = des3_random_to_key (handle, nfold, nfoldlen, key);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_dk (handle, SHISHI_DES3_CBC_HMAC_SHA1_KD,
-		   key, 3 * 8,
-		   "kerberos", strlen ("kerberos"), outkey, 3 * 8);
+  /* key = DK (tmpKey, KerberosConstant) */
+  res = shishi_dk (handle, SHISHI_DES3_CBC_HMAC_SHA1_KD, key, keylen,
+		   "kerberos", strlen ("kerberos"), outkey, keylen);
   if (res != SHISHI_OK)
     return res;
+
+  if (VERBOSECRYPTO(handle))
+    {
+      printf ("des3_string_to_key (string, salt)\n");
+      printf ("\t ;; Key:\n");
+      escapeprint (outkey, keylen);
+      hexprint (outkey, keylen);
+      puts ("");
+      puts ("");
+    }
 
   return SHISHI_OK;
 }
