@@ -609,7 +609,7 @@ extern int shishi_cfg_authorizationtype_set (Shishi * handle, char *value);
 extern const char *shishi_strerror (int err);
 extern const char *shishi_error (Shishi * handle);
 extern void shishi_error_clear (Shishi * handle);
-extern void shishi_error_set (Shishi * handle, const char *error);
+extern void shishi_error_set (Shishi * handle, const char *errstr);
 extern void shishi_error_printf (Shishi * handle, const char *format, ...);
 extern int shishi_outputtype (Shishi * handle);
 extern void shishi_set_outputtype (Shishi * handle, int type);

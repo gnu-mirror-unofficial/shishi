@@ -1,5 +1,5 @@
 /* error.c	error handling functions
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -152,7 +152,7 @@ shishi_error_clear (Shishi * handle)
 /**
  * shishi_error_set:
  * @handle: shishi handle as allocated by shishi_init().
- * @error: Zero terminated character array containing error description,
+ * @errstr: Zero terminated character array containing error description,
  *   or NULL to clear the error description string.
  *
  * Set the detailed error information string to specified string.  The
@@ -163,11 +163,11 @@ shishi_error_clear (Shishi * handle)
  * handling infrastructure.
  **/
 void
-shishi_error_set (Shishi * handle, const char *error)
+shishi_error_set (Shishi * handle, const char *errstr)
 {
-  if (error)
+  if (errstr)
     {
-      strncpy (handle->error, error, sizeof (handle->error));
+      strncpy (handle->error, errstr, sizeof (handle->error));
 
       if (VERBOSE (handle))
 	puts (handle->error);
