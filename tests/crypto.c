@@ -378,7 +378,7 @@ str2key[] =
   {
   "foo", "",
       "\xac\x8e\x65\x7f\x83\xdf\x82\xbe\xea\x5d\x43\xbd\xaf\x78\x00\xcc",
-      SHISHI_RC4_HMAC}
+      SHISHI_ARCFOUR_HMAC}
 #endif
 };
 
