@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.0.19\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2004-11-21 19:25+0100\n"
+"POT-Creation-Date: 2004-12-17 14:42+0100\n"
 "PO-Revision-Date: 2004-11-19 00:50+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -104,12 +104,12 @@ msgstr "Odczytywanie obiektu Authenticator w formacie %s...\n"
 msgid "Reading Authenticator from %s...done\n"
 msgstr "Odczytywanie obiektu Authenticator z %s... zakoñczone\n"
 
-#: lib/diskio.c:966
+#: lib/diskio.c:990
 #, c-format
 msgid "Writing KEY to %s...\n"
 msgstr "Zapisywanie KEY do %s...\n"
 
-#: lib/diskio.c:981
+#: lib/diskio.c:1005
 #, c-format
 msgid "Writing KEY to %s...done\n"
 msgstr "Zapisywanie KEY do %s... zakoñczone\n"
