@@ -83,6 +83,24 @@ test_keys( RSA_secret_key *sk, unsigned nbits )
     gcry_mpi_release ( out2 );
 }
 
+
+/* Callback used by the prime generation to test whether the exponent
+   is suitable. Returns 0 if the test has been passed. */
+static int
+check_exponent (void *arg, MPI a)
+{
+  MPI e = arg;
+  MPI tmp;
+  int result;
+  
+  mpi_sub_ui (a, a, 1);
+  tmp = _gcry_mpi_alloc_like (a);
+  result = !gcry_mpi_gcd(tmp, e, a); /* GCD is not 1. */
+  gcry_mpi_release (tmp);
+  mpi_add_ui (a, a, 1);
+  return result;
+}
+
 /****************
  * Generate a key pair with a key of size NBITS.  
  * USE_E = 0 let Libcgrypt decide what exponent to use.
@@ -108,6 +126,27 @@ generate (RSA_secret_key *sk, unsigned int nbits, unsigned long use_e)
     if ( (nbits&1) )
       nbits++; 
 
+    if (use_e == 1)   /* Alias for a secure value. */
+      use_e = 65537;  /* as demanded by Spinx. */
+
+    /* Public exponent:
+       In general we use 41 as this is quite fast and more secure than the
+       commonly used 17.  Benchmarking the RSA verify function
+       with a 1024 bit key yields (2001-11-08): 
+         e=17    0.54 ms
+         e=41    0.75 ms
+         e=257   0.95 ms
+         e=65537 1.80 ms
+    */
+    e = mpi_alloc( (32+BITS_PER_MPI_LIMB-1)/BITS_PER_MPI_LIMB );
+    if (!use_e)
+      mpi_set_ui (e, 41);     /* This is a reasonable secure and fast value */
+    else 
+      {
+        use_e |= 1; /* make sure this is odd */
+        mpi_set_ui (e, use_e); 
+      }
+    
     n = gcry_mpi_new (nbits);
 
     p = q = NULL;
@@ -117,8 +156,17 @@ generate (RSA_secret_key *sk, unsigned int nbits, unsigned long use_e)
         gcry_mpi_release (p);
       if (q)
         gcry_mpi_release (q);
-      p = _gcry_generate_secret_prime (nbits/2);
-      q = _gcry_generate_secret_prime (nbits/2);
+      if (use_e)
+        { /* Do an extra test to ensure that the given exponent is
+             suitable. */
+          p = _gcry_generate_secret_prime (nbits/2, check_exponent, e);
+          q = _gcry_generate_secret_prime (nbits/2, check_exponent, e);
+        }
+      else
+        { /* We check the exponent later. */
+          p = _gcry_generate_secret_prime (nbits/2, NULL, NULL);
+          q = _gcry_generate_secret_prime (nbits/2, NULL, NULL);
+        }
       if (mpi_cmp (p, q) > 0 ) /* p shall be smaller than q (for calc of u)*/
         mpi_swap(p,q);
       /* calculate the modulus */
@@ -137,25 +185,13 @@ generate (RSA_secret_key *sk, unsigned int nbits, unsigned long use_e)
     gcry_mpi_gcd(g, t1, t2);
     mpi_fdiv_q(f, phi, g);
 
-    /* find an public exponent.
-       We use 41 as this is quite fast and more secure than the
-       commonly used 17.  Benchmarking the RSA verify function
-       with a 1024 bit key yields (2001-11-08): 
-         e=17    0.54 ms
-         e=41    0.75 ms
-         e=257   0.95 ms
-         e=65537 1.80 ms
-    */
-    e = mpi_alloc( (32+BITS_PER_MPI_LIMB-1)/BITS_PER_MPI_LIMB );
-    if (!use_e)
-      use_e = 41;     /* This is a reasonable secure and fast value */
-    else if (use_e == 1)
-      use_e = 65537;  /* A secure value as demanded by Spinx. */
-
-    use_e |= 1; /* make sure this is odd */
-    mpi_set_ui (e, use_e); 
     while (!gcry_mpi_gcd(t1, e, phi)) /* (while gcd is not 1) */
-      mpi_add_ui (e, e, 2);
+      {
+        if (use_e)
+          BUG (); /* The prime generator already made sure that we
+                     never can get to here. */
+        mpi_add_ui (e, e, 2);
+      }
 
     /* calculate the secret key d = e^1 mod phi */
     d = gcry_mpi_snew ( nbits );
@@ -396,7 +432,8 @@ _gcry_rsa_check_secret_key( int algo, MPI *skey )
 
 
 int
-_gcry_rsa_encrypt( int algo, MPI *resarr, MPI data, MPI *pkey )
+_gcry_rsa_encrypt (int algo, MPI *resarr, MPI data, MPI *pkey,
+		   int flags)
 {
     RSA_public_key pk;
 
@@ -410,22 +447,123 @@ _gcry_rsa_encrypt( int algo, MPI *resarr, MPI data, MPI *pkey )
     return 0;
 }
 
+/* Perform RSA blinding.  */
+GcryMPI
+_gcry_rsa_blind (MPI x, MPI r, MPI e, MPI n)
+{
+  /* A helper.  */
+  GcryMPI a;
+
+  /* Result.  */
+  GcryMPI y;
+
+  a = gcry_mpi_snew (gcry_mpi_get_nbits (n));
+  y = gcry_mpi_snew (gcry_mpi_get_nbits (n));
+  
+  /* Now we calculate: y = (x * r^e) mod n, where r is the random
+     number, e is the public exponent, x is the non-blinded data and n
+     is the RSA modulus.  */
+  gcry_mpi_powm (a, r, e, n);
+  gcry_mpi_mulm (y, a, x, n);
+
+  gcry_mpi_release (a);
+
+  return y;
+}
+
+/* Undo RSA blinding.  */
+GcryMPI
+_gcry_rsa_unblind (MPI x, MPI ri, MPI n)
+{
+  GcryMPI y;
+
+  y = gcry_mpi_snew (gcry_mpi_get_nbits (n));
+
+  /* Here we calculate: y = (x * r^-1) mod n, where x is the blinded
+     decrypted data, ri is the modular multiplicative inverse of r and
+     n is the RSA modulus.  */
+
+  gcry_mpi_mulm (y, ri, x, n);
+
+  return y;
+}
+
 int
-_gcry_rsa_decrypt( int algo, MPI *result, MPI *data, MPI *skey )
+_gcry_rsa_decrypt (int algo, MPI *result, MPI *data, MPI *skey,
+		   int flags)
 {
     RSA_secret_key sk;
+    GcryMPI r = MPI_NULL;	/* Random number needed for
+				   blinding.  */
+    GcryMPI ri = MPI_NULL;	/* Modular multiplicative inverse of
+				   r.  */
+    GcryMPI x = MPI_NULL;	/* Data to decrypt.  */
+    GcryMPI y;			/* Result.  */
 
-    if( algo != 1 && algo != 2 )
+    if (algo != 1 && algo != 2)
 	return GCRYERR_INV_PK_ALGO;
 
+    /* Extract private key.  */
     sk.n = skey[0];
     sk.e = skey[1];
     sk.d = skey[2];
     sk.p = skey[3];
     sk.q = skey[4];
     sk.u = skey[5];
-    *result = mpi_alloc_secure( mpi_get_nlimbs( sk.n ) );
-    secret( *result, data[0], &sk );
+
+    y = gcry_mpi_snew (gcry_mpi_get_nbits (sk.n));
+
+    if (! (flags & PUBKEY_FLAG_NO_BLINDING))
+      {
+	/* Initialize blinding.  */
+
+	/* First, we need a random number r between 0 and n - 1, which
+	   is relatively prime to n (i.e. it is neither p nor q).  */
+	r = gcry_mpi_snew (gcry_mpi_get_nbits (sk.n));
+	ri = gcry_mpi_snew (gcry_mpi_get_nbits (sk.n));
+
+	gcry_mpi_randomize (r, gcry_mpi_get_nbits (sk.n),
+			    GCRY_STRONG_RANDOM);
+	gcry_mpi_mod (r, r, sk.n);
+
+	/* Actually it should be okay to skip the check for equality
+	   with either p or q here.  */
+
+	/* Calculate inverse of r.  */
+	if (! gcry_mpi_invm (ri, r, sk.n))
+	  BUG ();
+      }
+
+    if (! (flags & PUBKEY_FLAG_NO_BLINDING))
+      /* Do blinding.  */
+      x = _gcry_rsa_blind (data[0], r, sk.e, sk.n);
+    else
+      /* Skip blinding.  */
+      x = data[0];
+
+    /* Do the encryption.  */
+    secret (y, x, &sk);
+
+    if (! (flags & PUBKEY_FLAG_NO_BLINDING))
+      {
+	/* Undo blinding.  */
+	GcryMPI a = gcry_mpi_copy (y);
+
+	gcry_mpi_release (y);
+	y = _gcry_rsa_unblind (a, ri, sk.n);
+      }
+
+    if (! (flags & PUBKEY_FLAG_NO_BLINDING))
+      {
+	/* Deallocate resources needed for blinding.  */
+	gcry_mpi_release (x);
+	gcry_mpi_release (r);
+	gcry_mpi_release (ri);
+      }
+
+    /* Copy out result.  */
+    *result = y;
+
     return 0;
 }
 

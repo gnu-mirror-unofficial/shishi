@@ -1,5 +1,5 @@
 /* secmem.c  -	memory allocation from a secure heap
- * Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+ * Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
  *
  * This file is part of Libgcrypt.
  *
@@ -42,6 +42,7 @@
 #endif
 
 #define DEFAULT_POOLSIZE 16384
+#define DEFAULT_PAGESIZE 4096
 
 typedef struct memblock_struct MEMBLOCK;
 struct memblock_struct {
@@ -170,7 +171,7 @@ init_pool( size_t n)
   #ifdef HAVE_GETPAGESIZE
     pgsize = getpagesize();
   #else
-    pgsize = 4096;
+    pgsize = DEFAULT_PAGESIZE;
   #endif
 
   #if HAVE_MMAP
@@ -226,8 +227,8 @@ _gcry_secmem_set_flags( unsigned flags )
 {
     int was_susp = suspend_warning;
 
-    no_warning = flags & 1;
-    suspend_warning = flags & 2;
+    no_warning = flags & GCRY_SECMEM_FLAG_NO_WARNING;
+    suspend_warning = flags & GCRY_SECMEM_FLAG_SUSPEND_WARNING;
 
     /* and now issue the warning if it is not longer suspended */
     if( was_susp && !suspend_warning && show_warning ) {
@@ -241,8 +242,8 @@ _gcry_secmem_get_flags(void)
 {
     unsigned flags;
 
-    flags  = no_warning      ? 1:0;
-    flags |= suspend_warning ? 2:0;
+    flags  = no_warning ? GCRY_SECMEM_FLAG_NO_WARNING : 0;
+    flags |= suspend_warning ? GCRY_SECMEM_FLAG_SUSPEND_WARNING : 0;
     return flags;
 }
 

@@ -8,9 +8,20 @@ Noteworthy changes in version 1.1.13 (unreleased)
 
  * The public RSA exponent can now be specified in key generation. 
 
+ * The random module won't print the "not enough random bytes
+   available" anymore.  A new progress status is issued instead.
+
+ * CBC-MAC for block ciphers is now supported, by using a
+   GCRY_CIPHER_CBC_MAC cipher flag.
+
+ * RSA blinding is now supported and is used automatically for RSA
+   decryption.  It can be explicitely disabled by using the `no-blinding'
+   symbol in the `flags' s-exp.
+
  * Interface changes relative to the 1.1.12 release:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 gcry_pk_decrypt         ENHANCED: Allows flag to return complete S-expression.
+gcry_cipher_reset	NEW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Noteworthy changes in version 1.1.12 (2003-01-20)

@@ -44,13 +44,6 @@ struct gcry_sexp {
 #define ST_OPEN  3
 #define ST_CLOSE 4
 
-#define digitp(p)   (*(p) >= '0' && *(p) <= '9')
-#define octdigitp(p) (*(p) >= '0' && *(p) <= '7')
-#define alphap(a)    (   (*(a) >= 'A' && *(a) <= 'Z')  \
-                      || (*(a) >= 'a' && *(a) <= 'z'))
-#define hexdigitp(a) (digitp (a)                     \
-                      || (*(a) >= 'A' && *(a) <= 'F')  \
-                      || (*(a) >= 'a' && *(a) <= 'f'))
 /* the atoi macros assume that the buffer has only valid digits */
 #define atoi_1(p)   (*(p) - '0' )
 #define xtoi_1(p)   (*(p) <= '9'? (*(p)- '0'): \
@@ -1028,7 +1021,7 @@ sexp_sscan( GCRY_SEXP *retsexp, size_t *erroff ,
 	else if ( percent ) {
 	    if ( *p == 'm' ) { /* insert an MPI */
 		GCRY_MPI m = va_arg (arg_ptr, GCRY_MPI);
-		size_t nm;
+		size_t nm = 0;
 
 		if ( gcry_mpi_print( GCRYMPI_FMT_STD, NULL, &nm, m ) )
 		    BUG ();

@@ -1,3 +1,114 @@
+2003-03-26  Moritz Schulte  <moritz@g10code.com>
+
+	* dynload.c (_gcry_enum_gnupgext_pubkeys): Adjust `encrypt' and
+	`decrypt' function arguments.
+	(_gcry_enum_gnupgext_pubkeys): Likewise.
+	* dynload.h: Likewise.
+	
+	* pubkey.c (dummy_decrypt): Add argument: int flags.
+	(dummy_encrypt): Likewise.
+
+	* elgamal.c (_gcry_elg_encrypt): Add argument: int flags.
+	(_gcry_elg_decrypt): Likewise.
+
+	* rsa.c (_gcry_rsa_encrypt): Add argument: int flags.
+	(_gcry_rsa_decrypt): Likewise.
+
+	* pubkey.c: Add `flags' argument to members `encrypt' and
+	`decrypt' of struct `pubkey_table_s'.
+
+	* rsa.h: Add `flags' argument to function declarations.
+	* elgamal.h: Likewise.
+
+	* pubkey.c (sexp_data_to_mpi): New variable: int parsed_flags.
+	(sexp_data_to_mpi): Set `parsed_flags'.
+	(sexp_data_to_mpi): New argument: int *flags.
+	(gcry_pk_encrypt): New variable: int flags.
+	(gcry_pk_encrypt): Pass `flags' to pubkey_encrypt.
+	(pubkey_encrypt): New variable: int flags.
+	(pubkey_encrypt): Pass `flags' to pubkey encrypt function.
+	(pubkey_decrypt): Likewise.
+	(pubkey_decrypt): Pass `flags' to pubkey encrypt function.
+	(gcry_pk_encrypt): Include `flags' s-exp in return list.
+	(sexp_to_enc): New argument: int *flags.
+	(gcry_pk_decrypt): New variable: int flags.
+	(gcry_pk_decrypt): Pass `flags' to pubkey_decrypt.
+	(sexp_to_enc): New variable: int parsed_flags.
+	(sexp_to_enc): Set `parsed_flags'.
+
+2003-03-22  Simon Josefsson  <jas@extundo.com>
+
+	* cipher.c (gcry_cipher_open, do_cbc_encrypt)
+	(gcry_cipher_encrypt): Support GCRY_CIPHER_CBC_MAC.
+	(gcry_cipher_ctl): Support GCRYCTL_SET_CBC_MAC.
+
+2003-03-19  Werner Koch  <wk@gnupg.org>
+
+	* primegen.c (gen_prime): New args EXTRA_CHECK and EXTRA_CHECK_ARG
+	to allow for a user callback.  Changed all callers.
+	(_gcry_generate_secret_prime)
+	(_gcry_generate_public_prime): Ditto, pass them to gen_prime.
+	* rsa.c (check_exponent): New.
+	(generate): Use a callback to ensure that a given exponent is
+	actually generated.
+
+2003-03-12  Moritz Schulte  <moritz@g10code.com>
+
+	* primegen.c: Initialize `no_of_small_prime_numbers' statically.
+	(gen_prime): Remove calculation of `no_of_small_prime_numbers'.
+
+2003-03-03  Moritz Schulte  <moritz@g10code.com>
+
+	* md.c (gcry_md_ctl): Rewritten to use same style like the other
+	functions dispatchers.
+
+2003-03-02  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.c (struct gcry_cipher_handle): New member: algo_index.
+	(gcry_cipher_open): Allocate memory for two cipher contexts.
+	Initialize algo_index.
+	(cipher_setkey): Duplicate context into reserved memory.
+	(cipher_reset): New function, which resets the context and clear
+	the IV.
+	(gcry_cipher_ctl): Call cipher_reset.
+
+2003-02-23  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.c: Remove (bogus) `digitp' macro definition.
+	* md.c: Likewise.
+
+	* blowfish.c (burn_stack): Removed.
+	* arcfour.c (burn_stack): Likewise.
+	* cast5.c (burn_stack): Likewise.
+	* des.c (burn_stack): Likewise.
+	* md4.c (burn_stack): Likewise.
+	* md5.c (burn_stack): Likewise.
+	* random.c (burn_stack): Likewise.
+	* rijndael.c (burn_stack): Likewise.
+	* rmd160.c (burn_stack): Likewise.
+	* sha1.c (burn_stack): Likewise.
+	* sha256.c (burn_stack): Likewise.
+	* tiger.c (burn_stack): Likewise.
+	* twofish.c (burn_stack): Likewise.
+
+	* blowfish.c: Changed all occurences of burn_stack to
+	_gcry_burn_stack.
+	* arcfour.c: Likewise.
+	* cast5.c: Likewise.
+	* des.c: Likewise.
+	* md4.c: Likewise.
+	* md5.c: Likewise.
+	* random.c: Likewise.
+	* rijndael.c: Likewise.
+	* rmd160.c: Likewise.
+	* sha1.c: Likewise.
+	* sha256.c: Likewise.
+	* tiger.c: Likewise.
+	* twofish.c: Likewise.
+
+	* arcfour.c (_gcry_arcfour_get_info): Use GCRY_CIPHER_ARCFOUR
+	instead of hard-coded value `301'.
+
 2003-01-24  Werner Koch  <wk@gnupg.org>
 
 	* random.c (_gcry_register_random_progress): New.

@@ -102,14 +102,15 @@ _asn1_get_octet_der(const unsigned char *der,int *der_len,unsigned char *str,int
 {
   int len_len;
 
-  if(str==NULL) return ASN1_SUCCESS;
+  /* if(str==NULL) return ASN1_SUCCESS; */
   *str_len=_asn1_get_length_der(der,&len_len);
+
+  *der_len=*str_len+len_len;
   if ( str_size >= *str_len)
 	  memcpy(str,der+len_len,*str_len);
   else {
   	return ASN1_MEM_ERROR;
   }
-  *der_len=*str_len+len_len;
   
   return ASN1_SUCCESS;
 }
@@ -171,14 +172,14 @@ _asn1_get_bit_der(const unsigned char *der,int *der_len,unsigned char *str, int 
 
   if(str==NULL) return ASN1_SUCCESS;
   len_byte=_asn1_get_length_der(der,&len_len)-1;
-  
+
+  *der_len=len_byte+len_len+1;  
   if (str_size >= len_byte)
  	memcpy(str,der+len_len+1,len_byte);
   else {
   	return ASN1_MEM_ERROR;
   }
   *bit_len=len_byte*8-der[len_len];
-  *der_len=len_byte+len_len+1;
 
   return ASN1_SUCCESS;
 }
@@ -601,7 +602,7 @@ asn1_der_decoding(ASN1_TYPE *element,const unsigned char *der,int len,
 	temp2=(unsigned char *)_asn1_alloca(len2+len3+len4);
         if (temp2==NULL){
 	  asn1_delete_structure(element);
-	  return ASN1_MEM_ERROR;
+	  return ASN1_MEM_ALLOC_ERROR;
 	}
         
 	_asn1_octet_der(der+counter,len2+len3,temp2,&len4);
@@ -668,6 +669,7 @@ asn1_der_decoding(ASN1_TYPE *element,const unsigned char *der,int len,
   *   ASN1_ELEMENT_NOT_FOUND\: ELEMENT is ASN1_TYPE_EMPTY or elementName == NULL.
   *
   *   ASN1_TAG_ERROR,ASN1_DER_ERROR\: the der encoding doesn't match the structure STRUCTURE. *ELEMENT deleted. 
+  *
   **/
 asn1_retCode
 asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
@@ -699,7 +701,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
     if(nameLen>0) strcpy(currentName,(*structure)->name);
     else{
       asn1_delete_structure(structure);
-    return ASN1_MEM_ERROR;
+      return ASN1_MEM_ERROR;
     }
     if(!(strcmp(currentName,elementName))){ 
       state=FOUND;
@@ -999,7 +1001,7 @@ asn1_der_decoding_element(ASN1_TYPE *structure,const char *elementName,
 	  temp2=(unsigned char *)_asn1_alloca(len2+len3+len4);
 	  if (temp2==NULL){
 	    asn1_delete_structure(structure);
-	    return ASN1_MEM_ERROR;
+	    return ASN1_MEM_ALLOC_ERROR;
 	  }
         
 	_asn1_octet_der(der+counter,len2+len3,temp2,&len4);

@@ -38,8 +38,6 @@
 #define CTX_MAGIC_NORMAL 0x24091964
 #define CTX_MAGIC_SECURE 0x46919042
 
-#define digitp(p)   (*(p) >= 0 && *(p) <= '9')
-
 static struct {
   const char *oidstring;
   int algo;
@@ -89,6 +87,7 @@ struct gcry_cipher_handle {
     int  algo;
     int  mode;
     unsigned int flags;
+    int algo_index;
     size_t blocksize;
     byte iv[MAX_BLOCKSIZE];	/* (this should be ulong aligned) */
     byte lastiv[MAX_BLOCKSIZE];
@@ -517,7 +516,9 @@ gcry_cipher_open( int algo, int mode, unsigned int flags )
     /* check flags */
     if( (flags & ~(GCRY_CIPHER_SECURE|
 		   GCRY_CIPHER_ENABLE_SYNC|
-		   GCRY_CIPHER_CBC_CTS)) ) {
+		   GCRY_CIPHER_CBC_CTS|
+		   GCRY_CIPHER_CBC_MAC)) ||
+	(flags & GCRY_CIPHER_CBC_CTS & GCRY_CIPHER_CBC_MAC)) {
 	set_lasterr( GCRYERR_INV_CIPHER_ALGO );
 	return NULL;
     }
@@ -560,11 +561,14 @@ gcry_cipher_open( int algo, int mode, unsigned int flags )
 
     /* ? perform selftest here and mark this with a flag in cipher_table ? */
 
-    h = secure ? gcry_calloc_secure( 1, sizeof *h
-				       + cipher_table[idx].contextsize
-				       - sizeof(PROPERLY_ALIGNED_TYPE) )
-	       : gcry_calloc( 1, sizeof *h + cipher_table[idx].contextsize
-                                       - sizeof(PROPERLY_ALIGNED_TYPE)  );
+    h = secure ? gcry_calloc_secure( 1,
+				     sizeof *h
+				     + 2 * cipher_table[idx].contextsize
+				     - sizeof (PROPERLY_ALIGNED_TYPE) )
+	       : gcry_calloc( 1,
+			      sizeof *h
+			      + 2 * cipher_table[idx].contextsize
+			      - sizeof (PROPERLY_ALIGNED_TYPE) );
     if( !h ) {
 	set_lasterr( GCRYERR_NO_MEM );
 	return NULL;
@@ -573,6 +577,7 @@ gcry_cipher_open( int algo, int mode, unsigned int flags )
     h->algo = algo;
     h->mode = mode;
     h->flags = flags;
+    h->algo_index = idx;
     h->blocksize = cipher_table[idx].blocksize;
     h->setkey  = cipher_table[idx].setkey;
     h->encrypt = cipher_table[idx].encrypt;
@@ -600,7 +605,15 @@ gcry_cipher_close( GCRY_CIPHER_HD h )
 static int
 cipher_setkey( GCRY_CIPHER_HD c, byte *key, unsigned keylen )
 {
-    return (*c->setkey)( &c->context.c, key, keylen );
+    int ret;
+
+    ret = (*c->setkey)( &c->context.c, key, keylen );
+    if (! ret)
+      memcpy ((void *) ((char *) &c->context.c
+			+ cipher_table[c->algo_index].contextsize),
+	      (void *) &c->context.c,
+	      cipher_table[c->algo_index].contextsize);
+    return ret;
 }
 
 
@@ -619,6 +632,17 @@ cipher_setiv( GCRY_CIPHER_HD c, const byte *iv, unsigned ivlen )
     c->unused = 0;
 }
 
+
+static void
+cipher_reset (GCRY_CIPHER_HD c)
+{
+  memcpy ((void *) &c->context.c,
+	  (void *) ((char *) &c->context.c
+		    + cipher_table[c->algo_index].contextsize),
+	  cipher_table[c->algo_index].contextsize);
+  memset (c->iv, 0, c->blocksize);
+  memset (c->lastiv, 0, c->blocksize);
+}
 
 
 static void
@@ -668,7 +692,8 @@ do_cbc_encrypt( GCRY_CIPHER_HD c, byte *outbuf, const byte *inbuf, unsigned nbyt
 	(*c->encrypt)( &c->context.c, outbuf, outbuf );
 	memcpy(c->iv, outbuf, blocksize );
 	inbuf  += c->blocksize;
-	outbuf += c->blocksize;
+	if (!(c->flags & GCRY_CIPHER_CBC_MAC))
+	  outbuf += c->blocksize;
     }
 
     if ((c->flags & GCRY_CIPHER_CBC_CTS) && nbytes > blocksize)
@@ -918,7 +943,7 @@ gcry_cipher_encrypt (GcryCipherHd h, byte *out, size_t outsize,
     }
   else
     {
-      if ( outsize < inlen )
+      if ( outsize < ((h->flags & GCRY_CIPHER_CBC_MAC) ? h->blocksize : inlen))
         rc = GCRYERR_TOO_SHORT;
       else if ((h->mode == GCRY_CIPHER_MODE_ECB
                 || (h->mode == GCRY_CIPHER_MODE_CBC
@@ -1044,16 +1069,30 @@ gcry_cipher_ctl( GCRY_CIPHER_HD h, int cmd, void *buffer, size_t buflen)
     case GCRYCTL_SET_IV:
       cipher_setiv( h, buffer, buflen );
       break;
+    case GCRYCTL_RESET:
+      cipher_reset (h);
+      break;
     case GCRYCTL_CFB_SYNC:
       cipher_sync( h );
       break;
     case GCRYCTL_SET_CBC_CTS:
       if (buflen)
-	h->flags |= GCRY_CIPHER_CBC_CTS;
+	if (h->flags & GCRY_CIPHER_CBC_MAC)
+	  rc = GCRYERR_INV_FLAG;
+	else
+	  h->flags |= GCRY_CIPHER_CBC_CTS;
       else
 	h->flags &= ~GCRY_CIPHER_CBC_CTS;
       break;
-
+    case GCRYCTL_SET_CBC_MAC:
+      if (buflen)
+	if (h->flags & GCRY_CIPHER_CBC_CTS)
+	  rc = GCRYERR_INV_FLAG;
+	else
+	  h->flags |= GCRY_CIPHER_CBC_MAC;
+      else
+	h->flags &= ~GCRY_CIPHER_CBC_MAC;
+      break;
     case GCRYCTL_DISABLE_ALGO:
       /* this one expects a NULL handle and buffer pointing to an
        * integer with the algo number.

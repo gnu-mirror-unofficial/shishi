@@ -1,5 +1,5 @@
 /* misc.c
- *	Copyright (C) 1999, 2001, 2002 Free Software Foundation, Inc.
+ *	Copyright (C) 1999, 2001, 2002, 2003 Free Software Foundation, Inc.
  *
  * This file is part of Libgcrypt.
  *
@@ -28,7 +28,7 @@
 
 #include "g10lib.h"
 
-static int verbosity_level = 0; /* fixme: add a function to set it */
+static int verbosity_level = 0;
 
 static void (*fatal_error_handler)(void*,int, const char*) = NULL;
 static void *fatal_error_handler_value = 0;
@@ -193,7 +193,7 @@ _gcry_log_fatal( const char *fmt, ... )
     va_start( arg_ptr, fmt ) ;
     _gcry_logv( GCRY_LOG_FATAL, fmt, arg_ptr );
     va_end(arg_ptr);
-    abort(); /* never called, bugs it makes the compiler happy */
+    abort(); /* never called, but it makes the compiler happy */
 }
 
 void
@@ -204,7 +204,7 @@ _gcry_log_bug( const char *fmt, ... )
     va_start( arg_ptr, fmt ) ;
     _gcry_logv( GCRY_LOG_BUG, fmt, arg_ptr );
     va_end(arg_ptr);
-    abort(); /* never called, bugs it makes the compiler happy */
+    abort(); /* never called, but it makes the compiler happy */
 }
 
 void
@@ -228,4 +228,15 @@ _gcry_log_printf (const char *fmt, ...)
       _gcry_logv (GCRY_LOG_CONT, fmt, arg_ptr);
       va_end(arg_ptr);
     }
+}
+
+void
+_gcry_burn_stack (int bytes)
+{
+    char buf[64];
+    
+    memset (buf, 0, sizeof buf);
+    bytes -= sizeof buf;
+    if (bytes > 0)
+        _gcry_burn_stack (bytes);
 }

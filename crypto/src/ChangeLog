@@ -1,3 +1,62 @@
+2003-03-19  Moritz Schulte  <moritz@g10code.com>
+
+	* cipher.h (PUBKEY_FLAG_NO_BLINDING): New symbol.
+
+2003-03-22  Simon Josefsson  <jas@extundo.com>
+
+	* gcrypt.h: Add GCRYCTL_SET_CBC_MAC and GCRY_CIPHER_CBC_MAC.
+
+2003-03-19  Werner Koch  <wk@gnupg.org>
+
+	* g10lib.h: Adjusted primegen.c prototypes.
+
+2003-03-12  Werner Koch  <wk@gnupg.org>
+
+	* sexp.c (sexp_sscan): Initialize NM.  Thanks to Ian Peters for
+	valgrinding this.
+
+2003-03-06  Moritz Schulte  <mo@g10code.com>
+
+	* secmem.h (GCRY_SECMEM_FLAG_NO_WARNING,
+	GCRY_SECMEM_FLAG_SUSPEND_WARNING): New symbols.
+
+	* global.c (gcry_control): Use
+	GCRY_SECMEM_FLAG_{NO,SUSPEND}_WARNING, instead of hard-coded
+	values.
+	* secmem.c (_gcry_secmem_set_flags): Likewise.
+	* secmem.c (_gcry_secmem_get_flags): Likewise.
+	
+2003-03-03  Moritz Schulte  <moritz@g10code.com>
+
+	* misc.c: Removed old FIXME, since there is already a function to
+	set the value of `verbosity_level'.
+
+	* gcrypt.h: Removed enumeration list: gcry_ctl_cmds.
+	New enumeration lists: gcry_global_control_cmds,
+	gcry_control_cmds, gcry_info_cmds, gcry_algo_info_cmds.
+
+2003-03-02  Moritz Schulte  <moritz@g10code.com>
+
+	* gcrypt.h (gcry_cipher_reset): New macro for resetting a handle.
+
+2003-02-28  Moritz Schulte  <moritz@g10code.com>
+
+	* secmem.c (DEFAULT_PAGESIZE): New symbol.
+	(init_pool): Use DEFAULT_PAGESIZE.
+
+2003-02-23  Moritz Schulte  <moritz@g10code.com>
+
+	* secmem.h: Fix typo in declaration of _gcry_secmem_term.
+
+	* sexp.c: Move macro definitions of `digitp', `octdigit', `alphap'
+	and `hexdigit' ...
+	* g10lib.h: ... here.
+
+	* misc.c (_gcry_burn_stack): New function (former name:
+	burn_stack).
+
+	* g10lib.h (burn_stack): Declare _gcry_burn_stack().
+
 2003-01-24  Werner Koch  <wk@gnupg.org>
 
 	* global.c (gcry_set_progress_handler): Register a random progress
