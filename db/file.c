@@ -413,8 +413,9 @@ read_key (Shisa * dbh,
   ssize_t len;
   int rc;
 
-  asprintf (&file, "%s/%s/%s/keys/%s", info->path, realm, principal, keyfile);
-  fh = fopen (file, "r");
+  asprintf (&file, "keys/%s", keyfile);
+  fh = _shisa_fopen4 (info->path, realm, principal, file, "r");
+  free (file);
   if (!fh)
     return SHISA_NO_KEY;
 
@@ -460,11 +461,9 @@ read_key (Shisa * dbh,
   rc = fclose (fh);
   if (rc != 0)
     {
-      perror(file);
+      perror(keyfile);
       return SHISA_NO_KEY;
     }
-
-  free (file);
 
   *key = xmalloc (sizeof (**key));
   memcpy (*key, &tmpkey, sizeof (tmpkey));
