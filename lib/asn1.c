@@ -1,5 +1,5 @@
 /* asn1.c --- Utilities to manipulate RFC 1510 ASN.1 types.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -154,7 +154,7 @@ shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
 			const char *field, int32_t * i)
 {
   unsigned char buf[4];
-  int buflen;
+  size_t buflen;
   int rc;
 
   memset (buf, 0, sizeof (buf));
@@ -284,7 +284,7 @@ shishi_asn1_write_uint32 (Shishi * handle, Shishi_asn1 node,
   char *buf;
   int res;
 
-  asprintf (&buf, "%ud", n);
+  asprintf (&buf, "%ul", n);
   res = shishi_asn1_write (handle, node, field, buf, 0);
   free (buf);
   if (res != SHISHI_OK)
@@ -615,10 +615,12 @@ shishi_a2d_field (Shishi * handle,
 		  char *der, size_t * len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
+  int tmplen = *len;
   int rc;
 
-  rc = asn1_der_coding (node, field, (unsigned char *) der, len,
+  rc = asn1_der_coding (node, field, (unsigned char *) der, &tmplen,
 			errorDescription);
+  *len = tmplen;
   if (rc != ASN1_SUCCESS)
     {
       shishi_error_set (handle, errorDescription);
