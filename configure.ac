@@ -43,7 +43,7 @@ AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
 AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
 	sys/time.h sys/select.h sys/socket.h sys/stat.h stdint.h termios.h \
 	signal.h pwd.h errno.h syslog.h locale.h arpa/nameser.h resolv.h)
-AC_CHECK_HEADERS(netinet/in.h netinet/in6.h arpa/inet.h)
+AC_CHECK_HEADERS(netinet/in.h netinet/in6.h arpa/inet.h inttypes.h)
 
 # Checks for programs.
 AC_PROG_LIBTOOL
@@ -173,34 +173,30 @@ else
 fi
 
 # Check for libtasn1
-AC_ARG_WITH(system-libtasn1,
-  AC_HELP_STRING([--without-system-libtasn1],
-		[don't use the system's libtasn1]))
-if test "$with_system_libtasn1" != "no" ; then
-	AC_CHECK_LIB(tasn1, asn1_read_tag, [
-		LIBTASN1_LIBS="-ltasn1"
-		LIBTASN1_CFLAGS=""
-		with_system_libtasn1=yes
-	], [
-		with_system_libtasn1=no
-	])
+AC_ARG_WITH(included-libtasn1,
+	AC_HELP_STRING([--with-included-libtasn1], [Use the included libtasn1]),
+	minitasn1_enabled=$withval,
+	minitasn1_enabled=no
+	AC_CHECK_LIB(tasn1, asn1_read_tag, :,
+		minitasn1_enabled=yes
+		AC_MSG_WARN([Libtasn1 0.2.x not found. Using included one.])))
+AC_MSG_CHECKING([whether to use the included tasn1])
+AC_MSG_RESULT($minitasn1_enabled)
+if test x"$minitasn1_enabled" = xyes; then
+ ASN1=asn1
+ LIBTASN1_LIBS="-L../asn1 -lminitasn1"
+else
+ LIBTASN1_LIBS=-ltasn1
 fi
-if test "$with_system_libtasn1" = "no"; then
-	AC_MSG_WARN([[
-
-The system's libtasn1 0.2.0 or later not used.  Using copy distributed
-with Shishi instead.  See <http://www.gnu.org/software/gnutls/>.
-]])
-	LIBTASN1_CFLAGS="-I\$(top_srcdir)/asn1/lib"
-	LIBTASN1_LIBS="\$(top_builddir)/asn1/lib/libtasn1.la"
-	ASN1=asn1
-fi
-AC_SUBST(LIBTASN1_CFLAGS)
-AC_SUBST(LIBTASN1_LIBS)
 AC_SUBST(ASN1)
-AC_MSG_CHECKING([if system's libtasn1 should be used])
-AC_MSG_RESULT($with_system_libtasn1)
-AC_CONFIG_SUBDIRS(asn1)
+AC_SUBST(LIBTASN1_LIBS)
+
+# For libtasn1
+AC_CHECK_SIZEOF(unsigned long long, 8)
+AC_CHECK_SIZEOF(unsigned long int, 4)
+AC_CHECK_SIZEOF(unsigned int, 4)
+AC_CHECK_SIZEOF(unsigned short int, 2)
+AC_CHECK_SIZEOF(unsigned char, 1)
 
 # Check for libgcrypt
 AC_ARG_WITH(system-libgcrypt,
@@ -298,7 +294,7 @@ if test x$enable_gtk_doc = xauto ; then
 fi
 AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
 
-AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile \
+AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile asn1/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
 	doc/reference/Makefile extra/Makefile extra/pam_shishi/Makefile \
 	gl/Makefile gl/m4/Makefile shishi.pc shishi.conf shishi.skel)
