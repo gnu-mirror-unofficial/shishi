@@ -619,7 +619,7 @@ shishi_kdcreq_till (Shishi * handle, Shishi_asn1 kdcreq,
 /**
  * shishi_kdcreq_tillc:
  * @handle: Shishi library handle create by shishi_init().
- * @tkt: input variable with ticket info.
+ * @kdcreq: KDC-REQ variable to get till field from.
  *
  * Extract C time corresponding to the "till" field.
  *

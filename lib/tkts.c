@@ -32,6 +32,7 @@ struct Shishi_tkts
 
 /**
  * shishi_tkts_default_file_guess:
+ * @handle: Shishi library handle create by shishi_init().
  *
  * Guesses the default ticket filename; it is $SHISHI_TICKETS,
  * $SHISHI_HOME/tickets, or $HOME/.shishi/tickets.
