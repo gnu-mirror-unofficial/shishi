@@ -187,12 +187,18 @@ static int
 asreq1 (Shishi_as * as)
 {
   Shishi_tkt *tkt;
-  Shishi_key *sessionkey, *userkey;
-  int etype, i;
+  Shishi_key *serverkey = NULL, *sessionkey = NULL, *userkey = NULL;
+  Shisa_key *serverdbkey = NULL, *userdbkey = NULL;
+  Shisa_key **serverkeys, **userkeys;
+  size_t nserverkeys, nuserkeys;
   int err;
   char *username, *servername, *realm;
   Shisa_principal krbtgt;
   Shisa_principal user;
+  uint32_t etype;
+  int i;
+
+  /* Find the server, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
 
   err = shishi_kdcreq_server (handle, shishi_as_req (as), &servername, NULL);
   if (err != SHISHI_OK)
@@ -210,6 +216,9 @@ asreq1 (Shishi_as * as)
       printf ("server %s@%s not found\n", servername, realm);
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
+  printf ("Found server %s@%s...\n", servername, realm);
+
+  /* Find the user, e.g., simon@JOSEFSSON.ORG. */
 
   err = shishi_kdcreq_client (handle, shishi_as_req (as), &username, NULL);
   if (err != SHISHI_OK)
@@ -222,27 +231,87 @@ asreq1 (Shishi_as * as)
       printf ("user %s@%s not found\n", username, realm);
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
+  printf ("Found user %s@%s...\n", username, realm);
 
-  tkt = shishi_as_tkt (as);
-  if (!tkt)
-    return SHISHI_MALLOC_ERROR;
+  /* Enumerate keys for user and server. */
 
-  i = 1;
-  do
+  err = shisa_enumerate_keys (dbh, realm, servername,
+			      &serverkeys, &nserverkeys);
+  if (err != SHISA_OK)
     {
-      err = shishi_kdcreq_etype (handle, shishi_as_req (as), &etype, i);
-      if (err == SHISHI_OK && shishi_cipher_supported_p (etype))
-	break;
+      printf ("Error getting keys for %s@%s\n", servername, realm);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
     }
-  while (err == SHISHI_OK);
+  printf ("Found keys for server %s@%s...\n", servername, realm);
+
+  err = shisa_enumerate_keys (dbh, realm, username,
+			      &userkeys, &nuserkeys);
+  if (err != SHISA_OK)
+    {
+      printf ("Error getting keys for %s@%s\n", username, realm);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
+  printf ("Found keys for user %s@%s...\n", username, realm);
+
+  /* Select keys in database that match supplied encryption type. */
+
+  for (i = 1; (err = shishi_kdcreq_etype (handle, shishi_as_req (as),
+					  &etype, i)) == SHISHI_OK; i++)
+    {
+      size_t j;
+      printf ("Trying etype %d...\n", etype);
+      if (!shishi_cipher_supported_p (etype))
+	continue;
+      if (serverdbkey == NULL)
+	for (j = 0; j < nserverkeys; j++)
+	  {
+	    printf ("Matching against server etype %d...\n",
+		    serverkeys[j]->etype);
+	    if (serverkeys[j]->etype == etype)
+		serverdbkey = serverkeys[j];
+	  }
+      if (userdbkey == NULL)
+	for (j = 0; j < nuserkeys; j++)
+	  {
+	    printf ("Matching against user etype %d...\n",
+		    userkeys[j]->etype);
+	    if (userkeys[j]->etype == etype)
+	      userdbkey = userkeys[j];
+	  }
+    }
+
+  if (userdbkey == NULL)
+    {
+      printf ("No key found for %s@%s\n", username, realm);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
+
+  if (serverdbkey == NULL)
+    {
+      printf ("No key found for %s@%s\n", servername, realm);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
+
+  err = shishi_key_from_value (handle, userdbkey->etype,
+			       userdbkey->key, &userkey);
   if (err != SHISHI_OK)
     return err;
 
-  /* XXX use a "preferred server kdc etype" from shishi instead? */
+  err = shishi_key_from_value (handle, serverdbkey->etype,
+			       serverdbkey->key, &serverkey);
+  if (err != SHISHI_OK)
+    return err;
 
-  err = shishi_key_random (handle, etype, &sessionkey);
+  /* Generate session key of same key type as the selected long-term
+     server key. */
+
+  err = shishi_key_random (handle, shishi_key_type (serverkey), &sessionkey);
   if (err)
     return err;
+
+  /* Build Ticket and AS-REP. */
+
+  tkt = shishi_as_tkt (as);
 
   err = shishi_tkt_key_set (tkt, sessionkey);
   if (err)
@@ -256,17 +325,9 @@ asreq1 (Shishi_as * as)
   if (err)
     return err;
 
-#if 0
-  userkey = shishi_keys_for_serverrealm_in_file (handle,
-						 arg.keyfile,
-						 username, realm);
-  if (!userkey)
-    return !SHISHI_OK;
-
-  err = shishi_tkt_build (tkt, arg.tgskey);
+  err = shishi_tkt_build (tkt, serverkey);
   if (err)
     return err;
-#endif
 
   err = shishi_as_rep_build (as, userkey);
   if (err)
@@ -281,40 +342,6 @@ asreq1 (Shishi_as * as)
       shishi_enckdcreppart_print (handle, stderr,
 				  shishi_tkt_enckdcreppart (tkt));
       shishi_kdcrep_print (handle, stderr, shishi_as_rep (as));
-    }
-
-  return SHISHI_OK;
-}
-
-static int
-asreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
-{
-  Shishi_as *as;
-  int rc;
-
-  rc = shishi_as (handle, &as);
-  if (rc != SHISHI_OK)
-    {
-      syslog (LOG_ERR, "Cannot create AS: %s\n", shishi_strerror (rc));
-      return rc;
-    }
-
-  shishi_as_req_set (as, kdcreq);
-
-  rc = asreq1 (as);
-  if (rc != SHISHI_OK)
-    {
-      syslog (LOG_NOTICE, "Could not answer request: %s: %s\n",
-	      shishi_strerror (rc),
-	      shishi_krberror_message (handle, shishi_as_krberror (as)));
-      rc = shishi_as_krberror_der (as, out, outlen);
-    }
-  else
-    rc = shishi_as_rep_der (as, out, outlen);
-  if (rc != SHISHI_OK)
-    {
-      syslog (LOG_ERR, "Cannot DER encode reply: %s\n", shishi_strerror (rc));
-      return rc;
     }
 
   return SHISHI_OK;
@@ -479,6 +506,40 @@ tgsreq1 (Shishi_tgs * tgs)
 }
 
 static int
+asreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
+{
+  Shishi_as *as;
+  int rc;
+
+  rc = shishi_as (handle, &as);
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "Cannot create AS: %s\n", shishi_strerror (rc));
+      return rc;
+    }
+
+  shishi_as_req_set (as, kdcreq);
+
+  rc = asreq1 (as);
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_NOTICE, "Could not answer request: %s: %s\n",
+	      shishi_strerror (rc),
+	      shishi_krberror_message (handle, shishi_as_krberror (as)));
+      rc = shishi_as_krberror_der (as, out, outlen);
+    }
+  else
+    rc = shishi_as_rep_der (as, out, outlen);
+  if (rc != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "Cannot DER encode reply: %s\n", shishi_strerror (rc));
+      return rc;
+    }
+
+  return SHISHI_OK;
+}
+
+static int
 tgsreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
 {
   Shishi_tgs *tgs;
@@ -487,11 +548,7 @@ tgsreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
   rc = shishi_tgs (handle, &tgs);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR, "Incoming request failed: Cannot create TGS: %s\n",
-	      shishi_strerror (rc));
-      /* XXX hard coded KRB-ERROR? */
-      *out = strdup ("foo");
-      *outlen = strlen (*out);
+      syslog (LOG_ERR, "Cannot create TGS: %s\n", shishi_strerror (rc));
       return rc;
     }
 
@@ -509,12 +566,7 @@ tgsreq (Shishi_asn1 kdcreq, char **out, size_t * outlen)
     rc = shishi_tgs_rep_der (tgs, out, outlen);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR,
-	      "Incoming request failed: Cannot DER encode reply: %s\n",
-	      shishi_strerror (rc));
-      /* XXX hard coded KRB-ERROR? */
-      *out = strdup ("aaaaaa");
-      *outlen = strlen (*out);
+      syslog (LOG_ERR, "Cannot DER encode reply: %s\n", shishi_strerror (rc));
       return rc;
     }
 
