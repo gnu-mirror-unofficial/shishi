@@ -278,13 +278,7 @@ shishi_arcfour (Shishi * handle, int decryptp,
 
   *out = xmalloc (inlen);
 
-  rc = arcfour_set_key (&ctx, keylen, key);
-  if (!rc)
-    {
-      shishi_error_printf (handle, "Nettle arcfour_set_key failed");
-      return SHISHI_CRYPTO_INTERNAL_ERROR;
-    }
-
+  arcfour_set_key (&ctx, keylen, key);
   arcfour_crypt (&ctx, inlen, in, *out);
 
   return SHISHI_OK;
