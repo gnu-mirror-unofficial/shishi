@@ -108,10 +108,6 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_asn1_write (handle, node, "req-body.rtime", NULL, 0);
-  if (res != SHISHI_OK)
-    goto error;
-
   shishi_randomize (handle, &noncebuf[0], sizeof (noncebuf));
   res = shishi_asn1_write (handle, node, "req-body.nonce", noncebuf,
 			   sizeof (noncebuf));
@@ -561,6 +557,55 @@ shishi_kdcreq_set_etype (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
     }
+
+  return SHISHI_OK;
+}
+
+int
+shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq, int *flags)
+{
+  return shishi_asn1_read_bitstring (handle, kdcreq,
+				     "req-body.kdc-options", flags);
+}
+
+int
+shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq)
+{
+  int options = 0;
+
+  shishi_kdcreq_options (handle, kdcreq, &options);
+
+  return options & SHISHI_KDCOPTIONS_RENEWABLE;
+}
+
+int
+shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq, int options)
+{
+  int res;
+
+  res = shishi_asn1_write_bitstring (handle, kdcreq,
+				     "req-body.kdc-options", options);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+int
+shishi_kdcreq_options_add (Shishi * handle, Shishi_asn1 kdcreq, int option)
+{
+  int options;
+  int res;
+
+  res = shishi_kdcreq_options (handle, kdcreq, &options);
+  if (res != SHISHI_OK)
+    return res;
+
+  options |= option;
+
+  res = shishi_kdcreq_options_set (handle, kdcreq, options);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
