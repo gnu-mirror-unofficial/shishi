@@ -24,9 +24,9 @@ to, e.g., utilize specialized hardware, it is now easy to do so.  Two
 wrappers for Nettle (lib/nettle.c) and Libgcrypt (lib/libgcrypt.c) are
 included.
 
-** Logging destination for warnings and informational message variable.
-Message are sent to stderr for clients, and syslog for servers, by
-default.  See the new API functions shishi_outputtype and
+** Logging destination for warnings and informational messages can be changed.
+By default, message are sent to stderr for clients, and syslog for
+servers.  See the new API functions shishi_outputtype and
 shishi_set_outputtype for more information.
 
 * Version 0.0.5 (released 2003-09-07)
