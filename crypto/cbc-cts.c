@@ -69,7 +69,7 @@ cbc_cts_encrypt (void *ctx,
       memset (dst + restbytes, 0, block_size - restbytes);
       memxor (iv, dst, block_size);
       f (ctx, block_size, dst, iv);
-      memcpy (iv, dst, block_size);
+      memcpy (iv, dst + restbytes, block_size);
     }
 }
 
