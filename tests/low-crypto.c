@@ -203,7 +203,7 @@ test (Shishi * handle)
 		  "\x1d\xa3\x9d\xf4\x17\x69\x6e\x82"
 		  "\x02\xa8\x2d\x9c\xce\x1a\xb2\xfc"
 		  "\xfa\x5c\x67\x2f\x8f\x01\x80\xd5" "\x09\xa2", 258) == 0)
-	success ("shishi_arcfour() OK\n");
+	success ("shishi_arcfour() OK IV\n");
       else
 	{
 	  hexprint (ivout, 258);
@@ -259,7 +259,7 @@ test (Shishi * handle)
 	}
 
       if (memcmp (ivout, "\x7b\x66\x2d\x4d\x54\xc9\xc1\x01", 8) == 0)
-	success ("shishi_des() OK\n");
+	success ("shishi_des() OK IV\n");
       else
 	{
 	  hexprint (ivout, 8);
@@ -318,7 +318,7 @@ test (Shishi * handle)
 	}
 
       if (memcmp (ivout, "\x46\x57\x6b\x16\xd9\x5d\xf2\x38", 8) == 0)
-	success ("shishi_3des() OK\n");
+	success ("shishi_3des() OK IV\n");
       else
 	{
 	  hexprint (ivout, 8);
@@ -346,7 +346,7 @@ test (Shishi * handle)
 
       if (memcmp (ivout, "\x22\x8f\x1a\xc5\xd4\x74\xd2\x74"
 		  "\x96\x4d\x2d\xcd\x0b\xa3\x0d\x8f", 16) == 0)
-	success ("shishi_aes_cts(24) OK\n");
+	success ("shishi_aes_cts(24) OK IV\n");
       else
 	{
 	  hexprint (ivout, 16);
@@ -374,7 +374,7 @@ test (Shishi * handle)
 
       if (memcmp (ivout, "\x45\x23\x5a\x0c\x6b\x8a\x0c\xad"
 		  "\xe6\x50\xff\xe1\x08\x17\x9a\x6d", 16) == 0)
-	success ("shishi_aes_cts(23) OK\n");
+	success ("shishi_aes_cts(23) OK IV\n");
       else
 	{
 	  hexprint (ivout, 16);
@@ -402,7 +402,7 @@ test (Shishi * handle)
 
       if (memcmp (ivout, "\x4f\x76\x9d\xb0\x8c\x81\xbc\x1a"
 		  "\xe9\x80\x45\x85\xde\x30\x00\xf8", 16) == 0)
-	success ("shishi_aes_cts(25) OK\n");
+	success ("shishi_aes_cts(25) OK IV\n");
       else
 	{
 	  hexprint (ivout, 16);
