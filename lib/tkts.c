@@ -731,6 +731,7 @@ shishi_tkts_find_for_server (Shishi_tkts * tkts, const char *server)
     (tkts, shishi_principal_default (tkts->handle), server);
 }
 
+/* Set flags and times in KDC-REQ based on hint. */
 static int
 act_hint_on_kdcreq (Shishi * handle,
 		    Shishi_tkts_hint * hint,
