@@ -246,6 +246,7 @@ rc4_hmac_string_to_key (Shishi * handle,
     }
 
   rc = shishi_md4 (handle, tmp, tmplen, &md);
+  free (tmp);
   if (rc != SHISHI_OK)
     return rc;
 
