@@ -1289,6 +1289,8 @@ you to customize Shisa to use an external user database, such as a
 * Configuring Shisa::           Define the user database in Shisa.
 * Using Shisa::                 How to add realms and principals to database.
 * Starting Shishid::            Issue Kerberos tickets to your users.
+* Configuring DNS for KDC::     Placing the KDC address in DNS is useful.
+* Kerberos via TLS::            How to setup Shishi to use TLS.
 * Multiple servers::            High availability and load-balancing.
 * Developer information::       Writing your own Shisa database backend.
 @end menu
@@ -1745,6 +1747,173 @@ using Shishi.  It is quite likely that one or more steps failed, and
 if so we encourage you to debug it and submit a patch, or at least
 report it as a problem.  Heck, even letting us know if you got this
 far would be of interest.  @xref{Bug Reports}.
+
+@node Configuring DNS for KDC
+@section Configuring DNS for KDC
+
+Making sure the configuration files on all hosts running Shishi
+clients include the addresses of your server is tedious.  If the
+configuration files do not mention the KDC address for a realm, Shishi
+will try to look up the information from DNS.  In order for Shishi to
+find that information, you need to add the information to DNS.  For
+this to work well, you need to set up a DNS zone with the same name as
+your Kerberos realm.  The easiest is if you own the publicly visible
+DNS name, such as @samp{example.org} if your realm is
+@samp{EXAMPLE.ORG}, but you can set up an internal DNS server with the
+information for your realm only.  If this is done, you do not need to
+keep configuration files updated for the KDC addressing information.
+
+@subsection DNS vs. Kerberos - Case Sensitivity of Realm Names
+
+In Kerberos, realm names are case sensitive.  While it is strongly
+encouraged that all realm names be all upper case this recommendation
+has not been adopted by all sites.  Some sites use all lower case
+names and other use mixed case.  DNS on the other hand is case
+insensitive for queries but is case preserving for responses to TXT
+queries.  Since "MYREALM", "myrealm", and "MyRealm" are all different
+it is necessary that only one of the possible combinations of upper
+and lower case characters be used.  This restriction may be lifted in
+the future as the DNS naming scheme is expanded to support non-ASCII
+names.
+
+@subsection Overview - KDC location information
+
+KDC location information is to be stored using the DNS SRV RR [RFC
+2052].  The format of this RR is as follows:
+
+Service.Proto.Realm TTL Class SRV Priority Weight Port Target
+
+The Service name for Kerberos is always "_kerberos".
+
+The Proto can be either "_udp", "_tcp", or "_tls._tcp".  If these SRV
+records are to be used, a "_udp" record MUST be included.  If the
+Kerberos implementation supports TCP transport, a "_tcp" record MUST
+be included.  When using "_tcp" with "_kerberos", this indicates a
+"raw" TCP connection without any additional encapsulation.  A
+"_tls._tcp" record MUST be specified for all Kerberos implementations
+that support communication with the KDC across TCP sockets
+encapsulated using TLS [RFC2246] (@pxref{STARTTLS protected KDC exchanges}).
+
+The Realm is the Kerberos realm that this record corresponds to.
+
+TTL, Class, SRV, Priority, Weight, and Target have the standard
+meaning as defined in RFC 2052.
+
+As per RFC 2052 the Port number should be the value assigned to
+"kerberos" by the Internet Assigned Number Authority (88).
+
+@subsection Example - KDC location information
+
+These are DNS records for a Kerberos realm ASDF.COM.  It has two
+Kerberos servers, kdc1.asdf.com and kdc2.asdf.com.  Queries should be
+directed to kdc1.asdf.com first as per the specified priority.
+Weights are not used in these records.
+
+@example
+_kerberos._udp.ASDF.COM.        IN      SRV     0 0 88 kdc1.asdf.com.
+_kerberos._udp.ASDF.COM.        IN      SRV     1 0 88 kdc2.asdf.com.
+_kerberos._tcp.ASDF.COM.        IN      SRV     0 0 88 kdc1.asdf.com.
+_kerberos._tcp.ASDF.COM.        IN      SRV     1 0 88 kdc2.asdf.com.
+_kerberos._tls._tcp.ASDF.COM.   IN      SRV     0 0 88 kdc1.asdf.com.
+_kerberos._tls._tcp.ASDF.COM.   IN      SRV     1 0 88 kdc2.asdf.com.
+@end example
+
+@subsection Security considerations
+
+As DNS is deployed today, it is an unsecure service.  Thus the infor-
+mation returned by it cannot be trusted.
+
+Current practice for REALM to KDC mapping is to use hostnames to
+indicate KDC hosts (stored in some implementation-dependent location,
+but generally a local config file).  These hostnames are vulnerable
+to the standard set of DNS attacks (denial of service, spoofed
+entries, etc).  The design of the Kerberos protocol limits attacks of
+this sort to denial of service.  However, the use of SRV records does
+not change this attack in any way.  They have the same vulnerabilities
+that already exist in the common practice of using hostnames for
+KDC locations.
+
+Implementations SHOULD provide a way of specifying this information
+locally without the use of DNS.  However, to make this feature
+worthwhile a lack of any configuration information on a client should
+be interpretted as permission to use DNS.
+
+@node Kerberos via TLS
+@section Kerberos via TLS
+@cindex GNUTLS
+@cindex TLS
+@cindex STARTTLS
+
+If Shishi is built with support for GNUTLS, the messages exchanged
+between clients and Shishid can be protected with TLS.  TLS is only
+available over TCP connections.  A full discussion of the features TLS
+have is out of scope here, but in short it means the communication is
+integrity and privacy protected, and that users can use OpenPGP, X.509
+or SRP (i.e., any mechanism supported by TLS) to authenticate
+themselves to the Kerberos server.
+
+@section Setting up Anonymous TLS
+@cindex anonymous tls
+@cindex Diffie Hellman key exchange
+
+Anonymous TLS is the simplest to set up and use.  In fact, only the
+client need to be informed of the address of your KDC with TLS
+support.  This can be done in the configuration file with the
+@samp{/tls} parameter for @samp{kdc-realm} (@pxref{realm-kdc,, Shishi
+Configuration}), or placed the KDC address in DNS using the
+@samp{_tls} SRV record (@pxref{Configuring DNS for KDC}).
+
+To continue our example from previous sections, recall we started
+Shishid as follows.
+
+@example
+jas@@latte:~/src/shishi$ ~/sbin/shishid -l IPv4:*:4711/udp
+Initializing GNUTLS...
+Initializing GNUTLS...done
+Listening on IPv4:*:4711/udp...done
+Listening on 1 ports...
+@end example
+
+Let's use the client to talk with it, using TLS.
+
+@example
+jas@@latte:~/src/shishi/doc$ shishi -o 'realm-kdc=EXAMPLE.ORG,localhost:4711/tcp' simon@@EXAMPLE.ORG
+Enter password for `simon@@EXAMPLE.ORG':
+simon@@EXAMPLE.ORG:
+Authtime:       Tue Dec 16 05:20:47 2003
+Endtime:        Tue Dec 16 05:37:27 2003
+Server:         krbtgt/EXAMPLE.ORG key aes256-cts-hmac-sha1-96 (18)
+Ticket key:     aes256-cts-hmac-sha1-96 (18) protected by aes256-cts-hmac-sha1-96 (18)
+Ticket flags:   FORWARDED PROXIABLE (12)
+jas@@latte:~/src/shishi/doc$
+@end example
+
+On success, the server will print the following debug information.
+
+@example
+New connection on *:4711/tcp...*:4711/tcp peer 127.0.0.1
+Has 4 bytes from *:4711/tcp peer 127.0.0.1
+Trying to upgrade to TLS...
+TLS successful
+ASN.1 msg-type 10 (0xa)...
+Processing AS-REQ...
+servername krbtgt/EXAMPLE.ORG
+client & server realm EXAMPLE.ORG
+Found server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
+username simon
+Found user simon@@EXAMPLE.ORG...
+Found keys for server krbtgt/EXAMPLE.ORG@@EXAMPLE.ORG...
+Found keys for user simon@@EXAMPLE.ORG...
+Trying etype 18...
+Matching against server etype 18...
+Matching against user etype 18...
+Trying etype 16...
+Trying etype 3...
+TLS process 138 sending 505
+Has 245 bytes from *:4711/tcp peer 127.0.0.1
+Peer *:4711/tcp peer 127.0.0.1 disconnected
+Has 245 bytes from *:4711/tcp peer 127.0.0.1
+@end example
 
 @node Multiple servers
 @section Multiple servers
@@ -2453,6 +2622,7 @@ verbose-noice
 @end example
 
 @subsection @samp{realm-kdc}
+@anchor{realm-kdc}
 
 Specify KDC addresses for realms.  Value is
 @samp{REALM,KDCADDRESS[/PROTOCOL][,KDCADDRESS[/PROTOCOL]...]}.
@@ -3862,6 +4032,15 @@ If the TLS negotiation fails, possibly due to client or server policy
 (e.g., inadequate support of encryption types in TLS, or lack of
 client or server authentication) the entity that detect the failure
 should abort or re-try as appropriate, up to local policy.
+
+@subsection Interaction with KDC addresses in DNS
+
+Administrators for a KDC may announce the KDC address by placing SRV
+records in DNS for the realm, as described in
+@file{draft-ietf-krb-wg-krb-dns-locate-03.txt}.  That document mention
+TLS, but do not reference any work that describe how KDCs uses TLS.
+Until further clarified, consider the TLS field in that document to
+refer to implementation supporting this STARTTLS protocol.
 
 @subsection Security considerations
 
