@@ -56,6 +56,7 @@ void *xmalloc (size_t n);
 void *xcalloc (size_t n, size_t s);
 void *xrealloc (void *p, size_t n);
 char *xstrdup (const char *str);
+char *xstrndup (const char *str, size_t n);
 
 # define XMALLOC(Type, N_items) ((Type *) xmalloc (sizeof (Type) * (N_items)))
 # define XCALLOC(Type, N_items) ((Type *) xcalloc (sizeof (Type), (N_items)))
