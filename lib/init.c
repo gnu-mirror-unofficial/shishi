@@ -48,8 +48,7 @@ shishi (void)
       return NULL;
     }
 
-  handle->asn1 = _shishi_asn1_read ();
-  if (handle->asn1 == NULL)
+  if ((handle->asn1 = _shishi_asn1_init ()) == NULL)
     {
       shishi_warn (handle, "%s", shishi_strerror (SHISHI_ASN1_ERROR));
       return NULL;
