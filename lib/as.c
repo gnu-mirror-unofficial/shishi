@@ -55,7 +55,7 @@ shishi_as (Shishi * handle, Shishi_as ** as)
   if (las->asreq == NULL)
     {
       shishi_error_printf (handle, "Could not create AS-REQ: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -68,7 +68,7 @@ shishi_as (Shishi * handle, Shishi_as ** as)
   if (las->asrep == NULL)
     {
       shishi_error_printf (handle, "Could not create AS-REP: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -76,7 +76,7 @@ shishi_as (Shishi * handle, Shishi_as ** as)
   if (las->krberror == NULL)
     {
       shishi_error_printf (handle, "Could not create KRB-ERROR: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -258,7 +258,7 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
     {
       shishi_error_printf (as->handle, "Could not extract cname and "
 			   "realm from AS-REQ: %s\n", shishi_strerror (res),
-			   shishi_strerror_details (as->handle));
+			   shishi_error (as->handle));
       return res;
     }
   user[userlen] = '\0';
@@ -301,7 +301,7 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
     {
       shishi_error_printf (as->handle,
 			   "Could not extract ticket from AS-REP: %s",
-			   shishi_strerror_details (as->handle));
+			   shishi_error (as->handle));
       return res;
     }
 

@@ -298,14 +298,14 @@ _shishi_enckdcreppart_input (Shishi * handle,
   if (*enckdcreppart == NULL)
     {
       shishi_error_printf (handle, "Could not DER decode Encasreppart: %s",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
 
       *enckdcreppart = shishi_der2asn1_enctgsreppart (handle, der, derlen);
       if (*enckdcreppart == NULL)
 	{
 	  shishi_error_printf (handle,
 			       "Could not DER decode Enctgsreppart: %s",
-			       shishi_strerror_details (handle));
+			       shishi_error (handle));
 
 	  *enckdcreppart =
 	    shishi_der2asn1_enckdcreppart (handle, der, derlen);
@@ -313,7 +313,7 @@ _shishi_enckdcreppart_input (Shishi * handle,
 	    {
 	      shishi_error_printf (handle,
 				   "Could not DER decode Enckdcreppart: %s",
-				   shishi_strerror_details (handle));
+				   shishi_error (handle));
 	      return !SHISHI_OK;
 	    }
 	}
@@ -439,14 +439,14 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep,
       if (*asrep == NULL)
 	{
 	  printf ("Could not DER decode KDC-REP: %s\n",
-		  shishi_strerror_details (handle));
+		  shishi_error (handle));
 	  printf ("Parsing AS/TGS-REP as KDC-REP (bug work around)\n");
 
 	  *asrep = shishi_der2asn1_kdcrep (handle, der, derlen);
 	  if (*asrep == NULL)
 	    {
 	      fprintf (stderr, "Could not DER decode KDC-REP: %s\n",
-		       shishi_strerror_details (handle));
+		       shishi_error (handle));
 	      return !SHISHI_OK;
 	    }
 
@@ -495,7 +495,7 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
   *apreq = shishi_der2asn1_apreq (handle, der, derlen);
   if (*apreq == NULL)
     {
-      printf ("bad magic %s\n", shishi_strerror_details (handle));
+      printf ("bad magic %s\n", shishi_error (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
 
       return !SHISHI_OK;
@@ -542,7 +542,7 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep,
   *aprep = shishi_der2asn1_aprep (handle, der, derlen);
   if (*aprep == NULL)
     {
-      printf ("bad magic %s\n", shishi_strerror_details (handle));
+      printf ("bad magic %s\n", shishi_error (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REP\n");
 
       return !SHISHI_OK;
@@ -591,7 +591,7 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
   *encapreppart = shishi_der2asn1_encapreppart (handle, der, derlen);
   if (*encapreppart == NULL)
     {
-      printf ("bad magic %s\n", shishi_strerror_details (handle));
+      printf ("bad magic %s\n", shishi_error (handle));
       shishi_error_printf (handle, "Could not DER decode EncAPRepPart\n");
 
       return !SHISHI_OK;
@@ -639,7 +639,7 @@ _shishi_authenticator_input (Shishi * handle,
   *authenticator = shishi_der2asn1_authenticator (handle, der, derlen);
   if (*authenticator == NULL)
     {
-      printf ("bad magic %s\n", shishi_strerror_details (handle));
+      printf ("bad magic %s\n", shishi_error (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
 
       return !SHISHI_OK;
@@ -687,7 +687,7 @@ _shishi_krberror_input (Shishi * handle,
   *krberror = shishi_der2asn1_krberror (handle, der, derlen);
   if (*krberror == NULL)
     {
-      printf ("bad magic %s\n", shishi_strerror_details (handle));
+      printf ("bad magic %s\n", shishi_error (handle));
       shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
 
       return !SHISHI_OK;
@@ -734,7 +734,7 @@ _shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe, int type)
   *safe = shishi_der2asn1_krbsafe (handle, der, derlen);
   if (*safe == NULL)
     {
-      printf ("bad magic %s\n", shishi_strerror_details (handle));
+      printf ("bad magic %s\n", shishi_error (handle));
       shishi_error_printf (handle, "Could not DER decode KRB-SAFE\n");
 
       return !SHISHI_OK;

@@ -132,7 +132,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not get realm: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return res;
     }
   realm = xrealloc (realm, realmlen + 1);
@@ -142,7 +142,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not send to KDC: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return res;
     }
   free (realm);
@@ -165,7 +165,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 		{
 		  shishi_error_printf
 		    (handle, "Could not DER decode AS-REP/KRB-ERROR: %s",
-		     shishi_strerror_details (handle));
+		     shishi_error (handle));
 		  return SHISHI_ASN1_ERROR;
 		}
 

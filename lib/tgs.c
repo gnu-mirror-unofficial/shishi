@@ -59,7 +59,7 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
   if (ltgs->tgsreq == NULL)
     {
       shishi_error_printf (handle, "Could not create TGS-REQ: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -67,7 +67,7 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
   if (ltgs->tgsreq == NULL)
     {
       shishi_error_printf (handle, "Could not create TGS-REP: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -75,7 +75,7 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
   if (ltgs->krberror == NULL)
     {
       shishi_error_printf (handle, "Could not create KRB-ERROR: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 

@@ -507,7 +507,7 @@ main (int argc, char *argv[])
       if (res != SHISHI_OK)
 	{
 	  fail ("shishi_dr() entry %d failed (%s)\n",
-		i, shishi_strerror_details (handle));
+		i, shishi_error (handle));
 	  continue;
 	}
 
@@ -566,7 +566,7 @@ main (int argc, char *argv[])
       if (res != SHISHI_OK)
 	{
 	  fail ("shishi_dk() entry %d failed (%s)\n",
-		i, shishi_strerror_details (handle));
+		i, shishi_error (handle));
 	  continue;
 	}
 
@@ -626,7 +626,7 @@ main (int argc, char *argv[])
       if (res != SHISHI_OK)
 	{
 	  fail ("shishi_n_fold() entry %d failed (%s)\n",
-		i, shishi_strerror_details (handle));
+		i, shishi_error (handle));
 	  continue;
 	}
 
@@ -682,7 +682,7 @@ main (int argc, char *argv[])
       if (res != SHISHI_OK)
 	{
 	  fail ("shishi_string_to_key() entry %d failed (%s)\n",
-		i, shishi_strerror_details (handle));
+		i, shishi_error (handle));
 	  continue;
 	}
 

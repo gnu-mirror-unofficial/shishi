@@ -145,7 +145,7 @@ shishi_ticket_set_server (Shishi * handle,
   if (res != SHISHI_OK)
     {
       fprintf (stderr, _("Could not set sname: %s\n"),
-	       shishi_strerror_details (handle));
+	       shishi_error (handle));
       return res;
     }
   free (serverbuf);

@@ -570,10 +570,10 @@ extern int shishi_cfg_clientkdcetype_set (Shishi * handle, char *value);
 
 /* error.c */
 extern const char *shishi_strerror (int err);
-extern const char *shishi_strerror_details (Shishi * handle);
-extern void shishi_error_set (Shishi * handle, const char *error);
-extern void shishi_error_printf (Shishi * handle, char *format, ...);
+extern const char *shishi_error (Shishi * handle);
 extern void shishi_error_clear (Shishi * handle);
+extern void shishi_error_set (Shishi * handle, const char *error);
+extern void shishi_error_printf (Shishi * handle, const char *format, ...);
 extern void shishi_info (Shishi * handle, const char *format, ...);
 extern void shishi_warn (Shishi * handle, const char *format, ...);
 

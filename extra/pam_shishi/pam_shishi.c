@@ -149,7 +149,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 						 "host", password);
   if (tkt == NULL)
     {
-      D (("TGS exchange failed: %s\n", shishi_strerror_details (h)));
+      D (("TGS exchange failed: %s\n", shishi_error (h)));
       retval = PAM_AUTHINFO_UNAVAIL;
       goto done;
     }
@@ -157,7 +157,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
   key = shishi_hostkeys_for_localservice (h, "host");
   if (key == NULL)
     {
-      D (("Key not found: %s\n", shishi_strerror_details (h)));
+      D (("Key not found: %s\n", shishi_error (h)));
       retval = PAM_AUTHINFO_UNAVAIL;
       goto done;
     }

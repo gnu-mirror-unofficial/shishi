@@ -318,7 +318,7 @@ crypto (Shishi * handle, struct arguments arg)
       if (key == NULL)
 	{
 	  fprintf (stderr, _("Could not find key: %s\n"),
-		   shishi_strerror_details (handle));
+		   shishi_error (handle));
 	  return 1;
 	}
     }
@@ -1038,7 +1038,7 @@ main (int argc, char *argv[])
       rc = crypto (handle, arg);
       if (rc != SHISHI_OK)
 	fprintf (stderr, "Operation failed:\n%s\n%s\n",
-		 shishi_strerror (rc), shishi_strerror_details (handle));
+		 shishi_strerror (rc), shishi_error (handle));
       break;
 
     case OPTION_RENEW:
@@ -1069,7 +1069,7 @@ main (int argc, char *argv[])
 	    if (rc != SHISHI_OK)
 	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
 		       shishi_strerror (rc),
-		       shishi_strerror_details (handle));
+		       shishi_error (handle));
 	  }
 
 	/* Get ticket using TGT ... */
@@ -1094,7 +1094,7 @@ main (int argc, char *argv[])
 	if (rc != SHISHI_OK)
 	  {
 	    printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
-		    shishi_strerror_details (handle));
+		    shishi_error (handle));
 	    if (rc == SHISHI_GOT_KRBERROR)
 	      shishi_krberror_pretty_print (handle, stdout,
 					    shishi_tgs_krberror (tgs));
@@ -1105,7 +1105,7 @@ main (int argc, char *argv[])
 	if (!tkt)
 	  {
 	    printf ("No ticket in TGS-REP?!: %s\n",
-		    shishi_strerror_details (handle));
+		    shishi_error (handle));
 	    break;
 	  }
 
@@ -1142,7 +1142,7 @@ main (int argc, char *argv[])
 	    if (rc != SHISHI_OK)
 	      fprintf (stderr, "Pretty printing ticket failed:\n%s\n%s\n",
 		       shishi_strerror (rc),
-		       shishi_strerror_details (handle));
+		       shishi_error (handle));
 	  }
       }
       break;

@@ -391,7 +391,7 @@ shishi_tkts_write (Shishi_tkts * tkts, FILE * fh)
 	{
 	  shishi_error_printf (tkts->handle,
 			       "Could not print ticket: %s\n",
-			       shishi_strerror_details (tkts->handle));
+			       shishi_error (tkts->handle));
 	  return res;
 	}
 
@@ -401,7 +401,7 @@ shishi_tkts_write (Shishi_tkts * tkts, FILE * fh)
 	{
 	  shishi_error_printf (tkts->handle,
 			       "Could not print ticket: %s\n",
-			       shishi_strerror_details (tkts->handle));
+			       shishi_error (tkts->handle));
 	  return res;
 	}
 
@@ -411,7 +411,7 @@ shishi_tkts_write (Shishi_tkts * tkts, FILE * fh)
 	{
 	  shishi_error_printf (tkts->handle,
 			       "Could not print ticket: %s\n",
-			       shishi_strerror_details (tkts->handle));
+			       shishi_error (tkts->handle));
 	  return res;
 	}
 
@@ -838,7 +838,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 	  shishi_error_printf (tkts->handle,
 			       "AS exchange failed: %s\n%s\n",
 			       shishi_strerror (rc),
-			       shishi_strerror_details (tkts->handle));
+			       shishi_error (tkts->handle));
 	  if (rc == SHISHI_GOT_KRBERROR)
 	    shishi_krberror_pretty_print (tkts->handle, stdout,
 					  shishi_as_krberror (as));
@@ -880,7 +880,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   if (rc != SHISHI_OK)
     {
       printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
-	      shishi_strerror_details (tkts->handle));
+	      shishi_error (tkts->handle));
       if (rc == SHISHI_GOT_KRBERROR)
 	shishi_krberror_pretty_print (tkts->handle, stdout,
 				      shishi_tgs_krberror (tgs));
@@ -892,7 +892,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   if (!tkt)
     {
       printf ("No ticket in TGS-REP?!: %s\n",
-	      shishi_strerror_details (tkts->handle));
+	      shishi_error (tkts->handle));
       return NULL;
     }
 

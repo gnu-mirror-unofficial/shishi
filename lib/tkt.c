@@ -351,7 +351,7 @@ shishi_tkt (Shishi * handle, Shishi_tkt ** tkt)
   if (t->ticket == NULL)
     {
       shishi_error_printf (handle, "Could not create Ticket: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -360,7 +360,7 @@ shishi_tkt (Shishi * handle, Shishi_tkt ** tkt)
   if (t->enckdcreppart == NULL)
     {
       shishi_error_printf (handle, "Could not create EncKDCRepPart: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -368,7 +368,7 @@ shishi_tkt (Shishi * handle, Shishi_tkt ** tkt)
   if (t->encticketpart == NULL)
     {
       shishi_error_printf (handle, "Could not create EncTicketPart: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -394,7 +394,7 @@ shishi_tkt (Shishi * handle, Shishi_tkt ** tkt)
   if (t->kdcrep == NULL)
     {
       shishi_error_printf (handle, "Could not create AS-REP: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 

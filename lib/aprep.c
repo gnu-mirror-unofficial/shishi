@@ -330,7 +330,7 @@ shishi_aprep_enc_part_make (Shishi * handle,
   if (encapreppart == NULL)
     {
       shishi_error_printf (handle, "Could not create EncAPRepPart: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -338,7 +338,7 @@ shishi_aprep_enc_part_make (Shishi * handle,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not copy time: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return res;
     }
 
@@ -347,7 +347,7 @@ shishi_aprep_enc_part_make (Shishi * handle,
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not add encapreppart: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return res;
     }
 

@@ -21,15 +21,6 @@
 
 #include "internal.h"
 
-const char *
-shishi_strerror_details (Shishi * handle)
-{
-  return handle->error ? handle->
-    error :
-    "Internal application error: shishi_strerror() called without an "
-    "error condition";
-}
-
 struct shishi_error_msgs
 {
   int errorcode;
@@ -121,12 +112,56 @@ shishi_strerror (int err)
 
 }
 
+/**
+ * shishi_error:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Extract detailed error information string.  Note that the memory is
+ * managed by the Shishi library, so you must not deallocate the
+ * string.
+ *
+ * Return value: Returns pointer to error information string, that must
+ *   not be deallocate by caller.
+ **/
+const char *
+shishi_error (Shishi * handle)
+{
+  if (handle->error)
+    return handle->error;
+
+  return "No error";
+}
+
+/**
+ * shishi_error_clear:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Clear the detailed error information string.  See shishi_error()
+ * for how to access the error string, and shishi_error_set() and
+ * shishi_error_printf() for how to set the error string.  This
+ * function is mostly for Shishi internal use, but if you develop an
+ * extension of Shishi, it may be useful to use the same error
+ * handling infrastructure.
+ **/
 void
 shishi_error_clear (Shishi * handle)
 {
   handle->error[0] = '\0';
 }
 
+/**
+ * shishi_error_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @error: Zero terminated character array containing error description,
+ *   or NULL to clear the error description string.
+ *
+ * Set the detailed error information string to specified string.  The
+ * string is copied into the Shishi internal structure, so you can
+ * deallocate the string passed to this function after the call.  This
+ * function is mostly for Shishi internal use, but if you develop an
+ * extension of Shishi, it may be useful to use the same error
+ * handling infrastructure.
+ **/
 void
 shishi_error_set (Shishi * handle, const char *error)
 {
@@ -141,8 +176,19 @@ shishi_error_set (Shishi * handle, const char *error)
     shishi_error_clear (handle);
 }
 
+/**
+ * shishi_error_printf:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @format: printf style format string.
+ * @...: print style arguments.
+ *
+ * Set the detailed error information string to a printf formatted
+ * string.  This function is mostly for Shishi internal use, but if
+ * you develop an extension of Shishi, it may be useful to use the
+ * same error handling infrastructure.
+ **/
 void
-shishi_error_printf (Shishi * handle, char *format, ...)
+shishi_error_printf (Shishi * handle, const char *format, ...)
 {
   va_list ap;
   char *s;
@@ -166,19 +212,19 @@ shishi_error_printf (Shishi * handle, char *format, ...)
 /**
  * shishi_info:
  * @handle: shishi handle as allocated by shishi_init().
- * @fmt: printf style format string.
+ * @format: printf style format string.
  * @...: print style arguments.
  *
  * Print informational message to stderr.
  **/
 void
-shishi_info (Shishi * handle, const char *fmt, ...)
+shishi_info (Shishi * handle, const char *format, ...)
 {
   va_list ap;
-  va_start (ap, fmt);
+  va_start (ap, format);
 
   fprintf (stderr, INFOSTR);
-  vfprintf (stderr, fmt, ap);
+  vfprintf (stderr, format, ap);
   fprintf (stderr, "\n");
 
   va_end (ap);
@@ -187,19 +233,19 @@ shishi_info (Shishi * handle, const char *fmt, ...)
 /**
  * shishi_warn:
  * @handle: shishi handle as allocated by shishi_init().
- * @fmt: printf style format string.
+ * @format: printf style format string.
  * @...: print style arguments.
  *
  * Print a warning to stderr.
  **/
 void
-shishi_warn (Shishi * handle, const char *fmt, ...)
+shishi_warn (Shishi * handle, const char *format, ...)
 {
   va_list ap;
-  va_start (ap, fmt);
+  va_start (ap, format);
 
   fprintf (stderr, WARNSTR);
-  vfprintf (stderr, fmt, ap);
+  vfprintf (stderr, format, ap);
   fprintf (stderr, "\n");
 
   va_end (ap);

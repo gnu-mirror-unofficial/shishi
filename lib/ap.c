@@ -55,7 +55,7 @@ shishi_ap (Shishi * handle, Shishi_ap ** ap)
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not create Authenticator: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return res;
     }
 
@@ -96,7 +96,7 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
   if (lap->authenticator == NULL)
     {
       shishi_error_printf (handle, "Could not create Authenticator: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -104,7 +104,7 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
   if (lap->apreq == NULL)
     {
       shishi_error_printf (handle, "Could not create AP-REQ: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -112,7 +112,7 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
   if (lap->aprep == NULL)
     {
       shishi_error_printf (handle, "Could not create AP-REP: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -120,7 +120,7 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
   if (lap->encapreppart == NULL)
     {
       shishi_error_printf (handle, "Could not create EncAPRepPart: %s\n",
-			   shishi_strerror_details (handle));
+			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -586,7 +586,7 @@ shishi_ap_req_build (Shishi_ap * ap)
   if (res != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Could not set ticket in AP-REQ: %s\n",
-			   shishi_strerror_details (ap->handle));
+			   shishi_error (ap->handle));
       return res;
     }
 
@@ -608,7 +608,7 @@ shishi_ap_req_build (Shishi_ap * ap)
     {
       shishi_error_printf (ap->handle,
 			   "Could not add checksum to authenticator: %s\n",
-			   shishi_strerror_details (ap->handle));
+			   shishi_error (ap->handle));
       return res;
     }
 
@@ -625,7 +625,7 @@ shishi_ap_req_build (Shishi_ap * ap)
   if (res != SHISHI_OK)
     {
       shishi_error_printf (ap->handle, "Could not set authenticator: %s\n",
-			   shishi_strerror_details (ap->handle));
+			   shishi_error (ap->handle));
       return res;
     }
 
