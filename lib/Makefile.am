@@ -31,16 +31,16 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	kdc.c kdcreq.c kdcrep.c enckdcreppart.c as.c tgs.c \
 	ap.c apreq.c aprep.c encapreppart.c safe.c \
 	ticket.c encticketpart.c tkt.c tkts.c \
-	netio.c hostkeys.c key.c crypto.c pkcs5.h pkcs5.c \
+	netio.c hostkeys.c key.c crypto.c pkcs5.c \
 	asn1.c kerberos5.c \
 	version.c password.c \
 	resolv.c
-libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @LIBIDN_LIBS@ \
+libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
 	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 INCLUDES = -I$(top_srcdir)/gl -I$(top_srcdir)/asn1 \
-	@LIBGCRYPT_CFLAGS@ @LIBIDN_CFLAGS@
+	@LIBGCRYPT_CFLAGS@ @CRYPTO_CFLAGS@ @LIBIDN_CFLAGS@
 
 include_HEADERS = shishi.h
 

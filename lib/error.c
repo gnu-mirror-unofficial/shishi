@@ -66,8 +66,8 @@ shishi_strerror (int err)
       p = _("Could not close file.");
       break;
 
-    case SHISHI_GCRYPT_ERROR:
-      p = _("Internal libgcrypt error.");
+    case SHISHI_CRYPTO_INTERNAL_ERROR:
+      p = _("Internal error in low-level crypto routines.");
       break;
 
     case SHISHI_NONCE_MISMATCH:

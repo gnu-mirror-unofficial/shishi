@@ -50,7 +50,7 @@ enum
   SHISHI_DERIVEDKEY_TOO_SMALL = 15,
   SHISHI_KEY_TOO_LARGE = 16,
   SHISHI_CRYPTO_ERROR = 17,
-  SHISHI_GCRYPT_ERROR = 18,
+  SHISHI_CRYPTO_INTERNAL_ERROR = 18,
   SHISHI_SOCKET_ERROR = 19,
   SHISHI_BIND_ERROR = 20,
   SHISHI_SENDTO_ERROR = 21,
@@ -70,7 +70,11 @@ enum
   SHISHI_OUT_OF_RANGE = 35,
   SHISHI_ASN1_NO_ELEMENT = 36,
   SHISHI_SAFE_BAD_KEYTYPE = 37,
-  SHISHI_SAFE_VERIFY_FAILED = 38
+  SHISHI_SAFE_VERIFY_FAILED = 38,
+  SHISHI_PKCS5_INVALID_PRF = 39,
+  SHISHI_PKCS5_INVALID_ITERATION_COUNT = 40,
+  SHISHI_PKCS5_INVALID_DERIVED_KEY_LENGTH = 41,
+  SHISHI_PKCS5_DERIVED_KEY_TOO_LONG = 42
 };
 
 /* This is not specified in the ASN.1 syntax for some reason. */
@@ -952,6 +956,11 @@ extern int shishi_dr (Shishi * handle,
 		      char *constant, size_t constantlen);
 extern int shishi_n_fold (Shishi * handle, char *in, size_t m, char *out,
 			  size_t n);
+extern int shishi_pbkdf2_sha1 (const char *P, size_t Plen,
+			       const char *S, size_t Slen,
+			       unsigned int c,
+			       unsigned int dkLen,
+			       char *DK);
 
 /* version.c */
 extern const char *shishi_check_version (const char *req_version);

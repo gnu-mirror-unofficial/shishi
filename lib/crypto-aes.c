@@ -21,8 +21,6 @@
  *
  */
 
-#include "pkcs5.h"
-
 static int
 aes128_encrypt (Shishi * handle,
 		Shishi_key * key,
@@ -104,9 +102,9 @@ aes_string_to_key (Shishi * handle,
     }
 
   /* tkey = random2key(PBKDF2(passphrase, salt, iter_count, keylength)) */
-  res = PBKDF2 (PKCS5_PRF_SHA1, password, passwordlen, salt, saltlen,
-		iterations, keylen, key);
-  if (res != PKCS5_OK)
+  res = shishi_pbkdf2_sha1 (password, passwordlen, salt, saltlen,
+			    iterations, keylen, key);
+  if (res != SHISHI_OK)
     return res;
 
   res =
@@ -165,7 +163,7 @@ aes128_random_to_key (Shishi * handle,
 		      size_t randomlen, Shishi_key * outkey)
 {
   if (randomlen < shishi_key_length (outkey))
-    return !SHISHI_OK;
+    return SHISHI_CRYPTO_ERROR;
 
   shishi_key_value_set (outkey, random);
 
@@ -178,7 +176,7 @@ aes256_random_to_key (Shishi * handle,
 		      size_t randomlen, Shishi_key * outkey)
 {
   if (randomlen < shishi_key_length (outkey))
-    return !SHISHI_OK;
+    return SHISHI_CRYPTO_ERROR;
 
   shishi_key_value_set (outkey, random);
 

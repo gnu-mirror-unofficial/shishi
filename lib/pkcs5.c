@@ -17,10 +17,12 @@
  *
  */
 
-/* XXX what about namespace? */
-
-#include "pkcs5.h"
+#include "internal.h"
+#ifdef USE_GCRYPT
 #include <gcrypt.h>
+#else
+#include <hmac.h>
+#endif
 
 /*
  * 5.2 PBKDF2
@@ -51,17 +53,25 @@
 #define MAX_PRF_BLOCK_LEN 80
 
 int
-PBKDF2 (int PRF,
-	const char *P,
-	size_t Plen,
-	const char *S,
-	size_t Slen, unsigned int c, unsigned int dkLen, char *DK)
+shishi_pbkdf2_sha1 (const char *P,
+		    size_t Plen,
+		    const char *S,
+		    size_t Slen,
+		    unsigned int c,
+		    unsigned int dkLen,
+		    char *DK)
 {
+#ifdef USE_GCRYPT
+  int PRF = GCRY_MD_SHA1;
   gcry_md_hd_t prf;
+  unsigned int hLen = gcry_md_get_algo_dlen (PRF);
+#else
+  struct hmac_sha1_ctx hmac;
+  unsigned int hLen = SHA1_DIGEST_SIZE;
+#endif
   char U[MAX_PRF_BLOCK_LEN];
   char T[MAX_PRF_BLOCK_LEN];
   unsigned int u;
-  unsigned int hLen = gcry_md_get_algo_dlen (PRF);
   unsigned int l;
   unsigned int r;
   int rc;
@@ -70,13 +80,13 @@ PBKDF2 (int PRF,
   unsigned int k;
 
   if (hLen == 0 || hLen > MAX_PRF_BLOCK_LEN)
-    return PKCS5_INVALID_PRF;
+    return SHISHI_PKCS5_INVALID_PRF;
 
   if (c == 0)
-    return PKCS5_INVALID_ITERATION_COUNT;
+    return SHISHI_PKCS5_INVALID_ITERATION_COUNT;
 
   if (dkLen == 0)
-    return PKCS5_INVALID_DERIVED_KEY_LENGTH;
+    return SHISHI_PKCS5_INVALID_DERIVED_KEY_LENGTH;
 
   /*
    *
@@ -87,7 +97,7 @@ PBKDF2 (int PRF,
    */
 
   if (dkLen > 4294967295U)
-    return PKCS5_DERIVED_KEY_TOO_LONG;
+    return SHISHI_PKCS5_DERIVED_KEY_TOO_LONG;
 
   /*
    *     2. Let l be the number of hLen-octet blocks in the derived key,
@@ -148,9 +158,11 @@ PBKDF2 (int PRF,
    *
    */
 
+#ifdef USE_GCRYPT
   gcry_md_open (&prf, PRF, GCRY_MD_FLAG_HMAC);
   if (prf == NULL)
-    return PKCS5_INVALID_PRF;
+    return SHISHI_PKCS5_INVALID_PRF;
+#endif
 
   for (i = 1; i <= l; i++)
     {
@@ -160,11 +172,15 @@ PBKDF2 (int PRF,
 	{
 	  int Ulen;
 
+#ifdef USE_GCRYPT
 	  gcry_md_reset (prf);
 
 	  rc = gcry_md_setkey (prf, P, Plen);
 	  if (rc != GPG_ERR_NO_ERROR)
-	    return PKCS5_INVALID_PRF;
+	    return SHISHI_PKCS5_INVALID_PRF;
+#else
+	  hmac_sha1_set_key (&hmac, Plen, P);
+#endif
 
 	  if (u == 1)
 	    {
@@ -180,13 +196,19 @@ PBKDF2 (int PRF,
 	  else
 	    Ulen = hLen;
 
+#ifdef USE_GCRYPT
 	  gcry_md_write (prf, U, Ulen);
 
 	  p = gcry_md_read (prf, PRF);
 	  if (p == NULL)
-	    return PKCS5_INVALID_PRF;
+	    return SHISHI_PKCS5_INVALID_PRF;
 
 	  memcpy (U, p, hLen);
+#else
+	  hmac_sha1_update (&hmac, Ulen, U);
+	  hmac_sha1_digest (&hmac, hLen, U);
+#endif
+
 
 	  for (k = 0; k < hLen; k++)
 	    T[k] ^= U[k];
@@ -195,7 +217,9 @@ PBKDF2 (int PRF,
       memcpy (DK + (i - 1) * hLen, T, i == l ? r : hLen);
     }
 
+#ifdef USE_GCRYPT
   gcry_md_close (prf);
+#endif
 
-  return PKCS5_OK;
+  return SHISHI_OK;
 }

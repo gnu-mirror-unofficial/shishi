@@ -24,6 +24,12 @@
 #include "internal.h"
 #include <gcrypt.h>
 
+#include "hmac.h"
+#include "des.h"
+#include "aes.h"
+#include "cbc.h"
+#include "cbc-cts.h"
+
 static void
 escapeprint (const char *str, int len)
 {
@@ -215,6 +221,7 @@ simplified_hmac (Shishi * handle,
 		 const char *in, size_t inlen,
 		 char **outhash, size_t * outhashlen)
 {
+#if USE_GCRYPT
   gcry_md_hd_t mdh;
   int halg = GCRY_MD_SHA1;
   size_t hlen = gcry_md_get_algo_dlen (halg);
@@ -226,7 +233,7 @@ simplified_hmac (Shishi * handle,
     {
       shishi_error_printf (handle, "Libgcrypt md open failed");
       shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   err = gcry_md_setkey (mdh, shishi_key_value (key), shishi_key_length (key));
@@ -234,7 +241,7 @@ simplified_hmac (Shishi * handle,
     {
       shishi_error_printf (handle, "Libgcrypt md setkey failed");
       shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   gcry_md_write (mdh, in, inlen);
@@ -243,7 +250,7 @@ simplified_hmac (Shishi * handle,
   if (hash == NULL)
     {
       shishi_error_printf (handle, "Libgcrypt failed to compute hash");
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   *outhashlen = hlen;
@@ -251,7 +258,14 @@ simplified_hmac (Shishi * handle,
   memcpy (*outhash, hash, *outhashlen);
 
   gcry_md_close (mdh);
-
+#else
+  struct hmac_sha1_ctx ctx;
+  hmac_sha1_set_key (&ctx, shishi_key_length (key), shishi_key_value (key));
+  hmac_sha1_update (&ctx, inlen, in);
+  *outhashlen = SHA1_DIGEST_SIZE;
+  *outhash = xmalloc (*outhashlen);
+  hmac_sha1_digest (&ctx, *outhashlen, *outhash);
+#endif
   return SHISHI_OK;
 }
 
@@ -357,6 +371,7 @@ simplified_dencrypt (Shishi * handle,
 		     const char *in, size_t inlen,
 		     char **out, size_t * outlen, int decryptp)
 {
+#ifdef USE_GCRYPT
   gcry_cipher_hd_t ch;
   gpg_error_t err;
   int alg = 0;
@@ -390,7 +405,7 @@ simplified_dencrypt (Shishi * handle,
     {
       shishi_error_printf (handle, "Libgcrypt cipher open failed");
       shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   err = gcry_cipher_setkey (ch, shishi_key_value (key),
@@ -399,7 +414,7 @@ simplified_dencrypt (Shishi * handle,
     {
       shishi_error_printf (handle, "Libgcrypt setkey failed");
       shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   err = gcry_cipher_setiv (ch, iv, ivlen);
@@ -407,7 +422,7 @@ simplified_dencrypt (Shishi * handle,
     {
       shishi_error_printf (handle, "Libgcrypt setiv failed");
       shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   *out = xmalloc (*outlen);
@@ -421,11 +436,81 @@ simplified_dencrypt (Shishi * handle,
   if (err != GPG_ERR_NO_ERROR)
     {
       shishi_error_set (handle, gpg_strerror (err));
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   gcry_cipher_close (ch);
 
+#else
+  struct CBC_CTX(struct des_ctx, DES_BLOCK_SIZE) des;
+  struct CBC_CTX(struct des3_ctx, DES3_BLOCK_SIZE) des3;
+  struct CBC_CTS_CTX(struct aes_ctx, AES_BLOCK_SIZE) aes;
+  void *p;
+  int rc;
+
+  *outlen = inlen;
+  *out = xmalloc (*outlen);
+
+  switch (shishi_key_type (key))
+    {
+    case SHISHI_DES_CBC_CRC:
+    case SHISHI_DES_CBC_MD4:
+    case SHISHI_DES_CBC_MD5:
+      rc = des_set_key (&des.ctx, shishi_key_value (key));
+      if (!rc)
+	{
+	  shishi_error_printf (handle, "Nettle setkey failed");
+	  return SHISHI_CRYPTO_INTERNAL_ERROR;
+	}
+      if (iv)
+	CBC_SET_IV (&des, iv);
+      else
+	memset(des.iv, 0, sizeof(des.iv));
+      if (decryptp)
+	CBC_DECRYPT (&des, des_decrypt, inlen, *out, in);
+      else
+	CBC_ENCRYPT (&des, des_encrypt, inlen, *out, in);
+      break;
+
+    case SHISHI_DES3_CBC_HMAC_SHA1_KD:
+      rc = des3_set_key (&des3.ctx, shishi_key_value (key));
+      if (!rc)
+	{
+	  shishi_error_printf (handle, "Nettle setkey failed");
+	  return SHISHI_CRYPTO_INTERNAL_ERROR;
+	}
+      if (iv)
+	CBC_SET_IV (&des3, iv);
+      else
+	memset(des3.iv, 0, sizeof(des3.iv));
+      if (decryptp)
+	CBC_DECRYPT (&des3, des3_decrypt, inlen, *out, in);
+      else
+	CBC_ENCRYPT (&des3, des3_encrypt, inlen, *out, in);
+      break;
+
+    case SHISHI_AES128_CTS_HMAC_SHA1_96:
+    case SHISHI_AES256_CTS_HMAC_SHA1_96:
+      if (iv)
+	CBC_CTS_SET_IV (&aes, iv);
+      else
+	memset(aes.iv, 0, sizeof(aes.iv));
+      if (decryptp)
+	{
+	  aes_set_decrypt_key (&aes.ctx, shishi_key_length (key),
+			       shishi_key_value (key));
+	  CBC_CTS_DECRYPT (&aes, aes_decrypt, inlen, *out, in);
+	}
+      else
+	{
+	  aes_set_encrypt_key (&aes.ctx, shishi_key_length (key),
+			       shishi_key_value (key));
+	  CBC_CTS_ENCRYPT (&aes, aes_encrypt, inlen, *out, in);
+	}
+      break;
+    }
+
+#endif
   return SHISHI_OK;
 }
 
@@ -525,8 +610,7 @@ simplified_decrypt (Shishi * handle,
     {
       Shishi_key *privacykey = NULL, *integritykey = NULL;
       int blen = shishi_cipher_blocksize (shishi_key_type (key));
-      int halg = GCRY_MD_SHA1;
-      size_t hlen = gcry_md_get_algo_dlen (halg);
+      size_t hlen = 20; /* XXX only works for SHA-1 */
       size_t len;
 
       res = simplified_derivekey (handle, key, keyusage,
@@ -578,8 +662,7 @@ simplified_checksum (Shishi * handle,
 		     char *in, size_t inlen, char **out, size_t * outlen)
 {
   Shishi_key *checksumkey;
-  int halg = GCRY_MD_SHA1;	/* XXX hide this in crypto-lowlevel.c */
-  int hlen = gcry_md_get_algo_dlen (halg);
+  size_t hlen = 20; /* XXX only works for SHA-1 */
   int cksumlen = shishi_checksum_cksumlen (cksumtype);
   int res;
 
@@ -603,16 +686,18 @@ simplified_checksum (Shishi * handle,
 int
 _shishi_cipher_init (void)
 {
+#ifdef USE_GCRYPT
   if (gcry_control (GCRYCTL_ANY_INITIALIZATION_P) == 0)
     {
       if (gcry_check_version (GCRYPT_VERSION) == NULL)
-	return SHISHI_GCRYPT_ERROR;
+	return SHISHI_CRYPTO_INTERNAL_ERROR;
       if (gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0) != GPG_ERR_NO_ERROR)
-	return SHISHI_GCRYPT_ERROR;
+	return SHISHI_CRYPTO_INTERNAL_ERROR;
       if (gcry_control (GCRYCTL_INITIALIZATION_FINISHED,
 			NULL, 0) != GPG_ERR_NO_ERROR)
-	return SHISHI_GCRYPT_ERROR;
+	return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
+#endif
 
   return SHISHI_OK;
 }
@@ -688,6 +773,7 @@ static cipherinfo null_info = {
   null_decrypt
 };
 
+#ifdef USE_GCRYPT
 static cipherinfo des_cbc_crc_info = {
   1,
   "des-cbc-crc",
@@ -747,6 +833,7 @@ static cipherinfo des_cbc_none_info = {
   des_none_encrypt,
   des_none_decrypt
 };
+#endif
 
 static cipherinfo des3_cbc_sha1_kd_info = {
   16,
@@ -759,8 +846,8 @@ static cipherinfo des3_cbc_sha1_kd_info = {
   SHISHI_HMAC_SHA1_DES3_KD,
   des3_random_to_key,
   des3_string_to_key,
-  des3_encrypt,
-  des3_decrypt
+  _des3_encrypt,
+  _des3_decrypt
 };
 
 static cipherinfo des3_cbc_none_info = {
@@ -810,10 +897,12 @@ static cipherinfo aes256_cts_hmac_sha1_96_info = {
 
 static cipherinfo *ciphers[] = {
   &null_info,
+#ifdef USE_GCRYPT
   &des_cbc_crc_info,
   &des_cbc_md4_info,
   &des_cbc_md5_info,
   &des_cbc_none_info,
+#endif
   &des3_cbc_none_info,
   &des3_cbc_sha1_kd_info,
   &aes128_cts_hmac_sha1_96_info,
@@ -1056,6 +1145,7 @@ struct checksuminfo
 };
 typedef struct checksuminfo checksuminfo;
 
+#ifdef USE_GCRYPT
 static checksuminfo md4_info = {
   SHISHI_RSA_MD4_DES,
   "rsa-md4-des",
@@ -1069,9 +1159,10 @@ static checksuminfo md5_info = {
   24,
   des_md5_checksum
 };
+#endif
 
 static checksuminfo hmac_sha1_des3_kd_info = {
-  SHISHI_DES3_CBC_HMAC_SHA1_KD,
+  SHISHI_HMAC_SHA1_DES3_KD,
   "hmac-sha1-des3-kd",
   20,
   des3_checksum
@@ -1091,6 +1182,7 @@ static checksuminfo hmac_sha1_96_aes256_info = {
   aes256_checksum
 };
 
+#ifdef USE_GCRYPT
 int
 checksum_foo (Shishi * handle,
 	      Shishi_key * key,
@@ -1110,7 +1202,7 @@ checksum_foo (Shishi * handle,
 
   gcry_md_open (&hd, GCRY_MD_MD5, 0);
   if (!hd)
-    return SHISHI_GCRYPT_ERROR;
+    return SHISHI_CRYPTO_INTERNAL_ERROR;
 
   gcry_md_write (hd, in, inlen);
   p = gcry_md_read (hd, GCRY_MD_MD5);
@@ -1120,22 +1212,22 @@ checksum_foo (Shishi * handle,
   gcry_cipher_open (&ch, GCRY_CIPHER_DES,
 		    GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
   if (ch == NULL)
-    return SHISHI_GCRYPT_ERROR;
+    return SHISHI_CRYPTO_INTERNAL_ERROR;
 
   res = gcry_cipher_setkey (ch, keyp, 8);
   if (res != GPG_ERR_NO_ERROR)
-    return SHISHI_GCRYPT_ERROR;
+    return SHISHI_CRYPTO_INTERNAL_ERROR;
 
   res = gcry_cipher_setiv (ch, NULL, 8);
   if (res != 0)
-    return SHISHI_GCRYPT_ERROR;
+    return SHISHI_CRYPTO_INTERNAL_ERROR;
 
   *outlen = 8;
   *out = xmalloc (*outlen);
 
   res = gcry_cipher_encrypt (ch, *out, *outlen, p, 16);
   if (res != 0)
-    return SHISHI_GCRYPT_ERROR;
+    return SHISHI_CRYPTO_INTERNAL_ERROR;
 
   gcry_cipher_close (ch);
   gcry_md_close (hd);
@@ -1149,14 +1241,19 @@ static checksuminfo foo_info = {
   8,
   checksum_foo
 };
+#endif
 
 static checksuminfo *checksums[] = {
+#ifdef USE_GCRYPT
   &md4_info,
   &md5_info,
+#endif
   &hmac_sha1_des3_kd_info,
   &hmac_sha1_96_aes128_info,
   &hmac_sha1_96_aes256_info,
+#ifdef USE_GCRYPT
   &foo_info
+#endif
 };
 
 /**
@@ -1714,20 +1811,27 @@ shishi_decrypt (Shishi * handle,
 int
 shishi_randomize (Shishi * handle, char *data, size_t datalen)
 {
-#define RAND_TEST_SIZE 42
-  char old[RAND_TEST_SIZE];
-
-  memcpy (data, old, datalen < RAND_TEST_SIZE ? datalen : RAND_TEST_SIZE);
-
+#ifdef USE_GCRYPT
   gcry_randomize (data, datalen, GCRY_STRONG_RANDOM);
+#else
+  int fd;
+  char *device;
 
-  if (datalen > 0 &&
-      memcmp (data, old,
-	      datalen < RAND_TEST_SIZE ? datalen : RAND_TEST_SIZE) == 0)
+  device = "/dev/urandom";
+
+  fd = open (device, O_RDONLY);
+  if (fd < 0)
     {
-      shishi_error_set (handle, "No random data collected.");
-      return SHISHI_GCRYPT_ERROR;
+      shishi_error_printf(handle, "Could not open random device: %s\n",
+			  strerror (errno));
+      return SHISHI_FOPEN_ERROR;
     }
+  else
+    {
+      read (fd, data, datalen);
+      close (fd);
+    }
+#endif
 
   return SHISHI_OK;
 }

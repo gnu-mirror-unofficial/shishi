@@ -20,6 +20,7 @@
  * Note: This file is #include'd by crypto.c.
  *
  */
+#ifdef USE_GCRYPT
 
 static int
 raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
@@ -38,7 +39,7 @@ raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
   if (err != GPG_ERR_NO_ERROR)
     {
       shishi_error_printf (handle, "Algo %d not available in libgcrypt", algo);
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   gcry_md_write (hd, out, *outlen);
@@ -47,7 +48,7 @@ raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
   if (p == NULL)
     {
       shishi_error_printf (handle, "Libgcrypt failed to compute hash");
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   if (VERBOSECRYPTO (handle))
@@ -91,7 +92,7 @@ raw_des_checksum (Shishi * handle,
   if (err != GPG_ERR_NO_ERROR)
     {
       shishi_error_printf (handle, "MD %d not available in libgcrypt", algo);
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   res = shishi_randomize (handle, buffer, 8);
@@ -110,7 +111,7 @@ raw_des_checksum (Shishi * handle,
   if (p == NULL)
     {
       shishi_error_printf (handle, "Libgcrypt failed to compute hash");
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   memcpy(out, buffer, 8);
@@ -124,7 +125,7 @@ raw_des_checksum (Shishi * handle,
 }
 
 static int
-des_encrypt (Shishi * handle,
+_des_encrypt (Shishi * handle,
 	     Shishi_key * key,
 	     int keyusage,
 	     const char *iv,
@@ -182,7 +183,7 @@ des_crc_encrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_encrypt (handle, key, keyusage, iv, ivlen,
+  return _des_encrypt (handle, key, keyusage, iv, ivlen,
 		      in, inlen, out, outlen, GCRY_MD_CRC32_RFC1510);
 }
 
@@ -194,7 +195,7 @@ des_md4_encrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_encrypt (handle, key, keyusage, iv, ivlen,
+  return _des_encrypt (handle, key, keyusage, iv, ivlen,
 		      in, inlen, out, outlen, GCRY_MD_MD4);
 }
 
@@ -206,12 +207,12 @@ des_md5_encrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_encrypt (handle, key, keyusage, iv, ivlen,
+  return _des_encrypt (handle, key, keyusage, iv, ivlen,
 		      in, inlen, out, outlen, GCRY_MD_MD5);
 }
 
 static int
-des_decrypt (Shishi * handle,
+_des_decrypt (Shishi * handle,
 	     Shishi_key * key,
 	     int keyusage,
 	     const char *iv, size_t ivlen,
@@ -247,7 +248,7 @@ des_crc_decrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_decrypt (handle, key, keyusage, iv, ivlen,
+  return _des_decrypt (handle, key, keyusage, iv, ivlen,
 		      in, inlen, out, outlen, GCRY_MD_CRC32_RFC1510);
 }
 
@@ -259,7 +260,7 @@ des_md4_decrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_decrypt (handle, key, keyusage, iv, ivlen,
+  return _des_decrypt (handle, key, keyusage, iv, ivlen,
 		      in, inlen, out, outlen, GCRY_MD_MD4);
 }
 
@@ -271,7 +272,7 @@ des_md5_decrypt (Shishi * handle,
 		 size_t ivlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_decrypt (handle, key, keyusage, iv, ivlen,
+  return _des_decrypt (handle, key, keyusage, iv, ivlen,
 		      in, inlen, out, outlen, GCRY_MD_MD5);
 }
 
@@ -310,6 +311,7 @@ des_none_decrypt (Shishi * handle,
 
   return SHISHI_OK;
 }
+#endif
 
 static int
 des_set_odd_key_parity (char key[8])
@@ -332,6 +334,7 @@ des_set_odd_key_parity (char key[8])
   return SHISHI_OK;
 }
 
+#ifdef USE_GCRYPT
 static int
 des_key_correction (Shishi * handle, char *key)
 {
@@ -345,7 +348,7 @@ des_key_correction (Shishi * handle, char *key)
   if (err != GPG_ERR_NO_ERROR)
     {
       shishi_error_printf (handle, "DES-CBC not available in libgcrypt");
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   /* XXX? libgcrypt tests for pseudo-weak keys, rfc 1510 doesn't */
@@ -366,7 +369,7 @@ des_key_correction (Shishi * handle, char *key)
 	{
 	  shishi_error_printf (handle, "DES setkey failed");
 	  shishi_error_set (handle, gpg_strerror (err));
-	  return SHISHI_GCRYPT_ERROR;
+	  return SHISHI_CRYPTO_INTERNAL_ERROR;
 	}
     }
 
@@ -399,14 +402,14 @@ des_cbc_check (Shishi * handle, char key[8], char *data, int n_data)
 {
   gcry_cipher_hd_t ch;
   gpg_error_t err;
-  int res = SHISHI_GCRYPT_ERROR;
+  int res = SHISHI_CRYPTO_INTERNAL_ERROR;
 
   err = gcry_cipher_open (&ch, GCRY_CIPHER_DES,
 			  GCRY_CIPHER_MODE_CBC, GCRY_CIPHER_CBC_MAC);
   if (err != GPG_ERR_NO_ERROR)
     {
       shishi_error_printf (handle, "DES-CBC-MAC not available in libgcrypt");
-      return SHISHI_GCRYPT_ERROR;
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
   err = gcry_cipher_setkey (ch, key, 8);
@@ -705,3 +708,4 @@ des_md5_checksum (Shishi * handle,
 		       in, inlen, out, outlen,
 		       GCRY_MD_MD5);
 }
+#endif

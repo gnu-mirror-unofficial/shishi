@@ -22,7 +22,7 @@
  */
 
 static int
-des3_encrypt (Shishi * handle,
+_des3_encrypt (Shishi * handle,
 	      Shishi_key * key,
 	      int keyusage,
 	      const char *iv,
@@ -34,7 +34,7 @@ des3_encrypt (Shishi * handle,
 }
 
 static int
-des3_decrypt (Shishi * handle,
+_des3_decrypt (Shishi * handle,
 	      Shishi_key * key,
 	      int keyusage,
 	      const char *iv,
