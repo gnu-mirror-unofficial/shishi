@@ -1263,9 +1263,9 @@ extern int shishi_krberror_remove_crealm (Shishi * handle,
 extern int shishi_krberror_set_crealm (Shishi * handle,
 				       Shishi_asn1 krberror,
 				       const char *crealm);
-extern int shishi_krberror_cname (Shishi * handle,
-				  Shishi_asn1 krberror,
-				  char **cname, size_t *cnamelen);
+extern int shishi_krberror_client (Shishi * handle,
+				   Shishi_asn1 krberror,
+				   char **cname, size_t *cnamelen);
 extern int shishi_krberror_set_cname (Shishi * handle,
 				      Shishi_asn1 krberror,
 				      Shishi_name_type name_type,
@@ -1281,9 +1281,9 @@ extern int shishi_krberror_realm (Shishi * handle,
 extern int shishi_krberror_set_realm (Shishi * handle,
 				      Shishi_asn1 krberror,
 				      const char *realm);
-extern int shishi_krberror_sname (Shishi * handle,
-				  Shishi_asn1 krberror,
-				  char **sname, size_t *snamelen);
+extern int shishi_krberror_server (Shishi * handle,
+				   Shishi_asn1 krberror,
+				   char **server, size_t *serverlen);
 extern int shishi_krberror_remove_sname (Shishi * handle,
 					 Shishi_asn1 krberror);
 extern int shishi_krberror_set_sname (Shishi * handle,

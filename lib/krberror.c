@@ -323,7 +323,7 @@ shishi_krberror_build (Shishi * handle, Shishi_asn1 krberror)
 	return rc;
     }
 
-  rc = shishi_krberror_sname (handle, krberror, &tmp, &tmplen);
+  rc = shishi_krberror_server (handle, krberror, &tmp, &tmplen);
   if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_VALUE)
     return rc;
   if (rc == SHISHI_OK)
@@ -471,26 +471,26 @@ shishi_krberror_set_crealm (Shishi * handle,
 }
 
 /**
- * shishi_krberror_cname:
+ * shishi_krberror_client:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: krberror as allocated by shishi_krberror().
- * @cname: pointer to newly allocated zero terminated string containing
+ * @client: pointer to newly allocated zero terminated string containing
  *   principal name.  May be %NULL (to only populate @clientlen).
- * @cnamelen: pointer to length of @cname on output, excluding terminating
+ * @clientlen: pointer to length of @client on output, excluding terminating
  *   zero.  May be %NULL (to only populate @client).
  *
- * Return client principal field in KRB-ERROR.
+ * Return client principal name in KRB-ERROR.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_cname (Shishi * handle,
-		       Shishi_asn1 krberror,
-		       char **cname, size_t * cnamelen)
+shishi_krberror_client (Shishi * handle,
+			Shishi_asn1 krberror,
+			char **client, size_t *clientlen)
 {
   int rc;
 
-  rc = shishi_principal_name (handle, krberror, "cname", cname, cnamelen);
+  rc = shishi_principal_name (handle, krberror, "cname", client, clientlen);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -610,26 +610,26 @@ shishi_krberror_set_realm (Shishi * handle,
 }
 
 /**
- * shishi_krberror_sname:
+ * shishi_krberror_server:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: krberror as allocated by shishi_krberror().
- * @sname: pointer to newly allocated zero terminated string containing
- *   server name.  May be %NULL (to only populate @clientlen).
- * @snamelen: pointer to length of @sname on output, excluding terminating
- *   zero.  May be %NULL (to only populate @client).
+ * @server: pointer to newly allocated zero terminated string containing
+ *   server name.  May be %NULL (to only populate @serverlen).
+ * @snamelen: pointer to length of @server on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @server).
  *
- * Return server principal field in KRB-ERROR.
+ * Return server principal name in KRB-ERROR.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_sname (Shishi * handle,
-		       Shishi_asn1 krberror,
-		       char **sname, size_t *snamelen)
+shishi_krberror_server (Shishi * handle,
+			Shishi_asn1 krberror,
+			char **server, size_t *serverlen)
 {
   int rc;
 
-  rc = shishi_principal_name (handle, krberror, "sname", sname, snamelen);
+  rc = shishi_principal_name (handle, krberror, "sname", server, serverlen);
   if (rc != SHISHI_OK)
     return rc;
 
