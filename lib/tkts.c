@@ -849,6 +849,9 @@ set_tgtflags_based_on_hint (Shishi_tkts_hint * tkthint,
 
   if (tkthint->kdcoptions & SHISHI_KDCOPTIONS_RENEW)
     tgthint->tktflags |= SHISHI_TICKETFLAGS_RENEWABLE;
+
+  if (tkthint->endtime)
+    tgthint->endtime = tkthint->endtime;
 }
 
 /**
