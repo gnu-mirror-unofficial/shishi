@@ -456,6 +456,12 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
 const char *
 shishi_cfg_default_systemfile (Shishi * handle)
 {
+  char *file;
+
+  file = getenv ("SHISHI_CONFIG");
+  if (file)
+    return file;
+
   return SYSTEMCFGFILE;
 }
 
