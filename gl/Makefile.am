@@ -67,3 +67,4 @@ libfoo_a_SOURCES += vasprintf.h
 
 libfoo_a_SOURCES += xalloc.h xmalloc.c xstrdup.c
 
+libfoo_a_SOURCES += mempcpy.h
