@@ -75,7 +75,8 @@ crypto (Shishi * handle, struct arguments arg)
 				  arg.stringtokey,
 				  strlen (arg.stringtokey),
 				  salt,
-				  strlen (salt), key, &keylen, arg.algorithm);
+				  strlen (salt), 
+				  NULL, key, &keylen, arg.algorithm);
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, _("Error in string2key: %s\n"),
@@ -147,13 +148,13 @@ crypto (Shishi * handle, struct arguments arg)
       if (arg.encrypt_p)
 	{
 	  encryptedlen = sizeof (encrypted);
-	  res = shishi_encrypt (handle, encrypted, &encryptedlen,
+	  res = shishi_encrypt (handle, 0, encrypted, &encryptedlen,
 				data, datalen, key, keylen, arg.algorithm);
 	}
       else if (arg.decrypt_p)
 	{
 	  encryptedlen = sizeof (encrypted);
-	  res = shishi_decrypt (handle, encrypted, &encryptedlen,
+	  res = shishi_decrypt (handle, 0, encrypted, &encryptedlen,
 				data, datalen, key, keylen, arg.algorithm);
 	}
 

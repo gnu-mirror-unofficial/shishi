@@ -92,7 +92,7 @@ server (Shishi * handle, Shishi_ticketset * ticketset, struct arguments arg)
 				  arg.stringtokey,
 				  strlen (arg.stringtokey),
 				  salt,
-				  strlen (salt), key, &keylen);
+				  strlen (salt), NULL, key, &keylen);
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, _("Error in string2key: %s\n"),
