@@ -31,7 +31,8 @@ pkgconfig_DATA = shishi.pc
 sysconf_DATA = shishi.conf
 pkgdata_DATA = shishi.skel
 
-EXTRA_DIST = config.rpath mkinstalldirs  config.rpath shishi.conf.in shishi.skel.in shishi.pc.in
+EXTRA_DIST = config.rpath mkinstalldirs \
+	shishi.conf.in shishi.skel.in shishi.pc.in
 
 ChangeLog:
 	cvs2cl --fsf --usermap .cvsusers --separate-header -I \
