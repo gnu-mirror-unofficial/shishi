@@ -3395,7 +3395,12 @@ using environment variables.  The following variables are supported.
 
 @item @env{SHISHI_CONFIG}
 Specify the location of the default system configuration file.  Used
-by the Shishi library.
+by the Shishi library.  If not specified, the default is specified at
+compile-time and is usually @file{$prefix/etc/shishi.conf}.
+
+@item @env{SHISHI_USER}
+Specify the default principal user name.  Used by the Shishi library.
+If not specified, it is computed by calling @code{getpwuid(getuid)}.
 
 @end itemize
 
