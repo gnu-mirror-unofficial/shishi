@@ -18,6 +18,8 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+EXTRA_DIST = inetutils.diff
+
 DIST_SUBDIRS = pam_shishi
 
 SUBDIRS = @PAM_SHISHI@
