@@ -1,0 +1,100 @@
+# Swedish translations for shishi package
+# Svenska översättningar för paket shishi.
+# Copyright (C) 2002 Simon Josefsson
+# This file is distributed under the same license as the shishi package.
+# Simon Josefsson <simon@josefsson.org>, 2002.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: shishi 0.1\n"
+"POT-Creation-Date: 2002-11-23 04:14+0100\n"
+"PO-Revision-Date: 2002-09-08 20:20+0200\n"
+"Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
+"Language-Team: Swedish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/shishi.c:127 src/shishi.c:137 src/shishi.c:146 src/shishi.c:170
+#: src/shishi.c:181
+#, c-format
+msgid "Option `%s' only valid with CRYPTO."
+msgstr "Flagga \"%s\" får bara användas med CRYPTO"
+
+#: src/shishi.c:131
+#, c-format
+msgid "Unknown encryption type in `%s'"
+msgstr "Okänd krypteringstyp i \"%s\""
+
+#: src/shishi.c:140 src/shishi.c:149
+msgid "Cannot both encrypt and decrypt."
+msgstr "Kan inte kryptera och dekyptera samtidigt"
+
+#: src/shishi.c:163 src/shishi.c:229
+#, fuzzy, c-format
+msgid "Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."
+msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
+
+#: src/shishi.c:194 src/shishi.c:202 src/shishi.c:209
+#, c-format
+msgid "Option `%s' only valid with AP."
+msgstr ""
+
+#: src/shishi.c:247
+#, fuzzy, c-format
+msgid "Option `%s' only valid with AP, CLIENT, CRYPTO and KDC/AS/TGS."
+msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
+
+#: src/shishi.c:260
+#, c-format
+msgid "Option `%s' only valid with CRYPTO and KDC/AS/TGS."
+msgstr ""
+
+#: src/shishi.c:276 src/shishi.c:283
+#, fuzzy, c-format
+msgid "Option `%s' only valid with KDC."
+msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
+
+#: src/shishi.c:292
+#, fuzzy, c-format
+msgid "Option `%s' only valid with KDC/TGS."
+msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
+
+#: src/shishi.c:299 src/shishi.c:326 src/shishi.c:334 src/shishi.c:342
+#: src/shishi.c:350 src/shishi.c:358 src/shishi.c:365 src/shishi.c:372
+#, c-format
+msgid "Option `%s' only valid with KDC/AS/TGS."
+msgstr "Flagga `%s' får bara användas med KDC/AS/TGS"
+
+#: src/shishi.c:308 src/shishi.c:318
+#, c-format
+msgid "Option `%s' only valid with AP and KDC/AS/TGS."
+msgstr ""
+
+#: src/shishi.c:379
+#, c-format
+msgid "Too many arguments: `%s'"
+msgstr "För många parametrar: `%s'"
+
+#: src/shishi.c:416
+#, c-format
+msgid "Unknown command: '%s'"
+msgstr "Okänt kommando: '%s'"
+
+#: src/shishi.c:866
+#, c-format
+msgid "Tickets in `%s':\n"
+msgstr ""
+
+#~ msgid "Unknown file format: `%s' (%s)"
+#~ msgstr "Okänt filformat: `%s' (%s)"
+
+#~ msgid "Internal error: could not initialize shishi\n"
+#~ msgstr "Internt fel: kunde inte initialisera shishi\n"
+
+#~ msgid "Environment variable HOME not set by parent.\n"
+#~ msgstr "Miljövariabel HOME ej satt\n"
+
+#~ msgid "Internal error: unknown command `%d'\n"
+#~ msgstr "Internet felt: okänt kommando `%d'\n"

@@ -1,0 +1,4 @@
+# List of source files containing translatable strings for shishi.
+# Copyright (c) 2002 by Simon Josefsson
+
+src/shishi.c
