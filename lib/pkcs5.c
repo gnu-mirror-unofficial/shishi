@@ -57,7 +57,7 @@ PBKDF2 (int PRF,
 	const char *S,
 	size_t Slen, unsigned int c, unsigned int dkLen, char *DK)
 {
-  GCRY_MD_HD prf;
+  gcry_md_hd_t prf;
   char U[MAX_PRF_BLOCK_LEN];
   char T[MAX_PRF_BLOCK_LEN];
   unsigned int u;
@@ -148,7 +148,7 @@ PBKDF2 (int PRF,
    *
    */
 
-  prf = gcry_md_open (PRF, GCRY_MD_FLAG_HMAC);
+  gcry_md_open (&prf, PRF, GCRY_MD_FLAG_HMAC);
   if (prf == NULL)
     return PKCS5_INVALID_PRF;
 
@@ -163,7 +163,7 @@ PBKDF2 (int PRF,
 	  gcry_md_reset (prf);
 
 	  rc = gcry_md_setkey (prf, P, Plen);
-	  if (rc != GCRYERR_SUCCESS)
+	  if (rc != GPG_ERR_NO_ERROR)
 	    return PKCS5_INVALID_PRF;
 
 	  if (u == 1)

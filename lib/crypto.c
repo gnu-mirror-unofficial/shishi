@@ -215,18 +215,18 @@ simplified_hmac (Shishi * handle,
 		 const char *in,
 		 size_t inlen, char *outhash, size_t outhashlen)
 {
-  GCRY_MD_HD mdh;
+  gcry_md_hd_t mdh;
   int halg = GCRY_MD_SHA1;
   size_t hlen = gcry_md_get_algo_dlen (halg);
   unsigned char *hash;
   int res;
 
-  mdh = gcry_md_open (halg, GCRY_MD_FLAG_HMAC);
+  gcry_md_open (&mdh, halg, GCRY_MD_FLAG_HMAC);
   if (mdh == NULL)
     return SHISHI_GCRYPT_ERROR;
 
   res = gcry_md_setkey (mdh, shishi_key_value (key), shishi_key_length (key));
-  if (res != GCRYERR_SUCCESS)
+  if (res != GPG_ERR_NO_ERROR)
     {
       shishi_error_set (handle, gcry_strerror (res));
       return SHISHI_GCRYPT_ERROR;
@@ -338,7 +338,7 @@ simplified_dencrypt (Shishi * handle,
 		     int direction)
 {
   int res;
-  GCRY_CIPHER_HD ch;
+  gcry_cipher_hd_t ch;
   int alg = 0;
   int mode = GCRY_CIPHER_MODE_CBC;
   int flags = 0;
@@ -362,23 +362,23 @@ simplified_dencrypt (Shishi * handle,
       break;
     }
 
-  ch = gcry_cipher_open (alg, mode, flags);
+  gcry_cipher_open (&ch, alg, mode, flags);
   if (ch == NULL)
     return SHISHI_GCRYPT_ERROR;
 
   res =
     gcry_cipher_setkey (ch, shishi_key_value (key), shishi_key_length (key));
-  if (res == GCRYERR_SUCCESS)
+  if (res == GPG_ERR_NO_ERROR)
     res = gcry_cipher_setiv (ch, iv, ivlen);
 
-  if (res == GCRYERR_SUCCESS)
+  if (res == GPG_ERR_NO_ERROR)
     res = direction ?
       gcry_cipher_decrypt (ch, (unsigned char *) out, *outlen,
 			   (const unsigned char *) in, inlen) :
       gcry_cipher_encrypt (ch, (unsigned char *) out, *outlen,
 			   (const unsigned char *) in, inlen);
 
-  if (res != GCRYERR_SUCCESS)
+  if (res != GPG_ERR_NO_ERROR)
     {
       puts (gcry_strerror (res));
       shishi_error_set (handle, gcry_strerror (res));
@@ -769,10 +769,10 @@ _shishi_cipher_init (void)
     {
       if (gcry_check_version (GCRYPT_VERSION) == NULL)
 	return SHISHI_GCRYPT_ERROR;
-      if (gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0) != GCRYERR_SUCCESS)
+      if (gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0) != GPG_ERR_NO_ERROR)
 	return SHISHI_GCRYPT_ERROR;
       if (gcry_control (GCRYCTL_INITIALIZATION_FINISHED,
-			NULL, 0) != GCRYERR_SUCCESS)
+			NULL, 0) != GPG_ERR_NO_ERROR)
 	return SHISHI_GCRYPT_ERROR;
     }
 
@@ -816,7 +816,7 @@ shishi_cipher_name (int type)
 	return ciphers[i]->name;
     }
 
-  shishi_asprintf (&p, "unknown cipher %d", type);
+  asprintf (&p, "unknown cipher %d", type);
   return p;
 }
 
@@ -1270,10 +1270,10 @@ shishi_checksum (Shishi * handle,
 	char *keyp;
 	char *p;
 	int i;
-	GCRY_MD_HD hd;
-	GCRY_CIPHER_HD ch;
+	gcry_md_hd_t hd;
+	gcry_cipher_hd_t ch;
 
-	hd = gcry_md_open (GCRY_MD_MD5, 0);
+	gcry_md_open (&hd, GCRY_MD_MD5, 0);
 	if (!hd)
 	  return SHISHI_GCRYPT_ERROR;
 
@@ -1282,14 +1282,14 @@ shishi_checksum (Shishi * handle,
 
 	keyp = shishi_key_value (key);
 
-	ch = gcry_cipher_open (GCRY_CIPHER_DES,
+	gcry_cipher_open (&ch, GCRY_CIPHER_DES,
 			       GCRY_CIPHER_MODE_CBC,
 			       GCRY_CIPHER_CBC_MAC);
 	if (ch == NULL)
 	  return SHISHI_GCRYPT_ERROR;
 
 	res = gcry_cipher_setkey (ch, keyp, 8);
-	if (res != GCRYERR_SUCCESS)
+	if (res != GPG_ERR_NO_ERROR)
 	  return SHISHI_GCRYPT_ERROR;
 
 	res = gcry_cipher_setiv (ch, NULL, 8);

@@ -26,13 +26,13 @@ des_crc_verify (Shishi * handle, char *out, int *outlen)
 {
   int res;
   char md[16];
-  GCRY_MD_HD hd;
+  gcry_md_hd_t hd;
   char *p;
 
   memcpy (md, out + 8, 4);
   memset (out + 8, 0, 4);
 
-  hd = gcry_md_open (GCRY_MD_CRC32_RFC1510, 0);
+  gcry_md_open (&hd, GCRY_MD_CRC32_RFC1510, 0);
 
   if (!hd)
     {
@@ -80,7 +80,7 @@ des_crc_checksum (Shishi * handle,
   int res;
   char buffer[BUFSIZ];
   char *p;
-  GCRY_MD_HD hd;
+  gcry_md_hd_t hd;
 
   if (inlen + 8 + 4 > BUFSIZ)
     {
@@ -95,7 +95,7 @@ des_crc_checksum (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  hd = gcry_md_open (GCRY_MD_CRC32_RFC1510, 0);
+  gcry_md_open (&hd, GCRY_MD_CRC32_RFC1510, 0);
   if (hd == NULL)
     return SHISHI_GCRYPT_ERROR;
 
@@ -117,13 +117,13 @@ des_md4_verify (Shishi * handle, char *out, int *outlen)
 {
   int res;
   char md[16];
-  GCRY_MD_HD hd;
+  gcry_md_hd_t hd;
   char *p;
 
   memcpy (md, out + 8, 16);
   memset (out + 8, 0, 16);
 
-  hd = gcry_md_open (GCRY_MD_MD4, 0);
+  gcry_md_open (&hd, GCRY_MD_MD4, 0);
 
   if (!hd)
     {
@@ -171,7 +171,7 @@ des_md4_checksum (Shishi * handle,
   int res;
   char buffer[BUFSIZ];
   char *p;
-  GCRY_MD_HD hd;
+  gcry_md_hd_t hd;
 
   if (inlen + 8 + 16 > BUFSIZ)
     {
@@ -186,7 +186,7 @@ des_md4_checksum (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  hd = gcry_md_open (GCRY_MD_MD4, 0);
+  gcry_md_open (&hd, GCRY_MD_MD4, 0);
   if (hd == NULL)
     return SHISHI_GCRYPT_ERROR;
 
@@ -208,13 +208,13 @@ des_md5_verify (Shishi * handle, char *out, int *outlen)
 {
   int res;
   char md[16];
-  GCRY_MD_HD hd;
+  gcry_md_hd_t hd;
   char *p;
 
   memcpy (md, out + 8, 16);
   memset (out + 8, 0, 16);
 
-  hd = gcry_md_open (GCRY_MD_MD5, 0);
+  gcry_md_open (&hd, GCRY_MD_MD5, 0);
 
   if (!hd)
     {
@@ -262,7 +262,7 @@ des_md5_checksum (Shishi * handle,
   int res;
   char buffer[BUFSIZ];
   char *p;
-  GCRY_MD_HD hd;
+  gcry_md_hd_t hd;
 
   if (inlen + 8 + 16 > BUFSIZ)
     {
@@ -277,7 +277,7 @@ des_md5_checksum (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  hd = gcry_md_open (GCRY_MD_MD5, 0);
+  gcry_md_open (&hd, GCRY_MD_MD5, 0);
   if (hd == NULL)
     return SHISHI_GCRYPT_ERROR;
 
@@ -570,21 +570,22 @@ static int
 des_key_correction (Shishi * handle, char *key)
 {
   int res;
-  GCRY_CIPHER_HD ch;
+  gcry_cipher_hd_t ch;
 
   /* fixparity(key); */
   des_set_odd_key_parity (key);
 
-  ch = gcry_cipher_open (GCRY_CIPHER_DES, GCRY_CIPHER_MODE_CBC, 0);
+  gcry_cipher_open (&ch, GCRY_CIPHER_DES, GCRY_CIPHER_MODE_CBC, 0);
   if (ch == NULL)
     return !SHISHI_OK;
 
   /* XXX libgcrypt tests for pseudo-weak keys, rfc 1510 doesn't */
 
   res = gcry_cipher_setkey (ch, key, 8);
-  if (res != GCRYERR_SUCCESS)
+  if (res != GPG_ERR_NO_ERROR)
     {
-      if (res == GCRYERR_WEAK_KEY)
+      printf("hepp %d\n", gpg_err_code(res));
+      if (gpg_err_code(res) == GPG_ERR_WEAK_KEY)
 	{
 	  if (VERBOSECRYPTO(handle))
 	    printf ("\t ;; WEAK KEY (corrected)\n");
@@ -602,17 +603,17 @@ des_key_correction (Shishi * handle, char *key)
 static int
 des_cbc_check (char key[8], char *data, int n_data)
 {
-  GCRY_CIPHER_HD ch;
+  gcry_cipher_hd_t ch;
   int res;
 
-  ch = gcry_cipher_open (GCRY_CIPHER_DES,
+  gcry_cipher_open (&ch, GCRY_CIPHER_DES,
 			 GCRY_CIPHER_MODE_CBC,
 			 GCRY_CIPHER_CBC_MAC);
   if (ch == NULL)
     return SHISHI_GCRYPT_ERROR;
 
   res = gcry_cipher_setkey (ch, key, 8);
-  if (res != GCRYERR_SUCCESS)
+  if (res != GPG_ERR_NO_ERROR)
     return SHISHI_GCRYPT_ERROR;
 
   res = gcry_cipher_setiv (ch, key, 8);
@@ -856,7 +857,7 @@ checksum_md4 (Shishi * handle,
 {
   int res;
   char buffer[BUFSIZ];
-  GCRY_MD_HD hd;
+  gcry_md_hd_t hd;
   char *p;
 
   if (inlen + 8 > BUFSIZ)
@@ -885,7 +886,7 @@ checksum_md4 (Shishi * handle,
   printf ("\n");
 #endif
 
-  hd = gcry_md_open (GCRY_MD_MD4, 0);
+  gcry_md_open (&hd, GCRY_MD_MD4, 0);
   if (!hd)
     return SHISHI_GCRYPT_ERROR;
 
@@ -922,7 +923,7 @@ checksum_md5 (Shishi * handle,
 {
   int res;
   char buffer[BUFSIZ];
-  GCRY_MD_HD hd;
+  gcry_md_hd_t hd;
   char *p;
 
   if (inlen + 8 > BUFSIZ)
@@ -951,7 +952,7 @@ checksum_md5 (Shishi * handle,
   printf ("\n");
 #endif
 
-  hd = gcry_md_open (GCRY_MD_MD5, 0);
+  gcry_md_open (&hd, GCRY_MD_MD5, 0);
   if (!hd)
     return SHISHI_GCRYPT_ERROR;
 
