@@ -1,8 +1,8 @@
 Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
-Copyright (C) 2002, 2003 Simon Josefsson
+Copyright (C) 2002, 2003, 2004 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.12 (unreleased)
+* Version 0.0.12 (released 2004-01-02)
 
 ** The user database library Shisa has been improved.
 Shisa now support multiple keys for users, and you can now selectively
