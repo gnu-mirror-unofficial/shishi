@@ -21,11 +21,14 @@
 LDADD = @LTLIBINTL@ ../lib/libshishi.la -L../gl -lfoo
 
 bin_PROGRAMS = shishi
-shishi_SOURCES = shishi.c data.h gettext.h \
-	authp.c crypto.c client.c server.c
+shishi_SOURCES = shishi.c data.h gettext.h authp.c crypto.c
 
 sbin_PROGRAMS = shishid
 shishid_SOURCES = shishid.c
+
+noinst_PROGRAMS = client server
+sample_client_SOURCES = client.c
+sample_server_SOURCES = server.c
 
 localedir = $(datadir)/locale
 
