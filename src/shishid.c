@@ -590,6 +590,17 @@ process_1 (Shishi * handle, struct arguments arg,
 {
   Shishi_asn1 kdcreq;
   Shishi_msgtype msgtype;
+  Shishi_asn1 krberr;
+  int rc;
+
+  krberr = shishi_krberror (handle);
+  if (!krberr)
+    return SHISHI_MALLOC_ERROR;
+
+  rc = shishi_krberror_errorcode_set (handle, krberr,
+				      SHISHI_KRB_ERR_GENERIC);
+  if (rc != SHISHI_OK)
+    return rc;
 
   fprintf (stderr, "Processing %d bytes...\n", inlen);
 
@@ -599,16 +610,20 @@ process_1 (Shishi * handle, struct arguments arg,
 
   switch (msgtype)
     {
-    case SHISHI_MSGTYPE_AS_REQ+1:
+    case SHISHI_MSGTYPE_AS_REQ:
       kdcreq = shishi_der2asn1_asreq (handle, in, inlen);
       if (kdcreq)
 	{
 	  shishi_kdcreq_print (handle, stdout, kdcreq);
 	  asreq (handle, arg, kdcreq, out, outlen);
+	  return SHISHI_OK;
 	}
       else
 	{
-	  fprintf (stderr, "bad as-req...\n");
+	  rc = shishi_krberror_set_etext (handle, krberr,
+					  "Cannot parse AS-REQ");
+	  if (rc != SHISHI_OK)
+	    return rc;
 	}
       break;
 
@@ -618,36 +633,61 @@ process_1 (Shishi * handle, struct arguments arg,
 	{
 	  fprintf (stderr, "tgs-req...\n");
 	  shishi_kdcreq_print (handle, stdout, kdcreq);
+	  return SHISHI_OK;
 	}
       else
 	{
-	  fprintf (stderr, "bad tgs-req...\n");
+	  rc = shishi_krberror_set_etext (handle, krberr,
+					  "Cannot parse TGS-REQ");
+	  if (rc != SHISHI_OK)
+	    return rc;
 	}
       break;
 
     default:
-      {
-	Shishi_asn1 krberr;
-	int rc;
-
-	krberr = shishi_krberror (handle);
-	if (!krberr)
-	  return SHISHI_MALLOC_ERROR;
-
-	rc = shishi_krberror_errorcode_set (handle, krberr,
-					    SHISHI_KRB_ERR_GENERIC);
-	if (rc != SHISHI_OK)
-	  return rc;
-
-	shishi_krberror_print (handle, stdout, krberr);
-	shishi_krberror_pretty_print (handle, stdout, krberr);
-
-	rc = shishi_krberror_der (handle, krberr, out, outlen);
-	if (rc != SHISHI_OK)
-	  return rc;
-      }
+      rc = shishi_krberror_set_etext (handle, krberr,
+				      "Unsupported message type");
+      if (rc != SHISHI_OK)
+	return rc;
       break;
     }
+
+  rc = shishi_krberror_remove_ctime (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_cusec (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_crealm (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_cname (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_set_realm (handle, krberr, "");
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_server (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_remove_edata (handle, krberr);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  shishi_krberror_print (handle, stdout, krberr);
+  shishi_krberror_pretty_print (handle, stdout, krberr);
+
+  rc = shishi_krberror_der (handle, krberr, out, outlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  return SHISHI_OK;
 }
 
 static void
