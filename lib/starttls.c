@@ -223,7 +223,7 @@ _shishi_sendrecv_tls (Shishi * handle,
       shishi_error_printf (handle, "Shutdown failed (%d): %s",
 			   ret, strerror (errno));
       if (outerr == SHISHI_OK)
-	ret = SHISHI_CLOSE_ERROR;
+	outerr = SHISHI_CLOSE_ERROR;
     }
 
   ret = close (sockfd);
@@ -232,7 +232,7 @@ _shishi_sendrecv_tls (Shishi * handle,
       shishi_error_printf (handle, "Close failed (%d): %s",
 			   ret, strerror (errno));
       if (outerr == SHISHI_OK)
-	ret = SHISHI_CLOSE_ERROR;
+	outerr = SHISHI_CLOSE_ERROR;
     }
 
   gnutls_deinit (session);
