@@ -1,5 +1,5 @@
 /* krberror.c --- Functions related to KRB-ERROR packet.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -712,23 +712,23 @@ shishi_krberror_server_set (Shishi * handle,
  * shishi_krberror_ctime:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: Krberror to set client name field in.
- * @ctime: newly allocated zero-terminated output array with client time.
+ * @time: newly allocated zero-terminated output array with client time.
  *
  * Extract client time from KRB-ERROR.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_krberror_ctime (Shishi * handle, Shishi_asn1 krberror, char **ctime)
+shishi_krberror_ctime (Shishi * handle, Shishi_asn1 krberror, char **time)
 {
-  return shishi_time (handle, krberror, "ctime", ctime);
+  return shishi_time (handle, krberror, "ctime", time);
 }
 
 /**
  * shishi_krberror_ctime_set:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: Krberror as allocated by shishi_krberror().
- * @ctime: string with generalized time value to store in Krberror.
+ * @time: string with generalized time value to store in Krberror.
  *
  * Store client time in Krberror.
  *
@@ -736,13 +736,14 @@ shishi_krberror_ctime (Shishi * handle, Shishi_asn1 krberror, char **ctime)
  **/
 int
 shishi_krberror_ctime_set (Shishi * handle,
-			   Shishi_asn1 krberror, const char *ctime)
+			   Shishi_asn1 krberror,
+			   const char *time)
 {
   int res;
 
   if (ctime)
     res = shishi_asn1_write (handle, krberror, "ctime",
-			     ctime, GENERALIZEDTIME_TIME_LEN);
+			     time, GENERALIZEDTIME_TIME_LEN);
   else
     res = shishi_asn1_write (handle, krberror, "ctime", NULL, 0);
   if (res != SHISHI_OK)
