@@ -4,10 +4,12 @@ See the end for copying conditions.
 The inetutils/ sub-directory contains a copy of GNU Inetutils with a
 telnet implementation with Shishi support.  Ideally I would like to
 see GNU Inetutils incorporate this feature, but until or unless that
-happens the work can be found in this directory.
+happens the work can be found in this directory.  A patch that applies
+to GNU Inetutils is found in the file inetutils.diff in this
+directory.
 
-A patch that applies to GNU Inetutils is found in the file
-inetutils.diff in this directory.
+The pam_shishi/ sub-directory contains a PAM module that uses Shishi
+for authenticating users.
 
 ----------------------------------------------------------------------
 Copyright information:
