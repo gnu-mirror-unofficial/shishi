@@ -101,42 +101,145 @@ shishi_sendrecv_udp (Shishi * handle,
 }
 
 static int
+shishi_sendrecv_tcp (Shishi * handle,
+		     struct sockaddr *addr,
+		     const char *indata, int inlen,
+		     char **outdata, int *outlen, int timeout)
+{
+  char tmpbuf[BUFSIZ];		/* XXX can we do without it?
+				   MSG_PEEK|MSG_TRUNC doesn't work for udp.. */
+  int sockfd;
+  int bytes_sent;
+  struct sockaddr_storage from_sa;
+  int length = sizeof (struct sockaddr_storage);
+  fd_set readfds;
+  struct timeval tout;
+  int rc;
+
+  sockfd = socket (AF_INET, SOCK_STREAM, 0);
+  if (sockfd < 0)
+    {
+      shishi_error_set (handle, strerror (errno));
+      return SHISHI_SOCKET_ERROR;
+    }
+
+  if (connect (sockfd, addr, sizeof (*addr)) != 0)
+    {
+      shishi_error_set (handle, strerror (errno));
+      close (sockfd);
+      return SHISHI_CONNECT_ERROR;
+    }
+
+  tmpbuf[3] = inlen & 0xFF;
+  tmpbuf[2] = (inlen >> 8) & 0xFF;
+  tmpbuf[1] = (inlen >> 16) & 0xFF;
+  tmpbuf[0] = (inlen >> 24) & 0xFF;
+
+  bytes_sent = write (sockfd, tmpbuf, 4);
+
+  bytes_sent = write (sockfd, (const void *) indata, inlen);
+  if (bytes_sent != inlen)
+    {
+      shishi_error_set (handle, strerror (errno));
+      return SHISHI_SENDTO_ERROR;
+    }
+
+  FD_ZERO (&readfds);
+  FD_SET (sockfd, &readfds);
+  tout.tv_sec = timeout;
+  tout.tv_usec = 0;
+  if ((rc = select (sockfd + 1, &readfds, NULL, NULL, &tout)) != 1)
+    {
+      if (rc == -1)
+	shishi_error_set (handle, strerror (errno));
+      else
+	shishi_error_clear (handle);
+      return SHISHI_KDC_TIMEOUT;
+    }
+
+  *outlen = 4;
+  *outlen = recvfrom (sockfd, tmpbuf, *outlen, 0,
+		      (struct sockaddr *) &from_sa, &length);
+  if (*outlen == -1)
+    {
+      shishi_error_set (handle, strerror (errno));
+      return SHISHI_RECVFROM_ERROR;
+    }
+
+  *outlen = sizeof (tmpbuf);
+  *outlen = recvfrom (sockfd, tmpbuf, *outlen, 0,
+		      (struct sockaddr *) &from_sa, &length);
+
+  *outdata = xmalloc (*outlen);
+  memcpy (*outdata, tmpbuf, *outlen);
+
+  if (close (sockfd) != 0)
+    {
+      shishi_error_set (handle, strerror (errno));
+      return SHISHI_CLOSE_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+static int
+shishi_kdc_sendrecv_1 (Shishi * handle, struct Shishi_kdcinfo *ki,
+		       const char *indata, size_t inlen,
+		       char **outdata, size_t * outlen)
+{
+  int rc;
+
+  if (VERBOSE (handle))
+    printf ("Sending to %s (%s) via %s...\n", ki->name,
+	    inet_ntoa (((struct sockaddr_in *) &ki->sockaddress)->sin_addr),
+	    ki->protocol == TCP ? "tcp" : "udp");
+
+  switch (ki->protocol == TCP)
+    {
+    case TCP:
+      rc = shishi_sendrecv_tcp (handle, &ki->sockaddress,
+				indata, inlen, outdata, outlen,
+				handle->kdctimeout);
+      break;
+
+    case UDP:
+    default:
+      rc = shishi_sendrecv_udp (handle, &ki->sockaddress,
+				indata, inlen, outdata, outlen,
+				handle->kdctimeout);
+      break;
+    }
+
+  return rc;
+}
+
+static int
 shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
 			    const char *indata, size_t inlen,
 			    char **outdata, size_t * outlen)
 {
-  int i, j, k;
+  struct Shishi_realminfo *ri;
+  size_t j, k;
   int rc;
 
-  for (i = 0; i < handle->nrealminfos; i++)
-    if (realm && strcmp (handle->realminfos[i].name, realm) == 0)
+  ri = shishi_realminfo (handle, realm);
+  if (!ri)
+    {
+      shishi_error_printf (handle, "No KDC defined for realm %s", realm);
+      return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
+    }
+
+  for (j = 0; j < handle->kdcretries; j++)
+    for (k = 0; k < ri->nkdcaddresses; k++)
       {
-	for (j = 0; j < handle->kdcretries; j++)
-	  for (k = 0; k < handle->realminfos[i].nkdcaddresses; k++)
-	    {
-	      struct Shishi_kdcinfo *ki =
-		&handle->realminfos[i].kdcaddresses[k];
-
-	      if (VERBOSE (handle))
-		{
-		  printf ("Sending to %s (%s)...\n", ki->name,
-			  inet_ntoa (((struct sockaddr_in *)
-				      &ki->sockaddress)->sin_addr));
-		}
-
-	      rc = shishi_sendrecv_udp (handle, &ki->sockaddress,
-					indata, inlen, outdata, outlen,
-					handle->kdctimeout);
-	      if (rc != SHISHI_KDC_TIMEOUT)
-		return rc;
-	    }
-
-	shishi_error_clear (handle);
-	return SHISHI_KDC_TIMEOUT;
+	rc = shishi_kdc_sendrecv_1 (handle, &ri->kdcaddresses[k],
+				    indata, inlen, outdata, outlen);
+	if (rc != SHISHI_KDC_TIMEOUT)
+	  return rc;
       }
 
-  shishi_error_printf (handle, "No KDC defined for realm %s", realm);
-  return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
+  shishi_error_clear (handle);
+  return SHISHI_KDC_TIMEOUT;
 }
 
 static int
