@@ -31,22 +31,22 @@ struct Shishi_tkts
 /**
  * shishi_tkts_default_file_guess:
  *
- * Guesses the default ticket filename; it is $HOME/.shishi/tickets.
+ * Guesses the default ticket filename; it is $SHISHI_TICKETS,
+ * $SHISHI_HOME/tickets, or $HOME/.shishi/tickets.
  *
  * Return value: Returns default tkts filename as a string that
  * has to be deallocated with free() by the caller.
  **/
 char *
-shishi_tkts_default_file_guess (void)
+shishi_tkts_default_file_guess (Shishi * handle)
 {
-  char *home;
-  char *p;
+  char *envfile;
 
-  home = getenv ("HOME");
+  envfile = getenv ("SHISHI_TICKETS");
+  if (envfile)
+    return xstrdup (envfile);
 
-  asprintf (&p, "%s%s", home ? home : "", TICKET_FILE);
-
-  return p;
+  return shishi_cfg_userdirectory_file (handle, TICKET_FILE);
 }
 
 /**
@@ -64,7 +64,7 @@ shishi_tkts_default_file (Shishi * handle)
     {
       char *p;
 
-      p = shishi_tkts_default_file_guess ();
+      p = shishi_tkts_default_file_guess (handle);
       shishi_tkts_default_file_set (handle, p);
       free (p);
     }
