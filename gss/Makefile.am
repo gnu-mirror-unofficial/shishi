@@ -20,7 +20,7 @@
 
 lib_LTLIBRARIES = libshishi-gss.la
 libshishi_gss_la_SOURCES = internal.h oid.c \
-	cred.c context.c msg.c name.c misc.c
+	cred.c context.c msg.c name.c misc.c obsolete.c
 libshishi_gss_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 INCLUDES = -I../intl -I../lib \
@@ -31,4 +31,4 @@ pkginclude_HEADERS = gssapi.h
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 
 indent:
-	indent $(SOURCES)
+	indent $(SOURCES) $(pkginclude_HEADERS)
