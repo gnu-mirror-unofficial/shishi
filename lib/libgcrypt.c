@@ -167,6 +167,62 @@ shishi_md5 (Shishi * handle,
 }
 
 /*
+ * shishi_hmac_md5:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: input character array with key to use.
+ * @keylen: length of input character array with key to use.
+ * @in: input character array of data to hash.
+ * @inlen: length of input character array of data to hash.
+ * @outhash: newly allocated character array with keyed hash of data.
+ *
+ * Compute keyed checksum of data using HMAC-MD5
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_hmac_md5 (Shishi * handle,
+		  const char *key, size_t keylen,
+		  const char *in, size_t inlen,
+		  char *outhash[16])
+{
+  gcry_md_hd_t mdh;
+  size_t hlen = gcry_md_get_algo_dlen (GCRY_MD_MD5);
+  unsigned char *hash;
+  gpg_error_t err;
+
+  err = gcry_md_open (&mdh, GCRY_MD_MD5, GCRY_MD_FLAG_HMAC);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "Libgcrypt hmac md open failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  err = gcry_md_setkey (mdh, key, keylen);
+  if (err != GPG_ERR_NO_ERROR)
+    {
+      shishi_error_printf (handle, "Libgcrypt md setkey failed");
+      shishi_error_set (handle, gpg_strerror (err));
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  gcry_md_write (mdh, in, inlen);
+
+  hash = gcry_md_read (mdh, GCRY_MD_MD5);
+  if (hash == NULL)
+    {
+      shishi_error_printf (handle, "Libgcrypt failed to compute hash");
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  *outhash = xmemdup (hash, hlen);
+
+  gcry_md_close (mdh);
+
+  return SHISHI_OK;
+}
+
+/*
  * shishi_hmac_sha1:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: input character array with key to use.

@@ -147,6 +147,35 @@ shishi_md5 (Shishi * handle,
 }
 
 /**
+ * shishi_hmac_md5:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: input character array with key to use.
+ * @keylen: length of input character array with key to use.
+ * @in: input character array of data to hash.
+ * @inlen: length of input character array of data to hash.
+ * @outhash: newly allocated character array with keyed hash of data.
+ *
+ * Compute keyed checksum of data using HMAC-MD5
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_hmac_md5 (Shishi * handle,
+		  const char *key, size_t keylen,
+		  const char *in, size_t inlen,
+		  char *outhash[MD5_DIGEST_SIZE])
+{
+  struct hmac_md5_ctx ctx;
+
+  hmac_md5_set_key (&ctx, keylen, key);
+  hmac_md5_update (&ctx, inlen, in);
+  *outhash = xmalloc (MD5_DIGEST_SIZE);
+  hmac_md5_digest (&ctx, MD5_DIGEST_SIZE, *outhash);
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_hmac_sha1:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: input character array with key to use.
