@@ -222,14 +222,29 @@ AC_CHECK_SIZEOF(unsigned char, 1)
 # Check for libtasn1
 AC_ARG_WITH(system-asn1,
 	AC_HELP_STRING([--with-system-asn1], [Use the system's libtasn1]),
-	system_asn1=$withval, system_asn1=yes)
-if test "$system_asn1" != "no"; then
-	AC_CHECK_HEADER(libtasn1.h,, system_asn1=no)
-fi
-if test "$system_asn1" != "no"; then
-	AC_CHECK_LIB(tasn1, asn1_check_version,,
+	system_asn1=$withval, system_asn1=auto)
+if test "$system_asn1" = "auto"; then
+	save_LIBS=$LIBS
+	LIBS="$LIBS -ltasn1"
+	AC_CACHE_CHECK([for libtasn1 >= 0.2.5], ac_cv_libtasn1, [
+		AC_TRY_RUN([
+#include <libtasn1.h>
+int main ()
+{
+  return asn1_check_version ("0.2.5") == NULL;
+}
+],
+		ac_cv_libtasn1=yes,
+		ac_cv_libtasn1=no,
+		ac_cv_libtasn1=no)
+	])
+	LIBS=$save_LIBS
+	if test "$ac_cv_libtasn1" = "yes"; then
+		system_asn1=yes
+	else
 		system_asn1=no
-		AC_MSG_WARN([Libtasn1 >=0.2.2 not found. Using included one.]))
+		AC_MSG_WARN([Libtasn1 >= 0.2.5 not found. Using included one.])
+	fi
 fi
 AC_MSG_CHECKING([whether to use the system's libtasn1])
 AC_MSG_RESULT($system_asn1)
