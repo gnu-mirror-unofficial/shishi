@@ -249,6 +249,7 @@ shishi_as_cnamerealmsname (Shishi * handle,
 			     password, &kdcreppart);
   else
     res = shishi_kdc_process (handle, (*as)->asreq, (*as)->asrep, 
+			      SHISHI_KEYUSAGE_ENCASREPPART, 
 			      keytype, key, keylen, &kdcreppart);
   if (res != SHISHI_OK)
     goto done;

@@ -394,12 +394,6 @@ shishi_apreq_add_authenticator (Shishi * handle,
       return !SHISHI_OK;
     }
 
-  while ((derlen % 8) != 0)
-    {
-      der[derlen] = '\0';
-      derlen++;
-    }
-
   buflen = BUFSIZ;
   res = shishi_encrypt (handle, keyusage, keytype, key, keylen, 
 			der, derlen, buf, &buflen);
@@ -868,9 +862,9 @@ shishi_apreq_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     {
       if (!SILENT(handle))
-	printf ("des_decrypt failed: %s\n", shishi_strerror_details (handle));
-      shishi_error_printf (handle,
-			   "des_decrypt fail, most likely wrong password\n");
+	printf ("decrypt failed: %s\n", shishi_strerror_details (handle));
+      shishi_error_printf (handle, 
+			   "decrypt fail, most likely wrong password\n");
       return res;
     }
 

@@ -115,7 +115,8 @@ kdc_response (Shishi * handle,
 
       keytype = arg.algorithm;
 
-      res = shishi_kdc_process (handle, req, rep,
+      res = shishi_kdc_process (handle, req, rep, 
+				oldtkt ? 3 : 8,
 				keytype, key, keylen, &kdcreppart);
     }
   else if (oldtkt)

@@ -411,8 +411,10 @@ error:
 int
 shishi_kdcrep_decrypt (Shishi * handle,
 		       ASN1_TYPE kdcrep,
+		       int keyusage,
 		       int keytype,
-		       char *key, int keylen, 
+		       char *key, 
+		       int keylen, 
 		       ASN1_TYPE * enckdcreppart)
 {
   int res;
@@ -437,7 +439,7 @@ shishi_kdcrep_decrypt (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_decrypt (handle, SHISHI_KEYUSAGE_ENCASREPPART, etype,
+  res = shishi_decrypt (handle, keyusage, etype,
 			key, keylen, cipher, cipherlen, buf, &buflen);
   if (res != SHISHI_OK)
     {

@@ -84,45 +84,6 @@ des3_cbc_sha1_kd_checksum (Shishi * handle,
   return SHISHI_OK;
 }
 
-static int
-des3_cbc_sha1_kd_verify (Shishi * handle, char *out, int *outlen,
-			 char *key)
-{
-  GCRY_MD_HD mdh;
-  char *hash;
-  int i;
-  int res;
-
-  res = gcry_control (GCRYCTL_INIT_SECMEM, 512, 0);
-  if (res != GCRYERR_SUCCESS)
-    return SHISHI_GCRYPT_ERROR;
-
-  mdh = gcry_md_open (GCRY_MD_SHA1, GCRY_MD_FLAG_HMAC);
-  if (mdh == NULL)
-    return SHISHI_GCRYPT_ERROR;
-
-  res = gcry_md_setkey (mdh, key, 24);
-  if (res != GCRYERR_SUCCESS)
-    return SHISHI_GCRYPT_ERROR;
-
-  gcry_md_write (mdh, out, *outlen-24);
-  
-  hash = gcry_md_read (mdh, GCRY_MD_SHA1);
-  if (hash == NULL)
-    return SHISHI_GCRYPT_ERROR;
-
-#if 0
-  printf("hash: ");
-  for (i = 0; i < 21; i++)
-    printf("%02x", hash[i]);
-  printf("\n");
-#endif
-
-  memmove (out, out + 8, *outlen - 8);
-  *outlen -= 8 + 24;
-  return SHISHI_OK;
-}
-
 /* The 168 bits of random key data are converted to a protocol key
  * value as follows.  First, the 168 bits are divided into three
  * groups of 56 bits, which are expanded individually into 64 bits as

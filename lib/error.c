@@ -61,6 +61,10 @@ shishi_strerror (int err)
       p = _("Could not close file");
       break;
 
+    case SHISHI_GCRYPT_ERROR:
+      p = _("Internal libgcrypt error");
+      break;
+
     case SHISHI_NONCE_MISMATCH:
       p =
 	_("Replay protection value (nonce) differ between request and reply");
@@ -83,8 +87,12 @@ shishi_strerror (int err)
       p = _("Error in ASN.1 data, probably due to corrupt data");
       break;
 
+    case SHISHI_CRYPTO_ERROR:
+      p = _("Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption.");
+      break;
+
     default:
-      p = _("Unknown shishi error");
+      shishi_asprintf(&p, "Unknown shishi error %d", err);
       break;
     }
 

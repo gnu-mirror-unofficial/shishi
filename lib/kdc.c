@@ -456,7 +456,8 @@ shishi_tgs_process (Shishi * handle,
   if (etype != keytype)
     return SHISHI_TGSREP_BAD_KEYTYPE;
 
-  res = shishi_kdc_process (handle, tgsreq, tgsrep, keytype,
+  res = shishi_kdc_process (handle, tgsreq, tgsrep, 
+			    SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY, keytype,
 			    key, keylen, enckdcreppart);
 
   return res;
@@ -508,7 +509,8 @@ shishi_as_process (Shishi * handle,
     return res;
 
   res = shishi_kdc_process (handle, asreq, asrep,
-			    keytype, key, keylen, enckdcreppart);
+			    SHISHI_KEYUSAGE_ENCASREPPART, keytype, key, keylen,
+			    enckdcreppart);
 
   return res;
 }
@@ -543,6 +545,7 @@ int
 shishi_kdc_process (Shishi * handle,
 		    ASN1_TYPE kdcreq,
 		    ASN1_TYPE kdcrep,
+		    int keyusage,
 		    int keytype,
 		    char *key, int keylen, ASN1_TYPE * enckdcreppart)
 {
@@ -592,7 +595,7 @@ shishi_kdc_process (Shishi * handle,
 	return res;
     }
 
-  res = shishi_kdcrep_decrypt (handle, kdcrep, keytype, key, keylen, 
+  res = shishi_kdcrep_decrypt (handle, kdcrep, keyusage, keytype, key, keylen, 
 			       enckdcreppart);
   if (res != SHISHI_OK)
     return res;

@@ -157,6 +157,9 @@ typedef enum {
 
 #define GENERALIZEDTIME_TIME_LEN 15
 
+#define MAX_KEY_LEN 32
+#define MAX_HASH_LEN 32
+
 struct Shishi_ticket
 {
   char *principal;

@@ -108,89 +108,11 @@ shishi_mod_crc32 (char *buf, int len)
 }
 
 static int
-gcrypt (Shishi * handle,
-	int alg,
-	char *out,
-	int *outlen,
-	char *in,
-	int inlen, char *key, int keylen, int direction)
-{
-  int res;
-  GCRY_CIPHER_HD ch;
-  int j;
-  char iv[MAX_BLOCK_LEN];
-  char *tmp;
-  int tmplen;
-
-  ch = gcry_cipher_open (alg, GCRY_CIPHER_MODE_CBC, 0);
-  if (ch == NULL)
-    {
-      puts ("open fail");
-      return !SHISHI_OK;
-    }
-
-  res = gcry_cipher_setkey (ch, key, keylen);
-  if (res != GCRYERR_SUCCESS)
-    {
-      if (res == GCRYERR_WEAK_KEY)
-	{
-	  printf ("weak key\n");
-	}
-      else
-	{
-	  puts ("setkey fail");
-	}
-      return !SHISHI_OK;
-    }
-
-  if (gcry_cipher_get_algo_blklen(alg) > MAX_BLOCK_LEN)
-    return !SHISHI_OK;
-  memset (iv, 0, MAX_BLOCK_LEN);
-  res = gcry_cipher_setiv (ch, iv, gcry_cipher_get_algo_blklen(alg));
-  if (res != 0)
-    {
-      printf ("iv res %d err %s\n", res, gcry_strerror (res));
-    }
-
-  if ((inlen % 8) != 0)
-    {
-      tmplen = inlen;
-      tmplen += 8 - tmplen % 8;
-      tmp = (char *) malloc (tmplen);
-      memcpy (tmp, in, inlen);
-      memset (tmp + inlen, 0, tmplen - inlen);
-    }
-  else
-    {
-      tmp = in;
-      tmplen = inlen;
-    }
-
-  if (direction)
-    res = gcry_cipher_decrypt (ch, out, *outlen, tmp, tmplen);
-  else
-    res = gcry_cipher_encrypt (ch, out, *outlen, tmp, tmplen);
-
-  if ((inlen % 8) != 0)
-    free (tmp);
-
-  if (res != 0)
-    {
-      printf ("crypt res %d err %s\n", res, gcry_strerror (res));
-    }
-  *outlen = tmplen;
-
-  gcry_cipher_close (ch);
-
-  return SHISHI_OK;
-}
-
-static int
 des_encrypt (Shishi * handle,
 	     char *out,
 	     int *outlen, char *in, int inlen, char key[8])
 {
-  return gcrypt (handle, GCRY_CIPHER_DES, out, outlen, in, inlen, key, 8, 0);
+  return simplified_dencrypt (handle, SHISHI_DES_CBC_MD5, out, outlen, in, inlen, key, 8, 0);
 }
 
 static int
@@ -198,7 +120,7 @@ des_decrypt (Shishi * handle,
 	     char *out,
 	     int *outlen, char *in, int inlen, char key[8])
 {
-  return gcrypt (handle, GCRY_CIPHER_DES, out, outlen, in, inlen, key, 8, 1);
+  return simplified_dencrypt (handle, SHISHI_DES_CBC_MD5, out, outlen, in, inlen, key, 8, 1);
 }
 
 static int
@@ -1132,6 +1054,12 @@ des_crc_encrypt (Shishi * handle,
   int buflen;
   int res;
 
+  while ((inlen % 8) != 0)
+    {
+      in[inlen] = '\0';
+      inlen++;
+    }
+
   buflen = sizeof (buffer);
   res = des_crc_checksum (handle, buffer, &buflen, in, inlen);
   memcpy (buffer + buflen, in, inlen);
@@ -1197,6 +1125,12 @@ des_md4_encrypt (Shishi * handle,
   int buflen;
   int res;
 
+  while ((inlen % 8) != 0)
+    {
+      in[inlen] = '\0';
+      inlen++;
+    }
+
   buflen = sizeof (buffer);
   res = des_md4_checksum (handle, buffer, &buflen, in, inlen);
   memcpy (buffer + buflen, in, inlen);
@@ -1249,6 +1183,12 @@ des_md5_encrypt (Shishi * handle,
   char buffer[BUFSIZ];
   int buflen;
   int res;
+
+  while ((inlen % 8) != 0)
+    {
+      in[inlen] = '\0';
+      inlen++;
+    }
 
   buflen = sizeof (buffer);
   res = des_md5_checksum (handle, buffer, &buflen, in, inlen);
