@@ -1,5 +1,5 @@
 /* kdc.h --- Header file with common definitions for Shishid.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -183,8 +183,10 @@ extern void kdc_send1 (struct listenspec *ls);
 extern int kdc_extension (struct listenspec *ls);
 
 /* Interface between shishid.c, server.c and resume.c. */
+#ifdef USE_STARTTLS
 extern void resume_db_init (size_t nconnections);
 extern void resume_db_done (void);
 extern int resume_db_store (void *dbf, gnutls_datum key, gnutls_datum data);
 extern gnutls_datum resume_db_fetch (void *dbf, gnutls_datum key);
 extern int resume_db_delete (void *dbf, gnutls_datum key);
+#endif
