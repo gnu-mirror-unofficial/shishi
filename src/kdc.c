@@ -76,8 +76,8 @@ asreq1 (Shishi_as * as)
 
   /* Enumerate keys for user and server. */
 
-  err = shisa_enumerate_keys (dbh, realm, servername,
-			      &serverkeys, &nserverkeys);
+  err = shisa_keys_find (dbh, realm, servername, NULL,
+			 &serverkeys, &nserverkeys);
   if (err != SHISA_OK)
     {
       printf ("Error getting keys for %s@%s\n", servername, realm);
@@ -85,7 +85,7 @@ asreq1 (Shishi_as * as)
     }
   printf ("Found keys for server %s@%s...\n", servername, realm);
 
-  err = shisa_enumerate_keys (dbh, realm, username, &userkeys, &nuserkeys);
+  err = shisa_keys_find (dbh, realm, username, NULL, &userkeys, &nuserkeys);
   if (err != SHISA_OK)
     {
       printf ("Error getting keys for %s@%s\n", username, realm);
@@ -226,7 +226,7 @@ tgsreq1 (Shishi_tgs * tgs)
 
   /* We need to decrypt the ticket granting ticket, get key. */
 
-  rc = shisa_enumerate_keys (dbh, tgrealm, tgname, &tgkeys, &ntgkeys);
+  rc = shisa_keys_find (dbh, tgrealm, tgname, NULL, &tgkeys, &ntgkeys);
   if (rc != SHISA_OK)
     {
       printf ("Error getting keys for %s@%s\n", tgname, tgrealm);
@@ -265,8 +265,8 @@ tgsreq1 (Shishi_tgs * tgs)
 
   /* Get key for server, used to encrypt new ticket. */
 
-  rc = shisa_enumerate_keys (dbh, serverrealm, servername,
-			     &serverkeys, &nserverkeys);
+  rc = shisa_keys_find (dbh, serverrealm, servername, NULL,
+			&serverkeys, &nserverkeys);
   if (rc != SHISA_OK)
     {
       printf ("Error getting keys for %s@%s\n", servername, serverrealm);
