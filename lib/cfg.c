@@ -223,6 +223,21 @@ shishi_cfg (Shishi * handle, char *option)
 		struct sockaddr_in *sinaddr;
 		struct hostent *he;
 		struct servent *se;
+		char *p;
+		int protocol = UDP;
+
+		if ((p = strchr (value, '/')))
+		  {
+		    *p = '\0';
+		    p++;
+		    if (strcmp(p, "tcp") == 0)
+		      protocol = TCP;
+		    else if (strcmp(p, "tls") == 0)
+		      protocol = TLS;
+		    else
+		      shishi_warn (handle,
+				   "Ignoring unknown KDC parameter: %s", p);
+		  }
 
 		he = gethostbyname (value);	/* XXX move to netio.c */
 		if (he == NULL ||
@@ -234,12 +249,11 @@ shishi_cfg (Shishi * handle, char *option)
 		    break;
 		  }
 
-		ri->kdcaddresses = realloc (ri->kdcaddresses,
-					    (ri->nkdcaddresses + 1) *
-					    sizeof (*ri->kdcaddresses));
-		if (ri->kdcaddresses == NULL)
-		  return SHISHI_MALLOC_ERROR;
+		ri->kdcaddresses = xrealloc (ri->kdcaddresses,
+					     (ri->nkdcaddresses + 1) *
+					     sizeof (*ri->kdcaddresses));
 		ri->kdcaddresses[ri->nkdcaddresses].name = strdup (value);
+		ri->kdcaddresses[ri->nkdcaddresses].protocol = protocol;
 		sinaddr = (struct sockaddr_in *)
 		  &ri->kdcaddresses[ri->nkdcaddresses].sockaddress;
 		memset (sinaddr, 0, sizeof (struct sockaddr));
