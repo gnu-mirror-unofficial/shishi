@@ -193,8 +193,8 @@ struct Shishi
   int verbose;
   char *default_realm;
   char *default_principal;
-  int kdctimeout;
-  int kdcretries;
+  size_t kdctimeout;
+  size_t kdcretries;
   int ticketlife;
   int renewlife;
   int32_t *clientkdcetypes;
