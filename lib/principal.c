@@ -1,5 +1,5 @@
 /* principal.c --- Get and set default principal.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -202,7 +202,7 @@ shishi_principal_name (Shishi * handle,
 		       const char *namefield, char **out, size_t * outlen)
 {
   char *format;
-  int i, j, n;
+  size_t i, j, n;
   char *name = NULL;
   size_t namelen = 0;
   int res;
@@ -268,8 +268,7 @@ shishi_principal_name_get (Shishi * handle,
   int res;
   char *format;
   size_t totlen = 0;
-  int len;
-  int i, j, n;
+  size_t i, j, n, len;
 
   /* FIXME: allocate output instead of writing inline */
 
@@ -327,8 +326,7 @@ shishi_principal_name_realm_get (Shishi * handle,
 				 char *out, size_t * outlen)
 {
   int res;
-  size_t totlen = 0;
-  int len;
+  size_t totlen = 0, len;
 
   /* FIXME: allocate output instead of writing inline */
 

@@ -45,7 +45,7 @@ enum
   THE_END
 };
 
-static char *const _shishi_opts[] = {
+static const char *_shishi_opts[] = {
   /* [DEFAULT_REALM_OPTION] =        */ "default-realm",
   /* [DEFAULT_PRINCIPAL_OPTION] =    */ "default-principal",
   /* [CLIENT_KDC_ETYPES_OPTION] =    */ "client-kdc-etypes",
@@ -474,10 +474,7 @@ shishi_cfg_default_userdirectory (Shishi * handle)
     {
       home = getenv ("HOME");
 
-      if (home == NULL)
-	home = "";
-
-      asprintf (&handle->userdirectory, "%s%s", home, BASE_DIR);
+      asprintf (&handle->userdirectory, "%s%s", home ? home : "", BASE_DIR);
     }
 
   return handle->userdirectory;
@@ -517,10 +514,7 @@ shishi_cfg_default_userfile (Shishi * handle)
     {
       home = getenv ("HOME");
 
-      if (home == NULL)
-	home = "";
-
-      asprintf (&handle->usercfgfile, "%s%s", home, USERCFG_FILE);
+      asprintf (&handle->usercfgfile, "%s%s", home ? home : "", USERCFG_FILE);
     }
 
   return handle->usercfgfile;

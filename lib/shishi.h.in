@@ -1332,7 +1332,7 @@ extern const char *shishi_generalize_time (Shishi * handle, time_t t);
 extern const char *shishi_generalize_now (Shishi * handle);
 extern time_t shishi_generalize_ctime (Shishi * handle, const char *t);
 extern int shishi_time (Shishi * handle, Shishi_asn1 node,
-			const char *field, char **time);
+			const char *field, char **t);
 
 /* nettle.c, libgcrypt.c, ... */
 extern int shishi_randomize (Shishi * handle, int strong,
@@ -1385,7 +1385,8 @@ extern int shishi_string_to_key (Shishi * handle,
 				 const char *parameter, Shishi_key * outkey);
 extern int shishi_random_to_key (Shishi * handle,
 				 int32_t keytype,
-				 const char *random, size_t randomlen,
+				 const char *rnd,
+				 size_t rndlen,
 				 Shishi_key * outkey);
 extern int shishi_encrypt_ivupdate_etype (Shishi * handle,
 					  Shishi_key * key,
@@ -1711,7 +1712,6 @@ extern int shishi_ap_req_process (Shishi_ap * ap, Shishi_key * key);
 extern int shishi_ap_req_process_keyusage (Shishi_ap * ap,
 					   Shishi_key * key,
 					   int32_t keyusage);
-extern int shishi_ap_req_build (Shishi_ap * ap);
 
 extern Shishi_asn1 shishi_ap_rep (Shishi_ap * ap);
 extern void shishi_ap_rep_set (Shishi_ap * ap, Shishi_asn1 aprep);
@@ -1741,8 +1741,6 @@ extern int shishi_key_type (Shishi_key * key);
 extern void shishi_key_type_set (Shishi_key * key, int32_t type);
 extern char *shishi_key_value (Shishi_key * key);
 extern void shishi_key_value_set (Shishi_key * key, const char *value);
-extern int shishi_key_value_set_random (Shishi_key * key,
-					char *random, size_t randomlen);
 extern const char *shishi_key_name (Shishi_key * key);
 extern size_t shishi_key_length (Shishi_key * key);
 extern int shishi_key_version (Shishi_key * key);
@@ -1764,7 +1762,8 @@ extern int shishi_key_from_base64 (Shishi * handle,
 				   const char *value, Shishi_key ** key);
 extern int shishi_key_from_random (Shishi * handle,
 				   int32_t type,
-				   const char *random, size_t randomlen,
+				   const char *rnd,
+				   size_t rndlen,
 				   Shishi_key ** outkey);
 extern int shishi_key_from_string (Shishi * handle,
 				   int32_t type,

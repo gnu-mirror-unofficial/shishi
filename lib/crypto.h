@@ -1,5 +1,5 @@
 /* crypto.h --- Crypto prototypes.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -69,8 +69,8 @@ typedef enum
 Shishi_derivekeymode;
 
 typedef int (*Shishi_random_to_key_function) (Shishi * handle,
-					      const char *random,
-					      size_t randomlen,
+					      const char *rnd,
+					      size_t rndlen,
 					      Shishi_key * outkey);
 
 typedef int (*Shishi_string_to_key_function) (Shishi * handle,

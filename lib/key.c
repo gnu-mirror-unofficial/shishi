@@ -1,5 +1,5 @@
 /* key.c	Key related functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -371,8 +371,8 @@ shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
  * shishi_key_from_random
  * @handle: Shishi library handle create by shishi_init().
  * @type: type of key.
- * @random: random data.
- * @randomlen: length of random data.
+ * @rnd: random data.
+ * @rndlen: length of random data.
  * @outkey: pointer to structure that will hold newly created key information
  *
  * Create a new Key information structure, and set the key type and
@@ -384,7 +384,7 @@ shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
 int
 shishi_key_from_random (Shishi * handle,
 			int32_t type,
-			const char *random, size_t randomlen,
+			const char *rnd, size_t rndlen,
 			Shishi_key ** outkey)
 {
   int rc;
@@ -393,7 +393,7 @@ shishi_key_from_random (Shishi * handle,
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_random_to_key (handle, type, random, randomlen, *outkey);
+  rc = shishi_random_to_key (handle, type, rnd, rndlen, *outkey);
 
   return rc;
 }

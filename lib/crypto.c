@@ -1,5 +1,5 @@
 /* crypto.c --- Crypto functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -960,8 +960,8 @@ shishi_string_to_key (Shishi * handle,
  * shishi_random_to_key:
  * @handle: shishi handle as allocated by shishi_init().
  * @keytype: cryptographic encryption type, see Shishi_etype.
- * @random: input array with random data.
- * @randomlen: length of input array with random data.
+ * @rnd: input array with random data.
+ * @rndlen: length of input array with random data.
  * @outkey: allocated key handle that will contain new key.
  *
  * Derive key from random data for specified key type, and set the
@@ -972,7 +972,8 @@ shishi_string_to_key (Shishi * handle,
 int
 shishi_random_to_key (Shishi * handle,
 		      int32_t keytype,
-		      const char *random, size_t randomlen,
+		      const char *rnd,
+		      size_t rndlen,
 		      Shishi_key * outkey)
 {
   Shishi_random_to_key_function random2key;
@@ -984,8 +985,8 @@ shishi_random_to_key (Shishi * handle,
     {
       printf ("random_to_key (%s, random)\n", shishi_key_name (outkey));
       printf ("\t ;; random:\n");
-      _shishi_hexprint (random, randomlen);
-      _shishi_binprint (random, randomlen);
+      _shishi_hexprint (rnd, rndlen);
+      _shishi_binprint (rnd, rndlen);
     }
 
   random2key = _shishi_cipher_random_to_key (keytype);
@@ -996,7 +997,7 @@ shishi_random_to_key (Shishi * handle,
       return SHISHI_CRYPTO_ERROR;
     }
 
-  res = (*random2key) (handle, random, randomlen, outkey);
+  res = (*random2key) (handle, rnd, rndlen, outkey);
 
   if (VERBOSECRYPTO (handle))
     {

@@ -1,5 +1,5 @@
 /* gztime.c --- Convertion functions for GeneralizedTime.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -100,7 +100,7 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
  * @handle: shishi handle as allocated by shishi_init().
  * @node: ASN.1 node to get time from.
  * @field: Name of field in ASN.1 node to get time from.
- * @time: newly allocated output array with zero terminated time string.
+ * @t: newly allocated output array with zero terminated time string.
  *
  * Extract time from ASN.1 structure.
  *
@@ -108,25 +108,25 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
  **/
 int
 shishi_time (Shishi * handle, Shishi_asn1 node,
-	     const char *field, char **time)
+	     const char *field, char **t)
 {
   size_t len;
   int res;
 
   len = GENERALIZEDTIME_TIME_LEN + 1;
-  *time = xmalloc (len);
+  *t = xmalloc (len);
 
-  res = shishi_asn1_read (handle, node, field, *time, &len);
+  res = shishi_asn1_read (handle, node, field, *t, &len);
   if (res != SHISHI_OK)
     return res;
 
   if (len <= GENERALIZEDTIME_TIME_LEN)
     {
-      shishi_error_printf (handle, "Read time too short (%s)", *time);
+      shishi_error_printf (handle, "Read time too short (%s)", *t);
       return SHISHI_ASN1_ERROR;
     }
 
-  (*time)[GENERALIZEDTIME_TIME_LEN] = '\0';
+  (*t)[GENERALIZEDTIME_TIME_LEN] = '\0';
 
   return SHISHI_OK;
 }
