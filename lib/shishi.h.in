@@ -560,6 +560,7 @@ typedef ASN1_TYPE Shishi_asn1;
 
 /* init.c */
 extern Shishi *shishi (void);
+extern Shishi *shishi_server (void);
 extern void shishi_done (Shishi * handle);
 extern int shishi_init (Shishi ** handle);
 extern int shishi_init_with_paths (Shishi ** handle,
