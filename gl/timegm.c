@@ -66,7 +66,8 @@ time_t
 timegm (struct tm *tm)
 {
   time_t tl, tb;
-  struct tm *tg;
+  struct tm tp;
+  struct tm *tg = &tp;
 
   tl = mktime (tm);
   if (tl == (time_t) -1)
