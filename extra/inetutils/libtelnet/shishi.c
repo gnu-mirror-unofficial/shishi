@@ -173,8 +173,8 @@ krb5shishi_send (Authenticator *ap)
 
   tmp = malloc(strlen("host/") + strlen(RemoteHostName) + 1);
   sprintf(tmp, "host/%s", RemoteHostName);
-  tkt = shishi_ticketset_get_ticket_for_serveretype
-    (shishi_ticketset(shishi_handle), tmp, SHISHI_DES_CBC_MD5);
+  tkt = shishi_ticketset_get_for_serveretype
+    (shishi_ticketset_default(shishi_handle), tmp, SHISHI_DES_CBC_MD5);
   free(tmp);
   if (!tkt)
     {
@@ -422,7 +422,7 @@ krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
 	  return 1;
 	}
 
-      rc = _shishi_a2d (shishi_handle, aprep, der, &derlen);
+      rc = shishi_a2d (shishi_handle, aprep, der, &derlen);
       if (rc != SHISHI_OK)
 	{
 	  snprintf (errbuf, errbuflen, "Error der encoding aprep: %s\n",
