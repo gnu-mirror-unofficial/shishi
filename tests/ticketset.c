@@ -184,23 +184,25 @@ test (Shishi * handle)
     fail ("shishi_tkts_remove() failed\n");
 
   /* create ticket */
-  n = base64_from (buffer, tkt1ticketb64);
-  if (n == -1)
-    fail ("base64_from() failed\n");
+  n = BUFSIZ;
+  if (!base64_decode (tkt1ticketb64, strlen (tkt1ticketb64), buffer, &n))
+    fail ("base64_decode() failed\n");
   n1 = shishi_der2asn1_ticket (handle, buffer, n);
   if (!n1)
     fail ("shishi_der2asn1_ticket() failed\n");
 
-  n = base64_from (buffer, tkt1enckdcreppartb64);
-  if (n == -1)
-    fail ("base64_from() failed\n");
+  n = BUFSIZ;
+  if (!base64_decode (tkt1enckdcreppartb64, strlen (tkt1enckdcreppartb64),
+		      buffer, &n))
+    fail ("base64_decode() failed\n");
   n2 = shishi_der2asn1_encasreppart (handle, buffer, n);
   if (!n2)
     fail ("shishi_der2asn1_encasreppart() failed\n");
 
-  n = base64_from (buffer, tkt1kdcrepb64);
-  if (n == -1)
-    fail ("base64_from() failed\n");
+  n = BUFSIZ;
+  if (!base64_decode (tkt1kdcrepb64, strlen (tkt1kdcrepb64),
+		      buffer, &n))
+    fail ("base64_decode() failed\n");
   n3 = shishi_der2asn1_asrep (handle, buffer, n);
   if (!n3)
     fail ("shishi_der2asn1_asrep() failed\n");
@@ -273,23 +275,26 @@ test (Shishi * handle)
     fail ("shishi_tkts_size() failed\n");
 
   /* create ticket */
-  n = base64_from (buffer, tkt2ticketb64);
-  if (n == -1)
-    fail ("base64_from() failed\n");
+  n = BUFSIZ;
+  if (!base64_decode (tkt2ticketb64, strlen (tkt2ticketb64),
+		      buffer, &n))
+    fail ("base64_decode() failed\n");
   n1 = shishi_der2asn1_ticket (handle, buffer, n);
   if (!n1)
     fail ("shishi_der2asn1_ticket() failed\n");
 
-  n = base64_from (buffer, tkt2enckdcreppartb64);
-  if (n == -1)
-    fail ("base64_from() failed\n");
+  n = BUFSIZ;
+  if (!base64_decode (tkt2enckdcreppartb64, strlen (tkt2enckdcreppartb64),
+		      buffer, &n))
+    fail ("base64_decode() failed\n");
   n2 = shishi_der2asn1_enctgsreppart (handle, buffer, n);
   if (!n2)
     fail ("shishi_der2asn1_enctgsreppart() failed\n");
 
-  n = base64_from (buffer, tkt2kdcrepb64);
-  if (n == -1)
-    fail ("base64_from() failed\n");
+  n = BUFSIZ;
+  if (!base64_decode (tkt2kdcrepb64, strlen (tkt2kdcrepb64),
+		      buffer, &n))
+    fail ("base64_decode() failed\n");
   n3 = shishi_der2asn1_tgsrep (handle, buffer, n);
   if (!n3)
     fail ("shishi_der2asn1_kdcrep() failed\n");
@@ -503,7 +508,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_to (buffer2, buf, n, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZ);
   free (buf);
   if (strlen (buffer2) == strlen (tkt1ticketb64) &&
       memcmp (buffer2, tkt1ticketb64, strlen (tkt1ticketb64)) == 0)
@@ -518,7 +523,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_to (buffer2, buf, n, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZ);
   free (buf);
   if (strlen (buffer2) == strlen (tkt1enckdcreppartb64) &&
       memcmp (buffer2, tkt1enckdcreppartb64,
@@ -534,7 +539,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_to (buffer2, buf, n, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZ);
   free (buf);
   if (strlen (buffer2) == strlen (tkt1kdcrepb64) &&
       memcmp (buffer2, tkt1kdcrepb64, strlen (tkt1kdcrepb64)) == 0)
@@ -549,7 +554,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_to (buffer2, buf, n, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZ);
   free (buf);
   if (strlen (buffer2) == strlen (tkt2ticketb64) &&
       memcmp (buffer2, tkt2ticketb64, strlen (tkt2ticketb64)) == 0)
@@ -564,7 +569,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_to (buffer2, buf, n, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZ);
   free (buf);
   if (strlen (buffer2) == strlen (tkt2enckdcreppartb64) &&
       memcmp (buffer2, tkt2enckdcreppartb64,
@@ -580,7 +585,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_to (buffer2, buf, n, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZ);
   free (buf);
   if (strlen (buffer2) == strlen (tkt2kdcrepb64) &&
       memcmp (buffer2, tkt2kdcrepb64, strlen (tkt2kdcrepb64)) == 0)
