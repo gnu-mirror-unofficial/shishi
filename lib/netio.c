@@ -143,7 +143,7 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 
   for (; rrs; rrs = rrs->next)
     {
-      dns_srv_t srv = (dns_srv_t) rrs->rr;;
+      dns_srv_t srv = (dns_srv_t) rrs->rr;
       struct addrinfo hints;
       struct addrinfo *ai;
       char *port;
