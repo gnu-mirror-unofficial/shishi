@@ -406,6 +406,42 @@ shishi_der2asn1_kdc_rep (ASN1_TYPE definitions,
 }
 
 ASN1_TYPE
+shishi_d2a_kdcreq (Shishi * handle, char *der, int derlen)
+{
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
+  ASN1_TYPE structure = ASN1_TYPE_EMPTY;
+  int asn1_result = ASN1_SUCCESS;
+
+  structure = shishi_der2asn1_as_req (handle->asn1, der,
+				      derlen, errorDescription);
+  if (structure == ASN1_TYPE_EMPTY)
+    {
+      printf ("bad magic %s\n", errorDescription);
+      shishi_error_printf (handle, "Could not DER decode AS-REQ\n");
+
+      structure = shishi_der2asn1_tgs_req (handle->asn1, der,
+					   derlen, errorDescription);
+      if (structure == ASN1_TYPE_EMPTY)
+	{
+	  printf ("bad magic %s\n", errorDescription);
+	  shishi_error_printf (handle, "Could not DER decode TGS-REQ\n");
+
+	  structure = shishi_der2asn1_kdc_req (handle->asn1, der,
+					       derlen, errorDescription);
+	  if (structure == ASN1_TYPE_EMPTY)
+	    {
+	      printf ("bad magic %s\n", errorDescription);
+	      shishi_error_printf (handle, "Could not DER decode KDC-REQ\n");
+
+	      return ASN1_TYPE_EMPTY;
+	    }
+	}
+    }
+
+  return structure;
+}
+
+ASN1_TYPE
 shishi_d2a_encasreppart (Shishi * handle, char *der, int der_len)
 {
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];

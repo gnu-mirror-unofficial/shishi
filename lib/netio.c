@@ -52,7 +52,7 @@ shishi_sendrecv_udp (char *hostname,
   if (proto)
     ssa_inp->sin_port = htons(proto->p_proto);
   else
-    ssa_inp->sin_port = htons(88);
+    ssa_inp->sin_port = htons(8888);
 
   memset (&lsa, 0, sizeof(lsa));
   lsa_inp->sin_family = AF_INET;

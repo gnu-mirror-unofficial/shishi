@@ -20,15 +20,13 @@
  */
 
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
-
 #ifdef STDC_HEADERS
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #endif
-
 #include <unistd.h>
 #include <ctype.h>
 #include <netdb.h>
@@ -36,11 +34,6 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
-
-#include <argp.h>
-#include <locale.h>
-
-
 #if HAVE_INTTYPES_H
 # include <inttypes.h>
 #else
@@ -48,7 +41,6 @@
 #  include <stdint.h>
 # endif
 #endif
-
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>
 # include <time.h>
@@ -68,7 +60,6 @@
 #if HAVE_STRINGS_H
 # include <strings.h>
 #endif
-
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -78,23 +69,20 @@
 #ifdef HAVE_NETINET_IN6_H
 #include <netinet/in6.h>
 #endif
-
+#include <signal.h>
 #include <errno.h>
 extern int errno;
-
+#include <argp.h>
 #include "shishi.h"
-
-#include "gettext.h"
-#define _(String) gettext (String)
-#define _N(S1, S2, N) ngettext (S1, S2, N)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
 
 #define FAMILY_IPV4 "IPv4"
 #define FAMILY_IPV6 "IPv6"
 
 #ifdef WITH_IPV6
-#define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp" ", " FAMILY_IPV6 ":*:kerberos/udp, " FAMILY_IPV6 ":*:kerberos/tcp"
+#define LISTEN_DEFAULT FAMILY_IPV4 ":*:kerberos/udp, " \
+			FAMILY_IPV4 ":*:kerberos/tcp, " \
+			FAMILY_IPV6 ":*:kerberos/udp, " \
+			FAMILY_IPV6 ":*:kerberos/tcp"
 #else
 #define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
 #endif
@@ -107,6 +95,8 @@ struct listenspec
   int port;
   int type;
   int sockfd;
+  char buf[BUFSIZ];
+  size_t bufpos;
 };
 
 struct arguments
@@ -132,6 +122,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
   switch (key)
     {
     case 'q':
+    case 's':
       arguments->silent = 1;
       break;
 
@@ -156,6 +147,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	  struct servent *se;
 	  struct hostent *he;
 	  struct listenspec *ls;
+	  struct sockaddr_in *sin;
+#ifdef WITH_IPV6
+	  struct sockaddr_in6 *sin6;
+#endif
 
 	  arguments->nlistenspec++;
 	  arguments->listenspec = realloc(arguments->listenspec,
@@ -165,6 +160,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	    argp_error (state, "Fatal memory allocation error");
 	  ls = &arguments->listenspec[arguments->nlistenspec-1];
 	  ls->str = strdup(val);
+	  ls->bufpos = 0;
+	  sin = (struct sockaddr_in*)&ls->addr;
+#ifdef WITH_IPV6
+	  sin6 = (struct sockaddr_in6*)&ls->addr;
+#endif
 
 	  proto = strrchr(val, '/');
 	  if (proto == NULL)
@@ -173,6 +173,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	  *proto = '\0';
 	  proto++;
 
+	  if (strcmp(proto, "tcp") == 0)
+	    ls->type = SOCK_STREAM;
+	  else
+	    ls->type = SOCK_DGRAM;
+
 	  service = strrchr(val, ':');
 	  if (service == NULL)
 	    argp_error (state, "Could not find service in listen spec: `%s'", 
@@ -180,14 +185,9 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	  *service = '\0';
 	  service++;
 
-	  if (strcmp(proto, "tcp") == 0)
-	    ls->type = SOCK_STREAM;
-	  else
-	    ls->type = SOCK_DGRAM;
-
 	  se = getservbyname(service, proto);
 	  if (se)
-	      ls->port = ntohs(se->s_port);
+	    ls->port = ntohs(se->s_port);
 	  else if (strcmp(service, "kerberos") == 0)
 	    ls->port = 88;
 	  else if (atoi(service) != 0)
@@ -198,10 +198,10 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
 #ifdef WITH_IPV6
 	  if (ls->family == AF_INET6)
-	    ((struct sockaddr_in6*)&ls->addr)->sin6_port = htons(ls->port);
+	    sin6->sin6_port = htons(ls->port);
 	  else
 #endif
-	    ((struct sockaddr_in*)&ls->addr)->sin_port = htons(ls->port);
+	    sin->sin_port = htons(ls->port);
 
 	  if (strncmp(val, FAMILY_IPV4 ":", strlen(FAMILY_IPV4 ":")) == 0)
 	    {
@@ -209,7 +209,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	      val += strlen(FAMILY_IPV4 ":");
 	    }
 #ifdef WITH_IPV6
-	  else if (strncmp(val, FAMILY_IPV6":", strlen(FAMILY_IPV6 ":")) == 0)
+	  else if (strncmp(val, FAMILY_IPV6 ":", strlen(FAMILY_IPV6 ":")) == 0)
 	    {
 	      ls->family = AF_INET6;
 	      val += strlen(FAMILY_IPV6 ":");
@@ -222,26 +222,23 @@ parse_opt (int key, char *arg, struct argp_state *state)
 	    {
 #ifdef WITH_IPV6
 	      if (ls->family == AF_INET6)
-		((struct sockaddr_in6*)&ls->addr)->sin6_addr = in6addr_any;
+		sin6->sin6_addr = in6addr_any;
 	      else
 #endif
-		((struct sockaddr_in*)&ls->addr)->sin_addr.s_addr = 
-		  htonl(INADDR_ANY);
+		sin->sin_addr.s_addr = htonl(INADDR_ANY);
 	    }
 	  else if (he = gethostbyname(val))
 	    {
 	      if (he->h_addrtype == AF_INET)
 		{
-		  ((struct sockaddr_in*)&ls->addr)->sin_family = AF_INET;
-		  memcpy(&((struct sockaddr_in*)&ls->addr)->sin_addr, 
-			 he->h_addr_list[0], he->h_length);
+		  sin->sin_family = AF_INET;
+		  memcpy(&sin->sin_addr, he->h_addr_list[0], he->h_length);
 		}
 #ifdef WITH_IPV6
 	      else if (he->h_addrtype == AF_INET6)
 		{
-		  ((struct sockaddr_in6*)&ls->addr)->sin6_family = AF_INET6;
-		  memcpy(&((struct sockaddr_in6*)&ls->addr)->sin6_addr, 
-			 he->h_addr_list[0], he->h_length);
+		  sin6->sin6_family = AF_INET6;
+		  memcpy(&sin6->sin6_addr, he->h_addr_list[0], he->h_length);
 		}
 #endif
 	      else
@@ -257,7 +254,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       break;
 
     case ARGP_KEY_ARG:
-      argp_error (state, _("Too many arguments: `%s'"), arg);
+      argp_error (state, "Too many arguments: `%s'", arg);
       break;
 
     default:
@@ -270,12 +267,12 @@ parse_opt (int key, char *arg, struct argp_state *state)
 static struct argp_option options[] = {
 
   {"verbose", 'v', 0, 0,
-   "Produce verbose output.",},
+   "Produce verbose output."},
 
   {"quiet", 'q', 0, 0,
    "Don't produce any output."},
 
-  {"silent", 0, 0, OPTION_ALIAS},
+  {"silent", 's', 0, OPTION_ALIAS},
 
   {"configuration-file", 'c', "FILE", 0,
    "Read configuration from file.  Default is " SYSTEMCFGFILE "."},
@@ -296,6 +293,219 @@ static struct argp argp = {
   "Shishid -- A Kerberos 5 Key Distribution Center Network Service"
 };
 
+int quit = 0;
+
+void
+ctrlc (int signum)
+{
+  quit = 1;
+}
+
+void
+process (Shishi *handle, 
+	 struct arguments arg, 
+	 char *data,
+	 int datalen,
+	 int sockfd)
+{
+  ASN1_TYPE kdcreq;
+
+  printf("Processing %d bytes: %s\n", datalen, data);
+
+  kdcreq = shishi_d2a_kdcreq (handle, data, datalen);
+  if (kdcreq == ASN1_TYPE_EMPTY)
+    puts("oops");
+}
+
+int
+doit (Shishi *handle, struct arguments arg)
+{
+  struct listenspec *ls;
+  fd_set readfds;
+  struct timeval timeout;
+  struct sockaddr addr;
+  socklen_t length = sizeof(addr);
+  int maxfd = 0;
+  int rc;
+  int i;
+  int read_bytes;
+  int yes;
+
+  for (i = 0; i < arg.nlistenspec; i++)
+    {
+      ls = &arg.listenspec[i];
+
+      if (!arg.silent)
+	printf("Listening on %s...", ls->str);
+
+      ls->sockfd = socket(ls->family, ls->type, 0);
+      if (ls->sockfd < 0)
+	{
+	  if (!arg.silent)
+	    printf("failed\n");
+	  perror("socket");
+	  ls->sockfd = 0;
+	  continue;
+	}
+
+      yes = 1;
+      if (setsockopt (ls->sockfd, SOL_SOCKET, SO_REUSEADDR,
+		      (char *) &yes, sizeof (yes)) < 0)
+	{
+	  if (!arg.silent)
+	    printf("failed\n");
+	  perror("setsockopt");
+	  close(ls->sockfd);
+	  ls->sockfd = 0;
+	  continue;
+	}
+
+      if (bind(ls->sockfd, &ls->addr, sizeof(ls->addr)) != 0)
+	{
+	  if (!arg.silent)
+	    printf("failed\n");
+	  perror("bind");
+	  close(ls->sockfd);
+	  ls->sockfd = 0;
+	  continue;
+	}
+
+      if (ls->type == SOCK_STREAM && listen(ls->sockfd, 512) != 0)
+	{	
+	  if (!arg.silent)
+	    printf("failed\n");
+	  perror("listen");
+	  close(ls->sockfd);
+	  ls->sockfd = 0;
+	  continue;
+	}
+
+      maxfd++;
+      if (!arg.silent)
+	printf("done\n");
+    }
+
+  if (maxfd == 0)
+    {
+      fprintf(stderr, "Failed to bind any ports.\n");
+      return 1;
+    }
+ 
+  if (!arg.silent)
+    printf("Listening on %d ports...\n", maxfd);
+
+  signal(SIGINT, ctrlc);
+  signal(SIGTERM, ctrlc);
+
+  while (!quit)
+    {
+      sleep(1);
+      do {
+	FD_ZERO (&readfds);
+	maxfd = 0;
+	for (i = 0; i < arg.nlistenspec; i++)
+	  {
+	    if (arg.listenspec[i].sockfd >= maxfd)
+	      maxfd = arg.listenspec[i].sockfd + 1;
+	    FD_SET (arg.listenspec[i].sockfd, &readfds);
+	  }
+      } while((rc = select(maxfd, &readfds, NULL, NULL, NULL)) == 0);
+      
+      if (rc < 0)
+	{
+	  if (errno != EINTR)
+	    perror("select");
+	  continue;
+	}
+
+      for (i = 0; i < arg.nlistenspec; i++)
+	if (FD_ISSET (arg.listenspec[i].sockfd, &readfds))
+	  {
+	    if (arg.listenspec[i].type == SOCK_STREAM && 
+		arg.listenspec[i].family != -1)
+	      {
+		fprintf(stderr, "New connection on %s...", 
+			arg.listenspec[i].str);
+
+		/* XXX search for closed fd's before allocating new entry */
+		arg.listenspec = realloc(arg.listenspec,
+					 sizeof(*arg.listenspec) * 
+					 (arg.nlistenspec+1));
+		if (arg.listenspec != NULL)
+		  {
+		    struct sockaddr_in* sin;
+		    char *str;
+
+		    arg.nlistenspec++;
+		    ls = &arg.listenspec[arg.nlistenspec-1];
+		    ls->bufpos = 0;
+		    ls->type = arg.listenspec[i].type;
+		    ls->family = -1;
+		    length = sizeof(ls->addr);
+		    ls->sockfd = accept(arg.listenspec[i].sockfd, 
+					&ls->addr, &length);
+		    sin = (struct sockaddr_in*) &ls->addr;
+		    str = inet_ntoa(sin->sin_addr);
+		    ls->str = malloc(strlen(arg.listenspec[i].str) + 
+				     strlen(" peer ") + strlen(str) + 1);
+		    sprintf(ls->str, "%s peer %s", arg.listenspec[i].str, str);
+		    puts(ls->str);
+		  }
+	      }
+	    else
+	      {
+		ls = &arg.listenspec[i];
+
+		read_bytes = recvfrom(ls->sockfd, ls->buf + ls->bufpos, 
+				      BUFSIZ - ls->bufpos, 0, &addr, &length);
+
+		if (arg.listenspec[i].type == SOCK_STREAM && 
+		    arg.listenspec[i].family == -1 &&
+		    read_bytes == 0)
+		  {
+		    printf("Peer %s disconnected\n", ls->str);
+		    close(ls->sockfd);
+		    ls->sockfd = 0;
+		  }
+		else
+		  {
+		    ls->bufpos += read_bytes;
+		    ls->buf[ls->bufpos] = '\0';
+		  }
+
+		printf("Has %d bytes from %s: %s\n", 
+		       ls->bufpos, ls->str, ls->buf);
+
+		if (arg.listenspec[i].type == SOCK_DGRAM ||
+		    (ls->bufpos > 4 && ntohl(*(int*)ls->buf) == ls->bufpos))
+		  {
+		    process(handle, arg, ls->buf, ls->bufpos, ls->sockfd);
+		    ls->bufpos = 0;
+		  }
+	      }
+	  }
+    }
+
+  for (i = 0; i < arg.nlistenspec; i++)
+    if (arg.listenspec[i].sockfd)
+      {
+	if (!arg.silent)
+	  printf("Closing %s...", arg.listenspec[i].str);
+	rc = close(arg.listenspec[i].sockfd);
+	if (rc != 0)
+	  {
+	    if (!arg.silent)
+	      printf("failed\n");
+	    perror("close");
+	  }
+	else
+	  if (!arg.silent)
+	    printf("done\n");
+      }
+
+  return 0;
+}
+
 void
 die(char *fmt, ...)
 {
@@ -307,80 +517,11 @@ die(char *fmt, ...)
 }
 
 int
-doit (struct arguments arg)
-{
-  int i;
-  struct listenspec *ls;
-  fd_set readfds;
-  struct timeval timeout;
-  int maxfd = 0;
-
-  for (i = 0; i < arg.nlistenspec; i++)
-    {
-      struct listenspec *ls = &arg.listenspec[i];
-
-      printf("%d: %s\n", i, ls->str);
-
-      ls->sockfd = socket(ls->family, ls->type, 0);
-      if (ls->sockfd < 0)
-	{
-	  printf("Cannot create socket\n");
-	  ls->sockfd = 0;
-	  continue;
-	}
-
-      if (bind(ls->sockfd, &ls->addr, sizeof(ls->addr)) != 0)
-	{
-	  close(ls->sockfd);
-	  ls->sockfd = 0;
-	  printf("Cannot bind socket\n");
-	  continue;
-	}
-      if (ls->type == SOCK_STREAM)
-	{
-	  if (listen(ls->sockfd, 512) != 0)
-	    {
-	      printf("Cannot listen on socket\n");
-	    }
-	  printf ("accepting connections on port %d\n", ls->port);
-
-	}
-      if (ls->sockfd > maxfd)
-	maxfd = ls->sockfd + 1;
-    }
-
-  do {
-    do {
-      printf("loop\n");
-      FD_ZERO (&readfds);
-      for (i = 0; i < arg.nlistenspec; i++)
-	FD_SET (arg.listenspec[i].sockfd, &readfds);
-      timeout.tv_sec = 5;
-      timeout.tv_usec = 0;
-    } while(select(maxfd, &readfds, NULL, NULL, &timeout) == 0);
-
-    printf("foo\n");
-  } while (1);
-
-  printf("closing\n");
-  
-  for (i = 0; i < arg.nlistenspec; i++)
-    if (arg.listenspec[i].sockfd)
-      close(arg.listenspec[i].sockfd);
-
-  printf("done\n");
-}
-
-int
 main (int argc, char *argv[])
 {
   struct arguments arg;
   Shishi *handle;
   int rc;
-
-  setlocale (LC_ALL, "");
-  bindtextdomain (PACKAGE, LOCALEDIR);
-  textdomain (PACKAGE);
 
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
@@ -396,7 +537,7 @@ main (int argc, char *argv[])
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     die("Could not read system config: %s\n", shishi_strerror (rc));
 
-  rc = doit(arg);
+  rc = doit(handle, arg);
 
   shishi_done (handle);
 

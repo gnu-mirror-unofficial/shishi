@@ -17,16 +17,17 @@
 # License along with Shishi; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
-bin_PROGRAMS = shishi shishid
+bin_PROGRAMS = shishi
+sbin_PROGRAMS = shishid
 
 shishi_SOURCES = data.h gettext.h shishi.c kdc.c authp.c crypto.c \
 	list.c client.c server.c
-shishi_LDADD = @LIBARGP@ @LTLIBINTL@ \
-	../lib/libshishi.la ../asn1/lib/libtasn1.la @LIBGCRYPT@
+shishi_LDADD = @LIBARGP@ @LTLIBINTL@ @LIBGCRYPT@ \
+	../lib/libshishi.la ../asn1/lib/libtasn1.la
 
 shishid_SOURCES = shishid.c
-shishid_LDADD = @LIBARGP@ @LTLIBINTL@ \
-	../lib/libshishi.la ../asn1/lib/libtasn1.la @LIBGCRYPT@
+shishid_LDADD = @LIBARGP@ @LIBGCRYPT@ \
+	../lib/libshishi.la ../asn1/lib/libtasn1.la
 
 localedir = $(datadir)/locale
 
@@ -37,4 +38,4 @@ DEFS = -DSYSTEMCFGFILE=\"$(sysconfdir)/shishi.conf\" \
 	@DEFS@
 
 indent:
-	indent $(shishi_SOURCES)
+	indent $(shishi_SOURCES) $(shishid_SOURCES)
