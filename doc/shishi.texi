@@ -1210,6 +1210,9 @@ Usage: lt-shishi [OPTION...] [CLIENT [SERVER]] [OPTION...]
       --key-value=KEY        Cipher key to decrypt response (discouraged).
   -l, --list                 List tickets in local cache, subject to
                              --server-name limiting.
+      --proxiable            Get a proxiable ticket.  Only valid for initial
+                             authentication, or when the ticket-granting ticket
+                             is proxiable.
       --realm=REALM          Realm of server. Default is DNS domain of local
                              host. For AS, this also indicates realm of
                              client.
