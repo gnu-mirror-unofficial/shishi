@@ -536,7 +536,7 @@ shisa_file_keys_find (Shisa * dbh,
 
   rc = _shisa_ls4 (info->path, realm, principal, "keys", &files, &nfiles);
   if (rc != SHISA_OK)
-    return rc;
+    return SHISA_ENUMERATE_KEY_ERROR;
 
   if (nkeys)
     *nkeys = nfiles;
