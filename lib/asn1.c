@@ -173,18 +173,19 @@ shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
 
 int
 shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
-			    const char *field, int *flags)
+			    const char *field, uint32_t *flags)
 {
-  unsigned char buf[4];
-  int buflen;
-  int i;
+  char *buf;
+  size_t buflen;
+  size_t i;
   int res;
 
-  memset (buf, 0, sizeof (buf));
-  buflen = sizeof (buf);
-  res = shishi_asn1_read (handle, node, field, buf, &buflen);
+  res = shishi_asn1_read2 (handle, node, field, &buf, &buflen);
   if (res != SHISHI_OK)
     return res;
+
+  if (buflen < 4)
+    return SHISHI_ASN1_ERROR;
 
   *flags = 0;
   for (i = 0; i < 4; i++)
@@ -195,7 +196,8 @@ shishi_asn1_read_bitstring (Shishi * handle, Shishi_asn1 node,
 		 ((buf[i] >> 1) & 0x08) |
 		 ((buf[i] << 1) & 0x10) |
 		 ((buf[i] << 3) & 0x20) |
-		 ((buf[i] << 5) & 0x40) | ((buf[i] << 7) & 0x80)) << (8 * i);
+		 ((buf[i] << 5) & 0x40) |
+		 ((buf[i] << 7) & 0x80)) << (8 * i);
     }
 
   return SHISHI_OK;
@@ -279,11 +281,10 @@ shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
 
 int
 shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
-			     const char *field, int flags)
+			     const char *field, uint32_t flags)
 {
   unsigned char buf[4];
-  int buflen;
-  int i;
+  size_t i;
   int res;
 
   /* XXX

@@ -569,7 +569,7 @@ shishi_kdcreq_set_etype (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq, int *flags)
+shishi_kdcreq_options (Shishi * handle, Shishi_asn1 kdcreq, uint32_t *flags)
 {
   return shishi_asn1_read_bitstring (handle, kdcreq,
 				     "req-body.kdc-options", flags);
@@ -613,7 +613,9 @@ shishi_kdcreq_renewable_p (Shishi * handle, Shishi_asn1 kdcreq)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq, int options)
+shishi_kdcreq_options_set (Shishi * handle,
+			   Shishi_asn1 kdcreq,
+			   uint32_t options)
 {
   int res;
 
@@ -636,7 +638,9 @@ shishi_kdcreq_options_set (Shishi * handle, Shishi_asn1 kdcreq, int options)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_kdcreq_options_add (Shishi * handle, Shishi_asn1 kdcreq, int option)
+shishi_kdcreq_options_add (Shishi * handle,
+			   Shishi_asn1 kdcreq,
+			   uint32_t option)
 {
   int options;
   int res;
