@@ -26,9 +26,8 @@
  * @handle: shishi handle as allocated by shishi_init().
  * @asreq: input AS-REQ variable.
  * @asrep: input AS-REP variable.
- * @salt: output array with salt.
- * @saltlen: on input, maximum size of output array with salt, on output,
- *           holds actual size of output array with salt.
+ * @salt: newly allocated output array with salt.
+ * @saltlen: holds actual size of output array with salt.
  *
  * Derive the salt that should be used when deriving a key via
  * shishi_string_to_key() for an AS exchange.  Currently this searches
@@ -41,10 +40,9 @@
 int
 shishi_as_derive_salt (Shishi * handle,
 		       Shishi_asn1 asreq,
-		       Shishi_asn1 asrep, char *salt, size_t * saltlen)
+		       Shishi_asn1 asrep, char **salt, size_t * saltlen)
 {
-  size_t len = *saltlen;
-  size_t tmplen, i, n;
+  size_t i, n;
   char *format;
   int res;
 
@@ -67,7 +65,7 @@ shishi_as_derive_salt (Shishi * handle,
       if (patype == SHISHI_PA_PW_SALT)
 	{
 	  asprintf (&format, "padata.?%d.padata-value", i);
-	  res = shishi_asn1_read (handle, asrep, format, salt, saltlen);
+	  res = shishi_asn1_read2 (handle, asrep, format, salt, saltlen);
 	  free (format);
 	  if (res != SHISHI_OK)
 	    return res;
@@ -76,8 +74,7 @@ shishi_as_derive_salt (Shishi * handle,
 	}
     }
 
-  len = *saltlen;
-  res = shishi_asn1_read (handle, asreq, "req-body.realm", salt, &len);
+  res = shishi_kdcreq_realm (handle, asreq, salt, saltlen);
   if (res != SHISHI_OK)
     return res;
 
@@ -88,20 +85,22 @@ shishi_as_derive_salt (Shishi * handle,
 
   for (i = 1; i <= n; i++)
     {
-      if (*saltlen < len)
-	return SHISHI_TOO_SMALL_BUFFER;
-      tmplen = *saltlen - len;
+      char *tmp;
+      size_t tmplen;
 
       asprintf (&format, "req-body.cname.name-string.?%d", i);
-      res = shishi_asn1_read (handle, asreq, format, salt + len, &tmplen);
+      res = shishi_asn1_read2 (handle, asreq, format, &tmp, &tmplen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
 
-      len += tmplen;
-    }
+      *saltlen += tmplen;
 
-  *saltlen = len;
+      *salt = xrealloc (*salt, *saltlen + 1);
+      memcpy (*salt + *saltlen - tmplen, tmp, tmplen);
+      (*salt)[*saltlen] = '\0';
+      free (tmp);
+    }
 
   return SHISHI_OK;
 }
@@ -646,14 +645,13 @@ shishi_as_process (Shishi * handle,
 		   Shishi_asn1 asrep,
 		   const char *string, Shishi_asn1 * enckdcreppart)
 {
-  unsigned char salt[BUFSIZ];
+  char *salt;
   size_t saltlen;
   int res;
   Shishi_key *key;
   int keytype;
 
-  saltlen = sizeof (salt);
-  res = shishi_as_derive_salt (handle, asreq, asrep, salt, &saltlen);
+  res = shishi_as_derive_salt (handle, asreq, asrep, &salt, &saltlen);
   if (res != SHISHI_OK)
     return res;
 
