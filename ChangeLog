@@ -1,3 +1,390 @@
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.2.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix release target.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* src/client.c, src/server.c: Separate authentication from
+	  application data exchange.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/des.c, crypto/desCode.h: Fix netbsd crash.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c: Fix.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: (shishi_asn1_read_uint32, shishi_asn1_read_integer):
+	  Propagate return code.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: Generated.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c, src/client.c: Set program_name for gl/error.c.
+
+2003-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.skel.in: Sync with shishi.conf.in.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.conf.in: Add ticket-life, renew-life.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Add "ticket-life" and "renew-life" configuration
+	  terms.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Add ticketlife, renewlife.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: (shishi): Set ticketlife, renewlife.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Typo.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tgs.c: (shishi_tgs_req_build): Use shishi_kdcreq_build.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c: (shishi_as_req_build): Use shishi_kdcreq_build.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: (shishi_kdcreq_build): Add.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: (_shishi_kdcreq): Don't clear from.  Use
+	  ticketlife.  (shishi_kdcreq_build): New function.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: (shishi_tkts_get): Support starttime, endtime,
+	  renew_till.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Argp fixes.  Support starttime, endtime, renew_till
+	  and renewable tickets.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: (Shishi_tkts_hint): Add.  (shishi_as_req_build):
+	  Add.	(shishi_kdcreq_options*, shishi_kdcreq_renewable_p): Add.
+	  (shishi_asn1_empty_field): Add.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: (shishi_tkts_get): Honor renewable.  Call
+	  shishi_as_req_build.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: (_shishi_kdcreq): Don't clear rtime.
+	  (shishi_kdcreq_options*, shishi_kdcreq_renewable_p): Add.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: (shishi_asn1_empty_field): Add.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c: (shishi_as_req_build): New function; clear rtime if
+	  necessary.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tgs.c: (shishi_tgs_req_build): Clear rtime if necessary.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: (shishi_asn1_write_bitstring): Fix.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.skel.in: Fix doc.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS: Add.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: (shishi_error_printf): Handle when argument contains
+	  shishi_strerror_details().  Based on report and tiny patch from
+	  Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/cbc-cts.c: Typo.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/aes-decrypt-table.c, crypto/aes-decrypt.c,
+	  crypto/aes-encrypt-table.c, crypto/aes-encrypt.c,
+	  crypto/aes-meta.c, crypto/aes-set-decrypt-key.c,
+	  crypto/aes-set-encrypt-key.c, crypto/aes.c, crypto/cbc-cts.c,
+	  crypto/cbc-mac.c, crypto/cbc.c, crypto/des.c, crypto/des3.c,
+	  crypto/hmac-md5.c, crypto/hmac-sha1.c, crypto/hmac.c,
+	  crypto/md5-meta.c, crypto/md5.c, crypto/memxor.c,
+	  crypto/sha1-meta.c, crypto/sha1.c: Upstream sync.  Fix.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* po/shishi.pot, po/sv.po: Generated.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Sync user manual with reality.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Fix.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi, po/POTFILES.in: Fix.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Shishid is not i18n.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* po/POTFILES.in: Add.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: (shishi_tkts_get_for_localservicepasswd): Use
+	  shishi_server_for_local_service.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/principal.c:
+	  (shishi_server_for_local_service): Add.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/authp.c, src/crypto.c, src/kdc.c: Remove.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Cleanup.  Fix warnings.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Move data.h here.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am, src/data.h: Remove data.h.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Simplify argv handling.  Move crypto.c here.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Remove authp.c, crypto.c Fix typo.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Set up client and server for stand-alone
+	  compilation.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/data.h: Update.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Make AS/TGS/KDC into one GET command.  Remove
+	  CLIENT/SERVER commands.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/client.c, src/server.c: Now a separate program.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add error codes.  Add shishi_parse_name().
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: (shishi_parse_name): New function.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* gl/xstrndup.c: Add.
+
+2003-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* doc/draft-ietf-krb-wg-gss-crypto-00.txt: Place it in the correct
+	  directory.
+
+2003-08-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Abort if no DNS info.  Based on report by Nicolas
+	  Pouvesle <nico.pou@fnac.net>.
+
+2003-08-14  Simon Josefsson <simon@josefsson.org>
+
+	* doc/draft-ietf-krb-wg-gss-crypto-00.txt: Add.
+
+2003-08-13  Simon Josefsson <simon@josefsson.org>
+
+	* gl/xalloc.h: Add xstrndup.
+
+2003-08-13  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Build xstrndup.
+
+2003-08-13  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2003-08-13  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Bump versions.
+
+2003-08-13  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, configure.ac, gl/getdate.h, gl/getdate.y,
+	  gl/mktime.c, gl/unlocked-io.h, gl/m4/bison.m4, gl/m4/getdate.m4,
+	  gl/m4/mktime.m4, gl/m4/tm_gmtoff.m4: Add getdate.
+
+2003-08-12  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/Makefile.am: Add getdate stuff.
+
+2003-08-12  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Remove checks for unused programs.
+
+2003-08-12  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/Makefile.am: Fix.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/cbc-cts.c: Fix.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/cbc-cts.c: Fix.  Indent.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Built hostkeys.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Some hostkeys functions renamed.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* src/crypto.c: Use new key set API.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Fix gdoc-error invocation.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am, doc/shishi.texi: Add hostkeys again.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Add hostkeys.c.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Rename from *_hostkeys_* to *_keys_*.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/hostkeys.c: Re-added, as a wrapper around keys.c, with hard
+	  coded filename.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am, doc/shishi.texi, lib/hostkeys.c, lib/keys.c,
+	  lib/Makefile.am: Rename "hostkeys" to "keys" (for "key set", a'la
+	  "tkts"), since key sets can be used for more than just host keys.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Fix debug info.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/cbc-cts.c: Work.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/tkt.c: Fix typo.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Also try to send directly to realm.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/pkcs5.h: Removed.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2003-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* README, THANKS: Fix.
+
 2003-08-10  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.1.
