@@ -1,25 +1,43 @@
-/* base64.h	base64 encoding and decoding functions
- * Copyright (C) 2003  Simon Josefsson
- *
- * This file is part of Shishi.
- *
- * Shishi is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * Shishi is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Shishi; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
+/* base64.h -- Encode binary data using printable characters.
+   Copyright (C) 2004 Free Software Foundation, Inc.
+   Written by Simon Josefsson.
 
-extern void base64_to (unsigned char *out, const unsigned char *in,
-		       int len, int olen);
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
 
-extern int base64_from (unsigned char *out, const unsigned char *in);
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+
+#ifndef BASE64_H
+# define BASE64_H
+
+/* Get size_t. */
+#include <stddef.h>
+
+/* Get bool. */
+#include <stdbool.h>
+
+/* This uses that the expression (n+(k-1))/k means the smallest
+   integer >= n/k, i.e., the ceiling of n/k.  */
+#define BASE64_LENGTH(inlen) ((((inlen) + 2) / 3) * 4)
+
+extern void base64_encode (const char *restrict in, size_t inlen,
+			   char *restrict out, size_t outlen);
+
+extern size_t base64_encode_alloc (const char *in, size_t inlen, char **out);
+
+extern bool base64_decode (const char *restrict in, size_t inlen,
+			   char *restrict out, size_t * outlen);
+
+extern bool base64_decode_alloc (const char *in, size_t inlen,
+				 char **out, size_t * outlen);
+
+#endif /* BASE64_H */
