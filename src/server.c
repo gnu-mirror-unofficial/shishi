@@ -25,10 +25,8 @@ int
 server (Shishi * handle, struct arguments arg)
 {
   Shishi_ap *ap;
-  Shishi_ticket *tkt;
-  ASN1_TYPE apreq, aprep, ticket, encticketpart, authenticator;
-  Shishi_key *key, *key2;
-  int keytype;
+  ASN1_TYPE apreq;
+  Shishi_key *key;
   char salt[BUFSIZ];
   int res;
   char cnamerealm[BUFSIZ];
@@ -42,7 +40,7 @@ server (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      asprintf(&arg.sname, "host/www");
+      shishi_asprintf(&arg.sname, "host/www");
       if (arg.sname == NULL)
 	die("Could not allocate server name.");
     }
@@ -147,15 +145,16 @@ server (Shishi * handle, struct arguments arg)
   printf ("Client name (from authenticator): %s\n", cnamerealm);
 
   cnamerealmlen = sizeof (cnamerealm);
-  res = shishi_encticketpart_cnamerealm_get (handle,
-					     shishi_ticket_encticketpart(shishi_ap_ticket(ap)),
-					     cnamerealm, &cnamerealmlen);
+  res = shishi_encticketpart_cnamerealm_get
+    (handle, shishi_ticket_encticketpart(shishi_ap_ticket(ap)),
+     cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Client name (from encticketpart): %s\n", cnamerealm);
 
   cnamerealmlen = sizeof (cnamerealm);
-  res = shishi_ticket_snamerealm_get (handle, shishi_ap_ticket(ap),
-				      cnamerealm, &cnamerealmlen);
+  res = shishi_ticket_snamerealm_get
+    (handle, shishi_ticket_ticket(shishi_ap_ticket(ap)),
+     cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Server name (from ticket): %s\n", cnamerealm);
 
@@ -177,7 +176,7 @@ server (Shishi * handle, struct arguments arg)
 
       if (arg.verbose)
 	shishi_encapreppart_print (handle, stdout,
-				   shishi_last_encapreppart (handle));
+				   shishi_ap_encapreppart (ap));
       shishi_aprep_print (handle, stdout, aprep);
     }
 

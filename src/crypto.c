@@ -231,7 +231,7 @@ crypto (Shishi * handle, struct arguments arg)
 
   if (arg.writekeyfile)
     {
-      shishi_key_to_file (handle, arg.writekeyfile, key, arg.cname, arg.realm);
+      shishi_key_to_file (handle, arg.writekeyfile, key);
     }
 
   return 0;

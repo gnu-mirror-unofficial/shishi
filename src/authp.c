@@ -27,7 +27,6 @@ ap (Shishi * handle, struct arguments arg)
   Shishi_ap *ap;
   int res;
 
-
   if (arg.cname == NULL)
     arg.cname = shishi_principal_default (handle);
 
@@ -36,7 +35,7 @@ ap (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      asprintf(&arg.sname, "host/www");
+      shishi_asprintf(&arg.sname, "host/www");
       if (arg.sname == NULL)
 	die("Could not allocate server name.");
     }
@@ -71,7 +70,7 @@ ap (Shishi * handle, struct arguments arg)
     }
   else
     {
-      unsigned char data[BUFSIZ];
+      char data[BUFSIZ];
       int datalen;
       Shishi_ticket *ticket;
       int res;

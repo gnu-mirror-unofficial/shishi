@@ -272,6 +272,8 @@ struct arguments
   int apoptions;
 };
 
+extern void die (char *fmt, ...);
+
 extern int ap (Shishi * handle, struct arguments arg);
 
 extern int kdc (Shishi * handle, struct arguments arg);
@@ -279,5 +281,7 @@ extern int kdc (Shishi * handle, struct arguments arg);
 extern int client (Shishi * handle, struct arguments arg);
 
 extern int server (Shishi * handle, struct arguments arg);
+
+extern int crypto (Shishi * handle, struct arguments arg);
 
 #endif

@@ -66,7 +66,6 @@ static error_t
 parse_opt (int key, char *arg, struct argp_state *state)
 {
   struct arguments *arguments = state->input;
-  int res;
 
   switch (key)
     {
@@ -116,7 +115,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
 	arguments->apoptions = 0;
 	for (i = 0;
-	     val = strtok_r (i == 0 ? arg : NULL, ", \t\n\r", &ptrptr); i++)
+	     (val = strtok_r (i == 0 ? arg : NULL, ", \t\n\r", &ptrptr));
+	     i++)
 	  {
 	    int option = shishi_ap_string2option (val);
 	    if (option == 0)
@@ -199,7 +199,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       parse_filename (arg, &arguments->inputtype, &arguments->inputfile);
       if (arguments->inputtype == SHISHI_FILETYPE_TEXT ||
 	  arguments->inputtype == SHISHI_FILETYPE_DER)
-	arguments->inputtype == SHISHI_FILETYPE_BINARY;
+	arguments->inputtype = SHISHI_FILETYPE_BINARY;
       break;
 
     case OPTION_CRYPTO_WRITE_DATA_FILE:
@@ -209,7 +209,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
       parse_filename (arg, &arguments->outputtype, &arguments->outputfile);
       if (arguments->outputtype == SHISHI_FILETYPE_TEXT ||
 	  arguments->outputtype == SHISHI_FILETYPE_DER)
-	arguments->outputtype == SHISHI_FILETYPE_BINARY;
+	arguments->outputtype = SHISHI_FILETYPE_BINARY;
       break;
 
     case OPTION_CRYPTO_READ_KEY_FILE:
@@ -251,7 +251,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 		      &arguments->authenticatordatareadfile);
       if (arguments->authenticatordatareadtype == SHISHI_FILETYPE_TEXT ||
 	  arguments->authenticatordatareadtype == SHISHI_FILETYPE_DER)
-	arguments->authenticatordatareadtype == SHISHI_FILETYPE_BINARY;
+	arguments->authenticatordatareadtype = SHISHI_FILETYPE_BINARY;
       break;
 
     case OPTION_AS_CLIENT_NAME:
@@ -859,7 +859,6 @@ int
 main (int argc, char *argv[])
 {
   struct arguments arg;
-  char *home = getenv ("HOME");
   Shishi *handle;
   int rc;
 
@@ -898,7 +897,8 @@ main (int argc, char *argv[])
 
   if (arg.tgtname == NULL)
     {
-      asprintf(&arg.tgtname, "krbtgt/%s", shishi_realm_default (handle));
+      shishi_asprintf(&arg.tgtname, "krbtgt/%s",
+		      shishi_realm_default (handle));
       if (arg.tgtname == NULL)
 	die("Could not allocate TGT name.");
     }

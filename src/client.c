@@ -36,7 +36,7 @@ client (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      asprintf(&arg.sname, "host/www");
+      shishi_asprintf(&arg.sname, "host/www");
       if (arg.sname == NULL)
 	die("Could not allocate server name.");
     }
