@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <shishi.h>
 
@@ -89,8 +90,6 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
   Shishi_ap *ap;
   Shishi_tkt *tkt;
   Shishi_tkts_hint hint;
-  Shishi_key *key;
-  Shishi_safe *safe;
   int rc;
 
   printf ("Client: %s\n", cname);

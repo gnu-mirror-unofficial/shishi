@@ -443,8 +443,6 @@ shishi_kdc_check_nonce_1 (Shishi * handle,
 			  char *reqnonce, size_t reqnoncelen,
 			  char *repnonce, size_t repnoncelen)
 {
-  int res;
-
   if (VERBOSEASN1 (handle))
     {
       int i;

@@ -72,7 +72,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 {
   Shishi *h = NULL;
   Shishi_key *key = NULL;
-  Shishi_tkt *tkt = NULL, *tkt2 = NULL;
+  Shishi_tkt *tkt = NULL;
   int retval, rc;
   const char *user = NULL;
   const char *password = NULL;
@@ -145,9 +145,9 @@ pam_sm_authenticate (pam_handle_t * pamh,
       password = resp->resp;
     }
 
-  tkt2 = shishi_tkts_get_for_localservicepasswd (shishi_tkts_default (h),
+  tkt = shishi_tkts_get_for_localservicepasswd (shishi_tkts_default (h),
 						 "host", password);
-  if (tkt2 == NULL)
+  if (tkt == NULL)
     {
       D (("TGS exchange failed: %s\n", shishi_strerror_details (h)));
       retval = PAM_AUTHINFO_UNAVAIL;
@@ -162,7 +162,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
       goto done;
     }
 
-  rc = shishi_tkt_decrypt (tkt2, key);
+  rc = shishi_tkt_decrypt (tkt, key);
   if (rc != SHISHI_OK)
     {
       D (("Could not decrypt ticket: %s\n", shishi_strerror (rc)));

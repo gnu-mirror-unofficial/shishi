@@ -448,7 +448,6 @@ simplified_dencrypt (Shishi * handle,
   struct CBC_CTX(struct des_ctx, DES_BLOCK_SIZE) des;
   struct CBC_CTX(struct des3_ctx, DES3_BLOCK_SIZE) des3;
   struct CBC_CTS_CTX(struct aes_ctx, AES_BLOCK_SIZE) aes;
-  void *p;
   int rc;
 
   *outlen = inlen;
@@ -613,7 +612,6 @@ simplified_decrypt (Shishi * handle,
       Shishi_key *privacykey = NULL, *integritykey = NULL;
       int blen = shishi_cipher_blocksize (shishi_key_type (key));
       size_t hlen = 20; /* XXX only works for SHA-1 */
-      size_t len;
 
       res = simplified_derivekey (handle, key, keyusage,
 				  SHISHI_DERIVEKEYMODE_PRIVACY, &privacykey);
@@ -664,7 +662,6 @@ simplified_checksum (Shishi * handle,
 		     char *in, size_t inlen, char **out, size_t * outlen)
 {
   Shishi_key *checksumkey;
-  size_t hlen = 20; /* XXX only works for SHA-1 */
   int cksumlen = shishi_checksum_cksumlen (cksumtype);
   int res;
 

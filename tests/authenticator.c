@@ -56,7 +56,6 @@ main (int argc, char *argv[])
   Shishi_asn1 a;
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
-  char *p, *q;
   int n, m, res;
 
   do
@@ -96,7 +95,7 @@ main (int argc, char *argv[])
   /* shishi_authenticator() */
   a = shishi_authenticator (handle);
   if (debug)
-    printf ("shishi_authenticator () => `%X'.\n", a);
+    printf ("shishi_authenticator () => `%p'.\n", a);
   if (a)
     success ("shishi_authenticator() OK\n");
   else

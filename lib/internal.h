@@ -131,6 +131,7 @@
 #include "vasprintf.h"
 #include "gettext.h"
 #include "xalloc.h"
+#include "getdate.h"
 #include "shishi.h"
 
 #define _(String) dgettext (PACKAGE, String)

@@ -274,7 +274,6 @@ shishi_ticket_set_enc_part (Shishi * handle,
 			    Shishi_asn1 ticket,
 			    int etype, int kvno, char *buf, size_t buflen)
 {
-  char *format;
   int res = SHISHI_OK;
 
   res = shishi_asn1_write (handle, ticket, "enc-part.cipher", buf, buflen);

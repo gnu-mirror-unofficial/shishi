@@ -58,7 +58,6 @@ des3none_dencrypt (Shishi * handle,
 
   if (keyusage != 0)
     {
-      size_t len;
       Shishi_key *derivedkey;
 
       res = simplified_derivekey (handle, key, keyusage,

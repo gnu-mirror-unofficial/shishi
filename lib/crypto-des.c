@@ -77,7 +77,6 @@ raw_des_verify (Shishi * handle, int algo, char *out, int *outlen)
   char incoming[MAX_HASH_LEN];
   char computed[MAX_HASH_LEN];
   int hlen;
-  int rc;
 
   switch (algo)
     {

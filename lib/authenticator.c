@@ -380,7 +380,7 @@ shishi_authenticator_cusec_get (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_read_integer (handle, authenticator, "cusec", cusec);
+  res = shishi_asn1_read_uint32 (handle, authenticator, "cusec", cusec);
   if (res != SHISHI_OK)
     return res;
 
@@ -403,7 +403,7 @@ shishi_authenticator_cusec_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write_integer (handle, authenticator, "cusec", cusec);
+  res = shishi_asn1_write_uint32 (handle, authenticator, "cusec", cusec);
   if (res != SHISHI_OK)
     return res;
 

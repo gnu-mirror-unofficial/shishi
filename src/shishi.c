@@ -111,6 +111,7 @@
 #endif
 
 #include "getdate.h"
+#include "error.h"
 
 #include <argp.h>
 #include <gettext.h>
@@ -227,12 +228,8 @@ const char *argp_program_bug_address = PACKAGE_BUGREPORT;
 int
 crypto (Shishi * handle, struct arguments arg)
 {
-  FILE *infh, *outfh;
   Shishi_key *key;
-  char *in, *out;
-  size_t inlen, outlen;
   int rc;
-  int i;
 
   if (arg.cname == NULL)
     arg.cname = shishi_principal_default (handle);

@@ -74,8 +74,6 @@ shishi_pbkdf2_sha1 (const char *P,
   unsigned int u;
   unsigned int l;
   unsigned int r;
-  int rc;
-  unsigned char *p;
   unsigned int i;
   unsigned int k;
 

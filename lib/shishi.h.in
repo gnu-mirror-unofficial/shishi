@@ -588,9 +588,15 @@ extern int shishi_authenticator_client_set (Shishi * handle,
 extern int shishi_authenticator_ctime_get (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   char *ctime);
+extern int shishi_authenticator_ctime_set (Shishi * handle,
+					   Shishi_asn1 authenticator,
+					   char *ctime);
 extern int shishi_authenticator_cusec_get (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   int *cusec);
+extern int shishi_authenticator_cusec_set (Shishi * handle,
+					   Shishi_asn1 authenticator,
+					   int cusec);
 extern int shishi_authenticator_cname_get (Shishi * handle,
 					   Shishi_asn1 authenticator,
 					   char *cname, int *cnamelen);
@@ -1011,6 +1017,8 @@ extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 extern int shishi_asn1_read2 (Shishi * handle, Shishi_asn1 node,
 			      const char *field,
 			      char **data, size_t * datalen);
+extern int shishi_asn1_read_integer (Shishi * handle, Shishi_asn1 node,
+				     const char *field, int *i);
 extern int shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
 				   const char *field, int32_t * i);
 extern int shishi_asn1_read_uint32 (Shishi * handle, Shishi_asn1 node,
@@ -1025,6 +1033,8 @@ extern int shishi_asn1_read_empty_p (Shishi * handle,
 extern int shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 			      const char *field,
 			      const char *data, size_t datalen);
+extern int shishi_asn1_write_integer (Shishi * handle, Shishi_asn1 node,
+				      const char *field, int n);
 extern int shishi_asn1_write_int32 (Shishi * handle, Shishi_asn1 node,
 				    const char *field, int32_t n);
 extern int shishi_asn1_write_uint32 (Shishi * handle, Shishi_asn1 node,
