@@ -661,10 +661,10 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
 			      Shishi_asn1 kdcreq, Shishi_asn1 apreq)
 {
   int res;
-  char data[BUFSIZ];
+  char *data;
   int datalen;
 
-  res = shishi_a2d (handle, apreq, data, &datalen);
+  res = shishi_new_a2d (handle, apreq, &data, &datalen);
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode AP-REQ: %s\n",
@@ -674,6 +674,7 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
 
   res = shishi_kdcreq_add_padata (handle, kdcreq,
 				  SHISHI_PA_TGS_REQ, data, datalen);
+  free(data);
   if (res != SHISHI_OK)
     return res;
 
