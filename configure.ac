@@ -215,7 +215,7 @@ if test "$libgcrypt" != "no" ; then
 	AC_DEFINE(USE_GCRYPT, 1, [Define to 1 if you want to use libgcrypt.])
 else
 	CRYPTO=crypto
-	CRYPTO_CFLAGS="-I../crypto"
+	CRYPTO_CFLAGS="-I\$(top_srcdir)/crypto"
 	CRYPTO_LIBS="-L../crypto -lnettle"
 fi
 AC_SUBST(CRYPTO)
