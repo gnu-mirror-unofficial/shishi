@@ -105,7 +105,7 @@ krb5shishi_init (Authenticator *ap, int server)
 }
 
 void
-krb5shishi_cleanup ()
+krb5shishi_cleanup (Authenticator *ap)
 {
   if (shishi_handle == 0)
     return;
@@ -173,7 +173,7 @@ krb5shishi_send (Authenticator *ap)
 
   tmp = malloc(strlen("host/") + strlen(RemoteHostName) + 1);
   sprintf(tmp, "host/%s", RemoteHostName);
-  tkt = shishi_ticketset_find_ticket_for_server
+  tkt = shishi_ticketset_get_ticket_for_server
     (shishi_handle, NULL, tmp);
   free(tmp);
   if (!tkt)
@@ -181,6 +181,9 @@ krb5shishi_send (Authenticator *ap)
       DEBUG(("telnet: Kerberos V5: no shishi ticket for server\r\n"));
       return 0;
     }
+
+  if (auth_debug_mode)
+    shishi_ticket_print (shishi_handle, tkt, stdout);
 
   if (!UserNameRequested)
     {
