@@ -1,5 +1,5 @@
 Shishi extra/README -- Notes for the extra/ subdirectory.
-Copyright (C) 2002, 2003 Simon Josefsson
+Copyright (C) 2002, 2003, 2004 Simon Josefsson
 See the end for copying conditions.
 
 The pam_shishi/ sub-directory contains a PAM module that uses Shishi
@@ -14,10 +14,8 @@ Kerberos 5 authentication support for telnet client and telnetd server
 using Shishi.  Apply the patch and build InetUtils using
 --enable-encryption --enable-authentication --with-shishi.
 
-The mailutils.diff file contains a patch for GNU MailUtils to add
-Kerberos 5 authentication support for the IMAP server using GSS and
-Shishi.  Apply the patch, install GSS, and build MailUtils using
---with-gssapi.
+The file mailutils.diff has been removed, as up-stream GNU MailUtils
+now has incorporated support for GNU GSS/Shishi.  Thank you!
 
 ----------------------------------------------------------------------
 Copying and distribution of this file, with or without modification,
