@@ -19,6 +19,36 @@
  *
  */
 
+/*
+ * Theory of operation:
+ *
+ * Data is stored in the standard file system, so it is subject to
+ * normal access permission infrastructure, e.g. POSIX ACL or normal
+ * Unix file permissions.  A definition of the file database looks
+ * like:
+ *
+ * file LOCATION OPTIONS
+ *
+ * Where LOCATION is a path name, e.g. /var/shisa.  No OPTIONS are
+ * currently implemented.
+ *
+ * Realms are directories in LOCATION that contain a file called
+ * "info.txt".  Principals are directories in realm directories that
+ * contain a file called "info.txt".  Characters outside A-Za-z0-9_-
+ * are escaped using the URL encoding, e.g. example/host%2fwww denote
+ * the "host/www" principal in the "example" realm.
+ *
+ * Example file tree:
+ *
+ * LOCATION/EXAMPLE.ORG
+ * LOCATION/EXAMPLE.ORG/info.txt
+ * LOCATION/EXAMPLE.ORG/krbtgt%2fEXAMPLE.ORG
+ * LOCATION/EXAMPLE.ORG/krbtgt%2fEXAMPLE.ORG/info.txt
+ * LOCATION/EXAMPLE.ORG/host%2fkerberos.example.org
+ * LOCATION/EXAMPLE.ORG/host%2fkerberos.example.org/info.txt
+ *
+ */
+
 #include "internal.h"
 
 /* For stat. */
@@ -119,6 +149,25 @@ shisa_file_init (Shisa *dbh,
 }
 
 static int
+has_info_txt (char *path, char *directory)
+{
+  struct stat buf;
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/info.txt", path, directory);
+
+  rc = stat (tmp, &buf);
+
+  free (tmp);
+
+  if (rc != 0 || !S_ISREG (buf.st_mode))
+    return 0;
+
+  return 1;
+}
+
+static int
 shisa_file_ls_1 (Shisa *dbh,
 		 char *path,
 		 char ***files,
@@ -128,14 +177,15 @@ shisa_file_ls_1 (Shisa *dbh,
   struct dirent *de;
   int rc;
 
-  errno = 0;
-
-  while ((de = readdir (dir)) != NULL)
+  while (errno = 0, (de = readdir (dir)) != NULL)
     {
       if (strcmp (de->d_name, ".") == 0 || strcmp (de->d_name, "..") == 0)
 	continue;
-      *files = xrealloc (*files, (*nfiles + 1) * sizeof (**files));
-      (*files)[(*nfiles)++] = xstrdup (de->d_name);
+      if (has_info_txt (path, de->d_name))
+	{
+	  *files = xrealloc (*files, (*nfiles + 1) * sizeof (**files));
+	  (*files)[(*nfiles)++] = xstrdup (de->d_name);
+	}
     }
 
   if (errno != 0)
