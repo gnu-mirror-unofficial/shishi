@@ -54,6 +54,11 @@ shishi_strerror (int err)
       p = _("Memory allocation error in shishi library");
       break;
 
+    case SHISHI_BASE64_ERROR:
+      p = _("Base64 encoding or decoding failed.  This usually means the "
+	    "data is corrupt.");
+      break;
+
     case SHISHI_FOPEN_ERROR:
       p = _("Could not open file");
       break;
