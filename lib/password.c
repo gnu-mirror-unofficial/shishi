@@ -22,9 +22,9 @@
 /* XXX? zeroize password */
 
 #include "internal.h"
+
 #ifdef WITH_STRINGPREP
 #include <stringprep.h>
-#include <stringprep_kerberos5.h>
 #endif
 
 #if defined (HAVE_TERMIOS_H)
@@ -54,7 +54,9 @@ tty_set_echo (int echo)
 #else
 
 mail simon @ josefsson.org and tell what system this is
+
 #endif
+
 static RETSIGTYPE
 tty_echo (int signum)
 {
@@ -67,9 +69,10 @@ tty_noecho (int signum)
   tty_set_echo (0);
 }
 
-int
-shishi_read_password (FILE * fh, char *s, int size)
+static int
+read_password (char **s)
 {
+  char buf[BUFSIZ];
   int rc;
 
   rc = tty_set_echo (0);
@@ -81,8 +84,10 @@ shishi_read_password (FILE * fh, char *s, int size)
   signal (SIGCONT, tty_noecho);
 #endif
 
-  fgets (s, size, fh);
-  s[strlen (s) - 1] = '\0';
+  fgets (buf, sizeof (buf), stdin);
+  buf[strlen (buf) - 1] = '\0';
+
+  *s = strdup(buf);
 
 #ifdef HAVE_SIGNAL
   signal (SIGQUIT, SIG_DFL);
@@ -96,29 +101,22 @@ shishi_read_password (FILE * fh, char *s, int size)
   return SHISHI_OK;
 }
 
+/**
+ * shishi_prompt_password:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @s: pointer to newly allocated output string with read password.
+ * @format: printf(3) style format string.
+ * @...: printf(3) style arguments.
+ *
+ * Format and print a prompt to stdout, and read a password from
+ * stdint.  The password is possibly converted (e.g., converted from
+ * Latin-1 to UTF-8, or processed using Stringprep profile) following
+ * any 'stringprocess' keywords in configuration files.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_prompt_password_raw (FILE * in, char *s, int size,
-			    FILE * out, char *format, ...)
-{
-  va_list ap;
-  int rc;
-
-  va_start (ap, format);
-  vfprintf (out, format, ap);
-  fflush (out);
-  va_end (ap);
-
-  rc = shishi_read_password (in, s, size);
-
-  fprintf (out, "\n");
-
-  return rc;
-}
-
-int
-shishi_prompt_password (Shishi * handle,
-			FILE * in, char *s, int size,
-			FILE * out, char *format, ...)
+shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
 {
   char *p;
   va_list ap;
@@ -133,66 +131,71 @@ shishi_prompt_password (Shishi * handle,
 #endif
 
   va_start (ap, format);
-  vfprintf (out, format, ap);
-  fflush (out);
+  vprintf (format, ap);
+  fflush (stdout);
   va_end (ap);
 
-  rc = shishi_read_password (in, s, size);
+  rc = read_password (s);
 
-  fprintf (out, "\n");
+  printf ("\n");
 
   if (rc != SHISHI_OK)
     return rc;
 
-  if (VERBOSE (handle))
+  if (VERBOSENOICE (handle))
     {
       size_t i;
-      printf ("Read password (length %d): ", strlen (s));
-      for (i = 0; i < strlen (s); i++)
-	printf ("%02x ", s[i] & 0xFF);
+      printf ("Read password (length %d): ", strlen (*s));
+      for (i = 0; i < strlen (*s); i++)
+	printf ("%02x ", (*s)[i] & 0xFF);
       printf ("\n");
     }
 
-  if (handle->stringprocess
-      && strcasecmp (handle->stringprocess, "none") != 0)
+  if (handle->stringprocess && strcasecmp (handle->stringprocess, "none") != 0)
 #ifdef WITH_STRINGPREP
     {
       if (strcasecmp (handle->stringprocess, "stringprep") == 0)
-	p = stringprep_locale_to_utf8 (s);
+	p = stringprep_locale_to_utf8 (*s);
       else
-	p = stringprep_convert (s, handle->stringprocess,
+	p = stringprep_convert (*s, handle->stringprocess,
 				stringprep_locale_charset ());
 
       if (p)
 	{
-	  strncpy (s, p, size);
-	  s[size - 1] = '\0';
-	  free (p);
+	  free (*s);
+	  *s = p;
 	}
+      else
+	shishi_warn (handle, "Charset conversion of password failed");
 
-      if (VERBOSE (handle))
+      if (VERBOSENOICE (handle))
 	{
 	  size_t i;
 	  printf ("Password converted to %s (length %d): ",
 		  strcasecmp (handle->stringprocess, "stringprep") == 0 ?
-		  "UTF-8" : handle->stringprocess, strlen (s));
-	  for (i = 0; i < strlen (s); i++)
-	    printf ("%02x ", s[i] & 0xFF);
+		  "UTF-8" : handle->stringprocess, strlen (*s));
+	  for (i = 0; i < strlen (*s); i++)
+	    printf ("%02x ", (*s)[i] & 0xFF);
 	  printf ("\n");
 	}
 
       if (strcasecmp (handle->stringprocess, "stringprep") == 0)
 	{
-	  rc = stringprep_kerberos5 (s, size);
-	  if (rc != SHISHI_OK)
-	    return rc;
+	  rc = stringprep_profile (*s, &p, "KRBprep", 0);
+	  if (rc == SHISHI_OK)
+	    {
+	      free (*s);
+	      *s = p;
+	    }
+	  else
+	    shishi_warn (handle, "Stringprep conversion of password failed");
 
-	  if (VERBOSE (handle))
+	  if (VERBOSENOICE (handle))
 	    {
 	      size_t i;
-	      printf ("Stringprep'ed password (length %d): ", strlen (s));
-	      for (i = 0; i < strlen (s); i++)
-		printf ("%02x ", s[i] & 0xFF);
+	      printf ("Stringprep'ed password (length %d): ", strlen (*s));
+	      for (i = 0; i < strlen (*s); i++)
+		printf ("%02x ", (*s)[i] & 0xFF);
 	      printf ("\n");
 	    }
 
