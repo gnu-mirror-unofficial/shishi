@@ -56,6 +56,7 @@ main (int argc, char *argv[])
   Shishi_asn1 a;
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
+  char *p;
   int n, m, res;
 
   do
@@ -277,14 +278,14 @@ main (int argc, char *argv[])
   else
     fail ("shishi_authenticator_ctime_set() failed\n");
 
-  /* shishi_authenticator_ctime_get() */
-  res = shishi_authenticator_ctime_get (handle, a, buffer);
+  /* shishi_authenticator_ctime() */
+  res = shishi_authenticator_ctime (handle, a, &p);
   if (debug)
-    escapeprint (buffer, 15);
-  if (res == SHISHI_OK && memcmp (buffer, "19700101011831Z", 15) == 0)
-    success ("shishi_authenticator_ctime_get() OK\n");
+    escapeprint (p, strlen (p));
+  if (res == SHISHI_OK && memcmp (p, "19700101011831Z", 15) == 0)
+    success ("shishi_authenticator_ctime() OK\n");
   else
-    fail ("shishi_authenticator_ctime_get() failed\n");
+    fail ("shishi_authenticator_ctime() failed\n");
 
   /* shishi_a2d() */
   n = sizeof (buffer);

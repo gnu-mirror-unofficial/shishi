@@ -435,11 +435,12 @@ int
 shishi_aprep_verify (Shishi * handle,
 		     Shishi_asn1 authenticator, Shishi_asn1 encapreppart)
 {
-  char authenticatorctime[GENERALIZEDTIME_TIME_LEN + 1];
-  char encapreppartctime[GENERALIZEDTIME_TIME_LEN + 1];
+  char *authenticatorctime;
+  char *encapreppartctime;
   int authenticatorcusec;
   int encapreppartcusec;
   int res;
+  int different;
 
   /*
      3.2.5. Receipt of KRB_AP_REP message
@@ -453,8 +454,8 @@ shishi_aprep_verify (Shishi * handle,
 
    */
 
-  res = shishi_authenticator_ctime_get (handle, authenticator,
-					authenticatorctime);
+  res = shishi_authenticator_ctime (handle, authenticator,
+				    &authenticatorctime);
   if (res != SHISHI_OK)
     return res;
 
@@ -463,8 +464,8 @@ shishi_aprep_verify (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_encapreppart_ctime_get (handle, encapreppart,
-				       encapreppartctime);
+  res = shishi_encapreppart_ctime (handle, encapreppart,
+				   &encapreppartctime);
   if (res != SHISHI_OK)
     return res;
 
@@ -481,9 +482,13 @@ shishi_aprep_verify (Shishi * handle,
 	      encapreppartctime);
     }
 
+  different = authenticatorcusec != encapreppartcusec ||
+    strcmp (authenticatorctime, encapreppartctime) != 0;
 
-  if (authenticatorcusec != encapreppartcusec ||
-      strcmp (authenticatorctime, encapreppartctime) != 0)
+  free (authenticatorctime);
+  free (encapreppartctime);
+
+  if (different)
     return SHISHI_APREP_VERIFY_FAILED;
 
   return SHISHI_OK;
