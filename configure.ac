@@ -211,7 +211,7 @@ AC_ARG_WITH(system-libgcrypt,
   AC_HELP_STRING([--without-system-libgcrypt],
 		[don't use the system's libgcrypt]))
 if test "$with_system_libgcrypt" != "no" ; then
-	AM_PATH_LIBGCRYPT(1.1.11, [
+	AM_PATH_LIBGCRYPT(1.1.13, [
 		LIBGCRYPT_BUILD_LIBS="$LIBGCRYPT_LIBS"
 		LIBGCRYPT_BUILD_CFLAGS="$LIBGCRYPT_CFLAGS"
 		with_system_libgcrypt=yes
@@ -222,7 +222,7 @@ fi
 if test "$with_system_libgcrypt" = "no"; then
 	AC_MSG_WARN([[
 
-The system's libgcrypt 1.1.11 or later not used. Using copy
+The system's libgcrypt 1.1.13 or later not used. Using copy
 distributed with shishi instead.
 
 See <ftp://ftp.gnupg.org/pub/gcrypt/alpha/libgcrypt/>.
