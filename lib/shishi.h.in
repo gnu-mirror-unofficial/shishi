@@ -268,6 +268,24 @@ typedef enum
 }
 Shishi_keyusage;
 
+typedef enum
+{
+  SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED = 1,
+}
+Shishi_tkts_hintflags;
+
+struct Shishi_tkts_hint {
+  int startpos;
+  char *server;
+  char *serverrealm;
+  char *client;
+  char *clientrealm;
+  int flags;
+  int etype;
+  char *passwd;
+};
+typedef struct Shishi_tkts_hint Shishi_tkts_hint;
+
 typedef struct Shishi Shishi;
 typedef struct Shishi_tkt Shishi_tkt;
 typedef struct Shishi_tkts Shishi_tkts;
@@ -284,15 +302,17 @@ typedef ASN1_TYPE Shishi_asn1;
 /* init.c */
 extern Shishi *shishi (void);
 extern int shishi_init (Shishi ** handle);
-extern int shishi_init_server (Shishi ** handle);
 extern int shishi_init_with_paths (Shishi ** handle,
 				   const char *tktsfile,
 				   const char *systemcfgfile,
 				   const char *usercfgfile);
-extern void shishi_done (Shishi * handle);
-extern int shishi_verbose (Shishi * handle);
-extern int shishi_debug (Shishi * handle);
+extern int shishi_init_server (Shishi ** handle);
+extern int shishi_init_server_with_paths (Shishi ** handle,
+					  const char *systemcfgfile);
 extern void shishi_warn (Shishi * handle, const char *fmt, ...);
+
+/* done.c */
+extern void shishi_done (Shishi * handle);
 
 /* cfg.c */
 extern int shishi_cfg (Shishi * handle, char *option);
@@ -414,7 +434,7 @@ extern void shishi_tkts_default_file_set (Shishi * handle,
 					  const char *tktsfile);
 extern Shishi_tkts *shishi_tkts_default (Shishi * handle);
 extern int shishi_tkts (Shishi * handle, Shishi_tkts ** tkts);
-extern Shishi_tkt *shishi_tkts_get (Shishi_tkts * tkts, int ticketno);
+extern Shishi_tkt *shishi_tkts_nth (Shishi_tkts * tkts, int ticketno);
 extern int shishi_tkts_size (Shishi_tkts * tkts);
 extern int shishi_tkts_add (Shishi_tkts * tkts, Shishi_tkt * ticket);
 extern int shishi_tkts_new (Shishi_tkts * tkts,
@@ -430,44 +450,25 @@ extern int shishi_tkts_to_file (Shishi_tkts * tkts, const char *filename);
 extern int shishi_tkts_read (Shishi_tkts * tkts, FILE * fh);
 extern int shishi_tkts_from_file (Shishi_tkts * tkts, const char *filename);
 extern void shishi_tkts_done (Shishi_tkts ** tkts);
-extern Shishi_tkt *shishi_tkts_find_for_clientserveretypevalid (Shishi_tkts *
-								tkts,
-								const char
-								*client,
-								const char
-								*server,
-								int etype,
-								int valid);
+extern Shishi_tkt *shishi_tkt_match_p (Shishi_tkt * tkt,
+				       Shishi_tkts_hint * hint);
+extern Shishi_tkt *shishi_tkts_find (Shishi_tkts * tkts,
+				     Shishi_tkts_hint * hint);
 extern Shishi_tkt *shishi_tkts_find_for_clientserver (Shishi_tkts * tkts,
 						      const char *client,
 						      const char *server);
-extern Shishi_tkt *shishi_tkts_find_for_clientserver_all (Shishi_tkts * tkts,
-							  const char *client,
-							  const char *server);
-extern Shishi_tkt *shishi_tkts_find_for_serveretype (Shishi_tkts * tkts,
-						     const char *server,
-						     int etype);
 extern Shishi_tkt *shishi_tkts_find_for_server (Shishi_tkts * tkts,
 						const char *server);
-extern Shishi_tkt *shishi_tkts_find_for_server_all (Shishi_tkts * tkts,
-						    const char *server);
-extern Shishi_tkt *shishi_tkts_get_for_clientserveretype (Shishi_tkts * tkts,
-							  const char *client,
-							  const char *server,
-							  int etype);
+extern Shishi_tkt *shishi_tkts_get (Shishi_tkts * tkts,
+				    Shishi_tkts_hint * hint);
 extern Shishi_tkt *shishi_tkts_get_for_clientserver (Shishi_tkts * tkts,
 						     const char *client,
 						     const char *server);
 extern Shishi_tkt *shishi_tkts_get_for_server (Shishi_tkts * tkts,
 					       const char *server);
-extern Shishi_tkt *shishi_tkts_get_for_serveretype (Shishi_tkts * tkts,
-						    const char *server,
-						    int etype);
 extern Shishi_tkt *shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
-							   const char
-							   *service,
-							   const char
-							   *passwd);
+							   const char *service,
+							   const char *passwd);
 
 /* diskio.c */
 extern int

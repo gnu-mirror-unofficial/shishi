@@ -19,10 +19,6 @@
  *
  */
 
-/* XXX how to generalize shishi_tkts_{get,find}_tkt_for_*()??  unclean
-   with lots of different functions... A: getaddrinfo() like
-   approach. */
-
 #include "internal.h"
 
 struct Shishi_tkts
@@ -100,6 +96,22 @@ shishi_tkts_default_file_set (Shishi * handle, const char *tktsfile)
 }
 
 /**
+ * shishi_tkts_default:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Return value: Return the handle global ticket set.
+ **/
+Shishi_tkts *
+shishi_tkts_default (Shishi * handle)
+{
+  if (handle->tkts == NULL &&
+      (shishi_tkts (handle, &handle->tkts) != SHISHI_OK))
+    handle->tkts = NULL;
+
+  return handle->tkts;
+}
+
+/**
  * shishi_tkts:
  * @handle: shishi handle as allocated by shishi_init().
  * @tkts: output pointer to newly allocated tkts handle.
@@ -120,6 +132,31 @@ shishi_tkts (Shishi * handle, Shishi_tkts ** tkts)
 }
 
 /**
+ * shishi_tkts_done:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ *
+ * Deallocates all resources associated with ticket set.  The ticket
+ * set handle must not be used in calls to other shishi_tkts_*()
+ * functions after this.
+ **/
+void
+shishi_tkts_done (Shishi_tkts ** tkts)
+{
+  Shishi_tkts *tset;
+
+  if (!tkts || !*tkts)
+    return;
+
+  tset = *tkts;
+
+  if (tset->tkts)
+    free (tset->tkts);
+  free (tset);
+
+  return;
+}
+
+/**
  * shishi_tkts_size:
  * @tkts: ticket set handle as allocated by shishi_tkts().
  *
@@ -132,7 +169,7 @@ shishi_tkts_size (Shishi_tkts * tkts)
 }
 
 /**
- * shishi_tkts_get:
+ * shishi_tkts_nth:
  * @tkts: ticket set handle as allocated by shishi_tkts().
  * @ticketno: integer indicating requested ticket in ticket set.
  *
@@ -142,7 +179,7 @@ shishi_tkts_size (Shishi_tkts * tkts)
  * and so on.
  **/
 Shishi_tkt *
-shishi_tkts_get (Shishi_tkts * tkts, int ticketno)
+shishi_tkts_nth (Shishi_tkts * tkts, int ticketno)
 {
   if (tkts == NULL || ticketno >= tkts->ntkts)
     return NULL;
@@ -473,7 +510,7 @@ shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh, char *service)
   found = 0;
   for (i = 0; i < shishi_tkts_size (tkts); i++)
     {
-      Shishi_tkt *tkt = shishi_tkts_get (tkts, i);
+      Shishi_tkt *tkt = shishi_tkts_nth (tkts, i);
 
       if (service)
 	{
@@ -506,7 +543,7 @@ shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh, char *service)
 	}
 
       printf ("\n");
-      res = shishi_tkt_pretty_print (shishi_tkts_get (tkts, i), fh);
+      res = shishi_tkt_pretty_print (shishi_tkts_nth (tkts, i), fh);
       if (res != SHISHI_OK)
 	goto done;
 
@@ -549,64 +586,122 @@ shishi_tkts_print (Shishi_tkts * tkts, FILE * fh)
   return shishi_tkts_print_for_service (tkts, fh, NULL);
 }
 
+/**
+ * shishi_tkt_match_p:
+ * @tkt: ticket to test hints on.
+ * @hint: structure with characteristics of ticket to be found.
+ *
+ * Return value: Returns 0 iff ticket fails to match given criteria.
+ **/
 Shishi_tkt *
-shishi_tkts_find_for_clientserveretypevalid (Shishi_tkts *
-					     tkts,
-					     const char *client,
-					     const char *server,
-					     int etype, int valid)
+shishi_tkt_match_p (Shishi_tkt * tkt, Shishi_tkts_hint * hint)
+{
+  if (hint->server && !shishi_tkt_server_p (tkt, hint->server))
+    return 0;
+
+  if (hint->client && !shishi_tkt_client_p (tkt, hint->client))
+    return 0;
+
+  if (!(hint->flags & SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED) &&
+      !shishi_tkt_valid_now_p (tkt))
+    return 0;
+
+  if (hint->etype && !shishi_tkt_keytype_p (tkt, hint->etype))
+    return 0;
+
+  return 1;
+}
+
+/**
+ * shishi_tkts_find:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ * @hint: structure with characteristics of ticket to be found.
+ *
+ * Search the ticketset sequentially (from ticket number 0 through all
+ * tickets in the set) for a ticket that fits the given
+ * characteristics.  If a ticket is found, the hint->startpos field is
+ * updated to point to the next ticket in the set, so this function
+ * can be called repeatedly with the same hint argument in order to
+ * find all tickets matching a certain criterium.  Note that if
+ * tickets are added to, or removed from, the ticketset during a query
+ * with the same hint argument, the hint->startpos field must be
+ * updated appropriately.
+ *
+ * Here is how you would typically use this function:
+ *
+ *   Shishi_tkts_hint  hint;
+ *   Shishi_tkt  tkt;
+ *   ...
+ *   memset(&hint, 0, sizeof(hint));
+ *   hint.server = "imap/mail.example.org";
+ *   tkt = shishi_tkts_find (shishi_tkts_default(handle), &hint);
+ *   if (!tkt)
+ *     printf("No ticket found...\n");
+ *   else
+ *     ...do something  with ticket
+ *
+ * Return value: Returns a ticket if found, or NULL if no further
+ *               matching tickets could be found.
+ **/
+Shishi_tkt *
+shishi_tkts_find (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 {
   int i;
 
-  if (VERBOSE (tkts->handle))
-    fprintf (stderr, "Searching tickets for client `%s' and server `%s'\n",
-	     client, server);
+  fprintf (stderr, "Searching tickets...\n");
 
-  for (i = 0; i < tkts->ntkts; i++)
+  for (i = hint->startpos; i < tkts->ntkts; i++)
     {
-      if (!shishi_tkt_server_p (tkts->tkts[i], server))
+      if (!shishi_tkt_match_p(tkts->tkts[i], hint))
 	continue;
 
-      if (!shishi_tkt_cnamerealm_p (tkts->tkts[i], client))
-	continue;
-
-      if (valid)
-	if (!shishi_tkt_valid_now_p (tkts->tkts[i]))
-	  continue;
-
-      if (etype != -1 && !shishi_tkt_keytype_p (tkts->tkts[i], etype))
-	continue;
-
+      hint->startpos = i + 1;
       return tkts->tkts[i];
     }
 
+  hint->startpos = i;
   return NULL;
 }
 
+/**
+ * shishi_tkts_find_for_clientserver:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ * @client: client name to find ticket for.
+ * @server: server name to find ticket for.
+ *
+ * Short-hand function for searching the ticket set for a ticket for
+ * the given client and server.  See shishi_tkts_find().
+ *
+ * Return value: Returns a ticket if found, or NULL.
+ **/
 Shishi_tkt *
 shishi_tkts_find_for_clientserver (Shishi_tkts * tkts,
-				   const char *client, const char *server)
+				   const char *client,
+				   const char *server)
 {
-  return shishi_tkts_find_for_clientserveretypevalid
-    (tkts, shishi_principal_default (tkts->handle), server, -1, 1);
+  Shishi_tkts_hint hint;
+  Shishi_tkt *tkt;
+
+  memset(&hint, 0, sizeof(hint));
+  hint.server = server;
+  hint.client = client;
+
+  tkt = shishi_tkts_find(tkts, &hint);
+
+  return tkt;
 }
 
-Shishi_tkt *
-shishi_tkts_find_for_clientserver_all (Shishi_tkts * tkts,
-				       const char *client, const char *server)
-{
-  return shishi_tkts_find_for_clientserveretypevalid
-    (tkts, shishi_principal_default (tkts->handle), server, -1, 0);
-}
-
-Shishi_tkt *
-shishi_tkts_find_for_serveretype (Shishi_tkts * tkts,
-				  const char *server, int etype)
-{
-  return shishi_tkts_find_for_clientserveretypevalid
-    (tkts, shishi_principal_default (tkts->handle), server, etype, 1);
-}
-
+/**
+ * shishi_tkts_find_for_server:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ * @server: server name to find ticket for.
+ *
+ * Short-hand function for searching the ticket set for a ticket for
+ * the given server using the default client principal.  See
+ * shishi_tkts_find_for_clientserver() and shishi_tkts_find().
+ *
+ * Return value: Returns a ticket if found, or NULL.
+ **/
 Shishi_tkt *
 shishi_tkts_find_for_server (Shishi_tkts * tkts, const char *server)
 {
@@ -614,45 +709,55 @@ shishi_tkts_find_for_server (Shishi_tkts * tkts, const char *server)
     (tkts, shishi_principal_default (tkts->handle), server);
 }
 
+/**
+ * shishi_tkts_get:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ * @hint: structure with characteristics of ticket to begot.
+ *
+ * Get a ticket matching given characteristics.  This function first
+ * looks in the ticket set for the ticket, then tries to find a TGT
+ * for the realm (possibly by using an AS exchange) and then use the
+ * TGT in a TGS exchange to get the ticket.  Currently this function
+ * do not implement cross realm logic.
+ *
+ * Return value: Returns a ticket if found, or NULL if this function
+ *               is unable to get the ticket.
+ **/
 Shishi_tkt *
-shishi_tkts_find_for_server_all (Shishi_tkts * tkts, const char *server)
+shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 {
-  return shishi_tkts_find_for_clientserver_all
-    (tkts, shishi_principal_default (tkts->handle), server);
-}
-
-Shishi_tkt *
-shishi_tkts_get_for_clientserverpasswdetype (Shishi_tkts *
-					     tkts,
-					     const char *client,
-					     const char *server,
-					     const char *passwd, int etype)
-{
+  Shishi_tkts_hint lochint;
+  Shishi_tkt *tkt, *tgt;
   Shishi_tgs *tgs;
-  Shishi_tkt *tgt;
-  Shishi_tkt *tkt = NULL;
   char *tgtname;
+  int pos;
   int rc;
 
-  tkt = shishi_tkts_find_for_clientserveretypevalid (tkts,
-						     client, server,
-						     etype, 1);
+  pos = hint->startpos;
+
+  /* Try to get cached ticket ... */
+  tkt = shishi_tkts_find (tkts, hint);
   if (tkt)
     return tkt;
 
-  shishi_asprintf (&tgtname, "krbtgt/%s",
-		   shishi_realm_default (tkts->handle));
+  hint->startpos = pos;
 
-  tgt = shishi_tkts_find_for_clientserver (tkts, client, tgtname);
+  /* Try to get cached TGT ... */
+  memset(&lochint, 0, sizeof(lochint));
+  shishi_asprintf (&lochint.server, "krbtgt/%s",
+		   shishi_realm_default (tkts->handle));
+  tgt = shishi_tkts_find (tkts, &lochint);
   if (tgt == NULL)
     {
       Shishi_as *as;
+
+      /* Get TGT ... XXX cross realm */
 
       rc = shishi_as (tkts->handle, &as);
       if (rc == SHISHI_OK)
 	rc = shishi_as_sendrecv (as);
       if (rc == SHISHI_OK)
-	rc = shishi_as_rep_process (as, NULL, passwd);
+	rc = shishi_as_rep_process (as, NULL, hint->passwd);
       if (rc != SHISHI_OK)
 	{
 	  printf ("AS exchange failed: %s\n%s\n", shishi_strerror (rc),
@@ -665,25 +770,31 @@ shishi_tkts_get_for_clientserverpasswdetype (Shishi_tkts *
 
       tgt = shishi_as_tkt (as);
 
-      if (VERBOSEASN1 (tkts->handle))
+      if (!tgt)
 	{
-	  shishi_kdcreq_print (tkts->handle, stdout, shishi_as_req (as));
-	  shishi_kdcrep_print (tkts->handle, stdout, shishi_as_rep (as));
-	  shishi_tkt_pretty_print (tgt, stdout);
+	  printf ("No ticket in AS-REP?!: %s\n",
+		  shishi_strerror_details (tkts->handle));
+	  return NULL;
 	}
+
+      if (VERBOSEASN1 (tkts->handle))
+	shishi_tkt_pretty_print (tgt, stdout);
 
       rc = shishi_tkts_add (tkts, tgt);
       if (rc != SHISHI_OK)
 	printf ("Could not add ticket: %s", shishi_strerror (rc));
 
-      if (!tgt)
-	return NULL;
     }
 
+  /* Maybe user asked for TGT ... */
+  if (shishi_tkt_match_p(tgt, hint))
+    return tgt;
+
+  /* Get ticket using TGT ... */
   rc = shishi_tgs (tkts->handle, &tgs);
   shishi_tgs_tgtkt_set (tgs, tgt);
   if (rc == SHISHI_OK)
-    rc = shishi_tgs_set_server (tgs, server);
+    rc = shishi_tgs_set_server (tgs, hint->server);
   if (rc == SHISHI_OK)
     rc = shishi_tgs_req_build (tgs);
   if (rc == SHISHI_OK)
@@ -702,16 +813,15 @@ shishi_tkts_get_for_clientserverpasswdetype (Shishi_tkts *
 
   tkt = shishi_tgs_tkt (tgs);
 
-  if (VERBOSEASN1 (tkts->handle))
+  if (!tkt)
     {
-      shishi_authenticator_print
-	(tkts->handle, stdout, shishi_ap_authenticator (shishi_tgs_ap (tgs)));
-      shishi_apreq_print
-	(tkts->handle, stdout, shishi_ap_req (shishi_tgs_ap (tgs)));
-      shishi_kdcreq_print (tkts->handle, stdout, shishi_tgs_req (tgs));
-      shishi_kdcrep_print (tkts->handle, stdout, shishi_tgs_rep (tgs));
-      shishi_tkt_pretty_print (tkt, stdout);
+      printf ("No ticket in TGS-REP?!: %s\n",
+	      shishi_strerror_details (tkts->handle));
+      return NULL;
     }
+
+  if (VERBOSEASN1 (tkts->handle))
+    shishi_tkt_pretty_print (tkt, stdout);
 
   rc = shishi_tkts_add (tkts, tkt);
   if (rc != SHISHI_OK)
@@ -720,29 +830,52 @@ shishi_tkts_get_for_clientserverpasswdetype (Shishi_tkts *
   return tkt;
 }
 
-Shishi_tkt *
-shishi_tkts_get_for_clientserveretype (Shishi_tkts * tkts,
-				       const char *client,
-				       const char *server, int etype)
-{
-  return shishi_tkts_get_for_clientserverpasswdetype (tkts,
-						      client,
-						      server, NULL, etype);
-}
-
+/**
+ * shishi_tkts_get_for_clientserver:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ * @client: client name to get ticket for.
+ * @server: server name to get ticket for.
+ *
+ * Short-hand function for getting a ticket for the given client and
+ * server.  See shishi_tkts_get().
+ *
+ * Return value: Returns a ticket if found, or NULL.
+ **/
 Shishi_tkt *
 shishi_tkts_get_for_clientserver (Shishi_tkts * tkts,
-				  const char *client, const char *server)
+				  const char *client,
+				  const char *server)
 {
-  return shishi_tkts_get_for_clientserveretype
-    (tkts, shishi_principal_default (tkts->handle), server, -1);
+  Shishi_tkts_hint hint;
+  Shishi_tkt *tkt;
+
+  memset(&hint, 0, sizeof(hint));
+  hint.client = client;
+  hint.server = server;
+
+  tkt = shishi_tkts_get(tkts, &hint);
+
+  return tkt;
 }
 
+/**
+ * shishi_tkts_get_for_server:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ * @server: server name to get ticket for.
+ *
+ * Short-hand function for getting a ticket for the given server and
+ * the default principal client.  See shishi_tkts_get().
+ *
+ * Return value: Returns a ticket if found, or NULL.
+ **/
 Shishi_tkt *
-shishi_tkts_get_for_server (Shishi_tkts * tkts, const char *server)
+shishi_tkts_get_for_server (Shishi_tkts * tkts,
+			    const char *server)
 {
   return shishi_tkts_get_for_clientserver
-    (tkts, shishi_principal_default (tkts->handle), server);
+    (tkts,
+     shishi_principal_default (tkts->handle),
+     server);
 }
 
 Shishi_tkt *
@@ -750,6 +883,8 @@ shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
 					const char *service,
 					const char *passwd)
 {
+  Shishi_tkts_hint hint;
+  Shishi_tkt *tkt;
   char buf[HOST_NAME_MAX];
   int ret;
 
@@ -763,49 +898,10 @@ shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
   if (ret != 0)
     strcpy (&buf[strlen (service) + 1], "localhost");
 
-  return shishi_tkts_get_for_clientserverpasswdetype
-    (tkts, shishi_principal_default (tkts->handle), buf, passwd, -1);
-}
+  memset(&hint, 0, sizeof(hint));
+  hint.client = shishi_principal_default (tkts->handle);
+  hint.server = buf;
+  hint.passwd = passwd;
 
-Shishi_tkt *
-shishi_tkts_get_for_serveretype (Shishi_tkts * tkts,
-				 const char *server, int etype)
-{
-  return shishi_tkts_get_for_clientserveretype
-    (tkts, shishi_principal_default (tkts->handle), server, etype);
-}
-
-/**
- * shishi_tkts_done:
- * @tkts: ticket set handle as allocated by shishi_tkts().
- *
- * Deallocates all resources associated with ticket set.  The ticket
- * set handle must not be used in calls to other shishi_tkts_*()
- * functions after this.
- **/
-void
-shishi_tkts_done (Shishi_tkts ** tkts)
-{
-  Shishi_tkts *tset;
-
-  if (!tkts || !*tkts)
-    return;
-
-  tset = *tkts;
-
-  if (tset->tkts)
-    free (tset->tkts);
-  free (tset);
-
-  return;
-}
-
-Shishi_tkts *
-shishi_tkts_default (Shishi * handle)
-{
-  if (handle->tkts == NULL &&
-      (shishi_tkts (handle, &handle->tkts) != SHISHI_OK))
-    handle->tkts = NULL;
-
-  return handle->tkts;
+  return shishi_tkts_get (tkts, &hint);
 }

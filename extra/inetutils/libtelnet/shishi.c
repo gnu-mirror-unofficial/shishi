@@ -166,6 +166,7 @@ krb5shishi_send (Authenticator *ap)
   int ap_opts;
   char type_check[2];
   Shishi_tkt *tkt;
+  Shishi_tkts_hint hint;
   int rc;
   char *tmp;
   char apreq[4096];
@@ -173,8 +174,10 @@ krb5shishi_send (Authenticator *ap)
 
   tmp = malloc(strlen("host/") + strlen(RemoteHostName) + 1);
   sprintf(tmp, "host/%s", RemoteHostName);
-  tkt = shishi_tkts_get_for_serveretype
-    (shishi_tkts_default(shishi_handle), tmp, SHISHI_DES_CBC_MD5);
+  memset(&hint, 0, sizeof(hint));
+  hint.server = tmp;
+  hint.etype = SHISHI_DES_CBC_MD5;
+  tkt = shishi_tkts_get (shishi_tkts_default(shishi_handle), &hint);
   free(tmp);
   if (!tkt)
     {

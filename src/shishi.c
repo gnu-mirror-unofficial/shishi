@@ -902,7 +902,6 @@ main (int argc, char *argv[])
 
   rc = 1;
 
-again:
   switch (arg.command)
     {
     case COMMAND_AS:
@@ -1025,7 +1024,7 @@ again:
 	for (i = 0; i < shishi_tkts_size (shishi_tkts_default (handle)); i++)
 	  {
 	    if (arg.sname &&
-		!shishi_tkt_server_p (shishi_tkts_get
+		!shishi_tkt_server_p (shishi_tkts_nth
 				      (shishi_tkts_default (handle),
 				       i), arg.sname))
 	      continue;
@@ -1033,7 +1032,7 @@ again:
 	    if (arg.verbose)
 	      {
 		printf ("Removing ticket:\n");
-		shishi_tkt_pretty_print (shishi_tkts_get
+		shishi_tkt_pretty_print (shishi_tkts_nth
 					 (shishi_tkts_default
 					  (handle), i), stdout);
 	      }
@@ -1080,16 +1079,21 @@ again:
 
     default:
       {
-	Shishi_tkt *tgt;
+	Shishi_tkt *tkt;
 
-	tgt = shishi_tkts_find_for_clientserver
-	  (shishi_tkts_default (handle),
-	   shishi_principal_default (handle), arg.tgtname);
-	if (tgt == NULL)
-	  arg.command = COMMAND_AS;
-	else
-	  arg.command = COMMAND_LIST;
-	goto again;
+	tkt = shishi_tkts_get_for_server (shishi_tkts_default (handle),
+					  arg.tgtname);
+	if (!tkt)
+	  {
+	    printf ("Could not get ticket for `%s'.\n", arg.tgtname);
+	    rc = !SHISHI_OK;
+	    break;
+	  }
+
+	rc = shishi_tkt_pretty_print (tkt, stdout);
+	if (rc != SHISHI_OK)
+	  fprintf (stderr, "Operation failed:\n%s\n%s\n",
+		   shishi_strerror (rc), shishi_strerror_details (handle));
       }
       break;
     }

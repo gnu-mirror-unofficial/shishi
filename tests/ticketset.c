@@ -84,11 +84,12 @@ main (int argc, char *argv[])
 {
   Shishi *handle;
   Shishi_tkts *tktset;
+  Shishi_tkts_hint hint;
   Shishi_tkt *t1, *t2, *t3;
   Shishi_asn1 n1, n2, n3;
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
-  char *p, *q;
+  const char *p, *q;
   int n, res;
 
   do
@@ -150,7 +151,7 @@ main (int argc, char *argv[])
     success ("shishi_tkts_default_file_set() OK\n");
   else
     fail ("shishi_tkts_default_file_set() failed\n");
-  free (p);
+  free ((char*)p);
 
   /* shishi_tkts () */
   res = shishi_tkts (handle, &tktset);
@@ -168,19 +169,19 @@ main (int argc, char *argv[])
   else
     fail ("shishi_tkts_size() failed\n");
 
-  /* shishi_tkts_get () */
-  t1 = shishi_tkts_get (tktset, 0);
+  /* shishi_tkts_nth () */
+  t1 = shishi_tkts_nth (tktset, 0);
   if (t1 == NULL)
-    success ("shishi_tkts_get() OK\n");
+    success ("shishi_tkts_nth() OK\n");
   else
-    fail ("shishi_tkts_get() failed\n");
+    fail ("shishi_tkts_nth() failed\n");
 
-  /* shishi_tkts_get () */
-  t1 = shishi_tkts_get (tktset, 42);
+  /* shishi_tkts_nth () */
+  t1 = shishi_tkts_nth (tktset, 42);
   if (t1 == NULL)
-    success ("shishi_tkts_get() OK\n");
+    success ("shishi_tkts_nth() OK\n");
   else
-    fail ("shishi_tkts_get() failed\n");
+    fail ("shishi_tkts_nth() failed\n");
 
   /* shishi_tkts_add () */
   res = shishi_tkts_add (tktset, NULL);
@@ -248,17 +249,17 @@ main (int argc, char *argv[])
   else
     fail ("shishi_tkts_size() failed\n");
 
-  /* shishi_tkts_get () */
-  t1 = shishi_tkts_get (tktset, 0);
+  /* shishi_tkts_nth () */
+  t1 = shishi_tkts_nth (tktset, 0);
   if (debug)
     {
       shishi_tkt_pretty_print (t1, stdout);
       printf ("t1=%p\n", t1);
     }
   if (t1)
-    success ("shishi_tkts_get() OK\n");
+    success ("shishi_tkts_nth() OK\n");
   else
-    fail ("shishi_tkts_get() failed\n");
+    fail ("shishi_tkts_nth() failed\n");
 
   /* shishi_tkts_remove () */
   res = shishi_tkts_remove (tktset, 0);
@@ -276,12 +277,12 @@ main (int argc, char *argv[])
   else
     fail ("shishi_tkts_size() failed\n");
 
-  /* shishi_tkts_get () */
-  t2 = shishi_tkts_get (tktset, 0);
+  /* shishi_tkts_nth () */
+  t2 = shishi_tkts_nth (tktset, 0);
   if (t2 == NULL)
-    success ("shishi_tkts_get() OK\n");
+    success ("shishi_tkts_nth() OK\n");
   else
-    fail ("shishi_tkts_get() failed\n");
+    fail ("shishi_tkts_nth() failed\n");
 
   /* shishi_tkts_add () */
   res = shishi_tkts_add (tktset, t1);
@@ -337,33 +338,62 @@ main (int argc, char *argv[])
   else
     fail ("shishi_tkts_size() failed\n");
 
-  /* shishi_tkts_get () */
-  t2 = shishi_tkts_get (tktset, 1);
+  /* shishi_tkts_nth () */
+  t2 = shishi_tkts_nth (tktset, 1);
   if (debug)
     {
       shishi_tkt_pretty_print (t2, stdout);
       printf ("t2=%p\n", t2);
     }
   if (t2)
-    success ("shishi_tkts_get() OK\n");
+    success ("shishi_tkts_nth() OK\n");
   else
-    fail ("shishi_tkts_get() failed\n");
+    fail ("shishi_tkts_nth() failed\n");
 
-  /* shishi_tkts_find_for_server_all () */
-  t3 = shishi_tkts_find_for_server_all (tktset, "host/latte.josefsson.org");
+  /* shishi_tkts_find () */
+  memset(&hint, 0, sizeof(hint));
+  hint.server = "host/latte.josefsson.org";
+  hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
+  t3 = shishi_tkts_find (tktset, &hint);
   if (debug)
     printf ("t3=%p\n", t3);
   if (t3 == t2)
-    success ("shishi_tkts_find_ticket_for_server() OK\n");
+    success ("shishi_tkts_find() for server OK\n");
   else
-    fail ("shishi_tkts_find_ticket_for_server() failed\n");
+    fail ("shishi_tkts_find() for server failed\n");
 
-  /* shishi_tkts_find_for_server_all () */
-  t3 = shishi_tkts_find_for_server_all (tktset, "krbtgt/JOSEFSSON.ORG");
+  /* shishi_tkts_find () */
+  memset(&hint, 0, sizeof(hint));
+  hint.server = "krbtgt/JOSEFSSON.ORG";
+  hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
+  t3 = shishi_tkts_find (tktset, &hint);
   if (t3 == t1)
-    success ("shishi_tkts_find_ticket_for_server() OK\n");
+    success ("shishi_tkts_find() for server OK\n");
   else
-    fail ("shishi_tkts_find_ticket_for_server() failed\n");
+    fail ("shishi_tkts_find() for server failed\n");
+
+  /* shishi_tkts_find () */
+  memset(&hint, 0, sizeof(hint));
+  hint.client = "jas";
+  hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
+  t3 = shishi_tkts_find (tktset, &hint);
+  if (debug)
+    printf ("t3=%p\n", t3);
+  if (t3 == t1)
+    success ("shishi_tkts_find() for client OK\n");
+  else
+    fail ("shishi_tkts_find() for client failed\n");
+
+  /* shishi_tkts_find () */
+  memset(&hint, 0, sizeof(hint));
+  hint.client = "jas";
+  t3 = shishi_tkts_find (tktset, &hint);
+  if (debug)
+    printf ("t3=%p\n", t3);
+  if (t3 == NULL)
+    success ("shishi_tkts_find() for client OK\n");
+  else
+    fail ("shishi_tkts_find() for client failed\n");
 
   res = shishi_tkts_to_file (tktset, "tktset.tmp");
   if (res == SHISHI_OK)
@@ -399,17 +429,23 @@ main (int argc, char *argv[])
   else
     fail ("shishi_tkts_remove() failed\n");
 
-  t3 = shishi_tkts_find_for_server_all (tktset, "host/latte.josefsson.org");
+  memset(&hint, 0, sizeof(hint));
+  hint.server = "host/latte.josefsson.org";
+  hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
+  t3 = shishi_tkts_find (tktset, &hint);
   if (t3 == NULL)
-    success ("shishi_tkts_find_ticket_for_server() OK\n");
+    success ("shishi_tkts_find() for server OK\n");
   else
-    fail ("shishi_tkts_find_ticket_for_server() failed\n");
+    fail ("shishi_tkts_find() for server failed\n");
 
-  t3 = shishi_tkts_find_for_server_all (tktset, "krbtgt/JOSEFSSON.ORG");
+  memset(&hint, 0, sizeof(hint));
+  hint.server = "krbtgt/JOSEFSSON.ORG";
+  hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
+  t3 = shishi_tkts_find (tktset, &hint);
   if (t3 == t1)
-    success ("shishi_tkts_find_ticket_for_server() OK\n");
+    success ("shishi_tkts_find() for server OK\n");
   else
-    fail ("shishi_tkts_find_ticket_for_server() failed\n");
+    fail ("shishi_tkts_find() for server failed\n");
 
   /* shishi_tkts_remove () */
   res = shishi_tkts_remove (tktset, 0);
@@ -470,23 +506,23 @@ main (int argc, char *argv[])
   else
     fail ("shishi_tkts_size() failed\n");
 
-  /* shishi_tkts_get () */
-  t1 = shishi_tkts_get (tktset, 0);
+  /* shishi_tkts_nth () */
+  t1 = shishi_tkts_nth (tktset, 0);
   if (debug)
     shishi_tkt_pretty_print (t1, stdout);
   if (t1)
-    success ("shishi_tkts_get() OK\n");
+    success ("shishi_tkts_nth() OK\n");
   else
-    fail ("shishi_tkts_get() failed\n");
+    fail ("shishi_tkts_nth() failed\n");
 
-  /* shishi_tkts_get () */
-  t2 = shishi_tkts_get (tktset, 1);
+  /* shishi_tkts_nth () */
+  t2 = shishi_tkts_nth (tktset, 1);
   if (debug)
     shishi_tkt_pretty_print (t2, stdout);
   if (t2)
-    success ("shishi_tkts_get() OK\n");
+    success ("shishi_tkts_nth() OK\n");
   else
-    fail ("shishi_tkts_get() failed\n");
+    fail ("shishi_tkts_nth() failed\n");
 
   /* DER encode and compare tkt1 ticket */
   res = shishi_a2d (handle, shishi_tkt_ticket (t1), buffer, &n);
