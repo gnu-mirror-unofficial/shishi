@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: shishi 0.0.14\n"
+"Project-Id-Version: shishi 0.0.19\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
 "POT-Creation-Date: 2004-11-21 19:25+0100\n"
-"PO-Revision-Date: 2004-02-22 21:54+0100\n"
+"PO-Revision-Date: 2004-11-19 00:50+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -150,9 +150,8 @@ msgid "Could not set sname: %s\n"
 msgstr "Nie mo¿na ustawiæ sname: %s\n"
 
 #: lib/error.c:99
-#, fuzzy
 msgid "Unknown error"
-msgstr "Nieznany b³±d shishi: %d"
+msgstr "Nieznany b³±d"
 
 #: lib/kdcrep.c:155
 #, c-format
