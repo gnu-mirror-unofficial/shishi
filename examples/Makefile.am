@@ -19,9 +19,8 @@
 # Boston, MA 02111-1307, USA.
 
 INCLUDES = -I$(top_srcdir)/gl -I../lib
-LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBIDN_LIBS@ \
-	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
-	-L../lib -lshishi
+LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
+	../lib/libshishi.la ../gl/libfoo.la
 
 noinst_PROGRAMS = client client-cksum client-safe client-priv \
 	server
