@@ -97,7 +97,7 @@ md_bench ( const char *algoname )
   gcry_md_hd_t hd;
   int i;
   char buf[1000];
-  gpg_error_t err = GPG_ERR_NO_ERROR;
+  gcry_error_t err = GPG_ERR_NO_ERROR;
 
   if (!algo)
     {
@@ -164,7 +164,7 @@ cipher_bench ( const char *algoname )
     {0}
   };
   int modeidx;
-  gpg_error_t err = GPG_ERR_NO_ERROR;
+  gcry_error_t err = GPG_ERR_NO_ERROR;
 
   if (!header_printed)
     {
@@ -297,14 +297,14 @@ static void
 do_powm ( const char *n_str, const char *e_str, const char *m_str)
 {
   gcry_mpi_t e, n, msg, cip;
-  gpg_error_t err;
+  gcry_error_t err;
   int i;
 
-  err = gcry_mpi_scan (&n, GCRYMPI_FMT_HEX, n_str, 0 );
+  err = gcry_mpi_scan (&n, GCRYMPI_FMT_HEX, n_str, 0, 0);
   if (err) BUG ();
-  err = gcry_mpi_scan (&e, GCRYMPI_FMT_HEX, e_str, 0);
+  err = gcry_mpi_scan (&e, GCRYMPI_FMT_HEX, e_str, 0, 0);
   if (err) BUG ();
-  err = gcry_mpi_scan (&msg, GCRYMPI_FMT_HEX, m_str, 0);
+  err = gcry_mpi_scan (&msg, GCRYMPI_FMT_HEX, m_str, 0, 0);
   if (err) BUG ();
 
   cip = gcry_mpi_new (0);
