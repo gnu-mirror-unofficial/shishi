@@ -158,7 +158,7 @@ shishi_get_date (const char *p, const time_t * now)
 void (*shishi_alloc_fail_function) (void) = 0;
 
 void
-xalloc_die (void)
+shishi_xalloc_die (void)
 {
   if (shishi_alloc_fail_function)
     (*shishi_alloc_fail_function) ();
