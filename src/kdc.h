@@ -169,6 +169,7 @@ extern size_t fatal_krberror_len;
 #define DH_BITS 1024
 extern gnutls_dh_params dh_params;
 extern gnutls_anon_server_credentials anoncred;
+extern gnutls_certificate_credentials x509cred;
 #endif
 
 /* Interface between shishid.c and server.c. */

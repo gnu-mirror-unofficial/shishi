@@ -184,7 +184,8 @@ kdc_extension (struct listenspec *ls)
   if (!ls->usetls && ls->type == SOCK_STREAM && ls->bufpos == 4 &&
       memcmp (ls->buf, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN) == 0)
     {
-      const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
+      const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
+			      GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0 };
 
       syslog (LOG_INFO, "Trying STARTTLS");
 
@@ -224,6 +225,17 @@ kdc_extension (struct listenspec *ls)
 		  gnutls_strerror (rc));
 	  return -1;
 	}
+
+      rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_CERTIFICATE,
+				   x509cred);
+      if (rc != GNUTLS_E_SUCCESS)
+	{
+	  syslog (LOG_ERR, "TLS failed, gnutls_cs X.509 %d: %s", rc,
+		  gnutls_strerror (rc));
+	  return -1;
+	}
+
+      gnutls_certificate_server_set_request (ls->session, GNUTLS_CERT_REQUEST);
 
       gnutls_dh_set_prime_bits (ls->session, DH_BITS);
       gnutls_transport_set_ptr (ls->session,

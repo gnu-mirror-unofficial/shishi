@@ -22,9 +22,20 @@ package "shishid"
 
 purpose "Network daemon for issuing Kerberos 5 tickets."
 
-option "configuration-file" c "Use specified configuration file." string typestr="FILE" no
-option "listen" l "Sockets to listen for queries on.  Family is `IPv4' or `IPv6', if absent the family is decided by gethostbyname(ADDRESS). An address of `*' indicates all addresses on the local host. The default is `IPv4:*:kerberos/udp, IPv4:*:kerberos/tcp, IPv6:*:kerberos/udp, IPv6:*:kerberos/tcp'." string typestr="[FAMILY:]ADDRESS:SERVICE/TYPE" no
+section "Commands"
+
+option "listen" l "Sockets to listen for queries on.  Family is `IPv4' or `IPv6', if absent the family is decided by gethostbyname(ADDR). An address of `*' indicates all addresses on the local host. The default is `IPv4:*:kerberos/udp, IPv4:*:kerberos/tcp, IPv6:*:kerberos/udp, IPv6:*:kerberos/tcp'." string typestr="[FAMILY:]ADDR:PORT/TYPE" no
 option "setuid" u "After binding socket, set user identity." string typestr="NAME" no
 
+section "TLS settings"
+
+option "x509cafile" - "X.509 certificate authorities used to verify client certificates, in PEM format." string typestr="FILE" no
+option "x509certfile" - "X.509 server certificate, in PEM format." string typestr="FILE" no
+option "x509crlfile" - "X.509 certificate revocation list to check for revoked client certificates, in PEM format." string typestr="FILE" no
+option "x509keyfile" - "X.509 server certificate key, in PEM format." string typestr="FILE" no
+
+section "Other options"
+
+option "configuration-file" c "Use specified configuration file." string typestr="FILE" no
 option "verbose" v "Produce verbose output.\n" flag off
 option "quiet" q "Don't produce any diagnostic output.\n" flag off
