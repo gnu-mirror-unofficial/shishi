@@ -25,7 +25,7 @@ TESTS = authenticator crypto gztime priv safe ticketset
 INCLUDES = -I$(top_srcdir)/lib -I../lib
 LDADD =  @LTLIBINTL@ ../lib/libshishi.la
 
-noinst_PROGRAMS = $(TESTS)
+check_PROGRAMS = $(TESTS)
 
 indent:
 	indent $(SOURCES)
