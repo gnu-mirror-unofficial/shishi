@@ -6,5 +6,5 @@ includedir=@includedir@
 Name: Shishi
 Description: Implementation of Kerberos 5.
 Version: @VERSION@
-Libs: @LIBGCRYPT_LIBS@ -L${libdir} -R${libdir} -lshishi
-Cflags: @LIBGCRYPT_CFLAGS@ -I${includedir}
+Libs: -L${libdir} -R${libdir} -lshishi @LIBGCRYPT_LIBS@ 
+Cflags: -I${includedir} @LIBGCRYPT_CFLAGS@ 
