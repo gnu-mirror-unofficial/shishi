@@ -242,7 +242,7 @@ AC_SUBST(CRYPTO)
 AC_MSG_CHECKING([if system's libgcrypt should be used])
 AC_MSG_RESULT($with_system_libgcrypt)
 GPG_ERROR_CONFIG=`pwd`/errcrypto/src/gpg-error-config; export GPG_ERROR_CONFIG
-enable_ld_version_script=no
+enable_ld_version_script=no; export enable_ld_version_script
 AC_CONFIG_SUBDIRS(errcrypto crypto)
 
 # For gnulib stuff in gl/.
