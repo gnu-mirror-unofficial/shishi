@@ -820,7 +820,11 @@ main (int argc, char *argv[])
   Shishi *handle;
   int rc;
 
-  openlog (PACKAGE, LOG_PERROR, LOG_DAEMON);
+#ifdef LOG_PERROR
+  openlog (PACKAGE, LOG_CONS|LOG_PERROR, LOG_DAEMON);
+#else
+  openlog (PACKAGE, LOG_CONS, LOG_DAEMON);
+#endif
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
