@@ -1,5 +1,5 @@
 /* base64.c	base64 encoding and decoding functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -34,6 +34,7 @@
 
 #include <string.h>
 #include <ctype.h>
+#include "base64.h"
 
 static char B64Chars[64] = {
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
