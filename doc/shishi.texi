@@ -2374,6 +2374,12 @@ db file /var/cache/local-updates
 @node Developer information
 @section Developer information
 
+The Programming API for Shisa is described below (@pxref{Kerberos
+Database Functions}); this section is about extending Shisa, and
+consequently Shishi, to use your own user database system.  You may
+want to store your Kerberos user information on an LDAP database
+server, for example.
+
 Adding a new backend is straight forward.  You need to implement the
 backend API function set, add the list of API functions to
 @file{db/db.c} and possibly also add any library dependencies to the
@@ -3375,6 +3381,7 @@ library.
 * Utility Functions::           Utilities for use in the global context.
 * Error Handling::              Error codes and such.
 * Examples::                    Example code.
+* Kerberos Database Functions:: The Shisa generic database interface.
 * Generic Security Service::    If you want to use the GSS API instead.
 @end menu
 
@@ -4155,6 +4162,47 @@ far away, give me a week or to.)
 The intention is that the data read, after the authentication phase,
 should be protected using KRB_SAFE (see RFC) but I haven't added this
 yet.
+
+@node Kerberos Database Functions
+@section Kerberos Database Functions
+@cindex Shisa API
+@cindex Database interface
+
+Shisa is a separate and standalone library from Shishi
+(@pxref{Introduction to Shisa}).  If you only wish to manipulate the
+information stored in the Kerberos user database used by Shishi, you
+do not need to link or use the Shishi library at all.  However, you
+may find it useful to combine the two libraries.
+
+Shisa is typically initialized by calling @code{shisa_init}, and
+deinitialized (when the application no longer need to use Shisa,
+typically when it shuts down) by calling @code{shisa_done}, but here
+are the complete (de)initialization interface functions.
+
+@include texi/setup.c.texi
+
+The default configuration file is typically read automatically by
+calling @code{shisa_init}, but if you wish to manually access the
+Shisa configuration file functions, here is the complete interface.
+
+@include texi/config.c.texi
+
+The core part of the Shisa interface follows.  The typical procedure
+is to use @code{shisa_principal_find} to verify that a specific
+principal exists, and to extract some information about it, and then
+use @code{shisa_keys_find} to get the cryptographic keys for the
+principal, usually suppliying some hints as to which of all keys you
+are interested in (e.g., key version number and encryption algorithm
+number).
+
+@include texi/core.c.texi
+
+Error handling is similar to that for Shishi in general (@pxref{Error
+Handling}), i.e., you invoke @code{shisa_strerror} on the integer
+return value received by some function, if the return value is
+non-zero.  Below is the complete interface.
+
+@include texi/err.c.texi
 
 @node Generic Security Service
 @section Generic Security Service
