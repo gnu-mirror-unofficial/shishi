@@ -389,6 +389,7 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int mode,
 int
 shishi_arcfour (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
+		const char *iv, char **ivout,
 		const char *in, size_t inlen,
 		char **out)
 {
