@@ -45,9 +45,7 @@ shishi_authenticator (Shishi * handle)
   if (!node)
     return NULL;
 
-  res =
-    shishi_asn1_write (handle, node, "authenticator-vno", "5",
-		       0);
+  res = shishi_asn1_write (handle, node, "authenticator-vno", "5", 0);
   if (res != SHISHI_OK)
     goto error;
 
@@ -56,14 +54,13 @@ shishi_authenticator (Shishi * handle)
   if (res != SHISHI_OK)
     goto error;
 
-  res = shishi_authenticator_set_cname (handle, node, SHISHI_NT_PRINCIPAL,
-					shishi_principal_default (handle));
+  res = shishi_authenticator_client_set (handle, node,
+					 shishi_principal_default (handle));
   if (res != SHISHI_OK)
     goto error;
 
   gettimeofday (&tv, &tz);
-  sprintf (usec, "%ld", tv.tv_usec % 1000000);
-  res = shishi_asn1_write (handle, node, "cusec", usec, 0);
+  res = shishi_authenticator_cusec_set (handle, node, tv.tv_usec % 1000000);
   if (res != SHISHI_OK)
     goto error;
 
@@ -79,14 +76,6 @@ shishi_authenticator (Shishi * handle)
   res = shishi_asn1_write (handle, node, "seq-number", NULL, 0);
   if (res != SHISHI_OK)
     goto error;
-
-#if 0
-  res =
-    shishi_asn1_write (handle, node, "authorization-data", NULL,
-		       0);
-  if (res != SHISHI_OK)
-    goto error;
-#endif
 
   return node;
 
@@ -300,32 +289,38 @@ shishi_authenticator_set_crealm (Shishi * handle,
  **/
 int
 shishi_authenticator_set_cname (Shishi * handle,
-				Shishi_asn1 node,
+				Shishi_asn1 authenticator,
 				Shishi_name_type name_type,
-				const char *principal)
+				const char *cname[])
 {
   int res;
-  char buf[BUFSIZ];
 
-  sprintf (buf, "%d", name_type);
-
-  res = shishi_asn1_write (handle, node, "cname.name-type",
-			   buf, 0);
+  res = shishi_principal_name_set (handle, authenticator, "cname",
+				   name_type, cname);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write (handle, node, "cname.name-string",
-			   NULL, 0);
-  if (res != SHISHI_OK)
-    return res;
+  return SHISHI_OK;
+}
 
-  res = shishi_asn1_write (handle, node, "cname.name-string",
-			   "NEW", 1);
-  if (res != SHISHI_OK)
-    return res;
+/**
+ * shishi_authenticator_client_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcrep: Authenticator to set client name field in.
+ * @name: zero-terminated string with principal name on RFC 1964 form.
+ *
+ * Set the client name field in the Authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_client_set (Shishi * handle,
+				 Shishi_asn1 authenticator,
+				 const char *client)
+{
+  int res;
 
-  res = shishi_asn1_write (handle, node, "cname.name-string.?1",
-			   principal, strlen (principal));
+  res = shishi_principal_set (handle, authenticator, "cname", client);
   if (res != SHISHI_OK)
     return res;
 
@@ -348,17 +343,77 @@ shishi_authenticator_ctime_get (Shishi * handle,
   return res;
 }
 
+/**
+ * shishi_authenticator_ctime_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: Authenticator as allocated by shishi_authenticator().
+ * @ctime: string with generalized time value to store in Authenticator.
+ *
+ * Store client time in Authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_authenticator_cusec_get (Shishi * handle,
-				Shishi_asn1 authenticator, int *cusec)
+shishi_authenticator_ctime_set (Shishi * handle,
+				Shishi_asn1 authenticator,
+				char *ctime)
 {
   int res;
 
-  res = shishi_asn1_integer_field (handle, authenticator, cusec,
-				   "cusec");
-  *cusec = ntohl (*cusec);
+  res = shishi_asn1_write (handle, authenticator, "ctime",
+			   ctime, GENERALIZEDTIME_TIME_LEN);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_authenticator_cusec_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: Authenticator as allocated by shishi_authenticator().
+ * @cusec: output integer with client microseconds field.
+ *
+ * Extract client microseconds field from Authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_cusec_get (Shishi * handle,
+				Shishi_asn1 authenticator,
+				int *cusec)
+{
+  int res;
+
+  res = shishi_asn1_read_integer (handle, authenticator, "cusec", cusec);
+  if (res != SHISHI_OK)
+    return res;
 
   return res;
+}
+
+/**
+ * shishi_authenticator_cusec_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @cusec: client microseconds to set in authenticator, 0-999999.
+ *
+ * Set the cusec field in the Authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_cusec_set (Shishi * handle,
+				Shishi_asn1 authenticator,
+				int cusec)
+{
+  int res;
+
+  res = shishi_asn1_write_integer (handle, authenticator, "cusec", cusec);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
 }
 
 int
@@ -386,6 +441,8 @@ int
 shishi_authenticator_remove_cksum (Shishi * handle, Shishi_asn1 authenticator)
 {
   int res;
+
+  /* XXX remove this function */
 
   res = shishi_asn1_write (handle, authenticator, "cksum",
 			   NULL, 0);
@@ -469,6 +526,47 @@ shishi_authenticator_set_cksum (Shishi * handle,
 }
 
 /**
+ * shishi_authenticator_add_cksum:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @authenticator: authenticator as allocated by shishi_authenticator().
+ * @enckdcreppart: ticket information where the key is taken from.
+ * @data: input array with data to calculate checksum on.
+ * @datalen: size of input array with data to calculate checksum on.
+ *
+ * Calculate checksum for data and store it in the authenticator.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_authenticator_add_cksum (Shishi * handle,
+				Shishi_asn1 authenticator,
+				Shishi_key * key,
+				int keyusage, char *data, int datalen)
+{
+  int res;
+
+  if (data && datalen > 0)
+    {
+      char cksum[BUFSIZ];
+      int cksumlen;
+      int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
+
+      cksumlen = sizeof (cksum);
+      res = shishi_checksum (handle, key, keyusage, cksumtype,
+			     data, datalen, cksum, &cksumlen);
+      if (res != SHISHI_OK)
+	return res;
+
+      res = shishi_authenticator_set_cksum (handle, authenticator,
+					    cksumtype, cksum, cksumlen);
+    }
+  else
+    res = shishi_authenticator_remove_cksum (handle, authenticator);
+
+  return res;
+}
+
+/**
  * shishi_authenticator_clear_authorizationdata:
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: Authenticator as allocated by shishi_authenticator().
@@ -483,9 +581,8 @@ shishi_authenticator_clear_authorizationdata (Shishi * handle,
 {
   int res;
 
-  res =
-    shishi_asn1_write (handle, authenticator,
-		       "authorization-data", NULL, 0);
+  res = shishi_asn1_write (handle, authenticator,
+			   "authorization-data", NULL, 0);
   if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
@@ -589,45 +686,4 @@ shishi_authenticator_authorizationdata (Shishi * handle,
     return res;
 
   return SHISHI_OK;
-}
-
-/**
- * shishi_authenticator_add_cksum:
- * @handle: shishi handle as allocated by shishi_init().
- * @authenticator: authenticator as allocated by shishi_authenticator().
- * @enckdcreppart: ticket information where the key is taken from.
- * @data: input array with data to calculate checksum on.
- * @datalen: size of input array with data to calculate checksum on.
- *
- * Calculate checksum for data and store it in the authenticator.
- *
- * Return value: Returns SHISHI_OK iff successful.
- **/
-int
-shishi_authenticator_add_cksum (Shishi * handle,
-				Shishi_asn1 authenticator,
-				Shishi_key * key,
-				int keyusage, char *data, int datalen)
-{
-  int res;
-
-  if (data && datalen > 0)
-    {
-      char cksum[BUFSIZ];
-      int cksumlen;
-      int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
-
-      cksumlen = sizeof (cksum);
-      res = shishi_checksum (handle, key, keyusage, cksumtype,
-			     data, datalen, cksum, &cksumlen);
-      if (res != SHISHI_OK)
-	return res;
-
-      res = shishi_authenticator_set_cksum (handle, authenticator,
-					    cksumtype, cksum, cksumlen);
-    }
-  else
-    res = shishi_authenticator_remove_cksum (handle, authenticator);
-
-  return res;
 }
