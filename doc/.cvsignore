@@ -1,6 +1,7 @@
 Makefile
 Makefile.gdoc
 Makefile.in
+components.*
 html
 man
 mdate-sh
