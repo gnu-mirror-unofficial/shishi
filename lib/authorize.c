@@ -106,7 +106,7 @@ static struct
 
 /**
  * shishi_authorization_parse:
- * @cipher: name of authorization type, e.g. "basic".
+ * @authorization: name of authorization type, e.g. "basic".
  *
  * Return value: Return authorization type corresponding to a string.
  **/

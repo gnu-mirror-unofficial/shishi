@@ -210,8 +210,10 @@ shishi_error_printf (Shishi * handle, const char *format, ...)
  * shishi_outputtype:
  * @handle: shishi handle as allocated by shishi_init().
  *
- * Return output type (NULL, stderr or syslog) for informational
- * and warning messages.
+ * Get the current output type for logging messages.
+ *
+ * Return value: Return output type (NULL, stderr or syslog) for
+ *   informational and warning messages.
  **/
 int
 shishi_outputtype (Shishi * handle)
