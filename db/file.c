@@ -51,6 +51,11 @@
 
 #include "internal.h"
 
+/* Get ssize_t. */
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
 #include "fileutil.h"
 
 struct Shisa_file
