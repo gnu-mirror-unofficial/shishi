@@ -39,12 +39,12 @@ AC_PROG_CC
 AC_GNU_SOURCE
 gl_USE_SYSTEM_EXTENSIONS
 AC_HEADER_STDC
-AC_CHECK_HEADERS([sys/types.h])
-AC_CHECK_HEADERS([stdlib.h memory.h string.h strings.h sys/socket.h unistd.h])
-AC_CHECK_HEADERS(getopt.h unistd.h strings.h netdb.h time.h sys/poll.h \
-	sys/time.h sys/select.h sys/socket.h sys/stat.h stdint.h termios.h \
-	signal.h pwd.h errno.h syslog.h locale.h arpa/nameser.h \
-	netinet/in.h netinet/in6.h arpa/inet.h inttypes.h resolv.h fcntl.h)
+AC_CHECK_HEADERS(stdlib.h string.h strings.h memory.h \
+	sys/types.h sys/socket.h sys/poll.h sys/time.h sys/select.h \
+	sys/socket.h sys/stat.h \
+	unistd.h netdb.h time.h termios.h signal.h pwd.h errno.h syslog.h \
+	locale.h resolv.h fcntl.h \
+	arpa/nameser.h arpa/inet.h netinet/in.h netinet/in6.h)
 
 # Checks for programs.
 AC_PROG_LIBTOOL
