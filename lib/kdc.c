@@ -89,9 +89,9 @@ shishi_as_derive_salt (Shishi * handle,
 
   for (i = 1; i <= n; i++)
     {
-      tmplen = *saltlen - len;
-      if (tmplen < 0)
+      if (*saltlen < len)
 	return SHISHI_TOO_SMALL_BUFFER;
+      tmplen = *saltlen - len;
 
       asprintf (&format, "req-body.cname.name-string.?%d", i);
       res = shishi_asn1_read (handle, asreq, format, salt + len, &tmplen);
