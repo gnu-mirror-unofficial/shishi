@@ -104,6 +104,7 @@ cbc_cts_decrypt (void *ctx,
 
   if (length > block_size)
     {
+      memcpy (tmpiv, iv, block_size);
       memcpy (iv, src + block_size, restbytes);
       f (ctx, block_size, dst, src);
       memxor (dst, iv, restbytes);
