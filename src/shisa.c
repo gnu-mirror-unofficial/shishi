@@ -105,7 +105,7 @@ dumplist_realm_principal (Shisa *dbh,
       if (ph->lasttgt != (time_t) -1)
 	printtimefield ("Last TGT request at", ph->lasttgt);
       if (ph->lastrenewal != (time_t) -1)
-	printtimefield ("Last ticket was renewed at", ph->lastrenewal);
+	printtimefield ("Last ticket renewal at", ph->lastrenewal);
       if (ph-> passwordexpire!= (time_t) -1)
 	printtimefield ("Password expire on", ph->passwordexpire);
       if (ph->accountexpire != (time_t) -1)
