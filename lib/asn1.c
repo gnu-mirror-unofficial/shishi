@@ -39,6 +39,9 @@ _shishi_asn1_init (Shishi * handle)
       return SHISHI_ASN1_ERROR;
     }
 
+  if (!asn1_check_version ("0.2.5"))
+    shishi_warn (handle, "libtasn1 >= 0.2.5 preferred, you may see bugs.");
+
   asn1_result = asn1_array2tree (shishi_asn1_tab,
 				 &handle->asn1, errorDescription);
   if (asn1_result != ASN1_SUCCESS)
