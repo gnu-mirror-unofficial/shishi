@@ -1,3 +1,561 @@
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.15.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/nettle-internal.h: Sync.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/hmac.h: Sync
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/aprep.c, lib/apreq.c, lib/authenticator.c,
+	lib/encapreppart.c, lib/kdcrep.c, lib/kdcreq.c, lib/krberror.c,
+	lib/priv.c, lib/safe.c, lib/shishi.h.in: Use const.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c, tests/crypto.c, tests/rijndael.c: Fix
+	warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/shishi.h.in: Use const.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Fix copyright years on man pages.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* db/config.c, db/err.c, db/file.c, db/fileutil.c, db/info.h: Fix
+	warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Indent.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/utils.c: Fix.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/nettle-internal.h: Disable alloca use in nettle (we don't
+	include alloca.h early enough, as the Nettle configure.ac hacks make
+	sure).
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/nettle-internal.h: Try to get alloca.h included early.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/allocsa.c, gl/allocsa.h,
+	gl/getdate.h, gl/getdate.y, gl/getopt.c, gl/getopt.h, gl/getopt1.c,
+	gl/getopt_int.h, gl/gettime.c, gl/gettimeofday.c, gl/mktime.c,
+	gl/setenv.c, gl/strdup.c, gl/strdup.h, gl/timegm.c, gl/timespec.h,
+	gl/unlocked-io.h, gl/unsetenv.c, gl/xreadlink.c, gl/m4/allocsa.m4,
+	gl/m4/clock_time.m4, gl/m4/eealloc.m4, gl/m4/getdate.m4,
+	gl/m4/gettext.m4, gl/m4/gettime.m4, gl/m4/gettimeofday.m4,
+	gl/m4/intmax.m4, gl/m4/lib-ld.m4, gl/m4/lib-prefix.m4,
+	gl/m4/malloc.m4, gl/m4/po.m4, gl/m4/printf-posix.m4,
+	gl/m4/realloc.m4, gl/m4/size_max.m4, gl/m4/ssize_t.m4,
+	gl/m4/st_mtim.m4, gl/m4/strdup.m4, gl/m4/timespec.m4,
+	gl/m4/xalloc.m4, gl/m4/xsize.m4: Gnulib sync.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Replace get_date with shishi_get_date.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/utils.c: Fix.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Use shishi_get_date.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/utils.c:
+	(shishi_get_date): Add.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add utils.c and shishi_get_date.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/nettle-internal.h: Include alloca.h, if needed and
+	present.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Likewise.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am, lib/Makefile.am: Don't allow the possibility of
+	a trailing \ and an empty next line.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* extra/Makefile.am, extra/README, extra/fetchmail.diff,
+	extra/fetchmail.mail: Add fetchmail.*.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* extra/README, extra/mailutils.diff: Fix.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, db/Makefile.am, src/Makefile.am,
+	tests/Makefile.am, Makefile.am: Remove 'indent' target.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix ChangeLog target.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Use socklen_t.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Fix warning.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c, lib/kdcrep.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c: Use 'static' keyword on functions.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c, lib/shishi.h.in: Don't use variable name "error".
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/libgcrypt.c, lib/nettle.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-3des.c, lib/crypto-aes.c, lib/crypto-rc4.c,
+	lib/crypto.h: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c, lib/crypto-null.c, lib/crypto-des.c: Fix warning.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/starttls.c, lib/starttls.h, lib/netio.c, lib/crypto.c: Fix
+	warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c, lib/tkts.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c, lib/shishi.h.in: Allocate output.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c, lib/shishi.h.in: Fix int/uint32_t.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Use const.  Fix int/int32_t.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encticketpart.c: Fix warning.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/safe.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encapreppart.c: Read cusec as uint32.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c: Don't shadow variable.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/tgs.c, lib/aprep.c: Fix int/uint32_t.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/apreq.c: Fix int/uint32_t.  Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Use const.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdc.c:
+	(shishi_as_derive_salt): Allocate output.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c:
+	(shishi_asn1_read2): Handle zero length asn.1 fields.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in:
+	(shishi_as_derive_salt): Allocate output.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authorize.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.h, lib/diskio.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c, lib/authenticator.c, lib/encapreppart.c: Fix
+	warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Make usec's uint32_t.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c, lib/crypto.c, lib/crypto.h, lib/gztime.c, lib/key.c,
+	lib/shishi.h.in, lib/principal.c: Fix warnings.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Really apply last changes.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c, lib/shishi.h.in: Don't use variable name "stime".
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/encapreppart.c, lib/krberror.c: Don't
+	use variable "time" either (sigh..).
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/encapreppart.c, lib/krberror.c,
+	lib/shishi.h.in: Don't use variable name "ctime".
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c:
+	(shishi_asn1_number_of_elements): Don't use bogus cast.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: More debugging.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdc.c: Fix int/size_t.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/shishi.h.in:
+	(shishi_authenticator_authorizationdata): Fix int/int32_t/size_t
+	types.
+	(shishi_authenticator_add_authorizationdata): Likewise.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c: Add workaround for buggy
+	_asn1_convert_integer.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/cbc-cts.c, crypto/cbc-cts.h, crypto/cbc-mac.h: Style
+	changes on my files, to align with CVS Nettle.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/Makefile.am, crypto/aes-set-decrypt-key.c,
+	crypto/aes-set-encrypt-key.c, crypto/aes.h, crypto/arcfour-crypt.c,
+	crypto/arcfour.c, crypto/arcfour.h, crypto/cbc.c, crypto/cbc.h,
+	crypto/des.c, crypto/des.h, crypto/des3.c, crypto/hmac.c,
+	crypto/md4.c, crypto/md4.h, crypto/md5.h, crypto/memxor.h,
+	crypto/nettle-internal.h, crypto/nettle-meta.h, crypto/sha.h,
+	crypto/sha1-compress.c, crypto/sha1.c: Sync with Nettle CVS (after
+	s/nettle-types.h/shishi-int.h/g).
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* tests/low-crypto.c: Add aes_cts(16) test.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* tests/low-crypto.c: Fix aes_cts(25) test.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* tests/utils.c: More debugging.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Fix int/size_t.
+	(shishi_asn1_write_uint32): Use %ul instead of broken %ud.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c: Fix int/size_t.
+
+2004-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/coding.c, asn1/decoding.c, asn1/element.c, asn1/int.h,
+	asn1/libtasn1.h, asn1/structure.c: Sync with 0.2.8.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: Fix size_t/int.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: Fix int/size_t.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* tests/low-crypto.c: Fix messages.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encapreppart.c:
+	(shishi_encapreppart_seqnumber_remove): Add.
+	(shishi_encapreppart_seqnumber_set): Likewise.
+	(shishi_encapreppart): Use it.  Don't use 0 seqnr.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in:
+	(shishi_encapreppart_seqnumber_remove):
+	(shishi_encapreppart_seqnumber_set): Add.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix noise typo.  Add verbose-crypto-noise.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: Test sequence numbers.  Fix comments.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c:
+	(shishi_authenticator_seqnumber_remove): Add.
+	(shishi_authenticator_seqnumber_set): Add.
+	(shishi_authenticator): Use it.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in:
+	(shishi_authenticator_seqnumber_remove)
+	(shishi_authenticator_seqnumber_set): Add.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.skel.in: Typo fix of verbose-noise.  Mention
+	verbose-crypto-noise.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.conf.in: Mention verbose-crypto-noise.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.conf.in: Typo fix for verbose-noise.
+
+2004-04-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-04-05  Simon Josefsson <simon@josefsson.org>
+
+	* crypto/cbc-cts.c: Change output-IV to be last output from
+	encryption primitive F.
+
+2004-04-05  Simon Josefsson <simon@josefsson.org>
+
+	* tests/low-crypto.c: Revert bad next-IV update.
+
+2004-04-05  Simon Josefsson <simon@josefsson.org>
+
+	* lib/libgcrypt.c:
+	(libgcrypt_dencrypt): Only apply special CBC-CTS handling for
+	CBC-CTS.
+
+2004-04-05  Simon Josefsson <simon@josefsson.org>
+
+	* lib/libgcrypt.c:
+	(libgcrypt_dencrypt): Fix IV output to match updated document,
+	instead of MIT's original implementation.
+
+2004-04-05  Simon Josefsson <simon@josefsson.org>
+
+	* tests/low-crypto.c: Fix IVOUT test vectors.
+
+2004-04-05  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Add rijndael.
+
+2004-04-05  Simon Josefsson <simon@josefsson.org>
+
+	* tests/rijndael.c: Remove debugging code.
+
+2004-04-05  Simon Josefsson <simon@josefsson.org>
+
+	* tests/rijndael.c: Add, test vectors from -06.
+
+2004-03-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-02-29  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS, po/LINGUAS, po/pl.po: Add Polish translation, from Jakub
+	Bogusz <qboosh@pld-linux.org>.
+
+2004-02-03  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix multiple -v's.
+
+2004-02-03  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Support multiple -v's.
+
+2004-02-03  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.ggo, src/shishid.ggo: Support multiple -v's.
+
+2004-02-03  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Support mutliple -v's.
+
+2004-02-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c, lib/crypto-des.c, lib/crypto-rc4.c, lib/crypto.c,
+	lib/diskio.c, lib/init.c, lib/internal.h, lib/kdc.c, lib/keys.c,
+	lib/password.c, lib/tkts.c: Typo.
+
+2004-01-25  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-01-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encapreppart.c:
+	(shishi_encapreppart): Use random seq-number.
+
+2004-01-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c: Fix.
+
+2004-01-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c:
+	(shishi_authenticator_seqnumber_get): Add.
+
+2004-01-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2004-01-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c:
+	(shishi_authenticator): Use random seq-number, instead of removing
+	the field.
+
+2004-01-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/libgcrypt.c, lib/nettle.c:
+	(shishi_randomize): Use void*.
+
+2004-01-23  Simon Josefsson <simon@josefsson.org>
+
+	* doc/fdl.texi, doc/shishi.texi: Use FDL 1.2.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/shishi.h.in: Doc fix.
+
+2004-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
 2004-01-22  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.14.
