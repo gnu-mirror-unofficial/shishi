@@ -18,7 +18,7 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-EXTRA_DIST = utils.c
+EXTRA_DIST = utils.c shisa.sh
 
 INCLUDES = -I$(top_srcdir)/gl -I$(top_srcdir)/lib -I../lib
 LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
