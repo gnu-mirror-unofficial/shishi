@@ -176,12 +176,35 @@ shishi_ticket (Shishi * handle, char *principal,
 int
 shishi_ticket_flags (Shishi_ticket * ticket, int *flags)
 {
-  int len = sizeof (*flags);
+  unsigned char buf[4];
+  int buflen;
+  int i;
   int res;
-  *flags = 0;
+
+  memset (buf, 0, sizeof (buf));
+  buflen = sizeof (buf);
   res = _shishi_asn1_field (ticket->handle, ticket->enckdcreppart,
-			    (char *) flags, &len, "EncKDCRepPart.flags");
-  return res;
+			    buf, &buflen, "EncKDCRepPart.flags");
+  if (res != SHISHI_OK)
+    {
+      shishi_error_set (ticket->handle, libtasn1_strerror (res));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  *flags = 0;
+  for (i = 0; i < 4; i++)
+    {
+      *flags |= (((buf[i] >> 7) & 0x01) |
+		 ((buf[i] >> 5) & 0x02) |
+		 ((buf[i] >> 3) & 0x04) |
+		 ((buf[i] >> 1) & 0x08) |
+		 ((buf[i] << 1) & 0x10) |
+		 ((buf[i] << 3) & 0x20) |
+		 ((buf[i] << 5) & 0x40) |
+		 ((buf[i] << 7) & 0x80)) << (8*i);
+    }
+
+  return SHISHI_OK;
 }
 
 int
@@ -315,7 +338,7 @@ shishi_ticket_ok_as_delegate_p (Shishi_ticket * ticket)
 }
 
 int
-shishi_ticket_realm (Shishi_ticket * ticket, const char *realm, int *realmlen)
+shishi_ticket_realm (Shishi_ticket * ticket, char *realm, int *realmlen)
 {
   return shishi_ticket_realm_get (ticket->handle, ticket->ticket,
 				  realm, realmlen);
@@ -374,6 +397,112 @@ shishi_ticket_keytype (Shishi_ticket * ticket, int *etype)
   return _shishi_asn1_integer_field (ticket->handle,
 				     ticket->enckdcreppart, etype,
 				     "EncKDCRepPart.key.keytype");
+}
+
+int
+shishi_ticket_keytype_p (Shishi_ticket * ticket, int etype)
+{
+  int tktetype;
+  int rc;
+
+  rc = _shishi_asn1_integer_field (ticket->handle,
+				   ticket->enckdcreppart, &tktetype,
+				   "EncKDCRepPart.key.keytype");
+  if (rc != SHISHI_OK)
+    return 0;
+
+  return etype == tktetype;
+}
+
+int
+shishi_ticket_lastreq (Shishi_ticket * ticket,
+		       char *lrtime,
+		       int *lrtimelen,
+		       Shihi_lrtype lrtype)
+{
+  unsigned char format[BUFSIZ];
+  int tmplrtype;
+  int res;
+  int i, n;
+
+  res = asn1_number_of_elements (ticket->enckdcreppart,
+				 "EncKDCRepPart.last-req", &n);
+  if (res != ASN1_SUCCESS)
+    return SHISHI_ASN1_ERROR;
+
+  for (i = 1; i <= n; i++)
+    {
+      sprintf (format, "EncKDCRepPart.last-req.?%d.lr-type", i);
+
+      res = _shishi_asn1_integer_field (ticket->handle, ticket->enckdcreppart,
+					&tmplrtype, format);
+      if (res != SHISHI_OK)
+	return SHISHI_ASN1_ERROR;
+
+      if (lrtype == tmplrtype)
+	{
+	  sprintf (format, "EncKDCRepPart.last-req.?%d.lr-value", i);
+
+	  res = _shishi_asn1_field (ticket->handle, ticket->enckdcreppart,
+				    lrtime, lrtimelen, format);
+	  if (res != SHISHI_OK)
+	    return SHISHI_ASN1_ERROR;
+
+	  return SHISHI_OK;
+	}
+    }
+
+  return !SHISHI_OK;
+}
+
+time_t
+shishi_ticket_lastreqc (Shishi_ticket * ticket, Shihi_lrtype lrtype)
+{
+  char lrtime[GENERALIZEDTIME_TIME_LEN + 1];
+  int lrtimelen;
+  time_t t;
+  int res;
+
+  lrtimelen = sizeof (lrtime);
+  res = shishi_ticket_lastreq (ticket, lrtime, &lrtimelen, lrtype);
+  if (res != SHISHI_OK)
+    return (time_t) - 1;
+
+  lrtime[GENERALIZEDTIME_TIME_LEN] = '\0';
+
+  t = shishi_generalize_ctime (ticket->handle, lrtime);
+
+  return t;
+}
+
+int
+shishi_ticket_lastreq_pretty_print (Shishi_ticket * ticket, FILE *fh)
+{
+  time_t t;
+  int res;
+
+  t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_INITIAL_TGT_REQUEST);
+  if (t != (time_t) - 1)
+    printf(_("Time of last initial request for a TGT:\t%s"), ctime(&t));
+
+  t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_INITIAL_REQUEST);
+  if (t != (time_t) - 1)
+    printf("Time of last initial request:\t%s", ctime(&t));
+
+  t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_NEWEST_TGT_ISSUE);
+  if (t != (time_t) - 1)
+    printf("Time of issue for the newest ticket-granting ticket used:\t%s",
+	   ctime(&t));
+
+  t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_RENEWAL);
+  if (t != (time_t) - 1)
+    printf("Time of the last renewal:\t%s", ctime(&t));
+
+  t = shishi_ticket_lastreqc (ticket, SHISHI_LRTYPE_LAST_REQUEST);
+  if (t != (time_t) - 1)
+    printf("Time of last request:\t%s", ctime(&t));
+
+  return SHISHI_OK;
 }
 
 int
@@ -509,7 +638,7 @@ shishi_ticket_valid_now_p (Shishi_ticket * ticket)
 }
 
 int
-shishi_ticket_print (Shishi_ticket * ticket, FILE * fh)
+shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh)
 {
   char buf[BUFSIZ];
   char *p;
@@ -530,8 +659,10 @@ shishi_ticket_print (Shishi_ticket * ticket, FILE * fh)
   t = shishi_ticket_endctime (ticket);
   p = ctime (&t);
   p[strlen (p) - 1] = '\0';
-  printf (_("Endtime:\t%s\t%s\n"), p,
-	  shishi_ticket_valid_now_p (ticket) ? "valid" : "EXPIRED");
+  printf (_("Endtime:\t%s"), p);
+  if (!shishi_ticket_valid_now_p (ticket))
+    printf (" (EXPIRED)");
+  printf ("\n");
 
   t = shishi_ticket_renew_tillc (ticket);
   if (t != (time_t) - 1)
@@ -553,24 +684,37 @@ shishi_ticket_print (Shishi_ticket * ticket, FILE * fh)
   res = shishi_ticket_flags (ticket, &flags);
   if (res != SHISHI_OK)
     return res;
-  printf (_
-	  ("Flags:\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n"),
-	  flags, shishi_ticket_forwardable_p (ticket) ? "FORWARDABLE" :
-	  "", shishi_ticket_forwarded_p (ticket) ? "FORWARDED" : "",
-	  shishi_ticket_proxiable_p (ticket) ? "PROXIABLE" : "",
-	  shishi_ticket_proxy_p (ticket) ? "PROXY" : "",
-	  shishi_ticket_may_postdate_p (ticket) ? "MAYPOSTDATE" : "",
-	  shishi_ticket_postdated_p (ticket) ? "POSTDATED" : "",
-	  shishi_ticket_invalid_p (ticket) ? "INVALID" : "",
-	  shishi_ticket_renewable_p (ticket) ? "RENEWABLE" : "",
-	  shishi_ticket_initial_p (ticket) ? "INITIAL" : "",
-	  shishi_ticket_pre_authent_p (ticket) ? "PREAUTHENT" : "",
-	  shishi_ticket_hw_authent_p (ticket) ? "HWAUTHENT" : "",
-	  shishi_ticket_transited_policy_checked_p (ticket) ?
-	  "TRANSITEDPOLICYCHECKED" : "",
-	  shishi_ticket_ok_as_delegate_p (ticket) ? "OKASDELEGATE" : "");
-
-
+  if (flags)
+    {
+      printf (_("Ticket flags:\t"));
+      if (shishi_ticket_forwardable_p (ticket))
+	printf ("FORWARDABLE ");
+      if (shishi_ticket_forwarded_p (ticket))
+	printf ("FORWARDED ");
+      if (shishi_ticket_proxiable_p (ticket))
+	printf ("PROXIABLE ");
+      if (shishi_ticket_proxy_p (ticket))
+	printf ("PROXY ");
+      if (shishi_ticket_may_postdate_p (ticket))
+	printf ("MAYPOSTDATE ");
+      if (shishi_ticket_postdated_p (ticket))
+	printf ("POSTDATED ");
+      if (shishi_ticket_invalid_p (ticket))
+	printf ("INVALID ");
+      if (shishi_ticket_renewable_p (ticket))
+	printf ("RENEWABLE ");
+      if (shishi_ticket_initial_p (ticket))
+	printf ("INITIAL ");
+      if (shishi_ticket_pre_authent_p (ticket))
+	printf ("PREAUTHENT ");
+      if (shishi_ticket_hw_authent_p (ticket))
+	printf ("HWAUTHENT ");
+      if (shishi_ticket_transited_policy_checked_p (ticket))
+	printf ("TRANSITEDPOLICYCHECKED ");
+      if (shishi_ticket_ok_as_delegate_p (ticket))
+	printf ("OKASDELEGATE ");
+      printf ("(%d)\n", flags);
+    }
 
   return SHISHI_OK;
 }

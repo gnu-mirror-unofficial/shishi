@@ -111,7 +111,7 @@ typedef enum
   SHISHI_TICKETFLAGS_PRE_AUTHENT = 0x400,	/* bit 10 */
   SHISHI_TICKETFLAGS_HW_AUTHENT = 0x800,	/* bit 11 */
   SHISHI_TICKETFLAGS_TRANSITED_POLICY_CHECKED = 0x1000,	/* bit 12 */
-  SHISHI_TICKETFLAGS_OK_AS_DELEGATE = 0x2000	/* bit 12 */
+  SHISHI_TICKETFLAGS_OK_AS_DELEGATE = 0x2000	/* bit 13 */
 }
 Shishi_ticketflags;
 
@@ -145,6 +145,16 @@ typedef enum
   SHISHI_MSGTYPE_TGS_REP = 13
 }
 Shihi_msgtype;
+
+typedef enum
+{
+  SHISHI_LRTYPE_LAST_INITIAL_TGT_REQUEST = 1,
+  SHISHI_LRTYPE_LAST_INITIAL_REQUEST = 2,
+  SHISHI_LRTYPE_NEWEST_TGT_ISSUE = 3,
+  SHISHI_LRTYPE_LAST_RENEWAL = 4,
+  SHISHI_LRTYPE_LAST_REQUEST = 5
+}
+Shihi_lrtype;
 
 typedef enum
 {
@@ -302,8 +312,16 @@ extern Shishi_ticket *shishi_ticket (Shishi * handle,
 				     char *principal,
 				     ASN1_TYPE ticket,
 				     ASN1_TYPE enckdcreppart);
-extern int shishi_ticket_print (Shishi_ticket * ticket, FILE * fh);
+extern int shishi_ticket_pretty_print (Shishi_ticket * ticket, FILE * fh);
 extern char *shishi_ticket_principal (Shishi_ticket * ticket);
+extern int shishi_ticket_lastreq (Shishi_ticket * ticket,
+				  char *lrtime,
+				  int *lrtimelen,
+				  Shihi_lrtype lrtype);
+extern time_t shishi_ticket_lastreqc (Shishi_ticket * ticket,
+				      Shihi_lrtype lrtype);
+extern int shishi_ticket_lastreq_pretty_print (Shishi_ticket * ticket,
+					       FILE *fh);
 extern int shishi_ticket_authtime (Shishi_ticket * ticket,
 				   char *authtime, int *authtimelen);
 extern int shishi_ticket_starttime (Shishi_ticket * ticket,
@@ -314,10 +332,11 @@ extern int shishi_ticket_renew_till (Shishi_ticket * ticket,
 				     char *renewtilltime, int *renewtilllen);
 extern int shishi_ticket_keytype (Shishi_ticket * ticket,
 				  int *etype);
+extern int shishi_ticket_keytype_p (Shishi_ticket * ticket, int etype);
 extern int shishi_ticket_server (Shishi_ticket * ticket,
 				 const char *service, int *servicelen);
 extern int shishi_ticket_realm (Shishi_ticket * ticket,
-				const char *realm, int *realmlen);
+				char *realm, int *realmlen);
 extern int shishi_ticket_server_p (Shishi_ticket * ticket,
 				   const char *service);
 extern int shishi_ticket_valid_at_time_p (Shishi_ticket * ticket, time_t now);
@@ -351,6 +370,15 @@ shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
 					       Shishi_ticketset * ticketset,
 					       const char *client,
 					       const char *server);
+extern Shishi_ticket *
+shishi_ticketset_get_ticket_for_server (Shishi * handle,
+					Shishi_ticketset * ticketset,
+					const char *server);
+extern Shishi_ticket *
+shishi_ticketset_get_ticket_for_clientserver (Shishi * handle,
+					      Shishi_ticketset * ticketset,
+					      const char *client,
+					      const char *server);
 
 /* diskio.c */
 extern int
@@ -413,8 +441,8 @@ shishi_authenticator_set_cname (Shishi * handle,
 extern ASN1_TYPE shishi_authenticator (Shishi * handle);
 
 /* as.c */
-extern ASN1_TYPE shishi_as_asreq (Shishi_as * as);
-extern ASN1_TYPE shishi_as_asrep (Shishi_as * as);
+extern ASN1_TYPE shishi_as_req (Shishi_as * as);
+extern ASN1_TYPE shishi_as_rep (Shishi_as * as);
 extern ASN1_TYPE shishi_as_krberror (Shishi_as * as);
 extern Shishi_ticket *shishi_as_ticket (Shishi_as * as);
 extern int shishi_as (Shishi * handle, Shishi_as ** as);
@@ -439,6 +467,7 @@ extern int shishi_as_cnamerealmsname (Shishi * handle,
 				      char *sname);
 
 /* tgs.c */
+extern Shishi_ap * shishi_tgs_ap (Shishi_tgs * tgs);
 extern ASN1_TYPE shishi_tgs_get_tgsreq (Shishi_tgs * tgs);
 extern Shishi_ticket *shishi_tgs_get_tgticket (Shishi_tgs * tgs);
 extern ASN1_TYPE shishi_tgs_get_authenticator (Shishi_tgs * tgs);
