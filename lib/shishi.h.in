@@ -740,6 +740,7 @@ extern int shishi_tkt_server_realm (Shishi_tkt * tkt,
 				    size_t * serverrealmlen);
 extern int shishi_tkt_valid_at_time_p (Shishi_tkt * tkt, time_t now);
 extern int shishi_tkt_valid_now_p (Shishi_tkt * tkt);
+extern int shishi_tkt_expired_p (Shishi_tkt * tkt);
 extern int shishi_tkt_decrypt (Shishi_tkt * tkt, Shishi_key * key);
 extern void shishi_tkt_done (Shishi_tkt * tkt);
 extern int shishi_tkt_flags (Shishi_tkt * tkt, int *flags);
