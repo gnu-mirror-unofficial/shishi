@@ -31,8 +31,8 @@ AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
 
-AC_PREREQ(2.57)
-AM_INIT_AUTOMAKE([1.7 gnits])
+AC_PREREQ(2.59)
+AM_INIT_AUTOMAKE([1.8 gnits])
 AC_CONFIG_HEADERS(config.h)
 
 # Checks for header files.
@@ -50,7 +50,7 @@ AC_CHECK_HEADERS(stdlib.h string.h strings.h memory.h \
 # Checks for programs.
 AC_PROG_LIBTOOL
 AM_GNU_GETTEXT(external)
-AM_GNU_GETTEXT_VERSION(0.12.1)
+AM_GNU_GETTEXT_VERSION(0.14.1)
 AM_MISSING_PROG(PERL, perl, $missing_dir)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
 AM_MISSING_PROG(ASN1PARSER, asn1Parser, $missing_dir)
