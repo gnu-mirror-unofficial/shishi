@@ -1408,30 +1408,29 @@ jas@@latte:~/src/shishi$
 @end example
 
 This indicate the database do not exist.  For a file database, you can
-create it by simply creating the directory.  Note the access
-permission change.  Typically the @samp{root} user would own the
-files, but as these examples demonstrate, setting up a Kerberos server
-does require root access.  It may be useful to run all Shishi
-applications as a special non-@samp{root} user, so that any security
-vulnerabilities does not leading to a system compromise.  (However, if
-the user database is lost, system compromises of other systems may be
-possible if you use, e.g., Kerberos Telnet.)
+create it by simply creating the directory, as follows.  Note the
+access permission change with @samp{chmod}.  Typically the @samp{root}
+user would own the files, but as these examples demonstrate, setting
+up a Kerberos server does not require root access.  Indeed, it may be
+prudent to run all Shishi applications as a special non-@samp{root}
+user, and have all Shishi related files owned by that user, so that
+any security vulnerabilities does not lead to a system compromise.
+(However, if the user database is lost, system compromises of other
+systems may be possible if you use, e.g., Kerberos Telnet.)
 
 @example
 jas@@latte:~/src/shishi$ rmdir /usr/local/var/shishi
 jas@@latte:~/src/shishi$ mkdir /usr/local/var/shishi
 jas@@latte:~/src/shishi$ chmod 0700 /usr/local/var/shishi
-jas@@latte:~/src/shishi$ ls -la /usr/local/var/shishi
-total 8
-drwx------    2 jas      jas          4096 Dec  9 08:57 .
-drwxr-xr-x    5 jas      jas          4096 Dec  9 08:57 ..
-jas@@latte:~/src/shishi$
 @end example
 
 Back to the first example, where you have a realm @samp{latte} with
 some principals.  We want to remove the realm to demonstrate how you
-create a realm from scratch.  The @samp{--remove} parameter is used
-for this purpose, as follows.
+create the realm from scratch.  (Of course, you can have more than one
+realm in the database, but for this example we assume you want to set
+up a realm named the same as Shishi guessed you would name it, so the
+existing realm need to be removed first.)  The @samp{--remove}
+parameter is used for this purpose, as follows.
 
 @example
 jas@@latte:~/src/shishi$ shisa -r latte admin
