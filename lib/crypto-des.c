@@ -796,7 +796,6 @@ des_checksum (Shishi * handle,
       return res;
     }
 
-
   keyp = shishi_key_value (key);
 
   for (i = 0; i < 8; i++)
@@ -909,5 +908,59 @@ gss_des_checksum (Shishi * handle,
 
   CBC_MAC (&des, des_encrypt, MD5_DIGEST_SIZE, *out, digest);
 #endif
+  return SHISHI_OK;
+}
+
+int
+des_md5_verify (Shishi * handle,
+		Shishi_key * key,
+		int keyusage,
+		int cksumtype,
+		const char *in, size_t inlen,
+		const char *cksum, size_t cksumlen)
+{
+  struct md5_ctx md5;
+  char *out;
+  size_t outlen;
+  char md[MD5_DIGEST_SIZE];
+  char *keyp;
+  size_t i;
+  int res;
+
+  if (cksumlen != 8 + MD5_DIGEST_SIZE)
+    return SHISHI_VERIFY_FAILED;
+
+  /*
+   * get_mic                   des-cbc(key XOR 0xF0F0F0F0F0F0F0F0,
+   *                                   conf | rsa-md5(conf | msg))
+   * verify_mic                decrypt and verify rsa-md5 checksum
+   */
+
+  keyp = shishi_key_value (key);
+
+  for (i = 0; i < 8; i++)
+    keyp[i] ^= 0xF0;
+
+  res = simplified_decrypt (handle, key, 0, NULL, 0, NULL, NULL,
+			    cksum, cksumlen, &out, &outlen);
+
+  for (i = 0; i < 8; i++)
+    keyp[i] ^= 0xF0;
+
+  if (res != SHISHI_OK)
+    {
+      shishi_error_set (handle, "decrypt failed");
+      return res;
+    }
+
+  md5_init (&md5);
+  md5_update (&md5, 8, out);
+  md5_update (&md5, inlen, in);
+
+  md5_digest (&md5, MD5_DIGEST_SIZE, md);
+
+  if (memcmp (out + 8, md, MD5_DIGEST_SIZE) != 0)
+    return SHISHI_VERIFY_FAILED;
+
   return SHISHI_OK;
 }
