@@ -458,6 +458,7 @@ simplified_encrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
+      free(buffer);
       shishi_key_done (&derivedkey);
 
       *outlen = buflen + hlen;
@@ -674,6 +675,21 @@ static cipherinfo des_cbc_md5_info = {
   des_md5_decrypt
 };
 
+static cipherinfo des_cbc_none_info = {
+  4,
+  "des-cbc-none",
+  8,
+  0,
+  8,
+  3 * 8,
+  3 * 8,
+  SHISHI_RSA_MD5_DES,
+  des_random_to_key,
+  des_string_to_key,
+  des_none_encrypt,
+  des_none_decrypt
+};
+
 static cipherinfo des3_cbc_sha1_kd_info = {
   16,
   "des3-cbc-sha1-kd",
@@ -690,7 +706,7 @@ static cipherinfo des3_cbc_sha1_kd_info = {
 };
 
 static cipherinfo des3_cbc_none_info = {
-  -4097,
+  6,
   "des3-cbc-none",
   8,
   0,
@@ -739,8 +755,9 @@ static cipherinfo *ciphers[] = {
   &des_cbc_crc_info,
   &des_cbc_md4_info,
   &des_cbc_md5_info,
-  &des3_cbc_sha1_kd_info,
+  &des_cbc_none_info,
   &des3_cbc_none_info,
+  &des3_cbc_sha1_kd_info,
   &aes128_cts_hmac_sha1_96_info,
   &aes256_cts_hmac_sha1_96_info
 };
@@ -1246,6 +1263,49 @@ shishi_checksum (Shishi * handle,
       *outlen = 96 / 8;
       break;
 
+    case 42:
+      {
+	char buffer[BUFSIZ];
+	int buflen;
+	char *keyp;
+	char *p;
+	int i;
+	GCRY_MD_HD hd;
+	GCRY_CIPHER_HD ch;
+
+	hd = gcry_md_open (GCRY_MD_MD5, 0);
+	if (!hd)
+	  return SHISHI_GCRYPT_ERROR;
+
+	gcry_md_write (hd, in, inlen);
+	p = gcry_md_read (hd, GCRY_MD_MD5);
+
+	keyp = shishi_key_value (key);
+
+	ch = gcry_cipher_open (GCRY_CIPHER_DES,
+			       GCRY_CIPHER_MODE_CBC,
+			       GCRY_CIPHER_CBC_MAC);
+	if (ch == NULL)
+	  return SHISHI_GCRYPT_ERROR;
+
+	res = gcry_cipher_setkey (ch, keyp, 8);
+	if (res != GCRYERR_SUCCESS)
+	  return SHISHI_GCRYPT_ERROR;
+
+	res = gcry_cipher_setiv (ch, NULL, 8);
+	if (res != 0)
+	  return SHISHI_GCRYPT_ERROR;
+
+	res = gcry_cipher_encrypt (ch, out, 8, p, 16);
+	if (res != 0)
+	  return SHISHI_GCRYPT_ERROR;
+
+	outlen = 8;
+
+	gcry_cipher_close (ch);
+	gcry_md_close (hd);
+      }
+      break;
 
     default:
       res = !SHISHI_OK;
