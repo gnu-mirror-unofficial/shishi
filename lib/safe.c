@@ -539,53 +539,43 @@ shishi_safe_build (Shishi_safe * safe, Shishi_key * key)
  * implementations use the RFC1510 algorithm.
  *
  * Return value: Returns SHISHI_OK iff successful,
- *               SHISHI_SAFE_BAD_KEYTYPE if an incompatible key type
- *               is used, or SHISHI_SAFE_VERIFY_FAILED if the actual
- *               verification failed.
+ *   SHISHI_SAFE_BAD_KEYTYPE if an incompatible key type is used, or
+ *   SHISHI_SAFE_VERIFY_FAILED if the actual verification failed.
  **/
 int
 shishi_safe_verify (Shishi_safe * safe, Shishi_key * key)
 {
-  char *cksum;
+  char *cksum = NULL;
   size_t cksumlen;
   int cksumtype;
-  char *cksum2;
-  size_t cksum2len;
-  int cksumtype2;
+  char *safeder = NULL;
+  size_t safederlen;
   int rc;
 
   rc = shishi_safe_cksum (safe->handle, safe->safe,
 			  &cksumtype, &cksum, &cksumlen);
   if (rc != SHISHI_OK)
-    goto error;
+    goto done;
 
-  rc = shishi_safe_build (safe, key);
+  rc = shishi_safe_set_cksum (safe->handle, safe->safe, 0, "", 0);
   if (rc != SHISHI_OK)
-    goto error;
+    goto done;
 
-  rc = shishi_safe_cksum (safe->handle, safe->safe,
-			  &cksumtype2, &cksum2, &cksum2len);
+  rc = shishi_safe_safe_der (safe, &safeder, &safederlen);
   if (rc != SHISHI_OK)
-    goto error;
+    goto done;
 
-  if (cksumtype != cksumtype2)
-    {
-      rc = SHISHI_SAFE_BAD_KEYTYPE;
-      goto error;
-    }
+  rc = shishi_verify (safe->handle, key, SHISHI_KEYUSAGE_KRB_SAFE,
+		      cksumtype, safeder, safederlen, cksum, cksumlen);
+  if (rc != SHISHI_OK)
+    goto done;
 
-  if (cksum2len != cksumlen || memcmp (cksum, cksum2, cksumlen) != 0)
-    {
-      rc = SHISHI_SAFE_VERIFY_FAILED;
-      goto error;
-    }
+  rc = SHISHI_OK;
 
-  return SHISHI_OK;
-
- error:
+ done:
   if (cksum)
     free (cksum);
-  if (cksum2)
-    free (cksum2);
+  if (safeder)
+    free (safeder);
   return rc;
 }
