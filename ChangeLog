@@ -1,3 +1,223 @@
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Don't generate *.texi for each function.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc-error: Fix.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Typo.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/aprep.c, lib/apreq.c, lib/asn1.c,
+	lib/authenticator.c, lib/cfg.c, lib/crypto-aes.c, lib/diskio.c,
+	lib/encapreppart.c, lib/enckdcreppart.c, lib/encticketpart.c,
+	lib/gztime.c, lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c, lib/key.c,
+	lib/krberror.c, lib/netio.c, lib/principal.c, lib/priv.c,
+	lib/safe.c, lib/starttls.c, lib/ticket.c, lib/tkt.c, lib/utils.c:
+	Indent.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, lib/aprep.c, lib/apreq.c, lib/asn1.c, lib/authenticator.c,
+	lib/encapreppart.c, lib/enckdcreppart.c, lib/encticketpart.c,
+	lib/gztime.c, lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c,
+	lib/krberror.c, lib/principal.c, lib/priv.c, lib/safe.c,
+	lib/shishi.h.in, lib/ticket.c, lib/tkt.c: Cleanup ASN.1.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: Fix crash.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c, lib/encapreppart.c, lib/enckdcreppart.c,
+	lib/encticketpart.c, lib/gztime.c, lib/internal.h, lib/kdcreq.c,
+	lib/krberror.c, lib/shishi.h.in, lib/tkt.c:
+	SHISHI_GENERALIZEDTIME_LENGTH: New public definition.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: Use new API.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c:
+	(shishi_authenticator_authorizationdata): Allocate output.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encapreppart.c, lib/shishi.h.in:
+	(shishi_encapreppart_get_key): Return Shishi_key instead of raw key
+	data.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/components.dia: Update.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, lib/ap.c, lib/aprep.c, lib/apreq.c, lib/as.c, lib/asn1.c,
+	lib/asn1.h, lib/diskio.c, lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c,
+	lib/krberror.c, lib/priv.c, lib/safe.c, lib/shishi.h.in, lib/tgs.c,
+	lib/ticket.c, tests/authenticator.c, tests/priv.c, tests/safe.c,
+	tests/ticketset.c: ASN.1 cleanup.
+
+2004-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated
+
+2004-09-09  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/decoding.c, asn1/int.h, asn1/libtasn1.h: Sync.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, doc/shishi.texi: Consistency.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Check version.  Fix use after free on init errors.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* doc/components.dia: Fix.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gendocs_template: Update.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am, doc/components.dia: Add.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c, lib/tkts.c: Doc fix.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Update examples.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* gl/progname.c, gl/progname.h: Fix progname.
+
+2004-09-08  Simon Josefsson <simon@josefsson.org>
+
+	* gl/progname.c, gl/progname.h, src/shishid.c: Use short progname
+	in syslog.
+
+2004-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/password.c: Bug fix, based on patch from Nicolas Pouvesle
+	<nico.pou@fnac.net>.
+
+2004-09-02  Simon Josefsson <simon@josefsson.org>
+
+	* examples/client-cksum.c, examples/client-priv.c,
+	examples/client-safe.c, examples/client.c, examples/server.c:
+	Sanitize.
+
+2004-09-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/realm.c: Sanitize.
+
+2004-09-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/password.c: Doc fix.
+
+2004-09-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/password.c: Use getpass.
+
+2004-09-02  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/getpass.c, gl/getpass.h,
+	gl/m4/getpass.m4, gl/m4/gnulib.m4: Add getpass.
+
+2004-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, doc/Makefile.am, doc/Makefile.gdoci: Fix gdoc stuff.
+
+2004-08-25  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/gnulib.m4: Update.
+
+2004-08-23  Simon Josefsson <simon@josefsson.org>
+
+	* m4/autobuild.m4: Update.
+
+2004-08-18  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2004-08-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.asn1: Update.
+
+2004-08-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2004-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/exit.h, gl/exitfail.c, gl/exitfail.h,
+	gl/m4/gnulib.m4: Update.
+
+2004-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/exit.h, gl/exitfail.c, gl/exitfail.h,
+	gl/xalloc-die.c, gl/xalloc.h, gl/xgethostname.c, gl/xmalloc.c:
+	Update.
+
+2004-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Need xalloc-die too.
+
+2004-08-08  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.fms: Add.
+
 2004-08-08  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po, po/sv.po: Generated.
