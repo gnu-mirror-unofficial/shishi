@@ -39,6 +39,16 @@ init_handle (int outputtype)
       return NULL;
     }
 
+#ifdef USE_STARTTLS
+  rc = _shishi_tls_init (handle);
+  if (rc != SHISHI_OK)
+    {
+      free (handle);
+      shishi_warn (handle, "Cannot initialize TLS library");
+      return NULL;
+    }
+#endif
+
   rc = _shishi_asn1_init (handle);
   if (rc != SHISHI_OK)
     {
@@ -117,6 +127,14 @@ shishi_server (void)
 void
 shishi_done (Shishi * handle)
 {
+  int rc;
+
+#ifdef USE_STARTTLS
+  rc = _shishi_tls_done (handle);
+  if (rc != SHISHI_OK)
+    shishi_warn (handle, "Cannot deinitialize TLS library");
+#endif
+
   if (handle->tkts)
     {
       shishi_tkts_to_file (handle->tkts, shishi_tkts_default_file (handle));

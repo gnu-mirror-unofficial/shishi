@@ -253,15 +253,19 @@ int _shishi_priv_input (Shishi * handle, FILE * fh,
 Shishi_asn1 _shishi_asn1_read (void);
 int _shishi_cipher_init (void);
 
+
 int
 shishi_asn1_integer2_field (Shishi * handle,
 			    Shishi_asn1 node, unsigned long *i,
 			    const char *field);
-int
-_shishi_sendrecv_tls (Shishi * handle,
-		      struct sockaddr *addr,
-		      const char *indata, int inlen,
-		      char **outdata, int *outlen, int timeout);
+
+/* starttls.c */
+extern int _shishi_tls_init (Shishi * handle);
+extern int _shishi_tls_done (Shishi * handle);
+extern int _shishi_sendrecv_tls (Shishi * handle,
+				 struct sockaddr *addr,
+				 const char *indata, int inlen,
+				 char **outdata, int *outlen, int timeout);
 
 /* utils.c */
 extern void _shishi_escapeprint (const char *str, int len);

@@ -22,6 +22,29 @@
 #include "internal.h"
 #include <gnutls/gnutls.h>
 
+int
+_shishi_tls_init (Shishi * handle)
+{
+  int rc;
+
+  rc = gnutls_global_init ();
+  if (rc != GNUTLS_E_SUCCESS)
+    {
+      shishi_warn (handle, "TLS initialization failed: %s",
+		   gnutls_strerror (rc));
+      return SHISHI_CRYPTO_INTERNAL_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+int
+_shishi_tls_done (Shishi * handle)
+{
+  /* XXX call gnutls_global_deinit here.  But what if application uses
+     tls?  what if more than one shishi handle is allocated? */
+ }
+
 /*
  * Alternative approach: First send KDC-REQ in clear with PA-STARTTLS
  * preauth data, and have server respond with something saying it is
@@ -78,7 +101,6 @@ _shishi_sendrecv_tls (Shishi * handle,
   if (bytes_read != 4 || memcmp (tmpbuf, "\x70\x00\x00\x02", 4) != 0)
     return SHISHI_RECVFROM_ERROR;
 
-  gnutls_global_init ();
   gnutls_anon_allocate_client_credentials (&anoncred);
   gnutls_init (&session, GNUTLS_CLIENT);
   gnutls_set_default_priority (session);
@@ -112,7 +134,13 @@ _shishi_sendrecv_tls (Shishi * handle,
     }
 
   gnutls_bye (session, GNUTLS_SHUT_RDWR);
-  shutdown (sockfd, SHUT_RDWR);
+
+  if (shutdown (sockfd, SHUT_RDWR) != 0)
+    {
+      shishi_error_set (handle, strerror (errno));
+      return SHISHI_CLOSE_ERROR;
+    }
+
   if (close (sockfd) != 0)
     {
       shishi_error_set (handle, strerror (errno));
@@ -121,7 +149,6 @@ _shishi_sendrecv_tls (Shishi * handle,
 
   gnutls_deinit (session);
   gnutls_anon_free_client_credentials (anoncred);
-  gnutls_global_deinit ();
 
   *outlen = ret;
   *outdata = xmalloc (*outlen);
