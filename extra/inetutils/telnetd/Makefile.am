@@ -2,15 +2,13 @@ AUTOMAKE_OPTIONS = ../ansi2knr
 
 inetdaemondir = @inetdaemondir@
 
-inetdaemon_PROGRAMS = @telnetd_BUILD@
+inetdaemon_PROGRAMS = shishi-telnetd
 
-EXTRA_PROGRAMS = telnetd
-
-telnetd_SOURCES = telnetd.c pty.c term.c utility.c \
+shishi_telnetd_SOURCES = telnetd.c pty.c term.c utility.c \
  state.c termstat.c slc.c
 noinst_HEADERS = telnetd.h
 
-man_MANS = telnetd.8
+man_MANS = shishi-telnetd.8
 
 @PATHDEFS_MAKE@
 
