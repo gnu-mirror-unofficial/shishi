@@ -405,9 +405,6 @@ setup_fatal_krberror (Shishi * handle)
   if (rc != SHISHI_OK)
     return rc;
 
-  shishi_krberror_print (handle, stdout, krberr);
-  shishi_krberror_pretty_print (handle, stdout, krberr);
-
   rc = shishi_krberror_der (handle, krberr, &fatal_krberror,
 			    &fatal_krberror_len);
   if (rc != SHISHI_OK)
@@ -417,7 +414,7 @@ setup_fatal_krberror (Shishi * handle)
 }
 
 static int
-asreq1 (Shishi * handle, struct arguments arg, Shishi_as * as)
+asreq1 (Shishi * handle, struct arguments *arg, Shishi_as * as)
 {
   Shishi_tkt *tkt;
   Shishi_key *sessionkey, *sessiontktkey, *userkey;
@@ -425,7 +422,7 @@ asreq1 (Shishi * handle, struct arguments arg, Shishi_as * as)
   char buf[BUFSIZ];
   int buflen;
   int err;
-  char *username, *servername, *serverrealm;
+  char *username, *servername, *realm;
 
   tkt = shishi_as_tkt (as);
   if (!tkt)
@@ -475,14 +472,14 @@ asreq1 (Shishi * handle, struct arguments arg, Shishi_as * as)
   if (err != SHISHI_OK)
     return err;
   buf[buflen] = '\0';
-  serverrealm = strdup (buf);
-  printf ("serverrealm %s\n", serverrealm);
+  realm = strdup (buf);
+  printf ("client & server realm %s\n", realm);
 
-  err = shishi_tkt_clientrealm_set (tkt, serverrealm, username);
+  err = shishi_tkt_clientrealm_set (tkt, realm, username);
   if (err)
     return err;
 
-  err = shishi_tkt_serverrealm_set (tkt, serverrealm, servername);
+  err = shishi_tkt_serverrealm_set (tkt, realm, servername);
   if (err)
     return err;
 
@@ -493,8 +490,8 @@ asreq1 (Shishi * handle, struct arguments arg, Shishi_as * as)
     return err;
 
   userkey = shishi_keys_for_serverrealm_in_file (handle,
-						 arg.keyfile,
-						 username, serverrealm);
+						 arg->keyfile,
+						 username, realm);
   if (!userkey)
     return !SHISHI_OK;
 
@@ -506,7 +503,7 @@ asreq1 (Shishi * handle, struct arguments arg, Shishi_as * as)
   if (err)
     return err;
 
-  if (arg.verbose)
+  if (arg->verbose)
     {
       shishi_kdcreq_print (handle, stderr, shishi_as_req (as));
       shishi_encticketpart_print (handle, stderr,
@@ -521,7 +518,7 @@ asreq1 (Shishi * handle, struct arguments arg, Shishi_as * as)
 }
 
 static void
-asreq (Shishi * handle, struct arguments arg,
+asreq (Shishi * handle, struct arguments *arg,
        Shishi_asn1 kdcreq, char **out, int *outlen)
 {
   Shishi_as *as;
@@ -585,7 +582,7 @@ get_msgtype (Shishi * handle, char *in, size_t inlen)
 }
 
 static int
-process_1 (Shishi * handle, struct arguments arg,
+process_1 (Shishi * handle, struct arguments *arg,
 	   char *in, size_t inlen, char **out, size_t *outlen)
 {
   Shishi_asn1 kdcreq;
@@ -680,9 +677,6 @@ process_1 (Shishi * handle, struct arguments arg,
   if (rc != SHISHI_OK)
     return rc;
 
-  shishi_krberror_print (handle, stdout, krberr);
-  shishi_krberror_pretty_print (handle, stdout, krberr);
-
   rc = shishi_krberror_der (handle, krberr, out, outlen);
   if (rc != SHISHI_OK)
     return rc;
@@ -691,7 +685,7 @@ process_1 (Shishi * handle, struct arguments arg,
 }
 
 static void
-process (Shishi * handle, struct arguments arg,
+process (Shishi * handle, struct arguments *arg,
 	 char *in, int inlen, char **out, size_t *outlen)
 {
   int rc;
@@ -719,7 +713,7 @@ ctrlc (int signum)
 }
 
 static int
-doit (Shishi * handle, struct arguments arg)
+doit (Shishi * handle, struct arguments *arg)
 {
   struct listenspec *ls;
   fd_set readfds;
@@ -731,17 +725,17 @@ doit (Shishi * handle, struct arguments arg)
   int sent_bytes, read_bytes;
   int yes;
 
-  for (i = 0; i < arg.nlistenspec; i++)
+  for (i = 0; i < arg->nlistenspec; i++)
     {
-      ls = &arg.listenspec[i];
+      ls = &arg->listenspec[i];
 
-      if (!arg.silent)
+      if (!arg->silent)
 	printf ("Listening on %s...", ls->str);
 
       ls->sockfd = socket (ls->family, ls->type, 0);
       if (ls->sockfd < 0)
 	{
-	  if (!arg.silent)
+	  if (!arg->silent)
 	    printf ("failed\n");
 	  perror ("socket");
 	  ls->sockfd = 0;
@@ -752,7 +746,7 @@ doit (Shishi * handle, struct arguments arg)
       if (setsockopt (ls->sockfd, SOL_SOCKET, SO_REUSEADDR,
 		      (char *) &yes, sizeof (yes)) < 0)
 	{
-	  if (!arg.silent)
+	  if (!arg->silent)
 	    printf ("failed\n");
 	  perror ("setsockopt");
 	  close (ls->sockfd);
@@ -762,7 +756,7 @@ doit (Shishi * handle, struct arguments arg)
 
       if (bind (ls->sockfd, &ls->addr, sizeof (ls->addr)) != 0)
 	{
-	  if (!arg.silent)
+	  if (!arg->silent)
 	    printf ("failed\n");
 	  perror ("bind");
 	  close (ls->sockfd);
@@ -772,7 +766,7 @@ doit (Shishi * handle, struct arguments arg)
 
       if (ls->type == SOCK_STREAM && listen (ls->sockfd, 512) != 0)
 	{
-	  if (!arg.silent)
+	  if (!arg->silent)
 	    printf ("failed\n");
 	  perror ("listen");
 	  close (ls->sockfd);
@@ -781,7 +775,7 @@ doit (Shishi * handle, struct arguments arg)
 	}
 
       maxfd++;
-      if (!arg.silent)
+      if (!arg->silent)
 	printf ("done\n");
     }
 
@@ -791,14 +785,14 @@ doit (Shishi * handle, struct arguments arg)
       return 1;
     }
 
-  if (!arg.silent)
+  if (!arg->silent)
     printf ("Listening on %d ports...\n", maxfd);
 
-  if (arg.setuid)
+  if (arg->setuid)
     {
       struct passwd *passwd;
 
-      passwd = getpwnam (arg.setuid);
+      passwd = getpwnam (arg->setuid);
       if (passwd == NULL)
 	{
 	  perror ("setuid: getpwnam");
@@ -812,7 +806,7 @@ doit (Shishi * handle, struct arguments arg)
 	  return 1;
 	}
 
-      if (!arg.silent)
+      if (!arg->silent)
 	printf ("User identity set to `%s' (%d)...\n",
 		passwd->pw_name, passwd->pw_uid);
     }
@@ -827,11 +821,11 @@ doit (Shishi * handle, struct arguments arg)
 	{
 	  FD_ZERO (&readfds);
 	  maxfd = 0;
-	  for (i = 0; i < arg.nlistenspec; i++)
+	  for (i = 0; i < arg->nlistenspec; i++)
 	    {
-	      if (arg.listenspec[i].sockfd >= maxfd)
-		maxfd = arg.listenspec[i].sockfd + 1;
-	      FD_SET (arg.listenspec[i].sockfd, &readfds);
+	      if (arg->listenspec[i].sockfd >= maxfd)
+		maxfd = arg->listenspec[i].sockfd + 1;
+	      FD_SET (arg->listenspec[i].sockfd, &readfds);
 	    }
 	}
       while ((rc = select (maxfd, &readfds, NULL, NULL, NULL)) == 0);
@@ -843,51 +837,51 @@ doit (Shishi * handle, struct arguments arg)
 	  continue;
 	}
 
-      for (i = 0; i < arg.nlistenspec; i++)
-	if (FD_ISSET (arg.listenspec[i].sockfd, &readfds))
+      for (i = 0; i < arg->nlistenspec; i++)
+	if (FD_ISSET (arg->listenspec[i].sockfd, &readfds))
 	  {
-	    if (arg.listenspec[i].type == SOCK_STREAM &&
-		arg.listenspec[i].family != -1)
+	    if (arg->listenspec[i].type == SOCK_STREAM &&
+		arg->listenspec[i].family != -1)
 	      {
 		fprintf (stderr, "New connection on %s...",
-			 arg.listenspec[i].str);
+			 arg->listenspec[i].str);
 
 		/* XXX search for closed fd's before allocating new entry */
-		arg.listenspec = realloc (arg.listenspec,
-					  sizeof (*arg.listenspec) *
-					  (arg.nlistenspec + 1));
-		if (arg.listenspec != NULL)
+		arg->listenspec = realloc (arg->listenspec,
+					  sizeof (*arg->listenspec) *
+					  (arg->nlistenspec + 1));
+		if (arg->listenspec != NULL)
 		  {
 		    struct sockaddr_in *sin;
 		    char *str;
 
-		    arg.nlistenspec++;
-		    ls = &arg.listenspec[arg.nlistenspec - 1];
+		    arg->nlistenspec++;
+		    ls = &arg->listenspec[arg->nlistenspec - 1];
 		    ls->bufpos = 0;
-		    ls->type = arg.listenspec[i].type;
+		    ls->type = arg->listenspec[i].type;
 		    ls->family = -1;
 		    length = sizeof (ls->addr);
-		    ls->sockfd = accept (arg.listenspec[i].sockfd,
+		    ls->sockfd = accept (arg->listenspec[i].sockfd,
 					 &ls->addr, &length);
 		    sin = (struct sockaddr_in *) &ls->addr;
 		    str = inet_ntoa (sin->sin_addr);
-		    ls->str = malloc (strlen (arg.listenspec[i].str) +
+		    ls->str = malloc (strlen (arg->listenspec[i].str) +
 				      strlen (" peer ") + strlen (str) + 1);
-		    sprintf (ls->str, "%s peer %s", arg.listenspec[i].str,
+		    sprintf (ls->str, "%s peer %s", arg->listenspec[i].str,
 			     str);
 		    puts (ls->str);
 		  }
 	      }
 	    else
 	      {
-		ls = &arg.listenspec[i];
+		ls = &arg->listenspec[i];
 
 		read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
 				       BUFSIZ - ls->bufpos, 0, &addr,
 				       &length);
 
-		if (arg.listenspec[i].type == SOCK_STREAM &&
-		    arg.listenspec[i].family == -1 && read_bytes == 0)
+		if (arg->listenspec[i].type == SOCK_STREAM &&
+		    arg->listenspec[i].family == -1 && read_bytes == 0)
 		  {
 		    printf ("Peer %s disconnected\n", ls->str);
 		    close (ls->sockfd);
@@ -901,7 +895,7 @@ doit (Shishi * handle, struct arguments arg)
 
 		printf ("Has %d bytes from %s\n", ls->bufpos, ls->str);
 
-		if (arg.listenspec[i].type == SOCK_DGRAM ||
+		if (arg->listenspec[i].type == SOCK_DGRAM ||
 		    (ls->bufpos > 4
 		     && ntohl (*(int *) ls->buf) == ls->bufpos))
 		  {
@@ -937,19 +931,19 @@ doit (Shishi * handle, struct arguments arg)
 	  }
     }
 
-  for (i = 0; i < arg.nlistenspec; i++)
-    if (arg.listenspec[i].sockfd)
+  for (i = 0; i < arg->nlistenspec; i++)
+    if (arg->listenspec[i].sockfd)
       {
-	if (!arg.silent)
-	  printf ("Closing %s...", arg.listenspec[i].str);
-	rc = close (arg.listenspec[i].sockfd);
+	if (!arg->silent)
+	  printf ("Closing %s...", arg->listenspec[i].str);
+	rc = close (arg->listenspec[i].sockfd);
 	if (rc != 0)
 	  {
-	    if (!arg.silent)
+	    if (!arg->silent)
 	      printf ("failed\n");
 	    perror ("close");
 	  }
-	else if (!arg.silent)
+	else if (!arg->silent)
 	  printf ("done\n");
       }
 
@@ -972,11 +966,11 @@ launch (struct arguments *arg)
   rc = setup_fatal_krberror (handle);
   if (rc != SHISHI_OK)
     {
-      syslog (LOG_ERR, "Fatal error message cannot be allocated\n");
+      syslog (LOG_ERR, "Cannot allocate fatal error message\n");
       return 1;
     }
 
-  rc = doit (handle, *arg);
+  rc = doit (handle, arg);
 
   shishi_done (handle);
 
@@ -986,16 +980,16 @@ launch (struct arguments *arg)
 int
 main (int argc, char *argv[])
 {
+  struct arguments arg;
   Shishi *handle;
   int rc;
-
-  struct arguments arg;
 
 #ifdef LOG_PERROR
   openlog (PACKAGE, LOG_CONS | LOG_PERROR, LOG_DAEMON);
 #else
   openlog (PACKAGE, LOG_CONS, LOG_DAEMON);
 #endif
+
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
