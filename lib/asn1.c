@@ -130,7 +130,7 @@ shishi_new_a2d (Shishi * handle, Shishi_asn1 node, char **der, size_t *len)
   return shishi_a2d_new_field (handle, node, "", der, len);
 }
 
-int
+void
 shishi_asn1_done (Shishi * handle, Shishi_asn1 node)
 {
 
@@ -138,12 +138,8 @@ shishi_asn1_done (Shishi * handle, Shishi_asn1 node)
 
   rc = asn1_delete_structure (&node);
   if (rc != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (rc));
-      return SHISHI_ASN1_ERROR;
-    }
-
-  return SHISHI_OK;
+    shishi_error_printf (handle, "Cannot dellocate ASN.1 structure: %s",
+			 libtasn1_strerror (rc));
 }
 
 int

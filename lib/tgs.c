@@ -95,6 +95,25 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
 }
 
 /**
+ * shishi_as_done:
+ * @as: structure that holds information about AS exchange
+ *
+ * Deallocate resources associated with AS exchange.  This should be
+ * called by the application when it no longer need to utilize the AS
+ * exchange handle.
+ **/
+void
+shishi_tgs_done (Shishi_tgs * tgs)
+{
+  shishi_asn1_done (tgs->handle, tgs->tgsreq);
+  shishi_asn1_done (tgs->handle, tgs->tgsrep);
+  shishi_asn1_done (tgs->handle, tgs->krberror);
+  shishi_ap_done (tgs->ap);
+  shishi_tkt_done (tgs->tkt);
+  free (tgs);
+}
+
+/**
  * shishi_tgs_tgtkt:
  * @tgs: structure that holds information about TGS exchange
  *

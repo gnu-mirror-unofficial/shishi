@@ -91,6 +91,24 @@ shishi_as (Shishi * handle, Shishi_as ** as)
   return SHISHI_OK;
 }
 
+/**
+ * shishi_as_done:
+ * @as: structure that holds information about AS exchange
+ *
+ * Deallocate resources associated with AS exchange.  This should be
+ * called by the application when it no longer need to utilize the AS
+ * exchange handle.
+ **/
+void
+shishi_as_done (Shishi_as * as)
+{
+  shishi_asn1_done (as->handle, as->asreq);
+  shishi_asn1_done (as->handle, as->asrep);
+  shishi_asn1_done (as->handle, as->krberror);
+  shishi_tkt_done (as->tkt);
+  free (as);
+}
+
 /* TODO: add shishi_as_clientserver(h,p,a,client,server) and make the
    shishi_as_cnamerealmsname function take real cname/sname pointer
    arrays. */

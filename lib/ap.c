@@ -128,6 +128,24 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
 }
 
 /**
+ * shishi_ap_done:
+ * @ap: structure that holds information about AP exchange
+ *
+ * Deallocate resources associated with AP exchange.  This should be
+ * called by the application when it no longer need to utilize the AP
+ * exchange handle.
+ **/
+void
+shishi_ap_done (Shishi_ap * ap)
+{
+  shishi_asn1_done (ap->handle, ap->authenticator);
+  shishi_asn1_done (ap->handle, ap->apreq);
+  shishi_asn1_done (ap->handle, ap->aprep);
+  shishi_asn1_done (ap->handle, ap->encapreppart);
+  free (ap);
+}
+
+/**
  * shishi_ap_set_tktoptions:
  * @ap: structure that holds information about AP exchange
  * @tkt: ticket to set in AP.

@@ -901,6 +901,8 @@ extern int shishi_authenticator_save (Shishi * handle, FILE * fh,
 				      Shishi_asn1 authenticator);
 
 /* as.c */
+extern int shishi_as (Shishi * handle, Shishi_as ** as);
+extern void shishi_as_done (Shishi_as * as);
 extern Shishi_asn1 shishi_as_req (Shishi_as * as);
 extern int shishi_as_req_build (Shishi_as * as);
 extern void shishi_as_req_set (Shishi_as * as, Shishi_asn1 asreq);
@@ -919,28 +921,13 @@ extern int shishi_as_krberror_der (Shishi_as * as, char **out, size_t *outlen);
 extern void shishi_as_krberror_set (Shishi_as * as, Shishi_asn1 krberror);
 extern Shishi_tkt *shishi_as_tkt (Shishi_as * as);
 extern void shishi_as_tkt_set (Shishi_as * as, Shishi_tkt * tkt);
-extern int shishi_as (Shishi * handle, Shishi_as ** as);
-extern int shishi_as_password_cnamerealmsname (Shishi * handle,
-					       char *password,
-					       Shishi_as ** as,
-					       char *cname,
-					       char *realm, char *sname);
-extern int shishi_as_key_cnamerealmsname (Shishi * handle,
-					  Shishi_key * key,
-					  Shishi_as ** as,
-					  char *cname,
-					  char *realm, char *sname);
-extern int shishi_as_cnamerealmsname (Shishi * handle,
-				      char *password,
-				      Shishi_key * key,
-				      Shishi_as ** as,
-				      char *cname, char *realm, char *sname);
 extern int shishi_as_sendrecv (Shishi_as * as);
 extern int shishi_as_rep_process (Shishi_as * as,
 				  Shishi_key * key, const char *password);
 
 /* tgs.c */
 extern int shishi_tgs (Shishi * handle, Shishi_tgs ** tgs);
+extern void shishi_tgs_done (Shishi_tgs * tgs);
 extern Shishi_tkt *shishi_tgs_tgtkt (Shishi_tgs * tgs);
 extern void shishi_tgs_tgtkt_set (Shishi_tgs * tgs, Shishi_tkt * tgtkt);
 extern Shishi_ap *shishi_tgs_ap (Shishi_tgs * tgs);
@@ -1404,7 +1391,7 @@ extern int shishi_a2d_new_field (Shishi * handle, Shishi_asn1 node,
 				 const char *field, char **der, size_t *len);
 extern int shishi_new_a2d (Shishi * handle, Shishi_asn1 node,
 			   char **der, size_t *len);
-extern int shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
+extern void shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
 extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 			     const char *field, char *data, size_t * datalen);
 extern int shishi_asn1_read2 (Shishi * handle, Shishi_asn1 node,
@@ -1497,10 +1484,8 @@ extern Shishi_asn1 shishi_der2asn1_encapreppart (Shishi * handle,
 						 size_t derlen);
 
 /* ap.c */
-extern const char *shishi_ap_option2string (Shishi_apoptions option);
-extern Shishi_apoptions shishi_ap_string2option (const char *str);
-
 extern int shishi_ap (Shishi * handle, Shishi_ap ** ap);
+extern void shishi_ap_done (Shishi_ap * ap);
 extern int shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap);
 extern int shishi_ap_set_tktoptions (Shishi_ap * ap,
 				     Shishi_tkt * tkt, int options);
@@ -1575,6 +1560,9 @@ extern Shishi_asn1 shishi_ap_encapreppart (Shishi_ap * ap);
 extern void shishi_ap_encapreppart_set (Shishi_ap * ap,
 					Shishi_asn1 encapreppart);
 
+extern const char *shishi_ap_option2string (Shishi_apoptions option);
+extern Shishi_apoptions shishi_ap_string2option (const char *str);
+
 /* key.c */
 extern const char *shishi_key_principal (Shishi_key * key);
 extern void shishi_key_principal_set (Shishi_key * key,
@@ -1592,7 +1580,7 @@ extern size_t shishi_key_length (Shishi_key * key);
 extern int shishi_key_version (Shishi_key * key);
 extern void shishi_key_version_set (Shishi_key * key, int version);
 extern int shishi_key (Shishi * handle, Shishi_key ** key);
-extern void shishi_key_done (Shishi_key ** key);
+extern void shishi_key_done (Shishi_key * key);
 extern void shishi_key_copy (Shishi_key * dstkey, Shishi_key * srckey);
 extern int shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key);
 extern int shishi_key_to_file (Shishi * handle,
@@ -1832,6 +1820,7 @@ extern time_t shishi_encticketpart_authctime (Shishi * handle,
 
 /* safe.c */
 extern int shishi_safe (Shishi * handle, Shishi_safe ** safe);
+extern void shishi_safe_done (Shishi_safe * safe);
 extern Shishi_key *shishi_safe_key (Shishi_safe * safe);
 extern void shishi_safe_key_set (Shishi_safe * safe, Shishi_key * key);
 extern Shishi_asn1 shishi_safe_safe (Shishi_safe * safe);

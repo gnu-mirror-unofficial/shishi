@@ -228,13 +228,12 @@ shishi_key (Shishi * handle, Shishi_key ** key)
  * shishi_key_done:
  * @key: pointer to structure that holds key information.
  *
- * Deallocates key information structure and set key handle to NULL.
+ * Deallocates key information structure.
  **/
 void
-shishi_key_done (Shishi_key ** key)
+shishi_key_done (Shishi_key *key)
 {
-  free (*key);
-  *key = NULL;
+  free (key);
 }
 
 /**

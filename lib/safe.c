@@ -101,6 +101,22 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
 }
 
 /**
+ * shishi_safe_done:
+ * @safe: structure that holds information about SAFE exchange
+ *
+ * Deallocate resources associated with SAFE exchange.  This should be
+ * called by the application when it no longer need to utilize the
+ * SAFE exchange handle.
+ **/
+void
+shishi_safe_done (Shishi_safe * safe)
+{
+  shishi_asn1_done (safe->handle, safe->safe);
+  shishi_key_done (safe->key);
+  free (safe);
+}
+
+/**
  * shishi_safe_key:
  * @safe: structure that holds information about SAFE exchange
  *
