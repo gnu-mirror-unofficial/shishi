@@ -39,7 +39,6 @@ _shishi_kdcreq (Shishi * handle, int as)
 {
   int res = ASN1_SUCCESS;
   ASN1_TYPE node = ASN1_TYPE_EMPTY;
-  int etype[] = { /* SHISHI_DES3_CBC_HMAC_SHA1_KD, */ SHISHI_DES_CBC_MD5 };
   char *servicebuf[3];
   char noncebuf[20];
 
@@ -131,8 +130,8 @@ _shishi_kdcreq (Shishi * handle, int as)
   if (res != ASN1_SUCCESS)
     goto error;
 
-  res = shishi_kdcreq_set_etype (handle, node, etype,
-				 sizeof (etype) / sizeof (etype[0]));
+  res = shishi_kdcreq_set_etype (handle, node, handle->clientkdcetypes,
+				 handle->nclientkdcetypes);
   if (res != SHISHI_OK)
     goto error;
 

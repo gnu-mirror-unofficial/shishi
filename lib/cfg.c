@@ -25,6 +25,7 @@ enum
 {
   DEFAULT_REALM_OPTION = 0,
   DEFAULT_PRINCIPAL_OPTION,
+  CLIENT_KDC_ETYPES_OPTION,
   KDC_OPTION,
   VERBOSE_OPTION,
   DEBUG_OPTION,
@@ -34,6 +35,7 @@ enum
 static const char *_shishi_opts[] = {
   /* [DEFAULT_REALM_OPTION] =     */ "default-realm",
   /* [DEFAULT_PRINCIPAL_OPTION] = */ "default-principal",
+  /* [CLIENT_KDC_ETYPES_OPTION] = */ "client-kdc-etypes",
   /* [KDC_OPTION] =               */ "kdc",
   /* [VERBOSE_OPTION] =           */ "verbose",
   /* [DEBUG_OPTION] =             */ "debug",
@@ -64,6 +66,38 @@ shishi_cfg (Shishi * handle, char *option)
 	  break;
 	case DEFAULT_PRINCIPAL_OPTION:
 	  handle->default_principal = strdup(value);
+	  break;
+	case CLIENT_KDC_ETYPES_OPTION:
+	  {
+	    char *ptrptr;
+	    char *val;
+	    int i;
+	    int tot = 0;
+
+	    for (i = 0; 
+		 val = strtok_r(i == 0 ? value : NULL, ", \t\n\r", &ptrptr); 
+		 i++)
+	      {
+		int etype = shishi_etype_parse (val);
+
+		if (etype == -1)
+		  fprintf(stderr, "Ignoring unknown encryption type: `%s'\n", 
+			  val);
+		else
+		  {
+		    int *new;
+
+		    tot++;
+		    new = realloc(handle->clientkdcetypes, 
+				  tot * sizeof(*handle->clientkdcetypes));
+		    if (handle->clientkdcetypes == NULL)
+		      return SHISHI_MALLOC_ERROR;
+		    handle->clientkdcetypes = new;
+		    handle->clientkdcetypes[tot-1] = etype;
+		    handle->nclientkdcetypes = tot;
+		  }
+	      }
+	  }
 	  break;
 	case KDC_OPTION:
 	  handle->kdc = strdup(value);
@@ -146,12 +180,18 @@ shishi_readcfg (Shishi * handle, char *cfg)
 int
 shishi_dumpcfg (Shishi * handle)
 {
+  int i;
+
   printf ("Shishi initial library configuration:\n");
   printf ("\tDefault realm: %s\n",
 	  handle->default_realm ? handle->default_realm : "(NULL)");
   printf ("\tDefault principal: %s\n",
 	  handle->default_principal ? handle->
 	  default_principal : "(NULL)");
+  printf("\tClient KDC etypes:");
+  for (i=0; i < handle->nclientkdcetypes; i++)
+    printf(" %s", shishi_cipher_name(handle->clientkdcetypes[i]));
+  printf("\n");
   printf ("\tKDC: %s\n", handle->kdc ? handle->kdc : "(NULL)");
   printf ("\tVerbose: %d\n", handle->verbose);
   printf ("\tDebug: %d\n", handle->debug);

@@ -2,15 +2,12 @@
 Makefile
 Makefile.in
 aclocal.m4
-argp
-asn1
 autom4te.cache
 config.h
 config.h.in
 config.log
 config.status
 configure
-crypto
 intl
 libtool
 m4

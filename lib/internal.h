@@ -110,10 +110,10 @@ typedef enum {
   SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR = 7,
   /* 8. TGS-REP encrypted part (includes application session key), encrypted
      with the TGS session key */
-  SHISHI_KEYUSAGE_ENCTGSREPPART_TGS_SESSION_KEY = 0,
+  SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY = 8,
   /* 9. TGS-REP encrypted part (includes application session key), encrypted
      with the TGS authenticator subkey */
-  SHISHI_KEYUSAGE_ENCTGSREPPART_TGS_AUTHENTICATOR_KEY = 0,
+  SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY = 9,
   /* 10. AP-REQ Authenticator cksum, keyed with the application
      session key */
   SHISHI_KEYUSAGE_APREQ_AUTHENTICATOR_CKSUM = 10,
@@ -167,6 +167,8 @@ struct Shishi
   int debug;
   char *default_realm;
   char *default_principal;
+  int *clientkdcetypes;
+  int nclientkdcetypes;
   char *kdc;
   char error[1024];
   char *gztime_buf[40];

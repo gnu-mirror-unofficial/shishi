@@ -26,6 +26,17 @@
 # Specify the default principal, by default the login username is used.
 #default-principal jas
 
+# Specify which encryption types client asks server to respond in
+# during AS/TGS exchanges. List valid encryption types, in preference
+# order.  Supported algorithms include des3-hmac-sha1-kd, des-cbc-md5,
+# des-cbc-md4, des-cbc-crc and null.  This also indicates which
+# encryption types are accepted by the client when receiving the response.
+# Note that the preference order is not cryptographically protected,
+# so a man in the middle can modify the order without being detected.
+# Thus, only specify encryption types you trust completely here.  If
+# this is not specified, des3-cbc-sha1-kd and des-cbc-md5 is used.
+# client-kdc-etypes des-cbc-md5
+
 # Enable verbose library messages
 #verbose
 

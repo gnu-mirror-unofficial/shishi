@@ -84,7 +84,13 @@ shishi_init ()
   memset ((void *) handle, 0, sizeof (*handle));
 
   handle->asn1 = read_asn1 ();
+
   handle->shortnonceworkaround = 1;
+
+  handle->clientkdcetypes = malloc(sizeof(*handle->clientkdcetypes)*2);
+  handle->clientkdcetypes[0] = SHISHI_DES3_CBC_HMAC_SHA1_KD;
+  handle->clientkdcetypes[1] = SHISHI_DES_CBC_MD5;
+  handle->nclientkdcetypes = 2;
 
   tmp = shishi_realm_default_guess ();
   shishi_realm_default_set (handle, tmp);
