@@ -162,10 +162,30 @@ Shishi_KDCOptions;
 
 typedef enum
 {
-  SHISHI_MSGTYPE_AS_REQ = 0x10,
-  SHISHI_MSGTYPE_AS_REP = 0x11,
-  SHISHI_MSGTYPE_TGS_REQ = 0x12,
-  SHISHI_MSGTYPE_TGS_REP = 0x13
+  /* Request for initial authentication */
+  SHISHI_MSGTYPE_AS_REQ     = 10,
+  /* Response to SHISHI_MSGTYPE_AS_REQ request */
+  SHISHI_MSGTYPE_AS_REP     = 11,
+  /* Request for authentication based on TGT */
+  SHISHI_MSGTYPE_TGS_REQ    = 12,
+  /* Response to SHISHI_MSGTYPE_TGS_REQ request */
+  SHISHI_MSGTYPE_TGS_REP    = 13,
+  /* application request to server */
+  SHISHI_MSGTYPE_AP_REQ     = 14,
+  /* Response to SHISHI_MSGTYPE_AP_REQ_MUTUAL */
+  SHISHI_MSGTYPE_AP_REP     = 15,
+  /* Reserved for user-to-user krb_tgt_request */
+  SHISHI_MSGTYPE_RESERVED16 = 16,
+  /* Reserved for user-to-user krb_tgt_reply */
+  SHISHI_MSGTYPE_RESERVED17 = 17,
+  /* Safe (checksummed) application message */
+  SHISHI_MSGTYPE_SAFE       = 20,
+  /* Private (encrypted) application message */
+  SHISHI_MSGTYPE_PRIV       = 21,
+  /* Private (encrypted) message to forward credentials */
+  SHISHI_MSGTYPE_CRED       = 22,
+  /* Error response */
+  SHISHI_MSGTYPE_ERROR      = 30
 }
 Shishi_msgtype;
 
