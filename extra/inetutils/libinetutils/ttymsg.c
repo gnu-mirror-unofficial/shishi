@@ -35,10 +35,6 @@ static char sccsid[] = "@(#)ttymsg.c	8.2 (Berkeley) 11/16/93";
 #include <config.h>
 #endif
 
-#ifndef PATH_TTY_PFX
-#define PATH_TTY_PFX "/dev/"
-#endif
-
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <signal.h>

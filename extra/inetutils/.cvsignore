@@ -12,14 +12,13 @@ include
 stamp-h.in
 config.hin
 autom4te.cache
-COPYING
 config.guess
 config.h
 config.sub
 depcomp
 install-sh
+libtool
+ltmain.sh
 missing
 mkinstalldirs
 stamp-h1
-libtool
-ltmain.sh

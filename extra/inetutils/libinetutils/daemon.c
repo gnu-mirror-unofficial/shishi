@@ -36,10 +36,6 @@
 #endif
 #include <sys/wait.h>
 
-#ifndef PATH_DEVNULL
-#define PATH_DEVNULL "/dev/null"
-#endif
-
 /*
   According to Unix-FAQ maintained by Andrew Gierth:
 

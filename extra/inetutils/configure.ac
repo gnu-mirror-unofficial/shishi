@@ -23,19 +23,17 @@ AC_PREREQ(2.52)
 
 AC_INIT([GNU inetutils], [1.4.1], [bug-inetutils@gnu.org])
 
-AC_CONFIG_SRCDIR([telnet/telnet.c])
+AC_CONFIG_SRCDIR([inetd/inetd.c])
 AM_CONFIG_HEADER([config.h:config.hin])
 AC_CANONICAL_SYSTEM # FIXME: Why not just _HOST?
-AC_AIX
-AC_MINIX
-AM_PROG_LIBTOOL
 
 # config.h turns this on, so make sure it's on for our tests too
 #CPPFLAGS=-D_BSD_SOURCE
 
 # Include files that we link into our own include directory from headers.
 # Initialize it with the things we always want to use.
-INCLUDES="arpa/telnet.h tftpsubs.h"
+INCLUDES="crypt.h arpa/telnet.h arpa/ftp.h arpa/tftp.h protocols/talkd.h
+	tftpsubs.h"
 
 # Files that we link from somewhere other than headers to includes .  The
 # number of entries in LINK_SRCS should match that in LINK_DSTS.
@@ -59,39 +57,39 @@ AC_ARG_ENABLE(authentication,
               [  --enable-authentication enable connection authentication],
 	      , enable_authentication=no)
 
-#AC_ARG_WITH(krb4, [  --with-krb4[[=PATH]]      Compile with Kerberos IV],
-#            [KERBEROS_VERSION=4
-#             KERBEROS_DIR=$withval])
-#AC_ARG_WITH(krb5, [  --with-krb5[[=PATH]]      Compile with Kerberos V],
-#            [KERBEROS_VERSION=5
-#             KERBEROS_DIR=$withval])
+AC_ARG_WITH(krb4, [  --with-krb4[[=PATH]]      Compile with Kerberos IV],
+            [KERBEROS_VERSION=4
+             KERBEROS_DIR=$withval])
+AC_ARG_WITH(krb5, [  --with-krb5[[=PATH]]      Compile with Kerberos V],
+            [KERBEROS_VERSION=5
+             KERBEROS_DIR=$withval])
 AC_ARG_WITH(shishi, AC_HELP_STRING([--with-shishi],
                                    [Compile with Shishi (Kerberos 5)]))
 AC_ARG_WITH(wrap, [  --with-wrap    add tcp wrapper support])
 AC_ARG_WITH(pam,  [  --with-pam    add support for PAM])
 
-#IU_ENABLE_SERVER(ftpd)
-#IU_ENABLE_SERVER(inetd)
-#IU_ENABLE_SERVER(rexecd)
-#IU_ENABLE_SERVER(rlogind)
-#IU_ENABLE_SERVER(rshd)
-#IU_ENABLE_SERVER(syslogd)
-#IU_ENABLE_SERVER(talkd)
+IU_ENABLE_SERVER(ftpd)
+IU_ENABLE_SERVER(inetd)
+IU_ENABLE_SERVER(rexecd)
+IU_ENABLE_SERVER(rlogind)
+IU_ENABLE_SERVER(rshd)
+IU_ENABLE_SERVER(syslogd)
+IU_ENABLE_SERVER(talkd)
 IU_ENABLE_SERVER(telnetd)
-#IU_ENABLE_SERVER(tftpd)
-#IU_ENABLE_SERVER(uucpd)
+IU_ENABLE_SERVER(tftpd)
+IU_ENABLE_SERVER(uucpd)
 
-#IU_ENABLE_CLIENT(ftp)
-#IU_ENABLE_CLIENT(ping)
-#IU_ENABLE_CLIENT(rcp)
-#IU_ENABLE_CLIENT(rlogin)
-#IU_ENABLE_CLIENT(rsh)
-#IU_ENABLE_CLIENT(logger)
-#IU_ENABLE_CLIENT(talk)
+IU_ENABLE_CLIENT(ftp)
+IU_ENABLE_CLIENT(ping)
+IU_ENABLE_CLIENT(rcp)
+IU_ENABLE_CLIENT(rlogin)
+IU_ENABLE_CLIENT(rsh)
+IU_ENABLE_CLIENT(logger)
+IU_ENABLE_CLIENT(talk)
 IU_ENABLE_CLIENT(telnet)
-#IU_ENABLE_CLIENT(tftp)
-#IU_ENABLE_CLIENT(whois)
-#IU_ENABLE_CLIENT(ifconfig)
+IU_ENABLE_CLIENT(tftp)
+IU_ENABLE_CLIENT(whois)
+IU_ENABLE_CLIENT(ifconfig)
 
 AM_INIT_AUTOMAKE
 
@@ -105,7 +103,7 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-#AC_PROG_RANLIB
+AM_PROG_LIBTOOL
 AC_PROG_YACC
 
 dnl __P is the standard name for the ansi-or-not-ansi arg-decl macro.
@@ -213,98 +211,95 @@ fi
 
 # Look for a system `glob' function, and use our own if we can't find one (or
 # if the system one is missing features we need).
-#sys_glob=no
-#if test "$ac_cv_header_glob_h" = yes; then
-#  AC_CHECK_LIB(glob, glob, LIBGLOB=-lglob)
-#  _SAVE_LIBS="$LIBS"
-#  LIBS="$LIBGLOB $LIBS"
-#  AC_CHECK_FUNC(glob,
-#    IU_CHECK_MACRO(ok system glob,
-#      [#include <glob.h>], GLOB_BRACE GLOB_TILDE,
-#      sys_glob=yes))
-#  LIBS="$_SAVE_LIBS"
-#fi
-#if test "$sys_glob" != yes; then
-#  libglob_BUILD=libglob.a
-#  LINK_SRCS="$LINK_SRCS glob/glob.h"
-#  LINK_DSTS="$LINK_DSTS include/glob.h"
-#  LINK_SRCS="$LINK_SRCS glob/fnmatch.h"
-#  LINK_DSTS="$LINK_DSTS include/fnmatch.h"
-#  LIBGLOB="-L../glob -lglob"
-#else
-#  libglob_BUILD=''
-#fi
-#AC_SUBST(LIBGLOB)
-#AC_SUBST(libglob_BUILD)
+sys_glob=no
+if test "$ac_cv_header_glob_h" = yes; then
+  AC_CHECK_LIB(glob, glob, LIBGLOB=-lglob)
+  _SAVE_LIBS="$LIBS"
+  LIBS="$LIBGLOB $LIBS"
+  AC_CHECK_FUNC(glob,
+    IU_CHECK_MACRO(ok system glob,
+      [#include <glob.h>], GLOB_BRACE GLOB_TILDE,
+      sys_glob=yes))
+  LIBS="$_SAVE_LIBS"
+fi
+if test "$sys_glob" != yes; then
+  libglob_BUILD=libglob.a
+  LINK_SRCS="$LINK_SRCS glob/glob.h"
+  LINK_DSTS="$LINK_DSTS include/glob.h"
+  LINK_SRCS="$LINK_SRCS glob/fnmatch.h"
+  LINK_DSTS="$LINK_DSTS include/fnmatch.h"
+  LIBGLOB="-L../glob -lglob"
+else
+  libglob_BUILD=''
+fi
+AC_SUBST(LIBGLOB)
+AC_SUBST(libglob_BUILD)
 
 
 dnl FIXME: Make this test case a bit more robust.  Is there a reason why
 dnl        KRB4 exists?
 LIBAUTH=
 INCAUTH=
-#if test "$enable_encryption" = yes -o "$enable_authentication" = yes; then
-#  AH_TEMPLATE(KERBEROS_IV, [Define to one if you have Kerberos IV])
-#  AH_TEMPLATE(KRB4, [Define to one if you have Kerberos IV])
-#  AH_TEMPLATE(KERBEROS, [Define to one if you have Kerberos])
-#  AH_TEMPLATE(DES_ENCRYPTION, [FIXME])
-#  AH_TEMPLATE(KERBEROS_V, [Define to one if you have Kerberos V])
-#  AH_TEMPLATE(KRB5, [Define to one if you have Kerberos V])
+if test "$enable_encryption" = yes -o "$enable_authentication" = yes; then
+  AH_TEMPLATE(KERBEROS_IV, [Define to one if you have Kerberos IV])
+  AH_TEMPLATE(KRB4, [Define to one if you have Kerberos IV])
+  AH_TEMPLATE(KERBEROS, [Define to one if you have Kerberos])
+  AH_TEMPLATE(DES_ENCRYPTION, [FIXME])
+  AH_TEMPLATE(KERBEROS_V, [Define to one if you have Kerberos V])
+  AH_TEMPLATE(KRB5, [Define to one if you have Kerberos V])
   AH_TEMPLATE(SHISHI, [Define to 1 if you have Shishi])
   
-#  if test "$KERBEROS_VERSION" = 4; then
-#    AC_CHECK_LIB(krb, krb_mk_req,
-#                 [LIBAUTH=-lkrb
-#                  AC_DEFINE(KERBEROS_IV)
-#                  AC_DEFINE(KRB4)],
-#                 -L$KERBEROS_DIR)
-#    if test ".$LIBAUTH" != . ; then
-#      AC_CHECK_LIB(des, des_key_sched,
-#                   [LIBAUTH="$LIBAUTH -ldes"],
-#                   -L$KERBEROS_DIR)
-#      dnl FIXME: Fix this to one test case.
-#      test "$enable_authentication" = yes -a "$ac_cv_lib_krb_krb_mk_req" = yes\
-#  && AC_DEFINE(KRB4)
-#      test "$enable_authentication" = yes -a "$ac_cv_lib_krb_krb_mk_req" = yes \
-#  && AC_DEFINE(KERBEROS)
-#      test "$enable_encryption" = yes -a "$ac_cv_lib_des_des_key_sched" = yes \
-#        && AC_DEFINE(DES_ENCRYPTION)
-#    fi
-#  else
-#    IU_CHECK_KRB5($KERBEROS_VERSION,$KERBEROS_DIR)
-#    LIBAUTH=$KRB5_LIBS
-#    INCAUTH=$KRB_CFLAGS
-#    if test ".$LIBAUTH" != . ;then
-#      case $KERBEROS_VERSION in
-#      4) AC_DEFINE(KERBEROS_IV)
-#         AC_DEFINE(KRB4)
-#         ;;
-#      5) AC_DEFINE(KERBEROS_V)
-#	 AC_DEFINE(KRB5)
-#         ;;
-#      esac
-#    fi
-#  fi
-#
-#  if test "$with_shishi" = "yes"; then
-#    PKG_CHECK_MODULES(SHISHI, shishi >= 0.0.0)
-    LIBAUTH="$LIBAUTH ../../../lib/libshishi.la"
-#    INCAUTH="$INCAUTH $SHISHI_CFLAGS"
+  if test "$KERBEROS_VERSION" = 4; then
+    AC_CHECK_LIB(krb, krb_mk_req,
+                 [LIBAUTH=-lkrb
+                  AC_DEFINE(KERBEROS_IV)
+                  AC_DEFINE(KRB4)],
+                 -L$KERBEROS_DIR)
+    if test ".$LIBAUTH" != . ; then
+      AC_CHECK_LIB(des, des_key_sched,
+                   [LIBAUTH="$LIBAUTH -ldes"],
+                   -L$KERBEROS_DIR)
+      dnl FIXME: Fix this to one test case.
+      test "$enable_authentication" = yes -a "$ac_cv_lib_krb_krb_mk_req" = yes\
+  && AC_DEFINE(KRB4)
+      test "$enable_authentication" = yes -a "$ac_cv_lib_krb_krb_mk_req" = yes \
+  && AC_DEFINE(KERBEROS)
+      test "$enable_encryption" = yes -a "$ac_cv_lib_des_des_key_sched" = yes \
+        && AC_DEFINE(DES_ENCRYPTION)
+    fi
+  else
+    IU_CHECK_KRB5($KERBEROS_VERSION,$KERBEROS_DIR)
+    LIBAUTH=$KRB5_LIBS
+    INCAUTH=$KRB_CFLAGS
+    if test ".$LIBAUTH" != . ;then
+      case $KERBEROS_VERSION in
+      4) AC_DEFINE(KERBEROS_IV)
+         AC_DEFINE(KRB4)
+         ;;
+      5) AC_DEFINE(KERBEROS_V)
+	 AC_DEFINE(KRB5)
+         ;;
+      esac
+    fi
+  fi
+
+  if test "$with_shishi" = "yes"; then
+    LIBAUTH="$LIBAUTH \$(top_builddir)/../../lib/libshishi.la"
+    INCAUTH="$INCAUTH -I\$(top_srcdir)/lib"
     AC_DEFINE(SHISHI)
-#  fi
-#
-#fi
+  fi
+
+fi
 AC_SUBST(LIBAUTH)
 AC_SUBST(INCAUTH)
 
 dnl Define CPP macros that enable auth/encrypt code
-#if test ".$LIBAUTH" != .; then
-#  test "$enable_authentication" = yes && 
-AC_DEFINE(AUTHENTICATION, 1,
+if test ".$LIBAUTH" != .; then
+  test "$enable_authentication" = yes && AC_DEFINE(AUTHENTICATION, 1,
                    [Define to one if you want authentication.])
-#  test "$enable_encryption" = yes     && 
-AC_DEFINE(ENCRYPTION, 1,
+  test "$enable_encryption" = yes     && AC_DEFINE(ENCRYPTION, 1,
                    [Define to one if you want encryption.])
-#fi
+fi
 
 dnl Check if they want support for Wrap.  Certain daemons like
 dnl ftpd have support for it.
@@ -335,7 +330,7 @@ AC_HEADER_TIME
 AC_HEADER_DIRENT
 
 AC_CHECK_HEADERS(arpa/nameser.h des.h errno.h fcntl.h features.h glob.h \
-                 memory.h malloc.h netinet/in_systm.h netinet/ip.h \
+                 krb.h memory.h malloc.h netinet/in_systm.h netinet/ip.h \
                  netinet/ip_icmp.h netinet/ip_var.h \
                  security/pam_appl.h \
                  shadow.h stdarg.h stdlib.h string.h stropts.h sys/tty.h \
@@ -354,12 +349,12 @@ AC_TYPE_SIGNAL
 
 dnl We may need our own definition for struct osockaddr (equivalent to the
 dnl old 4.3BSD struct sockaddr, and used in grotty bsd talk protocol)
-#AC_CHECK_TYPE(struct osockaddr, ,
-#              AC_DEFINE(HAVE_OSOCKADDR_H, 1,
-#                        [Define to one if you have <osockaddr.h>.])
-#                        INCLUDES="$INCLUDES osockaddr.h",
-#	      [#include <sys/types.h>
-#               #include <sys/socket.h> ])
+AC_CHECK_TYPE(struct osockaddr, ,
+              AC_DEFINE(HAVE_OSOCKADDR_H, 1,
+                        [Define to one if you have <osockaddr.h>.])
+                        INCLUDES="$INCLUDES osockaddr.h",
+	      [#include <sys/types.h>
+               #include <sys/socket.h> ])
 
 AC_CHECK_TYPES(struct if_nameindex, , ,
   [#include <sys/socket.h>
@@ -540,7 +535,7 @@ dnl FIXME: I don't understand this.
 dnl If revoke hasn't been defined yet, just define a dummy version
 AC_REPLACE_FUNCS(revoke)
 
-#jm_INCLUDED_REGEX(libinetutils/regex.c)
+jm_INCLUDED_REGEX(libinetutils/regex.c)
 
 AC_CHECK_FUNC(_obstack_free, ,
   AC_LIBOBJ(obstack) INCLUDES="$INCLUDES obstack.h")
@@ -646,21 +641,21 @@ AC_CHECK_DECLS(errno, , , [#include <errno.h>])
 dnl See whether <syslog.h> will declare special internal stuff if we define
 dnl SYSLOG_NAMES before including it.  We check for various syslog internal
 dnl macros, the typedef `CODE', and the variable `prioritynames'.
-#define([iu_syslog_includes],
-#  [[#include <stdlib.h>
-#    #define SYSLOG_NAMES
-#    #include <syslog.h> ]])
-#IU_CHECK_MACRO(syslog internal macros,
-#  iu_syslog_includes,
-#  [LOG_MAKEPRI LOG_PRI LOG_FAC],
-#  AC_CHECK_TYPE(CODE,
-#    AC_CHECK_DECL(prioritynames,
-#      AC_DEFINE(HAVE_SYSLOG_INTERNAL, 1, [FIXME]),
-#      INCLUDES="$INCLUDES syslog-int.h",
-#      iu_syslog_includes),
-#    INCLUDES="$INCLUDES syslog-int.h", iu_syslog_includes),
-#  INCLUDES="$INCLUDES syslog-int.h")
-#undefine([iu_syslog_includes])
+define([iu_syslog_includes],
+  [[#include <stdlib.h>
+    #define SYSLOG_NAMES
+    #include <syslog.h> ]])
+IU_CHECK_MACRO(syslog internal macros,
+  iu_syslog_includes,
+  [LOG_MAKEPRI LOG_PRI LOG_FAC],
+  AC_CHECK_TYPE(CODE,
+    AC_CHECK_DECL(prioritynames,
+      AC_DEFINE(HAVE_SYSLOG_INTERNAL, 1, [FIXME]),
+      INCLUDES="$INCLUDES syslog-int.h",
+      iu_syslog_includes),
+    INCLUDES="$INCLUDES syslog-int.h", iu_syslog_includes),
+  INCLUDES="$INCLUDES syslog-int.h")
+undefine([iu_syslog_includes])
 
 dnl Some systems don't declare common functions (especially if they return
 dnl int), at least in the expected header file.  Check.
@@ -812,18 +807,14 @@ case "$host" in
   ;;
 esac
 
-AC_CONFIG_FILES([Makefile libinetutils/Makefile libtelnet/Makefile telnet/Makefile telnetd/Makefile
+AC_CONFIG_FILES([Makefile libinetutils/Makefile libtelnet/Makefile glob/Makefile
+libicmp/Makefile ping/Makefile ftp/Makefile ftpd/Makefile inetd/Makefile
+rcp/Makefile
+rexecd/Makefile rlogin/Makefile rlogind/Makefile rsh/Makefile
+rshd/Makefile logger/Makefile syslogd/Makefile talk/Makefile
+talkd/Makefile telnet/Makefile telnetd/Makefile tftp/Makefile
+tftpd/Makefile uucpd/Makefile gwhois/Makefile libls/Makefile
 include/confpaths.h:headers/confpaths.h.in
 headers/Makefile
-])
-#glob/Makefile 
-#libicmp/Makefile ping/Makefile ftp/Makefile ftpd/Makefile inetd/Makefile
-#rcp/Makefile
-#rexecd/Makefile rlogin/Makefile rlogind/Makefile rsh/Makefile
-#rshd/Makefile logger/Makefile syslogd/Makefile talk/Makefile
-#talkd/Makefile
- 
-# tftp/Makefile
-#tftpd/Makefile uucpd/Makefile gwhois/Makefile libls/Makefile
-#doc/Makefile doc/rfc/Makefile])
+doc/Makefile doc/rfc/Makefile])
 AC_OUTPUT

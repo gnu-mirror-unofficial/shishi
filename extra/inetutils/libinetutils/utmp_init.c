@@ -21,10 +21,6 @@
 # include <config.h>
 #endif
 
-#ifndef PATH_WTMP
-#define PATH_WTMP "/var/log/wtmp"
-#endif
-
 #include <sys/types.h>
 
 #ifdef HAVE_SYS_TIME_H

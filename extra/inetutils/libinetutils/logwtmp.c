@@ -26,10 +26,6 @@
 #include <config.h>
 #endif
 
-#ifndef PATH_WTMP
-#define PATH_WTMP "/var/log/wtmp"
-#endif
-
 #include <unistd.h>
 #include <sys/types.h>
 #ifdef TIME_WITH_SYS_TIME

@@ -1,4 +1,6 @@
-INCLUDES = -I. -I$(top_builddir)/../../asn1/lib -I$(top_builddir)/../../lib -I$(top_builddir)/include -I$(top_srcdir)
+AUTOMAKE_OPTIONS = ../ansi2knr
+
+INCLUDES = -I$(top_builddir)/include @INCAUTH@
 
 noinst_LIBRARIES = libtelnet.a
 
