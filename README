@@ -1,10 +1,12 @@
 Shishi README -- Important introductory notes.
+Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
 This directory holds an implementation of RFC 1510(bis).
 
-Installation instructions are found in the INSTALL file in this
-directory.  Further instructions are found in doc/shishi.info.
+See ANNOUNCE for an overview, and doc/shishi.{info,ps,pdf} for the
+manual.  Installation instructions are found in the INSTALL file in
+this directory.
 
 The library and application (lib/, src/) are licensed under the GNU
 Public License license (see COPYING), and the documentation (doc/) is
@@ -13,11 +15,9 @@ Third party packages (asn1/, crypto/, argp/, libstringprep/, and
 extra/inetutils/) are distributed here for convenience, and they have
 their own respective licenses.
 
-For updates to the project, see <URL:http://josefsson.org/shishi/>.
+For updates to the project, see <http://josefsson.org/shishi/>.
 
 ----------------------------------------------------------------------
-Copyright (C) 2002 Simon Josefsson
-
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
 notice and this notice are preserved.
