@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -18,14 +18,12 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-INCLUDES = -I../
-EXTRA_DIST = libtasn1.h der.h mem.h gstr.h errors.h \
-             int.h parser_aux.h structure.h errors_int.h \
-             element.h README
-EXTRA_DIST += defines.h
+AM_CPPFLAGS = -I../gl
+
+EXTRA_DIST = README
 
 noinst_LTLIBRARIES = libminitasn1.la
-
-libminitasn1_la_SOURCES = decoding.c gstr.c errors.c parser_aux.c \
-           structure.c element.c coding.c
-
+libminitasn1_la_SOURCES = libtasn1.h defines.h der.h mem.h gstr.h	\
+	errors.h int.h parser_aux.h structure.h errors_int.h element.h	\
+	decoding.c gstr.c errors.c parser_aux.c structure.c element.c	\
+	coding.c
