@@ -1,5 +1,5 @@
 /* enckdcreppart.c	Key distribution encrypted reply part functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -63,18 +63,22 @@ shishi_enckdcreppart_get_key (Shishi * handle,
   return SHISHI_OK;
 }
 
-int
-shishi_enckdcreppart (Shishi * handle, ASN1_TYPE * enckdcreppart)
+ASN1_TYPE
+shishi_enckdcreppart (Shishi * handle)
 {
-  int res;
+  int res = ASN1_SUCCESS;
+  ASN1_TYPE node = ASN1_TYPE_EMPTY;
 
   res = asn1_create_element (handle->asn1, "Kerberos5.EncKDCRepPart",
-			     enckdcreppart, "EncKDCRepPart");
+			     &node, "EncKDCRepPart");
   if (res != ASN1_SUCCESS)
-    {
-      printf ("bad magic: %s\n", libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+    goto error;
 
-  return SHISHI_OK;
+  return node;
+
+ error:
+  shishi_error_set (handle, libtasn1_strerror (res));
+  if (node != ASN1_TYPE_EMPTY)
+    asn1_delete_structure (&node);
+  return NULL;
 }
