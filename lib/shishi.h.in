@@ -1970,4 +1970,9 @@ extern int shishi_encprivpart_set_user_data (Shishi * handle,
 extern int shishi_priv_build (Shishi_priv * priv, Shishi_key * key);
 extern int shishi_priv_process (Shishi_priv * priv, Shishi_key * key);
 
+/* authorize.c */
+extern int shishi_authorized_p (Shishi * handle,
+				Shishi_tkt * tkt,
+				const char *authzname);
+
 #endif
