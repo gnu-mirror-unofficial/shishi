@@ -35,19 +35,20 @@
 Shishi_asn1
 shishi_authenticator (Shishi * handle)
 {
-  int res = ASN1_SUCCESS;
+  int res;
   Shishi_asn1 node = NULL;
   struct timeval tv;
   struct timezone tz;
   char usec[BUFSIZ];
 
-  res = asn1_create_element (handle->asn1, "Kerberos5.Authenticator",
-			     &node, "Authenticator");
-  if (res != ASN1_SUCCESS)
-    goto error;
+  node = shishi_asn1_authenticator (handle);
+  if (!node)
+    return NULL;
 
-  res = asn1_write_value (node, "Authenticator.authenticator-vno", "5", 0);
-  if (res != ASN1_SUCCESS)
+  res =
+    shishi_asn1_write (handle, node, "Authenticator.authenticator-vno", "5",
+		       0);
+  if (res != SHISHI_OK)
     goto error;
 
   res = shishi_authenticator_set_crealm (handle, node,
@@ -62,35 +63,35 @@ shishi_authenticator (Shishi * handle)
 
   gettimeofday (&tv, &tz);
   sprintf (usec, "%ld", tv.tv_usec % 1000000);
-  res = asn1_write_value (node, "Authenticator.cusec", usec, 0);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, node, "Authenticator.cusec", usec, 0);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "Authenticator.ctime",
-			  shishi_generalize_time (handle, time (NULL)), 0);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, node, "Authenticator.ctime",
+			   shishi_generalize_time (handle, time (NULL)), 0);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "Authenticator.subkey", NULL, 0);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, node, "Authenticator.subkey", NULL, 0);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "Authenticator.seq-number", NULL, 0);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, node, "Authenticator.seq-number", NULL, 0);
+  if (res != SHISHI_OK)
     goto error;
 
 #if 0
-  res = asn1_write_value (node, "Authenticator.authorization-data", NULL, 0);
-  if (res != ASN1_SUCCESS)
+  res =
+    shishi_asn1_write (handle, node, "Authenticator.authorization-data", NULL,
+		       0);
+  if (res != SHISHI_OK)
     goto error;
 #endif
 
   return node;
 
 error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != NULL)
-    asn1_delete_structure (&node);
+  shishi_asn1_done (handle, node);
   return NULL;
 }
 
@@ -272,16 +273,15 @@ shishi_authenticator_from_file (Shishi * handle, Shishi_asn1 * authenticator,
  **/
 int
 shishi_authenticator_set_crealm (Shishi * handle,
-				 Shishi_asn1 authenticator, const char *crealm)
+				 Shishi_asn1 authenticator,
+				 const char *crealm)
 {
-  int res = ASN1_SUCCESS;
+  int res;
 
-  res = asn1_write_value (authenticator, "Authenticator.crealm", crealm, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+  res = shishi_asn1_write (handle, authenticator, "Authenticator.crealm",
+			   crealm, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
@@ -304,38 +304,30 @@ shishi_authenticator_set_cname (Shishi * handle,
 				Shishi_name_type name_type,
 				const char *principal)
 {
-  int res = ASN1_SUCCESS;
+  int res;
   char buf[BUFSIZ];
 
   sprintf (buf, "%d", name_type);
 
-  res = asn1_write_value (node, "Authenticator.cname.name-type", buf, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
+  res = shishi_asn1_write (handle, node, "Authenticator.cname.name-type",
+			   buf, 0);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (node, "Authenticator.cname.name-string", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
+  res = shishi_asn1_write (handle, node, "Authenticator.cname.name-string",
+			   NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_write_value (node, "Authenticator.cname.name-string", "NEW", 1);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
-  res = asn1_write_value (node, "Authenticator.cname.name-string.?1",
-			  principal, strlen (principal));
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return !SHISHI_OK;
-    }
+  res = shishi_asn1_write (handle, node, "Authenticator.cname.name-string",
+			   "NEW", 1);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_write (handle, node, "Authenticator.cname.name-string.?1",
+			   principal, strlen (principal));
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
@@ -395,12 +387,10 @@ shishi_authenticator_remove_cksum (Shishi * handle, Shishi_asn1 authenticator)
 {
   int res;
 
-  res = asn1_write_value (authenticator, "Authenticator.cksum", NULL, 0);
-  if (res != ASN1_SUCCESS)
-    {
-      shishi_error_set (handle, libtasn1_strerror (res));
-      return SHISHI_ASN1_ERROR;
-    }
+  res = shishi_asn1_write (handle, authenticator, "Authenticator.cksum",
+			   NULL, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }
@@ -464,14 +454,16 @@ shishi_authenticator_set_cksum (Shishi * handle,
   int res;
 
   sprintf (format, "%i", cksumtype);
-  res = asn1_write_value (authenticator, "Authenticator.cksum.cksumtype",
-			  format, 0);
-  if (res != ASN1_SUCCESS)
+  res =
+    shishi_asn1_write (handle, authenticator, "Authenticator.cksum.cksumtype",
+		       format, 0);
+  if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
-  res = asn1_write_value (authenticator, "Authenticator.cksum.checksum",
-			  cksum, cksumlen);
-  if (res != ASN1_SUCCESS)
+  res =
+    shishi_asn1_write (handle, authenticator, "Authenticator.cksum.checksum",
+		       cksum, cksumlen);
+  if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   return SHISHI_OK;
@@ -492,9 +484,10 @@ shishi_authenticator_clear_authorizationdata (Shishi * handle,
 {
   int res;
 
-  res = asn1_write_value (authenticator, "Authenticator.authorization-data",
-			  NULL, 0);
-  if (res != ASN1_SUCCESS)
+  res =
+    shishi_asn1_write (handle, authenticator,
+		       "Authenticator.authorization-data", NULL, 0);
+  if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   return SHISHI_OK;
@@ -523,32 +516,29 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
   int res;
   int i;
 
-  res = asn1_write_value (authenticator, "Authenticator.authorization-data",
-			  "NEW", 1);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, authenticator,
+			   "Authenticator.authorization-data", "NEW", 1);
+  if (res != SHISHI_OK)
+    return res;
 
-  res = asn1_number_of_elements (authenticator,
-				 "Authenticator.authorization-data", &i);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_number_of_elements (handle, authenticator,
+					"Authenticator.authorization-data",
+					&i);
+  if (res != SHISHI_OK)
+    return res;
 
   sprintf (buf, "%d", adtype);
   sprintf (format, "Authenticator.authorization-data.?%d.ad-type", i);
-  res = asn1_write_value (authenticator, format, buf, 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, authenticator, format, buf, 0);
+  if (res != SHISHI_OK)
+    return res;
 
   sprintf (format, "Authenticator.authorization-data.?%d.ad-data", i);
-  res = asn1_write_value (authenticator, format, addata, addatalen);
-  if (res != ASN1_SUCCESS)
-    goto error;
+  res = shishi_asn1_write (handle, authenticator, format, addata, addatalen);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
-
-error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  return SHISHI_ASN1_ERROR;
 }
 
 /**
@@ -577,9 +567,10 @@ shishi_authenticator_authorizationdata (Shishi * handle,
   int res;
   int i;
 
-  res = asn1_number_of_elements (authenticator,
-				 "Authenticator.authorization-data", &i);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_number_of_elements (handle, authenticator,
+					"Authenticator.authorization-data",
+					&i);
+  if (res != SHISHI_OK)
     return SHISHI_ASN1_ERROR;
 
   if (nth > i)
@@ -592,7 +583,7 @@ shishi_authenticator_authorizationdata (Shishi * handle,
 
   sprintf (format, "Authenticator.authorization-data.?%d.ad-data", i);
   res = shishi_asn1_field (handle, authenticator, addata, addatalen, format);
-  if (res != ASN1_SUCCESS)
+  if (res != SHISHI_OK)
     return res;
 
   return SHISHI_OK;

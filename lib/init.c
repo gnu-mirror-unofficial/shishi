@@ -42,28 +42,6 @@ _shishi_gettext_init (void)
 }
 #endif /* ENABLE_NLS */
 
-extern const ASN1_ARRAY_TYPE shishi_asn1_tab[];
-
-static ASN1_TYPE
-read_asn1 (void)
-{
-  ASN1_TYPE definitions = ASN1_TYPE_EMPTY;
-  int asn1_result = ASN1_SUCCESS;
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
-
-  asn1_result = asn1_array2tree (shishi_asn1_tab,
-				 &definitions, errorDescription);
-  if (asn1_result != ASN1_SUCCESS)
-    {
-      fprintf (stderr, "libshishi: error: %s\n", errorDescription);
-      fprintf (stderr, "libshishi: error: %s\n",
-	       libtasn1_strerror (asn1_result));
-      return ASN1_TYPE_EMPTY;
-    }
-
-  return definitions;
-}
-
 /**
  * shishi_init:
  *
@@ -99,8 +77,8 @@ shishi (void)
   gcry_control (GCRYCTL_DISABLE_SECMEM, NULL, 0);
 #endif
 
-  handle->asn1 = read_asn1 ();
-  if (handle->asn1 == ASN1_TYPE_EMPTY)
+  handle->asn1 = _shishi_asn1_read ();
+  if (handle->asn1 == NULL)
     {
       fprintf (stderr, "libshishi: error: %s\n",
 	       shishi_strerror (SHISHI_ASN1_ERROR));
