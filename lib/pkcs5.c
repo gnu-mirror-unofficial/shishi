@@ -207,7 +207,6 @@ shishi_pbkdf2_sha1 (const char *P,
 	  hmac_sha1_digest (&hmac, hLen, U);
 #endif
 
-
 	  for (k = 0; k < hLen; k++)
 	    T[k] ^= U[k];
 	}
