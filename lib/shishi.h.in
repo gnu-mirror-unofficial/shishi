@@ -79,32 +79,68 @@ enum
   SHISHI_INVALID_ARGUMENT = 44
 };
 
-/* This is not specified in the ASN.1 syntax for some reason. */
 typedef enum
 {
-  SHISHI_NT_UNKNOWN = 0,	/* Name type not known */
-  SHISHI_NT_PRINCIPAL,		/* Just the name of the principal as in */
-  /* DCE, or for users */
-  SHISHI_NT_SRV_INST,		/* Service and other unique instance (krbtgt) */
-  SHISHI_NT_SRV_HST,		/* Service with host name as instance */
-  /* (telnet, rcommands) */
-  SHISHI_NT_SRV_XHST,		/* Service with host as remaining components */
-  SHISHI_NT_UID			/* Unique ID */
+  /* Name type not known */
+  KRB_NT_UNKNOWN = 0,
+  /* Just the name of the principal as in DCE, or for users */
+  KRB_NT_PRINCIPAL = 1,
+  /* Service and other unique instance (krbtgt) */
+  KRB_NT_SRV_INST = 2,
+  /* Service with host name as instance (telnet, rcommands) */
+  KRB_NT_SRV_HST = 3,
+  /* Service with host as remaining components */
+  KRB_NT_SRV_XHST = 4,
+  /* Unique ID */
+  KRB_NT_UID = 5,
+  /* Encoded X.509 Distingished name [RFC 2253] */
+  KRB_NT_X500_PRINCIPAL 6,
+  /* Name in form of SMTP email name (e.g. user@foo.com) */
+  KRB_NT_SMTP_NAME = 7,
+  /*  Enterprise name - may be mapped to principal name */
+  KRB_NT_ENTERPRISE = 10
 }
 Shishi_name_type;
 
-/* This is not specified in the ASN.1 syntax for some reason. */
 typedef enum
 {
-  SHISHI_PA_TGS_REQ = 1,	/* padata is APREQ */
-  SHISHI_PA_ENC_TIMESTAMP,	/* timestamp pre authentication */
-  SHISHI_PA_PW_SALT,		/* salt for string-to-key */
-  SHISHI_PA_ETYPE_INFO = 10,	/* in krb-error, request for preauth */
-  SHISHI_PA_USE_SPECIFIED_KVNO = 20	/* use specified kvno */
+  SHISHI_PA_TGS_REQ = 1,
+  SHISHI_PA_ENC_TIMESTAMP = 2,
+  SHISHI_PA_PW_SALT = 3,
+  SHISHI_PA_RESERVED = 4,
+  SHISHI_PA_ENC_UNIX_TIME = 5,		/* (deprecated) */
+  SHISHI_PA_SANDIA_SECUREID = 6,
+  SHISHI_PA_SESAME = 7,
+  SHISHI_PA_OSF_DCE = 8,
+  SHISHI_PA_CYBERSAFE_SECUREID = 9,
+  SHISHI_PA_AFS3_SALT = 10,
+  SHISHI_PA_ETYPE_INFO = 11,
+  SHISHI_PA_SAM_CHALLENGE = 12,		/* (sam/otp) */
+  SHISHI_PA_SAM_RESPONSE = 13,		/* (sam/otp) */
+  SHISHI_PA_PK_AS_REQ = 14,		/* (pkinit) */
+  SHISHI_PA_PK_AS_REP = 15,		/* (pkinit) */
+  SHISHI_PA_ETYPE_INFO2 = 19,		/* (replaces pa_etype_info) */
+  SHISHI_PA_USE_SPECIFIED_KVNO = 20,
+  SHISHI_PA_SAM_REDIRECT = 21,		/* (sam/otp) */
+  SHISHI_PA_GET_FROM_TYPED_DATA = 22,	/* (embedded in typed data) */
+  SHISHI_TD_PADATA = 22,		/* (embeds padata) */
+  SHISHI_PA_SAM_ETYPE_INFO = 23,	/* (sam/otp) */
+  SHISHI_PA_ALT_PRINC = 24,		/* (crawdad@fnal.gov) */
+  SHISHI_PA_SAM_CHALLENGE2 = 30,	/* (kenh@pobox.com) */
+  SHISHI_PA_SAM_RESPONSE2 = 31,		/* (kenh@pobox.com) */
+  SHISHI_PA_EXTRA_TGT = 41,		/* Reserved extra TGT */
+  SHISHI_TD_PKINIT_CMS_CERTIFICATES = 101, /* CertificateSet from CMS */
+  SHISHI_TD_KRB_PRINCIPAL = 102,	/* PrincipalName */
+  SHISHI_TD_KRB_REALM = 103,		/* Realm */
+  SHISHI_TD_TRUSTED_CERTIFIERS = 104,	/* from PKINIT */
+  SHISHI_TD_CERTIFICATE_INDEX = 105,	/* from PKINIT */
+  SHISHI_TD_APP_DEFINED_ERROR = 106,	/* application specific */
+  SHISHI_TD_REQ_NONCE = 107,		/* INTEGER */
+  SHISHI_TD_REQ_SEQ = 108,		/* INTEGER */
+  SHISHI_PA_PAC_REQUEST = 128		/* (jbrezak@exchange.microsoft.com) */
 }
 Shishi_padata_type;
 
-/* This is not specified in the ASN.1 syntax for some reason. */
 typedef enum
 {
   SHISHI_TR_DOMAIN_X500_COMPRESS = 1
