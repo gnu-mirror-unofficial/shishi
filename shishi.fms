@@ -5,8 +5,8 @@ Changelog-URL: http://josefsson.org/cgi-bin/viewcvs.cgi/shishi/ChangeLog?rev=HEA
 BSD-Port-URL: http://www.freshports.org/devel/shishi/
 CVS-URL: http://josefsson.org/cgi-bin/viewcvs.cgi/shishi/
 Mirror-Site-URL: http://josefsson.org/shishi
-Version: 0.0.20
+Version: 0.0.21
 Release-Focus: Minor bugfixes
 
-Fix formatting of man pages, based on warnings from Doclifter.
-Updated gnulib compatibility files.
+Libtasn1 updated to 0.2.13.  Gnulib files updated, and uses within the
+library updated.  Fix srcdir != objdir building.
