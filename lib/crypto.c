@@ -40,7 +40,7 @@ lcm (int a, int b)
 static void
 rot13 (Shishi * handle, char *in, char *out, int len)
 {
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       printf ("\t ;; rot 13 in:\n");
       _shishi_escapeprint (in, len);
@@ -80,7 +80,7 @@ rot13 (Shishi * handle, char *in, char *out, int len)
       out[1] = (in[1] & ~(0xFF & (0xFF << 3))) | (0xFF & (last << 3));
     }
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       printf ("\t ;; rot13 out:\n");
       _shishi_escapeprint (out, len);
@@ -1769,7 +1769,7 @@ shishi_n_fold (Shishi * handle,
 
   lcmmn = lcm (m, n);
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       printf ("%d-fold (string)\n", n * 8);
       printf ("\t ;; string length %d bytes %d bits\n", m, m * 8);
@@ -1784,7 +1784,7 @@ shishi_n_fold (Shishi * handle,
   /* Replicate the input th the LCMMN length */
   for (i = 0; i < (lcmmn / m); i++)
     {
-      if (VERBOSECRYPTO (handle))
+      if (VERBOSECRYPTONOICE (handle))
 	{
 	  printf ("\t ;; %d-th replication\n", i + 1);
 	  printf ("string = rot13(string)\n");
@@ -1796,7 +1796,7 @@ shishi_n_fold (Shishi * handle,
 
   memset (out, 0, n);		/* just in case */
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       printf ("\t ;; replicated string (length %d):\n", lcmmn);
       _shishi_hexprint (buf, lcmmn);
@@ -1811,7 +1811,7 @@ shishi_n_fold (Shishi * handle,
 
   for (i = 0; i < (lcmmn / n); i++)
     {
-      if (VERBOSECRYPTO (handle))
+      if (VERBOSECRYPTONOICE (handle))
 	{
 	  printf ("\t ;; %d-th one's complement addition sum\n", i + 1);
 	  printf ("\t ;; sum:\n");
@@ -1825,7 +1825,7 @@ shishi_n_fold (Shishi * handle,
 
       ocadd (out, (char *) &buf[i * n], out, n);
 
-      if (VERBOSECRYPTO (handle))
+      if (VERBOSECRYPTONOICE (handle))
 	{
 	  printf ("\t ;; sum:\n");
 	  _shishi_hexprint (out, n);
@@ -1833,7 +1833,7 @@ shishi_n_fold (Shishi * handle,
 	}
     }
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       printf ("\t ;; nfold\n");
       _shishi_hexprint (out, n);

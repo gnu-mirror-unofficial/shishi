@@ -32,6 +32,7 @@ enum
   KDC_RETRIES_OPTION,
   TICKET_LIFE_OPTION,
   RENEW_LIFE_OPTION,
+  VERBOSE_CRYPTO_NOICE_OPTION,
   VERBOSE_CRYPTO_OPTION,
   VERBOSE_ASN1_OPTION,
   VERBOSE_NOICE_OPTION,
@@ -41,21 +42,22 @@ enum
 };
 
 static char *const _shishi_opts[] = {
-  /* [DEFAULT_REALM_OPTION] =     */ "default-realm",
-  /* [DEFAULT_PRINCIPAL_OPTION] = */ "default-principal",
-  /* [CLIENT_KDC_ETYPES_OPTION] = */ "client-kdc-etypes",
-  /* [REALM_KDC_OPTION] =         */ "realm-kdc",
-  /* [SERVER_REALM_OPTION] =      */ "server-realm",
-  /* [KDC_TIMEOUT_OPTION] =       */ "kdc-timeout",
-  /* [KDC_RETRIES_OPTION] =       */ "kdc-retries",
-  /* [TICKET_LIFE_OPTION] =       */ "ticket-life",
-  /* [RENEW_LIFE_OPTION] =        */ "renew-life",
-  /* [VERBOSE_CRYPTO_OPTION] =    */ "verbose-crypto",
-  /* [VERBOSE_ASN1_OPTION] =      */ "verbose-asn1",
-  /* [VERBOSE_NOICE_OPTION] =     */ "verbose-noice",
-  /* [VERBOSE_OPTION] =           */ "verbose",
-  /* [STRINGPROCESS_OPTION] =     */ "stringprocess",
-  /* [THE_END] =                  */ NULL
+  /* [DEFAULT_REALM_OPTION] =        */ "default-realm",
+  /* [DEFAULT_PRINCIPAL_OPTION] =    */ "default-principal",
+  /* [CLIENT_KDC_ETYPES_OPTION] =    */ "client-kdc-etypes",
+  /* [REALM_KDC_OPTION] =            */ "realm-kdc",
+  /* [SERVER_REALM_OPTION] =         */ "server-realm",
+  /* [KDC_TIMEOUT_OPTION] =          */ "kdc-timeout",
+  /* [KDC_RETRIES_OPTION] =          */ "kdc-retries",
+  /* [TICKET_LIFE_OPTION] =          */ "ticket-life",
+  /* [RENEW_LIFE_OPTION] =           */ "renew-life",
+  /* [VERBOSE_CRYPTO_NOICE_OPTION] = */ "verbose-crypto-noice",
+  /* [VERBOSE_CRYPTO_OPTION] =       */ "verbose-crypto",
+  /* [VERBOSE_ASN1_OPTION] =         */ "verbose-asn1",
+  /* [VERBOSE_NOICE_OPTION] =        */ "verbose-noice",
+  /* [VERBOSE_OPTION] =              */ "verbose",
+  /* [STRINGPROCESS_OPTION] =        */ "stringprocess",
+  /* [THE_END] =                     */ NULL
 };
 
 int getsubopt (char **optionp, char *const *tokens, char **valuep);
@@ -224,6 +226,10 @@ shishi_cfg (Shishi * handle, char *option)
 	case VERBOSE_OPTION:
 	  handle->verbose = value && atoi (value) ? atoi (value) :
 	    ~0 & ~VERBOSES;
+	  break;
+
+	case VERBOSE_CRYPTO_NOICE_OPTION:
+	  handle->verbose |= SHISHI_VERBOSE_CRYPTO_NOICE;
 	  break;
 
 	case VERBOSE_CRYPTO_OPTION:

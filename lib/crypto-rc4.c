@@ -121,7 +121,7 @@ arcfour_hmac_encrypt (Shishi * handle,
   else
     offset = 10;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("k1pt");
       _shishi_hexprint (L40 + offset, 14 - offset);
@@ -133,7 +133,7 @@ arcfour_hmac_encrypt (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("k1");
       _shishi_hexprint (K1, 16);
@@ -143,7 +143,7 @@ arcfour_hmac_encrypt (Shishi * handle,
   if (export)
     memset (K1 + 7, 0xAB, 9);
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("k1");
       _shishi_hexprint (K1, 16);
@@ -174,7 +174,7 @@ arcfour_hmac_encrypt (Shishi * handle,
     goto done;
   memcpy (pt + 8, in, inlen);
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("random"); _shishi_hexprint (pt, 8);
     }
@@ -183,7 +183,7 @@ arcfour_hmac_encrypt (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("cksum"); _shishi_hexprint (cksum, 16);
     }
@@ -192,7 +192,7 @@ arcfour_hmac_encrypt (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("k3");
       _shishi_hexprint (K3, 16);
@@ -202,7 +202,7 @@ arcfour_hmac_encrypt (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("ct");
       _shishi_hexprint (ct, ptlen);
@@ -258,7 +258,7 @@ arcfour_hmac_decrypt (Shishi * handle,
   else
     offset = 10;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("k1pt");
       _shishi_hexprint (L40 + offset, 14 - offset);
@@ -270,7 +270,7 @@ arcfour_hmac_decrypt (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("k1");
       _shishi_hexprint (K1, 16);
@@ -280,7 +280,7 @@ arcfour_hmac_decrypt (Shishi * handle,
   if (export)
     memset (K1 + 7, 0xAB, 9);
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("k1");
       _shishi_hexprint (K1, 16);
@@ -292,7 +292,7 @@ arcfour_hmac_decrypt (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("k3");
       _shishi_hexprint (K3, 16);
@@ -302,7 +302,7 @@ arcfour_hmac_decrypt (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("cksum pt"); _shishi_hexprint (pt, inlen - 16);
     }
@@ -311,7 +311,7 @@ arcfour_hmac_decrypt (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("cksum"); _shishi_hexprint (cksum, 16);
       puts ("cksumin"); _shishi_hexprint (in, 16);
@@ -397,7 +397,7 @@ arcfour_hmac_md5_checksum (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("Ksign"); _shishi_hexprint (Ksign, 16);
     }
@@ -407,7 +407,7 @@ arcfour_hmac_md5_checksum (Shishi * handle,
   memcpy (pt, T, 4);
   memcpy (pt + 4, in, inlen);
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("pt"); _shishi_hexprint (pt, ptlen);
     }
@@ -416,7 +416,7 @@ arcfour_hmac_md5_checksum (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("md"); _shishi_hexprint (tmp, 16);
     }
@@ -426,7 +426,7 @@ arcfour_hmac_md5_checksum (Shishi * handle,
   if (err)
     goto done;
 
-  if (VERBOSECRYPTO (handle))
+  if (VERBOSECRYPTONOICE (handle))
     {
       puts ("hmac"); _shishi_hexprint (*out, 16);
     }

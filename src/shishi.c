@@ -1008,6 +1008,14 @@ main (int argc, char *argv[])
 	       shishi_strerror (rc));
     }
 
+  if (arg.verbose > 5)
+    {
+      rc = shishi_cfg (handle, "verbose-crypto-noice");
+      if (rc != SHISHI_OK)
+	error (1, 0, "Could not make library verbose: %s\n",
+	       shishi_strerror (rc));
+    }
+
   if (!arg.starttime)
     arg.starttime = time (NULL);
 
