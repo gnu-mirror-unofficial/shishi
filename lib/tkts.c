@@ -554,12 +554,7 @@ shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh,
 	printf ("\nNo tickets found.\n");
     }
 
-  res = 0;
-
-done:
-  if (res != SHISHI_OK)
-    fprintf (stderr, "Could not list tickets: %s", shishi_strerror (res));
-  return res;
+  return SHISHI_OK;
 }
 
 /**
@@ -801,7 +796,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 	    }
 	}
 
-      if (hint->renewable)
+      if (hint->flags & SHISHI_TKTSHINTFLAGS_RENEWABLE_TICKET)
 	{
 	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req (as),
 					  SHISHI_KDCOPTIONS_RENEWABLE);
@@ -816,6 +811,18 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 				  "req-body.rtime",
 				  shishi_generalize_time
 				  (tkts->handle, renew_till), 0);
+	  if (rc != SHISHI_OK)
+	    {
+	      shishi_error_printf (tkts->handle, "Cannot set KDC Options: %s",
+				   shishi_strerror (rc));
+	      return NULL;
+	    }
+	}
+
+      if (hint->flags & SHISHI_TKTSHINTFLAGS_PROXIABLE_TICKET)
+	{
+	  rc = shishi_kdcreq_options_add (tkts->handle, shishi_as_req (as),
+					  SHISHI_KDCOPTIONS_PROXIABLE);
 	  if (rc != SHISHI_OK)
 	    {
 	      shishi_error_printf (tkts->handle, "Cannot set KDC Options: %s",
