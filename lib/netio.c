@@ -25,10 +25,12 @@ static int
 shishi_sendrecv_udp (Shishi * handle,
 		     struct sockaddr *addr,
 		     const char *indata, int inlen,
-		     char *outdata, int *outlen, int timeout)
+		     char **outdata, int *outlen, int timeout)
 {
   struct sockaddr lsa;
   struct sockaddr_in *lsa_inp = (struct sockaddr_in *) &lsa;
+  char tmpbuf[BUFSIZ]; /* XXX can we do without it?
+			  MSG_PEEK|MSG_TRUNC doesn't work for udp.. */
   int sockfd;
   int bytes_sent;
   struct sockaddr_storage from_sa;
@@ -76,7 +78,8 @@ shishi_sendrecv_udp (Shishi * handle,
       return SHISHI_KDC_TIMEOUT;
     }
 
-  *outlen = recvfrom (sockfd, outdata, *outlen, 0,
+  *outlen = sizeof(tmpbuf);
+  *outlen = recvfrom (sockfd, tmpbuf, *outlen, 0,
 		      (struct sockaddr *) &from_sa, &length);
 
   if (*outlen == -1)
@@ -84,6 +87,9 @@ shishi_sendrecv_udp (Shishi * handle,
       shishi_error_set (handle, strerror (errno));
       return SHISHI_RECVFROM_ERROR;
     }
+
+  *outdata = xmalloc (*outlen);
+  memcpy (*outdata, tmpbuf, *outlen);
 
   if (close (sockfd) != 0)
     {
@@ -97,7 +103,7 @@ shishi_sendrecv_udp (Shishi * handle,
 static int
 shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
 			    const char *indata, size_t inlen,
-			    char *outdata, size_t * outlen)
+			    char **outdata, size_t * outlen)
 {
   int i, j, k;
   int rc;
@@ -136,7 +142,7 @@ shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
 static int
 shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 			   const char *indata, size_t inlen,
-			   char *outdata, size_t * outlen,
+			   char **outdata, size_t * outlen,
 			   dnshost_t rrs)
 {
   int rc;
@@ -190,7 +196,7 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 static int
 shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
 			 const char *indata, size_t inlen,
-			 char *outdata, size_t * outlen)
+			 char **outdata, size_t * outlen)
 {
   dnshost_t rrs;
   char *tmp;
@@ -220,7 +226,7 @@ shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
 static int
 shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
 			    const char *indata, size_t inlen,
-			    char *outdata, size_t * outlen)
+			    char **outdata, size_t * outlen)
 {
   struct servent *se;
   struct addrinfo hints;
@@ -265,7 +271,7 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
 int
 shishi_kdc_sendrecv (Shishi * handle, char *realm,
 		     const char *indata, size_t inlen,
-		     char *outdata, size_t * outlen)
+		     char **outdata, size_t * outlen)
 {
   int rc;
 
