@@ -44,6 +44,27 @@ conf_DATA = shishi.conf shisa.conf
 skeldir = $(SKELDIR)
 skel_DATA = shishi.skel
 
+install-exec-hook:
+	@echo Initializing database and creating host key...
+	if test ! -d $(DESTDIR)$(DBDIR); then \
+	  if mkdir -m 0700 -p $(DESTDIR)$(DBDIR); then \
+	    if test ! -f $(DESTDIR)$(KEYDIR)/shishi.keys; then \
+	      if $(DESTDIR)$(bindir)/shisa$(EXEEXT) -a > \
+			$(DESTDIR)$(KEYDIR)/shishi.keys; then \
+	        echo Successfully created database and host key.; \
+	      else \
+	        echo Unable to create database, see $(DESTDIR)$(KEYDIR)/shishi.keys.; \
+	      fi; \
+	    else \
+	      echo Key file $(DESTDIR)$(KEYDIR)/shishi.keys already exist.; \
+	    fi; \
+	  else \
+	    echo Could not create directory root$(DESTDIR)$(DBDIR).; \
+	  fi; \
+	else \
+	  echo Database root $(DESTDIR)$(DBDIR) already exist.; \
+	fi
+
 # Maintainer targets
 
 indent:
