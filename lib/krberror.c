@@ -26,9 +26,9 @@
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @krberror: KRB-ERROR to print.
- * 
+ *
  * Print ASCII armored DER encoding of KRB-ERROR to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -42,9 +42,9 @@ shishi_krberror_print (Shishi * handle, FILE * fh, ASN1_TYPE krberror)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for writing.
  * @krberror: KRB-ERROR to save.
- * 
+ *
  * Save DER encoding of KRB-ERROR to file.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -60,10 +60,10 @@ shishi_krberror_save (Shishi * handle, FILE * fh, ASN1_TYPE krberror)
  * @filetype: input variable specifying type of file to be written,
  *            see Shishi_filetype.
  * @filename: input variable with filename to write to.
- * 
+ *
  * Write KRB-ERROR to file in specified TYPE.  The file will be
  * truncated if it exists.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -106,10 +106,10 @@ shishi_krberror_to_file (Shishi * handle, ASN1_TYPE krberror,
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @krberror: output variable with newly allocated KRB-ERROR.
- * 
+ *
  * Read ASCII armored DER encoded KRB-ERROR from file and populate given
  * variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -123,9 +123,9 @@ shishi_krberror_parse (Shishi * handle, FILE * fh, ASN1_TYPE * krberror)
  * @handle: shishi handle as allocated by shishi_init().
  * @fh: file handle open for reading.
  * @krberror: output variable with newly allocated KRB-ERROR.
- * 
+ *
  * Read DER encoded KRB-ERROR from file and populate given variable.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -141,9 +141,9 @@ shishi_krberror_read (Shishi * handle, FILE * fh, ASN1_TYPE * krberror)
  * @filetype: input variable specifying type of file to be read,
  *            see Shishi_filetype.
  * @filename: input variable with filename to read from.
- * 
+ *
  * Read KRB-ERROR from file in specified TYPE.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -387,6 +387,7 @@ shishi_krberror_pretty_print (Shishi *handle, FILE *fh, ASN1_TYPE krberror)
 	  (handle, shishi_krberror_get_errorcode_fast(handle, krberror)));
 
   res = shishi_krberror_get_etext(handle, krberror, buf, &len);
+  buf[len] = '\0';
   if (res == SHISHI_OK && len > 0)
     fprintf(fh, "Additional Kerberos error message from server:\n%s\n", buf);
 
