@@ -765,6 +765,7 @@ extern int shishi_kdcreq_add_padata (Shishi * handle,
 extern int shishi_kdcreq_add_padata_tgs (Shishi * handle,
 					 Shishi_asn1 kdcreq,
 					 Shishi_asn1 apreq);
+extern int shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq);
 
 /* enckdcreppart.c */
 extern Shishi_asn1 shishi_enckdcreppart (Shishi * handle);
