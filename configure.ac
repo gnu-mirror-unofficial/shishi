@@ -309,6 +309,68 @@ if test x$enable_gtk_doc = xauto ; then
 fi
 AM_CONDITIONAL(ENABLE_GTK_DOC, test x$enable_gtk_doc = xyes)
 
+# Let people enable/disable various encryption/checksum types.
+AC_ARG_ENABLE(des, AC_HELP_STRING([--disable-des],
+			[disable DES related encryption/checksum types]),
+		enable_des=$enableval, enable_des=yes)
+AM_CONDITIONAL(DES, test "$enable_des" != "no")
+if test "$enable_des" != "no"; then
+	AC_DEFINE(WITH_DES, 1, [Define to 1 if you want DES {e,cksum}types.])
+fi
+AC_MSG_CHECKING([if DES related encryption/checksum types should be used])
+AC_MSG_RESULT($enable_des)
+
+AC_ARG_ENABLE(3des, AC_HELP_STRING([--disable-3des],
+			[disable 3DES encryption/checksum type]),
+		enable_3des=$enableval, enable_3des=yes)
+AM_CONDITIONAL(DES3, test "$enable_3des" != "no")
+if test "$enable_3des" != "no"; then
+	AC_DEFINE(WITH_3DES, 1, [Define to 1 if you want 3DES {e,cksum}type.])
+fi
+AC_MSG_CHECKING([if 3DES encryption/checksum type should be used])
+AC_MSG_RESULT($enable_3des)
+
+AC_ARG_ENABLE(aes, AC_HELP_STRING([--disable-aes],
+			[disable AES encryption/checksum types]),
+		enable_aes=$enableval, enable_aes=yes)
+AM_CONDITIONAL(AES, test "$enable_aes" != "no")
+if test "$enable_aes" != "no"; then
+	AC_DEFINE(WITH_AES, 1, [Define to 1 if you want AES {e,cksum}types.])
+fi
+AC_MSG_CHECKING([if AES encryption/checksum types should be used])
+AC_MSG_RESULT($enable_aes)
+
+AC_ARG_ENABLE(md, AC_HELP_STRING([--disable-md],
+			[disable unkeyed MD4/MD5 checksum types]),
+		enable_md=$enableval, enable_md=yes)
+AM_CONDITIONAL(MD, test "$enable_md" != "no")
+if test "$enable_md" != "no"; then
+	AC_DEFINE(WITH_MD, 1, [Define to 1 if you want MD cksumtypes.])
+fi
+AC_MSG_CHECKING([if unkeyed MD checksum types should be used])
+AC_MSG_RESULT($enable_md)
+
+AC_ARG_ENABLE(null, AC_HELP_STRING([--disable-null],
+			[disable dummy NULL encryption/checksum type]),
+		enable_null=$enableval, enable_null=yes)
+AM_CONDITIONAL(NULL, test "$enable_null" != "no")
+if test "$enable_null" != "no"; then
+	AC_DEFINE(WITH_NULL, 1, [Define to 1 if you want NULL {e,cksum}type.])
+fi
+AC_MSG_CHECKING([if dummy NULL encryption/checksum type should be used])
+AC_MSG_RESULT($enable_null)
+
+AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--disable-arcfour],
+			[disable ARCFOUR encryption/checksum type]),
+		enable_arcfour=$enableval, enable_arcfour=yes)
+AM_CONDITIONAL(ARCFOUR, test "$enable_arcfour" != "no")
+if test "$enable_arcfour" != "no"; then
+	AC_DEFINE(WITH_ARCFOUR, 1,
+			[Define to 1 if you want ARCFOUR {e,cksum}type.])
+fi
+AC_MSG_CHECKING([if ARCFOUR encryption/checksum type should be used])
+AC_MSG_RESULT($enable_arcfour)
+
 AC_CONFIG_FILES(Makefile po/Makefile.in m4/Makefile \
 	asn1/Makefile crypto/Makefile examples/Makefile \
 	lib/Makefile lib/shishi.h src/Makefile tests/Makefile doc/Makefile \
