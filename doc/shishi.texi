@@ -4745,6 +4745,12 @@ with original KCMD protocol because there is no official specification
 about it. However, it seems that shishi implementation is compatible
 with MIT's one.
 
+@strong{Warning:} If you are seriously considering using Kerberos rsh
+or rlogin, instead of more robust remote access protocols such as
+@acronym{SSH}, you may first want to explore
+@url{http://www.cs.berkeley.edu/~hildrum/kerberos/} and the full paper
+at @url{http://www.cs.berkeley.edu/~hildrum/043.pdf}.
+
 @subsection Establish connection
 
 First the client should establish a TCP connection with the
