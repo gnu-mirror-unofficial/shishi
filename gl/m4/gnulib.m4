@@ -19,6 +19,10 @@ AC_DEFUN([gl_EARLY],
 AC_DEFUN([gl_INIT],
 [
   gl_FUNC_ALLOCA
+changequote(,)dnl
+LTALLOCA=`echo "$ALLOCA" | sed 's/\.[^.]* /.lo /g;s/\.[^.]*$/.lo/'`
+changequote([, ])dnl
+AC_SUBST(LTALLOCA)
   gl_FUNC_ALLOCA
   gl_ALLOCSA
   gl_ERROR

@@ -77,7 +77,7 @@ verify (base_year_is_a_multiple_of_100, TM_YEAR_BASE % 100 == 0);
 
 /* Return 1 if YEAR + TM_YEAR_BASE is a leap year.  */
 static inline int
-leapyear (int year)
+leapyear (long int year)
 {
   /* Don't add YEAR to TM_YEAR_BASE, as that might overflow.
      Also, work even if YEAR is negative.  */
@@ -495,7 +495,6 @@ not_equal_tm (const struct tm *a, const struct tm *b)
 	  | (a->tm_mday ^ b->tm_mday)
 	  | (a->tm_mon ^ b->tm_mon)
 	  | (a->tm_year ^ b->tm_year)
-	  | (a->tm_mday ^ b->tm_mday)
 	  | (a->tm_yday ^ b->tm_yday)
 	  | (a->tm_isdst ^ b->tm_isdst));
 }
