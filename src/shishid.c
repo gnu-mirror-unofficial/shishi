@@ -30,7 +30,7 @@
 #include <ctype.h>
 #endif
 
-#if HAVE_UNISTD_H
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -147,6 +147,8 @@ struct arguments
   struct listenspec *listenspec;
   int nlistenspec;
 };
+
+struct arguments arg;
 
 const char *argp_program_version = PACKAGE_STRING;
 const char *argp_program_bug_address = PACKAGE_BUGREPORT;
@@ -335,39 +337,194 @@ static struct argp argp = {
   "Shishid -- Key Distribution Center network daemon"
 };
 
+int
+asreq1 (Shishi * handle, Shishi_as * as)
+{
+  int rc;
+  int pos;
+  ssize_t n;
+  Shishi_tkt *tkt;
+  Shishi_key *sessionkey, *sessiontktkey, *userkey;
+  int etype, i;
+  char buf[BUFSIZ];
+  int buflen;
+  int err;
+  char *username, *servername, *serverrealm;
+  char *password;
+
+  tkt = shishi_as_tkt (as);
+  if (!tkt)
+    return SHISHI_MALLOC_ERROR;
+
+  i = 1;
+  do {
+    err = shishi_kdcreq_etype (handle,
+			       shishi_as_req(as),
+			       &etype, i);
+    if (err == SHISHI_OK && shishi_cipher_supported_p (etype))
+      break;
+  } while (err == SHISHI_OK);
+  if (err != SHISHI_OK)
+    return err;
+
+  /* XXX use a "preferred server kdc etype" from shishi instead? */
+  err = shishi_key_random (handle, etype, &sessionkey);
+  if (err)
+    return err;
+  err = shishi_key_random (handle, etype, &sessiontktkey);
+  if (err)
+    return err;
+
+  err = shishi_tkt_key_set (tkt, sessionkey);
+  if (err)
+    return err;
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_cname_get (handle, shishi_as_req(as), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  username = strdup(buf);
+  printf("username %s\n", username);
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_sname_get (handle, shishi_as_req(as), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  servername = strdup(buf);
+  printf("servername %s\n", servername);
+
+  buflen = sizeof (buf) - 1;
+  err = shishi_kdcreq_realm_get (handle, shishi_as_req(as), buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+  buf[buflen] = '\0';
+  serverrealm = strdup(buf);
+  printf("serverrealm %s\n", serverrealm);
+
+  password = "foo";
+
+  err = shishi_tkt_clientrealm_set (tkt, serverrealm, username);
+  if (err)
+    return err;
+
+  err = shishi_tkt_serverrealm_set (tkt, serverrealm, servername);
+  if (err)
+    return err;
+
+  buflen = sizeof (buf);
+  err = shishi_as_derive_salt (handle, shishi_as_req(as), shishi_as_rep(as),
+			       buf, &buflen);
+  if (err != SHISHI_OK)
+    return err;
+
+  err = shishi_key_from_string (handle,
+				etype,
+				password,
+				strlen(password),
+				buf, buflen,
+				NULL, &userkey);
+  if (err != SHISHI_OK)
+    return err;
+
+  err = shishi_tkt_build (tkt, sessiontktkey);
+  if (err)
+    return err;
+
+  err = shishi_as_rep_build (as, userkey);
+  if (err)
+    return err;
+
+  if (arg.verbose)
+    {
+      shishi_kdcreq_print (handle, stderr, shishi_as_req(as));
+      shishi_encticketpart_print (handle, stderr,
+				  shishi_tkt_encticketpart (tkt));
+      shishi_ticket_print (handle, stderr, shishi_tkt_ticket (tkt));
+      shishi_enckdcreppart_print (handle, stderr,
+				  shishi_tkt_enckdcreppart (tkt));
+      shishi_kdcrep_print (handle, stderr, shishi_as_rep(as));
+    }
+
+  return SHISHI_OK;
+}
+
+void
+asreq (Shishi * handle, ASN1_TYPE kdcreq, char **out, int *outlen)
+{
+  Shishi *as;
+  int rc;
+  ssize_t n;
+  int pos;
+
+  rc = shishi_as (handle, &as);
+  if (rc != SHISHI_OK)
+    {
+      fprintf(stderr, "cannot create as: %s\n", shishi_strerror(rc));
+      /* XXX hard coded KRB-ERROR? */
+      *out = strdup("foo");
+      *outlen = strlen(*out);
+      return;
+    }
+
+  shishi_as_req_set (as, kdcreq);
+
+  *out = malloc(BUFSIZ);
+  if (*out == NULL)
+    {
+      fprintf(stderr, "malloc failed\n");
+      /* XXX hard coded KRB-ERROR? */
+      *out = NULL;
+      *outlen = 0;
+      return;
+    }
+  *outlen = BUFSIZ;
+
+  rc = asreq1 (handle, as);
+  if (rc != SHISHI_OK)
+    {
+      fprintf(stderr, "asreq1() failed: %s\n", shishi_strerror(rc));
+      rc = shishi_as_krberror_der (as, out, outlen);
+    }
+  else
+    rc = shishi_as_rep_der (as, *out, outlen);
+  if (rc != SHISHI_OK)
+    {
+      fprintf(stderr, "cannot DER encode result: %s\n", shishi_strerror(rc));
+      /* XXX hard coded KRB-ERROR? */
+      *out = strdup("aaaaaa");
+      *outlen = strlen(*out);
+      return;
+    }
+
+  return;
+}
+
 void
 process (Shishi * handle,
-	 struct arguments arg, char *data, int datalen, int sockfd)
+	 char *in, int inlen,
+	 char **out, int *outlen)
 {
   ASN1_TYPE kdcreq;
-  ASN1_TYPE kdcrep, ticket, encticketpart;
 
-  printf ("Processing %d bytes: %s\n", datalen, data);
+  fprintf (stderr, "Processing %d bytes...\n", inlen);
 
-  kdcreq = shishi_d2a_kdcreq (handle, data, datalen);
-  if (kdcreq == ASN1_TYPE_EMPTY)
-    puts ("oops");
+  kdcreq = shishi_d2a_asreq (handle, in, inlen);
+  if (kdcreq != ASN1_TYPE_EMPTY)
+    {
+      asreq(handle, kdcreq, out, outlen);
+      return;
+    }
 
-  shishi_kdcreq_print (handle, stdout, kdcreq);
+  kdcreq = shishi_d2a_tgsreq (handle, in, inlen);
+  if (kdcreq != ASN1_TYPE_EMPTY)
+    {
+      fprintf(stderr, "tgs-req...\n");
+    }
 
-  puts ("o");
-  kdcrep = shishi_as_rep (handle);
-
-  //shishi_kdcrep_print(handle, stdout, kdcrep);
-  puts ("o");
-
-  ticket = shishi_asn1_ticket (handle);
-  puts ("o");
-
-  //shishi_ticket_print (handle, stdout, ticket);
-
-  encticketpart = shishi_asn1_encticketpart (handle);
-  puts ("o");
-
-  shishi_encticketpart_print (handle, stdout, encticketpart);
-
-  puts ("o");
-
+  *out = NULL;
+  *outlen = 0;
 }
 
 int quit = 0;
@@ -389,7 +546,7 @@ doit (Shishi * handle, struct arguments arg)
   int maxfd = 0;
   int rc;
   int i;
-  int read_bytes;
+  int sent_bytes, read_bytes;
   int yes;
 
   for (i = 0; i < arg.nlistenspec; i++)
@@ -540,10 +697,33 @@ doit (Shishi * handle, struct arguments arg)
 		printf ("Has %d bytes from %s\n", ls->bufpos, ls->str);
 
 		if (arg.listenspec[i].type == SOCK_DGRAM ||
-		    (ls->bufpos > 4
-		     && ntohl (*(int *) ls->buf) == ls->bufpos))
+		    (ls->bufpos > 4 && ntohl (*(int *) ls->buf) == ls->bufpos))
 		  {
-		    process (handle, arg, ls->buf, ls->bufpos, ls->sockfd);
+		    char *p;
+		    size_t plen;
+
+		    process (handle, ls->buf, ls->bufpos, &p, &plen);
+
+		    if (p && plen > 0)
+		      {
+			do
+			  sent_bytes = sendto(ls->sockfd, p, plen,
+					      0, &addr, length);
+			while (sent_bytes == -1 && errno == EAGAIN);
+
+			if (sent_bytes == -1)
+			  perror("write");
+			else if (sent_bytes > plen)
+			  fprintf(stderr, "wrote %db but buffer only %db",
+				  sent_bytes, plen);
+			else if (sent_bytes < plen)
+			  fprintf(stderr,
+				  "short write (%db) writing %d bytes\n",
+				  sent_bytes, plen);
+
+			free(p);
+		      }
+
 		    ls->bufpos = 0;
 		  }
 	      }
@@ -572,14 +752,13 @@ doit (Shishi * handle, struct arguments arg)
 int
 main (int argc, char *argv[])
 {
-  struct arguments arg;
   Shishi *handle;
   int rc;
 
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
-  rc = shishi_init_with_paths (&handle, NULL, arg.cfgfile, "");
+  rc = shishi_init_server_with_paths (&handle, arg.cfgfile);
   if (rc != SHISHI_OK)
     {
       fprintf (stderr, "Could not initialize library\n");
