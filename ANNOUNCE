@@ -23,8 +23,8 @@ converted into any available character set (normally including
 ISO-8859-1 and UTF-8) and also be processed using an experimental
 Stringprep profile.
 
-Most common encryption types and checksum types are supported, such as
-DES, 3DES, AES and MD4, MD5, HMAC-SHA1.
+Most, if not all, of the widely used encryption and checksum types are
+supported, such as 3DES, AES and HMAC-SHA1.
 
 Shishi is developed for the GNU/Linux system, but runs on over 20
 platforms including most major Unix platforms and Windows, and many
