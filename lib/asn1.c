@@ -929,15 +929,15 @@ shishi_der2asn1_ap_rep (ASN1_TYPE definitions,
 }
 
 ASN1_TYPE
-shishi_d2a_aprep (Shishi * handle, char *der,
-		  int derlen, char *errorDescription)
+shishi_d2a_aprep (Shishi * handle, char *der, int derlen)
 {
   ASN1_TYPE aprep;
+  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE];
 
   aprep = shishi_der2asn1_ap_rep (handle->asn1, der,
 				  derlen, errorDescription);
   if (aprep == ASN1_TYPE_EMPTY)
-    fprintf (stdout, "Could not DER deocde AP-REP\n");
+    fprintf (stdout, "Could not DER deocde AP-REP: %s\n", errorDescription);
 
   return aprep;
 }
