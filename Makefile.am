@@ -41,6 +41,8 @@ pkgconfig_DATA = shishi.pc
 sysconf_DATA = shishi.conf
 pkgdata_DATA = shishi.skel
 
+EXTRA_DIST = shishi.conf.in shishi.skel.in shishi.pc.in
+
 # Maintainer targets
 
 indent:
