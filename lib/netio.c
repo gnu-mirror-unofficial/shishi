@@ -285,7 +285,7 @@ shishi_sendrecv_tls (Shishi * handle,
    } else if (ret > 0) {
       printf("- Received %d bytes: ", ret);
       for (i = 0; i < ret; i++) {
-         fputc(tmpbuf[i], stdout);
+	fputc(tmpbuf[i], stdout);
       }
       fputs("\n", stdout);
    }
@@ -305,8 +305,9 @@ shishi_sendrecv_tls (Shishi * handle,
 
    gnutls_global_deinit();
 
-   *outdata = xmalloc (ret);
-   memcpy (*outdata, tmpbuf, *outlen);
+   *outlen = ret - 4;
+   *outdata = xmalloc (*outlen);
+   memcpy (*outdata, tmpbuf + 4, *outlen);
 
   return SHISHI_OK;
 }
