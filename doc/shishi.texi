@@ -166,7 +166,8 @@ The following table summarize what is currently implemented.
 
 The following table summarize what the current objectives are (i.e.,
 the todo list) and an estimate on how long it will take to implement
-the feature.
+the feature.  If you like to start working on anything, please let me
+know so work duplication can be avoided.
 
 @table @asis
 
@@ -190,7 +191,17 @@ the feature.
 
 @item Port applications to use Shishi (indefinite)
 
+@item Improve documentation
+
+@item Improve internationalization
+
+@item Fix fixed size buffers.
+
 @end table
+
+Shishi will not contain a GSSAPI library, but a separate project to
+create a GSSAPI library is being considered and would contain a Shishi
+backend.
 
 @node Overview
 @section Overview
