@@ -27,6 +27,7 @@ shishi_texi_auto_deps = shishi-api-init.texi shishi-api-utility.texi \
 	shishi-api-kdc.texi shishi-api-authenticator.texi shishi-api-ap.texi \
 	shishi-api-key.texi shishi-api-keys.texi shishi-api-hostkeys.texi \
 	shishi-api-crypto.texi shishi-api-nettle.texi shishi-api-version.texi \
+	shishi-api-crypto-ctx.texi \
 	shishi-api-error.texi shishi-api-error-labels.texi
 
 generated = shishi.txt shishi.html shishi.ps shishi.pdf \
@@ -87,6 +88,9 @@ shishi-api-hostkeys.texi: $(top_srcdir)/lib/hostkeys.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-crypto.texi: $(top_srcdir)/lib/crypto.c
+	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
+
+shishi-api-crypto-ctx.texi: $(top_srcdir)/lib/crypto-ctx.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-nettle.texi: $(top_srcdir)/lib/nettle.c

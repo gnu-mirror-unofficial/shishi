@@ -2267,6 +2267,14 @@ are described now.
 
 @include shishi-api-crypto.texi
 
+An easier way to use encryption and decryption if your application
+repeatedly calls, e.g., @code{shishi_encrypt_ivupdate}, is to use the
+following functions.  They store the key, initialization vector, etc,
+in a context, and the encryption and decryption operations update the
+IV within the context automatically.
+
+@include shishi-api-crypto-ctx.texi
+
 Also included in Shishi is an interface to the really low-level
 cryptographic primitives.  They map directly on the underlying
 cryptographic library used (e.g., Nettle) and is used internally by
