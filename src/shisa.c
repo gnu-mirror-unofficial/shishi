@@ -64,13 +64,13 @@ Shishi *sh;
 Shisa *dbh;
 struct gengetopt_args_info args;
 
-void
+static void
 printfield (const char *fieldname, const char *value)
 {
   printf ("\t\t%s %s.\n", fieldname, value);
 }
 
-void
+static void
 printtimefield (const char *fieldname, time_t t)
 {
   char *p = ctime (&t);
@@ -78,7 +78,7 @@ printtimefield (const char *fieldname, time_t t)
   printfield (fieldname, t == (time_t) - 1 ? "N/A" : p);
 }
 
-void
+static void
 printintfield (const char *fieldname, int num)
 {
   char *p;
@@ -87,7 +87,7 @@ printintfield (const char *fieldname, int num)
   free (p);
 }
 
-void
+static void
 printuint32field (const char *fieldname, uint32_t num)
 {
   char *p;
@@ -96,7 +96,7 @@ printuint32field (const char *fieldname, uint32_t num)
   free (p);
 }
 
-void
+static void
 print3field (const char *fieldname, const char *text, uint32_t num)
 {
   char *p;
@@ -105,7 +105,7 @@ print3field (const char *fieldname, const char *text, uint32_t num)
   free (p);
 }
 
-void
+static void
 printdbkey (const char *realm, const char *principal, Shisa_key * dbkey)
 {
   Shishi_key *key;
@@ -123,7 +123,7 @@ printdbkey (const char *realm, const char *principal, Shisa_key * dbkey)
 	   rc, shishi_strerror (rc));
 }
 
-int
+static int
 dumplist_realm_principal (const char *realm, const char *principal)
 {
   Shisa_principal ph;
@@ -207,7 +207,7 @@ dumplist_realm_principal (const char *realm, const char *principal)
   return SHISA_OK;
 }
 
-int
+static int
 dumplist_realm (const char *realm)
 {
   char **principals;
@@ -233,7 +233,7 @@ dumplist_realm (const char *realm)
   return rc;
 }
 
-int
+static int
 dumplist (void)
 {
   int rc;
@@ -270,7 +270,7 @@ dumplist (void)
   return rc;
 }
 
-void
+static void
 add (const char *realm, const char *principal,
      Shisa_principal * ph, Shisa_key * key)
 {
@@ -295,7 +295,7 @@ add (const char *realm, const char *principal,
     printf ("Adding principal `%s@%s'...done\n", principal, realm);
 }
 
-void
+static void
 delete (const char *realm, const char *principal)
 {
   int rc;
@@ -338,7 +338,7 @@ delete (const char *realm, const char *principal)
     printf ("Removing principal `%s@%s'...done\n", principal, realm);
 }
 
-void
+static void
 apply_options (const char *realm,
 	       const char *principal, Shisa_principal * ph, Shisa_key * dbkey)
 {
