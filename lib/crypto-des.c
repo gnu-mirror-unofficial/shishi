@@ -558,7 +558,7 @@ des_cbc_check (Shishi * handle, char key[8], char *data, int n_data)
 
   CBC_SET_IV (&des, key);
 
-  CBC_ENCRYPT (&des, des_encrypt, n_data, key, data);
+  CBC_MAC (&des, des_encrypt, n_data, key, data);
 
   return SHISHI_OK;
 #endif
