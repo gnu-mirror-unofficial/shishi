@@ -93,7 +93,7 @@ Kerberos 5.
 
 @menu
 * Getting Started::             
-* Features and Project Status::                    
+* Features and Status::                    
 * Overview::                    
 * Cryptographic Overview::                    
 * Supported Platforms::
@@ -108,7 +108,7 @@ interface.  All commands, functions and data types provided by Shishi
 are explained.
 
 The reader is assumed to possess basic familiarity with network
-security and RFC 1510.
+security and the RFC 1510 security system.
 
 This manual can be used in several ways.  If read from the beginning
 to the end, it gives a good introduction into the library and how it
@@ -119,8 +119,8 @@ library.  Experienced programmers might want to start looking at the
 examples at the end of the manual, and then only read up those parts
 of the interface which are unclear.
 
-@node Features and Project Status
-@section Features and Project Status
+@node Features and Status
+@section Features and Status
 
 Shishi might have a couple of advantages over other packages doing a
 similar job.
@@ -143,9 +143,11 @@ It should work on all Unix like operating systems, including Windows.
 
 @end table
 
-The following table summarize what is currently implemented.
+Shishi is far from feature complete, it is not even a full RFC 1510
+implementation yet.  However, some basic functionality is implemented.
+A few implemented feature are mentioned below.
 
-@table @asis
+@itemize @bullet
 
 @item Initial authentication (AS) from raw key or password.
 
@@ -160,18 +162,18 @@ The following table summarize what is currently implemented.
 
 @item Telnet client.
 
-@item 
-
-@end table
+@end itemize
 
 The following table summarize what the current objectives are (i.e.,
 the todo list) and an estimate on how long it will take to implement
 the feature.  If you like to start working on anything, please let me
 know so work duplication can be avoided.
 
-@table @asis
+@itemize @bullet
 
 @item Cross-realm support (week).
+
+@item Session keys in AP (week).
 
 @item PKINIT (use libksba, weeks)
 
@@ -197,8 +199,9 @@ know so work duplication can be avoided.
 
 @item Fix fixed size buffers.
 
-@end table
+@end itemize
 
+@cindex GSSAPI
 Shishi will not contain a GSSAPI library, but a separate project to
 create a GSSAPI library is being considered and would contain a Shishi
 backend.
@@ -303,6 +306,10 @@ Here are the names of the supported encryption suites, with some notes
 on their status and there associated checksum suite.  They are ordered
 by increased security as perceived by the author.
 
+@cindex DES
+@cindex 3DES
+@cindex AES
+
 @table @code
 
 @item NULL
@@ -357,9 +364,9 @@ with the @code{hmac-sha1-des3-kd} checksum.
 AES encryption and decryption with 128 bit and 256 bit key,
 respectively, and 16 byte blocks in CBC mode with Cipher Text
 Stealing.  Cipher Text Stealing means data length of encrypted data is
-preserved (earlier schemes above added up to 7 pad characters).  The
-keys can be derived from passwords with RSA Laboratories PKCS#5
-Password Based Key Derivation Function
+preserved (pure CBC add up to 7 pad characters).  The keys can be
+derived from passwords with RSA Laboratories PKCS#5 Password Based Key
+Derivation Function
 2@footnote{@url{http://www.rsasecurity.com/rsalabs/pkcs/pkcs-5/}},
 which is provably secure in a random oracle model.  Data is integrity
 protected with a keyed (HMAC) SHA1 hash truncated to 96 bits.  There
@@ -429,24 +436,50 @@ is compatible with the @code{des3-cbc-sha1-kd} encryption mechanism.
 @node Supported Platforms
 @section Supported Platforms
 
-Shishi has been tested on the following platforms:
+Shishi is regularly tested on the following platforms:
 
 @enumerate
-@item alphaev67-dec-osf5.0 (Tru64 UNIX C, Tru64 make)
-@item i686-pc-linux-gnu (Debian unstable)
-@item i686-pc-linux-gnu (RedHat 7.2)
-@item mips-sgi-irix6.5 (MIPS C compiler, IRIX make)
-@item rs6000-ibm-aix4.3.2.0 (GCC 2.9-aix43-000718, GNU make)
-@item rs6000-ibm-aix4.3.2.0 (IBM C for AIX compiler, AIX make)
-@item sparc-sun-solaris2.6 (Sun WorkShop Compiler C 5.0, SUN make)
-@item sparc-sun-solaris2.8 (Sun WorkShop Compiler C 6.0, SUN make)
+
+@item Tru64 UNIX
+@cindex Tru64
+
+alphaev67-dec-osf5.0, Tru64 UNIX C compiler, and Tru64 Make.
+
+@item Debian Sid (post woody)
+@cindex Debian
+
+i686-pc-linux-gnu, GCC 3.2, GNU Make.
+
+@item RedHat 7.2
+@cindex RedHat
+
+i686-pc-linux-gnu, GCC 2.96rh, GNU Make.
+
+@item IRIX 6.5
+@cindex IRIX
+
+mips-sgi-irix6.5, MIPS C compiler, IRIX Make.
+
+@item AIX 4.3.2
+@cindex AIX
+
+rs6000-ibm-aix4.3.2.0, IBM C for AIX compiler, AIX Make.
+
+@item Solaris 2.8
+@cindex Solaris
+
+sparc-sun-solaris2.8, Sun WorkShop Compiler C 6.0, SUN Make.
+
 @end enumerate
 
-If you use Shishi on, or port Shishi to, a new platform please report it
-the author.
+If you use Shishi on, or port Shishi to, a new platform please report
+it to the author.  In particular, if someone has access to a machine
+running Microsoft Windows, a port to it and/or a Shishi maintainer for
+the platform would be gratefully accepted.
 
 @node Bug Reports
 @section Bug Reports
+@cindex Reporting Bugs
 
 If you think you have found a bug in Shishi, please investigate it and
 report it.
@@ -454,7 +487,7 @@ report it.
 @itemize @bullet
 
 @item Please make sure that the bug is really in Shishi, and preferably also
-check that it isn't fixed in the latest version.
+check that it hasn't already been fixed in the latest version.
 
 @item You have to send us a test case that makes it possible for us to
 reproduce the bug.
@@ -472,16 +505,17 @@ piecemeal messages are difficult to act on and don't help the
 development effort.
 
 If your bug report is good, we will do our best to help you to get a
-corrected version of the library; if the bug report is poor, we won't do
-anything about it (apart from asking you to send better bug reports).
+corrected version of the software; if the bug report is poor, we won't
+do anything about it (apart from asking you to send better bug
+reports).
+
+If you think something in this manual is unclear, or downright
+incorrect, or if the language needs to be improved, please also send a
+note.
 
 Send your bug report to:
 
 @center @samp{bug-shishi@@josefsson.org}
-
-If you think something in this manual is unclear, or downright
-incorrect, or if the language needs to be improved, please send a note
-to the same address.
 
 
 @c **********************************************************
@@ -489,6 +523,7 @@ to the same address.
 @c **********************************************************
 @node User Manual
 @chapter User Manual
+@cindex End-user Shishi usage
 
 Usually Shishi interacts with you to get some initial authentication
 information like a password, and then contacts a server to receive a
@@ -876,6 +911,7 @@ TBW.
 @c **********************************************************
 @node Programming Manual
 @chapter Programming Manual
+@cindex Application Programming Interface (API)
 
 This chapter describes all the publicly available functions in the
 library.
