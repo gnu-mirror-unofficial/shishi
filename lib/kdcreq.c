@@ -617,6 +617,36 @@ shishi_kdcreq_till (Shishi * handle, Shishi_asn1 kdcreq,
 }
 
 /**
+ * shishi_kdcreq_tillc:
+ * @handle: Shishi library handle create by shishi_init().
+ * @tkt: input variable with ticket info.
+ *
+ * Extract C time corresponding to the "till" field.
+ *
+ * Return value: Returns C time interpretation of the "till" field in
+ * KDC-REQ.
+ **/
+time_t
+shishi_kdcreq_tillc (Shishi * handle, Shishi_asn1 * kdcreq)
+{
+  char *till;
+  size_t tilllen;
+  time_t t = (time_t) -1;
+  int res;
+
+  res = shishi_kdcreq_till (handle, kdcreq, &till, &tilllen);
+  if (res != SHISHI_OK)
+    return t;
+
+  if (tilllen == GENERALIZEDTIME_TIME_LEN + 1) /* XXX why +1 ? */
+    t = shishi_generalize_ctime (handle, till);
+
+  free (till);
+
+  return t;
+}
+
+/**
  * shishi_kdcreq_etype:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ variable to get etype field from.
