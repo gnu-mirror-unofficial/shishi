@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+## Copyright (c) 2003 Simon Josefsson                            ##
 ## Copyright (c) 1998 Michael Zucchi, All Rights Reserved        ##
 ##                    hacked to allow -tex option --nmav         ##
 ##                    hacked to allow -texinfo option --jas      ##
@@ -244,6 +245,8 @@ sub output_highlight {
     my $contents = join "\n", @_;
     my $line;
 
+    $contents =~ s:{:\@{:gs if ($output_mode eq "texinfo");
+    $contents =~ s:}:\@}:gs if ($output_mode eq "texinfo");
     eval $dohighlight;
     $contents =~ s:CMD:@:gs if ($output_mode eq "texinfo");
     foreach $line (split "\n", $contents) {
