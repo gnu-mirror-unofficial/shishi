@@ -35,8 +35,8 @@ libshishi_la_SOURCES = internal.h gettext.h \
 	asn1.c kerberos5.c \
 	version.c password.c \
 	resolv.c
-libshishi_la_LIBADD = @LIBTASN1_LIBS@ @LIBGCRYPT_LIBS@ @LIBIDN_LIBS@ \
-	@LTLIBINTL@ -L../gl -lfoo
+libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @LIBIDN_LIBS@ \
+	@LTLIBINTL@ -L../gl -lfoo @LIBTASN1_LIBS@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 INCLUDES = -I$(top_srcdir)/gl -I$(top_srcdir)/asn1 \
