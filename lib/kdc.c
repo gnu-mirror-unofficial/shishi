@@ -559,6 +559,7 @@ shishi_kdc_check_nonce (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @tgsreq: input variable that holds the sent KDC-REQ.
  * @tgsrep: input variable that holds the received KDC-REP.
+ * @authenticator: input variable with Authenticator from AP-REQ in KDC-REQ.
  * @oldenckdcreppart: input variable with EncKDCRepPart used in request.
  * @enckdcreppart: output variable that holds new EncKDCRepPart.
  *
@@ -574,13 +575,11 @@ int
 shishi_tgs_process (Shishi * handle,
 		    Shishi_asn1 tgsreq,
 		    Shishi_asn1 tgsrep,
-		    Shishi_asn1 oldenckdcreppart, Shishi_asn1 * enckdcreppart)
+		    Shishi_asn1 authenticator,
+		    Shishi_asn1 oldenckdcreppart,
+		    Shishi_asn1 * enckdcreppart)
 {
   Shishi_key *key;
-  Shishi_key *subkey;
-  Shishi_key *keytouse;
-  Shishi_asn1 apreq;
-  Shishi_asn1 authenticator;
   int etype;
   int res;
   int32_t keyusage;
@@ -589,39 +588,30 @@ shishi_tgs_process (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_enckdcreppart_get_key (handle, oldenckdcreppart, &key);
+  res = shishi_authenticator_get_subkey (handle, authenticator, &key);
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_kdcreq_get_padata_tgs (handle, tgsreq, &apreq);
-  if (res != SHISHI_OK)
-    return res;
-
-  if (0) /* XXX shishi_apreq_use_session_key_p (handle, apreq)) */
+  if (res == SHISHI_ASN1_NO_ELEMENT)
     {
-      res = shishi_apreq_decrypt (handle, apreq, key,
-				  SHISHI_KEYUSAGE_TGSREQ_APREQ_AUTHENTICATOR,
-				  &authenticator);
+      res = shishi_enckdcreppart_get_key (handle, oldenckdcreppart, &key);
       if (res != SHISHI_OK)
 	return res;
 
-      res = shishi_authenticator_get_subkey (handle, authenticator, &subkey);
-      if (res != SHISHI_OK)
-	return res;
+      if (etype != shishi_key_type (key))
+	return SHISHI_TGSREP_BAD_KEYTYPE;
 
-      keytouse = subkey;
-      keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY;
+      keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY;
     }
   else
     {
-      keytouse = key;
-      keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_SESSION_KEY;
+      if (etype != shishi_key_type (key))
+	return SHISHI_TGSREP_BAD_KEYTYPE;
+
+      keyusage = SHISHI_KEYUSAGE_ENCTGSREPPART_AUTHENTICATOR_KEY;
     }
 
-  if (etype != shishi_key_type (keytouse))
-    return SHISHI_TGSREP_BAD_KEYTYPE;
-
-  res = shishi_kdc_process (handle, tgsreq, tgsrep, keytouse,
+  res = shishi_kdc_process (handle, tgsreq, tgsrep, key,
 			    keyusage, enckdcreppart);
 
   return res;
