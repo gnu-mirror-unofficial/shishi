@@ -273,13 +273,13 @@ shishi_encticketpart_cname_set (Shishi * handle,
 int
 shishi_encticketpart_transited_set (Shishi * handle,
 				    Shishi_asn1 encticketpart,
-				    int trtype,
-				    char *trdata, size_t trdatalen)
+				    int32_t trtype,
+				    const char *trdata, size_t trdatalen)
 {
   int res;
 
-  res = shishi_asn1_write_uint32 (handle, encticketpart,
-				  "transited.tr-type", trtype);
+  res = shishi_asn1_write_int32 (handle, encticketpart,
+				 "transited.tr-type", trtype);
   if (res != SHISHI_OK)
     return res;
 
