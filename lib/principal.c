@@ -98,6 +98,22 @@ shishi_principal_default_set (Shishi * handle, const char *principal)
     handle->default_principal = NULL;
 }
 
+/**
+ * shishi_parse_name:
+ * @handle: Shishi library handle create by shishi_init().
+ * @name: Input principal name string, e.g. imap/mail.gnu.org@GNU.ORG.
+ * @principal: newly allocated output string with principal name.
+ * @realm: newly allocated output string with realm name.
+ *
+ * Split up principal name (e.g., "simon@JOSEFSSON.ORG") into two
+ * newly allocated strings, the principal ("simon") and realm
+ * ("JOSEFSSON.ORG").  If there is no realm part in NAME, REALM is set
+ * to NULL.
+ *
+ * Return value: Returns SHISHI_INVALID_PRINCIPAL_NAME if NAME is NULL
+ *   or ends with the escape character "\", or SHISHI_OK iff
+ *   successful
+ **/
 int
 shishi_parse_name (Shishi * handle, const char *name,
 		   char **principal, char **realm)
@@ -114,6 +130,9 @@ shishi_parse_name (Shishi * handle, const char *name,
       escaped = 0;
     else if (*p++ == '\\')
       escaped = 1;
+
+  if (escaped)
+    return SHISHI_INVALID_PRINCIPAL_NAME;
 
   if (principal)
     {
@@ -138,7 +157,7 @@ shishi_parse_name (Shishi * handle, const char *name,
 	*realm = xstrdup (p);
     }
   else if (realm)
-    *realm = xstrdup (shishi_realm_default (handle));
+    *realm = NULL;
 
   return SHISHI_OK;
 }
