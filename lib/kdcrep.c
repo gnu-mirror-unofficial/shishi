@@ -449,15 +449,6 @@ shishi_kdcrep_decrypt (Shishi * handle,
 			   "des_decrypt fail, most likely wrong password\n");
       return res;
     }
-  {
-    FILE *fh;
-    fh = fopen("ggg", "w");
-    if (fh)
-      {
-	fwrite (buf, sizeof (buf[0]), buflen, fh);
-	fclose(fh);
-      }
-  }
 
   /* The crypto is so 1980; no length indicator. Trim off pad bytes
      until we can parse it. */
