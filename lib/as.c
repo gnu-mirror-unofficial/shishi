@@ -28,7 +28,7 @@
 /**
  * shishi_as_get_asreq:
  * @as: structure that holds information about AS exchange
- * 
+ *
  * Return value: Returns the generated AS-REQ packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
@@ -41,7 +41,7 @@ shishi_as_get_asreq (Shishi_as * as)
 /**
  * shishi_as_get_asrep:
  * @as: structure that holds information about AS exchange
- * 
+ *
  * Return value: Returns the received AS-REP packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
@@ -54,7 +54,7 @@ shishi_as_get_asrep (Shishi_as * as)
 /**
  * shishi_as_get_krberror:
  * @as: structure that holds information about AS exchange
- * 
+ *
  * Return value: Returns the received KRB-ERROR packet from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
@@ -67,7 +67,7 @@ shishi_as_get_krberror (Shishi_as * as)
 /**
  * shishi_as_get_ticket:
  * @as: structure that holds information about AS exchange
- * 
+ *
  * Return value: Returns the newly aquired ticket from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
@@ -82,14 +82,14 @@ shishi_as_get_ticket (Shishi_as * as)
  * @handle: shishi handle as allocated by shishi_init().
  * @password: password of client, or NULL to query user.
  * @as: holds pointer to newly allocate Shishi_as structure.
- * 
+ *
  * Perform initial Kerberos 5 authentication, in order to acquire a
  * Ticket Granting Ticket.  It uses defaults from the handle for the
  * client principal name, server realm and server name.  The server name
  * is by default the ticket-granting server name of the realm.  The
  * password field holds a user supplied password, or NULL to make this
  * function query for one.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -125,14 +125,14 @@ shishi_as (Shishi * handle, char *password, Shishi_as ** as)
  * @cname: client principal name
  * @realm: server realm (also indicates client realm)
  * @sname: server principal name
- * 
+ *
  * Perform initial Kerberos 5 authentication, in order to acquire a
  * Ticket Granting Ticket.  It uses the supplied values for the client
  * principal name, server realm and server name.  The server name
  * should normally be the ticket-granting server name of the realm.
  * The password field holds a user supplied password, or NULL to make
  * this function query for one.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
@@ -141,7 +141,7 @@ shishi_as_password_cnamerealmsname (Shishi * handle,
 				    Shishi_as ** as,
 				    char *cname, char *realm, char *sname)
 {
-  return shishi_as_cnamerealmsname (handle, -1, password, 0, as,
+  return shishi_as_cnamerealmsname (handle, password, NULL, as,
 				    cname, realm, sname);
 
 }
@@ -157,7 +157,7 @@ shishi_as_password_cnamerealmsname (Shishi * handle,
  * @cname: client principal name
  * @realm: server realm (also indicates client realm)
  * @sname: server principal name
- * 
+ *
  * Perform initial Kerberos 5 authentication, in order to acquire a
  * Ticket Granting Ticket.  It uses the supplied values for the client
  * principal name, server realm and server name.  The server name
@@ -165,18 +165,16 @@ shishi_as_password_cnamerealmsname (Shishi * handle,
  * The key is used to decrypt the AP-REP, but also used when creating
  * the AP-REQ to indicate that the only supported encryption type is
  * the supplied keytype.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_as_rawkey_cnamerealmsname (Shishi * handle,
-				  int keytype,
-				  char *key,
-				  int keylen,
-				  Shishi_as ** as,
-				  char *cname, char *realm, char *sname)
+shishi_as_key_cnamerealmsname (Shishi * handle,
+			       Shishi_key *key,
+			       Shishi_as ** as,
+			       char *cname, char *realm, char *sname)
 {
-  return shishi_as_cnamerealmsname (handle, keytype, key, keylen, as,
+  return shishi_as_cnamerealmsname (handle, NULL, key, as,
 				    cname, realm, sname);
 }
 
@@ -190,7 +188,7 @@ shishi_as_rawkey_cnamerealmsname (Shishi * handle,
  * @cname: client principal name
  * @realm: server realm (also indicates client realm)
  * @sname: server principal name
- * 
+ *
  * Perform initial Kerberos 5 authentication, in order to acquire a
  * Ticket Granting Ticket.  It uses the supplied values for the client
  * principal name, server realm and server name.  The server name
@@ -201,18 +199,16 @@ shishi_as_rawkey_cnamerealmsname (Shishi * handle,
  * (of length specified by keylen), and it is used to decrypt the
  * AP-REP, but also used when creating the AP-REQ to indicate that the
  * only supported encryption type is the supplied keytype.
- * 
+ *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
 shishi_as_cnamerealmsname (Shishi * handle,
-			   int keytype,
 			   char *password,
-			   int keylen,
+			   Shishi_key *key,
 			   Shishi_as ** as,
 			   char *cname, char *realm, char *sname)
 {
-  const char *const key = password;
   char user[BUFSIZ];
   int userlen;
   int res;
@@ -237,7 +233,7 @@ shishi_as_cnamerealmsname (Shishi * handle,
   if (res != SHISHI_OK)
     goto done;
 
-  if (keytype == -1 && password == NULL)
+  if (key == NULL && password == NULL)
     {
       char password[BUFSIZ];
 
@@ -254,7 +250,7 @@ shishi_as_cnamerealmsname (Shishi * handle,
       res = shishi_as_process (handle, (*as)->asreq, (*as)->asrep,
 			       password, &kdcreppart);
     }
-  else if (keytype == -1)
+  else if (key == NULL)
     res = shishi_as_process (handle, (*as)->asreq, (*as)->asrep,
 			     password, &kdcreppart);
   else

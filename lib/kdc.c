@@ -492,8 +492,7 @@ shishi_as_process (Shishi * handle,
   unsigned char salt[BUFSIZ];
   int saltlen;
   int res;
-  unsigned char key[BUFSIZ];
-  int keylen;
+  Shishi_key *key;
   int keytype;
 
   saltlen = sizeof (salt);
@@ -505,10 +504,11 @@ shishi_as_process (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  keylen = sizeof (key);
+  key = shishi_key (keytype, NULL);
+
   res = shishi_string_to_key (handle, keytype,
 			      string, strlen (string),
-			      salt, saltlen, NULL, key, &keylen);
+			      salt, saltlen, NULL, key);
   if (res != SHISHI_OK)
     return res;
 
