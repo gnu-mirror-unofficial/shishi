@@ -38,7 +38,7 @@ init_handle (int outputtype)
 
   handle = xcalloc (1, sizeof (*handle));
 
-  shishi_set_outputtype (handle, outputtype);
+  shishi_error_set_outputtype (handle, outputtype);
 
   rc = _shishi_crypto_init (handle);
   if (rc != SHISHI_OK)
@@ -92,8 +92,8 @@ init_handle (int outputtype)
  * shishi:
  *
  * Initializes the Shishi library, and set up, using
- * shishi_set_outputtype(), the library so that future warnings and
- * informational messages are printed to stderr.  If this function
+ * shishi_error_set_outputtype(), the library so that future warnings
+ * and informational messages are printed to stderr.  If this function
  * fails, it may print diagnostic errors to stderr.
  *
  * Return value: Returns Shishi library handle, or %NULL on error.
@@ -108,9 +108,9 @@ shishi (void)
  * shishi_server:
  *
  * Initializes the Shishi library, and set up, using
- * shishi_set_outputtype(), the library so that future warnings and
- * informational messages are printed to the syslog.  If this function
- * fails, it may print diagnostic errors to the syslog.
+ * shishi_error_set_outputtype(), the library so that future warnings
+ * and informational messages are printed to the syslog.  If this
+ * function fails, it may print diagnostic errors to the syslog.
  *
  * Return value: Returns Shishi library handle, or %NULL on error.
  **/

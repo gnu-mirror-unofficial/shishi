@@ -207,7 +207,7 @@ shishi_error_printf (Shishi * handle, const char *format, ...)
 }
 
 /**
- * shishi_outputtype:
+ * shishi_error_outputtype:
  * @handle: shishi handle as allocated by shishi_init().
  *
  * Get the current output type for logging messages.
@@ -216,13 +216,13 @@ shishi_error_printf (Shishi * handle, const char *format, ...)
  *   informational and warning messages.
  **/
 int
-shishi_outputtype (Shishi * handle)
+shishi_error_outputtype (Shishi * handle)
 {
   return handle->outputtype;
 }
 
 /**
- * shishi_set_outputtype:
+ * shishi_error_set_outputtype:
  * @handle: shishi handle as allocated by shishi_init().
  * @type: output type.
  *
@@ -230,7 +230,7 @@ shishi_outputtype (Shishi * handle)
  * and warning messages.
  **/
 void
-shishi_set_outputtype (Shishi * handle, int type)
+shishi_error_set_outputtype (Shishi * handle, int type)
 {
   handle->outputtype = type;
 }
@@ -256,7 +256,7 @@ shishi_info (Shishi * handle, const char *format, ...)
   va_start (ap, format);
   vasprintf (&out, format, ap);
 
-  type = shishi_outputtype (handle);
+  type = shishi_error_outputtype (handle);
   switch (type)
     {
     case SHISHI_OUTPUTTYPE_STDERR:
@@ -291,7 +291,7 @@ shishi_warn (Shishi * handle, const char *format, ...)
   va_start (ap, format);
   vasprintf (&out, format, ap);
 
-  type = shishi_outputtype (handle);
+  type = shishi_error_outputtype (handle);
   switch (type)
     {
     case SHISHI_OUTPUTTYPE_STDERR:

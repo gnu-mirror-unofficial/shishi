@@ -611,8 +611,8 @@ extern const char *shishi_error (Shishi * handle);
 extern void shishi_error_clear (Shishi * handle);
 extern void shishi_error_set (Shishi * handle, const char *errstr);
 extern void shishi_error_printf (Shishi * handle, const char *format, ...);
-extern int shishi_outputtype (Shishi * handle);
-extern void shishi_set_outputtype (Shishi * handle, int type);
+extern int shishi_error_outputtype (Shishi * handle);
+extern void shishi_error_set_outputtype (Shishi * handle, int type);
 extern void shishi_info (Shishi * handle, const char *format, ...);
 extern void shishi_warn (Shishi * handle, const char *format, ...);
 
