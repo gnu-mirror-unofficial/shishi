@@ -14,6 +14,10 @@ Kerberos 5 authentication support for telnet client and telnetd server
 using Shishi.  Apply the patch and build InetUtils using
 --enable-encryption --enable-authentication --with-shishi.
 
+The fetchmail.* files contains a mail and associated patch for Eric
+Raymond's Fetchmail to add support for GNU GSS/Shishi.  Apply the
+patch, and build Fetchmail with GSSAPI as normal with --with-gssapi.
+
 The file mailutils.diff has been removed, as up-stream GNU MailUtils
 now has incorporated support for GNU GSS/Shishi.  Thank you!
 

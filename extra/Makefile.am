@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -18,7 +18,7 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-EXTRA_DIST = inetutils.diff mailutils.diff
+EXTRA_DIST = inetutils.diff fetchmail.diff fetchmail.mail
 
 DIST_SUBDIRS = pam_shishi rsh-redone
 

@@ -1,0 +1,50 @@
+From: Simon Josefsson <jas@extundo.com>                             -*- mail -*-
+Subject: [PATCH] Fetchmail support for a new GSS-API library
+To: Eric S. Raymond <esr@thyrsus.com>
+
+Hello,
+
+I'm implementing Kerberos 5 and GSS-API, and thought it might be a
+good idea to test how well it works by making fetchmail use my library
+instead of Heimdal/MIT.  As it turned out, I didn't have to make many
+modifications.  My ego credit my own projects for that, but I guess
+fetchmail deserve some credit for being nicely written... take your
+pick. :-)
+
+Anyway, here is a patch (against fetchmail 6.2.5) to detect and use
+GSS when it is installed.  I perceived the intention with the current
+configure.in snippet with regards to selecting Heimdal vs MIT was to
+use the least common implementation, if it is installed.  I think that
+is a wise policy, as it probably leads to least surprises for users:
+with the current fetchmail logic, if users have both Heimdal and MIT
+installed, Heimdal is used.  So the logic, with this patch, is for
+users with all of GSS, Heimdal and MIT installed, is to use GSS.  Of
+course, in all cases, if a user only have one implementation
+installed, that one is used.
+
+The patch is made with --ignore-all-space to simplify review.  You
+might want to re-indent the if-case after applying it.
+
+I couldn't find any ChangeLog file (or equivalent), and I don't know
+if you prefer to have patches accompanied with NEWS entries, but here
+is a proposed NEWS entry in any case:
+
+* The GSSAPI support can now use the GNU Generic Security library
+  <http://www.gnu.org/software/gss/> as well.
+
+I hope you find the time to look at the patch, and to hopefully even
+add it to the standard distribution.  If there is anything I can do to
+improve the patch, I'll be happy to.
+
+FWIW, before I applied the patch I used fetchmail linked to MIT
+Kerberos to talk with a Cyrus IMAP server at my University, which uses
+Heimdal.  After the patch I use fetchmail, linked to Shishi/GSS
+instead of MIT, against Heimdal at the University.  I have only tried
+3DES Kerberos keys.
+
+Thanks,
+Simon
+
+[1] <http://www.gnu.org/software/shishi>, <http://www.gnu.org/software/gss>
+
+[[see file fetchmail.diff for the attached patch]]

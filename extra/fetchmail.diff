@@ -1,0 +1,47 @@
+diff --exclude fetchmail.pot --exclude configure --exclude aclocal.m4 -urw t/fetchmail-6.2.5/configure.in fetchmail-6.2.5/configure.in
+--- t/fetchmail-6.2.5/configure.in	2003-10-10 10:36:57.000000000 +0200
++++ fetchmail-6.2.5/configure.in	2003-12-31 22:38:47.000000000 +0100
+@@ -704,6 +704,9 @@
+     LDFLAGS="$LDFLAGS -L$with_gssapi/lib"
+   fi
+ 
++  AC_CHECK_LIB(gss, gss_check_version, LIBS="$LIBS -lgss", nogss=t)
++  if test -n "$nogss"
++  then
+   if test -f "$with_gssapi/include/roken.h"
+   then
+      LIBS="$LIBS -lkrb5 -lasn1 -ldes -lroken -ldb -ldl"
+@@ -714,10 +717,11 @@
+      AC_CHECK_LIB(gssapi_krb5, gss_init_sec_context,LIBS="$LIBS -lgssapi_krb5",
+                   AC_MSG_ERROR([could not find libgssapi_krb5 which is needed for GSSAPI support]), -lkrb5)
+   fi
++  fi
+   AC_DEFINE(GSSAPI)
+   save_CPPFLAGS=$CPPFLAGS
+   CPPFLAGS="-I$with_gssapi/include"
+-  AC_CHECK_HEADERS(gssapi.h gssapi/gssapi.h gssapi/gssapi_generic.h)
++  AC_CHECK_HEADERS(gss.h gssapi.h gssapi/gssapi.h gssapi/gssapi_generic.h)
+   if test "$ac_cv_header_gssapi_h" = "yes"; then
+     AC_EGREP_HEADER(GSS_C_NT_HOSTBASED_SERVICE, gssapi.h, AC_DEFINE(HAVE_GSS_C_NT_HOSTBASED_SERVICE))
+   else
+diff --exclude fetchmail.pot --exclude configure --exclude aclocal.m4 -urw t/fetchmail-6.2.5/gssapi.c fetchmail-6.2.5/gssapi.c
+--- t/fetchmail-6.2.5/gssapi.c	2003-07-17 03:03:22.000000000 +0200
++++ fetchmail-6.2.5/gssapi.c	2003-12-31 22:38:39.000000000 +0100
+@@ -21,6 +21,9 @@
+ #include <netinet/in.h>  /* for htonl/ntohl */
+ 
+ #ifdef GSSAPI
++#  ifdef HAVE_GSS_H
++#    include <gss.h>
++#  else
+ #  ifdef HAVE_GSSAPI_H
+ #    include <gssapi.h>
+ #  endif
+@@ -33,6 +36,7 @@
+ #  ifndef HAVE_GSS_C_NT_HOSTBASED_SERVICE
+ #    define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
+ #  endif
++#  endif
+ 
+ #define GSSAUTH_P_NONE      1
+ #define GSSAUTH_P_INTEGRITY 2
