@@ -219,9 +219,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
     case OPTION_CRYPTO_CLIENT_NAME:
     case OPTION_KDC_CLIENT_NAME:
     case OPTION_SERVER_CLIENT_NAME:
+    case OPTION_TGS_CLIENT_NAME:
       if (arguments->command != COMMAND_CRYPTO &&
 	  arguments->command != COMMAND_AS &&
 	  arguments->command != COMMAND_KDC &&
+	  arguments->command != COMMAND_TGS &&
 	  arguments->command != COMMAND_SERVER)
 	argp_error (state,
 	    _("Option `%s' only valid with CRYPTO, KDC/AS/TGS and SERVER."),
@@ -265,6 +267,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
     case OPTION_KDC_SERVER_NAME:
     case OPTION_LIST_SERVER_NAME:
     case OPTION_SERVER_SERVER_NAME:
+    case OPTION_TGS_SERVER_NAME:
       arguments->sname = strdup (arg);
       break;
 
@@ -491,6 +494,10 @@ static struct argp_option options[] = {
 
   {0, 0, 0, 0, "Options for Ticket Granting Service (TGS-OPTIONS):", 300},
  
+  {"client-name", OPTION_TGS_CLIENT_NAME, "NAME", 0,
+   "Client name. Default is login username. Used to locate ticket "
+   "granting ticket."},
+
   {"encryption-type", 'e', "ETYPE,[ETYPE...]", 0,
    "Encryption types to use.  ETYPE is either registered name or integer."},
 
@@ -501,6 +508,9 @@ static struct argp_option options[] = {
 
   {"realm", 'r', "REALM", 0,
    "Realm of server. Default is DNS domain of local host."},
+
+  {"server-name", OPTION_TGS_SERVER_NAME, "NAME", 0,
+   "Name of server."},
 
  /************** CLIENT */
 
@@ -762,8 +772,7 @@ main (int argc, char *argv[])
 {
   struct arguments arg;
   char *home = getenv ("HOME");
-  char *ticketfile;
-  char *usercfgfile;
+  const char *ticketfile;
   Shishi *handle;
   Shishi_ticketset *ticketset;
   int rc;
@@ -775,29 +784,17 @@ main (int argc, char *argv[])
   memset ((void *) &arg, 0, sizeof (arg));
   argp_parse (&argp, argc, argv, ARGP_IN_ORDER, 0, &arg);
 
-  handle = shishi_init ();
+  rc = shishi_init_with_paths (&handle, arg.ticketfile, arg.systemcfgfile,
+			       arg.usercfgfile);
+  if (rc != SHISHI_OK)
+    die("Internal error: could not initialize shishi\n");
   if (handle == NULL)
     die("Internal error: could not initialize shishi\n");
 
-  if (home == NULL)
-    home = "";
-
-  if (arg.systemcfgfile == NULL)
-    arg.systemcfgfile = SYSTEMCFGFILE;
-
-  rc = shishi_cfg_from_file (handle, arg.systemcfgfile);
-  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
-    die("Could not read system config: %s\n", shishi_strerror (rc));
-
-  usercfgfile = malloc (strlen (home) + strlen (USERCFG_FILE) + 1);
-  sprintf (usercfgfile, "%s%s", home, USERCFG_FILE);
-  if (arg.usercfgfile == NULL)
-    arg.usercfgfile = usercfgfile;
-
-  rc = shishi_cfg_from_file (handle, arg.usercfgfile);
-  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
-    die("Could not read user config: %s\n", shishi_strerror (rc));
-
+  ticketset = shishi_ticketset (handle);
+  ticketfile = arg.ticketfile ? arg.ticketfile : 
+    shishi_ticketset_default_file(handle);
+    
   rc = shishi_cfg_clientkdcetype_set (handle, arg.etypes);
   if (rc != SHISHI_OK)
     die("Could not set encryption types: %s\n", shishi_strerror (rc));
@@ -805,19 +802,6 @@ main (int argc, char *argv[])
   rc = shishi_cfg (handle, arg.lib_options);
   if (rc != SHISHI_OK)
     die("Could not read library options: %s\n", shishi_strerror (rc));
-
-  rc = shishi_ticketset_init (handle, &ticketset);
-  if (rc != SHISHI_OK)
-    die("Could not initialize ticket set: %s\n", shishi_strerror (rc));
-
-  ticketfile = malloc (strlen (home) + strlen (TICKET_FILE) + 1);
-  sprintf (ticketfile, "%s%s", home, TICKET_FILE);
-  if (arg.ticketfile == NULL)
-    arg.ticketfile = ticketfile;
-
-  rc = shishi_ticketset_from_file (handle, ticketset, arg.ticketfile);
-  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
-    die("Could not read tickets: %s\n", shishi_strerror (rc));
 
   rc = 1;
   switch (arg.command)
@@ -877,15 +861,13 @@ main (int argc, char *argv[])
 
     case COMMAND_LIST:
       if (!arg.silent)
-	printf (_("Tickets in `%s':\n"), arg.ticketfile);
+	printf (_("Tickets in `%s':\n"), ticketfile);
 
       rc = shishi_ticketset_print_for_service (handle, ticketset, 
 					       stdout, arg.sname);
       if (rc != SHISHI_OK)
 	fprintf (stderr, "Could not list tickets: %s", shishi_strerror (rc));
       break;
-
-
 
     case COMMAND_SERVER:
       rc = server (handle, ticketset, arg);
@@ -923,7 +905,7 @@ main (int argc, char *argv[])
 	    break;
 	  }
 
-	rc = shishi_tgs (handle, tgt, &tgs, arg.tgtname);
+	rc = shishi_tgs (handle, tgt, &tgs, arg.sname ? arg.sname : arg.tgtname);
 	if (rc != SHISHI_OK)
 	  {
 	    printf ("TGS exchange failed: %s\n%s\n", shishi_strerror (rc),
@@ -958,15 +940,14 @@ main (int argc, char *argv[])
 
   if (rc == SHISHI_OK)
     {
-      rc = shishi_ticketset_to_file (handle, ticketset, arg.ticketwritefile ? 
-				     arg.ticketwritefile : arg.ticketfile);
+      rc = shishi_ticketset_to_file (handle, ticketset,
+				     arg.ticketwritefile ? 
+				     arg.ticketwritefile :
+				     ticketfile);
       if (rc != SHISHI_OK)
 	printf ("Could not write tickets: %s\n", shishi_strerror (rc));
     }
 
-  shishi_ticketset_done(handle, ticketset);
-  free (ticketfile);
-  free (usercfgfile);
   shishi_done (handle);
 
   return rc;
