@@ -187,13 +187,26 @@ shishi_kdc_sendrecv_1 (Shishi * handle, struct Shishi_kdcinfo *ki,
 		       const char *indata, size_t inlen,
 		       char **outdata, size_t * outlen)
 {
-  char *protname = ki->protocol == TCP ? "tcp" : "udp";
+  char *protname;
   int rc;
 
+  switch (ki->protocol)
+    {
 #ifdef USE_STARTTLS
-  if (ki->protocol == TLS)
-    protname = "tls";
+    case TLS:
+      protname = "tls";
+      break;
 #endif
+
+    case TCP:
+      protname = "tcp";
+      break;
+
+    default:
+    case UDP:
+      protname = "udp";
+      break;
+    }
 
   if (VERBOSE (handle))
     printf ("Sending to %s (%s) via %s...\n", ki->name,
