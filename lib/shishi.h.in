@@ -262,9 +262,12 @@ typedef enum
   /* 20. Checksum for Mandatory Ticket Extensions */
   SHISHI_KEYUSAGE_TICKET_EXTENSION = 20,
   /* 21. Checksum in Authorization Data in Ticket Extensions */
-  SHISHI_KEYUSAGE_TICKET_EXTENSION_AUTHORIZATION = 21
-    /* 22-24. Reserved for use in GSSAPI mechanisms derived from RFC 1964.
-       (raeburn/MIT) */
+  SHISHI_KEYUSAGE_TICKET_EXTENSION_AUTHORIZATION = 21,
+  /* 22-24. Reserved for use in GSSAPI mechanisms derived from RFC 1964.
+     (raeburn/MIT) */
+  SHISHI_KEYUSAGE_GSS_R1 = 22,
+  SHISHI_KEYUSAGE_GSS_R2 = 23,
+  SHISHI_KEYUSAGE_GSS_R3 = 24,
     /* 25-511. Reserved for future use in Kerberos and related protocols. */
     /* 512-1023. Reserved for uses internal to a Kerberos implementation. */
 }
