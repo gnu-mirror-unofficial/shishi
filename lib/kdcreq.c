@@ -109,6 +109,7 @@ _shishi_kdcreq (Shishi * handle, int as)
     goto error;
 
   shishi_randomize (handle, 0, &nonce, sizeof (nonce));
+  nonce &= 0x7FFFFFFF; /* XXX fix _libtasn1_convert_integer. */
   res = shishi_kdcreq_nonce_set (handle, node, nonce);
   if (res != SHISHI_OK)
     goto error;
