@@ -20,6 +20,7 @@
  */
 
 #include "utils.c"
+#include <shishi.h>
 
 static const char tkt1kdcrepb64[] =
   "a4ICITCCAh2gAwIBBaEDAgELow8bDUpPU0VGU1NPTi5PUkekEDAOoAMCAQGhBzAF"

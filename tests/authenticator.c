@@ -20,6 +20,7 @@
  */
 
 #include "utils.c"
+#include <shishi.h>
 
 static const char authenticator[] = {
   '\x62', '\x4b', '\x30', '\x49', '\xa0', '\x03', '\x02', '\x01',

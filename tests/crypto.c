@@ -20,6 +20,7 @@
  */
 
 #include "utils.c"
+#include <shishi.h>
 #include <pkcs5.h>
 
 struct drdk

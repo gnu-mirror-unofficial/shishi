@@ -20,6 +20,7 @@
  */
 
 #include "utils.c"
+#include <shishi.h>
 
 int
 main (int argc, char *argv[])
