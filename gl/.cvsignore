@@ -2,3 +2,6 @@ Makefile
 Makefile.in
 alloca.h
 sysexits.h
+*.lo
+*.la
+.libs
