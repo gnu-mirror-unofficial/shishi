@@ -1351,7 +1351,7 @@ shishi_tkt_lastreq_pretty_print (Shishi_tkt * tkt, FILE * fh)
  * Print a human readable representation of a ticket to file handle.
  **/
 void
-shishi_tkt_pretty_print (const Shishi_tkt * tkt, FILE * fh)
+shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
 {
   char buf[BUFSIZ];
   char *buf2;
