@@ -34,7 +34,7 @@ pkgconfig_DATA = shishi.pc
 sysconf_DATA = shishi.conf
 pkgdata_DATA = shishi.skel
 
-EXTRA_DIST = config.rpath mkinstalldirs \
+EXTRA_DIST = ANNOUNCE config.rpath mkinstalldirs \
 	shishi.conf.in shishi.skel.in shishi.pc.in \
 	gdbm/COPYING gdbm/ChangeLog gdbm/INSTALL gdbm/Makefile.in gdbm/NEWS \
 	gdbm/README gdbm/aclocal.m4 \
