@@ -44,7 +44,9 @@ conf_DATA = shishi.conf shisa.conf
 skeldir = $(SKELDIR)
 skel_DATA = shishi.skel
 
-install-exec-hook:
+distuninstallcheck_listfiles = find . -type f -print | grep -v -e shishi.keys -e 0.key
+
+install-data-hook:
 	@echo Initializing database and creating host key...
 	if test ! -d $(DESTDIR)$(DBDIR); then \
 	  if mkdir -m 0700 -p $(DESTDIR)$(DBDIR); then \
