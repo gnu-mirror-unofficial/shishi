@@ -1099,6 +1099,8 @@ main (int argc, char *argv[])
       break;
     }
 
+  shishi_ticketset_expire (shishi_ticketset_default (handle));
+
   if (arg.ticketwritefile)
     shishi_ticketset_default_file_set (handle, arg.ticketwritefile);
 
