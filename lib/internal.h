@@ -157,6 +157,11 @@
 		  SHISHI_VERBOSE_CRYPTO_NOISE)
 #define VERBOSE(h) (h->verbose & ~VERBOSES)
 
+/* For resolv.c and netio.c, on old systems. */
+#ifndef T_SRV
+# define T_SRV (33)
+#endif
+
 enum
 {
   UDP,
