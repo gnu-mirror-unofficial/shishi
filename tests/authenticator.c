@@ -146,10 +146,7 @@ test (Shishi * handle)
     escapeprint (buf, n);
   if (res == SHISHI_OK && n == strlen ("foo")
       && memcmp (buf, "foo", n) == 0)
-    {
-      success ("shishi_authenticator_client() OK\n");
-      free (buf);
-    }
+    success ("shishi_authenticator_client() OK\n");
   else
     fail ("shishi_authenticator_client() failed\n");
 
