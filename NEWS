@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.22 (unreleased)
 
+** Should now build with objdir != srcdir on systems that lack stdbool.h.
+
 ** Gnulib files updated, and uses within the library updated.
 
 * Version 0.0.21 (released 2004-12-17)
