@@ -1420,11 +1420,10 @@ extern int shishi_pbkdf2_sha1 (Shishi * handle,
 			       unsigned int c, unsigned int dkLen, char *DK);
 
 /* crypto-ctx.c */
-extern Shishi_crypto *shishi_crypto_init (Shishi * handle,
-					  Shishi_key * key,
-					  int keyusage,
-					  int32_t etype,
-					  const char * iv, size_t ivlen);
+extern Shishi_crypto *shishi_crypto (Shishi * handle,
+				     Shishi_key * key, int keyusage,
+				     int32_t etype,
+				     const char * iv, size_t ivlen);
 extern void shishi_crypto_close (Shishi_crypto * ctx);
 extern int shishi_crypto_encrypt (Shishi_crypto * ctx,
 				  const char *in, size_t inlen,
