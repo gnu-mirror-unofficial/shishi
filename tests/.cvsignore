@@ -4,6 +4,7 @@ Makefile
 Makefile.in
 authenticator
 crypto
+crypto-ctx
 gztime
 priv
 safe
