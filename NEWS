@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.10 (unreleased)
+* Version 0.0.10 (released 2003-12-16)
 
 ** The TLS support in Shishid now works.
 
