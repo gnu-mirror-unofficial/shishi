@@ -134,7 +134,7 @@ shishi_md4 (Shishi * handle, const char *in, size_t inlen, char *out[16])
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  *out = xclone (p, gcry_md_get_algo_dlen (GCRY_MD_MD4));
+  *out = xmemdup (p, gcry_md_get_algo_dlen (GCRY_MD_MD4));
 
   gcry_md_close (hd);
 
@@ -165,7 +165,7 @@ shishi_md5 (Shishi * handle, const char *in, size_t inlen, char *out[16])
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  *out = xclone (p, gcry_md_get_algo_dlen (GCRY_MD_MD5));
+  *out = xmemdup (p, gcry_md_get_algo_dlen (GCRY_MD_MD5));
 
   gcry_md_close (hd);
 
@@ -207,7 +207,7 @@ shishi_hmac_md5 (Shishi * handle,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  *outhash = xclone (hash, hlen);
+  *outhash = xmemdup (hash, hlen);
 
   gcry_md_close (mdh);
 
@@ -249,7 +249,7 @@ shishi_hmac_sha1 (Shishi * handle,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  *outhash = xclone (hash, hlen);
+  *outhash = xmemdup (hash, hlen);
 
   gcry_md_close (mdh);
 

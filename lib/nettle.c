@@ -484,7 +484,7 @@ shishi_des (Shishi * handle, int decryptp,
     CBC_ENCRYPT (&des, des_encrypt, inlen, *out, in);
 
   if (ivout)
-    *ivout = xclone (des.iv, DES_BLOCK_SIZE);
+    *ivout = xmemdup (des.iv, DES_BLOCK_SIZE);
 
   return SHISHI_OK;
 }
@@ -535,7 +535,7 @@ shishi_3des (Shishi * handle, int decryptp,
     CBC_ENCRYPT (&des3, des3_encrypt, inlen, *out, in);
 
   if (ivout)
-    *ivout = xclone (des3.iv, DES3_BLOCK_SIZE);
+    *ivout = xmemdup (des3.iv, DES3_BLOCK_SIZE);
 
   return SHISHI_OK;
 }
@@ -590,7 +590,7 @@ shishi_aes_cts (Shishi * handle, int decryptp,
     /* XXX what is the output iv for CBC-CTS mode?
        but is this value useful at all for that mode anyway?
        Mostly it is DES apps that want the updated iv, so this is ok. */
-    *ivout = xclone (aes.iv, AES_BLOCK_SIZE);
+    *ivout = xmemdup (aes.iv, AES_BLOCK_SIZE);
 
   return SHISHI_OK;
 }
