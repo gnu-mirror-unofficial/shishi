@@ -62,6 +62,7 @@ AC_TYPE_UID_T
 AC_TYPE_SIGNAL
 AC_HEADER_TIME
 AC_CHECK_DECLS(h_errno)
+AC_CHECK_TYPE(socklen_t, size_t)
 
 # Check for IPv6
 AC_ARG_ENABLE(ipv6,
@@ -157,13 +158,13 @@ See <http://josefsson.org/libstringprep/>.
 
 Don't worry.
 ]])
-	STRINGPREP_CFLAGS="-I\$(top_srcdir)/libstringprep"
-	STRINGPREP_LIBS="\$(top_builddir)/libstringprep/libstringprep.la"
-	STRINGPREP=libstringprep
+	LIBSTRINGPREP_CFLAGS="-I\$(top_srcdir)/libstringprep"
+	LIBSTRINGPREP_LIBS="\$(top_builddir)/libstringprep/libstringprep.la"
+	LIBSTRINGPREP=libstringprep
 fi
-AC_SUBST(STRINGPREP)
-AC_SUBST(STRINGPREP_CFLAGS)
-AC_SUBST(STRINGPREP_LIBS)
+AC_SUBST(LIBSTRINGPREP)
+AC_SUBST(LIBSTRINGPREP_CFLAGS)
+AC_SUBST(LIBSTRINGPREP_LIBS)
 AC_MSG_CHECKING([if system's libstringprep should be used])
 AC_MSG_RESULT($with_system_stringprep)
 AC_CONFIG_SUBDIRS(libstringprep)
