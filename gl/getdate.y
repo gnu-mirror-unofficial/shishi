@@ -768,8 +768,11 @@ lookup_word (parser_control const *pc, char *word)
 
   /* Make it uppercase.  */
   for (p = word; *p; p++)
-    if (ISLOWER ((unsigned char) *p))
-      *p = toupper ((unsigned char) *p);
+    {
+      unsigned char ch = *p;
+      if (ISLOWER (ch))
+	*p = toupper (ch);
+    }
 
   for (tp = meridian_table; tp->name; tp++)
     if (strcmp (word, tp->name) == 0)
@@ -844,7 +847,8 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 	  if (c == '-' || c == '+')
 	    {
 	      sign = c == '-' ? -1 : 1;
-	      c = *++pc->input;
+	      while (c = *++pc->input, ISSPACE (c))
+		continue;
 	      if (! ISDIGIT (c))
 		/* skip the '-' sign */
 		continue;
