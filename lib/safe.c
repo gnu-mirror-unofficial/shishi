@@ -1,5 +1,5 @@
 /* safe.c	Application data integrity protection.
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -29,41 +29,6 @@ struct Shishi_safe
 };
 
 /**
- * shishi_krbsafe:
- * @handle: shishi handle as allocated by shishi_init().
- *
- * This function creates a new KRB-SAFE structure, populated with some
- * default values.
- *
- * Return value: Returns the authenticator or NULL on
- * failure.
- **/
-Shishi_asn1
-shishi_krbsafe (Shishi * handle)
-{
-  int res;
-  Shishi_asn1 node;
-
-  node = shishi_asn1_krbsafe (handle->asn1);
-  if (!node)
-    return NULL;
-
-  res = shishi_asn1_write (handle, node, "KRB-SAFE.pvno", "5", 0);
-  if (res != SHISHI_OK)
-    goto error;
-
-  res = shishi_asn1_write (handle, node, "KRB-SAFE.msg-type", "20", 0);
-  if (res != SHISHI_OK)
-    goto error;
-
-  return node;
-
-error:
-  shishi_asn1_done (handle, node);
-  return NULL;
-}
-
-/**
  * shishi_safe:
  * @handle: shishi handle as allocated by shishi_init().
  * @safe: pointer to new structure that holds information about SAFE exchange
@@ -89,9 +54,17 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
   if (rc != SHISHI_OK)
     return rc;
 
-  lsafe->safe = shishi_krbsafe (handle);
+  lsafe->safe = shishi_asn1_krbsafe (handle);
   if (lsafe->safe == NULL)
     return SHISHI_ASN1_ERROR;
+
+  rc = shishi_asn1_write (handle, lsafe->safe, "KRB-SAFE.pvno", "5", 0);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_asn1_write (handle, lsafe->safe, "KRB-SAFE.msg-type", "20", 0);
+  if (rc != SHISHI_OK)
+    return rc;
 
   return SHISHI_OK;
 }
