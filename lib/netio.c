@@ -94,16 +94,13 @@ shishi_sendrecv_udp (Shishi * handle,
   return SHISHI_OK;
 }
 
-int
-shishi_kdc_sendrecv (Shishi * handle,
-		     char *realm,
-		     const char *indata, size_t inlen,
-		     char *outdata, size_t * outlen)
+static int
+shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
+			    const char *indata, size_t inlen,
+			    char *outdata, size_t * outlen)
 {
   int i, j, k;
   int rc;
-  dnshost_t rrs;
-  char *tmp;
 
   for (i = 0; i < handle->nrealminfos; i++)
     if (realm && strcmp (handle->realminfos[i].name, realm) == 0)
@@ -132,12 +129,17 @@ shishi_kdc_sendrecv (Shishi * handle,
 	return SHISHI_KDC_TIMEOUT;
       }
 
-  if (VERBOSE (handle))
-    printf ("Finding SRV RRs for %s...\n", realm);
+  shishi_error_printf (handle, "No KDC defined for realm %s", realm);
+  return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
+}
 
-  asprintf (&tmp, "_kerberos._udp.%s", realm);
-  rrs = _shishi_resolv(tmp, T_SRV);
-  free (tmp);
+static int
+shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
+			   const char *indata, size_t inlen,
+			   char *outdata, size_t * outlen,
+			   dnshost_t rrs)
+{
+  int rc;
 
   for (; rrs; rrs = rrs->next)
     {
@@ -182,8 +184,52 @@ shishi_kdc_sendrecv (Shishi * handle,
 	return rc;
     }
 
+  return SHISHI_KDC_TIMEOUT;
+}
+
+static int
+shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
+			 const char *indata, size_t inlen,
+			 char *outdata, size_t * outlen)
+{
+  dnshost_t rrs;
+  char *tmp;
+  int rc;
+
+  if (VERBOSE (handle))
+    printf ("Finding SRV RRs for %s...\n", realm);
+
+  asprintf (&tmp, "_kerberos._udp.%s", realm);
+  rrs = _shishi_resolv(tmp, T_SRV);
+  free (tmp);
+
+  if (rrs)
+    rc = shishi_kdc_sendrecv_srv_1 (handle, realm, indata, inlen,
+				    outdata, outlen, rrs);
+  else
+    {
+      shishi_error_printf (handle, "No KDC SRV RRs for realm %s\n", realm);
+      rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
+    }
+
   _shishi_resolv_free (rrs);
 
-  shishi_error_printf (handle, "No KDC defined for realm %s\n", realm);
-  return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
+  return rc;
+}
+
+int
+shishi_kdc_sendrecv (Shishi * handle, char *realm,
+		     const char *indata, size_t inlen,
+		     char *outdata, size_t * outlen)
+{
+  int rc;
+
+  rc = shishi_kdc_sendrecv_static (handle, realm,
+				   indata, inlen, outdata, outlen);
+
+  if (rc == SHISHI_KDC_TIMEOUT || rc == SHISHI_KDC_NOT_KNOWN_FOR_REALM)
+    rc = shishi_kdc_sendrecv_srv (handle, realm,
+				  indata, inlen, outdata, outlen);
+
+  return rc;
 }
