@@ -648,32 +648,23 @@ shishi_cipher_defaultcksumtype (int32_t type)
   return -1;
 }
 
-static struct
+struct Cipher_aliases
 {
   char *name;
   int type;
-} cipher_aliases[] =
-{
-  {
-  "des-crc", SHISHI_DES_CBC_CRC},
-  {
-  "des-md4", SHISHI_DES_CBC_MD4},
-  {
-  "des-md5", SHISHI_DES_CBC_MD5},
-  {
-  "des", SHISHI_DES_CBC_MD5},
-  {
-  "des3", SHISHI_DES3_CBC_HMAC_SHA1_KD},
-  {
-  "3des", SHISHI_DES3_CBC_HMAC_SHA1_KD},
-  {
-  "aes128", SHISHI_AES128_CTS_HMAC_SHA1_96},
-  {
-  "aes256", SHISHI_AES256_CTS_HMAC_SHA1_96},
-  {
-  "aes", SHISHI_AES256_CTS_HMAC_SHA1_96},
-  {
-  "arcfour", SHISHI_ARCFOUR_HMAC}
+};
+
+static Cipher_aliases cipher_aliases[] = {
+  {"des-crc", SHISHI_DES_CBC_CRC},
+  {"des-md4", SHISHI_DES_CBC_MD4},
+  {"des-md5", SHISHI_DES_CBC_MD5},
+  {"des", SHISHI_DES_CBC_MD5},
+  {"des3", SHISHI_DES3_CBC_HMAC_SHA1_KD},
+  {"3des", SHISHI_DES3_CBC_HMAC_SHA1_KD},
+  {"aes128", SHISHI_AES128_CTS_HMAC_SHA1_96},
+  {"aes256", SHISHI_AES256_CTS_HMAC_SHA1_96},
+  {"aes", SHISHI_AES256_CTS_HMAC_SHA1_96},
+  {"arcfour", SHISHI_ARCFOUR_HMAC}
 };
 
 /**
@@ -972,9 +963,7 @@ shishi_string_to_key (Shishi * handle,
 int
 shishi_random_to_key (Shishi * handle,
 		      int32_t keytype,
-		      const char *rnd,
-		      size_t rndlen,
-		      Shishi_key * outkey)
+		      const char *rnd, size_t rndlen, Shishi_key * outkey)
 {
   Shishi_random_to_key_function random2key;
   int res;
