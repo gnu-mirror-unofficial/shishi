@@ -2491,7 +2491,7 @@ shishi_pbkdf2_sha1 (Shishi * handle,
 	      char *tmp;
 	      size_t tmplen = Slen + 4;
 
-	      tmp = alloca (tmplen);
+	      tmp = xmalloc (tmplen);
 
 	      memcpy (tmp, S, Slen);
 	      tmp[Slen + 0] = (i & 0xff000000) >> 24;
@@ -2500,6 +2500,8 @@ shishi_pbkdf2_sha1 (Shishi * handle,
 	      tmp[Slen + 3] = (i & 0x000000ff) >> 0;
 
 	      rc = shishi_hmac_sha1 (handle, P, Plen, tmp, tmplen, &p);
+
+	      free (tmp);
 	    }
 	  else
 	    {
