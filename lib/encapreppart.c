@@ -251,13 +251,13 @@ shishi_encapreppart_get_key (Shishi * handle,
   *keytype = 0;
   buflen = sizeof (*keytype);
   res = shishi_asn1_field (handle, encapreppart,
-			    keytype, &buflen, "EncAPRepPart.subkey.keytype");
+			   keytype, &buflen, "EncAPRepPart.subkey.keytype");
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_asn1_field (handle, encapreppart,
-			    keyvalue, keyvalue_len,
-			    "EncAPRepPart.subkey.keyvalue");
+			   keyvalue, keyvalue_len,
+			   "EncAPRepPart.subkey.keyvalue");
   if (res != ASN1_SUCCESS)
     return res;
 
@@ -273,7 +273,7 @@ shishi_encapreppart_ctime_get (Shishi * handle,
 
   len = GENERALIZEDTIME_TIME_LEN + 1;
   res = shishi_asn1_field (handle, encapreppart,
-			    ctime, &len, "EncAPRepPart.ctime");
+			   ctime, &len, "EncAPRepPart.ctime");
   if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
     ctime[len] = '\0';
 
@@ -304,7 +304,7 @@ shishi_encapreppart_cusec_get (Shishi * handle,
   int res;
 
   res = shishi_asn1_integer_field (handle, encapreppart, cusec,
-				    "EncAPRepPart.cusec");
+				   "EncAPRepPart.cusec");
   *cusec = ntohl (*cusec);
 
   return res;

@@ -40,9 +40,9 @@ server (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      shishi_asprintf(&arg.sname, "host/www");
+      shishi_asprintf (&arg.sname, "host/www");
       if (arg.sname == NULL)
-	die("Could not allocate server name.");
+	die ("Could not allocate server name.");
     }
 
   if (arg.verbose)
@@ -78,7 +78,8 @@ server (Shishi * handle, struct arguments arg)
     }
   else if (arg.keyvalue)
     {
-      res = shishi_key_from_base64 (handle, arg.algorithm, arg.keyvalue, &key);
+      res =
+	shishi_key_from_base64 (handle, arg.algorithm, arg.keyvalue, &key);
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, _("Could not create key: %s\n"),
@@ -97,7 +98,7 @@ server (Shishi * handle, struct arguments arg)
 	}
     }
 
-  if (shishi_key_type(key) == SHISHI_NULL && !arg.silent)
+  if (shishi_key_type (key) == SHISHI_NULL && !arg.silent)
     fprintf (stderr,
 	     "warning: using %s is silly, consider using --algorithm.\n",
 	     shishi_cipher_name (arg.algorithm));
@@ -115,11 +116,10 @@ server (Shishi * handle, struct arguments arg)
       return 1;
     }
 
-  res = shishi_ap(handle, &ap);
+  res = shishi_ap (handle, &ap);
   if (res != SHISHI_OK)
     {
-      fprintf (stderr, _("Could not create AP: %s\n"),
-	       shishi_strerror (res));
+      fprintf (stderr, _("Could not create AP: %s\n"), shishi_strerror (res));
       return 1;
     }
 
@@ -135,25 +135,25 @@ server (Shishi * handle, struct arguments arg)
 
 
   if (arg.verbose)
-    shishi_authenticator_print (handle, stdout, shishi_ap_authenticator(ap));
+    shishi_authenticator_print (handle, stdout, shishi_ap_authenticator (ap));
 
   cnamerealmlen = sizeof (cnamerealm);
   res = shishi_authenticator_cnamerealm_get (handle,
-					     shishi_ap_authenticator(ap),
+					     shishi_ap_authenticator (ap),
 					     cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Client name (from authenticator): %s\n", cnamerealm);
 
   cnamerealmlen = sizeof (cnamerealm);
   res = shishi_encticketpart_cnamerealm_get
-    (handle, shishi_ticket_encticketpart(shishi_ap_ticket(ap)),
+    (handle, shishi_ticket_encticketpart (shishi_ap_ticket (ap)),
      cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Client name (from encticketpart): %s\n", cnamerealm);
 
   cnamerealmlen = sizeof (cnamerealm);
   res = shishi_ticket_snamerealm_get
-    (handle, shishi_ticket_ticket(shishi_ap_ticket(ap)),
+    (handle, shishi_ticket_ticket (shishi_ap_ticket (ap)),
      cnamerealm, &cnamerealmlen);
   cnamerealm[cnamerealmlen] = '\0';
   printf ("Server name (from ticket): %s\n", cnamerealm);
@@ -166,7 +166,7 @@ server (Shishi * handle, struct arguments arg)
 
       printf ("Mutual authentication required.\n");
 
-      res = shishi_ap_rep_asn1(ap, &aprep);
+      res = shishi_ap_rep_asn1 (ap, &aprep);
       if (res != SHISHI_OK)
 	{
 	  fprintf (stderr, "Error creating AP-REP: %s\n",

@@ -1,5 +1,5 @@
 /* kdc.c	Key distribution (AS/TGS) functions
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -135,14 +135,14 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not DER encode AS-REQ: %s\n",
-			   shishi_strerror(res));
+			   shishi_strerror (res));
       return !SHISHI_OK;
     }
 
   realmlen = sizeof (realm);
   res =
     shishi_asn1_field (handle, kdcreq, realm, &realmlen,
-			"KDC-REQ.req-body.realm");
+		       "KDC-REQ.req-body.realm");
   if (res != SHISHI_OK)
     {
       shishi_error_printf (handle, "Could not get realm: %s\n",
@@ -178,7 +178,7 @@ shishi_kdcreq_sendrecv (Shishi * handle, ASN1_TYPE kdcreq, ASN1_TYPE * kdcrep)
 		{
 		  shishi_error_printf
 		    (handle, "Could not DER decode AS-REP/KRB-ERROR: %s",
-		     shishi_strerror_details(handle));
+		     shishi_strerror_details (handle));
 		  return !SHISHI_OK;
 		}
 
@@ -449,7 +449,7 @@ shishi_tgs_process (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (etype != shishi_key_type(key))
+  if (etype != shishi_key_type (key))
     return SHISHI_TGSREP_BAD_KEYTYPE;
 
   res = shishi_kdc_process (handle, tgsreq, tgsrep, key,
@@ -537,9 +537,7 @@ int
 shishi_kdc_process (Shishi * handle,
 		    ASN1_TYPE kdcreq,
 		    ASN1_TYPE kdcrep,
-		    Shishi_key *key,
-		    int keyusage,
-		    ASN1_TYPE * enckdcreppart)
+		    Shishi_key * key, int keyusage, ASN1_TYPE * enckdcreppart)
 {
   int res;
   int msgtype;

@@ -40,18 +40,18 @@ shishi_realm_default_guess (void)
   char buf[HOST_NAME_MAX];
   int ret;
 
-  ret = getdomainname (buf, sizeof(buf));
-  buf[sizeof(buf) - 1] = '\0';
-  if (ret != 0 || strlen(buf) == 0 || strcmp(buf, "(none)") == 0)
+  ret = getdomainname (buf, sizeof (buf));
+  buf[sizeof (buf) - 1] = '\0';
+  if (ret != 0 || strlen (buf) == 0 || strcmp (buf, "(none)") == 0)
     {
-      ret = gethostname (buf, sizeof(buf));
-      buf[sizeof(buf) - 1] = '\0';
+      ret = gethostname (buf, sizeof (buf));
+      buf[sizeof (buf) - 1] = '\0';
 
       if (ret != 0)
 	strcpy (buf, "could-not-guess-default-realm");
     }
 
-  return strdup(buf);
+  return strdup (buf);
 }
 
 /**
@@ -67,9 +67,9 @@ shishi_realm_default (Shishi * handle)
   if (!handle->default_realm)
     {
       char *p;
-      p = shishi_realm_default_guess();
+      p = shishi_realm_default_guess ();
       shishi_realm_default_set (handle, p);
-      free(p);
+      free (p);
     }
 
   return handle->default_realm;

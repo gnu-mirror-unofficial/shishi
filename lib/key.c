@@ -59,7 +59,7 @@ shishi_key_principal_set (Shishi_key * key, const char *principal)
   if (key->principal)
     free (key->principal);
   if (principal)
-    key->principal = strdup(principal);
+    key->principal = strdup (principal);
   else
     key->principal = NULL;
 }
@@ -92,7 +92,7 @@ shishi_key_realm_set (Shishi_key * key, const char *realm)
   if (key->realm)
     free (key->realm);
   if (realm)
-    key->realm = strdup(realm);
+    key->realm = strdup (realm);
   else
     key->realm = NULL;
 }
@@ -149,7 +149,7 @@ shishi_key_value_set (Shishi_key * key, char *value)
   if (value &&
       shishi_cipher_keylen (key->type) > 0 &&
       shishi_cipher_keylen (key->type) <= MAX_KEY_LEN)
-    memcpy(key->value, value, shishi_cipher_keylen (key->type));
+    memcpy (key->value, value, shishi_cipher_keylen (key->type));
 }
 
 /**
@@ -188,7 +188,7 @@ shishi_key_version_set (Shishi_key * key, int version)
 const char *
 shishi_key_name (Shishi_key * key)
 {
-  return shishi_cipher_name(key->type);
+  return shishi_cipher_name (key->type);
 }
 
 /**
@@ -202,7 +202,7 @@ shishi_key_name (Shishi_key * key)
 size_t
 shishi_key_length (Shishi_key * key)
 {
-  return shishi_cipher_keylen(key->type);
+  return shishi_cipher_keylen (key->type);
 }
 
 /**
@@ -216,12 +216,12 @@ shishi_key_length (Shishi_key * key)
  *               errors, and SHISHI_OK on success.
  **/
 int
-shishi_key (Shishi *handle, Shishi_key **key)
+shishi_key (Shishi * handle, Shishi_key ** key)
 {
   *key = malloc (sizeof (**key));
   if (!*key)
     return SHISHI_MALLOC_ERROR;
-  memset(*key, 0, sizeof(**key));
+  memset (*key, 0, sizeof (**key));
 
   (*key)->handle = handle;
 
@@ -235,9 +235,9 @@ shishi_key (Shishi *handle, Shishi_key **key)
  * Deallocates key information structure and set key handle to NULL.
  **/
 void
-shishi_key_done (Shishi_key **key)
+shishi_key_done (Shishi_key ** key)
 {
-  free(*key);
+  free (*key);
   *key = NULL;
 }
 
@@ -249,13 +249,13 @@ shishi_key_done (Shishi_key **key)
  * Copies source key into existing allocated destination key.
  **/
 void
-shishi_key_copy (Shishi_key * dstkey, Shishi_key *srckey)
+shishi_key_copy (Shishi_key * dstkey, Shishi_key * srckey)
 {
-  shishi_key_principal_set(dstkey, shishi_key_principal(srckey));
-  shishi_key_realm_set(dstkey, shishi_key_realm(srckey));
-  shishi_key_type_set(dstkey, shishi_key_type(srckey));
-  shishi_key_value_set(dstkey, shishi_key_value(srckey));
-  shishi_key_version_set(dstkey, shishi_key_version(srckey));
+  shishi_key_principal_set (dstkey, shishi_key_principal (srckey));
+  shishi_key_realm_set (dstkey, shishi_key_realm (srckey));
+  shishi_key_type_set (dstkey, shishi_key_type (srckey));
+  shishi_key_value_set (dstkey, shishi_key_value (srckey));
+  shishi_key_version_set (dstkey, shishi_key_version (srckey));
 }
 
 /**
@@ -273,10 +273,8 @@ shishi_key_copy (Shishi_key * dstkey, Shishi_key *srckey)
  *               errors, and SHISHI_OK on success.
  **/
 int
-shishi_key_from_value (Shishi *handle,
-		       int type,
-		       char *value,
-		       Shishi_key **key)
+shishi_key_from_value (Shishi * handle,
+		       int type, char *value, Shishi_key ** key)
 {
   int rc;
 
@@ -308,10 +306,8 @@ shishi_key_from_value (Shishi *handle,
  *               success.
  **/
 int
-shishi_key_from_base64 (Shishi *handle,
-			int type,
-			char *value,
-			Shishi_key **key)
+shishi_key_from_base64 (Shishi * handle,
+			int type, char *value, Shishi_key ** key)
 {
   int rc;
 
@@ -326,21 +322,21 @@ shishi_key_from_base64 (Shishi *handle,
       int len;
       char *buf;
 
-      buf = malloc(strlen(value) + 1);
+      buf = malloc (strlen (value) + 1);
       if (!buf)
 	return SHISHI_MALLOC_ERROR;
 
       len = shishi_from_base64 (buf, value);
 
-      if (len != shishi_key_length(*key))
+      if (len != shishi_key_length (*key))
 	{
-	  free(buf);
+	  free (buf);
 	  return SHISHI_INVALID_KEY;
 	}
 
       shishi_key_value_set (*key, buf);
 
-      free(buf);
+      free (buf);
     }
 
   return SHISHI_OK;
@@ -358,19 +354,17 @@ shishi_key_from_base64 (Shishi *handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_key_random (Shishi *handle,
-		   int type,
-		   Shishi_key **key)
+shishi_key_random (Shishi * handle, int type, Shishi_key ** key)
 {
   char buf[MAX_RANDOM_LEN];
-  int len = shishi_cipher_randomlen(type);
+  int len = shishi_cipher_randomlen (type);
   int rc;
 
   rc = shishi_key (handle, key);
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_randomize(handle, buf, len);
+  rc = shishi_randomize (handle, buf, len);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -396,11 +390,9 @@ shishi_key_random (Shishi *handle,
  *               errors, and SHISHI_OK on success.
  **/
 int
-shishi_key_from_random (Shishi *handle,
+shishi_key_from_random (Shishi * handle,
 			int type,
-			char *random,
-			int randomlen,
-			Shishi_key **key)
+			char *random, int randomlen, Shishi_key ** key)
 {
   int rc;
 
@@ -431,14 +423,12 @@ shishi_key_from_random (Shishi *handle,
  *               errors, and SHISHI_OK on success.
  **/
 int
-shishi_key_from_string (Shishi *handle,
+shishi_key_from_string (Shishi * handle,
 			int type,
 			char *password,
 			int passwordlen,
 			char *salt,
-			int saltlen,
-			char *parameter,
-			Shishi_key **key)
+			int saltlen, char *parameter, Shishi_key ** key)
 {
   int rc;
 

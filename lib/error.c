@@ -73,7 +73,8 @@ shishi_strerror (int err)
 
     case SHISHI_NONCE_MISMATCH:
       p =
-	_("Replay protection value (nonce) differ between request and reply.");
+	_
+	("Replay protection value (nonce) differ between request and reply.");
       break;
 
     case SHISHI_REALM_MISMATCH:

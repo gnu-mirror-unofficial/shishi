@@ -41,25 +41,25 @@ crypto (Shishi * handle, struct arguments arg)
 
   if (arg.salt == NULL)
     {
-      arg.salt = malloc(strlen(arg.realm) + strlen(arg.cname) + 1);
+      arg.salt = malloc (strlen (arg.realm) + strlen (arg.cname) + 1);
       if (!arg.salt)
 	return SHISHI_MALLOC_ERROR;
       strcpy (arg.salt, arg.realm);
       strcat (arg.salt, arg.cname);
     }
 
-  rc = shishi_key(handle, &key);
+  rc = shishi_key (handle, &key);
   if (rc != SHISHI_OK)
     {
       shishi_error_printf (handle, _("Cannot create key: %s"),
-			   shishi_strerror(rc));
+			   shishi_strerror (rc));
       return rc;
     }
 
-  shishi_key_type_set(key, arg.algorithm);
-  shishi_key_version_set(key, arg.kvno);
-  shishi_key_principal_set(key, arg.cname);
-  shishi_key_realm_set(key, arg.realm);
+  shishi_key_type_set (key, arg.algorithm);
+  shishi_key_version_set (key, arg.kvno);
+  shishi_key_principal_set (key, arg.cname);
+  shishi_key_realm_set (key, arg.realm);
 
   if (arg.password)
     {
@@ -67,8 +67,7 @@ crypto (Shishi * handle, struct arguments arg)
 				 arg.password,
 				 strlen (arg.password),
 				 arg.salt,
-				 strlen(arg.salt),
-				 arg.parameter, key);
+				 strlen (arg.salt), arg.parameter, key);
       if (rc != SHISHI_OK)
 	{
 	  shishi_error_printf (handle, _("Error in string2key"));
@@ -90,14 +89,14 @@ crypto (Shishi * handle, struct arguments arg)
     {
       char buf[BUFSIZ];
 
-      rc = shishi_randomize(handle, buf,
-			    shishi_cipher_randomlen(arg.algorithm));
+      rc = shishi_randomize (handle, buf,
+			     shishi_cipher_randomlen (arg.algorithm));
       if (rc != SHISHI_OK)
 	return rc;
 
-      shishi_random_to_key(handle, arg.algorithm,
-			   buf, shishi_cipher_randomlen(arg.algorithm),
-			   key);
+      shishi_random_to_key (handle, arg.algorithm,
+			    buf, shishi_cipher_randomlen (arg.algorithm),
+			    key);
     }
   else if (arg.readkeyfile)
     {
@@ -105,7 +104,7 @@ crypto (Shishi * handle, struct arguments arg)
 						arg.cname);
 #if 0
       shishi_key_from_file (handle, arg.writekeyfile, arg.algorithm, key,
-			  keylen, arg.kvno, arg.cname, arg.realm);
+			    keylen, arg.kvno, arg.cname, arg.realm);
 #endif
 
       if (key == NULL)
@@ -117,11 +116,11 @@ crypto (Shishi * handle, struct arguments arg)
     }
   else
     {
-      fprintf(stderr, "Nothing to do.\n");
+      fprintf (stderr, "Nothing to do.\n");
       return SHISHI_OK;
     }
 
-  if (shishi_key_type(key) == SHISHI_NULL && !arg.silent)
+  if (shishi_key_type (key) == SHISHI_NULL && !arg.silent)
     fprintf (stderr,
 	     "warning: using %s is silly, consider using --algorithm.\n",
 	     shishi_cipher_name (arg.algorithm));
@@ -199,8 +198,7 @@ crypto (Shishi * handle, struct arguments arg)
 	  i = fwrite (in, sizeof (in[0]), inlen, outfh);
 	  if (i != inlen)
 	    {
-	      fprintf (stderr, _("Short write (%d < %d)...\n"), i,
-		       inlen);
+	      fprintf (stderr, _("Short write (%d < %d)...\n"), i, inlen);
 	      return 1;
 	    }
 	  printf (_("Wrote %d bytes...\n"), inlen);

@@ -472,8 +472,7 @@ main (int argc, char *argv[])
 	     strcmp (argv[argc - 1], "--help") == 0)
       {
 	printf ("Usage: %s [-vdbh?] [--verbose] [--debug] "
-		"[--break-on-error] [--help]\n",
-		argv[0]);
+		"[--break-on-error] [--help]\n", argv[0]);
 	return 1;
       }
   while (argc-- > 1);
@@ -486,7 +485,7 @@ main (int argc, char *argv[])
     }
 
   if (debug)
-    shishi_cfg (handle, strdup("verbose,verbose-crypto"));
+    shishi_cfg (handle, strdup ("verbose,verbose-crypto"));
 
   for (i = 0; i < sizeof (drdk) / sizeof (drdk[0]); i++)
     {
@@ -499,7 +498,7 @@ main (int argc, char *argv[])
 	res = shishi_dr (handle, key, drdk[i].usage, drdk[i].nusage,
 			 out, strlen (drdk[i].dr));
 
-      shishi_key_done(&key);
+      shishi_key_done (&key);
 
       if (res != SHISHI_OK)
 	{
@@ -558,7 +557,7 @@ main (int argc, char *argv[])
       if (res == SHISHI_OK)
 	res = shishi_dk (handle, key, drdk[i].usage, drdk[i].nusage, key2);
 
-      shishi_key_done(&key);
+      shishi_key_done (&key);
 
       if (res != SHISHI_OK)
 	{
@@ -586,10 +585,10 @@ main (int argc, char *argv[])
 	  puts ("");
 
 	  printf ("computed DK:\n");
-	  escapeprint (shishi_key_value(key2), shishi_key_length(key2));
-	  hexprint (shishi_key_value(key2), shishi_key_length(key2));
+	  escapeprint (shishi_key_value (key2), shishi_key_length (key2));
+	  hexprint (shishi_key_value (key2), shishi_key_length (key2));
 	  puts ("");
-	  binprint (shishi_key_value(key2), shishi_key_length(key2));
+	  binprint (shishi_key_value (key2), shishi_key_length (key2));
 	  puts ("");
 
 	  printf ("expected DK:\n");
@@ -600,8 +599,9 @@ main (int argc, char *argv[])
 	  puts ("");
 	}
 
-      if (!(shishi_key_length(key2) == strlen (drdk[i].dk) &&
-	    memcmp (drdk[i].dk, shishi_key_value(key2), strlen (drdk[i].dk)) == 0))
+      if (!(shishi_key_length (key2) == strlen (drdk[i].dk) &&
+	    memcmp (drdk[i].dk, shishi_key_value (key2),
+		    strlen (drdk[i].dk)) == 0))
 	{
 	  fail ("shishi_dk() entry %d failed\n", i);
 	  if (verbose)
@@ -665,7 +665,7 @@ main (int argc, char *argv[])
       int n_password = strlen (str2key[i].password);
       int saltlen = strlen (str2key[i].salt);
       int keylen = sizeof (key);
-      const char *name = shishi_cipher_name(str2key[i].etype);
+      const char *name = shishi_cipher_name (str2key[i].etype);
 
       if (verbose)
 	printf ("STRING-TO-KEY entry %d (key type %s)\n", i,
@@ -699,10 +699,10 @@ main (int argc, char *argv[])
 	  puts ("");
 
 	  printf ("computed key:\n");
-	  escapeprint (shishi_key_value(key), shishi_key_length(key));
-	  hexprint (shishi_key_value(key), shishi_key_length(key));
+	  escapeprint (shishi_key_value (key), shishi_key_length (key));
+	  hexprint (shishi_key_value (key), shishi_key_length (key));
 	  puts ("");
-	  binprint (shishi_key_value(key), shishi_key_length(key));
+	  binprint (shishi_key_value (key), shishi_key_length (key));
 	  puts ("");
 
 	  printf ("expected key:\n");
@@ -713,7 +713,7 @@ main (int argc, char *argv[])
 	  puts ("");
 	}
 
-      if (memcmp (str2key[i].key, shishi_key_value(key), keylen) != 0)
+      if (memcmp (str2key[i].key, shishi_key_value (key), keylen) != 0)
 	{
 	  fail ("shishi_string_to_key() entry %d failed\n", i);
 

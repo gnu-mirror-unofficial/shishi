@@ -56,8 +56,7 @@ shishi_authenticator (Shishi * handle)
     goto error;
 
   res = shishi_authenticator_set_cname (handle, node, SHISHI_NT_PRINCIPAL,
-					shishi_principal_default
-					(handle));
+					shishi_principal_default (handle));
   if (res != SHISHI_OK)
     goto error;
 
@@ -348,7 +347,7 @@ shishi_authenticator_ctime_get (Shishi * handle,
 
   len = GENERALIZEDTIME_TIME_LEN + 1;
   res = shishi_asn1_field (handle, authenticator,
-			    ctime, &len, "Authenticator.ctime");
+			   ctime, &len, "Authenticator.ctime");
   if (res == SHISHI_OK && len == GENERALIZEDTIME_TIME_LEN)
     ctime[len] = '\0';
 
@@ -362,7 +361,7 @@ shishi_authenticator_cusec_get (Shishi * handle,
   int res;
 
   res = shishi_asn1_integer_field (handle, authenticator, cusec,
-				    "Authenticator.cusec");
+				   "Authenticator.cusec");
   *cusec = ntohl (*cusec);
 
   return res;
@@ -458,10 +457,8 @@ shishi_authenticator_set_cksum (Shishi * handle,
 int
 shishi_authenticator_add_cksum (Shishi * handle,
 				ASN1_TYPE authenticator,
-				Shishi_key *key,
-				int keyusage,
-				char *data,
-				int datalen)
+				Shishi_key * key,
+				int keyusage, char *data, int datalen)
 {
   int res;
 
@@ -469,7 +466,7 @@ shishi_authenticator_add_cksum (Shishi * handle,
     {
       char cksum[BUFSIZ];
       int cksumlen;
-      int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type(key));
+      int cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
 
       cksumlen = sizeof (cksum);
       res = shishi_checksum (handle, key, keyusage, cksumtype,

@@ -29,10 +29,10 @@
  * library.  (Not a copy of it, so don't modify or deallocate it.)
  **/
 const char *
-shishi_hostkeys_default_file (Shishi *handle)
+shishi_hostkeys_default_file (Shishi * handle)
 {
   if (!handle->hostkeysdefaultfile)
-    handle->hostkeysdefaultfile = strdup(HOSTKEYSFILE);
+    handle->hostkeysdefaultfile = strdup (HOSTKEYSFILE);
 
   return handle->hostkeysdefaultfile;
 }
@@ -53,7 +53,7 @@ shishi_hostkeys_default_file_set (Shishi * handle, const char *hostkeysfile)
   if (handle->hostkeysdefaultfile)
     free (handle->hostkeysdefaultfile);
   if (hostkeysfile)
-    handle->hostkeysdefaultfile = strdup(hostkeysfile);
+    handle->hostkeysdefaultfile = strdup (hostkeysfile);
   else
     handle->hostkeysdefaultfile = NULL;
 }
@@ -70,7 +70,7 @@ shishi_hostkeys_default_file_set (Shishi * handle, const char *hostkeysfile)
  * error encountered.
  **/
 Shishi_key *
-shishi_hostkeys_for_serverrealm_in_file (Shishi *handle,
+shishi_hostkeys_for_serverrealm_in_file (Shishi * handle,
 					 const char *filename,
 					 const char *server,
 					 const char *realm)
@@ -100,16 +100,16 @@ shishi_hostkeys_for_serverrealm_in_file (Shishi *handle,
 	break;
 
       if (server &&
-	  shishi_key_principal(key) &&
-	  strcmp(server, shishi_key_principal(key)) == 0)
+	  shishi_key_principal (key) &&
+	  strcmp (server, shishi_key_principal (key)) == 0)
 	break;
 
       if (realm &&
-	  shishi_key_realm(key) &&
-	  strcmp(server, shishi_key_principal(key)) == 0)
+	  shishi_key_realm (key) &&
+	  strcmp (server, shishi_key_principal (key)) == 0)
 	break;
 
-      shishi_key_done(&key);
+      shishi_key_done (&key);
     }
 
   res = fclose (fh);
@@ -130,9 +130,8 @@ shishi_hostkeys_for_serverrealm_in_file (Shishi *handle,
  * encountered.
  **/
 Shishi_key *
-shishi_hostkeys_for_server_in_file (Shishi *handle,
-				    const char *filename,
-				    const char *server)
+shishi_hostkeys_for_server_in_file (Shishi * handle,
+				    const char *filename, const char *server)
 {
   return shishi_hostkeys_for_serverrealm_in_file (handle, filename,
 						  server, NULL);
@@ -148,10 +147,10 @@ shishi_hostkeys_for_server_in_file (Shishi *handle,
  * NULL if no key could be found or an error encountered.
  **/
 Shishi_key *
-shishi_hostkeys_for_server (Shishi *handle, const char *server)
+shishi_hostkeys_for_server (Shishi * handle, const char *server)
 {
   return shishi_hostkeys_for_server_in_file
-    (handle, shishi_hostkeys_default_file(handle), server);
+    (handle, shishi_hostkeys_default_file (handle), server);
 }
 
 /**
@@ -166,12 +165,11 @@ shishi_hostkeys_for_server (Shishi *handle, const char *server)
  * or an error encountered.
  **/
 Shishi_key *
-shishi_hostkeys_for_serverrealm (Shishi *handle,
-				 const char *server,
-				 const char *realm)
+shishi_hostkeys_for_serverrealm (Shishi * handle,
+				 const char *server, const char *realm)
 {
   return shishi_hostkeys_for_serverrealm_in_file
-    (handle, shishi_hostkeys_default_file(handle), server, realm);
+    (handle, shishi_hostkeys_default_file (handle), server, realm);
 }
 
 /**
@@ -187,22 +185,21 @@ shishi_hostkeys_for_serverrealm (Shishi *handle,
  * or an error encountered.
  **/
 Shishi_key *
-shishi_hostkeys_for_localservicerealm (Shishi *handle,
-				       const char *service,
-				       const char *realm)
+shishi_hostkeys_for_localservicerealm (Shishi * handle,
+				       const char *service, const char *realm)
 {
   char buf[HOST_NAME_MAX];
   int ret;
 
-  strcpy(buf, service);
-  strcat(buf, "/");
+  strcpy (buf, service);
+  strcat (buf, "/");
 
-  ret = gethostname (&buf[strlen(service) + 1],
-		     sizeof(buf) - strlen(service) - 1);
-  buf[sizeof(buf) - 1] = '\0';
+  ret = gethostname (&buf[strlen (service) + 1],
+		     sizeof (buf) - strlen (service) - 1);
+  buf[sizeof (buf) - 1] = '\0';
 
   if (ret != 0)
-    strcpy (&buf[strlen(service) + 1], "localhost");
+    strcpy (&buf[strlen (service) + 1], "localhost");
 
   return shishi_hostkeys_for_serverrealm (handle, buf, realm);
 }
@@ -218,7 +215,7 @@ shishi_hostkeys_for_localservicerealm (Shishi *handle,
  * NULL if no key could be found or an error encountered.
  **/
 Shishi_key *
-shishi_hostkeys_for_localservice (Shishi *handle, const char *service)
+shishi_hostkeys_for_localservice (Shishi * handle, const char *service)
 {
   return shishi_hostkeys_for_localservicerealm (handle, service, NULL);
 }

@@ -83,7 +83,7 @@ int
 main (int argc, char *argv[])
 {
   Shishi *handle;
-  Shishi_ticketset * tktset;
+  Shishi_ticketset *tktset;
   Shishi_ticket *t1, *t2, *t3;
   ASN1_TYPE n1, n2, n3;
   char buffer[BUFSIZ];
@@ -106,8 +106,7 @@ main (int argc, char *argv[])
 	     strcmp (argv[argc - 1], "--help") == 0)
       {
 	printf ("Usage: %s [-vdbh?] [--verbose] [--debug] "
-		"[--break-on-error] [--help]\n",
-		argv[0]);
+		"[--break-on-error] [--help]\n", argv[0]);
 	return 1;
       }
   while (argc-- > 1);
@@ -120,477 +119,479 @@ main (int argc, char *argv[])
     }
 
   if (debug)
-    shishi_cfg (handle, strdup("verbose"));
+    shishi_cfg (handle, strdup ("verbose"));
 
   /* shishi_ticketset_default_file() */
   p = shishi_ticketset_default_file (handle);
   if (debug)
-    printf("shishi_ticketset_default_file () => `%s'.\n", p ? p : "<null>");
+    printf ("shishi_ticketset_default_file () => `%s'.\n", p ? p : "<null>");
   if (p)
-    success("shishi_ticketset_default_file() OK\n");
+    success ("shishi_ticketset_default_file() OK\n");
   else
-    fail("shishi_ticketset_default_file() failed\n");
-  p = strdup(p);
+    fail ("shishi_ticketset_default_file() failed\n");
+  p = strdup (p);
 
   /* shishi_ticketset_default_file_set() */
   shishi_ticketset_default_file_set (handle, "foo");
   q = shishi_ticketset_default_file (handle);
   if (debug)
-    printf("shishi_ticketset_default_file () => `%s'.\n", q ? q : "<null>");
-  if (q && strcmp(q, "foo") == 0)
-    success("shishi_ticketset_default_file_set() OK\n");
+    printf ("shishi_ticketset_default_file () => `%s'.\n", q ? q : "<null>");
+  if (q && strcmp (q, "foo") == 0)
+    success ("shishi_ticketset_default_file_set() OK\n");
   else
-    fail("shishi_ticketset_default_file_set() failed\n");
+    fail ("shishi_ticketset_default_file_set() failed\n");
 
   /* shishi_ticketset_default_file_set() */
   shishi_ticketset_default_file_set (handle, NULL);
   q = shishi_ticketset_default_file (handle);
   if (debug)
-    printf("shishi_ticketset_default_file () => `%s'.\n", q ? q : "<null>");
-  if (p && q && strcmp(p, q) == 0)
-    success("shishi_ticketset_default_file_set() OK\n");
+    printf ("shishi_ticketset_default_file () => `%s'.\n", q ? q : "<null>");
+  if (p && q && strcmp (p, q) == 0)
+    success ("shishi_ticketset_default_file_set() OK\n");
   else
-    fail("shishi_ticketset_default_file_set() failed\n");
-  free(p);
+    fail ("shishi_ticketset_default_file_set() failed\n");
+  free (p);
 
   /* shishi_ticketset () */
   res = shishi_ticketset (handle, &tktset);
   if (res == SHISHI_OK)
-    success("shishi_ticketset() OK\n");
+    success ("shishi_ticketset() OK\n");
   else
-    fail("shishi_ticketset() failed\n");
+    fail ("shishi_ticketset() failed\n");
 
   /* shishi_ticketset_size () */
   n = shishi_ticketset_size (tktset);
   if (debug)
-    printf("shishi_ticketset_size () => `%d'.\n", n);
+    printf ("shishi_ticketset_size () => `%d'.\n", n);
   if (n == 0)
-    success("shishi_ticketset_size() OK\n");
+    success ("shishi_ticketset_size() OK\n");
   else
-    fail("shishi_ticketset_size() failed\n");
+    fail ("shishi_ticketset_size() failed\n");
 
   /* shishi_ticketset_get () */
   t1 = shishi_ticketset_get (tktset, 0);
   if (t1 == NULL)
-    success("shishi_ticketset_get() OK\n");
+    success ("shishi_ticketset_get() OK\n");
   else
-    fail("shishi_ticketset_get() failed\n");
+    fail ("shishi_ticketset_get() failed\n");
 
   /* shishi_ticketset_get () */
   t1 = shishi_ticketset_get (tktset, 42);
   if (t1 == NULL)
-    success("shishi_ticketset_get() OK\n");
+    success ("shishi_ticketset_get() OK\n");
   else
-    fail("shishi_ticketset_get() failed\n");
+    fail ("shishi_ticketset_get() failed\n");
 
   /* shishi_ticketset_add () */
   res = shishi_ticketset_add (tktset, NULL);
   if (res == SHISHI_INVALID_TICKET)
-    success("shishi_ticketset_add() OK\n");
+    success ("shishi_ticketset_add() OK\n");
   else
-    fail("shishi_ticketset_add() failed\n");
+    fail ("shishi_ticketset_add() failed\n");
 
   /* shishi_ticketset_remove () */
   res = shishi_ticketset_remove (tktset, 0);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_remove() OK\n");
+    success ("shishi_ticketset_remove() OK\n");
   else
-    fail("shishi_ticketset_remove() failed\n");
+    fail ("shishi_ticketset_remove() failed\n");
 
   /* shishi_ticketset_remove () */
   res = shishi_ticketset_remove (tktset, 42);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_remove() OK\n");
+    success ("shishi_ticketset_remove() OK\n");
   else
-    fail("shishi_ticketset_remove() failed\n");
+    fail ("shishi_ticketset_remove() failed\n");
 
   /* shishi_ticketset_remove () */
   res = shishi_ticketset_remove (NULL, 0);
   if (res == SHISHI_INVALID_TICKETSET)
-    success("shishi_ticketset_remove() OK\n");
+    success ("shishi_ticketset_remove() OK\n");
   else
-    fail("shishi_ticketset_remove() failed\n");
+    fail ("shishi_ticketset_remove() failed\n");
 
   /* create ticket */
   n = shishi_from_base64 (buffer, tkt1ticketb64);
   if (n == -1)
-    die("shishi_from_base64() failed\n");
-  n1 = shishi_d2a_ticket(handle, buffer, n);
+    die ("shishi_from_base64() failed\n");
+  n1 = shishi_d2a_ticket (handle, buffer, n);
   if (n1 == ASN1_TYPE_EMPTY)
-    die("shishi_d2a_ticket() failed\n");
+    die ("shishi_d2a_ticket() failed\n");
 
   n = shishi_from_base64 (buffer, tkt1enckdcreppartb64);
   if (n == -1)
-    die("shishi_from_base64() failed\n");
-  n2 = shishi_d2a_encasreppart(handle, buffer, n);
+    die ("shishi_from_base64() failed\n");
+  n2 = shishi_d2a_encasreppart (handle, buffer, n);
   if (n2 == ASN1_TYPE_EMPTY)
-    die("shishi_d2a_encasreppart() failed\n");
+    die ("shishi_d2a_encasreppart() failed\n");
 
   n = shishi_from_base64 (buffer, tkt1kdcrepb64);
   if (n == -1)
-    die("shishi_from_base64() failed\n");
-  n3 = shishi_d2a_asrep(handle, buffer, n);
+    die ("shishi_from_base64() failed\n");
+  n3 = shishi_d2a_asrep (handle, buffer, n);
   if (n3 == ASN1_TYPE_EMPTY)
-    die("shishi_d2a_asrep() failed\n");
+    die ("shishi_d2a_asrep() failed\n");
 
   /* shishi_ticketset_new() */
   res = shishi_ticketset_new (tktset, n1, n2, n3);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_new() OK\n");
+    success ("shishi_ticketset_new() OK\n");
   else
-    fail("shishi_ticketset_new() failed\n");
+    fail ("shishi_ticketset_new() failed\n");
 
   /* shishi_ticketset_size () */
   n = shishi_ticketset_size (tktset);
   if (debug)
-    printf("shishi_ticketset_size () => `%d'.\n", n);
+    printf ("shishi_ticketset_size () => `%d'.\n", n);
   if (n == 1)
-    success("shishi_ticketset_size() OK\n");
+    success ("shishi_ticketset_size() OK\n");
   else
-    fail("shishi_ticketset_size() failed\n");
+    fail ("shishi_ticketset_size() failed\n");
 
   /* shishi_ticketset_get () */
   t1 = shishi_ticketset_get (tktset, 0);
   if (debug)
     {
-      shishi_ticket_pretty_print(t1, stdout);
-      printf("t1=%p\n", t1);
+      shishi_ticket_pretty_print (t1, stdout);
+      printf ("t1=%p\n", t1);
     }
   if (t1)
-    success("shishi_ticketset_get() OK\n");
+    success ("shishi_ticketset_get() OK\n");
   else
-    fail("shishi_ticketset_get() failed\n");
+    fail ("shishi_ticketset_get() failed\n");
 
   /* shishi_ticketset_remove () */
   res = shishi_ticketset_remove (tktset, 0);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_remove() OK\n");
+    success ("shishi_ticketset_remove() OK\n");
   else
-    fail("shishi_ticketset_remove() failed\n");
+    fail ("shishi_ticketset_remove() failed\n");
 
   /* shishi_ticketset_size () */
   n = shishi_ticketset_size (tktset);
   if (debug)
-    printf("shishi_ticketset_size () => `%d'.\n", n);
+    printf ("shishi_ticketset_size () => `%d'.\n", n);
   if (n == 0)
-    success("shishi_ticketset_size() OK\n");
+    success ("shishi_ticketset_size() OK\n");
   else
-    fail("shishi_ticketset_size() failed\n");
+    fail ("shishi_ticketset_size() failed\n");
 
   /* shishi_ticketset_get () */
   t2 = shishi_ticketset_get (tktset, 0);
   if (t2 == NULL)
-    success("shishi_ticketset_get() OK\n");
+    success ("shishi_ticketset_get() OK\n");
   else
-    fail("shishi_ticketset_get() failed\n");
+    fail ("shishi_ticketset_get() failed\n");
 
   /* shishi_ticketset_add () */
   res = shishi_ticketset_add (tktset, t1);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_add() OK\n");
+    success ("shishi_ticketset_add() OK\n");
   else
-    fail("shishi_ticketset_add() failed\n");
+    fail ("shishi_ticketset_add() failed\n");
 
   /* shishi_ticketset_size () */
   n = shishi_ticketset_size (tktset);
   if (debug)
-    printf("shishi_ticketset_size () => `%d'.\n", n);
+    printf ("shishi_ticketset_size () => `%d'.\n", n);
   if (n == 1)
-    success("shishi_ticketset_size() OK\n");
+    success ("shishi_ticketset_size() OK\n");
   else
-    fail("shishi_ticketset_size() failed\n");
+    fail ("shishi_ticketset_size() failed\n");
 
   /* create ticket */
   n = shishi_from_base64 (buffer, tkt2ticketb64);
   if (n == -1)
-    die("shishi_from_base64() failed\n");
-  n1 = shishi_d2a_ticket(handle, buffer, n);
+    die ("shishi_from_base64() failed\n");
+  n1 = shishi_d2a_ticket (handle, buffer, n);
   if (n1 == ASN1_TYPE_EMPTY)
-    die("shishi_d2a_ticket() failed\n");
+    die ("shishi_d2a_ticket() failed\n");
 
   n = shishi_from_base64 (buffer, tkt2enckdcreppartb64);
   if (n == -1)
-    die("shishi_from_base64() failed\n");
-  n2 = shishi_d2a_enctgsreppart(handle, buffer, n);
+    die ("shishi_from_base64() failed\n");
+  n2 = shishi_d2a_enctgsreppart (handle, buffer, n);
   if (n2 == ASN1_TYPE_EMPTY)
-    die("shishi_d2a_enctgsreppart() failed\n");
+    die ("shishi_d2a_enctgsreppart() failed\n");
 
   n = shishi_from_base64 (buffer, tkt2kdcrepb64);
   if (n == -1)
-    die("shishi_from_base64() failed\n");
-  n3 = shishi_d2a_tgsrep(handle, buffer, n);
+    die ("shishi_from_base64() failed\n");
+  n3 = shishi_d2a_tgsrep (handle, buffer, n);
   if (n3 == ASN1_TYPE_EMPTY)
-    die("shishi_d2a_kdcrep() failed\n");
+    die ("shishi_d2a_kdcrep() failed\n");
 
   /* shishi_ticketset_new() */
   res = shishi_ticketset_new (tktset, n1, n2, n3);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_new() OK\n");
+    success ("shishi_ticketset_new() OK\n");
   else
-    fail("shishi_ticketset_new() failed\n");
+    fail ("shishi_ticketset_new() failed\n");
 
   /* shishi_ticketset_size () */
   n = shishi_ticketset_size (tktset);
   if (debug)
-    printf("shishi_ticketset_size () => `%d'.\n", n);
+    printf ("shishi_ticketset_size () => `%d'.\n", n);
   if (n == 2)
-    success("shishi_ticketset_size() OK\n");
+    success ("shishi_ticketset_size() OK\n");
   else
-    fail("shishi_ticketset_size() failed\n");
+    fail ("shishi_ticketset_size() failed\n");
 
   /* shishi_ticketset_get () */
   t2 = shishi_ticketset_get (tktset, 1);
   if (debug)
     {
-      shishi_ticket_pretty_print(t2, stdout);
-      printf("t2=%p\n", t2);
+      shishi_ticket_pretty_print (t2, stdout);
+      printf ("t2=%p\n", t2);
     }
   if (t2)
-    success("shishi_ticketset_get() OK\n");
+    success ("shishi_ticketset_get() OK\n");
   else
-    fail("shishi_ticketset_get() failed\n");
+    fail ("shishi_ticketset_get() failed\n");
 
   /* shishi_ticketset_find_for_server_all () */
   t3 = shishi_ticketset_find_for_server_all (tktset,
 					     "host/latte.josefsson.org");
   if (debug)
-    printf("t3=%p\n", t3);
+    printf ("t3=%p\n", t3);
   if (t3 == t2)
-    success("shishi_ticketset_find_ticket_for_server() OK\n");
+    success ("shishi_ticketset_find_ticket_for_server() OK\n");
   else
-    fail("shishi_ticketset_find_ticket_for_server() failed\n");
+    fail ("shishi_ticketset_find_ticket_for_server() failed\n");
 
   /* shishi_ticketset_find_for_server_all () */
   t3 = shishi_ticketset_find_for_server_all (tktset, "krbtgt/JOSEFSSON.ORG");
   if (t3 == t1)
-    success("shishi_ticketset_find_ticket_for_server() OK\n");
+    success ("shishi_ticketset_find_ticket_for_server() OK\n");
   else
-    fail("shishi_ticketset_find_ticket_for_server() failed\n");
+    fail ("shishi_ticketset_find_ticket_for_server() failed\n");
 
-  res = shishi_ticketset_to_file(tktset, "tktset.tmp");
+  res = shishi_ticketset_to_file (tktset, "tktset.tmp");
   if (res == SHISHI_OK)
-    success("shishi_ticketset_to_file() OK\n");
+    success ("shishi_ticketset_to_file() OK\n");
   else
-    fail("shishi_ticketset_to_file() failed\n");
+    fail ("shishi_ticketset_to_file() failed\n");
 
   /* shishi_ticketset_add () */
   res = shishi_ticketset_add (tktset, t2);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_add() OK\n");
+    success ("shishi_ticketset_add() OK\n");
   else
-    fail("shishi_ticketset_add() failed\n");
+    fail ("shishi_ticketset_add() failed\n");
 
   /* shishi_ticketset_add () */
   res = shishi_ticketset_add (tktset, t1);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_add() OK\n");
+    success ("shishi_ticketset_add() OK\n");
   else
-    fail("shishi_ticketset_add() failed\n");
+    fail ("shishi_ticketset_add() failed\n");
 
   /* shishi_ticketset_remove () */
   res = shishi_ticketset_remove (tktset, 1);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_remove() OK\n");
+    success ("shishi_ticketset_remove() OK\n");
   else
-    fail("shishi_ticketset_remove() failed\n");
+    fail ("shishi_ticketset_remove() failed\n");
 
   /* shishi_ticketset_remove () */
   res = shishi_ticketset_remove (tktset, 1);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_remove() OK\n");
+    success ("shishi_ticketset_remove() OK\n");
   else
-    fail("shishi_ticketset_remove() failed\n");
+    fail ("shishi_ticketset_remove() failed\n");
 
   t3 = shishi_ticketset_find_for_server_all (tktset,
 					     "host/latte.josefsson.org");
   if (t3 == NULL)
-    success("shishi_ticketset_find_ticket_for_server() OK\n");
+    success ("shishi_ticketset_find_ticket_for_server() OK\n");
   else
-    fail("shishi_ticketset_find_ticket_for_server() failed\n");
+    fail ("shishi_ticketset_find_ticket_for_server() failed\n");
 
   t3 = shishi_ticketset_find_for_server_all (tktset, "krbtgt/JOSEFSSON.ORG");
   if (t3 == t1)
-    success("shishi_ticketset_find_ticket_for_server() OK\n");
+    success ("shishi_ticketset_find_ticket_for_server() OK\n");
   else
-    fail("shishi_ticketset_find_ticket_for_server() failed\n");
+    fail ("shishi_ticketset_find_ticket_for_server() failed\n");
 
   /* shishi_ticketset_remove () */
   res = shishi_ticketset_remove (tktset, 0);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_remove() OK\n");
+    success ("shishi_ticketset_remove() OK\n");
   else
-    fail("shishi_ticketset_remove() failed\n");
+    fail ("shishi_ticketset_remove() failed\n");
 
   /* shishi_ticketset_remove () */
   res = shishi_ticketset_remove (tktset, 0);
   if (res == SHISHI_OK)
-    success("shishi_ticketset_remove() OK\n");
+    success ("shishi_ticketset_remove() OK\n");
   else
-    fail("shishi_ticketset_remove() failed\n");
+    fail ("shishi_ticketset_remove() failed\n");
 
   /* shishi_ticketset_size () */
   n = shishi_ticketset_size (tktset);
   if (debug)
-    printf("shishi_ticketset_size () => `%d'.\n", n);
+    printf ("shishi_ticketset_size () => `%d'.\n", n);
   if (n == 0)
-    success("shishi_ticketset_size() OK\n");
+    success ("shishi_ticketset_size() OK\n");
   else
-    fail("shishi_ticketset_size() failed\n");
+    fail ("shishi_ticketset_size() failed\n");
 
   /* shishi_ticketset_done () */
   shishi_ticketset_done (&tktset);
-  success("shishi_ticketset_done() OK\n");
+  success ("shishi_ticketset_done() OK\n");
 
   shishi_ticket_done (t1);
-  success("shishi_ticket_done (t1) OK\n");
+  success ("shishi_ticket_done (t1) OK\n");
   shishi_ticket_done (t2);
-  success("shishi_ticket_done (t2) OK\n");
+  success ("shishi_ticket_done (t2) OK\n");
 
   /* shishi_ticketset_done () */
   shishi_ticketset_done (NULL);
-  success("shishi_ticketset_done() OK\n");
+  success ("shishi_ticketset_done() OK\n");
 
   /* shishi_ticketset () */
   res = shishi_ticketset (handle, &tktset);
   if (res == SHISHI_OK)
-    success("shishi_ticketset() OK\n");
+    success ("shishi_ticketset() OK\n");
   else
-    fail("shishi_ticketset() failed\n");
+    fail ("shishi_ticketset() failed\n");
 
   /* shishi_ticketset_from_file () */
-  res = shishi_ticketset_from_file(tktset, "tktset.tmp");
+  res = shishi_ticketset_from_file (tktset, "tktset.tmp");
   if (res == SHISHI_OK)
-    success("shishi_ticketset_to_file() OK\n");
+    success ("shishi_ticketset_to_file() OK\n");
   else
-    fail("shishi_ticketset_to_file() failed\n");
+    fail ("shishi_ticketset_to_file() failed\n");
 
   /* shishi_ticketset_size () */
   n = shishi_ticketset_size (tktset);
   if (debug)
-    printf("shishi_ticketset_size () => `%d'.\n", n);
+    printf ("shishi_ticketset_size () => `%d'.\n", n);
   if (n == 2)
-    success("shishi_ticketset_size() OK\n");
+    success ("shishi_ticketset_size() OK\n");
   else
-    fail("shishi_ticketset_size() failed\n");
+    fail ("shishi_ticketset_size() failed\n");
 
   /* shishi_ticketset_get () */
   t1 = shishi_ticketset_get (tktset, 0);
   if (debug)
-    shishi_ticket_pretty_print(t1, stdout);
+    shishi_ticket_pretty_print (t1, stdout);
   if (t1)
-    success("shishi_ticketset_get() OK\n");
+    success ("shishi_ticketset_get() OK\n");
   else
-    fail("shishi_ticketset_get() failed\n");
+    fail ("shishi_ticketset_get() failed\n");
 
   /* shishi_ticketset_get () */
   t2 = shishi_ticketset_get (tktset, 1);
   if (debug)
-    shishi_ticket_pretty_print(t2, stdout);
+    shishi_ticket_pretty_print (t2, stdout);
   if (t2)
-    success("shishi_ticketset_get() OK\n");
+    success ("shishi_ticketset_get() OK\n");
   else
-    fail("shishi_ticketset_get() failed\n");
+    fail ("shishi_ticketset_get() failed\n");
 
   /* DER encode and compare tkt1 ticket */
-  res = shishi_a2d (handle, shishi_ticket_ticket(t1), buffer, &n);
+  res = shishi_a2d (handle, shishi_ticket_ticket (t1), buffer, &n);
   if (res == SHISHI_OK)
-    success("shishi_a2d() OK\n");
+    success ("shishi_a2d() OK\n");
   else
-    n = 0, fail("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64(buffer2, buffer, n, BUFSIZ);
-  if (strlen(buffer2) == strlen(tkt1ticketb64) &&
-      memcmp(buffer2, tkt1ticketb64, strlen(tkt1ticketb64)) == 0)
-    success("Ticket read OK\n");
+  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  if (strlen (buffer2) == strlen (tkt1ticketb64) &&
+      memcmp (buffer2, tkt1ticketb64, strlen (tkt1ticketb64)) == 0)
+    success ("Ticket read OK\n");
   else
-    fail("Ticket read failed\n");
+    fail ("Ticket read failed\n");
 
   /* DER encode and compare tkt1 enckdcreppart */
-  res = shishi_a2d (handle, shishi_ticket_enckdcreppart(t1), buffer, &n);
+  res = shishi_a2d (handle, shishi_ticket_enckdcreppart (t1), buffer, &n);
   if (res == SHISHI_OK)
-    success("shishi_a2d() OK\n");
+    success ("shishi_a2d() OK\n");
   else
-    n = 0, fail("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64(buffer2, buffer, n, BUFSIZ);
-  if (strlen(buffer2) == strlen(tkt1enckdcreppartb64) &&
-      memcmp(buffer2, tkt1enckdcreppartb64, strlen(tkt1enckdcreppartb64)) == 0)
-    success("EncKDCRepPart read OK\n");
+  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  if (strlen (buffer2) == strlen (tkt1enckdcreppartb64) &&
+      memcmp (buffer2, tkt1enckdcreppartb64,
+	      strlen (tkt1enckdcreppartb64)) == 0)
+    success ("EncKDCRepPart read OK\n");
   else
-    fail("EncKDCRepPart read failed\n");
+    fail ("EncKDCRepPart read failed\n");
 
   /* DER encode and compare tkt1 kdcrep */
-  res = shishi_a2d (handle, shishi_ticket_kdcrep(t1), buffer, &n);
+  res = shishi_a2d (handle, shishi_ticket_kdcrep (t1), buffer, &n);
   if (res == SHISHI_OK)
-    success("shishi_a2d() OK\n");
+    success ("shishi_a2d() OK\n");
   else
-    n = 0, fail("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64(buffer2, buffer, n, BUFSIZ);
-  if (strlen(buffer2) == strlen(tkt1kdcrepb64) &&
-      memcmp(buffer2, tkt1kdcrepb64, strlen(tkt1kdcrepb64)) == 0)
-    success("KDC-REP read OK\n");
+  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  if (strlen (buffer2) == strlen (tkt1kdcrepb64) &&
+      memcmp (buffer2, tkt1kdcrepb64, strlen (tkt1kdcrepb64)) == 0)
+    success ("KDC-REP read OK\n");
   else
-    fail("KDC-REP read failed\n");
+    fail ("KDC-REP read failed\n");
 
   /* DER encode and compare tkt2 ticket */
-  res = shishi_a2d (handle, shishi_ticket_ticket(t2), buffer, &n);
+  res = shishi_a2d (handle, shishi_ticket_ticket (t2), buffer, &n);
   if (res == SHISHI_OK)
-    success("shishi_a2d() OK\n");
+    success ("shishi_a2d() OK\n");
   else
-    n = 0, fail("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64(buffer2, buffer, n, BUFSIZ);
-  if (strlen(buffer2) == strlen(tkt2ticketb64) &&
-      memcmp(buffer2, tkt2ticketb64, strlen(tkt2ticketb64)) == 0)
-    success("Ticket 2 read OK\n");
+  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  if (strlen (buffer2) == strlen (tkt2ticketb64) &&
+      memcmp (buffer2, tkt2ticketb64, strlen (tkt2ticketb64)) == 0)
+    success ("Ticket 2 read OK\n");
   else
-    fail("Ticket 2 read failed\n");
+    fail ("Ticket 2 read failed\n");
 
   /* DER encode and compare tkt2 enckdcreppart */
-  res = shishi_a2d (handle, shishi_ticket_enckdcreppart(t2), buffer, &n);
+  res = shishi_a2d (handle, shishi_ticket_enckdcreppart (t2), buffer, &n);
   if (res == SHISHI_OK)
-    success("shishi_a2d() OK\n");
+    success ("shishi_a2d() OK\n");
   else
-    n = 0, fail("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64(buffer2, buffer, n, BUFSIZ);
-  if (strlen(buffer2) == strlen(tkt2enckdcreppartb64) &&
-      memcmp(buffer2, tkt2enckdcreppartb64, strlen(tkt2enckdcreppartb64)) == 0)
-    success("EncKDCRepPart 2 read OK\n");
+  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  if (strlen (buffer2) == strlen (tkt2enckdcreppartb64) &&
+      memcmp (buffer2, tkt2enckdcreppartb64,
+	      strlen (tkt2enckdcreppartb64)) == 0)
+    success ("EncKDCRepPart 2 read OK\n");
   else
-    fail("EncKDCRepPart 2 read failed\n");
+    fail ("EncKDCRepPart 2 read failed\n");
 
   /* DER encode and compare tkt2 kdcrep */
-  res = shishi_a2d (handle, shishi_ticket_kdcrep(t2), buffer, &n);
+  res = shishi_a2d (handle, shishi_ticket_kdcrep (t2), buffer, &n);
   if (res == SHISHI_OK)
-    success("shishi_a2d() OK\n");
+    success ("shishi_a2d() OK\n");
   else
-    n = 0, fail("shishi_a2d() failed\n");
+    n = 0, fail ("shishi_a2d() failed\n");
 
-  shishi_to_base64(buffer2, buffer, n, BUFSIZ);
-  if (strlen(buffer2) == strlen(tkt2kdcrepb64) &&
-      memcmp(buffer2, tkt2kdcrepb64, strlen(tkt2kdcrepb64)) == 0)
-    success("KDC-REP 2 read OK\n");
+  shishi_to_base64 (buffer2, buffer, n, BUFSIZ);
+  if (strlen (buffer2) == strlen (tkt2kdcrepb64) &&
+      memcmp (buffer2, tkt2kdcrepb64, strlen (tkt2kdcrepb64)) == 0)
+    success ("KDC-REP 2 read OK\n");
   else
-    fail("KDC-REP 2 read failed\n");
+    fail ("KDC-REP 2 read failed\n");
 
-  res = unlink("tktset.tmp");
+  res = unlink ("tktset.tmp");
   if (res == 0)
-    success("unlink() OK\n");
+    success ("unlink() OK\n");
   else
-    fail("unlink() failed\n");
+    fail ("unlink() failed\n");
 
   shishi_ticket_done (t1);
-  success("shishi_ticket_done (t1) OK\n");
+  success ("shishi_ticket_done (t1) OK\n");
   shishi_ticket_done (t2);
-  success("shishi_ticket_done (t2) OK\n");
+  success ("shishi_ticket_done (t2) OK\n");
 
   /* shishi_ticketset_done () */
   shishi_ticketset_done (&tktset);
-  success("shishi_ticketset_done() OK\n");
+  success ("shishi_ticketset_done() OK\n");
 
-  shishi_done(handle);
+  shishi_done (handle);
 
   if (verbose)
     printf ("Ticketset self tests done with %d errors\n", error_count);

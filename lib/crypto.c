@@ -137,9 +137,7 @@ rot13 (Shishi * handle, char *in, char *out, int len)
 	((in[0] >> 5) & 0x04) |
 	((in[0] << 3) & 0x08) |
 	((in[0] << 3) & 0x10) |
-	((in[0] << 3) & 0x20) |
-	((in[0] << 3) & 0x40) |
-	((in[0] << 3) & 0x80);
+	((in[0] << 3) & 0x20) | ((in[0] << 3) & 0x40) | ((in[0] << 3) & 0x80);
     }
   else if (len > 1)
     {
@@ -184,7 +182,7 @@ ocadd (char *add1, char *add2, char *sum, int len)
 
   for (i = len - 1; i >= 0; i--)
     {
-      int tmpsum = (unsigned char)add1[i] + (unsigned char)add2[i];
+      int tmpsum = (unsigned char) add1[i] + (unsigned char) add2[i];
 
       sum[i] = (tmpsum + carry) & 0xFF;
       if (tmpsum + carry > 0xFF)
@@ -197,7 +195,7 @@ ocadd (char *add1, char *add2, char *sum, int len)
       int done = 0;
 
       for (i = len - 1; i >= 0; i--)
-	if ((unsigned char)sum[i] != 0xFF)
+	if ((unsigned char) sum[i] != 0xFF)
 	  {
 	    sum[i]++;
 	    done = 1;
@@ -213,11 +211,9 @@ ocadd (char *add1, char *add2, char *sum, int len)
 
 static int
 simplified_hmac (Shishi * handle,
-		 Shishi_key *key,
+		 Shishi_key * key,
 		 const char *in,
-		 size_t inlen,
-		 char *outhash,
-		 size_t outhashlen)
+		 size_t inlen, char *outhash, size_t outhashlen)
 {
   GCRY_MD_HD mdh;
   int halg = GCRY_MD_SHA1;
@@ -229,14 +225,14 @@ simplified_hmac (Shishi * handle,
   if (mdh == NULL)
     return SHISHI_GCRYPT_ERROR;
 
-  res = gcry_md_setkey (mdh, shishi_key_value(key), shishi_key_length(key));
+  res = gcry_md_setkey (mdh, shishi_key_value (key), shishi_key_length (key));
   if (res != GCRYERR_SUCCESS)
     {
       shishi_error_set (handle, gcry_strerror (res));
       return SHISHI_GCRYPT_ERROR;
     }
 
-  gcry_md_write (mdh, (const unsigned char *)in, inlen);
+  gcry_md_write (mdh, (const unsigned char *) in, inlen);
 
   hash = gcry_md_read (mdh, halg);
   if (hash == NULL)
@@ -251,11 +247,9 @@ simplified_hmac (Shishi * handle,
 
 static int
 simplified_hmac_verify (Shishi * handle,
-			Shishi_key *key,
+			Shishi_key * key,
 			const char *in,
-			size_t inlen,
-			char *hmac,
-			size_t hmaclen)
+			size_t inlen, char *hmac, size_t hmaclen)
 {
   char hash[MAX_HASH_LEN];
   int res;
@@ -275,19 +269,18 @@ simplified_hmac_verify (Shishi * handle,
 }
 
 typedef enum
-  {
-    SHISHI_DERIVEKEYMODE_CHECKSUM,
-    SHISHI_DERIVEKEYMODE_PRIVACY,
-    SHISHI_DERIVEKEYMODE_INTEGRITY
-  }
-  Shishi_derivekeymode;
+{
+  SHISHI_DERIVEKEYMODE_CHECKSUM,
+  SHISHI_DERIVEKEYMODE_PRIVACY,
+  SHISHI_DERIVEKEYMODE_INTEGRITY
+}
+Shishi_derivekeymode;
 
 static int
 simplified_derivekey (Shishi * handle,
-		      Shishi_key *key,
+		      Shishi_key * key,
 		      int keyusage,
-		      int derivekeymode,
-		      Shishi_key *derivedkey)
+		      int derivekeymode, Shishi_key * derivedkey)
 {
   char constant[5];
   int res;
@@ -300,11 +293,11 @@ simplified_derivekey (Shishi * handle,
 	      derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY ? "integrity" :
 	      derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY ? "privacy" :
 	      "base-key");
-      hexprint (shishi_key_value(key), shishi_key_length(key));
+      hexprint (shishi_key_value (key), shishi_key_length (key));
       puts ("");
     }
 
-  shishi_key_type_set(derivedkey, shishi_key_type(key));
+  shishi_key_type_set (derivedkey, shishi_key_type (key));
 
   if (keyusage)
     {
@@ -314,7 +307,7 @@ simplified_derivekey (Shishi * handle,
 	constant[4] = '\x99';
       else if (derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY)
 	constant[4] = '\x55';
-      else /* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
+      else			/* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
 	constant[4] = '\xAA';
 
       res = shishi_dk (handle, key, constant, 5, derivedkey);
@@ -327,9 +320,9 @@ simplified_derivekey (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; simplified_derivekey out (%d):\n",
-	      shishi_key_length(derivedkey));
-      hexprint (shishi_key_value(derivedkey),
-		shishi_key_length(derivedkey));
+	      shishi_key_length (derivedkey));
+      hexprint (shishi_key_value (derivedkey),
+		shishi_key_length (derivedkey));
       puts ("");
     }
 
@@ -338,12 +331,9 @@ simplified_derivekey (Shishi * handle,
 
 static int
 simplified_dencrypt (Shishi * handle,
-		     Shishi_key *key,
+		     Shishi_key * key,
 		     const char *in,
-		     size_t inlen,
-		     char *out,
-		     size_t *outlen,
-		     int direction)
+		     size_t inlen, char *out, size_t * outlen, int direction)
 {
   int res;
   GCRY_CIPHER_HD ch;
@@ -351,7 +341,7 @@ simplified_dencrypt (Shishi * handle,
   int mode = GCRY_CIPHER_MODE_CBC;
   int flags = 0;
 
-  switch (shishi_key_type(key))
+  switch (shishi_key_type (key))
     {
     case SHISHI_DES3_CBC_HMAC_SHA1_KD:
       alg = GCRY_CIPHER_3DES;
@@ -374,16 +364,17 @@ simplified_dencrypt (Shishi * handle,
   if (ch == NULL)
     return SHISHI_GCRYPT_ERROR;
 
-  res = gcry_cipher_setkey (ch, shishi_key_value(key), shishi_key_length(key));
+  res =
+    gcry_cipher_setkey (ch, shishi_key_value (key), shishi_key_length (key));
   if (res == GCRYERR_SUCCESS)
     res = gcry_cipher_setiv (ch, NULL, 0);
 
   if (res == GCRYERR_SUCCESS)
     res = direction ?
-      gcry_cipher_decrypt (ch, (unsigned char*)out, *outlen,
-			   (const unsigned char*)in, inlen) :
-      gcry_cipher_encrypt (ch, (unsigned char*)out, *outlen,
-			   (const unsigned char*)in, inlen);
+      gcry_cipher_decrypt (ch, (unsigned char *) out, *outlen,
+			   (const unsigned char *) in, inlen) :
+      gcry_cipher_encrypt (ch, (unsigned char *) out, *outlen,
+			   (const unsigned char *) in, inlen);
 
   if (res != GCRYERR_SUCCESS)
     {
@@ -401,20 +392,17 @@ simplified_dencrypt (Shishi * handle,
 
 static int
 simplified_encrypt (Shishi * handle,
-		    Shishi_key *key,
+		    Shishi_key * key,
 		    int keyusage,
-		    const char *in,
-		    size_t inlen,
-		    char *out,
-		    size_t *outlen)
+		    const char *in, size_t inlen, char *out, size_t * outlen)
 {
   int res;
   int padzerolen = 0;
 
-  if ((shishi_key_type(key) == SHISHI_DES3_CBC_HMAC_SHA1_KD ||
-       shishi_key_type(key) == SHISHI_DES_CBC_CRC ||
-       shishi_key_type(key) == SHISHI_DES_CBC_MD4 ||
-       shishi_key_type(key) == SHISHI_DES_CBC_MD5) && (inlen % 8) != 0)
+  if ((shishi_key_type (key) == SHISHI_DES3_CBC_HMAC_SHA1_KD ||
+       shishi_key_type (key) == SHISHI_DES_CBC_CRC ||
+       shishi_key_type (key) == SHISHI_DES_CBC_MD4 ||
+       shishi_key_type (key) == SHISHI_DES_CBC_MD5) && (inlen % 8) != 0)
     while (((inlen + padzerolen) % 8) != 0)
       padzerolen++;
 
@@ -422,13 +410,13 @@ simplified_encrypt (Shishi * handle,
     {
       char *buffer;
       int buflen;
-      int blen = shishi_cipher_blocksize (shishi_key_type(key));
+      int blen = shishi_cipher_blocksize (shishi_key_type (key));
       int halg = GCRY_MD_SHA1;
       int hlen = gcry_md_get_algo_dlen (halg);
       size_t len;
       Shishi_key *derivedkey;
 
-      res = shishi_key_from_value (handle, shishi_key_type(key),
+      res = shishi_key_from_value (handle, shishi_key_type (key),
 				   NULL, &derivedkey);
       if (res != SHISHI_OK)
 	return res;
@@ -466,7 +454,7 @@ simplified_encrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      shishi_key_done(&derivedkey);
+      shishi_key_done (&derivedkey);
 
       *outlen = buflen + hlen;
     }
@@ -480,24 +468,21 @@ simplified_encrypt (Shishi * handle,
 
 static int
 simplified_decrypt (Shishi * handle,
-		    Shishi_key *key,
+		    Shishi_key * key,
 		    int keyusage,
-		    const char *in,
-		    size_t inlen,
-		    char *out,
-		    size_t *outlen)
+		    const char *in, size_t inlen, char *out, size_t * outlen)
 {
   int res;
 
   if (keyusage)
     {
       Shishi_key *derivedkey;
-      int blen = shishi_cipher_blocksize (shishi_key_type(key));
+      int blen = shishi_cipher_blocksize (shishi_key_type (key));
       int halg = GCRY_MD_SHA1;
       size_t hlen = gcry_md_get_algo_dlen (halg);
       size_t len;
 
-      res = shishi_key_from_value (handle, shishi_key_type(key),
+      res = shishi_key_from_value (handle, shishi_key_type (key),
 				   NULL, &derivedkey);
       if (res != SHISHI_OK)
 	return res;
@@ -525,7 +510,7 @@ simplified_decrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      shishi_key_done(&derivedkey);
+      shishi_key_done (&derivedkey);
 
       memmove (out, out + blen, len - blen);
       *outlen = len - blen;
@@ -540,23 +525,22 @@ simplified_decrypt (Shishi * handle,
 
 static int
 simplified_checksum (Shishi * handle,
-		     Shishi_key *key,
+		     Shishi_key * key,
 		     int keyusage,
 		     char *in, int inlen, char *out, int *outlen)
 {
   Shishi_key *derivedkey;
-  int halg = GCRY_MD_SHA1; /* XXX hide this in crypto-lowlevel.c */
+  int halg = GCRY_MD_SHA1;	/* XXX hide this in crypto-lowlevel.c */
   int hlen = gcry_md_get_algo_dlen (halg);
   int res;
 
-  res = shishi_key_from_value (handle, shishi_key_type(key),
+  res = shishi_key_from_value (handle, shishi_key_type (key),
 			       NULL, &derivedkey);
   if (res != SHISHI_OK)
     return res;
 
   res = simplified_derivekey (handle, key, keyusage,
-			      SHISHI_DERIVEKEYMODE_CHECKSUM,
-			      derivedkey);
+			      SHISHI_DERIVEKEYMODE_CHECKSUM, derivedkey);
   if (res != SHISHI_OK)
     return res;
 
@@ -568,7 +552,7 @@ simplified_checksum (Shishi * handle,
     }
   *outlen = hlen;
 
-  shishi_key_done(&derivedkey);
+  shishi_key_done (&derivedkey);
 
   return SHISHI_OK;
 }
@@ -576,7 +560,7 @@ simplified_checksum (Shishi * handle,
 typedef int (*Shishi_random_to_key_function) (Shishi * handle,
 					      char *random,
 					      int randomlen,
-					      Shishi_key *outkey);
+					      Shishi_key * outkey);
 
 typedef int (*Shishi_string_to_key_function) (Shishi * handle,
 					      char *password,
@@ -584,23 +568,19 @@ typedef int (*Shishi_string_to_key_function) (Shishi * handle,
 					      char *salt,
 					      int saltlen,
 					      char *parameter,
-					      Shishi_key *outkey);
+					      Shishi_key * outkey);
 
 typedef int (*Shishi_encrypt_function) (Shishi * handle,
-					Shishi_key *key,
+					Shishi_key * key,
 					int keyusage,
 					char *in,
-					int inlen,
-					char *out,
-					int *outlen);
+					int inlen, char *out, int *outlen);
 
 typedef int (*Shishi_decrypt_function) (Shishi * handle,
-					Shishi_key *key,
+					Shishi_key * key,
 					int keyusage,
 					char *in,
-					int inlen,
-					char *out,
-					int *outlen);
+					int inlen, char *out, int *outlen);
 
 #include "crypto-null.c"
 #include "crypto-des.c"
@@ -973,14 +953,12 @@ shishi_string_to_key (Shishi * handle,
 		      char *password,
 		      int passwordlen,
 		      char *salt,
-		      int saltlen,
-		      char *parameter,
-		      Shishi_key *outkey)
+		      int saltlen, char *parameter, Shishi_key * outkey)
 {
   Shishi_string_to_key_function string2key;
   int res;
 
-  shishi_key_type_set(outkey, keytype);
+  shishi_key_type_set (outkey, keytype);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -996,11 +974,11 @@ shishi_string_to_key (Shishi * handle,
       puts ("");
     }
 
-  string2key = _shishi_cipher_string_to_key (shishi_key_type(outkey));
+  string2key = _shishi_cipher_string_to_key (shishi_key_type (outkey));
   if (string2key == NULL)
     {
       shishi_error_printf (handle, "Unsupported keytype %d",
-			   shishi_key_type(outkey));
+			   shishi_key_type (outkey));
       return !SHISHI_OK;
     }
 
@@ -1010,9 +988,9 @@ shishi_string_to_key (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; string_to_key key:\n");
-      hexprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
       puts ("");
-      binprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      binprint (shishi_key_value (outkey), shishi_key_length (outkey));
       puts ("");
     }
 
@@ -1035,14 +1013,12 @@ shishi_string_to_key (Shishi * handle,
 int
 shishi_random_to_key (Shishi * handle,
 		      int keytype,
-		      char *random,
-		      int randomlen,
-		      Shishi_key *outkey)
+		      char *random, int randomlen, Shishi_key * outkey)
 {
   Shishi_random_to_key_function random2key;
   int res;
 
-  shishi_key_type_set(outkey, keytype);
+  shishi_key_type_set (outkey, keytype);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -1067,9 +1043,9 @@ shishi_random_to_key (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       printf ("\t ;; random_to_key key:\n");
-      hexprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      hexprint (shishi_key_value (outkey), shishi_key_length (outkey));
       puts ("");
-      binprint (shishi_key_value(outkey), shishi_key_length(outkey));
+      binprint (shishi_key_value (outkey), shishi_key_length (outkey));
       puts ("");
     }
 
@@ -1098,10 +1074,9 @@ shishi_random_to_key (Shishi * handle,
  **/
 int
 shishi_checksum (Shishi * handle,
-		 Shishi_key *key,
+		 Shishi_key * key,
 		 int keyusage,
-		 int cksumtype,
-		 char *in, int inlen, char *out, int *outlen)
+		 int cksumtype, char *in, int inlen, char *out, int *outlen)
 {
   int res;
 
@@ -1109,8 +1084,8 @@ shishi_checksum (Shishi * handle,
     {
       printf ("checksum (%s, %d, in, out)\n",
 	      shishi_key_name (key), cksumtype);
-      printf ("\t ;; key (%d):\n", shishi_key_length(key));
-      hexprint (shishi_key_value(key), shishi_key_length(key));
+      printf ("\t ;; key (%d):\n", shishi_key_length (key));
+      hexprint (shishi_key_value (key), shishi_key_length (key));
       puts ("");
       printf ("\t ;; in:\n");
       escapeprint (in, inlen);
@@ -1119,7 +1094,7 @@ shishi_checksum (Shishi * handle,
     }
 
   if (cksumtype == 0)
-    cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type(key));
+    cksumtype = shishi_cipher_defaultcksumtype (shishi_key_type (key));
 
   /* XXX create a dispatcher instead of hardcoding this */
 
@@ -1140,7 +1115,7 @@ shishi_checksum (Shishi * handle,
 	    return res;
 	  }
 
-	keyp = shishi_key_value(key);
+	keyp = shishi_key_value (key);
 
 	for (i = 0; i < 8; i++)
 	  keyp[i] ^= 0xF0;
@@ -1174,7 +1149,7 @@ shishi_checksum (Shishi * handle,
 	    return res;
 	  }
 
-	keyp = shishi_key_value(key);
+	keyp = shishi_key_value (key);
 
 	for (i = 0; i < 8; i++)
 	  keyp[i] ^= 0xF0;
@@ -1194,17 +1169,20 @@ shishi_checksum (Shishi * handle,
       break;
 
     case SHISHI_HMAC_SHA1_DES3_KD:
-      res = simplified_checksum(handle, key, keyusage, in, inlen, out, outlen);
+      res =
+	simplified_checksum (handle, key, keyusage, in, inlen, out, outlen);
       break;
 
     case SHISHI_HMAC_SHA1_96_AES128:
-      res = simplified_checksum(handle, key, keyusage, in, inlen, out, outlen);
-      *outlen = 96/8;
+      res =
+	simplified_checksum (handle, key, keyusage, in, inlen, out, outlen);
+      *outlen = 96 / 8;
       break;
 
     case SHISHI_HMAC_SHA1_96_AES256:
-      res = simplified_checksum(handle, key, keyusage, in, inlen, out, outlen);
-      *outlen = 96/8;
+      res =
+	simplified_checksum (handle, key, keyusage, in, inlen, out, outlen);
+      *outlen = 96 / 8;
       break;
 
 
@@ -1246,10 +1224,8 @@ shishi_checksum (Shishi * handle,
  **/
 int
 shishi_encrypt (Shishi * handle,
-		Shishi_key *key,
-		int keyusage,
-		char *in, int inlen,
-		char *out, int *outlen)
+		Shishi_key * key,
+		int keyusage, char *in, int inlen, char *out, int *outlen)
 {
   Shishi_encrypt_function encrypt;
   int res;
@@ -1258,8 +1234,8 @@ shishi_encrypt (Shishi * handle,
     {
       printf ("encrypt (type=%s, usage=%d, key, in)\n",
 	      shishi_key_name (key), keyusage);
-      printf ("\t ;; key (%d):\n", shishi_key_length(key));
-      hexprint (shishi_key_value(key), shishi_key_length(key));
+      printf ("\t ;; key (%d):\n", shishi_key_length (key));
+      hexprint (shishi_key_value (key), shishi_key_length (key));
       puts ("");
       printf ("\t ;; in (%d):\n", inlen);
       escapeprint (in, inlen);
@@ -1267,11 +1243,11 @@ shishi_encrypt (Shishi * handle,
       puts ("");
     }
 
-  encrypt = _shishi_cipher_encrypt (shishi_key_type(key));
+  encrypt = _shishi_cipher_encrypt (shishi_key_type (key));
   if (encrypt == NULL)
     {
       shishi_error_printf (handle, "Unsupported keytype %d",
-			   shishi_key_type(key));
+			   shishi_key_type (key));
       return !SHISHI_OK;
     }
 
@@ -1309,10 +1285,8 @@ shishi_encrypt (Shishi * handle,
  **/
 int
 shishi_decrypt (Shishi * handle,
-		Shishi_key *key,
-		int keyusage,
-		char *in, int inlen,
-		char *out, int *outlen)
+		Shishi_key * key,
+		int keyusage, char *in, int inlen, char *out, int *outlen)
 {
   Shishi_decrypt_function decrypt;
   int res;
@@ -1321,8 +1295,8 @@ shishi_decrypt (Shishi * handle,
     {
       printf ("decrypt (type=%s, usage=%d, key, in, out)\n",
 	      shishi_key_name (key), keyusage);
-      printf ("\t ;; key (%d):\n", shishi_key_length(key));
-      hexprint (shishi_key_value(key), shishi_key_length(key));
+      printf ("\t ;; key (%d):\n", shishi_key_length (key));
+      hexprint (shishi_key_value (key), shishi_key_length (key));
       puts ("");
       printf ("\t ;; in (%d):\n", inlen);
       escapeprint (in, inlen);
@@ -1330,11 +1304,11 @@ shishi_decrypt (Shishi * handle,
       puts ("");
     }
 
-  decrypt = _shishi_cipher_decrypt (shishi_key_type(key));
+  decrypt = _shishi_cipher_decrypt (shishi_key_type (key));
   if (decrypt == NULL)
     {
       shishi_error_printf (handle, "Unsupported keytype %d",
-			   shishi_key_type(key));
+			   shishi_key_type (key));
       return !SHISHI_OK;
     }
 
@@ -1411,13 +1385,13 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
   int i = 0;
 
   /*
-    To n-fold a number X, replicate the input value to a length that is
-    the least common multiple of n and the length of X. Before each
-    repetition, the input is rotated to the right by 13 bit
-    positions. The successive n-bit chunks are added together using
-    1's-complement addition (that is, addition with end-around carry)
-    to yield a n-bit result denoted <X>_n.
-  */
+     To n-fold a number X, replicate the input value to a length that is
+     the least common multiple of n and the length of X. Before each
+     repetition, the input is rotated to the right by 13 bit
+     positions. The successive n-bit chunks are added together using
+     1's-complement addition (that is, addition with end-around carry)
+     to yield a n-bit result denoted <X>_n.
+   */
 
   a = (char *) malloc (m);
   if (a == NULL)
@@ -1543,27 +1517,25 @@ shishi_n_fold (Shishi * handle, char *in, int inlen, char *out, int outlen)
  **/
 int
 shishi_dr (Shishi * handle,
-	   Shishi_key *key,
+	   Shishi_key * key,
 	   char *constant,
-	   int constantlen,
-	   char *derivedrandom,
-	   int derivedrandomlen)
+	   int constantlen, char *derivedrandom, int derivedrandomlen)
 {
   char cipher[MAX_DR_CONSTANT];
   char plaintext[MAX_DR_CONSTANT];
   char nfoldconstant[MAX_DR_CONSTANT];
-  int blocksize = shishi_cipher_blocksize (shishi_key_type(key));
+  int blocksize = shishi_cipher_blocksize (shishi_key_type (key));
   int totlen, cipherlen;
   int res;
 
   if (VERBOSECRYPTO (handle))
     {
       printf ("dr (%s, key, constant, %d)\n",
-	      shishi_cipher_name (shishi_key_type(key)), derivedrandomlen);
-      printf ("\t ;; key (length %d):\n", shishi_key_type(key));
-      hexprint (shishi_key_value(key), shishi_key_type(key));
+	      shishi_cipher_name (shishi_key_type (key)), derivedrandomlen);
+      printf ("\t ;; key (length %d):\n", shishi_key_type (key));
+      hexprint (shishi_key_value (key), shishi_key_type (key));
       puts ("");
-      binprint (shishi_key_value(key), shishi_key_type(key));
+      binprint (shishi_key_value (key), shishi_key_type (key));
       puts ("");
       printf ("\t ;; constant  %s':\n", constant);
       escapeprint (constant, constantlen);
@@ -1645,22 +1617,19 @@ shishi_dr (Shishi * handle,
  **/
 int
 shishi_dk (Shishi * handle,
-	   Shishi_key *key,
-	   char *constant,
-	   int constantlen,
-	   Shishi_key *derivedkey)
+	   Shishi_key * key,
+	   char *constant, int constantlen, Shishi_key * derivedkey)
 {
   char random[MAX_RANDOM_LEN];
   int res;
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("dk (%s, key, constant)\n",
-	      shishi_key_name (key));
-      printf ("\t ;; key (length %d):\n", shishi_key_length(key));
-      hexprint (shishi_key_value(key), shishi_key_length(key));
+      printf ("dk (%s, key, constant)\n", shishi_key_name (key));
+      printf ("\t ;; key (length %d):\n", shishi_key_length (key));
+      hexprint (shishi_key_value (key), shishi_key_length (key));
       puts ("");
-      binprint (shishi_key_value(key), shishi_key_length(key));
+      binprint (shishi_key_value (key), shishi_key_length (key));
       puts ("");
       printf ("\t ;; constant:\n");
       escapeprint (constant, constantlen);
@@ -1671,15 +1640,15 @@ shishi_dk (Shishi * handle,
       puts ("");
     }
 
-  shishi_key_type_set(derivedkey, shishi_key_type(key));
+  shishi_key_type_set (derivedkey, shishi_key_type (key));
 
   res = shishi_dr (handle, key, constant, constantlen, random,
-		   shishi_key_length(derivedkey));
+		   shishi_key_length (derivedkey));
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_random_to_key (handle, shishi_key_type(derivedkey),
-			      random, shishi_key_length(derivedkey),
+  res = shishi_random_to_key (handle, shishi_key_type (derivedkey),
+			      random, shishi_key_length (derivedkey),
 			      derivedkey);
   if (res != SHISHI_OK)
     return res;

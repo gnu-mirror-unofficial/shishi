@@ -37,9 +37,9 @@ client (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      shishi_asprintf(&arg.sname, "host/www");
+      shishi_asprintf (&arg.sname, "host/www");
       if (arg.sname == NULL)
-	die("Could not allocate server name.");
+	die ("Could not allocate server name.");
     }
 
   if (arg.verbose)
@@ -50,7 +50,7 @@ client (Shishi * handle, struct arguments arg)
     }
 
   tkt = shishi_ticketset_get_for_server
-    (shishi_ticketset_default(handle), arg.sname);
+    (shishi_ticketset_default (handle), arg.sname);
   if (tkt == NULL)
     {
       printf ("Cannot get ticket for server `%s'.\n", arg.sname);
@@ -72,12 +72,11 @@ client (Shishi * handle, struct arguments arg)
     }
 
   if (arg.verbose)
-    shishi_authenticator_print (handle, stdout,
-				shishi_ap_authenticator(ap));
+    shishi_authenticator_print (handle, stdout, shishi_ap_authenticator (ap));
 
-  shishi_apreq_print (handle, stdout, shishi_ap_req(ap));
+  shishi_apreq_print (handle, stdout, shishi_ap_req (ap));
 
-  if (shishi_apreq_mutual_required_p (handle, shishi_ap_req(ap)))
+  if (shishi_apreq_mutual_required_p (handle, shishi_ap_req (ap)))
     {
       ASN1_TYPE aprep;
 
@@ -87,21 +86,21 @@ client (Shishi * handle, struct arguments arg)
 
       res = shishi_ap_rep_verify_asn1 (ap, aprep);
       if (res == SHISHI_APREP_VERIFY_FAILED)
-	printf("AP-REP verification failed...\n");
+	printf ("AP-REP verification failed...\n");
       else if (res == SHISHI_OK)
-	printf("AP-REP verification OK...\n");
+	printf ("AP-REP verification OK...\n");
       else
-	printf("AP-REP verification error: %s\n", shishi_strerror(res));
+	printf ("AP-REP verification error: %s\n", shishi_strerror (res));
     }
 
-  res = shishi_safe(handle, &safe);
+  res = shishi_safe (handle, &safe);
   if (res != SHISHI_OK)
     {
       printf ("Could not build SAFE: %s\n", shishi_strerror (res));
       return res;
     }
 
-  res = shishi_safe_print(handle, stdout, safe);
+  res = shishi_safe_print (handle, stdout, safe);
   if (res != SHISHI_OK)
     {
       printf ("Could not print SAFE: %s\n", shishi_strerror (res));

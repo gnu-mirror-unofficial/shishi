@@ -44,13 +44,13 @@ shishi_sendrecv_udp (Shishi * handle,
   sockfd = socket (AF_INET, SOCK_DGRAM, 0);
   if (sockfd < 0)
     {
-      shishi_error_set(handle, strerror(errno));
+      shishi_error_set (handle, strerror (errno));
       return SHISHI_SOCKET_ERROR;
     }
 
   if (bind (sockfd, (struct sockaddr *) &lsa, sizeof (lsa)) != 0)
     {
-      shishi_error_set(handle, strerror(errno));
+      shishi_error_set (handle, strerror (errno));
       close (sockfd);
       return SHISHI_BIND_ERROR;
     }
@@ -59,7 +59,7 @@ shishi_sendrecv_udp (Shishi * handle,
 		       0, addr, sizeof (*addr));
   if (bytes_sent != inlen)
     {
-      shishi_error_set(handle, strerror(errno));
+      shishi_error_set (handle, strerror (errno));
       return SHISHI_SENDTO_ERROR;
     }
 
@@ -70,9 +70,9 @@ shishi_sendrecv_udp (Shishi * handle,
   if ((rc = select (sockfd + 1, &readfds, NULL, NULL, &tout)) != 1)
     {
       if (rc == -1)
-	shishi_error_set(handle, strerror(errno));
+	shishi_error_set (handle, strerror (errno));
       else
-	shishi_error_clear(handle);
+	shishi_error_clear (handle);
       return SHISHI_KDC_TIMEOUT;
     }
 
@@ -81,13 +81,13 @@ shishi_sendrecv_udp (Shishi * handle,
 
   if (*outlen == -1)
     {
-      shishi_error_set(handle, strerror(errno));
+      shishi_error_set (handle, strerror (errno));
       return SHISHI_RECVFROM_ERROR;
     }
 
   if (close (sockfd) != 0)
     {
-      shishi_error_set(handle, strerror(errno));
+      shishi_error_set (handle, strerror (errno));
       return SHISHI_CLOSE_ERROR;
     }
 
@@ -98,9 +98,7 @@ int
 shishi_kdc_sendrecv (Shishi * handle,
 		     char *realm,
 		     const char *indata,
-		     size_t inlen,
-		     char *outdata,
-		     size_t *outlen)
+		     size_t inlen, char *outdata, size_t * outlen)
 {
   int i, j, k;
   int rc;
@@ -114,7 +112,7 @@ shishi_kdc_sendrecv (Shishi * handle,
 	      struct Shishi_kdcinfo *ki =
 		&handle->realminfos[i].kdcaddresses[k];
 
-	      if (VERBOSE(handle))
+	      if (VERBOSE (handle))
 		{
 		  printf ("Sending to %s (%s)...\n", ki->name,
 			  inet_ntoa (((struct sockaddr_in *)
@@ -128,7 +126,7 @@ shishi_kdc_sendrecv (Shishi * handle,
 		return rc;
 	    }
 
-	shishi_error_clear(handle);
+	shishi_error_clear (handle);
 	return SHISHI_KDC_TIMEOUT;
       }
 

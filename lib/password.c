@@ -53,7 +53,6 @@ tty_set_echo (int echo)
 
 mail simon @ josefsson.org and tell what system this is
 #endif
-
 static RETSIGTYPE
 tty_echo (int signum)
 {
@@ -103,7 +102,8 @@ shishi_prompt_password_raw (FILE * in, char *s, int size,
   int rc;
 
   va_start (ap, format);
-  vfprintf (out, format, ap); fflush (out);
+  vfprintf (out, format, ap);
+  fflush (out);
   va_end (ap);
 
   rc = shishi_read_password (in, s, size);
@@ -114,7 +114,7 @@ shishi_prompt_password_raw (FILE * in, char *s, int size,
 }
 
 int
-shishi_prompt_password (Shishi *handle,
+shishi_prompt_password (Shishi * handle,
 			FILE * in, char *s, int size,
 			FILE * out, char *format, ...)
 {
@@ -122,14 +122,15 @@ shishi_prompt_password (Shishi *handle,
   va_list ap;
   int rc;
 
-  if (VERBOSE(handle))
+  if (VERBOSE (handle))
     {
-      printf("Libstringprep thinks your locale is `%s'.\n",
-	     stringprep_locale_charset());
+      printf ("Libstringprep thinks your locale is `%s'.\n",
+	      stringprep_locale_charset ());
     }
 
   va_start (ap, format);
-  vfprintf (out, format, ap); fflush (out);
+  vfprintf (out, format, ap);
+  fflush (out);
   va_end (ap);
 
   rc = shishi_read_password (in, s, size);
@@ -139,18 +140,19 @@ shishi_prompt_password (Shishi *handle,
   if (rc != SHISHI_OK)
     return rc;
 
-  if (VERBOSE(handle))
+  if (VERBOSE (handle))
     {
       size_t i;
-      printf("Read password (length %d): ", strlen(s));
-      for (i=0; i < strlen(s); i++)
-	printf("%02x ", s[i] & 0xFF);
-      printf("\n");
+      printf ("Read password (length %d): ", strlen (s));
+      for (i = 0; i < strlen (s); i++)
+	printf ("%02x ", s[i] & 0xFF);
+      printf ("\n");
     }
 
-  if (handle->stringprocess && strcasecmp(handle->stringprocess, "none") != 0)
+  if (handle->stringprocess
+      && strcasecmp (handle->stringprocess, "none") != 0)
     {
-      if (strcasecmp(handle->stringprocess, "stringprep") == 0)
+      if (strcasecmp (handle->stringprocess, "stringprep") == 0)
 	p = stringprep_locale_to_utf8 (s);
       else
 	p = stringprep_convert (s, handle->stringprocess,
@@ -158,35 +160,35 @@ shishi_prompt_password (Shishi *handle,
 
       if (p)
 	{
-	  strncpy(s, p, size);
-	  s[size-1] = '\0';
-	  free(p);
+	  strncpy (s, p, size);
+	  s[size - 1] = '\0';
+	  free (p);
 	}
 
-      if (VERBOSE(handle))
+      if (VERBOSE (handle))
 	{
 	  size_t i;
-	  printf("Password converted to %s (length %d): ",
-		 strcasecmp(handle->stringprocess, "stringprep") == 0 ?
-		 "UTF-8" : handle->stringprocess, strlen(s));
-	  for (i=0; i < strlen(s); i++)
-	    printf("%02x ", s[i] & 0xFF);
-	  printf("\n");
+	  printf ("Password converted to %s (length %d): ",
+		  strcasecmp (handle->stringprocess, "stringprep") == 0 ?
+		  "UTF-8" : handle->stringprocess, strlen (s));
+	  for (i = 0; i < strlen (s); i++)
+	    printf ("%02x ", s[i] & 0xFF);
+	  printf ("\n");
 	}
 
-      if (strcasecmp(handle->stringprocess, "stringprep") == 0)
+      if (strcasecmp (handle->stringprocess, "stringprep") == 0)
 	{
-	  rc = stringprep_kerberos5(s, size);
+	  rc = stringprep_kerberos5 (s, size);
 	  if (rc != SHISHI_OK)
 	    return rc;
 
-	  if (VERBOSE(handle))
+	  if (VERBOSE (handle))
 	    {
 	      size_t i;
-	      printf("Stringprep'ed password (length %d): ", strlen(s));
-	      for (i=0; i < strlen(s); i++)
-		printf("%02x ", s[i] & 0xFF);
-	      printf("\n");
+	      printf ("Stringprep'ed password (length %d): ", strlen (s));
+	      for (i = 0; i < strlen (s); i++)
+		printf ("%02x ", s[i] & 0xFF);
+	      printf ("\n");
 	    }
 
 	}

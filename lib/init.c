@@ -81,8 +81,8 @@ shishi (void)
   handle = (Shishi *) malloc (sizeof (*handle));
   if (handle == NULL)
     {
-      fprintf(stderr, "libshishi: error: %s\n",
-	      shishi_strerror (SHISHI_MALLOC_ERROR));
+      fprintf (stderr, "libshishi: error: %s\n",
+	       shishi_strerror (SHISHI_MALLOC_ERROR));
       return NULL;
     }
   memset ((void *) handle, 0, sizeof (*handle));
@@ -91,8 +91,8 @@ shishi (void)
   res = gcry_control (GCRYCTL_INIT_SECMEM, 512, 0);
   if (res != GCRYERR_SUCCESS)
     {
-      fprintf(stderr, "libshishi: error: %s\n",
-	      shishi_strerror (SHISHI_GCRYPT_ERROR));
+      fprintf (stderr, "libshishi: error: %s\n",
+	       shishi_strerror (SHISHI_GCRYPT_ERROR));
       return NULL;
     }
 #else
@@ -102,8 +102,8 @@ shishi (void)
   handle->asn1 = read_asn1 ();
   if (handle->asn1 == ASN1_TYPE_EMPTY)
     {
-      fprintf(stderr, "libshishi: error: %s\n",
-	      shishi_strerror (SHISHI_ASN1_ERROR));
+      fprintf (stderr, "libshishi: error: %s\n",
+	       shishi_strerror (SHISHI_ASN1_ERROR));
       return NULL;
     }
 
@@ -115,8 +115,8 @@ shishi (void)
 				    handle->nclientkdcetypes);
   if (handle->clientkdcetypes == NULL)
     {
-      fprintf(stderr, "libshishi: error: %s\n",
-	      shishi_strerror (SHISHI_MALLOC_ERROR));
+      fprintf (stderr, "libshishi: error: %s\n",
+	       shishi_strerror (SHISHI_MALLOC_ERROR));
       return NULL;
     }
   handle->clientkdcetypes[0] = SHISHI_AES256_CTS_HMAC_SHA1_96;
@@ -138,8 +138,7 @@ shishi (void)
 static int
 _shishi_init_read (Shishi * handle,
 		   const char *ticketsetfile,
-		   const char *systemcfgfile,
-		   const char *usercfgfile)
+		   const char *systemcfgfile, const char *usercfgfile)
 {
   int rc = SHISHI_OK;
 
@@ -160,21 +159,21 @@ _shishi_init_read (Shishi * handle,
   if (*ticketsetfile)
     rc = shishi_ticketset_from_file (handle->ticketset, ticketsetfile);
   if (rc == SHISHI_FOPEN_ERROR)
-    fprintf (stderr, WARNSTR "%s: %s\n", ticketsetfile, strerror(errno));
+    fprintf (stderr, WARNSTR "%s: %s\n", ticketsetfile, strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
   if (*systemcfgfile)
     rc = shishi_cfg_from_file (handle, systemcfgfile);
   if (rc == SHISHI_FOPEN_ERROR)
-    fprintf (stderr, WARNSTR "%s: %s\n", systemcfgfile, strerror(errno));
+    fprintf (stderr, WARNSTR "%s: %s\n", systemcfgfile, strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
   if (*usercfgfile)
     rc = shishi_cfg_from_file (handle, usercfgfile);
   if (rc == SHISHI_FOPEN_ERROR)
-    fprintf (stderr, WARNSTR "%s: %s\n", usercfgfile, strerror(errno));
+    fprintf (stderr, WARNSTR "%s: %s\n", usercfgfile, strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
@@ -228,8 +227,7 @@ shishi_init (Shishi ** handle)
 int
 shishi_init_with_paths (Shishi ** handle,
 			const char *ticketsetfile,
-			const char *systemcfgfile,
-			const char *usercfgfile)
+			const char *systemcfgfile, const char *usercfgfile)
 {
   if (!handle || !(*handle = shishi ()))
     return SHISHI_HANDLE_ERROR;
@@ -260,10 +258,11 @@ shishi_init_server (Shishi ** handle)
   if (!handle || !(*handle = shishi ()))
     return SHISHI_HANDLE_ERROR;
 
-  rc = shishi_cfg_from_file (*handle, shishi_cfg_default_systemfile (*handle));
+  rc =
+    shishi_cfg_from_file (*handle, shishi_cfg_default_systemfile (*handle));
   if (rc == SHISHI_FOPEN_ERROR)
     shishi_warn (*handle, "%s: %s", shishi_cfg_default_systemfile (*handle),
-		 strerror(errno));
+		 strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 

@@ -35,9 +35,9 @@ ap (Shishi * handle, struct arguments arg)
 
   if (arg.sname == NULL)
     {
-      shishi_asprintf(&arg.sname, "host/www");
+      shishi_asprintf (&arg.sname, "host/www");
       if (arg.sname == NULL)
-	die("Could not allocate server name.");
+	die ("Could not allocate server name.");
     }
 
   if (arg.verbose)
@@ -76,7 +76,7 @@ ap (Shishi * handle, struct arguments arg)
       int res;
 
       ticket = shishi_ticketset_find_for_clientserver
-	(shishi_ticketset_default(handle), arg.cname, arg.sname);
+	(shishi_ticketset_default (handle), arg.cname, arg.sname);
       if (ticket == NULL)
 	{
 	  fprintf (stderr,
@@ -123,19 +123,19 @@ ap (Shishi * handle, struct arguments arg)
 	}
     }
 
-  if (shishi_ap_authenticator(ap))
-    shishi_authenticator_print (handle, stdout, shishi_ap_authenticator(ap));
+  if (shishi_ap_authenticator (ap))
+    shishi_authenticator_print (handle, stdout, shishi_ap_authenticator (ap));
 
-  if (arg.authenticatorwritefile && shishi_ap_authenticator(ap))
-    shishi_authenticator_to_file (handle, shishi_ap_authenticator(ap),
+  if (arg.authenticatorwritefile && shishi_ap_authenticator (ap))
+    shishi_authenticator_to_file (handle, shishi_ap_authenticator (ap),
 				  arg.authenticatorwritetype,
 				  arg.authenticatorwritefile);
 
   if (!arg.silent)
-    shishi_apreq_print (handle, stdout, shishi_ap_req(ap));
+    shishi_apreq_print (handle, stdout, shishi_ap_req (ap));
 
   if (arg.apreqwritefile)
-    shishi_apreq_to_file (handle, shishi_ap_req(ap),
+    shishi_apreq_to_file (handle, shishi_ap_req (ap),
 			  arg.apreqwritetype, arg.apreqwritefile);
 
   return 0;

@@ -42,7 +42,7 @@ shishi_principal_default_guess (void)
   if (pw)
     return strdup (pw->pw_name);
   else
-    return strdup("user");
+    return strdup ("user");
 }
 
 
@@ -59,9 +59,9 @@ shishi_principal_default (Shishi * handle)
   if (!handle->default_principal)
     {
       char *p;
-      p = shishi_principal_default_guess();
+      p = shishi_principal_default_guess ();
       shishi_principal_default_set (handle, p);
-      free(p);
+      free (p);
     }
 
   return handle->default_principal;

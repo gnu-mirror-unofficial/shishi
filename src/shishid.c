@@ -181,7 +181,8 @@ parse_opt (int key, char *arg, struct argp_state *state)
       /* fall through */
 
     case 'l':
-      for (i = 0; (val = strtok_r (i == 0 ? arg : NULL, ", \t", &ptrptr)); i++)
+      for (i = 0; (val = strtok_r (i == 0 ? arg : NULL, ", \t", &ptrptr));
+	   i++)
 	{
 	  char *service, *proto;
 	  struct servent *se;
@@ -349,23 +350,23 @@ process (Shishi * handle,
 
   shishi_kdcreq_print (handle, stdout, kdcreq);
 
-  puts("o");
+  puts ("o");
   kdcrep = shishi_as_rep (handle);
 
   //shishi_kdcrep_print(handle, stdout, kdcrep);
-  puts("o");
+  puts ("o");
 
   ticket = shishi_asn1_ticket (handle);
-  puts("o");
+  puts ("o");
 
   //shishi_asn1ticket_print (handle, stdout, ticket);
 
   encticketpart = shishi_asn1_encticketpart (handle);
-  puts("o");
+  puts ("o");
 
   shishi_encticketpart_print (handle, stdout, encticketpart);
 
-  puts("o");
+  puts ("o");
 
 }
 

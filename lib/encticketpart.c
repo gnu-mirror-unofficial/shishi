@@ -68,7 +68,7 @@ shishi_encticketpart_get_enc_part_etype (Shishi * handle,
   *etype = 0;
   buflen = sizeof (*etype);
   res = shishi_asn1_field (handle, encticketpart, (char *) etype, &buflen,
-			    "EncTicketPart.enc-part.etype");
+			   "EncTicketPart.enc-part.etype");
 
   return res;
 }
@@ -88,8 +88,7 @@ shishi_encticketpart_get_enc_part_etype (Shishi * handle,
  **/
 int
 shishi_encticketpart_get_key (Shishi * handle,
-			      ASN1_TYPE encticketpart,
-			      Shishi_key **key)
+			      ASN1_TYPE encticketpart, Shishi_key ** key)
 {
   int res;
   char buf[BUFSIZ];
@@ -97,13 +96,13 @@ shishi_encticketpart_get_key (Shishi * handle,
   int keytype;
 
   res = shishi_asn1_integer_field (handle, encticketpart, &keytype,
-				    "EncTicketPart.key.keytype");
+				   "EncTicketPart.key.keytype");
   if (res != SHISHI_OK)
     return res;
 
   buflen = BUFSIZ;
   res = shishi_asn1_field (handle, encticketpart, buf, &buflen,
-			    "EncTicketPart.key.keyvalue");
+			   "EncTicketPart.key.keyvalue");
   if (res != ASN1_SUCCESS)
     return res;
 
@@ -127,22 +126,20 @@ shishi_encticketpart_get_key (Shishi * handle,
  **/
 int
 shishi_encticketpart_key_set (Shishi * handle,
-			      ASN1_TYPE encticketpart,
-			      Shishi_key *key)
+			      ASN1_TYPE encticketpart, Shishi_key * key)
 {
   int res;
   char buf[BUFSIZ];
   int keytype;
 
   keytype = shishi_key_type (key);
-  sprintf(buf, "%d", keytype);
+  sprintf (buf, "%d", keytype);
   res = asn1_write_value (encticketpart, "EncTicketPart.key.keytype", buf, 0);
   if (res != ASN1_SUCCESS)
     return SHISHI_ASN1_ERROR;
 
   res = asn1_write_value (encticketpart, "EncTicketPart.key.keyvalue",
-			  shishi_key_value (key),
-			  shishi_key_length (key));
+			  shishi_key_value (key), shishi_key_length (key));
   if (res != ASN1_SUCCESS)
     return SHISHI_ASN1_ERROR;
 
@@ -161,13 +158,12 @@ shishi_encticketpart_key_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_flags_set (Shishi * handle,
-				ASN1_TYPE encticketpart,
-				int flags)
+				ASN1_TYPE encticketpart, int flags)
 {
   int res;
   char buf[BUFSIZ];
 
-  sprintf(buf, "%d", flags);
+  sprintf (buf, "%d", flags);
   res = asn1_write_value (encticketpart, "EncTicketPart.flags", buf, 0);
   if (res != ASN1_SUCCESS)
     return SHISHI_ASN1_ERROR;
@@ -187,8 +183,7 @@ shishi_encticketpart_flags_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_crealm_set (Shishi * handle,
-				 ASN1_TYPE encticketpart,
-				 const char *realm)
+				 ASN1_TYPE encticketpart, const char *realm)
 {
   int res = ASN1_SUCCESS;
 
@@ -274,13 +269,12 @@ int
 shishi_encticketpart_transited_set (Shishi * handle,
 				    ASN1_TYPE encticketpart,
 				    int trtype,
-				    char *trdata,
-				    size_t trdatalen)
+				    char *trdata, size_t trdatalen)
 {
   int res;
   char buf[BUFSIZ];
 
-  sprintf(buf, "%d", trtype);
+  sprintf (buf, "%d", trtype);
   res = asn1_write_value (encticketpart, "EncTicketPart.transited.tr-type",
 			  buf, 0);
   if (res != ASN1_SUCCESS)
@@ -306,8 +300,7 @@ shishi_encticketpart_transited_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_authtime_set (Shishi * handle,
-				   ASN1_TYPE encticketpart,
-				   char *authtime)
+				   ASN1_TYPE encticketpart, char *authtime)
 {
   int res;
 
@@ -331,8 +324,7 @@ shishi_encticketpart_authtime_set (Shishi * handle,
  **/
 int
 shishi_encticketpart_endtime_set (Shishi * handle,
-				  ASN1_TYPE encticketpart,
-				  char *endtime)
+				  ASN1_TYPE encticketpart, char *endtime)
 {
   int res;
 
@@ -345,7 +337,7 @@ shishi_encticketpart_endtime_set (Shishi * handle,
 }
 
 int
-shishi_encticketpart_authtime (Shishi *handle,
+shishi_encticketpart_authtime (Shishi * handle,
 			       ASN1_TYPE encticketpart,
 			       char *authtime, int *authtimelen)
 {
@@ -354,7 +346,7 @@ shishi_encticketpart_authtime (Shishi *handle,
 }
 
 time_t
-shishi_encticketpart_authctime (Shishi *handle, ASN1_TYPE encticketpart)
+shishi_encticketpart_authctime (Shishi * handle, ASN1_TYPE encticketpart)
 {
   char authtime[GENERALIZEDTIME_TIME_LEN + 1];
   int authtimelen;
