@@ -63,7 +63,6 @@ tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
 htmldir = ../www-$(PACKAGE)
 
 release:
-	(cd doc/man; make update-api)
 	cvs upd -p -r HEAD NEWS > /dev/null
 	if cvs upd -p -r $(tag) NEWS > /dev/null; then false else true; fi
 	rm -f ChangeLog && cvs upd ChangeLog
