@@ -329,6 +329,35 @@ shishi_as_check_cname (Shishi * handle, ASN1_TYPE asreq, ASN1_TYPE asrep)
 }
 
 /**
+ * shishi_kdc_copy_nonce:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ to read nonce from.
+ * @enckdcreppart: EncKDCRepPart to set nonce in.
+ *
+ * Set nonce in EncKDCRepPart to value in KDC-REQ.
+ *
+ * Return value: Returns SHISHI_OK if successful.
+ **/
+int
+shishi_kdc_copy_nonce (Shishi * handle,
+		       ASN1_TYPE kdcreq,
+		       ASN1_TYPE enckdcreppart)
+{
+  int res;
+  unsigned long nonce;
+
+  res = shishi_kdcreq_nonce (handle, kdcreq, &nonce);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_enckdcreppart_nonce_set (handle, enckdcreppart, nonce);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_kdc_check_nonce:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ to compare nonce field in.

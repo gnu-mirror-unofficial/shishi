@@ -551,8 +551,13 @@ extern int shishi_authenticator_save (Shishi * handle,
 /* as.c */
 extern ASN1_TYPE shishi_as_req (Shishi_as * as);
 extern void shishi_as_req_set (Shishi_as * as, ASN1_TYPE asreq);
+extern int shishi_as_req_der_set (Shishi_as * as, char *der, int derlen);
 extern ASN1_TYPE shishi_as_rep (Shishi_as * as);
 extern void shishi_as_rep_set (Shishi_as * as, ASN1_TYPE asrep);
+extern int shishi_as_rep_der_set (Shishi_as * as, char *der, int derlen);
+extern ASN1_TYPE shishi_as_encasreppart (Shishi_as * as);
+extern void shishi_as_encasreppart_set (Shishi_as * as,
+					ASN1_TYPE encasreppart);
 extern ASN1_TYPE shishi_as_krberror (Shishi_as * as);
 extern void shishi_as_krberror_set (Shishi_as * as, ASN1_TYPE krberror);
 extern Shishi_ticket *shishi_as_ticket (Shishi_as * as);
@@ -681,6 +686,9 @@ extern int shishi_as_check_crealm (Shishi * handle,
 				   ASN1_TYPE asreq, ASN1_TYPE asrep);
 extern int shishi_as_check_cname (Shishi * handle,
 				  ASN1_TYPE asreq, ASN1_TYPE asrep);
+extern int shishi_kdc_copy_nonce (Shishi * handle,
+				  ASN1_TYPE kdcreq,
+				  ASN1_TYPE enckdcreppart);
 extern int shishi_kdc_check_nonce (Shishi * handle,
 				   ASN1_TYPE kdcreq, ASN1_TYPE enckdcreppart);
 

@@ -359,6 +359,31 @@ shishi_ticket_key (Shishi_ticket * ticket)
 }
 
 /**
+ * shishi_ticket_key_set:
+ * @ticket: input variable with ticket info.
+ * @key: key to store in ticket.
+ *
+ * Set the key in the EncTicketPart.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ticket_key_set (Shishi_ticket * ticket, Shishi_key * key)
+{
+  int res;
+
+  res = shishi_encticketpart_key_set (ticket->handle,
+				      ticket->encticketpart,
+				      key);
+  if (res != SHISHI_OK)
+    return res;
+
+  ticket->key = key;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_ticket:
  * @handle: shishi handle as allocated by shishi_init().
  * @ticket: input variable with ticket.
@@ -387,6 +412,64 @@ shishi_ticket (Shishi * handle,
   tkt->kdcrep = kdcrep;
 
   return tkt;
+}
+
+/**
+ * shishi_ticket:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @ticket: output variable with newly allocated ticket.
+ *
+ * Create a new ticket handle.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_ticket2 (Shishi * handle, Shishi_ticket **ticket)
+{
+  Shishi_ticket *tkt;
+
+  tkt = malloc (sizeof (*tkt));
+  if (tkt == NULL)
+    return SHISHI_MALLOC_ERROR;
+  memset (tkt, 0, sizeof (*tkt));
+
+  tkt->handle = handle;
+
+  tkt->ticket = shishi_asn1_ticket (handle);
+  if (tkt->ticket == NULL)
+    {
+      shishi_error_printf (handle, "Could not create Ticket: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  tkt->enckdcreppart = shishi_enckdcreppart (handle);
+  if (tkt->enckdcreppart == NULL)
+    {
+      shishi_error_printf (handle, "Could not create EncKDCRepPart: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  tkt->encticketpart = shishi_encticketpart (handle);
+  if (tkt->encticketpart == NULL)
+    {
+      shishi_error_printf (handle, "Could not create EncTicketPart: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  tkt->kdcrep = shishi_asrep (handle);
+  if (tkt->kdcrep == NULL)
+    {
+      shishi_error_printf (handle, "Could not create AS-REP: %s\n",
+			   shishi_strerror_details (handle));
+      return SHISHI_ASN1_ERROR;
+    }
+
+  *ticket = tkt;
+
+  return SHISHI_OK;
 }
 
 void
