@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2004-10-15 13:05+0200\n"
+"POT-Creation-Date: 2004-11-09 21:16+0100\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -152,7 +152,7 @@ msgstr ""
 msgid "Could not set sname: %s\n"
 msgstr ""
 
-#: lib/error.c:109
+#: lib/error.c:111
 #, c-format
 msgid "Unknown shishi error: %d"
 msgstr ""
@@ -247,7 +247,7 @@ msgstr ""
 msgid "Reading KRB-ERROR from %s...done\n"
 msgstr ""
 
-#: lib/krberror.c:1278
+#: lib/krberror.c:1282
 #, c-format
 msgid "Unknown KRB-ERROR error code %d."
 msgstr ""
@@ -257,72 +257,72 @@ msgstr ""
 msgid "Could not set principal name: %s\n"
 msgstr ""
 
-#: lib/safe.c:279
+#: lib/safe.c:283
 #, c-format
 msgid "Writing SAFE to %s...\n"
 msgstr ""
 
-#: lib/safe.c:286
+#: lib/safe.c:290
 #, c-format
 msgid "Writing SAFE in %s format...\n"
 msgstr ""
 
-#: lib/safe.c:301
+#: lib/safe.c:305
 #, c-format
 msgid "Writing SAFE to %s...done\n"
 msgstr ""
 
-#: lib/safe.c:359
+#: lib/safe.c:363
 #, c-format
 msgid "Reading SAFE from %s...\n"
 msgstr ""
 
-#: lib/safe.c:366
+#: lib/safe.c:370
 #, c-format
 msgid "Reading SAFE in %s format...\n"
 msgstr ""
 
-#: lib/safe.c:381
+#: lib/safe.c:385
 #, c-format
 msgid "Reading SAFE from %s...done\n"
 msgstr ""
 
-#: lib/tkt.c:1316
+#: lib/tkt.c:1329
 #, c-format
 msgid "Time of last initial request for a TGT:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1362
+#: lib/tkt.c:1375
 #, c-format
 msgid "Authtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1369
+#: lib/tkt.c:1382
 #, c-format
 msgid "Starttime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1380
+#: lib/tkt.c:1393
 #, c-format
 msgid "Endtime:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1388
+#: lib/tkt.c:1401
 #, c-format
 msgid "Renewable till:\t%s"
 msgstr ""
 
-#: lib/tkt.c:1396
+#: lib/tkt.c:1409
 #, c-format
 msgid "Server:\t\t%s key %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1403
+#: lib/tkt.c:1416
 #, c-format
 msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr ""
 
-#: lib/tkt.c:1411
+#: lib/tkt.c:1424
 #, c-format
 msgid "Ticket flags:\t"
 msgstr ""

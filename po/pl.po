@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.0.14\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2004-10-15 13:05+0200\n"
+"POT-Creation-Date: 2004-11-09 21:16+0100\n"
 "PO-Revision-Date: 2004-02-22 21:54+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -149,7 +149,7 @@ msgstr "Odczytywanie EncAPRepPart z %s... zakoñczone\n"
 msgid "Could not set sname: %s\n"
 msgstr "Nie mo¿na ustawiæ sname: %s\n"
 
-#: lib/error.c:109
+#: lib/error.c:111
 #, c-format
 msgid "Unknown shishi error: %d"
 msgstr "Nieznany b³±d shishi: %d"
@@ -244,7 +244,7 @@ msgstr "Odczytywanie KRB-ERROR w formacie %s...\n"
 msgid "Reading KRB-ERROR from %s...done\n"
 msgstr "Odczytywanie KRB-ERROR z %s... zakoñczone\n"
 
-#: lib/krberror.c:1278
+#: lib/krberror.c:1282
 #, c-format
 msgid "Unknown KRB-ERROR error code %d."
 msgstr "Nieznany kod b³êdu KRB-ERROR %d."
@@ -254,72 +254,72 @@ msgstr "Nieznany kod b³êdu KRB-ERROR %d."
 msgid "Could not set principal name: %s\n"
 msgstr "Nie mo¿na ustawiæ nazwy g³ównej: %s\n"
 
-#: lib/safe.c:279
+#: lib/safe.c:283
 #, c-format
 msgid "Writing SAFE to %s...\n"
 msgstr "Zapisywanie SAFE do %s...\n"
 
-#: lib/safe.c:286
+#: lib/safe.c:290
 #, c-format
 msgid "Writing SAFE in %s format...\n"
 msgstr "Zapisywanie SAFE w formacie %s...\n"
 
-#: lib/safe.c:301
+#: lib/safe.c:305
 #, c-format
 msgid "Writing SAFE to %s...done\n"
 msgstr "Zapisywanie SAFE do %s... zakoñczone\n"
 
-#: lib/safe.c:359
+#: lib/safe.c:363
 #, c-format
 msgid "Reading SAFE from %s...\n"
 msgstr "Odczytywanie SAFE z %s...\n"
 
-#: lib/safe.c:366
+#: lib/safe.c:370
 #, c-format
 msgid "Reading SAFE in %s format...\n"
 msgstr "Odczytywanie SAFE w formacie %s...\n"
 
-#: lib/safe.c:381
+#: lib/safe.c:385
 #, c-format
 msgid "Reading SAFE from %s...done\n"
 msgstr "Odczytywanie SAFE z %s... zakoñczone\n"
 
-#: lib/tkt.c:1316
+#: lib/tkt.c:1329
 #, c-format
 msgid "Time of last initial request for a TGT:\t%s"
 msgstr "Czas ostatniego pocz±tkowego ¿±dania TGT:\t%s"
 
-#: lib/tkt.c:1362
+#: lib/tkt.c:1375
 #, c-format
 msgid "Authtime:\t%s"
 msgstr "Czas uwierzytelnienia:\t%s"
 
-#: lib/tkt.c:1369
+#: lib/tkt.c:1382
 #, c-format
 msgid "Starttime:\t%s"
 msgstr "Czas pocz±tku:\t%s"
 
-#: lib/tkt.c:1380
+#: lib/tkt.c:1393
 #, c-format
 msgid "Endtime:\t%s"
 msgstr "Czas koñca:\t%s"
 
-#: lib/tkt.c:1388
+#: lib/tkt.c:1401
 #, c-format
 msgid "Renewable till:\t%s"
 msgstr "Odnawialny do:\t%s"
 
-#: lib/tkt.c:1396
+#: lib/tkt.c:1409
 #, c-format
 msgid "Server:\t\t%s key %s (%d)\n"
 msgstr "Serwer:\t\t%s klucz %s (%d)\n"
 
-#: lib/tkt.c:1403
+#: lib/tkt.c:1416
 #, c-format
 msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
 msgstr "Klucz biletu:\t%s (%d) zabezpieczony przez %s (%d)\n"
 
-#: lib/tkt.c:1411
+#: lib/tkt.c:1424
 #, c-format
 msgid "Ticket flags:\t"
 msgstr "Flagi biletu:\t"
