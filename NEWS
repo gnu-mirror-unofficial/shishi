@@ -14,6 +14,16 @@ Shishi need Libgcrypt 1.1.44 or later, and libtasn1 0.2.5 or later.
 If a usable version is not found, the internal Nettle (crypto/) and/or
 libminitasn1 (asn1/) libraries are used instead.
 
+** It is possible to enable and disable part of the system at compile time.
+The --disable-des, --disable-3des, --disable-aes, --disable-md,
+--disable-null, --enable-arcfour.
+
+** The internal crypto interface now fully modularized.
+If you wish to add support for a new low-level cryptographic library,
+to, e.g., utilize specialized hardware, it is now easy to do so.  Two
+wrappers for Nettle (lib/nettle.c) and Libgcrypt (lib/libgcrypt.c) are
+included.
+
 * Version 0.0.5 (released 2003-09-07)
 
 ** Server host name to realm mapping via DNS supported.
