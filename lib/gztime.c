@@ -115,13 +115,13 @@ shishi_time (Shishi * handle, Shishi_asn1 node,
   if (res != SHISHI_OK)
     return res;
 
-  if (len == GENERALIZEDTIME_TIME_LEN)
+  if (len <= GENERALIZEDTIME_TIME_LEN)
     {
       shishi_error_printf (handle, "Read time too short (%s)", *time);
       return SHISHI_ASN1_ERROR;
     }
 
-  (*time)[len] = '\0';
+  (*time)[GENERALIZEDTIME_TIME_LEN] = '\0';
 
   return SHISHI_OK;
 }
