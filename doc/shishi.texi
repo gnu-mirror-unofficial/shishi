@@ -1438,6 +1438,15 @@ All functions that operate on this data structure are described now.
 
 @include shishi-api-key.texi
 
+Many servers run uninteractively but still need keying material, and
+when they do they are normally read from a file stored on the local
+host.  The file should be protected from unauthorized access.  The
+file is in ASCII format and contains keys as outputed by
+@code{shishi_key_print()}.  All functions that handle these hostkeys
+file are described now.
+
+@include shishi-api-hostkeys.texi
+
 After creating the key structure, it can be used to encrypt and
 decrypt data, calculate checksum on data etc.  All available functions
 are described now.
