@@ -794,9 +794,8 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @authenticator: authenticator as allocated by shishi_authenticator().
  * @adtype: output authorization data type.
- * @addata: output authorization data.
- * @addatalen: on input, maximum size of output authorization data,
- *             on output, actual size of authorization data.
+ * @addata: newly allocated output authorization data.
+ * @addatalen: on output, actual size of newly allocated authorization data.
  * @nth: element number of authorization-data to extract.
  *
  * Extract n:th authorization data from authenticator.  The first
@@ -808,7 +807,7 @@ int
 shishi_authenticator_authorizationdata (Shishi * handle,
 					Shishi_asn1 authenticator,
 					int32_t *adtype,
-					char *addata, size_t * addatalen,
+					char **addata, size_t * addatalen,
 					size_t nth)
 {
   char *format;
@@ -830,7 +829,7 @@ shishi_authenticator_authorizationdata (Shishi * handle,
     return res;
 
   asprintf (&format, "authorization-data.?%d.ad-data", i);
-  res = shishi_asn1_read (handle, authenticator, format, addata, addatalen);
+  res = shishi_asn1_read2 (handle, authenticator, format, addata, addatalen);
   free (format);
   if (res != SHISHI_OK)
     return res;
