@@ -325,6 +325,15 @@ extern char *shishi_principal_default_guess (void);
 extern const char *shishi_principal_default (Shishi * handle);
 extern void shishi_principal_default_set (Shishi * handle,
 					  const char *principal);
+extern int shishi_principal_name_get (Shishi * handle, Shishi_asn1 namenode,
+				      char *namefield, char *out,
+				      int *outlen);
+extern int shishi_principal_name_realm_get (Shishi * handle,
+					    Shishi_asn1 namenode,
+					    char *namefield,
+					    Shishi_asn1 realmnode,
+					    char *realmfield, char *out,
+					    int *outlen);
 
 /* ticket.c */
 extern int shishi_ticket_sname_get (Shishi * handle,
@@ -800,10 +809,11 @@ shishi_prompt_password (Shishi * handle,
 
 /* asn1.c */
 extern int shishi_a2d_field (Shishi * handle,
-			     Shishi_asn1 node, char *field,
+			     Shishi_asn1 node,
+			     const char *field,
 			     char *der, int *len);
-extern int shishi_a2d (Shishi * handle, Shishi_asn1 node, char *der,
-		       int *len);
+extern int shishi_a2d (Shishi * handle, Shishi_asn1 node,
+		       char *der, int *len);
 extern int shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
 extern int shishi_asn1_read (Shishi * handle, Shishi_asn1 node,
 			     const char *field,
@@ -834,42 +844,51 @@ extern Shishi_asn1 shishi_asn1_enckdcreppart (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_encasreppart (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_krberror (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_krbsafe (Shishi * handle);
-extern Shishi_asn1 shishi_d2a (Shishi * handle,
-			       char *fieldname,
-			       char *nodename, const char *der,
-			       size_t derlen);
-extern Shishi_asn1 shishi_d2a_ticket (Shishi * handle, char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_encticketpart (Shishi * handle,
-					     char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_asreq (Shishi * handle, char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_tgsreq (Shishi * handle, char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_asrep (Shishi * handle, char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_tgsrep (Shishi * handle, char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_kdcrep (Shishi * handle, char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_kdcreq (Shishi * handle, char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_encasreppart (Shishi * handle,
-					    char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_enctgsreppart (Shishi * handle,
-					     char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_enckdcreppart (Shishi * handle,
-					     char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_authenticator (Shishi * handle,
-					     char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_krberror (Shishi * handle, char *der,
-					int derlen);
-extern Shishi_asn1 shishi_d2a_apreq (Shishi * handle, char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_aprep (Shishi * handle, char *der, int derlen);
-extern Shishi_asn1 shishi_d2a_encapreppart (Shishi * handle,
-					    char *der, int derlen);
-extern int shishi_principal_name_get (Shishi * handle, Shishi_asn1 namenode,
-				      char *namefield, char *out,
-				      int *outlen);
-extern int shishi_principal_name_realm_get (Shishi * handle,
-					    Shishi_asn1 namenode,
-					    char *namefield,
-					    Shishi_asn1 realmnode,
-					    char *realmfield, char *out,
-					    int *outlen);
+extern Shishi_asn1 shishi_der2asn1 (Shishi * handle,
+				    const char *fieldname,
+				    const char *nodename,
+				    const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_ticket (Shishi * handle,
+					   const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_encticketpart (Shishi * handle,
+						  const char *der,
+						  size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_asreq (Shishi * handle,
+					  const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_tgsreq (Shishi * handle,
+					   const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_asrep (Shishi * handle,
+					  const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_tgsrep (Shishi * handle,
+					   const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_kdcrep (Shishi * handle,
+					   const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_kdcreq (Shishi * handle,
+					   const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_encasreppart (Shishi * handle,
+						 const char *der,
+						 size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_enctgsreppart (Shishi * handle,
+						  const char *der,
+						  size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_enckdcreppart (Shishi * handle,
+						  const char *der,
+						  size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_authenticator (Shishi * handle,
+						  const char *der,
+						  size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_krberror (Shishi * handle,
+					     const char *der,
+					     size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_apreq (Shishi * handle,
+					  const char *der,
+					  size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_aprep (Shishi * handle,
+					  const char *der,
+					  size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_encapreppart (Shishi * handle,
+						 const char *der,
+						 size_t derlen);
 
 /* ap.c */
 extern const char *shishi_ap_option2string (int option);
