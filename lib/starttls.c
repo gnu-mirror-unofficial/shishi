@@ -1,4 +1,4 @@
-/* starttls.c	network I/O functions to upgrade TCP connections to TLS
+/* starttls.c --- Network I/O functions to transport Kerberos over TLS.
  * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -22,6 +22,7 @@
 #include "internal.h"
 #include <gnutls/gnutls.h>
 
+/* Initialize TLS subsystem. Typically invoked by shishi_init. */
 int
 _shishi_tls_init (Shishi * handle)
 {
@@ -38,6 +39,7 @@ _shishi_tls_init (Shishi * handle)
   return SHISHI_OK;
 }
 
+/* Deinitialize TLS subsystem.  Typically invoked by shishi_done. */
 int
 _shishi_tls_done (Shishi * handle)
 {
@@ -66,20 +68,136 @@ _shishi_tls_done (Shishi * handle)
  *
  */
 
+#define STARTTLS_CLIENT_REQUEST "\x70\x00\x00\x01"
+#define STARTTLS_SERVER_ACCEPT "\x70\x00\x00\x02"
+#define STARTTLS_LEN 4
+
+/* Negotiate TLS and send and receive Kerberos packets on an open
+   socket. */
+int
+_shishi_sendrecv_tls1 (Shishi * handle,
+		       int sockfd,
+		       gnutls_session session,
+		       const char *indata, int inlen,
+		       char **outdata, int *outlen, int timeout)
+{
+  int ret;
+  ssize_t bytes_sent, bytes_read;
+  char extbuf[STARTTLS_LEN + 1];
+
+  bytes_sent = write (sockfd, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN);
+  if (bytes_sent != STARTTLS_LEN)
+    return SHISHI_SENDTO_ERROR;
+
+  bytes_read = read (sockfd, extbuf, sizeof (extbuf));
+  if (bytes_read != STARTTLS_LEN ||
+      memcmp (extbuf, STARTTLS_SERVER_ACCEPT, STARTTLS_LEN) != 0)
+    return SHISHI_RECVFROM_ERROR;
+
+  gnutls_transport_set_ptr (session, (gnutls_transport_ptr) sockfd);
+
+  ret = gnutls_handshake (session);
+  if (ret < 0)
+    {
+      shishi_error_printf (handle, "TLS handshake failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_RECVFROM_ERROR;
+    }
+
+  shishi_error_printf (handle, "TLS handshake completed");
+
+  bytes_sent = gnutls_record_send (session, indata, inlen);
+  if (bytes_sent != inlen)
+    {
+      shishi_error_printf (handle, "Bad TLS write (%d < %d)",
+			   bytes_sent, inlen);
+      return SHISHI_SENDTO_ERROR;
+    }
+
+  *outlen = gnutls_record_get_max_size (session);
+  *outdata = xmalloc (*outlen);
+
+  bytes_read = gnutls_record_recv (session, *outdata, *outlen);
+  if (bytes_read == 0)
+    {
+      shishi_error_printf (handle, "Peer has closed the TLS connection");
+      free (*outdata);
+      return SHISHI_RECVFROM_ERROR;
+    }
+  else if (bytes_read < 0)
+    {
+      shishi_error_printf (handle, "TLS Error (%d): %s",
+			   ret, gnutls_strerror (ret));
+      free (*outdata);
+      return SHISHI_RECVFROM_ERROR;
+    }
+
+  *outdata = xrealloc (*outdata, bytes_read);
+  *outlen = bytes_read;
+
+  do
+    ret = gnutls_bye(session, GNUTLS_SHUT_RDWR);
+  while (ret == GNUTLS_E_INTERRUPTED || ret == GNUTLS_E_AGAIN);
+
+  if (ret != GNUTLS_E_SUCCESS)
+    shishi_error_printf (handle, "TLS Disconnected failed (%d): %s",
+			 ret, gnutls_strerror (ret));
+
+  return SHISHI_OK;
+}
+
+/* Send Kerberos request to KDC over TLS, receive reply, and disconnect. */
 int
 _shishi_sendrecv_tls (Shishi * handle,
 		      struct sockaddr *addr,
 		      const char *indata, int inlen,
 		      char **outdata, int *outlen, int timeout)
 {
-  char tmpbuf[BUFSIZ];		/* XXX can we do without it? */
-  int i;
-  int sockfd;
-  int ret;
-  int bytes_sent, bytes_read;
-  gnutls_session session;
   const int kx_prio[] = { GNUTLS_KX_ANON_DH, 0 };
+  gnutls_session session;
   gnutls_anon_client_credentials anoncred;
+  int sockfd;
+  int ret, outerr;
+
+  ret = gnutls_init (&session, GNUTLS_CLIENT);
+  if (ret != GNUTLS_E_SUCCESS)
+    {
+      shishi_error_printf (handle, "TLS init failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_CRYPTO_ERROR;
+    }
+
+  ret = gnutls_set_default_priority (session);
+  if (ret != GNUTLS_E_SUCCESS)
+    {
+      shishi_error_printf (handle, "TLS sdp failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_CRYPTO_ERROR;
+    }
+
+  ret = gnutls_anon_allocate_client_credentials (&anoncred);
+  if (ret != GNUTLS_E_SUCCESS)
+    {
+      shishi_error_printf (handle, "TLS aacs failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_CRYPTO_ERROR;
+    }
+
+  ret = gnutls_credentials_set (session, GNUTLS_CRD_ANON, anoncred);
+  if (ret != GNUTLS_E_SUCCESS)
+    {
+      shishi_error_printf (handle, "TLS cs failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_CRYPTO_ERROR;
+    }
+
+  ret = gnutls_kx_set_priority (session, kx_prio);
+  if (ret != GNUTLS_E_SUCCESS)
+    {
+      shishi_error_printf (handle, "TLS ksp failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_CRYPTO_ERROR;
+    }
 
   sockfd = socket (AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0)
@@ -95,65 +213,30 @@ _shishi_sendrecv_tls (Shishi * handle,
       return SHISHI_CONNECT_ERROR;
     }
 
-  bytes_sent = write (sockfd, "\x70\x00\x00\x01", 4);
+  /* Core part. */
+  outerr = _shishi_sendrecv_tls1 (handle, sockfd, session, indata, inlen,
+				  outdata, outlen, timeout);
 
-  bytes_read = read (sockfd, tmpbuf, 4);
-
-  if (bytes_read != 4 || memcmp (tmpbuf, "\x70\x00\x00\x02", 4) != 0)
-    return SHISHI_RECVFROM_ERROR;
-
-  gnutls_anon_allocate_client_credentials (&anoncred);
-  gnutls_init (&session, GNUTLS_CLIENT);
-  gnutls_set_default_priority (session);
-  gnutls_credentials_set (session, GNUTLS_CRD_ANON, anoncred);
-  gnutls_kx_set_priority (session, kx_prio);
-
-  gnutls_transport_set_ptr (session, (gnutls_transport_ptr) sockfd);
-
-  ret = gnutls_handshake (session);
-  if (ret < 0)
+  ret = shutdown (sockfd, SHUT_RDWR);
+  if (ret != 0)
     {
-      shishi_error_printf (handle, "TLS handshake failed: %s",
-			   gnutls_strerror (ret));
-      return SHISHI_RECVFROM_ERROR;
+      shishi_error_printf (handle, "Shutdown failed (%d): %s",
+			   ret, strerror (errno));
+      if (outerr == SHISHI_OK)
+	ret = SHISHI_CLOSE_ERROR;
     }
 
-  shishi_error_printf (handle, "TLS handshake completed");
-
-  gnutls_record_send (session, indata, inlen);
-
-  ret = gnutls_record_recv (session, tmpbuf, sizeof (tmpbuf));
-  if (ret == 0)
+  ret = close (sockfd);
+  if (ret != 0)
     {
-      shishi_error_printf (handle, "Peer has closed the TLS connection");
-      return SHISHI_RECVFROM_ERROR;
-    }
-  else if (ret < 0)
-    {
-      shishi_error_printf (handle, "TLS Error: %s", gnutls_strerror (ret));
-      return SHISHI_RECVFROM_ERROR;
-    }
-
-  gnutls_bye (session, GNUTLS_SHUT_RDWR);
-
-  if (shutdown (sockfd, SHUT_RDWR) != 0)
-    {
-      shishi_error_set (handle, strerror (errno));
-      return SHISHI_CLOSE_ERROR;
-    }
-
-  if (close (sockfd) != 0)
-    {
-      shishi_error_set (handle, strerror (errno));
-      return SHISHI_CLOSE_ERROR;
+      shishi_error_printf (handle, "Close failed (%d): %s",
+			   ret, strerror (errno));
+      if (outerr == SHISHI_OK)
+	ret = SHISHI_CLOSE_ERROR;
     }
 
   gnutls_deinit (session);
   gnutls_anon_free_client_credentials (anoncred);
 
-  *outlen = ret;
-  *outdata = xmalloc (*outlen);
-  memcpy (*outdata, tmpbuf, *outlen);
-
-  return SHISHI_OK;
+  return outerr;
 }
