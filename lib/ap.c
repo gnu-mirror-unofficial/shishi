@@ -196,10 +196,13 @@ shishi_ap_set_tktoptionsdata (Shishi_ap * ap,
  * @tkt: ticket to set in AP.
  * @options: AP-REQ options to set in AP.
  * @node: input ASN.1 structure to store as authenticator checksum data.
+ * @field: field in ASN.1 structure to use.
+ * @authenticatorcksumkeyusage: key usage for checksum in authenticator.
+ * @authenticatorkeyusage: key usage for authenticator.
  *
  * Set ticket, options and authenticator checksum data using
  * shishi_ap_set_tktoptionsdata().  The authenticator checksum data is
- * the DER encoding of the ASN.1 structure provided.
+ * the DER encoding of the ASN.1 field provided.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -303,6 +306,9 @@ shishi_ap_tktoptionsdata (Shishi * handle,
  * @tkt: ticket to set in newly created AP.
  * @options: AP-REQ options to set in newly created AP.
  * @node: input ASN.1 structure to store as authenticator checksum data.
+ * @field: field in ASN.1 structure to use.
+ * @authenticatorcksumkeyusage: key usage for checksum in authenticator.
+ * @authenticatorkeyusage: key usage for authenticator.
  *
  * Create a new AP exchange using shishi_ap(), and set ticket, options
  * and authenticator checksum data from the DER encoding of the ASN.1
@@ -420,8 +426,7 @@ shishi_ap_authenticator_cksumtype (Shishi_ap * ap)
 /**
  * shishi_ap_authenticator_cksumtype_set:
  * @ap: structure that holds information about AP exchange
- * @authenticatorcksumtype: input int with authenticator checksum
- * type to use in AP.
+ * @cksumtype: authenticator checksum type to set in AP.
  *
  * Set the Authenticator Checksum Type in the AP exchange.
  **/
