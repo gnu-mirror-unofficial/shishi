@@ -216,10 +216,18 @@ readenc (Shishi * h, int sock, char *buf, int *len, char *iv, int *ivlen,
   hashsize =
     shishi_checksum_cksumlen (shishi_cipher_defaultcksumtype (enctype));
 
-  dlen += blocksize + hashsize - 1 + 4;
+  dlen += blocksize - 1 + 4;
+  if (shishi_key_type (enckey) != SHISHI_DES3_CBC_HMAC_SHA1_KD)
+    dlen += hashsize;
+  else
+    dlen += blocksize;
+
   dlen /= blocksize;
   dlen *= blocksize;
 
+  if (shishi_key_type (enckey) == SHISHI_DES3_CBC_HMAC_SHA1_KD)
+    dlen += hashsize;
+ 
   /* read encrypted data */
   outbis = malloc (dlen);
   if (outbis == NULL)
@@ -237,7 +245,7 @@ readenc (Shishi * h, int sock, char *buf, int *len, char *iv, int *ivlen,
 
   /* decrypt it */
   rc =
-    shishi_decrypt_ivupdate (h, enckey, 0, iv, *ivlen, &iv2, ivlen, outbis,
+    shishi_decrypt_ivupdate (h, enckey, 1026, iv, *ivlen, &iv2, ivlen, outbis,
 			     dlen, &out, &outlen);
   if (rc != SHISHI_OK)
     {
@@ -291,7 +299,7 @@ writeenc (Shishi * h, int sock, char *buf, int wlen, int *len, char *iv,
 
   /* encrypt it */
   rc =
-    shishi_encrypt_ivupdate (h, enckey, 0, iv, *ivlen, &iv2, ivlen, bufbis,
+    shishi_encrypt_ivupdate (h, enckey, 1026, iv, *ivlen, &iv2, ivlen, bufbis,
 			     wlen + sizeof (int), &out, &outlen);
   if (rc != SHISHI_OK)
     {
@@ -412,6 +420,8 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname, int sock,
   /* add checksum to authenticator */
 
   shishi_ap_authenticator_cksumdata_set (ap, cksumdata, strlen (cksumdata));
+  /* To be compatible with MIT rlogind */
+  shishi_ap_authenticator_cksumtype_set (ap, SHISHI_RSA_MD5);
 
   /* create der encoded AP-REQ */
 
