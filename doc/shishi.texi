@@ -236,6 +236,8 @@ easier to analyze.  Currently the mutual authentication property is
 only implicit from successful decryption of the KDC-REP and the 4 byte
 nonce.
 
+@item GUI applet for managing tickets.
+
 @end itemize
 
 @node Overview
