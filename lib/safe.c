@@ -41,30 +41,25 @@ struct Shishi_safe
 Shishi_asn1
 shishi_krbsafe (Shishi * handle)
 {
-  int res = ASN1_SUCCESS;
-  Shishi_asn1 node = NULL;
+  int res;
+  Shishi_asn1 node;
 
-  res = asn1_create_element (handle->asn1, "Kerberos5.KRB-SAFE", &node,
-			     "KRB-SAFE");
-  if (res != ASN1_SUCCESS)
+  node = shishi_asn1_krbsafe (handle->asn1);
+  if (!node)
+    return NULL;
+
+  res = shishi_asn1_write (handle, node, "KRB-SAFE.pvno", "5", 0);
+  if (res != SHISHI_OK)
     goto error;
 
-  res = asn1_write_value (node, "KRB-SAFE.pvno", "5", 0);
-  if (res != ASN1_SUCCESS)
+  res = shishi_asn1_write (handle, node, "KRB-SAFE.msg-type", "20", 0);
+  if (res != SHISHI_OK)
     goto error;
-
-  res = asn1_write_value (node, "KRB-SAFE.msg-type", "20", 0);
-  if (res != ASN1_SUCCESS)
-    goto error;
-
-  asn1_print_structure (stdout, node, node->name, ASN1_PRINT_NAME_TYPE_VALUE);
 
   return node;
 
 error:
-  shishi_error_set (handle, libtasn1_strerror (res));
-  if (node != NULL)
-    asn1_delete_structure (&node);
+  shishi_asn1_done (handle, node);
   return NULL;
 }
 
