@@ -31,8 +31,8 @@ client (Shishi * handle, struct arguments arg)
   if (arg.cname == NULL)
     arg.cname = shishi_principal_default (handle);
 
-  if (arg.verbose)
-    printf ("Service name: `%s'\n", arg.sname);
+  if (arg.realm == NULL)
+    arg.realm = shishi_realm_default (handle);
 
   if (arg.sname == NULL)
     {
