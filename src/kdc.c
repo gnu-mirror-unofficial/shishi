@@ -33,46 +33,86 @@ asreq1 (Shishi_as * as)
   Shisa_key **serverkeys, **userkeys;
   size_t nserverkeys, nuserkeys;
   int err;
-  char *username, *servername, *realm;
+  char *username = NULL, *servername = NULL, *realm = NULL;
   Shisa_principal krbtgt;
   Shisa_principal user;
   uint32_t etype;
   int i;
 
-  /* Find the server, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
-
-  err = shishi_kdcreq_server (handle, shishi_as_req (as), &servername, NULL);
-  if (err != SHISHI_OK)
-    return err;
-  printf ("servername %s\n", servername);
+  /*
+   * The authentication server looks up the client and server principals
+   * named in the KRB_AS_REQ in its database, extracting their respective
+   * keys. If the requested client principal named in the request is not
+   * known because it doesn't exist in the KDC's principal database, then
+   * an error message with a KDC_ERR_C_PRINCIPAL_UNKNOWN is returned.
+   */
 
   err = shishi_kdcreq_realm (handle, shishi_as_req (as), &realm, NULL);
   if (err != SHISHI_OK)
-    return err;
-  printf ("client & server realm %s\n", realm);
-
-  err = shisa_principal_find (dbh, realm, servername, &krbtgt);
-  if (err != SHISA_OK)
     {
-      printf ("server %s@%s not found\n", servername, realm);
-      return SHISHI_INVALID_PRINCIPAL_NAME;
+      syslog (LOG_ERR, "shishi_kdcreq_realm failed (%d): %s",
+	      err, shishi_strerror (err));
+      goto fatal;
     }
-  printf ("Found server %s@%s...\n", servername, realm);
-
-  /* Find the user, e.g., simon@JOSEFSSON.ORG. */
 
   err = shishi_kdcreq_client (handle, shishi_as_req (as), &username, NULL);
   if (err != SHISHI_OK)
-    return err;
-  printf ("username %s\n", username);
+    {
+      syslog (LOG_ERR, "shishi_kdcreq_client failed (%d): %s",
+	      err, shishi_strerror (err));
+      goto fatal;
+    }
+
+  err = shishi_kdcreq_server (handle, shishi_as_req (as), &servername, NULL);
+  if (err != SHISHI_OK)
+    {
+      syslog (LOG_ERR, "shishi_kdcreq_server failed (%d): %s",
+	      err, shishi_strerror (err));
+      goto fatal;
+    }
+
+  /* Find the client, e.g., simon@JOSEFSSON.ORG. */
 
   err = shisa_principal_find (dbh, realm, username, &user);
-  if (err != SHISA_OK)
+  if (err != SHISA_OK && err != SHISA_NO_PRINCIPAL)
     {
-      printf ("user %s@%s not found\n", username, realm);
+      syslog (LOG_ERR, "shisa_principal_find failed (%d): %s",
+	      err, shisa_strerror (err));
+      goto fatal;
+    }
+  if (err == SHISA_NO_PRINCIPAL)
+    {
+      syslog (LOG_NOTICE, "AS-REQ from %s@%s for %s@%s failed: no such user",
+	      username, realm, servername, realm);
+      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+					   SHISHI_KDC_ERR_C_PRINCIPAL_UNKNOWN);
+      if (err != SHISHI_OK)
+	goto fatal;
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
-  printf ("Found user %s@%s...\n", username, realm);
+
+  /* Find the server, e.g., krbtgt/JOSEFSSON.ORG@JOSEFSSON.ORG. */
+
+  err = shisa_principal_find (dbh, realm, servername, &krbtgt);
+  if (err != SHISA_OK && err != SHISA_NO_PRINCIPAL)
+    {
+      syslog (LOG_ERR, "shisa_principal_find failed (%d): %s",
+	      err, shisa_strerror (err));
+      goto fatal;
+    }
+  if (err == SHISA_NO_PRINCIPAL)
+    {
+      syslog (LOG_NOTICE, "AS-REQ from %s@%s for %s@%s failed: no such server",
+	      username, realm, servername, realm);
+      err = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
+					   SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN);
+      if (err != SHISHI_OK)
+	goto fatal;
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
+
+  syslog (LOG_INFO, "AS-REQ from %s@%s for %s@%s", username, realm,
+	  servername, realm);
 
   /* Enumerate keys for user and server. */
 
@@ -184,7 +224,17 @@ asreq1 (Shishi_as * as)
       shishi_kdcrep_print (handle, stderr, shishi_as_rep (as));
     }
 
-  return SHISHI_OK;
+  err = SHISHI_OK;
+
+ fatal:
+  if (realm)
+    free (realm);
+  if (username)
+    free (username);
+  if (servername)
+    free (servername);
+
+  return err;
 }
 
 static int
