@@ -536,25 +536,57 @@ shishi_authenticator_seqnumber_set (Shishi * handle,
   return SHISHI_OK;
 }
 
+/**
+ * shishi_authenticator_client:
+ * @handle: Shishi library handle create by shishi_init().
+ * @authenticator: Authenticator variable to get client name from.
+ * @client: pointer to newly allocated zero terminated string containing
+ *   principal name.  May be %NULL (to only populate @clientlen).
+ * @clientlen: pointer to length of @client on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
+ *
+ * Represent client principal name in Authenticator as zero-terminated
+ * string.  The string is allocate by this function, and it is the
+ * responsibility of the caller to deallocate it.  Note that the
+ * output length @clientlen does not include the terminating zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_authenticator_cname_get (Shishi * handle,
-				Shishi_asn1 authenticator,
-				char *cname, size_t * cnamelen)
+shishi_authenticator_client (Shishi * handle,
+			     Shishi_asn1 authenticator,
+			     char **client, size_t *clientlen)
 {
-  return shishi_principal_name_get (handle, authenticator,
-				    "cname", cname, cnamelen);
+  return shishi_principal_name (handle, authenticator,
+				"cname", client, clientlen);
 }
 
+/**
+ * shishi_authenticator_clientrealm:
+ * @handle: Shishi library handle create by shishi_init().
+ * @authenticator: Authenticator variable to get client name and realm from.
+ * @client: pointer to newly allocated zero terminated string containing
+ *   principal name and realm.  May be %NULL (to only populate @clientlen).
+ * @clientlen: pointer to length of @client on output, excluding terminating
+ *   zero.  May be %NULL (to only populate @client).
+ *
+ * Convert cname and realm fields from Authenticator to printable
+ * principal name format.  The string is allocate by this function,
+ * and it is the responsibility of the caller to deallocate it.  Note
+ * that the output length @clientlen does not include the terminating
+ * zero.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
 int
-shishi_authenticator_cnamerealm_get (Shishi * handle,
-				     Shishi_asn1 authenticator,
-				     char *cnamerealm, size_t * cnamerealmlen)
+shishi_authenticator_clientrealm (Shishi * handle,
+				  Shishi_asn1 authenticator,
+				  char **client, size_t *clientlen)
 {
-  return shishi_principal_name_realm_get (handle, authenticator,
-					  "cname",
-					  authenticator,
-					  "crealm",
-					  cnamerealm, cnamerealmlen);
+  return shishi_principal_name_realm (handle,
+				      authenticator, "cname",
+				      authenticator, "crealm",
+				      client, clientlen);
 }
 
 int

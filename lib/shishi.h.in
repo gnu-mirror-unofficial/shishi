@@ -889,13 +889,12 @@ extern int shishi_authenticator_seqnumber_remove (Shishi * handle,
 extern int shishi_authenticator_seqnumber_set (Shishi * handle,
 					       Shishi_asn1 authenticator,
 					       uint32_t seqnumber);
-extern int shishi_authenticator_cname_get (Shishi * handle,
-					   Shishi_asn1 authenticator,
-					   char *cname, size_t * cnamelen);
-extern int shishi_authenticator_cnamerealm_get (Shishi * handle,
-						Shishi_asn1 authenticator,
-						char *cnamerealm,
-						size_t * cnamerealmlen);
+extern int shishi_authenticator_client (Shishi * handle,
+					Shishi_asn1 authenticator,
+					char **client, size_t *clientlen);
+extern int shishi_authenticator_clientrealm (Shishi * handle,
+					     Shishi_asn1 authenticator,
+					     char **client, size_t *clientlen);
 extern int shishi_authenticator_remove_cksum (Shishi * handle,
 					      Shishi_asn1 authenticator);
 extern int shishi_authenticator_cksum (Shishi * handle,
