@@ -18,7 +18,16 @@
 # the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-SUBDIRS = inetutils pam_shishi
+lib_LTLIBRARIES = pam_shishi.la
+
+pam_shishi_la_SOURCES = pam_shishi.c
+pam_shishi_la_LIBADD = ../../lib/libshishi.la
+# XXX add -Wl,-x too?  PAM documentation suggests it.
+pam_shishi_la_LDFLAGS = -module
+
+INCLUDES = -I../asn1/lib -I../lib
+
+DEFS = -DDEBUG
 
 indent:
-	(cd pam_shishi && make indent)
+	indent $(SOURCES)
