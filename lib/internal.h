@@ -125,6 +125,7 @@
 #include "xalloc.h"
 #include "xmemdup.h"
 #include "xgethostname.h"
+#include "xgetdomainname.h"
 #include "xstrndup.h"
 
 #include "shishi.h"
@@ -156,10 +157,6 @@
 		  SHISHI_VERBOSE_NOICE |	\
 		  SHISHI_VERBOSE_CRYPTO_NOICE)
 #define VERBOSE(h) (h->verbose & ~VERBOSES)
-
-#ifndef HOST_NAME_MAX
-#define HOST_NAME_MAX BUFSIZ
-#endif
 
 enum
 {
