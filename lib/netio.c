@@ -1,5 +1,5 @@
 /* netio.c --- Network I/O functions.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -37,7 +37,7 @@ static int
 shishi_sendrecv_udp (Shishi * handle,
 		     struct sockaddr *addr,
 		     const char *indata, int inlen,
-		     char **outdata, int *outlen, int timeout)
+		     char **outdata, size_t *outlen, size_t timeout)
 {
   struct sockaddr lsa;
   struct sockaddr_in *lsa_inp = (struct sockaddr_in *) &lsa;
@@ -46,7 +46,7 @@ shishi_sendrecv_udp (Shishi * handle,
   int sockfd;
   int bytes_sent;
   struct sockaddr_storage from_sa;
-  int length = sizeof (struct sockaddr_storage);
+  size_t length = sizeof (struct sockaddr_storage);
   fd_set readfds;
   struct timeval tout;
   int rc;
@@ -116,14 +116,14 @@ static int
 shishi_sendrecv_tcp (Shishi * handle,
 		     struct sockaddr *addr,
 		     const char *indata, int inlen,
-		     char **outdata, int *outlen, int timeout)
+		     char **outdata, size_t *outlen, size_t timeout)
 {
   char tmpbuf[BUFSIZ];		/* XXX can we do without it?
 				   MSG_PEEK|MSG_TRUNC doesn't work for udp.. */
   int sockfd;
   int bytes_sent;
   struct sockaddr_storage from_sa;
-  int length = sizeof (struct sockaddr_storage);
+  size_t length = sizeof (struct sockaddr_storage);
   fd_set readfds;
   struct timeval tout;
   int rc;
@@ -200,7 +200,7 @@ shishi_kdc_sendrecv_1 (Shishi * handle, struct Shishi_kdcinfo *ki,
 		       char **outdata, size_t * outlen,
 		       Shishi_tkts_hint * hint)
 {
-  char *protname;
+  const char *protname;
   int rc;
 
   switch (ki->protocol)

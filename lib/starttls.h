@@ -1,5 +1,5 @@
 /* starttls.h --- Network I/O prototypes to transport Kerberos over TLS.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -23,6 +23,6 @@ extern int _shishi_tls_init (Shishi * handle);
 extern int _shishi_tls_done (Shishi * handle);
 extern int _shishi_sendrecv_tls (Shishi * handle,
 				 struct sockaddr *addr,
-				 const char *indata, int inlen,
-				 char **outdata, int *outlen, int timeout,
-				 Shishi_tkts_hint * hint);
+				 const char *indata, size_t inlen,
+				 char **outdata, size_t *outlen,
+				 size_t timeout, Shishi_tkts_hint * hint);

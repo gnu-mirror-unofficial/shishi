@@ -1,5 +1,5 @@
 /* starttls.c --- Network I/O functions to transport Kerberos over TLS.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,6 +21,7 @@
 
 #include "internal.h"
 #include <gnutls/gnutls.h>
+#include "starttls.h"
 
 /* Initialize TLS subsystem. Typically invoked by shishi_init. */
 int
@@ -74,12 +75,13 @@ _shishi_tls_done (Shishi * handle)
 
 /* Negotiate TLS and send and receive Kerberos packets on an open
    socket. */
-int
+static int
 _shishi_sendrecv_tls1 (Shishi * handle,
 		       int sockfd,
 		       gnutls_session session,
-		       const char *indata, int inlen,
-		       char **outdata, int *outlen, int timeout)
+		       const char *indata, size_t inlen,
+		       char **outdata, size_t *outlen,
+		       size_t timeout)
 {
   int ret;
   ssize_t bytes_sent, bytes_read;
@@ -178,9 +180,9 @@ _shishi_sendrecv_tls1 (Shishi * handle,
 int
 _shishi_sendrecv_tls (Shishi * handle,
 		      struct sockaddr *addr,
-		      const char *indata, int inlen,
-		      char **outdata, int *outlen, int timeout,
-		      Shishi_tkts_hint * hint)
+		      const char *indata, size_t inlen,
+		      char **outdata, size_t *outlen,
+		      size_t timeout, Shishi_tkts_hint * hint)
 {
   const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
     GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0

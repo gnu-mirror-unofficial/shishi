@@ -1177,7 +1177,7 @@ shishi_encrypt_ivupdate_etype (Shishi * handle,
 			       const char *in, size_t inlen,
 			       char **out, size_t * outlen)
 {
-  Shishi_encrypt_function encrypt;
+  Shishi_encrypt_function enc;
   int res;
 
   if (VERBOSECRYPTO (handle))
@@ -1197,16 +1197,16 @@ shishi_encrypt_ivupdate_etype (Shishi * handle,
 	}
     }
 
-  encrypt = _shishi_cipher_encrypt (etype);
-  if (encrypt == NULL)
+  enc = _shishi_cipher_encrypt (etype);
+  if (enc == NULL)
     {
       shishi_error_printf (handle, "Unsupported keytype %d",
 			   shishi_key_type (key));
       return SHISHI_CRYPTO_ERROR;
     }
 
-  res = (*encrypt) (handle, key, keyusage,
-		    iv, ivlen, ivout, ivoutlen, in, inlen, out, outlen);
+  res = (*enc) (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
+		in, inlen, out, outlen);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -1980,7 +1980,7 @@ shishi_dk (Shishi * handle,
 	   Shishi_key * key,
 	   const char *constant, size_t constantlen, Shishi_key * derivedkey)
 {
-  char random[MAX_RANDOM_LEN];
+  char rnd[MAX_RANDOM_LEN];
   int res;
 
   if (VERBOSECRYPTO (handle))
@@ -1997,13 +1997,13 @@ shishi_dk (Shishi * handle,
 
   shishi_key_type_set (derivedkey, shishi_key_type (key));
 
-  res = shishi_dr (handle, key, constant, constantlen, random,
+  res = shishi_dr (handle, key, constant, constantlen, rnd,
 		   shishi_key_length (derivedkey));
   if (res != SHISHI_OK)
     return res;
 
   res = shishi_random_to_key (handle, shishi_key_type (derivedkey),
-			      random, shishi_key_length (derivedkey),
+			      rnd, shishi_key_length (derivedkey),
 			      derivedkey);
   if (res != SHISHI_OK)
     return res;

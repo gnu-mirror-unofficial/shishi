@@ -1,5 +1,5 @@
 /* tkts.c	Ticket set handling.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -44,10 +44,7 @@ shishi_tkts_default_file_guess (void)
 
   home = getenv ("HOME");
 
-  if (home == NULL)
-    home = "";
-
-  asprintf (&p, "%s%s", home, TICKET_FILE);
+  asprintf (&p, "%s%s", home ? home : "", TICKET_FILE);
 
   return p;
 }
