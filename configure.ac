@@ -381,9 +381,9 @@ fi
 AC_MSG_CHECKING([if dummy NULL encryption/checksum type should be used])
 AC_MSG_RESULT($enable_null)
 
-AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--enable-arcfour],
-			[enable ARCFOUR encryption/checksum type]),
-		enable_arcfour=$enableval, enable_arcfour=no)
+AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--disable-arcfour],
+			[disable ARCFOUR encryption/checksum type]),
+		enable_arcfour=$enableval, enable_arcfour=yes)
 AM_CONDITIONAL(ARCFOUR, test "$enable_arcfour" != "no")
 if test "$enable_arcfour" != "no"; then
 	AC_DEFINE(WITH_ARCFOUR, 1,
