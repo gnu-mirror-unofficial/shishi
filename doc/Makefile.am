@@ -73,7 +73,7 @@ shishi-api-kdc.texi: $(top_srcdir)/lib/kdc.c $(top_srcdir)/lib/kdcreq.c $(top_sr
 shishi-api-authenticator.texi: $(top_srcdir)/lib/authenticator.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
-shishi-api-ap.texi: $(top_srcdir)/lib/ap.c $(top_srcdir)/lib/apreq.c $(top_srcdir)/lib/aprep.c
+shishi-api-ap.texi: $(top_srcdir)/lib/ap.c $(top_srcdir)/lib/apreq.c $(top_srcdir)/lib/aprep.c $(top_srcdir)/lib/encapreppart.c
 	$(PERL) $(srcdir)/gdoc -texinfo $^ > $@
 
 shishi-api-key.texi: $(top_srcdir)/lib/key.c
