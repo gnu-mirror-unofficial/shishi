@@ -51,6 +51,81 @@ des3_decrypt (Shishi * handle,
 			     in, inlen, out, outlen);
 }
 
+static int
+des3none_dencrypt (Shishi * handle,
+		   Shishi_key *key,
+		   int keyusage,
+		   const char *iv,
+		   size_t ivlen,
+		   const char *in,
+		   size_t inlen,
+		   char *out,
+		   size_t *outlen,
+		   int direction)
+{
+  int res;
+
+  if (keyusage != 0)
+    {
+      size_t len;
+      Shishi_key *derivedkey;
+
+      res = shishi_key_from_value (handle, shishi_key_type (key),
+				   NULL, &derivedkey);
+      if (res != SHISHI_OK)
+	return res;
+
+      res = simplified_derivekey (handle, key, keyusage,
+				  SHISHI_DERIVEKEYMODE_PRIVACY, derivedkey);
+      if (res != SHISHI_OK)
+	return res;
+
+      res = simplified_dencrypt (handle, derivedkey, iv, ivlen,
+				 in, inlen, out, outlen, direction);
+      if (res != SHISHI_OK)
+	return res;
+
+      shishi_key_done (&derivedkey);
+    }
+  else
+    {
+      res = simplified_dencrypt (handle, key, iv, ivlen,
+				 in, inlen, out, outlen, direction);
+    }
+
+  return res;
+}
+
+static int
+des3none_encrypt (Shishi * handle,
+		  Shishi_key *key,
+		  int keyusage,
+		  const char *iv,
+		  size_t ivlen,
+		  const char *in,
+		  size_t inlen,
+		  char *out,
+		  size_t *outlen)
+{
+  return des3none_dencrypt (handle, key, keyusage,
+			    iv, ivlen, in, inlen, out, outlen, 0);
+}
+
+static int
+des3none_decrypt (Shishi * handle,
+		  Shishi_key *key,
+		  int keyusage,
+		  const char *iv,
+		  size_t ivlen,
+		  const char *in,
+		  size_t inlen,
+		  char *out,
+		  size_t *outlen)
+{
+  return des3none_dencrypt (handle, key, keyusage,
+			    iv, ivlen, in, inlen, out, outlen, 1);
+}
+
 /* The 168 bits of random key data are converted to a protocol key
  * value as follows.  First, the 168 bits are divided into three
  * groups of 56 bits, which are expanded individually into 64 bits as

@@ -689,6 +689,21 @@ static cipherinfo des3_cbc_sha1_kd_info = {
   des3_decrypt
 };
 
+static cipherinfo des3_cbc_none_info = {
+  -4097,
+  "des3-cbc-none",
+  8,
+  0,
+  8,
+  3 * 8,
+  3 * 8,
+  SHISHI_HMAC_SHA1_DES3_KD,
+  des3_random_to_key,
+  des3_string_to_key,
+  des3none_encrypt,
+  des3none_decrypt
+};
+
 static cipherinfo aes128_cts_hmac_sha1_96_info = {
   17,
   "aes128-cts-hmac-sha1-96",
@@ -725,6 +740,7 @@ static cipherinfo *ciphers[] = {
   &des_cbc_md4_info,
   &des_cbc_md5_info,
   &des3_cbc_sha1_kd_info,
+  &des3_cbc_none_info,
   &aes128_cts_hmac_sha1_96_info,
   &aes256_cts_hmac_sha1_96_info
 };
@@ -1249,10 +1265,11 @@ shishi_checksum (Shishi * handle,
 }
 
 /**
- * shishi_encrypt_iv:
+ * shishi_encrypt_iv_etype:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: key to encrypt with.
  * @keyusage: integer specifying what this key is encrypting.
+ * @etype: integer specifying what decryption method to use.
  * @iv: input array with initialization vector.
  * @ivlen: size of input array with initialization vector.
  * @in: input array with data to encrypt.
@@ -1270,12 +1287,13 @@ shishi_checksum (Shishi * handle,
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
-shishi_encrypt_iv (Shishi * handle,
-		   Shishi_key * key,
-		   int keyusage,
-		   char *iv, int ivlen,
-		   char *in, int inlen,
-		   char *out, int *outlen)
+shishi_encrypt_iv_etype (Shishi * handle,
+			 Shishi_key * key,
+			 int keyusage,
+			 int etype,
+			 char *iv, int ivlen,
+			 char *in, int inlen,
+			 char *out, int *outlen)
 {
   Shishi_encrypt_function encrypt;
   int res;
@@ -1293,7 +1311,7 @@ shishi_encrypt_iv (Shishi * handle,
       puts ("");
     }
 
-  encrypt = _shishi_cipher_encrypt (shishi_key_type (key));
+  encrypt = _shishi_cipher_encrypt (etype);
   if (encrypt == NULL)
     {
       shishi_error_printf (handle, "Unsupported keytype %d",
@@ -1334,12 +1352,111 @@ shishi_encrypt_iv (Shishi * handle,
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
+shishi_encrypt_iv (Shishi * handle,
+		   Shishi_key * key,
+		   int keyusage,
+		   char *iv, int ivlen,
+		   char *in, int inlen,
+		   char *out, int *outlen)
+{
+  return shishi_encrypt_iv_etype (handle, key, keyusage, shishi_key_type (key),
+				  NULL, 0, in, inlen, out, outlen);
+}
+
+/**
+ * shishi_encrypt:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to encrypt with.
+ * @keyusage: integer specifying what this key is encrypting.
+ * @in: input array with data to encrypt.
+ * @inlen: size of input array with data to encrypt.
+ * @out: output array with encrypted data.
+ * @outlen: on input, holds maximum size of output array, on output,
+ *          holds actual size of output array.
+ *
+ * Encrypts data using key, possibly altered by supplied key usage.
+ * If key usage is 0, no key derivation is used.
+ *
+ * If OUT is NULL, this functions only set OUTLEN.  This usage may be
+ * used by the caller to allocate the proper buffer size.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
 shishi_encrypt (Shishi * handle,
 		Shishi_key * key,
 		int keyusage, char *in, int inlen, char *out, int *outlen)
 {
   return shishi_encrypt_iv (handle, key, keyusage, NULL, 0,
 			    in, inlen, out, outlen);
+}
+
+/**
+ * shishi_decrypt_iv_etype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to decrypt with.
+ * @keyusage: integer specifying what this key is decrypting.
+ * @etype: integer specifying what decryption method to use.
+ * @iv: input array with initialization vector.
+ * @ivlen: size of input array with initialization vector.
+ * @in: input array with data to decrypt.
+ * @inlen: size of input array with data to decrypt.
+ * @out: output array with decrypted data.
+ * @outlen: on input, holds maximum size of output array, on output,
+ *          holds actual size of output array.
+ *
+ * Decrypts data using key, possibly altered by supplied key usage.
+ * If key usage is 0, no key derivation is used.
+ *
+ * If OUT is NULL, this functions only set OUTLEN.  This usage may be
+ * used by the caller to allocate the proper buffer size.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_decrypt_iv_etype (Shishi * handle,
+			 Shishi_key * key,
+			 int keyusage,
+			 int etype,
+			 char *iv, int ivlen,
+			 char *in, int inlen,
+			 char *out, int *outlen)
+{
+  Shishi_decrypt_function decrypt;
+  int res;
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("decrypt (type=%s, usage=%d, key, in, out)\n",
+	      shishi_key_name (key), keyusage);
+      printf ("\t ;; key (%d):\n", shishi_key_length (key));
+      hexprint (shishi_key_value (key), shishi_key_length (key));
+      puts ("");
+      printf ("\t ;; in (%d):\n", inlen);
+      escapeprint (in, inlen);
+      hexprint (in, inlen);
+      puts ("");
+    }
+
+  decrypt = _shishi_cipher_decrypt (etype);
+  if (decrypt == NULL)
+    {
+      shishi_error_printf (handle, "Unsupported keytype %d",
+			   shishi_key_type (key));
+      return !SHISHI_OK;
+    }
+
+  res = (*decrypt) (handle, key, keyusage, iv, ivlen, in, inlen, out, outlen);
+
+  if (VERBOSECRYPTO (handle))
+    {
+      printf ("\t ;; decrypt out:\n");
+      escapeprint (out, *outlen);
+      hexprint (out, *outlen);
+      puts ("");
+    }
+
+  return res;
 }
 
 /**
@@ -1371,41 +1488,11 @@ shishi_decrypt_iv (Shishi * handle,
 		   char *in, int inlen,
 		   char *out, int *outlen)
 {
-  Shishi_decrypt_function decrypt;
-  int res;
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("decrypt (type=%s, usage=%d, key, in, out)\n",
-	      shishi_key_name (key), keyusage);
-      printf ("\t ;; key (%d):\n", shishi_key_length (key));
-      hexprint (shishi_key_value (key), shishi_key_length (key));
-      puts ("");
-      printf ("\t ;; in (%d):\n", inlen);
-      escapeprint (in, inlen);
-      hexprint (in, inlen);
-      puts ("");
-    }
-
-  decrypt = _shishi_cipher_decrypt (shishi_key_type (key));
-  if (decrypt == NULL)
-    {
-      shishi_error_printf (handle, "Unsupported keytype %d",
-			   shishi_key_type (key));
-      return !SHISHI_OK;
-    }
-
-  res = (*decrypt) (handle, key, keyusage, iv, ivlen, in, inlen, out, outlen);
-
-  if (VERBOSECRYPTO (handle))
-    {
-      printf ("\t ;; decrypt out:\n");
-      escapeprint (out, *outlen);
-      hexprint (out, *outlen);
-      puts ("");
-    }
-
-  return res;
+  return shishi_decrypt_iv_etype (handle, key, keyusage,
+				  shishi_key_type (key),
+				  iv, ivlen,
+				  in, inlen,
+				  out, outlen);
 }
 
 /**

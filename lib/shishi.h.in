@@ -178,6 +178,7 @@ typedef enum
   SHISHI_DES_CBC_MD4 = 2,
   SHISHI_DES_CBC_MD5 = 3,
   SHISHI_DES3_CBC_HMAC_SHA1_KD = 16,
+  SHISHI_DES3_CBC_NONE = -4097,
   SHISHI_AES128_CTS_HMAC_SHA1_96 = 17,
   SHISHI_AES256_CTS_HMAC_SHA1_96 = 18
 }
@@ -901,6 +902,13 @@ extern int shishi_encrypt_iv (Shishi * handle,
 			      char *iv, int ivlen,
 			      char *in, int inlen,
 			      char *out, int *outlen);
+extern int shishi_encrypt_iv_etype (Shishi * handle,
+				    Shishi_key * key,
+				    int keyusage,
+				    int etype,
+				    char *iv, int ivlen,
+				    char *in, int inlen,
+				    char *out, int *outlen);
 extern int shishi_decrypt (Shishi * handle,
 			   Shishi_key * key,
 			   int keyusage,
@@ -911,6 +919,13 @@ extern int shishi_decrypt_iv (Shishi * handle,
 			      char *iv, int ivlen,
 			      char *in, int inlen,
 			      char *out, int *outlen);
+extern int shishi_decrypt_iv_etype (Shishi * handle,
+				    Shishi_key * key,
+				    int keyusage,
+				    int etype,
+				    char *iv, int ivlen,
+				    char *in, int inlen,
+				    char *out, int *outlen);
 extern int shishi_checksum (Shishi * handle,
 			    Shishi_key * key,
 			    int keyusage,
