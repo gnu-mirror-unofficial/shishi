@@ -1,3 +1,3 @@
 #!/bin/sh -x
 autoreconf --install --force --verbose
-: 'You can now run CFLAGS=-g ./configure --enable-maintainer-mode --disable-shared and then make.'
+: 'You can now run ./configure CFLAGS=-g --enable-maintainer-mode --disable-shared and then make.'
