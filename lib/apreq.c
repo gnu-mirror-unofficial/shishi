@@ -332,7 +332,6 @@ shishi_apreq_set_authenticator (Shishi * handle,
 				Shishi_asn1 apreq,
 				int etype, char *buf, int buflen)
 {
-  char format[BUFSIZ];
   int res;
 
   res = shishi_asn1_write (handle, apreq, "authenticator.cipher",
@@ -340,9 +339,7 @@ shishi_apreq_set_authenticator (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  sprintf (format, "%d", etype);
-  res = shishi_asn1_write (handle, apreq, "authenticator.etype",
-			   format, 0);
+  res = shishi_asn1_write_integer (handle, apreq, "authenticator.etype", 0);
   if (res != SHISHI_OK)
     return res;
 
