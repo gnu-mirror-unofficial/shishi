@@ -437,7 +437,7 @@ shishi_ap_req_set (Shishi_ap * ap, ASN1_TYPE apreq)
  * @out: output array with der encoding of AP-REQ.
  * @outlen: length of output array with der encoding of AP-REQ.
  *
- * Build AP-REQ using shishi_ap_req_buidl() and DER encode it.
+ * Build AP-REQ using shishi_ap_req_build() and DER encode it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
