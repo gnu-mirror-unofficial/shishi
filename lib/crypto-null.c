@@ -26,11 +26,18 @@ null_encrypt (Shishi * handle,
 	      Shishi_key * key,
 	      int keyusage,
 	      const char *iv, size_t ivlen,
-	      const char *in, size_t inlen, char **out, size_t * outlen)
+	      char **ivout, size_t *ivoutlen,
+	      const char *in, size_t inlen,
+	      char **out, size_t * outlen)
 {
   *outlen = inlen;
   *out = xmalloc (*outlen);
   memcpy (*out, in, inlen);
+
+  if (ivout)
+    *ivout = NULL;
+  if (ivoutlen)
+    *ivoutlen = 0;
 
   return SHISHI_OK;
 }
@@ -40,11 +47,18 @@ null_decrypt (Shishi * handle,
 	      Shishi_key * key,
 	      int keyusage,
 	      const char *iv, size_t ivlen,
-	      const char *in, size_t inlen, char **out, size_t * outlen)
+	      char **ivout, size_t *ivoutlen,
+	      const char *in, size_t inlen,
+	      char **out, size_t * outlen)
 {
   *outlen = inlen;
   *out = xmalloc (*outlen);
   memcpy (*out, in, inlen);
+
+  if (ivout)
+    *ivout = NULL;
+  if (ivoutlen)
+    *ivoutlen = 0;
 
   return SHISHI_OK;
 }

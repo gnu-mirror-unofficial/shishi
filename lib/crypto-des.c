@@ -228,9 +228,10 @@ static int
 des_encrypt_checksum (Shishi * handle,
 		      Shishi_key * key,
 		      int keyusage,
-		      const char *iv,
-		      size_t ivlen,
-		      const char *in, size_t inlen, char **out, size_t * outlen,
+		      const char *iv, size_t ivlen,
+		      char **ivout, size_t *ivoutlen,
+		      const char *in, size_t inlen,
+		      char **out, size_t * outlen,
 		      int algo)
 {
   char cksum[8 + MAX_HASH_LEN];
@@ -261,7 +262,7 @@ des_encrypt_checksum (Shishi * handle,
 
   free (inpad);
 
-  res = simplified_encrypt (handle, key, 0, iv, ivlen,
+  res = simplified_encrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
 			    pt, ptlen, out, outlen);
 
   free (pt);
@@ -279,11 +280,11 @@ static int
 des_crc_encrypt (Shishi * handle,
 		 Shishi_key * key,
 		 int keyusage,
-		 const char *iv,
-		 size_t ivlen,
+		 const char *iv, size_t ivlen,
+		 char **ivout, size_t *ivoutlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen,
+  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
 			       in, inlen, out, outlen, SHISHI_DES_CBC_CRC);
 }
 
@@ -293,9 +294,10 @@ des_md4_encrypt (Shishi * handle,
 		 int keyusage,
 		 const char *iv,
 		 size_t ivlen,
+		 char **ivout, size_t *ivoutlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen,
+  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
 			       in, inlen, out, outlen, SHISHI_DES_CBC_MD4);
 }
 
@@ -305,9 +307,10 @@ des_md5_encrypt (Shishi * handle,
 		 int keyusage,
 		 const char *iv,
 		 size_t ivlen,
+		 char **ivout, size_t *ivoutlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen,
+  return des_encrypt_checksum (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
 			       in, inlen, out, outlen, SHISHI_DES_CBC_MD5);
 }
 
@@ -317,9 +320,10 @@ des_none_encrypt (Shishi * handle,
 		  int keyusage,
 		  const char *iv,
 		  size_t ivlen,
+		  char **ivout, size_t *ivoutlen,
 		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_encrypt (handle, key, 0, iv, ivlen,
+  return simplified_encrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
 			     in, inlen, out, outlen);
 }
 
@@ -328,13 +332,14 @@ des_decrypt_verify (Shishi * handle,
 		    Shishi_key * key,
 		    int keyusage,
 		    const char *iv, size_t ivlen,
+		    char **ivout, size_t *ivoutlen,
 		    const char *in, size_t inlen,
 		    char **out, size_t * outlen,
 		    int algo)
 {
   int res;
 
-  res = simplified_decrypt (handle, key, 0, iv, ivlen,
+  res = simplified_decrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
 			    in, inlen, out, outlen);
   if (res != SHISHI_OK)
     {
@@ -358,9 +363,10 @@ des_crc_decrypt (Shishi * handle,
 		 int keyusage,
 		 const char *iv,
 		 size_t ivlen,
+		 char **ivout, size_t *ivoutlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_decrypt_verify (handle, key, keyusage, iv, ivlen,
+  return des_decrypt_verify (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
 			     in, inlen, out, outlen, SHISHI_DES_CBC_CRC);
 }
 
@@ -370,9 +376,10 @@ des_md4_decrypt (Shishi * handle,
 		 int keyusage,
 		 const char *iv,
 		 size_t ivlen,
+		 char **ivout, size_t *ivoutlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_decrypt_verify (handle, key, keyusage, iv, ivlen,
+  return des_decrypt_verify (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
 			     in, inlen, out, outlen, SHISHI_DES_CBC_MD4);
 }
 
@@ -382,9 +389,10 @@ des_md5_decrypt (Shishi * handle,
 		 int keyusage,
 		 const char *iv,
 		 size_t ivlen,
+		 char **ivout, size_t *ivoutlen,
 		 const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return des_decrypt_verify (handle, key, keyusage, iv, ivlen,
+  return des_decrypt_verify (handle, key, keyusage, iv, ivlen, ivout, ivoutlen,
 			     in, inlen, out, outlen, SHISHI_DES_CBC_MD5);
 }
 
@@ -394,9 +402,10 @@ des_none_decrypt (Shishi * handle,
 		  int keyusage,
 		  const char *iv,
 		  size_t ivlen,
+		  char **ivout, size_t *ivoutlen,
 		  const char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return simplified_decrypt (handle, key, 0, iv, ivlen,
+  return simplified_decrypt (handle, key, 0, iv, ivlen, ivout, ivoutlen,
 			     in, inlen, out, outlen);
 }
 
@@ -787,8 +796,8 @@ des_checksum (Shishi * handle,
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
 
-  res = simplified_dencrypt (handle, key, NULL, 0, cksum, cksumlen,
-			     out, outlen, 0);
+  res = simplified_dencrypt (handle, key, NULL, 0, NULL, NULL,
+			     cksum, cksumlen, out, outlen, 0);
 
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;

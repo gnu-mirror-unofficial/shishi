@@ -371,6 +371,7 @@ static int
 simplified_dencrypt (Shishi * handle,
 		     Shishi_key * key,
 		     const char *iv, size_t ivlen,
+		     char **ivout, size_t *ivoutlen,
 		     const char *in, size_t inlen,
 		     char **out, size_t * outlen, int decryptp)
 {
@@ -442,16 +443,17 @@ simplified_dencrypt (Shishi * handle,
       return SHISHI_CRYPTO_INTERNAL_ERROR;
     }
 
-  if (iv)
+  if (ivout && ivoutlen)
     {
-      size_t blocksize = gcry_cipher_get_algo_blklen (alg);
+      *ivoutlen = gcry_cipher_get_algo_blklen (alg);
+      *ivout = xmalloc (*ivoutlen);
       if (decryptp)
-	memcpy (iv, in + inlen - blocksize, blocksize);
+	memcpy (*ivout, in + inlen - *ivoutlen, *ivoutlen);
       else
 	/* XXX what is the output iv for CBC-CTS mode?
 	   but is this value useful at all for that mode anyway?
 	   Mostly it is DES apps that want the updated iv, so this is ok. */
-	memcpy (iv, *out + *outlen - blocksize, blocksize);
+	memcpy (*ivout, *out + *outlen - *ivoutlen, *ivoutlen);
     }
 
   gcry_cipher_close (ch);
@@ -484,9 +486,13 @@ simplified_dencrypt (Shishi * handle,
 	CBC_DECRYPT (&des, des_decrypt, inlen, *out, in);
       else
 	CBC_ENCRYPT (&des, des_encrypt, inlen, *out, in);
-      if (iv)
-	/* XXX see above */
-	memcpy (iv, des.iv, sizeof (des.iv));
+      if (ivout && ivoutlen)
+	{
+	  *ivoutlen = sizeof (des.iv);
+	  *ivout = xmalloc (*ivoutlen);
+	  /* XXX see above */
+	  memcpy (*ivout, des.iv, *ivoutlen);
+	}
       break;
 
     case SHISHI_DES3_CBC_HMAC_SHA1_KD:
@@ -504,9 +510,13 @@ simplified_dencrypt (Shishi * handle,
 	CBC_DECRYPT (&des3, des3_decrypt, inlen, *out, in);
       else
 	CBC_ENCRYPT (&des3, des3_encrypt, inlen, *out, in);
-      if (iv)
-	/* XXX see above */
-	memcpy (iv, des3.iv, sizeof (des3.iv));
+      if (ivout && ivoutlen)
+	{
+	  *ivoutlen = sizeof (des3.iv);
+	  *ivout = xmalloc (*ivoutlen);
+	  /* XXX see above */
+	  memcpy (*ivout, des3.iv, *ivoutlen);
+	}
       break;
 
     case SHISHI_AES128_CTS_HMAC_SHA1_96:
@@ -527,9 +537,13 @@ simplified_dencrypt (Shishi * handle,
 			       shishi_key_value (key));
 	  CBC_CTS_ENCRYPT (&aes, aes_encrypt, inlen, *out, in);
 	}
-      if (iv)
-	/* XXX see above */
-	memcpy (iv, aes.iv, sizeof (aes.iv));
+      if (ivout && ivoutlen)
+	{
+	  *ivoutlen = sizeof (aes.iv);
+	  *ivout = xmalloc (*ivoutlen);
+	  /* XXX see above */
+	  memcpy (*ivout, aes.iv, *ivoutlen);
+	}
       break;
     }
 
@@ -542,6 +556,7 @@ simplified_encrypt (Shishi * handle,
 		    Shishi_key * key,
 		    int keyusage,
 		    const char *iv, size_t ivlen,
+		    char **ivout, size_t *ivoutlen,
 		    const char *in, size_t inlen, char **out, size_t * outlen)
 {
   int res;
@@ -576,7 +591,7 @@ simplified_encrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	goto done;
 
-      res = simplified_dencrypt (handle, privacykey, iv, ivlen,
+      res = simplified_dencrypt (handle, privacykey, iv, ivlen, ivout, ivoutlen,
 				 pt, ptlen, &ct, &ctlen, 0);
       if (res != SHISHI_OK)
 	goto done;
@@ -612,7 +627,7 @@ simplified_encrypt (Shishi * handle,
     }
   else
     {
-      res = simplified_dencrypt (handle, key, iv, ivlen,
+      res = simplified_dencrypt (handle, key, iv, ivlen, ivout, ivoutlen,
 				 in, inlen, out, outlen, 0);
     }
 
@@ -624,6 +639,7 @@ simplified_decrypt (Shishi * handle,
 		    Shishi_key * key,
 		    int keyusage,
 		    const char *iv, size_t ivlen,
+		    char **ivout, size_t *ivoutlen,
 		    const char *in, size_t inlen, char **out, size_t * outlen)
 {
   int res;
@@ -639,7 +655,7 @@ simplified_decrypt (Shishi * handle,
       if (res != SHISHI_OK)
 	goto done;
 
-      res = simplified_dencrypt (handle, privacykey, iv, ivlen,
+      res = simplified_dencrypt (handle, privacykey, iv, ivlen, ivout, ivoutlen,
 				 in, inlen - hlen, out, outlen, 1);
       if (res != SHISHI_OK)
 	goto done;
@@ -668,7 +684,7 @@ simplified_decrypt (Shishi * handle,
     }
   else
     {
-      res = simplified_dencrypt (handle, key, iv, ivlen,
+      res = simplified_dencrypt (handle, key, iv, ivlen, ivout, ivoutlen,
 				 in, inlen, out, outlen, 1);
     }
 
@@ -739,6 +755,7 @@ typedef int (*Shishi_encrypt_function) (Shishi * handle,
 					Shishi_key * key,
 					int keyusage,
 					const char *iv, size_t ivlen,
+					char **ivout, size_t *ivoutlen,
 					const char *in, size_t inlen,
 					char **out, size_t * outlen);
 
@@ -746,6 +763,7 @@ typedef int (*Shishi_decrypt_function) (Shishi * handle,
 					Shishi_key * key,
 					int keyusage,
 					const char *iv, size_t ivlen,
+					char **ivout, size_t *ivoutlen,
 					const char *in, size_t inlen,
 					char **out, size_t * outlen);
 
@@ -1498,35 +1516,37 @@ shishi_checksum (Shishi * handle,
 }
 
 /**
- * shishi_encrypt_iv_etype:
+ * shishi_encrypt_ivupdate_etype:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: key to encrypt with.
  * @keyusage: integer specifying what this key is encrypting.
- * @etype: integer specifying what decryption method to use.
- * @iv: on input, array with initialization vector, on ouput array
- *      with updated initialization vector
+ * @etype: integer specifying what cipher to use.
+ * @iv: input array with initialization vector
  * @ivlen: size of input array with initialization vector.
+ * @ivout: output array with newly allocated updated initialization vector.
+ * @ivoutlen: size of output array with updated initialization vector.
  * @in: input array with data to encrypt.
  * @inlen: size of input array with data to encrypt.
- * @out: output array with encrypted data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
+ * @out: output array with newly allocated encrypted data.
+ * @outlen: output variable with size of newly allocated output array.
  *
- * Encrypts data using key, possibly altered by supplied key usage.
- * If key usage is 0, no key derivation is used.
- *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
+ * Encrypts data as per encryption method using specified
+ * initialization vector and key.  The key actually used is derived
+ * using the key usage.  If key usage is 0, no key derivation is used.
+ * The OUT buffer must be deallocated by the caller.  If IVOUT or
+ * IVOUTLEN is NULL, the updated IV is not saved anywhere.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
-shishi_encrypt_iv_etype (Shishi * handle,
-			 Shishi_key * key,
-			 int keyusage,
-			 int32_t etype,
-			 char *iv, size_t ivlen,
-			 char *in, size_t inlen, char **out, size_t * outlen)
+shishi_encrypt_ivupdate_etype (Shishi * handle,
+			       Shishi_key * key,
+			       int keyusage,
+			       int32_t etype,
+			       const char *iv, size_t ivlen,
+			       char **ivout, size_t *ivoutlen,
+			       const char *in, size_t inlen,
+			       char **out, size_t * outlen)
 {
   Shishi_encrypt_function encrypt;
   int res;
@@ -1542,6 +1562,13 @@ shishi_encrypt_iv_etype (Shishi * handle,
       escapeprint (in, inlen);
       hexprint (in, inlen);
       puts ("");
+      if (iv)
+	{
+	  printf ("\t ;; iv (%d):\n", ivlen);
+	  escapeprint (iv, ivlen);
+	  hexprint (iv, ivlen);
+	  puts ("");
+	}
     }
 
   encrypt = _shishi_cipher_encrypt (etype);
@@ -1552,7 +1579,9 @@ shishi_encrypt_iv_etype (Shishi * handle,
       return SHISHI_CRYPTO_ERROR;
     }
 
-  res = (*encrypt) (handle, key, keyusage, iv, ivlen, in, inlen, out, outlen);
+  res = (*encrypt) (handle, key, keyusage,
+		    iv, ivlen, ivout, ivoutlen,
+		    in, inlen, out, outlen);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -1560,30 +1589,142 @@ shishi_encrypt_iv_etype (Shishi * handle,
       escapeprint (*out, *outlen);
       hexprint (*out, *outlen);
       puts ("");
+      if (ivout && ivoutlen)
+	{
+	  printf ("\t ;; iv out:\n");
+	  escapeprint (*ivout, *ivoutlen);
+	  hexprint (*ivout, *ivoutlen);
+	  puts ("");
+	}
     }
 
   return res;
 }
 
 /**
- * shishi_encrypt:
+ * shishi_encrypt_iv_etype:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: key to encrypt with.
  * @keyusage: integer specifying what this key is encrypting.
- * @iv: on input, array with initialization vector, on ouput array
- *      with updated initialization vector
+ * @etype: integer specifying what cipher to use.
+ * @iv: input array with initialization vector
  * @ivlen: size of input array with initialization vector.
  * @in: input array with data to encrypt.
  * @inlen: size of input array with data to encrypt.
- * @out: output array with encrypted data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
+ * @out: output array with newly allocated encrypted data.
+ * @outlen: output variable with size of newly allocated output array.
  *
- * Encrypts data using key, possibly altered by supplied key usage.
- * If key usage is 0, no key derivation is used.
+ * Encrypts data as per encryption method using specified
+ * initialization vector and key.  The key actually used is derived
+ * using the key usage.  If key usage is 0, no key derivation is used.
+ * The OUT buffer must be deallocated by the caller.  The next IV is
+ * lost, see shishi_encrypt_ivupdate_etype if you need it.
  *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_encrypt_iv_etype (Shishi * handle,
+			 Shishi_key * key,
+			 int keyusage,
+			 int32_t etype,
+			 const char *iv, size_t ivlen,
+			 const char *in, size_t inlen,
+			 char **out, size_t * outlen)
+{
+  return shishi_encrypt_ivupdate_etype (handle, key, keyusage, etype,
+					iv, ivlen, NULL, NULL,
+					in, inlen, out, outlen);
+}
+
+/**
+ * shishi_encrypt_etype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to encrypt with.
+ * @keyusage: integer specifying what this key is encrypting.
+ * @etype: integer specifying what cipher to use.
+ * @in: input array with data to encrypt.
+ * @inlen: size of input array with data to encrypt.
+ * @out: output array with newly allocated encrypted data.
+ * @outlen: output variable with size of newly allocated output array.
+ *
+ * Encrypts data as per encryption method using specified
+ * initialization vector and key.  The key actually used is derived
+ * using the key usage.  If key usage is 0, no key derivation is used.
+ * The OUT buffer must be deallocated by the caller.  The default IV
+ * is used, see shishi_encrypt_iv_etype if you need to alter it. The
+ * next IV is lost, see shishi_encrypt_ivupdate_etype if you need it.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_encrypt_etype (Shishi * handle,
+		      Shishi_key * key,
+		      int keyusage,
+		      int32_t etype,
+		      const char *iv, size_t ivlen,
+		      const char *in, size_t inlen,
+		      char **out, size_t * outlen)
+{
+  return shishi_encrypt_ivupdate_etype (handle, key, keyusage,
+					shishi_key_type (key),
+					iv, ivlen, NULL, NULL,
+					in, inlen, out, outlen);
+}
+
+/**
+ * shishi_encrypt_ivupdate:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to encrypt with.
+ * @keyusage: integer specifying what this key is encrypting.
+ * @iv: input array with initialization vector
+ * @ivlen: size of input array with initialization vector.
+ * @ivout: output array with newly allocated updated initialization vector.
+ * @ivoutlen: size of output array with updated initialization vector.
+ * @in: input array with data to encrypt.
+ * @inlen: size of input array with data to encrypt.
+ * @out: output array with newly allocated encrypted data.
+ * @outlen: output variable with size of newly allocated output array.
+ *
+ * Encrypts data using specified initialization vector and key.  The
+ * key actually used is derived using the key usage.  If key usage is
+ * 0, no key derivation is used.  The OUT buffer must be deallocated
+ * by the caller.  If IVOUT or IVOUTLEN is NULL, the updated IV is not
+ * saved anywhere.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_encrypt_ivupdate (Shishi * handle,
+			 Shishi_key * key,
+			 int keyusage,
+			 const char *iv, size_t ivlen,
+			 char **ivout, size_t *ivoutlen,
+			 const char *in, size_t inlen,
+			 char **out, size_t * outlen)
+{
+  return shishi_encrypt_ivupdate_etype (handle, key, keyusage,
+					shishi_key_type (key),
+					iv, ivlen, ivout, ivoutlen,
+					in, inlen, out, outlen);
+}
+
+/**
+ * shishi_encrypt_iv:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to encrypt with.
+ * @keyusage: integer specifying what this key is encrypting.
+ * @iv: input array with initialization vector
+ * @ivlen: size of input array with initialization vector.
+ * @in: input array with data to encrypt.
+ * @inlen: size of input array with data to encrypt.
+ * @out: output array with newly allocated encrypted data.
+ * @outlen: output variable with size of newly allocated output array.
+ *
+ * Encrypts data using specified initialization vector and key.  The
+ * key actually used is derived using the key usage.  If key usage is
+ * 0, no key derivation is used.  The OUT buffer must be deallocated
+ * by the caller.  The next IV is lost, see shishi_encrypt_ivupdate if
+ * you need it.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1591,12 +1732,14 @@ int
 shishi_encrypt_iv (Shishi * handle,
 		   Shishi_key * key,
 		   int keyusage,
-		   char *iv, size_t ivlen,
-		   char *in, size_t inlen, char **out, size_t * outlen)
+		   const char *iv, size_t ivlen,
+		   const char *in, size_t inlen,
+		   char **out, size_t * outlen)
 {
-  return shishi_encrypt_iv_etype (handle, key, keyusage,
-				  shishi_key_type (key), iv, ivlen, in, inlen,
-				  out, outlen);
+  return shishi_encrypt_ivupdate_etype (handle, key, keyusage,
+					shishi_key_type (key),
+					iv, ivlen, NULL, NULL,
+					in, inlen, out, outlen);
 }
 
 /**
@@ -1606,15 +1749,14 @@ shishi_encrypt_iv (Shishi * handle,
  * @keyusage: integer specifying what this key is encrypting.
  * @in: input array with data to encrypt.
  * @inlen: size of input array with data to encrypt.
- * @out: output array with encrypted data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
+ * @out: output array with newly allocated encrypted data.
+ * @outlen: output variable with size of newly allocated output array.
  *
- * Encrypts data using key, possibly altered by supplied key usage.
- * If key usage is 0, no key derivation is used.
- *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
+ * Encrypts data using specified key.  The key actually used is
+ * derived using the key usage.  If key usage is 0, no key derivation
+ * is used.  The OUT buffer must be deallocated by the caller.  The
+ * default IV is used, see shishi_encrypt_iv if you need to alter it.
+ * The next IV is lost, see shishi_encrypt_ivupdate if you need it.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1624,40 +1766,44 @@ shishi_encrypt (Shishi * handle,
 		int keyusage,
 		char *in, size_t inlen, char **out, size_t * outlen)
 {
-  return shishi_encrypt_iv (handle, key, keyusage, NULL, 0,
-			    in, inlen, out, outlen);
+  return shishi_encrypt_ivupdate_etype (handle, key, keyusage,
+					shishi_key_type (key),
+					NULL, 0, NULL, NULL,
+					in, inlen, out, outlen);
 }
 
 /**
- * shishi_decrypt_iv_etype:
+ * shishi_decrypt_ivupdate_etype:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: key to decrypt with.
  * @keyusage: integer specifying what this key is decrypting.
- * @etype: integer specifying what decryption method to use.
- * @iv: on input, array with initialization vector, on ouput array
- *      with updated initialization vector
+ * @etype: integer specifying what cipher to use.
+ * @iv: input array with initialization vector
  * @ivlen: size of input array with initialization vector.
+ * @ivout: output array with newly allocated updated initialization vector.
+ * @ivoutlen: size of output array with updated initialization vector.
  * @in: input array with data to decrypt.
  * @inlen: size of input array with data to decrypt.
- * @out: output array with decrypted data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
+ * @out: output array with newly allocated decrypted data.
+ * @outlen: output variable with size of newly allocated output array.
  *
- * Decrypts data using key, possibly altered by supplied key usage.
- * If key usage is 0, no key derivation is used.
- *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
+ * Decrypts data as per encryption method using specified
+ * initialization vector and key.  The key actually used is derived
+ * using the key usage.  If key usage is 0, no key derivation is used.
+ * The OUT buffer must be deallocated by the caller.  If IVOUT or
+ * IVOUTLEN is NULL, the updated IV is not saved anywhere.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
-shishi_decrypt_iv_etype (Shishi * handle,
-			 Shishi_key * key,
-			 int keyusage,
-			 int32_t etype,
-			 char *iv, size_t ivlen,
-			 char *in, size_t inlen, char **out, size_t * outlen)
+shishi_decrypt_ivupdate_etype (Shishi * handle,
+			       Shishi_key * key,
+			       int keyusage,
+			       int32_t etype,
+			       const char *iv, size_t ivlen,
+			       char **ivout, size_t *ivoutlen,
+			       const char *in, size_t inlen,
+			       char **out, size_t * outlen)
 {
   Shishi_decrypt_function decrypt;
   int res;
@@ -1683,7 +1829,9 @@ shishi_decrypt_iv_etype (Shishi * handle,
       return SHISHI_CRYPTO_ERROR;
     }
 
-  res = (*decrypt) (handle, key, keyusage, iv, ivlen, in, inlen, out, outlen);
+  res = (*decrypt) (handle, key, keyusage,
+		    iv, ivlen, ivout, ivoutlen,
+		    in, inlen, out, outlen);
 
   if (VERBOSECRYPTO (handle))
     {
@@ -1697,24 +1845,130 @@ shishi_decrypt_iv_etype (Shishi * handle,
 }
 
 /**
+ * shishi_decrypt_iv_etype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to decrypt with.
+ * @keyusage: integer specifying what this key is decrypting.
+ * @etype: integer specifying what cipher to use.
+ * @iv: input array with initialization vector
+ * @ivlen: size of input array with initialization vector.
+ * @in: input array with data to decrypt.
+ * @inlen: size of input array with data to decrypt.
+ * @out: output array with newly allocated decrypted data.
+ * @outlen: output variable with size of newly allocated output array.
+ *
+ * Decrypts data as per encryption method using specified
+ * initialization vector and key.  The key actually used is derived
+ * using the key usage.  If key usage is 0, no key derivation is used.
+ * The OUT buffer must be deallocated by the caller.  The next IV is
+ * lost, see shishi_decrypt_ivupdate_etype if you need it.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_decrypt_iv_etype (Shishi * handle,
+			 Shishi_key * key,
+			 int keyusage,
+			 int32_t etype,
+			 const char *iv, size_t ivlen,
+			 const char *in, size_t inlen,
+			 char **out, size_t * outlen)
+{
+  return shishi_decrypt_ivupdate_etype (handle, key, keyusage, etype,
+					iv, ivlen, NULL, NULL,
+					in, inlen, out, outlen);
+}
+
+/**
+ * shishi_decrypt_etype:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to decrypt with.
+ * @keyusage: integer specifying what this key is decrypting.
+ * @etype: integer specifying what cipher to use.
+ * @in: input array with data to decrypt.
+ * @inlen: size of input array with data to decrypt.
+ * @out: output array with newly allocated decrypted data.
+ * @outlen: output variable with size of newly allocated output array.
+ *
+ * Decrypts data as per encryption method using specified key.  The
+ * key actually used is derived using the key usage.  If key usage is
+ * 0, no key derivation is used.  The OUT buffer must be deallocated
+ * by the caller.  The default IV is used, see shishi_decrypt_iv_etype
+ * if you need to alter it.  The next IV is lost, see
+ * shishi_decrypt_ivupdate_etype if you need it.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_decrypt_etype (Shishi * handle,
+		      Shishi_key * key,
+		      int keyusage,
+		      int32_t etype,
+		      const char *in, size_t inlen,
+		      char **out, size_t * outlen)
+{
+  return shishi_decrypt_ivupdate_etype (handle, key, keyusage, etype,
+					NULL, 0, NULL, NULL,
+					in, inlen, out, outlen);
+}
+
+/**
+ * shishi_decrypt_ivupdate:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @key: key to decrypt with.
+ * @keyusage: integer specifying what this key is decrypting.
+ * @etype: integer specifying what cipher to use.
+ * @iv: input array with initialization vector
+ * @ivlen: size of input array with initialization vector.
+ * @ivout: output array with newly allocated updated initialization vector.
+ * @ivoutlen: size of output array with updated initialization vector.
+ * @in: input array with data to decrypt.
+ * @inlen: size of input array with data to decrypt.
+ * @out: output array with newly allocated decrypted data.
+ * @outlen: output variable with size of newly allocated output array.
+ *
+ * Decrypts data as per encryption method using specified
+ * initialization vector and key.  The key actually used is derived
+ * using the key usage.  If key usage is 0, no key derivation is used.
+ * The OUT buffer must be deallocated by the caller.  If IVOUT or
+ * IVOUTLEN is NULL, the updated IV is not saved anywhere.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_decrypt_ivupdate (Shishi * handle,
+			 Shishi_key * key,
+			 int keyusage,
+			 int32_t etype,
+			 const char *iv, size_t ivlen,
+			 char **ivout, size_t *ivoutlen,
+			 const char *in, size_t inlen,
+			 char **out, size_t * outlen)
+{
+  return shishi_decrypt_ivupdate_etype (handle, key, keyusage,
+					shishi_key_type (key),
+					iv, ivlen, ivout, ivoutlen,
+					in, inlen, out, outlen);
+}
+
+/**
  * shishi_decrypt_iv:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: key to decrypt with.
  * @keyusage: integer specifying what this key is decrypting.
- * @iv: on input, array with initialization vector, on ouput array
- *      with updated initialization vector
+ * @etype: integer specifying what cipher to use.
+ * @iv: input array with initialization vector
  * @ivlen: size of input array with initialization vector.
  * @in: input array with data to decrypt.
  * @inlen: size of input array with data to decrypt.
- * @out: output array with decrypted data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
+ * @out: output array with newly allocated decrypted data.
+ * @outlen: output variable with size of newly allocated output array.
  *
- * Decrypts data using key, possibly altered by supplied key usage.
- * If key usage is 0, no key derivation is used.
- *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
+ * Decrypts data using specified initialization vector and key.  The
+ * key actually used is derived using the key usage.  If key usage is
+ * 0, no key derivation is used.  The OUT buffer must be deallocated
+ * by the caller.  The next IV is lost, see
+ * shishi_decrypt_ivupdate_etype if you need it.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1722,12 +1976,14 @@ int
 shishi_decrypt_iv (Shishi * handle,
 		   Shishi_key * key,
 		   int keyusage,
-		   char *iv, size_t ivlen,
-		   char *in, size_t inlen, char **out, size_t * outlen)
+		   const char *iv, size_t ivlen,
+		   const char *in, size_t inlen,
+		   char **out, size_t * outlen)
 {
-  return shishi_decrypt_iv_etype (handle, key, keyusage,
-				  shishi_key_type (key),
-				  iv, ivlen, in, inlen, out, outlen);
+  return shishi_decrypt_ivupdate_etype (handle, key, keyusage,
+					shishi_key_type (key),
+					iv, ivlen, NULL, NULL,
+					in, inlen, out, outlen);
 }
 
 /**
@@ -1737,15 +1993,14 @@ shishi_decrypt_iv (Shishi * handle,
  * @keyusage: integer specifying what this key is decrypting.
  * @in: input array with data to decrypt.
  * @inlen: size of input array with data to decrypt.
- * @out: output array with decrypted data.
- * @outlen: on input, holds maximum size of output array, on output,
- *          holds actual size of output array.
+ * @out: output array with newly allocated decrypted data.
+ * @outlen: output variable with size of newly allocated output array.
  *
- * Decrypts data using key, possibly altered by supplied key usage.
- * If key usage is 0, no key derivation is used.
- *
- * If OUT is NULL, this functions only set OUTLEN.  This usage may be
- * used by the caller to allocate the proper buffer size.
+ * Decrypts data specified key.  The key actually used is derived
+ * using the key usage.  If key usage is 0, no key derivation is used.
+ * The OUT buffer must be deallocated by the caller.  The default IV
+ * is used, see shishi_decrypt_iv if you need to alter it.  The next
+ * IV is lost, see shishi_decrypt_ivupdate if you need it.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -1753,10 +2008,13 @@ int
 shishi_decrypt (Shishi * handle,
 		Shishi_key * key,
 		int keyusage,
-		char *in, size_t inlen, char **out, size_t * outlen)
+		const char *in, size_t inlen,
+		char **out, size_t * outlen)
 {
-  return shishi_decrypt_iv (handle, key, keyusage, NULL, 0,
-			    in, inlen, out, outlen);
+  return shishi_decrypt_ivupdate_etype (handle, key, keyusage,
+					shishi_key_type (key),
+					NULL, 0, NULL, NULL,
+					in, inlen, out, outlen);
 }
 
 /**
