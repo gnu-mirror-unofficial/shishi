@@ -356,8 +356,6 @@ shishi_init_server_with_paths (Shishi ** handle, const char *systemcfgfile)
   if (!handle || !(*handle = shishi_server ()))
     return SHISHI_HANDLE_ERROR;
 
-  shishi_set_outputtype (*handle, SHISHI_OUTPUTTYPE_SYSLOG);
-
   if (!systemcfgfile)
     systemcfgfile = shishi_cfg_default_systemfile (*handle);
 
