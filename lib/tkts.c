@@ -90,7 +90,7 @@ shishi_tkts_default_file_set (Shishi * handle, const char *tktsfile)
   if (handle->tktsdefaultfile)
     free (handle->tktsdefaultfile);
   if (tktsfile)
-    handle->tktsdefaultfile = strdup (tktsfile);
+    handle->tktsdefaultfile = xstrdup (tktsfile);
   else
     handle->tktsdefaultfile = NULL;
 }

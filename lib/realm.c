@@ -51,7 +51,7 @@ shishi_realm_default_guess (void)
 	strcpy (buf, "could-not-guess-default-realm");
     }
 
-  return strdup (buf);
+  return xstrdup (buf);
 }
 
 /**
@@ -90,7 +90,7 @@ shishi_realm_default_set (Shishi * handle, const char *realm)
   if (handle->default_realm)
     free (handle->default_realm);
   if (realm)
-    handle->default_realm = strdup (realm);
+    handle->default_realm = xstrdup (realm);
   else
     handle->default_realm = NULL;
 }

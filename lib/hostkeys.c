@@ -32,7 +32,7 @@ const char *
 shishi_hostkeys_default_file (Shishi * handle)
 {
   if (!handle->hostkeysdefaultfile)
-    handle->hostkeysdefaultfile = strdup (HOSTKEYSFILE);
+    handle->hostkeysdefaultfile = xstrdup (HOSTKEYSFILE);
 
   return handle->hostkeysdefaultfile;
 }
@@ -53,7 +53,7 @@ shishi_hostkeys_default_file_set (Shishi * handle, const char *hostkeysfile)
   if (handle->hostkeysdefaultfile)
     free (handle->hostkeysdefaultfile);
   if (hostkeysfile)
-    handle->hostkeysdefaultfile = strdup (hostkeysfile);
+    handle->hostkeysdefaultfile = xstrdup (hostkeysfile);
   else
     handle->hostkeysdefaultfile = NULL;
 }

@@ -40,9 +40,9 @@ shishi_principal_default_guess (void)
   pw = getpwuid (uid);
 
   if (pw)
-    return strdup (pw->pw_name);
+    return xstrdup (pw->pw_name);
   else
-    return strdup ("user");
+    return xstrdup ("user");
 }
 
 
@@ -83,7 +83,7 @@ shishi_principal_default_set (Shishi * handle, const char *principal)
   if (handle->default_principal)
     free (handle->default_principal);
   if (principal)
-    handle->default_principal = strdup (principal);
+    handle->default_principal = xstrdup (principal);
   else
     handle->default_principal = NULL;
 }
@@ -128,7 +128,7 @@ shishi_parse_name (Shishi * handle, const char *name,
 	*realm = xstrdup (p);
     }
   else if (realm)
-    *realm = strdup (shishi_realm_default (handle));
+    *realm = xstrdup (shishi_realm_default (handle));
 
   return SHISHI_OK;
 }
