@@ -33,7 +33,12 @@ Software Foundation raise funds for GNU development.''
 @end quotation
 @end copying
 
-@dircategory Net Utilities
+@dircategory GNU Libraries
+@direntry
+* libshishi: (shishi).		Library implementing Kerberos 5.
+@end direntry
+
+@dircategory GNU utilities
 @direntry
 * shishi: (shishi).		A Kerberos 5 implementation
 @end direntry
