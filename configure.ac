@@ -236,9 +236,11 @@ AC_MSG_RESULT($system_asn1)
 if test "$system_asn1" = "no"; then
  ASN1=asn1
  LIBTASN1_LIBS="\$(top_builddir)/asn1/libminitasn1.la"
+ LIBTASN1_CFLAGS="-I\$(top_srcdir)/asn1"
 fi
 AC_SUBST(ASN1)
 AC_SUBST(LIBTASN1_LIBS)
+AC_SUBST(LIBTASN1_CFLAGS)
 
 # Check for libgcrypt
 AC_ARG_WITH(libgcrypt,
