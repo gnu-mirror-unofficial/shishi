@@ -1,4 +1,4 @@
-# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm linebuffer xgethostname
+# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm linebuffer xgethostname xgetdomainname getline
 # + base64 (x)memdup
 
 # s/libfoo_a/libfoo_la/g
@@ -52,6 +52,11 @@ libfoo_la_SOURCES += getdate.h getdate.y
 BUILT_SOURCES += getdate.c
 MAINTAINERCLEANFILES += getdate.c
 
+libfoo_la_SOURCES += getdomainname.h
+
+
+libfoo_la_SOURCES += getline.h
+EXTRA_DIST += getndelim2.h getndelim2.c
 
 libfoo_la_SOURCES += getopt.h getopt.c getopt1.c
 
@@ -69,6 +74,18 @@ libfoo_la_SOURCES += mempcpy.h
 
 libfoo_la_SOURCES += setenv.h
 
+BUILT_SOURCES += $(STDBOOL_H)
+EXTRA_DIST += stdbool_.h
+
+# We need the following in order to create an <stdbool.h> when the system
+# doesn't have one that works.
+all-local $(libfoo_la_OBJECTS): $(STDBOOL_H)
+stdbool.h: stdbool_.h
+	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' < $(srcdir)/stdbool_.h > $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += stdbool.h stdbool.h-t
+
+libfoo_la_SOURCES += strcase.h
 
 libfoo_la_SOURCES += strchrnul.h
 
@@ -87,9 +104,9 @@ sysexits.h: sysexit_.h
 	mv sysexits.h-t sysexits.h
 MOSTLYCLEANFILES += sysexits.h sysexits.h-t
 
-libfoo_la_SOURCES += timegm.h
-
 libfoo_la_SOURCES += time_r.h
+
+libfoo_la_SOURCES += timegm.h
 
 libfoo_la_SOURCES += unlocked-io.h
 
@@ -98,6 +115,8 @@ libfoo_la_SOURCES += printf-args.h printf-parse.h vasnprintf.h
 libfoo_la_SOURCES += vasprintf.h
 
 libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
+
+libfoo_la_SOURCES += xgetdomainname.h xgetdomainname.c
 
 libfoo_la_SOURCES += xgethostname.h xgethostname.c
 
@@ -109,6 +128,4 @@ libfoo_la_SOURCES += xstrndup.h xstrndup.c
 libfoo_la_SOURCES += base64.c base64.h
 libfoo_la_SOURCES += memdup.h memdup.c
 libfoo_la_SOURCES += xmemdup.h xmemdup.c
-libfoo_la_SOURCES += getdomainname.h
-libfoo_la_SOURCES += xgetdomainname.h xgetdomainname.c
 EXTRA_DIST += README

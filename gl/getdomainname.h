@@ -1,4 +1,4 @@
-/* getdomainname emulation for systems that doesn't have it.
+/* getdomainname - Return the NIS domain name.
    Copyright (C) 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -20,14 +20,23 @@
 
 #if HAVE_GETDOMAINNAME
 
-/* Get getdomainname() declarations.  */
+/* Get getdomainname() declaration.  */
 # include <unistd.h>
 
 #else
 
-/* Put up to LEN chars of the domain name into NAME.
+# include <stddef.h>
+
+/* Return the NIS domain name of the machine.
+   WARNING! The NIS domain name is unrelated to the fully qualified host name
+            of the machine.  It is also unrelated to email addresses.
+   WARNING! The NIS domain name is usually the empty string or "(none)" when
+            not using NIS.
+
+   Put up to LEN bytes of the NIS domain name into NAME.
    Null terminate it if the name is shorter than LEN.
-   Return 0 if ok, -1 if error.  */
+   If the NIS domain name is longer than LEN, set errno = EINVAL and return -1.
+   Return 0 if successful, otherwise set errno and return -1.  */
 extern int getdomainname(char *name, size_t len);
 
 #endif /* HAVE_GETDOMAINNAME */

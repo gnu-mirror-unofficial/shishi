@@ -15,24 +15,41 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* written by Simon Josefsson */
+/* Written by Simon Josefsson.  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-/* Get specification. */
+/* Specification. */
 #include "getdomainname.h"
 
-/* Get strcpy. */
 #include <string.h>
+#include <errno.h>
 
-/* Put up to LEN chars of the domain name into NAME.
+/* Return the NIS domain name of the machine.
+   WARNING! The NIS domain name is unrelated to the fully qualified host name
+            of the machine.  It is also unrelated to email addresses.
+   WARNING! The NIS domain name is usually the empty string or "(none)" when
+            not using NIS.
+
+   Put up to LEN bytes of the NIS domain name into NAME.
    Null terminate it if the name is shorter than LEN.
-   Return 0 if ok, -1 if error.  */
+   If the NIS domain name is longer than LEN, set errno = EINVAL and return -1.
+   Return 0 if successful, otherwise set errno and return -1.  */
 int
 getdomainname (char *name, size_t len)
 {
-  strcpy (name, "");		/* Hardcode your domain name if you want.  */
+  const char *result = "";	/* Hardcode your domain name if you want.  */
+  size_t result_len = strlen (result);
+
+  if (result_len > len)
+    {
+      errno = EINVAL;
+      return -1;
+    }
+  memcpy (name, result, result_len);
+  if (result_len < len)
+    name[result_len] = '\0';
   return 0;
 }

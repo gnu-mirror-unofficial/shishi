@@ -8,9 +8,6 @@ dnl the same distribution terms as the rest of that program.
 
 AC_DEFUN([gl_FUNC_GETDOMAINNAME],
 [
-  dnl Persuade glibc <unistd.h> to declare getdomainname().
-  AC_REQUIRE([AC_GNU_SOURCE])
-
   AC_REPLACE_FUNCS(getdomainname)
   if test $ac_cv_func_getdomainname = no; then
     gl_PREREQ_GETDOMAINNAME

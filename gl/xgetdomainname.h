@@ -1,4 +1,4 @@
-/* xgetdomainname.h -- return current domain name with unlimited length
+/* xgetdomainname.h -- Return the NIS domain name, without size limitations.
    Copyright (C) 1992, 1996, 2000, 2001, 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -18,9 +18,13 @@
 #ifndef _XGETDOMAINNAME_H
 #define _XGETDOMAINNAME_H
 
-/* Return the current domain name in malloc'd storage.
+/* Return the NIS domain name of the machine, in malloc'd storage.
+   WARNING! The NIS domain name is unrelated to the fully qualified host name
+            of the machine.  It is also unrelated to email addresses.
+   WARNING! The NIS domain name is usually the empty string or "(none)" when
+            not using NIS.
    If malloc fails, exit.
-   Upon any other failure, return NULL.  */
+   Upon any other failure, set errno and return NULL.  */
 extern char *xgetdomainname (void);
 
 #endif /* _XGETDOMAINNAME_H */
