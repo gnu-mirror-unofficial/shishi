@@ -173,8 +173,8 @@ krb5shishi_send (Authenticator *ap)
 
   tmp = malloc(strlen("host/") + strlen(RemoteHostName) + 1);
   sprintf(tmp, "host/%s", RemoteHostName);
-  tkt = shishi_ticketset_get_ticket_for_server
-    (shishi_handle, NULL, tmp);
+  tkt = shishi_ticketset_get_ticket_for_serveretype
+    (shishi_ticketset(shishi_handle), tmp, SHISHI_DES_CBC_MD5);
   free(tmp);
   if (!tkt)
     {
@@ -183,7 +183,7 @@ krb5shishi_send (Authenticator *ap)
     }
 
   if (auth_debug_mode)
-    shishi_ticket_print (tkt, stdout);
+    shishi_ticket_pretty_print (tkt, stdout);
 
   if (!UserNameRequested)
     {
@@ -354,205 +354,146 @@ krb5shishi_status (Authenticator *ap, char *name, int level)
   if (level < AUTH_USER)
     return level;
 
-#if 0
-  if (UserNameRequested
-      && krb5_kuserok (telnet_context, ticket->enc_part2->client,
-		       UserNameRequested))
+  if (UserNameRequested)
     {
       /* FIXME: Check buffer length */
       strcpy (name, UserNameRequested);
       return AUTH_VALID;
-    } 
-#endif
+    }
 
   return AUTH_USER;
 }
 
 int
-krb5shishi_is_auth (Authenticator *ap, unsigned char *data, int cnt,
+krb5shishi_is_auth (Authenticator *a, unsigned char *data, int cnt,
 		    char *errbuf, int errbuflen)
 {
-  printd (data, cnt);
-#if 0
-  int r = 0;
-  krb5_keytab keytabid = 0;
-  krb5_authenticator *authenticator;
-  char *name;
-  krb5_data outbuf;
-  krb5_keyblock *newkey = NULL;
-  krb5_principal server;
-  
-#ifdef ENCRYPTION
-  Session_Key skey;
-#endif
-  
-  puts("krb5shishi_is_auth");
+  Shishi_ap *ap;
+  Shishi_key *key, *key2;
+  ASN1_TYPE ticket, encticketpart, authenticator;
+  int rc;
+  char cnamerealm[BUFSIZ];
+  int cnamerealmlen;
 
-  auth.data = (char *)data;
-  auth.length = cnt;
-
-  if (!r && !auth_context)
-    r = krb5_auth_con_init (telnet_context, &auth_context);
-  if (!r)
+  rc = shishi_ap(shishi_handle, &ap);
+  if (rc != SHISHI_OK)
     {
-      krb5_rcache rcache;
-    
-      r = krb5_auth_con_getrcache (telnet_context, auth_context,
-				   &rcache);
-      if (!r && !rcache)
-	{
-	  r = krb5_sname_to_principal(telnet_context, 0, 0,
-				      KRB5_NT_SRV_HST, &server);
-	  if (!r)
-	    {
-	      r = krb5_get_server_rcache(telnet_context,
-					 krb5_princ_component (telnet_context,
-							       server, 0),
-					 &rcache);
-	      krb5_free_principal (telnet_context, server);
-	    }
-	}
-      if (!r)
-	r = krb5_auth_con_setrcache (telnet_context,
-				     auth_context, rcache);
-    }
-  
-  if (!r && telnet_srvtab)
-    r = krb5_kt_resolve (telnet_context, telnet_srvtab, &keytabid);
-  if (!r)
-    r = krb5_rd_req (telnet_context, &auth_context, &auth,
-		     NULL, keytabid, NULL, &ticket);
-  if (r)
-    {
-      snprintf (errbuf, errbuflen, "krb5_rd_req failed: %s",
-		error_message (r));
-      return r;
-    }
-
-  /* 256 bytes should be much larger than any reasonable
-     first component of a service name especially since
-     the default is of length 4. */
-  if (krb5_princ_component (telnet_context,ticket->server,0)->length < 256)
-    {
-      char princ[256];
-      strncpy (princ,
-	       krb5_princ_component (telnet_context, ticket->server,0)->data,
-	       krb5_princ_component (telnet_context, ticket->server,0)->length);
-      princ[krb5_princ_component (telnet_context,
-				  ticket->server,0)->length] = '\0';
-      if (strcmp ("host", princ))
-	{
-	  snprintf(errbuf, errbuflen,
-		   "incorrect service name: \"%s\" != \"host\"",
-		   princ);
-	  return 1;
-	}
-    }
-  else
-    {
-      strncpy (errbuf, "service name too long", errbuflen);
+      snprintf(errbuf, errbuflen,
+	       "Cannot allocate authentication structures: %s",
+	       shishi_strerror(rc));
       return 1;
     }
 
-  r = krb5_auth_con_getauthenticator (telnet_context,
-				      auth_context,
-				      &authenticator);
-  if (r)
+  rc = shishi_ap_req_der_set(ap, data, cnt);
+  if (rc != SHISHI_OK)
     {
-      snprintf (errbuf, errbuflen,
-		"krb5_auth_con_getauthenticator failed: %s",
-		error_message (r));
+      snprintf(errbuf, errbuflen,
+	       "Cannot parse authentication information: %s",
+	       shishi_strerror(rc));
       return 1;
     }
 
-#ifdef AUTH_ENCRYPT_MASK
-  if ((ap->way & AUTH_ENCRYPT_MASK) == AUTH_ENCRYPT_ON
-      &&  !authenticator->checksum)
+  //shishi_apreq_print(shishi_handle, stdout, shishi_ap_req(ap));
+
+  rc = shishi_apreq_get_ticket (shishi_handle, shishi_ap_req(ap), &ticket);
+  if (rc != SHISHI_OK)
     {
-      snprintf (errbuf, errbuflen,
-		"authenticator is missing required checksum");
+      snprintf (errbuf, errbuflen, "Could not extract ticket:\n%s\n",
+		shishi_strerror (rc));
       return 1;
     }
-#endif
-  
-  if (authenticator->checksum)
+
+  //shishi_asn1ticket_print(shishi_handle, stdout, ticket);
+
+  rc = shishi_key_from_string(shishi_handle, SHISHI_DES_CBC_MD5,
+			      "fnord", strlen("fnord"),
+			      "JOSEFSSON.ORGhostlatte.josefsson.org",
+			      strlen("JOSEFSSON.ORGhostlatte.josefsson.org"),
+			      NULL, &key);
+  if (rc != SHISHI_OK)
     {
-      char type_check[2];
-      krb5_checksum *cksum = authenticator->checksum;
-      krb5_keyblock *key;
-
-      type_check[0] = ap->type;
-      type_check[1] = ap->way;
-
-      r = krb5_auth_con_getkey (telnet_context, auth_context,
-				&key);
-      if (r)
-	{
-	  snprintf (errbuf, errbuflen,
-		    "krb5_auth_con_getkey failed: %s",
-		    error_message (r));
-	  return 1;
-	}
-      
-      r = krb5_verify_checksum (telnet_context,
-				cksum->checksum_type, cksum,
-				&type_check, 2, key->contents,
-				key->length);
-      
-      if (r)
-	{
-	  snprintf (errbuf, errbuflen, 
-		    "checksum verification failed: %s",
-		    error_message (r));
-	  return 1;
-	}
-      krb5_free_keyblock (telnet_context, key);
+      snprintf (errbuf, errbuflen, "Could not create key:\n%s\n",
+		shishi_strerror (rc));
+      return 1;
     }
-  
-  krb5_free_authenticator (telnet_context, authenticator);
-  if ((ap->way & AUTH_HOW_MASK) == AUTH_HOW_MUTUAL)
+
+  rc = shishi_ticket_decrypt (shishi_handle, ticket, key, &encticketpart);
+  if (rc != SHISHI_OK)
     {
-      if ((r = krb5_mk_rep (telnet_context, auth_context,
-			    &outbuf)))
+      snprintf (errbuf, errbuflen, "Error decrypting ticket: %s\n",
+		shishi_strerror (rc));
+      return 1;
+    }
+
+  //shishi_encticketpart_print(shishi_handle, stdout, encticketpart);
+
+  rc = shishi_encticketpart_get_key (shishi_handle, encticketpart, &key2);
+  if (rc != SHISHI_OK)
+    {
+      snprintf (errbuf, errbuflen, "EncTicketPart get key failed: %s\n",
+		shishi_strerror (rc));
+      return 1;
+    }
+
+  rc = shishi_apreq_decrypt (shishi_handle, shishi_ap_req(ap),
+			     key2, 0, &authenticator);
+  if (rc != SHISHI_OK)
+    {
+      snprintf (errbuf, errbuflen, "Error decrypting apreq: %s\n",
+		shishi_strerror (rc));
+      return 1;
+    }
+
+  //shishi_authenticator_print(shishi_handle, stdout, authenticator);
+
+  if (shishi_apreq_mutual_required_p (shishi_handle, shishi_ap_req(ap)))
+    {
+      ASN1_TYPE encapreppart, aprep;
+      char der[BUFSIZ];
+      int derlen = BUFSIZ;;
+
+      //printf ("Mutual authentication required.\n");
+
+      aprep = shishi_aprep (shishi_handle);
+      rc = shishi_aprep_enc_part_make (shishi_handle, aprep,
+					authenticator, encticketpart);
+      if (rc != SHISHI_OK)
 	{
-	  snprintf (errbuf, errbuflen, "Make reply failed: %s",
-		    error_message(r));
+	  snprintf (errbuf, errbuflen, "Error making aprep: %s\n",
+		    shishi_strerror (rc));
+	  return 1;
+	}
+      //shishi_encapreppart_print (shishi_handle, stdout,
+      //shishi_last_encapreppart (shishi_handle));
+      //shishi_aprep_print (shishi_handle, stdout, aprep);
+
+      rc = _shishi_a2d (shishi_handle, aprep, der, &derlen);
+      if (rc != SHISHI_OK)
+	{
+	  snprintf (errbuf, errbuflen, "Error der encoding aprep: %s\n",
+		    shishi_strerror (rc));
 	  return 1;
 	}
 
-      Data (ap, KRB_RESPONSE, outbuf.data, outbuf.length);
+      Data (a, KRB_RESPONSE, der, derlen);
     }
-  
-  if (krb5_unparse_name (telnet_context, ticket->enc_part2 ->client, &name))
-    name = 0;
-  
-  Data (ap, KRB_ACCEPT, name, name ? -1 : 0);
+
+  cnamerealmlen = sizeof (cnamerealm);
+  rc = shishi_authenticator_cnamerealm_get (shishi_handle, authenticator,
+					    cnamerealm, &cnamerealmlen);
+  if (rc != SHISHI_OK)
+    {
+      snprintf (errbuf, errbuflen, "Error getting authenticator name: %s\n",
+		shishi_strerror (rc));
+      return 1;
+    }
+  cnamerealm[cnamerealmlen] = '\0';
+
+  Data (a, KRB_ACCEPT, cnamerealm, cnamerealm ? -1 : 0);
   DEBUG(("telnetd: Kerberos5 identifies him as ``%s''\r\n",
-	 name ? name : ""));
-  auth_finished (ap, AUTH_USER);
+	 cnamerealm ? cnamerealm : ""));
+  auth_finished (a, AUTH_USER);
 
-  if (name)
-    free (name);
-  krb5_auth_con_getremotesubkey (telnet_context, auth_context, &newkey);
-  
-  if (session_key)
-    {
-      krb5_free_keyblock (telnet_context, session_key);
-      session_key = 0;
-    }
-  
-  if (newkey)
-    {
-      krb5_copy_keyblock (telnet_context, newkey, &session_key);
-      krb5_free_keyblock (telnet_context, newkey);
-    }
-  else
-    {
-      krb5_copy_keyblock (telnet_context, ticket->enc_part2->session,
-			  &session_key);
-    }
-  telnet_encrypt_key (&skey);
-#endif
   return 0;
 }
     
