@@ -65,7 +65,7 @@ _shishi_print_armored_data (Shishi * handle,
 
   if (headers)
     {
-      fprintf (fh, headers);
+      fprintf (fh, "%s", headers);
       fprintf (fh, "\n");
     }
 

@@ -1,5 +1,5 @@
 /* authorize.c	Authorization to services of authenticated Kerberos principals.
- * Copyright (C) 2003  Simon Josefsson
+ * Copyright (C) 2003, 2004  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -92,16 +92,15 @@ shishi_authorize_k5login (Shishi * handle, const char *principal,
   return authorized;
 }
 
-static struct
+struct Authorization_aliases
 {
-  char *name;
+  const char *name;
   int type;
-} authorization_aliases[] =
-{
-  {
-  "basic", SHISHI_AUTHORIZATION_BASIC},
-  {
-  "k5login", SHISHI_AUTHORIZATION_K5LOGIN}
+};
+
+static const struct Authorization_aliases authorization_aliases[] = {
+  {"basic", SHISHI_AUTHORIZATION_BASIC},
+  {"k5login", SHISHI_AUTHORIZATION_K5LOGIN}
 };
 
 /**
