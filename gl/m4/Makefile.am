@@ -38,10 +38,12 @@ EXTRA_DIST += nls.m4
 EXTRA_DIST += onceonly_2_57.m4
 EXTRA_DIST += po.m4
 EXTRA_DIST += progtest.m4
+EXTRA_DIST += readlink.m4
 EXTRA_DIST += realloc.m4
 EXTRA_DIST += restrict.m4
 EXTRA_DIST += setenv.m4
 EXTRA_DIST += signed.m4
+EXTRA_DIST += size_max.m4
 EXTRA_DIST += ssize_t.m4
 EXTRA_DIST += stdbool.m4
 EXTRA_DIST += stdint_h.m4
@@ -64,6 +66,8 @@ EXTRA_DIST += vasprintf.m4
 EXTRA_DIST += wchar_t.m4
 EXTRA_DIST += wint_t.m4
 EXTRA_DIST += xalloc.m4
+EXTRA_DIST += xreadlink.m4
+EXTRA_DIST += xsize.m4
 EXTRA_DIST += xstrndup.m4
 
 # Local changes

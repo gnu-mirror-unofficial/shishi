@@ -1,4 +1,4 @@
-# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm linebuffer xgethostname xgetdomainname getline
+# strnlen strndup mempcpy alloca argp error gethostname getopt memmove memset realloc setenv strcase strchrnul strdup strerror sysexits vasprintf vasnprintf xalloc xstrndup getdate timegm linebuffer xgethostname xgetdomainname getline xreadlink
 # + base64 (x)memdup
 
 # s/libfoo_a/libfoo_la/g
@@ -72,6 +72,7 @@ libfoo_la_SOURCES += mempcpy.h
 
 
 
+
 libfoo_la_SOURCES += setenv.h
 
 BUILT_SOURCES += $(STDBOOL_H)
@@ -119,6 +120,10 @@ libfoo_la_SOURCES += xalloc.h xmalloc.c xstrdup.c
 libfoo_la_SOURCES += xgetdomainname.h xgetdomainname.c
 
 libfoo_la_SOURCES += xgethostname.h xgethostname.c
+
+libfoo_la_SOURCES += xreadlink.h xreadlink.c
+
+libfoo_la_SOURCES += xsize.h
 
 libfoo_la_SOURCES += xstrndup.h xstrndup.c
 

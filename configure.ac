@@ -37,6 +37,7 @@ AC_CONFIG_HEADERS(config.h)
 
 # Checks for header files.
 AC_PROG_CC
+AC_GNU_SOURCE
 gl_USE_SYSTEM_EXTENSIONS
 AC_HEADER_STDC
 AC_CHECK_HEADERS(stdlib.h string.h strings.h memory.h \
@@ -96,6 +97,7 @@ gl_FUNC_MEMMOVE
 gl_FUNC_MEMPCPY
 gl_FUNC_MEMSET
 gl_FUNC_MKTIME
+gl_FUNC_READLINK
 jm_FUNC_REALLOC
 gl_C_RESTRICT
 gt_FUNC_SETENV
@@ -113,6 +115,8 @@ jm_FUNC_GLIBC_UNLOCKED_IO
 gl_FUNC_VASNPRINTF
 gl_FUNC_VASPRINTF
 gl_XALLOC
+gl_XREADLINK
+gl_XSIZE
 gl_XSTRNDUP
 
 # Checks for library functions.
