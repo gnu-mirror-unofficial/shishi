@@ -71,7 +71,7 @@ des3none_dencrypt (Shishi * handle,
 	simplified_dencrypt (handle, derivedkey, iv, ivlen, ivout, ivoutlen,
 			     in, inlen, out, outlen, direction);
 
-      shishi_key_done (&derivedkey);
+      shishi_key_done (derivedkey);
 
       if (res != SHISHI_OK)
 	return res;
