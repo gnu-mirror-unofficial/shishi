@@ -95,6 +95,15 @@ shishi_realm_default_set (Shishi * handle, const char *realm)
     handle->default_realm = NULL;
 }
 
+/**
+ * shishi_realm_for_server_file:
+ * @handle: Shishi library handle create by shishi_init().
+ * @server: hostname to find realm for.
+ *
+ * Find Kerberos realm for a host using configuration file.
+ *
+ * Return value: Returns realm for host, or NULL if not found.
+ **/
 char *
 shishi_realm_for_server_file (Shishi * handle, char *server)
 {
@@ -114,6 +123,22 @@ shishi_realm_for_server_file (Shishi * handle, char *server)
  * to a compromised realm.  For this reason, Shishi prints a warning,
  * suggesting that the user should add the proper 'server-realm'
  * configuration tokens instead.
+ *
+ * To illustrate the DNS information used, here is an extract from a
+ * zone file for the domain ASDF.COM:
+ *
+ * _kerberos.asdf.com.             IN      TXT     "ASDF.COM"
+ * _kerberos.mrkserver.asdf.com.   IN      TXT     "MARKETING.ASDF.COM"
+ * _kerberos.salesserver.asdf.com. IN      TXT     "SALES.ASDF.COM"
+ *
+ * Let us suppose that in this case, a Kerberos client wishes to use a
+ * Kerberized service on the host foo.asdf.com.  It would first query:
+ *
+ * _kerberos.foo.asdf.com. IN TXT
+ *
+ * Finding no match, it would then query:
+ *
+ * _kerberos.asdf.com. IN TXT
  *
  * Return value: Returns realm for host, or NULL if not found.
  **/
@@ -143,11 +168,24 @@ shishi_realm_for_server_dns (Shishi * handle, char *server)
       return NULL;
     }
 
-  shishi_warn (handle, "DNS maps '%s' to '%s'", server, (char*)rrs->rr);
+  shishi_warn (handle, "DNS maps '%s' to '%s'.", server, (char*)rrs->rr);
+  shishi_warn (handle, "Consider using a 'server-realm' configuration token.");
 
   return rrs->rr;
 }
 
+/**
+ * shishi_realm_for_server:
+ * @handle: Shishi library handle create by shishi_init().
+ * @server: hostname to find realm for.
+ *
+ * Find Kerberos realm for a host, using various methods.  Currently
+ * this includes static configuration files (see
+ * shishi_realm_for_server_file()) and DNS (see
+ * shishi_realm_for_server_dns()).
+ *
+ * Return value: Returns realm for host, or NULL if not found.
+ **/
 char *
 shishi_realm_for_server (Shishi * handle, char *server)
 {
