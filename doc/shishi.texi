@@ -401,11 +401,14 @@ derived from passwords with RSA Laboratories PKCS#5 Password Based Key
 Derivation Function
 2@footnote{@url{http://www.rsasecurity.com/rsalabs/pkcs/pkcs-5/}},
 which is allegedly provably secure in a random oracle model.  Data is
-integrity protected with a keyed (HMAC) SHA1 hash truncated to 96
-bits.  There is no security proof, but the schemes are assumed to
-provide good security, but has, as AES itself, yet to receive the test
-of time.  It is associated with the @code{hmac-sha1-96-aes128} and
-@code{hmac-sha1-96-aes256} checksums, respectively.
+integrity protected with a keyed SHA1 hash, in HMAC mode, truncated to
+96 bits.  There is no security proof, but the schemes are assumed to
+provide adequate security in the sense that knowledge on how to crack
+them is not known to the public.  Note that AES has yet to receive the
+test of time, and the CBC variation used is not widely standardized
+(hence not widely studied).  It is associated with the
+@code{hmac-sha1-96-aes128} and @code{hmac-sha1-96-aes256} checksums,
+respectively.
 
 @end table
 
@@ -425,6 +428,14 @@ are ordered by increased security as perceived by the author.
 integrity.  It is weak.  It is compatible with the @code{NULL}
 encryption mechanism.
 
+@item rsa-md4
+
+@code{rsa-md4} is a unkeyed MD4 hash computed over the message.  Since
+it is unkeyed, it is in general a weak checksum, however applications
+can, with care, use it non-weak ways (e.g., by including it other
+messages that are encrypted or checksummed).  It is compatible with
+all encryption mechanisms.
+
 @item rsa-md4-des
 
 @code{rsa-md4-des} is a DES CBC encryption of one block of random data
@@ -433,6 +444,14 @@ to integrity protect.  The key used is derived from the base protocol
 key by XOR with a constant.  It is weak. It is compatible with the
 @code{des-cbc-crc}, @code{des-cbc-md4}, @code{des-cbc-md5} encryption
 mechanisms.
+
+@item rsa-md5
+
+@code{rsa-md5} is a unkeyed MD5 hash computed over the message.  Since
+it is unkeyed, it is in general a weak checksum, however applications
+can, with care, use it non-weak ways (e.g., by including it other
+messages that are encrypted or checksummed).  It is compatible with
+all encryption mechanisms.
 
 @item rsa-md5-des
 
