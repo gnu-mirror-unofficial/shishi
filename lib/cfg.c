@@ -193,9 +193,9 @@ shishi_cfg (Shishi * handle, char *option)
 	  handle->realminfos = xrealloc (handle->realminfos,
 					 (handle->nrealminfos + 1) *
 					 sizeof (*handle->realminfos));
+	  memset (&handle->realminfos[handle->nrealminfos], 0,
+		  sizeof (handle->realminfos[handle->nrealminfos]));
 	  handle->realminfos[handle->nrealminfos].name = realm;
-	  handle->realminfos[handle->nrealminfos].kdcaddresses = NULL;
-	  handle->realminfos[handle->nrealminfos].nkdcaddresses = 0;
 	  handle->nrealminfos++;
 	  break;
 
