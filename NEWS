@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.15 (unreleased)
 
+** Sequence numbers in Authenticator and EncAPRepPart are now randomized.
+
 * Version 0.0.14 (released 2004-01-22)
 
 ** High-level AP interface now support setting raw checksum field values.
