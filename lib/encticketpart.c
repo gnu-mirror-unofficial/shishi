@@ -1,5 +1,5 @@
 /* encticketpart.c	encrypted ticket part handling
- * Copyright (C) 2002  Simon Josefsson
+ * Copyright (C) 2002, 2003  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -20,6 +20,16 @@
  */
 
 #include "internal.h"
+
+ASN1_TYPE
+shishi_encticketpart (Shishi * handle)
+{
+  ASN1_TYPE node;
+
+  node = shishi_asn1_encticketpart (handle);
+  if (node == ASN1_TYPE_EMPTY)
+    return SHISHI_ASN1_ERROR;
+}
 
 /**
  * shishi_asn1ticket_get_enc_part_etype:
