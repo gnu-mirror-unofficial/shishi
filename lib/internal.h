@@ -222,7 +222,7 @@ shishi_asn1_integer2_field (Shishi * handle,
 			    Shishi_asn1 node, unsigned long *i,
 			    const char *field);
 
-#if WITH_DMALLOC
+#if defined(WITH_DMALLOC) && WITH_DMALLOC
 #include <dmalloc.h>
 #endif
 

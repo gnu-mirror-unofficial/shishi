@@ -283,7 +283,7 @@ simplified_derivekey (Shishi * handle,
 		      int derivekeymode, Shishi_key * derivedkey)
 {
   char constant[5];
-  int res;
+  int res = SHISHI_OK;
 
   if (VERBOSECRYPTO (handle))
     {
@@ -307,7 +307,7 @@ simplified_derivekey (Shishi * handle,
 	constant[4] = '\x99';
       else if (derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY)
 	constant[4] = '\x55';
-      else			/* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
+      else /* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
 	constant[4] = '\xAA';
 
       res = shishi_dk (handle, key, constant, 5, derivedkey);
