@@ -102,25 +102,20 @@ shisa_cfg_db (Shisa * dbh, char *value)
 int
 shisa_cfg (Shisa * dbh, char *option)
 {
-  char *value;
   int rc;
 
-  while (option != NULL && *option != '\0')
-    {
-      switch (getsubopt (&option, _shisa_opts, &value))
-	{
-	case DB_OPTION:
-	  rc = shisa_cfg_db (dbh, value);
-	  if (rc != SHISA_OK)
-	    return rc;
-	  break;
+  if (!option)
+    return SHISA_OK;
 
-	default:
-	  shisa_info (dbh, "Unknown option: `%s'.", value);
-	  return SHISA_CFG_SYNTAX_ERROR;
-	  break;
-	}
+  if (strncmp (option, "db ", 3) != 0)
+    {
+      shisa_info (dbh, "Unknown option: `%s'.", option);
+      return SHISA_CFG_SYNTAX_ERROR;
     }
+
+  rc = shisa_cfg_db (dbh, option + 3);
+  if (rc != SHISA_OK)
+    return rc;
 
   return SHISA_OK;
 }
