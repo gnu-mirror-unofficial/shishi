@@ -40,6 +40,13 @@
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
 
+/* Get asprintf. */
+#include "vasprintf.h"
+
+/* Get xgethostname. */
+#include "xgethostname.h"
+
+/* Get set_program_name and program_name. */
 #include "progname.h"
 
 #include <shisa.h>
@@ -264,7 +271,7 @@ apply_options (const char *realm,
       shishi_key_realm_set (key, realm);
       shishi_key_principal_set (key, principal);
 
-      if (!args_info.quiet_flag)
+      if (args_info.verbose_flag)
 	shishi_key_print (sh, stdout, key);
 
       dbkey->etype = etype;
@@ -347,6 +354,7 @@ add_principal (const char *realm, const char *principal)
   else
     printf ("Adding principal `%s@%s'...done\n", principal, realm);
 
+
   return EXIT_SUCCESS;
 }
 
@@ -361,12 +369,41 @@ add (void)
     rc = add_principal (args_info.inputs[0], args_info.inputs[1]);
   else
     {
-      error (0, 0, "too few arguments");
-      error (0, 0, "Try `%s --help' for more information.", program_name);
-      return EXIT_FAILURE;
+      int oldverbose = args_info.verbose_flag;
+      const char *realm = shishi_realm_default (sh);
+      char *host;
+      char *tmp;
+
+      /* This is mostly meant for 'make install', as it set up the
+	 default realm, and write a host key to stdout, which can be
+	 redirected into $prefix/etc/shishi/shishi.keys. */
+
+      printf ("Adding default realm `%s'...\n", realm);
+      rc = add_principal (realm, NULL);
+      if (rc != EXIT_SUCCESS)
+	return EXIT_FAILURE;
+
+      args_info.verbose_flag = 0;
+
+      asprintf (&tmp, "krbtgt/%s", realm);
+      rc = add_principal (realm, tmp);
+      free (tmp);
+      if (rc != EXIT_SUCCESS)
+	return EXIT_FAILURE;
+
+      args_info.verbose_flag = 1;
+
+      host = xgethostname ();
+      asprintf (&tmp, "host/%s", host);
+      free (host);
+      rc = add_principal (realm, tmp);
+      free (tmp);
+      args_info.verbose_flag = oldverbose;
+      if (rc != EXIT_SUCCESS)
+	return EXIT_FAILURE;
     }
 
-  return EXIT_SUCCESS;
+  return rc;
 }
 
 int
