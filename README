@@ -8,12 +8,12 @@ See ANNOUNCE for an overview, and doc/shishi.{info,ps,pdf} for the
 manual.  Installation instructions are found in the INSTALL file in
 this directory.
 
-The library and application (lib/, src/) are licensed under the GNU
-Public License license (see COPYING), and the documentation (doc/) is
-licensed under the GNU Free Documentation License (see COPYING.DOC).
-Third party packages (asn1/, crypto/, argp/, libstringprep/, and
-extra/inetutils/) are distributed here for convenience, and they have
-their own respective licenses.
+The library and application (lib/, gss/, and src/) are licensed under
+the GNU Public License license (see COPYING), and the documentation
+(doc/) is licensed under the GNU Free Documentation License (see
+COPYING.DOC).  Third party packages (asn1/, crypto/, argp/,
+libstringprep/, and extra/inetutils/) are distributed here for
+convenience, and they have their own respective licenses.
 
 For updates to the project, see <http://josefsson.org/shishi/>.
 
