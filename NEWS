@@ -12,7 +12,7 @@ platform is uClibc/uClinux on Motorola Coldfire.
 SHISHI_USER specifies default client username, SHISHI_HOME specifies
 user Shishi home directory (for configuration file, ticket cache,
 etc), SHISHI_TICKETS the ticket cache file, SHISHI_CONFIG for the
-system configuration file.
+system configuration file, SHISHI_KEYS for system wide host keys.
 
 * Version 0.0.15 (released 2004-04-18)
 
