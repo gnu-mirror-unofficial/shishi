@@ -60,6 +60,18 @@ static char *const _shishi_opts[] = {
 
 int getsubopt (char **optionp, char *const *tokens, char **valuep);
 
+struct Shishi_realminfo *
+shishi_realminfo (Shishi * handle, const char *realm)
+{
+  size_t i;
+
+  for (i = 0; i < handle->nrealminfos; i++)
+    if (strcmp (realm, handle->realminfos[i].name) == 0)
+      return &handle->realminfos[i];
+
+  return NULL;
+}
+
 /**
  * shishi_cfg:
  * @handle: Shishi library handle create by shishi_init().

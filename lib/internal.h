@@ -167,10 +167,17 @@
 #define HOST_NAME_MAX BUFSIZ
 #endif
 
+enum {
+  UDP,
+  TCP,
+  TLS
+};
+
 struct Shishi_kdcinfo
 {
   char *name;
   struct sockaddr sockaddress;
+  int protocol;
 };
 
 struct Shishi_realminfo
@@ -250,6 +257,9 @@ shishi_asn1_integer2_field (Shishi * handle,
 
 extern time_t xtime (time_t * t);
 extern int xgettimeofday (struct timeval *tv, struct timezone *tz);
+
+struct Shishi_realminfo *
+shishi_realminfo (Shishi * handle, const char *realm);
 
 #if defined(WITH_DMALLOC) && WITH_DMALLOC
 #include <dmalloc.h>
