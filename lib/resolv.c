@@ -31,9 +31,6 @@
 
 #ifdef HAVE_LIBRESOLV
 
-/* Get xinet_ntoa. */
-#include "xinet.h"
-
 /* the largest packet we'll send and receive */
 #if PACKETSZ > 1024
 # define MAX_PACKET PACKETSZ
@@ -46,17 +43,6 @@ typedef union
   HEADER hdr;
   unsigned char buf[MAX_PACKET];
 } dns_packet_t;
-
-static void *
-_a_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
-{
-  struct in_addr in;
-
-  GETLONG (in.s_addr, *scan);
-  in.s_addr = ntohl (in.s_addr);
-
-  return xinet_ntoa (in);
-}
 
 static void *
 _srv_rr (dns_packet_t packet, unsigned char *eom, unsigned char **scan)
@@ -150,7 +136,6 @@ _shishi_resolv (const char *zone, unsigned int query_type)
 
   switch (query_type)
     {
-    case T_A:
     case T_TXT:
     case T_SRV:
       break;
@@ -231,10 +216,6 @@ _shishi_resolv (const char *zone, unsigned int query_type)
       /* type-specific processing */
       switch (type)
 	{
-	case T_A:
-	  reply[an]->rr = _a_rr (packet, eom, &scan);
-	  break;
-
 	case T_TXT:
 	  reply[an]->rr = _txt_rr (packet, eom, &scan);
 	  break;
