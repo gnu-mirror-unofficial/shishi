@@ -548,7 +548,7 @@ shisa_file_key_add (Shisa * dbh,
   if (key->saltlen > 0)
     fwrite (key->salt, 1, key->saltlen, fh);
   if (key->str2keyparamlen > 0)
-    fwrite (key->str2keyparam, 1, key->str2keyparam, fh);
+    fwrite (key->str2keyparam, 1, key->str2keyparamlen, fh);
   if (passwdlen > 0)
     fwrite (key->password, 1, passwdlen, fh);
 
