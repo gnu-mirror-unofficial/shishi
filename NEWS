@@ -17,6 +17,8 @@ demonstrated.  The files are in src/client.c and src/server.c.
 
 ** AES ciphers didn't work when nettle was used.
 
+** Cleanups, bug fixes and improved portability.
+
 * Version 0.0.1 (released 2003-08-10)
 
 ** InetUtils copy removed.
