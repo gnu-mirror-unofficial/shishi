@@ -1126,8 +1126,7 @@ main (int argc, char *argv[])
 	tkt = shishi_tkts_get (shishi_tkts_default (handle), &hint);
 	if (!tkt)
 	  {
-	    printf ("Could not get ticket for `%s'.\n",
-		    arg.tgtname ? arg.tgtname : arg.cname);
+	    printf ("Could not get ticket for `%s'.\n", hint.server);
 	    rc = !SHISHI_OK;
 	  }
 	else
