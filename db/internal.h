@@ -75,6 +75,18 @@ typedef int (*_Shisa_db_principal_remove) (Shisa * dbh,
 					   void *state,
 					   const char *realm,
 					   const char *principal);
+typedef int (*_Shisa_db_enumerate_keys) (Shisa * dbh,
+					 void *state,
+					 const char *realm,
+					 const char *principal,
+					 Shisa_key ***keys,
+					 size_t *nkeys);
+typedef int (*_Shisa_db_key_add) (Shisa * dbh,
+				  void *state,
+				  const char *realm,
+				  const char *principal,
+				  uint32_t kvno,
+				  const Shisa_key * key);
 typedef void (*_Shisa_db_done) (Shisa *dbh, void *state);
 
 struct _Shisa_backend
@@ -87,6 +99,8 @@ struct _Shisa_backend
   _Shisa_db_principal_update principal_update;
   _Shisa_db_principal_add principal_add;
   _Shisa_db_principal_remove principal_remove;
+  _Shisa_db_enumerate_keys enumerate_keys;
+  _Shisa_db_key_add key_add;
   _Shisa_db_done done;
 };
 typedef struct _Shisa_backend _Shisa_backend;
@@ -143,6 +157,18 @@ extern int shisa_file_principal_remove (Shisa * dbh,
 					void *state,
 					const char *realm,
 					const char *principal);
+extern int shisa_file_enumerate_keys (Shisa * dbh,
+				      void *state,
+				      const char *realm,
+				      const char *principal,
+				      Shisa_key ***keys,
+				      size_t *nkeys);
+extern int shisa_file_key_add (Shisa * dbh,
+			       void *state,
+			       const char *realm,
+			       const char *principal,
+			       uint32_t kvno,
+			       const Shisa_key * key);
 extern void shisa_file_done (Shisa *dbh, void *state);
 
 #endif /* _INTERNAL_H */

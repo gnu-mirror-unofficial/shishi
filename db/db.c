@@ -30,6 +30,8 @@ static _Shisa_backend _shisa_backends[] = {
     shisa_file_principal_update,
     shisa_file_principal_add,
     shisa_file_principal_remove,
+    shisa_file_enumerate_keys,
+    shisa_file_key_add,
     shisa_file_done }
 };
 

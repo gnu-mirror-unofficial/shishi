@@ -81,9 +81,6 @@ struct Shisa_key
   char *str2keyparam;
   size_t str2keyparamlen;
   char *password;
-  time_t notusedafter;
-  time_t notusedbefore;
-  int isdisabled;
 };
 typedef struct Shisa_key Shisa_key;
 
@@ -124,15 +121,17 @@ extern int shisa_principal_remove (Shisa * dbh,
 				   const char *realm,
 				   const char *principal);
 
-extern int shisa_key_find (Shisa * dbh, const Shisa_principal * ph,
-			   Shisa_key ** key);
-extern void shisa_key_free (Shisa_key * key);
-extern int shisa_key_set (Shisa * dbh, const Shisa_principal * ph,
+extern int shisa_enumerate_keys (Shisa * dbh,
+				 const char *realm,
+				 const char *principal,
+				 Shisa_key ***keys,
+				 size_t *nkeys);
+extern int shisa_key_add (Shisa * dbh,
+			  const char *realm,
+			  const char *principal,
+			  uint32_t kvno,
 			  const Shisa_key * key);
-extern int shisa_key_add (Shisa * dbh, const Shisa_principal * ph,
-			  const Shisa_key * key);
-extern int shisa_key_remove (Shisa * dbh, const Shisa_principal * ph,
-			     const Shisa_key * key);
+extern int shisa_key_free (Shisa * dbh, Shisa_key * key);
 
 /* tool.c */
 extern int shisa_valid_principal_find (Shisa * dbh,

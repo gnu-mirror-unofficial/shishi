@@ -117,6 +117,36 @@ dumplist_realm_principal (const char *realm, const char *principal)
 	printtimefield ("Account expire on", ph.accountexpire);
     }
 
+  if (args_info.keys_given)
+    {
+      Shisa_key **keys;
+      size_t nkeys;
+      size_t i;
+
+      printf ("\t\tKeys:\n");
+
+      rc = shisa_enumerate_keys (dbh, realm, principal, &keys, &nkeys);
+      if (rc == SHISA_OK)
+	{
+	  for (i = 0; i < nkeys; i++)
+	    {
+	      if (keys[i])
+		{
+		  printuint32field ("\tEtype", keys[i]->etype);
+		  printfield ("\tKey", keys[i]->key);
+		  printfield ("\tSalt", keys[i]->salt);
+		  printfield ("\tS2K params", keys[i]->str2keyparam);
+		  printfield ("\tPassword", keys[i]->password);
+		  shisa_key_free (dbh, keys[i]);
+		}
+	      else
+		printfield ("\tKey is", "MISSING");
+	    }
+	  if (nkeys > 0)
+	    free (keys);
+	}
+    }
+
   return SHISA_OK;
 }
 
@@ -235,9 +265,6 @@ apply_options (const char *realm,
   dbkey->str2keyparam = str2keyparam;
   dbkey->str2keyparamlen = str2keyparamlen;
   dbkey->password = args_info.password_arg;
-  dbkey->notusedafter = (time_t) -1;
-  dbkey->notusedbefore = (time_t) -1;
-  dbkey->isdisabled = 0;
 
   return EXIT_SUCCESS;
 }
@@ -405,6 +432,11 @@ main (int argc, char *argv[])
 	     "Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
       return 1;
     }
+
+  puts ("WARNING: The on-disk database format is not stable.");
+  puts ("WARNING: It will likely change in the next release.");
+  puts ("WARNING: The old format will not be recognized.");
+  puts ("");
 
   rc = shisa_init_with_paths (&dbh, args_info.configuration_file_arg);
   if (rc != SHISA_OK)

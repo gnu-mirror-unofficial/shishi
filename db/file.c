@@ -51,27 +51,7 @@
 
 #include "internal.h"
 
-/* fileutil.c */
-extern int _shisa_isdir (const char *path);
-extern int _shisa_isdir2 (const char *path1, const char *path2);
-extern int _shisa_isdir3 (const char *path1, const char *path2,
-			  const char *path3);
-extern int _shisa_mkdir (const char *file);
-extern int _shisa_mkdir2 (const char *path1, const char *path2);
-extern int _shisa_mkdir3 (const char *path1, const char *path2,
-			  const char *path3);
-extern int _shisa_rmdir2 (const char *path1, const char *path2);
-extern int _shisa_rmdir3 (const char *path1, const char *path2,
-			  const char *path3);
-extern int _shisa_mtime4 (const char *path1, const char *path2,
-			  const char *path3, const char *path4);
-extern int _shisa_isfile4 (const char *path1, const char *path2,
-			   const char *path3, const char *path4);
-extern int _shisa_uint32link4 (const char *path1, const char *path2,
-			       const char *path3, const char *path4);
-extern int _shisa_ls (const char *path, char ***files, size_t *nfiles);
-extern int _shisa_ls2 (const char *path1, const char *path2,
-		       char ***files, size_t *nfiels);
+#include "fileutil.h"
 
 struct Shisa_file
 {
@@ -160,7 +140,7 @@ shisa_file_enumerate_realms (Shisa *dbh,
 {
   Shisa_file *info = state;
 
-  if (_shisa_ls (info->path, realms, nrealms) != 0)
+  if (_shisa_lsdir (info->path, realms, nrealms) != 0)
     return SHISA_ENUMERATE_REALM_ERROR;
 
   return SHISA_OK;
@@ -178,7 +158,7 @@ shisa_file_enumerate_principals (Shisa *dbh,
   if (!_shisa_isdir2 (info->path, realm))
     return SHISA_NO_REALM;
 
-  if (_shisa_ls2 (info->path, realm, principals, nprincipals) != 0)
+  if (_shisa_lsdir2 (info->path, realm, principals, nprincipals) != 0)
     return SHISA_ENUMERATE_PRINCIPAL_ERROR;
 
   return SHISA_OK;
@@ -265,7 +245,8 @@ principal_add (Shisa * dbh,
   if (ph)
     shisa_file_principal_update (dbh, state, realm, principal, ph);
 
-  /* XXX key */
+  if (key)
+    shisa_file_key_add (dbh, state, realm, principal, ph->kvno, key);
 
   return SHISA_OK;
 }
@@ -347,6 +328,167 @@ shisa_file_principal_remove (Shisa * dbh,
     rc = principal_remove (dbh, state, realm, principal);
 
   return rc;
+}
+
+int
+read_key (Shisa * dbh,
+	  Shisa_file *info,
+	  const char *realm,
+	  const char *principal,
+	  const char *keyfile,
+	  Shisa_key **key)
+{
+  Shisa_key tmpkey;
+  FILE *fh;
+  char *file;
+  char *line;
+  size_t linelen;
+  unsigned passwdlen;
+  ssize_t len;
+  int rc;
+
+  asprintf (&file, "%s/%s/%s/keys/%s", info->path, realm, principal, keyfile);
+  fh = fopen (file, "r");
+  if (!fh)
+    return SHISA_NO_KEY;
+
+  memset (&tmpkey, 0, sizeof (tmpkey));
+
+  if (fscanf (fh, "%u %u %u %u %u\n", &tmpkey.etype, &tmpkey.keylen,
+	      &tmpkey.saltlen, &tmpkey.str2keyparamlen, &passwdlen) != 5)
+    return SHISA_NO_KEY;
+
+  if (tmpkey.keylen > 0)
+    {
+      tmpkey.key = xmalloc (tmpkey.keylen + 1);
+      if (fread (tmpkey.key, 1, tmpkey.keylen, fh) != tmpkey.keylen)
+	return SHISA_NO_KEY;
+      tmpkey.key[tmpkey.keylen] = '\0';
+    }
+
+  if (tmpkey.saltlen > 0)
+    {
+      tmpkey.salt = xmalloc (tmpkey.saltlen + 1);
+      if (fread (tmpkey.salt, 1, tmpkey.saltlen, fh) != tmpkey.saltlen)
+	return SHISA_NO_KEY;
+      tmpkey.salt[tmpkey.saltlen] = '\0';
+    }
+
+  if (tmpkey.str2keyparamlen > 0)
+    {
+      tmpkey.str2keyparam = xmalloc (tmpkey.str2keyparamlen + 1);
+      if (fread (tmpkey.str2keyparam, 1, tmpkey.str2keyparamlen, fh) !=
+	  tmpkey.str2keyparamlen)
+	return SHISA_NO_KEY;
+      tmpkey.str2keyparam[tmpkey.str2keyparamlen] = '\0';
+    }
+
+  if (passwdlen > 0)
+    {
+      tmpkey.password = xmalloc (passwdlen + 1);
+      if (fread (tmpkey.password, 1, passwdlen, fh) != passwdlen)
+	return SHISA_NO_KEY;
+      tmpkey.password[passwdlen] = '\0';
+    }
+
+  rc = fclose (fh);
+  if (rc != 0)
+    {
+      perror(file);
+      return SHISA_NO_KEY;
+    }
+
+  free (file);
+
+  *key = xmalloc (sizeof (**key));
+  memcpy (*key, &tmpkey, sizeof (tmpkey));
+
+  return SHISA_OK;
+}
+
+int
+shisa_file_enumerate_keys (Shisa * dbh,
+			   void *state,
+			   const char *realm,
+			   const char *principal,
+			   Shisa_key ***keys,
+			   size_t *nkeys)
+{
+  Shisa_file *info = state;
+  char **files;
+  size_t nfiles;
+  size_t i;
+  int rc;
+
+  files = NULL;
+  nfiles = 0;
+
+  rc = _shisa_ls4 (info->path, realm, principal, "keys", &files, &nfiles);
+  if (rc != SHISA_OK)
+    return rc;
+
+  *nkeys = nfiles;
+  if (keys)
+    *keys = xmalloc (nfiles * sizeof (**keys));
+  for (i = 0; i < nfiles; i++)
+    {
+      if (keys && rc == SHISA_OK)
+	{
+	  rc = read_key (dbh, info, realm, principal, files[i], &(*keys)[i]);
+	  if (rc != SHISA_OK)
+	    /* XXX mem leak. */
+	    (*keys)[i] = NULL;
+	}
+      free (files[i]);
+    }
+  free (files);
+
+  return SHISA_OK;
+}
+
+int
+shisa_file_key_add (Shisa * dbh,
+		    void *state,
+		    const char *realm,
+		    const char *principal,
+		    uint32_t kvno,
+		    const Shisa_key * key)
+{
+  Shisa_file *info = state;
+  size_t passwdlen = key && key->password ? strlen(key->password) : 0;
+  char *file;
+  FILE *fh;
+
+  if (!key)
+    return SHISA_NO_KEY;
+
+  if (!_shisa_isdir4 (info->path, realm, principal, "keys") &&
+      _shisa_mkdir4 (info->path, realm, principal, "keys"))
+    return SHISA_NO_KEY;
+
+  asprintf (&file, "%s/%s/%s/keys/%d.key", info->path, realm, principal, kvno);
+  fh = fopen (file, "w");
+  free (file);
+  if (!fh)
+    {
+      perror (file);
+      return SHISA_NO_KEY;
+    }
+
+  fprintf (fh, "%u %u %u %u %u\n", key->etype, key->keylen,
+	   key->saltlen, key->str2keyparamlen, passwdlen);
+  if (key->keylen > 0)
+    fwrite (key->key, 1, key->keylen, fh);
+  if (key->saltlen > 0)
+    fwrite (key->salt, 1, key->saltlen, fh);
+  if (key->str2keyparamlen > 0)
+    fwrite (key->str2keyparam, 1, key->str2keyparam, fh);
+  if (passwdlen > 0)
+    fwrite (key->password, 1, passwdlen, fh);
+
+  fclose (fh);
+
+  return SHISA_OK;
 }
 
 void

@@ -160,3 +160,54 @@ shisa_principal_remove (Shisa * dbh,
 
   return SHISA_REMOVE_PRINCIPAL_ERROR;
 }
+
+int
+shisa_enumerate_keys (Shisa * dbh,
+		      const char *realm,
+		      const char *principal,
+		      Shisa_key ***keys,
+		      size_t *nkeys)
+{
+  _Shisa_db *db;
+  size_t i;
+  int rc;
+
+  *nkeys = 0;
+  if (keys)
+    *keys = NULL;
+
+  for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
+    {
+      rc = db->backend->enumerate_keys (dbh, db->state, realm, principal,
+					keys, nkeys);
+      if (rc != SHISA_OK)
+	/* XXX mem leak. */
+	return rc;
+    }
+
+  return SHISA_OK;
+}
+
+int
+shisa_key_add (Shisa * dbh,
+	       const char *realm,
+	       const char *principal,
+	       uint32_t kvno,
+	       const Shisa_key * key)
+{
+}
+
+int
+shisa_key_free (Shisa * dbh,
+		Shisa_key * key)
+{
+  if (key->key)
+    free (key->key);
+  if (key->salt)
+    free (key->salt);
+  if (key->str2keyparam)
+    free (key->str2keyparam);
+  if (key->password)
+    free (key->password);
+  free (key);
+}

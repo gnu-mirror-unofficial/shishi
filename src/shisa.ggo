@@ -34,6 +34,7 @@ section "Parameters"
 option "force" f "Allow removal of non-empty realms.\n" flag off
 option "enabled" - "Only dump or list enabled principals.\n" flag off
 option "disabled" - "Only dump or list disabled principals.\n" flag off
+option "keys" - "Dump or list keys as well.\n" flag off
 
 section "Values (for --add and --modify)"
 option "encryption-type" E "Override default key encryption type.  Valid values include 'aes128', 'aes256', 'aes' (same as 'aes256'), '3des', 'des-md5', 'des-md4', 'des-crc', 'des' (same as 'des-md5'), and 'arcfour'." string no

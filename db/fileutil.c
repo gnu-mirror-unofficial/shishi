@@ -36,6 +36,9 @@ extern int errno;
 
 #include "xreadlink.h"
 
+/* Get specification. */
+#include "fileutil.h"
+
 int
 _shisa_isdir (const char *path)
 {
@@ -71,6 +74,22 @@ _shisa_isdir3 (const char *path1, const char *path2, const char *path3)
   int rc;
 
   asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
+
+  rc = _shisa_isdir (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
+_shisa_isdir4 (const char *path1, const char *path2,
+	       const char *path3, const char *path4)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
 
   rc = _shisa_isdir (tmp);
 
@@ -116,6 +135,22 @@ _shisa_mkdir3 (const char *path1, const char *path2, const char *path3)
   int rc;
 
   asprintf (&tmp, "%s/%s/%s", path1, path2, path3);
+
+  rc = _shisa_mkdir (tmp);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
+_shisa_mkdir4 (const char *path1, const char *path2,
+	       const char *path3, const char *path4)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
 
   rc = _shisa_mkdir (tmp);
 
@@ -271,7 +306,7 @@ unescape_filename (const char *path)
 }
 
 static int
-_shisa_ls_1 (const char *path, char ***files, size_t *nfiles, DIR *dir)
+ls_1 (const char *path, int onlydir, char ***files, size_t *nfiles, DIR *dir)
 {
   struct dirent *de;
   int rc;
@@ -280,7 +315,7 @@ _shisa_ls_1 (const char *path, char ***files, size_t *nfiles, DIR *dir)
     {
       if (strcmp (de->d_name, ".") == 0 || strcmp (de->d_name, "..") == 0)
 	continue;
-      if (_shisa_isdir2 (path, de->d_name))
+      if (!onlydir || _shisa_isdir2 (path, de->d_name))
 	{
 	  if (files)
 	    {
@@ -311,8 +346,8 @@ _shisa_ls_1 (const char *path, char ***files, size_t *nfiles, DIR *dir)
   return 0;
 }
 
-int
-_shisa_ls (const char *path, char ***files, size_t *nfiles)
+static int
+ls (const char *path, int onlydir, char ***files, size_t *nfiles)
 {
   struct dirent *de;
   DIR *dir;
@@ -325,7 +360,7 @@ _shisa_ls (const char *path, char ***files, size_t *nfiles)
       return -1;
     }
 
-  if (_shisa_ls_1 (path, files, nfiles, dir) != 0)
+  if (ls_1 (path, onlydir, files, nfiles, dir) != 0)
     {
       rc = closedir (dir);
       if (rc != 0)
@@ -355,6 +390,12 @@ _shisa_ls (const char *path, char ***files, size_t *nfiles)
 }
 
 int
+_shisa_ls (const char *path, char ***files, size_t *nfiles)
+{
+  return ls (path, 0, files, nfiles);
+}
+
+int
 _shisa_ls2 (const char *path1, const char *path2,
 	    char ***files, size_t *nfiles)
 {
@@ -364,6 +405,45 @@ _shisa_ls2 (const char *path1, const char *path2,
   asprintf (&tmp, "%s/%s", path1, path2);
 
   rc = _shisa_ls (tmp, files, nfiles);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
+_shisa_ls4 (const char *path1, const char *path2,
+	    const char *path3, const char *path4,
+	    char ***files, size_t *nfiles)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s/%s/%s", path1, path2, path3, path4);
+
+  rc = _shisa_ls (tmp, files, nfiles);
+
+  free (tmp);
+
+  return rc;
+}
+
+int
+_shisa_lsdir (const char *path, char ***files, size_t *nfiles)
+{
+  return ls (path, 1, files, nfiles);
+}
+
+int
+_shisa_lsdir2 (const char *path1, const char *path2,
+	       char ***files, size_t *nfiles)
+{
+  char *tmp;
+  int rc;
+
+  asprintf (&tmp, "%s/%s", path1, path2);
+
+  rc = _shisa_lsdir (tmp, files, nfiles);
 
   free (tmp);
 
