@@ -757,6 +757,7 @@ extern int shishi_tkt_decrypt (Shishi_tkt * tkt, Shishi_key * key);
 extern void shishi_tkt_done (Shishi_tkt * tkt);
 extern int shishi_tkt_flags (Shishi_tkt * tkt, int *flags);
 extern int shishi_tkt_flags_set (Shishi_tkt * tkt, int flags);
+extern int shishi_tkt_flags_add (Shishi_tkt * tkt, int flag);
 extern int shishi_tkt_forwardable_p (Shishi_tkt * tkt);
 extern int shishi_tkt_forwarded_p (Shishi_tkt * tkt);
 extern int shishi_tkt_proxiable_p (Shishi_tkt * tkt);

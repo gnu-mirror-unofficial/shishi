@@ -41,6 +41,10 @@ shishi_enckdcreppart (Shishi * handle)
   if (res != SHISHI_OK)
     return NULL;
 
+  res = shishi_enckdcreppart_flags_set (handle, node, 0);
+  if (res != SHISHI_OK)
+    return NULL;
+
   return node;
 }
 
@@ -172,9 +176,9 @@ shishi_enckdcreppart_flags_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write_integer (handle, enckdcreppart, "flags", flags);
+  res = shishi_asn1_write_bitstring (handle, enckdcreppart, "flags", flags);
   if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
+    return res;
 
   return SHISHI_OK;
 }

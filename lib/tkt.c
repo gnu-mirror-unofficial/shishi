@@ -531,7 +531,7 @@ shishi_tkt_server_realm (Shishi_tkt * tkt,
  * @tkt: input variable with ticket info.
  * @flags: pointer to output integer with flags.
  *
- * Extract flags in ticket.
+ * Extract flags in ticket (i.e., EncKDCRepPart).
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -547,8 +547,8 @@ shishi_tkt_flags (Shishi_tkt * tkt, int *flags)
  * @tkt: input variable with ticket info.
  * @flags: integer with flags to store in ticket.
  *
- * Set flags in ticket.  Note that this reset any already existing
- * flags.
+ * Set flags in ticket, i.e., both EncTicketPart and EncKDCRepPart.
+ * Note that this reset any already existing flags.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
@@ -564,6 +564,35 @@ shishi_tkt_flags_set (Shishi_tkt * tkt, int flags)
 
   res = shishi_enckdcreppart_flags_set (tkt->handle, tkt->enckdcreppart,
 					flags);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_tkt_flags_add:
+ * @tkt: input variable with ticket info.
+ * @flag: integer with flags to store in ticket.
+ *
+ * Add ticket flags to Ticket and EncKDCRepPart.  This preserves all
+ * existing options.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_tkt_flags_add (Shishi_tkt * tkt, int flag)
+{
+  int flags;
+  int res;
+
+  res = shishi_tkt_flags (tkt, &flags);
+  if (res != SHISHI_OK)
+    return res;
+
+  flags |= flag;
+
+  res = shishi_tkt_flags_set (tkt, flags);
   if (res != SHISHI_OK)
     return res;
 
