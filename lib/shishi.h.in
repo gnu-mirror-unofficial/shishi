@@ -527,6 +527,7 @@ struct Shishi_tkts_hint
   char *clientrealm;
   int flags;
   Shishi_ticketflags tktflags;
+  Shishi_KDCOptions kdcoptions;
   int32_t etype;
   char *passwd;
   time_t starttime;
@@ -760,6 +761,11 @@ extern Shishi_tkt *shishi_tkts_find_for_server (Shishi_tkts * tkts,
 						const char *server);
 extern Shishi_tkt *shishi_tkts_get (Shishi_tkts * tkts,
 				    Shishi_tkts_hint * hint);
+extern Shishi_tkt *shishi_tkts_get_tgt (Shishi_tkts * tkts,
+					Shishi_tkts_hint * hint);
+extern Shishi_tkt *shishi_tkts_get_tgs (Shishi_tkts * tkts,
+					Shishi_tkts_hint * hint,
+					Shishi_tkt *tgt);
 extern Shishi_tkt *shishi_tkts_get_for_clientserver (Shishi_tkts * tkts,
 						     const char *client,
 						     const char *server);
