@@ -74,7 +74,7 @@ cbc_cts_decrypt (void *ctx,
   unsigned nblocks = length / block_size;
   unsigned restbytes = (length % block_size) == 0 ?
     block_size : length % block_size;
-  char *tmpiv = alloca (block_size);
+  uint8_t *tmpiv = alloca (block_size);
 
   if (length > block_size)
     {
