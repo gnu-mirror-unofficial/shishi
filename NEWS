@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.5 (unreleased)
 
+** Server host name to realm mapping via DNS supported.
+
 * Version 0.0.4 (released 2003-08-31)
 
 ** The rsh/rlogin client 'rsh-redone' ported to Shishi, by Nicolas Pouvesle.
