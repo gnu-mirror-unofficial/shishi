@@ -701,10 +701,11 @@ static struct argp_option options[] = {
    "ticket granting ticket for the default realm, and then display it.", 0},
 
   {"client-name", OPTION_CLIENT_NAME, "NAME", 0,
-   "Client name. Default is login username. Only for AS.", 10},
+   "Client name. Default is login username.", 10},
 
   {"destroy", 'd', 0, 0,
-   "Destroy tickets in local cache, subject to --server-name limiting.", 0},
+   "Destroy tickets in local cache, subject to --client-name and "
+   "--server-name limiting.", 0},
 
   {"encryption-type", 'E', "ETYPE,[ETYPE...]", 0,
    "Encryption types to use.  ETYPE is either registered name or integer.",
