@@ -124,7 +124,7 @@ test (Shishi *handle)
 	  err = shishi_crypto_encrypt (ctx, in, j, &out, &len);
 	  if (err)
 	    {
-	      fail ("shishi_crypto_encrypt(%d, %d) failed (%d)\n",
+	      fail ("shishi_crypto_encrypt(etype=%d, len=%d) failed (%d)\n",
 		    tvp->etype, j, err);
 	      continue;
 	    }
@@ -132,7 +132,7 @@ test (Shishi *handle)
 	  err = shishi_crypto_decrypt (ctx2, out, len, &out2, &len2);
 	  if (err)
 	    {
-	      fail ("shishi_crypto_decrypt(%d, %d) failed (%d)\n",
+	      fail ("shishi_crypto_decrypt(etype=%d, len=%d) failed (%d)\n",
 		    tvp->etype, j, err);
 	      continue;
 	    }
