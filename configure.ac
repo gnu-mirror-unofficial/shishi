@@ -38,8 +38,7 @@ AB_INIT
 
 # Checks for header files.
 AC_PROG_CC
-AC_GNU_SOURCE
-gl_USE_SYSTEM_EXTENSIONS
+gl_EARLY
 AC_HEADER_STDC
 AC_CHECK_HEADERS(stdlib.h string.h strings.h memory.h \
 	sys/types.h sys/socket.h sys/poll.h sys/time.h sys/select.h \
@@ -84,39 +83,7 @@ AC_CHECK_SIZEOF(unsigned short int, 2)
 AC_CHECK_SIZEOF(unsigned char, 1)
 
 # For gnulib stuff in gl/.
-gl_FUNC_ALLOCA
-gl_ALLOCSA
-gl_ERROR
-gl_EXITFAIL
-gl_GETDATE
-gl_FUNC_GETDOMAINNAME
-gl_FUNC_GETHOSTNAME
-AM_FUNC_GETLINE
-gl_FUNC_GETSUBOPT
-gl_GETOPT
-gl_GETTIME
-AC_FUNC_GETTIMEOFDAY_CLOBBER
-gl_FUNC_MKTIME
-gl_FUNC_READLINK
-AC_FUNC_REALLOC
-gl_C_RESTRICT
-gt_FUNC_SETENV
-AM_STDBOOL_H
-gl_STRCASE
-gl_FUNC_STRCHRNUL
-gl_FUNC_STRDUP
-gl_FUNC_STRNDUP
-gl_FUNC_STRNLEN
-gl_FUNC_TIMEGM
-gl_TIME_R
-gl_TIMESPEC
-gl_FUNC_GLIBC_UNLOCKED_IO
-gl_FUNC_VASNPRINTF
-gl_FUNC_VASPRINTF
-gl_XALLOC
-gl_XREADLINK
-gl_XSIZE
-gl_XSTRNDUP
+gl_INIT
 
 # Checks for library functions.
 AC_CHECK_FUNCS(signal select ngettext gethostbyname)
