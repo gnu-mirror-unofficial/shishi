@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002 Simon Josefsson.
+# Copyright (C) 2002, 2003 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -20,9 +20,9 @@
 
 EXTRA_DIST = utils.c
 
-TESTS = crypto ticketset
+TESTS = crypto ticketset authenticator gztime
 
-INCLUDES = -I$(top_srcdir)/asn1/lib -I$(top_srcdir)/lib
+INCLUDES = -I$(top_srcdir)/lib
 LDADD = ../lib/libshishi.la
 
 noinst_PROGRAMS = $(TESTS)
