@@ -26,14 +26,33 @@
 /* Get memcpy. */
 #include <string.h>
 
+/* Get struct hostent. */
+#include <netdb.h>
+
+#include <stdbool.h>
+
 #include "gettext.h"
 #define _(String) gettext (String)
 #define N_(String) String
 
-/* Get struct hostent. */
-#include <netdb.h>
-
 #include "getaddrinfo.h"
+
+static inline bool
+validate_family (int family)
+{
+  /* FIXME: Support more families. */
+#if HAVE_IPV4
+     if (family == PF_INET)
+       return true;
+#endif
+#if HAVE_IPV6
+     if (family == PF_INET6)
+       return true;
+#endif
+     if (family == PF_UNSPEC)
+       return true;
+     return false;
+}
 
 /* Translate name of a service location and/or a service name to set of
    socket addresses. */
@@ -52,15 +71,7 @@ getaddrinfo (const char *restrict nodename,
     /* FIXME: Support more flags. */
     return EAI_BADFLAGS;
 
-  if (hints
-#if HAVE_IPV4
-      && hints->ai_family != PF_INET
-#endif
-#if HAVE_IPV6
-      && hints->ai_family != PF_INET6
-#endif
-      && hints->ai_family != PF_UNSPEC)
-    /* FIXME: Support more families. */
+  if (hints && !validate_family (hints->ai_family))
     return EAI_FAMILY;
 
   if (hints && hints->ai_socktype)
