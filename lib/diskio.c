@@ -87,7 +87,7 @@ _shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
   char *der;
   size_t derlen;
   int res;
-  int i;
+  size_t i;
 
   derlen = sizeof (der);
   res = shishi_a2d_new_field (handle, asn1, asn1type, &der, &derlen);

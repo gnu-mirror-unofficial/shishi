@@ -578,7 +578,7 @@ shishi_tkt_ok_as_delegate_p (Shishi_tkt * tkt)
 }
 
 int
-shishi_tkt_realm (Shishi_tkt * tkt, char *realm, int *realmlen)
+shishi_tkt_realm (Shishi_tkt * tkt, char **realm, size_t *realmlen)
 {
   return shishi_ticket_realm_get (tkt->handle, tkt->ticket, realm, realmlen);
 }
