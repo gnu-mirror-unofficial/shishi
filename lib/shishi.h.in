@@ -349,34 +349,25 @@ extern void shishi_ticketset_default_file_set (Shishi * handle,
 					       const char *ticketsetfile);
 extern int shishi_ticketset_init (Shishi * handle,
 				  Shishi_ticketset ** ticketset);
-extern Shishi_ticket *shishi_ticketset_get (Shishi * handle,
-					    Shishi_ticketset * ticketset,
+extern Shishi_ticket *shishi_ticketset_get (Shishi_ticketset * ticketset,
 					    int ticketno);
-extern int shishi_ticketset_size (Shishi * handle,
-				  Shishi_ticketset * ticketset);
-extern int shishi_ticketset_from_file (Shishi * handle,
-				       Shishi_ticketset * ticketset,
+extern int shishi_ticketset_size (Shishi_ticketset * ticketset);
+extern int shishi_ticketset_from_file (Shishi_ticketset * ticketset,
 				       const char *filename);
-extern void shishi_ticketset_done (Shishi * handle,
-				   Shishi_ticketset * ticketset);
+extern void shishi_ticketset_done (Shishi_ticketset ** ticketset);
 extern Shishi_ticketset *shishi_ticketset (Shishi * handle);
 extern Shishi_ticket *
-shishi_ticketset_find_ticket_for_server (Shishi *
-					 handle,
-					 Shishi_ticketset * ticketset,
+shishi_ticketset_find_ticket_for_server (Shishi_ticketset * ticketset,
 					 const char *server);
 extern Shishi_ticket *
-shishi_ticketset_find_ticket_for_clientserver (Shishi * handle,
-					       Shishi_ticketset * ticketset,
+shishi_ticketset_find_ticket_for_clientserver (Shishi_ticketset * ticketset,
 					       const char *client,
 					       const char *server);
 extern Shishi_ticket *
-shishi_ticketset_get_ticket_for_server (Shishi * handle,
-					Shishi_ticketset * ticketset,
+shishi_ticketset_get_ticket_for_server (Shishi_ticketset * ticketset,
 					const char *server);
 extern Shishi_ticket *
-shishi_ticketset_get_ticket_for_clientserver (Shishi * handle,
-					      Shishi_ticketset * ticketset,
+shishi_ticketset_get_ticket_for_clientserver (Shishi_ticketset * ticketset,
 					      const char *client,
 					      const char *server);
 

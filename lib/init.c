@@ -160,8 +160,7 @@ _shishi_init_read (Shishi * handle,
     return rc;
 
   if (*ticketsetfile)
-    rc =
-      shishi_ticketset_from_file (handle, handle->ticketset, ticketsetfile);
+    rc = shishi_ticketset_from_file (handle->ticketset, ticketsetfile);
   if (rc == SHISHI_FOPEN_ERROR)
     fprintf (stderr, WARNSTR "%s: %s\n", ticketsetfile, strerror(errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)

@@ -40,11 +40,10 @@ shishi_done (Shishi * handle)
 
   if (handle->ticketset)
     {
-      shishi_ticketset_to_file (handle, handle->ticketset,
+      shishi_ticketset_to_file (handle->ticketset,
 				shishi_ticketset_default_file (handle));
 
-      if (handle->ticketset)
-	shishi_ticketset_done (handle, handle->ticketset);
+      shishi_ticketset_done (&handle->ticketset);
     }
 
   /*  if (handle->default_realm)
