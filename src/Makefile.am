@@ -19,8 +19,15 @@
 # Boston, MA 02111-1307, USA.
 
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_srcdir)/db -I../lib
+localedir = $(datadir)/locale
+DEFS = -DLOCALEDIR=\"$(localedir)\" \
+	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
+	-DKDCKEYFILE=\"$(KEYDIR)/shishid.keys\" \
+	-DSKELCFGFILE=\"$(SKELDIR)/shishi.skel\" \
+	@DEFS@
 
 BUILT_SOURCES = shisa_cmd.c shisa_cmd.h shishid_cmd.c shishid_cmd.h
+MAINTAINERCLEANFILES = $(BUILT_SOURCES)
 
 bin_PROGRAMS = shishi shisa
 sbin_PROGRAMS = shishid
@@ -45,13 +52,7 @@ shishid_cmd.c shishid_cmd.h: shishid.ggo
 	gengetopt --no-handle-help --no-handle-error \
 		 --input $< --file-name shishid_cmd
 
-localedir = $(datadir)/locale
-
-DEFS = -DLOCALEDIR=\"$(localedir)\" \
-	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
-	-DKDCKEYFILE=\"$(KEYDIR)/shishid.keys\" \
-	-DSKELCFGFILE=\"$(SKELDIR)/shishi.skel\" \
-	@DEFS@
+# Maintainer targets
 
 indent:
 	indent $(SOURCES)
