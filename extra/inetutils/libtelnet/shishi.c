@@ -220,14 +220,6 @@ krb5shishi_send (Authenticator *ap)
 	  return 0;
 	}
 
-      if (auth_debug_mode)
-	{
-	  shishi_authenticator_print
-	    (shishi_handle, stdout, shishi_ap_authenticator (auth_handle));
-	  shishi_apreq_print (shishi_handle, stdout,
-			      shishi_ap_req (auth_handle));
-	}
-
       apreq_len = sizeof(apreq);
       rc = shishi_ap_req_der (auth_handle, apreq, &apreq_len);
       if (rc != ASN1_SUCCESS)
@@ -235,6 +227,14 @@ krb5shishi_send (Authenticator *ap)
 	  DEBUG(("telnet: Kerberos V5: could not DER encode (%s)\r\n",
 		 shishi_strerror (rc)));
 	  return 0;
+	}
+
+      if (auth_debug_mode)
+	{
+	  shishi_authenticator_print
+	    (shishi_handle, stdout, shishi_ap_authenticator (auth_handle));
+	  shishi_apreq_print (shishi_handle, stdout,
+			      shishi_ap_req (auth_handle));
 	}
      }
 
