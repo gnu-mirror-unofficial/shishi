@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: shishi 0.1\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-09-14 14:40+0200\n"
+"POT-Creation-Date: 2003-09-21 19:29+0200\n"
 "PO-Revision-Date: 2002-09-08 20:20+0200\n"
 "Last-Translator: Simon Josefsson <simon@josefsson.org>\n"
 "Language-Team: Swedish\n"
@@ -399,17 +399,17 @@ msgstr ""
 msgid "Too many arguments: `%s'"
 msgstr "För många parametrar: `%s'"
 
-#: src/shishi.c:1018
+#: src/shishi.c:1026
 #, c-format
 msgid "invalid --endtime date `%s'"
 msgstr ""
 
-#: src/shishi.c:1025
+#: src/shishi.c:1033
 #, c-format
 msgid "invalid --renew-till date `%s'"
 msgstr ""
 
-#: src/shishi.c:1047
+#: src/shishi.c:1055
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""

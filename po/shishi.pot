@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2003-09-14 14:40+0200\n"
+"POT-Creation-Date: 2003-09-21 19:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -398,17 +398,17 @@ msgstr ""
 msgid "Too many arguments: `%s'"
 msgstr ""
 
-#: src/shishi.c:1018
+#: src/shishi.c:1026
 #, c-format
 msgid "invalid --endtime date `%s'"
 msgstr ""
 
-#: src/shishi.c:1025
+#: src/shishi.c:1033
 #, c-format
 msgid "invalid --renew-till date `%s'"
 msgstr ""
 
-#: src/shishi.c:1047
+#: src/shishi.c:1055
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr ""
