@@ -319,7 +319,7 @@ shishi_key_from_base64 (Shishi * handle,
 
   if (value)
     {
-      int len;
+      size_t len;
       char *buf;
 
       buf = malloc (strlen (value) + 1);
@@ -428,9 +428,7 @@ shishi_key_from_string (Shishi * handle,
 			const char *password,
 			int passwordlen,
 			const char *salt,
-			int saltlen,
-			const char *parameter,
-			Shishi_key ** key)
+			int saltlen, const char *parameter, Shishi_key ** key)
 {
   int rc;
 

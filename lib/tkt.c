@@ -94,8 +94,7 @@ int
 shishi_tkt_client (Shishi_tkt * tkt, char *client, int *clientlen)
 {
   return shishi_principal_name_get (tkt->handle, tkt->kdcrep,
-				    "KDC-REP.cname",
-				    client, clientlen);
+				    "KDC-REP.cname", client, clientlen);
 }
 
 int
@@ -670,7 +669,7 @@ shishi_tkt_keytype_p (Shishi_tkt * tkt, int etype)
 
 int
 shishi_tkt_lastreq (Shishi_tkt * tkt,
-		    char *lrtime, int *lrtimelen, Shihi_lrtype lrtype)
+		    char *lrtime, int *lrtimelen, int lrtype)
 {
   char *format;
   int tmplrtype;
@@ -687,7 +686,7 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
       shishi_asprintf (&format, "EncKDCRepPart.last-req.?%d.lr-type", i);
       res = shishi_asn1_read_integer (tkt->handle, tkt->enckdcreppart,
 				      format, &tmplrtype);
-      free(format);
+      free (format);
       if (res != SHISHI_OK)
 	return SHISHI_ASN1_ERROR;
 
@@ -696,7 +695,7 @@ shishi_tkt_lastreq (Shishi_tkt * tkt,
 	  shishi_asprintf (&format, "EncKDCRepPart.last-req.?%d.lr-value", i);
 	  res = shishi_asn1_read (tkt->handle, tkt->enckdcreppart,
 				  format, lrtime, lrtimelen);
-	  free(format);
+	  free (format);
 	  if (res != SHISHI_OK)
 	    return SHISHI_ASN1_ERROR;
 

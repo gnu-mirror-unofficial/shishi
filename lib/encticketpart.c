@@ -32,21 +32,21 @@ shishi_encticketpart (Shishi * handle)
   res = shishi_asn1_write (handle, node, "EncTicketPart.starttime", NULL, 0);
   if (res != SHISHI_OK)
     {
-      shishi_asn1_done(handle, node);
+      shishi_asn1_done (handle, node);
       return NULL;
     }
 
   res = shishi_asn1_write (handle, node, "EncTicketPart.renew-till", NULL, 0);
   if (res != SHISHI_OK)
     {
-      shishi_asn1_done(handle, node);
+      shishi_asn1_done (handle, node);
       return NULL;
     }
 
   res = shishi_asn1_write (handle, node, "EncTicketPart.caddr", NULL, 0);
   if (res != SHISHI_OK)
     {
-      shishi_asn1_done(handle, node);
+      shishi_asn1_done (handle, node);
       return NULL;
     }
 
@@ -54,7 +54,7 @@ shishi_encticketpart (Shishi * handle)
 			   NULL, 0);
   if (res != SHISHI_OK)
     {
-      shishi_asn1_done(handle, node);
+      shishi_asn1_done (handle, node);
       return NULL;
     }
 

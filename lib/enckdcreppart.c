@@ -158,13 +158,14 @@ shishi_enckdcreppart_nonce_set (Shishi * handle,
 				unsigned long nonce)
 {
   int res;
-  char buf[BUFSIZ];
+  char *format;
 
-  sprintf (buf, "%d", nonce);
+  shishi_asprintf (&format, "%ld", nonce);
   res = shishi_asn1_write (handle, enckdcreppart, "EncKDCRepPart.nonce",
-			   buf, 0);
+			   format, 0);
+  free (format);
   if (res != SHISHI_OK)
-    return SHISHI_ASN1_ERROR;
+    return res;
 
   return SHISHI_OK;
 }

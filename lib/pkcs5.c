@@ -66,8 +66,8 @@ PBKDF2 (int PRF,
   unsigned int r;
   int rc;
   unsigned char *p;
-  int i;
-  int k;
+  unsigned int i;
+  unsigned int k;
 
   if (hLen == 0 || hLen > MAX_PRF_BLOCK_LEN)
     return PKCS5_INVALID_PRF;

@@ -345,7 +345,7 @@ des_crc_decrypt (Shishi * handle,
    *outlen = 232;
 #endif
     {
-      int i;
+      size_t i;
       printf("decrypt %d\n", *outlen);
       for(i=0; i < *outlen; i++)
 	printf("%02x ", ((char*)out)[i] & 0xFF);

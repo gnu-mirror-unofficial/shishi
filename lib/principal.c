@@ -137,11 +137,11 @@ shishi_principal_default_set (Shishi * handle, const char *principal)
 int
 shishi_principal_name_get (Shishi * handle,
 			   Shishi_asn1 namenode,
-			   char *namefield, char *out, int *outlen)
+			   const char *namefield, char *out, size_t * outlen)
 {
   int res;
   char format[BUFSIZ];
-  int totlen = 0;
+  size_t totlen = 0;
   int len;
   int i, j, n;
 
@@ -191,12 +191,13 @@ shishi_principal_name_get (Shishi * handle,
 int
 shishi_principal_name_realm_get (Shishi * handle,
 				 Shishi_asn1 namenode,
-				 char *namefield,
+				 const char *namefield,
 				 Shishi_asn1 realmnode,
-				 char *realmfield, char *out, int *outlen)
+				 const char *realmfield,
+				 char *out, size_t * outlen)
 {
   int res;
-  int totlen = 0;
+  size_t totlen = 0;
   int len;
 
   totlen = *outlen;

@@ -307,7 +307,7 @@ simplified_derivekey (Shishi * handle,
 	constant[4] = '\x99';
       else if (derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY)
 	constant[4] = '\x55';
-      else /* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
+      else			/* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
 	constant[4] = '\xAA';
 
       res = shishi_dk (handle, key, constant, 5, derivedkey);
@@ -574,13 +574,13 @@ typedef int (*Shishi_encrypt_function) (Shishi * handle,
 					Shishi_key * key,
 					int keyusage,
 					const char *in, size_t inlen,
-					char *out, size_t *outlen);
+					char *out, size_t * outlen);
 
 typedef int (*Shishi_decrypt_function) (Shishi * handle,
 					Shishi_key * key,
 					int keyusage,
 					const char *in, size_t inlen,
-					char *out, size_t *outlen);
+					char *out, size_t * outlen);
 
 #include "crypto-null.c"
 #include "crypto-des.c"
@@ -988,9 +988,7 @@ shishi_string_to_key (Shishi * handle,
 		      const char *password,
 		      int passwordlen,
 		      const char *salt,
-		      int saltlen,
-		      const char *parameter,
-		      Shishi_key * outkey)
+		      int saltlen, const char *parameter, Shishi_key * outkey)
 {
   Shishi_string_to_key_function string2key;
   int res;

@@ -411,7 +411,7 @@ shishi_authenticator_remove_cksum (Shishi * handle, Shishi_asn1 authenticator)
 int
 shishi_authenticator_cksum (Shishi * handle,
 			    Shishi_asn1 authenticator,
-			    int *cksumtype, char *cksum, int *cksumlen)
+			    int *cksumtype, char *cksum, size_t * cksumlen)
 {
   int res;
 
@@ -577,13 +577,14 @@ shishi_authenticator_authorizationdata (Shishi * handle,
   shishi_asprintf (&format, "Authenticator.authorization-data.?%d.ad-type",
 		   nth);
   res = shishi_asn1_integer_field (handle, authenticator, adtype, format);
-  free(format);
+  free (format);
   if (res != SHISHI_OK)
     return res;
 
-  shishi_asprintf (&format, "Authenticator.authorization-data.?%d.ad-data", i);
+  shishi_asprintf (&format, "Authenticator.authorization-data.?%d.ad-data",
+		   i);
   res = shishi_asn1_field (handle, authenticator, addata, addatalen, format);
-  free(format);
+  free (format);
   if (res != SHISHI_OK)
     return res;
 

@@ -659,14 +659,14 @@ shishi_tkts_find (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 
   fprintf (stderr, "Searching tickets... ");
   if (hint->server)
-    fprintf(stderr, "server=`%s' ", hint->server);
+    fprintf (stderr, "server=`%s' ", hint->server);
   if (hint->client)
-    fprintf(stderr, "client=`%s' ", hint->client);
+    fprintf (stderr, "client=`%s' ", hint->client);
   fprintf (stderr, "\n");
 
   for (i = hint->startpos; i < tkts->ntkts; i++)
     {
-      if (!shishi_tkt_match_p(tkts->tkts[i], hint))
+      if (!shishi_tkt_match_p (tkts->tkts[i], hint))
 	continue;
 
       hint->startpos = i + 1;
@@ -690,17 +690,16 @@ shishi_tkts_find (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
  **/
 Shishi_tkt *
 shishi_tkts_find_for_clientserver (Shishi_tkts * tkts,
-				   const char *client,
-				   const char *server)
+				   const char *client, const char *server)
 {
   Shishi_tkts_hint hint;
   Shishi_tkt *tkt;
 
-  memset(&hint, 0, sizeof(hint));
+  memset (&hint, 0, sizeof (hint));
   hint.server = server;
   hint.client = client;
 
-  tkt = shishi_tkts_find(tkts, &hint);
+  tkt = shishi_tkts_find (tkts, &hint);
 
   return tkt;
 }
@@ -757,8 +756,9 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   hint->startpos = pos;
 
   /* Try to get cached TGT ... */
-  memset(&lochint, 0, sizeof(lochint));
-  shishi_asprintf (&tgtname, "krbtgt/%s", shishi_realm_default (tkts->handle));
+  memset (&lochint, 0, sizeof (lochint));
+  shishi_asprintf (&tgtname, "krbtgt/%s",
+		   shishi_realm_default (tkts->handle));
   lochint.server = tgtname;
   tgt = shishi_tkts_find (tkts, &lochint);
   if (tgt == NULL)
@@ -801,7 +801,7 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
     }
 
   /* Maybe user asked for TGT ... */
-  if (shishi_tkt_match_p(tgt, hint))
+  if (shishi_tkt_match_p (tgt, hint))
     return tgt;
 
   /* Get ticket using TGT ... */
@@ -857,17 +857,16 @@ shishi_tkts_get (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
  **/
 Shishi_tkt *
 shishi_tkts_get_for_clientserver (Shishi_tkts * tkts,
-				  const char *client,
-				  const char *server)
+				  const char *client, const char *server)
 {
   Shishi_tkts_hint hint;
   Shishi_tkt *tkt;
 
-  memset(&hint, 0, sizeof(hint));
+  memset (&hint, 0, sizeof (hint));
   hint.client = client;
   hint.server = server;
 
-  tkt = shishi_tkts_get(tkts, &hint);
+  tkt = shishi_tkts_get (tkts, &hint);
 
   return tkt;
 }
@@ -883,13 +882,10 @@ shishi_tkts_get_for_clientserver (Shishi_tkts * tkts,
  * Return value: Returns a ticket if found, or NULL.
  **/
 Shishi_tkt *
-shishi_tkts_get_for_server (Shishi_tkts * tkts,
-			    const char *server)
+shishi_tkts_get_for_server (Shishi_tkts * tkts, const char *server)
 {
   return shishi_tkts_get_for_clientserver
-    (tkts,
-     shishi_principal_default (tkts->handle),
-     server);
+    (tkts, shishi_principal_default (tkts->handle), server);
 }
 
 Shishi_tkt *
@@ -911,7 +907,7 @@ shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
   if (ret != 0)
     strcpy (&buf[strlen (service) + 1], "localhost");
 
-  memset(&hint, 0, sizeof(hint));
+  memset (&hint, 0, sizeof (hint));
   hint.client = shishi_principal_default (tkts->handle);
   hint.server = buf;
   hint.passwd = passwd;

@@ -25,8 +25,7 @@ static int
 shishi_sendrecv_udp (Shishi * handle,
 		     struct sockaddr *addr,
 		     const char *indata, int inlen,
-		     char *outdata, int *outlen,
-		     int timeout)
+		     char *outdata, int *outlen, int timeout)
 {
   struct sockaddr lsa;
   struct sockaddr_in *lsa_inp = (struct sockaddr_in *) &lsa;

@@ -298,7 +298,8 @@ shishi_kdc_copy_cname (Shishi * handle,
     return res;
 
   res = shishi_asn1_number_of_elements (handle, encticketpart,
-					"EncTicketPart.cname.name-string", &n);
+					"EncTicketPart.cname.name-string",
+					&n);
   if (res != SHISHI_OK)
     return res;
 
@@ -578,8 +579,7 @@ int
 shishi_as_process (Shishi * handle,
 		   Shishi_asn1 asreq,
 		   Shishi_asn1 asrep,
-		   const char *string,
-		   Shishi_asn1 * enckdcreppart)
+		   const char *string, Shishi_asn1 * enckdcreppart)
 {
   unsigned char salt[BUFSIZ];
   int saltlen;

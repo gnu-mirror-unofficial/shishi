@@ -301,7 +301,7 @@ error:
   return NULL;
 }
 
-Shishi_asn1
+static Shishi_asn1
 shishi_asn1_new (Shishi * handle, const char *field, const char *name)
 {
   ASN1_TYPE node = ASN1_TYPE_EMPTY;

@@ -676,7 +676,7 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
   shishi_asprintf (&format, "%d", etype);
   res = shishi_asn1_write (handle, kdcrep, "KDC-REP.enc-part.etype",
 			   format, 0);
-  free(format);
+  free (format);
   if (res != SHISHI_OK)
     return res;
 
@@ -692,7 +692,7 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
       shishi_asprintf (&format, "%d", etype);
       res = shishi_asn1_write (handle, kdcrep, "KDC-REP.enc-part.kvno",
 			       format, 0);
-      free(format);
+      free (format);
       if (res != SHISHI_OK)
 	return res;
     }

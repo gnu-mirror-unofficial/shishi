@@ -66,7 +66,7 @@ shishi (void)
     }
   memset ((void *) handle, 0, sizeof (*handle));
 
-  if (_shishi_cipher_init() != SHISHI_OK)
+  if (_shishi_cipher_init () != SHISHI_OK)
     return NULL;
 
   handle->asn1 = _shishi_asn1_read ();
