@@ -127,6 +127,7 @@ extern char *_shishi_gettext (const char *str);
 #define MAX_KEY_LEN 32
 #define MAX_RANDOM_LEN 32
 #define MAX_HASH_LEN 32
+#define MAX_CKSUM_LEN 32
 
 #define SHISHI_VERBOSE_CRYPTO  (1<<1)
 #define SHISHI_VERBOSE_ASN1    (1<<2)

@@ -66,7 +66,9 @@ enum
   SHISHI_TICKET_DECRYPT_FAILED = 33,
   SHISHI_INVALID_TICKET = 34,
   SHISHI_OUT_OF_RANGE = 35,
-  SHISHI_ASN1_NO_ELEMENT = 36
+  SHISHI_ASN1_NO_ELEMENT = 36,
+  SHISHI_SAFE_BAD_KEYTYPE = 37,
+  SHISHI_SAFE_VERIFY_FAILED = 38
 };
 
 /* This is not specified in the ASN.1 syntax for some reason. */
@@ -988,6 +990,8 @@ extern Shishi_asn1 shishi_der2asn1_authenticator (Shishi * handle,
 						  size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_krberror (Shishi * handle,
 					     const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_krbsafe (Shishi * handle,
+					    const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_apreq (Shishi * handle,
 					  const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_aprep (Shishi * handle,
@@ -1321,6 +1325,8 @@ extern int shishi_safe (Shishi * handle, Shishi_safe ** safe);
 extern Shishi_key *shishi_safe_key (Shishi_safe * safe);
 extern void shishi_safe_key_set (Shishi_safe * safe, Shishi_key * key);
 extern Shishi_asn1 shishi_safe_safe (Shishi_safe * safe);
+extern int shishi_safe_safe_der (Shishi_safe * safe, char *out, int *outlen);
+extern void shishi_safe_safe_set (Shishi_safe * safe, Shishi_asn1 asn1safe);
 extern int shishi_safe_print (Shishi * handle, FILE * fh, Shishi_asn1 safe);
 extern int shishi_safe_save (Shishi * handle, FILE * fh, Shishi_asn1 safe);
 extern int shishi_safe_to_file (Shishi * handle, Shishi_asn1 safe,
@@ -1329,5 +1335,19 @@ extern int shishi_safe_parse (Shishi * handle, FILE * fh, Shishi_asn1 * safe);
 extern int shishi_safe_read (Shishi * handle, FILE * fh, Shishi_asn1 * safe);
 extern int shishi_safe_from_file (Shishi * handle, Shishi_asn1 * safe,
 				  int filetype, char *filename);
+extern int shishi_safe_cksum (Shishi * handle,
+			      Shishi_asn1 safe,
+			      int *cksumtype, char *cksum, size_t * cksumlen);
+extern int shishi_safe_set_cksum (Shishi * handle,
+				  Shishi_asn1 safe,
+				  int cksumtype, char *cksum, int cksumlen);
+extern int shishi_safe_user_data (Shishi * handle,
+				  Shishi_asn1 safe,
+				  char *userdata, size_t * userdatalen);
+extern int shishi_safe_set_user_data (Shishi * handle,
+				      Shishi_asn1 safe,
+				      char *userdata, int userdatalen);
+extern int shishi_safe_build (Shishi_safe * safe, Shishi_key * key);
+extern int shishi_safe_verify (Shishi_safe * safe, Shishi_key * key);
 
 #endif

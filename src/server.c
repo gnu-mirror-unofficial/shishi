@@ -25,12 +25,15 @@ int
 server (Shishi * handle, struct arguments arg)
 {
   Shishi_ap *ap;
-  ASN1_TYPE apreq;
-  Shishi_key *key;
+  ASN1_TYPE apreq, asn1safe;
+  Shishi_safe *safe;
+  Shishi_key *key, *tktkey;
   char salt[BUFSIZ];
   int res;
   char cnamerealm[BUFSIZ];
   int cnamerealmlen;
+  char userdata[BUFSIZ];
+  int userdatalen;
 
   if (arg.cname == NULL)
     arg.cname = shishi_principal_default (handle);
@@ -181,6 +184,56 @@ server (Shishi * handle, struct arguments arg)
 				   shishi_ap_encapreppart (ap));
       shishi_aprep_print (handle, stdout, aprep);
     }
+
+  printf ("Waiting for SAFE from client...\n");
+
+  res = shishi_encticketpart_get_key
+    (handle, shishi_tkt_encticketpart (shishi_ap_tkt (ap)), &tktkey);
+  if (res != SHISHI_OK)
+    {
+      fprintf (stderr, _("Could not extract key:\n%s\n%s\n"),
+	       shishi_strerror (res), shishi_strerror_details (handle));
+      return 1;
+    }
+
+  res = shishi_safe_parse (handle, stdin, &asn1safe);
+  if (res != SHISHI_OK)
+    {
+      fprintf (stderr, _("Could not read SAFE:\n%s\n%s\n"),
+	       shishi_strerror (res), shishi_strerror_details (handle));
+      return 1;
+    }
+
+  res = shishi_safe (handle, &safe);
+  if (res != SHISHI_OK)
+    {
+      fprintf (stderr, _("Could not create SAFE:\n%s\n%s\n"),
+	       shishi_strerror (res), shishi_strerror_details (handle));
+      return 1;
+    }
+
+  shishi_safe_safe_set (safe, asn1safe);
+
+  res = shishi_safe_verify (safe, tktkey);
+  if (res != SHISHI_OK)
+    {
+      fprintf (stderr, _("Could not verify SAFE:\n%s\n%s\n"),
+	       shishi_strerror (res), shishi_strerror_details (handle));
+      return 1;
+    }
+
+  printf ("Verified SAFE successfully...\n");
+
+  userdatalen = sizeof(userdata);
+  res = shishi_safe_user_data (handle, asn1safe, userdata, &userdatalen);
+  if (res != SHISHI_OK)
+    {
+      fprintf (stderr, _("Could not extract user data:\n%s\n%s\n"),
+	       shishi_strerror (res), shishi_strerror_details (handle));
+      return 1;
+    }
+  userdata[userdatalen] = '\0';
+  printf("user data: `%s'\n", userdata);
 
   return SHISHI_OK;
 }

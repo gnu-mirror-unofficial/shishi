@@ -25,6 +25,7 @@ int
 client (Shishi * handle, struct arguments arg)
 {
   Shishi_tkt *tkt;
+  Shishi_key *key;
   Shishi_ap *ap;
   Shishi_safe *safe;
   int res;
@@ -55,6 +56,13 @@ client (Shishi * handle, struct arguments arg)
   if (tkt == NULL)
     {
       printf ("Cannot get ticket for server `%s'.\n", arg.sname);
+      return !SHISHI_OK;
+    }
+
+  key = shishi_tkt_key (tkt);
+  if (key == NULL)
+    {
+      printf ("Cannot get key for ticket for server `%s'.\n", arg.sname);
       return !SHISHI_OK;
     }
 
@@ -95,6 +103,22 @@ client (Shishi * handle, struct arguments arg)
     }
 
   res = shishi_safe (handle, &safe);
+  if (res != SHISHI_OK)
+    {
+      printf ("Could not build SAFE: %s\n", shishi_strerror (res));
+      return res;
+    }
+
+  res = shishi_safe_set_user_data (handle, shishi_safe_safe (safe),
+				   "foo", 0);
+  if (res != SHISHI_OK)
+    {
+      printf ("Could not set application data in SAFE: %s\n",
+	      shishi_strerror (res));
+      return res;
+    }
+
+  res = shishi_safe_build (safe, key);
   if (res != SHISHI_OK)
     {
       printf ("Could not build SAFE: %s\n", shishi_strerror (res));

@@ -731,11 +731,11 @@ _shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe, int type)
 	}
     }
 
-  *safe = shishi_der2asn1_krberror (handle, der, derlen);
+  *safe = shishi_der2asn1_krbsafe (handle, der, derlen);
   if (*safe == NULL)
     {
       printf ("bad magic %s\n", shishi_strerror_details (handle));
-      shishi_error_printf (handle, "Could not DER decode AP-REQ\n");
+      shishi_error_printf (handle, "Could not DER decode KRB-SAFE\n");
 
       return !SHISHI_OK;
     }

@@ -515,6 +515,13 @@ shishi_der2asn1_krberror (Shishi * handle, const char *der, size_t derlen)
 }
 
 Shishi_asn1
+shishi_der2asn1_krbsafe (Shishi * handle, const char *der, size_t derlen)
+{
+  return shishi_der2asn1 (handle, "Kerberos5.KRB-SAFE", "KRB-SAFE",
+			  der, derlen);
+}
+
+Shishi_asn1
 shishi_der2asn1_apreq (Shishi * handle, const char *der, size_t derlen)
 {
   return shishi_der2asn1 (handle, "Kerberos5.AP-REQ", "AP-REQ", der, derlen);
