@@ -16,7 +16,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Originally written by Steven M. Bellovin <smb@research.att.com> while
    at the University of North Carolina at Chapel Hill.  Later tweaked by
@@ -175,12 +175,13 @@ typedef struct
   long int rel_seconds;
   long int rel_ns;
 
-  /* Counts of nonterminals of various flavors parsed so far.  */
+  /* Presence or counts of nonterminals of various flavors parsed so far.  */
   bool timespec_seen;
+  bool rels_seen;
   size_t dates_seen;
   size_t days_seen;
   size_t local_zones_seen;
-  size_t rels_seen;
+  size_t dsts_seen;
   size_t times_seen;
   size_t zones_seen;
 
@@ -201,8 +202,8 @@ static long int time_zone_hhmm (textint, long int);
 %parse-param { parser_control *pc }
 %lex-param { parser_control *pc }
 
-/* This grammar has 14 shift/reduce conflicts. */
-%expect 14
+/* This grammar has 20 shift/reduce conflicts. */
+%expect 20
 
 %union
 {
@@ -255,7 +256,7 @@ item:
   | day
       { pc->days_seen++; }
   | rel
-      { pc->rels_seen++; }
+      { pc->rels_seen = true; }
   | number
   ;
 
@@ -306,14 +307,22 @@ time:
 
 local_zone:
     tLOCAL_ZONE
-      { pc->local_isdst = $1; }
+      {
+	pc->local_isdst = $1;
+	pc->dsts_seen += (0 < $1);
+      }
   | tLOCAL_ZONE tDST
-      { pc->local_isdst = $1 < 0 ? 1 : $1 + 1; }
+      {
+	pc->local_isdst = 1;
+	pc->dsts_seen += (0 < $1) + 1;
+      }
   ;
 
 zone:
     tZONE
       { pc->time_zone = $1; }
+  | tZONE relunit_snumber
+      { pc->time_zone = $1; pc->rels_seen = true; }
   | tZONE tSNUMBER o_colon_minutes
       { pc->time_zone = $1 + time_zone_hhmm ($2, $3); }
   | tDAYZONE
@@ -437,15 +446,11 @@ relunit:
       { pc->rel_year += $1 * $2; }
   | tUNUMBER tYEAR_UNIT
       { pc->rel_year += $1.value * $2; }
-  | tSNUMBER tYEAR_UNIT
-      { pc->rel_year += $1.value * $2; }
   | tYEAR_UNIT
       { pc->rel_year += $1; }
   | tORDINAL tMONTH_UNIT
       { pc->rel_month += $1 * $2; }
   | tUNUMBER tMONTH_UNIT
-      { pc->rel_month += $1.value * $2; }
-  | tSNUMBER tMONTH_UNIT
       { pc->rel_month += $1.value * $2; }
   | tMONTH_UNIT
       { pc->rel_month += $1; }
@@ -453,15 +458,11 @@ relunit:
       { pc->rel_day += $1 * $2; }
   | tUNUMBER tDAY_UNIT
       { pc->rel_day += $1.value * $2; }
-  | tSNUMBER tDAY_UNIT
-      { pc->rel_day += $1.value * $2; }
   | tDAY_UNIT
       { pc->rel_day += $1; }
   | tORDINAL tHOUR_UNIT
       { pc->rel_hour += $1 * $2; }
   | tUNUMBER tHOUR_UNIT
-      { pc->rel_hour += $1.value * $2; }
-  | tSNUMBER tHOUR_UNIT
       { pc->rel_hour += $1.value * $2; }
   | tHOUR_UNIT
       { pc->rel_hour += $1; }
@@ -469,15 +470,11 @@ relunit:
       { pc->rel_minutes += $1 * $2; }
   | tUNUMBER tMINUTE_UNIT
       { pc->rel_minutes += $1.value * $2; }
-  | tSNUMBER tMINUTE_UNIT
-      { pc->rel_minutes += $1.value * $2; }
   | tMINUTE_UNIT
       { pc->rel_minutes += $1; }
   | tORDINAL tSEC_UNIT
       { pc->rel_seconds += $1 * $2; }
   | tUNUMBER tSEC_UNIT
-      { pc->rel_seconds += $1.value * $2; }
-  | tSNUMBER tSEC_UNIT
       { pc->rel_seconds += $1.value * $2; }
   | tSDECIMAL_NUMBER tSEC_UNIT
       { pc->rel_seconds += $1.tv_sec * $2; pc->rel_ns += $1.tv_nsec * $2; }
@@ -485,6 +482,22 @@ relunit:
       { pc->rel_seconds += $1.tv_sec * $2; pc->rel_ns += $1.tv_nsec * $2; }
   | tSEC_UNIT
       { pc->rel_seconds += $1; }
+  | relunit_snumber
+  ;
+
+relunit_snumber:
+    tSNUMBER tYEAR_UNIT
+      { pc->rel_year += $1.value * $2; }
+  | tSNUMBER tMONTH_UNIT
+      { pc->rel_month += $1.value * $2; }
+  | tSNUMBER tDAY_UNIT
+      { pc->rel_day += $1.value * $2; }
+  | tSNUMBER tHOUR_UNIT
+      { pc->rel_hour += $1.value * $2; }
+  | tSNUMBER tMINUTE_UNIT
+      { pc->rel_minutes += $1.value * $2; }
+  | tSNUMBER tSEC_UNIT
+      { pc->rel_seconds += $1.value * $2; }
   ;
 
 seconds: signed_seconds | unsigned_seconds;
@@ -504,7 +517,7 @@ unsigned_seconds:
 number:
     tUNUMBER
       {
-	if (pc->dates_seen
+	if (pc->dates_seen && ! pc->year.digits
 	    && ! pc->rels_seen && (pc->times_seen || 2 < $1.digits))
 	  pc->year = $1;
 	else
@@ -638,6 +651,17 @@ static table const relative_time_table[] =
   { NULL, 0, 0 }
 };
 
+/* The universal time zone table.  These labels can be used even for
+   time stamps that would not otherwise be valid, e.g., GMT time
+   stamps in London during summer.  */
+static table const universal_time_zone_table[] =
+{
+  { "GMT",	tZONE,     HOUR ( 0) },	/* Greenwich Mean */
+  { "UT",	tZONE,     HOUR ( 0) },	/* Universal (Coordinated) */
+  { "UTC",	tZONE,     HOUR ( 0) },
+  { NULL, 0, 0 }
+};
+
 /* The time zone table.  This table is necessarily incomplete, as time
    zone abbreviations are ambiguous; e.g. Australians interpret "EST"
    as Eastern time in Australia, not as US Eastern Standard Time.
@@ -645,9 +669,6 @@ static table const relative_time_table[] =
    abbreviations; use numeric abbreviations like `-0500' instead.  */
 static table const time_zone_table[] =
 {
-  { "GMT",	tZONE,     HOUR ( 0) },	/* Greenwich Mean */
-  { "UT",	tZONE,     HOUR ( 0) },	/* Universal (Coordinated) */
-  { "UTC",	tZONE,     HOUR ( 0) },
   { "WET",	tZONE,     HOUR ( 0) },	/* Western European */
   { "WEST",	tDAYZONE,  HOUR ( 0) },	/* Western European Summer */
   { "BST",	tDAYZONE,  HOUR ( 0) },	/* British Summer */
@@ -695,7 +716,7 @@ static table const time_zone_table[] =
   { "GST",	tZONE,     HOUR (10) },	/* Guam Standard */
   { "NZST",	tZONE,     HOUR (12) },	/* New Zealand Standard */
   { "NZDT",	tDAYZONE,  HOUR (12) },	/* New Zealand Daylight */
-  { NULL, 0, 0  }
+  { NULL, 0, 0 }
 };
 
 /* Military time zone table. */
@@ -780,7 +801,12 @@ lookup_zone (parser_control const *pc, char const *name)
 {
   table const *tp;
 
-  /* Try local zone abbreviations first; they're more likely to be right.  */
+  for (tp = universal_time_zone_table; tp->name; tp++)
+    if (strcmp (name, tp->name) == 0)
+      return tp;
+
+  /* Try local zone abbreviations before those in time_zone_table, as
+     the local ones are more likely to be right.  */
   for (tp = pc->local_time_zone_table; tp->name; tp++)
     if (strcmp (name, tp->name) == 0)
       return tp;
@@ -1179,7 +1205,7 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
   pc.input = p;
   pc.year.value = tmp->tm_year;
   pc.year.value += TM_YEAR_BASE;
-  pc.year.digits = 4;
+  pc.year.digits = 0;
   pc.month = tmp->tm_mon + 1;
   pc.day = tmp->tm_mday;
   pc.hour = tmp->tm_hour;
@@ -1197,11 +1223,12 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
   pc.rel_month = 0;
   pc.rel_year = 0;
   pc.timespec_seen = false;
+  pc.rels_seen = false;
   pc.dates_seen = 0;
   pc.days_seen = 0;
-  pc.rels_seen = 0;
   pc.times_seen = 0;
   pc.local_zones_seen = 0;
+  pc.dsts_seen = 0;
   pc.zones_seen = 0;
 
 #if HAVE_STRUCT_TM_TM_ZONE
@@ -1269,9 +1296,8 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
     *result = pc.seconds;
   else
     {
-      if (1 < pc.times_seen || 1 < pc.dates_seen || 1 < pc.days_seen
-	  || 1 < (pc.local_zones_seen + pc.zones_seen)
-	  || (pc.local_zones_seen && 1 < pc.local_isdst))
+      if (1 < (pc.times_seen | pc.dates_seen | pc.days_seen | pc.dsts_seen
+	       | (pc.local_zones_seen + pc.zones_seen)))
 	goto fail;
 
       tm.tm_year = to_year (pc.year) - TM_YEAR_BASE;
@@ -1292,7 +1318,7 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
 	}
 
       /* Let mktime deduce tm_isdst if we have an absolute time stamp.  */
-      if (pc.dates_seen | pc.days_seen | pc.times_seen)
+      if (!pc.rels_seen)
 	tm.tm_isdst = -1;
 
       /* But if the input explicitly specifies local time with or without

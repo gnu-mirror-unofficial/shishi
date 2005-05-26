@@ -16,7 +16,7 @@
 
    You should have received a copy of the GNU General Public License along
    with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Define this to have a standalone program to test this implementation of
    mktime.  */
@@ -68,9 +68,9 @@
    an integer.  */
 #define TYPE_IS_INTEGER(t) ((t) 1.5 == 1)
 
-/* True if negative values of the signed integer type T use twos
-   complement, ones complement, or signed magnitude representation,
-   respectively.  Much GNU code assumes twos complement, but some
+/* True if negative values of the signed integer type T use two's
+   complement, ones' complement, or signed magnitude representation,
+   respectively.  Much GNU code assumes two's complement, but some
    people like to be portable to all possible C hosts.  */
 #define TYPE_TWOS_COMPLEMENT(t) ((t) ~ (t) 0 == (t) -1)
 #define TYPE_ONES_COMPLEMENT(t) ((t) ~ (t) 0 == 0)
