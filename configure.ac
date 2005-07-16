@@ -24,12 +24,9 @@ AC_INIT([shishi], [0.0.22], [bug-shishi@josefsson.org])
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
-LT_CURRENT=0
-LT_REVISION=22
-LT_AGE=0
-AC_SUBST(LT_CURRENT)
-AC_SUBST(LT_REVISION)
-AC_SUBST(LT_AGE)
+AC_SUBST(LT_CURRENT, 0)
+AC_SUBST(LT_REVISION, 22)
+AC_SUBST(LT_AGE, 0)
 
 AC_PREREQ(2.59)
 AM_INIT_AUTOMAKE([1.9 gnits])
