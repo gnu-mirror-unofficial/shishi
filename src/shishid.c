@@ -1,5 +1,5 @@
 /* shishid.c --- Shishi Key Distribution Center daemon.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -38,7 +38,7 @@ size_t fatal_krberror_len;
 #ifdef USE_STARTTLS
 gnutls_dh_params dh_params;
 gnutls_anon_server_credentials anoncred;
-gnutls_anon_server_credentials x509cred;
+gnutls_certificate_credentials x509cred;
 #endif
 
 /* Listen to all listenspec's, removing entries that fail. */
