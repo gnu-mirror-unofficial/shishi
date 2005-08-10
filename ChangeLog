@@ -1,3 +1,279 @@
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.22.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Add -I's for GnuTLS too.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/strnlen.m4: Update.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Fix compile error.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.fms, NEWS: Add.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am, doc/Makefile.am, doc/fdl.texi, doc/gendocs.sh,
+	doc/gendocs_template, doc/gpl.texi, examples/Makefile.am,
+	extra/Makefile.am, lib/Makefile.am, src/Makefile.am, src/shisa.ggo,
+	src/shishid.ggo, tests/Makefile.am, tests/shisa.sh, src/shishi.ggo,
+	extra/pam_shishi/Makefile.am, extra/rsh-redone/Makefile.am,
+	asn1/Makefile.am, gl/strnlen.h: Update license.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/coding.c, asn1/decoding.c, asn1/defines.h, asn1/element.c,
+	asn1/errors.c, asn1/errors.h, asn1/gstr.c, asn1/int.h,
+	asn1/libtasn1.h, asn1/parser_aux.c, asn1/structure.c: Update
+	libtasn1 to 0.2.14.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* COPYING.DOC: Remove (not used).
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* README: Mention help-shishi.  Fix.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi, NEWS: Add.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Add.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/exit.h, gl/exitfail.c, gl/exitfail.h,
+	gl/xalloc-die.c, gl/m4/exitfail.m4, gl/m4/gnulib.m4: Update.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* gl/xalloc-die.c, gl/m4/onceonly_2_57.m4: Update.
+
+2005-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/base64.c, gl/base64.h, gl/exit.h,
+	gl/exitfail.c, gl/exitfail.h, gl/getaddrinfo.h, gl/getdelim.c,
+	gl/getdelim.h, gl/getline.c, gl/getline.h, gl/getndelim2.c,
+	gl/getndelim2.h, gl/getsubopt.h, gl/mktime.c, gl/size_max.h,
+	gl/strtok_r.h, gl/time_r.h, gl/xmalloc.c, gl/m4/bison.m4,
+	gl/m4/codeset.m4, gl/m4/exitfail.m4, gl/m4/getdelim.m4,
+	gl/m4/getline.m4, gl/m4/getndelim2.m4, gl/m4/getopt.m4,
+	gl/m4/gettext.m4, gl/m4/glibc2.m4, gl/m4/glibc21.m4,
+	gl/m4/gnulib.m4, gl/m4/iconv.m4, gl/m4/intdiv0.m4, gl/m4/intmax.m4,
+	gl/m4/inttypes-pri.m4, gl/m4/inttypes.m4, gl/m4/isc-posix.m4,
+	gl/m4/lcmessage.m4, gl/m4/lib-ld.m4, gl/m4/lib-link.m4,
+	gl/m4/lib-prefix.m4, gl/m4/nls.m4, gl/m4/po.m4,
+	gl/m4/printf-posix.m4, gl/m4/progtest.m4, gl/m4/size_max.m4,
+	gl/m4/strndup.m4, gl/m4/strnlen.m4, gl/m4/uintmax_t.m4,
+	gl/m4/ulonglong.m4: Update.
+
+2005-07-16  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Simplify.
+
+2005-06-15  Simon Josefsson <simon@josefsson.org>
+
+	* gl/xreadlink.c, gl/m4/extensions.m4: Update gnulib files.
+
+2005-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, configure.ac, db/config.c, db/core.c, db/db.c,
+	db/err.c, db/file.c, db/file.h, db/fileutil.c, db/fileutil.h,
+	db/info.h, db/setup.c, db/shisa.h, doc/gdoc-error,
+	examples/client-cksum.c, examples/client-priv.c,
+	examples/client-safe.c, examples/client.c, examples/server.c,
+	extra/pam_shishi/pam_shishi.c, extra/rsh-redone/rcp.c,
+	extra/rsh-redone/rlogin.c, extra/rsh-redone/rlogind.c,
+	extra/rsh-redone/rsh.c, extra/rsh-redone/rshd.c, lib/ap.c,
+	lib/aprep.c, lib/apreq.c, lib/as.c, lib/asn1.c, lib/asn1.h,
+	lib/authenticator.c, lib/authorize.c, lib/cfg.c, lib/cfg.h,
+	lib/crypto-3des.c, lib/crypto-aes.c, lib/crypto-ctx.c,
+	lib/crypto-des.c, lib/crypto-md.c, lib/crypto-null.c,
+	lib/crypto-rc4.c, lib/crypto.c, lib/crypto.h, lib/diskio.c,
+	lib/diskio.h, lib/encapreppart.c, lib/enckdcreppart.c,
+	lib/encticketpart.c, lib/error.c, lib/gztime.c, lib/hostkeys.c,
+	lib/init.c, lib/internal.h, lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c,
+	lib/kerberos5.asn1, lib/key.c, lib/keys.c, lib/krberror.c,
+	lib/libgcrypt.c, lib/netio.c, lib/nettle.c, lib/password.c,
+	lib/pki.c, lib/principal.c, lib/priv.c, lib/realm.c, lib/resolv.c,
+	lib/safe.c, lib/shishi.h.in, lib/starttls.c, lib/starttls.h,
+	lib/tgs.c, lib/ticket.c, lib/tkt.c, lib/tkts.c, lib/utils.c,
+	lib/utils.h, lib/version.c, src/kdc.c, src/kdc.h, src/resume.c,
+	src/server.c, src/shisa.c, src/shishi.c, src/shishid.c,
+	src/starttls.c, tests/authenticator.c, tests/crypto-ctx.c,
+	tests/crypto.c, tests/gztime.c, tests/key.c, tests/low-crypto.c,
+	tests/priv.c, tests/rijndael.c, tests/safe.c, tests/ticketset.c,
+	tests/utils.c: Update license with new FSF address.
+
+2005-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/alloca_.h, gl/allocsa.c, gl/allocsa.h,
+	gl/asnprintf.c, gl/asprintf.c, gl/base64.c, gl/base64.h,
+	gl/error.c, gl/error.h, gl/gai_strerror.c, gl/getaddrinfo.c,
+	gl/getaddrinfo.h, gl/getdate.h, gl/getdate.y, gl/getdomainname.c,
+	gl/getdomainname.h, gl/gethostname.c, gl/getline.c, gl/getline.h,
+	gl/getndelim2.c, gl/getndelim2.h, gl/getopt.c, gl/getopt1.c,
+	gl/getopt_.h, gl/getopt_int.h, gl/getpass.c, gl/getpass.h,
+	gl/getsubopt.c, gl/getsubopt.h, gl/gettext.h, gl/gettime.c,
+	gl/gettimeofday.c, gl/mktime.c, gl/printf-args.c, gl/printf-args.h,
+	gl/printf-parse.c, gl/printf-parse.h, gl/progname.c, gl/progname.h,
+	gl/readlink.c, gl/realloc.c, gl/setenv.c, gl/setenv.h,
+	gl/stdbool_.h, gl/strcase.h, gl/strcasecmp.c, gl/strchrnul.c,
+	gl/strchrnul.h, gl/strdup.c, gl/strdup.h, gl/strndup.c,
+	gl/strndup.h, gl/strnlen.c, gl/strtok_r.c, gl/strtok_r.h,
+	gl/time_r.c, gl/time_r.h, gl/timegm.c, gl/timegm.h, gl/timespec.h,
+	gl/unsetenv.c, gl/vasnprintf.c, gl/vasnprintf.h, gl/vasprintf.c,
+	gl/vasprintf.h, gl/xalloc.h, gl/xasprintf.c, gl/xgetdomainname.c,
+	gl/xgetdomainname.h, gl/xgethostname.c, gl/xmalloc.c,
+	gl/xreadlink.c, gl/xreadlink.h, gl/xsize.h, gl/xstrndup.c,
+	gl/xstrndup.h, gl/xvasprintf.c, gl/xvasprintf.h,
+	gl/m4/clock_time.m4, gl/m4/getaddrinfo.m4, gl/m4/getopt.m4,
+	gl/m4/getpass.m4, gl/m4/gettext.m4, gl/m4/gettimeofday.m4,
+	gl/m4/gnulib.m4, doc/getdate.texi: Update.
+
+2005-04-29  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS: Add.
+
+2005-03-21  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Gnulib sync.
+
+2005-03-21  Simon Josefsson <simon@josefsson.org>
+
+	* gl/mktime.c, gl/strndup.c, gl/m4/getdate.m4, gl/m4/getline.m4,
+	gl/m4/getpass.m4, gl/m4/gettext.m4, gl/m4/lib-link.m4,
+	gl/m4/nls.m4, gl/m4/po.m4, gl/m4/strdup.m4, gl/m4/strndup.m4,
+	gl/m4/timespec.m4, gl/m4/xalloc.m4: Fix.
+
+2005-03-19  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/defines.h: Fix.
+
+2005-03-14  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2005-03-14  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/getdate.y, gl/gettext.h, gl/gettime.c,
+	gl/mktime.c, gl/progname.c, gl/setenv.c, gl/size_max.h,
+	gl/strnlen.h, gl/timegm.h, gl/timespec.h, gl/vasnprintf.c,
+	gl/vasprintf.c, gl/xgethostname.c, gl/m4/gettext.m4,
+	gl/m4/gettime.m4, gl/m4/glibc2.m4, gl/m4/intdiv0.m4,
+	gl/m4/intmax.m4, gl/m4/inttypes-pri.m4, gl/m4/inttypes.m4,
+	gl/m4/isc-posix.m4, gl/m4/lcmessage.m4, gl/m4/lib-link.m4,
+	gl/m4/lib-prefix.m4, gl/m4/nls.m4, gl/m4/po.m4,
+	gl/m4/printf-posix.m4, gl/m4/progtest.m4: Sync gnulib.
+
+2005-03-14  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Add strnlen.
+
+2005-03-14  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Avoid strnlen (only used once).
+
+2005-03-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c, lib/asn1.c: Doc fix.
+
+2005-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am, examples/Makefile.am,
+	extra/pam_shishi/Makefile.am, lib/Makefile.am, src/Makefile.am,
+	tests/Makefile.am: Gnulib need -I$(top_builddir)/gl as well,
+	reported by Dave Love <fx@gnu.org>.
+
+2005-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS: Add.
+
+2005-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* README: Add, suggested by Dave Love <fx@gnu.org>.
+
+2005-01-29  Simon Josefsson <simon@josefsson.org>
+
+	* gl/gai_strerror.c, gl/size_max.h, gl/m4/alloca.m4,
+	gl/m4/allocsa.m4, gl/m4/base64.m4, gl/m4/bison.m4,
+	gl/m4/clock_time.m4, gl/m4/codeset.m4, gl/m4/eealloc.m4,
+	gl/m4/eoverflow.m4, gl/m4/error.m4, gl/m4/extensions.m4,
+	gl/m4/getaddrinfo.m4, gl/m4/getdate.m4, gl/m4/getdomainname.m4,
+	gl/m4/gethostname.m4, gl/m4/getline.m4, gl/m4/getndelim2.m4,
+	gl/m4/getopt.m4, gl/m4/getpass.m4, gl/m4/getsubopt.m4,
+	gl/m4/gettime.m4, gl/m4/gettimeofday.m4, gl/m4/glibc21.m4,
+	gl/m4/iconv.m4, gl/m4/intmax_t.m4, gl/m4/inttypes_h.m4,
+	gl/m4/lib-ld.m4, gl/m4/lib-link.m4, gl/m4/lib-prefix.m4,
+	gl/m4/longdouble.m4, gl/m4/longlong.m4, gl/m4/mktime.m4,
+	gl/m4/readlink.m4, gl/m4/restrict.m4, gl/m4/setenv.m4,
+	gl/m4/signed.m4, gl/m4/size_max.m4, gl/m4/sockpfaf.m4,
+	gl/m4/ssize_t.m4, gl/m4/st_mtim.m4, gl/m4/stdbool.m4,
+	gl/m4/stdint_h.m4, gl/m4/strcase.m4, gl/m4/strchrnul.m4,
+	gl/m4/strdup.m4, gl/m4/strerror_r.m4, gl/m4/strndup.m4,
+	gl/m4/strnlen.m4, gl/m4/strtok_r.m4, gl/m4/time_r.m4,
+	gl/m4/timegm.m4, gl/m4/timespec.m4, gl/m4/tm_gmtoff.m4,
+	gl/m4/uintmax_t.m4, gl/m4/ulonglong.m4, gl/m4/vasnprintf.m4,
+	gl/m4/vasprintf.m4, gl/m4/wchar_t.m4, gl/m4/wint_t.m4,
+	gl/m4/xalloc.m4, gl/m4/xreadlink.m4, gl/m4/xsize.m4,
+	gl/m4/xstrndup.m4: Update.
+
+2005-01-02  Simon Josefsson <simon@josefsson.org>
+
+	* po/LINGUAS: Add.
+
+2005-01-02  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/base64.c, gl/base64.h, gl/error.c,
+	gl/m4/getline.m4, gl/m4/gnulib.m4, gl/m4/strdup.m4: Update.
+
+2004-12-29  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2004-12-24  Simon Josefsson <simon@josefsson.org>
+
+	* gl/getdate.y, gl/m4/getdate.m4: Update.
+
+2004-12-19  Simon Josefsson <simon@josefsson.org>
+
+	* gl/alloca_.h, gl/getdate.y: Update.
+
+2004-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* gl/alloca.c: Remove.
+
+2004-12-18  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/getdate.y, gl/m4/getline.m4, gl/m4/gnulib.m4,
+	gl/m4/strdup.m4, lib/internal.h: Update.
+
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2004-12-17  Simon Josefsson <simon@josefsson.org>
+
+	* shishi.fms: Add.
+
 2004-12-17  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po, po/sv.po: Generated.
