@@ -10,6 +10,8 @@ See the end for copying conditions.
 
 ** The license template in files were updated with the new FSF address.
 
+** The internal libtasn1 copy was updated to version 0.2.14.
+
 ** Gnulib files updated, and uses within the library updated.
 
 * Version 0.0.21 (released 2004-12-17)
