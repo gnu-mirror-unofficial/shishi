@@ -5,8 +5,11 @@ Changelog-URL: http://josefsson.org/cgi-bin/viewcvs.cgi/shishi/ChangeLog?rev=HEA
 BSD-Port-URL: http://www.freshports.org/devel/shishi/
 CVS-URL: http://josefsson.org/cgi-bin/viewcvs.cgi/shishi/
 Mirror-Site-URL: http://josefsson.org/shishi
-Version: 0.0.21
+Version: 0.0.22
 Release-Focus: Minor bugfixes
 
-Libtasn1 updated to 0.2.13.  Gnulib files updated, and uses within the
-library updated.  Fix srcdir != objdir building.
+The help-shishi@gnu.org mailing list is now mentioned in
+documentation.  Should now build with objdir != srcdir on systems that
+lack stdbool.h.  The license template in files were updated with the
+new FSF address.  The internal libtasn1 copy was updated to version
+0.2.14.  Gnulib files updated, and uses within the library updated.

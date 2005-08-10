@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.22 (unreleased)
 
+** Fix build error when STARTTLS support is enabled.
+
 ** The help-shishi@gnu.org mailing list is now mentioned in documentation.
 
 ** Should now build with objdir != srcdir on systems that lack stdbool.h.
