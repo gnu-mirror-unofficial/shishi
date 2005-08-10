@@ -6,6 +6,8 @@ dnl with or without modifications, as long as this notice is preserved.
 
 AC_DEFUN([gl_FUNC_STRNLEN],
 [
+  AC_LIBSOURCES([strnlen.c, strnlen.h])
+
   dnl Persuade glibc <string.h> to declare strnlen().
   AC_REQUIRE([AC_GNU_SOURCE])
 
