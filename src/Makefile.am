@@ -19,7 +19,7 @@
 # MA 02110-1301, USA.
 
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
-	-I$(top_srcdir)/db -I../lib
+	-I$(top_srcdir)/db -I../lib @LIBGNUTLS_CFLAGS@
 localedir = $(datadir)/locale
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\"
