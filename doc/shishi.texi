@@ -15,7 +15,7 @@
 This manual is last updated @value{UPDATED} for version
 @value{VERSION} of Shishi.
 
-Copyright @copyright{} 2002, 2003, 2004 Simon Josefsson.
+Copyright @copyright{} 2002, 2003, 2004, 2005 Simon Josefsson.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -120,6 +120,7 @@ Shishi is free software licensed under the GNU General Public License.
 * Overview::
 * Cryptographic Overview::
 * Supported Platforms::
+* Getting help::
 * Commercial Support::
 * Downloading and Installing::
 * Bug Reports::
@@ -768,6 +769,15 @@ GCC 3.4 and GNU Make @code{m68k-uclinux-elf}.
 
 If you use Shishi on, or port Shishi to, a new platform please report
 it to the author (@pxref{Bug Reports}).
+
+@node Getting help
+@section Getting help
+
+A mailing list where users of Shishi may help each other exists, and
+you can reach it by sending e-mail to @email{help-shishi@@gnu.org}.
+Archives of the mailing list discussions, and an interface to manage
+subscriptions, is available through the World Wide Web at
+@url{http://lists.gnu.org/mailman/listinfo/help-shishi}.
 
 @node Commercial Support
 @section Commercial Support

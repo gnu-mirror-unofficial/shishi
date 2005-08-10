@@ -4,7 +4,11 @@ See the end for copying conditions.
 
 * Version 0.0.22 (unreleased)
 
+** The help-shishi@gnu.org mailing list is now mentioned in documentation.
+
 ** Should now build with objdir != srcdir on systems that lack stdbool.h.
+
+** The license template in files were updated with the new FSF address.
 
 ** Gnulib files updated, and uses within the library updated.
 
