@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2003 Simon Josefsson.
+# Copyright (C) 2003, 2005 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -14,9 +14,9 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with Shishi; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-# Boston, MA 02111-1307, USA.
+# along with Shishi; see the file COPYING.  If not, write to the Free
+# Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+# MA 02110-1301, USA.
 
 SHISA=$PWD/../src/shisa
 DBDIR=shisa.db.tmp.$$
