@@ -83,6 +83,7 @@ AC_CHECK_SIZEOF(unsigned char, 1)
 gl_SOURCE_BASE(gl)
 gl_M4_BASE(gl/m4)
 gl_MODULES(error getopt realloc setenv strcase strchrnul strdup strndup xstrndup vasprintf vasnprintf xvasprintf xalloc getdate timegm gethostname xgethostname xgetdomainname getline xreadlink progname getsubopt getpass getaddrinfo strtok_r base64)
+gl_AVOID(xalloc-die)
 gl_INIT
 
 # Checks for library functions.
