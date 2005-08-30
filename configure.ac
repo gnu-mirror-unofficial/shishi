@@ -178,16 +178,15 @@ AC_ARG_WITH(stringprep,
 		[don't use libidn for string processing even if available]),
 	stringprep=$withval, stringprep=yes)
 if test "$stringprep" != "no"; then
-	AC_CHECK_HEADER(stringprep.h,, stringprep=no)
+  AC_LIB_HAVE_LINKFLAGS(idn,, [#include <stringprep.h>],
+    [stringprep_check_version (0);])
 fi
-if test "$stringprep" != "no"; then
-	AC_CHECK_LIB(idn, stringprep_check_version,,
-		stringprep=no
-		AC_MSG_WARN([Libidn not found.  String process disabled.]))
+if test "$ac_cv_libidn" != yes; then
+  stringprep=no
+  AC_MSG_WARN([Libidn not found.  String process disabled.])
 fi
-if test "$stringprep" != "no"; then
-	AC_DEFINE(WITH_STRINGPREP, 1, [Define to 1 if you want to use libidn.])
-fi
+AC_MSG_CHECKING([if String processing support via Libidn should be built])
+AC_MSG_RESULT($stringprep)
 
 # Check for libtasn1
 AC_ARG_WITH(system-asn1,
