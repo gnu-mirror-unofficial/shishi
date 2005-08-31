@@ -32,8 +32,6 @@ DISTCLEANFILES = shishi-int.h
 MAINTAINERCLEANFILES = kerberos5.c
 nodist_include_HEADERS = shishi-int.h
 
-EXTRA_DIST = kerberos5.asn1 shishi.vers
-
 include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = shishi.h.in internal.h \
@@ -47,7 +45,9 @@ libshishi_la_SOURCES = shishi.h.in internal.h \
 	netio.c key.c keys.c hostkeys.c crypto.c crypto.h crypto-ctx.c \
 	asn1.c asn1.h kerberos5.c \
 	version.c password.c \
-	utils.c utils.h resolv.c
+	utils.c utils.h resolv.c \
+	kerberos5.asn1 shishi.vers
+
 if NULL
 libshishi_la_SOURCES += crypto-null.c
 endif
