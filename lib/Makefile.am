@@ -32,7 +32,7 @@ DISTCLEANFILES = shishi-int.h
 MAINTAINERCLEANFILES = kerberos5.c
 nodist_include_HEADERS = shishi-int.h
 
-EXTRA_DIST = kerberos5.asn1
+EXTRA_DIST = kerberos5.asn1 shishi.vers
 
 include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
@@ -79,6 +79,10 @@ libshishi_la_LIBADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
 	@LTLIBINTL@ ../gl/libgnu.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@
 libshishi_la_LDFLAGS = -export-symbols-regex '^shishi.*' \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+
+if HAVE_LD_VERSION_SCRIPT
+  libshishi_la_LDFLAGS += -Wl,--version-script=$(srcdir)/shishi.vers
+endif
 
 kerberos5.c: $(srcdir)/kerberos5.asn1
 	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $^
