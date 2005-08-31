@@ -2,6 +2,10 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson
 See the end for copying conditions.
 
+* Version 0.0.23 (unreleased)
+
+** Added shared library versioning script, suggested by Steve Langasek.
+
 * Version 0.0.22 (released 2005-08-10)
 
 ** Fix build error when STARTTLS support is enabled.
