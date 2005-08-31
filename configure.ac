@@ -263,6 +263,25 @@ AM_CONDITIONAL(STARTTLS, test "$starttls" != "no")
 # Check for gtk-doc.
 GTK_DOC_CHECK(1.1)
 
+# For some systems we know that we have ld_version scripts.
+# Use it then as default.
+have_ld_version_script=no
+case "${host}" in
+    *-*-linux*)
+        have_ld_version_script=yes
+        ;;
+    *-*-gnu*)
+        have_ld_version_script=yes
+        ;;
+esac
+AC_ARG_ENABLE([ld-version-script],
+              AC_HELP_STRING([--enable-ld-version-script],
+                             [enable/disable use of linker version script.
+                              (default is system dependent)]),
+              [have_ld_version_script=$enableval],
+              [ : ] )
+AM_CONDITIONAL(HAVE_LD_VERSION_SCRIPT, test "$have_ld_version_script" = "yes")
+
 # Let people enable/disable various encryption/checksum types.
 AC_ARG_ENABLE(des, AC_HELP_STRING([--disable-des],
 			[disable DES related encryption/checksum types]),
