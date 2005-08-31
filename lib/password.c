@@ -1,5 +1,5 @@
 /* password.c --- Get passwords from user.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -25,8 +25,8 @@
 
 #include "getpass.h"
 
-#ifdef WITH_STRINGPREP
-#include <stringprep.h>
+#ifdef HAVE_LIBIDN
+# include <stringprep.h>
 #endif
 
 /**
@@ -49,7 +49,7 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
   char *p;
   va_list ap;
 
-#ifdef WITH_STRINGPREP
+#ifdef HAVE_LIBIDN
   if (VERBOSE (handle))
     {
       printf ("Libstringprep thinks your locale is `%s'.\n",
@@ -79,7 +79,7 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
 
   if (handle->stringprocess
       && strcasecmp (handle->stringprocess, "none") != 0)
-#ifdef WITH_STRINGPREP
+#ifdef HAVE_LIBIDN
     {
       if (strcasecmp (handle->stringprocess, "stringprep") == 0)
 	p = stringprep_locale_to_utf8 (*s);
