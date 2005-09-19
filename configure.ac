@@ -59,18 +59,6 @@ AC_TYPE_SIGNAL
 AC_HEADER_TIME
 AX_CREATE_STDINT_H(lib/shishi-int.h, sys/types.h)
 AC_CHECK_DECLS(h_errno)
-AC_CHECK_TYPE([socklen_t],, [AC_DEFINE([socklen_t], [size_t],
-              [Define to `size_t' if `socklen_t' is missing.])], [
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-#ifdef HAVE_NETDB_H
-#include <netdb.h>
-#endif
-])
 
 # For libtasn1
 AC_CHECK_SIZEOF(unsigned long long, 8)
