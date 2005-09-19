@@ -51,6 +51,7 @@ AC_DEFUN([gl_INIT],
   gl_C_RESTRICT
   gt_FUNC_SETENV
   gl_SIZE_MAX
+  gl_SOCKLEN_T
   gt_TYPE_SSIZE_T
   AM_STDBOOL_H
   gl_STRCASE
@@ -198,6 +199,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/setenv.m4
   m4/signed.m4
   m4/size_max.m4
+  m4/socklen.m4
   m4/sockpfaf.m4
   m4/ssize_t.m4
   m4/stdbool.m4

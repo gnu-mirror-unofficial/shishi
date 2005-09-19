@@ -14,10 +14,10 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=gl --m4-base=gl/m4 --aux-dir=. --avoid=xalloc-die --libtool --macro-prefix=gl base64 error getaddrinfo getdate gethostname getline getopt getpass getsubopt progname realloc setenv strcase strchrnul strdup strndup strtok_r timegm vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=gl --m4-base=gl/m4 --aux-dir=. --avoid=xalloc-die --libtool --macro-prefix=gl base64 error getaddrinfo getdate gethostname getline getopt getpass getsubopt progname realloc setenv socklen strcase strchrnul strdup strndup strtok_r timegm vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
-gl_MODULES([base64 error getaddrinfo getdate gethostname getline getopt getpass getsubopt progname realloc setenv strcase strchrnul strdup strndup strtok_r timegm vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf])
+gl_MODULES([base64 error getaddrinfo getdate gethostname getline getopt getpass getsubopt progname realloc setenv socklen strcase strchrnul strdup strndup strtok_r timegm vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf])
 gl_AVOID([xalloc-die])
 gl_SOURCE_BASE([gl])
 gl_M4_BASE([gl/m4])
