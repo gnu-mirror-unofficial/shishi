@@ -20,7 +20,7 @@
 
 SHISHI_0.0 {
   global:
-    shishi_*;
+    shishi*;
 
   local:
     *;
