@@ -6,6 +6,8 @@ See the end for copying conditions.
 
 ** Added shared library versioning script, suggested by Steve Langasek.
 
+** Improved libidn detection code.
+
 ** Updated gnulib compatibility files.
 
 * Version 0.0.22 (released 2005-08-10)
