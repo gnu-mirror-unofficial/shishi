@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in.
-# Copyright (C) 2004, 2005 Free Software Foundation, Inc.
+# Copyright (C) 2004 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -227,6 +227,3 @@ libgnu_la_SOURCES += xvasprintf.h xvasprintf.c xasprintf.c
 
 
 # Makefile.am ends here
-
-libgnu_la_LIBADD += @LIB_CLOCK_GETTIME@
-EXTRA_DIST += README
