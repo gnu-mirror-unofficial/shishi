@@ -31,6 +31,9 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_BASE64
   gl_ERROR
   dnl gl_USE_SYSTEM_EXTENSIONS must be added quite early to configure.ac.
+  gl_GC
+  gl_GC_HMAC_SHA1
+  gl_GC_PBKDF2_SHA1
   gl_GETADDRINFO
   gl_GETDATE
   gl_FUNC_GETDELIM
@@ -54,14 +57,15 @@ AC_DEFUN([gl_INIT],
   gl_SOCKLEN_T
   gt_TYPE_SSIZE_T
   AM_STDBOOL_H
+  gl_STDINT_H
   gl_STRCASE
   gl_FUNC_STRCHRNUL
   gl_FUNC_STRDUP
   gl_FUNC_STRNDUP
   gl_FUNC_STRNLEN
   gl_FUNC_STRTOK_R
-  gl_FUNC_TIMEGM
   gl_TIME_R
+  gl_FUNC_TIMEGM
   gl_TIMESPEC
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
@@ -74,6 +78,7 @@ AC_DEFUN([gl_INIT],
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
+  build-aux/config.rpath
   doc/getdate.texi
   lib/alloca_.h
   lib/allocsa.c
@@ -86,6 +91,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/error.c
   lib/error.h
   lib/gai_strerror.c
+  lib/gc-gnulib.c
+  lib/gc-libgcrypt.c
+  lib/gc-pbkdf2-sha1.c
+  lib/gc.h
   lib/getaddrinfo.c
   lib/getaddrinfo.h
   lib/getdate.h
@@ -97,8 +106,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gethostname.c
   lib/getline.c
   lib/getline.h
-  lib/getopt1.c
   lib/getopt.c
+  lib/getopt1.c
   lib/getopt_.h
   lib/getopt_int.h
   lib/getpass.c
@@ -108,10 +117,14 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gettext.h
   lib/gettime.c
   lib/gettimeofday.c
+  lib/hmac-sha1.c
+  lib/hmac.h
   lib/mbchar.c
   lib/mbchar.h
   lib/mbuiter.h
   lib/memchr.c
+  lib/memxor.c
+  lib/memxor.h
   lib/mktime.c
   lib/printf-args.c
   lib/printf-args.h
@@ -123,10 +136,13 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/realloc.c
   lib/setenv.c
   lib/setenv.h
+  lib/sha1.c
+  lib/sha1.h
   lib/size_max.h
   lib/stdbool_.h
-  lib/strcasecmp.c
+  lib/stdint_.h
   lib/strcase.h
+  lib/strcasecmp.c
   lib/strchrnul.c
   lib/strchrnul.h
   lib/strdup.c
@@ -134,16 +150,16 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strncasecmp.c
   lib/strndup.c
   lib/strndup.h
-  lib/strnlen1.c
-  lib/strnlen1.h
   lib/strnlen.c
   lib/strnlen.h
+  lib/strnlen1.c
+  lib/strnlen1.h
   lib/strtok_r.c
   lib/strtok_r.h
-  lib/timegm.c
-  lib/timegm.h
   lib/time_r.c
   lib/time_r.h
+  lib/timegm.c
+  lib/timegm.h
   lib/timespec.h
   lib/unsetenv.c
   lib/vasnprintf.c
@@ -173,6 +189,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/eoverflow.m4
   m4/error.m4
   m4/extensions.m4
+  m4/gc-hmac-sha1.m4
+  m4/gc-pbkdf2-sha1.m4
+  m4/gc.m4
   m4/getaddrinfo.m4
   m4/getdate.m4
   m4/getdelim.m4
@@ -184,25 +203,33 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/getsubopt.m4
   m4/gettime.m4
   m4/gettimeofday.m4
+  m4/hmac-sha1.m4
   m4/intmax_t.m4
+  m4/inttypes.m4
   m4/inttypes_h.m4
+  m4/lib-ld.m4
+  m4/lib-link.m4
+  m4/lib-prefix.m4
   m4/longdouble.m4
   m4/longlong.m4
   m4/mbchar.m4
   m4/mbiter.m4
   m4/mbrtowc.m4
   m4/memchr.m4
+  m4/memxor.m4
   m4/mktime.m4
   m4/onceonly_2_57.m4
   m4/readlink.m4
   m4/restrict.m4
   m4/setenv.m4
+  m4/sha1.m4
   m4/signed.m4
   m4/size_max.m4
   m4/socklen.m4
   m4/sockpfaf.m4
   m4/ssize_t.m4
   m4/stdbool.m4
+  m4/stdint.m4
   m4/stdint_h.m4
   m4/strcase.m4
   m4/strchrnul.m4
@@ -211,8 +238,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strndup.m4
   m4/strnlen.m4
   m4/strtok_r.m4
-  m4/timegm.m4
   m4/time_r.m4
+  m4/timegm.m4
   m4/timespec.m4
   m4/tm_gmtoff.m4
   m4/vasnprintf.m4
