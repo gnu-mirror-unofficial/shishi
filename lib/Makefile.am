@@ -18,8 +18,7 @@
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-INCLUDES = @LIBTASN1_CFLAGS@ @LIBGCRYPT_CFLAGS@ \
-	@LIBGNUTLS_CFLAGS@ \
+INCLUDES = @LIBTASN1_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
 	-I$(top_srcdir)/gl -I$(top_builddir)/gl
 
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
@@ -46,7 +45,8 @@ libshishi_la_SOURCES = shishi.h.in internal.h \
 	asn1.c asn1.h kerberos5.c \
 	version.c password.c \
 	utils.c utils.h resolv.c \
-	kerberos5.asn1 shishi.vers
+	kerberos5.asn1 shishi.vers \
+	low-crypto.c
 
 if NULL
 libshishi_la_SOURCES += crypto-null.c
@@ -65,12 +65,6 @@ libshishi_la_SOURCES += crypto-aes.c
 endif
 if ARCFOUR
 libshishi_la_SOURCES += crypto-rc4.c
-endif
-if NETTLE
-libshishi_la_SOURCES += nettle.c
-endif
-if LIBGCRYPT
-libshishi_la_SOURCES += libgcrypt.c
 endif
 if STARTTLS
 libshishi_la_SOURCES += starttls.c starttls.h
