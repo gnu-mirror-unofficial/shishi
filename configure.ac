@@ -207,29 +207,6 @@ AM_CONDITIONAL(ASN1, test "$system_asn1" = "no")
 AC_SUBST(LIBTASN1_LIBS)
 AC_SUBST(LIBTASN1_CFLAGS)
 
-# Check for libgcrypt
-AC_ARG_WITH(libgcrypt,
-  AC_HELP_STRING([--with-libgcrypt], [use libgcrypt for low-level crypto]),
-  libgcrypt=$withval, libgcrypt=no)
-if test "$libgcrypt" != "no" ; then
-	AM_PATH_LIBGCRYPT(1.1.43, :, [
-		libgcrypt=no
-		AC_MSG_WARN([Libgcrypt >= 1.1.43 not found.])
-	])
-fi
-AC_MSG_CHECKING([whether to use libgcrypt])
-AC_MSG_RESULT($libgcrypt)
-if test "$libgcrypt" != "no" ; then
-	AC_DEFINE(USE_GCRYPT, 1, [Define to 1 if you want to use libgcrypt.])
-else
-	CRYPTO_CFLAGS="-I\$(top_srcdir)/crypto"
-	CRYPTO_LIBS="\$(top_builddir)/crypto/libnettle.la"
-fi
-AM_CONDITIONAL(LIBGCRYPT, test "$libgcrypt" != "no")
-AM_CONDITIONAL(NETTLE, test "$libgcrypt" = "no")
-AC_SUBST(CRYPTO_CFLAGS)
-AC_SUBST(CRYPTO_LIBS)
-
 # Check for gnutls.
 AC_ARG_ENABLE(starttls,
 	AC_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
