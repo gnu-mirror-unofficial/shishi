@@ -38,6 +38,7 @@ AM_CONDITIONAL([GL_COND_LIBTOOL], [true])
   gl_GC_HMAC_MD5
   gl_GC_HMAC_SHA1
   gl_GC_MD4
+  gl_GC_MD5
   gl_GC_PBKDF2_SHA1
   gl_GETADDRINFO
   gl_GETDATE
@@ -210,6 +211,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/gc-hmac-md5.m4
   m4/gc-hmac-sha1.m4
   m4/gc-md4.m4
+  m4/gc-md5.m4
   m4/gc-pbkdf2-sha1.m4
   m4/gc.m4
   m4/getaddrinfo.m4
