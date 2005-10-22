@@ -482,3 +482,50 @@ shishi_aes_cts (Shishi * handle, int decryptp,
 			     GCRY_CIPHER_MODE_CBC, decryptp,
 			     key, keylen, iv, ivout, in, inlen, out);
 }
+
+/**
+ * shishi_pbkdf2_sha1:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @P: input password, an octet string
+ * @Plen: length of password, an octet string
+ * @S: input salt, an octet string
+ * @Slen: length of salt, an octet string
+ * @c: iteration count, a positive integer
+ * @dkLen: intended length in octets of the derived key, a positive integer,
+ *   at most (2^32 - 1) * hLen.  The DK array must have room for this many
+ *   characters.
+ * @DK: output derived key, a dkLen-octet string
+ *
+ * Derive key using the PBKDF2 defined in PKCS5.  PBKDF2 applies a
+ * pseudorandom function to derive keys. The length of the derived key
+ * is essentially unbounded. (However, the maximum effective search
+ * space for the derived key may be limited by the structure of the
+ * underlying pseudorandom function, which is this function is always
+ * SHA1.)
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_pbkdf2_sha1 (Shishi * handle,
+		    const char *P, size_t Plen,
+		    const char *S, size_t Slen,
+		    unsigned int c, unsigned int dkLen, char *DK)
+{
+  Gc_rc rc;
+
+  rc = gc_pbkdf2_sha1 (P, Plen, S, Slen, c, DK, dkLen);
+
+  if (rc == GC_PKCS5_INVALID_ITERATION_COUNT)
+    return SHISHI_PKCS5_INVALID_ITERATION_COUNT;
+
+  if (rc == GC_PKCS5_INVALID_DERIVED_KEY_LENGTH)
+    return SHISHI_PKCS5_INVALID_DERIVED_KEY_LENGTH;
+
+  if (rc == GC_PKCS5_DERIVED_KEY_TOO_LONG)
+    return SHISHI_PKCS5_DERIVED_KEY_TOO_LONG;
+
+  if (rc != GC_OK)
+    return SHISHI_CRYPTO_INTERNAL_ERROR;
+
+  return SHISHI_OK;
+}
