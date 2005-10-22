@@ -70,9 +70,6 @@ AC_CHECK_SIZEOF(unsigned char, 1)
 # For gnulib stuff in gl/.
 gl_INIT
 
-# Default to using libgcrypt through gc.
-libgcrypt=yes
-
 # Checks for library functions.
 AC_CHECK_FUNCS(signal select ngettext gethostbyname)
 AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
