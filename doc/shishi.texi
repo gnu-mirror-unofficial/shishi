@@ -214,10 +214,11 @@ This is used to login locally on a machine.
 @item KDC addresses located using DNS SRV RRs.
 
 @item Modularized low-level crypto interface.
-Currently Nettle and Libgcrypt are supported.  If you wish to add
+Currently Gnulib and Libgcrypt are supported.  If you wish to add
 support for another low-level cryptographic library, you only have to
-implement a few APIs to DES, AES, MD5, SHA1, HMAC, etc, look at
-@file{lib/nettle.c} or @file{lib/libgcrypt.c} as a starting pointer.
+implement a few APIs for DES, AES, MD5, SHA1, HMAC, etc. Look at
+@file{gl/gc-gnulib.c} or @file{gl/gc-libgcrypt.c} as a starting
+pointer.
 
 @end itemize
 
@@ -4180,10 +4181,10 @@ IV within the context automatically.
 
 Also included in Shishi is an interface to the really low-level
 cryptographic primitives.  They map directly on the underlying
-cryptographic library used (e.g., Nettle) and is used internally by
-Shishi.
+cryptographic library used (i.e., Gnulib or Libgcrypt) and is used
+internally by Shishi.
 
-@include texi/nettle.c.texi
+@include texi/low-crypto.c.texi
 
 
 @node X.509 Functions
@@ -4419,9 +4420,9 @@ be found at @url{http://josefsson.org/gss/}.
 @node Acknowledgements
 @chapter Acknowledgements
 
-Shishi uses Libtasn1 by Fabio Fiorina, Libnettle by Niels M@"oller,
-Libgcrypt and Libgpg-error by Werner Koch, Libidn by Simon Josefsson,
-cvs2cl by Karl Fogel, and gdoc by Michael Zucchi.
+Shishi uses Libtasn1 by Fabio Fiorina, Libgcrypt and Libgpg-error by
+Werner Koch, Libidn by Simon Josefsson, cvs2cl by Karl Fogel, and gdoc
+by Michael Zucchi.
 
 Several GNU packages simplified development considerably, those
 packages include Autoconf, Automake, Libtool, Gnulib, Gettext, Indent,
