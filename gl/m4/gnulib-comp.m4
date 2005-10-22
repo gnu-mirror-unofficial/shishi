@@ -30,6 +30,7 @@ AM_CONDITIONAL([GL_COND_LIBTOOL], [true])
   gl_FUNC_ALLOCA
   gl_ALLOCSA
   gl_FUNC_BASE64
+  gl_CRC
   gl_ERROR
   dnl gl_USE_SYSTEM_EXTENSIONS must be added quite early to configure.ac.
   gl_GC
@@ -96,6 +97,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/asprintf.c
   lib/base64.c
   lib/base64.h
+  lib/crc.c
+  lib/crc.h
   lib/des.c
   lib/des.h
   lib/error.c
@@ -201,6 +204,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/base64.m4
   m4/bison.m4
   m4/clock_time.m4
+  m4/crc.m4
   m4/des.m4
   m4/eealloc.m4
   m4/eoverflow.m4
