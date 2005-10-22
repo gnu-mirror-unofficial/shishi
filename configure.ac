@@ -352,7 +352,7 @@ AC_MSG_NOTICE([user database root path $DBDIR])
 AC_DEFINE([xalloc_die], [shishi_xalloc_die], [Fix namespace of xalloc_die.])
 
 AC_CONFIG_FILES(Makefile po/Makefile.in \
-	asn1/Makefile crypto/Makefile examples/Makefile \
+	asn1/Makefile examples/Makefile \
 	lib/Makefile lib/shishi.h db/Makefile src/Makefile tests/Makefile \
 	doc/Makefile doc/reference/Makefile \
 	extra/Makefile extra/pam_shishi/Makefile extra/rsh-redone/Makefile \
