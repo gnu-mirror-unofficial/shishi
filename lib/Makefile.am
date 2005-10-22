@@ -19,7 +19,7 @@
 # MA 02110-1301, USA.
 
 INCLUDES = @LIBTASN1_CFLAGS@ @LIBGCRYPT_CFLAGS@ \
-	@CRYPTO_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
+	@LIBGNUTLS_CFLAGS@ \
 	-I$(top_srcdir)/gl -I$(top_builddir)/gl
 
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
@@ -46,7 +46,8 @@ libshishi_la_SOURCES = shishi.h.in internal.h \
 	asn1.c asn1.h kerberos5.c \
 	version.c password.c \
 	utils.c utils.h resolv.c \
-	kerberos5.asn1 shishi.vers
+	kerberos5.asn1 shishi.vers \
+	libgcrypt.c
 
 if NULL
 libshishi_la_SOURCES += crypto-null.c
@@ -66,17 +67,11 @@ endif
 if ARCFOUR
 libshishi_la_SOURCES += crypto-rc4.c
 endif
-if NETTLE
-libshishi_la_SOURCES += nettle.c
-endif
-if LIBGCRYPT
-libshishi_la_SOURCES += libgcrypt.c
-endif
 if STARTTLS
 libshishi_la_SOURCES += starttls.c starttls.h
 endif
 libshishi_la_LIBADD = ../gl/libgnu.la @LIB_CLOCK_GETTIME@ \
-	@LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
+	@LIBGCRYPT_LIBS@ \
 	@LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ @LTLIBIDN@ \
 	@LTLIBINTL@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
