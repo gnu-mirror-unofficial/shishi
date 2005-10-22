@@ -26,13 +26,18 @@ AC_DEFUN([gl_EARLY],
 # "Check for header files, types and library functions".
 AC_DEFUN([gl_INIT],
 [
+AM_CONDITIONAL([GL_COND_LIBTOOL], [true])
   gl_FUNC_ALLOCA
   gl_ALLOCSA
   gl_FUNC_BASE64
   gl_ERROR
   dnl gl_USE_SYSTEM_EXTENSIONS must be added quite early to configure.ac.
   gl_GC
+  gl_GC_ARCFOUR
+  gl_GC_DES
+  gl_GC_HMAC_MD5
   gl_GC_HMAC_SHA1
+  gl_GC_MD4
   gl_GC_PBKDF2_SHA1
   gl_GETADDRINFO
   gl_GETDATE
@@ -84,10 +89,14 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/allocsa.c
   lib/allocsa.h
   lib/allocsa.valgrind
+  lib/arcfour.c
+  lib/arcfour.h
   lib/asnprintf.c
   lib/asprintf.c
   lib/base64.c
   lib/base64.h
+  lib/des.c
+  lib/des.h
   lib/error.c
   lib/error.h
   lib/gai_strerror.c
@@ -117,11 +126,16 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gettext.h
   lib/gettime.c
   lib/gettimeofday.c
+  lib/hmac-md5.c
   lib/hmac-sha1.c
   lib/hmac.h
   lib/mbchar.c
   lib/mbchar.h
   lib/mbuiter.h
+  lib/md4.c
+  lib/md4.h
+  lib/md5.c
+  lib/md5.h
   lib/memchr.c
   lib/memxor.c
   lib/memxor.h
@@ -182,14 +196,20 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xvasprintf.h
   m4/alloca.m4
   m4/allocsa.m4
+  m4/arcfour.m4
   m4/base64.m4
   m4/bison.m4
   m4/clock_time.m4
+  m4/des.m4
   m4/eealloc.m4
   m4/eoverflow.m4
   m4/error.m4
   m4/extensions.m4
+  m4/gc-arcfour.m4
+  m4/gc-des.m4
+  m4/gc-hmac-md5.m4
   m4/gc-hmac-sha1.m4
+  m4/gc-md4.m4
   m4/gc-pbkdf2-sha1.m4
   m4/gc.m4
   m4/getaddrinfo.m4
@@ -203,6 +223,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/getsubopt.m4
   m4/gettime.m4
   m4/gettimeofday.m4
+  m4/hmac-md5.m4
   m4/hmac-sha1.m4
   m4/intmax_t.m4
   m4/inttypes.m4
@@ -215,6 +236,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbchar.m4
   m4/mbiter.m4
   m4/mbrtowc.m4
+  m4/md4.m4
+  m4/md5.m4
   m4/memchr.m4
   m4/memxor.m4
   m4/mktime.m4

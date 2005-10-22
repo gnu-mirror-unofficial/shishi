@@ -1,4 +1,4 @@
-/* hmac-sha1.c -- hashed message authentication codes
+/* hmac-md5.c -- hashed message authentication codes
    Copyright (C) 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 #include "hmac.h"
 
 #include "memxor.h"
-#include "sha1.h"
+#include "md5.h"
 
 #include <string.h>
 
@@ -32,52 +32,52 @@
 #define OPAD 0x5c
 
 int
-hmac_sha1 (const void *key, size_t keylen,
-	   const void *in, size_t inlen, void *resbuf)
+hmac_md5 (const void *key, size_t keylen,
+	  const void *in, size_t inlen, void *resbuf)
 {
-  struct sha1_ctx inner;
-  struct sha1_ctx outer;
-  char optkeybuf[20];
+  struct md5_ctx inner;
+  struct md5_ctx outer;
+  char optkeybuf[16];
   char block[64];
-  char innerhash[20];
+  char innerhash[16];
 
   /* Reduce the key's size, so that it becomes <= 64 bytes large.  */
 
   if (keylen > 64)
     {
-      struct sha1_ctx keyhash;
+      struct md5_ctx keyhash;
 
-      sha1_init_ctx (&keyhash);
-      sha1_process_bytes (key, keylen, &keyhash);
-      sha1_finish_ctx (&keyhash, optkeybuf);
+      md5_init_ctx (&keyhash);
+      md5_process_bytes (key, keylen, &keyhash);
+      md5_finish_ctx (&keyhash, optkeybuf);
 
       key = optkeybuf;
-      keylen = 20;
+      keylen = 16;
     }
 
   /* Compute INNERHASH from KEY and IN.  */
 
-  sha1_init_ctx (&inner);
+  md5_init_ctx (&inner);
 
   memset (block, IPAD, sizeof (block));
   memxor (block, key, keylen);
 
-  sha1_process_block (block, 64, &inner);
-  sha1_process_bytes (in, inlen, &inner);
+  md5_process_block (block, 64, &inner);
+  md5_process_bytes (in, inlen, &inner);
 
-  sha1_finish_ctx (&inner, innerhash);
+  md5_finish_ctx (&inner, innerhash);
 
   /* Compute result from KEY and INNERHASH.  */
 
-  sha1_init_ctx (&outer);
+  md5_init_ctx (&outer);
 
   memset (block, OPAD, sizeof (block));
   memxor (block, key, keylen);
 
-  sha1_process_block (block, 64, &outer);
-  sha1_process_bytes (innerhash, 20, &outer);
+  md5_process_block (block, 64, &outer);
+  md5_process_bytes (innerhash, 16, &outer);
 
-  sha1_finish_ctx (&outer, resbuf);
+  md5_finish_ctx (&outer, resbuf);
 
   return 0;
 }
