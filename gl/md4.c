@@ -240,7 +240,7 @@ md4_process_bytes (const void *buffer, size_t len, struct md4_ctx *ctx)
       if (UNALIGNED_P (buffer))
 	while (len > 64)
 	  {
-	    md4_process_block (memcpy (ctx->buffer, buffer, 16), 64, ctx);
+	    md4_process_block (memcpy (ctx->buffer, buffer, 64), 64, ctx);
 	    buffer = (const char *) buffer + 64;
 	    len -= 64;
 	  }
