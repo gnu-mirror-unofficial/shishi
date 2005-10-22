@@ -23,8 +23,7 @@ EXTRA_DIST = utils.c shisa.sh
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
 	-I$(top_srcdir)/lib -I../lib
 AM_LDFLAGS = -no-install
-LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ \
-	@LTLIBINTL@ ../gl/libgnu.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
+LDADD = @LTLIBINTL@ ../gl/libgnu.la @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
 	../lib/libshishi.la
 
 check_PROGRAMS = authenticator crypto gztime priv safe \
