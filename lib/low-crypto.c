@@ -21,6 +21,7 @@
 
 #include "internal.h"
 #include "gc.h"
+#include "arcfour.h"
 #include <gcrypt.h>
 #include "crc.h"
 
@@ -348,60 +349,6 @@ libgcrypt_dencrypt (Shishi * handle, int algo, int flags, int mode,
   return SHISHI_OK;
 }
 
-/* BEGIN: Taken from Nettle arcfour.h and arcfour.c */
-struct arcfour_ctx
-{
-  uint8_t S[256];
-  uint8_t i;
-  uint8_t j;
-};
-
-#define SWAP(a,b) do { int _t = a; a = b; b = _t; } while(0)
-
-static void
-arcfour_set_key (struct arcfour_ctx *ctx,
-		 unsigned length, const uint8_t * key)
-{
-  unsigned i, j, k;
-
-  /* Initialize context */
-  for (i = 0; i < 256; i++)
-    ctx->S[i] = i;
-
-  for (i = j = k = 0; i < 256; i++)
-    {
-      j += ctx->S[i] + key[k];
-      j &= 0xff;
-      SWAP (ctx->S[i], ctx->S[j]);
-      /* Repeat key as needed */
-      k = (k + 1) % length;
-    }
-  ctx->i = ctx->j = 0;
-}
-
-static void
-arcfour_crypt (struct arcfour_ctx *ctx,
-	       unsigned length, uint8_t * dst, const uint8_t * src)
-{
-  register uint8_t i, j;
-
-  i = ctx->i;
-  j = ctx->j;
-  while (length--)
-    {
-      i++;
-      i &= 0xff;
-      j += ctx->S[i];
-      j &= 0xff;
-      SWAP (ctx->S[i], ctx->S[j]);
-      *dst++ = *src++ ^ ctx->S[(ctx->S[i] + ctx->S[j]) & 0xff];
-    }
-  ctx->i = i;
-  ctx->j = j;
-}
-
-/* END: Taken from Nettle arcfour.h and arcfour.c */
-
 /**
  * shishi_arcfour:
  * @handle: shishi handle as allocated by shishi_init().
@@ -430,16 +377,16 @@ shishi_arcfour (Shishi * handle, int decryptp,
 		const char iv[258], char *ivout[258],
 		const char *in, size_t inlen, char **out)
 {
-  struct arcfour_ctx ctx;
+  arcfour_context ctx;
 
   *out = xmalloc (inlen);
 
   if (iv)
     memcpy (&ctx, iv, sizeof (ctx));
   else
-    arcfour_set_key (&ctx, keylen, key);
+    arcfour_setkey (&ctx, key, keylen);
 
-  arcfour_crypt (&ctx, inlen, *out, in);
+  arcfour_stream (&ctx, in, *out, inlen);
 
   if (ivout)
     {
