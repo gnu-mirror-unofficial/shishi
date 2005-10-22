@@ -46,8 +46,7 @@ libshishi_la_SOURCES = shishi.h.in internal.h \
 	asn1.c asn1.h kerberos5.c \
 	version.c password.c \
 	utils.c utils.h resolv.c \
-	kerberos5.asn1 shishi.vers \
-	libgcrypt.c
+	kerberos5.asn1 shishi.vers
 
 if NULL
 libshishi_la_SOURCES += crypto-null.c
@@ -66,6 +65,12 @@ libshishi_la_SOURCES += crypto-aes.c
 endif
 if ARCFOUR
 libshishi_la_SOURCES += crypto-rc4.c
+endif
+if NETTLE
+libshishi_la_SOURCES += nettle.c
+endif
+if LIBGCRYPT
+libshishi_la_SOURCES += libgcrypt.c
 endif
 if STARTTLS
 libshishi_la_SOURCES += starttls.c starttls.h
