@@ -12,6 +12,8 @@ See the end for copying conditions.
 
 ** Updated gnulib compatibility files.
 
+** Minor bugfixes and improvements.
+
 * Version 0.0.22 (released 2005-08-10)
 
 ** Fix build error when STARTTLS support is enabled.
