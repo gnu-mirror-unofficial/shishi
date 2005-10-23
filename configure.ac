@@ -104,49 +104,8 @@ AC_MSG_RESULT($enable_pam)
 AC_ARG_ENABLE(ipv6,
   AC_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
 if test "$enable_ipv6" != "no"; then
-  enable_ipv6=yes
-  AC_CHECK_DECLS([AF_INET6, IN6ADDR_ANY_INIT],,enable_ipv6=no,[
-  #ifdef HAVE_SYS_TYPES_H
-  #include <sys/types.h>
-  #endif
-  #ifdef HAVE_SYS_SOCKET_H
-  #include <sys/socket.h>
-  #endif
-  #ifdef HAVE_NETINET_IN_H
-  #include <netinet/in.h>
-  #endif
-  #ifdef HAVE_NETINET_IN6_H
-  #include <netinet/in6.h>
-  #endif
-  ])
-  AC_CHECK_TYPE(struct sockaddr_in6,,enable_ipv6=no,[
-  #ifdef HAVE_SYS_TYPES_H
-  #include <sys/types.h>
-  #endif
-  #ifdef HAVE_SYS_SOCKET_H
-  #include <sys/socket.h>
-  #endif
-  #ifdef HAVE_NETINET_IN_H
-  #include <netinet/in.h>
-  #endif
-  #ifdef HAVE_NETINET_IN6_H
-  #include <netinet/in6.h>
-  #endif
-  ])
-  AC_CHECK_FUNCS([in6addr_any],,enable_ipv6=no,[
-  #ifdef HAVE_SYS_TYPES_H
-  #include <sys/types.h>
-  #endif
-  #ifdef HAVE_SYS_SOCKET_H
-  #include <sys/socket.h>
-  #endif
-  #ifdef HAVE_NETINET_IN_H
-  #include <netinet/in.h>
-  #endif
-  #ifdef HAVE_NETINET_IN6_H
-  #include <netinet/in6.h>
-  #endif
-  ])
+  AC_REQUIRE([gl_SOCKET_FAMILIES])
+  enable_ipv6=$gl_cv_socket_ipv6
 fi
 if test "$enable_ipv6" != "no"; then
   AC_DEFINE(WITH_IPV6, 1, [Define to 1 if you want IPv6.])
