@@ -104,7 +104,7 @@ AC_MSG_RESULT($enable_pam)
 AC_ARG_ENABLE(ipv6,
   AC_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
 if test "$enable_ipv6" != "no"; then
-  AC_REQUIRE([gl_SOCKET_FAMILIES])
+  gl_SOCKET_FAMILIES
   enable_ipv6=$gl_cv_socket_ipv6
 fi
 if test "$enable_ipv6" != "no"; then
