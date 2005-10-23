@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.23 (unreleased)
 
+** Replace internal crypto code with modules from gnulib.
+
 ** Added shared library versioning script, suggested by Steve Langasek.
 
 ** Improved libidn detection code.
