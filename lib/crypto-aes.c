@@ -1,5 +1,5 @@
 /* crypto-aes.c --- AES crypto functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -82,7 +82,7 @@ aes_string_to_key (Shishi * handle,
 		   const char *salt,
 		   size_t saltlen, const char *parameter, Shishi_key * outkey)
 {
-  unsigned char key[256 / 8];
+  char key[256 / 8];
   int keylen = shishi_key_length (outkey);
   Shishi_key *tmpkey;
   int iterations = 0x00001000;
