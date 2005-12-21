@@ -24,7 +24,8 @@ m4
 missing
 mkinstalldirs
 po
-shishi-*
+shishi-*.tar.gz
+shishi-*.tar.gz.sig
 shisa.conf
 shishi.conf
 shishi.pc
