@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -69,9 +69,8 @@ endif
 if STARTTLS
 libshishi_la_SOURCES += starttls.c starttls.h
 endif
-libshishi_la_LIBADD = ../gl/libgnu.la @LIB_CLOCK_GETTIME@ \
-	@LIBGCRYPT_LIBS@ \
-	@LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ @LTLIBIDN@ \
+libshishi_la_LIBADD = ../gl/libgnu.la @LIB_CLOCK_GETTIME@		\
+	@LTLIBGCRYPT@ @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ @LTLIBIDN@	\
 	@LTLIBINTL@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
