@@ -51,7 +51,7 @@ if STARTTLS
 shishid_SOURCES += starttls.c resume.c
 endif
 shishid_LDADD = ../gl/libgnu.la ../lib/libshishi.la \
-	../db/libshisa.la @LIBGNUTLS_LIBS@ @LTLIBINTL@
+	../db/libshisa.la @LTLIBGNUTLS@ @LTLIBINTL@
 shishid_cmd.c shishid_cmd.h: shishid.ggo
 	gengetopt --no-handle-help --no-handle-error \
 		 --input $< --file-name shishid_cmd
