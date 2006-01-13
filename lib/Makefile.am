@@ -18,8 +18,7 @@
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-INCLUDES = @LIBTASN1_CFLAGS@ @LIBGNUTLS_CFLAGS@ \
-	-I$(top_srcdir)/gl -I$(top_builddir)/gl
+INCLUDES = @LIBTASN1_CFLAGS@ -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
@@ -70,7 +69,7 @@ if STARTTLS
 libshishi_la_SOURCES += starttls.c starttls.h
 endif
 libshishi_la_LIBADD = ../gl/libgnu.la @LIB_CLOCK_GETTIME@		\
-	@LTLIBGCRYPT@ @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ @LTLIBIDN@	\
+	@LTLIBGCRYPT@ @LIBTASN1_LIBS@ @LTLIBGNUTLS@ @LTLIBIDN@	\
 	@LTLIBINTL@
 libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 

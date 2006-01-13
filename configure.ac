@@ -171,7 +171,14 @@ AC_ARG_ENABLE(starttls,
 	AC_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
 	starttls=$enableval, starttls=yes)
 if test "$starttls" != "no"; then
-	AM_PATH_LIBGNUTLS(1.0.0, starttls=yes, starttls=no)
+  AC_LIB_HAVE_LINKFLAGS(gnutls,, [#include <gnutls.h>],
+    [gnutls_check_version (0);])
+  if test "$ac_cv_gnutls" != yes; then
+    starttls=no
+    AC_MSG_WARN([GnuTLS not found.  STARTTLS disabled.])
+  fi
+else
+  starttls=yes
 fi
 AC_MSG_CHECKING([if non-standard STARTTLS support should be enabled])
 AC_MSG_RESULT($starttls)

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -19,7 +19,7 @@
 # MA 02110-1301, USA.
 
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
-	-I$(top_srcdir)/db -I../lib @LIBGNUTLS_CFLAGS@
+	-I$(top_srcdir)/db -I../lib
 localedir = $(datadir)/locale
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\"
