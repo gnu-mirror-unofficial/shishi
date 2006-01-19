@@ -72,6 +72,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_STRNDUP
   gl_FUNC_STRNLEN
   gl_FUNC_STRTOK_R
+  gl_HEADER_SYS_SOCKET
   gl_TIME_R
   gl_FUNC_TIMEGM
   gl_TIMESPEC
@@ -158,6 +159,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/sha1.c
   lib/sha1.h
   lib/size_max.h
+  lib/socket_.h
   lib/stdbool_.h
   lib/stdint_.h
   lib/strcase.h
@@ -268,6 +270,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strndup.m4
   m4/strnlen.m4
   m4/strtok_r.m4
+  m4/sys_socket_h.m4
   m4/time_r.m4
   m4/timegm.m4
   m4/timespec.m4
