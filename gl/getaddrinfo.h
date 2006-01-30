@@ -26,9 +26,9 @@
 # include <sys/types.h>
 /* Get all getaddrinfo related declarations, if available.  */
 # include <sys/socket.h>
-# ifdef HAVE_NETDB_H
-#  include <netdb.h>
-# endif
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
+#endif
 
 # ifndef HAVE_STRUCT_ADDRINFO
 
@@ -67,10 +67,18 @@ struct addrinfo
 #  define EAI_FAMILY	  -6	/* `ai_family' not supported.  */
 #  define EAI_SOCKTYPE	  -7	/* `ai_socktype' not supported.  */
 #  define EAI_SERVICE	  -8	/* SERVICE not supported for `ai_socktype'.  */
-#  define EAI_ADDRFAMILY  -9	/* Address family for NAME not supported.  */
 #  define EAI_MEMORY	  -10	/* Memory allocation failure.  */
-#  define EAI_SYSTEM	  -11	/* System error returned in `errno'.  */
 #  define EAI_OVERFLOW	  -12	/* Argument buffer overflow.  */
+#endif
+# ifndef EAI_ADDRFAMILY
+/* Not defined on mingw32.  XXX May be incorrect? Perhaps it is never
+   returned? */
+#  define EAI_ADDRFAMILY  -9	/* Address family for NAME not supported.  */
+# endif
+# ifndef EAI_SYSTEM
+/* Not defined on mingw32.  XXX May be incorrect? Perhaps it is never
+   returned? */
+#  define EAI_SYSTEM	  -11	/* System error returned in `errno'.  */
 # endif
 
 # ifdef __USE_GNU

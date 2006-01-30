@@ -44,9 +44,7 @@ static struct
   }
 values[] =
   {
-#ifdef EAI_ADDRFAMILY
     { EAI_ADDRFAMILY, N_("Address family for hostname not supported") },
-#endif
     { EAI_AGAIN, N_("Temporary failure in name resolution") },
     { EAI_BADFLAGS, N_("Bad value for ai_flags") },
     { EAI_FAIL, N_("Non-recoverable failure in name resolution") },
@@ -56,9 +54,7 @@ values[] =
     { EAI_NONAME, N_("Name or service not known") },
     { EAI_SERVICE, N_("Servname not supported for ai_socktype") },
     { EAI_SOCKTYPE, N_("ai_socktype not supported") },
-#ifdef EAI_ADDRFAMILY
     { EAI_SYSTEM, N_("System error") },
-#endif
 #ifdef __USE_GNU
     { EAI_INPROGRESS, N_("Processing request in progress") },
     { EAI_CANCELED, N_("Request canceled") },
