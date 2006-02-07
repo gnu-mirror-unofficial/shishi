@@ -41,20 +41,20 @@ shishi.1: $(top_srcdir)/src/shishi.c $(top_srcdir)/src/shishi.ggo \
 		$(top_srcdir)/configure.ac
 	$(HELP2MAN) \
 		--name="Shishi client tool" \
-		--output=$@ $(top_builddir)/src/shishi
+		--output=$@ $(top_builddir)/src/shishi$(EXEEXT)
 
 shisa.1: $(top_srcdir)/src/shisa.c $(top_srcdir)/src/shisa.ggo \
 		$(top_srcdir)/configure.ac
 	$(HELP2MAN) \
 		--name="Shishi database interface" \
 		--info-page=shishi \
-		--output=$@ $(top_builddir)/src/shisa
+		--output=$@ $(top_builddir)/src/shisa$(EXEEXT)
 
 shishid.1: $(top_srcdir)/src/shishid.c $(top_srcdir)/src/shishid.ggo \
 		$(top_srcdir)/configure.ac
 	$(HELP2MAN) \
 		--name="Shishi KDC server" \
-		--output=$@ $(top_builddir)/src/shishid
+		--output=$@ $(top_builddir)/src/shishid$(EXEEXT)
 
 shishi-api-error-labels.texi: $(top_srcdir)/lib/error.c
 	$(PERL) $(srcdir)/gdoc-error $^ > $@
