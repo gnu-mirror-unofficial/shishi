@@ -1,5 +1,5 @@
 /* krberror.c --- Functions related to KRB-ERROR packet.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -20,9 +20,6 @@
  */
 
 #include "internal.h"
-
-/* Get xgettimeofday. */
-#include "utils.h"
 
 /* Get _shishi_print_armored_data, etc. */
 #include "diskio.h"
@@ -49,7 +46,9 @@ shishi_krberror (Shishi * handle)
   struct timezone tz;
   int rc;
 
-  xgettimeofday (&tv, &tz);
+  rc = gettimeofday (tv, tz);
+  if (rc != 0)
+    return NULL;
 
   krberror = shishi_asn1_krberror (handle);
   if (!krberror)

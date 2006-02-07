@@ -1,5 +1,5 @@
 /* utils.c --- Auxilliary help functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -117,21 +117,6 @@ xtime (time_t * t)
     }
 
   return now;
-}
-
-int
-xgettimeofday (struct timeval *tv, struct timezone *tz)
-{
-  int rc;
-
-  rc = gettimeofday (tv, tz);
-  if (rc != 0)
-    {
-      perror ("gettimeofday");
-      abort ();
-    }
-
-  return rc;
 }
 
 time_t

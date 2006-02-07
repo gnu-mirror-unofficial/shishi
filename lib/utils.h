@@ -1,5 +1,5 @@
 /* utils.h --- Auxilliary help prototypes.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -24,4 +24,3 @@ extern void _shishi_hexprint (const char *str, int len);
 extern void _shishi_binprint (const char *str, int len);
 extern void _shishi_bin7print (const char *str, int len);
 extern time_t xtime (time_t * t);
-extern int xgettimeofday (struct timeval *tv, struct timezone *tz);
