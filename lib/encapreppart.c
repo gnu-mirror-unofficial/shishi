@@ -43,7 +43,7 @@ shishi_encapreppart (Shishi * handle)
   uint32_t seqnr;
 
   res = gettimeofday (&tv, NULL);
-  if (res != 0)
+  if (res)
     return NULL;
 
   node = shishi_asn1_encapreppart (handle);
