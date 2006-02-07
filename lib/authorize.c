@@ -1,5 +1,5 @@
 /* authorize.c --- Authorization to services of authenticated principals.
- * Copyright (C) 2003, 2004  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -46,7 +46,7 @@ shishi_authorize_k5login (Shishi * handle, const char *principal,
 
   pwd = getpwnam (authzname);
   if (pwd == NULL)
-    return authorized;
+    return 0;
 
   asprintf (&ficname, "%s%s", pwd->pw_dir, ".k5login");
 
@@ -58,17 +58,15 @@ shishi_authorize_k5login (Shishi * handle, const char *principal,
   /* Owner should be user or root */
   if ((sta.st_uid != pwd->pw_uid) && (sta.st_uid != 0))
     {
-      free (pwd);
       free (ficname);
-      return authorized;
+      return 0;
     }
 
   fic = fopen (ficname, "r");
   if (fic == NULL)
     {
-      free (pwd);
       free (ficname);
-      return authorized;
+      return 0;
     }
 
   while (!feof (fic))
@@ -85,7 +83,6 @@ shishi_authorize_k5login (Shishi * handle, const char *principal,
     }
 
   fclose (fic);
-  free (pwd);
   free (ficname);
   free (line);
 
