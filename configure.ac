@@ -69,6 +69,7 @@ AC_CHECK_SIZEOF(unsigned char, 1)
 
 # For gnulib stuff in gl/.
 libgcrypt=yes
+AC_DEFINE(OK_TO_USE_1S_CLOCK, 1, [Define to 1 to make gettime work.])
 gl_INIT
 
 # Checks for library functions.
