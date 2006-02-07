@@ -1,5 +1,5 @@
 /* shishi.h --- Header file for Shishi library.                       -*- c -*-
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -83,7 +83,8 @@ typedef enum
   SHISHI_PRIV_BAD_KEYTYPE = 48,
   SHISHI_FILE_ERROR = 49,
   SHISHI_ENCAPREPPART_BAD_KEYTYPE = 50,
-  SHISHI_LAST_ERROR = 50
+  SHISHI_GETTIMEOFDAY_ERROR = 51,
+  SHISHI_LAST_ERROR = 51
 }
 Shishi_rc;
 
