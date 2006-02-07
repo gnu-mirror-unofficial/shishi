@@ -43,10 +43,9 @@ shishi_krberror (Shishi * handle)
 {
   Shishi_asn1 krberror;
   struct timeval tv;
-  struct timezone tz;
   int rc;
 
-  rc = gettimeofday (tv, tz);
+  rc = gettimeofday (tv, NULL);
   if (rc != 0)
     return NULL;
 

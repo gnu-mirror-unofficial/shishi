@@ -1,5 +1,5 @@
 /* priv.c --- Application data privacy protection.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -47,7 +47,6 @@ shishi_priv (Shishi * handle, Shishi_priv ** priv)
 {
   Shishi_priv *lpriv;
   struct timeval tv;
-  struct timezone tz;
   char *usec;
   int rc;
 
@@ -84,7 +83,9 @@ shishi_priv (Shishi * handle, Shishi_priv ** priv)
   if (rc != SHISHI_OK)
     return rc;
 
-  gettimeofday (&tv, &tz);
+  rc = gettimeofday (&tv, NULL);
+  if (rc != 0)
+    return SHISHI_GETTIMEOFDAY_ERROR;
   asprintf (&usec, "%ld", tv.tv_usec % 1000000);
   rc = shishi_asn1_write (handle, lpriv->encprivpart, "usec", usec, 0);
   free (usec);
