@@ -1,5 +1,5 @@
 /* principal.c --- Get and set default principal.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -33,15 +33,17 @@
 char *
 shishi_principal_default_guess (void)
 {
+#if HAVE_GETPWUID
   uid_t uid;
   struct passwd *pw;
 
   uid = getuid ();
   pw = getpwuid (uid);
 
-  if (pw)
+  if (pw && pw->pw_name)
     return xstrdup (pw->pw_name);
   else
+#endif
     return xstrdup ("user");
 }
 
