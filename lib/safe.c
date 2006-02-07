@@ -1,5 +1,5 @@
 /* safe.c --- Application data integrity protection.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -46,7 +46,6 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
 {
   Shishi_safe *lsafe;
   struct timeval tv;
-  struct timezone tz;
   char *usec;
   int rc;
 
@@ -75,7 +74,10 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
   if (rc != SHISHI_OK)
     return rc;
 
-  gettimeofday (&tv, &tz);
+  rc = gettimeofday (&tv, NULL);
+  if (!rc)
+    return SHISHI_GETTIMEOFDAY_ERROR;
+
   asprintf (&usec, "%ld", tv.tv_usec % 1000000);
   rc = shishi_asn1_write (handle, lsafe->safe, "safe-body.usec", usec, 0);
   free (usec);
