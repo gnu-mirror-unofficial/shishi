@@ -1,5 +1,5 @@
 /* authenticator.c --- Functions for authenticators.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -41,8 +41,11 @@ shishi_authenticator (Shishi * handle)
   int res;
   Shishi_asn1 node = NULL;
   struct timeval tv;
-  struct timezone tz;
   uint32_t seqnr;
+
+  res = gettimeofday (&tv, NULL);
+  if (res != 0)
+    return NULL;
 
   node = shishi_asn1_authenticator (handle);
   if (!node)
@@ -62,7 +65,6 @@ shishi_authenticator (Shishi * handle)
   if (res != SHISHI_OK)
     goto error;
 
-  gettimeofday (&tv, &tz);
   res = shishi_authenticator_cusec_set (handle, node, tv.tv_usec % 1000000);
   if (res != SHISHI_OK)
     goto error;
