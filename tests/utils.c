@@ -1,5 +1,5 @@
 /* utils.c	Shishi self tests utilities.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -54,9 +54,7 @@
 #include <sys/select.h>
 #endif
 
-#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
-#endif
 
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>

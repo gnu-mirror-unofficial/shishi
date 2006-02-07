@@ -1,5 +1,5 @@
 /* kdc.h --- Header file with common definitions for Shishid.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -67,9 +67,7 @@
 #endif
 
 /* Get accept, sendto, etc. */
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
-#endif
+#include <sys/socket.h>
 
 /* Used for the backlog argument to listen. */
 #ifndef SOMAXCONN
