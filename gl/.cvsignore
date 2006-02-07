@@ -8,3 +8,4 @@ sysexits.h
 *.la
 .libs
 getdate.c
+sys
