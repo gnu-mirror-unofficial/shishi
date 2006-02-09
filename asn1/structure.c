@@ -1,22 +1,23 @@
 /*
+ *      Copyright (C) 2004, 2006 Free Software Foundation
  *      Copyright (C) 2002  Fabio Fiorina
- *      Copyright (C) 2004  Simon Josefsson
  *
- * This file is part of LIBASN1.
+ * This file is part of LIBTASN1.
  *
- * The LIBTASN1 library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
+ * The LIBTASN1 library is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA
  */
 
 
@@ -362,7 +363,8 @@ _asn1_copy_structure3(node_asn *source_node)
 	case TYPE_OCTET_STRING: case TYPE_BIT_STRING: case TYPE_GENERALSTRING:
 	case TYPE_INTEGER:
 	  len2=-1;
-	  len=_asn1_get_length_der(p_s->value,&len2);
+	  len=_asn1_get_length_der(p_s->value,p_s->value_len,&len2);
+	  if (len < 0) return NULL;
 	  _asn1_set_value(p_d,p_s->value,len+len2);
 	  break;
 	default:
@@ -726,17 +728,19 @@ asn1_print_structure(FILE *out,ASN1_TYPE structure,const char *name,int mode)
       case TYPE_INTEGER:
 	if(p->value){
 	  len2=-1;
-	  len=_asn1_get_length_der(p->value,&len2);
+	  len=_asn1_get_length_der(p->value,p->value_len,&len2);
 	  fprintf(out,"  value:0x");
-	  for(k=0;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
+	  if (len > 0)
+	    for(k=0;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
 	}
 	break;
       case TYPE_ENUMERATED:
 	if(p->value){
 	  len2=-1;
-	  len=_asn1_get_length_der(p->value,&len2);
+	  len=_asn1_get_length_der(p->value,p->value_len,&len2);
 	  fprintf(out,"  value:0x");
-	  for(k=0;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
+	  if (len > 0)
+	    for(k=0;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
 	}
 	break;
       case TYPE_TIME:
@@ -751,25 +755,30 @@ asn1_print_structure(FILE *out,ASN1_TYPE structure,const char *name,int mode)
       case TYPE_BIT_STRING:
 	if(p->value){
 	  len2=-1;
-	  len=_asn1_get_length_der(p->value,&len2);
-	  fprintf(out,"  value(%i):",(len-1)*8-(p->value[len2]));
-	  for(k=1;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
+	  len=_asn1_get_length_der(p->value,p->value_len,&len2);
+	  if (len>0)
+	    {
+	      fprintf(out,"  value(%i):",(len-1)*8-(p->value[len2]));
+	      for(k=1;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
+	    }
 	}
 	break;
       case TYPE_OCTET_STRING:
 	if(p->value){
 	  len2=-1;
-	  len=_asn1_get_length_der(p->value,&len2);
+	  len=_asn1_get_length_der(p->value,p->value_len,&len2);
 	  fprintf(out,"  value:");
-	  for(k=0;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
+	  if (len>0)
+	    for(k=0;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
 	}
 	break;
       case TYPE_GENERALSTRING:
 	if(p->value){
 	  len2=-1;
-	  len=_asn1_get_length_der(p->value,&len2);
+	  len=_asn1_get_length_der(p->value,p->value_len,&len2);
 	  fprintf(out,"  value:");
-	  for(k=0;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
+	  if (len>0)
+	    for(k=0;k<len;k++) fprintf(out,"%02x",(p->value)[k+len2]);
 	}
 	break;
       case TYPE_OBJECT_ID:
@@ -778,9 +787,10 @@ asn1_print_structure(FILE *out,ASN1_TYPE structure,const char *name,int mode)
       case TYPE_ANY:
 	if(p->value){
 	  len3=-1;
-	  len2=_asn1_get_length_der(p->value,&len3);
+	  len2=_asn1_get_length_der(p->value,p->value_len,&len3);
 	  fprintf(out,"  value:");
-	  for(k=0;k<len2;k++) fprintf(out,"%02x",(p->value)[k+len3]);
+	  if (len2>0)
+	    for(k=0;k<len2;k++) fprintf(out,"%02x",(p->value)[k+len3]);
 	}
 	break;
       case TYPE_SET:

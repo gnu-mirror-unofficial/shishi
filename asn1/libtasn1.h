@@ -1,6 +1,6 @@
 /*
+ *      Copyright (C) 2004, 2005, 2006 Free Software Foundation
  *      Copyright (C) 2002 Fabio Fiorina
- *      Copyright (C) 2004, 2005 Simon Josefsson
  *
  * This file is part of LIBTASN1.
  *
@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef LIBASN1_H
-# define LIBASN1_H
+#ifndef LIBTASN1_H
+# define LIBTASN1_H
 
 #include <stdio.h> /* for FILE* */
 
@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-#define LIBTASN1_VERSION "0.2.15"
+#define LIBTASN1_VERSION "0.2.18"
 
 #include <sys/types.h>
 #include <time.h>
@@ -42,10 +42,10 @@ extern "C" {
                                         /* (null character included)    */
 
 
-typedef int asn1_retCode;  /* type returned by libasn1 functions */
+typedef int asn1_retCode;  /* type returned by libtasn1 functions */
 
   /*****************************************/
-  /*  Errors returned by libasn1 functions */
+  /*  Errors returned by libtasn1 functions */
   /*****************************************/
 #define ASN1_SUCCESS               0
 #define ASN1_FILE_NOT_FOUND        1
@@ -108,6 +108,7 @@ typedef struct node_asn_struct{
   char *name;                    /* Node name */
   unsigned int type;             /* Node type */
   unsigned char *value;          /* Node value */
+  int value_len;
   struct node_asn_struct *down;  /* Pointer to the son node */
   struct node_asn_struct *right; /* Pointer to the brother node */
   struct node_asn_struct *left;  /* Pointer to the next list element */ 
@@ -196,4 +197,4 @@ void libtasn1_perror(asn1_retCode error);
 }
 #endif
 
-#endif /* LIBASN1_H */
+#endif /* LIBTASN1_H */

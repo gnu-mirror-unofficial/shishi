@@ -1,22 +1,23 @@
 /*
+ *      Copyright (C) 2004, 2006 Free Software Foundation
  *      Copyright (C) 2002  Fabio Fiorina
- *      Copyright (C) 2004  Simon Josefsson
  *
- * This file is part of LIBASN1.
+ * This file is part of LIBTASN1.
  *
- * The LIBTASN1 library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public   
- * License as published by the Free Software Foundation; either 
+ * The LIBTASN1 library is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA
  */
 
 
@@ -148,7 +149,7 @@ _asn1_octet_der(const unsigned char *str,int str_len,unsigned char *der,int *der
 {
   int len_len;
 
-  if(der==NULL) return;
+  if(der==NULL || str_len <= 0) return;
   _asn1_length_der(str_len,der,&len_len);
   memcpy(der+len_len,str,str_len);
   *der_len=str_len+len_len;
@@ -196,7 +197,8 @@ _asn1_get_utctime_der(unsigned char *der,int *der_len,unsigned char *str)
   char temp[20];
 
   if(str==NULL) return;
-  str_len=_asn1_get_length_der(der,&len_len);
+  str_len=_asn1_get_length_der(der,*der_len,&len_len);
+  if (str_len<0) return;
   memcpy(temp,der+len_len,str_len);
   *der_len=str_len+len_len;
   switch(str_len){
@@ -298,7 +300,7 @@ _asn1_objectid_der(unsigned char *str,unsigned char *der,int *der_len)
 }
 
 
-char bit_mask[]={0xFF,0xFE,0xFC,0xF8,0xF0,0xE0,0xC0,0x80};
+const char bit_mask[]={0xFF,0xFE,0xFC,0xF8,0xF0,0xE0,0xC0,0x80};
 
 /******************************************************/
 /* Function : _asn1_bit_der                           */
@@ -534,7 +536,7 @@ _asn1_insert_tag_der(node_asn *node,unsigned char *der,int *counter,int *max_len
 /* Return:                                            */
 /******************************************************/
 void
-_asn1_ordering_set(unsigned char *der,node_asn *node)
+_asn1_ordering_set(unsigned char *der, int der_len, node_asn *node)
 {
   struct vet{
     int end;
@@ -569,12 +571,14 @@ _asn1_ordering_set(unsigned char *der,node_asn *node)
     last=p_vet;
 
     /* tag value calculation */
-    tag=_asn1_get_tag_der(der+counter,&class,&len2);
+    if (_asn1_get_tag_der(der+counter, der_len-counter,&class,&len2, &tag)!=ASN1_SUCCESS)
+       return;
     p_vet->value=(class<<24)|tag;
     counter+=len2;
 
     /* extraction and length */
-    len2=_asn1_get_length_der(der+counter,&len);
+    len2=_asn1_get_length_der(der+counter,der_len-counter,&len);
+    if (len2<0) return;
     counter+=len+len2;
 
     p_vet->end=counter;
@@ -626,7 +630,7 @@ _asn1_ordering_set(unsigned char *der,node_asn *node)
 /* Return:                                            */
 /******************************************************/
 void
-_asn1_ordering_set_of(unsigned char *der,node_asn *node)
+_asn1_ordering_set_of(unsigned char *der, int der_len, node_asn *node)
 {
   struct vet{
     int end;
@@ -661,10 +665,16 @@ _asn1_ordering_set_of(unsigned char *der,node_asn *node)
     last=p_vet;
 
     /* extraction of tag and length */
-    _asn1_get_tag_der(der+counter,&class,&len);
-    counter+=len;
-    len2=_asn1_get_length_der(der+counter,&len);
-    counter+=len+len2;
+    if (der_len-counter > 0) {
+
+       if (_asn1_get_tag_der(der+counter, der_len - counter, &class,&len,NULL)!=ASN1_SUCCESS)
+          return;
+       counter+=len;
+    
+       len2=_asn1_get_length_der(der+counter,der_len-counter,&len);
+       if (len2<0) return;
+       counter+=len+len2;
+    }
 
     p_vet->end=counter;
     p=p->right;
@@ -804,7 +814,8 @@ asn1_der_coding(ASN1_TYPE element,const char *name,void *ider,int *len,
 	  _asn1_error_description_value_not_found(p,ErrorDescription);
 	  return ASN1_VALUE_NOT_FOUND;
 	}
-	len2=_asn1_get_length_der(p->value,&len3);
+	len2=_asn1_get_length_der(p->value,p->value_len, &len3);
+	if (len2<0) return ASN1_DER_ERROR;
 	max_len -= len2+len3;
 	if(max_len>=0)
 	  memcpy(der+counter,p->value,len3+len2);
@@ -846,7 +857,8 @@ asn1_der_coding(ASN1_TYPE element,const char *name,void *ider,int *len,
 	_asn1_error_description_value_not_found(p,ErrorDescription);
 	return ASN1_VALUE_NOT_FOUND;
       }
-      len2=_asn1_get_length_der(p->value,&len3);
+      len2=_asn1_get_length_der(p->value,p->value_len,&len3);
+      if (len2<0) return ASN1_DER_ERROR;
       max_len-=len2+len3;
       if(max_len>=0)
 	memcpy(der+counter,p->value,len3+len2);
@@ -858,7 +870,8 @@ asn1_der_coding(ASN1_TYPE element,const char *name,void *ider,int *len,
 	_asn1_error_description_value_not_found(p,ErrorDescription);
 	return ASN1_VALUE_NOT_FOUND;
       }
-      len2=_asn1_get_length_der(p->value,&len3);
+      len2=_asn1_get_length_der(p->value,p->value_len,&len3);
+      if (len2<0) return ASN1_DER_ERROR;
       max_len-=len2+len3;
       if(max_len>=0)
 	memcpy(der+counter,p->value,len3+len2);
@@ -870,7 +883,8 @@ asn1_der_coding(ASN1_TYPE element,const char *name,void *ider,int *len,
 	_asn1_error_description_value_not_found(p,ErrorDescription);
 	return ASN1_VALUE_NOT_FOUND;
       }
-      len2=_asn1_get_length_der(p->value,&len3);
+      len2=_asn1_get_length_der(p->value,p->value_len,&len3);
+      if (len2<0) return ASN1_DER_ERROR;
       max_len-=len2+len3;
       if(max_len>=0)
 	memcpy(der+counter,p->value,len3+len2);
@@ -903,7 +917,7 @@ asn1_der_coding(ASN1_TYPE element,const char *name,void *ider,int *len,
 	len2=strtol(p->value,NULL,10);
 	_asn1_set_value(p,NULL,0);
 	if((type_field(p->type)==TYPE_SET) && (max_len>=0))
-	  _asn1_ordering_set(der+len2,p);
+	  _asn1_ordering_set(der+len2, max_len-len2,p);
 	_asn1_length_der(counter-len2,temp,&len3);
 	max_len-=len3;
 	if(max_len>=0){
@@ -934,8 +948,9 @@ asn1_der_coding(ASN1_TYPE element,const char *name,void *ider,int *len,
       if(move==UP){
 	len2=strtol(p->value,NULL,10);
 	_asn1_set_value(p,NULL,0);
-	if((type_field(p->type)==TYPE_SET_OF) && (max_len>=0))
-	  _asn1_ordering_set_of(der+len2,p);
+	if((type_field(p->type)==TYPE_SET_OF) && (max_len-len2>0)) {
+	  _asn1_ordering_set_of(der+len2, max_len-len2,p);
+        }
 	_asn1_length_der(counter-len2,temp,&len3);
 	max_len-=len3;
 	if(max_len>=0){
@@ -951,7 +966,8 @@ asn1_der_coding(ASN1_TYPE element,const char *name,void *ider,int *len,
 	_asn1_error_description_value_not_found(p,ErrorDescription);
 	return ASN1_VALUE_NOT_FOUND;
       }
-      len2=_asn1_get_length_der(p->value,&len3);
+      len2=_asn1_get_length_der(p->value,p->value_len,&len3);
+      if (len2<0) return ASN1_DER_ERROR;
       max_len-=len2;
       if(max_len>=0)
 	memcpy(der+counter,p->value+len3,len2);

@@ -1,22 +1,23 @@
 /*
+ *      Copyright (C) 2004, 2006 Free Software Foundation
  *      Copyright (C) 2000, 2001, 2002, 2003 Fabio Fiorina
- *      Copyright (C) 2004 Simon Josefsson
  *
- * This file is part of LIBASN1.
+ * This file is part of LIBTASN1.
  *
- * The LIBTASN1 library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
+ * The LIBTASN1 library is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA
  */
 
 /*****************************************************/
@@ -677,7 +678,7 @@ asn1_read_value(ASN1_TYPE root,const char *name,void* ivalue, int *len)
     }
     else{
       len2=-1;
-      if (_asn1_get_octet_der(node->value,&len2,value, value_size, len)!=ASN1_SUCCESS) return ASN1_MEM_ERROR;
+      if (_asn1_get_octet_der(node->value,node->value_len,&len2,value, value_size, len)!=ASN1_SUCCESS) return ASN1_MEM_ERROR;
     }
     break;
   case TYPE_OBJECT_ID:
@@ -709,22 +710,23 @@ asn1_read_value(ASN1_TYPE root,const char *name,void* ivalue, int *len)
     break;
   case TYPE_OCTET_STRING:
     len2=-1;
-    if (_asn1_get_octet_der(node->value,&len2,value, value_size, len)!=ASN1_SUCCESS) return ASN1_MEM_ERROR;
+    if (_asn1_get_octet_der(node->value,node->value_len,&len2,value, value_size, len)!=ASN1_SUCCESS) return ASN1_MEM_ERROR;
     break;
   case TYPE_GENERALSTRING:
     len2=-1;
-    if (_asn1_get_octet_der(node->value,&len2,value, value_size, len)!=ASN1_SUCCESS) return ASN1_MEM_ERROR;
+    if (_asn1_get_octet_der(node->value,node->value_len,&len2,value, value_size, len)!=ASN1_SUCCESS) return ASN1_MEM_ERROR;
     break;
   case TYPE_BIT_STRING:
     len2=-1;
-    if (_asn1_get_bit_der(node->value,&len2,value,value_size,len)!=ASN1_SUCCESS) return ASN1_MEM_ERROR;
+    if (_asn1_get_bit_der(node->value,node->value_len,&len2,value,value_size,len)!=ASN1_SUCCESS) return ASN1_MEM_ERROR;
     break;
   case TYPE_CHOICE:
     PUT_STR_VALUE( value, value_size, node->down->name);
     break; 
   case TYPE_ANY:
     len3=-1;
-    len2=_asn1_get_length_der(node->value,&len3);
+    len2=_asn1_get_length_der(node->value,node->value_len,&len3);
+    if (len2 < 0) return ASN1_DER_ERROR;
     PUT_VALUE( value, value_size, node->value+len3, len2);
     break;
   default:
