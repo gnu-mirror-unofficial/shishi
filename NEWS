@@ -1,5 +1,5 @@
 Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
-Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson
+Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson
 See the end for copying conditions.
 
 * Version 0.0.23 (unreleased)
@@ -11,6 +11,8 @@ See the end for copying conditions.
 ** Improved libidn detection code.
 
 ** Updated gnulib compatibility files.
+
+** Updated libtasn1.
 
 ** Minor bugfixes and improvements.
 
