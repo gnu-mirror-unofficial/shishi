@@ -88,8 +88,8 @@ AC_DEFUN([gl_INIT],
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
   build-aux/GNUmakefile
-  build-aux/Makefile.maint
   build-aux/config.rpath
+  build-aux/maint.mk
   doc/getdate.texi
   lib/alloca_.h
   lib/allocsa.c
