@@ -87,6 +87,8 @@ AC_DEFUN([gl_INIT],
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
+  build-aux/GNUmakefile
+  build-aux/Makefile.maint
   build-aux/config.rpath
   doc/getdate.texi
   lib/alloca_.h
