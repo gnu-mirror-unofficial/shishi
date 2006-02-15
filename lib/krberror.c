@@ -45,7 +45,7 @@ shishi_krberror (Shishi * handle)
   struct timeval tv;
   int rc;
 
-  rc = gettimeofday (tv, NULL);
+  rc = gettimeofday (&tv, NULL);
   if (rc != 0)
     return NULL;
 
