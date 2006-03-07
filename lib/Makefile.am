@@ -68,10 +68,11 @@ endif
 if STARTTLS
 libshishi_la_SOURCES += starttls.c starttls.h
 endif
-libshishi_la_LIBADD = ../gl/libgnu.la @LIB_CLOCK_GETTIME@		\
+libshishi_la_LIBADD = ../gl/libgnu.la @LIB_CLOCK_GETTIME@	\
 	@LTLIBGCRYPT@ @LIBTASN1_LIBS@ @LTLIBGNUTLS@ @LTLIBIDN@	\
 	@LTLIBINTL@
-libshishi_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+libshishi_la_LDFLAGS = -no-undefined \
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 if HAVE_LD_VERSION_SCRIPT
   libshishi_la_LDFLAGS += -Wl,--version-script=$(srcdir)/shishi.vers
