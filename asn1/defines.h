@@ -27,12 +27,10 @@
 # include <config.h>
 #endif
 
-#ifdef STDC_HEADERS
-# include <string.h>
-# include <stdlib.h>
-# include <stdio.h>
-# include <ctype.h>
-#endif
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
 
 #ifdef HAVE_STRINGS_H
 # include <strings.h>
@@ -47,31 +45,6 @@
 #else
 # if HAVE_STDINT_H
 #  include <stdint.h>
-# else
-#  if SIZEOF_UNSIGNED_LONG_INT == 4
-typedef unsigned long int uint32;
-typedef signed long int sint32;
-#  elif SIZEOF_UNSIGNED_INT == 4
-typedef unsigned int uint32;
-typedef signed int sint32;
-#  else
-#   error "Cannot find a 32 bit integer in your system, sorry."
-#  endif
-#  if SIZEOF_UNSIGNED_INT == 2
-typedef unsigned int uint16;
-typedef signed int sint16;
-#  elif SIZEOF_UNSIGNED_SHORT_INT == 2
-typedef unsigned short int uint16;
-typedef signed short int sint16;
-#  else
-#   error "Cannot find a 16 bit integer in your system, sorry."
-#  endif
-#  if SIZEOF_UNSIGNED_CHAR == 1
-typedef unsigned char uint8;
-typedef signed char int8;
-#  else
-#   error "Cannot find an 8 bit char in your system, sorry."
-#  endif
 # endif
 #endif
 
