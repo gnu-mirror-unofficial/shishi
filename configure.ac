@@ -61,11 +61,8 @@ AX_CREATE_STDINT_H(lib/shishi-int.h, sys/types.h)
 AC_CHECK_DECLS(h_errno)
 
 # For libtasn1
-AC_CHECK_SIZEOF(unsigned long long, 8)
 AC_CHECK_SIZEOF(unsigned long int, 4)
 AC_CHECK_SIZEOF(unsigned int, 4)
-AC_CHECK_SIZEOF(unsigned short int, 2)
-AC_CHECK_SIZEOF(unsigned char, 1)
 
 # For gnulib stuff in gl/.
 libgcrypt=yes
@@ -141,12 +138,12 @@ AC_ARG_WITH(system-asn1,
 if test "$system_asn1" = "auto"; then
 	save_LIBS=$LIBS
 	LIBS="$LIBS -ltasn1"
-	AC_CACHE_CHECK([for libtasn1 >= 0.2.18], ac_cv_libtasn1, [
+	AC_CACHE_CHECK([for libtasn1 >= 0.3.2], ac_cv_libtasn1, [
 		AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <libtasn1.h>
 int main ()
 {
-  return asn1_check_version ("0.2.18") == NULL;
+  return asn1_check_version ("0.3.2") == NULL;
 }
 ]])],[ac_cv_libtasn1=yes],[ac_cv_libtasn1=no],[ac_cv_libtasn1=no])
 	])
@@ -156,7 +153,7 @@ int main ()
 		LIBTASN1_LIBS="-ltasn1"
 	else
 		system_asn1=no
-		AC_MSG_WARN([Libtasn1 >= 0.2.18 not found. Using included one.])
+		AC_MSG_WARN([Libtasn1 >= 0.3.2 not found. Using included one.])
 	fi
 fi
 AC_MSG_CHECKING([whether to use the system's libtasn1])
