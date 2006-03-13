@@ -14,9 +14,9 @@ To compile from CVS, you need perl, texinfo, GTK-DOC, autoconf 2.59+,
 automake 1.9+, help2man, and gengetopt 2.12rc.  Bootstrap the build
 environment with:
 
-  $ ./autogen.sh
+  $ make bootstrap
 
-Then run ./configure etc as usual.
+Then run 'make' etc as usual.
 
 A note to binary package builders: please build using --disable-shared
 because during the development phase, only the so revision will be
