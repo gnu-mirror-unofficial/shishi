@@ -76,6 +76,7 @@ AC_DEFUN([gl_INIT],
   gl_TIME_R
   gl_FUNC_TIMEGM
   gl_TIMESPEC
+  gl_HEADER_UNISTD
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
   gl_XALLOC
@@ -277,6 +278,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/timegm.m4
   m4/timespec.m4
   m4/tm_gmtoff.m4
+  m4/unistd_h.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4
   m4/wchar_t.m4

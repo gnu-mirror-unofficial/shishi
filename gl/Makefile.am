@@ -220,6 +220,18 @@ libgnu_la_SOURCES += timegm.h
 
 ## end   gnulib module timegm
 
+## begin gnulib module unistd
+
+BUILT_SOURCES += $(UNISTD_H)
+
+# We need the following in order to create an empty placeholder for
+# <unistd.h> when the system doesn't have one.
+unistd.h:
+	echo '/* Empty placeholder for $@.  */' >$@
+MOSTLYCLEANFILES += unistd.h
+
+## end   gnulib module unistd
+
 ## begin gnulib module vasnprintf
 
 libgnu_la_SOURCES += printf-args.h printf-parse.h vasnprintf.h
