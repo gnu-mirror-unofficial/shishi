@@ -75,7 +75,7 @@ shishi_safe (Shishi * handle, Shishi_safe ** safe)
     return rc;
 
   rc = gettimeofday (&tv, NULL);
-  if (!rc)
+  if (rc != 0)
     return SHISHI_GETTIMEOFDAY_ERROR;
 
   asprintf (&usec, "%ld", tv.tv_usec % 1000000);
