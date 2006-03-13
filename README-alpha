@@ -1,5 +1,5 @@
 Shishi README-alpha -- Important introductory notes for alpha releases.
-Copyright (C) 2002, 2003, 2004 Simon Josefsson
+Copyright (C) 2002, 2003, 2004, 2006 Simon Josefsson
 See the end for copying conditions.
 
 Shishi is unstable.  You should expect it to not work.  You should
@@ -11,9 +11,8 @@ IN A PRODUCTION ENVIRONMENT!
 It will not become stable without help.  Donate time or money.
 
 To compile from CVS, you need perl, texinfo, GTK-DOC, autoconf 2.59+,
-automake 1.9+, help2man, asn1Parser from Libtasn1 CVS (or copy
-lib/kerberos5.c from Shishi releases, it rarely changes), and
-gengetopt 2.12rc.  Bootstrap the build environment with:
+automake 1.9+, help2man, and gengetopt 2.12rc.  Bootstrap the build
+environment with:
 
   $ ./autogen.sh
 
