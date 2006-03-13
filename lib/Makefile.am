@@ -69,7 +69,7 @@ if STARTTLS
 libshishi_la_SOURCES += starttls.c starttls.h
 endif
 libshishi_la_LIBADD = ../gl/libgnu.la @LIB_CLOCK_GETTIME@	\
-	@LTLIBGCRYPT@ @LIBTASN1_LIBS@ @LTLIBGNUTLS@ @LTLIBIDN@	\
+	@LTLIBGCRYPT@ @LTLIBTASN1@ @LTLIBGNUTLS@ @LTLIBIDN@	\
 	@LTLIBINTL@
 libshishi_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
