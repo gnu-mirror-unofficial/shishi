@@ -42,6 +42,7 @@ AC_DEFUN([gl_INIT],
   gl_GC_MD4
   gl_GC_MD5
   gl_GC_PBKDF2_SHA1
+  gl_GC_RANDOM
   gl_GETADDRINFO
   gl_GETDATE
   gl_FUNC_GETDELIM
@@ -223,6 +224,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/gc-md4.m4
   m4/gc-md5.m4
   m4/gc-pbkdf2-sha1.m4
+  m4/gc-random.m4
   m4/gc.m4
   m4/getaddrinfo.m4
   m4/getdate.m4
