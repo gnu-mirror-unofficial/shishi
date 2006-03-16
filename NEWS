@@ -10,6 +10,8 @@ See the end for copying conditions.
 
 ** Improved libidn detection code.
 
+** The manual doesn't have any invariant sections.
+
 ** Updated gnulib compatibility files.
 
 ** Updated libtasn1.
