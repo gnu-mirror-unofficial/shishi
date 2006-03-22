@@ -495,6 +495,12 @@ shishi_key_from_name (Shishi * handle,
   rc = shishi_key_from_string (handle, type, password, passwordlen,
 			       salt, saltlen, parameter, outkey);
 
+  if (rc == SHISHI_OK)
+    {
+      shishi_key_principal_set (*outkey, principal);
+      shishi_key_realm_set (*outkey, realm);
+    }
+
   free (salt);
   free (realm);
   free (principal);
