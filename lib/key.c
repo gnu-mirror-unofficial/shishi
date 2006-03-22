@@ -482,10 +482,22 @@ shishi_key_from_name (Shishi * handle,
     return rc;
 
   if (!principal || !realm)
-    return SHISHI_INVALID_PRINCIPAL_NAME;
+    {
+      if (principal)
+	free (principal);
+      if (realm)
+	free (realm);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
 
   saltlen = asprintf (&salt, "%s%s", realm, principal);
 
-  return shishi_key_from_string (handle, type, password, passwordlen,
-				 salt, saltlen, parameter, outkey);
+  rc = shishi_key_from_string (handle, type, password, passwordlen,
+			       salt, saltlen, parameter, outkey);
+
+  free (salt);
+  free (realm);
+  free (principal);
+
+  return rc;
 }
