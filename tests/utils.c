@@ -140,7 +140,7 @@ success (const char *format, ...)
 }
 
 static void
-escapeprint (const unsigned char *str, int len)
+escapeprint (const char *str, int len)
 {
   int i;
 
@@ -159,7 +159,7 @@ escapeprint (const unsigned char *str, int len)
 }
 
 static void
-hexprint (const unsigned char *str, int len)
+hexprint (const char *str, int len)
 {
   int i;
 
@@ -179,7 +179,7 @@ hexprint (const unsigned char *str, int len)
 }
 
 static void
-binprint (const unsigned char *str, int len)
+binprint (const char *str, int len)
 {
   int i;
 

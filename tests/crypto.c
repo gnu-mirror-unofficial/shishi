@@ -1,5 +1,5 @@
 /* crypto.c	Shishi crypto self tests.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -339,7 +339,7 @@ void
 test (Shishi * handle)
 {
   Shishi_key *key, *key2;
-  unsigned char out[BUFSIZ];
+  char out[BUFSIZ];
   size_t i;
   int res;
 
