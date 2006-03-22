@@ -4,6 +4,9 @@ See the end for copying conditions.
 
 * Version 0.0.23 (unreleased)
 
+** Added shishi_key_from_name API to create a key from principal and password.
+Suggested by Elrond <elrond@samba-tng.org>.
+
 ** Replace internal crypto code with modules from gnulib.
 
 ** Added shared library versioning script, suggested by Steve Langasek.
