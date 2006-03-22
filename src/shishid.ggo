@@ -1,5 +1,5 @@
 ## Process this file with gengetopt to produce shishid_cmd.*
-# Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -37,5 +37,5 @@ option "resume-limit" - "Keep track of up to this many TLS sessions for resume p
 section "Other options"
 
 option "configuration-file" c "Use specified configuration file." string typestr="FILE" no
-option "verbose" v "Produce verbose output.\nUse multiple times to increase amount of information." multiple
+option "verbose" v "Produce verbose output.\nUse multiple times to increase amount of information." no multiple
 option "quiet" q "Don't produce any diagnostic output.\n" flag off
