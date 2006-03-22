@@ -56,4 +56,4 @@ option "library-options" o "Parse STRING as a configuration file statement." str
 option "quiet" q "Don't produce any diagnostic output.\n" flag off
 option "system-configuration-file" - "Read system configuration from FILE." string typestr="FILE" no
 option "ticket-write-file" - "Write tickets from FILE.  Default is to write them back to where they were read from." string typestr="FILE" no
-option "verbose" v "Produce verbose output.\nUse multiple times to increase amount of information." multiple
+option "verbose" v "Produce verbose output.\nUse multiple times to increase amount of information." no multiple
