@@ -1,5 +1,5 @@
 /* shisa.c --- Command line interface to Shishi database.
- * Copyright (C) 2003, 2004  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -360,16 +360,6 @@ apply_options (const char *realm,
     {
       etype = shishi_cfg_clientkdcetype_fast (sh);
 
-      if (!salt && realm && principal)
-	{
-	  char *p;
-	  asprintf (&salt, "%s%s", realm, principal);
-
-	  /* FIXME: Parse principal/realm and create proper salt. */
-	  while ((p = strchr (salt, '/')))
-	    memmove (p, p + 1, strlen (p));
-	}
-
       if (args.string_to_key_parameter_given)
 	{
 	  /* XXX */
@@ -389,10 +379,21 @@ apply_options (const char *realm,
 		error (EXIT_FAILURE, 0, "Could not read password");
 	    }
 
-	  rc = shishi_key_from_string (sh, etype,
-				       passwd, strlen (passwd),
-				       salt, salt ? strlen (salt) : 0,
-				       str2keyparam, &key);
+	  if (salt)
+	    rc = shishi_key_from_string (sh, etype,
+					 passwd, strlen (passwd),
+					 salt, strlen (salt),
+					 str2keyparam, &key);
+	  else
+	    {
+	      char *name;
+	      asprintf (&name, "%s@%s", principal, realm);
+
+	      rc = shishi_key_from_name (sh, etype, name,
+					 passwd, strlen (passwd),
+					 str2keyparam, &key);
+	      free (name);
+	    }
 	}
       else
 	rc = shishi_key_random (sh, etype, &key);
