@@ -1,5 +1,5 @@
 /* key.c --- Key related functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -445,4 +445,47 @@ shishi_key_from_string (Shishi * handle,
     return rc;
 
   return SHISHI_OK;
+}
+
+/**
+ * shishi_key_from_name:
+ * @handle: Shishi library handle create by shishi_init().
+ * @type: type of key.
+ * @name: principal name of user.
+ * @password: input array containing password.
+ * @passwordlen: length of input array containing password.
+ * @parameter: input array with opaque encryption type specific information.
+ * @outkey: pointer to structure that will hold newly created key information
+ *
+ * Create a new Key information structure, and derive the key from
+ * principal name and password using shishi_key_from_name().  The salt
+ * is derived from the principal name by concatenating the decoded
+ * realm and principal.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_key_from_name (Shishi * handle,
+		      int32_t type,
+		      const char *name,
+		      const char *password, size_t passwordlen,
+		      const char *parameter, Shishi_key ** outkey)
+{
+  int rc;
+  char *principal;
+  char *realm;
+  size_t saltlen;
+  char *salt;
+
+  rc = shishi_parse_name (handle, name, &principal, &realm);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  if (!principal || !realm)
+    return SHISHI_INVALID_PRINCIPAL_NAME;
+
+  saltlen = asprintf (&salt, "%s%s", realm, principal);
+
+  return shishi_key_from_string (handle, type, password, passwordlen,
+				 salt, saltlen, parameter, outkey);
 }
