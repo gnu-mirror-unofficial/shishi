@@ -425,6 +425,45 @@ shishi_principal_set (Shishi * handle,
 }
 
 /**
+ * shishi_derive_default_salt:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @name: principal name of user.
+ * @salt: output variable with newly allocated salt string.
+ *
+ * Derive the default salt from a principal.  The default salt is the
+ * concatenation of the decoded realm and principal.
+ *
+ * Return value: Return SHISHI_OK if successful.
+ **/
+int
+shishi_derive_default_salt (Shishi * handle,
+			    const char *name,
+			    char **salt)
+{
+  char *principal;
+  char *realm;
+  char *salt;
+  int rc;
+
+  rc = shishi_parse_name (handle, name, &principal, &realm);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  if (!principal || !realm)
+    {
+      if (principal)
+	free (principal);
+      if (realm)
+	free (realm);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
+
+  xasprintf (salt, "%s%s", realm, principal);
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_server_for_local_service:
  * @handle: shishi handle as allocated by shishi_init().
  * @service: zero terminated string with name of service, e.g., "host".

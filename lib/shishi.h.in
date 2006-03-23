@@ -681,6 +681,9 @@ extern int shishi_principal_set (Shishi * handle,
 				 const char *namefield, const char *name);
 extern int shishi_parse_name (Shishi * handle, const char *name,
 			      char **principal, char **realm);
+extern int shishi_derive_default_salt (Shishi * handle,
+				       const char *name,
+				       char **salt);
 extern char *shishi_server_for_local_service (Shishi * handle,
 					      const char *service);
 
