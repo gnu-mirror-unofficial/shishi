@@ -1169,7 +1169,8 @@ struct krb_error_msgs
   const char *message;
 };
 
-struct krb_error_msgs _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
+static const struct krb_error_msgs
+_shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
   {SHISHI_KDC_ERR_NONE, "No error"},
   {SHISHI_KDC_ERR_NAME_EXP, "Client's entry in database has expired"},
   {SHISHI_KDC_ERR_SERVICE_EXP, "Server's entry in database has expired"},
