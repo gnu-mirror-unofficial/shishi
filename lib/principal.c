@@ -442,7 +442,6 @@ shishi_derive_default_salt (Shishi * handle,
 {
   char *principal;
   char *realm;
-  char *salt;
   int rc;
 
   rc = shishi_parse_name (handle, name, &principal, &realm);
