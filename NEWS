@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.23 (unreleased)
 
+** Debian packages are available from http://josefsson.org/shishi/debian/
+Thanks to Russ Allbery, Yvan Bassuel and Elrond for help on the Debian
+packaging.
+
 ** Added shishi_derive_default_salt and shishi_key_from_name APIs.
 Used to create a key from principal and password.  Suggested by Elrond
 <elrond@samba-tng.org>.
