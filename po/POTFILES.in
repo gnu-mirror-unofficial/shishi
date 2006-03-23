@@ -2,6 +2,7 @@
 # Copyright (c) 2002, 2003, 2006 by Simon Josefsson
 lib/error.c
 lib/krberror.c
+db/err.c
 src/shisa.c
 src/shishi.c
 src/shishid.c
