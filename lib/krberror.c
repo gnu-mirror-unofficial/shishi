@@ -1204,7 +1204,7 @@ struct krb_error_msgs _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
   {SHISHI_KDC_ERR_PREAUTH_FAILED,
    "Pre-authentication information was invalid"},
   {SHISHI_KDC_ERR_PREAUTH_REQUIRED,
-   "Additional pre-authenticationrequired [40]"},
+   "Additional pre-authentication required [40]"},
   {SHISHI_KDC_ERR_SERVER_NOMATCH, "Requested server and ticket don't match"},
   {SHISHI_KDC_ERR_MUST_USE_USER2USER,
    "Server principal valid for user2user only"},
