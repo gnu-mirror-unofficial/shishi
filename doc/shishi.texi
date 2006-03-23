@@ -256,6 +256,8 @@ the interface is rather libtasn1 centric.
 
 @item Port applications to use Shishi (indefinite)
 
+@item Finish server-realm stuff
+
 @item Improve documentation
 
 @item Improve internationalization
