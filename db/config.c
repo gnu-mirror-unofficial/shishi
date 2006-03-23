@@ -47,7 +47,7 @@ static const char *_shisa_opts[] = {
  *   successfully.
  **/
 int
-shisa_cfg_db (Shisa * dbh, char *value)
+shisa_cfg_db (Shisa * dbh, const char *value)
 {
   char *p;
   char *db;
@@ -73,6 +73,7 @@ shisa_cfg_db (Shisa * dbh, char *value)
   if (backend == NULL)
     {
       shisa_info (dbh, "Unknown database type: `%s'.", db);
+      free (db);
       return SHISA_CFG_SYNTAX_ERROR;
     }
 
@@ -82,8 +83,10 @@ shisa_cfg_db (Shisa * dbh, char *value)
       shisa_info (dbh, "Cannot initialize `%s' database backend.\n"
 		  "Location `%s' and options `%s'.", db,
 		  location ? location : "N/A", options ? options : "N/A");
+      free (db);
       return rc;
     }
+  free (db);
 
   dbh->dbs = xrealloc (dbh->dbs, ++dbh->ndbs * sizeof (*dbh->dbs));
   dbh->dbs->backend = backend;

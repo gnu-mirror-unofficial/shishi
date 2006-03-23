@@ -98,7 +98,7 @@ extern int shisa_init_with_paths (Shisa ** dbh, const char *file);
 
 /* cfg.c */
 extern int shisa_cfg (Shisa * dbh, char *option);
-extern int shisa_cfg_db (Shisa * dbh, char *value);
+extern int shisa_cfg_db (Shisa * dbh, const char *value);
 extern int shisa_cfg_from_file (Shisa * dbh, const char *cfg);
 extern const char *shisa_cfg_default_systemfile (Shisa * dbh);
 
