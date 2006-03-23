@@ -119,7 +119,7 @@ printdbkey (const char *realm, const char *principal, Shisa_key * dbkey)
       shishi_key_print (sh, stdout, key);
     }
   else
-    error (0, 0, "shishi_key_from_value failed (%d):\n%s",
+    error (0, 0, "shishi_key_from_value (%d):\n%s",
 	   rc, shishi_strerror (rc));
 }
 
@@ -134,7 +134,7 @@ dumplist_realm_principal (const char *realm, const char *principal)
       rc = shisa_principal_find (dbh, realm, principal, &ph);
       if (rc != SHISA_OK)
 	{
-	  error (0, 0, "shishi_principal_find failed (%d):\n%s",
+	  error (0, 0, "shishi_principal_find (%d):\n%s",
 		 rc, shisa_strerror (rc));
 	  return rc;
 	}
@@ -154,27 +154,28 @@ dumplist_realm_principal (const char *realm, const char *principal)
       size_t nkeys;
       size_t i;
 
-      printfield ("Account is", ph.isdisabled ? "DISABLED" : "enabled");
-      printuint32field ("Current key version", ph.kvno);
+      printfield (_("Account is"),
+		  ph.isdisabled ? _("DISABLED") : _("enabled"));
+      printuint32field (_("Current key version"), ph.kvno);
       if (ph.notusedbefore != (time_t) - 1)
-	printtimefield ("Account not valid before", ph.notusedbefore);
+	printtimefield (_("Account not valid before"), ph.notusedbefore);
       if (ph.lastinitialtgt != (time_t) - 1)
-	printtimefield ("Last initial TGT request at", ph.lastinitialtgt);
+	printtimefield (_("Last initial TGT request at"), ph.lastinitialtgt);
       if (ph.lastinitialrequest != (time_t) - 1)
-	printtimefield ("Last initial request at", ph.lastinitialrequest);
+	printtimefield (_("Last initial request at"), ph.lastinitialrequest);
       if (ph.lasttgt != (time_t) - 1)
-	printtimefield ("Last TGT request at", ph.lasttgt);
+	printtimefield (_("Last TGT request at"), ph.lasttgt);
       if (ph.lastrenewal != (time_t) - 1)
-	printtimefield ("Last ticket renewal at", ph.lastrenewal);
+	printtimefield (_("Last ticket renewal at"), ph.lastrenewal);
       if (ph.passwordexpire != (time_t) - 1)
-	printtimefield ("Password expire on", ph.passwordexpire);
+	printtimefield (_("Password expire on"), ph.passwordexpire);
       if (ph.accountexpire != (time_t) - 1)
-	printtimefield ("Account expire on", ph.accountexpire);
+	printtimefield (_("Account expire on"), ph.accountexpire);
 
       rc = shisa_keys_find (dbh, realm, principal, NULL, &keys, &nkeys);
       if (rc != SHISA_OK)
 	{
-	  error (0, 0, "shishi_keys_find(%s, %s) failed (%d):\n%s",
+	  error (0, 0, "shishi_keys_find(%s, %s) (%d):\n%s",
 		 realm, principal, rc, shisa_strerror (rc));
 	  return rc;
 	}
@@ -182,24 +183,24 @@ dumplist_realm_principal (const char *realm, const char *principal)
       for (i = 0; i < nkeys; i++)
 	if (keys[i])
 	  {
-	    printintfield ("Key", i);
+	    printintfield (_("Key"), i);
 
-	    print3field ("\tEtype", shishi_cipher_name (keys[i]->etype),
+	    print3field (_("\tEtype"), shishi_cipher_name (keys[i]->etype),
 			 keys[i]->etype);
 	    if (keys[i]->priority > 0)
-	      printintfield ("\tPriority", keys[i]->priority);
+	      printintfield (_("\tPriority"), keys[i]->priority);
 	    if (args.keys_given)
 	      printdbkey (realm, principal, keys[i]);
 	    if (keys[i]->saltlen > 0)
-	      printfield ("\tSalt", keys[i]->salt);
+	      printfield (_("\tSalt"), keys[i]->salt);
 	    if (keys[i]->str2keyparamlen > 0)
-	      printfield ("\tS2K params", keys[i]->str2keyparam);
+	      printfield (_("\tS2K params"), keys[i]->str2keyparam);
 	    if (args.keys_given)
 	      if (keys[i]->password)
-		printfield ("\tPassword", keys[i]->password);
+		printfield (_("\tPassword"), keys[i]->password);
 	  }
 	else
-	  printfield ("\tKey is", "MISSING");
+	  printfield (_("\tKey is", "MISSING"));
 
       shisa_keys_free (dbh, keys, nkeys);
     }
@@ -277,22 +278,22 @@ add (const char *realm, const char *principal,
   int rc;
 
   if (principal == NULL)
-    printf ("Adding realm `%s'...\n", realm);
+    printf (_("Adding realm `%s'...\n"), realm);
   else
-    printf ("Adding principal `%s@%s'...\n", principal, realm);
+    printf (_("Adding principal `%s@%s'...\n"), principal, realm);
 
   rc = shisa_principal_add (dbh, realm, principal, ph, key);
   if (rc != SHISA_OK)
-    error (EXIT_FAILURE, 0, "shisa_principal_add failed (%d):\n%s",
+    error (EXIT_FAILURE, 0, "shisa_principal_add (%d):\n%s",
 	   rc, shisa_strerror (rc));
 
   if (args.keys_given)
     printdbkey (realm, principal, key);
 
   if (principal == NULL)
-    printf ("Adding realm `%s'...done\n", realm);
+    printf (_("Adding realm `%s'...done\n"), realm);
   else
-    printf ("Adding principal `%s@%s'...done\n", principal, realm);
+    printf (_("Adding principal `%s@%s'...done\n"), principal, realm);
 }
 
 static void
@@ -308,7 +309,7 @@ delete (const char *realm, const char *principal)
 
       rc = shisa_enumerate_principals (dbh, realm, &principals, &nprincipals);
       if (rc != SHISA_OK)
-	error (EXIT_FAILURE, 0, "shisa_enumerate_principals failed (%d):\n%s",
+	error (EXIT_FAILURE, 0, "shisa_enumerate_principals (%d):\n%s",
 	       rc, shisa_strerror (rc));
 
       for (i = 0; i < nprincipals; i++)
@@ -323,19 +324,19 @@ delete (const char *realm, const char *principal)
     }
 
   if (principal == NULL)
-    printf ("Removing realm `%s'...\n", realm);
+    printf (_("Removing realm `%s'...\n"), realm);
   else
-    printf ("Removing principal `%s@%s'...\n", principal, realm);
+    printf (_("Removing principal `%s@%s'...\n"), principal, realm);
 
   rc = shisa_principal_remove (dbh, realm, principal);
   if (rc != SHISA_OK)
-    error (EXIT_FAILURE, 0, "shisa_principal_remove failed (%d):\n%s",
+    error (EXIT_FAILURE, 0, "shisa_principal_remove (%d):\n%s",
 	   rc, shisa_strerror (rc));
 
   if (principal == NULL)
-    printf ("Removing realm `%s'...done\n", realm);
+    printf (_("Removing realm `%s'...done\n"), realm);
   else
-    printf ("Removing principal `%s@%s'...done\n", principal, realm);
+    printf (_("Removing principal `%s@%s'...done\n"), principal, realm);
 }
 
 static void
@@ -371,12 +372,12 @@ apply_options (const char *realm,
 	    {
 	      if (realm && principal)
 		rc = shishi_prompt_password (sh, &passwd,
-					     "Password for `%s@%s': ",
+					     _("Password for `%s@%s': "),
 					     principal, realm);
 	      else
-		rc = shishi_prompt_password (sh, &passwd, "Password: ");
+		rc = shishi_prompt_password (sh, &passwd, _("Password: "));
 	      if (rc != SHISHI_OK)
-		error (EXIT_FAILURE, 0, "Could not read password");
+		error (EXIT_FAILURE, 0, _("Could not read password"));
 	    }
 
 	  if (salt)
@@ -399,7 +400,7 @@ apply_options (const char *realm,
 	rc = shishi_key_random (sh, etype, &key);
 
       if (rc != SHISHI_OK)
-	error (EXIT_FAILURE, 0, "Could not create key (%d):\n%s",
+	error (EXIT_FAILURE, 0, _("Could not create key (%d):\n%s"),
 	       rc, shishi_strerror (rc));
 
       if (realm && principal)
@@ -435,7 +436,7 @@ main (int argc, char *argv[])
   set_program_name (argv[0]);
 
   if (cmdline_parser (argc, argv, &args) != 0)
-    error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
+    error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
 	   program_name);
 
   rc = args.add_given + args.dump_given + args.list_given +
@@ -444,38 +445,38 @@ main (int argc, char *argv[])
 
   if (rc > 1 || args.inputs_num > 2)
     {
-      error (0, 0, "too many arguments");
-      error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
+      error (0, 0, _("too many arguments"));
+      error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
 	     program_name);
     }
 
   if (rc == 0 || args.help_given)
     {
       cmdline_parser_print_help ();
-      printf ("\nMandatory arguments to long options are "
-	      "mandatory for short options too.\n\n");
-      printf ("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
+      printf (_("\nMandatory arguments to long options are "
+		"mandatory for short options too.\n\n"));
+      printf (_("Report bugs to <%s>.\n"), PACKAGE_BUGREPORT);
       return EXIT_SUCCESS;
     }
 
   rc = shisa_init_with_paths (&dbh, args.configuration_file_arg);
   if (rc != SHISA_OK)
-    error (EXIT_FAILURE, 0, "Initialization failed:\n%s",
+    error (EXIT_FAILURE, 0, _("Initialization failed:\n%s"),
 	   shisa_strerror (rc));
 
   rc = shisa_cfg (dbh, args.library_options_arg);
   if (rc != SHISA_OK)
-    error (EXIT_FAILURE, 0, "Could not read library options `%s':\n%s",
+    error (EXIT_FAILURE, 0, _("Could not read library options `%s':\n%s"),
 	   args.library_options_arg, shisa_strerror (rc));
 
   rc = shishi_init (&sh);
   if (rc != SHISHI_OK)
-    error (EXIT_FAILURE, 0, "Shishi initialization failed:\n%s",
+    error (EXIT_FAILURE, 0, _("Shishi initialization failed:\n%s"),
 	   shishi_strerror (rc));
 
   rc = shishi_cfg_clientkdcetype_set (sh, args.encryption_type_arg);
   if (rc != SHISHI_OK)
-    error (EXIT_FAILURE, 0, "Could not set encryption type `%s':\n%s",
+    error (EXIT_FAILURE, 0, _("Could not set encryption type `%s':\n%s"),
 	   args.encryption_type_arg, shishi_strerror (rc));
 
   if ((args.inputs_num < 2 && (args.modify_given ||
@@ -483,8 +484,8 @@ main (int argc, char *argv[])
 			       args.key_remove_given)) ||
       (args.inputs_num < 1 && (args.remove_given)))
     {
-      error (0, 0, "too few arguments");
-      error (0, 0, "Try `%s --help' for more information.", program_name);
+      error (0, 0, _("too few arguments"));
+      error (0, 0, _("Try `%s --help' for more information."), program_name);
       return EXIT_FAILURE;
     }
 
@@ -515,7 +516,7 @@ main (int argc, char *argv[])
 
       realm = shishi_realm_default (sh);
 
-      printf ("Adding default realm `%s'...\n", realm);
+      printf (_("Adding default realm `%s'...\n"), realm);
       add (realm, NULL, NULL, NULL);
 
       asprintf (&tmp, "krbtgt/%s", realm);
@@ -535,32 +536,32 @@ main (int argc, char *argv[])
     }
   else if (args.modify_given)
     {
-      printf ("Modifying principal `%s@%s'...\n", principal, realm);
+      printf (_("Modifying principal `%s@%s'...\n"), principal, realm);
 
       rc = shisa_principal_update (dbh, realm, principal, &ph);
       if (rc != SHISA_OK)
-	error (EXIT_FAILURE, 0, "shisa_principal_update failed (%d):\n%s",
+	error (EXIT_FAILURE, 0, "shisa_principal_update (%d):\n%s",
 	       rc, shisa_strerror (rc));
 
-      printf ("Modifying principal `%s@%s'...done\n", principal, realm);
+      printf (_("Modifying principal `%s@%s'...done\n"), principal, realm);
     }
   else if (args.key_add_given)
     {
-      printf ("Adding key to `%s@%s'...\n", principal, realm);
+      printf (_("Adding key to `%s@%s'...\n"), principal, realm);
 
       rc = shisa_key_add (dbh, realm, principal, &key);
       if (rc != SHISA_OK)
-	error (EXIT_FAILURE, 0, "shisa_key_add failed (%d):\n%s",
+	error (EXIT_FAILURE, 0, "shisa_key_add (%d):\n%s",
 	       rc, shisa_strerror (rc));
 
       if (args.keys_given)
 	printdbkey (realm, principal, &key);
 
-      printf ("Adding key to `%s@%s'...done\n", principal, realm);
+      printf (_("Adding key to `%s@%s'...done\n"), principal, realm);
     }
   else if (args.key_remove_given)
     {
-      printf ("Removing key from `%s@%s'...\n", principal, realm);
+      printf (_("Removing key from `%s@%s'...\n"), principal, realm);
 
       if (!args.password_given)
 	{
@@ -570,10 +571,10 @@ main (int argc, char *argv[])
 
       rc = shisa_key_remove (dbh, realm, principal, &key);
       if (rc != SHISA_OK)
-	error (EXIT_FAILURE, 0, "shisa_key_remove failed (%d):\n%s",
+	error (EXIT_FAILURE, 0, "shisa_key_remove (%d):\n%s",
 	       rc, shisa_strerror (rc));
 
-      printf ("Removing key from `%s@%s'...done\n", principal, realm);
+      printf (_("Removing key from `%s@%s'...done\n"), principal, realm);
     }
 
   shisa_done (dbh);

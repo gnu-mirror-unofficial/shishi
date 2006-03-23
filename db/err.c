@@ -1,5 +1,5 @@
 /* error.c --- Error handling functions for the Shisa library.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -27,31 +27,53 @@ struct shisa_error_msgs
   const char *message;
 };
 
-static struct shisa_error_msgs _shisa_error_messages[] = {
-  {SHISA_OK, "Shisa success"},
-  {SHISA_INIT_ERROR, "Shisa could not be initialized."},
-  {SHISA_CFG_NO_FILE, "The Shisa configuration file does not exist."},
-  {SHISA_CFG_IO_ERROR, "File I/O error for Shisa configuration file."},
-  {SHISA_CFG_SYNTAX_ERROR, "Syntax error in Shisa configuration token."},
-  {SHISA_OPEN_ERROR, "Shisa database could not be opened."},
-  {SHISA_ENUMERATE_REALM_ERROR, "Error enumerating realms in database."},
+static const struct shisa_error_msgs _shisa_error_messages[] = {
+  {SHISA_OK,
+   N_("Shisa success")},
+  {SHISA_INIT_ERROR,
+   N_("Shisa could not be initialized.")},
+  {SHISA_CFG_NO_FILE,
+   N_("The Shisa configuration file does not exist.")},
+  {SHISA_CFG_IO_ERROR,
+   N_("File I/O error for Shisa configuration file.")},
+  {SHISA_CFG_SYNTAX_ERROR,
+   N_("Syntax error in Shisa configuration token.")},
+  {SHISA_OPEN_ERROR,
+   N_("Shisa database could not be opened.")},
+  {SHISA_ENUMERATE_REALM_ERROR,
+   N_("Error enumerating realms in database.")},
   {SHISA_ENUMERATE_PRINCIPAL_ERROR,
-   "Error enumerating principals in database."},
-  {SHISA_ENUMERATE_KEY_ERROR, "Error enumerating keys in database."},
-  {SHISA_NO_REALM, "Supplied realm does not exist."},
-  {SHISA_NO_PRINCIPAL, "Supplied principal does not exist."},
-  {SHISA_NO_KEY, "Principal is not associated with any matching key."},
-  {SHISA_FIND_ERROR, "Error finding principal."},
-  {SHISA_ADD_REALM_EXISTS, "Tried to add a realm that already exist."},
-  {SHISA_ADD_REALM_ERROR, "Error adding realm to database."},
-  {SHISA_REMOVE_REALM_NONEMPTY, "Tried to remove a non-empty realm."},
-  {SHISA_REMOVE_REALM_ERROR, "Error removing realm from database."},
-  {SHISA_ADD_PRINCIPAL_EXISTS, "Tried to add a principal that already exist."},
-  {SHISA_ADD_PRINCIPAL_ERROR, "Error adding principal to database."},
-  {SHISA_REMOVE_PRINCIPAL_ERROR, "Error removing principal from database."},
-  {SHISA_ADD_KEY_ERROR, "Error adding key to principal."},
-  {SHISA_REMOVE_KEY_ERROR, "Error removing key from principal."},
-  {SHISA_MULTIPLE_KEY_MATCH, "More than one key match given search criteria."}
+   N_("Error enumerating principals in database.")},
+  {SHISA_ENUMERATE_KEY_ERROR,
+   N_("Error enumerating keys in database.")},
+  {SHISA_NO_REALM,
+   N_("Supplied realm does not exist.")},
+  {SHISA_NO_PRINCIPAL,
+   N_("Supplied principal does not exist.")},
+  {SHISA_NO_KEY,
+   N_("Principal is not associated with any matching key.")},
+  {SHISA_FIND_ERROR,
+   N_("Error finding principal.")},
+  {SHISA_ADD_REALM_EXISTS,
+   N_("Tried to add a realm that already exist.")},
+  {SHISA_ADD_REALM_ERROR,
+   N_("Error adding realm to database.")},
+  {SHISA_REMOVE_REALM_NONEMPTY,
+   N_("Tried to remove a non-empty realm.")},
+  {SHISA_REMOVE_REALM_ERROR,
+   N_("Error removing realm from database.")},
+  {SHISA_ADD_PRINCIPAL_EXISTS,
+   N_("Tried to add a principal that already exist.")},
+  {SHISA_ADD_PRINCIPAL_ERROR,
+   N_("Error adding principal to database.")},
+  {SHISA_REMOVE_PRINCIPAL_ERROR,
+   N_("Error removing principal from database.")},
+  {SHISA_ADD_KEY_ERROR,
+   N_("Error adding key to principal.")},
+  {SHISA_REMOVE_KEY_ERROR,
+   N_("Error removing key from principal.")},
+  {SHISA_MULTIPLE_KEY_MATCH,
+   N_("More than one key match given search criteria.)"}
 };
 
 /**
@@ -92,7 +114,7 @@ shisa_info (Shisa * dbh, const char *format, ...)
   va_start (ap, format);
   vasprintf (&out, format, ap);
 
-  fprintf (stderr, "shisa: %s\n", out);
+  fprintf (stderr, _("shisa: %s\n"), out);
 
   free (out);
   va_end (ap);
