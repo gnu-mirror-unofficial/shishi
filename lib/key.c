@@ -472,38 +472,31 @@ shishi_key_from_name (Shishi * handle,
 		      const char *parameter, Shishi_key ** outkey)
 {
   int rc;
-  char *principal;
-  char *realm;
-  size_t saltlen;
   char *salt;
 
-  rc = shishi_parse_name (handle, name, &principal, &realm);
+  rc = shishi_derive_default_salt (handle, name, &salt);
   if (rc != SHISHI_OK)
     return rc;
 
-  if (!principal || !realm)
-    {
-      if (principal)
-	free (principal);
-      if (realm)
-	free (realm);
-      return SHISHI_INVALID_PRINCIPAL_NAME;
-    }
-
-  saltlen = asprintf (&salt, "%s%s", realm, principal);
-
   rc = shishi_key_from_string (handle, type, password, passwordlen,
-			       salt, saltlen, parameter, outkey);
-
+			       salt, strlen (salt), parameter, outkey);
   if (rc == SHISHI_OK)
     {
+      char *principal;
+      char *realm;
+
+      rc = shishi_parse_name (handle, name, &principal, &realm);
+      if (rc != SHISHI_OK)
+	return rc;
+
       shishi_key_principal_set (*outkey, principal);
       shishi_key_realm_set (*outkey, realm);
+
+      free (realm);
+      free (principal);
     }
 
   free (salt);
-  free (realm);
-  free (principal);
 
   return rc;
 }

@@ -457,7 +457,7 @@ shishi_derive_default_salt (Shishi * handle,
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
 
-  xasprintf (salt, "%s%s", realm, principal);
+  *salt = xasprintf ("%s%s", realm, principal);
 
   return SHISHI_OK;
 }
