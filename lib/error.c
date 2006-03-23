@@ -1,5 +1,5 @@
 /* error.c --- Error handling functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -27,59 +27,59 @@ struct shishi_error_msgs
   const char *message;
 };
 
-struct shishi_error_msgs _shishi_error_messages[] = {
+static const struct shishi_error_msgs _shishi_error_messages[] = {
   {SHISHI_OK,
-   "Shishi success"},
+   N_("Shishi success")},
   {SHISHI_ASN1_ERROR,
-   "Error in ASN.1 data, probably due to corrupt data."},
+   N_("Error in ASN.1 data, probably due to corrupt data.")},
   {SHISHI_FOPEN_ERROR,
-   "Could not open file."},
+   N_("Could not open file.")},
   {SHISHI_IO_ERROR,
-   "File input/output error."},
+   N_("File input/output error.")},
   {SHISHI_MALLOC_ERROR,
-   "Memory allocation error in shishi library."},
+   N_("Memory allocation error in shishi library.")},
   {SHISHI_BASE64_ERROR,
-   "Base64 encoding or decoding failed. Data corrupt?"},
+   N_("Base64 encoding or decoding failed. Data corrupt?")},
   {SHISHI_REALM_MISMATCH,
-   "Client realm value differ between request and reply."},
+   N_("Client realm value differ between request and reply.")},
   {SHISHI_CNAME_MISMATCH,
-   "Client name value differ between request and reply."},
+   N_("Client name value differ between request and reply.")},
   {SHISHI_NONCE_MISMATCH,
-   "Replay protection value (nonce) differ between request and reply."},
+   N_("Replay protection value (nonce) differ between request and reply.")},
   {SHISHI_TICKET_BAD_KEYTYPE,
-   "Keytype used to encrypt ticket doesn't match provided key. "
-   "This usually indicates an internal application error."},
+   N_("Keytype used to encrypt ticket doesn't match provided key. "
+      "This usually indicates an internal application error.")},
   {SHISHI_CRYPTO_INTERNAL_ERROR,
-   "Internal error in low-level crypto routines."},
+   N_("Internal error in low-level crypto routines.")},
   {SHISHI_CRYPTO_ERROR,
-   "Low-level cryptographic primitive failed.  This usually indicates "
-   "bad password or data corruption."},
+   N_("Low-level cryptographic primitive failed.  This usually indicates "
+      "bad password or data corruption.")},
   {SHISHI_KDC_TIMEOUT,
-   "Timedout talking to KDC. This usually indicates a network "
-   "or KDC address problem."},
+   N_("Timedout talking to KDC. This usually indicates a network "
+      "or KDC address problem.")},
   {SHISHI_KDC_NOT_KNOWN_FOR_REALM,
-   "No KDC for realm known."},
+   N_("No KDC for realm known.")},
   {SHISHI_SOCKET_ERROR,
-   "The system call socket() failed.  This usually indicates that "
-   "your system does not support the socket type."},
+   N_("The system call socket() failed.  This usually indicates that "
+      "your system does not support the socket type.")},
   {SHISHI_BIND_ERROR,
-   "The system call bind() failed.  This usually indicates "
-   "insufficient permissions."},
+   N_("The system call bind() failed.  This usually indicates "
+      "insufficient permissions.")},
   {SHISHI_SENDTO_ERROR,
-   "The system call sendto() failed."},
+   N_("The system call sendto() failed.")},
   {SHISHI_CLOSE_ERROR,
-   "The system call close() failed."},
+   N_("The system call close() failed.")},
   {SHISHI_GOT_KRBERROR,
-   "Server replied with an error message to request."},
+   N_("Server replied with an error message to request.")},
   {SHISHI_INVALID_TKTS,
-   "Ticketset not initialized.  This usually indicates an internal "
-   "application error."},
+   N_("Ticketset not initialized.  This usually indicates an internal "
+      "application error.")},
   {SHISHI_APREQ_DECRYPT_FAILED,
-   "Could not decrypt AP-REQ using provided key. "
-   "This usually indicates an internal application error."},
+   N_("Could not decrypt AP-REQ using provided key. "
+      "This usually indicates an internal application error.")},
   {SHISHI_TICKET_DECRYPT_FAILED,
-   "Could not decrypt Ticket using provided key. "
-   "This usually indicates an internal application error."},
+   N_("Could not decrypt Ticket using provided key. "
+      "This usually indicates an internal application error.")},
   {-1, NULL}
 };
 
@@ -127,7 +127,7 @@ shishi_error (Shishi * handle)
   if (handle->error)
     return handle->error;
 
-  return "No error";
+  return _("No error");
 }
 
 /**
@@ -233,9 +233,6 @@ shishi_error_set_outputtype (Shishi * handle, int type)
   handle->outputtype = type;
 }
 
-#define INFOSTR "libshishi: info: "
-#define WARNSTR "libshishi: warning: "
-
 /**
  * shishi_info:
  * @handle: shishi handle as allocated by shishi_init().
@@ -258,10 +255,10 @@ shishi_info (Shishi * handle, const char *format, ...)
   switch (type)
     {
     case SHISHI_OUTPUTTYPE_STDERR:
-      fprintf (stderr, "%s%s\n", INFOSTR, out);
+      fprintf (stderr, _("libshishi: info: %s\n"), out);
       break;
     case SHISHI_OUTPUTTYPE_SYSLOG:
-      syslog (LOG_ERR, "%s%s", INFOSTR, out);
+      syslog (LOG_ERR, _("libshishi: info: %s"), out);
       break;
     default:
       break;
@@ -293,10 +290,10 @@ shishi_warn (Shishi * handle, const char *format, ...)
   switch (type)
     {
     case SHISHI_OUTPUTTYPE_STDERR:
-      fprintf (stderr, "%s%s\n", WARNSTR, out);
+      fprintf (stderr, _("libshishi: warning: %s\n"), out);
       break;
     case SHISHI_OUTPUTTYPE_SYSLOG:
-      syslog (LOG_ERR, "%s%s", WARNSTR, out);
+      syslog (LOG_ERR, _("libshishi: warning: %s"), out);
       break;
     default:
       break;
