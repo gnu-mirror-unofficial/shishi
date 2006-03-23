@@ -1208,7 +1208,7 @@ _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
   {SHISHI_KDC_ERR_TRTYPE_NOSUPP,
    N_("KDC has no support for transited type")},
   {SHISHI_KDC_ERR_CLIENT_REVOKED,
-   N_("Clients credentials have been revoked"},
+   N_("Clients credentials have been revoked")},
   {SHISHI_KDC_ERR_SERVICE_REVOKED,
    N_("Credentials for server have been revoked")},
   {SHISHI_KDC_ERR_TGT_REVOKED,
@@ -1306,7 +1306,7 @@ _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
   {SHISHI_KDC_ERR_CLIENT_NAME_MISMATCH,
    N_("(pkinit)")},
   {SHISHI_KDC_ERR_KDC_NAME_MISMATCH,
-   N_("(pkinit))"}
+   N_("(pkinit)")}
 };
 
 /**

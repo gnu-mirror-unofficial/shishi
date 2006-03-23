@@ -200,7 +200,7 @@ dumplist_realm_principal (const char *realm, const char *principal)
 		printfield (_("\tPassword"), keys[i]->password);
 	  }
 	else
-	  printfield (_("\tKey is", "MISSING"));
+	  printfield (_("\tKey is"), _("MISSING"));
 
       shisa_keys_free (dbh, keys, nkeys);
     }

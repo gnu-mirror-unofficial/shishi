@@ -73,7 +73,7 @@ static const struct shisa_error_msgs _shisa_error_messages[] = {
   {SHISA_REMOVE_KEY_ERROR,
    N_("Error removing key from principal.")},
   {SHISA_MULTIPLE_KEY_MATCH,
-   N_("More than one key match given search criteria.)"}
+   N_("More than one key match given search criteria.")}
 };
 
 /**
