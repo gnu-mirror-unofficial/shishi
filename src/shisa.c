@@ -41,7 +41,7 @@
 #define N_(String) gettext_noop (String)
 
 /* Get asprintf. */
-#include "vasprintf.h"
+#include "xvasprintf.h"
 
 /* Get xgethostname. */
 #include "xgethostname.h"
@@ -81,8 +81,7 @@ printtimefield (const char *fieldname, time_t t)
 static void
 printintfield (const char *fieldname, int num)
 {
-  char *p;
-  asprintf (&p, "%d (0x%x)", num, num);
+  char *p = xasprintf ("%d (0x%x)", num, num);
   printfield (fieldname, p);
   free (p);
 }
@@ -90,8 +89,7 @@ printintfield (const char *fieldname, int num)
 static void
 printuint32field (const char *fieldname, uint32_t num)
 {
-  char *p;
-  asprintf (&p, "%d (0x%x)", num, num);
+  char *p = xasprintf ("%d (0x%x)", num, num);
   printfield (fieldname, p);
   free (p);
 }
@@ -99,8 +97,7 @@ printuint32field (const char *fieldname, uint32_t num)
 static void
 print3field (const char *fieldname, const char *text, uint32_t num)
 {
-  char *p;
-  asprintf (&p, "%s (0x%x, %d)", text, num, num);
+  char *p = xasprintf ("%s (0x%x, %d)", text, num, num);
   printfield (fieldname, p);
   free (p);
 }
@@ -361,6 +358,17 @@ apply_options (const char *realm,
     {
       etype = shishi_cfg_clientkdcetype_fast (sh);
 
+      if (!salt && realm && principal)
+	{
+	  char *name = xasprintf ("%s@%s", principal, realm);
+
+	  rc = shishi_derive_default_salt (sh, name, &salt);
+	  free (name);
+	  if (rc != SHISHI_OK)
+	    error (EXIT_FAILURE, 0, "shisa_derive_default_salt (%d):\n%s",
+		   rc, shisa_strerror (rc));
+	}
+
       if (args.string_to_key_parameter_given)
 	{
 	  /* XXX */
@@ -380,21 +388,10 @@ apply_options (const char *realm,
 		error (EXIT_FAILURE, 0, _("Could not read password"));
 	    }
 
-	  if (salt)
-	    rc = shishi_key_from_string (sh, etype,
-					 passwd, strlen (passwd),
-					 salt, strlen (salt),
-					 str2keyparam, &key);
-	  else
-	    {
-	      char *name;
-	      asprintf (&name, "%s@%s", principal, realm);
-
-	      rc = shishi_key_from_name (sh, etype, name,
-					 passwd, strlen (passwd),
-					 str2keyparam, &key);
-	      free (name);
-	    }
+	  rc = shishi_key_from_string (sh, etype,
+				       passwd, strlen (passwd),
+				       salt, salt ? strlen (salt) : 0,
+				       str2keyparam, &key);
 	}
       else
 	rc = shishi_key_random (sh, etype, &key);
@@ -425,7 +422,8 @@ apply_options (const char *realm,
 int
 main (int argc, char *argv[])
 {
-  char *realm = NULL, *principal = NULL;
+  const char *realm = NULL;
+  const char *principal = NULL;
   Shisa_principal ph;
   Shisa_key key;
   int rc;
@@ -519,12 +517,12 @@ main (int argc, char *argv[])
       printf (_("Adding default realm `%s'...\n"), realm);
       add (realm, NULL, NULL, NULL);
 
-      asprintf (&tmp, "krbtgt/%s", realm);
+      tmp = xasprintf ("krbtgt/%s", realm);
       add (realm, tmp, &ph, &key);
       free (tmp);
 
       host = xgethostname ();
-      asprintf (&tmp, "host/%s", host);
+      tmp = xasprintf ("host/%s", host);
       free (host);
 
       memset (&key2, 0, sizeof (key2));
