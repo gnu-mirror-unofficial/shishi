@@ -450,14 +450,17 @@ shishi_derive_default_salt (Shishi * handle,
 
   if (!principal || !realm)
     {
-      if (principal)
-	free (principal);
       if (realm)
 	free (realm);
+      if (principal)
+	free (principal);
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
 
   *salt = xasprintf ("%s%s", realm, principal);
+
+  free (realm);
+  free (principal);
 
   return SHISHI_OK;
 }
