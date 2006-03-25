@@ -1,3 +1,641 @@
+2006-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Generated.
+
+2006-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Use proper gpg key.
+
+2006-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Use gnupload.
+
+2006-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* gl/base64.c, gl/setenv.c, gl/time_r.c, gl/unsetenv.c: Update.
+
+2006-03-24  Simon Josefsson <simon@josefsson.org>
+
+	* db/setup.c: Fix mem leak, reported by Elrond.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* db/config.c, db/shisa.h: Fix mem leak, use const, from Elrond.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Fix mem leak.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c: Use new salt API.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c, lib/principal.c: Fix.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c, lib/shishi.h.in: Add shishi_derive_default_salt.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c, db/err.c, src/shisa.c: Typo.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* po/POTFILES.in: Fix.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c, db/err.c: Translate.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* po/POTFILES.in: Remove some, for now.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: Translate.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Translate.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Fix.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Fix.
+
+2006-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Fix typo, from Russ.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c: Further fixes, from Elrond.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c: Fix mem leak, from Elrond.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-3des.c: Avoid unsigned char's.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c: Use shishi_key_from_name API.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/version.c: Fix check.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS: Remove nettle, we don't use it now.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS: Add.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c, lib/shishi.h.in: Add shishi_key_from_name(), suggested
+	by Elrond.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Avoid unsigned char's.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* tests/crypto.c, tests/utils.c: Avoid unsigned char's.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.ggo: Don't require -v.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/strverscmp.c, gl/strverscmp.h,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4, gl/m4/strverscmp.m4,
+	lib/version.c: Rewrite shishi_check_version().
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.ggo: Fix.
+
+2006-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.ggo: Don't require -v.
+
+2006-03-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-03-16  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: No invariant sections.
+
+2006-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha: Fix.
+
+2006-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.c: Add.
+
+2006-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Fix -libtasn1.
+
+2006-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Fix libtasn1 -l's.
+
+2006-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix libtasn1 test.
+
+2006-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gc-random.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4: Update.
+
+2006-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* maint.mk, gl/Makefile.am, gl/base64.h, gl/gc-gnulib.c,
+	gl/gc-libgcrypt.c, gl/setenv.c, gl/time_r.c, gl/time_r.h,
+	gl/unsetenv.c, gl/m4/clock_time.m4, gl/m4/extensions.m4,
+	gl/m4/gc.m4, gl/m4/getaddrinfo.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/timespec.m4, gl/m4/unistd_h.m4: Update.
+
+2006-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2006-03-13  Simon Josefsson <simon@josefsson.org>
+
+	* lib/safe.c: Fix.
+
+2006-03-12  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/Makefile.am: Remove.
+
+2006-03-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Libtasn1 update.
+
+2006-03-11  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/coding.c, asn1/decoding.c, asn1/defines.h, asn1/der.h,
+	asn1/element.c, asn1/errors.h, asn1/errors_int.h, asn1/gstr.c,
+	asn1/gstr.h, asn1/int.h, asn1/libtasn1.h, asn1/parser_aux.c,
+	asn1/parser_aux.h, asn1/structure.c, asn1/structure.h: Update.
+
+2006-03-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Add -no-undefined, required to produce DLLs on
+	mingw32.
+
+2006-02-16  Simon Josefsson <simon@josefsson.org>
+
+	* maint-cfg.mk: Fix.
+
+2006-02-16  Simon Josefsson <simon@josefsson.org>
+
+	* maint.mk, gl/m4/getaddrinfo.m4, gl/m4/socklen.m4,
+	gl/m4/sys_socket_h.m4: Update.
+
+2006-02-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Typo.
+
+2006-02-14  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, Makefile.cfg, Makefile.maint, maint-cfg.mk,
+	maint.mk, gl/m4/gnulib-comp.m4: Rename.
+
+2006-02-14  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, Makefile.maint, gl/Makefile.am,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4: Add
+	maintainer-makefile module.
+
+2006-02-14  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.cfg: Add.
+
+2006-02-09  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-02-09  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Bump libtasn1 version.
+
+2006-02-09  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/coding.c, asn1/decoding.c, asn1/defines.h, asn1/der.h,
+	asn1/element.c, asn1/errors.c, asn1/errors.h, asn1/errors_int.h,
+	asn1/gstr.c, asn1/int.h, asn1/libtasn1.h, asn1/parser_aux.c,
+	asn1/structure.c: Update.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c, lib/encapreppart.c, lib/priv.c: Fix
+	gettimeofday() usage.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/safe.c: Fix gettimeofday usage.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add SHISHI_GETTIMEOFDAY_ERROR.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authorize.c: Don't free getpwnam return.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Test for getpwname, for mingw32.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/authenticator.c: Avoid use of timezone.  Check return value.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Fix getpwuid call, for mingw32.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Check for getpwuid, for mingw32.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c, lib/utils.c, lib/utils.h: Remove xgettimeofday.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.h, tests/utils.c: Always has sys/socket.h now.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: We always have sys/socket.h now.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: gettime fix for mingw32.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Mingw32 fix.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* README: Add.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix GnuTLS test.
+
+2006-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/extensions.m4: Update.
+
+2006-01-30  Simon Josefsson <simon@josefsson.org>
+
+	* gl/gai_strerror.c, gl/getaddrinfo.h, gl/getopt.c, gl/socket_.h,
+	gl/stdbool_.h, gl/strndup.c, gl/strnlen.c, gl/vasnprintf.c,
+	gl/m4/getaddrinfo.m4, gl/m4/getopt.m4, gl/m4/gnulib-tool.m4,
+	gl/m4/socklen.m4, gl/m4/stdbool.m4: Update.
+
+2006-01-19  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/gai_strerror.c, gl/getaddrinfo.h,
+	gl/socket_.h, gl/m4/getaddrinfo.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/sys_socket_h.m4: Update.
+
+2006-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Fix gnutls check.
+
+2006-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Fix gnutls check.
+
+2006-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix gnutls check.
+
+2006-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Enable gcrypt if present, for now.
+
+2006-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, src/Makefile.am: Fix gnutls check.
+
+2006-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix gnutls check.
+
+2006-01-13  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Fix libs.
+
+2006-01-12  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/base64.c, gl/gettime.c, gl/md5.c, gl/md5.h,
+	gl/sha1.c, gl/sha1.h, gl/stdint_.h, gl/m4/getaddrinfo.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/gnulib-tool.m4, gl/m4/socklen.m4,
+	gl/m4/stdint.m4, doc/getdate.texi: Update.
+
+2006-01-12  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Fix copyright years in man page.
+
+2005-12-24  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/getaddrinfo.m4, gl/m4/socklen.m4: Update.
+
+2005-12-20  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am: Fix.
+
+2005-12-20  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/sv.po: Initial attempt.
+
+2005-12-15  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/gnulib-comp.m4: Update.
+
+2005-12-13  Simon Josefsson <simon@josefsson.org>
+
+	* gl/gc-gnulib.c, gl/gc-libgcrypt.c, gl/gc.h, gl/getaddrinfo.h,
+	gl/md5.c, gl/stdint_.h, gl/m4/socklen.m4: Update.
+
+2005-10-23  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS: Update PGP key.
+
+2005-10-23  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Bump versions.
+
+2005-10-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2005-10-23  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2005-10-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-aes.c: Fix compiler warning.
+
+2005-10-23  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix.
+
+2005-10-23  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Simplify IPv6 test, using gnulib.
+
+2005-10-23  Simon Josefsson <simon@josefsson.org>
+
+	* gl/gc-gnulib.c, gl/md4.h, gl/md5.c, gl/md5.h: Update.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c, lib/low-crypto.c: Use pbkdf2-sha1 from gc.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/low-crypto.c: Replace internal ARCFOUR implementation with
+	the one from gnulib.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/arcfour.c, gl/arcfour.h, gl/md4.c: Update.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Remove nettle stuff.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Generated.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/crc.h: Update.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/libgcrypt.c, lib/low-crypto.c, lib/nettle.c:
+	Use low-crypto.c, to interface with gc.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Don't default to libgcrypt.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gc-md5.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/crc.c, gl/crc.h, gl/m4/crc.m4: Update.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Remove crypto.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Enable libgcrypt by default.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Remove crypto.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Remove crypto/.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, lib/Makefile.am: Remove crypto.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Remove nettle/libgcrypt code.
+
+2005-10-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/arcfour.c, gl/arcfour.h, gl/des.c, gl/des.h,
+	gl/gc-gnulib.c, gl/gc-libgcrypt.c, gl/gc-pbkdf2-sha1.c, gl/gc.h,
+	gl/hmac-md5.c, gl/hmac-sha1.c, gl/md4.c, gl/md4.h, gl/md5.c,
+	gl/m4/arcfour.m4, gl/m4/des.m4, gl/m4/gc-arcfour.m4,
+	gl/m4/gc-des.m4, gl/m4/gc-hmac-md5.m4, gl/m4/gc-hmac-sha1.m4,
+	gl/m4/gc-md4.m4, gl/m4/gc.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/hmac-md5.m4, gl/m4/md4.m4,
+	gl/m4/md5.m4, gl/m4/stdbool.m4, gl/md5.h: Update.
+
+2005-10-12  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/gc-gnulib.c, gl/gc-libgcrypt.c,
+	gl/gc-pbkdf2-sha1.c, gl/gc.h, gl/getaddrinfo.c, gl/getaddrinfo.h,
+	gl/getdate.y, gl/getdelim.c, gl/getopt_.h, gl/hmac-sha1.c,
+	gl/hmac.h, gl/memxor.c, gl/memxor.h, gl/sha1.c, gl/sha1.h,
+	gl/stdint_.h, gl/strcasecmp.c, gl/strncasecmp.c, gl/xgethostname.c,
+	gl/xreadlink.c, gl/m4/gc-hmac-sha1.m4, gl/m4/gc-pbkdf2-sha1.m4,
+	gl/m4/gc.m4, gl/m4/getaddrinfo.m4, gl/m4/getdate.m4,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4, gl/m4/hmac-sha1.m4,
+	gl/m4/inttypes.m4, gl/m4/lib-ld.m4, gl/m4/lib-link.m4,
+	gl/m4/lib-prefix.m4, gl/m4/mbchar.m4, gl/m4/mbiter.m4,
+	gl/m4/memxor.m4, gl/m4/mktime.m4, gl/m4/sha1.m4, gl/m4/stdbool.m4,
+	gl/m4/stdint.m4, gl/m4/strcase.m4, gl/m4/xreadlink.m4: Add.
+
+2005-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Update.
+
+2005-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Revert local changes.
+
+2005-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Link with realtime clock library, for gnulib.
+
+2005-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/getaddrinfo.c, gl/getdate.h, gl/getdelim.c,
+	gl/getline.c, gl/getopt1.c, gl/getpass.c, gl/gettimeofday.c,
+	gl/progname.c, gl/readlink.c, gl/realloc.c, gl/strncasecmp.c,
+	gl/strndup.c, gl/strnlen.c, gl/strnlen1.c, gl/time_r.c,
+	gl/timespec.h, gl/xmalloc.c, gl/xreadlink.c, gl/xstrndup.c: Update.
+
+2005-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2005-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.vers: Fix.
+
+2005-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/socklen.m4: Update.
+
+2005-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Socklen_t is handled by gnulib now.
+
+2005-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/socklen.m4: Update.
+
+2005-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2005-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/base64.c, gl/gai_strerror.c, gl/getaddrinfo.c,
+	gl/getaddrinfo.h, gl/getdelim.c, gl/getpass.c, gl/mbchar.c,
+	gl/mbchar.h, gl/mbuiter.h, gl/memchr.c, gl/mktime.c, gl/strcase.h,
+	gl/strcasecmp.c, gl/strncasecmp.c, gl/strnlen1.c, gl/strnlen1.h,
+	gl/timespec.h, gl/m4/getaddrinfo.m4, gl/m4/getopt.m4,
+	gl/m4/getpass.m4, gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/gnulib-tool.m4, gl/m4/mbchar.m4, gl/m4/mbiter.m4,
+	gl/m4/mbrtowc.m4, gl/m4/memchr.m4, gl/m4/strcase.m4,
+	gl/m4/timespec.m4, configure.ac, gl/m4/gnulib.m4, gl/m4/st_mtim.m4:
+	Update.
+
+2005-09-19  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/tmpl/shishi-unused.sgml: Add.
+
+2005-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Avoid EXTRA_DIST.
+
+2005-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Link with idn.
+
+2005-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Remove -export-symbols-regex, handled by version
+	script.
+
+2005-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/password.c: Use new CPP symbol.
+
+2005-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Use version script.
+
+2005-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.vers, NEWS: Add.
+
+2005-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Add --enable-ld-version-script.
+
+2005-08-30  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/defines.h, asn1/errors.c, asn1/errors.h, asn1/libtasn1.h:
+	Update.
+
+2005-08-30  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix libidn test.
+
+2005-08-12  Simon Josefsson <simon@josefsson.org>
+
+	* gl/strnlen.h: Update.
+
+2005-08-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Avoid gnulib module xalloc-die.
+
+2005-08-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/strnlen.h, gl/m4/gnulib.m4, gl/m4/strdup.m4: Update.
+
 2005-08-10  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po, po/sv.po: Generated.
@@ -303,11 +941,6 @@
 
 	* THANKS: Add.  Reorder.
 
-2004-12-17  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am: Fix srcdir != objdir, tiny patch from Mike
-	Castle <dalgoda@ix.netcom.com>.
-
 2004-12-16  Simon Josefsson <simon@josefsson.org>
 
 	* asn1/coding.c, asn1/decoding.c, asn1/element.c, asn1/errors.c,
@@ -579,14 +1212,10 @@
 
 2004-11-09  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/nettle-meta.h: Sync upstream.
-
-2004-11-09  Simon Josefsson <simon@josefsson.org>
-
 	* asn1/coding.c, asn1/decoding.c, asn1/element.c, asn1/errors.c,
 	asn1/errors.h, asn1/errors_int.h, asn1/gstr.c, asn1/gstr.h,
-	asn1/int.h, asn1/libtasn1.h, asn1/parser_aux.c, asn1/structure.c,
-	crypto/macros.h: Sync upstream.
+	asn1/int.h, asn1/libtasn1.h, asn1/parser_aux.c, asn1/structure.c:
+	Sync upstream.
 
 2004-11-09  Simon Josefsson <simon@josefsson.org>
 
@@ -1552,11 +2181,6 @@
 
 2004-04-20  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/Makefile.am, crypto/hmac-md4.c, crypto/hmac.h: Remove
-	HMAC-MD4 (why was it added?).
-
-2004-04-20  Simon Josefsson <simon@josefsson.org>
-
 	* lib/nettle.c: Include md4.h directly (not via hmac.h).
 
 2004-04-19  Simon Josefsson <simon@josefsson.org>
@@ -1589,14 +2213,6 @@
 2004-04-18  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.15.
-
-2004-04-18  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/nettle-internal.h: Sync.
-
-2004-04-18  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/hmac.h: Sync
 
 2004-04-18  Simon Josefsson <simon@josefsson.org>
 
@@ -1636,16 +2252,6 @@
 
 2004-04-18  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/nettle-internal.h: Disable alloca use in nettle (we don't
-	include alloca.h early enough, as the Nettle configure.ac hacks make
-	sure).
-
-2004-04-18  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/nettle-internal.h: Try to get alloca.h included early.
-
-2004-04-18  Simon Josefsson <simon@josefsson.org>
-
 	* configure.ac, gl/Makefile.am, gl/allocsa.c, gl/allocsa.h,
 	gl/getdate.h, gl/getdate.y, gl/getopt.c, gl/getopt.h, gl/getopt1.c,
 	gl/getopt_int.h, gl/gettime.c, gl/gettimeofday.c, gl/mktime.c,
@@ -1679,11 +2285,6 @@
 2004-04-18  Simon Josefsson <simon@josefsson.org>
 
 	* lib/shishi.h.in: Add utils.c and shishi_get_date.
-
-2004-04-18  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/nettle-internal.h: Include alloca.h, if needed and
-	present.
 
 2004-04-18  Simon Josefsson <simon@josefsson.org>
 
@@ -1912,22 +2513,6 @@
 
 2004-04-18  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/cbc-cts.c, crypto/cbc-cts.h, crypto/cbc-mac.h: Style
-	changes on my files, to align with CVS Nettle.
-
-2004-04-18  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am, crypto/aes-set-decrypt-key.c,
-	crypto/aes-set-encrypt-key.c, crypto/aes.h, crypto/arcfour-crypt.c,
-	crypto/arcfour.c, crypto/arcfour.h, crypto/cbc.c, crypto/cbc.h,
-	crypto/des.c, crypto/des.h, crypto/des3.c, crypto/hmac.c,
-	crypto/md4.c, crypto/md4.h, crypto/md5.h, crypto/memxor.h,
-	crypto/nettle-internal.h, crypto/nettle-meta.h, crypto/sha.h,
-	crypto/sha1-compress.c, crypto/sha1.c: Sync with Nettle CVS (after
-	s/nettle-types.h/shishi-int.h/g).
-
-2004-04-18  Simon Josefsson <simon@josefsson.org>
-
 	* tests/low-crypto.c: Add aes_cts(16) test.
 
 2004-04-18  Simon Josefsson <simon@josefsson.org>
@@ -2026,11 +2611,6 @@
 2004-04-17  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Add.
-
-2004-04-05  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/cbc-cts.c: Change output-IV to be last output from
-	encryption primitive F.
 
 2004-04-05  Simon Josefsson <simon@josefsson.org>
 
@@ -3598,8 +4178,9 @@
 2003-11-26  Simon Josefsson <simon@josefsson.org>
 
 	* doc/reference/Makefile.am, doc/reference/shishi-docs.sgml,
-	doc/reference/shishi-docs.tmpl, doc/reference/shishi.types: Use my
-	own GTK-DOC Makefile instead of buggy upstream version.
+	doc/reference/shishi-docs.tmpl, doc/reference/shishi.types,
+	doc/reference/tmpl/dummy.sgml: Use my own GTK-DOC Makefile instead
+	of buggy upstream version.
 
 2003-11-26  Simon Josefsson <simon@josefsson.org>
 
@@ -3610,11 +4191,6 @@
 
 	* ANNOUNCE, Makefile.am, doc/shishi.texi: Move ANNOUNCE text to
 	manual.  Don't EXTRA_DIST stuff.
-
-2003-11-26  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/README, crypto/README.shishi: Add upstream README as
-	README.
 
 2003-11-26  Simon Josefsson <simon@josefsson.org>
 
@@ -3698,6 +4274,10 @@
 
 2003-11-01  Simon Josefsson <simon@josefsson.org>
 
+	* doc/man/Makefile.am: Remove (replaced by gdoc framework).
+
+2003-11-01  Simon Josefsson <simon@josefsson.org>
+
 	* doc/gdoc: Sync with libidn.
 
 2003-10-25  Simon Josefsson <simon@josefsson.org>
@@ -3708,6 +4288,11 @@
 2003-10-25  Simon Josefsson <simon@josefsson.org>
 
 	* configure.ac: Fix for recent libtool breakage.
+
+2003-10-25  Simon Josefsson <simon@josefsson.org>
+
+	* doc/man/Makefile.am: Generated.  (This should be autogenerated
+	instead of put in CVS...)
 
 2003-10-20  Simon Josefsson <simon@josefsson.org>
 
@@ -3720,22 +4305,6 @@
 2003-10-20  Simon Josefsson <simon@josefsson.org>
 
 	* lib/libgcrypt.c, lib/nettle.c: Fix whitespace.
-
-2003-10-20  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/cbc-cts.c:
-	(cbc_cts_decrypt): Fix real bug.
-
-2003-10-20  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/cbc-cts.c:
-	(cbc_cts_decrypt): Use last blocksize bytes.  (Incorrect?)
-
-2003-10-20  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/cbc-cts.c: Fix IV (now it uses last blocksize bytes, same
-	as libgcrypt, but perhaps using the next-to-last block is the
-	correct way?).
 
 2003-10-20  Simon Josefsson <simon@josefsson.org>
 
@@ -3783,12 +4352,6 @@
 	tests/priv.c, tests/safe.c, tests/ticketset.c, tests/utils.c:
 	Simplify test harness.  Indent.
 
-2003-10-20  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/cbc-cts.c:
-	(cbc_cts_encrypt): Fix IV, from Nicolas Pouvesle
-	<nico.pou@fnac.net>.
-
 2003-10-16  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS, configure.ac: Bump versions.
@@ -3804,6 +4367,10 @@
 2003-10-16  Simon Josefsson <simon@josefsson.org>
 
 	* Makefile.am: Only dist examples and extra, don't build them.
+
+2003-10-16  Simon Josefsson <simon@josefsson.org>
+
+	* doc/man/Makefile.am: Generated.
 
 2003-10-16  Simon Josefsson <simon@josefsson.org>
 
@@ -3953,6 +4520,10 @@
 
 2003-09-28  Simon Josefsson <simon@josefsson.org>
 
+	* doc/man/Makefile.am: Generated.
+
+2003-09-28  Simon Josefsson <simon@josefsson.org>
+
 	* lib/Makefile.am, lib/authorize.c, lib/shishi.h.in:
 	(shishi_authorized_p): Add.
 
@@ -4007,6 +4578,10 @@
 2003-09-24  Simon Josefsson <simon@josefsson.org>
 
 	* doc/Makefile.am, doc/shishi.texi: Add crypto-ctx.
+
+2003-09-24  Simon Josefsson <simon@josefsson.org>
+
+	* doc/man/Makefile.am: Generated.
 
 2003-09-24  Simon Josefsson <simon@josefsson.org>
 
@@ -4101,6 +4676,10 @@
 
 	* lib/crypto-rc4.c, lib/nettle.c: Support ARCFOUR "iv", from
 	Nicolas Pouvesle <nico.pou@fnac.net>.
+
+2003-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* doc/man/Makefile.am: Generated.
 
 2003-09-20  Simon Josefsson <simon@josefsson.org>
 
@@ -4239,7 +4818,7 @@
 
 2003-09-14  Simon Josefsson <simon@josefsson.org>
 
-	* po/shishi.pot, po/sv.po: Generated.
+	* doc/man/Makefile.am, po/shishi.pot, po/sv.po: Generated.
 
 2003-09-14  Simon Josefsson <simon@josefsson.org>
 
@@ -4256,6 +4835,10 @@
 2003-09-14  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Add.
+
+2003-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* doc/man/Makefile.am: Distclean man pages, for 'distcheck'.
 
 2003-09-14  Simon Josefsson <simon@josefsson.org>
 
@@ -4285,10 +4868,6 @@
 2003-09-14  Simon Josefsson <simon@josefsson.org>
 
 	* extra/pam_shishi/Makefile.am: Fix.
-
-2003-09-13  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am, crypto/arcfour.c, crypto/arcfour.h: Add.
 
 2003-09-13  Simon Josefsson <simon@josefsson.org>
 
@@ -4421,6 +5000,10 @@
 
 2003-09-10  Simon Josefsson <simon@josefsson.org>
 
+	* doc/man/Makefile.am: Add.
+
+2003-09-10  Simon Josefsson <simon@josefsson.org>
+
 	* lib/init.c: Cleanup.  Doc fix.
 
 2003-09-10  Simon Josefsson <simon@josefsson.org>
@@ -4445,8 +5028,8 @@
 
 2003-09-09  Simon Josefsson <simon@josefsson.org>
 
-	* Makefile.am, doc/Makefile.am: Move shishi.1 to doc/man/.
-	Generate API man pages.
+	* Makefile.am, doc/Makefile.am, doc/man/Makefile.am: Move shishi.1
+	to doc/man/.  Generate API man pages.
 
 2003-09-09  Simon Josefsson <simon@josefsson.org>
 
@@ -4935,10 +5518,6 @@
 
 2003-09-06  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/Makefile.am: Dist README.  Fix copying conditions.
-
-2003-09-06  Simon Josefsson <simon@josefsson.org>
-
 	* gl/getdate.y, gl/timegm.c, gl/timegm.h: Upstream sync.
 
 2003-09-06  Simon Josefsson <simon@josefsson.org>
@@ -4948,17 +5527,6 @@
 2003-09-06  Simon Josefsson <simon@josefsson.org>
 
 	* gl/README: Add.
-
-2003-09-06  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/aes-internal.h, crypto/aes.h, crypto/cbc.h, crypto/des.c,
-	crypto/des.h, crypto/desCode.h, crypto/hmac.h, crypto/md4-meta.c,
-	crypto/md4.c, crypto/md4.h, crypto/md5.c, crypto/md5.h,
-	crypto/nettle-meta.h, crypto/sha.h: Upstream sync.
-
-2003-09-06  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/README: Add.
 
 2003-09-06  Simon Josefsson <simon@josefsson.org>
 
@@ -6189,10 +6757,6 @@
 
 2003-08-17  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/des.c, crypto/desCode.h: Fix netbsd crash.
-
-2003-08-17  Simon Josefsson <simon@josefsson.org>
-
 	* lib/authenticator.c: Fix.
 
 2003-08-17  Simon Josefsson <simon@josefsson.org>
@@ -6338,21 +6902,6 @@
 
 2003-08-15  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/cbc-cts.c: Typo.
-
-2003-08-15  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/aes-decrypt-table.c, crypto/aes-decrypt.c,
-	crypto/aes-encrypt-table.c, crypto/aes-encrypt.c,
-	crypto/aes-meta.c, crypto/aes-set-decrypt-key.c,
-	crypto/aes-set-encrypt-key.c, crypto/aes.c, crypto/cbc-cts.c,
-	crypto/cbc-mac.c, crypto/cbc.c, crypto/des.c, crypto/des3.c,
-	crypto/hmac-md5.c, crypto/hmac-sha1.c, crypto/hmac.c,
-	crypto/md5-meta.c, crypto/md5.c, crypto/memxor.c,
-	crypto/sha1-meta.c, crypto/sha1.c: Upstream sync.  Fix.
-
-2003-08-15  Simon Josefsson <simon@josefsson.org>
-
 	* po/shishi.pot, po/sv.po: Generated.
 
 2003-08-15  Simon Josefsson <simon@josefsson.org>
@@ -6491,18 +7040,6 @@
 
 2003-08-10  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/Makefile.am: Fix.
-
-2003-08-10  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/cbc-cts.c: Fix.
-
-2003-08-10  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/cbc-cts.c: Fix.  Indent.
-
-2003-08-10  Simon Josefsson <simon@josefsson.org>
-
 	* src/shishid.c: Fix.
 
 2003-08-10  Simon Josefsson <simon@josefsson.org>
@@ -6547,10 +7084,6 @@
 2003-08-10  Simon Josefsson <simon@josefsson.org>
 
 	* lib/netio.c: Fix debug info.
-
-2003-08-10  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/cbc-cts.c: Work.
 
 2003-08-10  Simon Josefsson <simon@josefsson.org>
 
@@ -6627,25 +7160,7 @@
 
 2003-08-09  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/md4.c, crypto/md4.h: Fix copyright.
-
-2003-08-09  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am, crypto/hmac-md4.c, crypto/hmac.h,
-	crypto/nettle-meta.h: Add hmac-md4.
-
-2003-08-09  Simon Josefsson <simon@josefsson.org>
-
 	* lib/crypto-des.c: Fix md4/md5.
-
-2003-08-09  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/md4.c: Fix.
-
-2003-08-09  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am, crypto/md4-meta.c, crypto/md4.c,
-	crypto/md4.h: Add md4.
 
 2003-08-09  Simon Josefsson <simon@josefsson.org>
 
@@ -6654,24 +7169,11 @@
 
 2003-08-09  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/gstr.c, crypto/gstr.h, crypto/mem.h: Remove asn1 junk.
-
-2003-08-09  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am, crypto/cbc-mac.c, crypto/cbc-mac.h: Add
-	CBC-MAC.
-
-2003-08-09  Simon Josefsson <simon@josefsson.org>
-
 	* THANKS: Fix.
 
 2003-08-09  Simon Josefsson <simon@josefsson.org>
 
 	* configure.ac: Fix -Icrypto.
-
-2003-08-09  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am, crypto/desinfo.h: Fix.
 
 2003-08-09  Simon Josefsson <simon@josefsson.org>
 
@@ -6706,40 +7208,9 @@
 	* Makefile.am: Remove errcrypto.  Remove crypto/m4 from aclocal
 	flags.
 
-2003-08-09  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am, crypto/aes-decrypt-table.c,
-	crypto/aes-decrypt.c, crypto/aes-encrypt-table.c,
-	crypto/aes-encrypt.c, crypto/aes-internal.h, crypto/aes-meta.c,
-	crypto/aes-set-decrypt-key.c, crypto/aes-set-encrypt-key.c,
-	crypto/aes.c, crypto/aes.h, crypto/cbc-cts.c, crypto/cbc-cts.h,
-	crypto/cbc.c, crypto/cbc.h, crypto/des.c, crypto/des.h,
-	crypto/des3.c, crypto/desCode.h, crypto/desinfo.h, crypto/gstr.c,
-	crypto/gstr.h, crypto/hmac-md5.c, crypto/hmac-sha1.c,
-	crypto/hmac.c, crypto/hmac.h, crypto/keymap.h, crypto/macros.h,
-	crypto/md5-meta.c, crypto/md5.c, crypto/md5.h, crypto/mem.h,
-	crypto/memxor.c, crypto/memxor.h, crypto/nettle-meta.h,
-	crypto/parity.h, crypto/rotors.h, crypto/sha.h, crypto/sha1-meta.c,
-	crypto/sha1.c: Add (from nettle).
-
-2003-08-09  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/AUTHORS, crypto/BUGS, crypto/COPYING, crypto/COPYING.DOC,
-	crypto/COPYING.LIB, crypto/Makefile.am, crypto/NEWS,
-	crypto/Notes-wk, crypto/README, crypto/README-alpha,
-	crypto/README.apichanges, crypto/THANKS, crypto/TODO,
-	crypto/acinclude.m4, crypto/configure.ac, crypto/libgcrypt.txt,
-	crypto/stamp-h.in: Remove (libgcrypt is being replaced by a
-	mini-nettle).
-
 2003-08-08  Simon Josefsson <simon@josefsson.org>
 
 	* configure.ac: Prefer minitasn1 over libtasn1.
-
-2003-08-08  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/AUTHORS, crypto/NEWS, crypto/README, crypto/THANKS,
-	crypto/configure.ac: Upstream sync.
 
 2003-08-08  Simon Josefsson <simon@josefsson.org>
 
@@ -6759,23 +7230,11 @@
 
 2003-08-08  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/README.apichanges, crypto/configure.ac: Upstream sync.
-
-2003-08-08  Simon Josefsson <simon@josefsson.org>
-
 	* lib/shishi.h.in: Include time.h for time_t.
 
 2003-08-07  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/Makefile.am: Revert to upstream.
-
-2003-08-07  Simon Josefsson <simon@josefsson.org>
-
 	* configure.ac: Readd depends.
-
-2003-08-07  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am: Really fix check target.
 
 2003-08-07  Simon Josefsson <simon@josefsson.org>
 
@@ -6788,11 +7247,6 @@
 2003-08-07  Simon Josefsson <simon@josefsson.org>
 
 	* src/Makefile.am: Link gnulib.
-
-2003-08-07  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/Makefile.am: Remove tests (random stuff hang on too many
-	platforms).
 
 2003-08-07  Simon Josefsson <simon@josefsson.org>
 
@@ -7119,11 +7573,6 @@
 
 2003-07-10  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/NEWS, crypto/README, crypto/TODO, crypto/configure.ac:
-	Upstream update.
-
-2003-07-10  Simon Josefsson <simon@josefsson.org>
-
 	* lib/Makefile.am: Remove GNU Make specific idiom.
 
 2003-07-10  Simon Josefsson <simon@josefsson.org>
@@ -7275,16 +7724,6 @@
 2003-07-05  Simon Josefsson <simon@josefsson.org>
 
 	* configure.ac: Configure errcrypto.
-
-2003-07-05  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/configure.ac: Quick hack to get paths to libgpg-error into
-	Makefile's.
-
-2003-07-05  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/AUTHORS, crypto/NEWS, crypto/README, crypto/acinclude.m4,
-	crypto/configure.ac: Sync with upstream.
 
 2003-07-05  Simon Josefsson <simon@josefsson.org>
 
@@ -7612,11 +8051,6 @@
 
 2003-03-26  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/AUTHORS, crypto/NEWS, crypto/THANKS, crypto/TODO,
-	crypto/configure.ac: Upstream sync.
-
-2003-03-26  Simon Josefsson <simon@josefsson.org>
-
 	* asn1/NEWS, asn1/configure.in: Upstream sync.
 
 2003-03-14  Simon Josefsson <simon@josefsson.org>
@@ -7703,10 +8137,6 @@
 
 2003-02-11  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/INSTALL: Fix.
-
-2003-02-11  Simon Josefsson <simon@josefsson.org>
-
 	* Makefile.am: Allow use of external libtasn1.
 
 2003-02-11  Simon Josefsson <simon@josefsson.org>
@@ -7722,12 +8152,6 @@
 2003-02-11  Simon Josefsson <simon@josefsson.org>
 
 	* configure.ac: We need libgcrypt >1.1.13.
-
-2003-02-11  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/AUTHORS, crypto/INSTALL, crypto/NEWS, crypto/README,
-	crypto/TODO, crypto/configure.ac, crypto/libgcrypt.txt: Upstream
-	update.
 
 2003-02-11  Simon Josefsson <simon@josefsson.org>
 
@@ -8142,11 +8566,13 @@
 
 2003-02-03  Simon Josefsson <simon@josefsson.org>
 
-	* doc/reference/Makefile.am: Fix.
+	* doc/reference/Makefile.am, doc/reference/tmpl/dummy.sgml,
+	doc/reference/tmpl/shishi.sgml: Fix.
 
 2003-02-03  Simon Josefsson <simon@josefsson.org>
 
-	* doc/reference/shishi.types: Remove autogenerated stuff.
+	* doc/reference/shishi.types, doc/reference/tmpl/shishi.sgml:
+	Remove autogenerated stuff.
 
 2003-02-03  Simon Josefsson <simon@josefsson.org>
 
@@ -8155,15 +8581,16 @@
 
 2003-02-03  Simon Josefsson <simon@josefsson.org>
 
-	* doc/Makefile.am, doc/shishi.texi, extra/pam_shishi/pam_shishi.c,
-	lib/Makefile.am, lib/ap.c, lib/apreq.c, lib/as.c, lib/asn1.c,
-	lib/authenticator.c, lib/diskio.c, lib/done.c, lib/enckdcreppart.c,
-	lib/error.c, lib/init.c, lib/internal.h, lib/kdc.c, lib/kdcrep.c,
-	lib/kdcreq.c, lib/safe.c, lib/shishi.h.in, lib/tgs.c, lib/ticket.c,
-	src/authp.c, src/client.c, src/server.c, src/shishi.c,
-	src/shishid.c, tests/ticketset.c: Rename shishi_ticketset_* to
-	shishi_tkts_*.  Separate ASN.1 ticket functions into shishi_ticket_*
-	and high-level ticket functions into shishi_tkt_*.
+	* doc/Makefile.am, doc/shishi.texi, doc/reference/tmpl/shishi.sgml,
+	extra/pam_shishi/pam_shishi.c, lib/Makefile.am, lib/ap.c,
+	lib/apreq.c, lib/as.c, lib/asn1.c, lib/authenticator.c,
+	lib/diskio.c, lib/done.c, lib/enckdcreppart.c, lib/error.c,
+	lib/init.c, lib/internal.h, lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c,
+	lib/safe.c, lib/shishi.h.in, lib/tgs.c, lib/ticket.c, src/authp.c,
+	src/client.c, src/server.c, src/shishi.c, src/shishid.c,
+	tests/ticketset.c: Rename shishi_ticketset_* to shishi_tkts_*.
+	Separate ASN.1 ticket functions into shishi_ticket_* and high-level
+	ticket functions into shishi_tkt_*.
 
 2003-02-02  Simon Josefsson <simon@josefsson.org>
 
@@ -8318,6 +8745,14 @@
 2003-01-31  Simon Josefsson <simon@josefsson.org>
 
 	* lib/crypto.c: Use strong random data.
+
+2003-01-26  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/tmpl/shishi.sgml: Generated.
+
+2003-01-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/tmpl/shishi.sgml: New.
 
 2003-01-22  Simon Josefsson <simon@josefsson.org>
 
@@ -9205,7 +9640,7 @@
 
 2002-11-29  Simon Josefsson <simon@josefsson.org>
 
-	* crypto/INSTALL, asn1/INSTALL: these are regenerated by autoreconf
+	* asn1/INSTALL: these are regenerated by autoreconf
 
 2002-11-29  Simon Josefsson <simon@josefsson.org>
 
@@ -9225,15 +9660,6 @@
 	asn1/Makefile.am, asn1/NEWS, asn1/README, asn1/THANKS,
 	asn1/acconfig.h, asn1/acinclude.m4, asn1/buildconf,
 	asn1/configure.in: add libtasn1 from CVS as of 2002-11-29
-
-2002-11-29  Simon Josefsson <simon@josefsson.org>
-
-	* crypto/AUTHORS, crypto/BUGS, crypto/COPYING, crypto/COPYING.DOC,
-	crypto/COPYING.LIB, crypto/INSTALL, crypto/Makefile.am,
-	crypto/NEWS, crypto/Notes-wk, crypto/README, crypto/README-alpha,
-	crypto/THANKS, crypto/TODO, crypto/acinclude.m4,
-	crypto/configure.ac, crypto/libgcrypt.txt, crypto/stamp-h.in: add
-	libgcrypt from CVS, version 1.1.0 plus md4 and cts
 
 2002-11-29  Simon Josefsson <simon@josefsson.org>
 
