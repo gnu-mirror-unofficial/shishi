@@ -1,5 +1,5 @@
 /* diskio.c --- Read and write data structures from disk.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -819,7 +819,7 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
   char armorend[BUFSIZ];
   int in_key = 0, in_body = 0;
   int res;
-  size_t len, buflen;
+  size_t len;
   Shishi_key *lkey = NULL;
 
   sprintf (armorbegin, HEADERBEG, "KEY");
