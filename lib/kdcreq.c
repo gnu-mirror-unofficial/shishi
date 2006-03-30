@@ -1,5 +1,5 @@
 /* kdcreq.c --- Key distribution (AS/TGS) request functions.
- * Copyright (C) 2002, 2003, 2004, 2005  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -1292,6 +1292,7 @@ int
 shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
 {
   int res;
+  size_t n;
 
   if (VERBOSE (handle))
     printf ("Building KDC-REQ...\n");
@@ -1312,6 +1313,17 @@ shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
       if (res != SHISHI_OK)
 	{
 	  shishi_error_printf (handle, "Could not write from\n");
+	  return res;
+	}
+    }
+
+  res = shishi_asn1_number_of_elements (handle, kdcreq, "padata", &n);
+  if (res == SHISHI_OK && n == 0)
+    {
+      res = shishi_kdcreq_clear_padata (handle, kdcreq);
+      if (res != SHISHI_OK)
+	{
+	  shishi_error_printf (handle, "Could not write padata\n");
 	  return res;
 	}
     }
