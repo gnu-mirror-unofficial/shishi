@@ -425,6 +425,20 @@ asn1_new (Shishi * handle, const char *field, const char *name)
 }
 
 /**
+ * shishi_asn1_padata:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Create new ASN.1 structure for PA-DATA.
+ *
+ * Return value: Returns ASN.1 structure.
+ **/
+Shishi_asn1
+shishi_asn1_padata (Shishi * handle)
+{
+  return asn1_new (handle, ASN1NAME "PA-DATA", "PA-DATA");
+}
+
+/**
  * shishi_asn1_asreq:
  * @handle: shishi handle as allocated by shishi_init().
  *

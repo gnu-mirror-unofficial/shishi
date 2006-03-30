@@ -1592,6 +1592,7 @@ extern int shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
 
 extern void shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
 
+extern Shishi_asn1 shishi_asn1_padata (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asreq (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asrep (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_tgsreq (Shishi * handle);
