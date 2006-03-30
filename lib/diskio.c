@@ -102,6 +102,19 @@ _shishi_save_data (Shishi * handle, FILE * fh, Shishi_asn1 asn1,
 }
 
 int
+shishi_padata_print (Shishi * handle, FILE * fh, Shishi_asn1 padata)
+{
+  return _shishi_print_armored_data (handle, fh, padata, "PA-DATA", NULL);
+}
+
+int
+shishi_methoddata_print (Shishi * handle, FILE * fh, Shishi_asn1 methoddata)
+{
+  return _shishi_print_armored_data (handle, fh, methoddata,
+				     "METHOD-DATA", NULL);
+}
+
+int
 shishi_enckdcreppart_print (Shishi * handle,
 			    FILE * fh, Shishi_asn1 enckdcreppart)
 {

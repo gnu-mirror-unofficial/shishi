@@ -1593,6 +1593,7 @@ extern int shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
 extern void shishi_asn1_done (Shishi * handle, Shishi_asn1 node);
 
 extern Shishi_asn1 shishi_asn1_padata (Shishi * handle);
+extern Shishi_asn1 shishi_asn1_methoddata (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asreq (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asrep (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_tgsreq (Shishi * handle);
@@ -1621,6 +1622,10 @@ extern Shishi_msgtype shishi_der_msgtype (Shishi * handle,
 
 extern Shishi_asn1 shishi_der2asn1 (Shishi * handle,
 				    const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_padata (Shishi * handle,
+					   const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_methoddata (Shishi * handle,
+					       const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_ticket (Shishi * handle,
 					   const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_encticketpart (Shishi * handle,

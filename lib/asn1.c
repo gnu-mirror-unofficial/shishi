@@ -439,6 +439,20 @@ shishi_asn1_padata (Shishi * handle)
 }
 
 /**
+ * shishi_asn1_methoddata:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Create new ASN.1 structure for METHOD-DATA.
+ *
+ * Return value: Returns ASN.1 structure.
+ **/
+Shishi_asn1
+shishi_asn1_methoddata (Shishi * handle)
+{
+  return asn1_new (handle, ASN1NAME "METHOD-DATA", "METHOD-DATA");
+}
+
+/**
  * shishi_asn1_asreq:
  * @handle: shishi handle as allocated by shishi_init().
  *
@@ -862,6 +876,38 @@ shishi_der2asn1 (Shishi * handle, const char *der, size_t derlen)
     }
 
   return node;
+}
+
+/**
+ * shishi_der2asn1_padata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @der: input character array with DER encoding.
+ * @derlen: length of input character array with DER encoding.
+ *
+ * Decode DER encoding of PA-DATA and create a ASN.1 structure.
+ *
+ * Return value: Returns ASN.1 structure corresponding to DER data.
+ **/
+Shishi_asn1
+shishi_der2asn1_padata (Shishi * handle, const char *der, size_t derlen)
+{
+  return der2asn1 (handle, ASN1NAME "PA-DATA", "PA-DATA", der, derlen);
+}
+
+/**
+ * shishi_der2asn1_methoddata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @der: input character array with DER encoding.
+ * @derlen: length of input character array with DER encoding.
+ *
+ * Decode DER encoding of METHOD-DATA and create a ASN.1 structure.
+ *
+ * Return value: Returns ASN.1 structure corresponding to DER data.
+ **/
+Shishi_asn1
+shishi_der2asn1_methoddata (Shishi * handle, const char *der, size_t derlen)
+{
+  return der2asn1 (handle, ASN1NAME "METHOD-DATA", "METHOD-DATA", der, derlen);
 }
 
 /**
