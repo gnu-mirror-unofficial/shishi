@@ -1157,6 +1157,60 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
 	  buf[len] = '\0';
 	  fprintf (fh, "Additional error message from server:\n%s\n", buf);
 	}
+      free (buf);
+
+      if (shishi_krberror_errorcode_fast (handle, krberror) ==
+	  SHISHI_KDC_ERR_PREAUTH_REQUIRED)
+	{
+	  Shishi_asn1 pas;
+	  size_t i, n;
+
+	  res = shishi_krberror_edata (handle, krberror, &buf, &len);
+	  if (res != SHISHI_OK)
+	    {
+	      fprintf (fh, "Could not extract METHOD-DATA:\n%s\n",
+		       shishi_strerror (res));
+	      return SHISHI_OK;
+	    }
+
+	  pas = shishi_der2asn1_methoddata (handle, buf, len);
+	  free (buf);
+	  if (!pas)
+	    {
+	      fprintf (fh, "Could not decode METHOD-DATA:\n%s\n",
+		       shishi_strerror (res));
+	      return SHISHI_OK;
+	    }
+
+	  if (VERBOSEASN1 (handle))
+	    shishi_methoddata_print (handle, stdout, pas);
+
+	  res = shishi_asn1_number_of_elements (handle, pas, "", &n);
+	  if (res == SHISHI_OK)
+	    {
+	      fprintf (fh, "Types of PA-DATA requested: ");
+
+	      for (i = 1; i <= n; i++)
+		{
+		  char *format = xasprintf ("?%d.padata-type", i);
+		  int32_t padatatype;
+
+		  if (i > 1)
+		    fprintf (fh, ", ");
+
+		  res = shishi_asn1_read_int32 (handle, pas, format,
+						&padatatype);
+		  if (res == SHISHI_OK)
+		    printf ("%d", padatatype);
+
+		  free (format);
+		}
+
+	      fprintf (fh, ".\n");
+	    }
+
+	  shishi_asn1_done (handle, pas);
+	}
     }
 
 
