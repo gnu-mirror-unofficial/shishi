@@ -1,5 +1,5 @@
 /* as.c --- High level client AS functions
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -58,11 +58,6 @@ shishi_as (Shishi * handle, Shishi_as ** as)
 			   shishi_error (handle));
       return SHISHI_ASN1_ERROR;
     }
-
-  /* XXX there are reasons for having padata in AS-REQ */
-  res = shishi_kdcreq_clear_padata (las->handle, las->asreq);
-  if (res != SHISHI_OK)
-    return res;
 
   las->asrep = shishi_asrep (handle);
   if (las->asrep == NULL)
