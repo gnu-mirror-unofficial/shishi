@@ -1,5 +1,5 @@
 /* cfg.h --- Configuration file functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -46,6 +46,7 @@ enum
   VERBOSE_NOISE_OPTION,
   VERBOSE_OPTION,
   STRINGPROCESS_OPTION,
+  PREAUTH_OPTION,
   THE_END
 };
 
@@ -66,6 +67,7 @@ static const char *_shishi_opts[] = {
   /* [VERBOSE_NOISE_OPTION] =        */ "verbose-noise",
   /* [VERBOSE_OPTION] =              */ "verbose",
   /* [STRINGPROCESS_OPTION] =        */ "stringprocess",
+  /* [PREAUTH_OPTION] =              */ "preauth",
   /* [THE_END] =                     */ NULL
 };
 
@@ -234,6 +236,10 @@ shishi_cfg (Shishi * handle, char *option)
 
 	case STRINGPROCESS_OPTION:
 	  handle->stringprocess = xstrdup (value);
+	  break;
+
+	case PREAUTH_OPTION:
+	  handle->preauth = 1;
 	  break;
 
 	case VERBOSE_OPTION:
