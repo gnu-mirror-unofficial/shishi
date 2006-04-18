@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.24 (unreleased)
 
+** Updated gnulib compatibility files.
+
 * Version 0.0.23 (released 2006-03-25)
 
 ** Debian packages are available from http://josefsson.org/shishi/debian/
