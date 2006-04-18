@@ -1293,6 +1293,7 @@ shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
 {
   int res;
   size_t n;
+  int msgtype;
 
   if (VERBOSE (handle))
     printf ("Building KDC-REQ...\n");
@@ -1317,14 +1318,20 @@ shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
 	}
     }
 
-  res = shishi_asn1_number_of_elements (handle, kdcreq, "padata", &n);
-  if (res == SHISHI_OK && n == 0)
+  res = shishi_asn1_read_integer (handle, kdcreq, "msg-type", &msgtype);
+  if (res != SHISHI_OK)
+    return res;
+  if (msgtype == SHISHI_MSGTYPE_AS_REQ)
     {
-      res = shishi_kdcreq_clear_padata (handle, kdcreq);
-      if (res != SHISHI_OK)
+      res = shishi_asn1_number_of_elements (handle, kdcreq, "padata", &n);
+      if (res == SHISHI_OK && n == 0)
 	{
-	  shishi_error_printf (handle, "Could not write padata\n");
-	  return res;
+	  res = shishi_kdcreq_clear_padata (handle, kdcreq);
+	  if (res != SHISHI_OK)
+	    {
+	      shishi_error_printf (handle, "Could not write padata\n");
+	      return res;
+	    }
 	}
     }
 
