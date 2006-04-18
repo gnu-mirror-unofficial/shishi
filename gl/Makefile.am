@@ -208,12 +208,6 @@ mostlyclean-local:
 
 ## end   gnulib module sys_socket
 
-## begin gnulib module time_r
-
-libgnu_la_SOURCES += time_r.h
-
-## end   gnulib module time_r
-
 ## begin gnulib module timegm
 
 libgnu_la_SOURCES += timegm.h
