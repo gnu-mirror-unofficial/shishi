@@ -34,6 +34,8 @@
 #include <string.h>
 #endif
 
+#include <stdbool.h>
+
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -212,6 +214,7 @@ struct Shishi
   char *x509certfile;
   char *x509keyfile;
   char *stringprocess;
+  bool preauth;
   Shishi_tkts *tkts;
 };
 
