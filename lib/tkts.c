@@ -1,5 +1,5 @@
 /* tkts.c --- Ticket set handling.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -917,6 +917,10 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   rc = shishi_as (tkts->handle, &as);
   if (rc == SHISHI_OK)
     rc = act_hint_on_kdcreq (tkts->handle, &lochint, shishi_as_req (as));
+  if (tkts->handle->preauth)
+    {
+      rc = shishi_kdcreq_add_padata_preauth (tkts->handle, shishi_as_req (as));
+    }
   if (rc == SHISHI_OK)
     rc = shishi_as_req_build (as);
   if (rc == SHISHI_OK)
@@ -929,8 +933,19 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 			   "AS exchange failed: %s\n%s\n",
 			   shishi_strerror (rc), shishi_error (tkts->handle));
       if (rc == SHISHI_GOT_KRBERROR)
-	shishi_krberror_pretty_print (tkts->handle, stdout,
-				      shishi_as_krberror (as));
+	{
+	  shishi_krberror_pretty_print (tkts->handle, stdout,
+					shishi_as_krberror (as));
+
+	  if (shishi_krberror_errorcode_fast
+	      (tkts->handle, shishi_as_krberror (as)) ==
+	      SHISHI_KDC_ERR_PREAUTH_REQUIRED)
+	    {
+	      shishi_error_printf (tkts->handle,
+				   "Preauth required, try `-o preauth'.\n");
+	    }
+	}
+
       return NULL;
     }
 
