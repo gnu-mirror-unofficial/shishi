@@ -67,6 +67,10 @@ install-data-hook:
 
 # Maintainer targets
 
+update-po: refresh-po
+	cvs add `ls po/*.po | grep -v quot.po` || true && \
+	cvs commit -m "Sync with TP." po/LINGUAS `ls po/*.po | grep -v quot.po`
+
 .PHONY: extra
 extra:
 	(cd extra && make)
