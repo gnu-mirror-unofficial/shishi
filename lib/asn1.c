@@ -439,6 +439,20 @@ shishi_asn1_pa_enc_ts_enc (Shishi * handle)
 }
 
 /**
+ * shishi_asn1_encrypteddata:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Create new ASN.1 structure for EncryptedData
+ *
+ * Return value: Returns ASN.1 structure.
+ **/
+Shishi_asn1
+shishi_asn1_encrypteddata (Shishi * handle)
+{
+  return asn1_new (handle, ASN1NAME "EncryptedData", "EncryptedData");
+}
+
+/**
  * shishi_asn1_padata:
  * @handle: shishi handle as allocated by shishi_init().
  *
