@@ -941,8 +941,7 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 	      (tkts->handle, shishi_as_krberror (as)) ==
 	      SHISHI_KDC_ERR_PREAUTH_REQUIRED)
 	    {
-	      shishi_error_printf (tkts->handle,
-				   "Preauth required, try `-o preauth'.\n");
+	      printf ("Preauth required, try `-o preauth'.\n");
 	    }
 	}
 
