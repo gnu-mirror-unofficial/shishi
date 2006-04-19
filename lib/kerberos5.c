@@ -2,7 +2,7 @@
 #include "libtasn1.h"
 
 const ASN1_ARRAY_TYPE shishi_asn1_tab[]={
-  {"Kerberos5",536872976,0},
+  {"KerberosV5Spec2",536872976,0},
   {0,1610612748,0},
   {"iso",1073741825,"1"},
   {"identified-organization",1073741825,"3"},
@@ -51,7 +51,7 @@ const ASN1_ARRAY_TYPE shishi_asn1_tab[]={
   {0,2056,"1"},
   {"padata-value",536879111,0},
   {0,2056,"2"},
-  {"KerberosFlags",1073741830,0},
+  {"KerberosFlags",1075838982,0},
   {"EncryptedData",1610612741,0},
   {"etype",1610620930,"Int32"},
   {0,2056,"0"},
@@ -384,7 +384,7 @@ const ASN1_ARRAY_TYPE shishi_asn1_tab[]={
   {"TYPED-DATA",1612709899,0},
   {"MAX",1074266122,"1"},
   {0,536870917,0},
-  {"data-type",1610620931,0},
+  {"data-type",1610620930,"Int32"},
   {0,2056,"0"},
   {"data-value",536895495,0},
   {0,2056,"1"},
@@ -422,7 +422,7 @@ const ASN1_ARRAY_TYPE shishi_asn1_tab[]={
   {"elements",536879106,"AuthorizationData"},
   {0,2056,"3"},
   {"AD-AND-OR",1610612741,0},
-  {"condition-count",1610620931,0},
+  {"condition-count",1610620930,"Int32"},
   {0,2056,"0"},
   {"elements",536879106,"AuthorizationData"},
   {0,2056,"1"},
