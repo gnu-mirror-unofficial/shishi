@@ -871,6 +871,9 @@ set_tgtflags_based_on_hint (Shishi_tkts_hint * tkthint,
 
   if (tkthint->endtime)
     tgthint->endtime = tkthint->endtime;
+
+  if (tkthint->passwd)
+    tgthint->passwd = tkthint->passwd;
 }
 
 /* Pre-authenticate request, based on LOCHINT.  Currently only
@@ -881,7 +884,36 @@ do_preauth (Shishi_tkts *tkts, Shishi_tkts_hint *lochint, Shishi_as *as)
   int rc = SHISHI_OK;
 
   if (lochint->preauthetype)
-    rc = shishi_kdcreq_add_padata_preauth (tkts->handle, shishi_as_req (as));
+    {
+      char *user;
+
+      /* XXX Don't prompt for password here? */
+
+      rc = shishi_asreq_clientrealm (tkts->handle, shishi_as_req (as),
+				     &user, NULL);
+      if (rc != SHISHI_OK)
+	return rc;
+
+      rc = shishi_prompt_password (tkts->handle, &lochint->passwd,
+				   "Enter password for `%s': ", user);
+      if (rc != SHISHI_OK)
+	return rc;
+
+      if (!lochint->preauthsalt)
+	{
+	  rc = shishi_derive_default_salt (tkts->handle, user,
+					   &lochint->preauthsalt);
+	  if (rc != SHISHI_OK)
+	    return rc;
+	}
+
+      rc = shishi_kdcreq_add_padata_preauth (tkts->handle,
+					     shishi_as_req (as),
+					     lochint->preauthetype,
+					     lochint->passwd,
+					     lochint->preauthsalt,
+					     lochint->preauths2kparams);
+    }
 
   return rc;
 }
@@ -1084,7 +1116,7 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   if (rc == SHISHI_OK)
     rc = shishi_as_sendrecv_hint (as, &lochint);
   if (rc == SHISHI_OK)
-    rc = shishi_as_rep_process (as, NULL, hint->passwd);
+    rc = shishi_as_rep_process (as, NULL, lochint.passwd);
   if (rc == SHISHI_GOT_KRBERROR
       && shishi_krberror_errorcode_fast (tkts->handle,
 					 shishi_as_krberror (as))
