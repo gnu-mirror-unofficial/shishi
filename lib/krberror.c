@@ -1214,7 +1214,7 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
 	  res = shishi_asn1_number_of_elements (handle, pas, "", &n);
 	  if (res == SHISHI_OK)
 	    {
-	      fprintf (fh, "Types of PA-DATA requested: ");
+	      fprintf (fh, "Types of PA-DATA in KRB-ERROR: ");
 
 	      for (i = 1; i <= n; i++)
 		{
