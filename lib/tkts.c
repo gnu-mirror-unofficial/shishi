@@ -874,6 +874,21 @@ set_tgtflags_based_on_hint (Shishi_tkts_hint * tkthint,
 
   if (tkthint->passwd)
     tgthint->passwd = tkthint->passwd;
+
+  if (tkthint->preauthetype)
+    tgthint->preauthetype = tkthint->preauthetype;
+
+  if (tkthint->preauthsalt)
+    {
+      tgthint->preauthsalt = tkthint->preauthsalt;
+      tgthint->preauthsaltlen = tkthint->preauthsaltlen;
+    }
+
+  if (tkthint->preauths2kparams)
+    {
+      tgthint->preauths2kparams = tkthint->preauths2kparams;
+      tgthint->preauths2kparamslen = tkthint->preauths2kparamslen;
+    }
 }
 
 /* Pre-authenticate request, based on LOCHINT.  Currently only
@@ -885,6 +900,7 @@ do_preauth (Shishi_tkts *tkts, Shishi_tkts_hint *lochint, Shishi_as *as)
 
   if (lochint->preauthetype)
     {
+      Shishi_key *key;
       char *user;
 
       /* XXX Don't prompt for password here? */
@@ -905,14 +921,20 @@ do_preauth (Shishi_tkts *tkts, Shishi_tkts_hint *lochint, Shishi_as *as)
 					   &lochint->preauthsalt);
 	  if (rc != SHISHI_OK)
 	    return rc;
+
+	  lochint->preauthsaltlen = strlen (lochint->preauthsalt);
 	}
 
+      rc = shishi_key_from_string (tkts->handle, lochint->preauthetype,
+				   lochint->passwd, strlen (lochint->passwd),
+				   lochint->preauthsalt,
+				   lochint->preauthsaltlen,
+				   lochint->preauths2kparams, &key);
+      if (rc != SHISHI_OK)
+	return rc;
+
       rc = shishi_kdcreq_add_padata_preauth (tkts->handle,
-					     shishi_as_req (as),
-					     lochint->preauthetype,
-					     lochint->passwd,
-					     lochint->preauthsalt,
-					     lochint->preauths2kparams);
+					     shishi_as_req (as), key);
     }
 
   return rc;
@@ -936,6 +958,15 @@ recover_preauth_info2 (Shishi_tkts *tkts,
   rc = shishi_etype_info2_print (tkts->handle, stdout, einfo2s);
   if (rc != SHISHI_OK)
     return rc;
+
+  if (lochint->preauthetype ||
+      lochint->preauthsalt ||
+      lochint->preauths2kparams)
+    {
+      if (VERBOSENOISE(tkts->handle))
+	printf ("Pre-auth already tried and failed...\n");
+      return SHISHI_OK;
+    }
 
   rc = shishi_asn1_number_of_elements (tkts->handle, einfo2s, "", &n);
   if (rc != SHISHI_OK)
@@ -961,7 +992,30 @@ recover_preauth_info2 (Shishi_tkts *tkts,
 	      if (etype == tkts->handle->clientkdcetypes[j])
 		{
 		  if (j < foundpos && VERBOSENOISE(tkts->handle))
-		    printf ("New best etype %d...\n", etype);
+		    {
+		      char *salt;
+		      size_t saltlen;
+
+		      printf ("New best etype %d...\n", etype);
+
+		      /* XXX mem leak. */
+
+		      format = xasprintf ("?%d.salt", i);
+		      rc = shishi_asn1_read (tkts->handle, einfo2s, format,
+					     &lochint->preauthsalt,
+					     &lochint->preauthsaltlen);
+		      free (format);
+		      if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
+			return rc;
+
+		      format = xasprintf ("?%d.s2kparams", i);
+		      rc = shishi_asn1_read (tkts->handle, einfo2s, format,
+					     &lochint->preauths2kparams,
+					     &lochint->preauths2kparamslen);
+		      free (format);
+		      if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
+			return rc;
+		    }
 
 		  foundpos = MIN(foundpos, j);
 		}
