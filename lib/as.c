@@ -549,6 +549,8 @@ shishi_as_sendrecv_hint (Shishi_as * as, Shishi_tkts_hint * hint)
 	printf ("Received KRB-ERROR...\n");
       if (VERBOSEASN1 (as->handle))
 	shishi_krberror_print (as->handle, stdout, as->krberror);
+      if (VERBOSEASN1(as->handle))
+	shishi_krberror_pretty_print (as->handle, stdout, as->krberror);
     }
   if (res != SHISHI_OK)
     return res;
