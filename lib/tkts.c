@@ -955,9 +955,8 @@ recover_preauth_info2 (Shishi_tkts *tkts,
   if (VERBOSENOISE(tkts->handle))
     printf ("Found INFO-ETYPE2 pre-auth hints, trying to find etype...\n");
 
-  rc = shishi_etype_info2_print (tkts->handle, stdout, einfo2s);
-  if (rc != SHISHI_OK)
-    return rc;
+  if (VERBOSEASN1(tkts->handle))
+    shishi_etype_info2_print (tkts->handle, stdout, einfo2s);
 
   if (lochint->preauthetype ||
       lochint->preauthsalt ||
