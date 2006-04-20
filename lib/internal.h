@@ -214,7 +214,6 @@ struct Shishi
   char *x509certfile;
   char *x509keyfile;
   char *stringprocess;
-  bool preauth;
   Shishi_tkts *tkts;
 };
 
