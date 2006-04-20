@@ -231,8 +231,6 @@ please let me know so work duplication can be avoided.
 
 @item Parse @file{/etc/krb5.keytab} to extract keys to use for telnetd etc (week)
 
-@item Pre-authentication support (week).
-
 @item Cross-realm support (week).
 
 @item PKINIT (use libksba, weeks)
