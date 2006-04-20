@@ -873,6 +873,165 @@ set_tgtflags_based_on_hint (Shishi_tkts_hint * tkthint,
     tgthint->endtime = tkthint->endtime;
 }
 
+/* Pre-authenticate request, based on LOCHINT.  Currently only
+   PA-ENC-TIMESTAMP is supported.  */
+static int
+do_preauth (Shishi_tkts *tkts, Shishi_tkts_hint *lochint, Shishi_as *as)
+{
+  int rc = SHISHI_OK;
+
+  if (lochint->preauthetype)
+    rc = shishi_kdcreq_add_padata_preauth (tkts->handle, shishi_as_req (as));
+
+  return rc;
+}
+
+/* Handle ETYPE-INFO2 pre-auth data. */
+static int
+recover_preauth_info2 (Shishi_tkts *tkts,
+		       Shishi_as *as,
+		       Shishi_tkts_hint *lochint,
+		       Shishi_asn1 einfo2s,
+		       bool *retry)
+{
+  size_t foundpos = SIZE_MAX;
+  size_t i, n;
+  int rc;
+
+  if (VERBOSENOISE(tkts->handle))
+    printf ("Found INFO-ETYPE2 pre-auth hints, trying to find etype...\n");
+
+  rc = shishi_etype_info2_print (tkts->handle, stdout, einfo2s);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_asn1_number_of_elements (tkts->handle, einfo2s, "", &n);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  for (i = 1; i <= n; i++)
+    {
+      char *format;
+      int32_t etype;
+
+      format = xasprintf ("?%d.etype", i);
+      rc = shishi_asn1_read_int32 (tkts->handle, einfo2s, format, &etype);
+      free (format);
+      if (rc == SHISHI_OK)
+	{
+	  size_t j;
+
+	  if (VERBOSENOISE(tkts->handle))
+	    printf ("Server has etype %d...\n", etype);
+
+	  for (j = 0; j < tkts->handle->nclientkdcetypes; j++)
+	    {
+	      if (etype == tkts->handle->clientkdcetypes[j])
+		{
+		  if (j < foundpos && VERBOSENOISE(tkts->handle))
+		    printf ("New best etype %d...\n", etype);
+
+		  foundpos = MIN(foundpos, j);
+		}
+	    }
+	}
+    }
+
+  if (foundpos != SIZE_MAX)
+    {
+      lochint->preauthetype = tkts->handle->clientkdcetypes[foundpos];
+
+      if (VERBOSENOISE(tkts->handle))
+	printf ("Best pre-auth etype was %d...\n", lochint->preauthetype);
+
+      *retry = true;
+    }
+
+  return SHISHI_OK;
+}
+
+/* Called when KDC refused with a NEED_PREAUTH error.  This function
+   should look at the METHOD-DATA, figure out what kind of pre-auth is
+   requested, and if it is able to figure out how to recover from the
+   error, set *RETRY to true and set any hints in LOCHINT that help
+   do_preauth() compute the proper pre-auth data.  */
+static int
+recover_preauth (Shishi_tkts *tkts,
+		 Shishi_as *as,
+		 Shishi_tkts_hint *lochint,
+		 bool *retry)
+{
+  Shishi_asn1 krberror = shishi_as_krberror (as);
+  Shishi_asn1 pas;
+  size_t i, n;
+  int rc;
+
+  *retry = false;
+
+  if (VERBOSE(tkts->handle))
+    printf ("Server requested pre-auth data, figuring out what to send...\n");
+
+  rc = shishi_krberror_methoddata (tkts->handle, krberror, &pas);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_asn1_number_of_elements (tkts->handle, pas, "", &n);
+  if (rc == SHISHI_OK)
+    {
+      for (i = 1; i <= n; i++)
+	{
+	  char *format = xasprintf ("?%d.padata-type", i);
+	  int32_t padatatype;
+
+	  rc = shishi_asn1_read_int32 (tkts->handle, pas, format,
+					&padatatype);
+	  free (format);
+	  if (rc == SHISHI_OK)
+	    {
+	      if (VERBOSENOISE(tkts->handle))
+		printf ("Looking at pa-type %d...\n", padatatype);
+
+	      switch (padatatype)
+		{
+		case SHISHI_PA_ETYPE_INFO2:
+		  {
+		    char *der;
+		    size_t len;
+		    Shishi_asn1 einfo2s;
+
+		    format = xasprintf ("?%d.padata-value", i);
+		    rc = shishi_asn1_read (tkts->handle, pas, format,
+					   &der, &len);
+		    free (format);
+		    if (rc != SHISHI_OK)
+		      return rc;
+
+		    einfo2s = shishi_der2asn1_etype_info2 (tkts->handle,
+							   der, len);
+		    if (!einfo2s)
+		      return SHISHI_ASN1_ERROR;
+
+		    rc = recover_preauth_info2 (tkts, as, lochint,
+						einfo2s, retry);
+		    if (rc != SHISHI_OK)
+		      return rc;
+
+		    shishi_asn1_done (tkts->handle, einfo2s);
+		  }
+		  break;
+
+		default:
+		  break;
+		}
+	    }
+	}
+    }
+
+  shishi_asn1_done (tkts->handle, pas);
+
+  return SHISHI_OK;
+}
+
 /**
  * shishi_tkts_get_tgt:
  * @tkts: ticket set handle as allocated by shishi_tkts().
@@ -914,37 +1073,43 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   if (tgt)
     return tgt;
 
+ again:
   rc = shishi_as (tkts->handle, &as);
   if (rc == SHISHI_OK)
     rc = act_hint_on_kdcreq (tkts->handle, &lochint, shishi_as_req (as));
-  if (tkts->handle->preauth)
-    {
-      rc = shishi_kdcreq_add_padata_preauth (tkts->handle, shishi_as_req (as));
-    }
+  if (rc == SHISHI_OK)
+    rc = do_preauth (tkts, &lochint, as);
   if (rc == SHISHI_OK)
     rc = shishi_as_req_build (as);
   if (rc == SHISHI_OK)
     rc = shishi_as_sendrecv_hint (as, &lochint);
   if (rc == SHISHI_OK)
     rc = shishi_as_rep_process (as, NULL, hint->passwd);
+  if (rc == SHISHI_GOT_KRBERROR
+      && shishi_krberror_errorcode_fast (tkts->handle,
+					 shishi_as_krberror (as))
+      == SHISHI_KDC_ERR_PREAUTH_REQUIRED)
+    {
+      bool retry = false;
+
+      rc = recover_preauth (tkts, as, &lochint, &retry);
+      if (rc != SHISHI_OK)
+	return NULL;
+
+      if (retry)
+	{
+	  shishi_as_done (as);
+	  goto again;
+	}
+
+      shishi_error_printf (tkts->handle, "Unsupported pre-auth required\n");
+      return NULL;
+    }
   if (rc != SHISHI_OK)
     {
       shishi_error_printf (tkts->handle,
 			   "AS exchange failed: %s\n%s\n",
 			   shishi_strerror (rc), shishi_error (tkts->handle));
-      if (rc == SHISHI_GOT_KRBERROR)
-	{
-	  shishi_krberror_pretty_print (tkts->handle, stdout,
-					shishi_as_krberror (as));
-
-	  if (shishi_krberror_errorcode_fast
-	      (tkts->handle, shishi_as_krberror (as)) ==
-	      SHISHI_KDC_ERR_PREAUTH_REQUIRED)
-	    {
-	      printf ("Preauth required, try `-o preauth'.\n");
-	    }
-	}
-
       return NULL;
     }
 
