@@ -1,4 +1,4 @@
--- kerberos.asn1   Kerberos ASN.1 Module
+-- kerberos.asn1 --- Kerberos ASN.1 schema
 -- Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
 --
 -- This file is part of Shishi.
@@ -18,7 +18,9 @@
 -- Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 
--- This module is appendix A of RFC 4120, with two minor modifications
+-- This rest of this file is taken from appendix A of RFC 4120,
+-- http://www.ietf.org/rfc/rfc4120.txt (MD5
+-- f95332f70f18eb9252756c7e2accc141), with two minor modifications
 -- marked with "libtasn1 bug" below.  RFC 4120 exhibit the ISOC
 -- copyright, althought it does not cover the ASN.1 schema, see
 -- discussions in the IETF IPR WG.  I have acquired permission to use
