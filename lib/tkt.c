@@ -1,5 +1,5 @@
 /* tkt.c --- Ticket handling.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -1368,8 +1368,13 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
   time_t now = time (NULL);
 
   res = shishi_tkt_clientrealm (tkt, &buf, &buflen);
-  fprintf (fh, "%s:\n", buf);
-  free (buf);
+  if (res == SHISHI_OK)
+    {
+      fprintf (fh, "%s:\n", buf);
+      free (buf);
+    }
+  else
+    fprintf (fh, "<unknown>:\n");
 
   t = shishi_tkt_authctime (tkt);
   fprintf (fh, _("Authtime:\t%s"), ctime (&t));
@@ -1412,14 +1417,15 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
     }
 
   res = shishi_tkt_keytype (tkt, &keytype);
-  res = shishi_kdcrep_get_enc_part_etype (tkt->handle, tkt->kdcrep, &etype);
-  fprintf (fh, _("Ticket key:\t%s (%d) protected by %s (%d)\n"),
-	   shishi_cipher_name (keytype), keytype,
-	   shishi_cipher_name (etype), etype);
-
+  if (res == SHISHI_OK)
+    res = shishi_kdcrep_get_enc_part_etype (tkt->handle, tkt->kdcrep, &etype);
+  if (res == SHISHI_OK)
+    fprintf (fh, _("Ticket key:\t%s (%d) protected by %s (%d)\n"),
+	     shishi_cipher_name (keytype), keytype,
+	     shishi_cipher_name (etype), etype);
 
   res = shishi_tkt_flags (tkt, &flags);
-  if (flags)
+  if (res == SHISHI_OK && flags)
     {
       fprintf (fh, _("Ticket flags:\t"));
       if (shishi_tkt_forwardable_p (tkt))
