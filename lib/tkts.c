@@ -1145,6 +1145,8 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
       return NULL;
     }
 
+  /* XXX free lochint members */
+
   tgt = shishi_as_tkt (as);
   if (!tgt)
     {

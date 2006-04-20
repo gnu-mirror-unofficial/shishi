@@ -562,7 +562,9 @@ struct Shishi_tkts_hint
   time_t renew_till;
   int32_t preauthetype;
   char *preauthsalt;
+  size_t preauthsaltlen;
   char *preauths2kparams;
+  size_t preauths2kparamslen;
 };
 typedef struct Shishi_tkts_hint Shishi_tkts_hint;
 
@@ -1152,7 +1154,7 @@ extern int shishi_kdcreq_add_padata_preauth (Shishi * handle,
 					     const char *password,
 					     const char *salt,
 					     const char *s2kparams);
-  extern int shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq);
+extern int shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq);
 
 /* kdc.c */
 extern int shishi_as_derive_salt (Shishi * handle,
