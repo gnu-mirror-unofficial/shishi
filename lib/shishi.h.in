@@ -1599,6 +1599,7 @@ extern Shishi_asn1 shishi_asn1_pa_enc_ts_enc (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_encrypteddata (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_padata (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_methoddata (Shishi * handle);
+extern Shishi_asn1 shishi_asn1_etype_info2 (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asreq (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asrep (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_tgsreq (Shishi * handle);

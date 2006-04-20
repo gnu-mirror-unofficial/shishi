@@ -484,6 +484,20 @@ shishi_asn1_methoddata (Shishi * handle)
 }
 
 /**
+ * shishi_asn1_etype_info2:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Create new ASN.1 structure for ETYPE-INFO2.
+ *
+ * Return value: Returns ASN.1 structure.
+ **/
+Shishi_asn1
+shishi_asn1_etype_info2 (Shishi * handle)
+{
+  return asn1_new (handle, ASN1NAME "ETYPE-INFO2", "ETYPE-INFO2");
+}
+
+/**
  * shishi_asn1_asreq:
  * @handle: shishi handle as allocated by shishi_init().
  *
