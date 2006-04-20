@@ -877,6 +877,8 @@ extern int shishi_ticket_parse (Shishi * handle, FILE * fh,
 				Shishi_asn1 * ticket);
 extern int shishi_ticket_read (Shishi * handle, FILE * fh,
 			       Shishi_asn1 * ticket);
+extern int shishi_etype_info2_print (Shishi * handle, FILE * fh,
+				     Shishi_asn1 etypeinfo2);
 
 /* authenticator.c */
 extern Shishi_asn1 shishi_authenticator (Shishi * handle);
