@@ -956,6 +956,22 @@ shishi_der2asn1_methoddata (Shishi * handle, const char *der, size_t derlen)
 }
 
 /**
+ * shishi_der2asn1_etype_info2:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @der: input character array with DER encoding.
+ * @derlen: length of input character array with DER encoding.
+ *
+ * Decode DER encoding of METHOD-DATA and create a ASN.1 structure.
+ *
+ * Return value: Returns ASN.1 structure corresponding to DER data.
+ **/
+Shishi_asn1
+shishi_der2asn1_etype_info2 (Shishi * handle, const char *der, size_t derlen)
+{
+  return der2asn1 (handle, ASN1NAME "ETYPE-INFO2", "ETYPE-INFO2", der, derlen);
+}
+
+/**
  * shishi_der2asn1_ticket:
  * @handle: shishi handle as allocated by shishi_init().
  * @der: input character array with DER encoding.
