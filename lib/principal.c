@@ -318,7 +318,8 @@ shishi_principal_name_realm (Shishi * handle,
     }
 
   *out = tmp;
-  *outlen = tmplen;
+  if (outlen)
+    *outlen = tmplen;
 
   return SHISHI_OK;
 }
