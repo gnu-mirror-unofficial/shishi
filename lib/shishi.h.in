@@ -560,6 +560,9 @@ struct Shishi_tkts_hint
   time_t starttime;
   time_t endtime;
   time_t renew_till;
+  int32_t preauthetype;
+  char *preauthsalt;
+  char *preauths2kparams;
 };
 typedef struct Shishi_tkts_hint Shishi_tkts_hint;
 
