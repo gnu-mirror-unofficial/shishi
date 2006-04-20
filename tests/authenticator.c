@@ -1,5 +1,5 @@
 /* authenticator.c	Shishi authenticator self tests.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -52,8 +52,6 @@ void
 test (Shishi * handle)
 {
   Shishi_asn1 a;
-  char buffer[BUFSIZ];
-  char buffer2[BUFSIZ];
   char *p, *buf, *buf2;
   int res;
   size_t n, m;
