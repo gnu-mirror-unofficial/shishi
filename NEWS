@@ -4,6 +4,9 @@ See the end for copying conditions.
 
 * Version 0.0.24 (unreleased)
 
+** Pre-authentication is supported.
+Only the PA-ENC-TIMESTAMP and ETYPE-INFO2 mechanisms are supported.
+
 ** Updated gnulib compatibility files.
 
 * Version 0.0.23 (released 2006-03-25)
