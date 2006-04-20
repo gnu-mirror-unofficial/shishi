@@ -1071,6 +1071,45 @@ shishi_krberror_edata (Shishi * handle, Shishi_asn1 krberror,
 }
 
 /**
+ * shishi_krberror_methoddata:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @krberror: KRB-ERROR structure with error code.
+ * @methoddata: output ASN.1 METHOD-DATA.
+ *
+ * Extract METHOD-DATA ASN.1 object from the e-data field.  The e-data
+ * field will only contain a METHOD-DATA if the krberror error code is
+ * %SHISHI_KDC_ERR_PREAUTH_REQUIRED.
+ *
+ * Return value: Returns SHISHI_OK iff successful.
+ **/
+int
+shishi_krberror_methoddata (Shishi * handle, Shishi_asn1 krberror,
+			    Shishi_asn1 *methoddata)
+{
+  int rc;
+
+  *methoddata = NULL;
+
+  if (shishi_krberror_errorcode_fast (handle, krberror)
+      == SHISHI_KDC_ERR_PREAUTH_REQUIRED)
+    {
+      char *buf;
+      size_t len;
+
+      rc = shishi_krberror_edata (handle, krberror, &buf, &len);
+      if (rc != SHISHI_OK)
+	return rc;
+
+      *methoddata = shishi_der2asn1_methoddata (handle, buf, len);
+      free (buf);
+      if (!*methoddata)
+	return SHISHI_ASN1_ERROR;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_krberror_set_edata:
  * @handle: shishi handle as allocated by shishi_init().
  * @krberror: krberror as allocated by shishi_krberror().
@@ -1165,22 +1204,9 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
 	  Shishi_asn1 pas;
 	  size_t i, n;
 
-	  res = shishi_krberror_edata (handle, krberror, &buf, &len);
+	  res = shishi_krberror_methoddata (handle, krberror, &pas);
 	  if (res != SHISHI_OK)
-	    {
-	      fprintf (fh, "Could not extract METHOD-DATA:\n%s\n",
-		       shishi_strerror (res));
-	      return SHISHI_OK;
-	    }
-
-	  pas = shishi_der2asn1_methoddata (handle, buf, len);
-	  free (buf);
-	  if (!pas)
-	    {
-	      fprintf (fh, "Could not decode METHOD-DATA:\n%s\n",
-		       shishi_strerror (res));
-	      return SHISHI_OK;
-	    }
+	    return res;
 
 	  if (VERBOSEASN1 (handle))
 	    shishi_methoddata_print (handle, stdout, pas);
