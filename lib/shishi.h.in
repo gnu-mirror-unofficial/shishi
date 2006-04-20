@@ -1367,6 +1367,9 @@ extern const char *shishi_krberror_errorcode_message (Shishi * handle,
 						      int errorcode);
 extern const char *shishi_krberror_message (Shishi * handle,
 					    Shishi_asn1 krberror);
+extern int shishi_krberror_methoddata (Shishi * handle,
+				       Shishi_asn1 krberror,
+				       Shishi_asn1 *methoddata);
 
 /* gztime.c */
 extern const char *shishi_generalize_time (Shishi * handle, time_t t);
