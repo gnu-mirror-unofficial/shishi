@@ -1292,19 +1292,23 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
  * shishi_kdcreq_add_padata_preauth:
  * @handle: shishi handle as allocated by shishi_init().
  * @kdcreq: KDC-REQ to add pre-authentication data to.
+ * @key: Key used to encrypt pre-auth data.
  *
  * Add pre-authentication data to KDC-REQ.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_kdcreq_add_padata_preauth (Shishi * handle, Shishi_asn1 kdcreq)
+shishi_kdcreq_add_padata_preauth (Shishi * handle,
+				  Shishi_asn1 kdcreq,
+				  Shishi_key *key)
 {
   char *der, *data;
   size_t derlen, datalen;
   Shishi_asn1 pa;
   struct timespec ts;
   int rc;
+  Shishi_asn1 ed;
 
   pa = shishi_asn1_pa_enc_ts_enc (handle);
   if (!pa)
@@ -1326,76 +1330,32 @@ shishi_kdcreq_add_padata_preauth (Shishi * handle, Shishi_asn1 kdcreq)
   if (rc != SHISHI_OK)
       return rc;
 
-  {
-    char *passwd;
-    char *user;
-    size_t userlen;
-    char *salt;
-    size_t saltlen;
-    int res;
-    Shishi_key *key;
-    int keytype;
+  rc = shishi_encrypt (handle, key, SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP,
+		       der, derlen, &data, &datalen);
+  free (der);
+  if (rc != SHISHI_OK)
+    return rc;
 
-    /* XXX Don't prompt for password here. */
-    res = shishi_asreq_clientrealm (handle, kdcreq, &user, &userlen);
-    if (res != SHISHI_OK)
-      return res;
+  ed = shishi_asn1_encrypteddata (handle);
+  if (!ed)
+    return SHISHI_ASN1_ERROR;
 
-    res = shishi_prompt_password (handle, &passwd,
-				  "Enter password for `%s': ", user);
-    if (res != SHISHI_OK)
-      return res;
+  rc = shishi_asn1_write_integer (handle, ed, "etype", shishi_key_type (key));
+  if (rc != SHISHI_OK)
+    return rc;
 
-    /* XXX Use some other salt?  Possibly query KDC and inspect
-       KRB-ERROR. */
-    res = shishi_derive_default_salt (handle, user, &salt);
-    free (user);
-    if (res != SHISHI_OK)
-      return res;
-    saltlen = strlen (salt);
+  rc = shishi_asn1_write (handle, ed, "cipher", data, datalen);
+  if (rc != SHISHI_OK)
+    return rc;
 
-    /* XXX Which etype to use? */
-    res = shishi_kdcreq_etype (handle, kdcreq, &keytype, 1);
-    if (res != SHISHI_OK)
-      return res;
+  rc = shishi_asn1_write (handle, ed, "kvno", NULL, 0);
+  if (rc != SHISHI_OK)
+    return rc;
 
-    res = shishi_key_from_string (handle, keytype,
-				  passwd, strlen (passwd),
-				  salt, saltlen, NULL, &key);
-    if (res != SHISHI_OK)
-      return res;
-
-    rc = shishi_encrypt (handle, key, SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP,
-			 der, derlen, &data, &datalen);
-    free (der);
-    if (rc != SHISHI_OK)
-      return rc;
-
-    {
-      Shishi_asn1 ed;
-
-      ed = shishi_asn1_encrypteddata (handle);
-      if (!ed)
-	return SHISHI_ASN1_ERROR;
-
-      rc = shishi_asn1_write_integer (handle, ed, "etype", keytype);
-      if (rc != SHISHI_OK)
-	return rc;
-
-      rc = shishi_asn1_write (handle, ed, "cipher", data, datalen);
-      if (rc != SHISHI_OK)
-	return rc;
-
-      rc = shishi_asn1_write (handle, ed, "kvno", NULL, 0);
-      if (rc != SHISHI_OK)
-	return rc;
-
-      rc = shishi_asn1_to_der (handle, ed, &der, &derlen);
-      free (data);
-      if (rc != SHISHI_OK)
-	return rc;
-  }
-  }
+  rc = shishi_asn1_to_der (handle, ed, &der, &derlen);
+  free (data);
+  if (rc != SHISHI_OK)
+    return rc;
 
   rc = shishi_kdcreq_add_padata (handle, kdcreq, SHISHI_PA_ENC_TIMESTAMP,
 				 der, derlen);
