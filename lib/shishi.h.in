@@ -1150,10 +1150,7 @@ extern int shishi_kdcreq_add_padata_tgs (Shishi * handle,
 					 Shishi_asn1 apreq);
 extern int shishi_kdcreq_add_padata_preauth (Shishi * handle,
 					     Shishi_asn1 kdcreq,
-					     int32_t keytype,
-					     const char *password,
-					     const char *salt,
-					     const char *s2kparams);
+					     Shishi_key key);
 extern int shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq);
 
 /* kdc.c */
