@@ -402,10 +402,13 @@ shishi_asn1_done (Shishi * handle, Shishi_asn1 node)
 
   int rc;
 
-  rc = asn1_delete_structure (&node);
-  if (rc != ASN1_SUCCESS)
-    shishi_error_printf (handle, "Cannot dellocate ASN.1 structure: %s",
-			 libtasn1_strerror (rc));
+  if (node)
+    {
+      rc = asn1_delete_structure (&node);
+      if (rc != ASN1_SUCCESS)
+	shishi_error_printf (handle, "Cannot dellocate ASN.1 structure: %s",
+			     libtasn1_strerror (rc));
+    }
 }
 
 static Shishi_asn1
