@@ -8,6 +8,8 @@ See the end for copying conditions.
 Only the PA-ENC-TIMESTAMP, ETYPE-INFO and ETYPE-INFO2 mechanisms are
 supported.  Tested againt MIT and Heimdal KDCs.
 
+** Clarified the copyright on lib/kerberos5.asn1.
+
 ** Updated gnulib compatibility files.
 
 * Version 0.0.23 (released 2006-03-25)
