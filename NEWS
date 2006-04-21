@@ -6,7 +6,7 @@ See the end for copying conditions.
 
 ** Pre-authentication support.
 Only the PA-ENC-TIMESTAMP, ETYPE-INFO and ETYPE-INFO2 mechanisms are
-supported.
+supported.  Tested againt MIT and Heimdal KDCs.
 
 ** Updated gnulib compatibility files.
 
