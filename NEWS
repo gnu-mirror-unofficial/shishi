@@ -6,7 +6,7 @@ See the end for copying conditions.
 
 ** Pre-authentication support.
 Only the PA-ENC-TIMESTAMP, ETYPE-INFO and ETYPE-INFO2 mechanisms are
-supported.  Tested againt MIT and Heimdal KDCs.
+supported.  Tested againt MIT, Heimdal, and Windows 2000 KDCs. 
 
 ** Clarified the copyright on lib/kerberos5.asn1.
 
