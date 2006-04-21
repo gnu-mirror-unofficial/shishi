@@ -882,6 +882,8 @@ extern int shishi_ticket_parse (Shishi * handle, FILE * fh,
 				Shishi_asn1 * ticket);
 extern int shishi_ticket_read (Shishi * handle, FILE * fh,
 			       Shishi_asn1 * ticket);
+extern int shishi_etype_info_print (Shishi * handle, FILE * fh,
+				    Shishi_asn1 etypeinfo);
 extern int shishi_etype_info2_print (Shishi * handle, FILE * fh,
 				     Shishi_asn1 etypeinfo2);
 
@@ -1609,6 +1611,7 @@ extern Shishi_asn1 shishi_asn1_pa_enc_ts_enc (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_encrypteddata (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_padata (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_methoddata (Shishi * handle);
+extern Shishi_asn1 shishi_asn1_etype_info (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_etype_info2 (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asreq (Shishi * handle);
 extern Shishi_asn1 shishi_asn1_asrep (Shishi * handle);
@@ -1642,6 +1645,9 @@ extern Shishi_asn1 shishi_der2asn1_padata (Shishi * handle,
 					   const char *der, size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_methoddata (Shishi * handle,
 					       const char *der, size_t derlen);
+extern Shishi_asn1 shishi_der2asn1_etype_info (Shishi * handle,
+					       const char *der,
+					       size_t derlen);
 extern Shishi_asn1 shishi_der2asn1_etype_info2 (Shishi * handle,
 						const char *der,
 						size_t derlen);

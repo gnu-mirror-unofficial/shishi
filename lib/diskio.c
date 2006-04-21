@@ -115,6 +115,13 @@ shishi_methoddata_print (Shishi * handle, FILE * fh, Shishi_asn1 methoddata)
 }
 
 int
+shishi_etype_info_print (Shishi * handle, FILE * fh, Shishi_asn1 etypeinfo)
+{
+  return _shishi_print_armored_data (handle, fh, etypeinfo,
+				     "ETYPE-INFO", NULL);
+}
+
+int
 shishi_etype_info2_print (Shishi * handle, FILE * fh, Shishi_asn1 etypeinfo2)
 {
   return _shishi_print_armored_data (handle, fh, etypeinfo2,

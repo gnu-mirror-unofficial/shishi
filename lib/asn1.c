@@ -484,6 +484,20 @@ shishi_asn1_methoddata (Shishi * handle)
 }
 
 /**
+ * shishi_asn1_etype_info:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Create new ASN.1 structure for ETYPE-INFO.
+ *
+ * Return value: Returns ASN.1 structure.
+ **/
+Shishi_asn1
+shishi_asn1_etype_info (Shishi * handle)
+{
+  return asn1_new (handle, ASN1NAME "ETYPE-INFO", "ETYPE-INFO");
+}
+
+/**
  * shishi_asn1_etype_info2:
  * @handle: shishi handle as allocated by shishi_init().
  *
@@ -956,12 +970,28 @@ shishi_der2asn1_methoddata (Shishi * handle, const char *der, size_t derlen)
 }
 
 /**
+ * shishi_der2asn1_etype_info:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @der: input character array with DER encoding.
+ * @derlen: length of input character array with DER encoding.
+ *
+ * Decode DER encoding of ETYPE-INFO and create a ASN.1 structure.
+ *
+ * Return value: Returns ASN.1 structure corresponding to DER data.
+ **/
+Shishi_asn1
+shishi_der2asn1_etype_info (Shishi * handle, const char *der, size_t derlen)
+{
+  return der2asn1 (handle, ASN1NAME "ETYPE-INFO", "ETYPE-INFO", der, derlen);
+}
+
+/**
  * shishi_der2asn1_etype_info2:
  * @handle: shishi handle as allocated by shishi_init().
  * @der: input character array with DER encoding.
  * @derlen: length of input character array with DER encoding.
  *
- * Decode DER encoding of METHOD-DATA and create a ASN.1 structure.
+ * Decode DER encoding of ETYPE-INFO2 and create a ASN.1 structure.
  *
  * Return value: Returns ASN.1 structure corresponding to DER data.
  **/
