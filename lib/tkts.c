@@ -954,7 +954,7 @@ recover_preauth_info (Shishi_tkts *tkts,
   int rc;
 
   if (VERBOSENOISE(tkts->handle))
-    printf ("Found INFO-ETYPE2 pre-auth hints, trying to find etype...\n");
+    printf ("Found INFO-ETYPE(2) pre-auth hints, trying to find etype...\n");
 
   if (VERBOSEASN1(tkts->handle))
     {
@@ -1085,6 +1085,9 @@ recover_preauth (Shishi_tkts *tkts,
 
 	      switch (padatatype)
 		{
+		  /* XXX Don't parse INFO structures if there is a
+		     INFO2. */
+
 		case SHISHI_PA_ETYPE_INFO:
 		case SHISHI_PA_ETYPE_INFO2:
 		  {
