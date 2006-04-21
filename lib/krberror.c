@@ -1195,8 +1195,8 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
 	{
 	  buf[len] = '\0';
 	  fprintf (fh, "Additional error message from server:\n%s\n", buf);
+	  free (buf);
 	}
-      free (buf);
 
       if (shishi_krberror_errorcode_fast (handle, krberror) ==
 	  SHISHI_KDC_ERR_PREAUTH_REQUIRED)
