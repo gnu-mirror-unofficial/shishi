@@ -940,13 +940,14 @@ do_preauth (Shishi_tkts *tkts, Shishi_tkts_hint *lochint, Shishi_as *as)
   return rc;
 }
 
-/* Handle ETYPE-INFO2 pre-auth data. */
+/* Handle ETYPE-INFO and ETYPE-INFO2 pre-auth data. */
 static int
-recover_preauth_info2 (Shishi_tkts *tkts,
-		       Shishi_as *as,
-		       Shishi_tkts_hint *lochint,
-		       Shishi_asn1 einfo2s,
-		       bool *retry)
+recover_preauth_info (Shishi_tkts *tkts,
+		      Shishi_as *as,
+		      Shishi_tkts_hint *lochint,
+		      Shishi_asn1 einfos,
+		      bool isinfo2,
+		      bool *retry)
 {
   size_t foundpos = SIZE_MAX;
   size_t i, n;
@@ -956,18 +957,21 @@ recover_preauth_info2 (Shishi_tkts *tkts,
     printf ("Found INFO-ETYPE2 pre-auth hints, trying to find etype...\n");
 
   if (VERBOSEASN1(tkts->handle))
-    shishi_etype_info2_print (tkts->handle, stdout, einfo2s);
+    {
+      if (isinfo2)
+	shishi_etype_info2_print (tkts->handle, stdout, einfos);
+      else
+	shishi_etype_info_print (tkts->handle, stdout, einfos);
+    }
 
-  if (lochint->preauthetype ||
-      lochint->preauthsalt ||
-      lochint->preauths2kparams)
+  if (lochint->preauthetype)
     {
       if (VERBOSENOISE(tkts->handle))
-	printf ("Pre-auth already tried and failed...\n");
+	printf ("Pre-auth data already specified...\n");
       return SHISHI_OK;
     }
 
-  rc = shishi_asn1_number_of_elements (tkts->handle, einfo2s, "", &n);
+  rc = shishi_asn1_number_of_elements (tkts->handle, einfos, "", &n);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -977,7 +981,7 @@ recover_preauth_info2 (Shishi_tkts *tkts,
       int32_t etype;
 
       format = xasprintf ("?%d.etype", i);
-      rc = shishi_asn1_read_int32 (tkts->handle, einfo2s, format, &etype);
+      rc = shishi_asn1_read_int32 (tkts->handle, einfos, format, &etype);
       free (format);
       if (rc == SHISHI_OK)
 	{
@@ -1000,20 +1004,23 @@ recover_preauth_info2 (Shishi_tkts *tkts,
 		      /* XXX mem leak. */
 
 		      format = xasprintf ("?%d.salt", i);
-		      rc = shishi_asn1_read (tkts->handle, einfo2s, format,
+		      rc = shishi_asn1_read (tkts->handle, einfos, format,
 					     &lochint->preauthsalt,
 					     &lochint->preauthsaltlen);
 		      free (format);
 		      if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
 			return rc;
 
-		      format = xasprintf ("?%d.s2kparams", i);
-		      rc = shishi_asn1_read (tkts->handle, einfo2s, format,
-					     &lochint->preauths2kparams,
-					     &lochint->preauths2kparamslen);
-		      free (format);
-		      if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
-			return rc;
+		      if (isinfo2)
+			{
+			  format = xasprintf ("?%d.s2kparams", i);
+			  rc = shishi_asn1_read (tkts->handle, einfos, format,
+						 &lochint->preauths2kparams,
+						 &lochint->preauths2kparamslen);
+			  free (format);
+			  if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
+			    return rc;
+			}
 		    }
 
 		  foundpos = MIN(foundpos, j);
@@ -1078,11 +1085,12 @@ recover_preauth (Shishi_tkts *tkts,
 
 	      switch (padatatype)
 		{
+		case SHISHI_PA_ETYPE_INFO:
 		case SHISHI_PA_ETYPE_INFO2:
 		  {
 		    char *der;
 		    size_t len;
-		    Shishi_asn1 einfo2s;
+		    Shishi_asn1 einfos;
 
 		    format = xasprintf ("?%d.padata-value", i);
 		    rc = shishi_asn1_read (tkts->handle, pas, format,
@@ -1091,17 +1099,22 @@ recover_preauth (Shishi_tkts *tkts,
 		    if (rc != SHISHI_OK)
 		      return rc;
 
-		    einfo2s = shishi_der2asn1_etype_info2 (tkts->handle,
+		    if (padatatype == SHISHI_PA_ETYPE_INFO)
+		      einfos = shishi_der2asn1_etype_info (tkts->handle,
 							   der, len);
-		    if (!einfo2s)
+		    else
+		      einfos = shishi_der2asn1_etype_info2 (tkts->handle,
+							    der, len);
+		    if (!einfos)
 		      return SHISHI_ASN1_ERROR;
 
-		    rc = recover_preauth_info2 (tkts, as, lochint,
-						einfo2s, retry);
+		    rc = recover_preauth_info
+		      (tkts, as, lochint, einfos,
+		       padatatype == SHISHI_PA_ETYPE_INFO2, retry);
 		    if (rc != SHISHI_OK)
 		      return rc;
 
-		    shishi_asn1_done (tkts->handle, einfo2s);
+		    shishi_asn1_done (tkts->handle, einfos);
 		  }
 		  break;
 
