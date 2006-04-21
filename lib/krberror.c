@@ -1181,9 +1181,12 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
       fprintf (fh, "Generic error from server:\n");
 
       res = shishi_krberror_etext (handle, krberror, &buf, &len);
-      buf[len] = '\0';
       if (res == SHISHI_OK && len > 0)
-	fprintf (fh, "%s\n", buf);
+	{
+	  buf[len] = '\0';
+	  fprintf (fh, "%s\n", buf);
+	  free (buf);
+	}
     }
   else
     {
