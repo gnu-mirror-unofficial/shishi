@@ -12,6 +12,8 @@ supported.  Tested againt MIT and Heimdal KDCs.
 
 ** Updated gnulib compatibility files.
 
+** Fix some memory leaks and crashes.
+
 * Version 0.0.23 (released 2006-03-25)
 
 ** Debian packages are available from http://josefsson.org/shishi/debian/
