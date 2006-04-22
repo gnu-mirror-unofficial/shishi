@@ -1,5 +1,5 @@
 /* ticketset.c	Shishi ticketset self tests.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -88,7 +88,7 @@ test (Shishi * handle)
   Shishi_asn1 n1, n2, n3;
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
-  char *buf, *buf2;
+  char *buf;
   char *p, *q;
   size_t n;
   int res;
