@@ -1,5 +1,5 @@
 /* server.c --- Handle KDC sessions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -287,11 +287,14 @@ kdc_loop (void)
 	  maxfd = 0;
 	  for (ls = listenspec; ls; ls = ls->next)
 	    {
-	      maxfd = MAX (maxfd, ls->sockfd + 1);
-	      if (!arg.quiet_flag)
-		syslog (LOG_DEBUG, "Listening on %s socket %d\n",
-			ls->str, ls->sockfd);
-	      FD_SET (ls->sockfd, &readfds);
+	      if (ls->sockfd > 0)
+		{
+		  maxfd = MAX (maxfd, ls->sockfd + 1);
+		  if (!arg.quiet_flag)
+		    syslog (LOG_DEBUG, "Listening on %s socket %d\n",
+			    ls->str, ls->sockfd);
+		  FD_SET (ls->sockfd, &readfds);
+		}
 	    }
 	}
       while ((rc = select (maxfd, &readfds, NULL, NULL, NULL)) == 0);
@@ -305,7 +308,7 @@ kdc_loop (void)
 	}
 
       for (ls = listenspec; ls; ls = ls->next)
-	if (FD_ISSET (ls->sockfd, &readfds))
+	if (ls->sockfd > 0 && FD_ISSET (ls->sockfd, &readfds))
 	  {
 	    if (ls->type == SOCK_STREAM && ls->listening)
 	      kdc_accept (ls);
