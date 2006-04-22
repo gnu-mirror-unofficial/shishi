@@ -1103,7 +1103,7 @@ recover_preauth (Shishi_tkts *tkts,
 		      {
 			shishi_error_printf (tkts->handle,
 					     "Can't extract PA-DATA value\n");
-			return rc;
+			continue;
 		      }
 
 		    if (padatatype == SHISHI_PA_ETYPE_INFO)
@@ -1112,18 +1112,24 @@ recover_preauth (Shishi_tkts *tkts,
 		    else
 		      einfos = shishi_der2asn1_etype_info2 (tkts->handle,
 							    der, len);
+		    free (der);
 		    if (!einfos)
 		      {
 			shishi_error_printf (tkts->handle,
-					     "Can't DER decode PA-DATA...\n");
-			return SHISHI_ASN1_ERROR;
+					     "Can't DER decode PA-DATA\n");
+			continue;
 		      }
 
 		    rc = recover_preauth_info
 		      (tkts, as, lochint, einfos,
 		       padatatype == SHISHI_PA_ETYPE_INFO2, retry);
 		    if (rc != SHISHI_OK)
-		      return rc;
+		      {
+			shishi_error_printf (tkts->handle,
+					     "Could not parse pre-auth data: %s\n",
+					     shishi_strerror (rc));
+			continue;
+		      }
 
 		    shishi_asn1_done (tkts->handle, einfos);
 		  }
