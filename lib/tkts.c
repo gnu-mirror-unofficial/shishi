@@ -407,7 +407,7 @@ shishi_tkts_write (Shishi_tkts * tkts, FILE * fh)
       if (res != SHISHI_OK)
 	{
 	  shishi_error_printf (tkts->handle,
-			       "Could not print ticket: %s\n",
+			       "Could not print ticket: %s",
 			       shishi_error (tkts->handle));
 	  return res;
 	}
@@ -417,7 +417,7 @@ shishi_tkts_write (Shishi_tkts * tkts, FILE * fh)
       if (res != SHISHI_OK)
 	{
 	  shishi_error_printf (tkts->handle,
-			       "Could not print ticket: %s\n",
+			       "Could not print ticket: %s",
 			       shishi_error (tkts->handle));
 	  return res;
 	}
@@ -427,7 +427,7 @@ shishi_tkts_write (Shishi_tkts * tkts, FILE * fh)
       if (res != SHISHI_OK)
 	{
 	  shishi_error_printf (tkts->handle,
-			       "Could not print ticket: %s\n",
+			       "Could not print ticket: %s",
 			       shishi_error (tkts->handle));
 	  return res;
 	}
@@ -1102,7 +1102,7 @@ recover_preauth (Shishi_tkts *tkts,
 		    if (rc != SHISHI_OK)
 		      {
 			shishi_error_printf (tkts->handle,
-					     "Can't extract PA-DATA value\n");
+					     "Can't extract PA-DATA value");
 			continue;
 		      }
 
@@ -1116,7 +1116,7 @@ recover_preauth (Shishi_tkts *tkts,
 		    if (!einfos)
 		      {
 			shishi_error_printf (tkts->handle,
-					     "Can't DER decode PA-DATA\n");
+					     "Can't DER decode PA-DATA");
 			continue;
 		      }
 
@@ -1126,7 +1126,7 @@ recover_preauth (Shishi_tkts *tkts,
 		    if (rc != SHISHI_OK)
 		      {
 			shishi_error_printf (tkts->handle,
-					     "Could not parse pre-auth data: %s\n",
+					     "Could not use pre-auth data: %s",
 					     shishi_strerror (rc));
 			continue;
 		      }
@@ -1217,7 +1217,7 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 	  goto again;
 	}
 
-      shishi_error_printf (tkts->handle, "Unsupported pre-auth required\n");
+      shishi_error_printf (tkts->handle, "Unsupported pre-auth required");
       return NULL;
     }
   if (rc != SHISHI_OK)
