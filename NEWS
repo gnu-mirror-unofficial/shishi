@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.24 (unreleased)
 
+** Fix bug in shishid which caused it to listen on standard input and crash.
+
 ** Pre-authentication support.
 Only the PA-ENC-TIMESTAMP, ETYPE-INFO and ETYPE-INFO2 mechanisms are
 supported.  Tested againt MIT, Heimdal, and Windows 2000 KDCs.
