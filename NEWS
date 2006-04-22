@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.24 (unreleased)
+* Version 0.0.24 (released 2006-04-22)
 
 ** Fix bug in shishid which caused it to listen on standard input and crash.
 
