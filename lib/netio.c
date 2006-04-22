@@ -1,5 +1,5 @@
 /* netio.c --- Network I/O functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -396,7 +396,7 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
     }
 
   if (VERBOSE (handle))
-    printf ("Sending to %s:%s (%s)...\n", realm, port,
+    printf ("Sending to %s:%d (%s)...\n", realm, port,
 	    inet_ntoa (((struct sockaddr_in *) ai->ai_addr)->sin_addr));
 
   rc = shishi_sendrecv_udp (handle, ai->ai_addr,
