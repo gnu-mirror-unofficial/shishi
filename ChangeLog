@@ -1,3 +1,301 @@
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.24.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/getpass.m4: Update.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c: Don't select failed sockets.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Typo.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: More debug info.  Fix mem leak.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: More debug.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Fix printf format.
+
+2006-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Fix mem leak, reported by Elrond.
+
+2006-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Fix crash, reported by Elrond.
+
+2006-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Fix.
+
+2006-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Support ETYPE-INFO too.
+
+2006-04-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c, lib/diskio.c, lib/shishi.h.in: Add.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: Remove unused.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* gl/base64.c, gl/m4/extensions.m4, gl/m4/longdouble.m4: Update.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Less debug.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Fix salt/s2kparams.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Cleanup.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c, lib/shishi.h.in: Fix.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Pre-auth fixes.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Fix crash.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Fix message.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c: Check errors.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Improve preauth.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add more hints.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c, lib/shishi.h.in: Add.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Add.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/asn1.c: Add.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c: Debug more.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Fix.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Remove preauth.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Remove preauth option.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Add shishi_krberror_methoddata.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.asn1: Fix.
+
+2006-04-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.asn1: Fix.
+
+2006-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Fix.
+
+2006-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* po/LINGUAS: Sync with TP.
+
+2006-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Support preauth (XXX).
+
+2006-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c, lib/shishi.h.in, lib/asn1.c: Add.
+
+2006-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.c: Generated.
+
+2006-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2006-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.asn1, lib/asn1.c: Fix.
+
+2006-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* po/Makevars: Fix.
+
+2006-04-19  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Add update-po.
+
+2006-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Only clear padata in AS-REQ.
+
+2006-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Add preauth config option.
+
+2006-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Add.
+
+2006-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-04-18  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/stdint_.h, gl/m4/time_r.m4: Update.
+
+2006-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c: Don't always clear padata.
+
+2006-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Clear padata if not set.
+
+2006-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/krberror.c: Print which pre-auth types were requested by
+	server.
+
+2006-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c, lib/diskio.c, lib/shishi.h.in: Add PA/METHOD-DATA
+	stuff.
+
+2006-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c, lib/shishi.h.in: Add shishi_asn1_padata.
+
+2006-03-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c: Remove unused variable.
+
+2006-03-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Need getline.h.
+
+2006-03-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Re-order direntry's, for broken install-info.
+
+2006-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2006-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Fix gnupload command.
+
+2006-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.23.
+
 2006-03-25  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po, po/sv.po: Generated.
