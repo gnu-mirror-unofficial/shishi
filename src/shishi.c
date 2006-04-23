@@ -1,5 +1,5 @@
 /* shishi.c --- Shishi command line interface.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -67,22 +67,22 @@ main (int argc, char *argv[])
   set_program_name (argv[0]);
 
   if (cmdline_parser (argc, argv, &args) != 0)
-    error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
+    error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
 	   program_name);
 
   if (args.inputs_num > 2 ||
       args.destroy_given + args.list_given + args.renew_given > 1)
     {
-      error (0, 0, "too many arguments");
-      error (EXIT_FAILURE, 0, "Try `%s --help' for more information.",
+      error (0, 0, _("too many arguments"));
+      error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
 	     program_name);
     }
 
   if (args.help_given)
     {
       cmdline_parser_print_help ();
-      printf ("\nMandatory arguments to long options are "
-	      "mandatory for short options too.\n\nReport bugs to <%s>.\n",
+      printf (_("\nMandatory arguments to long options are "
+		"mandatory for short options too.\n\nReport bugs to <%s>.\n"),
 	      PACKAGE_BUGREPORT);
       return EXIT_SUCCESS;
     }
@@ -91,11 +91,11 @@ main (int argc, char *argv[])
 			       args.system_configuration_file_arg,
 			       args.configuration_file_arg);
   if (rc == SHISHI_HANDLE_ERROR)
-    error (EXIT_FAILURE, 0, "Internal error: could not initialize shishi\n");
+    error (EXIT_FAILURE, 0, _("Could not initialize libshishi."));
 
   rc = shishi_cfg_clientkdcetype_set (sh, args.encryption_type_arg);
   if (rc != SHISHI_OK)
-    error (1, 0, "Could not set encryption types: %s\n",
+    error (EXIT_FAILURE, 0, _("Could not set encryption types: %s"),
 	   shishi_strerror (rc));
 
   if (args.inputs_num > 0)
@@ -107,7 +107,7 @@ main (int argc, char *argv[])
 
       if (rc != SHISHI_OK)
 	error (EXIT_FAILURE, 0,
-	       "Could not parse client principal \"%s\": %s\n",
+	       _("Could not parse client principal \"%s\": %s"),
 	       args.inputs[0], shishi_strerror (rc));
     }
 
@@ -120,13 +120,13 @@ main (int argc, char *argv[])
 
       if (rc != SHISHI_OK)
 	error (EXIT_FAILURE, 0,
-	       "Could not parse server principal \"%s\": %s\n",
+	       _("Could not parse server principal \"%s\": %s"),
 	       args.inputs[1], shishi_strerror (rc));
     }
 
   rc = shishi_cfg (sh, args.library_options_arg);
   if (rc != SHISHI_OK)
-    error (1, 0, "Could not read library options: %s\n",
+    error (EXIT_FAILURE, 0, _("Could not read library options: %s"),
 	   shishi_strerror (rc));
 
   if (args.verbose_given > 0)
@@ -144,7 +144,7 @@ main (int argc, char *argv[])
     {
       starttime = shishi_get_date (args.starttime_arg, NULL);
       if (starttime == -1)
-	error (EXIT_FAILURE, 0, "Invalid --starttime date `%s'",
+	error (EXIT_FAILURE, 0, _("Invalid --starttime date `%s'"),
 	       args.starttime_arg);
     }
   else
@@ -154,7 +154,7 @@ main (int argc, char *argv[])
     {
       endtime = shishi_get_date (args.endtime_arg, &starttime);
       if (endtime == -1)
-	error (EXIT_FAILURE, 0, "Invalid --endtime date `%s'",
+	error (EXIT_FAILURE, 0, _("Invalid --endtime date `%s'"),
 	       args.starttime_arg);
     }
   else
@@ -164,7 +164,7 @@ main (int argc, char *argv[])
     {
       renew_till = shishi_get_date (args.renew_till_arg, &starttime);
       if (renew_till == -1)
-	error (EXIT_FAILURE, 0, "Invalid --renew-till date `%s'",
+	error (EXIT_FAILURE, 0, _("Invalid --renew-till date `%s'"),
 	       args.renew_till_arg);
     }
   else
@@ -188,7 +188,7 @@ main (int argc, char *argv[])
       rc = shishi_tkts_print_for_service (shishi_tkts_default (sh),
 					  stdout, args.server_name_arg);
       if (rc != SHISHI_OK)
-	error (EXIT_FAILURE, 0, "Could not list tickets: %s",
+	error (EXIT_FAILURE, 0, _("Could not list tickets: %s"),
 	       shishi_strerror (rc));
     }
   else if (args.destroy_flag)
@@ -205,14 +205,14 @@ main (int argc, char *argv[])
 
 	  if (args.verbose_given)
 	    {
-	      printf ("Removing ticket:\n");
+	      printf (_("Removing ticket:\n"));
 	      shishi_tkt_pretty_print (shishi_tkts_nth
 				       (shishi_tkts_default (sh), i), stdout);
 	    }
 
 	  rc = shishi_tkts_remove (shishi_tkts_default (sh), i);
 	  if (rc != SHISHI_OK)
-	    error (EXIT_FAILURE, 0, "Could not destroy ticket %d:\n%s\n", i,
+	    error (EXIT_FAILURE, 0, _("Could not destroy ticket %d:\n%s"), i,
 		   shishi_strerror (rc));
 
 	  i--;
@@ -222,11 +222,10 @@ main (int argc, char *argv[])
       if (!args.quiet_flag)
 	{
 	  if (removed == 0)
-	    printf ("No tickets removed.\n");
-	  else if (removed == 1)
-	    printf ("1 ticket removed.\n");
+	    printf (_("No tickets removed.\n"));
 	  else
-	    printf ("%d tickets removed.\n", removed);
+	    printf (ngettext ("%d ticket removed.\n",
+			      "%d tickets removed.\n", removed), removed);
 	}
     }
   else if (args.renew_given)
@@ -258,7 +257,7 @@ main (int argc, char *argv[])
 
       tkt = shishi_tkts_get (shishi_tkts_default (sh), &hint);
       if (!tkt)
-	error (EXIT_FAILURE, 0, "Could not get ticket as `%s' for `%s'.",
+	error (EXIT_FAILURE, 0, _("Could not get ticket as `%s' for `%s'."),
 	       hint.client ? hint.client : shishi_principal_default (sh),
 	       hint.server);
 
