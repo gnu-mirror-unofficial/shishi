@@ -966,7 +966,7 @@ shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
     fprintf (fh, "Principal: %s\n", shishi_key_principal (key));
   if (shishi_key_realm (key))
     fprintf (fh, "Realm: %s\n", shishi_key_realm (key));
-  if (shishi_key_version (key))
+  if (shishi_key_version (key) != UINT32_MAX)
     fprintf (fh, "Key-Version-Number: %d\n", shishi_key_version (key));
   fprintf (fh, "\n");
 

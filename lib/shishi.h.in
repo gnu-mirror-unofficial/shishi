@@ -715,8 +715,8 @@ extern int shishi_ticket_get_enc_part_etype (Shishi * handle,
 					     Shishi_asn1 ticket,
 					     int32_t * etype);
 extern int shishi_ticket_set_enc_part (Shishi * handle, Shishi_asn1 ticket,
-				       int etype, int kvno,
-				       char *buf, size_t buflen);
+				       int32_t etype, uint32_t kvno,
+				       const char *buf, size_t buflen);
 extern int shishi_ticket_add_enc_part (Shishi * handle, Shishi_asn1 ticket,
 				       Shishi_key * key,
 				       Shishi_asn1 encticketpart);

@@ -28,7 +28,7 @@ struct Shishi_key
   char *realm;
   int type;
   char value[MAX_KEY_LEN];
-  int kvno;
+  uint32_t kvno; /* UINT32_MAX means undefined kvno */
 };
 
 /**
@@ -165,7 +165,8 @@ shishi_key_value_set (Shishi_key * key, const char *value)
  * shishi_key_version:
  * @key: structure that holds key information
  *
- * Get the "kvno" (key version) of key.
+ * Get the "kvno" (key version) of key.  It will be UINT32_MAX if the
+ * key is not long-lived.
  *
  * Return value: Returns the version of key ("kvno").
  **/
@@ -180,7 +181,8 @@ shishi_key_version (Shishi_key * key)
  * @key: structure that holds key information
  * @kvno: new version integer.
  *
- * Set the version of key ("kvno") in key structure.
+ * Set the version of key ("kvno") in key structure.  Use UINT32_MAX
+ * for non-ptermanent keys.
  **/
 void
 shishi_key_version_set (Shishi_key * key, uint32_t kvno)
