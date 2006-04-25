@@ -1934,7 +1934,7 @@ extern int shishi_apreq_save (Shishi * handle, FILE * fh, Shishi_asn1 apreq);
 extern int shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
 				    Shishi_asn1 ticket);
 extern int shishi_apreq_set_authenticator (Shishi * handle, Shishi_asn1 apreq,
-					   int32_t etype,
+					   int32_t etype, uint32_t kvno,
 					   const char *buf, size_t buflen);
 extern int shishi_apreq_add_authenticator (Shishi * handle, Shishi_asn1 apreq,
 					   Shishi_key * key, int keyusage,

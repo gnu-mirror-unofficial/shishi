@@ -1,5 +1,5 @@
 /* apreq.c --- AP-REQ functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -333,12 +333,17 @@ shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
 int
 shishi_apreq_set_authenticator (Shishi * handle,
 				Shishi_asn1 apreq,
-				int32_t etype, const char *buf, size_t buflen)
+				int32_t etype, int32_t kvno,
+				const char *buf, size_t buflen)
 {
   int res;
 
   res = shishi_asn1_write (handle, apreq, "authenticator.cipher",
 			   buf, buflen);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_asn1_write_int32 (handle, apreq, "authenticator.kvno", kvno);
   if (res != SHISHI_OK)
     return res;
 
@@ -393,6 +398,7 @@ shishi_apreq_add_authenticator (Shishi * handle,
     }
 
   res = shishi_apreq_set_authenticator (handle, apreq, shishi_key_type (key),
+					shishi_key_version (key),
 					buf, buflen);
 
   return res;
