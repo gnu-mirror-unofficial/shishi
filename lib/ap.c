@@ -1,5 +1,5 @@
 /* ap.c --- AP functions
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -798,6 +798,9 @@ shishi_ap_req_build (Shishi_ap * ap)
 
   if (VERBOSE (ap->handle))
     printf ("Building AP-REQ...\n");
+
+  if (VERBOSEASN1 (ap->handle))
+    shishi_ticket_print (ap->handle, stdout, shishi_tkt_ticket (ap->tkt));
 
   res = shishi_apreq_set_ticket (ap->handle, ap->apreq,
 				 shishi_tkt_ticket (ap->tkt));
