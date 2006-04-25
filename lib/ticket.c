@@ -1,5 +1,5 @@
 /* ticket.c --- Low-level ASN.1 Ticket handling.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -319,7 +319,8 @@ shishi_ticket_decrypt (Shishi * handle,
 int
 shishi_ticket_set_enc_part (Shishi * handle,
 			    Shishi_asn1 ticket,
-			    int etype, int kvno, char *buf, size_t buflen)
+			    int32_t etype, uint32_t kvno,
+			    const char *buf, size_t buflen)
 {
   int res = SHISHI_OK;
 
@@ -331,7 +332,7 @@ shishi_ticket_set_enc_part (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (kvno == 0)
+  if (kvno == UINT32_MAX)
     res = shishi_asn1_write (handle, ticket, "enc-part.kvno", NULL, 0);
   else
     res = shishi_asn1_write_uint32 (handle, ticket, "enc-part.kvno", kvno);

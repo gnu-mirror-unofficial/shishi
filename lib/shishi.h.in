@@ -1234,7 +1234,7 @@ extern int shishi_kdcrep_crealmserver_set (Shishi * handle,
 					   const char *crealm,
 					   const char *client);
 extern int shishi_kdcrep_set_enc_part (Shishi * handle, Shishi_asn1 kdcrep,
-				       int etype, int kvno,
+				       int32_t etype, int kvno,
 				       const char *buf, size_t buflen);
 extern int shishi_kdcrep_decrypt (Shishi * handle,
 				  Shishi_asn1 kdcrep,
