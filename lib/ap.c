@@ -800,7 +800,11 @@ shishi_ap_req_build (Shishi_ap * ap)
     printf ("Building AP-REQ...\n");
 
   if (VERBOSEASN1 (ap->handle))
-    shishi_ticket_print (ap->handle, stdout, shishi_tkt_ticket (ap->tkt));
+    {
+      shishi_ticket_print (ap->handle, stdout, shishi_tkt_ticket (ap->tkt));
+      shishi_key_print (ap->handle, stdout, shishi_tkt_key (ap->tkt));
+    }
+
 
   res = shishi_apreq_set_ticket (ap->handle, ap->apreq,
 				 shishi_tkt_ticket (ap->tkt));
