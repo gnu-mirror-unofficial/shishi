@@ -1,5 +1,5 @@
 /* kdcrep.c --- Key distribution (AS/TGS) Reply functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -617,7 +617,7 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
 int
 shishi_kdcrep_set_enc_part (Shishi * handle,
 			    Shishi_asn1 kdcrep,
-			    int etype, int kvno,
+			    int32_t etype, uint32_t kvno,
 			    const char *buf, size_t buflen)
 {
   int res = SHISHI_OK;
@@ -630,18 +630,12 @@ shishi_kdcrep_set_enc_part (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  if (kvno == 0)
-    {
-      res = shishi_asn1_write (handle, kdcrep, "enc-part.kvno", NULL, 0);
-      if (res != SHISHI_OK)
-	return res;
-    }
+  if (kvno == UINT32_MAX)
+    res = shishi_asn1_write (handle, kdcrep, "enc-part.kvno", NULL, 0);
   else
-    {
-      res = shishi_asn1_write_uint32 (handle, kdcrep, "enc-part.kvno", kvno);
-      if (res != SHISHI_OK)
-	return res;
-    }
+    res = shishi_asn1_write_uint32 (handle, kdcrep, "enc-part.kvno", kvno);
+  if (res != SHISHI_OK)
+    return res;
 
   return SHISHI_OK;
 }

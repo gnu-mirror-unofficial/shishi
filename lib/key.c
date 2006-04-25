@@ -233,6 +233,7 @@ shishi_key (Shishi * handle, Shishi_key ** key)
   *key = xcalloc (1, sizeof (**key));
 
   (*key)->handle = handle;
+  (*key)->kvno = UINT32_MAX;
 
   return SHISHI_OK;
 }

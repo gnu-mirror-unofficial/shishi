@@ -344,7 +344,10 @@ shishi_apreq_set_authenticator (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  res = shishi_asn1_write_int32 (handle, apreq, "authenticator.kvno", kvno);
+  if (kvno == UINT32_MAX)
+    res = shishi_asn1_write (handle, apreq, "authenticator.kvno", NULL, 0);
+  else
+    res = shishi_asn1_write_int32 (handle, apreq, "authenticator.kvno", kvno);
   if (res != SHISHI_OK)
     return res;
 
