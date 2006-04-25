@@ -94,9 +94,10 @@ manage tickets (and more).  The server side, a Key Distribution
 Center, is implemented by 'shishid'.  Of course, a manual documenting
 usage aspects as well as the programming API is included.
 
-Shishi currently supports AS/TGS exchanges for acquiring tickets, the
-AP exchange for performing client and server authentication, and
-SAFE/PRIV for integrity/privacy protected application data exchanges.
+Shishi currently supports AS/TGS exchanges for acquiring tickets,
+pre-authentication, the AP exchange for performing client and server
+authentication, and SAFE/PRIV for integrity/privacy protected
+application data exchanges.
 
 Shishi is internationalized; error and status messages can be
 translated into the users' language; user name and passwords can be
