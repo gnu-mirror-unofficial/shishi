@@ -293,8 +293,8 @@ changes to the current code.
 This section describes RFC 1510 from a protocol point of
 view@footnote{The text is a lightly adapted version of the
 introduction section from RFC 1510 by J. Kohl and C. Neuman, September
-1993, unclear copyrights, but presumably owned by The Internet
-Society.}.
+1993, copyright likely owned by the RFC 1510 authors or some
+contributor.}.
 
 Kerberos provides a means of verifying the identities of principals,
 (e.g., a workstation user or a network server) on an open
