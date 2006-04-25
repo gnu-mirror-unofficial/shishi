@@ -106,7 +106,7 @@ ISO-8859-1 and UTF-8) and also be processed using an experimental
 Stringprep profile.
 
 Most, if not all, of the widely used encryption and checksum types are
-supported, such as 3DES, AES and HMAC-SHA1.
+supported, such as 3DES, AES, ARCFOUR and HMAC-SHA1.
 
 Shishi is developed for the GNU/Linux system, but runs on over 20
 platforms including most major Unix platforms and Windows, and many
