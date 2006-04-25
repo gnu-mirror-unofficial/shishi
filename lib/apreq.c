@@ -319,6 +319,7 @@ shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
  * @handle: shishi handle as allocated by shishi_init().
  * @apreq: AP-REQ to add authenticator field to.
  * @etype: encryption type used to encrypt authenticator.
+ * @kvno: version of the key used to encrypt authenticator.
  * @buf: input array with encrypted authenticator.
  * @buflen: size of input array with encrypted authenticator.
  *
@@ -328,12 +329,12 @@ shishi_apreq_from_file (Shishi * handle, Shishi_asn1 * apreq,
  * shishi_apreq_add_authenticator() instead, which calculates the
  * encrypted data and calls this function in one step.
  *
- * Return value:
+ * Return value: Returns SHISHI_OK on success.
  **/
 int
 shishi_apreq_set_authenticator (Shishi * handle,
 				Shishi_asn1 apreq,
-				int32_t etype, int32_t kvno,
+				int32_t etype, uint32_t kvno,
 				const char *buf, size_t buflen)
 {
   int res;
