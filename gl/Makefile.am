@@ -25,6 +25,8 @@ CLEANFILES =
 DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
+AM_CPPFLAGS =
+
 ## begin gnulib module alloca-opt
 
 BUILT_SOURCES += $(ALLOCA_H)
