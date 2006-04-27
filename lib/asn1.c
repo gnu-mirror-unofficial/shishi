@@ -773,6 +773,37 @@ shishi_asn1_to_der_field (Shishi * handle, Shishi_asn1 node,
       return SHISHI_ASN1_ERROR;
     }
 
+  if (strcmp (field, "req-body") == 0)
+    {
+      unsigned char class;
+      int derlen, derlen2;
+      unsigned long tag;
+      signed long lenlen;
+
+      /* XXX when encoding a field inside a SEQUENCE, libtasn1 appear
+	 to include the tag from the SEQUENCE in the encoding of a
+	 particular field.  This appear wrong, so we frob it here.
+	 This typically happens when encoding req-body in KDC-REQ for
+	 TGS checksums.  */
+
+      rc = asn1_get_tag_der (*der, mylen, &class, &derlen, &tag);
+      if (rc != ASN1_SUCCESS)
+	{
+	  shishi_error_set (handle, errorDescription);
+	  return SHISHI_ASN1_ERROR;
+	}
+
+      lenlen = asn1_get_length_der(*der + derlen, mylen - derlen, &derlen2);
+      if (lenlen < 0)
+	return SHISHI_ASN1_ERROR;
+
+      if (derlen + derlen2 < mylen)
+	{
+	  mylen -= derlen + derlen2;
+	  memmove (*der, *der + derlen + derlen2, mylen);
+	}
+    }
+
   *len = mylen;
 
   return SHISHI_OK;
