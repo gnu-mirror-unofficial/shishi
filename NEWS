@@ -9,6 +9,16 @@ The problem was in the libtasn1 DER encoder which include ASN.1 tags
 for SEQUENCE members when calling asn1_der_coding() on a SEQUENCE
 element, thanks to Elrond for debugging.
 
+** Improved handling of key versions.
+Shishi should not send kvno for a session keys in TGS requests any
+more.  Internally, the UINT32_MAX kvno is now used to denote a
+"kvno"-less (i.e., non-permenant) key, earlier 0 was used which
+collided with the perfectly valid real kvno of 0.
+
+** Improved translation of messages in shishi.
+
+** Doc fixes.
+
 * Version 0.0.24 (released 2006-04-22)
 
 ** Fix bug in shishid which caused it to listen on standard input and crash.
