@@ -1,3 +1,128 @@
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.25.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc: Fix copyright.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc: Convert - to \- in man pages, from lintian.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gnulib-cache.m4: Update.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Replace size_max with stdint.h.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c: Fix.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: Need size_max.h.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.h, lib/internal.h, tests/utils.c: Always have unistd.h.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: Remove XXX, thanks to Elrond for investigating.
+
+2006-04-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Work around bug in libtasn1:
+	      /* XXX when encoding a field inside a SEQUENCE, libtasn1
+		 appear to include the tag from the SEQUENCE in the encoding of
+		 a particular field.  This appear wrong, so we frob it here.
+		 This typically happens when encoding req-body in KDC-REQ for
+		 TGS checksums.  */
+
+2006-04-26  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/getdate.y, gl/m4/strerror_r.m4: Update.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: More debug.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/apreq.c, lib/key.c: Fix.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/ticket.c, lib/kdcrep.c: Fix.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c, lib/key.c: Fix.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: More debug.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/apreq.c: Doc fox.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/apreq.c: Fix.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c: Rename version to kvno.
+
+2006-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix.
+
+2006-04-23  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishi.c: Translate.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* tests/ticketset.c: Remove unused variable.
+
+2006-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
 2006-04-22  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.24.
