@@ -19,6 +19,8 @@
  *
  */
 
+/* XXX oh, please, rewrite this file. */
+
 #include <libtasn1.h>
 #define _SHISHI_HAS_LIBTASN1_H 1
 #include "internal.h"
