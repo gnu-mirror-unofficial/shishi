@@ -127,6 +127,7 @@
 #include "xgethostname.h"
 #include "xgetdomainname.h"
 #include "xstrndup.h"
+#include "size_max.h"
 
 #include "shishi.h"
 
