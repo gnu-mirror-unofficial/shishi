@@ -342,10 +342,6 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
   if (res != SHISHI_OK)
     return res;
 
-  /* XXX what is this? */
-  memmove (buf, buf + 2, buflen - 2);
-  buflen -= 2;
-
   res = shishi_ap_set_tktoptionsdata (ap, tkt, options, buf, buflen);
   if (res != SHISHI_OK)
     return res;
