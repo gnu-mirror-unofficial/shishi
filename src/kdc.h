@@ -30,9 +30,7 @@
 #include <string.h>
 
 /* Get ssize_t, setuid, read, etc. */
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
+#include <unistd.h>
 
 /* Get gethostbyname, getservbyname. */
 #ifdef HAVE_NETDB_H

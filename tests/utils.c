@@ -23,16 +23,12 @@
 #include "config.h"
 #endif
 
-#ifdef STDC_HEADERS
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
-#endif
 
-#if HAVE_UNISTD_H
 #include <unistd.h>
-#endif
 
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
