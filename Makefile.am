@@ -27,9 +27,9 @@ if ASN1
 SUBDIRS += asn1
 endif
 
-SUBDIRS += lib db src tests doc
+SUBDIRS += lib db src tests doc extra
 
-DIST_SUBDIRS = po gl asn1 lib db src tests doc examples extra
+DIST_SUBDIRS = po gl asn1 lib db src tests doc examples
 
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4
 
@@ -70,10 +70,6 @@ install-data-hook:
 update-po: refresh-po
 	cvs add `ls po/*.po | grep -v quot.po` || true && \
 	cvs commit -m "Sync with TP." po/LINGUAS `ls po/*.po | grep -v quot.po`
-
-.PHONY: extra
-extra:
-	(cd extra && make)
 
 .PHONY: examples
 examples:
