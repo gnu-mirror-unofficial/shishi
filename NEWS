@@ -2,6 +2,8 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson
 See the end for copying conditions.
 
+* Version 0.0.26 (unreleased)
+
 * Version 0.0.25 (released 2006-04-27)
 
 ** Fix bug in code to get service tickets.
