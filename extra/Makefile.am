@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -22,7 +22,4 @@ EXTRA_DIST = inetutils.diff fetchmail.diff fetchmail.mail
 
 DIST_SUBDIRS = pam_shishi rsh-redone
 
-SUBDIRS = @PAM_SHISHI@ rsh-redone
-
-indent:
-	(cd pam_shishi && make indent)
+SUBDIRS = @PAM_SHISHI@
