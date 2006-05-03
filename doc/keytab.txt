@@ -1,43 +1,41 @@
 The Kerberos Keytab Binary File Format
 Michael B Allen <mba2000 ioplex.com>
-Last updated: Tue May 2 20:51:41 EDT 2006
+Last updated: Wed May  3 12:56:26 EDT 2006
 
 The MIT keytab binary format is not a standard format, nor is it
-documentated anywhere in detail. It is however understood by several
-Kerberos implementations including Heimdal and of course MIT and keytab
-files are created by the ktpass.exe utility from Windows. So it has
-established itself as the defacto format for storing Kerberos keys.
+documentated anywhere in detail. The format has evolved and may continue
+to. It is however understood by several Kerberos implementations including
+Heimdal and of course MIT and keytab files are created by the ktpass.exe
+utility from Windows. So it has established itself as the defacto format
+for storing Kerberos keys.
 
 The following C-like structure definitions illustrate the MIT keytab
-format.
+file format. All values are in network byte order.
 
   keytab {
-      uint16_t file_format_version; /* 0x502 */
+      uint16_t file_format_version;
       keytab_entry entries[*];
   };
- 
-  keytab_entry {
+
+  struct keytab_entry {
       int32_t size;
       uint16_t num_components;
-      counted_string realm;
-      counted_string service; /* optional */
-      counted_string name;
+      counted_octet_string components[num_components - 1];
       uint32_t name_type;
       uint32_t timestamp;
-      uint16_t vno; /* little endian */
+      uint8_t vno8;
       keyblock key;
-      uint32_t vno32; /* big endian */
+      uint32_t vno;
   };
-  
-  counted_string {
+
+  counted_octet_string {
       uint16_t length;
       uint8_t data[length];
   };
-  
+
   keyblock {
       uint16_t type;
-      uint8_t length;
-      uint8_t data[length];
+      counted_octet_string;
   };
 
 The keytab file format begins with the 16 bit file_format_version which
@@ -53,31 +51,32 @@ the offset to the next keytab_entry. Based on these size values alone
 the entire keytab file can be traversed.
 
 The size is followed by a 16 bit num_components field indicating the
-number of string components that follow minus one. In practice this value
-will be either 1 to indicate the realm and name follow or 2 to indicate
-the realm, service, and name follow. Each component is a counted_string.
+number of counted_octet_string components *minus one* that constitute
+the name. A counted_octet_string is simply an array of bytes prefixed
+with a 16 bit length. For the name components, the counted_octet_string
+bytes are UTF-8 encoded text (no zero terminator).
 
-The realm, optional service, and name components are counted_strings. A
-counted string is simply an array of bytes prefixed with a 16 bit
-length. With a service principal of HTTP/quark.foo.net@FOO.NET the
-service, name and realm would be "HTTP" "quark.foo.net" and "FOO.NET"
-respectively.
+Following the components array is the 32 bit name_type (e.g. 1 is
+KRB5_NT_PRINCIPAL, 2 is KRB5_NT_SRV_INST, 5 is KRB5_NT_UID, etc).
 
-Following the string components is the name_type. This value is usually
-1 unless ... ?
+In practice the name_type is almost certainly 1 meaning
+KRB5_NT_PRINCIPAL. For this type of entry the components array consists
+of the realm, service and name (in that order) although if num_components
+is 1, the service component is not present. For example, the service
+principal HTTP/quark.foo.net@FOO.NET would be encoded with name components
+"FOO.NET" followed by "HTTP" followed by "quark.foo.net".
 
 The 32 bit timestamp indicates the time the key was established for that
 principal. The value represents the number of seconds since Jan 1, 1970.
 
-The 16 bit vno field is the version number of the key. This value may
-be overridden by the vno32 field described below.
+The 8 bit vno8 field is the version number of the key. This value is
+overridden by the vno field if it is present.
 
 The keyblock structure consists of a 16 bit value indicating the keytype
 (e.g. 3 is des-cbc-md5, 23 is arcfour-hmac-md5, 16 is des3-cbc-sha1,
-etc). This is followed by an 8 bit value indicating the length of the
-key data that follows.
+etc). This is followed by a counted_octet_string containing the key.
 
-The last field of the keytab_entry struction is optional. If the size of
-the keytab_entry indicates that there are bytes remaining a 32 bit value
-representing the key version number follows. This value superceeds the
-16 bit value preceeding the keyblock.
+The last field of the keytab_entry structure is optional. If the size of
+the keytab_entry indicates that there are bytes remaining, a 32 bit value
+representing the key version number is present. This value superceeds
+the 8 bit value preceeding the keyblock.
