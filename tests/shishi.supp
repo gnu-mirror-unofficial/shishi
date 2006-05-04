@@ -1,0 +1,82 @@
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libgcrypt.so.11.2.1
+   obj:/usr/lib/libgcrypt.so.11.2.1
+   fun:gcry_malloc
+   obj:/usr/lib/libgcrypt.so.11.2.1
+   obj:/usr/lib/libgcrypt.so.11.2.1
+   obj:/usr/lib/libgcrypt.so.11.2.1
+   obj:/usr/lib/libgcrypt.so.11.2.1
+   fun:gcry_check_version
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libgcrypt.so.11.2.1
+   fun:gcry_malloc
+   fun:gcry_xmalloc
+   fun:gcry_xcalloc
+   obj:/usr/lib/libgcrypt.so.11.2.1
+   fun:gcry_randomize
+   fun:gc_pseudo_random
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_asn1_set_value
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_asn1_add_node_only
+   fun:_asn1_expand_object_id
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:strdup
+   fun:_asn1_set_name
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
+{
+   <insert a suppression name here>
+   Memcheck:Leak
+   fun:malloc
+   fun:_asn1_add_node
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
