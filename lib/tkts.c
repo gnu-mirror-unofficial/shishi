@@ -291,7 +291,7 @@ shishi_tkts_new (Shishi_tkts * tkts,
   Shishi_tkt *tkt;
   int res;
 
-  /* XXX */
+  /* XXX Who will de-allocate these? */
   tkt = shishi_tkt2 (tkts->handle, ticket, enckdcreppart, kdcrep);
 
   res = shishi_tkts_add (tkts, tkt);
