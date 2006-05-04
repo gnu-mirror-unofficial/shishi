@@ -1,5 +1,5 @@
 /* init.c --- Initialization functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -151,6 +151,8 @@ shishi_done (Shishi * handle)
       shishi_tkts_to_file (handle->tkts, shishi_tkts_default_file (handle));
       shishi_tkts_done (&handle->tkts);
     }
+
+  shishi_principal_default_set (handle, NULL);
 
 #ifdef USE_STARTTLS
   rc = _shishi_tls_done (handle);
