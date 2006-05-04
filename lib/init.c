@@ -153,6 +153,7 @@ shishi_done (Shishi * handle)
     }
 
   shishi_principal_default_set (handle, NULL);
+  shishi_tkts_default_file_set (handle, NULL);
 
 #ifdef USE_STARTTLS
   rc = _shishi_tls_done (handle);
@@ -164,8 +165,6 @@ shishi_done (Shishi * handle)
     free (handle->default_realm);
   if (handle->usercfgfile)
     free (handle->usercfgfile);
-  if (handle->tktsdefaultfile)
-    free (handle->tktsdefaultfile);
   if (handle->hostkeysdefaultfile)
     free (handle->hostkeysdefaultfile);
   if (handle->clientkdcetypes)
