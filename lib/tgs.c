@@ -1,5 +1,5 @@
 /* tgs.c --- High level client TGS functions.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -79,7 +79,12 @@ shishi_tgs (Shishi * handle, Shishi_tgs ** tgs)
       return SHISHI_ASN1_ERROR;
     }
 
-  res = shishi_ap (handle, &ltgs->ap);
+  res = shishi_ap_nosubkey (handle, &ltgs->ap);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = shishi_authenticator_remove_subkey
+    (handle, shishi_ap_authenticator (ltgs->ap));
   if (res != SHISHI_OK)
     return res;
 
