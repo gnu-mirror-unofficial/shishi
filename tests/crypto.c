@@ -468,6 +468,8 @@ test (Shishi * handle)
 	}
       else if (verbose)
 	success ("OK\n");
+
+      shishi_key_done (key2);
     }
 
   for (i = 0; i < sizeof (nfold) / sizeof (nfold[0]); i++)
@@ -581,6 +583,8 @@ test (Shishi * handle)
 	}
       else if (verbose)
 	success ("OK\n");
+
+      shishi_key_done (key);
     }
 
   for (i = 0; i < sizeof (pkcs5) / sizeof (pkcs5[0]); i++)
