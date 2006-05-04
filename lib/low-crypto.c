@@ -1,5 +1,5 @@
 /* low-crypto.c --- Shishi crypto wrappers around generic crypto.
- * Copyright (C) 2002, 2003, 2004, 2005  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -258,7 +258,7 @@ shishi_des_cbc_mac (Shishi * handle,
       goto done;
     }
 
-  return SHISHI_OK;
+  res = SHISHI_OK;
 
  done:
   gcry_cipher_close (ch);
