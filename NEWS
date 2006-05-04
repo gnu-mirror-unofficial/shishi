@@ -8,6 +8,10 @@ See the end for copying conditions.
 This solves interop problems with Windows 2003 and Heimdal, thanks to
 Elrond for debugging.
 
+** Fix mem leaks.
+
+** Self-tests are now run under valgrind, if it is installed.
+
 ** Updated Polish translation, thanks to Jakub Bogusz.
 
 * Version 0.0.25 (released 2006-04-27)
