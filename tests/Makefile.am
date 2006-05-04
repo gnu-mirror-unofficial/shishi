@@ -18,7 +18,7 @@
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-EXTRA_DIST = utils.c shisa.sh
+EXTRA_DIST = utils.c shisa.sh shishi.supp
 
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
 	-I$(top_srcdir)/lib -I../lib
@@ -30,4 +30,4 @@ check_PROGRAMS = authenticator crypto gztime priv safe \
 	ticketset crypto-ctx low-crypto rijndael key
 TESTS = $(check_PROGRAMS)
 
-TESTS_ENVIRONMENT = `if type valgrind > /dev/null 2>&1; then echo valgrind --leak-check=full --show-reachable=yes; else echo $$SHELL -c; fi`
+TESTS_ENVIRONMENT = `if type valgrind > /dev/null 2>&1; then echo valgrind --leak-check=full --show-reachable=yes --suppressions=shishi.supp; else echo $$SHELL -c; fi`
