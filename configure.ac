@@ -75,7 +75,7 @@ AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]])
 AC_SEARCH_LIBS(socket, socket)
 AC_SEARCH_LIBS(gethostbyname, nsl)
 AC_SEARCH_LIBS(syslog, syslog)
-AC_CHECK_FUNCS(getpwuid getpwnam)
+AC_CHECK_FUNCS(getpwnam)
 
 # Check for PAM
 AC_ARG_ENABLE(pam,
