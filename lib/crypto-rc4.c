@@ -1,5 +1,5 @@
 /* crypto-rc4.c --- draft-brezak-win2k-krb-rc4-hmac-04 crypto functions.
- * Copyright (C) 2003, 2004  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -507,6 +507,8 @@ arcfour_hmac_string_to_key (Shishi * handle,
     return rc;
 
   shishi_key_value_set (outkey, md);
+
+  free (md);
 
   return SHISHI_OK;
 }
