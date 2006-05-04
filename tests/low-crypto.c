@@ -1,5 +1,5 @@
 /* low-crypto.c --- Shishi crypto primitives self tests.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -266,6 +266,7 @@ test (Shishi * handle)
 	  fail ("shishi_des() failure IV\n");
 	}
       free (out);
+      free (ivout);
     }
 
   err = shishi_3des (handle, 0, "kdykdykdykdykdykdykdykdy", NULL, NULL,
@@ -325,6 +326,7 @@ test (Shishi * handle)
 	  fail ("shishi_3des() failure IV\n");
 	}
       free (out);
+      free (ivout);
     }
 
   err = shishi_aes_cts (handle, 0, "keykeykeykeykeyk", 16,
@@ -352,6 +354,7 @@ test (Shishi * handle)
 	  fail ("shishi_aes_cts(16) failure IV\n");
 	}
       free (out);
+      free (ivout);
     }
 
   err = shishi_aes_cts (handle, 0, "keykeykeykeykeyk", 16,
@@ -380,6 +383,7 @@ test (Shishi * handle)
 	  fail ("shishi_aes_cts(24) failure IV\n");
 	}
       free (out);
+      free (ivout);
     }
 
   err = shishi_aes_cts (handle, 0, "keykeykeykeykeyk", 16,
@@ -408,6 +412,7 @@ test (Shishi * handle)
 	  fail ("shishi_aes_cts(23) failure IV\n");
 	}
       free (out);
+      free (ivout);
     }
 
   err = shishi_aes_cts (handle, 0, "keykeykeykeykeyk", 16,
@@ -436,5 +441,6 @@ test (Shishi * handle)
 	  fail ("shishi_aes_cts(25) failure IV\n");
 	}
       free (out);
+      free (ivout);
     }
 }
