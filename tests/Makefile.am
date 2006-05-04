@@ -30,4 +30,7 @@ check_PROGRAMS = authenticator crypto gztime priv safe \
 	ticketset crypto-ctx low-crypto rijndael key
 TESTS = $(check_PROGRAMS)
 
-TESTS_ENVIRONMENT = `if type valgrind > /dev/null 2>&1; then echo valgrind --leak-check=full --show-reachable=yes --suppressions=shishi.supp; else echo $$SHELL -c; fi`
+VALGRIND=valgrind --leak-check=full --leak-resolution=high \
+	--show-reachable=yes --num-callers=50 \
+	--suppressions=shishi.supp
+TESTS_ENVIRONMENT = `if type valgrind > /dev/null 2>&1; then echo $(VALGRIND); else echo $$SHELL -c; fi`
