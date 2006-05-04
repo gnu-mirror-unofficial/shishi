@@ -30,4 +30,4 @@ check_PROGRAMS = authenticator crypto gztime priv safe \
 	ticketset crypto-ctx low-crypto rijndael key
 TESTS = $(check_PROGRAMS)
 
-TESTS_ENVIRONMENT = `if type valgrindx > /dev/null 2>&1; then echo valgrind --leak-check=full --show-reachable=yes; else echo $$SHELL -c; fi`
+TESTS_ENVIRONMENT = `if type valgrind > /dev/null 2>&1; then echo valgrind --leak-check=full --show-reachable=yes; else echo $$SHELL -c; fi`
