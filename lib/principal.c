@@ -299,8 +299,8 @@ shishi_principal_name_realm (Shishi * handle,
       char *realm;
       size_t realmlen;
 
-      rc =
-	shishi_asn1_read (handle, realmnode, realmfield, &realm, &realmlen);
+      rc = shishi_asn1_read (handle, realmnode, realmfield,
+			     &realm, &realmlen);
       if (rc != SHISHI_OK)
 	{
 	  free (tmp);
@@ -315,6 +315,8 @@ shishi_principal_name_realm (Shishi * handle,
       tmplen += 1 + realmlen;
 
       tmp[tmplen] = '\0';
+
+      free (realm);
     }
 
   *out = tmp;
