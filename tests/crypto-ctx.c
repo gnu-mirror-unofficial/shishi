@@ -1,5 +1,5 @@
 /* crypto-ctx.c --- Shishi crypto context self tests.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -156,6 +156,10 @@ test (Shishi * handle)
 	  success ("shishi_crypto_encrypt/decrypt(etype=%d, len=%d) OK\n",
 		   tvp->etype, j);
 	}
+
+      shishi_crypto_close (ctx);
+      shishi_crypto_close (ctx2);
+      shishi_key_done (key);
 
       success ("shishi_crypto_encrypt/decrypt(etype=%d) OK\n", tvp->etype);
     }
