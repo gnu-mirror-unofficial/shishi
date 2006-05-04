@@ -1,6 +1,6 @@
 The Kerberos Keytab Binary File Format
 Michael B Allen <mba2000 ioplex.com>
-Last updated: Wed May  3 12:56:26 EDT 2006
+Last updated: Thu May  4 13:16:23 EDT 2006
 
 The MIT keytab binary format is not a standard format, nor is it
 documentated anywhere in detail. The format has evolved and may continue
@@ -10,22 +10,23 @@ utility from Windows. So it has established itself as the defacto format
 for storing Kerberos keys.
 
 The following C-like structure definitions illustrate the MIT keytab
-file format. All values are in network byte order.
+file format. All values are in network byte order. All text is ASCII.
 
   keytab {
-      uint16_t file_format_version;
+      uint16_t file_format_version;                    /* 0x502 */
       keytab_entry entries[*];
   };
 
-  struct keytab_entry {
+  keytab_entry {
       int32_t size;
-      uint16_t num_components;
-      counted_octet_string components[num_components - 1];
-      uint32_t name_type;
+      uint16_t num_components;   /* subtract 1 if version 0x501 */
+      counted_octet_string realm;
+      counted_octet_string components[num_components];
+      uint32_t name_type;       /* not present if version 0x501 */
       uint32_t timestamp;
       uint8_t vno8;
       keyblock key;
-      uint32_t vno;
+      uint32_t vno; /* only present if >= 4 bytes left in entry */
   };
 
   counted_octet_string {
@@ -39,7 +40,8 @@ file format. All values are in network byte order.
   };
 
 The keytab file format begins with the 16 bit file_format_version which
-at the time this document was authored is 0x502.
+at the time this document was authored is 0x502. The format of older
+keytabs is described at the end of this document.
 
 The file_format_version is immediately followed by an array of
 keytab_entry structures which are prefixed with a 32 bit size indicating
@@ -54,7 +56,7 @@ The size is followed by a 16 bit num_components field indicating the
 number of counted_octet_string components *minus one* that constitute
 the name. A counted_octet_string is simply an array of bytes prefixed
 with a 16 bit length. For the name components, the counted_octet_string
-bytes are UTF-8 encoded text (no zero terminator).
+bytes are ASCII encoded text with no zero terminator.
 
 Following the components array is the 32 bit name_type (e.g. 1 is
 KRB5_NT_PRINCIPAL, 2 is KRB5_NT_SRV_INST, 5 is KRB5_NT_UID, etc).
@@ -77,6 +79,17 @@ The keyblock structure consists of a 16 bit value indicating the keytype
 etc). This is followed by a counted_octet_string containing the key.
 
 The last field of the keytab_entry structure is optional. If the size of
-the keytab_entry indicates that there are bytes remaining, a 32 bit value
-representing the key version number is present. This value superceeds
-the 8 bit value preceeding the keyblock.
+the keytab_entry indicates that there are at least 4 bytes remaining,
+a 32 bit value representing the key version number is present. This
+value superceeds the 8 bit value preceeding the keyblock.
+
+Keytabs with a file_format_version of 0x501 are different in three ways:
+
+  1) All integers are in host byte order [1].
+  2) The num_components field is 1 too large (i.e. fter decoding,
+     decrement by 1).
+  3) The 32 bit name_type field is not present.
+
+[1] The file_format_version field should really be treated as two
+    separate 8 bit quantities representing the major and minor version
+    number respectively.
