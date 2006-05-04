@@ -1,5 +1,12 @@
+# shishi.supp -- Valgrind suppresion file for Shishi.
+
+# Copyright (C) 2006 Simon Josefsson
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
+
 {
-   <insert a suppression name here>
+   known libgcrypt mem leak
    Memcheck:Leak
    fun:malloc
    obj:/usr/lib/libgcrypt.so.11.2.1
@@ -16,7 +23,7 @@
 }
 
 {
-   <insert a suppression name here>
+   known libgcrypt mem leak
    Memcheck:Leak
    fun:malloc
    obj:/usr/lib/libgcrypt.so.11.2.1
@@ -33,7 +40,7 @@
 }
 
 {
-   <insert a suppression name here>
+   known gnutls mem leak
    Memcheck:Leak
    fun:malloc
    fun:_asn1_set_value
@@ -45,7 +52,7 @@
 }
 
 {
-   <insert a suppression name here>
+   known gnutls mem leak
    Memcheck:Leak
    fun:malloc
    fun:_asn1_add_node_only
@@ -58,7 +65,7 @@
 }
 
 {
-   <insert a suppression name here>
+   known gnutls mem leak
    Memcheck:Leak
    fun:malloc
    fun:strdup
@@ -69,8 +76,9 @@
    fun:init_handle
    fun:main
 }
+
 {
-   <insert a suppression name here>
+   known gnutls mem leak
    Memcheck:Leak
    fun:malloc
    fun:_asn1_add_node
