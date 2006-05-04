@@ -3394,7 +3394,8 @@ computed as @code{$HOME/.shishi}.
 
 @item @env{SHISHI_USER}
 Specify the default principal user name.  Used by the Shishi library.
-If not specified, it is computed by calling @code{getpwuid(getuid)}.
+If not specified, it is taken from the environment variable
+@env{USER}.
 
 @item @env{SHISHI_TICKETS}
 Specify the file name of the ticket cache.  Used by the Shishi
