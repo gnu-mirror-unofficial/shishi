@@ -340,6 +340,7 @@ shishi_tkts_read (Shishi_tkts * tkts, FILE * fh)
       if (res != SHISHI_OK)
 	break;
 
+      /* XXX Who will de-allocate these? */
       res = shishi_tkts_new (tkts, ticket, enckdcreppart, kdcrep);
       if (res != SHISHI_OK)
 	break;
