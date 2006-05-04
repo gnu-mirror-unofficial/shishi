@@ -24,27 +24,25 @@
 /**
  * shishi_principal_default_guess:
  *
- * Guesses a principal using getpwuid(getuid)), or if it fails, the
+ * Guesses the principal name for the user, looking at environment
+ * variables SHISHI_USER and USER, or if that fails, returns the
  * string "user".
  *
- * Return value: Returns guessed default principal for user as a string that
- * has to be deallocated with free() by the caller.
+ * Return value: Returns guessed default principal for user as a
+ * string that has to be deallocated with free() by the caller.
  **/
 char *
 shishi_principal_default_guess (void)
 {
-#if HAVE_GETPWUID
-  uid_t uid;
-  struct passwd *pw;
+  char *envuser;
 
-  uid = getuid ();
-  pw = getpwuid (uid);
+  envuser = getenv ("SHISHI_USER");
+  if (!envuser)
+    envuser = getenv ("USER");
+  if (!envuser)
+    envuser = "user";
 
-  if (pw && pw->pw_name)
-    return xstrdup (pw->pw_name);
-  else
-#endif
-    return xstrdup ("user");
+  return xstrdup (envuser);
 }
 
 
@@ -62,12 +60,6 @@ shishi_principal_default_guess (void)
 const char *
 shishi_principal_default (Shishi * handle)
 {
-  char *envuser;
-
-  envuser = getenv ("SHISHI_USER");
-  if (envuser)
-    return envuser;
-
   if (!handle->default_principal)
     {
       char *p;
