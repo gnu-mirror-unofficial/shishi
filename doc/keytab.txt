@@ -1,9 +1,9 @@
 The Kerberos Keytab Binary File Format
 Michael B Allen <mba2000 ioplex.com>
-Last updated: Thu May  4 13:16:23 EDT 2006
+Last updated: Thu May  4 14:30:18 EDT 2006
 
 The MIT keytab binary format is not a standard format, nor is it
-documentated anywhere in detail. The format has evolved and may continue
+documented anywhere in detail. The format has evolved and may continue
 to. It is however understood by several Kerberos implementations including
 Heimdal and of course MIT and keytab files are created by the ktpass.exe
 utility from Windows. So it has established itself as the defacto format
@@ -53,26 +53,30 @@ the offset to the next keytab_entry. Based on these size values alone
 the entire keytab file can be traversed.
 
 The size is followed by a 16 bit num_components field indicating the
-number of counted_octet_string components *minus one* that constitute
-the name. A counted_octet_string is simply an array of bytes prefixed
-with a 16 bit length. For the name components, the counted_octet_string
+number of counted_octet_string components in the components array.
+
+The num_components field is followed by a counted_octet_string
+representing the realm of the principal.
+
+A counted_octet_string is simply an array of bytes prefixed with a 16
+bit length. For the realm and name components, the counted_octet_string
 bytes are ASCII encoded text with no zero terminator.
 
-Following the components array is the 32 bit name_type (e.g. 1 is
-KRB5_NT_PRINCIPAL, 2 is KRB5_NT_SRV_INST, 5 is KRB5_NT_UID, etc).
+Following the realm is the components array that represents the name of
+the principal. The text of these components may be joined with slashs
+to construct the typical SPN representation. For example, the service
+principal HTTP/www.foo.net@FOO.NET would consist of name components
+"HTTP" followed by "www.foo.net".
 
-In practice the name_type is almost certainly 1 meaning
-KRB5_NT_PRINCIPAL. For this type of entry the components array consists
-of the realm, service and name (in that order) although if num_components
-is 1, the service component is not present. For example, the service
-principal HTTP/quark.foo.net@FOO.NET would be encoded with name components
-"FOO.NET" followed by "HTTP" followed by "quark.foo.net".
+Following the components array is the 32 bit name_type (e.g. 1 is
+KRB5_NT_PRINCIPAL, 2 is KRB5_NT_SRV_INST, 5 is KRB5_NT_UID, etc). In
+practice the name_type is almost certainly 1 meaning KRB5_NT_PRINCIPAL.
 
 The 32 bit timestamp indicates the time the key was established for that
 principal. The value represents the number of seconds since Jan 1, 1970.
 
 The 8 bit vno8 field is the version number of the key. This value is
-overridden by the vno field if it is present.
+overridden by the 32 bit vno field if it is present.
 
 The keyblock structure consists of a 16 bit value indicating the keytype
 (e.g. 3 is des-cbc-md5, 23 is arcfour-hmac-md5, 16 is des3-cbc-sha1,
@@ -81,15 +85,17 @@ etc). This is followed by a counted_octet_string containing the key.
 The last field of the keytab_entry structure is optional. If the size of
 the keytab_entry indicates that there are at least 4 bytes remaining,
 a 32 bit value representing the key version number is present. This
-value superceeds the 8 bit value preceeding the keyblock.
+value supersedes the 8 bit vno8 value preceeding the keyblock.
 
-Keytabs with a file_format_version of 0x501 are different in three ways:
+Older keytabs with a file_format_version of 0x501 are different in
+three ways:
 
   1) All integers are in host byte order [1].
-  2) The num_components field is 1 too large (i.e. fter decoding,
+  2) The num_components field is 1 too large (i.e. after decoding,
      decrement by 1).
   3) The 32 bit name_type field is not present.
 
 [1] The file_format_version field should really be treated as two
     separate 8 bit quantities representing the major and minor version
     number respectively.
+
