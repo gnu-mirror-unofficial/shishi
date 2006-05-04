@@ -173,6 +173,8 @@ shishi_done (Shishi * handle)
     free (handle->authorizationtypes);
   if (handle->stringprocess)
     free (handle->stringprocess);
+  if (handle->userdirectory)
+    free (handle->userdirectory);
 
   if (handle->asn1)
     shishi_asn1_done (handle, handle->asn1);
