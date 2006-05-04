@@ -85,7 +85,8 @@ test (Shishi * handle)
   Shishi_tkts *tktset;
   Shishi_tkts_hint hint;
   Shishi_tkt *t1, *t2, *t3;
-  Shishi_asn1 n1, n2, n3;
+  Shishi_asn1 tkt1asn1, tkt1asn2, tkt1asn3;
+  Shishi_asn1 tkt2asn1, tkt2asn2, tkt2asn3;
   char buffer[BUFSIZ];
   char buffer2[BUFSIZ];
   char *buf;
@@ -187,28 +188,28 @@ test (Shishi * handle)
   n = BUFSIZ;
   if (!base64_decode (tkt1ticketb64, strlen (tkt1ticketb64), buffer, &n))
     fail ("base64_decode() failed\n");
-  n1 = shishi_der2asn1_ticket (handle, buffer, n);
-  if (!n1)
+  tkt1asn1 = shishi_der2asn1_ticket (handle, buffer, n);
+  if (!tkt1asn1)
     fail ("shishi_der2asn1_ticket() failed\n");
 
   n = BUFSIZ;
   if (!base64_decode (tkt1enckdcreppartb64, strlen (tkt1enckdcreppartb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
-  n2 = shishi_der2asn1_encasreppart (handle, buffer, n);
-  if (!n2)
+  tkt1asn2 = shishi_der2asn1_encasreppart (handle, buffer, n);
+  if (!tkt1asn2)
     fail ("shishi_der2asn1_encasreppart() failed\n");
 
   n = BUFSIZ;
   if (!base64_decode (tkt1kdcrepb64, strlen (tkt1kdcrepb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
-  n3 = shishi_der2asn1_asrep (handle, buffer, n);
-  if (!n3)
+  tkt1asn3 = shishi_der2asn1_asrep (handle, buffer, n);
+  if (!tkt1asn3)
     fail ("shishi_der2asn1_asrep() failed\n");
 
   /* shishi_tkts_new() */
-  res = shishi_tkts_new (tktset, n1, n2, n3);
+  res = shishi_tkts_new (tktset, tkt1asn1, tkt1asn2, tkt1asn3);
   if (res == SHISHI_OK)
     success ("shishi_tkts_new() OK\n");
   else
@@ -279,28 +280,28 @@ test (Shishi * handle)
   if (!base64_decode (tkt2ticketb64, strlen (tkt2ticketb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
-  n1 = shishi_der2asn1_ticket (handle, buffer, n);
-  if (!n1)
+  tkt2asn1 = shishi_der2asn1_ticket (handle, buffer, n);
+  if (!tkt2asn1)
     fail ("shishi_der2asn1_ticket() failed\n");
 
   n = BUFSIZ;
   if (!base64_decode (tkt2enckdcreppartb64, strlen (tkt2enckdcreppartb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
-  n2 = shishi_der2asn1_enctgsreppart (handle, buffer, n);
-  if (!n2)
+  tkt2asn2 = shishi_der2asn1_enctgsreppart (handle, buffer, n);
+  if (!tkt2asn2)
     fail ("shishi_der2asn1_enctgsreppart() failed\n");
 
   n = BUFSIZ;
   if (!base64_decode (tkt2kdcrepb64, strlen (tkt2kdcrepb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
-  n3 = shishi_der2asn1_tgsrep (handle, buffer, n);
-  if (!n3)
+  tkt2asn3 = shishi_der2asn1_tgsrep (handle, buffer, n);
+  if (!tkt2asn3)
     fail ("shishi_der2asn1_kdcrep() failed\n");
 
   /* shishi_tkts_new() */
-  res = shishi_tkts_new (tktset, n1, n2, n3);
+  res = shishi_tkts_new (tktset, tkt2asn1, tkt2asn2, tkt2asn3);
   if (res == SHISHI_OK)
     success ("shishi_tkts_new() OK\n");
   else
@@ -607,4 +608,11 @@ test (Shishi * handle)
   /* shishi_tkts_done () */
   shishi_tkts_done (&tktset);
   success ("shishi_tkts_done() OK\n");
+
+  shishi_asn1_done (handle, tkt1asn1);
+  shishi_asn1_done (handle, tkt1asn2);
+  shishi_asn1_done (handle, tkt1asn3);
+  shishi_asn1_done (handle, tkt2asn1);
+  shishi_asn1_done (handle, tkt2asn2);
+  shishi_asn1_done (handle, tkt2asn3);
 }

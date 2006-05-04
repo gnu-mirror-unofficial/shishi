@@ -1,5 +1,5 @@
 /* priv.c	Shishi PRIV self tests.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -81,6 +81,7 @@ test (Shishi * handle)
     success ("shishi_encprivpart_user_data() OK\n");
   else
     fail ("shishi_encprivpart_user_data() failed (%d)\n", res);
+  free (p);
 
   /* shishi_priv_set_cksum */
   res = shishi_priv_set_enc_part (handle, asn1priv, 42, "bar", 3);
@@ -148,6 +149,8 @@ test (Shishi * handle)
     success ("shishi_asn1_to_der() OK\n");
   else
     fail ("shishi_asn1_to_der() failed\n");
+
+  shishi_asn1_done (handle, asn1priv);
 
   /* Compare DER encodings of authenticators */
   if (l > 0 && m > 0 && l == m && memcmp (p, q, l) == 0)
