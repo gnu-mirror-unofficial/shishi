@@ -411,7 +411,7 @@ static char weak_des_keys[16][8] = {
   "\xFE\xE0\xFE\xE0\xFE\xF1\xFE\xF1"
 };
 
-static int
+static void
 des_key_correction (Shishi * handle, char key[8])
 {
   size_t i;
@@ -429,8 +429,6 @@ des_key_correction (Shishi * handle, char key[8])
 	key[7] ^= 0xF0;
 	break;
       }
-
-  return SHISHI_OK;
 }
 
 static int
@@ -596,9 +594,7 @@ des_string_to_key (Shishi * handle,
       printf ("tempkey = key_correction(add_parity_bits(tempstring));\n");
     }
 
-  res = des_key_correction (handle, tempkey);
-  if (res != SHISHI_OK)
-    return res;
+  des_key_correction (handle, tempkey);
 
   if (VERBOSECRYPTONOISE (handle))
     {
@@ -617,12 +613,11 @@ des_string_to_key (Shishi * handle,
   res = shishi_des_cbc_mac (handle, tempkey, tempkey, s, n_s, &p);
   if (res != SHISHI_OK)
     return res;
+  free (s);
   memcpy (tempkey, p, 8);
   free (p);
 
-  res = des_key_correction (handle, tempkey);
-  if (res != SHISHI_OK)
-    return res;
+  des_key_correction (handle, tempkey);
 
   if (VERBOSECRYPTO (handle))
     {
