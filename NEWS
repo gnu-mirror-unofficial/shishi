@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.26 (unreleased)
 
+** Requests for service tickets (TGS) are now sent without a sub-session key.
+This solves interop problems with Windows 2003 and Heimdal, thanks to
+Elrond for debugging.
+
 ** Updated Polish translation, thanks to Jakub Bogusz.
 
 * Version 0.0.25 (released 2006-04-27)
