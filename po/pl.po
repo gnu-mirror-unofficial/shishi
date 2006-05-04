@@ -1,874 +1,565 @@
 # Polish translation for shishi.
+# Copyright (C) 2004, 2006 Free Software Foundation, Inc.
 # This file is distributed under the same license as the shishi package.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2004
+# Jakub Bogusz <qboosh@pld-linux.org>, 2004-2006.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: shishi 0.0.19\n"
+"Project-Id-Version: shishi 0.0.24\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2006-03-25 21:43+0100\n"
-"PO-Revision-Date: 2004-11-19 00:50+0100\n"
+"POT-Creation-Date: 2006-04-22 12:06+0200\n"
+"PO-Revision-Date: 2006-04-23 10:20+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: lib/error.c:32
 msgid "Shishi success"
-msgstr ""
+msgstr "Sukces Shishi"
 
-#: lib/error.c:34
 msgid "Error in ASN.1 data, probably due to corrupt data."
-msgstr ""
+msgstr "B³±d w danych ASN.1, prawdopodobnie z powodu uszkodzonych danych."
 
-#: lib/error.c:36
 msgid "Could not open file."
-msgstr ""
+msgstr "Nie uda³o siê otworzyæ pliku."
 
-#: lib/error.c:38
 msgid "File input/output error."
-msgstr ""
+msgstr "B³±d wej¶cia/wyj¶cia pliku."
 
-#: lib/error.c:40
 msgid "Memory allocation error in shishi library."
-msgstr ""
+msgstr "B³±d przydzielania pamiêci w bibliotece shishi."
 
-#: lib/error.c:42
 msgid "Base64 encoding or decoding failed. Data corrupt?"
-msgstr ""
+msgstr "Kodowanie lub dekodowanie base64 nie powiod³o siê. Uszkodzone dane?"
 
-#: lib/error.c:44
 msgid "Client realm value differ between request and reply."
-msgstr ""
+msgstr "Warto¶æ dziedziny klienta ró¿ni siê miêdzy ¿±daniem a odpowiedzi±."
 
-#: lib/error.c:46
 msgid "Client name value differ between request and reply."
-msgstr ""
+msgstr "Warto¶æ nazwy klienta ró¿ni siê miêdzy ¿±daniem a odpowiedzi±."
 
-#: lib/error.c:48
 msgid "Replay protection value (nonce) differ between request and reply."
-msgstr ""
+msgstr "Warto¶æ zabezpieczenia odtworzenia (nonce) ró¿ni siê miêdzy ¿±daniem a odpowiedzi±."
 
-#: lib/error.c:50
-msgid ""
-"Keytype used to encrypt ticket doesn't match provided key. This usually "
-"indicates an internal application error."
-msgstr ""
+msgid "Keytype used to encrypt ticket doesn't match provided key. This usually indicates an internal application error."
+msgstr "Rodzaj klucza u¿yty do zaszyfrowania biletu nie pasuje do dostarczonego klucza. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
-#: lib/error.c:53
 msgid "Internal error in low-level crypto routines."
-msgstr ""
+msgstr "B³±d wewnêtrzny w niskopoziomowych funkcjach kryptograficznych."
 
-#: lib/error.c:55
-msgid ""
-"Low-level cryptographic primitive failed.  This usually indicates bad "
-"password or data corruption."
-msgstr ""
+msgid "Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption."
+msgstr "Niskopoziomowa operacja kryptograficzna nie powiod³a siê. Zwykle oznacza to z³e has³o lub uszkodzenie danych."
 
-#: lib/error.c:58
-msgid ""
-"Timedout talking to KDC. This usually indicates a network or KDC address "
-"problem."
-msgstr ""
+msgid "Timedout talking to KDC. This usually indicates a network or KDC address problem."
+msgstr "Up³yn±³ limit czasu przy komunikacji z KDC. Zwykle oznacza to problem z sieci± lub adresem KDC."
 
-#: lib/error.c:61
 msgid "No KDC for realm known."
-msgstr ""
+msgstr "Nie ma znanego KDC dla tej dziedziny."
 
-#: lib/error.c:63
-msgid ""
-"The system call socket() failed.  This usually indicates that your system "
-"does not support the socket type."
-msgstr ""
+msgid "The system call socket() failed.  This usually indicates that your system does not support the socket type."
+msgstr "Wywo³anie systemowe socket() nie powiod³o siê. Zwykle oznacza to, ¿e system nie obs³uguje danego rodzaju gniazdo."
 
-#: lib/error.c:66
-msgid ""
-"The system call bind() failed.  This usually indicates insufficient "
-"permissions."
-msgstr ""
+msgid "The system call bind() failed.  This usually indicates insufficient permissions."
+msgstr "Wywo³anie systemowe bind() nie powiod³o siê. Zwykle oznacza to niewystarczaj±ce uprawnienia."
 
-#: lib/error.c:69
 msgid "The system call sendto() failed."
-msgstr ""
+msgstr "Wywo³anie systemowe sendto() nie powiod³o siê."
 
-#: lib/error.c:71
 msgid "The system call close() failed."
-msgstr ""
+msgstr "Wywo³anie systemowe close() nie powiod³o siê."
 
-#: lib/error.c:73
 msgid "Server replied with an error message to request."
-msgstr ""
+msgstr "Serwer odpowiedzia³ komunikatem b³êdu na ¿±danie."
 
-#: lib/error.c:75
-msgid ""
-"Ticketset not initialized.  This usually indicates an internal application "
-"error."
-msgstr ""
+msgid "Ticketset not initialized.  This usually indicates an internal application error."
+msgstr "Zbiór biletów nie zainicjowany. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
-#: lib/error.c:78
-msgid ""
-"Could not decrypt AP-REQ using provided key. This usually indicates an "
-"internal application error."
-msgstr ""
+msgid "Could not decrypt AP-REQ using provided key. This usually indicates an internal application error."
+msgstr "Nie uda³o siê odszyfrowaæ AP-REQ przy u¿yciu dostarczonego klucza. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
-#: lib/error.c:81
-msgid ""
-"Could not decrypt Ticket using provided key. This usually indicates an "
-"internal application error."
-msgstr ""
+msgid "Could not decrypt Ticket using provided key. This usually indicates an internal application error."
+msgstr "Nie uda³o siê odszyfrowaæ biletu przy u¿yciu dostarczonego klucza. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
-#: lib/error.c:99
 msgid "Unknown error"
 msgstr "Nieznany b³±d"
 
-#: lib/error.c:130 lib/krberror.c:1175
-#, fuzzy
 msgid "No error"
-msgstr "Nieznany b³±d"
+msgstr "Brak b³êdu"
 
-#: lib/error.c:258
 #, c-format
 msgid "libshishi: info: %s\n"
-msgstr ""
+msgstr "libshishi: info: %s\n"
 
-#: lib/error.c:261
 #, c-format
 msgid "libshishi: info: %s"
-msgstr ""
+msgstr "libshishi: info: %s"
 
-#: lib/error.c:293
 #, c-format
 msgid "libshishi: warning: %s\n"
-msgstr ""
+msgstr "libshishi: uwaga: %s\n"
 
-#: lib/error.c:296
 #, c-format
 msgid "libshishi: warning: %s"
-msgstr ""
+msgstr "libshishi: uwaga: %s"
 
-#: lib/krberror.c:136
 #, c-format
 msgid "Writing KRB-ERROR to %s...\n"
 msgstr "Zapisywanie KRB-ERROR do %s...\n"
 
-#: lib/krberror.c:143
 #, c-format
 msgid "Writing KRB-ERROR in %s format...\n"
 msgstr "Zapisywanie KRB-ERROR w formacie %s...\n"
 
-#: lib/krberror.c:158
 #, c-format
 msgid "Writing KRB-ERROR to %s...done\n"
 msgstr "Zapisywanie KRB-ERROR do %s... zakoñczone\n"
 
-#: lib/krberror.c:216
 #, c-format
 msgid "Reading KRB-ERROR from %s...\n"
 msgstr "Odczytywanie KRB-ERROR z %s...\n"
 
-#: lib/krberror.c:223
 #, c-format
 msgid "Reading KRB-ERROR in %s format...\n"
 msgstr "Odczytywanie KRB-ERROR w formacie %s...\n"
 
-#: lib/krberror.c:238
 #, c-format
 msgid "Reading KRB-ERROR from %s...done\n"
 msgstr "Odczytywanie KRB-ERROR z %s... zakoñczone\n"
 
-#: lib/krberror.c:1177
 msgid "Client's entry in database has expired"
-msgstr ""
+msgstr "Wpis klienta w bazie danych wygas³"
 
-#: lib/krberror.c:1179
 msgid "Server's entry in database has expired"
-msgstr ""
+msgstr "Wpis serwera w bazie danych wygas³"
 
-#: lib/krberror.c:1181
 msgid "Requested protocol version number not supported"
-msgstr ""
+msgstr "¯±dana wersja protoko³u nie jest obs³ugiwana"
 
-#: lib/krberror.c:1183
 msgid "Client's key encrypted in old master key"
-msgstr ""
+msgstr "Klucz klienta zaszyfrowany w starym kluczu g³ównym"
 
-#: lib/krberror.c:1185
 msgid "Server's key encrypted in old master key"
-msgstr ""
+msgstr "Klucz serwera zaszyfrowany w starym kluczu g³ównym"
 
-#: lib/krberror.c:1187
 msgid "Client not found in database"
-msgstr ""
+msgstr "Nie znaleziono klienta w bazie danych"
 
-#: lib/krberror.c:1189
 msgid "Server not found in database"
-msgstr ""
+msgstr "Nie znaleziono serwera w bazie danych"
 
-#: lib/krberror.c:1191
 msgid "Multiple principal entries in database"
-msgstr ""
+msgstr "Wiele wpisów zarz±dcy w bazie danych"
 
-#: lib/krberror.c:1193
 msgid "The client or server has a null key"
-msgstr ""
+msgstr "Klient lub serwer ma pusty klucz"
 
-#: lib/krberror.c:1195
 msgid "Ticket not eligible for postdating"
-msgstr ""
+msgstr "Bilet nie nadaje siê do postdatowania"
 
-#: lib/krberror.c:1197
 msgid "Requested start time is later than end time"
-msgstr ""
+msgstr "¯±dany czas pocz±tkowy jest pó¼niejszy ni¿ koñcowy"
 
-#: lib/krberror.c:1199
 msgid "KDC policy rejects request"
-msgstr ""
+msgstr "¯±danie odrzucone przez politykê KDC"
 
-#: lib/krberror.c:1201
 msgid "KDC cannot accommodate requested option"
-msgstr ""
+msgstr "KDC nie zgadza siê na ¿±dan± opcjê"
 
-#: lib/krberror.c:1203
 msgid "KDC has no support for encryption type"
-msgstr ""
+msgstr "KDC nie obs³uguje tego rodzaju szyfru"
 
-#: lib/krberror.c:1205
 msgid "KDC has no support for checksum type"
-msgstr ""
+msgstr "KDC nie obs³uguje tego rodzaju sumy kontrolnej"
 
-#: lib/krberror.c:1207
 msgid "KDC has no support for padata type"
-msgstr ""
+msgstr "KDC nie obs³uguje tego rodzaju padata"
 
-#: lib/krberror.c:1209
 msgid "KDC has no support for transited type"
-msgstr ""
+msgstr "KDC nie obs³uguje tego rodzaju transmisji"
 
-#: lib/krberror.c:1211
 msgid "Clients credentials have been revoked"
-msgstr ""
+msgstr "Dane uwierzytelniej±ce klientów zosta³y anulowane"
 
-#: lib/krberror.c:1213
 msgid "Credentials for server have been revoked"
-msgstr ""
+msgstr "Dane uwierzytelniaj±ce dla serwera zosta³y anulowane"
 
-#: lib/krberror.c:1215
 msgid "TGT has been revoked"
-msgstr ""
+msgstr "TGT zosta³o anulowane"
 
-#: lib/krberror.c:1217
 msgid "Client not yet valid - try again later"
-msgstr ""
+msgstr "Klient jeszcze nie jest wa¿ny - proszê spróbowaæ pó¼niej"
 
-#: lib/krberror.c:1219
 msgid "Server not yet valid - try again later"
-msgstr ""
+msgstr "Serwer jeszcze nie jest wa¿ny - proszê spróbowaæ pó¼niej"
 
-#: lib/krberror.c:1221
 msgid "Password has expired "
-msgstr ""
+msgstr "Has³o wygas³o"
 
-#: lib/krberror.c:1223
 msgid "Pre-authentication information was invalid"
-msgstr ""
+msgstr "Informacje wczesnego uwierzytelnienia by³y nieprawid³owe"
 
-#: lib/krberror.c:1225
 msgid "Additional pre-authentication required"
-msgstr ""
+msgstr "Wymagane dodatkowe wczesne uwierzytelnienie"
 
-#: lib/krberror.c:1227
 msgid "Requested server and ticket don't match"
-msgstr ""
+msgstr "¯±dany serwer i bilet nie zgadzaj± siê"
 
-#: lib/krberror.c:1229
 msgid "Server principal valid for user2user only"
-msgstr ""
+msgstr "Zarz±dca serwera wa¿ny tylko dla user2user"
 
-#: lib/krberror.c:1231
 msgid "KDC Policy rejects transited path"
-msgstr ""
+msgstr "Polityka KDC odrzuca ¶cie¿kê tranzytow±"
 
-#: lib/krberror.c:1233
 msgid "A service is not available"
-msgstr ""
+msgstr "Us³uga niedostêpna"
 
-#: lib/krberror.c:1235
 msgid "Integrity check on decrypted field failed"
-msgstr ""
+msgstr "Kontrola poprawno¶ci odszyfrowanego pola nie powiod³a siê"
 
-#: lib/krberror.c:1237
 msgid "Ticket expired"
-msgstr ""
+msgstr "Bilet wygas³"
 
-#: lib/krberror.c:1239
 msgid "Ticket not yet valid"
-msgstr ""
+msgstr "Bilet jeszcze niewa¿ny"
 
-#: lib/krberror.c:1241
 msgid "Request is a replay"
-msgstr ""
+msgstr "¯±danie jest powtórk±"
 
-#: lib/krberror.c:1243
 msgid "The ticket isn't for us"
-msgstr ""
+msgstr "Bilet nie jest dla nas"
 
-#: lib/krberror.c:1245
 msgid "Ticket and authenticator don't match"
-msgstr ""
+msgstr "Bilet i uwierzytelnienie nie zgadzaj± siê"
 
-#: lib/krberror.c:1247
 msgid "Clock skew too great"
-msgstr ""
+msgstr "Zbyt du¿e przesuniêcie zegara"
 
-#: lib/krberror.c:1249
 msgid "Incorrect net address"
-msgstr ""
+msgstr "Niepoprawny adres sieci"
 
-#: lib/krberror.c:1251
 msgid "Protocol version mismatch"
-msgstr ""
+msgstr "Niezgodno¶æ wersji protoko³u"
 
-#: lib/krberror.c:1253
 msgid "Invalid msg type"
-msgstr ""
+msgstr "Nieprawid³owy rodzaj komunikatu"
 
-#: lib/krberror.c:1255
 msgid "Message stream modified"
-msgstr ""
+msgstr "Zmodyfikowany strumieñ komunikatu"
 
-#: lib/krberror.c:1257
 msgid "Message out of order"
-msgstr ""
+msgstr "Komunikat spoza kolejno¶ci"
 
-#: lib/krberror.c:1259
 msgid "Specified version of key is not available"
-msgstr ""
+msgstr "Podana wersja klucza nie jest dostêpna"
 
-#: lib/krberror.c:1261
 msgid "Service key not available"
-msgstr ""
+msgstr "Klucz us³ugi niedostêpny"
 
-#: lib/krberror.c:1263
 msgid "Mutual authentication failed"
-msgstr ""
+msgstr "Wzajemne uwierzytelnienie nie powiod³o siê"
 
-#: lib/krberror.c:1265
 msgid "Incorrect message direction"
-msgstr ""
+msgstr "Niepoprawny kierunek komunikatu"
 
-#: lib/krberror.c:1267
 msgid "Alternative authentication method required"
-msgstr ""
+msgstr "Wymagana alternatywna metoda uwierzytelnienia"
 
-#: lib/krberror.c:1269
 msgid "Incorrect sequence number in message"
-msgstr ""
+msgstr "Niepoprawny numer sekwencji w komunikacie"
 
-#: lib/krberror.c:1271
 msgid "Inappropriate type of checksum in message"
-msgstr ""
+msgstr "Niew³a¶ciwy rodzaj sumy kontrolnej w komunikacie"
 
-#: lib/krberror.c:1273
 msgid "Policy rejects transited path"
-msgstr ""
+msgstr "Polityka odrzuca ¶cie¿kê tranzytow±"
 
-#: lib/krberror.c:1275
 msgid "Response too big for UDP, retry with TCP"
-msgstr ""
+msgstr "Odpowied¼ zbyt du¿a dla UDP, proszê spróbowaæ TCP"
 
-#: lib/krberror.c:1277
 msgid "Generic error (description in e-text)"
-msgstr ""
+msgstr "B³±d ogólny (opis w e-tek¶cie)"
 
-#: lib/krberror.c:1279
 msgid "Field is too long for this implementation"
-msgstr ""
+msgstr "Pole zbyt d³ugie dla tej implementacji"
 
-#: lib/krberror.c:1281 lib/krberror.c:1283 lib/krberror.c:1285
-#: lib/krberror.c:1287 lib/krberror.c:1289 lib/krberror.c:1297
-#: lib/krberror.c:1299 lib/krberror.c:1301 lib/krberror.c:1303
-#: lib/krberror.c:1305 lib/krberror.c:1307 lib/krberror.c:1309
 msgid "(pkinit)"
-msgstr ""
+msgstr "(pkinit)"
 
-#: lib/krberror.c:1291 lib/krberror.c:1293 lib/krberror.c:1295
 msgid "(user-to-user)"
-msgstr ""
+msgstr "(user-to-user)"
 
-#: lib/krberror.c:1336
 #, c-format
 msgid "Unknown KRB-ERROR error code %d."
 msgstr "Nieznany kod b³êdu KRB-ERROR %d."
 
-#: db/err.c:32
 msgid "Shisa success"
-msgstr ""
+msgstr "Sukces Shisy"
 
-#: db/err.c:34
 msgid "Shisa could not be initialized."
-msgstr ""
+msgstr "Nie uda³o siê zainicjowaæ Shisy."
 
-#: db/err.c:36
 msgid "The Shisa configuration file does not exist."
-msgstr ""
+msgstr "Plik konfiguracyjny Shisy nie istnieje."
 
-#: db/err.c:38
 msgid "File I/O error for Shisa configuration file."
-msgstr ""
+msgstr "B³±d we/wy pliku dla pliku konfiguracyjnego Shisy."
 
-#: db/err.c:40
 msgid "Syntax error in Shisa configuration token."
-msgstr ""
+msgstr "B³±d sk³adni w tokenie konfiguracyjnym Shisy."
 
-#: db/err.c:42
 msgid "Shisa database could not be opened."
-msgstr ""
+msgstr "Nie mo¿na otworzyæ bazy danych Shisy."
 
-#: db/err.c:44
 msgid "Error enumerating realms in database."
-msgstr ""
+msgstr "B³±d w numeracji dziedzin w bazie danych."
 
-#: db/err.c:46
 msgid "Error enumerating principals in database."
-msgstr ""
+msgstr "B³±d w numeracji zarz±dców w bazie danych."
 
-#: db/err.c:48
 msgid "Error enumerating keys in database."
-msgstr ""
+msgstr "B³±d w numeracji kluczy w bazie danych."
 
-#: db/err.c:50
 msgid "Supplied realm does not exist."
-msgstr ""
+msgstr "Podana dziedzina nie istnieje."
 
-#: db/err.c:52
 msgid "Supplied principal does not exist."
-msgstr ""
+msgstr "Podany zarz±dca nie istnieje."
 
-#: db/err.c:54
 msgid "Principal is not associated with any matching key."
-msgstr ""
+msgstr "Zarz±dca nie jest zwi±zany z ¿adnym pasuj±cym kluczem."
 
-#: db/err.c:56
 msgid "Error finding principal."
-msgstr ""
+msgstr "B³±d przy szukaniu zarz±dcy."
 
-#: db/err.c:58
 msgid "Tried to add a realm that already exist."
-msgstr ""
+msgstr "Próbowano dodaæ ju¿ istniej±c± dziedzinê."
 
-#: db/err.c:60
 msgid "Error adding realm to database."
-msgstr ""
+msgstr "B³±d przy dodawaniu dziedziny do bazy danych."
 
-#: db/err.c:62
 msgid "Tried to remove a non-empty realm."
-msgstr ""
+msgstr "Próbowano usun±æ niepust± dziedzinê."
 
-#: db/err.c:64
 msgid "Error removing realm from database."
-msgstr ""
+msgstr "B³±d przy usuwaniu dziedziny z bazy danych."
 
-#: db/err.c:66
 msgid "Tried to add a principal that already exist."
-msgstr ""
+msgstr "Próbowano dodaæ ju¿ istniej±cego zarz±dcê."
 
-#: db/err.c:68
 msgid "Error adding principal to database."
-msgstr ""
+msgstr "B³±d przy dodawaniu zarz±dcy do bazy danych."
 
-#: db/err.c:70
 msgid "Error removing principal from database."
-msgstr ""
+msgstr "B³±d przy usuwaniu zarz±dcy z bazy danych."
 
-#: db/err.c:72
 msgid "Error adding key to principal."
-msgstr ""
+msgstr "B³±d przy dodawaniu klucza do zarz±dcy."
 
-#: db/err.c:74
 msgid "Error removing key from principal."
-msgstr ""
+msgstr "B³±d przy usuwaniu klucza z zarz±dcy."
 
-#: db/err.c:76
 msgid "More than one key match given search criteria."
-msgstr ""
+msgstr "Wiêcej ni¿ jeden klucz pasuje do podanego kryterium wyszukiwania."
 
-#: db/err.c:97
-#, fuzzy
 msgid "Unknown Shisa error"
-msgstr "Nieznany b³±d"
+msgstr "Nieznany b³±d Shisy"
 
-#: db/err.c:117
 #, c-format
 msgid "shisa: %s\n"
-msgstr ""
+msgstr "shisa: %s\n"
 
-#: src/shisa.c:154
 msgid "Account is"
-msgstr ""
+msgstr "Konto jest"
 
-#: src/shisa.c:155
 msgid "DISABLED"
-msgstr ""
+msgstr "WY£¡CZONE"
 
-#: src/shisa.c:155
 msgid "enabled"
-msgstr ""
+msgstr "w³±czone"
 
-#: src/shisa.c:156
 msgid "Current key version"
-msgstr ""
+msgstr "Bie¿±ca wersja klucza"
 
-#: src/shisa.c:158
 msgid "Account not valid before"
-msgstr ""
+msgstr "Konto niewa¿ne przed"
 
-#: src/shisa.c:160
-#, fuzzy
 msgid "Last initial TGT request at"
-msgstr "Czas ostatniego pocz±tkowego ¿±dania TGT:\t%s"
+msgstr "Ostatnie pocz±tkowe ¿±danie TGT"
 
-#: src/shisa.c:162
-#, fuzzy
 msgid "Last initial request at"
-msgstr "Czas ostatniego pocz±tkowego ¿±dania TGT:\t%s"
+msgstr "Ostatnie pocz±tkowe ¿±danie"
 
-#: src/shisa.c:164
 msgid "Last TGT request at"
-msgstr ""
+msgstr "Ostatnie ¿±danie TGT"
 
-#: src/shisa.c:166
 msgid "Last ticket renewal at"
-msgstr ""
+msgstr "Ostatnie odnowienie biletu"
 
-#: src/shisa.c:168
 msgid "Password expire on"
-msgstr ""
+msgstr "Has³o wygasa"
 
-#: src/shisa.c:170
 msgid "Account expire on"
-msgstr ""
+msgstr "Konto wygasa"
 
-#: src/shisa.c:183
 msgid "Key"
-msgstr ""
+msgstr "Klucz"
 
-#: src/shisa.c:185
 msgid "\tEtype"
-msgstr ""
+msgstr "\tEtype"
 
-#: src/shisa.c:188
 msgid "\tPriority"
-msgstr ""
+msgstr "\tPriorytet"
 
-#: src/shisa.c:192
 msgid "\tSalt"
-msgstr ""
+msgstr "\tZarodek"
 
-#: src/shisa.c:194
 msgid "\tS2K params"
-msgstr ""
+msgstr "\tParametry S2K"
 
-#: src/shisa.c:197
 msgid "\tPassword"
-msgstr ""
+msgstr "\tHas³o"
 
-#: src/shisa.c:200
 msgid "\tKey is"
-msgstr ""
+msgstr "\tKlucz jest"
 
-#: src/shisa.c:200
 msgid "MISSING"
-msgstr ""
+msgstr "BRAKUJ¡CY"
 
-#: src/shisa.c:278
-#, fuzzy, c-format
+#, c-format
 msgid "Adding realm `%s'...\n"
-msgstr "Odczytywanie SAFE z %s...\n"
+msgstr "Dodawanie dziedziny `%s'...\n"
 
-#: src/shisa.c:280
 #, c-format
 msgid "Adding principal `%s@%s'...\n"
-msgstr ""
+msgstr "Dodawanie zarz±dcy `%s@%s'...\n"
 
-#: src/shisa.c:291
-#, fuzzy, c-format
+#, c-format
 msgid "Adding realm `%s'...done\n"
-msgstr "Odczytywanie SAFE z %s... zakoñczone\n"
+msgstr "Dodawanie dziedziny `%s'... zakoñczone\n"
 
-#: src/shisa.c:293
 #, c-format
 msgid "Adding principal `%s@%s'...done\n"
-msgstr ""
+msgstr "Dodawanie zarz±dcy `%s@%s'... zakoñczone\n"
 
-#: src/shisa.c:324
-#, fuzzy, c-format
+#, c-format
 msgid "Removing realm `%s'...\n"
-msgstr "Odczytywanie SAFE z %s...\n"
+msgstr "Usuwanie dziedziny `%s'...\n"
 
-#: src/shisa.c:326
 #, c-format
 msgid "Removing principal `%s@%s'...\n"
-msgstr ""
+msgstr "Usuwanie zarz±dcy `%s@%s'...\n"
 
-#: src/shisa.c:334
-#, fuzzy, c-format
+#, c-format
 msgid "Removing realm `%s'...done\n"
-msgstr "Odczytywanie SAFE z %s... zakoñczone\n"
+msgstr "Usuwanie dziedziny `%s'... zakoñczone\n"
 
-#: src/shisa.c:336
-#, fuzzy, c-format
+#, c-format
 msgid "Removing principal `%s@%s'...done\n"
-msgstr "Odczytywanie EncAPRepPart z %s... zakoñczone\n"
+msgstr "Usuwanie zarz±dcy `%s@%s'... zakoñczone\n"
 
-#: src/shisa.c:383
 #, c-format
 msgid "Password for `%s@%s': "
-msgstr ""
+msgstr "Has³o dla `%s@%s': "
 
-#: src/shisa.c:386
 msgid "Password: "
-msgstr ""
+msgstr "Has³o: "
 
-#: src/shisa.c:388
 msgid "Could not read password"
-msgstr ""
+msgstr "Nie uda³o siê odczytaæ has³a"
 
-#: src/shisa.c:400
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not create key (%d):\n"
 "%s"
-msgstr "Nie mo¿na ustawiæ sname: %s\n"
+msgstr ""
+"Nie uda³o siê utworzyæ klucza (%d):\n"
+"%s"
 
-#: src/shisa.c:437 src/shisa.c:447 src/shisa.c:486
 #, c-format
 msgid "Try `%s --help' for more information."
-msgstr ""
+msgstr "`%s --help' poda wiêcej informacji."
 
-#: src/shisa.c:446
 msgid "too many arguments"
-msgstr ""
+msgstr "zbyt wiele argumentów"
 
-#: src/shisa.c:454
 #, c-format
 msgid ""
 "\n"
 "Mandatory arguments to long options are mandatory for short options too.\n"
 "\n"
 msgstr ""
+"\n"
+"Argumenty obowi±zkowe dla opcji d³ugich s± obowi±zkowe tak¿e dla opcji krótkich.\n"
+"\n"
 
-#: src/shisa.c:456
 #, c-format
 msgid "Report bugs to <%s>.\n"
-msgstr ""
+msgstr "B³êdy proszê zg³aszaæ na adres <%s>.\n"
 
-#: src/shisa.c:462
 #, c-format
 msgid ""
 "Initialization failed:\n"
 "%s"
 msgstr ""
+"Inicjalizacja nie powiod³a siê:\n"
+"%s"
 
-#: src/shisa.c:467
 #, c-format
 msgid ""
 "Could not read library options `%s':\n"
 "%s"
 msgstr ""
+"Nie uda³o siê odczytaæ opcji biblioteki `%s':\n"
+"%s"
 
-#: src/shisa.c:472
 #, c-format
 msgid ""
 "Shishi initialization failed:\n"
 "%s"
 msgstr ""
+"Inicjalizacja Shishi nie powiod³a siê:\n"
+"%s"
 
-#: src/shisa.c:477
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not set encryption type `%s':\n"
 "%s"
-msgstr "Nie mo¿na ustawiæ nazwy g³ównej: %s\n"
-
-#: src/shisa.c:485
-msgid "too few arguments"
 msgstr ""
+"Nie uda³o siê ustawiæ rodzaju szyfrowania `%s':\n"
+"%s"
 
-#: src/shisa.c:517
+msgid "too few arguments"
+msgstr "zbyt ma³o argumentów"
+
 #, c-format
 msgid "Adding default realm `%s'...\n"
-msgstr ""
+msgstr "Dodawanie domy¶lnej dziedziny `%s'...\n"
 
-#: src/shisa.c:537
 #, c-format
 msgid "Modifying principal `%s@%s'...\n"
-msgstr ""
+msgstr "Modyfikowanie zarz±dcy `%s@%s'...\n"
 
-#: src/shisa.c:544
 #, c-format
 msgid "Modifying principal `%s@%s'...done\n"
-msgstr ""
+msgstr "Modyfikowanie zarz±dcy `%s@%s'... zakoñczone\n"
 
-#: src/shisa.c:548
-#, fuzzy, c-format
+#, c-format
 msgid "Adding key to `%s@%s'...\n"
-msgstr "Zapisywanie KEY do %s...\n"
+msgstr "Dodawanie klucza do `%s@%s'...\n"
 
-#: src/shisa.c:558
-#, fuzzy, c-format
+#, c-format
 msgid "Adding key to `%s@%s'...done\n"
-msgstr "Zapisywanie KEY do %s... zakoñczone\n"
+msgstr "Dodawanie klucza do `%s@%s'... zakoñczone\n"
 
-#: src/shisa.c:562
-#, fuzzy, c-format
+#, c-format
 msgid "Removing key from `%s@%s'...\n"
-msgstr "Odczytywanie SAFE z %s...\n"
+msgstr "Usuwanie klucza z `%s@%s'...\n"
 
-#: src/shisa.c:575
-#, fuzzy, c-format
+#, c-format
 msgid "Removing key from `%s@%s'...done\n"
-msgstr "Odczytywanie SAFE z %s... zakoñczone\n"
+msgstr "Usuwanie klucza z `%s@%s'... zakoñczone\n"
 
-#: src/shishi.c:186
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr "Bilety w `%s':\n"
-
-#~ msgid "Writing AP-REP to %s...\n"
-#~ msgstr "Zapisywanie AP-REP do %s...\n"
-
-#~ msgid "Writing AP-REP in %s format...\n"
-#~ msgstr "Zapisywanie AP-REP w formacie %s...\n"
-
-#~ msgid "Writing AP-REP to %s...done\n"
-#~ msgstr "Zapisywanie AP-REP do %s... zakoñczone\n"
-
-#~ msgid "Reading AP-REP from %s...\n"
-#~ msgstr "Odczytywanie AP-REP z %s...\n"
-
-#~ msgid "Reading AP-REP in %s format...\n"
-#~ msgstr "Odczytywanie AP-REP w formacie %s...\n"
-
-#~ msgid "Reading AP-REP from %s...done\n"
-#~ msgstr "Odczytywanie AP-REP z %s... zakoñczone\n"
-
-#~ msgid "Writing AP-REQ to %s...\n"
-#~ msgstr "Zapisywanie AP-REQ do %s...\n"
-
-#~ msgid "Writing AP-REQ in %s format...\n"
-#~ msgstr "Zapisywanie AP-REQ w formacie %s...\n"
-
-#~ msgid "Writing AP-REQ to %s...done\n"
-#~ msgstr "Zapisywanie AP-REQ do %s... zakoñczone\n"
-
-#~ msgid "Reading AP-REQ from %s...\n"
-#~ msgstr "Odczytywanie AP-REQ z %s...\n"
-
-#~ msgid "Reading AP-REQ in %s format...\n"
-#~ msgstr "Odczytywanie AP-REQ w formacie %s...\n"
-
-#~ msgid "Reading AP-REQ from %s...done\n"
-#~ msgstr "Odczytywanie AP-REQ z %s... zakoñczone\n"
-
-#~ msgid "Writing Authenticator to %s...\n"
-#~ msgstr "Zapisywanie obiektu Authenticator do %s...\n"
-
-#~ msgid "Writing Authenticator in %s format...\n"
-#~ msgstr "Zapisywanie obiektu Authenticator w formacie %s...\n"
-
-#~ msgid "Writing Authenticator to %s...done\n"
-#~ msgstr "Zapisywanie obiektu Authenticator do %s... zakoñczone\n"
-
-#~ msgid "Reading Authenticator from %s...\n"
-#~ msgstr "Odczytywanie obiektu Authenticator z %s...\n"
-
-#~ msgid "Reading Authenticator in %s format...\n"
-#~ msgstr "Odczytywanie obiektu Authenticator w formacie %s...\n"
-
-#~ msgid "Reading Authenticator from %s...done\n"
-#~ msgstr "Odczytywanie obiektu Authenticator z %s... zakoñczone\n"
-
-#~ msgid "Writing EncAPRepPart to %s...\n"
-#~ msgstr "Zapisywanie EncAPRepPart do %s...\n"
-
-#~ msgid "Writing EncAPRepPart in %s format...\n"
-#~ msgstr "Zapisywanie EncAPRepPart w formacie %s...\n"
-
-#~ msgid "Writing EncAPRepPart to %s...done\n"
-#~ msgstr "Zapisywanie EncAPRepPart do %s... zakoñczone\n"
-
-#~ msgid "Reading EncAPRepPart from %s...\n"
-#~ msgstr "Odczytywanie EncAPRepPart z %s...\n"
-
-#~ msgid "Reading EncAPRepPart in %s format...\n"
-#~ msgstr "Odczytywanie EncAPRepPart w formacie %s...\n"
-
-#~ msgid "Writing KDC-REP to %s...\n"
-#~ msgstr "Zapisywanie KDC-REP do %s...\n"
-
-#~ msgid "Writing KDC-REP in %s format...\n"
-#~ msgstr "Zapisywanie KDC-REP w formacie %s...\n"
-
-#~ msgid "Writing KDC-REP to %s...done\n"
-#~ msgstr "Zapisywanie KDC-REP do %s... zakoñczone\n"
-
-#~ msgid "Reading KDC-REP from %s...\n"
-#~ msgstr "Odczytywanie KDC-REP z %s...\n"
-
-#~ msgid "Reading KDC-REP in %s format...\n"
-#~ msgstr "Odczytywanie KDC-REP w formacie %s...\n"
-
-#~ msgid "Reading KDC-REP from %s...done\n"
-#~ msgstr "Odczytywanie KDC-REP z %s... zakoñczone\n"
-
-#~ msgid "Writing KDC-REQ to %s...\n"
-#~ msgstr "Zapisywanie KDC-REQ do %s...\n"
-
-#~ msgid "Writing KDC-REQ in %s format...\n"
-#~ msgstr "Zapisywanie KDC-REQ w formacie %s...\n"
-
-#~ msgid "Writing KDC-REQ to %s...done\n"
-#~ msgstr "Zapisywanie KDC-REQ do %s... zakoñczone\n"
-
-#~ msgid "Reading KDC-REQ from %s...\n"
-#~ msgstr "Odczytywanie KDC-REQ z %s...\n"
-
-#~ msgid "Reading KDC-REQ in %s format...\n"
-#~ msgstr "Odczytywanie KDC-REQ w formacie %s...\n"
-
-#~ msgid "Reading KDC-REQ from %s...done\n"
-#~ msgstr "Odczytywanie KDC-REQ z %s... zakoñczone\n"
-
-#~ msgid "Writing SAFE to %s...\n"
-#~ msgstr "Zapisywanie SAFE do %s...\n"
-
-#~ msgid "Writing SAFE in %s format...\n"
-#~ msgstr "Zapisywanie SAFE w formacie %s...\n"
-
-#~ msgid "Writing SAFE to %s...done\n"
-#~ msgstr "Zapisywanie SAFE do %s... zakoñczone\n"
-
-#~ msgid "Reading SAFE in %s format...\n"
-#~ msgstr "Odczytywanie SAFE w formacie %s...\n"
-
-#~ msgid "Authtime:\t%s"
-#~ msgstr "Czas uwierzytelnienia:\t%s"
-
-#~ msgid "Starttime:\t%s"
-#~ msgstr "Czas pocz±tku:\t%s"
-
-#~ msgid "Endtime:\t%s"
-#~ msgstr "Czas koñca:\t%s"
-
-#~ msgid "Renewable till:\t%s"
-#~ msgstr "Odnawialny do:\t%s"
-
-#~ msgid "Server:\t\t%s key %s (%d)\n"
-#~ msgstr "Serwer:\t\t%s klucz %s (%d)\n"
-
-#~ msgid "Ticket key:\t%s (%d) protected by %s (%d)\n"
-#~ msgstr "Klucz biletu:\t%s (%d) zabezpieczony przez %s (%d)\n"
-
-#~ msgid "Ticket flags:\t"
-#~ msgstr "Flagi biletu:\t"
