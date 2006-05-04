@@ -1,5 +1,5 @@
 /* key.c --- Shishi KEY self tests.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -49,4 +49,5 @@ test (Shishi * handle)
 	fail ("shishi_key_value mismatch\n");
     }
 
+  shishi_key_done (key);
 }
