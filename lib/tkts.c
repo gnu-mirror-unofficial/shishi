@@ -277,6 +277,10 @@ shishi_tkts_add (Shishi_tkts * tkts, Shishi_tkt * tkt)
  *
  * Allocate a new ticket and add it to the ticket set.
  *
+ * Note that @ticket, @enckdcreppart and @kdcrep are stored by
+ * reference, so you must not de-allocate them before the ticket is
+ * removed from the ticket set and de-allocated.
+ *
  * Return value: Returns SHISHI_OK iff succesful.
  **/
 int
