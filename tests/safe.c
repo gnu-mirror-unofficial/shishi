@@ -70,6 +70,7 @@ test (Shishi * handle)
     success ("shishi_safe_user_data() OK\n");
   else
     fail ("shishi_safe_user_data() failed (%d)\n", res);
+  free (p);
 
   /* shishi_safe_set_cksum */
   res = shishi_safe_set_cksum (handle, asn1safe, 42, "bar", 3);
@@ -89,6 +90,7 @@ test (Shishi * handle)
     success ("shishi_safe_cksum() OK\n");
   else
     fail ("shishi_safe_cksum() failed (%d)\n", res);
+  free (q);
 
   /* shishi_safe_verify */
   res = shishi_safe_verify (safe, key);
@@ -164,6 +166,7 @@ test (Shishi * handle)
   else
     fail ("DER comparison failed\n");
 
+  shishi_asn1_done (handle, asn1safe);
   free (q);
   free (p);
 
