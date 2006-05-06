@@ -1,6 +1,7 @@
 The Kerberos Keytab Binary File Format
-Michael B Allen <mba2000 ioplex.com>
-Last updated: Thu May  4 14:30:18 EDT 2006
+Copyright (C) 2006 Michael B Allen <mba2000 ioplex.com>
+http://www.ioplex.com/utilities/keytab.txt
+Last updated: Fri May  5 13:39:40 EDT 2006
 
 The MIT keytab binary format is not a standard format, nor is it
 documented anywhere in detail. The format has evolved and may continue
@@ -19,10 +20,10 @@ file format. All values are in network byte order. All text is ASCII.
 
   keytab_entry {
       int32_t size;
-      uint16_t num_components;   /* subtract 1 if version 0x501 */
+      uint16_t num_components;    /* sub 1 if version 0x501 */
       counted_octet_string realm;
       counted_octet_string components[num_components];
-      uint32_t name_type;       /* not present if version 0x501 */
+      uint32_t name_type;   /* not present if version 0x501 */
       uint32_t timestamp;
       uint8_t vno8;
       keyblock key;
@@ -99,3 +100,7 @@ three ways:
     separate 8 bit quantities representing the major and minor version
     number respectively.
 
+Permission to copy, modify, and distribute this document, with or
+without modification, for any purpose and without fee or royalty is
+hereby granted, provided that you include this copyright notice in ALL
+copies of the document or portions thereof, including modifications.
