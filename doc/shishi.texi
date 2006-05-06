@@ -4501,6 +4501,7 @@ is experimental.  Comments and feedback is appreciated.
 * Telnet encryption with AES-CCM::      Integrity and privacy protected telnet.
 * Kerberized rsh and rlogin::           Description of KCMD protocol.
 * Key as initialization vector::        Some cryptography discussion.
+* The MIT Kerberos Keytab Binary File Format:: Format of the MIT keytab files.
 @end menu
 
 @node STARTTLS protected KDC exchanges
@@ -5232,6 +5233,11 @@ So, if you must use a fixed IV, don't use the key-- use 0 or something
 like that.  Even better, don't use a fixed IV-- use the DES encryption
 of a counter, or something like that.
 @end verbatim
+
+@node The MIT Kerberos Keytab Binary File Format
+@section The MIT Kerberos Keytab Binary File Format
+
+@verbatiminclude keytab.txt
 
 @node Copying This Manual
 @appendix Copying This Manual
