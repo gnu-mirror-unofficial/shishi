@@ -1,4 +1,5 @@
-# Copyright (C) 2004 Free Software Foundation, Inc.
+# Copyright (C) 2004-2006 Free Software Foundation, Inc.
+#
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
 # Public License, this file may be distributed as part of a program
@@ -65,6 +66,7 @@ AC_DEFUN([gl_INIT],
   gl_SIZE_MAX
   gl_TYPE_SOCKLEN_T
   gt_TYPE_SSIZE_T
+  gl_STDARG_H
   AM_STDBOOL_H
   gl_STDINT_H
   gl_STRCASE
@@ -85,6 +87,7 @@ AC_DEFUN([gl_INIT],
   gl_XREADLINK
   gl_XSIZE
   gl_XSTRNDUP
+  gl_XVASPRINTF
 ])
 
 # This macro records the list of files which have been installed by
@@ -268,6 +271,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/socklen.m4
   m4/sockpfaf.m4
   m4/ssize_t.m4
+  m4/stdarg.m4
   m4/stdbool.m4
   m4/stdint.m4
   m4/stdint_h.m4
@@ -293,4 +297,5 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/xreadlink.m4
   m4/xsize.m4
   m4/xstrndup.m4
+  m4/xvasprintf.m4
 ])
