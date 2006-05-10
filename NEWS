@@ -12,6 +12,8 @@ Elrond for debugging.
 
 ** Self-tests are now run under valgrind, if it is installed.
 
+** Fix buggy MD4 implementation on 64-bit platforms.
+
 ** Updated Polish translation, thanks to Jakub Bogusz.
 
 * Version 0.0.25 (released 2006-04-27)
