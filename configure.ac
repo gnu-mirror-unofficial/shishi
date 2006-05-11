@@ -99,7 +99,7 @@ AC_SUBST(PAM_SHISHI)
 AC_MSG_CHECKING([if PAM should be used])
 AC_MSG_RESULT($enable_pam)
 
-AC_SUBST(PAMDIR, "\$(libdir)/security")
+AC_SUBST(PAMDIR, "\$(exec_prefix)/lib/security")
 AC_ARG_WITH(pam-dir,
   AC_HELP_STRING([--with-pam-dir=DIR],
                  [Where to install PAM module [[PREFIX/lib/security]]]),
