@@ -8,16 +8,16 @@ See the end for copying conditions.
 This solves interop problems with Windows 2003 and Heimdal, thanks to
 Elrond for debugging.
 
-** Fix mem leaks.
-
-** Self-tests are now run under valgrind, if it is installed.
-
 ** Fix buggy MD4 implementation on 64-bit platforms.
 
 ** The Shishi PAM module in extra/pam-shishi/ is now built by default.
 The installation path has also been changed to $prefix/lib/security,
 but you can change it with `configure --with-pam-dir=/somewhere/else'
 or `make install PAMDIR=/somewhere/else'.
+
+** Fix mem leaks.
+
+** Self-tests are now run under valgrind, if it is installed.
 
 ** Updated Polish translation, thanks to Jakub Bogusz.
 
