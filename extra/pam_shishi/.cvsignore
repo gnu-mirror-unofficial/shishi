@@ -4,3 +4,4 @@ Makefile
 Makefile.in
 pam_shishi.la
 pam_shishi.lo
+test
