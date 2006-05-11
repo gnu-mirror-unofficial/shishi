@@ -15,6 +15,9 @@ Elrond for debugging.
 ** Fix buggy MD4 implementation on 64-bit platforms.
 
 ** The Shishi PAM module in extra/pam-shishi/ is now built by default.
+The installation path has also been changed to $prefix/lib/security,
+but you can change it with `configure --with-pam-dir=/somewhere/else'
+or `make install PAMDIR=/somewhere/else'.
 
 ** Updated Polish translation, thanks to Jakub Bogusz.
 
