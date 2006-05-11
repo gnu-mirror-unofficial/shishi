@@ -106,7 +106,7 @@ AC_ARG_WITH(pam-dir,
             [case "${withval}" in
             /*) PAMDIR="${withval}";;
             ./*|../*) AC_MSG_ERROR(Bad value for --with-pam-dir);;
-            *)  PAMDIR="\$(libdir)/${withval}";;
+            *)  PAMDIR="\$(exec_prefix)/lib/${withval}";;
             esac])
 AC_MSG_NOTICE([PAM installation path $PAMDIR])
 
