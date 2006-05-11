@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2005 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2005, 2006 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -23,7 +23,7 @@ lib_LTLIBRARIES = pam_shishi.la
 pam_shishi_la_SOURCES = pam_shishi.c
 pam_shishi_la_LIBADD = ../../lib/libshishi.la
 # XXX add -Wl,-x too?  PAM documentation suggests it.
-pam_shishi_la_LDFLAGS = -module
+pam_shishi_la_LDFLAGS = -module -avoid-version
 
 INCLUDES = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../../lib
 
