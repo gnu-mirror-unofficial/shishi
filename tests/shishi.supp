@@ -88,3 +88,80 @@
    fun:init_handle
    fun:main
 }
+
+{
+   known gnutls mem leak
+   Memcheck:Leak
+   fun:malloc
+   fun:_asn1_set_value
+   fun:_asn1_change_integer_value
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
+
+{
+   known gnutls mem leak
+   Memcheck:Leak
+   fun:malloc
+   fun:_asn1_set_value
+   fun:_asn1_expand_object_id
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
+
+{
+   known gnutls mem leak
+   Memcheck:Leak
+   fun:calloc
+   fun:_asn1_add_node
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
+
+{
+   known gnutls mem leak
+   Memcheck:Leak
+   fun:malloc
+   fun:strdup
+   fun:_asn1_set_name
+   fun:_asn1_expand_object_id
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
+
+{
+   known gnutls mem leak
+   Memcheck:Leak
+   fun:calloc
+   fun:_asn1_add_node_only
+   fun:_asn1_expand_object_id
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
+
+{
+   known gnutls mem leak
+   Memcheck:Leak
+   fun:calloc
+   fun:_asn1_add_node
+   fun:asn1_array2tree
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+   fun:init_handle
+   fun:main
+}
