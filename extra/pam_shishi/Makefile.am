@@ -31,6 +31,3 @@ INCLUDES = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../../lib
 
 # -DDEBUG_PAM
 DEFS = @DEFS@
-
-indent:
-	indent $(SOURCES)
