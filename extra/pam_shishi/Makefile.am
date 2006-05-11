@@ -18,6 +18,8 @@
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
+libdir = ${exec_prefix}/lib/security
+
 lib_LTLIBRARIES = pam_shishi.la
 
 pam_shishi_la_SOURCES = pam_shishi.c
