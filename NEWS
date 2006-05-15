@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.26 (unreleased)
+* Version 0.0.26 (released 2006-05-15)
 
 ** Requests for service tickets (TGS) are now sent without a sub-session key.
 This solves interop problems with Windows 2003 and Heimdal, thanks to
