@@ -1,3 +1,274 @@
+2006-05-15  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po: Generated.
+
+2006-05-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.26.
+
+2006-05-12  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Fix valgrind call.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* tests/shishi.supp: Add.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/coding.c, asn1/decoding.c, asn1/element.c, asn1/errors.c,
+	asn1/gstr.c, asn1/libtasn1.h, asn1/parser_aux.c, asn1/parser_aux.h,
+	asn1/structure.c: Update.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/test.c: Add (not finished).
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/Makefile.am: Use PAMDIR.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Don't infrecurse PAMDIR definition.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/xvasprintf.m4: Update.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Add --with-pam-dir.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/Makefile.am: Remove unused indent target.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/Makefile.am: Put things in $prefix/lib/security.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/Makefile.am: Add -avoid-version for libtool.
+
+2006-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/crc.c, gl/des.c, gl/md4.c, gl/sha1.c: Update.
+
+2006-05-10  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po: Sync with TP.
+
+2006-05-10  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/md4.c, gl/xvasprintf.c, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/stdarg.m4, gl/m4/xvasprintf.m4,
+	po/pl.po: Update.gl
+
+2006-05-10  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-05-06  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Add.
+
+2006-05-06  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add keytab.txt.
+
+2006-05-06  Simon Josefsson <simon@josefsson.org>
+
+	* doc/keytab.txt: Update.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* doc/keytab.txt: Update.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Simplify valgrind invocation.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Getpwnam is POSIX, don't test for it.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Don't check for getpwuid.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Doc fix.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: shishi_principal_default_guess: Don't use
+	getpwuid, use USER instead.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/authenticator.c: Fix mem leaks.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Fix mem leak.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Fix mem leak.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c: Fix mem leaks.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-rc4.c: Fix mem leak.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/shishi.supp: Fix names.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/crypto.c: Fix mem leaks.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Add shishi.supp, valgrind suppressions.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/shishi.supp: Add.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/priv.c, tests/ticketset.c: Fix mem leaks.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-des.c, tests/crypto-ctx.c: Fix mem leaks.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/low-crypto.c: Fix mem leaks.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/low-crypto.c: Fix mem leak.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/safe.c: Fix mem leaks.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Fix.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Typo.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c: Fix mem leak.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Doc fix.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Fix.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Fix mem leak.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Typo.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Run tests under valgrind if present.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* tests/key.c: Fix mem leak.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* gl/stdint_.h: Update.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tgs.c: Don't use a sub-session key in TGS to fix problems
+	with w2k3 and bugs in heimdal, debugged by Elrond.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/enckdcreppart.c: Typo.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-05-04  Simon Josefsson <simon@josefsson.org>
+
+	* po/LINGUAS, po/pl.po: Sync with TP.
+
+2006-05-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/keytab.txt: FIx.
+
+2006-05-03  Simon Josefsson <simon@josefsson.org>
+
+	* extra/Makefile.am: Don't build rsh-redone, for now.  (Fails gnits
+	tests.)
+
+2006-05-03  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Dist extra/.
+
+2006-05-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/keytab.txt: Add.
+
+2006-05-02  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2006-05-02  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Make in extra/ too.
+
 2006-04-27  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.25.
