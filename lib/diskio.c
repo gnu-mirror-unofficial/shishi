@@ -57,16 +57,11 @@ _shishi_print_armored_data (Shishi * handle,
   asn1_print_structure (fh, asn1, "", ASN1_PRINT_NAME_TYPE_VALUE);
 
   i = base64_encode_alloc (der, derlen, &b64der);
+  free (der);
   if (b64der == NULL && i == 0 && derlen != 0)
-    {
-      free (der);
-      return SHISHI_BASE64_ERROR;
-    }
+    return SHISHI_BASE64_ERROR;
   if (b64der == NULL)
-    {
-      free (der);
-      return SHISHI_MALLOC_ERROR;
-    }
+    return SHISHI_MALLOC_ERROR;
 
   fprintf (fh, HEADERBEG "\n", asn1type);
 
@@ -85,7 +80,6 @@ _shishi_print_armored_data (Shishi * handle,
   fprintf (fh, HEADEREND "\n", asn1type);
 
   free (b64der);
-  free (der);
 
   return SHISHI_OK;
 }
