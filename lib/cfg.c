@@ -233,6 +233,8 @@ shishi_cfg (Shishi * handle, char *option)
 	  break;
 
 	case STRINGPROCESS_OPTION:
+	  if (handle->stringprocess)
+	    free (handle->stringprocess);
 	  handle->stringprocess = xstrdup (value);
 	  break;
 
