@@ -161,6 +161,22 @@ shishi_done (Shishi * handle)
     shishi_warn (handle, "Cannot deinitialize TLS library");
 #endif
 
+  if (handle->realminfos)
+    {
+      size_t i;
+
+      for (i= 0; i < handle->nrealminfos; i++)
+	{
+	  size_t j;
+
+	  if (handle->realminfos[i].kdcaddresses)
+	    free (handle->realminfos[i].kdcaddresses);
+
+	  if (handle->realminfos[i].name)
+	    free (handle->realminfos[i].name);
+	}
+    }
+
   if (handle->default_realm)
     free (handle->default_realm);
   if (handle->usercfgfile)
