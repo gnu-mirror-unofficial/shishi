@@ -61,9 +61,6 @@ shishi_keys_for_serverrealm_in_file (Shishi * handle,
 	  shishi_key_print (handle, stdout, key);
 	}
 
-      if (server == NULL && realm == NULL)
-	break;
-
       if ((!server ||
 	   (shishi_key_principal (key) &&
 	    strcmp (server, shishi_key_principal (key)) == 0)) &&
