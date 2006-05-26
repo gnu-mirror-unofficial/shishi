@@ -150,7 +150,9 @@ shishi_key_value (Shishi_key * key)
  * @key: structure that holds key information
  * @value: input array with key data.
  *
- * Set the key value and length in key structure.
+ * Set the key value and length in key structure.  The value is copied
+ * into the key (in other words, you can deallocate @value right after
+ * calling this function without modifying the value inside the key).
  **/
 void
 shishi_key_value_set (Shishi_key * key, const char *value)
@@ -367,17 +369,20 @@ shishi_key_random (Shishi * handle, int32_t type, Shishi_key ** key)
   int len = shishi_cipher_randomlen (type);
   int rc;
 
-  rc = shishi_key (handle, key);
+  rc = shishi_randomize (handle, 1, buf, len);
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_randomize (handle, 1, buf, len);
+  rc = shishi_key (handle, key);
   if (rc != SHISHI_OK)
     return rc;
 
   rc = shishi_random_to_key (handle, type, buf, len, *key);
   if (rc != SHISHI_OK)
-    return rc;
+    {
+      shishi_key_done (*key);
+      return rc;
+    }
 
   return SHISHI_OK;
 }
@@ -445,7 +450,10 @@ shishi_key_from_string (Shishi * handle,
   rc = shishi_string_to_key (handle, type, password, passwordlen,
 			     salt, saltlen, parameter, *outkey);
   if (rc != SHISHI_OK)
-    return rc;
+    {
+      shishi_key_done (*outkey);
+      return rc;
+    }
 
   return SHISHI_OK;
 }
@@ -489,14 +497,14 @@ shishi_key_from_name (Shishi * handle,
       char *realm;
 
       rc = shishi_parse_name (handle, name, &principal, &realm);
-      if (rc != SHISHI_OK)
-	return rc;
+      if (rc == SHISHI_OK)
+	{
+	  shishi_key_principal_set (*outkey, principal);
+	  shishi_key_realm_set (*outkey, realm);
 
-      shishi_key_principal_set (*outkey, principal);
-      shishi_key_realm_set (*outkey, realm);
-
-      free (realm);
-      free (principal);
+	  free (realm);
+	  free (principal);
+	}
     }
 
   free (salt);
