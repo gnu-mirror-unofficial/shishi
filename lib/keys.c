@@ -1,4 +1,4 @@
-/* keys.c --- Functions for managing keys stored in files.
+/* keys.c --- Functions for managing keys sets, and keys stored in files.
  * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
@@ -20,6 +20,146 @@
  */
 
 #include "internal.h"
+
+struct Shishi_keys
+{
+  Shishi *handle;
+  Shishi_key **keys;
+  int nkeys;
+};
+
+/**
+ * shishi_keys:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @keys: output pointer to newly allocated keys handle.
+ *
+ * Get a new key set handle.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_keys (Shishi * handle, Shishi_keys ** keys)
+{
+  *keys = xmalloc (sizeof (**keys));
+
+  (*keys)->handle = handle;
+  (*keys)->keys = NULL;
+  (*keys)->nkeys = 0;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_keys_done:
+ * @keys: key set handle as allocated by shishi_keys().
+ *
+ * Deallocates all resources associated with key set.  The key set
+ * handle must not be used in calls to other shishi_keys_*() functions
+ * after this.
+ **/
+void
+shishi_keys_done (Shishi_keys ** keys)
+{
+  if (!keys || !*keys)
+    return;
+
+  if ((*keys)->keys)
+    free ((*keys)->keys);
+  free (*keys);
+
+  *keys = NULL;
+
+  return;
+}
+
+/**
+ * shishi_keys_size:
+ * @keys: key set handle as allocated by shishi_keys().
+ *
+ * Get size of key set.
+ *
+ * Return value: Returns number of keys stored in key set.
+ **/
+int
+shishi_keys_size (Shishi_keys * keys)
+{
+  return keys->nkeys;
+}
+
+/**
+ * shishi_keys_nth:
+ * @keys: key set handle as allocated by shishi_keys().
+ * @keyno: integer indicating requested key in key set.
+ *
+ * Get the n:th ticket in key set.
+ *
+ * Return value: Returns a key handle to the keyno:th key in the key
+ *   set, or NULL if @keys is invalid or @keyno is out of bounds.  The
+ *   first key is @keyno 0, the second key @keyno 1, and so on.
+ **/
+const Shishi_key *
+shishi_keys_nth (Shishi_keys * keys, int keyno)
+{
+  if (keys == NULL || keyno >= keys->nkeys)
+    return NULL;
+
+  return keys->keys[keyno];
+}
+
+/**
+ * shishi_keys_remove:
+ * @keys: key set handle as allocated by shishi_keys().
+ * @keyno: key number of key in the set to remove.  The first
+ *   key is key number 0.
+ *
+ * Remove a key, indexed by @keyno, in given key set.
+ **/
+void
+shishi_keys_remove (Shishi_keys * keys, int keyno)
+{
+  shishi_key_done (keys->keys[keyno]);
+
+  if (keyno < keys->nkeys)
+    memmove (&keys->keys[keyno], &keys->keys[keyno + 1],
+	     sizeof (*keys->keys) * (keys->nkeys - keyno - 1));
+
+  --keys->nkeys;
+
+  keys->keys = xrealloc (keys->keys, sizeof (*keys->keys) * keys->nkeys);
+}
+
+/**
+ * shishi_keys_add:
+ * @keys: key set handle as allocated by shishi_keys().
+ * @key: key to be added to key set.
+ *
+ * Add a key to the key set.  A deep copy of the key is stored, so
+ * changing @key, or deallocating it, will not modify the value stored
+ * in the key set.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_keys_add (Shishi_keys * keys, Shishi_key * key)
+{
+  int rc;
+
+  if (!key)
+    return SHISHI_INVALID_KEY;
+
+  keys->nkeys++;
+
+  keys->keys = xrealloc (keys->keys, sizeof (*keys->keys) * keys->nkeys);
+
+  rc = shishi_key (keys->handle, &(keys->keys[keys->nkeys - 1]));
+  if (rc != SHISHI_OK)
+    return rc;
+
+  shishi_key_copy (keys->keys[keys->nkeys - 1], key);
+
+  return SHISHI_OK;
+}
+
 
 /**
  * shishi_keys_for_serverrealm_in_file
