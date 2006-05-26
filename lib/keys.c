@@ -1,5 +1,5 @@
 /* keys.c --- Functions for managing keys stored in files.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -64,14 +64,12 @@ shishi_keys_for_serverrealm_in_file (Shishi * handle,
       if (server == NULL && realm == NULL)
 	break;
 
-      if (server &&
-	  shishi_key_principal (key) &&
-	  strcmp (server, shishi_key_principal (key)) == 0)
-	break;
-
-      if (realm &&
-	  shishi_key_realm (key) &&
-	  strcmp (server, shishi_key_principal (key)) == 0)
+      if ((!server ||
+	   (shishi_key_principal (key) &&
+	    strcmp (server, shishi_key_principal (key)) == 0)) &&
+	  (!realm ||
+	   (shishi_key_realm (key) &&
+	    strcmp (realm, shishi_key_realm (key)) == 0)))
 	break;
 
       shishi_key_done (key);
