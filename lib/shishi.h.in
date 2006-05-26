@@ -1847,6 +1847,13 @@ extern int shishi_key_from_name (Shishi * handle,
 				 Shishi_key ** outkey);
 
 /* keys.c */
+extern int shishi_keys (Shishi * handle, Shishi_keys ** keys);
+extern void shishi_keys_done (Shishi_keys ** keys);
+extern int shishi_keys_size (Shishi_keys * keys);
+extern const Shishi_key *shishi_keys_nth (Shishi_keys * keys, int keyno);
+extern void shishi_keys_remove (Shishi_keys * keys, int keyno);
+extern int shishi_keys_add (Shishi_keys * keys, Shishi_key * key);
+
 extern Shishi_key *shishi_keys_for_serverrealm_in_file (Shishi * handle,
 							const char *filename,
 							const char *server,
