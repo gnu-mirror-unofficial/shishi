@@ -152,16 +152,14 @@ shishi_tkts (Shishi * handle, Shishi_tkts ** tkts)
 void
 shishi_tkts_done (Shishi_tkts ** tkts)
 {
-  Shishi_tkts *tset;
-
   if (!tkts || !*tkts)
     return;
 
-  tset = *tkts;
+  if ((*tkts)->tkts)
+    free ((*tkts)->tkts);
+  free (*tkts);
 
-  if (tset->tkts)
-    free (tset->tkts);
-  free (tset);
+  *tkts = NULL;
 
   return;
 }
