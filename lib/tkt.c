@@ -328,7 +328,7 @@ shishi_tkt_key_set (Shishi_tkt * tkt, Shishi_key * key)
 
   if (!tkt->key)
     {
-      res = shishi_key (handle, &tkt->key);
+      res = shishi_key (tkt->handle, &tkt->key);
       if (res != SHISHI_OK)
 	return res;
     }
