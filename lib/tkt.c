@@ -101,6 +101,10 @@ shishi_tkt (Shishi * handle, Shishi_tkt ** tkt)
       return SHISHI_ASN1_ERROR;
     }
 
+  /* XXX We don't allocate t->key here, because shishi_tkt_key()
+     relies on it being NULL.  Possibly, we should allocate it here
+     instead, and simplify shishi_tkt_key().  */
+
   *tkt = t;
 
   return SHISHI_OK;
@@ -144,10 +148,8 @@ shishi_tkt2 (Shishi * handle,
 void
 shishi_tkt_done (Shishi_tkt * tkt)
 {
-  /*   XXX need to always copy key into ticket before we can do
-     XXX this, compare shishi_tkt_key_set().
-     if (tkt->key)
-     shishi_key_done (tkt->key); */
+  if (tkt->key)
+    shishi_key_done (tkt->key);
   free (tkt);
 }
 
@@ -280,22 +282,22 @@ shishi_tkt_encticketpart_set (Shishi_tkt * tkt, Shishi_asn1 encticketpart)
 Shishi_key *
 shishi_tkt_key (Shishi_tkt * tkt)
 {
+  int rc;
+
+  /* XXX We probably shouldn't extract the keys here.  Where is this
+     extraction actually needed?  */
   if (!tkt->key && tkt->enckdcreppart)
     {
-      int res;
-
-      res = shishi_enckdcreppart_get_key (tkt->handle,
-					  tkt->enckdcreppart, &tkt->key);
-      if (res != SHISHI_OK)
+      rc = shishi_enckdcreppart_get_key (tkt->handle,
+					 tkt->enckdcreppart, &tkt->key);
+      if (rc != SHISHI_OK)
 	return NULL;
     }
   else if (!tkt->key && tkt->encticketpart)
     {
-      int res;
-
-      res = shishi_encticketpart_get_key (tkt->handle,
-					  tkt->encticketpart, &tkt->key);
-      if (res != SHISHI_OK)
+      rc = shishi_encticketpart_get_key (tkt->handle,
+					 tkt->encticketpart, &tkt->key);
+      if (rc != SHISHI_OK)
 	return NULL;
     }
 
@@ -324,7 +326,14 @@ shishi_tkt_key_set (Shishi_tkt * tkt, Shishi_key * key)
   if (res != SHISHI_OK)
     return res;
 
-  tkt->key = key;
+  if (!tkt->key)
+    {
+      res = shishi_key (handle, &tkt->key);
+      if (res != SHISHI_OK)
+	return res;
+    }
+
+  shishi_key_copy (tkt->key, key);
 
   return SHISHI_OK;
 }
