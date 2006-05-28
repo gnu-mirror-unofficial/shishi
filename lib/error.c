@@ -80,6 +80,8 @@ static const struct shishi_error_msgs _shishi_error_messages[] = {
   {SHISHI_TICKET_DECRYPT_FAILED,
    N_("Could not decrypt Ticket using provided key. "
       "This usually indicates an internal application error.")},
+  {SHISHI_KEYTAB_ERROR,
+   N_("Failed to parse keytab file.")},
   {-1, NULL}
 };
 
