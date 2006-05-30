@@ -66,7 +66,7 @@ shishi_keys_done (Shishi_keys ** keys)
     return;
 
   if ((*keys)->nkeys > 0)
-    for (i = (*keys)->nkeys + 1; i > 0; i--)
+    for (i = (*keys)->nkeys; i > 0; i--)
       shishi_key_done ((*keys)->keys[i - 1]);
 
   if ((*keys)->keys)
