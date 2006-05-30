@@ -365,6 +365,9 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 	  shishi_key_version_set (key, vno);
 	}
 
+      if (VERBOSECRYPTONOISE (handle))
+	shishi_key_print (handle, stdout, key);
+
       rc = shishi_keys_add (keys, key);
       if (rc != SHISHI_OK)
 	goto done;

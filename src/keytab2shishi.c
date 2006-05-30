@@ -119,6 +119,9 @@ main (int argc, char *argv[])
     if (rc != SHISHI_OK)
       error (EXIT_FAILURE, errno, "%s: %s", infile, shishi_strerror (rc));
 
+    if (args.verbose_given)
+      shishi_keys_print (keys, stdout);
+
     rc = shishi_keys_to_file (sh, outfile, keys);
     if (rc != SHISHI_OK)
       error (EXIT_FAILURE, errno, "%s:%s", outfile, shishi_strerror (rc));
