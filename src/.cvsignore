@@ -11,3 +11,6 @@ shishi_cmd.c
 shishid
 shishid_cmd.h
 shishid_cmd.c
+keytab2shishi
+keytab2shishi_cmd.h
+keytab2shishi_cmd.c
