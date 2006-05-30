@@ -4,6 +4,15 @@ See the end for copying conditions.
 
 * Version 0.0.27 (unreleased)
 
+** New APIs to read MIT keytab files.
+Thanks to Michael B Allen who reverse-engineered the format and
+published a freely licensed description, available from
+<http://www.ioplex.com/utilities/keytab.txt>.  The APIs are
+shishi_keys_add_keytab_mem, shishi_keys_add_keytab_file,
+shishi_keys_from_keytab_mem, and shishi_keys_from_keytab_file.
+
+** New APIs to manage set of keys.
+
 * Version 0.0.26 (released 2006-05-15)
 
 ** Requests for service tickets (TGS) are now sent without a sub-session key.
