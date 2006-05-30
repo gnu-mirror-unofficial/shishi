@@ -190,6 +190,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 			    Shishi_keys *keys)
 {
   int rc;
+  uint16_t file_format_version;
   size_t entrystartpos;
   uint16_t num_components;    /* sub 1 if version 0x501 */
   char *principal;
@@ -203,15 +204,13 @@ shishi_keys_add_keytab_mem (Shishi * handle,
     }
 
   /* Check file format. */
-  {
-    uint16_t file_format_version = (data[0] << 8) | data[1];
+  file_format_version = (data[0] << 8) | data[1];
 
-    if (VERBOSENOISE (handle))
-      printf ("keytab file_format_version %04X\n", file_format_version);
+  if (VERBOSENOISE (handle))
+    printf ("keytab file_format_version %04X\n", file_format_version);
 
-    if (file_format_version != 0x0501 && file_format_version != 0x0502)
-      return SHISHI_KEYTAB_ERROR;
-  }
+  if (file_format_version != 0x0501 && file_format_version != 0x0502)
+    return SHISHI_KEYTAB_ERROR;
 
   /* Check file integrity first, to avoid error-checking below. */
   entrystartpos = 2;
