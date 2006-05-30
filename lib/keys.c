@@ -526,6 +526,47 @@ shishi_keys_print (Shishi_keys * keys, FILE *fh)
 }
 
 /**
+ * shishi_keys_to_file:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @filename: filename to append key to.
+ * @keys: set of keys to print.
+ *
+ * Print an ASCII representation of a key structure to a file, for
+ * each key in the key set.  The file is appended to if it exists.
+ * See shishi_key_print() for the format of the output.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ **/
+int
+shishi_keys_to_file (Shishi * handle,
+		     const char *filename,
+		     Shishi_keys * keys)
+{
+  FILE *fh;
+  int res;
+
+  if (VERBOSE (handle))
+    printf (_("Writing KEYS to %s...\n"), filename);
+
+  fh = fopen (filename, "a");
+  if (fh == NULL)
+    return SHISHI_FOPEN_ERROR;
+
+  res = shishi_keys_print (keys, fh);
+  if (res != SHISHI_OK)
+    return res;
+
+  res = fclose (fh);
+  if (res != 0)
+    return SHISHI_IO_ERROR;
+
+  if (VERBOSE (handle))
+    printf (_("Writing KEYS to %s...done\n"), filename);
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_keys_for_serverrealm_in_file
  * @handle: Shishi library handle create by shishi_init().
  * @filename: file to read keys from.

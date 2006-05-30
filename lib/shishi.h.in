@@ -1819,7 +1819,8 @@ extern void shishi_key_version_set (Shishi_key * key, uint32_t kvno);
 extern int shishi_key (Shishi * handle, Shishi_key ** key);
 extern void shishi_key_done (Shishi_key * key);
 extern void shishi_key_copy (Shishi_key * dstkey, Shishi_key * srckey);
-extern int shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key);
+extern int shishi_key_print (Shishi * handle, FILE * fh,
+			     const Shishi_key * key);
 extern int shishi_key_to_file (Shishi * handle,
 			       const char *filename, Shishi_key * key);
 extern int shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key);
@@ -1868,6 +1869,11 @@ extern int shishi_keys_from_keytab_mem (Shishi * handle,
 extern int shishi_keys_from_keytab_file (Shishi * handle,
 					 const char *filename,
 					 Shishi_keys **outkeys);
+
+extern int shishi_keys_print (Shishi_keys * keys, FILE *fh);
+extern int shishi_keys_to_file (Shishi * handle,
+				const char *filename,
+				Shishi_keys * keys);
 
 extern Shishi_key *shishi_keys_for_serverrealm_in_file (Shishi * handle,
 							const char *filename,
