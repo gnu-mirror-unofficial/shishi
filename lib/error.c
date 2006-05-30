@@ -31,11 +31,11 @@ static const struct shishi_error_msgs _shishi_error_messages[] = {
   {SHISHI_OK,
    N_("Shishi success")},
   {SHISHI_ASN1_ERROR,
-   N_("Error in ASN.1 data, probably due to corrupt data.")},
+   N_("Error in ASN.1 function (corrupt data?)")},
   {SHISHI_FOPEN_ERROR,
-   N_("Could not open file.")},
+   N_("Could not open file")},
   {SHISHI_IO_ERROR,
-   N_("File input/output error.")},
+   N_("File input/output error")},
   {SHISHI_MALLOC_ERROR,
    N_("Memory allocation error in shishi library.")},
   {SHISHI_BASE64_ERROR,
@@ -81,7 +81,7 @@ static const struct shishi_error_msgs _shishi_error_messages[] = {
    N_("Could not decrypt Ticket using provided key. "
       "This usually indicates an internal application error.")},
   {SHISHI_KEYTAB_ERROR,
-   N_("Failed to parse keytab file.")},
+   N_("Failed to parse keytab file")},
   {-1, NULL}
 };
 
