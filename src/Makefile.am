@@ -22,25 +22,27 @@ AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
 	-I$(top_srcdir)/db -I../lib
 localedir = $(datadir)/locale
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
-	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\"
+	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
+	-DHOSTKEYSFILE=\"$(KEYDIR)/shishi.keys\"
 
-BUILT_SOURCES = shishi_cmd.c shishi_cmd.h shisa_cmd.c shisa_cmd.h \
-	shishid_cmd.c shishid_cmd.h
+BUILT_SOURCES = shishi_cmd.c shishi_cmd.h shisa_cmd.c shisa_cmd.h	\
+	shishid_cmd.c shishid_cmd.h keytab2shishi_cmd.c			\
+	keytab2shishi_cmd.h
 MAINTAINERCLEANFILES = $(BUILT_SOURCES)
 
-bin_PROGRAMS = shishi shisa
+bin_PROGRAMS = shishi shisa keytab2shishi
 sbin_PROGRAMS = shishid
 
 shishi_SOURCES = shishi.c shishi.ggo shishi_cmd.h shishi_cmd.c
 shishi_LDADD = ../gl/libgnu.la ../lib/libshishi.la @LTLIBINTL@
-shishi_cmd.c shishi_cmd.h: shishi.ggo
+shishi_cmd.c shishi_cmd.h: shishi.ggo Makefile.am
 	gengetopt --unamed-opts="CLIENT [SERVER]" \
 		--no-handle-help --no-handle-error \
 		--input $< --file-name shishi_cmd
 
 shisa_SOURCES = shisa.c shisa.ggo shisa_cmd.h shisa_cmd.c
 shisa_LDADD = ../gl/libgnu.la ../db/libshisa.la ../lib/libshishi.la @LTLIBINTL@
-shisa_cmd.c shisa_cmd.h: shisa.ggo
+shisa_cmd.c shisa_cmd.h: shisa.ggo Makefile.am
 	gengetopt --unamed-opts="REALM [PRINCIPAL]" \
 		--no-handle-help --no-handle-error \
 		--input $< --file-name shisa_cmd
@@ -52,6 +54,14 @@ shishid_SOURCES += starttls.c resume.c
 endif
 shishid_LDADD = ../gl/libgnu.la ../lib/libshishi.la \
 	../db/libshisa.la @LTLIBGNUTLS@ @LTLIBINTL@
-shishid_cmd.c shishid_cmd.h: shishid.ggo
+shishid_cmd.c shishid_cmd.h: shishid.ggo Makefile.am
 	gengetopt --no-handle-help --no-handle-error \
 		 --input $< --file-name shishid_cmd
+
+keytab2shishi_SOURCES = keytab2shishi.c keytab2shishi.ggo	\
+	keytab2shishi_cmd.h keytab2shishi_cmd.c
+keytab2shishi_LDADD = ../gl/libgnu.la ../lib/libshishi.la @LTLIBINTL@
+keytab2shishi_cmd.c keytab2shishi_cmd.h: keytab2shishi.ggo Makefile.am
+	gengetopt --unamed-opts="INFILE [OUTFILE]" \
+		--no-handle-help --no-handle-error \
+		--input $< --file-name keytab2shishi_cmd
