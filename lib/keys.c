@@ -270,18 +270,29 @@ shishi_keys_add_keytab_mem (Shishi * handle,
       }
 
       /* Principal components. */
-      for (i = 0; i < num_components; i++)
-	{
-	  size_t l;
+      {
+	char *name = NULL;
+	size_t namelen = 0;
 
-	  l = data[pos] << 8 | data[pos+1];
-	  pos += 2;
-	  principal = xstrndup (&data[pos], l);
-	  pos += l;
-	  printf ("princ %s\n", principal);
+	for (i = 0; i < num_components; i++)
+	  {
+	    size_t l;
+
+	    l = data[pos] << 8 | data[pos+1];
+	    pos += 2;
+
+	    name = xrealloc (name, namelen + l + 1);
+	    memcpy (name + namelen, &data[pos], l);
+	    name[namelen + l] = '/';
+
+	    namelen += l + 1;
+	    pos += l;
 
 	}
-      //shishi_key_principal_set (key,
+	name[namelen - 1] = '\0';
+	shishi_key_principal_set (key, name);
+	free (name);
+      }
 
       /* Name_type */
       {
@@ -507,6 +518,8 @@ shishi_keys_print (Shishi_keys * keys, FILE *fh)
       rc = shishi_key_print (keys->handle, fh, shishi_keys_nth (keys, i));
       if (rc != SHISHI_OK)
 	return rc;
+
+      fputs ("", fh);
     }
 
   return SHISHI_OK;
