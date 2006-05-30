@@ -950,7 +950,7 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_key_print (Shishi * handle, FILE * fh, Shishi_key * key)
+shishi_key_print (Shishi * handle, FILE * fh, const Shishi_key * key)
 {
   char *b64key;
   size_t i;
