@@ -57,7 +57,7 @@ strfile (const char *filename, size_t *length)
     pos += nread;
   } while (!feof (fh) && !ferror (fh));
 
-  if (!(feof (fh) && fclose (fh)))
+  if (!(feof (fh) && fclose (fh) == 0))
     {
       int save_errno = errno;
       free (out);
