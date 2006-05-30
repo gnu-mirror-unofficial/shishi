@@ -519,7 +519,7 @@ shishi_keys_print (Shishi_keys * keys, FILE *fh)
       if (rc != SHISHI_OK)
 	return rc;
 
-      fputs ("", fh);
+      fprintf (fh, "\n");
     }
 
   return SHISHI_OK;
