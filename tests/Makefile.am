@@ -18,7 +18,7 @@
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-EXTRA_DIST = utils.c shisa.sh shishi.supp
+EXTRA_DIST = utils.c shisa.sh shishi.supp keytab1.bin
 
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
 	-I$(top_srcdir)/lib -I../lib
