@@ -488,6 +488,31 @@ shishi_keys_from_keytab_file (Shishi * handle,
 }
 
 /**
+ * shishi_keys_print:
+ * @keys: key set to print.
+ * @fh: file handle, open for writing, to print keys to.
+ *
+ * Print all keys in set using shishi_key_print.
+ *
+ * Returns: Returns %SHISHI_OK on success.
+ **/
+int
+shishi_keys_print (Shishi_keys * keys, FILE *fh)
+{
+  int rc;
+  size_t i;
+
+  for (i = 0; i < keys->nkeys; i++)
+    {
+      rc = shishi_key_print (keys->handle, fh, shishi_keys_nth (keys, i));
+      if (rc != SHISHI_OK)
+	return rc;
+    }
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_keys_for_serverrealm_in_file
  * @handle: Shishi library handle create by shishi_init().
  * @filename: file to read keys from.
