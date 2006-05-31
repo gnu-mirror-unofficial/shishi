@@ -1,5 +1,6 @@
-/* strfile.h -- read file contents into a string
+/* read-file.h -- read file contents into a string
    Copyright (C) 2006 Free Software Foundation, Inc.
+   Written by Simon Josefsson.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,12 +16,19 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifndef STRFILE_H
-#define STRFILE_H
+#ifndef READ_FILE_H
+#define READ_FILE_H
 
 /* Get size_t.  */
 #include <stddef.h>
 
-extern char *strfile (const char *filename, size_t *length);
+/* Get FILE.  */
+#include <stdio.h>
 
-#endif /* STRFILE_H */
+extern char *fread_file (FILE * stream, size_t * length);
+
+extern char *read_file (const char *filename, size_t * length);
+
+extern char *read_binary_file (const char *filename, size_t * length);
+
+#endif /* READ_FILE_H */

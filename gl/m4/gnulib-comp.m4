@@ -59,6 +59,7 @@ AC_DEFUN([gl_INIT],
   gl_MBITER
   gl_FUNC_MEMCHR
   gl_FUNC_MKTIME
+  gl_FUNC_READ_FILE
   gl_FUNC_READLINK
   AC_FUNC_REALLOC
   gl_C_RESTRICT
@@ -72,7 +73,6 @@ AC_DEFUN([gl_INIT],
   gl_STRCASE
   gl_FUNC_STRCHRNUL
   gl_FUNC_STRDUP
-  gl_FUNC_STRFILE
   gl_FUNC_STRNDUP
   gl_FUNC_STRNLEN
   gl_FUNC_STRTOK_R
@@ -161,6 +161,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf-parse.h
   lib/progname.c
   lib/progname.h
+  lib/read-file.c
+  lib/read-file.h
   lib/readlink.c
   lib/realloc.c
   lib/setenv.c
@@ -177,8 +179,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strchrnul.h
   lib/strdup.c
   lib/strdup.h
-  lib/strfile.c
-  lib/strfile.h
   lib/strncasecmp.c
   lib/strndup.c
   lib/strndup.h
@@ -265,6 +265,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/memxor.m4
   m4/mktime.m4
   m4/onceonly_2_57.m4
+  m4/read-file.m4
   m4/readlink.m4
   m4/restrict.m4
   m4/setenv.m4
@@ -282,7 +283,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strchrnul.m4
   m4/strdup.m4
   m4/strerror_r.m4
-  m4/strfile.m4
   m4/strndup.m4
   m4/strnlen.m4
   m4/strtok_r.m4
