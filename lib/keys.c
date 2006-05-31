@@ -408,7 +408,7 @@ shishi_keys_add_keytab_file (Shishi * handle,
 			     Shishi_keys *keys)
 {
   size_t len;
-  char *keytab = strfile (filename, &len);
+  char *keytab = read_file (filename, &len);
   int rc;
 
   if (!keytab)
