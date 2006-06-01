@@ -654,6 +654,7 @@ extern int shishi_error_outputtype (Shishi * handle);
 extern void shishi_error_set_outputtype (Shishi * handle, int type);
 extern void shishi_info (Shishi * handle, const char *format, ...);
 extern void shishi_warn (Shishi * handle, const char *format, ...);
+extern void shishi_verbose (Shishi * handle, const char *format, ...);
 
 /* realm.c */
 extern char *shishi_realm_default_guess (void);
