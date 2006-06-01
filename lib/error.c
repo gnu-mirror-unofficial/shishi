@@ -330,10 +330,10 @@ shishi_verbose (Shishi * handle, const char *format, ...)
   switch (type)
     {
     case SHISHI_OUTPUTTYPE_STDERR:
-      fprintf (stderr, N_("%s\n"), out);
+      fprintf (stderr, "%s\n", out);
       break;
     case SHISHI_OUTPUTTYPE_SYSLOG:
-      syslog (LOG_DEBUG, N_("%s"), out);
+      syslog (LOG_DEBUG, "%s", out);
       break;
     default:
       break;
