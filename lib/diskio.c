@@ -35,51 +35,98 @@
  *
  */
 
+static char *
+armor_data (const char *data, size_t len,
+	    const char *armortype,
+	    const char *armorheaders)
+{
+  /* Must be a multiple of 4. */
+#define WRAP_COL 64
+  char *armorbegin, *armorend;
+  char *b64data, *out;
+  size_t wrapb64len = BASE64_LENGTH (len) + BASE64_LENGTH (len) / WRAP_COL + 1;
+  size_t i;
+
+  b64data = xmalloc (wrapb64len + 1);
+
+  for (i = 0; i <= BASE64_LENGTH (len) / WRAP_COL; i++)
+    {
+      size_t readpos = i * WRAP_COL * 3 /4;
+      size_t nread = WRAP_COL * 3 /4;
+      size_t storepos = i * WRAP_COL + i;
+      size_t nstore = WRAP_COL;
+
+      if (readpos >= len)
+	break;
+
+      if (readpos + nread >= len)
+	{
+	  nread = len - readpos;
+	  nstore = BASE64_LENGTH (nread);
+	}
+
+      base64_encode (data + readpos, nread, b64data + storepos, nstore);
+      b64data[storepos + nstore] = '\n';
+      b64data[storepos + nstore + 1] = '\0';
+
+#if 0
+      printf ("alloc %d len %d curlen %d "
+	      "readpos %d nread %d storepos %d nstore %d\n",
+	      wrapb64len + 1, len, strlen (b64data),
+	      readpos, nread, storepos, nstore);
+#endif
+    }
+
+  armorbegin = xasprintf (HEADERBEG, armortype);
+  armorend = xasprintf (HEADEREND, armortype);
+
+  out = xasprintf ("%s\n%s%s%s%s\n",
+		   armorbegin,
+		   armorheaders ? armorheaders : "",
+		   armorheaders ? "\n" : "",
+		   b64data,
+		   armorend);
+
+  free (b64data);
+  free (armorend);
+  free (armorbegin);
+
+  return out;
+}
+
+static char *
+armor_asn1 (Shishi * handle,
+	    Shishi_asn1 asn1,
+	    const char *armortype,
+	    const char *armorheaders)
+{
+  char *der;
+  size_t derlen;
+  char *out;
+  int rc;
+
+  rc = shishi_asn1_to_der (handle, asn1, &der, &derlen);
+  if (rc != SHISHI_OK)
+    return NULL;
+
+  out = armor_data (der, derlen, armortype, armorheaders);
+
+  free (der);
+
+  return out;
+}
+
 int
 _shishi_print_armored_data (Shishi * handle,
 			    FILE * fh,
 			    Shishi_asn1 asn1,
 			    const char *asn1type, char *headers)
 {
-  char *der;
-  size_t derlen;
-  char *b64der;
-  size_t i;
-  int res;
-
-  if (!asn1)
-    return SHISHI_OK;
-
-  res = shishi_asn1_to_der (handle, asn1, &der, &derlen);
-  if (res != SHISHI_OK)
-    return res;
+  char *data = armor_asn1 (handle, asn1, asn1type, headers);
 
   asn1_print_structure (fh, asn1, "", ASN1_PRINT_NAME_TYPE_VALUE);
 
-  i = base64_encode_alloc (der, derlen, &b64der);
-  free (der);
-  if (b64der == NULL && i == 0 && derlen != 0)
-    return SHISHI_BASE64_ERROR;
-  if (b64der == NULL)
-    return SHISHI_MALLOC_ERROR;
-
-  fprintf (fh, HEADERBEG "\n", asn1type);
-
-  if (headers)
-    fprintf (fh, "%s\n", headers);
-
-  for (i = 0; i < strlen (b64der); i++)
-    {
-      fprintf (fh, "%c", b64der[i]);
-      if ((i + 1) % 64 == 0)
-	fprintf (fh, "\n");
-    }
-  if ((i + 1) % 64 != 0)
-    fprintf (fh, "\n");
-
-  fprintf (fh, HEADEREND "\n", asn1type);
-
-  free (b64der);
+  fprintf (fh, "%s\n", data);
 
   return SHISHI_OK;
 }
