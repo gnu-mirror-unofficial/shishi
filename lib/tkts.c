@@ -343,7 +343,7 @@ shishi_tkts_read (Shishi_tkts * tkts, FILE * fh)
       if (res != SHISHI_OK)
 	break;
 
-      if (VERBOSE (tkts->handle))
+      if (VERBOSEASN1 (tkts->handle))
 	{
 	  printf ("Read ticket for principal `':\n");
 	  shishi_kdcrep_print (tkts->handle, stdout, kdcrep);

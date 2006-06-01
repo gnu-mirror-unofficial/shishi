@@ -86,7 +86,7 @@ shishi_priv (Shishi * handle, Shishi_priv ** priv)
   rc = gettimeofday (&tv, NULL);
   if (rc != 0)
     return SHISHI_GETTIMEOFDAY_ERROR;
-  asprintf (&usec, "%ld", tv.tv_usec % 1000000);
+  usec = xasprintf ("%ld", tv.tv_usec % 1000000);
   rc = shishi_asn1_write (handle, lpriv->encprivpart, "usec", usec, 0);
   free (usec);
   if (rc != SHISHI_OK)

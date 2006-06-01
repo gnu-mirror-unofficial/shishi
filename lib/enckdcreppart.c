@@ -304,13 +304,12 @@ shishi_enckdcreppart_server_set (Shishi * handle,
     {
       serverbuf = xrealloc (serverbuf, (i + 2) * sizeof (*serverbuf));
     }
+
   res = shishi_enckdcreppart_sname_set (handle, enckdcreppart,
 					SHISHI_NT_PRINCIPAL, serverbuf);
   if (res != SHISHI_OK)
-    {
-      fprintf (stderr, _("Could not set sname: %s\n"), shishi_error (handle));
-      return res;
-    }
+    return res;
+
   free (serverbuf);
   free (tmpserver);
 

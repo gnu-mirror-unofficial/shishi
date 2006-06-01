@@ -218,10 +218,10 @@ shishi_kdc_sendrecv_1 (Shishi * handle, struct Shishi_kdcinfo *ki,
       break;
     }
 
-  if (VERBOSE (handle))
-    printf ("Sending to %s (%s) via %s...\n", ki->name,
-	    inet_ntoa (((struct sockaddr_in *) &ki->sockaddress)->sin_addr),
-	    protname);
+  shishi_verbose (handle, "Sending to %s (%s) via %s", ki->name,
+		  inet_ntoa (((struct sockaddr_in *)
+			      &ki->sockaddress)->sin_addr),
+		  protname);
 
   switch (ki->protocol)
     {
@@ -299,12 +299,12 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
       if (rrs->type != T_SRV)
 	continue;
 
-      if (VERBOSE (handle))
-	printf ("Located SRV RRs server %s:%d...\n", srv->name, srv->port);
+      shishi_verbose (handle, "Located SRV RRs server %s:%d",
+		      srv->name, srv->port);
 
       memset (&hints, 0, sizeof (hints));
       hints.ai_socktype = SOCK_DGRAM;
-      asprintf (&port, "%d", srv->port);
+      port = xasprintf ("%d", srv->port);
       rc = getaddrinfo (srv->name, port, &hints, &ai);
       free (port);
 
@@ -315,9 +315,10 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 	  continue;
 	}
 
-      if (VERBOSE (handle))
-	printf ("Sending to %s:%d (%s)...\n", srv->name, srv->port,
-		inet_ntoa (((struct sockaddr_in *) ai->ai_addr)->sin_addr));
+      shishi_verbose (handle, "Sending to %s:%d (%s)",
+		      srv->name, srv->port,
+		      inet_ntoa (((struct sockaddr_in *)
+				  ai->ai_addr)->sin_addr));
 
       rc = shishi_sendrecv_udp (handle, ai->ai_addr,
 				indata, inlen, outdata, outlen,
@@ -341,10 +342,9 @@ shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
   char *tmp;
   int rc;
 
-  if (VERBOSE (handle))
-    printf ("Finding SRV RRs for %s...\n", realm);
+  shishi_verbose (handle, "Finding SRV RRs for %s", realm);
 
-  asprintf (&tmp, "_kerberos._udp.%s", realm);
+  tmp = xasprintf ("_kerberos._udp.%s", realm);
   rrs = shishi_resolv (tmp, SHISHI_DNS_SRV);
   free (tmp);
 
@@ -373,14 +373,13 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
   char *port;
   int rc;
 
-  if (VERBOSE (handle))
-    printf ("Trying direct realm host mapping for %s...\n", realm);
+  shishi_verbose (handle, "Trying direct realm host mapping for %s", realm);
 
   se = getservbyname ("kerberos", NULL);
   if (se)
-    asprintf (&port, "%d", ntohs (se->s_port));
+    port = xasprintf ("%d", ntohs (se->s_port));
   else
-    asprintf (&port, "%d", 88);
+    port = xasprintf ("%d", 88);
 
   memset (&hints, 0, sizeof (hints));
   hints.ai_socktype = SOCK_DGRAM;
@@ -395,9 +394,8 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
       return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
     }
 
-  if (VERBOSE (handle))
-    printf ("Sending to %s:%d (%s)...\n", realm, port,
-	    inet_ntoa (((struct sockaddr_in *) ai->ai_addr)->sin_addr));
+  shishi_verbose (handle, "Sending to %s:%d (%s)", realm, port,
+		  inet_ntoa (((struct sockaddr_in *) ai->ai_addr)->sin_addr));
 
   rc = shishi_sendrecv_udp (handle, ai->ai_addr,
 			    indata, inlen, outdata, outlen,
