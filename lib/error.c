@@ -304,3 +304,41 @@ shishi_warn (Shishi * handle, const char *format, ...)
   free (out);
   va_end (ap);
 }
+
+/**
+ * shishi_verbose:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @format: printf style format string.
+ * @...: print style arguments.
+ *
+ * Print a diagnostic message to output as defined in handle.
+ **/
+void
+shishi_verbose (Shishi * handle, const char *format, ...)
+{
+  va_list ap;
+  char *out;
+  int type;
+
+  if (!VERBOSE (handle))
+    return;
+
+  va_start (ap, format);
+  vasprintf (&out, format, ap);
+
+  type = shishi_error_outputtype (handle);
+  switch (type)
+    {
+    case SHISHI_OUTPUTTYPE_STDERR:
+      fprintf (stderr, _("libshishi: verbose: %s\n"), out);
+      break;
+    case SHISHI_OUTPUTTYPE_SYSLOG:
+      syslog (LOG_ERR, _("libshishi: verbose: %s"), out);
+      break;
+    default:
+      break;
+    }
+
+  free (out);
+  va_end (ap);
+}
