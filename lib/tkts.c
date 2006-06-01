@@ -956,8 +956,7 @@ recover_preauth_info (Shishi_tkts *tkts,
   size_t i, n;
   int rc;
 
-  if (VERBOSENOISE(tkts->handle))
-    printf ("Found INFO-ETYPE(2) pre-auth hints, trying to find etype...\n");
+  shishi_verbose (tkts->handle, "Found INFO-ETYPE(2) pre-auth hints");
 
   if (VERBOSEASN1(tkts->handle))
     {
@@ -969,8 +968,7 @@ recover_preauth_info (Shishi_tkts *tkts,
 
   if (lochint->preauthetype)
     {
-      if (VERBOSENOISE(tkts->handle))
-	printf ("Pre-auth data already specified...\n");
+      shishi_verbose (tkts->handle, "Pre-auth data already specified");
       return SHISHI_OK;
     }
 
@@ -990,8 +988,7 @@ recover_preauth_info (Shishi_tkts *tkts,
 	{
 	  size_t j;
 
-	  if (VERBOSENOISE(tkts->handle))
-	    printf ("Server has etype %d...\n", etype);
+	  shishi_verbose (tkts->handle, "Server has etype %d", etype);
 
 	  for (j = 0; j < tkts->handle->nclientkdcetypes; j++)
 	    {
@@ -1002,7 +999,7 @@ recover_preauth_info (Shishi_tkts *tkts,
 		      char *salt;
 		      size_t saltlen;
 
-		      printf ("New best etype %d...\n", etype);
+		      shishi_verbose (tkts->handle, "New best etype %d", etype);
 
 		      /* XXX mem leak. */
 
@@ -1036,8 +1033,8 @@ recover_preauth_info (Shishi_tkts *tkts,
     {
       lochint->preauthetype = tkts->handle->clientkdcetypes[foundpos];
 
-      if (VERBOSENOISE(tkts->handle))
-	printf ("Best pre-auth etype was %d...\n", lochint->preauthetype);
+      shishi_verbose (tkts->handle, "Best pre-auth etype was %d",
+		      lochint->preauthetype);
 
       *retry = true;
     }
@@ -1063,8 +1060,7 @@ recover_preauth (Shishi_tkts *tkts,
 
   *retry = false;
 
-  if (VERBOSE(tkts->handle))
-    printf ("Server requested pre-auth data, figuring out what to send...\n");
+  shishi_verbose (tkts->handle, "Server requests pre-auth data");
 
   rc = shishi_krberror_methoddata (tkts->handle, krberror, &pas);
   if (rc != SHISHI_OK)
@@ -1083,8 +1079,8 @@ recover_preauth (Shishi_tkts *tkts,
 	  free (format);
 	  if (rc == SHISHI_OK)
 	    {
-	      if (VERBOSENOISE(tkts->handle))
-		printf ("Looking at pa-type %d...\n", padatatype);
+	      shishi_verbose (tkts->handle, "Looking at pa-type %d",
+			      padatatype);
 
 	      switch (padatatype)
 		{
