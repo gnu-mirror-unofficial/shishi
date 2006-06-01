@@ -56,8 +56,7 @@ fread_file (FILE * stream, size_t * length)
 	  if (!tmp)
 	    {
 	      int save_errno = errno;
-	      if (buf)
-		free (buf);
+	      free (buf);
 	      errno = save_errno;
 	      return NULL;
 	    }
@@ -109,8 +108,7 @@ internal_read_file (const char *filename, size_t * length, const char *mode)
   if (rc != 0)
     {
       int save_errno = errno;
-      if (out)
-	free (out);
+      free (out);
       errno = save_errno;
       return NULL;
     }

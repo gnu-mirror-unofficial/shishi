@@ -1,5 +1,5 @@
 /* realloc() function that is glibc compatible.
-   Copyright (C) 1997, 2003, 2004 Free Software Foundation, Inc.
+   Copyright (C) 1997, 2003, 2004, 2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,11 +33,12 @@ rpl_realloc (void *p, size_t n)
 {
   if (n == 0)
     {
-      n = 1;
+      void *tmp = malloc (1);
+      if (!tmp)
+	return NULL;
 
-      /* In theory realloc might fail, so don't rely on it to free.  */
       free (p);
-      p = NULL;
+      return tmp;
     }
 
   if (p == NULL)
