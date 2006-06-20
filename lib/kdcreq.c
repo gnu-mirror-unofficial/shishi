@@ -1373,8 +1373,7 @@ shishi_kdcreq_build (Shishi * handle, Shishi_asn1 kdcreq)
   size_t n;
   int msgtype;
 
-  if (VERBOSE (handle))
-    printf ("Building KDC-REQ...\n");
+  shishi_verbose (handle, "Building KDC-REQ...");
 
   if (shishi_asn1_empty_p (handle, kdcreq, "req-body.rtime"))
     {
