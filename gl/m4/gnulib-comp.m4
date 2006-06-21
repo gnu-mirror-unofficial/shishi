@@ -226,6 +226,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/eoverflow.m4
   m4/error.m4
   m4/extensions.m4
+  m4/full-header-path.m4
   m4/gc-arcfour.m4
   m4/gc-des.m4
   m4/gc-hmac-md5.m4
@@ -249,7 +250,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/hmac-md5.m4
   m4/hmac-sha1.m4
   m4/intmax_t.m4
-  m4/inttypes.m4
   m4/inttypes_h.m4
   m4/lib-ld.m4
   m4/lib-link.m4

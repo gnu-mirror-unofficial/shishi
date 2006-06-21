@@ -29,86 +29,82 @@
 #include <errno.h>
 
 /* Read a STREAM and return a newly allocated string with the content,
-   and set LENGTH to the length of the string.  The string is
-   zero-terminated, but the terminating zero character is not counted
-   in the LENGTH variable.  On errors, return NULL, sets errno and
-   LENGTH is undefined. */
+   and set *LENGTH to the length of the string.  The string is
+   zero-terminated, but the terminating zero byte is not counted in
+   *LENGTH.  On errors, *LENGTH is undefined, errno preserves the
+   values set by system functions (if any), and NULL is returned. */
 char *
 fread_file (FILE * stream, size_t * length)
 {
   char *buf = NULL;
   size_t alloc = 0;
   size_t size = 0;
+  int save_errno;
 
-  while (!feof (stream))
+  for (;;)
     {
       size_t count;
+      size_t requested;
 
       if (size + BUFSIZ + 1 > alloc)
 	{
-	  char *tmp;
+	  char *new_buf;
 
 	  alloc += alloc / 2;
 	  if (alloc < size + BUFSIZ + 1)
 	    alloc = size + BUFSIZ + 1;
 
-	  tmp = realloc (buf, alloc);
-	  if (!tmp)
+	  new_buf = realloc (buf, alloc);
+	  if (!new_buf)
 	    {
-	      int save_errno = errno;
-	      free (buf);
-	      errno = save_errno;
-	      return NULL;
+	      save_errno = errno;
+	      break;
 	    }
 
-	  buf = tmp;
+	  buf = new_buf;
 	}
 
-      count = fread (buf + size, 1, alloc - size - 1, stream);
+      requested = alloc - size - 1;
+      count = fread (buf + size, 1, requested, stream);
       size += count;
 
-      if (ferror (stream))
+      if (count != requested)
 	{
-	  int save_errno = errno;
-	  free (buf);
-	  errno = save_errno;
-	  return NULL;
+	  save_errno = errno;
+	  if (ferror (stream))
+	    break;
+	  buf[size] = '\0';
+	  *length = size;
+	  return buf;
 	}
     }
 
-  buf[size] = '\0';
-
-  *length = size;
-
-  return buf;
+  free (buf);
+  errno = save_errno;
+  return NULL;
 }
 
 static char *
 internal_read_file (const char *filename, size_t * length, const char *mode)
 {
   FILE *stream = fopen (filename, mode);
-  char *out = NULL;
-  int rc;
+  char *out;
+  int save_errno;
 
   if (!stream)
     return NULL;
 
   out = fread_file (stream, length);
 
-  if (out)
-    rc = fclose (stream);
-  else
-    {
-      /* On failure, preserve the original errno value. */
-      int save_errno = errno;
-      rc = fclose (stream);
-      errno = save_errno;
-    }
+  save_errno = errno;
 
-  if (rc != 0)
+  if (fclose (stream) != 0)
     {
-      int save_errno = errno;
-      free (out);
+      if (out)
+	{
+	  save_errno = errno;
+	  free (out);
+	}
       errno = save_errno;
       return NULL;
     }
@@ -117,10 +113,11 @@ internal_read_file (const char *filename, size_t * length, const char *mode)
 }
 
 /* Open and read the contents of FILENAME, and return a newly
-   allocated string with the content, and set LENGTH to the length of
+   allocated string with the content, and set *LENGTH to the length of
    the string.  The string is zero-terminated, but the terminating
-   zero character is not counted in the LENGTH variable.  On errors,
-   return NULL and sets errno.  */
+   zero byte is not counted in *LENGTH.  On errors, *LENGTH is
+   undefined, errno preserves the values set by system functions (if
+   any), and NULL is returned.  */
 char *
 read_file (const char *filename, size_t * length)
 {
@@ -130,8 +127,10 @@ read_file (const char *filename, size_t * length)
 /* Open (on non-POSIX systems, in binary mode) and read the contents
    of FILENAME, and return a newly allocated string with the content,
    and set LENGTH to the length of the string.  The string is
-   zero-terminated, but the terminating zero character is not counted
-   in the LENGTH variable.  On errors, return NULL and sets errno.  */
+   zero-terminated, but the terminating zero byte is not counted in
+   the LENGTH variable.  On errors, *LENGTH is undefined, errno
+   preserves the values set by system functions (if any), and NULL is
+   returned.  */
 char *
 read_binary_file (const char *filename, size_t * length)
 {
