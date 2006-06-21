@@ -13,9 +13,9 @@ licensed under the GNU General Public License license (see COPYING),
 and the documentation (doc/) is licensed under the GNU Free
 Documentation License.
 
-Third party packages (asn1/, crypto/, and gl/) are distributed here
-for convenience, and they have their own respective licenses,
-typically the GPL or LGPL.
+Third party packages (asn1/ and gl/) are distributed here for
+convenience, and they have their own respective licenses, typically
+the GPL or LGPL.
 
 For updates to the project, see <http://www.gnu.org/software/shishi/>.
 
