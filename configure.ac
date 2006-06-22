@@ -45,6 +45,7 @@ AC_CHECK_HEADERS(stdlib.h string.h strings.h memory.h \
 	arpa/nameser.h arpa/inet.h netinet/in.h netinet/in6.h)
 
 # Checks for programs.
+AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 AM_GNU_GETTEXT(external, need-ngettext)
 AM_GNU_GETTEXT_VERSION(0.14.1)
