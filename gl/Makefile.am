@@ -288,9 +288,7 @@ sys/socket.h: socket_.h
 	cp $(srcdir)/socket_.h $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += sys/socket.h sys/socket.h-t
-
-mostlyclean-local:
-	-rmdir sys 2>/dev/null
+MOSTLYCLEANDIRS += sys
 
 ## end   gnulib module sys_socket
 
@@ -354,7 +352,13 @@ libgnu_la_SOURCES += xvasprintf.h xvasprintf.c xasprintf.c
 
 ## end   gnulib module xvasprintf
 
+
 mostlyclean-local:
-	-test -n "$(MOSTLYCLEANDIRS)" && rmdir $(MOSTLYCLEANDIRS) 2>/dev/null
+	@test -z "$(MOSTLYCLEANDIRS)" || \
+	  for dir in $(MOSTLYCLEANDIRS); do \
+	    if test -d $$dir; then \
+	      echo "rmdir $$dir"; rmdir $$dir; \
+	    fi; \
+	  done
 
 # Makefile.am ends here
