@@ -9,3 +9,4 @@ sysexits.h
 .libs
 getdate.c
 sys
+stdint.h
