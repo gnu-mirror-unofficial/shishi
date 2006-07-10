@@ -55,9 +55,11 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_GETSUBOPT
   gl_GETTIME
   AC_FUNC_GETTIMEOFDAY_CLOBBER
+  gl_INET_NTOP
   gl_MBCHAR
   gl_MBITER
   gl_FUNC_MEMCHR
+  gl_MINMAX
   gl_FUNC_MKTIME
   gl_FUNC_READ_FILE
   gl_FUNC_READLINK
@@ -65,6 +67,7 @@ AC_DEFUN([gl_INIT],
   gl_C_RESTRICT
   gt_FUNC_SETENV
   gl_SIZE_MAX
+  gl_FUNC_SNPRINTF
   gl_TYPE_SOCKLEN_T
   gt_TYPE_SSIZE_T
   gl_STDARG_H
@@ -84,6 +87,7 @@ AC_DEFUN([gl_INIT],
   gl_HEADER_UNISTD
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
+  gl_FUNC_WCWIDTH
   gl_XALLOC
   gl_XREADLINK
   gl_XSIZE
@@ -144,6 +148,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/hmac-md5.c
   lib/hmac-sha1.c
   lib/hmac.h
+  lib/inet_ntop.c
+  lib/inet_ntop.h
   lib/mbchar.c
   lib/mbchar.h
   lib/mbuiter.h
@@ -154,6 +160,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/memchr.c
   lib/memxor.c
   lib/memxor.h
+  lib/minmax.h
   lib/mktime.c
   lib/printf-args.c
   lib/printf-args.h
@@ -170,6 +177,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/sha1.c
   lib/sha1.h
   lib/size_max.h
+  lib/snprintf.c
+  lib/snprintf.h
   lib/socket_.h
   lib/stdbool_.h
   lib/stdint_.h
@@ -200,6 +209,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/vasnprintf.h
   lib/vasprintf.c
   lib/vasprintf.h
+  lib/wcwidth.h
   lib/xalloc.h
   lib/xasprintf.c
   lib/xgetdomainname.c
@@ -214,6 +224,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xstrndup.h
   lib/xvasprintf.c
   lib/xvasprintf.h
+  m4/absolute-header.m4
   m4/alloca.m4
   m4/allocsa.m4
   m4/arcfour.m4
@@ -226,7 +237,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/eoverflow.m4
   m4/error.m4
   m4/extensions.m4
-  m4/full-header-path.m4
   m4/gc-arcfour.m4
   m4/gc-des.m4
   m4/gc-hmac-md5.m4
@@ -249,6 +259,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/gettimeofday.m4
   m4/hmac-md5.m4
   m4/hmac-sha1.m4
+  m4/inet_ntop.m4
   m4/intmax_t.m4
   m4/inttypes_h.m4
   m4/lib-ld.m4
@@ -263,8 +274,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/md5.m4
   m4/memchr.m4
   m4/memxor.m4
+  m4/minmax.m4
   m4/mktime.m4
-  m4/onceonly_2_57.m4
   m4/read-file.m4
   m4/readlink.m4
   m4/restrict.m4
@@ -272,6 +283,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/sha1.m4
   m4/signed.m4
   m4/size_max.m4
+  m4/snprintf.m4
   m4/socklen.m4
   m4/sockpfaf.m4
   m4/ssize_t.m4
@@ -296,6 +308,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/vasnprintf.m4
   m4/vasprintf.m4
   m4/wchar_t.m4
+  m4/wcwidth.m4
   m4/wint_t.m4
   m4/xalloc.m4
   m4/xreadlink.m4
