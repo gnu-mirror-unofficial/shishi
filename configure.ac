@@ -53,6 +53,7 @@ AM_MISSING_PROG(PERL, perl, $missing_dir)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
 AM_MISSING_PROG(ASN1PARSER, asn1Parser, $missing_dir)
 AM_MISSING_PROG(GENGETOPT, gengetopt, $missing_dir)
+AM_MISSING_PROG(DIA, dia, $missing_dir)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_UID_T

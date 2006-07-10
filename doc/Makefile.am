@@ -25,7 +25,7 @@ endif
 EXTRA_DIST = gdoc shishi.html shishi.pdf shishi.ps components.dia
 
 components.png: components.dia
-	dia --export=$@ --filter=png $<
+	$(DIA) --export=$@ --filter=png $<
 
 info_TEXINFOS = shishi.texi
 shishi_TEXINFOS = gpl.texi fdl.texi $(gdoc_TEXINFOS) \
