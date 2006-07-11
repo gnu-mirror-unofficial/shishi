@@ -101,6 +101,7 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/GNUmakefile
   build-aux/config.rpath
   build-aux/maint.mk
+  doc/fdl.texi
   doc/getdate.texi
   lib/alloca_.h
   lib/allocsa.c
