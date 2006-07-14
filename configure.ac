@@ -39,7 +39,7 @@ gl_EARLY
 AC_HEADER_STDC
 AC_CHECK_HEADERS(stdlib.h string.h strings.h memory.h \
 	sys/poll.h sys/time.h \
-	unistd.h netdb.h time.h termios.h signal.h pwd.h errno.h syslog.h \
+	netdb.h time.h termios.h signal.h pwd.h errno.h syslog.h \
 	locale.h resolv.h fcntl.h \
 	arpa/nameser.h arpa/inet.h netinet/in.h netinet/in6.h)
 
