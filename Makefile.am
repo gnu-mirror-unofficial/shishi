@@ -92,7 +92,7 @@ release:
 	$(MAKE) ChangeLog distcheck
 	cvs commit -m "" ChangeLog
 	cvs rtag $(tag) $(PACKAGE)
-	cd doc && ./gendocs.sh --html "--css-include=texinfo.css" \
+	cd doc && ../gendocs.sh --html "--css-include=texinfo.css" \
 		-o ../$(htmldir)/manual/ $(PACKAGE) "Shishi"
 	gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
 	cp -v $(distdir).tar.gz{,.sig} $(htmldir)/releases/
