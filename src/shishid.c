@@ -314,11 +314,16 @@ doit (void)
 
   kdc_listen ();
 
+  {
+    char *slash = strrchr (program_name, '/');
+    char *shortname = (slash != NULL ? slash + 1 : program_name);
+
 #ifdef LOG_PERROR
-  openlog (program_name, LOG_CONS | LOG_PERROR, LOG_DAEMON);
+    openlog (shortname, LOG_CONS | LOG_PERROR, LOG_DAEMON);
 #else
-  openlog (program_name, LOG_CONS, LOG_DAEMON);
+    openlog (shortname, LOG_CONS, LOG_DAEMON);
 #endif
+  }
 
   kdc_setuid ();
 
