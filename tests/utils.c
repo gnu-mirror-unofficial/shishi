@@ -27,8 +27,12 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
-
+#include <stdint.h>
+#include <sys/types.h>
+#include <sys/select.h>
+#include <sys/socket.h>
 #include <unistd.h>
+#include <string.h>
 
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
@@ -42,30 +46,12 @@
 #include <pwd.h>
 #endif
 
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-#ifdef HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif
-
-#include <sys/socket.h>
-
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif
-
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#else
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif
 #endif
 
 #if TIME_WITH_SYS_TIME
@@ -77,16 +63,6 @@
 # else
 #  include <time.h>
 # endif
-#endif
-
-#if HAVE_STRING_H
-# if !STDC_HEADERS && HAVE_MEMORY_H
-#  include <memory.h>
-# endif
-# include <string.h>
-#endif
-#if HAVE_STRINGS_H
-# include <strings.h>
 #endif
 
 #ifdef HAVE_SIGNAL_H
