@@ -17,6 +17,8 @@ shishi_keys_from_keytab_mem, and shishi_keys_from_keytab_file.
 This fixes a bug that caused self-test failures in Shishi on 64-bit
 platforms.
 
+** Remove path from syslog messages for shishid.
+
 * Version 0.0.26 (released 2006-05-15)
 
 ** Requests for service tickets (TGS) are now sent without a sub-session key.
