@@ -30,6 +30,9 @@ DISTCLEANFILES = shishi-int.h
 MAINTAINERCLEANFILES = kerberos5.c
 nodist_include_HEADERS = shishi-int.h
 
+shishi-int.h:
+	cp ../gl/stdint.h shishi-int.h
+
 include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
 libshishi_la_SOURCES = shishi.h.in internal.h \

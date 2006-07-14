@@ -59,7 +59,6 @@ AM_MISSING_PROG(DIA, dia, $missing_dir)
 AC_TYPE_UID_T
 AC_TYPE_SIGNAL
 AC_HEADER_TIME
-AX_CREATE_STDINT_H(lib/shishi-int.h, sys/types.h)
 AC_CHECK_DECLS(h_errno)
 
 # For libtasn1
