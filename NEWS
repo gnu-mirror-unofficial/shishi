@@ -12,6 +12,14 @@ shishi_keys_add_keytab_mem, shishi_keys_add_keytab_file,
 shishi_keys_from_keytab_mem, and shishi_keys_from_keytab_file.
 
 ** New APIs to manage set of keys.
+shishi_keys
+shishi_keys_done
+shishi_keys_size
+shishi_keys_nth
+shishi_keys_remove
+shishi_keys_add
+shishi_keys_print
+shishi_keys_to_file
 
 ** Libtasn1 updated to 0.3.6.
 This fixes a bug that caused self-test failures in Shishi on 64-bit
