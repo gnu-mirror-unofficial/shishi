@@ -19,6 +19,8 @@
 # any checks for libraries, header files, types and library functions.
 AC_DEFUN([gl_EARLY],
 [
+  m4_pattern_forbid([^gl_[A-Z]])dnl the gnulib macro namespace
+  m4_pattern_allow([^gl_ES$])dnl a valid locale name
   AC_REQUIRE([AC_PROG_RANLIB])
   AC_REQUIRE([AC_GNU_SOURCE])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
@@ -31,6 +33,7 @@ AC_DEFUN([gl_INIT],
   AM_CONDITIONAL([GL_COND_LIBTOOL], [true])
   gl_FUNC_ALLOCA
   gl_ALLOCSA
+  gl_HEADER_ARPA_INET
   gl_FUNC_BASE64
   gl_CRC
   gl_ERROR
@@ -59,12 +62,11 @@ AC_DEFUN([gl_INIT],
   gl_MBCHAR
   gl_MBITER
   gl_FUNC_MEMCHR
-  gl_MINMAX
   gl_FUNC_MKTIME
+  gl_HEADER_NETINET_IN
   gl_FUNC_READ_FILE
   gl_FUNC_READLINK
   AC_FUNC_REALLOC
-  gl_C_RESTRICT
   gt_FUNC_SETENV
   gl_SIZE_MAX
   gl_FUNC_SNPRINTF
@@ -165,7 +167,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/memchr.c
   lib/memxor.c
   lib/memxor.h
-  lib/minmax.h
   lib/mktime.c
   lib/printf-args.c
   lib/printf-args.h
@@ -234,6 +235,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/alloca.m4
   m4/allocsa.m4
   m4/arcfour.m4
+  m4/arpa_inet_h.m4
   m4/base64.m4
   m4/bison.m4
   m4/clock_time.m4
@@ -280,11 +282,11 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/md5.m4
   m4/memchr.m4
   m4/memxor.m4
-  m4/minmax.m4
   m4/mktime.m4
+  m4/netinet_in_h.m4
+  m4/onceonly_2_57.m4
   m4/read-file.m4
   m4/readlink.m4
-  m4/restrict.m4
   m4/setenv.m4
   m4/sha1.m4
   m4/signed.m4
