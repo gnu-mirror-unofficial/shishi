@@ -4500,7 +4500,8 @@ is experimental.  Comments and feedback is appreciated.
 * Telnet encryption with AES-CCM::      Integrity and privacy protected telnet.
 * Kerberized rsh and rlogin::           Description of KCMD protocol.
 * Key as initialization vector::        Some cryptography discussion.
-* The MIT Kerberos Keytab Binary File Format:: Format of the MIT keytab files.
+* The Keytab Binary File Format::       Format of keytab files.
+* The Credential Cache Binary File Format:: Format of ccache files.
 @end menu
 
 @node STARTTLS protected KDC exchanges
@@ -5233,10 +5234,21 @@ like that.  Even better, don't use a fixed IV-- use the DES encryption
 of a counter, or something like that.
 @end verbatim
 
-@node The MIT Kerberos Keytab Binary File Format
-@section The MIT Kerberos Keytab Binary File Format
+@node The Keytab Binary File Format
+@section The Keytab Binary File Format
+
+The keytab file format is described in the file @file{keytab.txt},
+included in verbatim below.
 
 @verbatiminclude keytab.txt
+
+@node The Credential Cache Binary File Format
+@section The Credential Cache Binary File Format
+
+The credential cache file format is described in the file
+@file{keytab.txt}, included in verbatim below.
+
+@verbatiminclude ccache.txt
 
 @node Copying Information
 @appendix Copying Information
