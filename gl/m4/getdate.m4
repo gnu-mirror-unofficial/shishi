@@ -19,8 +19,6 @@ AC_DEFUN([gl_C_COMPOUND_LITERALS],
 
 AC_DEFUN([gl_GETDATE],
 [
-  AC_LIBOBJ([getdate])
-
   dnl Prerequisites of lib/getdate.h.
   AC_REQUIRE([AM_STDBOOL_H])
   AC_REQUIRE([gl_TIMESPEC])
