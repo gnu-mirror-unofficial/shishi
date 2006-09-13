@@ -154,7 +154,7 @@ similar job.
 @table @asis
 @item It's Free Software
 Anybody can use, modify, and redistribute it under the terms of the GNU
-General Public License (@pxref{Copying}).
+General Public License (@pxref{GNU GPL}).
 
 @item It's thread-safe
 The library uses no global variables.
