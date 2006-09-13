@@ -16,8 +16,8 @@ noinst_LTLIBRARIES = libgnu.la
 
 libgnu_la_SOURCES =
 libgnu_la_LIBADD = @LTLIBOBJS@
+libgnu_la_LDFLAGS = $(AM_LDFLAGS)
 noinst_HEADERS =
-pkgdata_DATA =
 EXTRA_DIST =
 BUILT_SOURCES =
 SUFFIXES =
@@ -37,8 +37,8 @@ EXTRA_DIST += alloca_.h
 # We need the following in order to create <alloca.h> when the system
 # doesn't have one that works with the given compiler.
 alloca.h: alloca_.h
-	cp $(srcdir)/alloca_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/alloca_.h $@-t
+	mv -f $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
 
 ## end   gnulib module alloca-opt
@@ -58,6 +58,7 @@ BUILT_SOURCES += $(ARPA_INET_H)
 # doesn't have one.
 arpa/inet.h:
 	test -d arpa || mkdir arpa
+	rm -f $@-t $@
 	echo '#include <sys/socket.h>' >$@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += arpa/inet.h arpa/inet.h-t
@@ -71,15 +72,26 @@ libgnu_la_SOURCES += base64.h base64.c
 
 ## end   gnulib module base64
 
+## begin gnulib module crc
+
+EXTRA_DIST += crc.h
+
+## end   gnulib module crc
+
 ## begin gnulib module gc
 
+EXTRA_DIST += gc.h
 if GL_COND_LIBTOOL
-libgnu_la_LIBADD += $(LTLIBGCRYPT)
-else
-libgnu_la_LIBADD += $(LIBGCRYPT)
+libgnu_la_LDFLAGS += $(LTLIBGCRYPT)
 endif
 
 ## end   gnulib module gc
+
+## begin gnulib module gc-md5
+
+libgnu_la_SOURCES += md5.h
+
+## end   gnulib module gc-md5
 
 ## begin gnulib module getaddrinfo
 
@@ -89,17 +101,30 @@ libgnu_la_SOURCES += getaddrinfo.h
 
 ## begin gnulib module getdate
 
+libgnu_la_SOURCES += getdate.y
 BUILT_SOURCES += getdate.c
 MAINTAINERCLEANFILES += getdate.c
-EXTRA_DIST += getdate.c
+EXTRA_DIST += getdate.c getdate.h
 
 ## end   gnulib module getdate
+
+## begin gnulib module getdelim
+
+EXTRA_DIST += getdelim.h
+
+## end   gnulib module getdelim
 
 ## begin gnulib module getdomainname
 
 libgnu_la_SOURCES += getdomainname.h
 
 ## end   gnulib module getdomainname
+
+## begin gnulib module getline
+
+EXTRA_DIST += getline.h
+
+## end   gnulib module getline
 
 ## begin gnulib module getopt
 
@@ -109,11 +134,17 @@ EXTRA_DIST += getopt_.h getopt_int.h
 # We need the following in order to create <getopt.h> when the system
 # doesn't have one that works with the given compiler.
 getopt.h: getopt_.h
-	cp $(srcdir)/getopt_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/getopt_.h $@-t
+	mv -f $@-t $@
 MOSTLYCLEANFILES += getopt.h getopt.h-t
 
 ## end   gnulib module getopt
+
+## begin gnulib module getpass
+
+EXTRA_DIST += getpass.h
+
+## end   gnulib module getpass
 
 ## begin gnulib module getsubopt
 
@@ -153,6 +184,7 @@ BUILT_SOURCES += $(NETINET_IN_H)
 # doesn't have one.
 netinet/in.h:
 	test -d netinet || mkdir netinet
+	rm -f $@-t $@
 	echo '#include <sys/socket.h>' >$@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += netinet/in.h netinet/in.h-t
@@ -165,6 +197,12 @@ MOSTLYCLEANDIRS += netinet
 libgnu_la_SOURCES += progname.h progname.c
 
 ## end   gnulib module progname
+
+## begin gnulib module read-file
+
+EXTRA_DIST += read-file.h
+
+## end   gnulib module read-file
 
 ## begin gnulib module setenv
 
@@ -192,6 +230,7 @@ EXTRA_DIST += stdbool_.h
 # We need the following in order to create <stdbool.h> when the system
 # doesn't have one that works.
 stdbool.h: stdbool_.h
+	rm -f $@-t $@
 	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' < $(srcdir)/stdbool_.h > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += stdbool.h stdbool.h-t
@@ -206,10 +245,11 @@ EXTRA_DIST += stdint_.h
 # We need the following in order to create <stdint.h> when the system
 # doesn't have one that works with the given compiler.
 stdint.h: stdint_.h
+	rm -f $@-t $@
 	sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
 	    -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
-	    -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
 	    -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
+	    -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
 	    -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_INTTYPES_H''@/$(HAVE_SYS_INTTYPES_H)/g' \
 	    -e 's/@''HAVE_SYS_BITYPES_H''@/$(HAVE_SYS_BITYPES_H)/g' \
@@ -245,6 +285,24 @@ libgnu_la_SOURCES += strchrnul.h
 
 ## end   gnulib module strchrnul
 
+## begin gnulib module strdup
+
+EXTRA_DIST += strdup.h
+
+## end   gnulib module strdup
+
+## begin gnulib module strndup
+
+EXTRA_DIST += strndup.h
+
+## end   gnulib module strndup
+
+## begin gnulib module strnlen
+
+EXTRA_DIST += strnlen.h
+
+## end   gnulib module strnlen
+
 ## begin gnulib module strnlen1
 
 libgnu_la_SOURCES += strnlen1.h strnlen1.c
@@ -257,6 +315,12 @@ libgnu_la_SOURCES += strtok_r.h
 
 ## end   gnulib module strtok_r
 
+## begin gnulib module strverscmp
+
+EXTRA_DIST += strverscmp.h
+
+## end   gnulib module strverscmp
+
 ## begin gnulib module sys_select
 
 BUILT_SOURCES += $(SYS_SELECT_H)
@@ -265,6 +329,7 @@ BUILT_SOURCES += $(SYS_SELECT_H)
 # doesn't have one that works with the given compiler.
 sys/select.h:
 	test -d sys || mkdir sys
+	rm -f $@-t $@
 	echo '#include <sys/socket.h>' >$@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += sys/select.h sys/select.h-t
@@ -281,8 +346,8 @@ EXTRA_DIST += socket_.h
 # doesn't have one that works with the given compiler.
 sys/socket.h: socket_.h
 	test -d sys || mkdir sys
-	cp $(srcdir)/socket_.h $@-t
-	mv $@-t $@
+	cp -f $(srcdir)/socket_.h $@-t
+	mv -f $@-t $@
 MOSTLYCLEANFILES += sys/socket.h sys/socket.h-t
 MOSTLYCLEANDIRS += sys
 
@@ -297,6 +362,7 @@ EXTRA_DIST += stat_.h
 # has one that is incomplete.
 sys/stat.h: stat_.h
 	test -d sys || mkdir sys
+	rm -f $@-t $@
 	sed -e 's|@''ABSOLUTE_SYS_STAT_H''@|$(ABSOLUTE_SYS_STAT_H)|g' \
 	    < $(srcdir)/stat_.h > $@-t
 	mv $@-t $@
@@ -305,11 +371,23 @@ MOSTLYCLEANDIRS += sys
 
 ## end   gnulib module sys_stat
 
+## begin gnulib module time_r
+
+EXTRA_DIST += time_r.h
+
+## end   gnulib module time_r
+
 ## begin gnulib module timegm
 
 libgnu_la_SOURCES += timegm.h
 
 ## end   gnulib module timegm
+
+## begin gnulib module timespec
+
+EXTRA_DIST += timespec.h
+
+## end   gnulib module timespec
 
 ## begin gnulib module unistd
 
@@ -341,6 +419,12 @@ libgnu_la_SOURCES += wcwidth.h
 
 ## end   gnulib module wcwidth
 
+## begin gnulib module xalloc
+
+EXTRA_DIST += xalloc.h
+
+## end   gnulib module xalloc
+
 ## begin gnulib module xgetdomainname
 
 libgnu_la_SOURCES += xgetdomainname.h xgetdomainname.c
@@ -352,6 +436,12 @@ libgnu_la_SOURCES += xgetdomainname.h xgetdomainname.c
 libgnu_la_SOURCES += xgethostname.h xgethostname.c
 
 ## end   gnulib module xgethostname
+
+## begin gnulib module xreadlink
+
+EXTRA_DIST += xreadlink.h
+
+## end   gnulib module xreadlink
 
 ## begin gnulib module xsize
 
@@ -379,5 +469,3 @@ mostlyclean-local: mostlyclean-generic
 	      echo "rmdir $$dir"; rmdir $$dir; \
 	    fi; \
 	  done
-
-# Makefile.am ends here

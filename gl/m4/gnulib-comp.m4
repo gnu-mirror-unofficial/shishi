@@ -31,6 +31,7 @@ AC_DEFUN([gl_EARLY],
 AC_DEFUN([gl_INIT],
 [
   AM_CONDITIONAL([GL_COND_LIBTOOL], [true])
+  gl_cond_libtool=true
   gl_FUNC_ALLOCA
   gl_ALLOCSA
   gl_HEADER_ARPA_INET
@@ -39,6 +40,10 @@ AC_DEFUN([gl_INIT],
   gl_ERROR
   dnl gl_USE_SYSTEM_EXTENSIONS must be added quite early to configure.ac.
   gl_GC
+  if test $gl_cond_libtool = false; then
+    gl_ltlibdeps="$gl_ltlibdeps $LTLIBGCRYPT"
+    gl_libdeps="$gl_libdeps $LIBGCRYPT"
+  fi
   gl_GC_ARCFOUR
   gl_GC_DES
   gl_GC_HMAC_MD5
@@ -284,7 +289,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/memxor.m4
   m4/mktime.m4
   m4/netinet_in_h.m4
-  m4/onceonly_2_57.m4
   m4/read-file.m4
   m4/readlink.m4
   m4/setenv.m4
@@ -302,7 +306,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strcase.m4
   m4/strchrnul.m4
   m4/strdup.m4
-  m4/strerror_r.m4
   m4/strndup.m4
   m4/strnlen.m4
   m4/strtok_r.m4
