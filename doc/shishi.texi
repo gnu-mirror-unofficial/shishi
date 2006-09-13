@@ -67,13 +67,12 @@ Appendices
 
 * Criticism of Kerberos::       Why you maybe shouldn't use Kerberos.
 * Protocol Extensions::         Description of protocol extensions used.
-* Copying This Manual::         How you can copy and share this manual.
-* Copying::                     How you can copy and share the source.
+* Copying Information::         How you can copy and share Shishi.
 
 Indices
 
-* Concept Index::               Index of concepts and programs.
 * Function and Data Index::     Index of functions, variables and data types.
+* Concept Index::               Index of concepts and programs.
 @end menu
 
 
@@ -5239,26 +5238,26 @@ of a counter, or something like that.
 
 @verbatiminclude keytab.txt
 
-@node Copying This Manual
-@appendix Copying This Manual
+@node Copying Information
+@appendix Copying Information
 
 @menu
-* GNU Free Documentation License::  License for copying this manual.
+* GNU Free Documentation License::   License for copying this manual.
+* GNU GPL::                          License for copying the programs.
 @end menu
 
 @include fdl.texi
-
 @include gpl.texi
-
-@node Concept Index
-@unnumbered Concept Index
-
-@printindex cp
 
 @node Function and Data Index
 @unnumbered Function and Data Index
 
 @printindex fn
+
+@node Concept Index
+@unnumbered Concept Index
+
+@printindex cp
 
 @summarycontents
 @contents
