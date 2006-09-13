@@ -30,7 +30,7 @@ components.png: components.dia
 info_TEXINFOS = shishi.texi
 shishi_TEXINFOS = gpl.texi fdl.texi $(gdoc_TEXINFOS) \
 	shishi-api-error-labels.texi getdate.texi \
-	texinfo.css components.png keytab.txt
+	texinfo.css components.png keytab.txt ccache.txt
 
 AM_MAKEINFOHTMLFLAGS = --no-split --number-sections --css-include=texinfo.css
 
