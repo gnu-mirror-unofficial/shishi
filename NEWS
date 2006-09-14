@@ -27,6 +27,8 @@ platforms.
 
 ** Remove path from syslog messages for shishid.
 
+** Update of gnulib files.
+
 * Version 0.0.26 (released 2006-05-15)
 
 ** Requests for service tickets (TGS) are now sent without a sub-session key.
