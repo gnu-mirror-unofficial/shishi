@@ -29,6 +29,8 @@ platforms.
 
 ** Update of gnulib files.
 
+** Some minor code cleanups.
+
 * Version 0.0.26 (released 2006-05-15)
 
 ** Requests for service tickets (TGS) are now sent without a sub-session key.

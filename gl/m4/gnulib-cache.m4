@@ -15,11 +15,11 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --local-dir=gl/override --lib=libgnu --source-base=gl --m4-base=gl/m4 --doc-base=doc --aux-dir=. --avoid=xalloc-die --libtool --macro-prefix=gl base64 crc error fdl gc-arcfour gc-des gc-hmac-md5 gc-hmac-sha1 gc-md4 gc-md5 gc-pbkdf2-sha1 gc-random gendocs getaddrinfo getdate gethostname getline getopt getpass getsubopt maintainer-makefile progname read-file realloc setenv socklen stdint strcase strchrnul strdup strndup strtok_r strverscmp sys_select sys_socket sys_stat timegm unistd vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf
+#   gnulib-tool --import --dir=. --local-dir=gl/override --lib=libgnu --source-base=gl --m4-base=gl/m4 --doc-base=doc --aux-dir=. --avoid=xalloc-die --libtool --macro-prefix=gl base64 crc error fdl gc-arcfour gc-des gc-hmac-md5 gc-hmac-sha1 gc-md4 gc-md5 gc-pbkdf2-sha1 gc-random gendocs getaddrinfo getdate gethostname getline getopt getpass getsubopt gnupload maintainer-makefile progname read-file realloc setenv socklen stdint strcase strchrnul strdup strndup strtok_r strverscmp sys_select sys_socket sys_stat timegm unistd vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([gl/override])
-gl_MODULES([base64 crc error fdl gc-arcfour gc-des gc-hmac-md5 gc-hmac-sha1 gc-md4 gc-md5 gc-pbkdf2-sha1 gc-random gendocs getaddrinfo getdate gethostname getline getopt getpass getsubopt maintainer-makefile progname read-file realloc setenv socklen stdint strcase strchrnul strdup strndup strtok_r strverscmp sys_select sys_socket sys_stat timegm unistd vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf])
+gl_MODULES([base64 crc error fdl gc-arcfour gc-des gc-hmac-md5 gc-hmac-sha1 gc-md4 gc-md5 gc-pbkdf2-sha1 gc-random gendocs getaddrinfo getdate gethostname getline getopt getpass getsubopt gnupload maintainer-makefile progname read-file realloc setenv socklen stdint strcase strchrnul strdup strndup strtok_r strverscmp sys_select sys_socket sys_stat timegm unistd vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf])
 gl_AVOID([xalloc-die])
 gl_SOURCE_BASE([gl])
 gl_M4_BASE([gl/m4])
