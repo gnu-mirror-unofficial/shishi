@@ -31,7 +31,11 @@ MAINTAINERCLEANFILES = kerberos5.c
 nodist_include_HEADERS = shishi-int.h
 
 shishi-int.h:
-	cp ../gl/stdint.h shishi-int.h
+	if test -n "$(STDINT_H)"; then \
+		cp ../gl/stdint.h shishi-int.h; \
+	else \
+		echo '#include <stdint.h>' > shishi-int.h; \
+	fi
 
 include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
