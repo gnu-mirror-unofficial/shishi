@@ -3,6 +3,7 @@ Makefile.gdoc
 Makefile.in
 components.png
 html
+keytab2shishi.1
 man
 mdate-sh
 shisa.1
