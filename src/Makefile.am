@@ -30,8 +30,8 @@ BUILT_SOURCES = shishi_cmd.c shishi_cmd.h shisa_cmd.c shisa_cmd.h	\
 	keytab2shishi_cmd.h
 MAINTAINERCLEANFILES = $(BUILT_SOURCES)
 
-bin_PROGRAMS = shishi shisa keytab2shishi
-sbin_PROGRAMS = shishid
+bin_PROGRAMS = shishi shisa
+sbin_PROGRAMS = shishid keytab2shishi
 
 shishi_SOURCES = shishi.c shishi.ggo shishi_cmd.h shishi_cmd.c
 shishi_LDADD = ../gl/libgnu.la ../lib/libshishi.la @LTLIBINTL@
