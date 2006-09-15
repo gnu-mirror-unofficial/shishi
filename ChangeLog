@@ -1,3 +1,456 @@
+2006-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po: Generated.
+
+2006-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.27.
+
+2006-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Move keytab2shishi to sbin/.
+
+2006-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Update.
+
+2006-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am: Update.
+
+2006-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Add keytab2shishi.1.
+
+2006-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS: Update PGP key.
+
+2006-09-15  Simon Josefsson <simon@josefsson.org>
+
+	* gl/allocsa.c, gl/asnprintf.c, gl/asprintf.c, gl/mbchar.c,
+	gl/printf-args.c, gl/printf-parse.c, gl/progname.c, gl/readlink.c,
+	gl/strcasecmp.c, gl/strncasecmp.c, gl/strnlen1.c, gl/strtok_r.c,
+	gl/unsetenv.c, gl/vasnprintf.c, gl/vasprintf.c: Update.
+
+2006-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Use gnulib's gnupload.
+
+2006-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, gnupload, gl/Makefile.am, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4: Add.
+
+2006-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Fix shishi-int.h for C99 platforms.
+
+2006-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* gl/error.c, gl/gai_strerror.c, gl/getdate.y, gl/getdomainname.c,
+	gl/gethostname.c, gl/getopt.c, gl/getopt1.c, gl/getpass.c,
+	gl/gettime.c, gl/gettimeofday.c, gl/inet_ntop.c, gl/md5.c,
+	gl/memchr.c, gl/realloc.c, gl/setenv.c, gl/sha1.c, gl/snprintf.c,
+	gl/strdup.c, gl/strndup.c, gl/strnlen.c, gl/strverscmp.c,
+	gl/time_r.c, gl/timegm.c, gl/xgethostname.c, gl/xmalloc.c,
+	gl/xreadlink.c, gl/m4/getdate.m4: Update.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* doc/ccache.txt: Add.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Dist ccache.txt.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* doc/ccache.txt: Add.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/getdate.m4: Update.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix GPL cross reference.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gnulib-cache.m4,
+	gl/override/doc/gendocs_template: Add.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Bump required autoconf version to 2.60.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* doc/fdl.texi, doc/gpl.texi, gl/Makefile.am, gl/error.c,
+	gl/getaddrinfo.c, gl/mbchar.h, gl/mktime.c, gl/stat_.h,
+	gl/stdint_.h, gl/vasnprintf.c, gl/vasprintf.c, gl/m4/arcfour.m4,
+	gl/m4/crc.m4, gl/m4/des.m4, gl/m4/gc-pbkdf2-sha1.m4, gl/m4/gc.m4,
+	gl/m4/getdate.m4, gl/m4/getdelim.m4, gl/m4/getline.m4,
+	gl/m4/getpass.m4, gl/m4/gettime.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/hmac-md5.m4, gl/m4/hmac-sha1.m4,
+	gl/m4/intmax_t.m4, gl/m4/inttypes_h.m4, gl/m4/lib-link.m4,
+	gl/m4/longlong.m4, gl/m4/mbchar.m4, gl/m4/md4.m4, gl/m4/md5.m4,
+	gl/m4/memxor.m4, gl/m4/mktime.m4, gl/m4/onceonly_2_57.m4,
+	gl/m4/read-file.m4, gl/m4/sha1.m4, gl/m4/stdint_h.m4,
+	gl/m4/strdup.m4, gl/m4/strerror_r.m4, gl/m4/strndup.m4,
+	gl/m4/strnlen.m4, gl/m4/strverscmp.m4, gl/m4/time_r.m4,
+	gl/m4/timespec.m4, gl/m4/xalloc.m4, gl/m4/xreadlink.m4: Update.
+
+2006-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Add GPL.  Move concept index last.
+
+2006-08-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-08-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-08-19  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/libtasn1.h: Update.
+
+2006-08-19  Simon Josefsson <simon@josefsson.org>
+
+	* gendocs.sh, doc/getdate.texi, gl/Makefile.am, gl/allocsa.h,
+	gl/error.c, gl/error.h, gl/getaddrinfo.c, gl/getaddrinfo.h,
+	gl/gettext.h, gl/inet_ntop.h, gl/mbchar.h, gl/minmax.h,
+	gl/printf-args.c, gl/readlink.c, gl/setenv.c, gl/snprintf.c,
+	gl/stdint_.h, gl/strnlen1.c, gl/strnlen1.h, gl/vasprintf.h,
+	gl/wcwidth.h, gl/m4/arpa_inet_h.m4, gl/m4/base64.m4, gl/m4/gc.m4,
+	gl/m4/getaddrinfo.m4, gl/m4/getline.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/inet_ntop.m4, gl/m4/lib-link.m4, gl/m4/mbchar.m4,
+	gl/m4/memxor.m4, gl/m4/minmax.m4, gl/m4/netinet_in_h.m4,
+	gl/m4/onceonly_2_57.m4, gl/m4/restrict.m4, gl/m4/stdint.m4,
+	gl/m4/strtok_r.m4, gl/m4/time_r.m4, gl/m4/wcwidth.m4: Update.
+
+2006-07-14  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-07-14  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Use short program name in syslog.
+
+2006-07-14  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Simplify header checks.
+
+2006-07-14  Simon Josefsson <simon@josefsson.org>
+
+	* tests/utils.c, lib/internal.h: Simplify.
+
+2006-07-14  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/stat_.h, gl/m4/gnulib-cache.m4,
+	gl/m4/sys_select_h.m4, gl/m4/sys_stat_h.m4: Use gnulib unistd.h
+	replacer.
+
+2006-07-14  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gendocs_template: Fix.
+
+2006-07-14  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, configure.ac, gendocs.sh, doc/gendocs_template,
+	gl/Makefile.am, gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4: Use
+	gnulib sys/* replacers.
+
+2006-07-14  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gendocs.sh, lib/Makefile.am,
+	m4/ax_create_stdint_h.m4: Use gnulib stdint.
+
+2006-07-14  Simon Josefsson <simon@josefsson.org>
+
+	* gendocs.sh, doc/gendocs.sh, gl/Makefile.am,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4: Update.
+
+2006-07-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/absolute-header.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/stdint.m4: Update.
+
+2006-07-10  Simon Josefsson <simon@josefsson.org>
+
+	* doc/components.png: Add.
+
+2006-07-10  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, doc/Makefile.am: Fix dia invocation.
+
+2006-07-10  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/base64.c, gl/getaddrinfo.c, gl/getaddrinfo.h,
+	gl/getdate.y, gl/getopt.c, gl/mbchar.h, gl/stdint_.h,
+	gl/strverscmp.c, gl/xvasprintf.h, gl/m4/full-header-path.m4,
+	gl/m4/getaddrinfo.m4, gl/m4/getdate.m4, gl/m4/getopt.m4,
+	gl/m4/getpass.m4, gl/m4/gnulib-comp.m4, gl/m4/longlong.m4,
+	gl/m4/onceonly_2_57.m4, gl/m4/sockpfaf.m4, gl/m4/stdarg.m4,
+	gl/m4/stdint.m4, gl/m4/strndup.m4, gl/inet_ntop.c, gl/inet_ntop.h,
+	gl/minmax.h, gl/snprintf.c, gl/snprintf.h, gl/wcwidth.h,
+	gl/m4/absolute-header.m4, gl/m4/inet_ntop.m4, gl/m4/minmax.m4,
+	gl/m4/snprintf.m4, gl/m4/wcwidth.m4: Update.
+
+2006-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc: Use GNU-style warnings.
+
+2006-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc: Sync with gnutls.
+
+2006-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-06-26  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/coding.c, asn1/libtasn1.h: Update to 0.3.5.
+
+2006-06-26  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/getaddrinfo.c, gl/getaddrinfo.h, gl/socket_.h,
+	gl/stdint_.h, gl/m4/getaddrinfo.m4, gl/m4/sockpfaf.m4,
+	gl/m4/stdint.m4: Update.
+
+2006-06-22  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Make portable to mingw.
+
+2006-06-21  Simon Josefsson <simon@josefsson.org>
+
+	* README: Fix.
+
+2006-06-21  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/alloca_.h, gl/getdate.y, gl/read-file.c,
+	gl/realloc.c, gl/size_max.h, gl/stdint_.h, gl/unsetenv.c,
+	gl/m4/full-header-path.m4, gl/m4/gnulib-comp.m4, gl/m4/inttypes.m4,
+	gl/m4/setenv.m4, gl/m4/size_max.m4, gl/m4/ssize_t.m4,
+	gl/m4/stdint.m4: Update.
+
+2006-06-20  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update dia call.
+
+2006-06-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Fix.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Use shishi_verbose.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Fix.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c, lib/enckdcreppart.c: Fix.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/priv.c, lib/kdcrep.c: Fix.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: Fix.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: Add shishi_verbose.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c: Rewrite slightly.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2006-06-01  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/read-file.c, gl/realloc.c,
+	gl/m4/gnulib-cache.m4: Update.
+
+2006-05-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h, lib/keys.c: Fix strfile->read-file.
+
+2006-05-31  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/read-file.c, gl/read-file.h, gl/strfile.c,
+	gl/strfile.h, gl/strndup.c, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/read-file.m4, gl/m4/strfile.m4,
+	gl/m4/strndup.m4: Update.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po: Sync with TP.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Dist keytab1.bin too.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c, src/keytab2shishi.c: More debug.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am, tests/keytab.c, tests/keytab1.bin: Add self
+	test of keytab functions.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am, src/keytab2shishi.c, src/keytab2shishi.ggo: Add
+	keytab2shishi tool.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Fix.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: Fix.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c: Fix.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/keys.c: Add.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Fix.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Fix principal name.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Add.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* gl/strfile.c: Add.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Fix.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Fix.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Read MIT keytab's.  Fix mem leak.
+
+2006-05-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2006-05-28  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/error.c: Add SHISHI_KEYTAB_ERROR.
+
+2006-05-28  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/getpass.c, gl/printf-args.c, gl/strfile.c,
+	gl/strfile.h, gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/strfile.m4, lib/internal.h: Add.
+
+2006-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Typo.
+
+2006-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add Shishi_keys.
+
+2006-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2006-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c: Typo.
+
+2006-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Reset old tkts in shishi_tkts_done().
+
+2006-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkt.c: Deep-copy the tkt->key, so we can safely deallocate
+	it.
+
+2006-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/key.c: Fix mem leaks.
+
+2006-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Simplify.
+
+2006-05-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keys.c: Fix logic in matching hostkeys, reported by Elrond.
+
+2006-05-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Fix mem leak, reported by Elrond.
+
+2006-05-18  Simon Josefsson <simon@josefsson.org>
+
+	* gl/sha1.c, gl/stdint_.h, gl/m4/stdbool.m4: Update.
+
+2006-05-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Fix mem leak, from Elrond.
+
+2006-05-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2006-05-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/diskio.c: Simplify, from Elrond.
+
 2006-05-15  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po: Generated.
