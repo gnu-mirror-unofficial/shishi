@@ -101,13 +101,13 @@ EXTRA_DIST += des.h
 
 ## begin gnulib module gc-hmac-md5
 
-EXTRA_DIST += memxor.h hmac.h
+EXTRA_DIST += memxor.h hmac.h md5.h
 
 ## end   gnulib module gc-hmac-md5
 
 ## begin gnulib module gc-hmac-sha1
 
-EXTRA_DIST += memxor.h hmac.h
+EXTRA_DIST += memxor.h hmac.h sha1.h
 
 ## end   gnulib module gc-hmac-sha1
 
