@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.27 (unreleased)
 
+** New command line tool "keytab2shishi".
+The tool will read host keys from /etc/krb5.keytab (by default) and
+will write them to $(prefix)/etc/shishi.keys.
+
 ** New APIs to read MIT keytab files.
 Thanks to Michael B Allen who reverse-engineered the format and
 published a freely licensed description, available from
