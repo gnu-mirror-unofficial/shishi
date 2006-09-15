@@ -87,6 +87,36 @@ endif
 
 ## end   gnulib module gc
 
+## begin gnulib module gc-arcfour
+
+EXTRA_DIST += arcfour.h
+
+## end   gnulib module gc-arcfour
+
+## begin gnulib module gc-des
+
+EXTRA_DIST += des.h
+
+## end   gnulib module gc-des
+
+## begin gnulib module gc-hmac-md5
+
+EXTRA_DIST += hmac.h
+
+## end   gnulib module gc-hmac-md5
+
+## begin gnulib module gc-hmac-sha1
+
+EXTRA_DIST += hmac.h
+
+## end   gnulib module gc-hmac-sha1
+
+## begin gnulib module gc-md4
+
+EXTRA_DIST += md4.h
+
+## end   gnulib module gc-md4
+
 ## begin gnulib module gc-md5
 
 libgnu_la_SOURCES += md5.h
