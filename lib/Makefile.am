@@ -47,7 +47,9 @@ libshishi_la_SOURCES = shishi.h.in internal.h \
 	ap.c apreq.c aprep.c encapreppart.c \
 	safe.c priv.c \
 	ticket.c encticketpart.c tkt.c tkts.c \
-	netio.c key.c keys.c hostkeys.c crypto.c crypto.h crypto-ctx.c \
+	netio.c \
+	key.c keys.c keytab.c hostkeys.c \
+	crypto.c crypto.h crypto-ctx.c \
 	asn1.c asn1.h kerberos5.c \
 	version.c password.c \
 	utils.c utils.h resolv.c \
