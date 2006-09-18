@@ -214,7 +214,9 @@ main (int argc, char *argv[])
   if (debug)
     {
       shishi_cfg (handle, strdup ("verbose"));
+      shishi_cfg (handle, strdup ("verbose-noise"));
       shishi_cfg (handle, strdup ("verbose-asn1"));
+      shishi_cfg (handle, strdup ("verbose-crypto-asn1"));
     }
 
   test (handle);
