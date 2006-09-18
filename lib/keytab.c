@@ -1,4 +1,4 @@
-/* keys.c --- Functions for managing keys sets, and keys stored in files.
+/* keys.c --- Functions for reading /etc/krb5.keytab style key files.
  * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
