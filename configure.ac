@@ -312,6 +312,23 @@ AC_MSG_NOTICE([user database root path $DBDIR])
 
 AC_DEFINE([xalloc_die], [shishi_xalloc_die], [Fix namespace of xalloc_die.])
 
+# Run self-tests under valgrind?
+if test "$cross_compiling" = no; then
+  AC_CHECK_PROGS(VALGRIND, valgrind)
+fi
+if test -n "$VALGRIND" && $VALGRIND true > /dev/null 2>&1; then
+  opt_valgrind_tests=yes
+else
+  opt_valgrind_tests=no
+  VALGRIND=
+fi 
+AC_MSG_CHECKING([whether self tests are run under valgrind])
+AC_ARG_ENABLE(valgrind-tests,
+	AS_HELP_STRING([--enable-valgrind-tests],
+                       [run self tests under valgrind]),
+  opt_valgrind_tests=$enableval)
+AC_MSG_RESULT($opt_valgrind_tests)
+
 AC_CONFIG_FILES(Makefile po/Makefile.in \
 	asn1/Makefile examples/Makefile \
 	lib/Makefile lib/shishi.h db/Makefile src/Makefile tests/Makefile \
