@@ -102,6 +102,11 @@ parse_principal (const void **data, size_t * len,
   *data += out->realm.length;
   *len -= out->realm.length;
 
+  /* Make sure realm will be zero terminated.  This limits component
+     lengths to 2^24 bytes... */
+  if (**(char**)data != '\0')
+    return -1;
+
   for (n = 0; n < out->num_components; n++)
     {
       rc = get_uint32 (data, len, &out->components[n].length);
@@ -113,6 +118,12 @@ parse_principal (const void **data, size_t * len,
       out->components[n].data = *data;
       *data += out->components[n].length;
       *len -= out->components[n].length;
+
+      /* Make sure component is zero terminated.  This limits the
+	 length of the next component to 2^24 bytes.  Note that you'll
+	 have to test after the last component elsewhere. */
+      if (*len > 0 && **(char**)data != '\0')
+	return -1;
     }
 
   return 0;
@@ -176,6 +187,10 @@ parse_credential (const void **data, size_t * len,
   rc = parse_principal (data, len, &out->client);
   if (rc < 0)
     return rc;
+
+  /* Make sure the last component is zero terminated.  */
+  if (*len > 0 && **(char**)data != '\0')
+    return -1;
 
   rc = parse_principal (data, len, &out->server);
   if (rc < 0)

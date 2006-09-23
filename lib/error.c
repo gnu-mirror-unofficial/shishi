@@ -82,6 +82,8 @@ static const struct shishi_error_msgs _shishi_error_messages[] = {
       "This usually indicates an internal application error.")},
   {SHISHI_KEYTAB_ERROR,
    N_("Failed to parse keytab file")},
+  {SHISHI_CCACHE_ERROR,
+   N_("Failed to parse credential cache file")},
   {-1, NULL}
 };
 

@@ -18,7 +18,7 @@
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-EXTRA_DIST = utils.c shisa.sh shishi.supp keytab1.bin
+EXTRA_DIST = utils.c shisa.sh shishi.supp keytab1.bin ccache1.bin
 
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
 	-I$(top_srcdir)/lib -I../lib
@@ -27,9 +27,10 @@ LDADD = @LTLIBINTL@ ../gl/libgnu.la @LTLIBTASN1@ @LTLIBGNUTLS@ \
 	../lib/libshishi.la
 
 check_PROGRAMS = authenticator crypto gztime priv safe \
-	ticketset crypto-ctx low-crypto rijndael key keytab
+	ticketset crypto-ctx low-crypto rijndael key keytab ccache
 TESTS = $(check_PROGRAMS)
 
 TESTS_ENVIRONMENT = \
 	KEYTAB1=$(srcdir)/keytab1.bin	\
+	CCACHE1=$(srcdir)/ccache1.bin	\
 	$(VALGRIND)
