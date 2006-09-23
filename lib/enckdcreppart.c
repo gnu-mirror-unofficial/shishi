@@ -184,6 +184,60 @@ shishi_enckdcreppart_flags_set (Shishi * handle,
 }
 
 /**
+ * shishi_enckdcreppart_authtime_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @enckdcreppart: input EncKDCRepPart variable.
+ * @authtime: character buffer containing a generalized time string.
+ *
+ * Set the EncTicketPart.authtime to supplied value.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_enckdcreppart_authtime_set (Shishi * handle,
+				   Shishi_asn1 enckdcreppart,
+				   const char *authtime)
+{
+  int res;
+
+  res = shishi_asn1_write (handle, enckdcreppart, "authtime",
+			   authtime, SHISHI_GENERALIZEDTIME_LENGTH);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_enckdcreppart_starttime_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @enckdcreppart: input EncKDCRepPart variable.
+ * @starttime: character buffer containing a generalized time string.
+ *
+ * Set the EncTicketPart.starttime to supplied value.  Use a NULL
+ * value for @starttime to remove the field.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_enckdcreppart_starttime_set (Shishi * handle,
+				    Shishi_asn1 enckdcreppart,
+				    const char *starttime)
+{
+  int res;
+
+  if (!starttime)
+    res = shishi_asn1_write (handle, enckdcreppart, "starttime", NULL, 0);
+  else
+    res = shishi_asn1_write (handle, enckdcreppart, "starttime",
+			     starttime, SHISHI_GENERALIZEDTIME_LENGTH);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_enckdcreppart_endtime_set:
  * @handle: shishi handle as allocated by shishi_init().
  * @enckdcreppart: input EncKDCRepPart variable.
@@ -202,6 +256,35 @@ shishi_enckdcreppart_endtime_set (Shishi * handle,
 
   res = shishi_asn1_write (handle, enckdcreppart, "endtime",
 			   endtime, SHISHI_GENERALIZEDTIME_LENGTH);
+  if (res != SHISHI_OK)
+    return res;
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_enckdcreppart_renew_till_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @enckdcreppart: input EncKDCRepPart variable.
+ * @renew_till: character buffer containing a generalized time string.
+ *
+ * Set the EncTicketPart.renew-till to supplied value.  Use a NULL
+ * value for @renew_till to remove the field.
+ *
+ * Return value: Returns SHISHI_OK iff succesful.
+ **/
+int
+shishi_enckdcreppart_renew_till_set (Shishi * handle,
+				     Shishi_asn1 enckdcreppart,
+				     const char *renew_till)
+{
+  int res;
+
+  if (!renew_till)
+    res = shishi_asn1_write (handle, enckdcreppart, "renew-till", NULL, 0);
+  else
+    res = shishi_asn1_write (handle, enckdcreppart, "renew-till",
+			     renew_till, SHISHI_GENERALIZEDTIME_LENGTH);
   if (res != SHISHI_OK)
     return res;
 

@@ -1259,9 +1259,18 @@ extern int shishi_enckdcreppart_nonce_set (Shishi * handle,
 extern int shishi_enckdcreppart_flags_set (Shishi * handle,
 					   Shishi_asn1 enckdcreppart,
 					   int flags);
+extern int shishi_enckdcreppart_authtime_set (Shishi * handle,
+					     Shishi_asn1 enckdcreppart,
+					     const char *authtime);
+extern int shishi_enckdcreppart_starttime_set (Shishi * handle,
+					     Shishi_asn1 enckdcreppart,
+					     const char *starttime);
 extern int shishi_enckdcreppart_endtime_set (Shishi * handle,
 					     Shishi_asn1 enckdcreppart,
 					     const char *endtime);
+extern int shishi_enckdcreppart_renew_till_set (Shishi * handle,
+						Shishi_asn1 enckdcreppart,
+						const char *renew_till);
 extern int shishi_enckdcreppart_srealm_set (Shishi * handle,
 					    Shishi_asn1 enckdcreppart,
 					    const char *srealm);
