@@ -355,7 +355,7 @@ ccache_print_credential (struct ccache_credential *cred)
   printf ("\t\tendtime %04x\n", cred->endtime);
   printf ("\t\trenew_till %04x\n", cred->renew_till);
   printf ("\tis_skey %04x\n", cred->is_skey);
-  printf ("\ttktflags_skey %04x\n", cred->tktflags);
+  printf ("\ttktflags %04x\n", cred->tktflags);
   printf ("\tticketlen %04x\n", cred->ticket.length);
   printf ("\tsecond_ticketlen %04x\n", cred->second_ticket.length);
 }
