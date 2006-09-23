@@ -242,6 +242,7 @@ parse_credential (const void **data, size_t * len,
 
   if (*len < out->ticket.length)
     return -1;
+  out->ticket.data = *data;
   *data += out->ticket.length;
   *len -= out->ticket.length;
 
@@ -251,6 +252,7 @@ parse_credential (const void **data, size_t * len,
 
   if (*len < out->second_ticket.length)
     return -1;
+  out->second_ticket.data = *data;
   *data += out->second_ticket.length;
   *len -= out->second_ticket.length;
 
