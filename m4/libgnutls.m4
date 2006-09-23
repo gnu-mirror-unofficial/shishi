@@ -9,7 +9,7 @@ dnl $id$
 dnl AM_PATH_LIBGNUTLS([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND ]]])
 dnl Test for libgnutls, and define LIBGNUTLS_CFLAGS and LIBGNUTLS_LIBS
 dnl
-AC_DEFUN(AM_PATH_LIBGNUTLS,
+AC_DEFUN([AM_PATH_LIBGNUTLS],
 [dnl
 dnl Get the cflags and libraries from the libgnutls-config script
 dnl
@@ -18,7 +18,6 @@ AC_ARG_WITH(libgnutls-prefix,
           libgnutls_config_prefix="$withval", libgnutls_config_prefix="")
 
   if test x$libgnutls_config_prefix != x ; then
-     libgnutls_config_args="$libgnutls_config_args --prefix=$libgnutls_config_prefix"
      if test x${LIBGNUTLS_CONFIG+set} != xset ; then
         LIBGNUTLS_CONFIG=$libgnutls_config_prefix/bin/libgnutls-config
      fi
