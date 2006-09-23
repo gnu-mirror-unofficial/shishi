@@ -2,6 +2,13 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson
 See the end for copying conditions.
 
+* Version 0.0.28 (unreleased)
+
+** New APIs to support ccache reading.
+shishi_enckdcreppart_authtime_set
+shishi_enckdcreppart_starttime_set
+shishi_enckdcreppart_renew_till_set
+
 * Version 0.0.27 (released 2006-09-15)
 
 ** New command line tool "keytab2shishi".
