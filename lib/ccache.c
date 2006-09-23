@@ -62,6 +62,19 @@ get_uint32 (const void **data, size_t * len, uint32_t * i)
 }
 
 static int
+get_uint32_swapped (const void **data, size_t * len, uint32_t * i)
+{
+  const char *p = *data;
+  if (*len < 4)
+    return -1;
+  *i = ((p[3] << 24) & 0xFF000000)
+    | ((p[2] << 16) & 0xFF0000) | ((p[1] << 8) & 0xFF00) | (p[0] & 0xFF);
+  *data += 4;
+  *len -= 4;
+  return 0;
+}
+
+static int
 parse_principal (const void **data, size_t * len,
 		 struct ccache_principal *out)
 {
@@ -208,7 +221,7 @@ parse_credential (const void **data, size_t * len,
   if (rc < 0)
     return rc;
 
-  rc = get_uint32 (data, len, &out->tktflags);
+  rc = get_uint32_swapped (data, len, &out->tktflags);
   if (rc < 0)
     return rc;
 
