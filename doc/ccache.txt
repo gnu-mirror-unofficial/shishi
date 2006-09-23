@@ -1,7 +1,7 @@
 The Kerberos Credential Cache Binary File Format
 Copyright (C) 2006 Simon Josefsson <simon josefsson.org>
 http://josefsson.org/shishi/ccache.txt
-Last updated: Wed Sep 20 18:14:29 CEST 2006
+Last updated: Sat Sep 23 12:04:11 CEST 2006
 
 Like the MIT keytab binary format (see Michael B Allen's reverse
 engineered description in keytab.txt), the credential cache format is
@@ -47,7 +47,7 @@ credential {
            keyblock key;
            times    time;
            uint8_t  is_skey;            /* 1 if skey, 0 otherwise */
-           uint32_t tktflags;
+           uint32_t tktflags;           /* stored in reversed byte order */
            uint32_t num_address;
            address  addrs[num_address];
            uint32_t num_authdata;
