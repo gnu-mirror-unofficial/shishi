@@ -3,6 +3,7 @@
 Makefile
 Makefile.in
 authenticator
+ccache
 crypto
 crypto-ctx
 gztime
