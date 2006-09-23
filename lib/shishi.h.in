@@ -855,6 +855,20 @@ extern Shishi_tkt *shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
 							   const char
 							   *passwd);
 
+/* tktccache.c */
+extern int shishi_tkts_add_ccache_mem (Shishi * handle,
+				       const char *data, size_t len,
+				       Shishi_tkts *tkts);
+extern int shishi_tkts_add_ccache_file (Shishi * handle,
+					const char *filename,
+					Shishi_tkts *tkts);
+extern int shishi_tkts_from_ccache_mem (Shishi * handle,
+					const char *data, size_t len,
+					Shishi_tkts **outtkts);
+extern int shishi_tkts_from_ccache_file (Shishi * handle,
+					 const char *filename,
+					 Shishi_tkts **outtkts);
+
 /* diskio.c */
 extern int
 shishi_enckdcreppart_print (Shishi * handle,
