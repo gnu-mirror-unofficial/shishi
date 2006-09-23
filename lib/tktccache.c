@@ -25,20 +25,20 @@
 /**
  * shishi_tkts_add_ccache_mem:
  * @handle: shishi handle as allocated by shishi_init().
- * @data: constant memory buffer with keytab of @len size.
- * @len: size of memory buffer with keytab data.
- * @keys: allocated key set to store keys in.
+ * @data: constant memory buffer with ccache of @len size.
+ * @len: size of memory buffer with ccache data.
+ * @tkts: allocated key set to store tickets in.
  *
- * Read keys from a MIT keytab data structure, and add them to the key
- * set.
+ * Read tickets from a ccache data structure, and add them to the
+ * ticket set.
  *
- * The format of keytab's is proprietary, and this function support
- * the 0x0501 and 0x0502 formats.  See the section The MIT Kerberos
- * Keytab Binary File Format in the Shishi manual for a description of
- * the reverse-engineered format.
+ * The ccache format is proprietary, and this function support (at
+ * least) the 0x0504 format.  See the section The Credential Cache
+ * Binary File Format in the Shishi manual for a description of the
+ * file format.
  *
- * Returns: Returns %SHISHI_KEYTAB_ERROR if the data does not
- *   represent a valid keytab structure, and %SHISHI_OK on success.
+ * Returns: Returns %SHISHI_CCACHE_ERROR if the data does not
+ *   represent a valid ccache structure, and %SHISHI_OK on success.
  **/
 int
 shishi_tkts_add_ccache_mem (Shishi * handle,
@@ -209,18 +209,18 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
  * shishi_tkts_add_ccache_file:
  * @handle: shishi handle as allocated by shishi_init().
  * @filename: name of file to read.
- * @keys: allocated key set to store keys in.
+ * @keys: allocated ticket set to store tickets in.
  *
- * Read keys from a MIT keytab data structure from a file, and add the
- * keys to the key set.
+ * Read tickets from a ccache data structure, and add them to the
+ * ticket set.
  *
- * The format of keytab's is proprietary, and this function support
- * the 0x0501 and 0x0502 formats.  See the section The MIT Kerberos
- * Keytab Binary File Format in the Shishi manual for a description of
- * the reverse-engineered format.
+ * The ccache format is proprietary, and this function support (at
+ * least) the 0x0504 format.  See the section The Credential Cache
+ * Binary File Format in the Shishi manual for a description of the
+ * file format.
  *
  * Returns: Returns %SHISHI_IO_ERROR if the file cannot be read,
- *   %SHISHI_KEYTAB_ERROR if the data cannot be parsed as a valid keytab
+ *   %SHISHI_CCACHE_ERROR if the data cannot be parsed as a valid ccache
  *   structure, and %SHISHI_OK on success.
  **/
 int
@@ -245,21 +245,21 @@ shishi_tkts_add_ccache_file (Shishi * handle,
 /**
  * shishi_tkts_from_ccache_mem:
  * @handle: shishi handle as allocated by shishi_init().
- * @data: constant memory buffer with keytab of @len size.
- * @len: size of memory buffer with keytab data.
- * @outkeys: pointer to key set that will be allocated and populated,
+ * @data: constant memory buffer with ccache of @len size.
+ * @len: size of memory buffer with ccache data.
+ * @outkeys: pointer to ticket set that will be allocated and populated,
  *   must be deallocated by caller on succes.
  *
- * Create a new key set populated with keys from a MIT keytab data
- * structure read from a memory block.
+ * Read tickets from a ccache data structure, and add them to the
+ * ticket set.
  *
- * The format of keytab's is proprietary, and this function support
- * the 0x0501 and 0x0502 formats.  See the section The MIT Kerberos
- * Keytab Binary File Format in the Shishi manual for a description of
- * the reverse-engineered format.
+ * The ccache format is proprietary, and this function support (at
+ * least) the 0x0504 format.  See the section The Credential Cache
+ * Binary File Format in the Shishi manual for a description of the
+ * file format.
  *
- * Returns: Returns %SHISHI_KEYTAB_ERROR if the data does not
- *   represent a valid keytab structure, and %SHISHI_OK on success.
+ * Returns: Returns %SHISHI_CCACHE_ERROR if the data does not
+ *   represent a valid ccache structure, and %SHISHI_OK on success.
  **/
 int
 shishi_tkts_from_ccache_mem (Shishi * handle,
@@ -286,19 +286,19 @@ shishi_tkts_from_ccache_mem (Shishi * handle,
  * shishi_tkts_from_ccache_file:
  * @handle: shishi handle as allocated by shishi_init().
  * @filename: name of file to read.
- * @outkeys: pointer to key set that will be allocated and populated,
+ * @outkeys: pointer to ticket set that will be allocated and populated,
  *   must be deallocated by caller on succes.
  *
- * Create a new key set populated with keys from a MIT keytab data
- * structure read from a file.
+ * Read tickets from a ccache data structure, and add them to the
+ * ticket set.
  *
- * The format of keytab's is proprietary, and this function support
- * the 0x0501 and 0x0502 formats.  See the section The MIT Kerberos
- * Keytab Binary File Format in the Shishi manual for a description of
- * the reverse-engineered format.
+ * The ccache format is proprietary, and this function support (at
+ * least) the 0x0504 format.  See the section The Credential Cache
+ * Binary File Format in the Shishi manual for a description of the
+ * file format.
  *
  * Returns: Returns %SHISHI_IO_ERROR if the file cannot be read,
- *   %SHISHI_KEYTAB_ERROR if the data cannot be parsed as a valid keytab
+ *   %SHISHI_CCACHE_ERROR if the data cannot be parsed as a valid ccache
  *   structure, and %SHISHI_OK on success.
  **/
 int
