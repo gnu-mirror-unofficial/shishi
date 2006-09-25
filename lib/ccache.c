@@ -25,7 +25,7 @@
 /* See ccache.txt for a description of the file format. */
 
 static int
-get_uint8 (const void **data, size_t * len, uint8_t * i)
+get_uint8 (const char **data, size_t * len, uint8_t * i)
 {
   const char *p = *data;
   if (*len < 1)
@@ -37,7 +37,7 @@ get_uint8 (const void **data, size_t * len, uint8_t * i)
 }
 
 static int
-get_uint16 (const void **data, size_t * len, uint16_t * i)
+get_uint16 (const char **data, size_t * len, uint16_t * i)
 {
   const char *p = *data;
   if (*len < 2)
@@ -49,7 +49,7 @@ get_uint16 (const void **data, size_t * len, uint16_t * i)
 }
 
 static int
-get_uint32 (const void **data, size_t * len, uint32_t * i)
+get_uint32 (const char **data, size_t * len, uint32_t * i)
 {
   const char *p = *data;
   if (*len < 4)
@@ -62,7 +62,7 @@ get_uint32 (const void **data, size_t * len, uint32_t * i)
 }
 
 static int
-get_uint32_swapped (const void **data, size_t * len, uint32_t * i)
+get_uint32_swapped (const char **data, size_t * len, uint32_t * i)
 {
   const char *p = *data;
   if (*len < 4)
@@ -75,7 +75,54 @@ get_uint32_swapped (const void **data, size_t * len, uint32_t * i)
 }
 
 static int
-parse_principal (const void **data, size_t * len,
+put_uint8 (uint8_t i, char **data, size_t * len)
+{
+  if (*len < 1)
+    return -1;
+  *(*data)++ = i;
+  *len -= 1;
+  return 0;
+}
+
+static int
+put_uint16 (uint16_t i, char **data, size_t * len)
+{
+  if (*len < 2)
+    return -1;
+  *(*data)++ = (i >> 8) & 0xFF;
+  *(*data)++ = i;
+  *len -= 2;
+  return 0;
+}
+
+static int
+put_uint32 (uint32_t i, char **data, size_t * len)
+{
+  if (*len < 4)
+    return -1;
+  *(*data)++ = (i >> 24) & 0xFF;
+  *(*data)++ = (i >> 16) & 0xFF;
+  *(*data)++ = (i >> 8) & 0xFF;
+  *(*data)++ = i;
+  *len -= 4;
+  return 0;
+}
+
+static int
+put_uint32_swapped (uint32_t i, char **data, size_t * len)
+{
+  if (*len < 4)
+    return -1;
+  *(*data)++ = i;
+  *(*data)++ = (i >> 8) & 0xFF;
+  *(*data)++ = (i >> 16) & 0xFF;
+  *(*data)++ = (i >> 24) & 0xFF;
+  *len -= 4;
+  return 0;
+}
+
+static int
+parse_principal (const char **data, size_t * len,
 		 struct ccache_principal *out)
 {
   size_t n;
@@ -103,7 +150,7 @@ parse_principal (const void **data, size_t * len,
   *len -= out->realm.length;
 
   /* Make sure realm will be zero terminated.  This limits component
-     lengths to 2^24 bytes... */
+     lengths to 2^24 bytes. */
   if (**(char**)data != '\0')
     return -1;
 
@@ -130,7 +177,7 @@ parse_principal (const void **data, size_t * len,
 }
 
 static int
-skip_address (const void **data, size_t * len)
+skip_address (const char **data, size_t * len)
 {
   uint16_t addrtype;
   uint32_t addrlen;
@@ -153,7 +200,7 @@ skip_address (const void **data, size_t * len)
 }
 
 static int
-skip_authdata (const void **data, size_t * len)
+skip_authdata (const char **data, size_t * len)
 {
   uint16_t authdatatype;
   uint32_t authdatalen;
@@ -176,7 +223,7 @@ skip_authdata (const void **data, size_t * len)
 }
 
 static int
-parse_credential (const void **data, size_t * len,
+parse_credential (const char **data, size_t * len,
 		  struct ccache_credential *out)
 {
   struct ccache_principal princ;
@@ -188,13 +235,19 @@ parse_credential (const void **data, size_t * len,
   if (rc < 0)
     return rc;
 
-  /* Make sure the last component is zero terminated.  */
+  /* Make sure the last component is zero terminated.  This limits the
+     next name-type to 2^24 bytes.  */
   if (*len > 0 && **(char**)data != '\0')
     return -1;
 
   rc = parse_principal (data, len, &out->server);
   if (rc < 0)
     return rc;
+
+  /* Make sure the last component is zero terminated.  This limits the
+     next key-type to lower 1 byte.  */
+  if (*len > 0 && **(char**)data != '\0')
+    return -1;
 
   rc = get_uint16 (data, len, &out->key.keytype);
   if (rc < 0)
@@ -288,7 +341,7 @@ parse_credential (const void **data, size_t * len,
 }
 
 int
-ccache_parse (const void *data, size_t len, struct ccache *out)
+ccache_parse (const char *data, size_t len, struct ccache *out)
 {
   size_t pos = 0;
   int rc;
@@ -319,7 +372,7 @@ ccache_parse (const void *data, size_t len, struct ccache *out)
 }
 
 int
-ccache_parse_credential (const void *data, size_t len,
+ccache_parse_credential (const char *data, size_t len,
 			 struct ccache_credential *out, size_t * n)
 {
   size_t savelen = len;
@@ -329,6 +382,159 @@ ccache_parse_credential (const void *data, size_t len,
     return rc;
 
   *n = savelen - len;
+  return 0;
+}
+
+static int
+pack_principal (struct ccache_principal *princ,
+		char **out, size_t * len)
+
+{
+  size_t n;
+  int rc;
+
+  rc = put_uint32 (princ->name_type, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint32 (princ->num_components, out, len);
+  if (rc < 0)
+    return rc;
+
+  if (princ->num_components >= CCACHE_MAX_COMPONENTS)
+    return -1;
+
+  rc = put_uint32 (princ->realm.length, out, len);
+  if (rc < 0)
+    return rc;
+
+  if (*len < princ->realm.length)
+    return -1;
+  memcpy (*out, princ->realm.data, princ->realm.length);
+  *out += princ->realm.length;
+  *len -= princ->realm.length;
+
+  for (n = 0; n < princ->num_components; n++)
+    {
+      rc = put_uint32 (princ->components[n].length, out, len);
+      if (rc < 0)
+	return rc;
+
+      if (*len < princ->components[n].length)
+	return -1;
+      memcpy (*out, princ->components[n].data, princ->components[n].length);
+      *out += princ->components[n].length;
+      *len -= princ->components[n].length;
+    }
+
+  return 0;
+}
+
+static int
+pack_credential (struct ccache_credential *cred,
+		 char **out, size_t *len)
+{
+  struct ccache_principal princ;
+  uint32_t num_address;
+  uint32_t num_authdata;
+  int rc;
+
+  rc = pack_principal (&cred->client, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = pack_principal (&cred->server, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint16 (cred->key.keytype, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint16 (cred->key.etype, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint16 (cred->key.keylen, out, len);
+  if (rc < 0)
+    return rc;
+
+  if (*len < cred->key.keylen)
+    return -1;
+
+  memcpy (*out, cred->key.keyvalue, cred->key.keylen);
+
+  *out += cred->key.keylen;
+  *len -= cred->key.keylen;
+
+  rc = put_uint32 (cred->authtime, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint32 (cred->starttime, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint32 (cred->endtime, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint32 (cred->renew_till, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint8 (0, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint32_swapped (cred->tktflags, out, len);
+  if (rc < 0)
+    return rc;
+
+  /* XXX Write addresses. */
+  rc = put_uint32 (0, out, len);
+  if (rc < 0)
+    return rc;
+
+  /* XXX Write auth-data. */
+  rc = put_uint32 (0, out, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint32 (cred->ticket.length, out, len);
+  if (rc < 0)
+    return rc;
+
+  if (*len < cred->ticket.length)
+    return -1;
+  memcpy (*out, cred->ticket.data, cred->ticket.length);
+  *out += cred->ticket.length;
+  *len -= cred->ticket.length;
+
+  rc = put_uint32 (cred->second_ticket.length, out, len);
+  if (rc < 0)
+    return rc;
+
+  if (*len < cred->second_ticket.length)
+    return -1;
+  memcpy (*out, cred->second_ticket.data, cred->second_ticket.length);
+  *out += cred->second_ticket.length;
+  *len -= cred->second_ticket.length;
+
+  return 0;
+}
+
+int
+ccache_pack_credential (struct ccache_credential *cred,
+			char *out, size_t *len)
+{
+  size_t savelen = *len;
+  int rc = pack_credential (cred, &out, len);
+
+  if (rc < 0)
+    return rc;
+
+  *len = savelen - *len;
   return 0;
 }
 
