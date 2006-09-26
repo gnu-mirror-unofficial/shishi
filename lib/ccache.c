@@ -354,10 +354,9 @@ ccache_parse (const char *data, size_t len, struct ccache *out)
   if (rc < 0)
     return rc;
 
-  out->header = data;
-
   if (len < out->headerlen)
     return -1;
+  out->header = data;
   data += out->headerlen;
   len -= out->headerlen;
 
@@ -535,6 +534,34 @@ ccache_pack_credential (struct ccache_credential *cred,
     return rc;
 
   *len = savelen - *len;
+  return 0;
+}
+
+int
+ccache_pack (struct ccache *info, char *data, size_t *len)
+{
+  size_t savelen = *len;
+  int rc;
+
+  rc = put_uint16 (info->file_format_version
+		   ? info->file_format_version : 0x0504, &data, len);
+  if (rc < 0)
+    return rc;
+
+  rc = put_uint16 (info->headerlen, &data, len);
+  if (rc < 0)
+    return rc;
+
+  if (*len < out->headerlen)
+    return -1;
+  memcpy (data, info->header, info->headerlen);
+  data += info->headerlen;
+  *len -= info->headerlen;
+
+  rc = pack_principal (out->default_principal, &data, len);
+  if (rc < 0)
+    return rc;
+
   return 0;
 }
 
