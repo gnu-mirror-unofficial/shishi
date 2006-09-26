@@ -1,5 +1,5 @@
 /* gztime.c --- Convertion functions for GeneralizedTime.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -126,6 +126,36 @@ shishi_time (Shishi * handle, Shishi_asn1 node, const char *field, char **t)
     }
 
   (*t)[SHISHI_GENERALIZEDTIME_LENGTH] = '\0';
+
+  return SHISHI_OK;
+}
+
+/**
+ * shishi_ctime:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @node: ASN.1 variable to read field from.
+ * @field: name of field in @node to read.
+ * @t: pointer to time field to set.
+ *
+ * Extract time from ASN.1 structure.
+ *
+ * Return value: Returns SHISHI_OK if successful,
+ *   SHISHI_ASN1_NO_ELEMENT if the element do not exist,
+ *   SHISHI_ASN1_NO_VALUE if the field has no value, ot
+ *   SHISHI_ASN1_ERROR otherwise.
+ **/
+int
+shishi_ctime (Shishi * handle, Shishi_asn1 node, const char *field, time_t *t)
+{
+  char str[SHISHI_GENERALIZEDTIME_LENGTH + 1];
+  size_t strlen = sizeof (str);
+  int rc;
+
+  rc = shishi_asn1_read_inline (handle, node, field, str, &strlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  *t = shishi_generalize_ctime (handle, str);
 
   return SHISHI_OK;
 }

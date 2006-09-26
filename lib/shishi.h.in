@@ -1416,6 +1416,8 @@ extern const char *shishi_generalize_now (Shishi * handle);
 extern time_t shishi_generalize_ctime (Shishi * handle, const char *t);
 extern int shishi_time (Shishi * handle, Shishi_asn1 node,
 			const char *field, char **t);
+extern int shishi_ctime (Shishi * handle, Shishi_asn1 node,
+			 const char *field, time_t *t);
 
 /* nettle.c, libgcrypt.c, ... */
 extern int shishi_randomize (Shishi * handle, int strong,
