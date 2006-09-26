@@ -552,13 +552,13 @@ ccache_pack (struct ccache *info, char *data, size_t *len)
   if (rc < 0)
     return rc;
 
-  if (*len < out->headerlen)
+  if (*len < info->headerlen)
     return -1;
   memcpy (data, info->header, info->headerlen);
   data += info->headerlen;
   *len -= info->headerlen;
 
-  rc = pack_principal (out->default_principal, &data, len);
+  rc = pack_principal (&info->default_principal, &data, len);
   if (rc < 0)
     return rc;
 
