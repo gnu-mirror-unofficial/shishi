@@ -22,7 +22,8 @@
 #include "ccache.h"
 #include <stdio.h>
 
-/* See ccache.txt for a description of the file format. */
+/* See ccache.txt for a description of the file format.  Currently
+   this implementation do not support addresses nor auth-data.  */
 
 static int
 get_uint8 (const char **data, size_t * len, uint8_t * i)
