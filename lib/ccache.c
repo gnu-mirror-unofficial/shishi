@@ -562,6 +562,7 @@ ccache_pack (struct ccache *info, char *data, size_t *len)
   if (rc < 0)
     return rc;
 
+  *len = savelen - *len;
   return 0;
 }
 
