@@ -26,6 +26,7 @@
 #include <string.h>
 
 #define CCACHE_MAX_COMPONENTS 5
+#define CCACHE_MAX_KEYLEN 32
 
 struct ccache_header
 {
@@ -53,7 +54,9 @@ struct ccache_keyblock
   uint16_t keytype;
   uint16_t etype;
   uint16_t keylen;
-  void *keyvalue;
+  char *keyvalue;
+  char storage[CCACHE_MAX_KEYLEN];  /* usable by caller for storing
+				       keys that keyvalue point to. */
 };
 
 struct ccache_credential
@@ -75,10 +78,10 @@ struct ccache
 {
   uint16_t file_format_version;
   uint16_t headerlen;
-  void *header;
+  char *header;
   struct ccache_principal default_principal;
   size_t credentialslen;
-  void *credentials;
+  char *credentials;
 };
 
 extern int ccache_parse (const char *data, size_t length, struct ccache *out);
