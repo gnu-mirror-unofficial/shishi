@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.28 (unreleased)
 
+** Fix build errors for missing arcfour_stream when using --with-libgcrypt.
+
 ** A description of the ccache file format were added in doc/ccache.txt.
 
 ** A self-contained standalone parser of the ccache format added.
