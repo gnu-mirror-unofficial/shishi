@@ -23,6 +23,9 @@ shishi_tkts_from_ccache_file
 shishi_enckdcreppart_authtime_set
 shishi_enckdcreppart_starttime_set
 shishi_enckdcreppart_renew_till_set
+shishi_tkts_default_ccache_guess
+shishi_tkts_default_ccache
+shishi_tkts_default_ccache_set
 
 * Version 0.0.27 (released 2006-09-15)
 
