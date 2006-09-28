@@ -35,8 +35,10 @@ AC_DEFUN([gl_INIT],
   gl_source_base='gl'
   gl_FUNC_ALLOCA
   gl_ALLOCSA
+  gl_ARCFOUR
   gl_HEADER_ARPA_INET
   gl_FUNC_BASE64
+  gl_CLOCK_TIME
   gl_CRC
   gl_ERROR
   dnl gl_USE_SYSTEM_EXTENSIONS must be added quite early to configure.ac.
@@ -45,7 +47,6 @@ AC_DEFUN([gl_INIT],
     gl_ltlibdeps="$gl_ltlibdeps $LTLIBGCRYPT"
     gl_libdeps="$gl_libdeps $LIBGCRYPT"
   fi
-  gl_GC_ARCFOUR
   gl_GC_DES
   gl_GC_HMAC_MD5
   gl_GC_HMAC_SHA1
@@ -252,7 +253,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/eoverflow.m4
   m4/error.m4
   m4/extensions.m4
-  m4/gc-arcfour.m4
   m4/gc-des.m4
   m4/gc-hmac-md5.m4
   m4/gc-hmac-sha1.m4
