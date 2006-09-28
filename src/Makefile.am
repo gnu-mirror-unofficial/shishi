@@ -27,10 +27,11 @@ DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
 
 BUILT_SOURCES = shishi_cmd.c shishi_cmd.h shisa_cmd.c shisa_cmd.h	\
 	shishid_cmd.c shishid_cmd.h keytab2shishi_cmd.c			\
-	keytab2shishi_cmd.h
+	keytab2shishi_cmd.h ccache2shishi_cmd.c				\
+	ccache2shishi_cmd.h
 MAINTAINERCLEANFILES = $(BUILT_SOURCES)
 
-bin_PROGRAMS = shishi shisa
+bin_PROGRAMS = shishi shisa ccache2shishi
 sbin_PROGRAMS = shishid keytab2shishi
 
 shishi_SOURCES = shishi.c shishi.ggo shishi_cmd.h shishi_cmd.c
@@ -65,3 +66,11 @@ keytab2shishi_cmd.c keytab2shishi_cmd.h: keytab2shishi.ggo Makefile.am
 	gengetopt --unamed-opts="INFILE [OUTFILE]" \
 		--no-handle-help --no-handle-error \
 		--input $< --file-name keytab2shishi_cmd
+
+ccache2shishi_SOURCES = ccache2shishi.c ccache2shishi.ggo	\
+	ccache2shishi_cmd.h ccache2shishi_cmd.c
+ccache2shishi_LDADD = ../gl/libgnu.la ../lib/libshishi.la @LTLIBINTL@
+ccache2shishi_cmd.c ccache2shishi_cmd.h: ccache2shishi.ggo Makefile.am
+	gengetopt --unamed-opts="INFILE [OUTFILE]" \
+		--no-handle-help --no-handle-error \
+		--input $< --file-name ccache2shishi_cmd
