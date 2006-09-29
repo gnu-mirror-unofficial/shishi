@@ -196,6 +196,7 @@ struct Shishi
   char *userdirectory;
   char *usercfgfile;
   char *tktsdefaultfile;
+  char *ccachedefault;
   char *hostkeysdefaultfile;
   char *x509certfile;
   char *x509keyfile;
