@@ -856,6 +856,10 @@ extern Shishi_tkt *shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
 							   *passwd);
 
 /* tktccache.c */
+extern char *shishi_tkts_default_ccache_guess (Shishi * handle);
+extern const char *shishi_tkts_default_ccache (Shishi * handle);
+extern void shishi_tkts_default_ccache_set (Shishi * handle,
+					    const char *ccache);
 extern int shishi_tkts_add_ccache_mem (Shishi * handle,
 				       const char *data, size_t len,
 				       Shishi_tkts *tkts);
