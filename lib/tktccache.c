@@ -306,7 +306,7 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
  * shishi_tkts_add_ccache_file:
  * @handle: shishi handle as allocated by shishi_init().
  * @filename: name of file to read.
- * @keys: allocated ticket set to store tickets in.
+ * @tkts: allocated ticket set to store tickets in.
  *
  * Read tickets from a ccache data structure, and add them to the
  * ticket set.
@@ -344,7 +344,7 @@ shishi_tkts_add_ccache_file (Shishi * handle,
  * @handle: shishi handle as allocated by shishi_init().
  * @data: constant memory buffer with ccache of @len size.
  * @len: size of memory buffer with ccache data.
- * @outkeys: pointer to ticket set that will be allocated and populated,
+ * @outtkts: pointer to ticket set that will be allocated and populated,
  *   must be deallocated by caller on succes.
  *
  * Read tickets from a ccache data structure, and add them to the
@@ -494,29 +494,45 @@ shishi_tkt_to_ccache_mem (Shishi *handle,
       if (rc != SHISHI_OK)
 	return rc;
 
-      rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
-			 "authtime", &cred.authtime);
-      if (rc != SHISHI_OK)
-	return rc;
+      {
+	time_t t;
+	rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+			   "authtime", &t);
+	if (rc != SHISHI_OK)
+	  return rc;
+	cred.authtime = t;
+      }
 
-      rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
-			 "starttime", &cred.starttime);
-      if (rc == SHISHI_ASN1_NO_ELEMENT)
-	cred.starttime = 0;
-      else if (rc != SHISHI_OK)
-	return rc;
+      {
+	time_t t;
+	rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+			   "starttime", &t);
+	if (rc == SHISHI_ASN1_NO_ELEMENT)
+	  cred.starttime = 0;
+	else if (rc != SHISHI_OK)
+	  return rc;
+	cred.starttime = t;
+      }
 
-      rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
-			 "endtime", &cred.endtime);
-      if (rc != SHISHI_OK)
-	return rc;
+      {
+	time_t t;
+	rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+			 "endtime", &t);
+	if (rc != SHISHI_OK)
+	  return rc;
+	cred.endtime = t;
+      }
 
-      rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
-			 "renew-till", &cred.renew_till);
-      if (rc == SHISHI_ASN1_NO_ELEMENT)
-	cred.renew_till = 0;
-      else if (rc != SHISHI_OK)
-	return rc;
+      {
+	time_t t;
+	rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+			   "renew-till", &t);
+	if (rc == SHISHI_ASN1_NO_ELEMENT)
+	  cred.renew_till = 0;
+	else if (rc != SHISHI_OK)
+	  return rc;
+	cred.renew_till = t;
+      }
 
       cred.key.keylen = shishi_key_length (shishi_tkt_key (tkt));
       cred.key.keytype = shishi_key_type (shishi_tkt_key (tkt));
