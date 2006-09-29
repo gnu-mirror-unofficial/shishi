@@ -23,6 +23,75 @@
 #include "ccache.h"
 
 /**
+ * shishi_tkts_default_ccache_guess:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Guesses the default ccache ticket filename; it is the contents of
+ * the environment variable KRB5CCNAME or /tmp/krb5cc_<UID> where
+ * <UID> is the user's identity in decimal, as returned by getuid().
+ *
+ * Return value: Returns default ccache filename as a string that has
+ *   to be deallocated with free() by the caller.
+ **/
+char *
+shishi_tkts_default_ccache_guess (Shishi * handle)
+{
+  char *envfile;
+
+  envfile = getenv ("KRB5CCNAME");
+  if (envfile)
+    return xstrdup (envfile);
+
+  return xasprintf("/tmp/krb5cc_%u", (unsigned long) getuid ());
+}
+
+/**
+ * shishi_tkts_default_ccache:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Get filename of default ccache filename.
+ *
+ * Return value: Returns the default ccache filename used in the
+ *   library.  The string is not a copy, so don't modify or deallocate
+ *   it.
+ **/
+const char *
+shishi_tkts_default_ccache (Shishi * handle)
+{
+  if (!handle->ccachedefault)
+    {
+      char *p;
+
+      p = shishi_tkts_default_ccache_guess (handle);
+      shishi_tkts_default_ccache_set (handle, p);
+      free (p);
+    }
+
+  return handle->ccachedefault;
+}
+
+/**
+ * shishi_tkts_default_ccache_set:
+ * @handle: Shishi library handle create by shishi_init().
+ * @tktsfile: string with new default ccache filename, or
+ *                 NULL to reset to default.
+ *
+ * Set the default ccache filename used in the library.  The string is
+ * copied into the library, so you can dispose of the variable
+ * immediately after calling this function.
+ **/
+void
+shishi_tkts_default_ccache_set (Shishi * handle, const char *ccache)
+{
+  if (handle->ccachedefault)
+    free (handle->ccachedefault);
+  if (ccache)
+    handle->ccachedefault = xstrdup (ccache);
+  else
+    handle->ccachedefault = NULL;
+}
+
+/**
  * shishi_tkts_add_ccache_mem:
  * @handle: shishi handle as allocated by shishi_init().
  * @data: constant memory buffer with ccache of @len size.
@@ -174,6 +243,25 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
       if (rc != SHISHI_OK)
 	return rc;
 
+      {
+	uint32_t nonce = 0;
+	rc = shishi_enckdcreppart_nonce_set (handle,
+					     shishi_tkt_enckdcreppart (tkt),
+					     nonce);
+	if (rc != SHISHI_OK)
+	  return rc;
+      }
+
+      rc = shishi_kdcrep_set_ticket (handle, shishi_tkt_kdcrep (tkt),
+				     shishi_tkt_ticket (tkt));
+      if (rc != SHISHI_OK)
+	return rc;
+
+      rc = shishi_kdcrep_set_enc_part (handle, shishi_tkt_kdcrep (tkt),
+				       0, 0, "", 0);
+      if (rc != SHISHI_OK)
+	return rc;
+
       /* Add key. */
 
       {
@@ -201,6 +289,15 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
       ccache.credentials += n;
       ccache.credentialslen -= n;
     }
+
+#if 0
+  {
+    char *data;
+    size_t len;
+    rc = shishi_tkts_to_ccache_mem (handle, tkts, &data, &len);
+    printf ("gaah res %d\n", rc);
+  }
+#endif
 
   return rc;
 }
@@ -320,4 +417,161 @@ shishi_tkts_from_ccache_file (Shishi * handle,
     }
 
   return SHISHI_OK;
+}
+
+int
+shishi_tkt_to_ccache_mem (Shishi *handle,
+			  Shishi_tkt *tkt,
+			  char **data, size_t *len)
+{
+  struct ccache_credential cred;
+  char tmp[1024];
+  size_t i;
+  int rc;
+
+  memset (&cred, 0, sizeof (cred));
+
+  rc = shishi_asn1_to_der (handle, shishi_tkt_ticket (tkt),
+			   &cred.ticket.data, &cred.ticket.length);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  /* Sanity check credential first. */
+
+  if (shishi_key_length (shishi_tkt_key (tkt)) > CCACHE_MAX_KEYLEN)
+    return SHISHI_CCACHE_ERROR;
+
+#if 0
+
+      {
+	char *cname[CCACHE_MAX_COMPONENTS + 1];
+	size_t i;
+
+	for (i = 0; i < cred.client.num_components
+	       && i < CCACHE_MAX_COMPONENTS; i++)
+	  cname[i] = cred.client.components[i].data;
+	cname[i] = NULL;
+
+	rc = shishi_kdcrep_crealm_set (handle,
+				       shishi_tkt_kdcrep (tkt),
+				       cred.client.realm.data);
+	if (rc != SHISHI_OK)
+	  return rc;
+
+	rc = shishi_kdcrep_cname_set (handle,
+				      shishi_tkt_kdcrep (tkt),
+				      cred.client.name_type,
+				      cname);
+	if (rc != SHISHI_OK)
+	  return rc;
+      }
+
+      {
+	char *sname[CCACHE_MAX_COMPONENTS + 1];
+	size_t i;
+
+	for (i = 0; i < cred.server.num_components
+	       && i < CCACHE_MAX_COMPONENTS; i++)
+	  sname[i] = cred.server.components[i].data;
+	sname[i] = NULL;
+
+	rc = shishi_enckdcreppart_srealm_set (handle,
+					      shishi_tkt_enckdcreppart (tkt),
+					      cred.server.realm.data);
+	if (rc != SHISHI_OK)
+	  return rc;
+
+	rc = shishi_enckdcreppart_sname_set (handle,
+					     shishi_tkt_enckdcreppart (tkt),
+					     cred.server.name_type,
+					     sname);
+	if (rc != SHISHI_OK)
+	  return rc;
+      }
+#endif
+
+      rc = shishi_tkt_flags (tkt, &cred.tktflags);
+      if (rc != SHISHI_OK)
+	return rc;
+
+      rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+			 "authtime", &cred.authtime);
+      if (rc != SHISHI_OK)
+	return rc;
+
+      rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+			 "starttime", &cred.starttime);
+      if (rc == SHISHI_ASN1_NO_ELEMENT)
+	cred.starttime = 0;
+      else if (rc != SHISHI_OK)
+	return rc;
+
+      rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+			 "endtime", &cred.endtime);
+      if (rc != SHISHI_OK)
+	return rc;
+
+      rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+			 "renew-till", &cred.renew_till);
+      if (rc == SHISHI_ASN1_NO_ELEMENT)
+	cred.renew_till = 0;
+      else if (rc != SHISHI_OK)
+	return rc;
+
+      cred.key.keylen = shishi_key_length (shishi_tkt_key (tkt));
+      cred.key.keytype = shishi_key_type (shishi_tkt_key (tkt));
+      memcpy (cred.key.storage, shishi_key_value (shishi_tkt_key (tkt)),
+	      shishi_key_length (shishi_tkt_key (tkt)));
+      cred.key.keyvalue = &cred.key.storage[0];
+
+      i = 1024;
+      rc = ccache_pack_credential (&cred, tmp, &i);
+      printf ("rc %d len %d\n", rc, i);
+
+      {
+	struct ccache_credential foo;
+	size_t n;
+
+	rc = ccache_parse_credential (tmp, i, &foo, &n);
+	if (rc < 0)
+	  return SHISHI_CCACHE_ERROR;
+
+	printf ("packed:");
+	ccache_print_credential (&foo);
+      }
+      _shishi_escapeprint (tmp, i);
+
+}
+
+int
+shishi_tkts_to_ccache_mem (Shishi *handle,
+			   Shishi_tkts *tkts,
+			   char **data, size_t *len)
+{
+  struct ccache info;
+  int rc = SHISHI_OK;
+  size_t i;
+
+  for (i = 0; i < shishi_tkts_size (tkts); i++)
+    {
+      Shishi_tkt *tkt = shishi_tkts_nth (tkts, i);
+      struct ccache_credential cred;
+
+      printf ("ccache %d\n", i);
+
+      if (!tkt)
+	return SHISHI_INVALID_TKTS;
+
+      rc = shishi_tkt_to_ccache_mem (handle, tkt, data, len);
+      printf ("f %d\n", rc);
+    }
+
+#if 0
+  memset (&info, 0, sizeof (info));
+
+  rc = ccache_pack (&info, *data, *len);
+  printf ("pack res %d len %d\n", rc, *len);
+#endif
+
+  return rc;
 }
