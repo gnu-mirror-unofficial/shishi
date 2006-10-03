@@ -28,9 +28,9 @@
 -- authors but Tom Yu (as of April 2006).  For prudence, asking the
 -- Kerberos WG whether anyone else contributed significantly to the
 -- ASN.1 schema also remains.  Further, it seems the IETF IPR WG tend
--- to believe that code extracted from RFCs should be modifiable,
--- which would be sufficient for this file, compare
--- ipr-rules-update-07 and
+-- to believe that code extracted from RFCs was intended to be
+-- modifiable under RFC 3978, which would be sufficient for an ASN.1
+-- schema such as this file, compare ipr-rules-update-07 and
 -- <50E312B117033946BA23AA102C8134C62AB176@SDCPEXCCL2MX.wilmerhale.com>.
 
 KerberosV5Spec2 {
