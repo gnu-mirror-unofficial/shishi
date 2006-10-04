@@ -32,6 +32,10 @@
 -- modifiable under RFC 3978, which would be sufficient for an ASN.1
 -- schema such as this file, compare ipr-rules-update-07 and
 -- <50E312B117033946BA23AA102C8134C62AB176@SDCPEXCCL2MX.wilmerhale.com>.
+-- The IETF lawyer Jorge Contreras has said the following on this
+-- topic: "Under RFC 3978, it is currently OK to modify code extracts
+-- from RFCs.", see <44A91390.2030908@dial.pipex.com>.
+
 
 KerberosV5Spec2 {
         iso(1) identified-organization(3) dod(6) internet(1)
