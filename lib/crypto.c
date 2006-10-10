@@ -1,5 +1,5 @@
 /* crypto.c --- Crypto functions.
- * Copyright (C) 2002, 2003, 2004, 2005  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -184,7 +184,7 @@ _shishi_simplified_derivekey (Shishi * handle,
 			      int keyusage,
 			      int derivekeymode, Shishi_key ** outkey)
 {
-  char constant[5];
+  char prfconstant[5];
   int res = SHISHI_OK;
   Shishi_key *derivedkey;
 
@@ -210,15 +210,15 @@ _shishi_simplified_derivekey (Shishi * handle,
   if (keyusage)
     {
       uint32_t tmp = htonl (keyusage);
-      memcpy (constant, &tmp, 4);
+      memcpy (prfconstant, &tmp, 4);
       if (derivekeymode == SHISHI_DERIVEKEYMODE_CHECKSUM)
-	constant[4] = '\x99';
+	prfconstant[4] = '\x99';
       else if (derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY)
-	constant[4] = '\x55';
-      else			/* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
-	constant[4] = '\xAA';
+	prfconstant[4] = '\x55';
+      else /* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
+	prfconstant[4] = '\xAA';
 
-      res = shishi_dk (handle, key, constant, 5, derivedkey);
+      res = shishi_dk (handle, key, prfconstant, 5, derivedkey);
     }
   else
     {
@@ -1881,73 +1881,71 @@ shishi_n_fold (Shishi * handle,
   return SHISHI_OK;
 }
 
-#define MAX_DR_CONSTANT 1024
+#define MAX_DR_PRFCONSTANT 1024
 
 /**
  * shishi_dr:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: input array with cryptographic key to use.
- * @constant: input array with the constant string.
- * @constantlen: size of input array with the constant string.
+ * @prfconstant: input array with the constant string.
+ * @prfconstantlen: size of input array with the constant string.
  * @derivedrandom: output array with derived random data.
  * @derivedrandomlen: size of output array with derived random data.
  *
  * Derive "random" data from a key and a constant thusly:
- * DR(KEY, CONSTANT) = TRUNCATE(DERIVEDRANDOMLEN,
- *                              SHISHI_ENCRYPT(KEY, CONSTANT)).
+ * DR(KEY, PRFCONSTANT) = TRUNCATE(DERIVEDRANDOMLEN,
+ *                                 SHISHI_ENCRYPT(KEY, PRFCONSTANT)).
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_dr (Shishi * handle,
 	   Shishi_key * key,
-	   const char *constant, size_t constantlen,
+	   const char *prfconstant, size_t prfconstantlen,
 	   char *derivedrandom, size_t derivedrandomlen)
 {
   char *cipher;
-  char plaintext[MAX_DR_CONSTANT];
-  char nfoldconstant[MAX_DR_CONSTANT];
+  char plaintext[MAX_DR_PRFCONSTANT];
+  char nfoldprfconstant[MAX_DR_PRFCONSTANT];
   size_t blocksize = shishi_cipher_blocksize (shishi_key_type (key));
   size_t totlen, cipherlen;
   int res;
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("dr (%s, key, constant, %d)\n",
+      printf ("dr (%s, key, prfconstant, %d)\n",
 	      shishi_cipher_name (shishi_key_type (key)), derivedrandomlen);
       printf ("\t ;; key (length %d):\n", shishi_key_length (key));
       _shishi_hexprint (shishi_key_value (key), shishi_key_length (key));
       _shishi_binprint (shishi_key_value (key), shishi_key_length (key));
-      printf ("\t ;; constant  %s':\n", constant);
-      _shishi_escapeprint (constant, constantlen);
-      _shishi_hexprint (constant, constantlen);
-      _shishi_binprint (constant, constantlen);
+      printf ("\t ;; prfconstant  %s':\n", prfconstant);
+      _shishi_escapeprint (prfconstant, prfconstantlen);
+      _shishi_hexprint (prfconstant, prfconstantlen);
+      _shishi_binprint (prfconstant, prfconstantlen);
     }
 
-  if (constantlen > MAX_DR_CONSTANT)
+  if (prfconstantlen > MAX_DR_PRFCONSTANT)
     return SHISHI_TOO_SMALL_BUFFER;
 
-  if (constantlen == blocksize)
-    {
-      memcpy (nfoldconstant, constant, constantlen);
-    }
+  if (prfconstantlen == blocksize)
+    memcpy (nfoldprfconstant, prfconstant, prfconstantlen);
   else
     {
-      res = shishi_n_fold (handle, constant, constantlen, nfoldconstant,
-			   blocksize);
+      res = shishi_n_fold (handle, prfconstant, prfconstantlen,
+			   nfoldprfconstant, blocksize);
       if (res != SHISHI_OK)
 	return res;
     }
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("\t ;; possibly nfolded constant (length %d):\n", blocksize);
-      _shishi_escapeprint (nfoldconstant, blocksize);
-      _shishi_hexprint (nfoldconstant, blocksize);
-      _shishi_binprint (nfoldconstant, blocksize);
+      printf ("\t ;; possibly nfolded prfconstant (length %d):\n", blocksize);
+      _shishi_escapeprint (nfoldprfconstant, blocksize);
+      _shishi_hexprint (nfoldprfconstant, blocksize);
+      _shishi_binprint (nfoldprfconstant, blocksize);
     }
 
-  memcpy (plaintext, nfoldconstant, blocksize);
+  memcpy (plaintext, nfoldprfconstant, blocksize);
 
   totlen = 0;
   do
@@ -1979,38 +1977,39 @@ shishi_dr (Shishi * handle,
  * shishi_dk:
  * @handle: shishi handle as allocated by shishi_init().
  * @key: input cryptographic key to use.
- * @constant: input array with the constant string.
- * @constantlen: size of input array with the constant string.
+ * @prfconstant: input array with the constant string.
+ * @prfconstantlen: size of input array with the constant string.
  * @derivedkey: pointer to derived key (allocated by caller).
  *
  * Derive a key from a key and a constant thusly:
- * DK(KEY, CONSTANT) = SHISHI_RANDOM-TO-KEY(SHISHI_DR(KEY, CONSTANT)).
+ * DK(KEY, PRFCONSTANT) = SHISHI_RANDOM-TO-KEY(SHISHI_DR(KEY, PRFCONSTANT)).
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_dk (Shishi * handle,
 	   Shishi_key * key,
-	   const char *constant, size_t constantlen, Shishi_key * derivedkey)
+	   const char *prfconstant, size_t prfconstantlen,
+	   Shishi_key * derivedkey)
 {
   char rnd[MAX_RANDOM_LEN];
   int res;
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("dk (%s, key, constant)\n", shishi_key_name (key));
+      printf ("dk (%s, key, prfconstant)\n", shishi_key_name (key));
       printf ("\t ;; key (length %d):\n", shishi_key_length (key));
       _shishi_hexprint (shishi_key_value (key), shishi_key_length (key));
       _shishi_binprint (shishi_key_value (key), shishi_key_length (key));
-      printf ("\t ;; constant:\n");
-      _shishi_escapeprint (constant, constantlen);
-      _shishi_hexprint (constant, constantlen);
-      _shishi_binprint (constant, constantlen);
+      printf ("\t ;; prfconstant:\n");
+      _shishi_escapeprint (prfconstant, prfconstantlen);
+      _shishi_hexprint (prfconstant, prfconstantlen);
+      _shishi_binprint (prfconstant, prfconstantlen);
     }
 
   shishi_key_type_set (derivedkey, shishi_key_type (key));
 
-  res = shishi_dr (handle, key, constant, constantlen, rnd,
+  res = shishi_dr (handle, key, prfconstant, prfconstantlen, rnd,
 		   shishi_key_length (derivedkey));
   if (res != SHISHI_OK)
     return res;
