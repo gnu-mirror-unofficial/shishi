@@ -1,7 +1,7 @@
 
-#include "libtasn1.h"
+#include <libtasn1.h>
 
-const ASN1_ARRAY_TYPE shishi_asn1_tab[]={
+extern const ASN1_ARRAY_TYPE shishi_asn1_tab[]={
   {"KerberosV5Spec2",536872976,0},
   {0,1610612748,0},
   {"iso",1073741825,"1"},
