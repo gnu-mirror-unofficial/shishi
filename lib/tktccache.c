@@ -383,7 +383,7 @@ shishi_tkts_from_ccache_mem (Shishi * handle,
  * shishi_tkts_from_ccache_file:
  * @handle: shishi handle as allocated by shishi_init().
  * @filename: name of file to read.
- * @outkeys: pointer to ticket set that will be allocated and populated,
+ * @outtkts: pointer to ticket set that will be allocated and populated,
  *   must be deallocated by caller on succes.
  *
  * Read tickets from a ccache data structure, and add them to the
