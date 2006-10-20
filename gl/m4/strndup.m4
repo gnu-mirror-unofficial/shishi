@@ -1,4 +1,4 @@
-# strndup.m4 serial 9
+# strndup.m4 serial 11
 dnl Copyright (C) 2002-2003, 2005-2006 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
@@ -40,8 +40,6 @@ AC_DEFUN([gl_FUNC_STRNDUP],
       [Define if you have the strndup() function and it works.])
   else
     AC_LIBOBJ([strndup])
-    AC_DEFINE(strndup, rpl_strndup,
-      [Define to rpl_strndup if the replacement function should be used,])
     gl_PREREQ_STRNDUP
   fi
 ])
