@@ -258,6 +258,20 @@ EXTRA_DIST += inet_ntop.c inet_ntop.h
 
 ## end   gnulib module inet_ntop
 
+## begin gnulib module intprops
+
+
+EXTRA_DIST += intprops.h
+
+## end   gnulib module intprops
+
+## begin gnulib module inttostr
+
+
+EXTRA_DIST += imaxtostr.c inttostr.c inttostr.h offtostr.c uinttostr.c umaxtostr.c
+
+## end   gnulib module inttostr
+
 ## begin gnulib module mbchar
 
 
@@ -342,13 +356,6 @@ EXTRA_DIST += setenv.c setenv.h unsetenv.c
 libgnu_la_SOURCES += size_max.h
 
 ## end   gnulib module size_max
-
-## begin gnulib module snprintf
-
-
-EXTRA_DIST += snprintf.c snprintf.h
-
-## end   gnulib module snprintf
 
 ## begin gnulib module stdbool
 
@@ -624,9 +631,8 @@ EXTRA_DIST += xalloc.h
 
 
 mostlyclean-local: mostlyclean-generic
-	@test -z "$(MOSTLYCLEANDIRS)" || \
-	  for dir in $(MOSTLYCLEANDIRS); do \
-	    if test -d $$dir; then \
-	      echo "rmdir $$dir"; rmdir $$dir; \
-	    fi; \
-	  done
+	@for dir in '' $(MOSTLYCLEANDIRS); do \
+	  if test -n "$$dir" && test -d $$dir; then \
+	    echo "rmdir $$dir"; rmdir $$dir; \
+	  fi; \
+	done

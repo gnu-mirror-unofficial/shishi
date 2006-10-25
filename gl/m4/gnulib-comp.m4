@@ -71,6 +71,7 @@ AC_DEFUN([gl_INIT],
   gl_GETTIME
   AC_FUNC_GETTIMEOFDAY_CLOBBER
   gl_INET_NTOP
+  gl_INTTOSTR
   gl_MBCHAR
   gl_MBITER
   gl_FUNC_MEMCHR
@@ -81,7 +82,6 @@ AC_DEFUN([gl_INIT],
   AC_FUNC_REALLOC
   gt_FUNC_SETENV
   gl_SIZE_MAX
-  gl_FUNC_SNPRINTF
   gl_TYPE_SOCKLEN_T
   gt_TYPE_SSIZE_T
   gl_STDARG_H
@@ -194,8 +194,12 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/hmac-md5.c
   lib/hmac-sha1.c
   lib/hmac.h
+  lib/imaxtostr.c
   lib/inet_ntop.c
   lib/inet_ntop.h
+  lib/intprops.h
+  lib/inttostr.c
+  lib/inttostr.h
   lib/mbchar.c
   lib/mbchar.h
   lib/mbuiter.h
@@ -207,6 +211,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/memxor.c
   lib/memxor.h
   lib/mktime.c
+  lib/offtostr.c
   lib/printf-args.c
   lib/printf-args.h
   lib/printf-parse.c
@@ -222,8 +227,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/sha1.c
   lib/sha1.h
   lib/size_max.h
-  lib/snprintf.c
-  lib/snprintf.h
   lib/socket_.h
   lib/stat_.h
   lib/stdbool_.h
@@ -250,6 +253,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/timegm.c
   lib/timegm.h
   lib/timespec.h
+  lib/uinttostr.c
+  lib/umaxtostr.c
   lib/unsetenv.c
   lib/vasnprintf.c
   lib/vasnprintf.h
@@ -307,6 +312,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/hmac-sha1.m4
   m4/inet_ntop.m4
   m4/intmax_t.m4
+  m4/inttostr.m4
   m4/inttypes_h.m4
   m4/lib-ld.m4
   m4/lib-link.m4
@@ -328,7 +334,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/sha1.m4
   m4/signed.m4
   m4/size_max.m4
-  m4/snprintf.m4
   m4/socklen.m4
   m4/sockpfaf.m4
   m4/ssize_t.m4
