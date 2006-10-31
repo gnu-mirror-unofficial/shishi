@@ -4,8 +4,9 @@ See the end for copying conditions.
 
 * Version 0.0.28 (unreleased)
 
-** Fix build errors for missing arcfour_stream when using --with-libgcrypt.
-Reported by abhijit mitra <abhijit_kly@yahoo.co.in>.
+** New command line tool "ccache2shishi".
+The tool will read tickets from /tmp/krb5cc_UID (by default) and will
+write them to ~/.shishi/tickets.
 
 ** A description of the ccache file format were added in doc/ccache.txt.
 
@@ -27,6 +28,9 @@ shishi_enckdcreppart_renew_till_set
 shishi_tkts_default_ccache_guess
 shishi_tkts_default_ccache
 shishi_tkts_default_ccache_set
+
+** Fix build errors for missing arcfour_stream when using --with-libgcrypt.
+Reported by abhijit mitra <abhijit_kly@yahoo.co.in>.
 
 * Version 0.0.27 (released 2006-09-15)
 
