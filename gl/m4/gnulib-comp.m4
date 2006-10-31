@@ -332,7 +332,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/readlink.m4
   m4/setenv.m4
   m4/sha1.m4
-  m4/signed.m4
   m4/size_max.m4
   m4/socklen.m4
   m4/sockpfaf.m4
