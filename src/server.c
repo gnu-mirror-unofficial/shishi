@@ -166,7 +166,9 @@ kdc_read (struct listenspec *ls)
   ls->addrlen = sizeof (ls->addr);
 #ifdef USE_STARTTLS
   if (ls->usetls)
-    read_bytes = gnutls_record_recv (ls->session, ls->buf, sizeof (ls->buf));
+    read_bytes = gnutls_record_recv (ls->session,
+				     ls->buf + ls->bufpos,
+				     sizeof (ls->buf) - ls->bufpos);
   else
 #endif
     read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
@@ -205,9 +207,14 @@ kdc_read (struct listenspec *ls)
 static int
 kdc_ready (struct listenspec *ls)
 {
-  if ((ls->usetls || ls->type == SOCK_DGRAM) && ls->bufpos > 0)
+  int waitfor = ls->bufpos >= 4 ? ntohl (*(int*) ls->buf) : 4;
+
+  syslog (LOG_DEBUG, "Got %d bytes of %d bytes from %s on socket %d\n",
+	  ls->bufpos, waitfor + 4, ls->str, ls->sockfd);
+
+  if (ls->type == SOCK_DGRAM && ls->bufpos > 0)
     return 1;
-  else if (ls->bufpos > 4 && ntohl (*(int *) ls->buf) + 4 == ls->bufpos)
+  else if (ls->bufpos > 4 && waitfor + 4 == ls->bufpos)
     return 1;
 
   return 0;
@@ -223,7 +230,7 @@ kdc_process (struct listenspec *ls)
   syslog (LOG_DEBUG, "Processing %d from %s on socket %d",
 	  ls->bufpos, ls->str, ls->sockfd);
 
-  if (ls->usetls || ls->type == SOCK_DGRAM)
+  if (ls->type == SOCK_DGRAM)
     plen = process (ls->buf, ls->bufpos, &p);
   else
     plen = process (ls->buf + 4, ls->bufpos - 4, &p);
