@@ -5,10 +5,10 @@ See the end for copying conditions.
 * Version 0.0.30 (unreleased)
 
 ** Fix failure when reading large integers from ASN.1 structure.
-This can manifest itself by giving such as 'Replay protection value
-(nonce) differ between request and reply.'.  Added a new self test
-"nonce" to detect errors in these routines.  Reported by Alberto
-Fondi.
+This can manifest itself by giving error messages such as 'Replay
+protection value (nonce) differ between request and reply.'.  Added a
+new self test "nonce" to detect errors in these routines.  Reported by
+Alberto Fondi.
 
 * Version 0.0.29 (released 2006-11-01)
 
