@@ -1,5 +1,5 @@
 /* starttls.c --- Network I/O functions for Shishi over TLS.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -67,10 +67,13 @@ _shishi_tls_done (Shishi * handle)
  *
  * Derive EncKDCRepPart key from TLS PRF?  Hm.
  *
+ * The code currently implements
+ * draft-josefsson-krb-tcp-expansion-02.txt and
+ * draft-josefsson-kerberos5-starttls-02.txt.
  */
 
 #define STARTTLS_CLIENT_REQUEST "\x70\x00\x00\x01"
-#define STARTTLS_SERVER_ACCEPT "\x70\x00\x00\x02"
+#define STARTTLS_SERVER_ACCEPT "\x00\x00\x00\x00"
 #define STARTTLS_LEN 4
 
 /* Negotiate TLS and send and receive packets on an open socket. */
@@ -86,6 +89,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
   char extbuf[STARTTLS_LEN + 1];
   static size_t session_data_size = 0;
   static void *session_data = NULL;
+  char tmpbuf[4];
 
   bytes_sent = write (sockfd, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN);
   if (bytes_sent != STARTTLS_LEN)
@@ -132,6 +136,19 @@ _shishi_sendrecv_tls1 (Shishi * handle,
 			       ret, gnutls_strerror (ret));
 	  return SHISHI_RECVFROM_ERROR;
 	}
+    }
+
+  tmpbuf[3] = inlen & 0xFF;
+  tmpbuf[2] = (inlen >> 8) & 0xFF;
+  tmpbuf[1] = (inlen >> 16) & 0xFF;
+  tmpbuf[0] = (inlen >> 24) & 0xFF;
+
+  bytes_sent = gnutls_record_send (session, tmpbuf, 4);
+  if (bytes_sent != 4)
+    {
+      shishi_error_printf (handle, "Bad TLS write (%d < 4)",
+			   bytes_sent);
+      return SHISHI_SENDTO_ERROR;
     }
 
   bytes_sent = gnutls_record_send (session, indata, inlen);
