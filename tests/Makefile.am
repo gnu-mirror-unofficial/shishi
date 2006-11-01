@@ -27,7 +27,7 @@ LDADD = @LTLIBINTL@ ../gl/libgnu.la @LTLIBTASN1@ @LTLIBGNUTLS@ \
 	../lib/libshishi.la
 
 check_PROGRAMS = authenticator crypto gztime priv safe \
-	ticketset crypto-ctx low-crypto rijndael key keytab ccache
+	ticketset crypto-ctx low-crypto rijndael key keytab ccache nonce
 TESTS = $(check_PROGRAMS)
 
 TESTS_ENVIRONMENT = \
