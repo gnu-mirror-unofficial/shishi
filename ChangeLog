@@ -1,3 +1,287 @@
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.28.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po: Sync with TP.
+
+2006-10-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/version.c: Doc fix.
+
+2006-10-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto-md.c: Nicolas assigned his copyright to the FSF, see
+	AUTHORS.
+
+2006-10-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Dist ccache.h.
+
+2006-10-31  Simon Josefsson <simon@josefsson.org>
+
+	* gl/arcfour.c, gl/base64.c, gl/crc.c, gl/des.c, gl/gc-gnulib.c,
+	gl/gc-libgcrypt.c, gl/gc-pbkdf2-sha1.c, gl/getaddrinfo.c,
+	gl/getdelim.c, gl/getline.c, gl/gettext.h, gl/hmac-md5.c,
+	gl/hmac-sha1.c, gl/mbchar.c, gl/mbchar.h, gl/md4.c, gl/memxor.c,
+	gl/progname.h, gl/read-file.c, gl/stat_.h, gl/xgetdomainname.c,
+	gl/xstrndup.c, gl/m4/gnulib-comp.m4, gl/m4/lib-link.m4,
+	gl/m4/signed.m4, gl/m4/sys_stat_h.m4, gl/m4/vasnprintf.m4: Update.
+
+2006-10-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Mention ccache2shishi.
+
+2006-10-25  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/getaddrinfo.c, gl/getdate.y, gl/imaxtostr.c,
+	gl/intprops.h, gl/inttostr.c, gl/inttostr.h, gl/offtostr.c,
+	gl/snprintf.c, gl/snprintf.h, gl/stdint_.h, gl/uinttostr.c,
+	gl/umaxtostr.c, gl/wcwidth.h, gl/m4/gnulib-comp.m4,
+	gl/m4/inttostr.m4, gl/m4/snprintf.m4, gl/m4/wcwidth.m4: Update.
+
+2006-10-20  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/alloca.m4, gl/m4/allocsa.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/size_max.m4: Update.
+
+2006-10-20  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/allocsa.h, gl/getpass.c, gl/gettext.h,
+	gl/printf-args.c, gl/printf-args.h, gl/printf-parse.c,
+	gl/progname.c, gl/stdint_.h, gl/strdup.c, gl/strndup.c,
+	gl/strndup.h, gl/vasnprintf.c, gl/xasprintf.c, gl/xvasprintf.c,
+	gl/m4/allocsa.m4, gl/m4/extensions.m4, gl/m4/getpass.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/longlong.m4, gl/m4/stdint.m4,
+	gl/m4/strndup.m4, gl/m4/ulonglong.m4, gl/m4/vasnprintf.m4,
+	gnupload: Update.
+
+2006-10-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tktccache.c: Doc fix.
+
+2006-10-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c, lib/shishi.h.in: Don't use variable name
+	"constant", since gtk-doc warns about it.
+
+2006-10-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.c: Update.
+
+2006-10-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.asn1: Add.
+
+2006-10-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.asn1: Further copyright discussions.
+
+2006-10-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.asn1: More license discussions.
+
+2006-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2006-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tktccache.c: Fix warnings.
+
+2006-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add.
+
+2006-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: New field ccachedefault for default ccache
+	filenames, used by tktccache.c.
+
+2006-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tktccache.c: Add shishi_tkts_default_ccache_guess,
+	shishi_tkts_default_ccache, shishi_tkts_default_ccache_set.  Add
+	work in progress, shishi_tkts_to_ccache_mem and
+	shishi_tkt_to_ccache_mem.
+	(shishi_tkts_add_ccache_mem): Set more fields, to make converted
+	tickets work.
+
+2006-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-09-29  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, THANKS: Add.
+
+2006-09-28  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-09-28  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am, src/ccache2shishi.c, src/ccache2shishi.ggo: Add
+	ccache2shishi.
+
+2006-09-28  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-09-28  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gc-arcfour.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4: Update.
+
+2006-09-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/keytab2shishi.ggo: Fix copyright years.
+
+2006-09-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c: Fix.
+
+2006-09-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c: Fix typos.
+
+2006-09-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/gztime.c, lib/shishi.h.in:
+	(shishi_ctime): Add.
+
+2006-09-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c, lib/ccache.h: Add ccache_pack.
+
+2006-09-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c, lib/ccache.h: Don't mention Shishi in license
+	template.
+
+2006-09-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c: Doc fix.
+
+2006-09-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.h: Add storage for key data (optional).  Use 'char*'
+	instead of 'void*' for data.
+
+2006-09-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.h: Add ccache_pack_credential.  Use char* instead of
+	void* for data buffers.
+
+2006-09-25  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c: Add ccache_pack_credential, and related helper
+	functions.  Use char* instead of void* for data buffers.  Fix NUL
+	checks, and their comments.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Add ccache APIs.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tktccache.c: Doc fix.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/Makefile.am: Ignore ccache.h.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Update.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* m4/libgnutls.m4: Update from gnutls CVS.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* m4/libgcrypt.m4: Update from libgcrypt.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* gl/gc-gnulib.c, gl/getaddrinfo.c, gl/md4.c, gl/strtok_r.c,
+	gl/m4/getdate.m4, gl/m4/gnulib-comp.m4, gl/m4/signed.m4,
+	gl/m4/sockpfaf.m4, gl/m4/strndup.m4, gl/m4/time_r.m4,
+	gl/m4/vasprintf.m4: Update.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Bump versions.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, lib/Makefile.am, lib/ccache.c, lib/error.c,
+	lib/shishi.h.in, lib/tktccache.c, tests/Makefile.am,
+	tests/ccache.c, tests/ccache1.bin: Add ccache reader APIs.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in, lib/enckdcreppart.c: Add.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* doc/ccache.txt: Update.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c: Ticket flags are stored bit-swapped?!
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c: Fix typo.
+
+2006-09-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c: Save ticket pointers.
+
+2006-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Simplify valgrind.
+
+2006-09-21  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Test for valgrind.
+
+2006-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* doc/ccache.txt: Update.
+
+2006-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ccache.c, lib/ccache.h: Add.
+
+2006-09-20  Simon Josefsson <simon@josefsson.org>
+
+	* doc/ccache.txt: Change field name.
+
+2006-09-18  Simon Josefsson <simon@josefsson.org>
+
+	* tests/utils.c: Fix last commit.
+
+2006-09-18  Simon Josefsson <simon@josefsson.org>
+
+	* tests/utils.c: More debugging output for --debug.
+
+2006-09-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keytab.c: Fix comment.
+
+2006-09-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/keys.c, lib/keytab.c: Separate out keytab
+	stuff from keys.c to keytab.c.
+
 2006-09-15  Simon Josefsson <simon@josefsson.org>
 
 	* po/pl.po: Generated.
