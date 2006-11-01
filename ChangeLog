@@ -1,5 +1,87 @@
 2006-11-01  Simon Josefsson <simon@josefsson.org>
 
+	* configure.ac: Bump versions, for 0.0.30.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.30.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/starttls.c: Send TCP length octet for TLS packets too.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c: Fix length field.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c: Fix length field.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c: More krb5starttls -02 fixes.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* src/starttls.c: Implement the -02 protocol.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c: Send 4-octet length field for TLS connections too.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/starttls.c: Upgrade to modern STARTTLS drafts.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/enckdcreppart.c:
+	(shishi_enckdcreppart_nonce_set): Use shishi_asn1_write_uint32 to
+	write the nonce.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am: Add nonce.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* tests/nonce.c: Add, to detect uint32 reading regression.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Fix last commit.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS: Add.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c:
+	(shishi_asn1_read_int32): Convert buffer to integer correctly, to
+	fix reading nonces, reported by Alberto Fondi
+	<alberto.fondi@lnf.infn.it>.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tktccache.c:
+	(shishi_tkts_default_ccache_set): Doc fix.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
 	* po/pl.po: Generated.
 
 2006-11-01  Simon Josefsson <simon@josefsson.org>
