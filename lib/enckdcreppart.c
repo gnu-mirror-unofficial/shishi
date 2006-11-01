@@ -153,7 +153,7 @@ shishi_enckdcreppart_nonce_set (Shishi * handle,
 {
   int res;
 
-  res = shishi_asn1_write_integer (handle, enckdcreppart, "nonce", nonce);
+  res = shishi_asn1_write_uint32 (handle, enckdcreppart, "nonce", nonce);
   if (res != SHISHI_OK)
     return res;
 
