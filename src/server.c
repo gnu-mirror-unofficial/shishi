@@ -125,15 +125,15 @@ kdc_send1 (struct listenspec *ls)
 static void
 kdc_send (struct listenspec *ls)
 {
-  if (ls->usetls)
-    syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via TLS",
+  if (ls->type == SOCK_DGRAM)
+    syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via UDP",
 	    ls->bufpos, ls->str, ls->sockfd);
-  else if (ls->type == SOCK_STREAM)
+  else
     {
       uint32_t len = htonl (ls->bufpos) + 4;
 
-      syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via TCP",
-	      ls->bufpos, ls->str, ls->sockfd);
+      syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via %s",
+	      ls->bufpos, ls->str, ls->sockfd, ls->usetls ? "TLS" : "TCP");
 
       if (ls->bufpos + 4 >= sizeof (ls->buf))
 	ls->bufpos = sizeof (ls->buf) - 4;
@@ -142,9 +142,6 @@ kdc_send (struct listenspec *ls)
       memcpy (ls->buf, &len, 4);
       ls->bufpos += 4;
     }
-  else
-    syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via UDP",
-	    ls->bufpos, ls->str, ls->sockfd);
 
   kdc_send1 (ls);
 
