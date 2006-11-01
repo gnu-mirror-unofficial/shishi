@@ -1,6 +1,7 @@
 Makefile
 Makefile.gdoc
 Makefile.in
+ccache2shishi.1
 components.png
 html
 keytab2shishi.1
