@@ -76,6 +76,11 @@ _shishi_tls_done (Shishi * handle)
 #define STARTTLS_SERVER_ACCEPT "\x00\x00\x00\x00"
 #define STARTTLS_LEN 4
 
+#define C2I(buf) ((buf[3] & 0xFF) |		\
+		  ((buf[2] & 0xFF) << 8) |	\
+		  ((buf[1] & 0xFF) << 16) |	\
+		  ((buf[0] & 0xFF) << 24))
+
 /* Negotiate TLS and send and receive packets on an open socket. */
 static int
 _shishi_sendrecv_tls1 (Shishi * handle,
@@ -159,7 +164,16 @@ _shishi_sendrecv_tls1 (Shishi * handle,
       return SHISHI_SENDTO_ERROR;
     }
 
-  *outlen = gnutls_record_get_max_size (session);
+  bytes_read = gnutls_record_recv (session, tmpbuf, 4);
+  if (bytes_read != 4)
+    {
+      shishi_error_printf (handle, "Bad TLS read (%d < 4)",
+			   bytes_read);
+      return SHISHI_SENDTO_ERROR;
+    }
+
+  /* XXX sanities input. */
+  *outlen = C2I(tmpbuf);
   *outdata = xmalloc (*outlen);
 
   bytes_read = gnutls_record_recv (session, *outdata, *outlen);
@@ -176,9 +190,13 @@ _shishi_sendrecv_tls1 (Shishi * handle,
       free (*outdata);
       return SHISHI_RECVFROM_ERROR;
     }
-
-  *outdata = xrealloc (*outdata, bytes_read);
-  *outlen = bytes_read;
+  else if (bytes_read != *outlen)
+    {
+      shishi_error_printf (handle, "TLS Read error (%d != %d)",
+			   *outlen, bytes_read);
+      free (*outdata);
+      return SHISHI_RECVFROM_ERROR;
+    }
 
   do
     ret = gnutls_bye (session, GNUTLS_SHUT_RDWR);
