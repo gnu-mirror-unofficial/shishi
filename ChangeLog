@@ -1,5 +1,25 @@
 2006-11-01  Simon Josefsson <simon@josefsson.org>
 
+	* po/pl.po: Generated.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.29.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Bump versions.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Build ccache2shishi.1.
+
+2006-11-01  Simon Josefsson <simon@josefsson.org>
+
 	* NEWS: Version 0.0.28.
 
 2006-11-01  Simon Josefsson <simon@josefsson.org>
