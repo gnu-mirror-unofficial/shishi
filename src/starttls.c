@@ -1,5 +1,5 @@
 /* starttls.c --- Handle extended TCP connections (for TLS).
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -257,7 +257,7 @@ logtlsinfo (gnutls_session session)
 }
 
 #define STARTTLS_CLIENT_REQUEST "\x70\x00\x00\x01"
-#define STARTTLS_SERVER_ACCEPT "\x70\x00\x00\x02"
+#define STARTTLS_SERVER_ACCEPT "\x00\x00\x00\x00"
 #define STARTTLS_LEN 4
 
 /* Handle the high TCP length bit, currently only used for STARTTLS. */
