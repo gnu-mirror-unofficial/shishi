@@ -229,10 +229,10 @@ shishi_asn1_read_optional (Shishi * handle,
   return SHISHI_OK;
 }
 
-#define C2I(buf) ((buf[0] & 0xFF) |		\
-		  ((buf[1] & 0xFF) << 8) |	\
-		  ((buf[2] & 0xFF) << 16) |	\
-		  ((buf[3] & 0xFF) << 24))
+#define C2I(buf) ((buf[3] & 0xFF) |		\
+		  ((buf[2] & 0xFF) << 8) |	\
+		  ((buf[1] & 0xFF) << 16) |	\
+		  ((buf[0] & 0xFF) << 24))
 
 int
 shishi_asn1_read_int32 (Shishi * handle, Shishi_asn1 node,
