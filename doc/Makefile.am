@@ -34,7 +34,8 @@ shishi_TEXINFOS = gpl.texi fdl.texi $(gdoc_TEXINFOS) \
 
 AM_MAKEINFOHTMLFLAGS = --no-split --number-sections --css-include=texinfo.css
 
-dist_man_MANS = shishi.1 shisa.1 shishid.1 keytab2shishi.1 $(gdoc_MANS)
+dist_man_MANS = shishi.1 shisa.1 shishid.1 keytab2shishi.1 ccache2shishi.1 \
+	$(gdoc_MANS)
 MAINTAINERCLEANFILES = $(dist_man_MANS)
 
 shishi.1: $(top_srcdir)/src/shishi.c $(top_srcdir)/src/shishi.ggo \
@@ -61,6 +62,12 @@ keytab2shishi.1: $(top_srcdir)/src/keytab2shishi.c \
 	$(HELP2MAN) \
 		--name="Shishi host key conversion tool" \
 		--output=$@ $(top_builddir)/src/keytab2shishi$(EXEEXT)
+
+ccache2shishi.1: $(top_srcdir)/src/ccache2shishi.c \
+	$(top_srcdir)/src/ccache2shishi.ggo $(top_srcdir)/configure.ac
+	$(HELP2MAN) \
+		--name="Shishi user ticket conversion tool" \
+		--output=$@ $(top_builddir)/src/ccache2shishi$(EXEEXT)
 
 shishi-api-error-labels.texi: $(top_srcdir)/lib/error.c
 	$(PERL) $(srcdir)/gdoc-error $^ > $@
