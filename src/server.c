@@ -130,8 +130,6 @@ kdc_send (struct listenspec *ls)
 	    ls->bufpos, ls->str, ls->sockfd);
   else
     {
-      uint32_t len = htonl (ls->bufpos) + 4;
-
       syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via %s",
 	      ls->bufpos, ls->str, ls->sockfd, ls->usetls ? "TLS" : "TCP");
 
@@ -139,7 +137,10 @@ kdc_send (struct listenspec *ls)
 	ls->bufpos = sizeof (ls->buf) - 4;
 
       memmove (ls->buf + 4, ls->buf, ls->bufpos);
-      memcpy (ls->buf, &len, 4);
+      ls->buf[0] = (ls->bufpos << 24) & 0xFF;
+      ls->buf[1] = (ls->bufpos << 16) & 0xFF;
+      ls->buf[2] = (ls->bufpos << 8) & 0xFF;
+      ls->buf[3] = ls->bufpos & 0xFF;
       ls->bufpos += 4;
     }
 
