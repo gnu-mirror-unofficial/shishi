@@ -137,9 +137,9 @@ kdc_send (struct listenspec *ls)
 	ls->bufpos = sizeof (ls->buf) - 4;
 
       memmove (ls->buf + 4, ls->buf, ls->bufpos);
-      ls->buf[0] = (ls->bufpos << 24) & 0xFF;
-      ls->buf[1] = (ls->bufpos << 16) & 0xFF;
-      ls->buf[2] = (ls->bufpos << 8) & 0xFF;
+      ls->buf[0] = (ls->bufpos >> 24) & 0xFF;
+      ls->buf[1] = (ls->bufpos >> 16) & 0xFF;
+      ls->buf[2] = (ls->bufpos >> 8) & 0xFF;
       ls->buf[3] = ls->bufpos & 0xFF;
       ls->bufpos += 4;
     }
@@ -204,11 +204,16 @@ kdc_read (struct listenspec *ls)
   return 0;
 }
 
+#define C2I(buf) ((buf[3] & 0xFF) |		\
+		  ((buf[2] & 0xFF) << 8) |	\
+		  ((buf[1] & 0xFF) << 16) |	\
+		  ((buf[0] & 0xFF) << 24))
+
 /* Have we read an entire request? */
 static int
 kdc_ready (struct listenspec *ls)
 {
-  int waitfor = ls->bufpos >= 4 ? ntohl (*(int*) ls->buf) : 4;
+  int waitfor = ls->bufpos >= 4 ? C2I (ls->buf) : 4;
 
   syslog (LOG_DEBUG, "Got %d bytes of %d bytes from %s on socket %d\n",
 	  ls->bufpos, waitfor + 4, ls->str, ls->sockfd);
