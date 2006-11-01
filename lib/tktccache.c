@@ -73,7 +73,7 @@ shishi_tkts_default_ccache (Shishi * handle)
 /**
  * shishi_tkts_default_ccache_set:
  * @handle: Shishi library handle create by shishi_init().
- * @tktsfile: string with new default ccache filename, or
+ * @ccache: string with new default ccache filename, or
  *                 NULL to reset to default.
  *
  * Set the default ccache filename used in the library.  The string is
