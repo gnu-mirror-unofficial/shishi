@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.29 (unreleased)
+* Version 0.0.29 (released 2006-11-01)
 
 ** Add man page for ccache2shishi.
 
