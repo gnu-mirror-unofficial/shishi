@@ -277,11 +277,11 @@ shishi_cfg (Shishi * handle, char *option)
 		  {
 		    *p = '\0';
 		    p++;
-		    if (strcmp (p, "udp") == 0)
+		    if (strcasecmp (p, "udp") == 0)
 		      protocol = UDP;
-		    else if (strcmp (p, "tcp") == 0)
+		    else if (strcasecmp (p, "tcp") == 0)
 		      protocol = TCP;
-		    else if (strcmp (p, "tls") == 0)
+		    else if (strcasecmp (p, "tls") == 0)
 		      protocol = TLS;
 		    else
 		      shishi_warn (handle,
