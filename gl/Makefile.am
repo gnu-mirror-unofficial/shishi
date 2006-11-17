@@ -18,6 +18,7 @@ noinst_LTLIBRARIES = libgnu.la
 libgnu_la_SOURCES =
 libgnu_la_LIBADD = $(gl_LTLIBOBJS)
 libgnu_la_DEPENDENCIES = $(gl_LTLIBOBJS)
+EXTRA_libgnu_la_SOURCES =
 libgnu_la_LDFLAGS = $(AM_LDFLAGS)
 noinst_HEADERS =
 EXTRA_DIST =
@@ -61,6 +62,8 @@ EXTRA_DIST += allocsa.valgrind
 
 EXTRA_DIST += arcfour.c arcfour.h
 
+EXTRA_libgnu_la_SOURCES += arcfour.c
+
 ## end   gnulib module arcfour
 
 ## begin gnulib module arpa_inet
@@ -92,12 +95,16 @@ libgnu_la_SOURCES += base64.h base64.c
 
 EXTRA_DIST += crc.c crc.h
 
+EXTRA_libgnu_la_SOURCES += crc.c
+
 ## end   gnulib module crc
 
 ## begin gnulib module error
 
 
 EXTRA_DIST += error.c error.h
+
+EXTRA_libgnu_la_SOURCES += error.c
 
 ## end   gnulib module error
 
@@ -109,12 +116,16 @@ endif
 
 EXTRA_DIST += gc-gnulib.c gc-libgcrypt.c gc.h
 
+EXTRA_libgnu_la_SOURCES += gc-gnulib.c gc-libgcrypt.c
+
 ## end   gnulib module gc
 
 ## begin gnulib module gc-des
 
 
 EXTRA_DIST += des.c des.h
+
+EXTRA_libgnu_la_SOURCES += des.c
 
 ## end   gnulib module gc-des
 
@@ -123,6 +134,8 @@ EXTRA_DIST += des.c des.h
 
 EXTRA_DIST += hmac-md5.c hmac.h md5.c md5.h memxor.c memxor.h
 
+EXTRA_libgnu_la_SOURCES += hmac-md5.c md5.c memxor.c
+
 ## end   gnulib module gc-hmac-md5
 
 ## begin gnulib module gc-hmac-sha1
@@ -130,12 +143,16 @@ EXTRA_DIST += hmac-md5.c hmac.h md5.c md5.h memxor.c memxor.h
 
 EXTRA_DIST += hmac-sha1.c hmac.h memxor.c memxor.h sha1.c sha1.h
 
+EXTRA_libgnu_la_SOURCES += hmac-sha1.c memxor.c sha1.c
+
 ## end   gnulib module gc-hmac-sha1
 
 ## begin gnulib module gc-md4
 
 
 EXTRA_DIST += md4.c md4.h
+
+EXTRA_libgnu_la_SOURCES += md4.c
 
 ## end   gnulib module gc-md4
 
@@ -145,6 +162,8 @@ libgnu_la_SOURCES += md5.h
 
 EXTRA_DIST += md5.c
 
+EXTRA_libgnu_la_SOURCES += md5.c
+
 ## end   gnulib module gc-md5
 
 ## begin gnulib module gc-pbkdf2-sha1
@@ -152,12 +171,16 @@ EXTRA_DIST += md5.c
 
 EXTRA_DIST += gc-pbkdf2-sha1.c
 
+EXTRA_libgnu_la_SOURCES += gc-pbkdf2-sha1.c
+
 ## end   gnulib module gc-pbkdf2-sha1
 
 ## begin gnulib module getaddrinfo
 
 
 EXTRA_DIST += gai_strerror.c getaddrinfo.c getaddrinfo.h
+
+EXTRA_libgnu_la_SOURCES += gai_strerror.c getaddrinfo.c
 
 ## end   gnulib module getaddrinfo
 
@@ -177,12 +200,16 @@ EXTRA_DIST += getdate.h
 
 EXTRA_DIST += getdelim.c getdelim.h
 
+EXTRA_libgnu_la_SOURCES += getdelim.c
+
 ## end   gnulib module getdelim
 
 ## begin gnulib module getdomainname
 
 
 EXTRA_DIST += getdomainname.c getdomainname.h
+
+EXTRA_libgnu_la_SOURCES += getdomainname.c
 
 ## end   gnulib module getdomainname
 
@@ -191,12 +218,16 @@ EXTRA_DIST += getdomainname.c getdomainname.h
 
 EXTRA_DIST += gethostname.c
 
+EXTRA_libgnu_la_SOURCES += gethostname.c
+
 ## end   gnulib module gethostname
 
 ## begin gnulib module getline
 
 
 EXTRA_DIST += getline.c getline.h
+
+EXTRA_libgnu_la_SOURCES += getline.c
 
 ## end   gnulib module getline
 
@@ -215,6 +246,8 @@ MOSTLYCLEANFILES += getopt.h getopt.h-t
 
 EXTRA_DIST += getopt.c getopt1.c getopt_.h getopt_int.h
 
+EXTRA_libgnu_la_SOURCES += getopt.c getopt1.c
+
 ## end   gnulib module getopt
 
 ## begin gnulib module getpass
@@ -222,12 +255,16 @@ EXTRA_DIST += getopt.c getopt1.c getopt_.h getopt_int.h
 
 EXTRA_DIST += getpass.c getpass.h
 
+EXTRA_libgnu_la_SOURCES += getpass.c
+
 ## end   gnulib module getpass
 
 ## begin gnulib module getsubopt
 
 
 EXTRA_DIST += getsubopt.c getsubopt.h
+
+EXTRA_libgnu_la_SOURCES += getsubopt.c
 
 ## end   gnulib module getsubopt
 
@@ -242,12 +279,16 @@ libgnu_la_SOURCES += gettext.h
 
 EXTRA_DIST += gettime.c
 
+EXTRA_libgnu_la_SOURCES += gettime.c
+
 ## end   gnulib module gettime
 
 ## begin gnulib module gettimeofday
 
 
 EXTRA_DIST += gettimeofday.c
+
+EXTRA_libgnu_la_SOURCES += gettimeofday.c
 
 ## end   gnulib module gettimeofday
 
@@ -256,26 +297,16 @@ EXTRA_DIST += gettimeofday.c
 
 EXTRA_DIST += inet_ntop.c inet_ntop.h
 
+EXTRA_libgnu_la_SOURCES += inet_ntop.c
+
 ## end   gnulib module inet_ntop
-
-## begin gnulib module intprops
-
-
-EXTRA_DIST += intprops.h
-
-## end   gnulib module intprops
-
-## begin gnulib module inttostr
-
-
-EXTRA_DIST += imaxtostr.c inttostr.c inttostr.h offtostr.c uinttostr.c umaxtostr.c
-
-## end   gnulib module inttostr
 
 ## begin gnulib module mbchar
 
 
 EXTRA_DIST += mbchar.c mbchar.h
+
+EXTRA_libgnu_la_SOURCES += mbchar.c
 
 ## end   gnulib module mbchar
 
@@ -290,12 +321,16 @@ libgnu_la_SOURCES += mbuiter.h
 
 EXTRA_DIST += memchr.c
 
+EXTRA_libgnu_la_SOURCES += memchr.c
+
 ## end   gnulib module memchr
 
 ## begin gnulib module mktime
 
 
 EXTRA_DIST += mktime.c
+
+EXTRA_libgnu_la_SOURCES += mktime.c
 
 ## end   gnulib module mktime
 
@@ -328,12 +363,16 @@ libgnu_la_SOURCES += progname.h progname.c
 
 EXTRA_DIST += read-file.c read-file.h
 
+EXTRA_libgnu_la_SOURCES += read-file.c
+
 ## end   gnulib module read-file
 
 ## begin gnulib module readlink
 
 
 EXTRA_DIST += readlink.c
+
+EXTRA_libgnu_la_SOURCES += readlink.c
 
 ## end   gnulib module readlink
 
@@ -342,12 +381,16 @@ EXTRA_DIST += readlink.c
 
 EXTRA_DIST += realloc.c
 
+EXTRA_libgnu_la_SOURCES += realloc.c
+
 ## end   gnulib module realloc
 
 ## begin gnulib module setenv
 
 
 EXTRA_DIST += setenv.c setenv.h unsetenv.c
+
+EXTRA_libgnu_la_SOURCES += setenv.c unsetenv.c
 
 ## end   gnulib module setenv
 
@@ -356,6 +399,15 @@ EXTRA_DIST += setenv.c setenv.h unsetenv.c
 libgnu_la_SOURCES += size_max.h
 
 ## end   gnulib module size_max
+
+## begin gnulib module snprintf
+
+
+EXTRA_DIST += snprintf.c snprintf.h
+
+EXTRA_libgnu_la_SOURCES += snprintf.c
+
+## end   gnulib module snprintf
 
 ## begin gnulib module stdbool
 
@@ -420,12 +472,16 @@ EXTRA_DIST += stdint_.h
 
 EXTRA_DIST += strcase.h strcasecmp.c strncasecmp.c
 
+EXTRA_libgnu_la_SOURCES += strcasecmp.c strncasecmp.c
+
 ## end   gnulib module strcase
 
 ## begin gnulib module strchrnul
 
 
 EXTRA_DIST += strchrnul.c strchrnul.h
+
+EXTRA_libgnu_la_SOURCES += strchrnul.c
 
 ## end   gnulib module strchrnul
 
@@ -434,6 +490,8 @@ EXTRA_DIST += strchrnul.c strchrnul.h
 
 EXTRA_DIST += strdup.c strdup.h
 
+EXTRA_libgnu_la_SOURCES += strdup.c
+
 ## end   gnulib module strdup
 
 ## begin gnulib module strndup
@@ -441,12 +499,16 @@ EXTRA_DIST += strdup.c strdup.h
 
 EXTRA_DIST += strndup.c strndup.h
 
+EXTRA_libgnu_la_SOURCES += strndup.c
+
 ## end   gnulib module strndup
 
 ## begin gnulib module strnlen
 
 
 EXTRA_DIST += strnlen.c strnlen.h
+
+EXTRA_libgnu_la_SOURCES += strnlen.c
 
 ## end   gnulib module strnlen
 
@@ -461,12 +523,16 @@ libgnu_la_SOURCES += strnlen1.h strnlen1.c
 
 EXTRA_DIST += strtok_r.c strtok_r.h
 
+EXTRA_libgnu_la_SOURCES += strtok_r.c
+
 ## end   gnulib module strtok_r
 
 ## begin gnulib module strverscmp
 
 
 EXTRA_DIST += strverscmp.c strverscmp.h
+
+EXTRA_libgnu_la_SOURCES += strverscmp.c
 
 ## end   gnulib module strverscmp
 
@@ -533,12 +599,16 @@ EXTRA_DIST += stat_.h
 
 EXTRA_DIST += time_r.c time_r.h
 
+EXTRA_libgnu_la_SOURCES += time_r.c
+
 ## end   gnulib module time_r
 
 ## begin gnulib module timegm
 
 
 EXTRA_DIST += timegm.c timegm.h
+
+EXTRA_libgnu_la_SOURCES += timegm.c
 
 ## end   gnulib module timegm
 
@@ -568,12 +638,16 @@ MOSTLYCLEANFILES += unistd.h
 
 EXTRA_DIST += asnprintf.c printf-args.c printf-args.h printf-parse.c printf-parse.h vasnprintf.c vasnprintf.h
 
+EXTRA_libgnu_la_SOURCES += asnprintf.c printf-args.c printf-parse.c vasnprintf.c
+
 ## end   gnulib module vasnprintf
 
 ## begin gnulib module vasprintf
 
 
 EXTRA_DIST += asprintf.c vasprintf.c vasprintf.h
+
+EXTRA_libgnu_la_SOURCES += asprintf.c vasprintf.c
 
 ## end   gnulib module vasprintf
 
@@ -587,6 +661,8 @@ libgnu_la_SOURCES += wcwidth.h
 
 
 EXTRA_DIST += xalloc.h xmalloc.c
+
+EXTRA_libgnu_la_SOURCES += xmalloc.c
 
 ## end   gnulib module xalloc
 
@@ -606,6 +682,8 @@ libgnu_la_SOURCES += xgethostname.h xgethostname.c
 
 
 EXTRA_DIST += xreadlink.c xreadlink.h
+
+EXTRA_libgnu_la_SOURCES += xreadlink.c
 
 ## end   gnulib module xreadlink
 

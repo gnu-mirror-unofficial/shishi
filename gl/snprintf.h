@@ -1,7 +1,6 @@
-/* inttostr.h -- convert integers to printable strings
-
-   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006 Free Software
-   Foundation, Inc.
+/* Formatted output to strings.
+   Copyright (C) 2004 Free Software Foundation, Inc.
+   Written by Simon Josefsson.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,18 +12,18 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-/* Written by Paul Eggert */
+#ifndef SNPRINTF_H
+#define SNPRINTF_H
 
-#include <stdint.h>
-#include <sys/types.h>
+/* Get snprintf declaration, if available.  */
+#include <stdio.h>
 
-#include "intprops.h"
+#if defined HAVE_DECL_SNPRINTF && !HAVE_DECL_SNPRINTF
+int snprintf (char *str, size_t size, const char *format, ...);
+#endif
 
-char *offtostr (off_t, char *);
-char *imaxtostr (intmax_t, char *);
-char *umaxtostr (uintmax_t, char *);
-char *uinttostr (unsigned int, char *);
+#endif /* SNPRINTF_H */
