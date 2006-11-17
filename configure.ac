@@ -18,14 +18,14 @@
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-AC_INIT([shishi], [0.0.30], [bug-shishi@josefsson.org])
+AC_INIT([shishi], [0.0.31], [bug-shishi@josefsson.org])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 AC_SUBST(LT_CURRENT, 0)
-AC_SUBST(LT_REVISION, 30)
+AC_SUBST(LT_REVISION, 31)
 AC_SUBST(LT_AGE, 0)
 
 AC_PREREQ(2.60)
