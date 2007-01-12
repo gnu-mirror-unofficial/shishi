@@ -1,5 +1,5 @@
 /* internal.h --- Internal header file for Shishi.
- * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -198,6 +198,7 @@ struct Shishi
   char *tktsdefaultfile;
   char *ccachedefault;
   char *hostkeysdefaultfile;
+  char *x509cafile;
   char *x509certfile;
   char *x509keyfile;
   char *stringprocess;
