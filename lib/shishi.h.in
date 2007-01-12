@@ -1,5 +1,5 @@
 /* shishi.h --- Header file for Shishi library.                       -*- c -*-
- * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -2196,6 +2196,11 @@ extern int shishi_authorize_k5login (Shishi * handle, const char *principal,
 				     const char *authzname);
 
 /* pki.c */
+extern char *shishi_x509ca_default_file_guess (Shishi * handle);
+extern void shishi_x509ca_default_file_set (Shishi * handle,
+					    const char *x509cafile);
+extern const char *shishi_x509ca_default_file (Shishi * handle);
+extern char *shishi_x509ca_default_file_guess (Shishi * handle);
 extern char *shishi_x509cert_default_file_guess (Shishi * handle);
 extern void shishi_x509cert_default_file_set (Shishi * handle,
 					      const char *x509certfile);

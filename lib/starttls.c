@@ -1,5 +1,5 @@
 /* starttls.c --- Network I/O functions for Shishi over TLS.
- * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -95,6 +95,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
   static size_t session_data_size = 0;
   static void *session_data = NULL;
   char tmpbuf[4];
+  unsigned int status;
 
   bytes_sent = write (sockfd, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN);
   if (bytes_sent != STARTTLS_LEN)
@@ -122,6 +123,16 @@ _shishi_sendrecv_tls1 (Shishi * handle,
     shishi_error_printf (handle, "TLS handshake completed (resumed)");
   else
     shishi_error_printf (handle, "TLS handshake completed (not resumed)");
+
+  ret = gnutls_certificate_verify_peers2 (session, &status);
+  if (ret != 0 || status != 0)
+    {
+      shishi_error_printf (handle, "TLS verification of CA failed (%d/%d)",
+			   ret, status);
+      return SHISHI_RECVFROM_ERROR;
+    }
+
+  /* XXX: We need to verify the CA cert further here. */
 
   if (session_data_size == 0)
     {
@@ -225,6 +236,7 @@ _shishi_sendrecv_tls (Shishi * handle,
   gnutls_certificate_credentials x509cred;
   int sockfd;
   int ret, outerr;
+  const char *cafile = shishi_x509ca_default_file (handle);
   const char *certfile = shishi_x509cert_default_file (handle);
   const char *keyfile = shishi_x509key_default_file (handle);
 
@@ -267,6 +279,17 @@ _shishi_sendrecv_tls (Shishi * handle,
 			   ret, gnutls_strerror (ret));
       return SHISHI_CRYPTO_ERROR;
     }
+
+  ret = gnutls_certificate_set_x509_trust_file (x509cred, cafile,
+						GNUTLS_X509_FMT_PEM);
+  if (ret != GNUTLS_E_SUCCESS && ret != GNUTLS_E_FILE_ERROR)
+    {
+      shishi_error_printf (handle, "TLS csxtf failed (%d): %s",
+			   ret, gnutls_strerror (ret));
+      return SHISHI_CRYPTO_ERROR;
+    }
+  else if (ret == GNUTLS_E_SUCCESS)
+    shishi_error_printf (handle, "Loaded CA certificate");
 
   ret = gnutls_certificate_set_x509_key_file (x509cred, certfile,
 					      keyfile, GNUTLS_X509_FMT_PEM);

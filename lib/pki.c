@@ -1,5 +1,5 @@
 /* pki.c --- Public Key Infrastructure support functions for Shishi.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,23 +21,83 @@
 
 #include "internal.h"
 
+#define X509CA_FILE "client.ca"
 #define X509KEY_FILE "client.key"
 #define X509CERT_FILE "client.certs"
 
 /**
- * shishi_x509cert_default_file_guess:
+ * shishi_x509ca_default_file_guess:
  * @handle: Shishi library handle create by shishi_init().
  *
- * Guesses the default X.509 client certificate filename; it is
- * $HOME/.shishi/client.certs.
+ * Guesses the default X.509 CA certificate filename; it is
+ * $HOME/.shishi/client.ca.
  *
  * Return value: Returns default X.509 client certificate filename as
  *   a string that has to be deallocated with free() by the caller.
  **/
 char *
-shishi_x509cert_default_file_guess (Shishi * handle)
+shishi_x509ca_default_file_guess (Shishi * handle)
 {
-  return shishi_cfg_userdirectory_file (handle, X509CERT_FILE);
+  return shishi_cfg_userdirectory_file (handle, X509CA_FILE);
+}
+
+/**
+ * shishi_x509ca_default_file_set:
+ * @handle: Shishi library handle create by shishi_init().
+ * @x509cafile: string with new default x509 client certificate file name,
+ *   or NULL to reset to default.
+ *
+ * Set the default X.509 CA certificate filename used in the library.
+ * The certificate is used during TLS connections with the KDC to
+ * authenticate the KDC.  The string is copied into the library, so
+ * you can dispose of the variable immediately after calling this
+ * function.
+ **/
+void
+shishi_x509ca_default_file_set (Shishi * handle, const char *x509cafile)
+{
+  if (handle->x509cafile)
+    free (handle->x509cafile);
+  if (x509cafile)
+    handle->x509cafile = xstrdup (x509cafile);
+  else
+    handle->x509cafile = shishi_x509ca_default_file_guess (handle);
+}
+
+/**
+ * shishi_x509ca_default_file:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Get filename for default X.509 CA certificate.
+ *
+ * Return value: Returns the default X.509 CA certificate filename
+ *   used in the library.  The certificate is used during TLS
+ *   connections with the KDC to authenticate the KDC.  The string is
+ *   not a copy, so don't modify or deallocate it.
+ **/
+const char *
+shishi_x509ca_default_file (Shishi * handle)
+{
+  if (!handle->x509cafile)
+    shishi_x509ca_default_file_set (handle, NULL);
+
+  return handle->x509cafile;
+}
+
+/**
+ * shishi_x509ca_default_file_guess:
+ * @handle: Shishi library handle create by shishi_init().
+ *
+ * Guesses the default X.509 CA certificate filename; it is
+ * $HOME/.shishi/client.ca.
+ *
+ * Return value: Returns default X.509 CA certificate filename as a
+ *   string that has to be deallocated with free() by the caller.
+ **/
+char *
+shishi_x509ca_default_file_guess (Shishi * handle)
+{
+  return shishi_cfg_userdirectory_file (handle, X509CA_FILE);
 }
 
 /**
