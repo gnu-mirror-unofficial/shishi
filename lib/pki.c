@@ -85,19 +85,19 @@ shishi_x509ca_default_file (Shishi * handle)
 }
 
 /**
- * shishi_x509ca_default_file_guess:
+ * shishi_x509cert_default_file_guess:
  * @handle: Shishi library handle create by shishi_init().
  *
- * Guesses the default X.509 CA certificate filename; it is
- * $HOME/.shishi/client.ca.
+ * Guesses the default X.509 client certificate filename; it is
+ * $HOME/.shishi/client.certs.
  *
- * Return value: Returns default X.509 CA certificate filename as a
- *   string that has to be deallocated with free() by the caller.
+ * Return value: Returns default X.509 client certificate filename as
+ *   a string that has to be deallocated with free() by the caller.
  **/
 char *
-shishi_x509ca_default_file_guess (Shishi * handle)
+shishi_x509cert_default_file_guess (Shishi * handle)
 {
-  return shishi_cfg_userdirectory_file (handle, X509CA_FILE);
+  return shishi_cfg_userdirectory_file (handle, X509CERT_FILE);
 }
 
 /**
