@@ -441,9 +441,20 @@ shishi_tkt_to_ccache_mem (Shishi *handle,
   if (shishi_key_length (shishi_tkt_key (tkt)) > CCACHE_MAX_KEYLEN)
     return SHISHI_CCACHE_ERROR;
 
-#if 0
+  rc = shishi_asn1_read (handle, shishi_tkt_kdcrep (tkt), "crealm",
+			 &cred.client.realm.data,
+			 &cred.client.realm.length);
+  if (rc != SHISHI_OK)
+    return rc;
 
-      {
+  rc = shishi_asn1_read (handle, shishi_tkt_enckdcreppart (tkt), "srealm",
+			 &cred.server.realm.data,
+			 &cred.server.realm.length);
+  if (rc != SHISHI_OK)
+    return rc;
+
+#if 0
+  {
 	char *cname[CCACHE_MAX_COMPONENTS + 1];
 	size_t i;
 
