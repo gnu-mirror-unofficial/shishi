@@ -1,6 +1,6 @@
 ## DO NOT EDIT! GENERATED AUTOMATICALLY!
 ## Process this file with automake to produce Makefile.in.
-# Copyright (C) 2004-2006 Free Software Foundation, Inc.
+# Copyright (C) 2004-2007 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -13,14 +13,9 @@
 
 AUTOMAKE_OPTIONS = 1.5 gnits
 
-noinst_LTLIBRARIES = libgnu.la
-
-libgnu_la_SOURCES =
-libgnu_la_LIBADD = $(gl_LTLIBOBJS)
-libgnu_la_DEPENDENCIES = $(gl_LTLIBOBJS)
-EXTRA_libgnu_la_SOURCES =
-libgnu_la_LDFLAGS = $(AM_LDFLAGS)
 noinst_HEADERS =
+noinst_LIBRARIES =
+noinst_LTLIBRARIES =
 EXTRA_DIST =
 BUILT_SOURCES =
 SUFFIXES =
@@ -31,6 +26,14 @@ DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
 AM_CPPFLAGS =
+
+noinst_LTLIBRARIES += libgnu.la
+
+libgnu_la_SOURCES =
+libgnu_la_LIBADD = $(gl_LTLIBOBJS)
+libgnu_la_DEPENDENCIES = $(gl_LTLIBOBJS)
+EXTRA_libgnu_la_SOURCES =
+libgnu_la_LDFLAGS = $(AM_LDFLAGS)
 
 ## begin gnulib module alloca-opt
 
@@ -436,8 +439,7 @@ BUILT_SOURCES += $(STDINT_H)
 stdint.h: stdint_.h
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
-	  sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
-	      -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
+	  sed -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
 	      -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
 	      -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
 	      -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
@@ -543,7 +545,7 @@ BUILT_SOURCES += $(SYS_SELECT_H)
 # We need the following in order to create <sys/select.h> when the system
 # doesn't have one that works with the given compiler.
 sys/select.h:
-	test -d sys || mkdir sys
+	$(MKDIR_P) sys
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
 	  echo '#include <sys/socket.h>'; \
@@ -561,7 +563,7 @@ BUILT_SOURCES += $(SYS_SOCKET_H)
 # We need the following in order to create <sys/socket.h> when the system
 # doesn't have one that works with the given compiler.
 sys/socket.h: socket_.h
-	test -d sys || mkdir sys
+	$(MKDIR_P) sys
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
 	  cat $(srcdir)/socket_.h; \
 	} > $@-t
@@ -580,7 +582,7 @@ BUILT_SOURCES += $(SYS_STAT_H)
 # We need the following in order to create <sys/stat.h> when the system
 # has one that is incomplete.
 sys/stat.h: stat_.h
-	test -d sys || mkdir sys
+	$(MKDIR_P) sys
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
 	  sed -e 's|@''ABSOLUTE_SYS_STAT_H''@|$(ABSOLUTE_SYS_STAT_H)|g' \
@@ -593,6 +595,30 @@ MOSTLYCLEANDIRS += sys
 EXTRA_DIST += stat_.h
 
 ## end   gnulib module sys_stat
+
+## begin gnulib module sys_time
+
+BUILT_SOURCES += sys/time.h
+
+# We need the following in order to create <sys/time.h> when the system
+# doesn't have one that works with the given compiler.
+sys/time.h: sys_time_.h
+	$(MKDIR_P) sys
+	rm -f $@-t $@
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  sed -e 's/@''HAVE_SYS_TIME_H''@/$(HAVE_SYS_TIME_H)/g' \
+	      -e 's|@''ABSOLUTE_SYS_TIME_H''@|$(ABSOLUTE_SYS_TIME_H)|g' \
+	      -e 's/@''GETTIMEOFDAY_CLOBBERS_LOCALTIME''@/$(GETTIMEOFDAY_CLOBBERS_LOCALTIME)/g' \
+	      -e 's/@''HAVE_GETTIMEOFDAY_POSIX_SIGNATURE''@/$(HAVE_GETTIMEOFDAY_POSIX_SIGNATURE)/g' \
+	      -e 's/@''HAVE_STRUCT_TIMEVAL''@/$(HAVE_STRUCT_TIMEVAL)/g' \
+	      < $(srcdir)/sys_time_.h; \
+	} > $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += sys/time.h sys/time.h-t
+
+EXTRA_DIST += sys_time_.h
+
+## end   gnulib module sys_time
 
 ## begin gnulib module time_r
 
@@ -625,11 +651,16 @@ BUILT_SOURCES += $(UNISTD_H)
 
 # We need the following in order to create an empty placeholder for
 # <unistd.h> when the system doesn't have one.
-unistd.h:
+unistd.h: unistd_.h
+	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
-	  echo '/* Empty placeholder for $@.  */'; \
-	} > $@
-MOSTLYCLEANFILES += unistd.h
+	  sed -e 's|@''ABSOLUTE_UNISTD_H''@|$(ABSOLUTE_UNISTD_H)|g' \
+	      < $(srcdir)/unistd_.h; \
+	} > $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += unistd.h unistd.h-t
+
+EXTRA_DIST += unistd_.h
 
 ## end   gnulib module unistd
 
@@ -650,6 +681,47 @@ EXTRA_DIST += asprintf.c vasprintf.c vasprintf.h
 EXTRA_libgnu_la_SOURCES += asprintf.c vasprintf.c
 
 ## end   gnulib module vasprintf
+
+## begin gnulib module wchar
+
+BUILT_SOURCES += $(WCHAR_H)
+
+# We need the following in order to create <wchar.h> when the system
+# version does not work standalone.
+wchar.h: wchar_.h
+	rm -f $@-t $@
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  sed -e 's|@''ABSOLUTE_WCHAR_H''@|$(ABSOLUTE_WCHAR_H)|g' \
+	    < $(srcdir)/wchar_.h; \
+	} > $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += wchar.h wchar.h-t
+
+EXTRA_DIST += wchar_.h
+
+## end   gnulib module wchar
+
+## begin gnulib module wctype
+
+BUILT_SOURCES += $(WCTYPE_H)
+
+# We need the following in order to create <wctype.h> when the system
+# doesn't have one that works with the given compiler.
+wctype.h: wctype_.h
+	rm -f $@-t $@
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  sed -e 's/@''HAVE_WCTYPE_H''@/$(HAVE_WCTYPE_H)/g' \
+	      -e 's|@''ABSOLUTE_WCTYPE_H''@|$(ABSOLUTE_WCTYPE_H)|g' \
+	      -e 's/@''HAVE_WCTYPE_CTMP_BUG''@/$(HAVE_WCTYPE_CTMP_BUG)/g' \
+	      -e 's/@''HAVE_WINT_T''@/$(HAVE_WINT_T)/g' \
+	      < $(srcdir)/wctype_.h; \
+	} > $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += wctype.h wctype.h-t
+
+EXTRA_DIST += wctype_.h
+
+## end   gnulib module wctype
 
 ## begin gnulib module wcwidth
 
