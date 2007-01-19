@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2004-2006 Free Software Foundation, Inc.
+# Copyright (C) 2004-2007 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -54,12 +54,18 @@ AC_DEFUN([gl_INIT],
     gl_libdeps="$gl_libdeps $LIBGCRYPT"
   fi
   gl_GC_DES
+  gl_MODULE_INDICATOR([gc-des])
   gl_GC_HMAC_MD5
+  gl_MODULE_INDICATOR([gc-hmac-md5])
   gl_GC_HMAC_SHA1
+  gl_MODULE_INDICATOR([gc-hmac-sha1])
   gl_GC_MD4
+  gl_MODULE_INDICATOR([gc-md4])
   gl_GC_MD5
+  gl_MODULE_INDICATOR([gc-md5])
   gl_GC_PBKDF2_SHA1
   gl_GC_RANDOM
+  gl_MODULE_INDICATOR([gc-random])
   gl_GETADDRINFO
   gl_GETDATE
   gl_FUNC_GETDELIM
@@ -70,7 +76,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_GETPASS
   gl_FUNC_GETSUBOPT
   gl_GETTIME
-  AC_FUNC_GETTIMEOFDAY_CLOBBER
+  gl_FUNC_GETTIMEOFDAY
   gl_INET_NTOP
   gl_INLINE
   gl_MBCHAR
@@ -97,14 +103,21 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_STRTOK_R
   gl_FUNC_STRVERSCMP
   gl_HEADER_SYS_SELECT
+  AC_PROG_MKDIR_P
   gl_HEADER_SYS_SOCKET
+  AC_PROG_MKDIR_P
   gl_HEADER_SYS_STAT_H
+  AC_PROG_MKDIR_P
+  gl_HEADER_SYS_TIME_H
+  AC_PROG_MKDIR_P
   gl_TIME_R
   gl_FUNC_TIMEGM
   gl_TIMESPEC
   gl_HEADER_UNISTD
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
+  gl_WCHAR_H
+  gl_WCTYPE_H
   gl_FUNC_WCWIDTH
   gl_XALLOC
   gl_XREADLINK
@@ -253,16 +266,20 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strtok_r.h
   lib/strverscmp.c
   lib/strverscmp.h
+  lib/sys_time_.h
   lib/time_r.c
   lib/time_r.h
   lib/timegm.c
   lib/timegm.h
   lib/timespec.h
+  lib/unistd_.h
   lib/unsetenv.c
   lib/vasnprintf.c
   lib/vasnprintf.h
   lib/vasprintf.c
   lib/vasprintf.h
+  lib/wchar_.h
+  lib/wctype_.h
   lib/wcwidth.h
   lib/xalloc.h
   lib/xasprintf.c
@@ -311,6 +328,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/getsubopt.m4
   m4/gettime.m4
   m4/gettimeofday.m4
+  m4/gnulib-common.m4
   m4/hmac-md5.m4
   m4/hmac-sha1.m4
   m4/inet_ntop.m4
@@ -354,6 +372,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/sys_select_h.m4
   m4/sys_socket_h.m4
   m4/sys_stat_h.m4
+  m4/sys_time_h.m4
   m4/time_r.m4
   m4/timegm.m4
   m4/timespec.m4
@@ -362,7 +381,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/unistd_h.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4
+  m4/wchar.m4
   m4/wchar_t.m4
+  m4/wctype.m4
   m4/wcwidth.m4
   m4/wint_t.m4
   m4/xalloc.m4

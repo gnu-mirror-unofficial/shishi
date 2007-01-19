@@ -1,4 +1,4 @@
-#serial 10
+#serial 11
 
 # Copyright (C) 2001, 2002, 2003, 2005, 2007 Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
@@ -31,7 +31,7 @@ AC_DEFUN([gl_FUNC_GETTIMEOFDAY],
   gl_FUNC_GETTIMEOFDAY_CLOBBER
 
   if test $gl_cv_func_gettimeofday_posix_signature != yes; then
-    HAVE_GETTIMEOFDAY_POSIX_SIGNATURE=0
+    GETTIMEOFDAY_REPLACEMENT=1
     if test $gl_cv_func_gettimeofday_clobber != yes; then
       AC_LIBOBJ(gettimeofday)
       gl_PREREQ_GETTIMEOFDAY
@@ -76,8 +76,8 @@ AC_DEFUN([gl_FUNC_GETTIMEOFDAY_CLOBBER],
      [gl_cv_func_gettimeofday_clobber=yes])])
 
  if test $gl_cv_func_gettimeofday_clobber = yes; then
+   GETTIMEOFDAY_REPLACEMENT=1
    gl_GETTIMEOFDAY_REPLACE_LOCALTIME
-   GETTIMEOFDAY_CLOBBERS_LOCALTIME=1
    AC_DEFINE([GETTIMEOFDAY_CLOBBERS_LOCALTIME], 1,
      [Define if gettimeofday clobbers the localtime buffer.])
  fi
@@ -90,8 +90,6 @@ AC_DEFUN([gl_GETTIMEOFDAY_REPLACE_LOCALTIME], [
     [Define to rpl_gmtime if the replacement function should be used.])
   AC_DEFINE([localtime], [rpl_localtime],
     [Define to rpl_localtime if the replacement function should be used.])
-  AC_DEFINE([gettimeofday], [rpl_gettimeofday],
-    [Define to rpl_gettimeofday if the replacement function should be used.])
 ])
 
 # Prerequisites of lib/gettimeofday.c.
