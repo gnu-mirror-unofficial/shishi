@@ -47,7 +47,7 @@ AC_CHECK_HEADERS(sys/poll.h sys/time.h \
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 AM_GNU_GETTEXT(external, need-ngettext)
-AM_GNU_GETTEXT_VERSION(0.14.1)
+AM_GNU_GETTEXT_VERSION(0.16.1)
 AM_MISSING_PROG(PERL, perl, $missing_dir)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
 AM_MISSING_PROG(ASN1PARSER, asn1Parser, $missing_dir)
