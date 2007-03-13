@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -92,9 +92,9 @@ release:
 	$(MAKE) ChangeLog distcheck
 	cvs commit -m "" ChangeLog
 	cvs rtag $(tag) $(PACKAGE)
-	cd doc && ../gendocs.sh --html "--css-include=texinfo.css" \
+	cd doc && ../build-aux/gendocs.sh --html "--css-include=texinfo.css" \
 		-o ../$(htmldir)/manual/ $(PACKAGE) "Shishi"
-	./gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
+	build-aux/gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
 	cp -v $(distdir).tar.gz{,.sig} $(htmldir)/releases/
 	cp -v doc/reference/html/*.{html,png,devhelp,css} $(htmldir)/reference/
 	cd $(htmldir) && cvs add -kb releases/$(distdir).tar.gz{,.sig} && \
