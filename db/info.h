@@ -1,5 +1,5 @@
 /* info.h --- Internal header file for shisa library.
- * Copyright (C) 2002, 2003, 2004  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -42,9 +42,6 @@
 
 /* Get getline, ssize_t. */
 #include "getline.h"
-
-/* Get getsubopt. */
-#include "getsubopt.h"
 
 /* Get prototypes. */
 #include "shisa.h"

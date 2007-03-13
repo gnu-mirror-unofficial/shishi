@@ -1,5 +1,5 @@
 /* gztime.c --- Convertion functions for GeneralizedTime.
- * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -23,9 +23,6 @@
 
 /* Get xtime. */
 #include "utils.h"
-
-/* Get timegm. */
-#include "timegm.h"
 
 /**
  * shishi_generalize_time:

@@ -1,5 +1,5 @@
 /* cfg.h --- Configuration file functions.
- * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -23,8 +23,6 @@
 
 /* Get prototypes. */
 #include "cfg.h"
-
-#include "getsubopt.h"
 
 #define KDC_SERVICE_PORT "\x6b\x65\x72\x62\x65\x72\x6f\x73"
 
