@@ -27,6 +27,11 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([AC_PROG_RANLIB])
   AC_REQUIRE([AC_GNU_SOURCE])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  dnl Some compilers (e.g., AIX 5.3 cc) need to be in c99 mode
+  dnl for the builtin va_copy to work.  With Autoconf 2.60 or later,
+  dnl AC_PROG_CC_STDC arranges for this.  With older Autoconf AC_PROG_CC_STDC
+  dnl shouldn't hurt, though installers are on their own to set c99 mode.
+  AC_REQUIRE([AC_PROG_CC_STDC])
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -43,11 +48,11 @@ AC_DEFUN([gl_INIT],
   gl_ALLOCSA
   gl_ARCFOUR
   gl_HEADER_ARPA_INET
+  AC_PROG_MKDIR_P
   gl_FUNC_BASE64
   gl_CLOCK_TIME
   gl_CRC
   gl_ERROR
-  dnl gl_USE_SYSTEM_EXTENSIONS must be added quite early to configure.ac.
   gl_GC
   if test $gl_cond_libtool = false; then
     gl_ltlibdeps="$gl_ltlibdeps $LTLIBGCRYPT"
@@ -75,32 +80,42 @@ AC_DEFUN([gl_INIT],
   gl_GETOPT
   gl_FUNC_GETPASS
   gl_FUNC_GETSUBOPT
+  gl_STDLIB_MODULE_INDICATOR([getsubopt])
   gl_GETTIME
   gl_FUNC_GETTIMEOFDAY
   gl_INET_NTOP
   gl_INLINE
-  gl_MBCHAR
-  gl_MBITER
-  gl_FUNC_MEMCHR
   gl_FUNC_MKTIME
   gl_HEADER_NETINET_IN
+  AC_PROG_MKDIR_P
   gl_FUNC_READ_FILE
   gl_FUNC_READLINK
+  gl_UNISTD_MODULE_INDICATOR([readlink])
   AC_FUNC_REALLOC
-  gt_FUNC_SETENV
+  gl_FUNC_SETENV
+  gl_FUNC_UNSETENV
   gl_SIZE_MAX
   gl_FUNC_SNPRINTF
+  gl_STDIO_MODULE_INDICATOR([snprintf])
   gl_TYPE_SOCKLEN_T
   gt_TYPE_SSIZE_T
   gl_STDARG_H
   AM_STDBOOL_H
   gl_STDINT_H
+  gl_STDIO_H
+  gl_STDLIB_H
   gl_STRCASE
   gl_FUNC_STRCHRNUL
+  gl_STRING_MODULE_INDICATOR([strchrnul])
   gl_FUNC_STRDUP
+  gl_STRING_MODULE_INDICATOR([strdup])
+  gl_HEADER_STRING_H
   gl_FUNC_STRNDUP
+  gl_STRING_MODULE_INDICATOR([strndup])
   gl_FUNC_STRNLEN
+  gl_STRING_MODULE_INDICATOR([strnlen])
   gl_FUNC_STRTOK_R
+  gl_STRING_MODULE_INDICATOR([strtok_r])
   gl_FUNC_STRVERSCMP
   gl_HEADER_SYS_SELECT
   AC_PROG_MKDIR_P
@@ -110,17 +125,15 @@ AC_DEFUN([gl_INIT],
   AC_PROG_MKDIR_P
   gl_HEADER_SYS_TIME_H
   AC_PROG_MKDIR_P
+  gl_HEADER_TIME_H
   gl_TIME_R
   gl_FUNC_TIMEGM
   gl_TIMESPEC
-  gl_HEADER_UNISTD
+  gl_UNISTD_H
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
   gl_WCHAR_H
-  gl_WCTYPE_H
-  gl_FUNC_WCWIDTH
   gl_XALLOC
-  gl_XREADLINK
   gl_XSIZE
   gl_XSTRNDUP
   gl_XVASPRINTF
@@ -165,6 +178,7 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/config.rpath
   build-aux/gendocs.sh
   build-aux/gnupload
+  build-aux/link-warning.h
   build-aux/maint.mk
   doc/fdl.texi
   doc/gendocs_template
@@ -208,7 +222,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getpass.c
   lib/getpass.h
   lib/getsubopt.c
-  lib/getsubopt.h
   lib/gettext.h
   lib/gettime.c
   lib/gettimeofday.c
@@ -217,17 +230,14 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/hmac.h
   lib/inet_ntop.c
   lib/inet_ntop.h
-  lib/mbchar.c
-  lib/mbchar.h
-  lib/mbuiter.h
   lib/md4.c
   lib/md4.h
   lib/md5.c
   lib/md5.h
-  lib/memchr.c
   lib/memxor.c
   lib/memxor.h
   lib/mktime.c
+  lib/netinet_in_.h
   lib/printf-args.c
   lib/printf-args.h
   lib/printf-parse.c
@@ -244,33 +254,27 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/sha1.h
   lib/size_max.h
   lib/snprintf.c
-  lib/snprintf.h
   lib/socket_.h
   lib/stat_.h
   lib/stdbool_.h
   lib/stdint_.h
-  lib/strcase.h
+  lib/stdio_.h
+  lib/stdlib_.h
   lib/strcasecmp.c
   lib/strchrnul.c
-  lib/strchrnul.h
   lib/strdup.c
-  lib/strdup.h
+  lib/string_.h
   lib/strncasecmp.c
   lib/strndup.c
-  lib/strndup.h
   lib/strnlen.c
-  lib/strnlen.h
-  lib/strnlen1.c
-  lib/strnlen1.h
   lib/strtok_r.c
-  lib/strtok_r.h
   lib/strverscmp.c
   lib/strverscmp.h
+  lib/sys_select_.h
   lib/sys_time_.h
+  lib/time_.h
   lib/time_r.c
-  lib/time_r.h
   lib/timegm.c
-  lib/timegm.h
   lib/timespec.h
   lib/unistd_.h
   lib/unsetenv.c
@@ -279,8 +283,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/vasprintf.c
   lib/vasprintf.h
   lib/wchar_.h
-  lib/wctype_.h
-  lib/wcwidth.h
   lib/xalloc.h
   lib/xasprintf.c
   lib/xgetdomainname.c
@@ -340,12 +342,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/lib-prefix.m4
   m4/longdouble.m4
   m4/longlong.m4
-  m4/mbchar.m4
-  m4/mbiter.m4
-  m4/mbrtowc.m4
   m4/md4.m4
   m4/md5.m4
-  m4/memchr.m4
   m4/memxor.m4
   m4/mktime.m4
   m4/netinet_in_h.m4
@@ -362,9 +360,12 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stdbool.m4
   m4/stdint.m4
   m4/stdint_h.m4
+  m4/stdio_h.m4
+  m4/stdlib_h.m4
   m4/strcase.m4
   m4/strchrnul.m4
   m4/strdup.m4
+  m4/string_h.m4
   m4/strndup.m4
   m4/strnlen.m4
   m4/strtok_r.m4
@@ -373,6 +374,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/sys_socket_h.m4
   m4/sys_stat_h.m4
   m4/sys_time_h.m4
+  m4/time_h.m4
   m4/time_r.m4
   m4/timegm.m4
   m4/timespec.m4
@@ -383,11 +385,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/vasprintf.m4
   m4/wchar.m4
   m4/wchar_t.m4
-  m4/wctype.m4
-  m4/wcwidth.m4
   m4/wint_t.m4
   m4/xalloc.m4
-  m4/xreadlink.m4
   m4/xsize.m4
   m4/xstrndup.m4
   m4/xvasprintf.m4

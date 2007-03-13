@@ -1,7 +1,6 @@
 /* xreadlink.c -- readlink wrapper to return the link name in malloc'd storage
 
-   Copyright (C) 2001, 2003, 2004, 2005, 2006 Free Software
-   Foundation, Inc.
+   Copyright (C) 2001, 2003-2007 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,13 +17,16 @@
    If not, write to the Free Software Foundation,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-/* Written by Jim Meyering <jim@meyering.net>  */
+/* Written by Jim Meyering <jim@meyering.net>
+   and Bruno Haible <bruno@clisp.org>.  */
 
 #include <config.h>
 
+/* Specification.  */
 #include "xreadlink.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <errno.h>
 #include <limits.h>
 #include <sys/types.h>
@@ -38,68 +40,92 @@
 # define SSIZE_MAX ((ssize_t) (SIZE_MAX / 2))
 #endif
 
-/* SYMLINK_MAX is used only for an initial memory-allocation sanity
-   check, so it's OK to guess too small on hosts where there is no
-   arbitrary limit to symbolic link length.  */
-#ifndef SYMLINK_MAX
-# define SYMLINK_MAX 1024
+#ifdef NO_XMALLOC
+# define xmalloc malloc
+#else
+# include "xalloc.h"
 #endif
 
-#define MAXSIZE (SIZE_MAX < SSIZE_MAX ? SIZE_MAX : SSIZE_MAX)
-
-#include "xalloc.h"
-
-/* Call readlink to get the symbolic link value of FILE.
-   SIZE is a hint as to how long the link is expected to be;
-   typically it is taken from st_size.  It need not be correct.
+/* Call readlink to get the symbolic link value of FILENAME.
    Return a pointer to that NUL-terminated string in malloc'd storage.
    If readlink fails, return NULL (caller may use errno to diagnose).
-   If malloc fails, or if the link value is longer than SSIZE_MAX :-),
+   If realloc fails, or if the link value is longer than SIZE_MAX :-),
    give a diagnostic and exit.  */
 
 char *
-xreadlink (char const *file, size_t size)
+xreadlink (char const *filename)
 {
-  /* Some buggy file systems report garbage in st_size.  Defend
-     against them by ignoring outlandish st_size values in the initial
-     memory allocation.  */
-  size_t symlink_max = SYMLINK_MAX;
-  size_t INITIAL_LIMIT_BOUND = 8 * 1024;
-  size_t initial_limit = (symlink_max < INITIAL_LIMIT_BOUND
-			  ? symlink_max + 1
-			  : INITIAL_LIMIT_BOUND);
+  /* The initial buffer size for the link value.  A power of 2
+     detects arithmetic overflow earlier, but is not required.  */
+#define INITIAL_BUF_SIZE 1024
 
-  /* The initial buffer size for the link value.  */
-  size_t buf_size = size < initial_limit ? size + 1 : initial_limit;
+  /* Allocate the initial buffer on the stack.  This way, in the common
+     case of a symlink of small size, we get away with a single small malloc()
+     instead of a big malloc() followed by a shrinking realloc().  */
+  char initial_buf[INITIAL_BUF_SIZE];
+
+  char *buffer = initial_buf;
+  size_t buf_size = sizeof (initial_buf);
 
   while (1)
     {
-      char *buffer = xmalloc (buf_size);
-      ssize_t r = readlink (file, buffer, buf_size);
-      size_t link_length = r;
+      /* Attempt to read the link into the current buffer.  */
+      ssize_t link_length = readlink (filename, buffer, buf_size);
 
       /* On AIX 5L v5.3 and HP-UX 11i v2 04/09, readlink returns -1
 	 with errno == ERANGE if the buffer is too small.  */
-      if (r < 0 && errno != ERANGE)
+      if (link_length < 0 && errno != ERANGE)
 	{
-	  int saved_errno = errno;
-	  free (buffer);
-	  errno = saved_errno;
+	  if (buffer != initial_buf)
+	    {
+	      int saved_errno = errno;
+	      free (buffer);
+	      errno = saved_errno;
+	    }
 	  return NULL;
 	}
 
-      if (link_length < buf_size)
+      if ((size_t) link_length < buf_size)
 	{
-	  buffer[link_length] = 0;
+	  buffer[link_length++] = '\0';
+
+	  /* Return it in a chunk of memory as small as possible.  */
+	  if (buffer == initial_buf)
+	    {
+	      buffer = (char *) xmalloc (link_length);
+#ifdef NO_XMALLOC
+	      if (buffer == NULL)
+		return NULL;
+#endif
+	      memcpy (buffer, initial_buf, link_length);
+	    }
+	  else
+	    {
+	      /* Shrink buffer before returning it.  */
+	      if ((size_t) link_length < buf_size)
+		{
+		  char *smaller_buffer = (char *) realloc (buffer, link_length);
+
+		  if (smaller_buffer != NULL)
+		    buffer = smaller_buffer;
+		}
+	    }
 	  return buffer;
 	}
 
-      free (buffer);
-      if (buf_size <= MAXSIZE / 2)
-	buf_size *= 2;
-      else if (buf_size < MAXSIZE)
-	buf_size = MAXSIZE;
-      else
+      if (buffer != initial_buf)
+	free (buffer);
+      buf_size *= 2;
+      if (SSIZE_MAX < buf_size || (SIZE_MAX / 2 < SSIZE_MAX && buf_size == 0))
+#ifdef NO_XMALLOC
+	return NULL;
+#else
 	xalloc_die ();
+#endif
+      buffer = (char *) xmalloc (buf_size);
+#ifdef NO_XMALLOC
+      if (buffer == NULL)
+	return NULL;
+#endif
     }
 }

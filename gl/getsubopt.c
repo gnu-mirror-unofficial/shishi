@@ -1,5 +1,5 @@
-/* Parse comma separate list into words.
-   Copyright (C) 1996, 1997, 1999, 2004 Free Software Foundation, Inc.
+/* Parse comma separated list into words.
+   Copyright (C) 1996, 1997, 1999, 2004, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Ulrich Drepper <drepper@cygnus.com>, 1996.
 
@@ -17,6 +17,10 @@
    with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
+#if !_LIBC
+# include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -24,7 +28,6 @@
 /* This code is written for inclusion in gnu-libc, and uses names in
    the namespace reserved for libc.  If we're compiling in gnulib,
    define those names to be the normal ones instead.  */
-# include "strchrnul.h"
 # undef __strchrnul
 # define __strchrnul strchrnul
 #endif
