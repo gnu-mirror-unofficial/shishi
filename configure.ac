@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-# Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -18,7 +18,9 @@
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
+AC_PREREQ(2.61)
 AC_INIT([shishi], [0.0.31], [bug-shishi@josefsson.org])
+AC_CONFIG_AUX_DIR([build-aux])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
@@ -28,8 +30,7 @@ AC_SUBST(LT_CURRENT, 0)
 AC_SUBST(LT_REVISION, 31)
 AC_SUBST(LT_AGE, 0)
 
-AC_PREREQ(2.60)
-AM_INIT_AUTOMAKE([1.9 gnits])
+AM_INIT_AUTOMAKE([1.10 gnits])
 AC_CONFIG_HEADERS(config.h)
 AB_INIT
 
