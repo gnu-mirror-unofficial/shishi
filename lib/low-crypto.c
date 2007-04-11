@@ -1,5 +1,5 @@
 /* low-crypto.c --- Shishi crypto wrappers around generic crypto.
- * Copyright (C) 2002, 2003, 2004, 2005, 2006  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -28,6 +28,11 @@
 int
 _shishi_crypto_init (Shishi * handle)
 {
+  int rc = gc_init ();
+
+  if (rc != GC_OK)
+    return SHISHI_CRYPTO_INTERNAL_ERROR;
+
   return SHISHI_OK;
 }
 
