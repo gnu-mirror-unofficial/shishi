@@ -19,7 +19,7 @@
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([gl/override])
-gl_MODULES([arcfour base64 crc error fdl crypto/gc-des crypto/gc-hmac-md5 crypto/gc-hmac-sha1 crypto/gc-md4 crypto/gc-md5 crypto/gc-pbkdf2-sha1 crypto/gc-random gendocs getaddrinfo getdate gethostname getline getopt getpass getsubopt gnupload maintainer-makefile progname read-file realloc setenv socklen stdint strcase strchrnul strdup strndup strtok_r strverscmp sys_select sys_socket sys_stat timegm unistd vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf])
+gl_MODULES([crypto/arcfour base64 crc error fdl crypto/gc-des crypto/gc-hmac-md5 crypto/gc-hmac-sha1 crypto/gc-md4 crypto/gc-md5 crypto/gc-pbkdf2-sha1 crypto/gc-random gendocs getaddrinfo getdate gethostname getline getopt getpass getsubopt gnupload maintainer-makefile progname read-file realloc setenv socklen stdint strcase strchrnul strdup strndup strtok_r strverscmp sys_select sys_socket sys_stat timegm unistd vasnprintf vasprintf xalloc xgetdomainname xgethostname xreadlink xstrndup xvasprintf])
 gl_AVOID([xalloc-die])
 gl_SOURCE_BASE([gl])
 gl_M4_BASE([gl/m4])

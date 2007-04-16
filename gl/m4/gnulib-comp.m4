@@ -46,13 +46,12 @@ AC_DEFUN([gl_INIT],
   gl_source_base='gl'
   gl_FUNC_ALLOCA
   gl_ALLOCSA
-  gl_ARCFOUR
   gl_HEADER_ARPA_INET
   AC_PROG_MKDIR_P
   gl_FUNC_BASE64
   gl_CLOCK_TIME
   gl_CRC
-  gl_ERROR
+  gl_ARCFOUR
   gl_GC
   if test $gl_cond_libtool = false; then
     gl_ltlibdeps="$gl_ltlibdeps $LTLIBGCRYPT"
@@ -71,6 +70,7 @@ AC_DEFUN([gl_INIT],
   gl_GC_PBKDF2_SHA1
   gl_GC_RANDOM
   gl_MODULE_INDICATOR([gc-random])
+  gl_ERROR
   gl_GETADDRINFO
   gl_GETDATE
   gl_FUNC_GETDELIM
@@ -81,6 +81,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_GETPASS
   gl_FUNC_GETSUBOPT
   gl_STDLIB_MODULE_INDICATOR([getsubopt])
+  AC_SUBST([LIBINTL])
+  AC_SUBST([LTLIBINTL])
   gl_GETTIME
   gl_FUNC_GETTIMEOFDAY
   gl_INET_NTOP
@@ -132,6 +134,7 @@ AC_DEFUN([gl_INIT],
   gl_UNISTD_H
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
+  gl_STDIO_MODULE_INDICATOR([vasprintf])
   gl_WCHAR_H
   gl_XALLOC
   gl_XSIZE
@@ -281,7 +284,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/vasnprintf.c
   lib/vasnprintf.h
   lib/vasprintf.c
-  lib/vasprintf.h
   lib/wchar_.h
   lib/xalloc.h
   lib/xasprintf.c
@@ -340,7 +342,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/lib-ld.m4
   m4/lib-link.m4
   m4/lib-prefix.m4
-  m4/longdouble.m4
   m4/longlong.m4
   m4/md4.m4
   m4/md5.m4

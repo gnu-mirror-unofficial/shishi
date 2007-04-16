@@ -101,13 +101,11 @@
 
 #include "gettext.h"
 
-#include "vasprintf.h"
 #include "xvasprintf.h"
 #include "base64.h"
 #include "getdate.h"
 #include "getline.h"
 #include "read-file.h"
-#include "vasprintf.h"
 #include "xalloc.h"
 #include "xgethostname.h"
 #include "xgetdomainname.h"
