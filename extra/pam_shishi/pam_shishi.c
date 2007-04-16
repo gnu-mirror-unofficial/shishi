@@ -1,5 +1,5 @@
 /* pam_shishi.c	PAM module using Shishi.
- * Copyright (C) 2002, 2003  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -30,7 +30,6 @@
 #include <ctype.h>
 #endif
 
-#include <vasprintf.h>
 #include <shishi.h>
 
 /* Libtool defines PIC for shared objects */
