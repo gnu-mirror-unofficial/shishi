@@ -27,6 +27,7 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([AC_PROG_RANLIB])
   AC_REQUIRE([AC_GNU_SOURCE])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  AC_REQUIRE([AC_FUNC_FSEEKO])
   dnl Some compilers (e.g., AIX 5.3 cc) need to be in c99 mode
   dnl for the builtin va_copy to work.  With Autoconf 2.60 or later,
   dnl AC_PROG_CC_STDC arranges for this.  With older Autoconf AC_PROG_CC_STDC
@@ -71,6 +72,9 @@ AC_DEFUN([gl_INIT],
   gl_GC_RANDOM
   gl_MODULE_INDICATOR([gc-random])
   gl_ERROR
+  gl_FLOAT_H
+  gl_FUNC_FSEEKO
+  gl_STDIO_MODULE_INDICATOR([fseeko])
   gl_GETADDRINFO
   gl_GETDATE
   gl_FUNC_GETDELIM
@@ -202,6 +206,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/des.h
   lib/error.c
   lib/error.h
+  lib/float+.h
+  lib/float_.h
   lib/gai_strerror.c
   lib/gc-gnulib.c
   lib/gc-libgcrypt.c
@@ -257,8 +263,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/sha1.h
   lib/size_max.h
   lib/snprintf.c
-  lib/socket_.h
-  lib/stat_.h
   lib/stdbool_.h
   lib/stdint_.h
   lib/stdio_.h
@@ -274,6 +278,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strverscmp.c
   lib/strverscmp.h
   lib/sys_select_.h
+  lib/sys_socket_.h
+  lib/sys_stat_.h
   lib/sys_time_.h
   lib/time_.h
   lib/time_r.c
@@ -313,6 +319,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/eoverflow.m4
   m4/error.m4
   m4/extensions.m4
+  m4/float_h.m4
+  m4/fseeko.m4
   m4/gc-des.m4
   m4/gc-hmac-md5.m4
   m4/gc-hmac-sha1.m4

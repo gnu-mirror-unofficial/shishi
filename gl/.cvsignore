@@ -15,3 +15,7 @@ stdlib.h
 string.h
 time.h
 unistd.h
+float+.h
+float_.h
+sys_socket_.h
+sys_stat_.h

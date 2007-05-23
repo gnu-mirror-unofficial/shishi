@@ -23,7 +23,12 @@
 /* This file is supposed to be used on platforms where <sys/stat.h> is
    incomplete.  It is intended to provide definitions and prototypes
    needed by an application.  Start with what the system provides.  */
-#include @ABSOLUTE_SYS_STAT_H@
+
+#if @HAVE_INCLUDE_NEXT@
+# include_next <sys/stat.h>
+#else
+# include @ABSOLUTE_SYS_STAT_H@
+#endif
 
 #ifndef S_IFMT
 # define S_IFMT 0170000
@@ -253,14 +258,14 @@
 
 /* mingw does not support symlinks, therefore it does not have lstat.  But
    without links, stat does just fine.  */
-#if ! HAVE_LSTAT
+#if ! @HAVE_LSTAT@
 # define lstat stat
 #endif
 
 /* mingw's _mkdir() function has 1 argument, but we pass 2 arguments.
    Additionally, it declares _mkdir (and depending on compile flags, an
    alias mkdir), only in the nonstandard io.h.  */
-#if ! HAVE_DECL_MKDIR && HAVE_IO_H
+#if ! @HAVE_DECL_MKDIR@ && @HAVE_IO_H@
 # include <io.h>
 
 static inline int
