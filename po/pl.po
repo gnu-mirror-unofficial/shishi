@@ -1,34 +1,32 @@
 # Polish translation for shishi.
-# Copyright (C) 2004, 2006 Free Software Foundation, Inc.
+# Copyright (C) 2004, 2006, 2007 Free Software Foundation, Inc.
 # This file is distributed under the same license as the shishi package.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2004-2006.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2004-2007.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: shishi 0.0.24\n"
+"Project-Id-Version: shishi 0.0.30\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2006-11-01 10:22+0100\n"
-"PO-Revision-Date: 2006-04-23 10:20+0200\n"
+"POT-Creation-Date: 2006-11-01 15:57+0100\n"
+"PO-Revision-Date: 2006-11-13 23:15+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 msgid "Shishi success"
 msgstr "Sukces Shishi"
 
-#, fuzzy
 msgid "Error in ASN.1 function (corrupt data?)"
-msgstr "B³±d w danych ASN.1, prawdopodobnie z powodu uszkodzonych danych."
+msgstr "B³±d w funkcji ASN.1 (uszkodzone dane?)"
 
-#, fuzzy
 msgid "Could not open file"
-msgstr "Nie uda³o siê otworzyæ pliku."
+msgstr "Nie uda³o siê otworzyæ pliku"
 
-#, fuzzy
 msgid "File input/output error"
-msgstr "B³±d wej¶cia/wyj¶cia pliku."
+msgstr "B³±d wej¶cia/wyj¶cia pliku"
 
 msgid "Memory allocation error in shishi library."
 msgstr "B³±d przydzielania pamiêci w bibliotece shishi."
@@ -43,50 +41,28 @@ msgid "Client name value differ between request and reply."
 msgstr "Warto¶æ nazwy klienta ró¿ni siê miêdzy ¿±daniem a odpowiedzi±."
 
 msgid "Replay protection value (nonce) differ between request and reply."
-msgstr ""
-"Warto¶æ zabezpieczenia odtworzenia (nonce) ró¿ni siê miêdzy ¿±daniem a "
-"odpowiedzi±."
+msgstr "Warto¶æ zabezpieczenia odtworzenia (nonce) ró¿ni siê miêdzy ¿±daniem a odpowiedzi±."
 
-msgid ""
-"Keytype used to encrypt ticket doesn't match provided key. This usually "
-"indicates an internal application error."
-msgstr ""
-"Rodzaj klucza u¿yty do zaszyfrowania biletu nie pasuje do dostarczonego "
-"klucza. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
+msgid "Keytype used to encrypt ticket doesn't match provided key. This usually indicates an internal application error."
+msgstr "Rodzaj klucza u¿yty do zaszyfrowania biletu nie pasuje do dostarczonego klucza. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
 msgid "Internal error in low-level crypto routines."
 msgstr "B³±d wewnêtrzny w niskopoziomowych funkcjach kryptograficznych."
 
-msgid ""
-"Low-level cryptographic primitive failed.  This usually indicates bad "
-"password or data corruption."
-msgstr ""
-"Niskopoziomowa operacja kryptograficzna nie powiod³a siê. Zwykle oznacza to "
-"z³e has³o lub uszkodzenie danych."
+msgid "Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption."
+msgstr "Niskopoziomowa operacja kryptograficzna nie powiod³a siê. Zwykle oznacza to z³e has³o lub uszkodzenie danych."
 
-msgid ""
-"Timedout talking to KDC. This usually indicates a network or KDC address "
-"problem."
-msgstr ""
-"Up³yn±³ limit czasu przy komunikacji z KDC. Zwykle oznacza to problem z "
-"sieci± lub adresem KDC."
+msgid "Timedout talking to KDC. This usually indicates a network or KDC address problem."
+msgstr "Up³yn±³ limit czasu przy komunikacji z KDC. Zwykle oznacza to problem z sieci± lub adresem KDC."
 
 msgid "No KDC for realm known."
 msgstr "Nie ma znanego KDC dla tej dziedziny."
 
-msgid ""
-"The system call socket() failed.  This usually indicates that your system "
-"does not support the socket type."
-msgstr ""
-"Wywo³anie systemowe socket() nie powiod³o siê. Zwykle oznacza to, ¿e system "
-"nie obs³uguje danego rodzaju gniazdo."
+msgid "The system call socket() failed.  This usually indicates that your system does not support the socket type."
+msgstr "Wywo³anie systemowe socket() nie powiod³o siê. Zwykle oznacza to, ¿e system nie obs³uguje danego rodzaju gniazdo."
 
-msgid ""
-"The system call bind() failed.  This usually indicates insufficient "
-"permissions."
-msgstr ""
-"Wywo³anie systemowe bind() nie powiod³o siê. Zwykle oznacza to "
-"niewystarczaj±ce uprawnienia."
+msgid "The system call bind() failed.  This usually indicates insufficient permissions."
+msgstr "Wywo³anie systemowe bind() nie powiod³o siê. Zwykle oznacza to niewystarczaj±ce uprawnienia."
 
 msgid "The system call sendto() failed."
 msgstr "Wywo³anie systemowe sendto() nie powiod³o siê."
@@ -97,31 +73,20 @@ msgstr "Wywo³anie systemowe close() nie powiod³o siê."
 msgid "Server replied with an error message to request."
 msgstr "Serwer odpowiedzia³ komunikatem b³êdu na ¿±danie."
 
-msgid ""
-"Ticketset not initialized.  This usually indicates an internal application "
-"error."
-msgstr ""
-"Zbiór biletów nie zainicjowany. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
+msgid "Ticketset not initialized.  This usually indicates an internal application error."
+msgstr "Zbiór biletów nie zainicjowany. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
-msgid ""
-"Could not decrypt AP-REQ using provided key. This usually indicates an "
-"internal application error."
-msgstr ""
-"Nie uda³o siê odszyfrowaæ AP-REQ przy u¿yciu dostarczonego klucza. Zwykle "
-"oznacza to b³±d wewnêtrzny aplikacji."
+msgid "Could not decrypt AP-REQ using provided key. This usually indicates an internal application error."
+msgstr "Nie uda³o siê odszyfrowaæ AP-REQ przy u¿yciu dostarczonego klucza. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
-msgid ""
-"Could not decrypt Ticket using provided key. This usually indicates an "
-"internal application error."
-msgstr ""
-"Nie uda³o siê odszyfrowaæ biletu przy u¿yciu dostarczonego klucza. Zwykle "
-"oznacza to b³±d wewnêtrzny aplikacji."
+msgid "Could not decrypt Ticket using provided key. This usually indicates an internal application error."
+msgstr "Nie uda³o siê odszyfrowaæ biletu przy u¿yciu dostarczonego klucza. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
 msgid "Failed to parse keytab file"
-msgstr ""
+msgstr "Nie uda³o siê przeanalizowaæ pliku keytab"
 
 msgid "Failed to parse credential cache file"
-msgstr ""
+msgstr "Nie uda³o siê przeanalizowaæ pliku cache'a danych uwierzytelniaj±cych"
 
 msgid "Unknown error"
 msgstr "Nieznany b³±d"
@@ -532,8 +497,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Argumenty obowi±zkowe dla opcji d³ugich s± obowi±zkowe tak¿e dla opcji "
-"krótkich.\n"
+"Argumenty obowi±zkowe dla opcji d³ugich s± obowi±zkowe tak¿e dla opcji krótkich.\n"
 "\n"
 
 #, c-format
@@ -603,7 +567,7 @@ msgstr "Usuwanie klucza z `%s@%s'...\n"
 msgid "Removing key from `%s@%s'...done\n"
 msgstr "Usuwanie klucza z `%s@%s'... zakoñczone\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Mandatory arguments to long options are mandatory for short options too.\n"
@@ -611,84 +575,72 @@ msgid ""
 "Report bugs to <%s>.\n"
 msgstr ""
 "\n"
-"Argumenty obowi±zkowe dla opcji d³ugich s± obowi±zkowe tak¿e dla opcji "
-"krótkich.\n"
+"Argumenty obowi±zkowe dla opcji d³ugich s± obowi±zkowe tak¿e dla opcji krótkich.\n"
 "\n"
+"B³êdy proszê zg³aszaæ na adres <%s>.\n"
 
-#, fuzzy
 msgid "Could not initialize libshishi."
-msgstr "Nie uda³o siê zainicjowaæ Shisy."
+msgstr "Nie uda³o siê zainicjowaæ libshishi."
 
-#, fuzzy, c-format
+#, c-format
 msgid "Could not set encryption types: %s"
-msgstr ""
-"Nie uda³o siê ustawiæ rodzaju szyfrowania `%s':\n"
-"%s"
+msgstr "Nie uda³o siê ustawiæ rodzajów szyfrowania: %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Could not parse client principal \"%s\": %s"
-msgstr ""
-"Nie uda³o siê ustawiæ rodzaju szyfrowania `%s':\n"
-"%s"
+msgstr "Nie uda³o siê przeanalizowaæ zarz±dcy klienta \"%s\": %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Could not parse server principal \"%s\": %s"
-msgstr ""
-"Nie uda³o siê ustawiæ rodzaju szyfrowania `%s':\n"
-"%s"
+msgstr "Nie uda³o siê przeanalizowaæ zarz±dcy serwera \"%s\": %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Could not read library options: %s"
-msgstr ""
-"Nie uda³o siê odczytaæ opcji biblioteki `%s':\n"
-"%s"
+msgstr "Nie uda³o siê odczytaæ opcji biblioteki: %s"
 
 #, c-format
 msgid "Invalid --starttime date `%s'"
-msgstr ""
+msgstr "Nieprawid³owa data --starttime `%s'"
 
 #, c-format
 msgid "Invalid --endtime date `%s'"
-msgstr ""
+msgstr "Nieprawid³owa data --endtime `%s'"
 
 #, c-format
 msgid "Invalid --renew-till date `%s'"
-msgstr ""
+msgstr "Nieprawid³owa data --renew-till `%s'"
 
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr "Bilety w `%s':\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Could not list tickets: %s"
-msgstr ""
-"Nie uda³o siê ustawiæ rodzaju szyfrowania `%s':\n"
-"%s"
+msgstr "Nie uda³o siê wylistowaæ biletów: %s"
 
 #, c-format
 msgid "Removing ticket:\n"
-msgstr ""
+msgstr "Usuwanie biletu:\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not destroy ticket %d:\n"
 "%s"
 msgstr ""
-"Nie uda³o siê utworzyæ klucza (%d):\n"
+"Nie uda³o siê zniszczyæ biletu %d:\n"
 "%s"
 
 #, c-format
 msgid "No tickets removed.\n"
-msgstr ""
+msgstr "Nie usuniêto ¿adnego biletu.\n"
 
 #, c-format
 msgid "%d ticket removed.\n"
 msgid_plural "%d tickets removed.\n"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Usuniêto %d bilet.\n"
+msgstr[1] "Usuniêto %d bilety.\n"
+msgstr[2] "Usuniêto %d biletów.\n"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Could not get ticket as `%s' for `%s'."
-msgstr ""
-"Nie uda³o siê ustawiæ rodzaju szyfrowania `%s':\n"
-"%s"
+msgstr "Nie uda³o siê pobraæ biletu jako `%s' dla `%s'."
