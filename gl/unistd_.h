@@ -16,8 +16,8 @@
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #ifndef _GL_UNISTD_H
-#define _GL_UNISTD_H
 
+/* The include_next requires a split double-inclusion guard.  */
 #if @HAVE_UNISTD_H@
 # if @HAVE_INCLUDE_NEXT@
 #  include_next <unistd.h>
@@ -25,6 +25,9 @@
 #  include @ABSOLUTE_UNISTD_H@
 # endif
 #endif
+
+#ifndef _GL_UNISTD_H
+#define _GL_UNISTD_H
 
 /* mingw doesn't define the SEEK_* macros in <unistd.h>.  */
 #if !(defined SEEK_CUR && defined SEEK_END && defined SEEK_SET)
@@ -176,6 +179,24 @@ extern int getlogin_r (char *name, size_t size);
 #endif
 
 
+#if @GNULIB_LSEEK@
+# if @REPLACE_LSEEK@
+/* Set the offset of FD relative to SEEK_SET, SEEK_CUR, or SEEK_END.
+   Return the new offset if successful, otherwise -1 and errno set.
+   See the POSIX:2001 specification
+   <http://www.opengroup.org/susv3xsh/lseek.html>.  */
+#  define lseek rpl_lseek
+   extern off_t lseek (int fd, off_t offset, int whence);
+# endif
+#elif defined GNULIB_POSIXCHECK
+# undef lseek
+# define lseek(f,o,w) \
+    (GL_LINK_WARNING ("lseek does not fail with ESPIPE on pipes on some " \
+                      "systems - use gnulib module lseek for portability"), \
+     lseek (f, o, w))
+#endif
+
+
 #if @GNULIB_READLINK@
 /* Read the contents of the symbolic link FILE and place the first BUFSIZE
    bytes of it into BUF.  Return the number of bytes placed into BUF if
@@ -217,4 +238,5 @@ extern unsigned int sleep (unsigned int n);
 #endif
 
 
+#endif /* _GL_UNISTD_H */
 #endif /* _GL_UNISTD_H */

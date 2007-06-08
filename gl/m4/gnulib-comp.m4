@@ -91,6 +91,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_GETTIMEOFDAY
   gl_INET_NTOP
   gl_INLINE
+  gl_FUNC_LSEEK
+  gl_UNISTD_MODULE_INDICATOR([lseek])
   gl_FUNC_MKTIME
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
@@ -208,6 +210,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/error.h
   lib/float+.h
   lib/float_.h
+  lib/fseeko.c
   lib/gai_strerror.c
   lib/gc-gnulib.c
   lib/gc-libgcrypt.c
@@ -239,6 +242,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/hmac.h
   lib/inet_ntop.c
   lib/inet_ntop.h
+  lib/lseek.c
   lib/md4.c
   lib/md4.h
   lib/md5.c
@@ -351,6 +355,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/lib-link.m4
   m4/lib-prefix.m4
   m4/longlong.m4
+  m4/lseek.m4
   m4/md4.m4
   m4/md5.m4
   m4/memxor.m4
