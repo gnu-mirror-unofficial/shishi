@@ -68,30 +68,25 @@ install-data-hook:
 # Maintainer targets
 
 update-po: refresh-po
-	cvs add `ls po/*.po | grep -v quot.po` || true && \
-	cvs commit -m "Sync with TP." po/LINGUAS `ls po/*.po | grep -v quot.po`
+	cg-commit -m "Sync with TP." po/LINGUAS `ls po/*.po | grep -v quot.po`
 
 .PHONY: examples
 examples:
 	(cd examples && make)
 
 ChangeLog:
-	cvs2cl --fsf --FSF --usermap .cvsusers -I ChangeLog -I .cvs \
-		-I autogen.sh -I doc/specification
+	git log --pretty --numstat --summary | git2cl > ChangeLog
 	cat .cvscopying >> ChangeLog
 
 tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
 htmldir = ../www-$(PACKAGE)
 
 release:
-	cvs upd -p -r HEAD NEWS > /dev/null
-	if cvs upd -p -r $(tag) NEWS > /dev/null; then false else true; fi
-	rm -f ChangeLog && cvs upd ChangeLog
-	cvs commit
+	! git-tag -l $(tag) > /dev/null
 	rm -f ChangeLog
 	$(MAKE) ChangeLog distcheck
-	cvs commit -m "" ChangeLog
-	cvs rtag $(tag) $(PACKAGE)
+	git commit -m Generated. ChangeLog
+	git-tag -u b565716f! -m $(VERSION) $(tag)
 	cd doc && ../build-aux/gendocs.sh --html "--css-include=texinfo.css" \
 		-o ../$(htmldir)/manual/ $(PACKAGE) "Shishi"
 	build-aux/gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
