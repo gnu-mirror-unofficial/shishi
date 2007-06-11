@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.31 (unreleased)
 
+** Shishi is now developed using Git instead of CVS.
+A public git mirror is available from
+<http://repo.or.cz/w/shishi.git>.
+
 ** Verify the KDC's certificate against a CA certificate in the client.
 The CA is by default stored in ~/.shishi/client.ca in PEM format.
 Suggested by Alberto Fondi <alberto.fondi@lnf.infn.it>.
