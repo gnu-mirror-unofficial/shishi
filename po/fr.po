@@ -1,0 +1,647 @@
+# French translations for shishi package.
+# Copyright (C) 2006 Free Software Foundation, Inc.
+# This file is distributed under the same license as the shishi package.
+# Daniel Dehennin <daniel.dehennin@baby-gnu.org>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: shishi 0.0.30\n"
+"Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
+"POT-Creation-Date: 2006-11-01 15:57+0100\n"
+"PO-Revision-Date: 2007-06-08 16:27+0200\n"
+"Last-Translator: Daniel Dehennin <daniel.dehennin@baby-gnu.org>\n"
+"Language-Team: French <traduc@traduc.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Shishi success"
+msgstr "Shishi a réussi"
+
+msgid "Error in ASN.1 function (corrupt data?)"
+msgstr "Erreur dans la fonction ASN.1 (donnée corrompue ?)"
+
+msgid "Could not open file"
+msgstr "Ne peut pas ouvrir le fichier"
+
+msgid "File input/output error"
+msgstr "Erreur d'entrée/sortie sur le fichier"
+
+msgid "Memory allocation error in shishi library."
+msgstr "Erreur d'allocation mémoire dans la bibliothèque shishi."
+
+msgid "Base64 encoding or decoding failed. Data corrupt?"
+msgstr "L'encodage ou le décodage en base64 a échoué. Donnée corrompue ?"
+
+msgid "Client realm value differ between request and reply."
+msgstr "Le domaine du client diffère entre la requète et la réponse."
+
+msgid "Client name value differ between request and reply."
+msgstr "La valeur du nom du client diffère entre la requète et la réponse."
+
+msgid "Replay protection value (nonce) differ between request and reply."
+msgstr "La valeur de protection contre le rejeu (nonce) diffère entre la requète et la réponse."
+
+msgid "Keytype used to encrypt ticket doesn't match provided key. This usually indicates an internal application error."
+msgstr "Le type de clef utilisée pour chiffrer le ticket ne correspond pas à la clef fournie. Cela révèle généralement une erreur interne de l'application."
+
+msgid "Internal error in low-level crypto routines."
+msgstr "Erreur interne dans les routines cryptographiques de bas-niveau."
+
+msgid "Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption."
+msgstr "Échec de la primitive cryptographique de bas-niveau. Cela révèle généralement un mauvais mot de passe ou une donnée corrompue."
+
+msgid "Timedout talking to KDC. This usually indicates a network or KDC address problem."
+msgstr "Délais d'attente de la demande dépassé lors de la communication avec le KDC. Cela révèle généralement un problème de réseau ou d'adresse de KDC."
+
+msgid "No KDC for realm known."
+msgstr "Auncun KDC pour le domaine n'est connu."
+
+msgid "The system call socket() failed.  This usually indicates that your system does not support the socket type."
+msgstr "L'appel système socket() a échoué. Cela révèle généralement le non support du type de socket par votre système."
+
+msgid "The system call bind() failed.  This usually indicates insufficient permissions."
+msgstr "L'appel système bind() a échoué. Cela révèle généralement des droits insuffisants."
+
+msgid "The system call sendto() failed."
+msgstr "L'appel système sendto() a échoué."
+
+msgid "The system call close() failed."
+msgstr "L'appel système close() a échoué."
+
+msgid "Server replied with an error message to request."
+msgstr "Le serveur a répondu avec un message d'erreur à la requète."
+
+msgid "Ticketset not initialized.  This usually indicates an internal application error."
+msgstr "Le cache de ticket n'est pas initialisé. Cela révèle généralement une erreur interne de l'application."
+
+msgid "Could not decrypt AP-REQ using provided key. This usually indicates an internal application error."
+msgstr "Ne peut pas déchiffrer AP-REQ avec la clef fournie. Cela révèle généralement une erreur interne de l'application."
+
+msgid "Could not decrypt Ticket using provided key. This usually indicates an internal application error."
+msgstr "Ne peut déchiffrer le Ticket avec la clef fournie. Cela révèle généralement une erreur interne de l'application."
+
+msgid "Failed to parse keytab file"
+msgstr "Échec de lecture du fichier keytab"
+
+msgid "Failed to parse credential cache file"
+msgstr "Échec de lecture du ficher de cache des mots de passe"
+
+msgid "Unknown error"
+msgstr "Erreur inconnue"
+
+msgid "No error"
+msgstr "Pas d'erreur"
+
+#, c-format
+msgid "libshishi: info: %s\n"
+msgstr "libshishi: info: %s\n"
+
+#, c-format
+msgid "libshishi: info: %s"
+msgstr "libshishi: info: %s"
+
+#, c-format
+msgid "libshishi: warning: %s\n"
+msgstr "libshishi: attention: %s\n"
+
+#, c-format
+msgid "libshishi: warning: %s"
+msgstr "libshishi: attention: %s"
+
+#, c-format
+msgid "Writing KRB-ERROR to %s...\n"
+msgstr "Écriture de KRB-ERROR sur %s...\n"
+
+#, c-format
+msgid "Writing KRB-ERROR in %s format...\n"
+msgstr "Écriture de KRB-ERROR dans le format %s...\n"
+
+#, c-format
+msgid "Writing KRB-ERROR to %s...done\n"
+msgstr "Écriture de KRB-ERROR sur %s... ok\n"
+
+#, c-format
+msgid "Reading KRB-ERROR from %s...\n"
+msgstr "Lecture de KRB-ERROR depuis %s...\n"
+
+#, c-format
+msgid "Reading KRB-ERROR in %s format...\n"
+msgstr "Lecture de KRB-ERROR dans le format %s...\n"
+
+#, c-format
+msgid "Reading KRB-ERROR from %s...done\n"
+msgstr "Lecture de KRB-ERROR depuis %s... ok\n"
+
+msgid "Client's entry in database has expired"
+msgstr "L'entrée du client dans la base de donnée a expirée"
+
+msgid "Server's entry in database has expired"
+msgstr "L'entrée du serveur dans la base de donnée a expirée"
+
+msgid "Requested protocol version number not supported"
+msgstr "La version de protocole demandée n'est pas supportée"
+
+msgid "Client's key encrypted in old master key"
+msgstr "Clef du client chiffrée avec l'ancienne clef maître"
+
+msgid "Server's key encrypted in old master key"
+msgstr "Clef du serveur chiffrée avec l'ancienne clef maître"
+
+msgid "Client not found in database"
+msgstr "Client non trouvé dans la base de données"
+
+msgid "Server not found in database"
+msgstr "Serveur non trouvé dans la base de données"
+
+msgid "Multiple principal entries in database"
+msgstr "Multiple entrées de principal dans la base de données"
+
+msgid "The client or server has a null key"
+msgstr "Le client ou le serveur a une clef nulle"
+
+msgid "Ticket not eligible for postdating"
+msgstr "Le ticket n'est pas éligible pour le post-datage"
+
+msgid "Requested start time is later than end time"
+msgstr "La date de départ demandée est postérieure à la date de fin"
+
+msgid "KDC policy rejects request"
+msgstr "La politique du KDC rejecte la requète"
+
+msgid "KDC cannot accommodate requested option"
+msgstr "Le KDC ne peut pas adapter l'option demandée"
+
+msgid "KDC has no support for encryption type"
+msgstr "Le KDC ne supporte pas le type de chiffrement"
+
+msgid "KDC has no support for checksum type"
+msgstr "Le KDC ne supporte pas le type de somme de contôle"
+
+msgid "KDC has no support for padata type"
+msgstr "Le KDC ne supporte pas le type padata"
+
+msgid "KDC has no support for transited type"
+msgstr "KDC ne supporte pas le type transité"
+
+msgid "Clients credentials have been revoked"
+msgstr "L'information d'authentification du client a été révoquée"
+
+msgid "Credentials for server have been revoked"
+msgstr "L'information d'authentification pour le serveur a été révoquée"
+
+msgid "TGT has been revoked"
+msgstr "Le TGT a été révoqué"
+
+msgid "Client not yet valid - try again later"
+msgstr "Client encore invalide - essayez plus tard"
+
+msgid "Server not yet valid - try again later"
+msgstr "Serveur encore invalide - essayez plus tard"
+
+msgid "Password has expired "
+msgstr "Le mot de passe a expiré"
+
+msgid "Pre-authentication information was invalid"
+msgstr "L'information de pré-authentification était invalide"
+
+msgid "Additional pre-authentication required"
+msgstr "Pre-authentification supplémentaire requise"
+
+msgid "Requested server and ticket don't match"
+msgstr "Le serveur et le ticket demandés ne correspondent pas"
+
+msgid "Server principal valid for user2user only"
+msgstr "Identificant du serveur valide uniquement d'utilisateur à utilisateur"
+
+msgid "KDC Policy rejects transited path"
+msgstr "La politique du KDC rejette les chemins transités"
+
+msgid "A service is not available"
+msgstr "Un service n'est pas disponible"
+
+msgid "Integrity check on decrypted field failed"
+msgstr "La vérification de l'intégrité d'un champ déchiffré a échouée"
+
+msgid "Ticket expired"
+msgstr "Le ticket a expiré"
+
+msgid "Ticket not yet valid"
+msgstr "Le ticket n'est pas encore valide"
+
+msgid "Request is a replay"
+msgstr "La requète est un rejeu"
+
+msgid "The ticket isn't for us"
+msgstr "Le ticket n'est pas pour nous"
+
+msgid "Ticket and authenticator don't match"
+msgstr "Le ticket et l'authentifiant ne correspondent pas"
+
+msgid "Clock skew too great"
+msgstr "Le décalage d'horloge est trop grand"
+
+msgid "Incorrect net address"
+msgstr "Adresse réseau incorrecte"
+
+msgid "Protocol version mismatch"
+msgstr "La version de protocole ne correspond pas"
+
+msgid "Invalid msg type"
+msgstr "Type de message invalide"
+
+msgid "Message stream modified"
+msgstr "Flux du message modifié"
+
+msgid "Message out of order"
+msgstr "Message hors service"
+
+msgid "Specified version of key is not available"
+msgstr "La version de clef spécifiée est indisponible"
+
+msgid "Service key not available"
+msgstr "Le service de clef n'est pas disponible"
+
+msgid "Mutual authentication failed"
+msgstr "L'authentification mutuelle a échoué"
+
+msgid "Incorrect message direction"
+msgstr "Direction de message incorrecte"
+
+msgid "Alternative authentication method required"
+msgstr "Méthode d'authentification alternative requise"
+
+msgid "Incorrect sequence number in message"
+msgstr "Numéro de séquence incorrect dans le message"
+
+msgid "Inappropriate type of checksum in message"
+msgstr "Type de somme de contrôle inapproprié dans le message"
+
+msgid "Policy rejects transited path"
+msgstr "La politique rejette les chemins transités"
+
+msgid "Response too big for UDP, retry with TCP"
+msgstr "Réponse trop grande pour UDP, réessayez avec TCP"
+
+msgid "Generic error (description in e-text)"
+msgstr "Erreur générique (description dans e-text)"
+
+msgid "Field is too long for this implementation"
+msgstr "Le champ est trop long pour cette implémentation"
+
+msgid "(pkinit)"
+msgstr "(pkinit)"
+
+msgid "(user-to-user)"
+msgstr "(utilisateur-à-utilisateur)"
+
+#, c-format
+msgid "Unknown KRB-ERROR error code %d."
+msgstr "Code d'erreur KRB-ERROR inconnu %d."
+
+msgid "Shisa success"
+msgstr "Shisa a réussi"
+
+msgid "Shisa could not be initialized."
+msgstr "Shisa n'a pas pu être initialisé."
+
+msgid "The Shisa configuration file does not exist."
+msgstr "Le fichier de configuration de Shisa n'existe pas."
+
+msgid "File I/O error for Shisa configuration file."
+msgstr "Erreur d'entrée/sortie sur le fichier de configuration de Shisa."
+
+msgid "Syntax error in Shisa configuration token."
+msgstr "Erreur de syntaxe dans le paramètre de configuration de Shisa."
+
+msgid "Shisa database could not be opened."
+msgstr "La base de données Shisa n'a pas pu être ouverte."
+
+msgid "Error enumerating realms in database."
+msgstr "Erreur lors de l'énumération des domaines dans la base de données."
+
+msgid "Error enumerating principals in database."
+msgstr "Erreur lors de l'énumération des identifiants dans la base de données."
+
+msgid "Error enumerating keys in database."
+msgstr "Erreur lors de l'énumération des clefs dans la base de données."
+
+msgid "Supplied realm does not exist."
+msgstr "Le domaine fourni n'existe pas."
+
+msgid "Supplied principal does not exist."
+msgstr "L'identifiant fourni n'existe pas."
+
+msgid "Principal is not associated with any matching key."
+msgstr "Le principal n'est associé avec aucune clef correspondante."
+
+msgid "Error finding principal."
+msgstr "Erreur pour trouver l'identifiant."
+
+msgid "Tried to add a realm that already exist."
+msgstr "Essai d'ajout d'un domaine déjà existant."
+
+msgid "Error adding realm to database."
+msgstr "Erreur lors de l'ajout du domaine dans la base de données."
+
+msgid "Tried to remove a non-empty realm."
+msgstr "Essai de suppression de domaine non vide."
+
+msgid "Error removing realm from database."
+msgstr "Erreur lors de la suppression du domaine de la base de données."
+
+msgid "Tried to add a principal that already exist."
+msgstr "Essai d'ajout d'un identifiant déjà existant."
+
+msgid "Error adding principal to database."
+msgstr "Erreur lors de l'ajout de l'identifiant dans la base de données."
+
+msgid "Error removing principal from database."
+msgstr "Erreur lors de la suppression de l'identifiant de la base de données."
+
+msgid "Error adding key to principal."
+msgstr "Erreur lors de l'ajout de la clef à l'identifiant."
+
+msgid "Error removing key from principal."
+msgstr "Erreur lors de la suppression de la clef de l'identifiant."
+
+msgid "More than one key match given search criteria."
+msgstr "Plus d'une clef correspondent aux critères de recherche."
+
+msgid "Unknown Shisa error"
+msgstr "Erreur de Shisa inconnue"
+
+#, c-format
+msgid "shisa: %s\n"
+msgstr "shisa: %s\n"
+
+msgid "Account is"
+msgstr "Le compte est"
+
+msgid "DISABLED"
+msgstr "DÉSACTIVÉ"
+
+msgid "enabled"
+msgstr "activé"
+
+msgid "Current key version"
+msgstr "Version actuelle de clef"
+
+msgid "Account not valid before"
+msgstr "Compte invalide avant"
+
+msgid "Last initial TGT request at"
+msgstr "Dernière requète initiale TGT à"
+
+msgid "Last initial request at"
+msgstr "Dernière requète initiale à"
+
+msgid "Last TGT request at"
+msgstr "Dernière requète TGT à"
+
+msgid "Last ticket renewal at"
+msgstr "Dernier renouvellement de ticket à"
+
+msgid "Password expire on"
+msgstr "Le mot de passe expire à"
+
+msgid "Account expire on"
+msgstr "Le compte expire à"
+
+msgid "Key"
+msgstr "Clef"
+
+msgid "\tEtype"
+msgstr "\tEtype"
+
+msgid "\tPriority"
+msgstr "\tPriorité"
+
+msgid "\tSalt"
+msgstr "\tSel"
+
+msgid "\tS2K params"
+msgstr "\tParamètres S2K"
+
+msgid "\tPassword"
+msgstr "\tMot de passe"
+
+msgid "\tKey is"
+msgstr "\tLa clef est"
+
+msgid "MISSING"
+msgstr "MANQUANTE"
+
+#, c-format
+msgid "Adding realm `%s'...\n"
+msgstr "Ajout du domaine '%s'...\n"
+
+#, c-format
+msgid "Adding principal `%s@%s'...\n"
+msgstr "Ajout de l'identifiant '%s@%s'...\n"
+
+#, c-format
+msgid "Adding realm `%s'...done\n"
+msgstr "Ajout du domaine '%s'...ok\n"
+
+#, c-format
+msgid "Adding principal `%s@%s'...done\n"
+msgstr "Ajout de l'identifiant '%s@%s'...ok\n"
+
+#, c-format
+msgid "Removing realm `%s'...\n"
+msgstr "Suppression du domaine '%s'...\n"
+
+#, c-format
+msgid "Removing principal `%s@%s'...\n"
+msgstr "Suppression de l'identifiant '%s@%s'...\n"
+
+#, c-format
+msgid "Removing realm `%s'...done\n"
+msgstr "Suppression du domaine '%s'...ok\n"
+
+#, c-format
+msgid "Removing principal `%s@%s'...done\n"
+msgstr "Suppression de l'identifiant '%s@%s'...ok\n"
+
+#, c-format
+msgid "Password for `%s@%s': "
+msgstr "Mot de passe pour '%s@%s' : "
+
+msgid "Password: "
+msgstr "Mot de passe : "
+
+msgid "Could not read password"
+msgstr "Ne peut lire le mot de passe"
+
+#, c-format
+msgid ""
+"Could not create key (%d):\n"
+"%s"
+msgstr ""
+"Ne peut créer la clef (%d) :\n"
+"%s"
+
+#, c-format
+msgid "Try `%s --help' for more information."
+msgstr "Essayez '%s --help' pour plus d'informations."
+
+msgid "too many arguments"
+msgstr "Trop d'arguments"
+
+#, c-format
+msgid ""
+"\n"
+"Mandatory arguments to long options are mandatory for short options too.\n"
+"\n"
+msgstr ""
+"\n"
+"Les arguments obligatoires pour les options longues le sont aussi pour les\n"
+"options courtes.\n"
+"\n"
+
+#, c-format
+msgid "Report bugs to <%s>.\n"
+msgstr "Rapportez les bugs à <%s>.\n"
+
+#, c-format
+msgid ""
+"Initialization failed:\n"
+"%s"
+msgstr ""
+"L'initialisation a échoué :\n"
+"%s"
+
+#, c-format
+msgid ""
+"Could not read library options `%s':\n"
+"%s"
+msgstr ""
+"Ne peut lire les options de bibliothèque '%s' :\n"
+"%s"
+
+#, c-format
+msgid ""
+"Shishi initialization failed:\n"
+"%s"
+msgstr ""
+"L'initialisation de Shishi a échoué :\n"
+"%s"
+
+#, c-format
+msgid ""
+"Could not set encryption type `%s':\n"
+"%s"
+msgstr ""
+"Ne peut définir le type de chiffrement '%s' :\n"
+"%s"
+
+msgid "too few arguments"
+msgstr "Trop peu d'arguments"
+
+#, c-format
+msgid "Adding default realm `%s'...\n"
+msgstr "Ajout du domaine par défaut '%s'...\n"
+
+#, c-format
+msgid "Modifying principal `%s@%s'...\n"
+msgstr "Modification de l'identifiant '%s@%s'...\n"
+
+#, c-format
+msgid "Modifying principal `%s@%s'...done\n"
+msgstr "Modification de l'identifiant '%s@%s'...ok\n"
+
+#, c-format
+msgid "Adding key to `%s@%s'...\n"
+msgstr "Ajout de la clef pour '%s@%s'...\n"
+
+#, c-format
+msgid "Adding key to `%s@%s'...done\n"
+msgstr "Ajout de la clef pour '%s@%s'...ok\n"
+
+#, c-format
+msgid "Removing key from `%s@%s'...\n"
+msgstr "Suppression de la clef pour '%s@%s'...\n"
+
+#, c-format
+msgid "Removing key from `%s@%s'...done\n"
+msgstr "Suppression de la clef pour '%s@%s'...ok\n"
+
+#, c-format
+msgid ""
+"\n"
+"Mandatory arguments to long options are mandatory for short options too.\n"
+"\n"
+"Report bugs to <%s>.\n"
+msgstr ""
+"\n"
+"Les arguments obligatoires au options longues sont aussi obligatoires pour\n"
+"les options courtes.\n"
+"\n"
+"Rapportez les anomalies à <%s>.\n"
+
+msgid "Could not initialize libshishi."
+msgstr "Ne peut initialiser la libshishi."
+
+#, c-format
+msgid "Could not set encryption types: %s"
+msgstr "Ne peut définir le type de chiffrement : %s"
+
+#, c-format
+msgid "Could not parse client principal \"%s\": %s"
+msgstr "Ne peut lire l'identifiant du client \"%s\" : %s"
+
+#, c-format
+msgid "Could not parse server principal \"%s\": %s"
+msgstr "Ne peut lire l'identifiant du serveur \"%s\" : %s"
+
+#, c-format
+msgid "Could not read library options: %s"
+msgstr "Ne peut lire les options de bibliothèques : %s"
+
+#, c-format
+msgid "Invalid --starttime date `%s'"
+msgstr "Date pour --starttime invalide '%s'"
+
+#, c-format
+msgid "Invalid --endtime date `%s'"
+msgstr "Date pour --endtime invalide '%s'"
+
+#, c-format
+msgid "Invalid --renew-till date `%s'"
+msgstr "Date pour --renew-till invalide '%s'"
+
+#, c-format
+msgid "Tickets in `%s':\n"
+msgstr "Tickets dans '%s' :\n"
+
+#, c-format
+msgid "Could not list tickets: %s"
+msgstr "Ne peut lister les tickets : %s"
+
+#, c-format
+msgid "Removing ticket:\n"
+msgstr "Suppression du ticket :\n"
+
+#, c-format
+msgid ""
+"Could not destroy ticket %d:\n"
+"%s"
+msgstr ""
+"Ne peut détruire le ticket %d :\n"
+"%s"
+
+#, c-format
+msgid "No tickets removed.\n"
+msgstr "Aucun ticket supprimé.\n"
+
+#, c-format
+msgid "%d ticket removed.\n"
+msgid_plural "%d tickets removed.\n"
+msgstr[0] "%d ticket supprimé.\n"
+msgstr[1] "%d tickets supprimés.\n"
+
+#, c-format
+msgid "Could not get ticket as `%s' for `%s'."
+msgstr "Ne peut obtenir de ticket en tant que '%s' pour '%s'."
