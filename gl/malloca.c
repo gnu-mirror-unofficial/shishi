@@ -1,5 +1,5 @@
 /* Safe automatic memory allocation.
-   Copyright (C) 2003, 2006 Free Software Foundation, Inc.
+   Copyright (C) 2003, 2006-2007 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2003.
 
    This program is free software; you can redistribute it and/or modify
@@ -19,27 +19,27 @@
 #include <config.h>
 
 /* Specification.  */
-#include "allocsa.h"
+#include "malloca.h"
 
-/* The speed critical point in this file is freesa() applied to an alloca()
+/* The speed critical point in this file is freea() applied to an alloca()
    result: it must be fast, to match the speed of alloca().  The speed of
-   mallocsa() and freesa() in the other case are not critical, because they
+   mmalloca() and freea() in the other case are not critical, because they
    are only invoked for big memory sizes.  */
 
 #if HAVE_ALLOCA
 
-/* Store the mallocsa() results in a hash table.  This is needed to reliably
-   distinguish a mallocsa() result and an alloca() result.
+/* Store the mmalloca() results in a hash table.  This is needed to reliably
+   distinguish a mmalloca() result and an alloca() result.
 
    Although it is possible that the same pointer is returned by alloca() and
-   by mallocsa() at different times in the same application, it does not lead
-   to a bug in freesa(), because:
+   by mmalloca() at different times in the same application, it does not lead
+   to a bug in freea(), because:
      - Before a pointer returned by alloca() can point into malloc()ed memory,
        the function must return, and once this has happened the programmer must
-       not call freesa() on it anyway.
-     - Before a pointer returned by mallocsa() can point into the stack, it
-       must be freed.  The only function that can free it is freesa(), and
-       when freesa() frees it, it also removes it from the hash table.  */
+       not call freea() on it anyway.
+     - Before a pointer returned by mmalloca() can point into the stack, it
+       must be freed.  The only function that can free it is freea(), and
+       when freea() frees it, it also removes it from the hash table.  */
 
 #define MAGIC_NUMBER 0x1415fb4a
 #define MAGIC_SIZE sizeof (int)
@@ -57,16 +57,16 @@ typedef int verify1[2 * (HEADER_SIZE == sizeof (struct header)) - 1];
    table resizable, because when the hash table gets filled so much that the
    lookup becomes slow, it means that the application has memory leaks.  */
 #define HASH_TABLE_SIZE 257
-static void * mallocsa_results[HASH_TABLE_SIZE];
+static void * mmalloca_results[HASH_TABLE_SIZE];
 
 #endif
 
 void *
-mallocsa (size_t n)
+mmalloca (size_t n)
 {
 #if HAVE_ALLOCA
   /* Allocate one more word, that serves as an indicator for malloc()ed
-     memory, so that freesa() of an alloca() result is fast.  */
+     memory, so that freea() of an alloca() result is fast.  */
   size_t nplus = n + HEADER_SIZE;
 
   if (nplus >= n)
@@ -84,8 +84,8 @@ mallocsa (size_t n)
 
 	  /* Enter p into the hash table.  */
 	  slot = (unsigned long) p % HASH_TABLE_SIZE;
-	  ((struct header *) (p - HEADER_SIZE))->next = mallocsa_results[slot];
-	  mallocsa_results[slot] = p;
+	  ((struct header *) (p - HEADER_SIZE))->next = mmalloca_results[slot];
+	  mmalloca_results[slot] = p;
 
 	  return p;
 	}
@@ -103,21 +103,21 @@ mallocsa (size_t n)
 
 #if HAVE_ALLOCA
 void
-freesa (void *p)
+freea (void *p)
 {
-  /* mallocsa() may have returned NULL.  */
+  /* mmalloca() may have returned NULL.  */
   if (p != NULL)
     {
-      /* Attempt to quickly distinguish the mallocsa() result - which has
+      /* Attempt to quickly distinguish the mmalloca() result - which has
 	 a magic indicator word - and the alloca() result - which has an
 	 uninitialized indicator word.  It is for this test that sa_increment
 	 additional bytes are allocated in the alloca() case.  */
       if (((int *) p)[-1] == MAGIC_NUMBER)
 	{
-	  /* Looks like a mallocsa() result.  To see whether it really is one,
+	  /* Looks like a mmalloca() result.  To see whether it really is one,
 	     perform a lookup in the hash table.  */
 	  size_t slot = (unsigned long) p % HASH_TABLE_SIZE;
-	  void **chain = &mallocsa_results[slot];
+	  void **chain = &mmalloca_results[slot];
 	  for (; *chain != NULL;)
 	    {
 	      if (*chain == p)
@@ -131,7 +131,7 @@ freesa (void *p)
 	      chain = &((struct header *) ((char *) *chain - HEADER_SIZE))->next;
 	    }
 	}
-      /* At this point, we know it was not a mallocsa() result.  */
+      /* At this point, we know it was not a mmalloca() result.  */
     }
 }
 #endif

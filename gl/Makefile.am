@@ -61,14 +61,6 @@ EXTRA_DIST += alloca_.h
 
 ## end   gnulib module alloca-opt
 
-## begin gnulib module allocsa
-
-libgnu_la_SOURCES += allocsa.h allocsa.c
-
-EXTRA_DIST += allocsa.valgrind
-
-## end   gnulib module allocsa
-
 ## begin gnulib module arpa_inet
 
 BUILT_SOURCES += $(ARPA_INET_H)
@@ -357,6 +349,14 @@ EXTRA_libgnu_la_SOURCES += lseek.c
 
 ## end   gnulib module lseek
 
+## begin gnulib module malloca
+
+libgnu_la_SOURCES += malloca.c
+
+EXTRA_DIST += malloca.h malloca.valgrind
+
+## end   gnulib module malloca
+
 ## begin gnulib module mktime
 
 
@@ -622,6 +622,7 @@ string.h: string_.h
 	  sed -e 's|@''ABSOLUTE_STRING_H''@|$(ABSOLUTE_STRING_H)|g' \
 	      -e 's/@''HAVE_INCLUDE_NEXT''@/$(HAVE_INCLUDE_NEXT)/g' \
 	      -e 's|@''GNULIB_MBSLEN''@|$(GNULIB_MBSLEN)|g' \
+	      -e 's|@''GNULIB_MBSNLEN''@|$(GNULIB_MBSNLEN)|g' \
 	      -e 's|@''GNULIB_MBSCHR''@|$(GNULIB_MBSCHR)|g' \
 	      -e 's|@''GNULIB_MBSRCHR''@|$(GNULIB_MBSRCHR)|g' \
 	      -e 's|@''GNULIB_MBSSTR''@|$(GNULIB_MBSSTR)|g' \

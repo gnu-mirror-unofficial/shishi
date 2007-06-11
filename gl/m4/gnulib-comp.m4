@@ -46,7 +46,6 @@ AC_DEFUN([gl_INIT],
   gl_cond_libtool=true
   gl_source_base='gl'
   gl_FUNC_ALLOCA
-  gl_ALLOCSA
   gl_HEADER_ARPA_INET
   AC_PROG_MKDIR_P
   gl_FUNC_BASE64
@@ -93,6 +92,7 @@ AC_DEFUN([gl_INIT],
   gl_INLINE
   gl_FUNC_LSEEK
   gl_UNISTD_MODULE_INDICATOR([lseek])
+  gl_MALLOCA
   gl_FUNC_MKTIME
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
@@ -193,9 +193,6 @@ AC_DEFUN([gl_FILE_LIST], [
   doc/gendocs_template
   doc/getdate.texi
   lib/alloca_.h
-  lib/allocsa.c
-  lib/allocsa.h
-  lib/allocsa.valgrind
   lib/arcfour.c
   lib/arcfour.h
   lib/asnprintf.c
@@ -243,6 +240,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/inet_ntop.c
   lib/inet_ntop.h
   lib/lseek.c
+  lib/malloca.c
+  lib/malloca.h
+  lib/malloca.valgrind
   lib/md4.c
   lib/md4.h
   lib/md5.c
@@ -311,7 +311,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xvasprintf.h
   m4/absolute-header.m4
   m4/alloca.m4
-  m4/allocsa.m4
   m4/arcfour.m4
   m4/arpa_inet_h.m4
   m4/base64.m4
@@ -356,6 +355,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/lib-prefix.m4
   m4/longlong.m4
   m4/lseek.m4
+  m4/malloca.m4
   m4/md4.m4
   m4/md5.m4
   m4/memxor.m4

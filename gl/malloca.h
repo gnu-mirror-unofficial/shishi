@@ -16,8 +16,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifndef _ALLOCSA_H
-#define _ALLOCSA_H
+#ifndef _MALLOCA_H
+#define _MALLOCA_H
 
 #include <alloca.h>
 #include <stddef.h>
@@ -49,29 +49,29 @@ extern "C" {
 # define safe_alloca(N) ((void) (N), NULL)
 #endif
 
-/* allocsa(N) is a safe variant of alloca(N).  It allocates N bytes of
-   memory allocated on the stack, that must be freed using freesa() before
+/* malloca(N) is a safe variant of alloca(N).  It allocates N bytes of
+   memory allocated on the stack, that must be freed using freea() before
    the function returns.  Upon failure, it returns NULL.  */
 #if HAVE_ALLOCA
-# define allocsa(N) \
+# define malloca(N) \
   ((N) < 4032 - sa_increment					    \
    ? (void *) ((char *) alloca ((N) + sa_increment) + sa_increment) \
-   : mallocsa (N))
+   : mmalloca (N))
 #else
-# define allocsa(N) \
-  mallocsa (N)
+# define malloca(N) \
+  mmalloca (N)
 #endif
-extern void * mallocsa (size_t n);
+extern void * mmalloca (size_t n);
 
-/* Free a block of memory allocated through allocsa().  */
+/* Free a block of memory allocated through malloca().  */
 #if HAVE_ALLOCA
-extern void freesa (void *p);
+extern void freea (void *p);
 #else
-# define freesa free
+# define freea free
 #endif
 
 /* Maybe we should also define a variant
-    nallocsa (size_t n, size_t s) - behaves like allocsa (n * s)
+    nmalloca (size_t n, size_t s) - behaves like malloca (n * s)
    If this would be useful in your application. please speak up.  */
 
 
@@ -121,4 +121,4 @@ enum
   sa_increment = ((sizeof (int) + sa_alignment_max - 1) / sa_alignment_max) * sa_alignment_max
 };
 
-#endif /* _ALLOCSA_H */
+#endif /* _MALLOCA_H */
