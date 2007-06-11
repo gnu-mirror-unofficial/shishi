@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.31 (unreleased)
+* Version 0.0.31 (released 2007-06-11)
 
 ** Shishi is now developed using Git instead of CVS.
 A public git mirror is available from
