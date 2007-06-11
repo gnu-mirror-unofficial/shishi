@@ -12,6 +12,8 @@ A public git mirror is available from
 The CA is by default stored in ~/.shishi/client.ca in PEM format.
 Suggested by Alberto Fondi <alberto.fondi@lnf.infn.it>.
 
+** Update gnulib files.
+
 * Version 0.0.30 (released 2006-11-01)
 
 ** Update STARTTLS extension to match latest drafts.
