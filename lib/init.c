@@ -264,14 +264,28 @@ init_read (Shishi * handle,
   /* XXX Is this the correct place for this? */
   maybe_install_usercfg (handle);
 
-  if (!tktsfile)
-    tktsfile = shishi_tkts_default_file (handle);
-
   if (!systemcfgfile)
     systemcfgfile = shishi_cfg_default_systemfile (handle);
 
+  if (*systemcfgfile)
+    rc = shishi_cfg_from_file (handle, systemcfgfile);
+  if (rc == SHISHI_FOPEN_ERROR)
+    shishi_warn (handle, "%s: %s", systemcfgfile, strerror (errno));
+  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
+    return rc;
+
   if (!usercfgfile)
     usercfgfile = shishi_cfg_default_userfile (handle);
+
+  if (*usercfgfile)
+    rc = shishi_cfg_from_file (handle, usercfgfile);
+  if (rc == SHISHI_FOPEN_ERROR)
+    shishi_warn (handle, "%s: %s", usercfgfile, strerror (errno));
+  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
+    return rc;
+
+  if (!tktsfile)
+    tktsfile = shishi_tkts_default_file (handle);
 
   if (!handle->tkts)
     rc = shishi_tkts (handle, &handle->tkts);
@@ -282,20 +296,6 @@ init_read (Shishi * handle,
     rc = shishi_tkts_from_file (handle->tkts, tktsfile);
   if (rc == SHISHI_FOPEN_ERROR)
     shishi_verbose (handle, "%s: %s", tktsfile, strerror (errno));
-  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
-    return rc;
-
-  if (*systemcfgfile)
-    rc = shishi_cfg_from_file (handle, systemcfgfile);
-  if (rc == SHISHI_FOPEN_ERROR)
-    shishi_warn (handle, "%s: %s", systemcfgfile, strerror (errno));
-  if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
-    return rc;
-
-  if (*usercfgfile)
-    rc = shishi_cfg_from_file (handle, usercfgfile);
-  if (rc == SHISHI_FOPEN_ERROR)
-    shishi_warn (handle, "%s: %s", usercfgfile, strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
