@@ -1,5 +1,5 @@
 /* init.c --- Initialization functions.
- * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -281,7 +281,7 @@ init_read (Shishi * handle,
   if (*tktsfile)
     rc = shishi_tkts_from_file (handle->tkts, tktsfile);
   if (rc == SHISHI_FOPEN_ERROR)
-    shishi_warn (handle, "%s: %s", tktsfile, strerror (errno));
+    shishi_verbose (handle, "%s: %s", tktsfile, strerror (errno));
   if (rc != SHISHI_OK && rc != SHISHI_FOPEN_ERROR)
     return rc;
 
