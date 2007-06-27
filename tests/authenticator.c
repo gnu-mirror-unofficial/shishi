@@ -1,5 +1,5 @@
-/* authenticator.c	Shishi authenticator self tests.
- * Copyright (C) 2002, 2003, 2004, 2006  Simon Josefsson
+/* authenticator.c --- Shishi authenticator self tests.
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -14,8 +14,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Shishi; if not, see http://www.gnu.org/licenses or write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+ * along with Shishi; if not, see http://www.gnu.org/licenses or write
+ * to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+ * Floor, Boston, MA 02110-1301, USA
  *
  */
 
