@@ -18,7 +18,7 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
-EXTRA_DIST = inetutils.diff fetchmail.diff fetchmail.mail
+EXTRA_DIST = fetchmail.diff fetchmail.mail
 
 DIST_SUBDIRS = pam_shishi rsh-redone
 
