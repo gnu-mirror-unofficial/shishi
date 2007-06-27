@@ -1,5 +1,5 @@
 Shishi extra/README -- Notes for the extra/ subdirectory.
-Copyright (C) 2002, 2003, 2004 Simon Josefsson
+Copyright (C) 2002, 2003, 2004, 2007 Simon Josefsson
 See the end for copying conditions.
 
 The pam_shishi/ sub-directory contains a PAM module that uses Shishi
@@ -9,14 +9,12 @@ The rsh-redone/ sub-directory contains a Shishi port, by Nicolas
 Pouvesle <nico.pou@fnac.net>, of the rewrite of rsh/rlogin called
 rsh-redone, by Guus Sliepen <guus@sliepen.eu.org>.
 
-The inetutils.diff file contains a patch for GNU InetUtils to add
-Kerberos 5 authentication support for telnet client and telnetd server
-using Shishi.  Apply the patch and build InetUtils using
---enable-encryption --enable-authentication --with-shishi.
-
 The fetchmail.* files contains a mail and associated patch for Eric
 Raymond's Fetchmail to add support for GNU GSS/Shishi.  Apply the
 patch, and build Fetchmail with GSSAPI as normal with --with-gssapi.
+
+The inetutils.diff file has been removed, as up-stream GNU InetUtils
+now has incorporated support for GNU Shishi.  Thank you!
 
 The file mailutils.diff has been removed, as up-stream GNU MailUtils
 now has incorporated support for GNU GSS/Shishi.  Thank you!
