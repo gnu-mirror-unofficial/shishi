@@ -1,5 +1,5 @@
 /* ccache.c --- Read MIT style Kerberos Credential Cache file.
- * Copyright (C) 2006  Simon Josefsson
+ * Copyright (C) 2006, 2007  Simon Josefsson
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -12,9 +12,9 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this file; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA
+ * along with this file; if not, see http://www.gnu.org/licenses or
+ * write to the Free Software Foundation, Inc., 51 Franklin Street,
+ * Fifth Floor, Boston, MA 02110-1301, USA
  *
  */
 
