@@ -239,6 +239,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/hmac.h
   lib/inet_ntop.c
   lib/inet_ntop.h
+  lib/intprops.h
   lib/lseek.c
   lib/malloca.c
   lib/malloca.h
@@ -294,6 +295,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/vasnprintf.c
   lib/vasnprintf.h
   lib/vasprintf.c
+  lib/verify.h
   lib/wchar_.h
   lib/xalloc.h
   lib/xasprintf.c
@@ -346,6 +348,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/gnulib-common.m4
   m4/hmac-md5.m4
   m4/hmac-sha1.m4
+  m4/include_next.m4
   m4/inet_ntop.m4
   m4/inline.m4
   m4/intmax_t.m4

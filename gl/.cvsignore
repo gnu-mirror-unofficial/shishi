@@ -19,3 +19,5 @@ float+.h
 float_.h
 sys_socket_.h
 sys_stat_.h
+intprops.h
+verify.h
