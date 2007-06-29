@@ -6,6 +6,8 @@ See the end for copying conditions.
 
 ** Shishi is now licensed under the GPL version 3 or later.
 
+** Remove extra/inetutils.diff since the patch has been merged into InetUtils.
+
 ** Update gnulib files.
 
 * Version 0.0.31 (released 2007-06-11)
