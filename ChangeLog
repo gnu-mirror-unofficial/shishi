@@ -1,3 +1,210 @@
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.32.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gpl.texi: Add GPLv3.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Bump copyright year.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/maint.mk: Update gnulib files.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* po/LINGUAS: Sync with TP.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* po/LINGUAS: Sync with TP.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Add 2007 copyright year.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/config.rpath, gl/.cvsignore, gl/Makefile.am,
+	gl/float_.h, gl/getdate.y, gl/intprops.h, gl/m4/.cvsignore,
+	gl/m4/absolute-header.m4, gl/m4/float_h.m4, gl/m4/getaddrinfo.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/include_next.m4, gl/m4/netinet_in_h.m4,
+	gl/m4/stdint.m4, gl/m4/stdio_h.m4, gl/m4/stdlib_h.m4,
+	gl/m4/string_h.m4, gl/m4/sys_select_h.m4, gl/m4/sys_socket_h.m4,
+	gl/m4/sys_stat_h.m4, gl/m4/sys_time_h.m4, gl/m4/time_h.m4,
+	gl/m4/unistd_h.m4, gl/m4/wchar.m4, gl/netinet_in_.h,
+	gl/printf-args.c, gl/printf-parse.h, gl/stdint_.h, gl/stdio_.h,
+	gl/stdlib_.h, gl/string_.h, gl/sys_select_.h, gl/sys_socket_.h,
+	gl/sys_stat_.h, gl/sys_time_.h, gl/time_.h, gl/unistd_.h,
+	gl/verify.h, gl/wchar_.h, gl/xreadlink.h: Update gnulib files.
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* COPYING: Add GPLv3, since automake installs GPLv2.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* .cvscopying: Typos.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* extra/Makefile.am: No need for inetutils.diff.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Change GPLv2+ to GPLv3+.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* src/ccache2shishi.c, src/kdc.c, src/kdc.h, src/keytab2shishi.c,
+	src/resume.c, src/server.c, src/shisa.c, src/shishi.c,
+	src/shishid.c, src/starttls.c, tests/authenticator.c,
+	tests/ccache.c, tests/crypto-ctx.c, tests/crypto.c, tests/gztime.c,
+	tests/key.c, tests/keytab.c, tests/low-crypto.c, tests/nonce.c,
+	tests/priv.c, tests/rijndael.c, tests/safe.c, tests/ticketset.c,
+	tests/utils.c: Change GPLv2+ to GPLv3+.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/aprep.c, lib/apreq.c, lib/as.c, lib/asn1.c,
+	lib/asn1.h, lib/authenticator.c, lib/authorize.c, lib/ccache.c,
+	lib/ccache.h, lib/cfg.c, lib/cfg.h, lib/crypto-3des.c,
+	lib/crypto-aes.c, lib/crypto-ctx.c, lib/crypto-des.c,
+	lib/crypto-md.c, lib/crypto-null.c, lib/crypto-rc4.c, lib/crypto.c,
+	lib/crypto.h, lib/diskio.c, lib/diskio.h, lib/encapreppart.c,
+	lib/enckdcreppart.c, lib/encticketpart.c, lib/error.c,
+	lib/gztime.c, lib/hostkeys.c, lib/init.c, lib/internal.h,
+	lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c, lib/kerberos5.asn1,
+	lib/key.c, lib/keys.c, lib/keytab.c, lib/krberror.c,
+	lib/low-crypto.c, lib/netio.c, lib/password.c, lib/pki.c,
+	lib/principal.c, lib/priv.c, lib/realm.c, lib/resolv.c, lib/safe.c,
+	lib/starttls.c, lib/starttls.h, lib/tgs.c, lib/ticket.c, lib/tkt.c,
+	lib/tktccache.c, lib/tkts.c, lib/utils.c, lib/utils.h,
+	lib/version.c: Change GPLv2+ to GPLv3+.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/Makefile.am: Change GPLv2+ to GPLv3+.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* extra/inetutils.diff: Remove, not needed anymore.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* extra/README: Fix.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am, lib/shishi.vers, src/ccache2shishi.ggo,
+	src/keytab2shishi.ggo, src/shisa.ggo, src/shishi.ggo,
+	src/shishid.ggo, tests/shisa.sh: Change GPLv2+ to GPLv3+.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, configure.ac, db/Makefile.am, db/config.c,
+	db/core.c, db/db.c, db/err.c, db/file.c, db/file.h, db/fileutil.c,
+	db/fileutil.h, db/info.h, db/setup.c, db/shisa.h,
+	examples/Makefile.am, examples/client-cksum.c,
+	examples/client-priv.c, examples/client-safe.c, examples/client.c,
+	examples/server.c, extra/Makefile.am, extra/pam_shishi/Makefile.am,
+	extra/pam_shishi/pam_shishi.c, extra/rsh-redone/Makefile.am,
+	lib/Makefile.am, lib/ap.c, lib/aprep.c, lib/apreq.c, lib/as.c,
+	lib/asn1.c, lib/asn1.h, lib/authenticator.c, lib/authorize.c,
+	lib/cfg.c, lib/cfg.h, lib/crypto-3des.c, lib/crypto-aes.c,
+	lib/crypto-ctx.c, lib/crypto-des.c, lib/crypto-md.c,
+	lib/crypto-null.c, lib/crypto-rc4.c, lib/crypto.c, lib/crypto.h,
+	lib/diskio.c, lib/diskio.h, lib/encapreppart.c,
+	lib/enckdcreppart.c, lib/encticketpart.c, lib/error.c,
+	lib/gztime.c, lib/hostkeys.c, lib/init.c, lib/internal.h,
+	lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c, lib/kerberos5.asn1,
+	lib/key.c, lib/keys.c, lib/keytab.c, lib/krberror.c,
+	lib/low-crypto.c, lib/netio.c, lib/password.c, lib/pki.c,
+	lib/principal.c, lib/priv.c, lib/realm.c, lib/resolv.c, lib/safe.c,
+	lib/shishi.h.in, lib/starttls.c, lib/starttls.h, lib/tgs.c,
+	lib/ticket.c, lib/tkt.c, lib/tktccache.c, lib/tkts.c, lib/utils.c,
+	lib/utils.h, lib/version.c, maint-cfg.mk, src/Makefile.am,
+	src/ccache2shishi.c, src/kdc.c, src/kdc.h, src/keytab2shishi.c,
+	src/resume.c, src/server.c, src/shisa.c, src/shishi.c,
+	src/shishid.c, src/starttls.c, tests/Makefile.am,
+	tests/authenticator.c, tests/ccache.c, tests/crypto-ctx.c,
+	tests/crypto.c, tests/gztime.c, tests/key.c, tests/keytab.c,
+	tests/low-crypto.c, tests/nonce.c, tests/priv.c, tests/rijndael.c,
+	tests/safe.c, tests/ticketset.c, tests/utils.c: Change GPLv2+ to
+	GPLv3+.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* db/config.c, db/core.c, db/db.c, db/err.c, db/file.c, db/file.h,
+	db/fileutil.c, db/fileutil.h, db/info.h, db/setup.c, db/shisa.h,
+	doc/gdoc-error, examples/client-cksum.c, examples/client-priv.c,
+	examples/client-safe.c, examples/client.c, examples/server.c,
+	extra/pam_shishi/pam_shishi.c, lib/ap.c, lib/aprep.c, lib/apreq.c,
+	lib/as.c, lib/asn1.c, lib/asn1.h, lib/authenticator.c,
+	lib/authorize.c, lib/ccache.c, lib/ccache.h, lib/cfg.c, lib/cfg.h,
+	lib/crypto-3des.c, lib/crypto-aes.c, lib/crypto-ctx.c,
+	lib/crypto-des.c, lib/crypto-md.c, lib/crypto-null.c,
+	lib/crypto-rc4.c, lib/crypto.c, lib/crypto.h, lib/diskio.c,
+	lib/diskio.h, lib/encapreppart.c, lib/enckdcreppart.c,
+	lib/encticketpart.c, lib/error.c, lib/gztime.c, lib/hostkeys.c,
+	lib/init.c, lib/internal.h, lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c,
+	lib/kerberos5.asn1, lib/key.c, lib/keys.c, lib/keytab.c,
+	lib/krberror.c, lib/low-crypto.c, lib/netio.c, lib/password.c,
+	lib/pki.c, lib/principal.c, lib/priv.c, lib/realm.c, lib/resolv.c,
+	lib/safe.c, lib/shishi.h.in, lib/starttls.c, lib/starttls.h,
+	lib/tgs.c, lib/ticket.c, lib/tkt.c, lib/tktccache.c, lib/tkts.c,
+	lib/utils.c, lib/utils.h, lib/version.c, src/ccache2shishi.c,
+	src/kdc.c, src/kdc.h, src/keytab2shishi.c, src/resume.c,
+	src/server.c, src/shisa.c, src/shishi.c, src/shishid.c,
+	src/starttls.c, tests/authenticator.c, tests/ccache.c,
+	tests/crypto-ctx.c, tests/crypto.c, tests/gztime.c, tests/key.c,
+	tests/keytab.c, tests/low-crypto.c, tests/nonce.c, tests/priv.c,
+	tests/rijndael.c, tests/safe.c, tests/ticketset.c, tests/utils.c: 
+	Change GPLv2+ to GPLv3+.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS: Update PGP key.
+
+2007-06-27  Simon Josefsson <simon@josefsson.org>
+
+	* .cvscopying: Use GPL license (as in emacs).
+
+2007-06-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Reorder configuration file reading. Now the system
+	config file is read first, then user configuration, then ticket
+	file.
+
+2007-06-12  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Print debug info, not warning if ticket file doesn't
+	exist. Absent ticket isn't critical during initialization. Reported
+	by Josh Triplett <josh@freedesktop.org>, Debian#423944.
+
+2007-06-11  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2007-06-11  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.31.
@@ -14690,8 +14897,22 @@
 
 	* Initial release, version 0.0.0.
 
-----------------------------------------------------------------------
-  Copyright 2002, 2003  Simon Josefsson
- Copying and distribution of this file, with or without modification,
- are permitted in any medium without royalty provided the copyright
- notice and this notice are preserved.
+
+    Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Simon Josefsson
+
+  This file is part of Shishi.
+ 
+  Shishi is free software; you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 3 of the License, or
+  (at your option) any later version.
+
+  Shishi is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with Shishi; if not, see http://www.gnu.org/licenses or write
+  to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+  Floor, Boston, MA 02110-1301, USA.
