@@ -5258,8 +5258,19 @@ The credential cache file format is described in the file
 * GNU GPL::                          License for copying the programs.
 @end menu
 
+@node GNU Free Documentation License
+@appendixsec GNU Free Documentation License
+
+@cindex FDL, GNU Free Documentation License
+
 @include fdl.texi
-@include gpl.texi
+
+@node GNU GPL
+@appendixsec GNU General Public License
+@cindex GPL, GNU General Public License
+@cindex License, GNU GPL
+
+@include gpl-3.0.texi
 
 @node Function and Data Index
 @unnumbered Function and Data Index

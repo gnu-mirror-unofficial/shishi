@@ -192,6 +192,7 @@ AC_DEFUN([gl_FILE_LIST], [
   doc/fdl.texi
   doc/gendocs_template
   doc/getdate.texi
+  doc/gpl-3.0.texi
   lib/alloca_.h
   lib/arcfour.c
   lib/arcfour.h
