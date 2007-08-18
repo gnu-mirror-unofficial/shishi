@@ -208,6 +208,13 @@ EXTRA_libgnu_la_SOURCES += fseeko.c
 
 ## end   gnulib module fseeko
 
+## begin gnulib module gendocs
+
+
+EXTRA_DIST += $(top_srcdir)/build-aux/gendocs.sh
+
+## end   gnulib module gendocs
+
 ## begin gnulib module getaddrinfo
 
 
@@ -325,6 +332,20 @@ EXTRA_libgnu_la_SOURCES += gettimeofday.c
 
 ## end   gnulib module gettimeofday
 
+## begin gnulib module gnupload
+
+
+EXTRA_DIST += $(top_srcdir)/build-aux/gnupload
+
+## end   gnulib module gnupload
+
+## begin gnulib module havelib
+
+
+EXTRA_DIST += $(top_srcdir)/build-aux/config.rpath
+
+## end   gnulib module havelib
+
 ## begin gnulib module inet_ntop
 
 
@@ -345,6 +366,8 @@ EXTRA_DIST += intprops.h
 
 LINK_WARNING_H=$(top_srcdir)/build-aux/link-warning.h
 
+EXTRA_DIST += $(top_srcdir)/build-aux/link-warning.h
+
 ## end   gnulib module link-warning
 
 ## begin gnulib module lseek
@@ -355,6 +378,12 @@ EXTRA_DIST += lseek.c
 EXTRA_libgnu_la_SOURCES += lseek.c
 
 ## end   gnulib module lseek
+
+## begin gnulib module maintainer-makefile
+
+EXTRA_DIST += $(top_srcdir)/build-aux/GNUmakefile $(top_srcdir)/build-aux/maint.mk
+
+## end   gnulib module maintainer-makefile
 
 ## begin gnulib module malloca
 
@@ -941,6 +970,10 @@ wchar.h: wchar_.h
 	  sed -e 's/@''INCLUDE_NEXT''@/$(INCLUDE_NEXT)/g' \
 	      -e 's|@''NEXT_WCHAR_H''@|$(NEXT_WCHAR_H)|g' \
 	      -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
+	      -e 's|@''GNULIB_WCWIDTH''@|$(GNULIB_WCWIDTH)|g' \
+	      -e 's|@''HAVE_DECL_WCWIDTH''@|$(HAVE_DECL_WCWIDTH)|g' \
+	      -e 's|@''REPLACE_WCWIDTH''@|$(REPLACE_WCWIDTH)|g' \
+	      -e '/definition of GL_LINK_WARNING/r $(LINK_WARNING_H)' \
 	    < $(srcdir)/wchar_.h; \
 	} > $@-t
 	mv $@-t $@

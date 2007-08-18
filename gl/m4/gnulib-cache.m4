@@ -23,9 +23,11 @@ gl_MODULES([base64 crc crypto/arcfour crypto/gc-des crypto/gc-hmac-md5 crypto/gc
 gl_AVOID([xalloc-die])
 gl_SOURCE_BASE([gl])
 gl_M4_BASE([gl/m4])
+gl_PO_BASE([])
 gl_DOC_BASE([doc])
 gl_TESTS_BASE([gl/tests])
 gl_LIB([libgnu])
 gl_MAKEFILE_NAME([])
 gl_LIBTOOL
 gl_MACRO_PREFIX([gl])
+gl_PO_DOMAIN([])
