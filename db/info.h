@@ -41,9 +41,6 @@
 /* Get xmalloc. */
 #include "xalloc.h"
 
-/* Get getline, ssize_t. */
-#include "getline.h"
-
 /* Get prototypes. */
 #include "shisa.h"
 
