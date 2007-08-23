@@ -77,9 +77,11 @@ AC_DEFUN([gl_INIT],
   gl_GETADDRINFO
   gl_GETDATE
   gl_FUNC_GETDELIM
+  gl_STDIO_MODULE_INDICATOR([getdelim])
   gl_FUNC_GETDOMAINNAME
   gl_FUNC_GETHOSTNAME
   gl_FUNC_GETLINE
+  gl_STDIO_MODULE_INDICATOR([getline])
   gl_GETOPT
   gl_FUNC_GETPASS
   gl_FUNC_GETSUBOPT
@@ -219,12 +221,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getdate.h
   lib/getdate.y
   lib/getdelim.c
-  lib/getdelim.h
   lib/getdomainname.c
   lib/getdomainname.h
   lib/gethostname.c
   lib/getline.c
-  lib/getline.h
   lib/getopt.c
   lib/getopt1.c
   lib/getopt_.h
