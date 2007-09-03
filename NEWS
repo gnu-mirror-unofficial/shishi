@@ -4,6 +4,9 @@ See the end for copying conditions.
 
 * Version 0.0.33 (unreleased)
 
+** Don't include built manuals in source archive.
+They are available at <http://www.gnu.org/software/shishi/manual/>.
+
 * Version 0.0.32 (released 2007-06-29)
 
 ** Shishi is now licensed under the GPL version 3 or later.
