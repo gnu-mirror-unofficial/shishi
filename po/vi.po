@@ -1,0 +1,827 @@
+# Vietnamese translation for Shishi.
+# Copyright © 2007 Free Software Foundation, Inc.
+# Clytie Siddall <clytie@riverland.net.au>, 2007
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: shishi 0.0.32\n"
+"Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
+"POT-Creation-Date: 2007-06-29 17:17+0200\n"
+"PO-Revision-Date: 2007-07-15 21:31+0930\n"
+"Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
+"Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: LocFactoryEditor 1.7b1\n"
+
+#: lib/error.c:33
+msgid "Shishi success"
+msgstr "Thành công Shishi"
+
+#: lib/error.c:35
+msgid "Error in ASN.1 function (corrupt data?)"
+msgstr "Gặp lỗi trong hàm ASN.1 (dữ liệu bị hỏng ?)"
+
+#: lib/error.c:37
+msgid "Could not open file"
+msgstr "Không thể mở tập tin"
+
+#: lib/error.c:39
+msgid "File input/output error"
+msgstr "Lỗi vào/ra tập tin"
+
+#: lib/error.c:41
+msgid "Memory allocation error in shishi library."
+msgstr "Lỗi phân cấp bộ nhớ trong thư viện shishi."
+
+#: lib/error.c:43
+msgid "Base64 encoding or decoding failed. Data corrupt?"
+msgstr "Lỗi mã hoá/giải mã base64. Dữ liệu bị hỏng ?"
+
+#: lib/error.c:45
+msgid "Client realm value differ between request and reply."
+msgstr "Giá trị địa hạt khách khác biệt giữa yêu cầu và đáp ứng."
+
+#: lib/error.c:47
+msgid "Client name value differ between request and reply."
+msgstr "Giá trị tên khách khác biệt giữa yêu cầu và đáp ứng."
+
+#: lib/error.c:49
+msgid "Replay protection value (nonce) differ between request and reply."
+msgstr "Giá trị bảo vệ phát lại (nonce) khác biệt giữa yêu cầu và đáp ứng."
+
+#: lib/error.c:51
+msgid "Keytype used to encrypt ticket doesn't match provided key. This usually indicates an internal application error."
+msgstr "Kiểu khoá dùng để mã hoá vé không khớp với khoá đã cung cấp. Thường ngụ ý lỗi ứng dụng nội bộ."
+
+#: lib/error.c:54
+msgid "Internal error in low-level crypto routines."
+msgstr "Lỗi nội bộ trong các hàm mật mã cấp thấp."
+
+#: lib/error.c:56
+msgid "Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption."
+msgstr "Điều có sẵn mật mã cấp thấp bị lỗi. Thường ngụ ý mật khẩu sai hay dữ liệu bị hỏng."
+
+#: lib/error.c:59
+msgid "Timedout talking to KDC. This usually indicates a network or KDC address problem."
+msgstr "Quá thời khi liên lạc với KDC. Thường ngụ ý vấn đề kiểu mạng hay địa chỉ KDC."
+
+#: lib/error.c:62
+msgid "No KDC for realm known."
+msgstr "Không có KDC đã biết cho địa hạt này."
+
+#: lib/error.c:64
+msgid "The system call socket() failed.  This usually indicates that your system does not support the socket type."
+msgstr "Lời gọi hệ thống socket() (ổ cắm) bị lỗi. Thường ngụ ý hệ thống không hỗ trợ kiểu ổ cắm đó."
+
+#: lib/error.c:67
+msgid "The system call bind() failed.  This usually indicates insufficient permissions."
+msgstr "Lời gọi hệ thống bind() (đóng kết) bị lỗi. Thường ngụ ý không đủ quyền truy cập."
+
+#: lib/error.c:70
+msgid "The system call sendto() failed."
+msgstr "Lời gọi hệ thống sendto() (gửi cho) bị lỗi."
+
+#: lib/error.c:72
+msgid "The system call close() failed."
+msgstr "Lời gọi hệ thống close() (đóng) bị lỗi."
+
+#: lib/error.c:74
+msgid "Server replied with an error message to request."
+msgstr "Nhận được yêu cầu thì máy phục vụ đáp ứng với thông điệp lỗi."
+
+#: lib/error.c:76
+msgid "Ticketset not initialized.  This usually indicates an internal application error."
+msgstr "Chưa sở khởi bộ vé. Thường ngụ ý lỗi ứng dụng nội bộ."
+
+#: lib/error.c:79
+msgid "Could not decrypt AP-REQ using provided key. This usually indicates an internal application error."
+msgstr "Không thể giải mã AP-REQ bằng khoá đã cung cấp. Thường ngụ ý lỗi ứng dụng nội bộ."
+
+#: lib/error.c:82
+msgid "Could not decrypt Ticket using provided key. This usually indicates an internal application error."
+msgstr "Không thể giải mã Vé bằng khoá đã cung cấp. Thường ngụ ý lỗi ứng dụng nội bộ."
+
+#: lib/error.c:85
+msgid "Failed to parse keytab file"
+msgstr "Lỗi phân tách tập tin keytab."
+
+#: lib/error.c:87
+msgid "Failed to parse credential cache file"
+msgstr "Lỗi phân tách tập tin nhớ tạm thông tin xác thực"
+
+#: lib/error.c:104
+msgid "Unknown error"
+msgstr "Lỗi không rõ"
+
+#: lib/error.c:135 lib/krberror.c:1259
+msgid "No error"
+msgstr "Không có lỗi"
+
+#: lib/error.c:263
+#, c-format
+msgid "libshishi: info: %s\n"
+msgstr "libshishi: thông tin: %s\n"
+
+#: lib/error.c:266
+#, c-format
+msgid "libshishi: info: %s"
+msgstr "libshishi: thông tin: %s"
+
+#: lib/error.c:298
+#, c-format
+msgid "libshishi: warning: %s\n"
+msgstr "libshishi: cảnh báo : %s\n"
+
+#: lib/error.c:301
+#, c-format
+msgid "libshishi: warning: %s"
+msgstr "libshishi: cảnh báo : %s"
+
+#: lib/krberror.c:137
+#, c-format
+msgid "Writing KRB-ERROR to %s...\n"
+msgstr "Đang ghi lỗi KRB-ERROR vào %s...\n"
+
+#: lib/krberror.c:144
+#, c-format
+msgid "Writing KRB-ERROR in %s format...\n"
+msgstr "Đang ghi lỗi KRB-ERROR theo định dạng %s...\n"
+
+#: lib/krberror.c:159
+#, c-format
+msgid "Writing KRB-ERROR to %s...done\n"
+msgstr "Đang ghi lỗi KRB-ERROR vào %s...hoàn tất\n"
+
+#: lib/krberror.c:217
+#, c-format
+msgid "Reading KRB-ERROR from %s...\n"
+msgstr "Đang đọc lỗi KRB-ERROR từ %s...\n"
+
+#: lib/krberror.c:224
+#, c-format
+msgid "Reading KRB-ERROR in %s format...\n"
+msgstr "Đang đọc lỗi KRB-ERROR theo định dạng %s...\n"
+
+#: lib/krberror.c:239
+#, c-format
+msgid "Reading KRB-ERROR from %s...done\n"
+msgstr "Đang đọc lỗi KRB-ERROR từ %s...hoàn tất\n"
+
+#: lib/krberror.c:1261
+msgid "Client's entry in database has expired"
+msgstr "Mục của trình khách trong cơ sở dữ liệu đã hết hạn"
+
+#: lib/krberror.c:1263
+msgid "Server's entry in database has expired"
+msgstr "Mục của trình phục vụ trong cơ sở dữ liệu đã hết hạn"
+
+#: lib/krberror.c:1265
+msgid "Requested protocol version number not supported"
+msgstr "Không hỗ trợ số hiệu phiên bản giao thức đã yêu cầu"
+
+#: lib/krberror.c:1267
+msgid "Client's key encrypted in old master key"
+msgstr "Khoá của trình khách đã mật mã trong khoá chủ cũ"
+
+#: lib/krberror.c:1269
+msgid "Server's key encrypted in old master key"
+msgstr "Khoá của trình phục vụ đã mật mã trong khoá chủ cũ"
+
+#: lib/krberror.c:1271
+msgid "Client not found in database"
+msgstr "Không tìm thấy trình khách trong cơ sở dữ liệu"
+
+#: lib/krberror.c:1273
+msgid "Server not found in database"
+msgstr "Không tìm thấy trình phục vụ trong cơ sở dữ liệu"
+
+#: lib/krberror.c:1275
+msgid "Multiple principal entries in database"
+msgstr "Cơ sở dữ liệu chứa nhiều mục nhập chính"
+
+#: lib/krberror.c:1277
+msgid "The client or server has a null key"
+msgstr "Trình khách hay trình phục vụ có khoá vô giá trị"
+
+#: lib/krberror.c:1279
+msgid "Ticket not eligible for postdating"
+msgstr "Vé không thích hợp để đặt ngày tháng sau"
+
+#: lib/krberror.c:1281
+msgid "Requested start time is later than end time"
+msgstr "Giờ bắt đầu đã yêu cầu nằm sau giờ kết thúc"
+
+#: lib/krberror.c:1283
+msgid "KDC policy rejects request"
+msgstr "Chính sách KDC từ chối yêu cầu"
+
+#: lib/krberror.c:1285
+msgid "KDC cannot accommodate requested option"
+msgstr "KDC không thể xử lý tùy chọn đã yêu cầu"
+
+#: lib/krberror.c:1287
+msgid "KDC has no support for encryption type"
+msgstr "KDC không hỗ trợ kiểu mật mã này"
+
+#: lib/krberror.c:1289
+msgid "KDC has no support for checksum type"
+msgstr "KDC không hỗ trợ kiểu tổng kiểm này"
+
+#: lib/krberror.c:1291
+msgid "KDC has no support for padata type"
+msgstr "KDC không hỗ trợ kiểu dữ liệu padata này"
+
+#: lib/krberror.c:1293
+msgid "KDC has no support for transited type"
+msgstr "KDC không hỗ trợ kiểu đã đi qua"
+
+#: lib/krberror.c:1295
+msgid "Clients credentials have been revoked"
+msgstr "Thông tin xác thực của trình khách đã bị hủy bỏ"
+
+#: lib/krberror.c:1297
+msgid "Credentials for server have been revoked"
+msgstr "Thông tin xác thực của trình phục vụ đã bị hủy bỏ"
+
+#: lib/krberror.c:1299
+msgid "TGT has been revoked"
+msgstr "TGT đã bị hủy bỏ"
+
+#: lib/krberror.c:1301
+msgid "Client not yet valid - try again later"
+msgstr "Trình khách chưa hợp lệ — thử lại sau"
+
+#: lib/krberror.c:1303
+msgid "Server not yet valid - try again later"
+msgstr "Trình phục vụ chưa hợp lệ — thử lại sau"
+
+#: lib/krberror.c:1305
+msgid "Password has expired "
+msgstr "Mật khẩu đã hết hạn "
+
+#: lib/krberror.c:1307
+msgid "Pre-authentication information was invalid"
+msgstr "Thông tin xác thực sẵn không hợp lệ"
+
+#: lib/krberror.c:1309
+msgid "Additional pre-authentication required"
+msgstr "Cần thiết xác thực sẵn thêm"
+
+#: lib/krberror.c:1311
+msgid "Requested server and ticket don't match"
+msgstr "Trình phục vụ đã yêu cầu không tương ứng với vé"
+
+#: lib/krberror.c:1313
+msgid "Server principal valid for user2user only"
+msgstr "Mục chính trình phục vụ chỉ hợp lệ cho người-dùng-đến-người-dùng"
+
+#: lib/krberror.c:1315
+msgid "KDC Policy rejects transited path"
+msgstr "Chính sách KDC từ chối đường dẫn đã đi qua"
+
+#: lib/krberror.c:1317
+msgid "A service is not available"
+msgstr "Dịch vụ không sẵn sàng"
+
+#: lib/krberror.c:1319
+msgid "Integrity check on decrypted field failed"
+msgstr "Lỗi thử tính nguyên vẹn trên trường đã giải mã"
+
+#: lib/krberror.c:1321
+msgid "Ticket expired"
+msgstr "Vé quá thời"
+
+#: lib/krberror.c:1323
+msgid "Ticket not yet valid"
+msgstr "Vé chưa hợp lệ"
+
+#: lib/krberror.c:1325
+msgid "Request is a replay"
+msgstr "Yêu cầu cũng phát lại"
+
+#: lib/krberror.c:1327
+msgid "The ticket isn't for us"
+msgstr "Vé này không thích hợp với chúng ta"
+
+#: lib/krberror.c:1329
+msgid "Ticket and authenticator don't match"
+msgstr "Vé và bộ xác thực không khớp"
+
+#: lib/krberror.c:1331
+msgid "Clock skew too great"
+msgstr "Độ lệch đồng hồ quá lớn"
+
+#: lib/krberror.c:1333
+msgid "Incorrect net address"
+msgstr "Sai địa chỉ Mạng"
+
+#: lib/krberror.c:1335
+msgid "Protocol version mismatch"
+msgstr "Phiên bản giao thức không khớp"
+
+#: lib/krberror.c:1337
+msgid "Invalid msg type"
+msgstr "Kiểu thông điệp không hợp lệ"
+
+#: lib/krberror.c:1339
+msgid "Message stream modified"
+msgstr "Luồng thông điệp bị sửa đổi"
+
+#: lib/krberror.c:1341
+msgid "Message out of order"
+msgstr "Thông điệp không theo thứ tự"
+
+#: lib/krberror.c:1343
+msgid "Specified version of key is not available"
+msgstr "Không có sẵn phiên bản khoá đã xác định"
+
+#: lib/krberror.c:1345
+msgid "Service key not available"
+msgstr "Khoá dịch vụ không sẵn sàng"
+
+#: lib/krberror.c:1347
+msgid "Mutual authentication failed"
+msgstr "Lỗi xác thực lẫn nhau"
+
+#: lib/krberror.c:1349
+msgid "Incorrect message direction"
+msgstr "Sai hướng thông điệp"
+
+#: lib/krberror.c:1351
+msgid "Alternative authentication method required"
+msgstr "Cần thiết phương pháp xác thực xen kẽ"
+
+#: lib/krberror.c:1353
+msgid "Incorrect sequence number in message"
+msgstr "Sai số thứ tự dãy trong thông điệp"
+
+#: lib/krberror.c:1355
+msgid "Inappropriate type of checksum in message"
+msgstr "Kiểu tổng kiểm không thích hợp trong thông điệp"
+
+#: lib/krberror.c:1357
+msgid "Policy rejects transited path"
+msgstr "Chính sách từ chối đường dẫn đã đi qua"
+
+#: lib/krberror.c:1359
+msgid "Response too big for UDP, retry with TCP"
+msgstr "Đáp ứng quá lớn cho UDP, hãy thử lại với TCP"
+
+#: lib/krberror.c:1361
+msgid "Generic error (description in e-text)"
+msgstr "Lỗi giống loài (mô ta trong văn bản điện tử)"
+
+#: lib/krberror.c:1363
+msgid "Field is too long for this implementation"
+msgstr "Trường quá dài cho sự thực hiện này"
+
+#: lib/krberror.c:1365 lib/krberror.c:1367 lib/krberror.c:1369
+#: lib/krberror.c:1371 lib/krberror.c:1373 lib/krberror.c:1381
+#: lib/krberror.c:1383 lib/krberror.c:1385 lib/krberror.c:1387
+#: lib/krberror.c:1389 lib/krberror.c:1391 lib/krberror.c:1393
+msgid "(pkinit)"
+msgstr "(pkinit)"
+
+#: lib/krberror.c:1375 lib/krberror.c:1377 lib/krberror.c:1379
+msgid "(user-to-user)"
+msgstr "(người dùng-đến-người dùng)"
+
+#: lib/krberror.c:1420
+#, c-format
+msgid "Unknown KRB-ERROR error code %d."
+msgstr "Mã lỗi KRB-ERROR lạ %d."
+
+#: db/err.c:33
+msgid "Shisa success"
+msgstr "Shisa thành công"
+
+#: db/err.c:35
+msgid "Shisa could not be initialized."
+msgstr "Không thể sở khởi Shisa."
+
+#: db/err.c:37
+msgid "The Shisa configuration file does not exist."
+msgstr "Tập tin cấu hình Shisa không tồn tại."
+
+#: db/err.c:39
+msgid "File I/O error for Shisa configuration file."
+msgstr "Lỗi V/R tập tin cho tập tin cấu hình Shisa."
+
+#: db/err.c:41
+msgid "Syntax error in Shisa configuration token."
+msgstr "Gặp lỗi cú pháp trong hiệu bài cấu hình Shisa."
+
+#: db/err.c:43
+msgid "Shisa database could not be opened."
+msgstr "Không thể mở cơ sở dữ liệu Shisa."
+
+#: db/err.c:45
+msgid "Error enumerating realms in database."
+msgstr "Gặp lỗi khi đếm các địa hạt trong cơ sở dữ liệu."
+
+#: db/err.c:47
+msgid "Error enumerating principals in database."
+msgstr "Gặp lỗi khi đếm các mục chính trong cơ sở dữ liệu."
+
+#: db/err.c:49
+msgid "Error enumerating keys in database."
+msgstr "Gặp lỗi khi đếm các khoá trong cơ sở dữ liệu."
+
+#: db/err.c:51
+msgid "Supplied realm does not exist."
+msgstr "Địa hạt đã cung cấp không tồn tại."
+
+#: db/err.c:53
+msgid "Supplied principal does not exist."
+msgstr "Mục chính đã cung cấp không tồn tại."
+
+#: db/err.c:55
+msgid "Principal is not associated with any matching key."
+msgstr "Mục chính không liên quan đến khoá khớp."
+
+#: db/err.c:57
+msgid "Error finding principal."
+msgstr "Gặp lỗi khi tìm mục chính."
+
+#: db/err.c:59
+msgid "Tried to add a realm that already exist."
+msgstr "Đã thử thêm một địa hạt đã có."
+
+#: db/err.c:61
+msgid "Error adding realm to database."
+msgstr "Gặp lỗi khi thêm địa hạt vào cơ sở dữ liệu."
+
+#: db/err.c:63
+msgid "Tried to remove a non-empty realm."
+msgstr "Đã thử gỡ bỏ một địa hạt không rỗng."
+
+#: db/err.c:65
+msgid "Error removing realm from database."
+msgstr "Gặp lỗi khi gỡ bỏ địa hạt khỏi cơ sở dữ liệu."
+
+#: db/err.c:67
+msgid "Tried to add a principal that already exist."
+msgstr "Đã thử thêm một mục chính đã có."
+
+#: db/err.c:69
+msgid "Error adding principal to database."
+msgstr "Gặp lỗi khi thêm mục chính vào cơ sở dữ liệu."
+
+#: db/err.c:71
+msgid "Error removing principal from database."
+msgstr "Gặp lỗi khi gỡ bỏ mục chính khỏi cơ sở dữ liệu."
+
+#: db/err.c:73
+msgid "Error adding key to principal."
+msgstr "Gặp lỗi khi thêm khoá vào mục chính"
+
+#: db/err.c:75
+msgid "Error removing key from principal."
+msgstr "Gặp lỗi khi gỡ bỏ khoá khỏi mục chính"
+
+#: db/err.c:77
+msgid "More than one key match given search criteria."
+msgstr "Nhiều khoá tương ứng với tiêu chuẩn tìm kiếm."
+
+#: db/err.c:98
+msgid "Unknown Shisa error"
+msgstr "Lỗi Shisa không rõ"
+
+#: db/err.c:118
+#, c-format
+msgid "shisa: %s\n"
+msgstr "shisa: %s\n"
+
+#: src/shisa.c:155
+msgid "Account is"
+msgstr "Tài khoản"
+
+#: src/shisa.c:156
+msgid "DISABLED"
+msgstr "BỊ TẮT"
+
+#: src/shisa.c:156
+msgid "enabled"
+msgstr "đã bật"
+
+#: src/shisa.c:157
+msgid "Current key version"
+msgstr "Phiên bản khoá hiện thời"
+
+#: src/shisa.c:159
+msgid "Account not valid before"
+msgstr "Tài khoản không hợp lệ trước"
+
+#: src/shisa.c:161
+msgid "Last initial TGT request at"
+msgstr "Yêu cầu TGT đầu tiên cuối vào"
+
+#: src/shisa.c:163
+msgid "Last initial request at"
+msgstr "Yêu cầu đầu tiên cuối vào"
+
+#: src/shisa.c:165
+msgid "Last TGT request at"
+msgstr "Yêu cầu TGT cuối vào"
+
+#: src/shisa.c:167
+msgid "Last ticket renewal at"
+msgstr "Gia hạn vé cuối vào"
+
+#: src/shisa.c:169
+msgid "Password expire on"
+msgstr "Mật khẩu hết hạn vào"
+
+#: src/shisa.c:171
+msgid "Account expire on"
+msgstr "Tài khoản hết hạn vào"
+
+#: src/shisa.c:184
+msgid "Key"
+msgstr "Khoá"
+
+#: src/shisa.c:186
+msgid "\tEtype"
+msgstr "\tKiểu E"
+
+#: src/shisa.c:189
+msgid "\tPriority"
+msgstr "\tƯu tiên"
+
+#: src/shisa.c:193
+msgid "\tSalt"
+msgstr "\tSalt"
+
+#: src/shisa.c:195
+msgid "\tS2K params"
+msgstr "\tTham số S2K"
+
+#: src/shisa.c:198
+msgid "\tPassword"
+msgstr "\tMật khẩu"
+
+#: src/shisa.c:201
+msgid "\tKey is"
+msgstr "\tKhoá"
+
+#: src/shisa.c:201
+msgid "MISSING"
+msgstr "BỊ THIẾU"
+
+#: src/shisa.c:279
+#, c-format
+msgid "Adding realm `%s'...\n"
+msgstr "Đang thêm địa hạt « %s »...\n"
+
+#: src/shisa.c:281
+#, c-format
+msgid "Adding principal `%s@%s'...\n"
+msgstr "Đang thêm mục chính « %s@%s »...\n"
+
+#: src/shisa.c:292
+#, c-format
+msgid "Adding realm `%s'...done\n"
+msgstr "Đang thêm địa hạt « %s »... hoàn tất\n"
+
+#: src/shisa.c:294
+#, c-format
+msgid "Adding principal `%s@%s'...done\n"
+msgstr "Đang thêm mục chính « %s@%s »... hoàn tất\n"
+
+#: src/shisa.c:325
+#, c-format
+msgid "Removing realm `%s'...\n"
+msgstr "Đang gỡ bỏ địa hạt « %s »...\n"
+
+#: src/shisa.c:327
+#, c-format
+msgid "Removing principal `%s@%s'...\n"
+msgstr "Đang gỡ bỏ mục chính « %s@%s »...\n"
+
+#: src/shisa.c:335
+#, c-format
+msgid "Removing realm `%s'...done\n"
+msgstr "Đang gỡ bỏ địa hạt « %s »... hoàn tất\n"
+
+#: src/shisa.c:337
+#, c-format
+msgid "Removing principal `%s@%s'...done\n"
+msgstr "Đang gỡ bỏ mục chính « %s@%s »... hoàn tất\n"
+
+#: src/shisa.c:384
+#, c-format
+msgid "Password for `%s@%s': "
+msgstr "Mật khẩu cho « %s@%s »: "
+
+#: src/shisa.c:387
+msgid "Password: "
+msgstr "Mật khẩu : "
+
+#: src/shisa.c:389
+msgid "Could not read password"
+msgstr "Không thể đọc mật khẩu"
+
+#: src/shisa.c:401
+#, c-format
+msgid ""
+"Could not create key (%d):\n"
+"%s"
+msgstr ""
+"Không thể tạo khoá (%d):\n"
+"%s"
+
+#: src/shisa.c:438 src/shisa.c:448 src/shisa.c:487 src/shishi.c:68
+#: src/shishi.c:75
+#, c-format
+msgid "Try `%s --help' for more information."
+msgstr "Hãy thử lệnh trợ giúp « %s --help » để xem thông tin thêm."
+
+#: src/shisa.c:447 src/shishi.c:74
+msgid "too many arguments"
+msgstr "quá nhiều đối số"
+
+#: src/shisa.c:455
+#, c-format
+msgid ""
+"\n"
+"Mandatory arguments to long options are mandatory for short options too.\n"
+"\n"
+msgstr ""
+"\n"
+"Tất cả đối số bắt buộc phải sử dụng với tùy chọn dài cũng bắt buộc với tùy chọn ngắn.\n"
+"\n"
+
+#: src/shisa.c:457
+#, c-format
+msgid "Report bugs to <%s>.\n"
+msgstr "Hãy thông báo lỗi cho <%s>\n"
+
+#: src/shisa.c:463
+#, c-format
+msgid ""
+"Initialization failed:\n"
+"%s"
+msgstr ""
+"Lỗi sở khởi:\n"
+"%s"
+
+#: src/shisa.c:468
+#, c-format
+msgid ""
+"Could not read library options `%s':\n"
+"%s"
+msgstr ""
+"Không thể đọc các tùy chọn của thư viện « %s »:\n"
+"%s"
+
+#: src/shisa.c:473
+#, c-format
+msgid ""
+"Shishi initialization failed:\n"
+"%s"
+msgstr ""
+"Lỗi sở khởi Shisi:\n"
+"%s"
+
+#: src/shisa.c:478
+#, c-format
+msgid ""
+"Could not set encryption type `%s':\n"
+"%s"
+msgstr ""
+"Không thể đặt kiểu mật mã « %s »:\n"
+"%s"
+
+#: src/shisa.c:486
+msgid "too few arguments"
+msgstr "quá ít đối số"
+
+#: src/shisa.c:518
+#, c-format
+msgid "Adding default realm `%s'...\n"
+msgstr "Đang thêm địa hạt mặc định « %s »...\n"
+
+#: src/shisa.c:538
+#, c-format
+msgid "Modifying principal `%s@%s'...\n"
+msgstr "Đang sửa đổi mục chính « %s@%s »...\n"
+
+#: src/shisa.c:545
+#, c-format
+msgid "Modifying principal `%s@%s'...done\n"
+msgstr "Đang sửa đổi mục chính « %s@%s »... hoàn tất\n"
+
+#: src/shisa.c:549
+#, c-format
+msgid "Adding key to `%s@%s'...\n"
+msgstr "Đang thêm khoá vào « %s@%s »...\n"
+
+#: src/shisa.c:559
+#, c-format
+msgid "Adding key to `%s@%s'...done\n"
+msgstr "Đang thêm khoá vào « %s@%s »... hoàn tất\n"
+
+#: src/shisa.c:563
+#, c-format
+msgid "Removing key from `%s@%s'...\n"
+msgstr "Đang gỡ bỏ khoá khỏi « %s@%s »...\n"
+
+#: src/shisa.c:576
+#, c-format
+msgid "Removing key from `%s@%s'...done\n"
+msgstr "Đang gỡ bỏ khoá khỏi « %s@%s »... hoàn tất\n"
+
+#: src/shishi.c:82
+#, c-format
+msgid ""
+"\n"
+"Mandatory arguments to long options are mandatory for short options too.\n"
+"\n"
+"Report bugs to <%s>.\n"
+msgstr ""
+"\n"
+"Tất cả đối số bắt buộc phải sử dụng với tùy chọn dài cũng bắt buộc với tùy chọn ngắn.\n"
+"\n"
+"Hãy thông báo lỗi cho <%s>.\n"
+
+#: src/shishi.c:92
+msgid "Could not initialize libshishi."
+msgstr "Không thể sở khởi libshishi."
+
+#: src/shishi.c:96
+#, c-format
+msgid "Could not set encryption types: %s"
+msgstr "Không thể đặt các kiểu mật mã: %s"
+
+#: src/shishi.c:108
+#, c-format
+msgid "Could not parse client principal \"%s\": %s"
+msgstr "Không thể phân tách mục chính của trình khách « %s »: %s"
+
+#: src/shishi.c:121
+#, c-format
+msgid "Could not parse server principal \"%s\": %s"
+msgstr "Không thể phân tách mục chính của trình phục vụ « %s »: %s"
+
+#: src/shishi.c:127
+#, c-format
+msgid "Could not read library options: %s"
+msgstr "Không thể đọc các tùy chọn của thư viện: %s"
+
+#: src/shishi.c:145
+#, c-format
+msgid "Invalid --starttime date `%s'"
+msgstr "Ngày tháng « --starttime » (giờ bắt đầu) không hợp lệ « %s »"
+
+#: src/shishi.c:155
+#, c-format
+msgid "Invalid --endtime date `%s'"
+msgstr "Ngày tháng « --endtime » (giờ kết thúc) không hợp lệ « %s »"
+
+#: src/shishi.c:165
+#, c-format
+msgid "Invalid --renew-till date `%s'"
+msgstr "Ngày tháng « --renew-till » (gia hạn đến) không hợp lệ « %s »"
+
+#: src/shishi.c:184
+#, c-format
+msgid "Tickets in `%s':\n"
+msgstr "Vé trong « %s »:\n"
+
+#: src/shishi.c:189
+#, c-format
+msgid "Could not list tickets: %s"
+msgstr "Không thể liệt kê các vé: %s"
+
+#: src/shishi.c:206
+#, c-format
+msgid "Removing ticket:\n"
+msgstr "Đang gỡ bỏ vé:\n"
+
+#: src/shishi.c:213
+#, c-format
+msgid ""
+"Could not destroy ticket %d:\n"
+"%s"
+msgstr ""
+"Không thể hủy vé %d:\n"
+"%s"
+
+#: src/shishi.c:223
+#, c-format
+msgid "No tickets removed.\n"
+msgstr "Chưa gỡ bỏ vé.\n"
+
+#: src/shishi.c:225
+#, c-format
+msgid "%d ticket removed.\n"
+msgid_plural "%d tickets removed.\n"
+msgstr[0] "%d vé bị gỡ bỏ.\n"
+
+#: src/shishi.c:258
+#, c-format
+msgid "Could not get ticket as `%s' for `%s'."
+msgstr "Không thể lấy vé như « %s » cho « %s »."
