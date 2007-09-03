@@ -22,7 +22,7 @@ if ENABLE_GTK_DOC
 SUBDIRS = . reference
 endif
 
-EXTRA_DIST = gdoc components.dia
+EXTRA_DIST = gdoc shishi.html shishi.pdf shishi.ps components.dia
 
 components.png: components.dia
 	$(DIA) --export=$@ --filter=png $<

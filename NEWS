@@ -4,9 +4,6 @@ See the end for copying conditions.
 
 * Version 0.0.33 (unreleased)
 
-** Don't include built manuals in source archive.
-They are available at <http://www.gnu.org/software/shishi/manual/>.
-
 ** Update translations.
 
 * Version 0.0.32 (released 2007-06-29)
