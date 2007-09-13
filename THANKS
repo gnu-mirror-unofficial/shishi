@@ -1,5 +1,5 @@
 Shishi THANKS -- Acknowledgements.
-Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson
+Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Simon Josefsson
 See the end for copying conditions.
 
 Shishi uses Libtasn1 by Fabio Fiorina, Libgcrypt and Libgpg-error by
@@ -22,6 +22,7 @@ Elrond
 Russ Allbery
 Abhijit Mitra
 Alberto Fondi
+Jack Bates
 
 ----------------------------------------------------------------------
 Copying and distribution of this file, with or without modification,
