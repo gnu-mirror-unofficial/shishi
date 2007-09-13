@@ -7,6 +7,9 @@ See the end for copying conditions.
 ** libpam_shishi: Don't echo password when reading it from console.
 Reported by Jack Bates <ms419@freezone.co.uk>.
 
+** libpam_shishi: Save read password in PAM library for other modules.
+Reported by Jack Bates <ms419@freezone.co.uk>.
+
 ** Update translations.
 
 * Version 0.0.32 (released 2007-06-29)
