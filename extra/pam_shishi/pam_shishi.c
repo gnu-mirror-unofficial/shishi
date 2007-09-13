@@ -126,7 +126,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
       pmsg[0] = &msg[0];
       asprintf ((char **) &msg[0].msg, "Password for `%s@%s': ",
 		shishi_principal_default (h), shishi_realm_default (h));
-      msg[0].msg_style = PAM_PROMPT_ECHO_ON;
+      msg[0].msg_style = PAM_PROMPT_ECHO_OFF;
       resp = NULL;
 
       retval = conv->conv (nargs, (const struct pam_message **) pmsg,
