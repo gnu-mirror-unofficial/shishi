@@ -143,6 +143,13 @@ pam_sm_authenticate (pam_handle_t * pamh,
       D (("conv returned: %s", resp->resp));
 
       password = resp->resp;
+
+      retval = pam_set_item(pamh, PAM_AUTHTOK, password);
+      if (retval != PAM_SUCCESS)
+	{
+	  D (("set_item returned error: %s", pam_strerror (pamh, retval)));
+	  goto done;
+	}
     }
 
   tkt = shishi_tkts_get_for_localservicepasswd (shishi_tkts_default (h),
