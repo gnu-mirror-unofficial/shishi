@@ -55,6 +55,51 @@ extern "C" {
 #endif
 
 
+#if @GNULIB_MALLOC_POSIX@
+# if !@HAVE_MALLOC_POSIX@
+#  undef malloc
+#  define malloc rpl_malloc
+extern void * malloc (size_t size);
+# endif
+#elif defined GNULIB_POSIXCHECK
+# undef malloc
+# define malloc(s) \
+    (GL_LINK_WARNING ("malloc is not POSIX compliant everywhere - " \
+                      "use gnulib module malloc-posix for portability"), \
+     malloc (s))
+#endif
+
+
+#if @GNULIB_REALLOC_POSIX@
+# if !@HAVE_REALLOC_POSIX@
+#  undef realloc
+#  define realloc rpl_realloc
+extern void * realloc (void *ptr, size_t size);
+# endif
+#elif defined GNULIB_POSIXCHECK
+# undef realloc
+# define realloc(p,s) \
+    (GL_LINK_WARNING ("realloc is not POSIX compliant everywhere - " \
+                      "use gnulib module realloc-posix for portability"), \
+     realloc (p, s))
+#endif
+
+
+#if @GNULIB_CALLOC_POSIX@
+# if !@HAVE_CALLOC_POSIX@
+#  undef calloc
+#  define calloc rpl_calloc
+extern void * calloc (size_t nmemb, size_t size);
+# endif
+#elif defined GNULIB_POSIXCHECK
+# undef calloc
+# define calloc(n,s) \
+    (GL_LINK_WARNING ("calloc is not POSIX compliant everywhere - " \
+                      "use gnulib module calloc-posix for portability"), \
+     calloc (n, s))
+#endif
+
+
 #if @GNULIB_GETSUBOPT@
 /* Assuming *OPTIONP is a comma separated list of elements of the form
    "token" or "token=value", getsubopt parses the first of these elements.

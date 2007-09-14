@@ -94,6 +94,8 @@ AC_DEFUN([gl_INIT],
   gl_INLINE
   gl_FUNC_LSEEK
   gl_UNISTD_MODULE_INDICATOR([lseek])
+  gl_FUNC_MALLOC_POSIX
+  gl_STDLIB_MODULE_INDICATOR([malloc-posix])
   gl_MALLOCA
   gl_FUNC_MKTIME
   gl_HEADER_NETINET_IN
@@ -102,6 +104,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
   AC_FUNC_REALLOC
+  gl_FUNC_REALLOC_POSIX
+  gl_STDLIB_MODULE_INDICATOR([realloc-posix])
   gl_FUNC_SETENV
   gl_FUNC_UNSETENV
   gl_SIZE_MAX
@@ -242,6 +246,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/inet_ntop.h
   lib/intprops.h
   lib/lseek.c
+  lib/malloc.c
   lib/malloca.c
   lib/malloca.h
   lib/malloca.valgrind
@@ -359,6 +364,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/lib-prefix.m4
   m4/longlong.m4
   m4/lseek.m4
+  m4/malloc.m4
   m4/malloca.m4
   m4/md4.m4
   m4/md5.m4
@@ -367,6 +373,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/netinet_in_h.m4
   m4/read-file.m4
   m4/readlink.m4
+  m4/realloc.m4
   m4/setenv.m4
   m4/sha1.m4
   m4/size_max.m4
