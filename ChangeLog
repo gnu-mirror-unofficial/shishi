@@ -1,3 +1,134 @@
+2007-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.33.
+
+2007-09-14  Simon Josefsson <simon@josefsson.org>
+
+	* gl/.cvsignore, gl/Makefile.am, gl/gc-gnulib.c, gl/m4/.cvsignore,
+	gl/m4/extensions.m4, gl/m4/getaddrinfo.m4, gl/m4/getdelim.m4,
+	gl/m4/getline.m4, gl/m4/getsubopt.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/malloc.m4, gl/m4/realloc.m4, gl/m4/stdlib_h.m4,
+	gl/m4/strchrnul.m4, gl/m4/strndup.m4, gl/m4/strnlen.m4,
+	gl/m4/strverscmp.m4, gl/m4/time_h.m4, gl/m4/vasprintf.m4,
+	gl/malloc.c, gl/realloc.c, gl/stdlib_.h: Update gnulib files.
+
+2007-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS: Add.
+
+2007-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2007-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/pam_shishi.c: Store password for subsequent PAM
+	modules that use try_first_pass. Reported by Jack Bates
+	<ms419@freezone.co.uk>.
+
+2007-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2007-09-13  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/pam_shishi.c: Don't echo password to console
+	(untested patch). Reported by Jack Bates <ms419@freezone.co.uk>.
+
+2007-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, doc/Makefile.am: Revert.
+
+2007-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha: Remove.
+
+2007-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha: Fix.
+
+2007-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2007-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* po/LINGUAS, po/vi.po: Sync with TP.
+
+2007-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2007-09-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Don't include built manuals in source archive
+	(they are available online).
+
+2007-08-31  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Drop gnits mode.
+
+2007-08-24  Simon Josefsson <simon@josefsson.org>
+
+	* db/info.h: No need for getline.h.
+
+2007-08-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/internal.h: No need for getline.h.
+
+2007-08-24  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/fseeko.c, gl/getdelim.c, gl/getdelim.h,
+	gl/getline.c, gl/getline.h, gl/getpass.c, gl/lseek.c,
+	gl/m4/getdelim.m4, gl/m4/getline.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/lseek.m4, gl/m4/stdio_h.m4, gl/stdio_.h: Update gnulib files.
+
+
+2007-08-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2007-08-18  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am, doc/gpl-3.0.texi, doc/gpl.texi, doc/shishi.texi,
+	gl/Makefile.am, gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4: Use
+	gpl-3.0 gnulib module.
+
+2007-08-18  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/GNUmakefile, build-aux/gendocs.sh, build-aux/gnupload,
+	build-aux/maint.mk, doc/fdl.texi, gl/Makefile.am, gl/error.c,
+	gl/m4/gnulib-cache.m4, gl/m4/include_next.m4, gl/m4/stdint.m4,
+	gl/m4/wchar.m4, gl/stdint_.h, gl/sys_time_.h, gl/vasnprintf.c,
+	gl/wchar_.h: Update gnulib files.
+
+2007-08-13  Simon Josefsson <simon@josefsson.org>
+
+	* doc/specifications/draft-johansson-kerberos-model-03.txt,
+	doc/specifications/draft-sakane-krb-cross-problem-statement-03.txt: 
+	Add.
+
+2007-07-20  Simon Josefsson <simon@josefsson.org>
+
+	* doc/specifications/draft-kamada-krb-client-friendly-cross-02.txt: 
+	Add.
+
+2007-07-12  Simon Josefsson <simon@josefsson.org>
+
+	* doc/specifications/draft-zhu-pku2u-02.txt,
+	doc/specifications/draft-zhu-ws-kerb-03.txt: Add.
+
+2007-07-12  Simon Josefsson <simon@josefsson.org>
+
+	* doc/specifications/draft-ietf-krb-wg-anon-04.txt,
+	doc/specifications/draft-ietf-krb-wg-pkinit-alg-agility-03.txt,
+	doc/specifications/draft-ietf-krb-wg-preauth-framework-06.txt: Add.
+
+
+2007-06-29  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2007-06-29  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.32.
