@@ -123,6 +123,8 @@ AC_DEFUN([gl_INIT],
   gl_STRING_MODULE_INDICATOR([strchrnul])
   gl_FUNC_STRDUP
   gl_STRING_MODULE_INDICATOR([strdup])
+  gl_FUNC_STRERROR
+  gl_STRING_MODULE_INDICATOR([strerror])
   gl_HEADER_STRING_H
   gl_FUNC_STRNDUP
   gl_STRING_MODULE_INDICATOR([strndup])
@@ -173,18 +175,31 @@ AC_DEFUN([gl_INIT],
 
 # Like AC_LIBOBJ, except that the module name goes
 # into gl_LIBOBJS instead of into LIBOBJS.
-AC_DEFUN([gl_LIBOBJ],
-  [gl_LIBOBJS="$gl_LIBOBJS $1.$ac_objext"])
+AC_DEFUN([gl_LIBOBJ], [
+  AS_LITERAL_IF([$1], [gl_LIBSOURCES([$1.c])])dnl
+  gl_LIBOBJS="$gl_LIBOBJS $1.$ac_objext"
+])
 
 # Like AC_REPLACE_FUNCS, except that the module name goes
 # into gl_LIBOBJS instead of into LIBOBJS.
-AC_DEFUN([gl_REPLACE_FUNCS],
-  [AC_CHECK_FUNCS([$1], , [gl_LIBOBJ($ac_func)])])
+AC_DEFUN([gl_REPLACE_FUNCS], [
+  m4_foreach_w([gl_NAME], [$1], [AC_LIBSOURCES(gl_NAME[.c])])dnl
+  AC_CHECK_FUNCS([$1], , [gl_LIBOBJ($ac_func)])
+])
 
-# Like AC_LIBSOURCES, except that it does nothing.
-# We rely on EXTRA_lib..._SOURCES instead.
-AC_DEFUN([gl_LIBSOURCES],
-  [])
+# Like AC_LIBSOURCES, except the directory where the source file is
+# expected is derived from the gnulib-tool parametrization,
+# and alloca is special cased (for the alloca-opt module).
+# We could also entirely rely on EXTRA_lib..._SOURCES.
+AC_DEFUN([gl_LIBSOURCES], [
+  m4_foreach([_gl_NAME], [$1], [
+    m4_if(_gl_NAME, [alloca.c], [], [
+      m4_syscmd([test -r gl/]_gl_NAME[ || test ! -d gl])dnl
+      m4_if(m4_sysval, [0], [],
+        [AC_FATAL([missing gl/]_gl_NAME)])
+    ])
+  ])
+])
 
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
@@ -199,9 +214,11 @@ AC_DEFUN([gl_FILE_LIST], [
   doc/gendocs_template
   doc/getdate.texi
   doc/gpl-3.0.texi
-  lib/alloca_.h
+  lib/alloca.in.h
   lib/arcfour.c
   lib/arcfour.h
+  lib/areadlink.c
+  lib/areadlink.h
   lib/asnprintf.c
   lib/asprintf.c
   lib/base64.c
@@ -213,7 +230,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/error.c
   lib/error.h
   lib/float+.h
-  lib/float_.h
+  lib/float.in.h
   lib/fseeko.c
   lib/gai_strerror.c
   lib/gc-gnulib.c
@@ -230,8 +247,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gethostname.c
   lib/getline.c
   lib/getopt.c
+  lib/getopt.in.h
   lib/getopt1.c
-  lib/getopt_.h
   lib/getopt_int.h
   lib/getpass.c
   lib/getpass.h
@@ -257,7 +274,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/memxor.c
   lib/memxor.h
   lib/mktime.c
-  lib/netinet_in_.h
+  lib/netinet_in.in.h
   lib/printf-args.c
   lib/printf-args.h
   lib/printf-parse.c
@@ -274,35 +291,36 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/sha1.h
   lib/size_max.h
   lib/snprintf.c
-  lib/stdbool_.h
-  lib/stdint_.h
-  lib/stdio_.h
-  lib/stdlib_.h
+  lib/stdbool.in.h
+  lib/stdint.in.h
+  lib/stdio.in.h
+  lib/stdlib.in.h
   lib/strcasecmp.c
   lib/strchrnul.c
   lib/strdup.c
-  lib/string_.h
+  lib/strerror.c
+  lib/string.in.h
   lib/strncasecmp.c
   lib/strndup.c
   lib/strnlen.c
   lib/strtok_r.c
   lib/strverscmp.c
   lib/strverscmp.h
-  lib/sys_select_.h
-  lib/sys_socket_.h
-  lib/sys_stat_.h
-  lib/sys_time_.h
-  lib/time_.h
+  lib/sys_select.in.h
+  lib/sys_socket.in.h
+  lib/sys_stat.in.h
+  lib/sys_time.in.h
+  lib/time.in.h
   lib/time_r.c
   lib/timegm.c
   lib/timespec.h
-  lib/unistd_.h
+  lib/unistd.in.h
   lib/unsetenv.c
   lib/vasnprintf.c
   lib/vasnprintf.h
   lib/vasprintf.c
   lib/verify.h
-  lib/wchar_.h
+  lib/wchar.in.h
   lib/xalloc.h
   lib/xasprintf.c
   lib/xgetdomainname.c
@@ -390,6 +408,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strcase.m4
   m4/strchrnul.m4
   m4/strdup.m4
+  m4/strerror.m4
   m4/string_h.m4
   m4/strndup.m4
   m4/strnlen.m4

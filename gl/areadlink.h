@@ -1,6 +1,6 @@
-/* gettime -- get the system clock
+/* Read symbolic links without size limitation.
 
-   Copyright (C) 2002, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
+   Copyright (C) 2001, 2003, 2004, 2007 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,34 +15,9 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-/* Written by Paul Eggert.  */
+/* Written by Jim Meyering <jim@meyering.net>  */
 
-#include <config.h>
+#include <stddef.h>
 
-#include "timespec.h"
-
-#include <sys/time.h>
-
-/* Get the system time into *TS.  */
-
-void
-gettime (struct timespec *ts)
-{
-#if HAVE_NANOTIME
-  nanotime (ts);
-#else
-
-# if defined CLOCK_REALTIME && HAVE_CLOCK_GETTIME
-  if (clock_gettime (CLOCK_REALTIME, ts) == 0)
-    return;
-# endif
-
-  {
-    struct timeval tv;
-    gettimeofday (&tv, NULL);
-    ts->tv_sec = tv.tv_sec;
-    ts->tv_nsec = tv.tv_usec * 1000;
-  }
-
-#endif
-}
+extern char *areadlink (char const *filename);
+extern char *areadlink_with_size (char const *filename, size_t size_hint);
