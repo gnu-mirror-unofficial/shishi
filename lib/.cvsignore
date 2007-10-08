@@ -1,9 +1,0 @@
-.deps
-.libs
-Makefile
-Makefile.in
-libshishi.la
-kerberos5.c
-shishi.h
-shishi-int.h
-*.lo
