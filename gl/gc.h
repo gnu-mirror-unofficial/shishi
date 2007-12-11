@@ -3,7 +3,7 @@
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
- * by the Free Software Foundation; either version 2, or (at your
+ * by the Free Software Foundation; either version 3, or (at your
  * option) any later version.
  *
  * This file is distributed in the hope that it will be useful, but
@@ -79,7 +79,9 @@ enum Gc_cipher
   GC_DES,
   GC_ARCFOUR128,
   GC_ARCFOUR40,
-  GC_ARCTWO40
+  GC_ARCTWO40,
+  GC_CAMELLIA128,
+  GC_CAMELLIA256
 };
 typedef enum Gc_cipher Gc_cipher;
 

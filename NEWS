@@ -6,6 +6,8 @@ See the end for copying conditions.
 
 ** Use gettext 0.17.
 
+** Update gnulib files.
+
 * Version 0.0.33 (released 2007-09-14)
 
 ** libpam_shishi: Don't echo password when reading it from console.
