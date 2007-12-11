@@ -106,6 +106,7 @@
 #include "base64.h"
 #include "getdate.h"
 #include "read-file.h"
+#include "timespec.h"
 #include "xalloc.h"
 #include "xgethostname.h"
 #include "xgetdomainname.h"
