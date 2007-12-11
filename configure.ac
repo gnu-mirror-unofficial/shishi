@@ -19,7 +19,7 @@
 # Floor, Boston, MA 02110-1301, USA.
 
 AC_PREREQ(2.61)
-AC_INIT([shishi], [0.0.33], [bug-shishi@josefsson.org])
+AC_INIT([shishi], [0.0.34], [bug-shishi@josefsson.org])
 AC_CONFIG_AUX_DIR([build-aux])
 
 # Library code modified:                              REVISION++
@@ -27,7 +27,7 @@ AC_CONFIG_AUX_DIR([build-aux])
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 AC_SUBST(LT_CURRENT, 0)
-AC_SUBST(LT_REVISION, 33)
+AC_SUBST(LT_REVISION, 34)
 AC_SUBST(LT_AGE, 0)
 
 AM_INIT_AUTOMAKE([1.10])
