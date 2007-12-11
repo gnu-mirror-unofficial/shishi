@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.34 (unreleased)
 
+** Use gettext 0.17.
+
 * Version 0.0.33 (released 2007-09-14)
 
 ** libpam_shishi: Don't echo password when reading it from console.
