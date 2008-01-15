@@ -41,6 +41,7 @@ AC_DEFUN([gl2_INIT],
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_XGETTEXT_OPTION([--flag=error:3:c-format])
      AM_XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
+  gl_GETOPT
   gl_LOCALE_H
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
@@ -161,6 +162,10 @@ AC_DEFUN([gl2tests_LIBSOURCES], [
 AC_DEFUN([gl2_FILE_LIST], [
   lib/error.c
   lib/error.h
+  lib/getopt.c
+  lib/getopt.in.h
+  lib/getopt1.c
+  lib/getopt_int.h
   lib/locale.in.h
   lib/progname.c
   lib/progname.h
@@ -168,6 +173,7 @@ AC_DEFUN([gl2_FILE_LIST], [
   lib/version-etc.c
   lib/version-etc.h
   m4/error.m4
+  m4/getopt.m4
   m4/gnulib-common.m4
   m4/locale_h.m4
   m4/strerror.m4

@@ -81,7 +81,6 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_GETHOSTNAME
   gl_FUNC_GETLINE
   gl_STDIO_MODULE_INDICATOR([getline])
-  gl_GETOPT
   gl_FUNC_GETPASS
   gl_FUNC_GETSUBOPT
   gl_STDLIB_MODULE_INDICATOR([getsubopt])
@@ -316,10 +315,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getdomainname.h
   lib/gethostname.c
   lib/getline.c
-  lib/getopt.c
-  lib/getopt.in.h
-  lib/getopt1.c
-  lib/getopt_int.h
   lib/getpass.c
   lib/getpass.h
   lib/getsubopt.c
@@ -431,7 +426,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/getdomainname.m4
   m4/gethostname.m4
   m4/getline.m4
-  m4/getopt.m4
   m4/getpass.m4
   m4/getsubopt.m4
   m4/gettime.m4
