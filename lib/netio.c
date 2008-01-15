@@ -1,5 +1,5 @@
 /* netio.c --- Network I/O functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -295,9 +295,9 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
       struct addrinfo *ai;
       char *port;
 
-      if (rrs->class != C_IN)
+      if (rrs->class != SHISHI_DNS_IN)
 	continue;
-      if (rrs->type != T_SRV)
+      if (rrs->type != SHISHI_DNS_SRV)
 	continue;
 
       shishi_verbose (handle, "Located SRV RRs server %s:%d",
