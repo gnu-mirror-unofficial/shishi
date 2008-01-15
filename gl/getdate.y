@@ -1321,9 +1321,6 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
 #else
 #if HAVE_TZNAME
   {
-# ifndef tzname
-    extern char *tzname[];
-# endif
     int i;
     for (i = 0; i < 2; i++)
       {
