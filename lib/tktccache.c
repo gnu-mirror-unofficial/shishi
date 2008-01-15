@@ -1,5 +1,5 @@
 /* ccache.c --- Credential Cache compatibility ticket set handling.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -43,7 +43,11 @@ shishi_tkts_default_ccache_guess (Shishi * handle)
   if (envfile)
     return xstrdup (envfile);
 
+#if HAVE_GETUID
   return xasprintf("/tmp/krb5cc_%u", (unsigned long) getuid ());
+#else
+  return xasprintf("/tmp/krb5cc_0");
+#endif
 }
 
 /**
