@@ -349,8 +349,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf-args.h
   lib/printf-parse.c
   lib/printf-parse.h
-  lib/progname.c
-  lib/progname.h
   lib/read-file.c
   lib/read-file.h
   lib/readlink.c
