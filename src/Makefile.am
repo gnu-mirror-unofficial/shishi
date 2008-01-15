@@ -42,7 +42,7 @@ shishi_LDADD = ../gl/libgnu.la gl/libgnu.la \
 	../lib/libshishi.la @LTLIBINTL@
 shishi_cmd.c shishi_cmd.h: shishi.ggo Makefile.am
 	gengetopt --unamed-opts="CLIENT [SERVER]" \
-		--no-handle-help --no-handle-error \
+		--no-handle-help --no-handle-error --no-handle-version \
 		--input $< --file-name shishi_cmd
 
 shisa_SOURCES = shisa.c shisa.ggo shisa_cmd.h shisa_cmd.c
@@ -61,7 +61,7 @@ endif
 shishid_LDADD = ../gl/libgnu.la gl/libgnu.la ../lib/libshishi.la \
 	../db/libshisa.la @LTLIBGNUTLS@ @LTLIBINTL@
 shishid_cmd.c shishid_cmd.h: shishid.ggo Makefile.am
-	gengetopt --no-handle-help --no-handle-error \
+	gengetopt --no-handle-help --no-handle-error --no-handle-version \
 		 --input $< --file-name shishid_cmd
 
 keytab2shishi_SOURCES = keytab2shishi.c keytab2shishi.ggo	\

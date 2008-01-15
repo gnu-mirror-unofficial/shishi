@@ -1,5 +1,5 @@
 /* shishid.c --- Shishi Key Distribution Center daemon.
- * Copyright (C) 2002, 2003, 2004, 2005, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -23,10 +23,9 @@
 /* Get Shishid stuff. */
 #include "kdc.h"
 
-/* Get program_name, for error. */
+/* Gnulib helpers. */
 #include "progname.h"
-
-/* Get error. */
+#include "version-etc.h"
 #include "error.h"
 
 /* Global variables. */
@@ -478,6 +477,32 @@ parse_listen (char *listenstr)
     }
 }
 
+const char version_etc_copyright[] =
+  /* Do *not* mark this string for translation.  %s is a copyright
+     symbol suitable for this locale, and %d is the copyright
+     year.  */
+  "Copyright %s %d Simon Josefsson.";
+
+static void
+usage (int status)
+{
+  if (status != EXIT_SUCCESS)
+    fprintf (stderr, _("Try `%s --help' for more information.\n"),
+	     program_name);
+  else
+    {
+      cmdline_parser_print_help ();
+      /* TRANSLATORS: The placeholder indicates the bug-reporting address
+	 for this package.  Please add _another line_ saying
+	 "Report translation bugs to <...>\n" with the address for translation
+	 bugs (typically your translation team's web or email address).  */
+      printf (_("\nMandatory arguments to long options are "
+		"mandatory for short options too.\n\nReport bugs to <%s>.\n"),
+	      PACKAGE_BUGREPORT);
+    }
+  exit (status);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -487,16 +512,17 @@ main (int argc, char *argv[])
   set_program_name (argv[0]);
 
   if (cmdline_parser (argc, argv, &arg) != 0)
-    error (EXIT_FAILURE, 0, "Try `%s --help' for more information.", argv[0]);
+    usage (EXIT_FAILURE);
 
-  if (arg.help_given)
+  if (arg.version_given)
     {
-      cmdline_parser_print_help ();
-      printf ("\nMandatory arguments to long options are "
-	      "mandatory for short options too.\n\n");
-      printf ("Report bugs to <%s>.\n", PACKAGE_BUGREPORT);
+      version_etc (stdout, "shishid", PACKAGE_NAME, VERSION,
+		   "Simon Josefsson", (char *) NULL);
       return EXIT_SUCCESS;
     }
+
+  if (arg.help_given)
+    usage (EXIT_SUCCESS);
 
   if (!arg.configuration_file_arg)
     arg.configuration_file_arg = strdup (SYSTEMCFGFILE);
