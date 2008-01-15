@@ -95,6 +95,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_MALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([malloc-posix])
   gl_MALLOCA
+  gl_MINMAX
   gl_FUNC_MKTIME
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
@@ -331,6 +332,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/md5.h
   lib/memxor.c
   lib/memxor.h
+  lib/minmax.h
   lib/mktime.c
   lib/netinet_in.in.h
   lib/printf-args.c
@@ -438,6 +440,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/md4.m4
   m4/md5.m4
   m4/memxor.m4
+  m4/minmax.m4
   m4/mktime.m4
   m4/netinet_in_h.m4
   m4/read-file.m4

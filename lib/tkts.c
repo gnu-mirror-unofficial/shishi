@@ -1,5 +1,5 @@
 /* tkts.c --- Ticket set handling.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,6 +21,7 @@
  */
 
 #include "internal.h"
+#include <minmax.h>
 
 struct Shishi_tkts
 {
