@@ -12,6 +12,9 @@ See the end for copying conditions.
 There is now a new gnulib directory src/gl for those modules that
 aren't needed by libshishi.
 
+** New types for DNS classes:
+SHISHI_DNS_IN: New #define.
+
 * Version 0.0.33 (released 2007-09-14)
 
 ** libpam_shishi: Don't echo password when reading it from console.
