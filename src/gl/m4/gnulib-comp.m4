@@ -167,7 +167,6 @@ AC_DEFUN([gl2_FILE_LIST], [
   lib/version-etc.h
   m4/error.m4
   m4/gnulib-common.m4
-  m4/include_next.m4
   m4/locale_h.m4
   m4/strerror.m4
 ])

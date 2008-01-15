@@ -15,12 +15,12 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=src/gl --m4-base=src/gl/m4 --doc-base=doc --aux-dir=build-aux --avoid=extensions --avoid=gettext --avoid=gettext-h --avoid=intprops --avoid=stdarg --avoid=string --makefile-name=gnulib.mk --libtool --macro-prefix=gl2 error locale version-etc
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=src/gl --m4-base=src/gl/m4 --doc-base=doc --aux-dir=build-aux --avoid=extensions --avoid=gettext --avoid=gettext-h --avoid=include_next --avoid=intprops --avoid=stdarg --avoid=string --makefile-name=gnulib.mk --libtool --macro-prefix=gl2 error locale version-etc
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
 gl_MODULES([error locale version-etc])
-gl_AVOID([extensions gettext gettext-h intprops stdarg string])
+gl_AVOID([extensions gettext gettext-h include_next intprops stdarg string])
 gl_SOURCE_BASE([src/gl])
 gl_M4_BASE([src/gl/m4])
 gl_PO_BASE([])
