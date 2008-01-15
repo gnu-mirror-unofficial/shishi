@@ -21,7 +21,9 @@
 SUBDIRS = gl
 
 # -I../lib is to get shishi-int.h and uint32_t.
-AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../lib
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
+	-I$(srcdir)/gl -I$(builddir)/gl \
+	-I../lib
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shisa.conf\" \
