@@ -41,6 +41,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <time.h>
+#include <signal.h>
 
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
@@ -64,10 +65,6 @@
 
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif
-
-#ifdef HAVE_SIGNAL_H
-#include <signal.h>
 #endif
 
 #include <netinet/in.h>

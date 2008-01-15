@@ -112,6 +112,7 @@ AC_DEFUN([gl_INIT],
   gl_STDLIB_MODULE_INDICATOR([realloc-posix])
   gl_FUNC_SETENV
   gl_STDLIB_MODULE_INDICATOR([setenv])
+  gl_SIGNAL_H
   gl_SIZE_MAX
   gl_FUNC_SNPRINTF
   gl_STDIO_MODULE_INDICATOR([snprintf])
@@ -365,6 +366,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/setenv.c
   lib/sha1.c
   lib/sha1.h
+  lib/signal.in.h
   lib/size_max.h
   lib/snprintf.c
   lib/stdbool.in.h
@@ -471,6 +473,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/realloc.m4
   m4/setenv.m4
   m4/sha1.m4
+  m4/signal_h.m4
   m4/size_max.m4
   m4/snprintf.m4
   m4/socklen.m4
