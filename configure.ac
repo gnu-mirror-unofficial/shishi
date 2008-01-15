@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -30,6 +30,10 @@ AC_SUBST(LT_CURRENT, 0)
 AC_SUBST(LT_REVISION, 34)
 AC_SUBST(LT_AGE, 0)
 
+# Used when creating libshishi-XX.def.
+SOVERSION=`expr ${LT_CURRENT} - ${LT_AGE}`
+AC_SUBST(SOVERSION)
+
 AM_INIT_AUTOMAKE([1.10])
 AC_CONFIG_HEADERS(config.h)
 AB_INIT
@@ -42,6 +46,15 @@ AC_CHECK_HEADERS(sys/poll.h sys/time.h \
 	netdb.h time.h termios.h signal.h pwd.h errno.h syslog.h \
 	locale.h resolv.h fcntl.h \
 	arpa/nameser.h arpa/inet.h netinet/in.h netinet/in6.h)
+
+# For libshishi-XX.def.
+AC_MSG_CHECKING([if gcc/ld supports -Wl,--output-def])
+_gcc_ldflags_save=$LDFLAGS
+LDFLAGS="-Wl,--output-def,foo.def"
+AC_LINK_IFELSE(AC_LANG_PROGRAM([]),output_def=yes,output_def=no)
+AC_MSG_RESULT($output_def)
+LDFLAGS="$_gcc_ldflags_save"
+AM_CONDITIONAL(HAVE_LD_OUTPUT_DEF, test "$output_def" = "yes")
 
 # Checks for programs.
 AC_LIBTOOL_WIN32_DLL
