@@ -99,8 +99,6 @@ AC_DEFUN([gl_INIT],
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
   gl_FUNC_READ_FILE
-  gl_FUNC_READLINK
-  gl_UNISTD_MODULE_INDICATOR([readlink])
   AC_FUNC_REALLOC
   AC_DEFINE([GNULIB_REALLOC_GNU], 1, [Define to indicate the 'realloc' module.])
   gl_FUNC_REALLOC_POSIX
@@ -112,7 +110,6 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_SNPRINTF
   gl_STDIO_MODULE_INDICATOR([snprintf])
   gl_TYPE_SOCKLEN_T
-  gt_TYPE_SSIZE_T
   gl_STDARG_H
   AM_STDBOOL_H
   gl_STDINT_H
@@ -288,8 +285,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/alloca.in.h
   lib/arcfour.c
   lib/arcfour.h
-  lib/areadlink.c
-  lib/areadlink.h
   lib/asnprintf.c
   lib/asprintf.c
   lib/base64.c
@@ -346,7 +341,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf-parse.h
   lib/read-file.c
   lib/read-file.h
-  lib/readlink.c
   lib/realloc.c
   lib/setenv.c
   lib/sha1.c
@@ -391,8 +385,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xgethostname.c
   lib/xgethostname.h
   lib/xmalloc.c
-  lib/xreadlink.c
-  lib/xreadlink.h
   lib/xsize.h
   lib/xstrndup.c
   lib/xstrndup.h
@@ -451,7 +443,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mktime.m4
   m4/netinet_in_h.m4
   m4/read-file.m4
-  m4/readlink.m4
   m4/realloc.m4
   m4/setenv.m4
   m4/sha1.m4
@@ -460,7 +451,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/snprintf.m4
   m4/socklen.m4
   m4/sockpfaf.m4
-  m4/ssize_t.m4
   m4/stdarg.m4
   m4/stdbool.m4
   m4/stdint.m4
