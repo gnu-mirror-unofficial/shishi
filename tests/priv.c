@@ -127,6 +127,7 @@ test (Shishi * handle)
   success ("shishi_priv_done() OK\n");
 
   /* shishi_authenticator_from_file() */
+  asn1priv = NULL;
   res = shishi_priv_from_file (handle, &asn1priv, SHISHI_FILETYPE_TEXT,
 			       "priv.tmp");
   if (res == SHISHI_OK)
