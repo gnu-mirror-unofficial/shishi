@@ -25,7 +25,6 @@ AC_DEFUN([gl2_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
-  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -44,7 +43,6 @@ AC_DEFUN([gl2_INIT],
      AM_XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
-  gl_HEADER_STRING_H
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
   m4_popdef([AC_LIBOBJ])
@@ -160,18 +158,12 @@ AC_DEFUN([gl2tests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl2_FILE_LIST], [
-  build-aux/link-warning.h
   lib/error.c
   lib/error.h
-  lib/intprops.h
   lib/strerror.c
-  lib/string.in.h
   lib/version-etc.c
   lib/version-etc.h
   m4/error.m4
-  m4/extensions.m4
   m4/gnulib-common.m4
-  m4/include_next.m4
   m4/strerror.m4
-  m4/string_h.m4
 ])
