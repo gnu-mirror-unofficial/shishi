@@ -1,5 +1,5 @@
 /* resolv.c --- Resolver glue.
- * Copyright (C) 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2007, 2008  Simon Josefsson
  * Copyright (C) 2002 Jeremie Miller, Thomas Muldowney,
  *                    Ryan Eatmon, Robert Norris
  *
@@ -140,8 +140,8 @@ shishi_resolv (const char *zone, uint16_t querytype)
 
   switch (querytype)
     {
-    case T_TXT:
-    case T_SRV:
+    case SHISHI_DNS_TXT:
+    case SHISHI_DNS_SRV:
       break;
 
     default:
@@ -219,11 +219,11 @@ shishi_resolv (const char *zone, uint16_t querytype)
       /* type-specific processing */
       switch (type)
 	{
-	case T_TXT:
+	case SHISHI_DNS_TXT:
 	  reply[an]->rr = txt_rr (packet, eom, &scan);
 	  break;
 
-	case T_SRV:
+	case SHISHI_DNS_SRV:
 	  reply[an]->rr = srv_rr (packet, eom, &scan);
 	  break;
 
@@ -245,7 +245,7 @@ shishi_resolv (const char *zone, uint16_t querytype)
     }
 
   /* sort srv records them */
-  if (querytype == T_SRV)
+  if (querytype == SHISHI_DNS_SRV)
     qsort (reply, an, sizeof (Shishi_dns), srv_compare);
 
   /* build a linked list out of the array elements */
