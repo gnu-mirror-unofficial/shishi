@@ -42,7 +42,7 @@ AB_INIT
 AC_PROG_CC
 gl_EARLY
 AC_HEADER_STDC
-AC_CHECK_HEADERS(sys/poll.h sys/time.h \
+AC_CHECK_HEADERS(sys/poll.h \
 	netdb.h time.h termios.h signal.h pwd.h errno.h syslog.h \
 	locale.h resolv.h fcntl.h \
 	arpa/nameser.h arpa/inet.h netinet/in.h netinet/in6.h)
@@ -72,7 +72,6 @@ AM_GNU_GETTEXT_VERSION(0.17)
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_UID_T
 AC_TYPE_SIGNAL
-AC_HEADER_TIME
 AC_CHECK_DECLS(h_errno)
 
 # For libtasn1
