@@ -86,12 +86,11 @@ main (int argc, char *argv[])
   set_program_name (argv[0]);
 
   if (cmdline_parser (argc, argv, &args) != 0)
-    error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
-	   program_name);
+    usage (EXIT_FAILURE);
 
   if (args.version_given)
     {
-      version_etc (stdout, "gsasl", PACKAGE_NAME, VERSION,
+      version_etc (stdout, "shishi", PACKAGE_NAME, VERSION,
 		   "Simon Josefsson", (char *) NULL);
       return EXIT_SUCCESS;
     }
@@ -100,8 +99,7 @@ main (int argc, char *argv[])
       args.destroy_given + args.list_given + args.renew_given > 1)
     {
       error (0, 0, _("too many arguments"));
-      error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
-	     program_name);
+      usage (EXIT_FAILURE);
     }
 
   if (args.help_given)
