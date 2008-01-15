@@ -19,7 +19,7 @@
 # Floor, Boston, MA 02110-1301, USA.
 
 AC_PREREQ(2.61)
-AC_INIT([shishi], [0.0.34], [bug-shishi@josefsson.org])
+AC_INIT([GNU Shishi], [0.0.34], [bug-shishi@josefsson.org])
 AC_CONFIG_AUX_DIR([build-aux])
 
 # Library code modified:                              REVISION++
