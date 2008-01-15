@@ -8,7 +8,9 @@ See the end for copying conditions.
 
 ** Use gettext 0.17.
 
-** Update gnulib files.
+** Update and re-factor gnulib files.
+There is now a new gnulib directory src/gl for those modules that
+aren't needed by libshishi.
 
 * Version 0.0.33 (released 2007-09-14)
 
