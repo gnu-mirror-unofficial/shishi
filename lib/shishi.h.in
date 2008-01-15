@@ -1,5 +1,5 @@
 /* shishi.h --- Header file for Shishi library.                       -*- c -*-
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -572,6 +572,7 @@ struct Shishi_tkts_hint
 typedef struct Shishi_tkts_hint Shishi_tkts_hint;
 
 /* resolv.c */
+#define SHISHI_DNS_IN 1
 #define SHISHI_DNS_TXT 16
 #define SHISHI_DNS_SRV 33
 
