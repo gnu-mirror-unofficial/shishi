@@ -55,10 +55,6 @@
 /*extern int h_errno;*/
 #endif
 
-#ifdef HAVE_PWD_H
-#include <pwd.h>
-#endif
-
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #endif
