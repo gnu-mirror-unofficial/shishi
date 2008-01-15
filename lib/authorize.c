@@ -1,5 +1,5 @@
 /* authorize.c --- Authorization to services of authenticated principals.
- * Copyright (C) 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -22,6 +22,10 @@
 
 #include "internal.h"
 
+#ifdef HAVE_PWD_H
+# include <pwd.h>
+#endif
+
 int
 shishi_authorize_strcmp (Shishi * handle, const char *principal,
 			 const char *authzname)
@@ -37,6 +41,7 @@ int
 shishi_authorize_k5login (Shishi * handle, const char *principal,
 			  const char *authzname)
 {
+#if HAVE_PWD_H && HAVE_GETPWNAM
   struct passwd *pwd;
   struct stat sta;
   FILE *fic;
@@ -46,7 +51,7 @@ shishi_authorize_k5login (Shishi * handle, const char *principal,
   int authorized = 0;
 
   pwd = getpwnam (authzname);
-  if (pwd == NULL)
+  if (pwd == NULL || pwd->pw_dir == NULL)
     return 0;
 
   asprintf (&ficname, "%s%s", pwd->pw_dir, ".k5login");
@@ -88,6 +93,9 @@ shishi_authorize_k5login (Shishi * handle, const char *principal,
   free (line);
 
   return authorized;
+#else
+  return 0;
+#endif
 }
 
 struct Authorization_aliases
