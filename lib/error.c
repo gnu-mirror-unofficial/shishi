@@ -1,5 +1,5 @@
 /* error.c --- Error handling functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -259,11 +259,14 @@ shishi_info (Shishi * handle, const char *format, ...)
   type = shishi_error_outputtype (handle);
   switch (type)
     {
+    case SHISHI_OUTPUTTYPE_SYSLOG:
+      /* If we don't have syslog, log to stderr... */
+#if HAVE_SYSLOG
+      syslog (LOG_ERR, _("libshishi: info: %s"), out);
+      break;
+#endif
     case SHISHI_OUTPUTTYPE_STDERR:
       fprintf (stderr, _("libshishi: info: %s\n"), out);
-      break;
-    case SHISHI_OUTPUTTYPE_SYSLOG:
-      syslog (LOG_ERR, _("libshishi: info: %s"), out);
       break;
     default:
       break;
@@ -294,11 +297,14 @@ shishi_warn (Shishi * handle, const char *format, ...)
   type = shishi_error_outputtype (handle);
   switch (type)
     {
+    case SHISHI_OUTPUTTYPE_SYSLOG:
+      /* If we don't have syslog, log to stderr... */
+#if HAVE_SYSLOG
+      syslog (LOG_ERR, _("libshishi: warning: %s"), out);
+      break;
+#endif
     case SHISHI_OUTPUTTYPE_STDERR:
       fprintf (stderr, _("libshishi: warning: %s\n"), out);
-      break;
-    case SHISHI_OUTPUTTYPE_SYSLOG:
-      syslog (LOG_ERR, _("libshishi: warning: %s"), out);
       break;
     default:
       break;
@@ -332,11 +338,14 @@ shishi_verbose (Shishi * handle, const char *format, ...)
   type = shishi_error_outputtype (handle);
   switch (type)
     {
+    case SHISHI_OUTPUTTYPE_SYSLOG:
+      /* If we don't have syslog, log to stderr... */
+#if HAVE_SYSLOG
+      syslog (LOG_DEBUG, "%s", out);
+      break;
+#endif
     case SHISHI_OUTPUTTYPE_STDERR:
       fprintf (stderr, "%s\n", out);
-      break;
-    case SHISHI_OUTPUTTYPE_SYSLOG:
-      syslog (LOG_DEBUG, "%s", out);
       break;
     default:
       break;
