@@ -44,7 +44,7 @@ gl_EARLY
 AC_HEADER_STDC
 AC_CHECK_HEADERS(sys/poll.h \
 	netdb.h termios.h pwd.h errno.h syslog.h \
-	locale.h resolv.h fcntl.h \
+	resolv.h fcntl.h \
 	arpa/nameser.h netinet/in6.h)
 
 # For libshishi-XX.def.
