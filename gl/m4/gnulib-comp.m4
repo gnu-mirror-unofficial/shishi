@@ -111,7 +111,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_REALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([realloc-posix])
   gl_FUNC_SETENV
-  gl_FUNC_UNSETENV
+  gl_STDLIB_MODULE_INDICATOR([setenv])
   gl_SIZE_MAX
   gl_FUNC_SNPRINTF
   gl_STDIO_MODULE_INDICATOR([snprintf])
@@ -151,6 +151,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_TIMEGM
   gl_TIMESPEC
   gl_UNISTD_H
+  gl_FUNC_UNSETENV
+  gl_STDLIB_MODULE_INDICATOR([unsetenv])
   gl_FUNC_VASNPRINTF
   gl_FUNC_VASPRINTF
   gl_STDIO_MODULE_INDICATOR([vasprintf])
@@ -361,7 +363,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/readlink.c
   lib/realloc.c
   lib/setenv.c
-  lib/setenv.h
   lib/sha1.c
   lib/sha1.h
   lib/size_max.h
