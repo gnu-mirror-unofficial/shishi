@@ -1,5 +1,5 @@
 /* shisa.c --- Command line interface to Shishi database.
- * Copyright (C) 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -31,11 +31,7 @@
 #include <ctype.h>
 
 /* Setup i18n. */
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#else
-# define setlocale(Category, Locale)	/* empty */
-#endif
+#include <locale.h>
 #include <gettext.h>
 #define _(String) gettext (String)
 #define gettext_noop(String) String

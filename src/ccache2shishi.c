@@ -1,5 +1,5 @@
 /* ccache2shishi.c --- Print and convert MIT ccache files.
- * Copyright (C) 2006, 2007  Simon Josefsson
+ * Copyright (C) 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -36,11 +36,7 @@
 #include <unistd.h>
 
 /* Get i18n. */
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#else
-# define setlocale(Category, Locale)	/* empty */
-#endif
+#include <locale.h>
 #include <gettext.h>
 #define _(String) gettext (String)
 #define gettext_noop(String) String

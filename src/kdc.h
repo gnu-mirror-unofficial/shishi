@@ -1,5 +1,5 @@
 /* kdc.h --- Header file with common definitions for Shishid.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -44,26 +44,14 @@
 #endif
 
 /* For select, etc. */
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
+#include <sys/types.h>
 
 /* For select, etc. */
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
-#endif
+#include <sys/time.h>
+#include <time.h>
 
 /* Get select, etc. */
-#ifdef HAVE_SYS_SELECT_H
-# include <sys/select.h>
-#endif
+#include <sys/select.h>
 
 /* Get accept, sendto, etc. */
 #include <sys/socket.h>
@@ -86,20 +74,14 @@ extern int errno;
 #endif
 
 /* Get signal, etc. */
-#ifdef HAVE_SIGNAL_H
-# include <signal.h>
-#endif
+#include <signal.h>
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
+#include <netinet/in.h>
 #ifdef HAVE_NETINET_IN6_H
 # include <netinet/in6.h>
 #endif
 
-#ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h>
-#endif
+#include <arpa/inet.h>
 
 #ifdef HAVE_SYSLOG_H
 # include <syslog.h>
@@ -111,11 +93,7 @@ extern int errno;
 #endif
 
 /* Setup i18n. */
-#ifdef HAVE_LOCALE_H
-# include <locale.h>
-#else
-# define setlocale(Category, Locale)	/* empty */
-#endif
+#include <locale.h>
 #include <gettext.h>
 #define _(String) gettext (String)
 #define gettext_noop(String) String
