@@ -20,7 +20,7 @@
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
 gl_MODULES([version-etc])
-gl_AVOID([])
+gl_AVOID([gettext])
 gl_SOURCE_BASE([src/gl])
 gl_M4_BASE([src/gl/m4])
 gl_PO_BASE([])
