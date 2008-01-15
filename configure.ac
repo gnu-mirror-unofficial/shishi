@@ -86,7 +86,7 @@ gl2_INIT
 gl3_INIT
 
 # Checks for library functions.
-AC_CHECK_FUNCS(signal select ngettext gethostbyname getpwnam)
+AC_CHECK_FUNCS(signal select ngettext gethostbyname getpwnam getuid)
 AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
 AC_SEARCH_LIBS(socket, socket)
 AC_SEARCH_LIBS(gethostbyname, nsl)
