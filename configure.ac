@@ -43,7 +43,7 @@ AC_PROG_CC
 gl_EARLY
 AC_HEADER_STDC
 AC_CHECK_HEADERS(sys/poll.h \
-	netdb.h time.h termios.h pwd.h errno.h syslog.h \
+	netdb.h termios.h pwd.h errno.h syslog.h \
 	locale.h resolv.h fcntl.h \
 	arpa/nameser.h netinet/in6.h)
 
