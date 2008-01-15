@@ -405,6 +405,9 @@ shishi_tkts_write (Shishi_tkts * tkts, FILE * fh)
   int res;
   int i;
 
+  if (!tkts)
+    return SHISHI_INVALID_TKTS;
+
   for (i = 0; i < tkts->ntkts; i++)
     {
       res = shishi_kdcrep_print
@@ -456,6 +459,9 @@ shishi_tkts_expire (Shishi_tkts * tkts)
 {
   int warn = 0;
   int i = 0;
+
+  if (!tkts)
+    return SHISHI_INVALID_TKTS;
 
   while (i < tkts->ntkts)
     {
@@ -678,6 +684,9 @@ Shishi_tkt *
 shishi_tkts_find (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
 {
   int i;
+
+  if (!tkts)
+    return NULL;
 
   if (VERBOSENOISE (tkts->handle))
     {
