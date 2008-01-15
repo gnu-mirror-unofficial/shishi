@@ -41,6 +41,7 @@ AB_INIT
 # Checks for header files.
 AC_PROG_CC
 gl_EARLY
+gl2_EARLY
 AC_HEADER_STDC
 AC_CHECK_HEADERS(sys/poll.h netdb.h termios.h pwd.h errno.h syslog.h \
 	resolv.h fcntl.h arpa/nameser.h netinet/in6.h)
@@ -80,6 +81,7 @@ AC_CHECK_SIZEOF(unsigned int, 4)
 libgcrypt=yes
 AC_DEFINE(OK_TO_USE_1S_CLOCK, 1, [Define to 1 to make gettime work.])
 gl_INIT
+gl2_INIT
 
 # Checks for library functions.
 AC_CHECK_FUNCS(signal select ngettext gethostbyname)
@@ -343,7 +345,7 @@ AC_ARG_ENABLE(valgrind-tests,
 AC_MSG_RESULT($opt_valgrind_tests)
 
 AC_CONFIG_FILES(Makefile po/Makefile.in \
-	asn1/Makefile examples/Makefile \
+	asn1/Makefile examples/Makefile src/gl/Makefile \
 	lib/Makefile lib/shishi.h db/Makefile src/Makefile tests/Makefile \
 	doc/Makefile doc/reference/Makefile \
 	extra/Makefile extra/pam_shishi/Makefile extra/rsh-redone/Makefile \
