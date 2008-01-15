@@ -50,7 +50,7 @@ shisa_LDADD = ../gl/libgnu.la gl/libgnu.la \
 	../db/libshisa.la ../lib/libshishi.la @LTLIBINTL@
 shisa_cmd.c shisa_cmd.h: shisa.ggo Makefile.am
 	gengetopt --unamed-opts="REALM [PRINCIPAL]" \
-		--no-handle-help --no-handle-error \
+		--no-handle-help --no-handle-error --no-handle-version \
 		--input $< --file-name shisa_cmd
 
 shishid_SOURCES = shishid.c server.c kdc.h kdc.c \

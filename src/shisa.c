@@ -37,17 +37,12 @@
 #define gettext_noop(String) String
 #define N_(String) gettext_noop (String)
 
-/* Get asprintf. */
+/* Gnulib helpers. */
 #include "xvasprintf.h"
-
-/* Get xgethostname. */
 #include "xgethostname.h"
-
-/* Get set_program_name and program_name. */
 #include "progname.h"
-
-/* Get error. */
 #include "error.h"
+#include "version-etc.h"
 
 /* Shishi and Shisa library. */
 #include <shisa.h>
@@ -416,6 +411,32 @@ apply_options (const char *realm,
     }
 }
 
+const char version_etc_copyright[] =
+  /* Do *not* mark this string for translation.  %s is a copyright
+     symbol suitable for this locale, and %d is the copyright
+     year.  */
+  "Copyright %s %d Simon Josefsson.";
+
+static void
+usage (int status)
+{
+  if (status != EXIT_SUCCESS)
+    fprintf (stderr, _("Try `%s --help' for more information.\n"),
+	     program_name);
+  else
+    {
+      cmdline_parser_print_help ();
+      /* TRANSLATORS: The placeholder indicates the bug-reporting address
+	 for this package.  Please add _another line_ saying
+	 "Report translation bugs to <...>\n" with the address for translation
+	 bugs (typically your translation team's web or email address).  */
+      printf (_("\nMandatory arguments to long options are "
+		"mandatory for short options too.\n\nReport bugs to <%s>.\n"),
+	      PACKAGE_BUGREPORT);
+    }
+  exit (status);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -431,8 +452,14 @@ main (int argc, char *argv[])
   set_program_name (argv[0]);
 
   if (cmdline_parser (argc, argv, &args) != 0)
-    error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
-	   program_name);
+    usage (EXIT_FAILURE);
+
+  if (args.version_given)
+    {
+      version_etc (stdout, "shisa", PACKAGE_NAME, VERSION,
+		   "Simon Josefsson", (char *) NULL);
+      return EXIT_SUCCESS;
+    }
 
   rc = args.add_given + args.dump_given + args.list_given +
     args.modify_given + args.remove_given +
@@ -441,18 +468,11 @@ main (int argc, char *argv[])
   if (rc > 1 || args.inputs_num > 2)
     {
       error (0, 0, _("too many arguments"));
-      error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
-	     program_name);
+      usage (EXIT_FAILURE);
     }
 
   if (rc == 0 || args.help_given)
-    {
-      cmdline_parser_print_help ();
-      printf (_("\nMandatory arguments to long options are "
-		"mandatory for short options too.\n\n"));
-      printf (_("Report bugs to <%s>.\n"), PACKAGE_BUGREPORT);
-      return EXIT_SUCCESS;
-    }
+    usage (EXIT_SUCCESS);
 
   rc = shisa_init_with_paths (&dbh, args.configuration_file_arg);
   if (rc != SHISA_OK)
@@ -480,8 +500,7 @@ main (int argc, char *argv[])
       (args.inputs_num < 1 && (args.remove_given)))
     {
       error (0, 0, _("too few arguments"));
-      error (0, 0, _("Try `%s --help' for more information."), program_name);
-      return EXIT_FAILURE;
+      usage (EXIT_FAILURE);
     }
 
   if (args.inputs_num > 0)
