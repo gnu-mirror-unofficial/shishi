@@ -74,9 +74,7 @@
 #ifdef HAVE_NETINET_IN6_H
 #include <netinet/in6.h>
 #endif
-#ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>
-#endif
 
 #ifdef HAVE_ARPA_NAMESER_H
 #include <arpa/nameser.h>
