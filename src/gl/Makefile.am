@@ -16,4 +16,4 @@ AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
 include gnulib.mk
 
-libgnu_la_LIBADD += $(top_builddir)/lgl/libgnu.la
+libgnu_la_LIBADD += $(top_builddir)/gl/libgnu.la
