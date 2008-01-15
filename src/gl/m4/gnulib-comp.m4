@@ -42,8 +42,6 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl2_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl2_LIBSOURCES]))
   gl_source_base='src/gl'
-  AC_SUBST([LIBINTL])
-  AC_SUBST([LTLIBINTL])
   gl_STDARG_H
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
@@ -160,7 +158,6 @@ AC_DEFUN([gl2tests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl2_FILE_LIST], [
-  lib/gettext.h
   lib/version-etc.c
   lib/version-etc.h
   m4/gnulib-common.m4

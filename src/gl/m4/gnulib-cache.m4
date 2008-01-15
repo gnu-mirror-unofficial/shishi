@@ -15,19 +15,19 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=src/gl --m4-base=src/gl/m4 --doc-base=doc --aux-dir=build-aux --libtool --macro-prefix=gl2 version-etc
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=src/gl --m4-base=src/gl/m4 --doc-base=doc --aux-dir=build-aux --avoid=gettext --avoid=gettext-h --makefile-name=gnulib.mk --libtool --macro-prefix=gl2 version-etc
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
 gl_MODULES([version-etc])
-gl_AVOID([gettext])
+gl_AVOID([gettext gettext-h])
 gl_SOURCE_BASE([src/gl])
 gl_M4_BASE([src/gl/m4])
 gl_PO_BASE([])
 gl_DOC_BASE([doc])
 gl_TESTS_BASE([tests])
 gl_LIB([libgnu])
-gl_MAKEFILE_NAME([])
+gl_MAKEFILE_NAME([gnulib.mk])
 gl_LIBTOOL
 gl_MACRO_PREFIX([gl2])
 gl_PO_DOMAIN([])
