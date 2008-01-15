@@ -45,7 +45,7 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS(sys/poll.h \
 	netdb.h time.h termios.h signal.h pwd.h errno.h syslog.h \
 	locale.h resolv.h fcntl.h \
-	arpa/nameser.h arpa/inet.h netinet/in.h netinet/in6.h)
+	arpa/nameser.h arpa/inet.h netinet/in6.h)
 
 # For libshishi-XX.def.
 AC_MSG_CHECKING([if gcc/ld supports -Wl,--output-def])
