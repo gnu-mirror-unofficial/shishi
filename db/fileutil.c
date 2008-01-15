@@ -1,5 +1,5 @@
 /* fileutil.c --- Utility functions used by file.c.
- * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -35,7 +35,7 @@
 extern int errno;
 #endif
 
-#include "xreadlink.h"
+#include "areadlink.h"
 
 /* Get specification. */
 #include "fileutil.h"
@@ -392,12 +392,17 @@ static uint32_t
 uint32link (const char *file)
 {
   char *linkname;
+  long n;
 
-  linkname = xreadlink (file);
+  linkname = areadlink (file);
   if (linkname == NULL)
     return 0;
 
-  return atol (linkname);
+  n = atol (linkname);
+
+  free (linkname);
+
+  return n;
 }
 
 int
