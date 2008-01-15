@@ -1,5 +1,5 @@
 /* realm.c --- Realm related functions.
- * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -170,7 +170,7 @@ shishi_realm_for_server_dns (Shishi * handle, char *server)
   if (!rrs)
     return NULL;
 
-  if (rrs->class != C_IN || rrs->type != T_TXT)
+  if (rrs->class != SHISHI_DNS_IN || rrs->type != SHISHI_DNS_TXT)
     {
       shishi_warn (handle, "Got non-TXT response to TXT query from DNS?");
       return NULL;
