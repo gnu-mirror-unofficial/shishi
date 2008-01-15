@@ -99,8 +99,6 @@ AC_DEFUN([gl_INIT],
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
   gl_FUNC_READ_FILE
-  AC_FUNC_REALLOC
-  AC_DEFINE([GNULIB_REALLOC_GNU], 1, [Define to indicate the 'realloc' module.])
   gl_FUNC_REALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([realloc-posix])
   gl_FUNC_SETENV
