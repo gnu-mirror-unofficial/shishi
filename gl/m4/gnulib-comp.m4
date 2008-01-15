@@ -91,7 +91,6 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_GETTIMEOFDAY
   gl_INET_NTOP
   gl_INLINE
-  gl_LOCALE_H
   gl_FUNC_LSEEK
   gl_UNISTD_MODULE_INDICATOR([lseek])
   gl_FUNC_MALLOC_POSIX
@@ -333,7 +332,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/inet_ntop.c
   lib/inet_ntop.h
   lib/intprops.h
-  lib/locale.in.h
   lib/lseek.c
   lib/malloc.c
   lib/malloca.c
@@ -451,7 +449,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/lib-ld.m4
   m4/lib-link.m4
   m4/lib-prefix.m4
-  m4/locale_h.m4
   m4/longlong.m4
   m4/lseek.m4
   m4/malloc.m4
