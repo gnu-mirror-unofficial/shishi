@@ -177,7 +177,7 @@ shishi_tkts_done (Shishi_tkts ** tkts)
 int
 shishi_tkts_size (Shishi_tkts * tkts)
 {
-  return tkts->ntkts;
+  return tkts ? tkts->ntkts : -1;
 }
 
 /**
