@@ -162,6 +162,8 @@ AC_DEFUN([gl2_FILE_LIST], [
   lib/error.c
   lib/error.h
   lib/locale.in.h
+  lib/progname.c
+  lib/progname.h
   lib/strerror.c
   lib/version-etc.c
   lib/version-etc.h
