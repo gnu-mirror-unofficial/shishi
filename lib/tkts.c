@@ -1007,9 +1007,6 @@ recover_preauth_info (Shishi_tkts *tkts,
 		{
 		  if (j < foundpos && VERBOSENOISE(tkts->handle))
 		    {
-		      char *salt;
-		      size_t saltlen;
-
 		      shishi_verbose (tkts->handle, "New best etype %d", etype);
 
 		      /* XXX mem leak. */
