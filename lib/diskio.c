@@ -1,5 +1,5 @@
 /* diskio.c --- Read and write data structures from disk.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -230,9 +230,7 @@ _shishi_read_armored_data (Shishi * handle,
 
   while (getline (&line, &linelen, fh) > 0)
     {
-      if (line[strlen (line) - 1] == '\r')
-	line[strlen (line) - 1] = '\0';
-      if (line[strlen (line) - 1] == '\n')
+      while (strchr ("\n\r\t ", line[strlen (line) - 1]))
 	line[strlen (line) - 1] = '\0';
 
       if (phase == 1)
