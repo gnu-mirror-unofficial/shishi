@@ -80,6 +80,8 @@ static const char tkt2ticketb64[] =
   "zNj0Cw+6fqyDJIt6PmRpUe/yGZe6hSQkrqgQuBhpAHZF4/aoWqOmNufTdGa+5gHz"
   "qcEmQerWD8YhImeD+Xe5citg92XTPx2nHiNMBMmwgWJHf1TjddiwsQ==";
 
+#define BUFSIZE 5000
+
 void
 test (Shishi * handle)
 {
@@ -88,8 +90,8 @@ test (Shishi * handle)
   Shishi_tkt *t1, *t2, *t3;
   Shishi_asn1 tkt1asn1, tkt1asn2, tkt1asn3;
   Shishi_asn1 tkt2asn1, tkt2asn2, tkt2asn3;
-  char buffer[BUFSIZ];
-  char buffer2[BUFSIZ];
+  char buffer[BUFSIZE];
+  char buffer2[BUFSIZE];
   char *buf;
   char *p, *q;
   size_t n;
@@ -186,14 +188,14 @@ test (Shishi * handle)
     fail ("shishi_tkts_remove() failed\n");
 
   /* create ticket */
-  n = BUFSIZ;
+  n = BUFSIZE;
   if (!base64_decode (tkt1ticketb64, strlen (tkt1ticketb64), buffer, &n))
     fail ("base64_decode() failed\n");
   tkt1asn1 = shishi_der2asn1_ticket (handle, buffer, n);
   if (!tkt1asn1)
     fail ("shishi_der2asn1_ticket() failed\n");
 
-  n = BUFSIZ;
+  n = BUFSIZE;
   if (!base64_decode (tkt1enckdcreppartb64, strlen (tkt1enckdcreppartb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
@@ -201,7 +203,7 @@ test (Shishi * handle)
   if (!tkt1asn2)
     fail ("shishi_der2asn1_encasreppart() failed\n");
 
-  n = BUFSIZ;
+  n = BUFSIZE;
   if (!base64_decode (tkt1kdcrepb64, strlen (tkt1kdcrepb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
@@ -277,7 +279,7 @@ test (Shishi * handle)
     fail ("shishi_tkts_size() failed\n");
 
   /* create ticket */
-  n = BUFSIZ;
+  n = BUFSIZE;
   if (!base64_decode (tkt2ticketb64, strlen (tkt2ticketb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
@@ -285,7 +287,7 @@ test (Shishi * handle)
   if (!tkt2asn1)
     fail ("shishi_der2asn1_ticket() failed\n");
 
-  n = BUFSIZ;
+  n = BUFSIZE;
   if (!base64_decode (tkt2enckdcreppartb64, strlen (tkt2enckdcreppartb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
@@ -293,7 +295,7 @@ test (Shishi * handle)
   if (!tkt2asn2)
     fail ("shishi_der2asn1_enctgsreppart() failed\n");
 
-  n = BUFSIZ;
+  n = BUFSIZE;
   if (!base64_decode (tkt2kdcrepb64, strlen (tkt2kdcrepb64),
 		      buffer, &n))
     fail ("base64_decode() failed\n");
@@ -510,7 +512,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_encode (buf, n, buffer2, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZE);
   free (buf);
   if (strlen (buffer2) == strlen (tkt1ticketb64) &&
       memcmp (buffer2, tkt1ticketb64, strlen (tkt1ticketb64)) == 0)
@@ -525,7 +527,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_encode (buf, n, buffer2, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZE);
   free (buf);
   if (strlen (buffer2) == strlen (tkt1enckdcreppartb64) &&
       memcmp (buffer2, tkt1enckdcreppartb64,
@@ -541,7 +543,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_encode (buf, n, buffer2, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZE);
   free (buf);
   if (strlen (buffer2) == strlen (tkt1kdcrepb64) &&
       memcmp (buffer2, tkt1kdcrepb64, strlen (tkt1kdcrepb64)) == 0)
@@ -556,7 +558,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_encode (buf, n, buffer2, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZE);
   free (buf);
   if (strlen (buffer2) == strlen (tkt2ticketb64) &&
       memcmp (buffer2, tkt2ticketb64, strlen (tkt2ticketb64)) == 0)
@@ -571,7 +573,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_encode (buf, n, buffer2, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZE);
   free (buf);
   if (strlen (buffer2) == strlen (tkt2enckdcreppartb64) &&
       memcmp (buffer2, tkt2enckdcreppartb64,
@@ -587,7 +589,7 @@ test (Shishi * handle)
   else
     n = 0, fail ("shishi_asn1_to_der() failed\n");
 
-  base64_encode (buf, n, buffer2, BUFSIZ);
+  base64_encode (buf, n, buffer2, BUFSIZE);
   free (buf);
   if (strlen (buffer2) == strlen (tkt2kdcrepb64) &&
       memcmp (buffer2, tkt2kdcrepb64, strlen (tkt2kdcrepb64)) == 0)
