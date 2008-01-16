@@ -1,5 +1,5 @@
 /* ticketset.c --- Shishi ticketset self tests.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -370,9 +370,9 @@ test (Shishi * handle)
   if (debug)
     printf ("t3=%p\n", t3);
   if (t3 == NULL)
-    success ("shishi_tkts_find() for client OK\n");
+    success ("shishi_tkts_find() for client2 OK\n");
   else
-    fail ("shishi_tkts_find() for client failed\n");
+    fail ("shishi_tkts_find() for client2 failed\n");
 
   res = shishi_tkts_to_file (tktset, "tktset.tmp");
   if (res == SHISHI_OK)
