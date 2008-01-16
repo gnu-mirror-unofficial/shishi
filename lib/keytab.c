@@ -1,5 +1,5 @@
 /* keys.c --- Functions for reading /etc/krb5.keytab style key files.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,6 +21,9 @@
  */
 
 #include "internal.h"
+
+/* Get _shishi_hexprint, etc. */
+#include "utils.h"
 
 /**
  * shishi_keys_add_keytab_mem:
