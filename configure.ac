@@ -90,7 +90,12 @@ AC_CHECK_FUNCS(signal select ngettext gethostbyname getpwnam getuid)
 AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
 AC_SEARCH_LIBS(socket, socket)
 AC_SEARCH_LIBS(gethostbyname, nsl)
+
+# Shishid needs a logging mechanism, and right now there is no
+# alternative to syslog.  A 'fprintf(stderr,...)' mechanism may be
+# useful.
 AC_SEARCH_LIBS(syslog, syslog)
+AM_CONDITIONAL(ENABLE_SHISHID, test "$ac_cv_search_syslog" != "no")
 
 # Check for PAM
 AC_ARG_ENABLE(pam,
