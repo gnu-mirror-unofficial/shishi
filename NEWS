@@ -15,6 +15,10 @@ There is now a new gnulib directory src/gl/ and db/gl/ for those
 modules that aren't needed by libshishi, but used by the command-line
 tools and libshisa, respectively.
 
+** If syslog is not available, shishid is not built.
+Implementing an alternative logging mechanism is needed in order to
+re-enable building shishid on platforms that lack syslog.
+
 ** New types for DNS classes:
 SHISHI_DNS_IN: New #define.
 
