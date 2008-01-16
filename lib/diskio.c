@@ -31,6 +31,8 @@
 #define HEADERBEG "-----BEGIN SHISHI %s-----"
 #define HEADEREND "-----END SHISHI %s-----"
 
+#define BUFSIZE 5000
+
 /*
  * Note to self: if you change any *print* function, remember to change
  * the corresponding *parse* function too.
@@ -282,9 +284,9 @@ static int
 _shishi_ticket_input (Shishi * handle,
 		      FILE * fh, Shishi_asn1 * ticket, int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -338,9 +340,9 @@ static int
 _shishi_enckdcreppart_input (Shishi * handle,
 			     FILE * fh, Shishi_asn1 * enckdcreppart, int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -418,9 +420,9 @@ int
 _shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq,
 		      int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -481,9 +483,9 @@ int
 _shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep,
 		      int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -543,9 +545,9 @@ int
 _shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
 		     int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -592,9 +594,9 @@ int
 _shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep,
 		     int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -641,9 +643,9 @@ int
 _shishi_encapreppart_input (Shishi * handle, FILE * fh,
 			    Shishi_asn1 * encapreppart, int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -692,9 +694,9 @@ int
 _shishi_authenticator_input (Shishi * handle,
 			     FILE * fh, Shishi_asn1 * authenticator, int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -742,9 +744,9 @@ int
 _shishi_krberror_input (Shishi * handle,
 			FILE * fh, Shishi_asn1 * krberror, int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -791,9 +793,9 @@ _shishi_krberror_input (Shishi * handle,
 int
 _shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe, int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -840,9 +842,9 @@ _shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe, int type)
 int
 _shishi_priv_input (Shishi * handle, FILE * fh, Shishi_asn1 * priv, int type)
 {
-  char der[BUFSIZ];
+  char der[BUFSIZE];
   size_t derlen;
-  char b64der[BUFSIZ];
+  char b64der[BUFSIZE];
   size_t b64len = 0;
   int res;
 
@@ -890,10 +892,10 @@ int
 shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 {
   int lno = 0;
-  char line[BUFSIZ];
+  char line[BUFSIZE];
   char *b64buffer;
-  char armorbegin[BUFSIZ];
-  char armorend[BUFSIZ];
+  char armorbegin[BUFSIZE];
+  char armorend[BUFSIZE];
   int in_key = 0, in_body = 0;
   int res;
   size_t len;
