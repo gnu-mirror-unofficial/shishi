@@ -6,6 +6,8 @@ See the end for copying conditions.
 
 ** When built under MinGW, generate a libshishi-XX.def using -Wl,--output-def.
 
+** Several code fixes for MinGW.
+
 ** Use gettext 0.17.
 
 ** Update and re-factor gnulib files.
