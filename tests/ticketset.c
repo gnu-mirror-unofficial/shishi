@@ -474,9 +474,9 @@ test (Shishi * handle)
   /* shishi_tkts_from_file () */
   res = shishi_tkts_from_file (tktset, "tktset.tmp");
   if (res == SHISHI_OK)
-    success ("shishi_tkts_to_file() OK\n");
+    success ("shishi_tkts_from_file() OK\n");
   else
-    fail ("shishi_tkts_to_file() failed\n");
+    fail ("shishi_tkts_from_file() failed\n");
 
   /* shishi_tkts_size () */
   n = shishi_tkts_size (tktset);
