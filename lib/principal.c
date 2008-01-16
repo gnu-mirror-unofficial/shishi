@@ -1,5 +1,5 @@
 /* principal.c --- Get and set default principal.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -393,7 +393,7 @@ shishi_principal_set (Shishi * handle,
 {
   char *tmpname;
   const char **namebuf;
-  char *tokptr;
+  char *tokptr = NULL;
   int res;
   int i;
 
