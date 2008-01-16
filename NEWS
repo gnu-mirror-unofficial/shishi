@@ -11,8 +11,9 @@ See the end for copying conditions.
 ** Use gettext 0.17.
 
 ** Update and re-factor gnulib files.
-There is now a new gnulib directory src/gl for those modules that
-aren't needed by libshishi.
+There is now a new gnulib directory src/gl/ and db/gl/ for those
+modules that aren't needed by libshishi, but used by the command-line
+tools and libshisa, respectively.
 
 ** New types for DNS classes:
 SHISHI_DNS_IN: New #define.
