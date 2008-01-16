@@ -1,5 +1,5 @@
 /* safe.c --- Shishi SAFE self tests.
- * Copyright (C) 2002, 2003, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -137,6 +137,7 @@ test (Shishi * handle)
   success ("shishi_safe_done() OK\n");
 
   /* shishi_authenticator_from_file() */
+  asn1safe = NULL;
   res = shishi_safe_from_file (handle, &asn1safe, SHISHI_FILETYPE_TEXT,
 			       "safe.tmp");
   if (res == SHISHI_OK)
