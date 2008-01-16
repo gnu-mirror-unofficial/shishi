@@ -1,5 +1,5 @@
 /* Substitute for and wrapper around <unistd.h>.
-   Copyright (C) 2004-2007 Free Software Foundation, Inc.
+   Copyright (C) 2004-2008 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,11 @@
 
 /* mingw fails to declare _exit in <unistd.h>.  */
 #include <stdlib.h>
+
+/* mingw fails to declare gethostname in <unistd.h>, but declare it in
+   winsock2.h.  Cygwin should not include winsock2.h, instead
+   winsock2.h access needs to go via sys/socket.h, so we do that. */
+#include <sys/socket.h>
 
 /* The definition of GL_LINK_WARNING is copied here.  */
 
