@@ -4,9 +4,11 @@ See the end for copying conditions.
 
 * Version 0.0.34 (unreleased)
 
-** When built under MinGW, generate a libshishi-XX.def using -Wl,--output-def.
-
 ** Several code fixes for MinGW.
+A mingw build now compiles and passes the self-tests under Wine.
+
+** When built under MinGW, generate a libshishi-XX.def using -Wl,--output-def.
+Useful when developing applications with Visual Studio.
 
 ** Use gettext 0.17.
 
