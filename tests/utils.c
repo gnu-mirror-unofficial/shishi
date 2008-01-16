@@ -112,9 +112,9 @@ escapeprint (const char *str, int len)
     if ((str[i] >= 'A' && str[i] <= 'Z') ||
 	(str[i] >= 'a' && str[i] <= 'z') ||
 	(str[i] >= '0' && str[i] <= '9') || str[i] == '.')
-      printf ("%c", str[i]);
+      printf ("%c", str[i] & 0xFF);
     else
-      printf ("\\x%02x", str[i]);
+      printf ("\\x%02x", str[i] & 0xFF);
   printf ("' (length %d bytes)\n", len);
 }
 
@@ -129,7 +129,7 @@ hexprint (const char *str, int len)
   printf ("\t ;; ");
   for (i = 0; i < len; i++)
     {
-      printf ("%02x ", str[i]);
+      printf ("%02x ", str[i] & 0xFF);
       if ((i + 1) % 8 == 0)
 	printf (" ");
       if ((i + 1) % 16 == 0 && i + 1 < len)
