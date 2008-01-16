@@ -23,6 +23,8 @@
 #include "internal.h"
 #include "ccache.h"
 
+#include "utils.h"
+
 /**
  * shishi_tkts_default_ccache_guess:
  * @handle: Shishi library handle create by shishi_init().
@@ -331,7 +333,7 @@ shishi_tkts_add_ccache_file (Shishi * handle,
 			     Shishi_tkts *tkts)
 {
   size_t len;
-  char *ccache = read_file (filename, &len);
+  char *ccache = read_binary_file (filename, &len);
   int rc;
 
   if (!ccache)
