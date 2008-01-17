@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.35 (unreleased)
 
+** Warnings about missing configuration files are only printed once.
+
 * Version 0.0.34 (released 2008-01-16)
 
 ** Several code fixes for MinGW.
