@@ -1,5 +1,5 @@
 /* init.c --- Initialization functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -226,15 +226,15 @@ maybe_install_usercfg (Shishi * handle)
     {
       rc = mkdir (userdir, S_IRUSR | S_IWUSR | S_IXUSR);
       if (rc != 0)
-	shishi_info (handle, "mkdir %s: %s", userdir, strerror (errno));
+	shishi_warn (handle, "`%s': %s", userdir, strerror (errno));
     }
   else if (rc != 0)
-    shishi_info (handle, "stat %s: %s", userdir, strerror (errno));
+    shishi_warn (handle, "`%s': %s", userdir, strerror (errno));
 
   src = fopen (SKELCFGFILE, "r");
   if (!src)
     {
-      shishi_info (handle, "open %s: %s", SKELCFGFILE, strerror (errno));
+      shishi_warn (handle, "`%s': %s", SKELCFGFILE, strerror (errno));
       return;
     }
 
@@ -242,7 +242,7 @@ maybe_install_usercfg (Shishi * handle)
   if (!dst)
     {
       fclose (src);
-      shishi_info (handle, "open %s: %s", usercfg, strerror (errno));
+      shishi_warn (handle, "`%s': %s", usercfg, strerror (errno));
       return;
     }
 
