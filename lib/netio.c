@@ -387,17 +387,18 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
   hints.ai_socktype = SOCK_DGRAM;
   rc = getaddrinfo (realm, port, &hints, &ai);
 
-  free (port);
-
   if (rc != 0)
     {
       shishi_error_printf (handle, "No direct realm host for realm %s",
 			   realm);
+      free (port);
       return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
     }
 
-  shishi_verbose (handle, "Sending to %s:%d (%s)", realm, port,
+  shishi_verbose (handle, "Sending to %s:%s (%s)", realm, port,
 		  inet_ntoa (((struct sockaddr_in *) ai->ai_addr)->sin_addr));
+
+  free (port);
 
   rc = shishi_sendrecv_udp (handle, ai->ai_addr,
 			    indata, inlen, outdata, outlen,
