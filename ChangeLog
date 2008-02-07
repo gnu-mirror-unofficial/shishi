@@ -1,3 +1,70 @@
+2008-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.35.
+
+2008-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* doc/specifications/draft-ietf-krb-wg-kdc-model-01.txt: Add.
+
+2008-02-07  Simon Josefsson <simon@josefsson.org>
+
+	* po/pl.po, po/vi.po: Sync with TP.
+
+2008-02-06  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-02-06  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, Makefile.am, maint-cfg.mk: Brace expansion is not
+	POSIX portable.
+
+2008-02-06  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/gnupload, gl/m4/md4.m4, gl/m4/md5.m4, gl/m4/sha1.m4,
+	gl/md4.c, gl/md4.h, gl/md5.c, gl/md5.h, gl/sha1.c, gl/sha1.h,
+	gl/unistd.in.h, gl/vasnprintf.c: Update gnulib files.
+
+2008-01-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Fix debug output for direct sends.
+
+2008-01-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Fix messages when creating ~/.shishi.
+
+2008-01-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-01-17  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: (shishi_cfg_from_file): Don't print warning (done by init.c).
+
+2008-01-17  Simon Josefsson <simon@josefsson.org>
+
+	* gl/gethostname.c: Update gnulib files.
+
+2008-01-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2008-01-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Remove unused variables.
+
+2008-01-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Silence warnings.
+
+2008-01-16  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2008-01-16  Simon Josefsson <simon@josefsson.org>
 
 	* Makefile.am: Fix git-tag invocation.
