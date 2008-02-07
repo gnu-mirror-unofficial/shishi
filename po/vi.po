@@ -1,13 +1,14 @@
 # Vietnamese translation for Shishi.
-# Copyright © 2007 Free Software Foundation, Inc.
-# Clytie Siddall <clytie@riverland.net.au>, 2007
-#
+# Copyright © 2008 Free Software Foundation, Inc.
+# This file is distributed under the same license as the shishi-0.0.34 package.
+# Clytie Siddall <clytie@riverland.net.au>, 2007-2008.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: shishi 0.0.32\n"
+"Project-Id-Version: shishi 0.0.34\n"
 "Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2007-06-29 17:17+0200\n"
-"PO-Revision-Date: 2007-07-15 21:31+0930\n"
+"POT-Creation-Date: 2008-01-16 17:59+0100\n"
+"PO-Revision-Date: 2008-01-18 18:13+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -120,25 +121,25 @@ msgstr "Lỗi không rõ"
 msgid "No error"
 msgstr "Không có lỗi"
 
-#: lib/error.c:263
-#, c-format
-msgid "libshishi: info: %s\n"
-msgstr "libshishi: thông tin: %s\n"
-
-#: lib/error.c:266
+#: lib/error.c:265
 #, c-format
 msgid "libshishi: info: %s"
 msgstr "libshishi: thông tin: %s"
 
-#: lib/error.c:298
+#: lib/error.c:269
 #, c-format
-msgid "libshishi: warning: %s\n"
-msgstr "libshishi: cảnh báo : %s\n"
+msgid "libshishi: info: %s\n"
+msgstr "libshishi: thông tin: %s\n"
 
-#: lib/error.c:301
+#: lib/error.c:303
 #, c-format
 msgid "libshishi: warning: %s"
 msgstr "libshishi: cảnh báo : %s"
+
+#: lib/error.c:307
+#, c-format
+msgid "libshishi: warning: %s\n"
+msgstr "libshishi: cảnh báo : %s\n"
 
 #: lib/krberror.c:137
 #, c-format
@@ -495,136 +496,137 @@ msgstr "Lỗi Shisa không rõ"
 msgid "shisa: %s\n"
 msgstr "shisa: %s\n"
 
-#: src/shisa.c:155
+#: src/shisa.c:146
 msgid "Account is"
 msgstr "Tài khoản"
 
-#: src/shisa.c:156
+#: src/shisa.c:147
 msgid "DISABLED"
 msgstr "BỊ TẮT"
 
-#: src/shisa.c:156
+#: src/shisa.c:147
 msgid "enabled"
 msgstr "đã bật"
 
-#: src/shisa.c:157
+#: src/shisa.c:148
 msgid "Current key version"
 msgstr "Phiên bản khoá hiện thời"
 
-#: src/shisa.c:159
+#: src/shisa.c:150
 msgid "Account not valid before"
 msgstr "Tài khoản không hợp lệ trước"
 
-#: src/shisa.c:161
+#: src/shisa.c:152
 msgid "Last initial TGT request at"
 msgstr "Yêu cầu TGT đầu tiên cuối vào"
 
-#: src/shisa.c:163
+#: src/shisa.c:154
 msgid "Last initial request at"
 msgstr "Yêu cầu đầu tiên cuối vào"
 
-#: src/shisa.c:165
+#: src/shisa.c:156
 msgid "Last TGT request at"
 msgstr "Yêu cầu TGT cuối vào"
 
-#: src/shisa.c:167
+#: src/shisa.c:158
 msgid "Last ticket renewal at"
 msgstr "Gia hạn vé cuối vào"
 
-#: src/shisa.c:169
+#: src/shisa.c:160
 msgid "Password expire on"
 msgstr "Mật khẩu hết hạn vào"
 
-#: src/shisa.c:171
+#: src/shisa.c:162
 msgid "Account expire on"
 msgstr "Tài khoản hết hạn vào"
 
-#: src/shisa.c:184
+#: src/shisa.c:175
 msgid "Key"
 msgstr "Khoá"
 
-#: src/shisa.c:186
+#: src/shisa.c:177
 msgid "\tEtype"
 msgstr "\tKiểu E"
 
-#: src/shisa.c:189
+#: src/shisa.c:180
 msgid "\tPriority"
 msgstr "\tƯu tiên"
 
-#: src/shisa.c:193
+#: src/shisa.c:184
 msgid "\tSalt"
 msgstr "\tSalt"
 
-#: src/shisa.c:195
+#: src/shisa.c:186
 msgid "\tS2K params"
 msgstr "\tTham số S2K"
 
-#: src/shisa.c:198
+#: src/shisa.c:189
 msgid "\tPassword"
 msgstr "\tMật khẩu"
 
-#: src/shisa.c:201
+#: src/shisa.c:192
 msgid "\tKey is"
 msgstr "\tKhoá"
 
-#: src/shisa.c:201
+#: src/shisa.c:192
 msgid "MISSING"
 msgstr "BỊ THIẾU"
 
-#: src/shisa.c:279
+#: src/shisa.c:270
 #, c-format
 msgid "Adding realm `%s'...\n"
 msgstr "Đang thêm địa hạt « %s »...\n"
 
-#: src/shisa.c:281
+#: src/shisa.c:272
 #, c-format
 msgid "Adding principal `%s@%s'...\n"
 msgstr "Đang thêm mục chính « %s@%s »...\n"
 
-#: src/shisa.c:292
+#: src/shisa.c:283
 #, c-format
 msgid "Adding realm `%s'...done\n"
 msgstr "Đang thêm địa hạt « %s »... hoàn tất\n"
 
-#: src/shisa.c:294
+#: src/shisa.c:285
 #, c-format
 msgid "Adding principal `%s@%s'...done\n"
 msgstr "Đang thêm mục chính « %s@%s »... hoàn tất\n"
 
-#: src/shisa.c:325
+#: src/shisa.c:316
 #, c-format
 msgid "Removing realm `%s'...\n"
 msgstr "Đang gỡ bỏ địa hạt « %s »...\n"
 
-#: src/shisa.c:327
+#: src/shisa.c:318
 #, c-format
 msgid "Removing principal `%s@%s'...\n"
 msgstr "Đang gỡ bỏ mục chính « %s@%s »...\n"
 
-#: src/shisa.c:335
+#: src/shisa.c:326
 #, c-format
 msgid "Removing realm `%s'...done\n"
 msgstr "Đang gỡ bỏ địa hạt « %s »... hoàn tất\n"
 
-#: src/shisa.c:337
+#: src/shisa.c:328
 #, c-format
 msgid "Removing principal `%s@%s'...done\n"
 msgstr "Đang gỡ bỏ mục chính « %s@%s »... hoàn tất\n"
 
-#: src/shisa.c:384
+#: src/shisa.c:375
 #, c-format
 msgid "Password for `%s@%s': "
 msgstr "Mật khẩu cho « %s@%s »: "
 
-#: src/shisa.c:387
+#: src/shisa.c:378
 msgid "Password: "
 msgstr "Mật khẩu : "
 
-#: src/shisa.c:389
+#: src/shisa.c:380
+#, c-format
 msgid "Could not read password"
 msgstr "Không thể đọc mật khẩu"
 
-#: src/shisa.c:401
+#: src/shisa.c:392
 #, c-format
 msgid ""
 "Could not create key (%d):\n"
@@ -633,108 +635,16 @@ msgstr ""
 "Không thể tạo khoá (%d):\n"
 "%s"
 
-#: src/shisa.c:438 src/shisa.c:448 src/shisa.c:487 src/shishi.c:68
-#: src/shishi.c:75
+#: src/shisa.c:424 src/shishi.c:59 src/shishid.c:490
 #, c-format
-msgid "Try `%s --help' for more information."
-msgstr "Hãy thử lệnh trợ giúp « %s --help » để xem thông tin thêm."
+msgid "Try `%s --help' for more information.\n"
+msgstr "Hãy thử lệnh trợ giúp « %s --help » để xem thêm thông tin.\n"
 
-#: src/shisa.c:447 src/shishi.c:74
-msgid "too many arguments"
-msgstr "quá nhiều đối số"
-
-#: src/shisa.c:455
-#, c-format
-msgid ""
-"\n"
-"Mandatory arguments to long options are mandatory for short options too.\n"
-"\n"
-msgstr ""
-"\n"
-"Tất cả đối số bắt buộc phải sử dụng với tùy chọn dài cũng bắt buộc với tùy chọn ngắn.\n"
-"\n"
-
-#: src/shisa.c:457
-#, c-format
-msgid "Report bugs to <%s>.\n"
-msgstr "Hãy thông báo lỗi cho <%s>\n"
-
-#: src/shisa.c:463
-#, c-format
-msgid ""
-"Initialization failed:\n"
-"%s"
-msgstr ""
-"Lỗi sở khởi:\n"
-"%s"
-
-#: src/shisa.c:468
-#, c-format
-msgid ""
-"Could not read library options `%s':\n"
-"%s"
-msgstr ""
-"Không thể đọc các tùy chọn của thư viện « %s »:\n"
-"%s"
-
-#: src/shisa.c:473
-#, c-format
-msgid ""
-"Shishi initialization failed:\n"
-"%s"
-msgstr ""
-"Lỗi sở khởi Shisi:\n"
-"%s"
-
-#: src/shisa.c:478
-#, c-format
-msgid ""
-"Could not set encryption type `%s':\n"
-"%s"
-msgstr ""
-"Không thể đặt kiểu mật mã « %s »:\n"
-"%s"
-
-#: src/shisa.c:486
-msgid "too few arguments"
-msgstr "quá ít đối số"
-
-#: src/shisa.c:518
-#, c-format
-msgid "Adding default realm `%s'...\n"
-msgstr "Đang thêm địa hạt mặc định « %s »...\n"
-
-#: src/shisa.c:538
-#, c-format
-msgid "Modifying principal `%s@%s'...\n"
-msgstr "Đang sửa đổi mục chính « %s@%s »...\n"
-
-#: src/shisa.c:545
-#, c-format
-msgid "Modifying principal `%s@%s'...done\n"
-msgstr "Đang sửa đổi mục chính « %s@%s »... hoàn tất\n"
-
-#: src/shisa.c:549
-#, c-format
-msgid "Adding key to `%s@%s'...\n"
-msgstr "Đang thêm khoá vào « %s@%s »...\n"
-
-#: src/shisa.c:559
-#, c-format
-msgid "Adding key to `%s@%s'...done\n"
-msgstr "Đang thêm khoá vào « %s@%s »... hoàn tất\n"
-
-#: src/shisa.c:563
-#, c-format
-msgid "Removing key from `%s@%s'...\n"
-msgstr "Đang gỡ bỏ khoá khỏi « %s@%s »...\n"
-
-#: src/shisa.c:576
-#, c-format
-msgid "Removing key from `%s@%s'...done\n"
-msgstr "Đang gỡ bỏ khoá khỏi « %s@%s »... hoàn tất\n"
-
-#: src/shishi.c:82
+#. TRANSLATORS: The placeholder indicates the bug-reporting address
+#. for this package.  Please add _another line_ saying
+#. "Report translation bugs to <...>\n" with the address for translation
+#. bugs (typically your translation team's web or email address).
+#: src/shisa.c:433 src/shishi.c:68 src/shishid.c:499
 #, c-format
 msgid ""
 "\n"
@@ -747,61 +657,143 @@ msgstr ""
 "\n"
 "Hãy thông báo lỗi cho <%s>.\n"
 
-#: src/shishi.c:92
+#: src/shisa.c:470 src/shishi.c:101
+#, c-format
+msgid "too many arguments"
+msgstr "quá nhiều đối số"
+
+#: src/shisa.c:479
+#, c-format
+msgid ""
+"Initialization failed:\n"
+"%s"
+msgstr ""
+"Lỗi sở khởi:\n"
+"%s"
+
+#: src/shisa.c:484
+#, c-format
+msgid ""
+"Could not read library options `%s':\n"
+"%s"
+msgstr ""
+"Không thể đọc các tùy chọn của thư viện « %s »:\n"
+"%s"
+
+#: src/shisa.c:489
+#, c-format
+msgid ""
+"Shishi initialization failed:\n"
+"%s"
+msgstr ""
+"Lỗi sở khởi Shisi:\n"
+"%s"
+
+#: src/shisa.c:494
+#, c-format
+msgid ""
+"Could not set encryption type `%s':\n"
+"%s"
+msgstr ""
+"Không thể đặt kiểu mật mã « %s »:\n"
+"%s"
+
+#: src/shisa.c:502
+#, c-format
+msgid "too few arguments"
+msgstr "quá ít đối số"
+
+#: src/shisa.c:533
+#, c-format
+msgid "Adding default realm `%s'...\n"
+msgstr "Đang thêm địa hạt mặc định « %s »...\n"
+
+#: src/shisa.c:553
+#, c-format
+msgid "Modifying principal `%s@%s'...\n"
+msgstr "Đang sửa đổi mục chính « %s@%s »...\n"
+
+#: src/shisa.c:560
+#, c-format
+msgid "Modifying principal `%s@%s'...done\n"
+msgstr "Đang sửa đổi mục chính « %s@%s »... hoàn tất\n"
+
+#: src/shisa.c:564
+#, c-format
+msgid "Adding key to `%s@%s'...\n"
+msgstr "Đang thêm khoá vào « %s@%s »...\n"
+
+#: src/shisa.c:574
+#, c-format
+msgid "Adding key to `%s@%s'...done\n"
+msgstr "Đang thêm khoá vào « %s@%s »... hoàn tất\n"
+
+#: src/shisa.c:578
+#, c-format
+msgid "Removing key from `%s@%s'...\n"
+msgstr "Đang gỡ bỏ khoá khỏi « %s@%s »...\n"
+
+#: src/shisa.c:591
+#, c-format
+msgid "Removing key from `%s@%s'...done\n"
+msgstr "Đang gỡ bỏ khoá khỏi « %s@%s »... hoàn tất\n"
+
+#: src/shishi.c:112
+#, c-format
 msgid "Could not initialize libshishi."
 msgstr "Không thể sở khởi libshishi."
 
-#: src/shishi.c:96
+#: src/shishi.c:116
 #, c-format
 msgid "Could not set encryption types: %s"
 msgstr "Không thể đặt các kiểu mật mã: %s"
 
-#: src/shishi.c:108
+#: src/shishi.c:128
 #, c-format
 msgid "Could not parse client principal \"%s\": %s"
 msgstr "Không thể phân tách mục chính của trình khách « %s »: %s"
 
-#: src/shishi.c:121
+#: src/shishi.c:141
 #, c-format
 msgid "Could not parse server principal \"%s\": %s"
 msgstr "Không thể phân tách mục chính của trình phục vụ « %s »: %s"
 
-#: src/shishi.c:127
+#: src/shishi.c:147
 #, c-format
 msgid "Could not read library options: %s"
 msgstr "Không thể đọc các tùy chọn của thư viện: %s"
 
-#: src/shishi.c:145
+#: src/shishi.c:165
 #, c-format
 msgid "Invalid --starttime date `%s'"
 msgstr "Ngày tháng « --starttime » (giờ bắt đầu) không hợp lệ « %s »"
 
-#: src/shishi.c:155
+#: src/shishi.c:175
 #, c-format
 msgid "Invalid --endtime date `%s'"
 msgstr "Ngày tháng « --endtime » (giờ kết thúc) không hợp lệ « %s »"
 
-#: src/shishi.c:165
+#: src/shishi.c:185
 #, c-format
 msgid "Invalid --renew-till date `%s'"
 msgstr "Ngày tháng « --renew-till » (gia hạn đến) không hợp lệ « %s »"
 
-#: src/shishi.c:184
+#: src/shishi.c:204
 #, c-format
 msgid "Tickets in `%s':\n"
 msgstr "Vé trong « %s »:\n"
 
-#: src/shishi.c:189
+#: src/shishi.c:209
 #, c-format
 msgid "Could not list tickets: %s"
 msgstr "Không thể liệt kê các vé: %s"
 
-#: src/shishi.c:206
+#: src/shishi.c:226
 #, c-format
 msgid "Removing ticket:\n"
 msgstr "Đang gỡ bỏ vé:\n"
 
-#: src/shishi.c:213
+#: src/shishi.c:233
 #, c-format
 msgid ""
 "Could not destroy ticket %d:\n"
@@ -810,18 +802,18 @@ msgstr ""
 "Không thể hủy vé %d:\n"
 "%s"
 
-#: src/shishi.c:223
+#: src/shishi.c:243
 #, c-format
 msgid "No tickets removed.\n"
 msgstr "Chưa gỡ bỏ vé.\n"
 
-#: src/shishi.c:225
+#: src/shishi.c:245
 #, c-format
 msgid "%d ticket removed.\n"
 msgid_plural "%d tickets removed.\n"
 msgstr[0] "%d vé bị gỡ bỏ.\n"
 
-#: src/shishi.c:258
+#: src/shishi.c:278
 #, c-format
 msgid "Could not get ticket as `%s' for `%s'."
 msgstr "Không thể lấy vé như « %s » cho « %s »."
