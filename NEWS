@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.36 (unreleased)
 
+** Fix warnings in generated man pages (silence lintian).
+
+** Update gnulib files.
+
 * Version 0.0.35 (released 2008-02-07)
 
 ** Warnings about missing configuration files are only printed once.
