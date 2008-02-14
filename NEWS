@@ -2,6 +2,8 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson
 See the end for copying conditions.
 
+* Version 0.0.36 (unreleased)
+
 * Version 0.0.35 (released 2008-02-07)
 
 ** Warnings about missing configuration files are only printed once.
