@@ -661,7 +661,6 @@ shishi_tkt_match_p (Shishi_tkt * tkt, Shishi_tkts_hint * hint)
  *
  *   Shishi_tkt  tkt;
  *
- *   ...
  *
  *   memset(&hint, 0, sizeof(hint));
  *
@@ -675,7 +674,7 @@ shishi_tkt_match_p (Shishi_tkt * tkt, Shishi_tkts_hint * hint)
  *
  *   else
  *
- *     ...do something  with ticket
+ *     do_something_with_ticket (tkt);
  *
  * Return value: Returns a ticket if found, or NULL if no further
  *               matching tickets could be found.
