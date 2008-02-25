@@ -1,5 +1,5 @@
 /*
- *      Copyright (C) 2004, 2006 Free Software Foundation
+ *      Copyright (C) 2004, 2006, 2007, 2008 Free Software Foundation
  *      Copyright (C) 2002  Fabio Fiorina
  *
  * This file is part of LIBTASN1.
@@ -92,19 +92,24 @@ _asn1_create_static_structure (ASN1_TYPE pointer, char *output_file_name,
   if (file == NULL)
     return ASN1_FILE_NOT_FOUND;
 
-  fprintf (file, "\n#include <libtasn1.h>\n\n");
-  fprintf (file, "extern const ASN1_ARRAY_TYPE %s[]={\n", vector_name);
+  fprintf (file, "#if HAVE_CONFIG_H\n");
+  fprintf (file, "# include \"config.h\"\n");
+  fprintf (file, "#endif\n\n");
+
+  fprintf (file, "#include <libtasn1.h>\n\n");
+
+  fprintf (file, "const ASN1_ARRAY_TYPE %s[] = {\n", vector_name);
 
   p = pointer;
 
   while (p)
     {
-      fprintf (file, "  {");
+      fprintf (file, "  { ");
 
       if (p->name)
-	fprintf (file, "\"%s\",", p->name);
+	fprintf (file, "\"%s\", ", p->name);
       else
-	fprintf (file, "0,");
+	fprintf (file, "NULL, ");
 
       t = p->type;
       if (p->down)
@@ -112,12 +117,12 @@ _asn1_create_static_structure (ASN1_TYPE pointer, char *output_file_name,
       if (p->right)
 	t |= CONST_RIGHT;
 
-      fprintf (file, "%lu,", t);
+      fprintf (file, "%lu, ", t);
 
       if (p->value)
 	fprintf (file, "\"%s\"},\n", p->value);
       else
-	fprintf (file, "0},\n");
+	fprintf (file, "NULL },\n");
 
       if (p->down)
 	{
@@ -146,7 +151,7 @@ _asn1_create_static_structure (ASN1_TYPE pointer, char *output_file_name,
 	}
     }
 
-  fprintf (file, "  {0,0,0}\n};\n");
+  fprintf (file, "  { NULL, 0, NULL }\n};\n");
 
   fclose (file);
 
