@@ -70,6 +70,8 @@ AC_DEFUN([gl_INIT],
   gl_GC_PBKDF2_SHA1
   gl_GC_RANDOM
   gl_MODULE_INDICATOR([gc-random])
+  gl_ENVIRON
+  gl_UNISTD_MODULE_INDICATOR([environ])
   gl_FLOAT_H
   gl_FUNC_FSEEKO
   gl_STDIO_MODULE_INDICATOR([fseeko])
@@ -400,6 +402,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/crc.m4
   m4/des.m4
   m4/eealloc.m4
+  m4/environ.m4
   m4/eoverflow.m4
   m4/extensions.m4
   m4/float_h.m4
