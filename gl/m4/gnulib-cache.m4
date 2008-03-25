@@ -1,4 +1,4 @@
-# Copyright (C) 2004-2007 Free Software Foundation, Inc.
+# Copyright (C) 2002-2008 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -15,7 +15,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --local-dir=gl/override --lib=libgnu --source-base=gl --m4-base=gl/m4 --doc-base=doc --aux-dir=build-aux --avoid=xalloc-die --libtool --macro-prefix=gl arpa_inet base64 crc crypto/arcfour crypto/gc-des crypto/gc-hmac-md5 crypto/gc-hmac-sha1 crypto/gc-md4 crypto/gc-md5 crypto/gc-pbkdf2-sha1 crypto/gc-random fdl gendocs getaddrinfo getdate getline getpass getsubopt gnupload gpl-3.0 maintainer-makefile minmax netinet_in read-file signal socklen stdint strcase strdup strndup strtok_r strverscmp sys_select sys_socket sys_stat sys_time time timegm unistd vasnprintf vasprintf xalloc xgetdomainname xgethostname xstrndup xvasprintf
+#   gnulib-tool --import --dir=. --local-dir=gl/override --lib=libgnu --source-base=gl --m4-base=gl/m4 --doc-base=doc --aux-dir=build-aux --avoid=xalloc-die --libtool --macro-prefix=gl --no-vc-files arpa_inet base64 crc crypto/arcfour crypto/gc-des crypto/gc-hmac-md5 crypto/gc-hmac-sha1 crypto/gc-md4 crypto/gc-md5 crypto/gc-pbkdf2-sha1 crypto/gc-random fdl gendocs getaddrinfo getdate getline getpass getsubopt gnupload gpl-3.0 maintainer-makefile minmax netinet_in read-file signal socklen stdint strcase strdup strndup strtok_r strverscmp sys_select sys_socket sys_stat sys_time time timegm unistd vasnprintf vasprintf xalloc xgetdomainname xgethostname xstrndup xvasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([gl/override])
@@ -31,3 +31,4 @@ gl_MAKEFILE_NAME([])
 gl_LIBTOOL
 gl_MACRO_PREFIX([gl])
 gl_PO_DOMAIN([])
+gl_VC_FILES([false])

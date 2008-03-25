@@ -1,4 +1,4 @@
-# Copyright (C) 2004-2007 Free Software Foundation, Inc.
+# Copyright (C) 2002-2008 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -15,7 +15,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=src/gl --m4-base=src/gl/m4 --doc-base=doc --aux-dir=build-aux --avoid=extensions --avoid=gettext --avoid=gettext-h --avoid=include_next --avoid=intprops --avoid=stdarg --avoid=string --avoid=unistd --makefile-name=gnulib.mk --libtool --macro-prefix=gl2 error getopt locale progname version-etc
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=src/gl --m4-base=src/gl/m4 --doc-base=doc --aux-dir=build-aux --avoid=extensions --avoid=gettext --avoid=gettext-h --avoid=include_next --avoid=intprops --avoid=stdarg --avoid=string --avoid=unistd --makefile-name=gnulib.mk --libtool --macro-prefix=gl2 --no-vc-files error getopt locale progname version-etc
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -31,3 +31,4 @@ gl_MAKEFILE_NAME([gnulib.mk])
 gl_LIBTOOL
 gl_MACRO_PREFIX([gl2])
 gl_PO_DOMAIN([])
+gl_VC_FILES([false])
