@@ -923,10 +923,13 @@ do_preauth (Shishi_tkts *tkts, Shishi_tkts_hint *lochint, Shishi_as *as)
       if (rc != SHISHI_OK)
 	return rc;
 
-      rc = shishi_prompt_password (tkts->handle, &lochint->passwd,
-				   "Enter password for `%s': ", user);
-      if (rc != SHISHI_OK)
-	return rc;
+      if (lochint->passwd == NULL)
+	{
+	  rc = shishi_prompt_password (tkts->handle, &lochint->passwd,
+				       "Enter password for `%s': ", user);
+	  if (rc != SHISHI_OK)
+	    return rc;
+	}
 
       if (!lochint->preauthsalt)
 	{
