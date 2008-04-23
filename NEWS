@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.37 (unreleased)
 
+** Internal copy of libtasn1 updated to version 1.4.
+
 * Version 0.0.36 (released 2008-02-14)
 
 ** Fix warnings in generated man pages (silence lintian).
