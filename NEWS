@@ -4,6 +4,11 @@ See the end for copying conditions.
 
 * Version 0.0.37 (unreleased)
 
+** libshishi: When doing pre-authentication with a pre-seeded password,
+** don't ask for a new password.
+Reported by Graham Shaw <gdshaw@riscpkg.org> in
+<http://permalink.gmane.org/gmane.comp.gnu.shishi.general/494>.
+
 ** Translations files not stored directly in git to avoid merge conflicts.
 This allows us to avoid use of --no-location which makes the
 translation teams happier.
