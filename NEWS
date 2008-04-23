@@ -4,6 +4,10 @@ See the end for copying conditions.
 
 * Version 0.0.37 (unreleased)
 
+** Translations files not stored directly in git to avoid merge conflicts.
+This allows us to avoid use of --no-location which makes the
+translation teams happier.
+
 ** Internal copy of libtasn1 updated to version 1.4.
 
 ** Update gnulib files.
