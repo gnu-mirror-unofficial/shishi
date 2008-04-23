@@ -62,11 +62,16 @@ arpa/inet.h:
 	@MKDIR_P@ arpa
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
-	  echo '#include <sys/socket.h>'; \
+	  sed \
+	      -e 's|@''GNULIB_INET_NTOP''@|$(GNULIB_INET_NTOP)|g' \
+	      -e 's|@''GNULIB_INET_PTON''@|$(GNULIB_INET_PTON)|g' \
+	      < $(srcdir)/arpa_inet.in.h; \
 	} > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += arpa/inet.h arpa/inet.h-t
 MOSTLYCLEANDIRS += arpa
+
+EXTRA_DIST += arpa_inet.in.h
 
 ## end   gnulib module arpa_inet
 
@@ -878,9 +883,8 @@ sys/stat.h: sys_stat.in.h
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
 	  sed -e 's/@''INCLUDE_NEXT''@/$(INCLUDE_NEXT)/g' \
 	      -e 's|@''NEXT_SYS_STAT_H''@|$(NEXT_SYS_STAT_H)|g' \
-	      -e 's|@''HAVE_IO_H''@|$(HAVE_IO_H)|g' \
 	      -e 's|@''HAVE_LSTAT''@|$(HAVE_LSTAT)|g' \
-	      -e 's|@''HAVE_DECL_MKDIR''@|$(HAVE_DECL_MKDIR)|g' \
+	      -e 's|@''REPLACE_MKDIR''@|$(REPLACE_MKDIR)|g' \
 	      < $(srcdir)/sys_stat.in.h; \
 	} > $@-t
 	mv $@-t $@

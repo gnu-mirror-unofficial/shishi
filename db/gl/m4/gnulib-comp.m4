@@ -36,6 +36,7 @@ AC_DEFUN([gl3_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl3_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl3_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl3_LIBSOURCES]))
+  gl_COMMON
   gl_source_base='db/gl'
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
@@ -61,6 +62,7 @@ AC_DEFUN([gl3_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl3tests_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl3tests_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl3tests_LIBSOURCES]))
+  gl_COMMON
   gl_source_base='tests'
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])

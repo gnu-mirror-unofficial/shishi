@@ -36,6 +36,7 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl2_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl2_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl2_LIBSOURCES]))
+  gl_COMMON
   gl_source_base='src/gl'
   gl_ERROR
   m4_ifdef([AM_XGETTEXT_OPTION],
@@ -67,6 +68,7 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl2tests_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl2tests_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl2tests_LIBSOURCES]))
+  gl_COMMON
   gl_source_base='tests'
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
