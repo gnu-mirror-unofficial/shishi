@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.37 (unreleased)
 
+** Dist gdoc-error to avoid build failures when building modified sources.
+
 ** libshishi: When doing pre-authentication with a pre-seeded password,
 ** don't ask for a new password.
 Reported by Graham Shaw <gdshaw@riscpkg.org> in
