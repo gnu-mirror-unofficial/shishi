@@ -21,6 +21,8 @@
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc \
 	--without-system-asn1 --without-libgcrypt
 
+EXTRA_DIST = cfg.mk maint.mk .clcopying
+
 SUBDIRS = po gl
 
 if ASN1
@@ -73,7 +75,7 @@ examples:
 
 ChangeLog:
 	git log --pretty --numstat --summary | git2cl > ChangeLog
-	cat .cvscopying >> ChangeLog
+	cat .clcopying >> ChangeLog
 
 tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
 htmldir = ../www-$(PACKAGE)
