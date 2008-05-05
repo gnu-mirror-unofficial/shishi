@@ -114,6 +114,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_MKTIME
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
+  gl_FUNC_RAWMEMCHR
+  gl_STRING_MODULE_INDICATOR([rawmemchr])
   gl_FUNC_READ_FILE
   gl_FUNC_REALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([realloc-posix])
@@ -334,7 +336,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/hmac-sha1.c
   lib/hmac.h
   lib/inet_ntop.c
-  lib/inet_ntop.h
   lib/intprops.h
   lib/lseek.c
   lib/malloc.c
@@ -354,6 +355,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf-args.h
   lib/printf-parse.c
   lib/printf-parse.h
+  lib/rawmemchr.c
+  lib/rawmemchr.valgrind
   lib/read-file.c
   lib/read-file.h
   lib/realloc.c
@@ -366,10 +369,12 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdarg.in.h
   lib/stdbool.in.h
   lib/stdint.in.h
+  lib/stdio-impl.h
   lib/stdio.in.h
   lib/stdlib.in.h
   lib/strcasecmp.c
   lib/strchrnul.c
+  lib/strchrnul.valgrind
   lib/strdup.c
   lib/string.in.h
   lib/strings.in.h
@@ -460,6 +465,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mktime.m4
   m4/netinet_in_h.m4
   m4/printf.m4
+  m4/rawmemchr.m4
   m4/read-file.m4
   m4/realloc.m4
   m4/setenv.m4
