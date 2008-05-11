@@ -1,5 +1,5 @@
 /* asn1.c --- Utilities to manipulate RFC 1510 ASN.1 types.
- * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -1379,4 +1379,19 @@ shishi_der2asn1_kdcreq (Shishi * handle, const char *der, size_t derlen)
     }
 
   return structure;
+}
+
+/**
+ * shishi_asn1_print:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @node: ASN.1 data that have field to extract.
+ * @fh: file descriptor to print to, e.g. stdout.
+ *
+ * Print ASN.1 structure in human readable form, typically for
+ * debugging purposes.
+ **/
+void
+shishi_asn1_print (Shishi * handle, Shishi_asn1 node, FILE * fh)
+{
+  asn1_print_structure (fh, node, "", ASN1_PRINT_NAME_TYPE_VALUE);
 }

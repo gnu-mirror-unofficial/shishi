@@ -608,10 +608,11 @@ typedef struct Shishi_key Shishi_key;
 typedef struct Shishi_keys Shishi_keys;
 typedef struct Shishi_safe Shishi_safe;
 typedef struct Shishi_priv Shishi_priv;
-#ifndef _SHISHI_HAS_LIBTASN1_H
-typedef struct node_asn_struct *ASN1_TYPE;
-#endif
+#ifdef LIBTASN1_H
 typedef ASN1_TYPE Shishi_asn1;
+#else
+typedef void *Shishi_asn1;
+#endif
 typedef struct Shishi_crypto Shishi_crypto;
 
 #define SHISHI_GENERALIZEDTIME_LENGTH 15
@@ -1668,11 +1669,14 @@ extern Shishi_asn1 shishi_asn1_encprivpart (Shishi * handle);
 extern int shishi_asn1_to_der (Shishi * handle, Shishi_asn1 node,
 			       char **der, size_t * len);
 extern int shishi_asn1_to_der_field (Shishi * handle, Shishi_asn1 node,
-				     const char *field, char **der, size_t * len);
+				     const char *field,
+				     char **der, size_t * len);
 
 extern Shishi_msgtype shishi_asn1_msgtype (Shishi * handle, Shishi_asn1 node);
 extern Shishi_msgtype shishi_der_msgtype (Shishi * handle,
 					  const char *der, size_t derlen);
+
+extern void shishi_asn1_print (Shishi * handle, Shishi_asn1 node, FILE * fh);
 
 extern Shishi_asn1 shishi_der2asn1 (Shishi * handle,
 				    const char *der, size_t derlen);

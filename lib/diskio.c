@@ -22,9 +22,6 @@
 
 /* XXX oh, please, rewrite this file. */
 
-#include <config.h>
-#include <libtasn1.h>
-#define _SHISHI_HAS_LIBTASN1_H 1
 #include "internal.h"
 #include "diskio.h"
 
@@ -128,7 +125,7 @@ _shishi_print_armored_data (Shishi * handle,
 {
   char *data = armor_asn1 (handle, asn1, asn1type, headers);
 
-  asn1_print_structure (fh, asn1, "", ASN1_PRINT_NAME_TYPE_VALUE);
+  shishi_asn1_print (handle, asn1, fh);
 
   fprintf (fh, "%s\n", data);
 

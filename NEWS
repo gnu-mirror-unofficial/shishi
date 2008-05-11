@@ -13,6 +13,13 @@ Reported by Graham Shaw <gdshaw@riscpkg.org> in
 Reported by Graham Shaw <gdshaw@riscpkg.org> in
 <http://permalink.gmane.org/gmane.comp.gnu.shishi.general/494>.
 
+** libshishi: add new function to debug print ASN.1 structures.
+shishi_asn1_print: ADD.
+
+** libshishi: Cleanup type declaration of Shishi_asn1.
+Now it is mapped to ASN1_TYPE if you included libtasn1.h, otherwise to
+'void*'.
+
 ** Translations files not stored directly in git to avoid merge conflicts.
 This allows us to avoid use of --no-location which makes the
 translation teams happier.
