@@ -46,7 +46,7 @@ shishi_tkts_default_ccache_guess (Shishi * handle)
     return xstrdup (envfile);
 
 #if HAVE_GETUID
-  return xasprintf("/tmp/krb5cc_%u", (unsigned long) getuid ());
+  return xasprintf("/tmp/krb5cc_%lu", (unsigned long) getuid ());
 #else
   return xasprintf("/tmp/krb5cc_0");
 #endif
@@ -171,7 +171,7 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
       shishi_tkt_ticket_set (tkt, ticket);
 
       {
-	char *cname[CCACHE_MAX_COMPONENTS + 1];
+	const char *cname[CCACHE_MAX_COMPONENTS + 1];
 	size_t i;
 
 	for (i = 0; i < cred.client.num_components
