@@ -20,6 +20,12 @@
  *
  */
 
+/* Normally internal.h pulls in config.h, but since internal.h also
+   pulls in shishi.h, and we need to pull in libtasn1.h before
+   shishi.h to get Shishi_asn1 definition correct, we need to pull in
+   config.h here to avoid libtasn1.h pulling in system header files
+   without having parsed config.h first. */
+#include <config.h>
 #include <libtasn1.h>
 #include "internal.h"
 #include "asn1.h"
