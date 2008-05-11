@@ -52,8 +52,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
   uint16_t file_format_version;
   size_t entrystartpos;
   uint16_t num_components;    /* sub 1 if version 0x501 */
-  char *principal;
-  size_t i, l;
+  size_t i;
   Shishi_key *key;
 
   if (VERBOSENOISE (handle))
