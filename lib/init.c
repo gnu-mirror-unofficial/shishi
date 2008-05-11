@@ -168,7 +168,7 @@ shishi_done (Shishi * handle)
 
       for (i= 0; i < handle->nrealminfos; i++)
 	{
-	  size_t j;
+	  /* XXX free each address */
 
 	  if (handle->realminfos[i].kdcaddresses)
 	    free (handle->realminfos[i].kdcaddresses);
