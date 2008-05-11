@@ -4,10 +4,6 @@ See the end for copying conditions.
 
 * Version 0.0.37 (unreleased)
 
-** Dist gdoc-error to avoid build failures when building modified sources.
-Reported by Graham Shaw <gdshaw@riscpkg.org> in
-<http://permalink.gmane.org/gmane.comp.gnu.shishi.general/497>.
-
 ** libshishi: When doing pre-authentication with a pre-seeded password,
 ** don't ask for a new password.
 Reported by Graham Shaw <gdshaw@riscpkg.org> in
@@ -23,6 +19,10 @@ Now it is mapped to ASN1_TYPE if you included libtasn1.h, otherwise to
 ** Translations files not stored directly in git to avoid merge conflicts.
 This allows us to avoid use of --no-location which makes the
 translation teams happier.
+
+** Dist gdoc-error to avoid build failures when building modified sources.
+Reported by Graham Shaw <gdshaw@riscpkg.org> in
+<http://permalink.gmane.org/gmane.comp.gnu.shishi.general/497>.
 
 ** Internal copy of libtasn1 updated to version 1.4.
 
