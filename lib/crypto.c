@@ -1,5 +1,5 @@
 /* crypto.c --- Crypto functions.
- * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -376,9 +376,9 @@ _shishi_simplified_encrypt (Shishi * handle,
       memcpy (*out + ctlen, hmac, hmaclen);
 
     done:
-      if (&privacykey)
+      if (privacykey)
 	shishi_key_done (privacykey);
-      if (&integritykey)
+      if (integritykey)
 	shishi_key_done (integritykey);
       if (hmac)
 	free (hmac);
