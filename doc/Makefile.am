@@ -218,6 +218,7 @@ gdoc_MANS += man/shishi_der2asn1_apreq.3
 gdoc_MANS += man/shishi_der2asn1_aprep.3
 gdoc_MANS += man/shishi_der2asn1_encapreppart.3
 gdoc_MANS += man/shishi_der2asn1_kdcreq.3
+gdoc_MANS += man/shishi_asn1_print.3
 gdoc_MANS += man/shishi_authenticator.3
 gdoc_MANS += man/shishi_authenticator_subkey.3
 gdoc_MANS += man/shishi_authenticator_print.3
