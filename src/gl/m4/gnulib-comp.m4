@@ -36,6 +36,8 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl2_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl2_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl2_LIBSOURCES]))
+  m4_pushdef([gl2_LIBSOURCES_LIST], [])
+  m4_pushdef([gl2_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='src/gl'
   gl_ERROR
@@ -46,6 +48,19 @@ AC_DEFUN([gl2_INIT],
   gl_LOCALE_H
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
+  m4_ifval(gl2_LIBSOURCES_LIST, [
+    m4_syscmd([test ! -d ]gl2_LIBSOURCES_DIR[ ||
+      for gl_file in ]gl2_LIBSOURCES_LIST[ ; do
+        if test ! -r ]gl2_LIBSOURCES_DIR[/$gl_file ; then
+          echo "missing file ]gl2_LIBSOURCES_DIR[/$gl_file" >&2
+          exit 1
+        fi
+      done])dnl
+      m4_if(m4_sysval, [0], [],
+        [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
+  ])
+  m4_popdef([gl2_LIBSOURCES_DIR])
+  m4_popdef([gl2_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
   m4_popdef([AC_LIBOBJ])
@@ -68,8 +83,23 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl2tests_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl2tests_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl2tests_LIBSOURCES]))
+  m4_pushdef([gl2tests_LIBSOURCES_LIST], [])
+  m4_pushdef([gl2tests_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='tests'
+  m4_ifval(gl2tests_LIBSOURCES_LIST, [
+    m4_syscmd([test ! -d ]gl2tests_LIBSOURCES_DIR[ ||
+      for gl_file in ]gl2tests_LIBSOURCES_LIST[ ; do
+        if test ! -r ]gl2tests_LIBSOURCES_DIR[/$gl_file ; then
+          echo "missing file ]gl2tests_LIBSOURCES_DIR[/$gl_file" >&2
+          exit 1
+        fi
+      done])dnl
+      m4_if(m4_sysval, [0], [],
+        [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
+  ])
+  m4_popdef([gl2tests_LIBSOURCES_DIR])
+  m4_popdef([gl2tests_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
   m4_popdef([AC_LIBOBJ])
@@ -96,13 +126,6 @@ AC_DEFUN([gl2_LIBOBJ], [
   gl2_LIBOBJS="$gl2_LIBOBJS $1.$ac_objext"
 ])
 
-# m4_foreach_w is provided by autoconf-2.59c and later.
-# This definition is to accommodate developers using versions
-# of autoconf older than that.
-m4_ifndef([m4_foreach_w],
-  [m4_define([m4_foreach_w],
-    [m4_foreach([$1], m4_split(m4_normalize([$2]), [ ]), [$3])])])
-
 # Like AC_REPLACE_FUNCS, except that the module name goes
 # into gl2_LIBOBJS instead of into LIBOBJS.
 AC_DEFUN([gl2_REPLACE_FUNCS], [
@@ -111,15 +134,14 @@ AC_DEFUN([gl2_REPLACE_FUNCS], [
 ])
 
 # Like AC_LIBSOURCES, except the directory where the source file is
-# expected is derived from the gnulib-tool parametrization,
+# expected is derived from the gnulib-tool parameterization,
 # and alloca is special cased (for the alloca-opt module).
 # We could also entirely rely on EXTRA_lib..._SOURCES.
 AC_DEFUN([gl2_LIBSOURCES], [
   m4_foreach([_gl_NAME], [$1], [
     m4_if(_gl_NAME, [alloca.c], [], [
-      m4_syscmd([test -r src/gl/]_gl_NAME[ || test ! -d src/gl])dnl
-      m4_if(m4_sysval, [0], [],
-        [AC_FATAL([missing src/gl/]_gl_NAME)])
+      m4_define([gl2_LIBSOURCES_DIR], [src/gl])
+      m4_append([gl2_LIBSOURCES_LIST], _gl_NAME, [ ])
     ])
   ])
 ])
@@ -131,13 +153,6 @@ AC_DEFUN([gl2tests_LIBOBJ], [
   gl2tests_LIBOBJS="$gl2tests_LIBOBJS $1.$ac_objext"
 ])
 
-# m4_foreach_w is provided by autoconf-2.59c and later.
-# This definition is to accommodate developers using versions
-# of autoconf older than that.
-m4_ifndef([m4_foreach_w],
-  [m4_define([m4_foreach_w],
-    [m4_foreach([$1], m4_split(m4_normalize([$2]), [ ]), [$3])])])
-
 # Like AC_REPLACE_FUNCS, except that the module name goes
 # into gl2tests_LIBOBJS instead of into LIBOBJS.
 AC_DEFUN([gl2tests_REPLACE_FUNCS], [
@@ -146,15 +161,14 @@ AC_DEFUN([gl2tests_REPLACE_FUNCS], [
 ])
 
 # Like AC_LIBSOURCES, except the directory where the source file is
-# expected is derived from the gnulib-tool parametrization,
+# expected is derived from the gnulib-tool parameterization,
 # and alloca is special cased (for the alloca-opt module).
 # We could also entirely rely on EXTRA_lib..._SOURCES.
 AC_DEFUN([gl2tests_LIBSOURCES], [
   m4_foreach([_gl_NAME], [$1], [
     m4_if(_gl_NAME, [alloca.c], [], [
-      m4_syscmd([test -r tests/]_gl_NAME[ || test ! -d tests])dnl
-      m4_if(m4_sysval, [0], [],
-        [AC_FATAL([missing tests/]_gl_NAME)])
+      m4_define([gl2tests_LIBSOURCES_DIR], [tests])
+      m4_append([gl2tests_LIBSOURCES_LIST], _gl_NAME, [ ])
     ])
   ])
 ])

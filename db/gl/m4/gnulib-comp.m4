@@ -36,10 +36,25 @@ AC_DEFUN([gl3_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl3_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl3_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl3_LIBSOURCES]))
+  m4_pushdef([gl3_LIBSOURCES_LIST], [])
+  m4_pushdef([gl3_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='db/gl'
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
+  m4_ifval(gl3_LIBSOURCES_LIST, [
+    m4_syscmd([test ! -d ]gl3_LIBSOURCES_DIR[ ||
+      for gl_file in ]gl3_LIBSOURCES_LIST[ ; do
+        if test ! -r ]gl3_LIBSOURCES_DIR[/$gl_file ; then
+          echo "missing file ]gl3_LIBSOURCES_DIR[/$gl_file" >&2
+          exit 1
+        fi
+      done])dnl
+      m4_if(m4_sysval, [0], [],
+        [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
+  ])
+  m4_popdef([gl3_LIBSOURCES_DIR])
+  m4_popdef([gl3_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
   m4_popdef([AC_LIBOBJ])
@@ -62,8 +77,23 @@ AC_DEFUN([gl3_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl3tests_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl3tests_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl3tests_LIBSOURCES]))
+  m4_pushdef([gl3tests_LIBSOURCES_LIST], [])
+  m4_pushdef([gl3tests_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='tests'
+  m4_ifval(gl3tests_LIBSOURCES_LIST, [
+    m4_syscmd([test ! -d ]gl3tests_LIBSOURCES_DIR[ ||
+      for gl_file in ]gl3tests_LIBSOURCES_LIST[ ; do
+        if test ! -r ]gl3tests_LIBSOURCES_DIR[/$gl_file ; then
+          echo "missing file ]gl3tests_LIBSOURCES_DIR[/$gl_file" >&2
+          exit 1
+        fi
+      done])dnl
+      m4_if(m4_sysval, [0], [],
+        [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
+  ])
+  m4_popdef([gl3tests_LIBSOURCES_DIR])
+  m4_popdef([gl3tests_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
   m4_popdef([AC_LIBOBJ])
@@ -90,13 +120,6 @@ AC_DEFUN([gl3_LIBOBJ], [
   gl3_LIBOBJS="$gl3_LIBOBJS $1.$ac_objext"
 ])
 
-# m4_foreach_w is provided by autoconf-2.59c and later.
-# This definition is to accommodate developers using versions
-# of autoconf older than that.
-m4_ifndef([m4_foreach_w],
-  [m4_define([m4_foreach_w],
-    [m4_foreach([$1], m4_split(m4_normalize([$2]), [ ]), [$3])])])
-
 # Like AC_REPLACE_FUNCS, except that the module name goes
 # into gl3_LIBOBJS instead of into LIBOBJS.
 AC_DEFUN([gl3_REPLACE_FUNCS], [
@@ -105,15 +128,14 @@ AC_DEFUN([gl3_REPLACE_FUNCS], [
 ])
 
 # Like AC_LIBSOURCES, except the directory where the source file is
-# expected is derived from the gnulib-tool parametrization,
+# expected is derived from the gnulib-tool parameterization,
 # and alloca is special cased (for the alloca-opt module).
 # We could also entirely rely on EXTRA_lib..._SOURCES.
 AC_DEFUN([gl3_LIBSOURCES], [
   m4_foreach([_gl_NAME], [$1], [
     m4_if(_gl_NAME, [alloca.c], [], [
-      m4_syscmd([test -r db/gl/]_gl_NAME[ || test ! -d db/gl])dnl
-      m4_if(m4_sysval, [0], [],
-        [AC_FATAL([missing db/gl/]_gl_NAME)])
+      m4_define([gl3_LIBSOURCES_DIR], [db/gl])
+      m4_append([gl3_LIBSOURCES_LIST], _gl_NAME, [ ])
     ])
   ])
 ])
@@ -125,13 +147,6 @@ AC_DEFUN([gl3tests_LIBOBJ], [
   gl3tests_LIBOBJS="$gl3tests_LIBOBJS $1.$ac_objext"
 ])
 
-# m4_foreach_w is provided by autoconf-2.59c and later.
-# This definition is to accommodate developers using versions
-# of autoconf older than that.
-m4_ifndef([m4_foreach_w],
-  [m4_define([m4_foreach_w],
-    [m4_foreach([$1], m4_split(m4_normalize([$2]), [ ]), [$3])])])
-
 # Like AC_REPLACE_FUNCS, except that the module name goes
 # into gl3tests_LIBOBJS instead of into LIBOBJS.
 AC_DEFUN([gl3tests_REPLACE_FUNCS], [
@@ -140,15 +155,14 @@ AC_DEFUN([gl3tests_REPLACE_FUNCS], [
 ])
 
 # Like AC_LIBSOURCES, except the directory where the source file is
-# expected is derived from the gnulib-tool parametrization,
+# expected is derived from the gnulib-tool parameterization,
 # and alloca is special cased (for the alloca-opt module).
 # We could also entirely rely on EXTRA_lib..._SOURCES.
 AC_DEFUN([gl3tests_LIBSOURCES], [
   m4_foreach([_gl_NAME], [$1], [
     m4_if(_gl_NAME, [alloca.c], [], [
-      m4_syscmd([test -r tests/]_gl_NAME[ || test ! -d tests])dnl
-      m4_if(m4_sysval, [0], [],
-        [AC_FATAL([missing tests/]_gl_NAME)])
+      m4_define([gl3tests_LIBSOURCES_DIR], [tests])
+      m4_append([gl3tests_LIBSOURCES_LIST], _gl_NAME, [ ])
     ])
   ])
 ])
