@@ -4,6 +4,11 @@ See the end for copying conditions.
 
 * Version 0.0.37 (unreleased)
 
+** libshishi: New ticketset hint flag SHISHI_TKTSHINTFLAGS_NON_INTERACTIVE.
+When this flag is passed to ticketset functions, it will never query
+the user for a password.  Inspired by discussion with Graham Shaw
+<gdshaw@riscpkg.org>.
+
 ** libshishi: When doing pre-authentication with a pre-seeded password,
 ** don't ask for a new password.
 Reported by Graham Shaw <gdshaw@riscpkg.org> in

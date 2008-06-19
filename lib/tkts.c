@@ -1197,6 +1197,9 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   if (tgt)
     return tgt;
 
+  if (hint->flags & SHISHI_TKTSHINTFLAGS_NON_INTERACTIVE)
+    return NULL;
+
  again:
   rc = shishi_as (tkts->handle, &as);
   if (rc == SHISHI_OK)
