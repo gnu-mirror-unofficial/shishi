@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2005, 2007 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2005, 2007, 2008 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -19,8 +19,7 @@
 # Floor, Boston, MA 02110-1301, USA.
 
 INCLUDES = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../lib
-LDADD = @LIBGCRYPT_LIBS@ @CRYPTO_LIBS@ @LIBTASN1_LIBS@ @LIBGNUTLS_LIBS@ \
-	../lib/libshishi.la ../gl/libfoo.la
+LDADD = ../gl/libgnu.la ../lib/libshishi.la @LTLIBINTL@
 
 noinst_PROGRAMS = client client-cksum client-safe client-priv \
 	server
