@@ -25,6 +25,7 @@
 
 #include <stddef.h>		/* size_t */
 #include <stdio.h>		/* FILE */
+#include <stdarg.h>		/* va_list */
 #include <time.h>		/* time_t */
 #include <shishi-int.h>		/* uint32_t */
 
@@ -1602,6 +1603,15 @@ extern int shishi_crypto_decrypt (Shishi_crypto * ctx,
 extern const char *shishi_check_version (const char *req_version);
 
 /* password.c */
+typedef int (*shishi_prompt_password_func) (Shishi * handle,
+					    char **s,
+					    const char *format,
+					    va_list ap);
+extern void
+shishi_prompt_password_callback_set (Shishi * handle,
+				     shishi_prompt_password_func cb);
+extern shishi_prompt_password_func
+shishi_prompt_password_callback_get (Shishi * handle);
 extern int
 shishi_prompt_password (Shishi * handle, char **s, const char *format, ...);
 

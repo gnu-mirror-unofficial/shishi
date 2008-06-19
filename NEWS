@@ -4,6 +4,15 @@ See the end for copying conditions.
 
 * Version 0.0.37 (unreleased)
 
+** libshishi: New functions to set a password prompt callback.
+You register the callback using shishi_prompt_password_callback_set
+and can retrieve the current callback using
+shishi_prompt_password_callback_get.  The callback function should
+follow the shishi_prompt_password_func function prototype.  The
+shishi_prompt_password function has been updated to call the
+callbacks, if registered.  Inspired by discussion with Graham Shaw
+<gdshaw@riscpkg.org>.
+
 ** libshishi: New ticketset hint flag SHISHI_TKTSHINTFLAGS_NON_INTERACTIVE.
 When this flag is passed to ticketset functions, it will never query
 the user for a password.  Inspired by discussion with Graham Shaw
@@ -32,6 +41,12 @@ Reported by Graham Shaw <gdshaw@riscpkg.org> in
 ** Internal copy of libtasn1 updated to version 1.4.
 
 ** Update gnulib files.
+
+** New APIs to deal with password queries.
+SHISHI_TKTSHINTFLAGS_NON_INTERACTIVE
+shishi_prompt_password_callback_set
+shishi_prompt_password_callback_get
+shishi_prompt_password_func
 
 * Version 0.0.36 (released 2008-02-14)
 

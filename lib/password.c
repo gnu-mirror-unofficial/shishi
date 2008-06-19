@@ -30,6 +30,19 @@
 # include <stringprep.h>
 #endif
 
+void
+shishi_prompt_password_callback_set (Shishi * handle,
+				     shishi_prompt_password_func cb)
+{
+  handle->prompt_passwd = cb;
+}
+
+shishi_prompt_password_func
+shishi_prompt_password_callback_get (Shishi * handle)
+{
+  return handle->prompt_passwd;
+}
+
 /**
  * shishi_prompt_password:
  * @handle: shishi handle as allocated by shishi_init().
@@ -49,6 +62,16 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
 {
   char *p;
   va_list ap;
+
+  if (handle->prompt_passwd)
+    {
+      int ret;
+      va_start (ap, format);
+      ret = handle->prompt_passwd (handle, s, format, ap);
+      va_end (ap);
+
+      return ret;
+    }
 
 #ifdef HAVE_LIBIDN
   if (VERBOSE (handle))

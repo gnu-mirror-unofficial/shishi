@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -26,8 +26,9 @@ AM_LDFLAGS = -no-install
 LDADD = @LTLIBINTL@ ../gl/libgnu.la @LTLIBTASN1@ @LTLIBGNUTLS@ \
 	../lib/libshishi.la
 
-check_PROGRAMS = authenticator crypto gztime priv safe \
-	ticketset crypto-ctx low-crypto rijndael key keytab ccache nonce
+check_PROGRAMS = authenticator crypto gztime priv safe ticketset	\
+	crypto-ctx low-crypto rijndael key keytab ccache nonce		\
+	passwdpromptcb
 TESTS = $(check_PROGRAMS)
 
 TESTS_ENVIRONMENT = \

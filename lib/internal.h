@@ -174,6 +174,7 @@ struct Shishi
   char *x509keyfile;
   char *stringprocess;
   Shishi_tkts *tkts;
+  shishi_prompt_password_func prompt_passwd;
 };
 
 #define TICKETLIFE (60*60*8)	/* Work day */
