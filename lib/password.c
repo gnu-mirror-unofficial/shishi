@@ -30,6 +30,25 @@
 # include <stringprep.h>
 #endif
 
+/**
+ * shishi_prompt_password_callback_set:
+ * @handle: shishi handle as allocated by shishi_init().
+ * @cb: function pointer to application password callback, a
+ *   %shishi_prompt_password_func type.
+ *
+ * Set a callback function that will be used by
+ * shishi_prompt_password() to query the user for a password.  The
+ * function pointer can be retrieved using
+ * shishi_prompt_password_callback_get().
+ *
+ * The @cb function should follow the %shishi_prompt_password_func prototype:
+ *
+ * int prompt_password (Shishi * @handle, char **@s,
+ * const char *@format, va_list @ap);
+ *
+ * If the function returns 0, the @s variable should contain a newly
+ * allocated string with the password read from the user.
+ **/
 void
 shishi_prompt_password_callback_set (Shishi * handle,
 				     shishi_prompt_password_func cb)
@@ -37,6 +56,13 @@ shishi_prompt_password_callback_set (Shishi * handle,
   handle->prompt_passwd = cb;
 }
 
+/**
+ * shishi_prompt_password_callback_get:
+ * @handle: shishi handle as allocated by shishi_init().
+ *
+ * Get the application password prompt function callback as set by
+ * shishi_prompt_password_callback_set().
+ **/
 shishi_prompt_password_func
 shishi_prompt_password_callback_get (Shishi * handle)
 {
