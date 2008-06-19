@@ -1,5 +1,5 @@
 /* server.c --- Sample server with authentication using Shishi.
- * Copyright (C) 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -97,7 +97,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
   Shishi_key *key;
   Shishi_ap *ap;
   Shishi_asn1 apreq;
-  char buf[BUFSIZ];
+  char *buf;
   int buflen;
   int rc;
 
@@ -152,24 +152,20 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
   if (verbose)
     shishi_authenticator_print (h, stderr, shishi_ap_authenticator (ap));
 
-  buflen = sizeof (buf);
-  rc = shishi_authenticator_cnamerealm_get (h, shishi_ap_authenticator (ap),
-					    buf, &buflen);
-  buf[buflen] = '\0';
-  printf ("Client name (from authenticator): %s\n", buf);
+  rc = shishi_authenticator_client (h, shishi_ap_authenticator (ap),
+				    &buf, &buflen);
+  printf ("Client name (from authenticator): %.*s\n", buflen, buf);
+  free (buf);
 
-  buflen = sizeof (buf);
-  rc = shishi_encticketpart_cnamerealm_get
-    (h, shishi_tkt_encticketpart (shishi_ap_tkt (ap)), buf, &buflen);
-  buf[buflen] = '\0';
-  printf ("Client name (from encticketpart): %s\n", buf);
+  rc = shishi_encticketpart_clientrealm
+    (h, shishi_tkt_encticketpart (shishi_ap_tkt (ap)), &buf, &buflen);
+  printf ("Client name (from encticketpart): %.*s\n", buflen, buf);
+  free (buf);
 
-  buflen = sizeof (buf);
-  rc =
-    shishi_ticket_snamerealm_get (h, shishi_tkt_ticket (shishi_ap_tkt (ap)),
-				  buf, &buflen);
-  buf[buflen] = '\0';
-  printf ("Server name (from ticket): %s\n", buf);
+  rc = shishi_ticket_server (h, shishi_tkt_ticket (shishi_ap_tkt (ap)),
+			     &buf, &buflen);
+  printf ("Server name (from ticket): %.*s\n", buflen, buf);
+  free (buf);
 
   /* User is authenticated. */
 
