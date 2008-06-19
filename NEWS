@@ -30,6 +30,10 @@ shishi_asn1_print: ADD.
 Now it is mapped to ASN1_TYPE if you included libtasn1.h, otherwise to
 'void*'.
 
+** Update examples for new API.
+Now the examples are also built by default, so we notice any build
+failures for them.
+
 ** Translations files not stored directly in git to avoid merge conflicts.
 This allows us to avoid use of --no-location which makes the
 translation teams happier.
