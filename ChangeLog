@@ -1,3 +1,270 @@
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.37.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix typo.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/shishi-docs.sgml: Fix.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Typos.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h.in: Fix typos and remove obsolete stuff.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* lib/password.c: Doc fix.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, db/gl/m4/gnulib-cache.m4, gl/Makefile.am,
+	gl/m4/gnulib-cache.m4, gl/m4/signal_h.m4, gl/signal.in.h,
+	src/gl/m4/gnulib-cache.m4: Update gnulib files.
+
+2008-06-19  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, examples/Makefile.am: Fix building examples.
+
+2008-06-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-06-19  Simon Josefsson <simon@josefsson.org>
+
+	* examples/server.c: Use new API.
+
+2008-06-19  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Generated.
+
+2008-06-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/password.c: Doc fix.
+
+2008-06-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, lib/internal.h, lib/password.c, lib/shishi.h.in,
+	tests/Makefile.am, tests/passwdpromptcb.c: New functions to set a
+	password prompt callback.  You register the callback using
+	shishi_prompt_password_callback_set and can retrieve the current
+	callback using shishi_prompt_password_callback_get.  The callback
+	function should follow the shishi_prompt_password_func function
+	prototype.  The shishi_prompt_password function has been updated to
+	call the callbacks, if registered.  Inspired by discussion with
+	Graham Shaw <gdshaw@riscpkg.org>.
+
+2008-06-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, THANKS, lib/shishi.h.in, lib/tkts.c: libshishi: New
+	ticketset hint flag SHISHI_TKTSHINTFLAGS_NON_INTERACTIVE.  When this
+	flag is passed to ticketset functions, it will never query the user
+	for a password.  Inspired by discussion with Graham Shaw
+	<gdshaw@riscpkg.org>.
+
+2008-06-19  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, doc/gendocs_template, gl/Makefile.am,
+	gl/m4/stdio_h.m4, gl/override/doc/gendocs_template.diff,
+	gl/stdio.in.h: Update gnulib files.
+
+2008-06-02  Simon Josefsson <simon@josefsson.org>
+
+	* gl/stdbool.in.h, gl/stdio-impl.h, gl/vasnprintf.c, gl/xalloc.h,
+	maint.mk: Update gnulib files.
+
+2008-05-20  Simon Josefsson <simon@josefsson.org>
+
+	* db/gl/m4/gnulib-common.m4, db/gl/m4/gnulib-comp.m4, gl/base64.c,
+	gl/base64.h, gl/m4/gnulib-common.m4, gl/m4/gnulib-comp.m4,
+	gl/vasnprintf.c, gl/xalloc.h, gl/xmalloc.c,
+	src/gl/m4/gnulib-common.m4, src/gl/m4/gnulib-comp.m4: Update gnulib
+	files.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Fix warnings.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/keytab.c: Fix warnings.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Fix warnings.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tktccache.c: Fix warnings.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kerberos5.c: Regenerated.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Pull in config.h.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Generated.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Drop obsolete _SHISHI_HAS_LIBTASN1_H.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Reorder.
+
+2008-05-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, lib/asn1.c, lib/diskio.c, lib/shishi.h.in: Cleanup
+	libtasn1.h dependency in diskio.c.
+
+2008-05-05  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Regenerated.
+
+2008-05-05  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Simplify man page creating to allow easier diff
+	review.
+
+2008-05-05  Simon Josefsson <simon@josefsson.org>
+
+	* .clcopying, .cvscopying, Makefile.am: Dist more files.  Rename
+	.cvscopying to .clcopying.
+
+2008-05-05  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/gendocs.sh, gl/Makefile.am, gl/arpa_inet.in.h,
+	gl/fseeko.c, gl/getaddrinfo.c, gl/getaddrinfo.h, gl/inet_ntop.c,
+	gl/inet_ntop.h, gl/m4/arpa_inet_h.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/inet_ntop.m4, gl/m4/rawmemchr.m4, gl/m4/stdlib_h.m4,
+	gl/m4/string_h.m4, gl/m4/sys_socket_h.m4, gl/rawmemchr.c,
+	gl/rawmemchr.valgrind, gl/stdio-impl.h, gl/stdlib.in.h,
+	gl/strchrnul.c, gl/strchrnul.valgrind, gl/string.in.h,
+	gl/sys_socket.in.h: Update gnulib files.
+
+2008-04-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-04-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-04-24  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Dist gdoc-error.  Reported by Graham Shaw
+	<gdshaw@riscpkg.org>.
+
+2008-04-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-04-23  Simon Josefsson <simon@josefsson.org>
+
+	* .gitignore: Add.
+
+2008-04-23  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, NEWS, cfg.mk, po/Makevars, po/fr.po, po/fr.po.in,
+	po/pl.po, po/pl.po.in, po/vi.po, po/vi.po.in: Avoid *.po merge
+	conflicts and --no-location.
+
+2008-04-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-04-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, asn1/Makefile.am, asn1/coding.c, asn1/decoding.c,
+	asn1/element.c, asn1/int.h, asn1/mem.h: Update to libtasn1 v1.4.
+
+2008-04-23  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, build-aux/gnupload, db/gl/m4/gnulib-common.m4,
+	db/gl/m4/gnulib-comp.m4, gl/Makefile.am, gl/arpa_inet.in.h,
+	gl/fseeko.c, gl/gc-gnulib.c, gl/m4/arpa_inet_h.m4,
+	gl/m4/extensions.m4, gl/m4/gc-random.m4, gl/m4/gnulib-common.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/include_next.m4, gl/m4/netinet_in_h.m4,
+	gl/m4/printf.m4, gl/m4/snprintf.m4, gl/m4/stdint.m4,
+	gl/m4/stdio_h.m4, gl/m4/strndup.m4, gl/m4/sys_select_h.m4,
+	gl/m4/sys_socket_h.m4, gl/m4/sys_stat_h.m4, gl/sys_socket.in.h,
+	gl/sys_stat.in.h, gl/vasnprintf.c, gl/wchar.in.h,
+	src/gl/m4/getopt.m4, src/gl/m4/gnulib-common.m4,
+	src/gl/m4/gnulib-comp.m4, src/gl/m4/strerror.m4: Update gnulib
+	files.
+
+2008-04-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: (do_preauth): Don't ask for password if we already have it.
+	Reported by Graham Shaw <gdshaw@riscpkg.org> in
+	<http://permalink.gmane.org/gmane.comp.gnu.shishi.general/494>.
+
+2008-04-02  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/Makefile.am: Drop defines.h, not used any more.
+
+2008-04-01  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/gc-libgcrypt.c, gl/gc.h, gl/getdelim.c,
+	gl/m4/gnulib-comp.m4, gl/m4/stdlib_h.m4, gl/m4/vasnprintf.m4,
+	gl/snprintf.c, gl/stdarg.in.h, gl/stdlib.in.h, gl/vasnprintf.c,
+	gl/vasprintf.c, gl/wchar.in.h, gl/xvasprintf.c: Update gnulib files.
+
+2008-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk: Fix config.rpath hack.
+
+2008-03-25  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, build-aux/GNUmakefile, build-aux/maint.mk, cfg.mk,
+	db/gl/gnulib.mk, db/gl/m4/gnulib-cache.m4, db/gl/m4/gnulib-comp.m4,
+	gl/Makefile.am, gl/m4/absolute-header.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/include_next.m4, gl/m4/lib-link.m4,
+	gl/m4/stdarg.m4, maint-cfg.mk, maint.mk, src/gl/gnulib.mk,
+	src/gl/m4/gnulib-cache.m4, src/gl/m4/gnulib-comp.m4: Update gnulib
+	files.
+
+2008-03-10  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/gendocs.sh, gl/alloca.in.h, gl/gc-gnulib.c,
+	gl/getaddrinfo.c, gl/getdelim.c, gl/m4/fseeko.m4, gl/xsize.h,
+	src/gl/getopt.c: Update gnulib files.
+
+2008-02-25  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2008-02-25  Simon Josefsson <simon@josefsson.org>
+
+	* asn1/coding.c, asn1/decoding.c, asn1/defines.h, asn1/int.h,
+	asn1/libtasn1.h, asn1/parser_aux.c, asn1/structure.c: Update
+	libtasn1 version.
+
+2008-02-25  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/environ.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/setenv.m4, gl/m4/time_r.m4, gl/m4/unistd_h.m4, gl/setenv.c,
+	gl/unistd.in.h, gl/unsetenv.c: Update gnulib files.
+
+2008-02-14  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2008-02-14  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.36.
