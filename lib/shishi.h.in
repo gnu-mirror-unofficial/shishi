@@ -896,7 +896,7 @@ extern int shishi_ticket_save (Shishi * handle, FILE * fh,
 extern int shishi_ticket_print (Shishi * handle, FILE * fh,
 				Shishi_asn1 ticket);
 extern int shishi_kdcreq_print (Shishi * handle, FILE * fh,
-				Shishi_asn1 asreq);
+				Shishi_asn1 kdcreq);
 extern int shishi_kdcrep_print (Shishi * handle, FILE * fh,
 				Shishi_asn1 kdcrep);
 extern int shishi_kdc_print (Shishi * handle, FILE * fh, Shishi_asn1 asreq,
