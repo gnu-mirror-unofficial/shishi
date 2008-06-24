@@ -34,7 +34,7 @@
  * shishi_prompt_password_callback_set:
  * @handle: shishi handle as allocated by shishi_init().
  * @cb: function pointer to application password callback, a
- *   %shishi_prompt_password_func type.
+ *   #shishi_prompt_password_func type.
  *
  * Set a callback function that will be used by
  * shishi_prompt_password() to query the user for a password.  The
@@ -62,6 +62,9 @@ shishi_prompt_password_callback_set (Shishi * handle,
  *
  * Get the application password prompt function callback as set by
  * shishi_prompt_password_callback_set().
+ *
+ * Returns: Returns the callback, a #shishi_prompt_password_func type,
+ *   or %NULL.
  **/
 shishi_prompt_password_func
 shishi_prompt_password_callback_get (Shishi * handle)
