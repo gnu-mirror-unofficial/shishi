@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.37 (unreleased)
+* Version 0.0.37 (released 2008-06-24)
 
 ** libshishi: New functions to set a password prompt callback.
 You register the callback using shishi_prompt_password_callback_set
