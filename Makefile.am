@@ -86,9 +86,11 @@ release:
 	git-tag -u b565716f! -m $(VERSION) $(tag)
 	cd doc && ../build-aux/gendocs.sh --html "--css-include=texinfo.css" \
 		-o ../$(htmldir)/manual/ $(PACKAGE) "Shishi"
-	build-aux/gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
 	cp -v $(distdir).tar.gz $(distdir).tar.gz.sig $(htmldir)/releases/
 	cp -v doc/reference/html/*.html doc/reference/html/*.png doc/reference/html/*.devhelp doc/reference/html/*.css $(htmldir)/reference/
+	git-push --tags
+	git-push
+	build-aux/gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
 	cd $(htmldir) && \
 		cvs add -kb releases/$(distdir).tar.gz \
 			releases/$(distdir).tar.gz.sig && \
