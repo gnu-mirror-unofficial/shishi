@@ -898,13 +898,13 @@ extern int shishi_ticket_print (Shishi * handle, FILE * fh,
 extern int shishi_kdcreq_print (Shishi * handle, FILE * fh,
 				Shishi_asn1 asreq);
 extern int shishi_kdcrep_print (Shishi * handle, FILE * fh,
-				Shishi_asn1 asreq);
+				Shishi_asn1 kdcrep);
 extern int shishi_kdc_print (Shishi * handle, FILE * fh, Shishi_asn1 asreq,
 			     Shishi_asn1 asrep, Shishi_asn1 encasreppart);
 extern int shishi_kdcreq_parse (Shishi * handle, FILE * fh,
-				Shishi_asn1 * asreq);
+				Shishi_asn1 * kdcreq);
 extern int shishi_kdcrep_parse (Shishi * handle, FILE * fh,
-				Shishi_asn1 * asrep);
+				Shishi_asn1 * kdcrep);
 extern int shishi_ticket_parse (Shishi * handle, FILE * fh,
 				Shishi_asn1 * ticket);
 extern int shishi_ticket_read (Shishi * handle, FILE * fh,
