@@ -10,40 +10,49 @@
     <title>Shishi API Reference Manual</title>
 
     <para>
-Shishi is a (still incomplete) implementation of the RFC 1510 and RFC
-1510bis network authentication system.  RFC 1510 can be used to
-authenticate users in distributed systems.
+Shishi is an implementation of the Kerberos 5 network authentication
+system, as specified in RFC 4120.  Shishi can be used to authenticate
+users in distributed systems.
     </para>
 
     <para>
 Shishi contains a library ('libshishi') that can be used by
-application developers to add support for RFC 1510.  Shishi contains a
-command line utility ('shishi') that is used by users to interface
-with the library, to acquire and manage tickets (and more).  Included
-are also a TELNET client and server (based on GNU InetUtils) for
-remote network login, and a PAM module for host security.  Of course,
-a manual documenting user aspects as well as the programming API is
-included.
+application developers to add support for Kerberos 5.  Shishi contains
+a command line utility ('shishi') that is used by users to acquire and
+manage tickets (and more).  The server side, a Key Distribution
+Center, is implemented by 'shishid'.  Of course, a manual documenting
+usage aspects as well as the programming API is included.
     </para>
 
     <para>
-Shishi currently supports AS/TGS exchanges for acquiring tickets, and
-the AP exchange for performing client and server authentication.
+Shishi currently supports AS/TGS exchanges for acquiring tickets,
+pre-authentication, the AP exchange for performing client and server
+authentication, and SAFE/PRIV for integrity/privacy protected
+application data exchanges.
+    </para>
+
+    <para>
 Shishi is internationalized; error and status messages can be
-translated into the users' language; username and passwords can be
+translated into the users' language; user name and passwords can be
 converted into any available character set (normally including
-ISO-8859-1 and UTF-8) and be processed using an experimental
-Stringprep profile.  The des-cbc-md4, des-cbc-md5, des3-cbc-sha1-kd,
-aes128-cts-hmac-sha1-96, and aes256-cts-hmac-sha1-96 encryption types,
-and the rsa-md4-des, rsa-md5-des, hmac-sha1-des3-kd,
-hmac-sha1-96-aes128, hmac-sha1-96-aes256 checksum types are supported.
+ISO-8859-1 and UTF-8) and also be processed using an experimental
+Stringprep profile.
     </para>
 
     <para>
-The internal source code layout of Shishi is illustrated in <xref
-linkend="components"/>.  It is primarily intended for Shishi
-developers, but may assist in getting a in-depth understanding of the
-API.
+Most, if not all, of the widely used encryption and checksum types are
+supported, such as 3DES, AES, ARCFOUR and HMAC-SHA1.
+    </para>
+
+    <para>
+Shishi is developed for the GNU/Linux system, but runs on over 20
+platforms including most major Unix platforms and Windows, and many
+kind of devices including iPAQ handhelds and S/390 mainframes.
+    </para>
+
+    <para>
+Shishi is free software licensed under the GNU General Public License
+version 3.0.
     </para>
 
     <figure id="components">
