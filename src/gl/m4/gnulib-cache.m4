@@ -19,7 +19,13 @@
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
-gl_MODULES([error getopt locale progname version-etc])
+gl_MODULES([
+  error
+  getopt
+  locale
+  progname
+  version-etc
+])
 gl_AVOID([extensions gettext gettext-h include_next intprops stdarg string unistd])
 gl_SOURCE_BASE([src/gl])
 gl_M4_BASE([src/gl/m4])

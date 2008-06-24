@@ -19,7 +19,54 @@
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([gl/override])
-gl_MODULES([arpa_inet base64 crc crypto/arcfour crypto/gc-des crypto/gc-hmac-md5 crypto/gc-hmac-sha1 crypto/gc-md4 crypto/gc-md5 crypto/gc-pbkdf2-sha1 crypto/gc-random fdl gendocs getaddrinfo getdate getline getpass getsubopt gnupload gpl-3.0 maintainer-makefile minmax netinet_in read-file signal socklen stdint strcase strdup strndup strtok_r strverscmp sys_select sys_socket sys_stat sys_time time timegm unistd vasnprintf vasprintf xalloc xgetdomainname xgethostname xstrndup xvasprintf])
+gl_MODULES([
+  arpa_inet
+  base64
+  crc
+  crypto/arcfour
+  crypto/gc-des
+  crypto/gc-hmac-md5
+  crypto/gc-hmac-sha1
+  crypto/gc-md4
+  crypto/gc-md5
+  crypto/gc-pbkdf2-sha1
+  crypto/gc-random
+  fdl
+  gendocs
+  getaddrinfo
+  getdate
+  getline
+  getpass
+  getsubopt
+  gnupload
+  gpl-3.0
+  maintainer-makefile
+  minmax
+  netinet_in
+  read-file
+  signal
+  socklen
+  stdint
+  strcase
+  strdup
+  strndup
+  strtok_r
+  strverscmp
+  sys_select
+  sys_socket
+  sys_stat
+  sys_time
+  time
+  timegm
+  unistd
+  vasnprintf
+  vasprintf
+  xalloc
+  xgetdomainname
+  xgethostname
+  xstrndup
+  xvasprintf
+])
 gl_AVOID([xalloc-die])
 gl_SOURCE_BASE([gl])
 gl_M4_BASE([gl/m4])

@@ -19,7 +19,9 @@
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
-gl_MODULES([areadlink])
+gl_MODULES([
+  areadlink
+])
 gl_AVOID([absolute-header include_next link-warning malloc-posix ssize_t stdlib unistd])
 gl_SOURCE_BASE([db/gl])
 gl_M4_BASE([db/gl/m4])
