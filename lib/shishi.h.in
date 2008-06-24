@@ -895,16 +895,16 @@ extern int shishi_ticket_save (Shishi * handle, FILE * fh,
 			       Shishi_asn1 ticket);
 extern int shishi_ticket_print (Shishi * handle, FILE * fh,
 				Shishi_asn1 ticket);
-extern int shishi_kdc_req_print (Shishi * handle, FILE * fh,
-				 Shishi_asn1 asreq);
-extern int shishi_kdc_rep_print (Shishi * handle, FILE * fh,
-				 Shishi_asn1 asreq);
+extern int shishi_kdcreq_print (Shishi * handle, FILE * fh,
+				Shishi_asn1 asreq);
+extern int shishi_kdcrep_print (Shishi * handle, FILE * fh,
+				Shishi_asn1 asreq);
 extern int shishi_kdc_print (Shishi * handle, FILE * fh, Shishi_asn1 asreq,
 			     Shishi_asn1 asrep, Shishi_asn1 encasreppart);
-extern int shishi_kdc_req_parse (Shishi * handle, FILE * fh,
-				 Shishi_asn1 * asreq);
-extern int shishi_kdc_rep_parse (Shishi * handle, FILE * fh,
-				 Shishi_asn1 * asrep);
+extern int shishi_kdcreq_parse (Shishi * handle, FILE * fh,
+				Shishi_asn1 * asreq);
+extern int shishi_kdcrep_parse (Shishi * handle, FILE * fh,
+				Shishi_asn1 * asrep);
 extern int shishi_ticket_parse (Shishi * handle, FILE * fh,
 				Shishi_asn1 * ticket);
 extern int shishi_ticket_read (Shishi * handle, FILE * fh,
@@ -1040,9 +1040,6 @@ extern void shishi_as_rep_set (Shishi_as * as, Shishi_asn1 asrep);
 extern int shishi_as_rep_build (Shishi_as * as, Shishi_key * key);
 extern int shishi_as_rep_der (Shishi_as * as, char **out, size_t * outlen);
 extern int shishi_as_rep_der_set (Shishi_as * as, char *der, size_t derlen);
-extern Shishi_asn1 shishi_as_encasreppart (Shishi_as * as);
-extern void shishi_as_encasreppart_set (Shishi_as * as,
-					Shishi_asn1 encasreppart);
 extern Shishi_asn1 shishi_as_krberror (Shishi_as * as);
 extern int shishi_as_krberror_der (Shishi_as * as, char **out,
 				   size_t * outlen);
