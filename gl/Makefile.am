@@ -85,6 +85,12 @@ libgnu_la_SOURCES += base64.h base64.c
 
 ## end   gnulib module base64
 
+## begin gnulib module c-ctype
+
+libgnu_la_SOURCES += c-ctype.h c-ctype.c
+
+## end   gnulib module c-ctype
+
 ## begin gnulib module crc
 
 

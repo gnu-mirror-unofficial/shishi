@@ -1,8 +1,8 @@
 %{
 /* Parse a string into an internal time stamp.
 
-   Copyright (C) 1999, 2000, 2002, 2003, 2004, 2005, 2006, 2007 Free Software
-   Foundation, Inc.
+   Copyright (C) 1999, 2000, 2002, 2003, 2004, 2005, 2006, 2007, 2008
+   Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@
 # undef static
 #endif
 
-#include <ctype.h>
+#include <c-ctype.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -246,6 +246,31 @@ digits_to_date_time (parser_control *pc, textint text_int)
     }
 }
 
+/* Increment PC->rel by FACTOR * REL (FACTOR is 1 or -1).  */
+static void
+apply_relative_time (parser_control *pc, relative_time rel, int factor)
+{
+  pc->rel.ns += factor * rel.ns;
+  pc->rel.seconds += factor * rel.seconds;
+  pc->rel.minutes += factor * rel.minutes;
+  pc->rel.hour += factor * rel.hour;
+  pc->rel.day += factor * rel.day;
+  pc->rel.month += factor * rel.month;
+  pc->rel.year += factor * rel.year;
+  pc->rels_seen = true;
+}
+
+/* Set PC-> hour, minutes, seconds and nanoseconds members from arguments.  */
+static void
+set_hhmmss (parser_control *pc, long int hour, long int minutes,
+	    time_t sec, long int nsec)
+{
+  pc->hour = hour;
+  pc->minutes = minutes;
+  pc->seconds.tv_sec = sec;
+  pc->seconds.tv_nsec = nsec;
+}
+
 %}
 
 /* We want a reentrant parser, even if the TZ manipulation and the calls to
@@ -313,7 +338,6 @@ item:
   | day
       { pc->days_seen++; }
   | rel
-      { pc->rels_seen = true; }
   | number
   | hybrid
   ;
@@ -321,42 +345,29 @@ item:
 time:
     tUNUMBER tMERIDIAN
       {
-	pc->hour = $1.value;
-	pc->minutes = 0;
-	pc->seconds.tv_sec = 0;
-	pc->seconds.tv_nsec = 0;
+	set_hhmmss (pc, $1.value, 0, 0, 0);
 	pc->meridian = $2;
       }
   | tUNUMBER ':' tUNUMBER o_merid
       {
-	pc->hour = $1.value;
-	pc->minutes = $3.value;
-	pc->seconds.tv_sec = 0;
-	pc->seconds.tv_nsec = 0;
+	set_hhmmss (pc, $1.value, $3.value, 0, 0);
 	pc->meridian = $4;
       }
   | tUNUMBER ':' tUNUMBER tSNUMBER o_colon_minutes
       {
-	pc->hour = $1.value;
-	pc->minutes = $3.value;
-	pc->seconds.tv_sec = 0;
-	pc->seconds.tv_nsec = 0;
+	set_hhmmss (pc, $1.value, $3.value, 0, 0);
 	pc->meridian = MER24;
 	pc->zones_seen++;
 	pc->time_zone = time_zone_hhmm ($4, $5);
       }
   | tUNUMBER ':' tUNUMBER ':' unsigned_seconds o_merid
       {
-	pc->hour = $1.value;
-	pc->minutes = $3.value;
-	pc->seconds = $5;
+	set_hhmmss (pc, $1.value, $3.value, $5.tv_sec, $5.tv_nsec);
 	pc->meridian = $6;
       }
   | tUNUMBER ':' tUNUMBER ':' unsigned_seconds tSNUMBER o_colon_minutes
       {
-	pc->hour = $1.value;
-	pc->minutes = $3.value;
-	pc->seconds = $5;
+	set_hhmmss (pc, $1.value, $3.value, $5.tv_sec, $5.tv_nsec);
 	pc->meridian = MER24;
 	pc->zones_seen++;
 	pc->time_zone = time_zone_hhmm ($6, $7);
@@ -381,14 +392,7 @@ zone:
       { pc->time_zone = $1; }
   | tZONE relunit_snumber
       { pc->time_zone = $1;
-	pc->rel.ns += $2.ns;
-	pc->rel.seconds += $2.seconds;
-	pc->rel.minutes += $2.minutes;
-	pc->rel.hour += $2.hour;
-	pc->rel.day += $2.day;
-	pc->rel.month += $2.month;
-	pc->rel.year += $2.year;
-        pc->rels_seen = true; }
+	apply_relative_time (pc, $2, 1); }
   | tZONE tSNUMBER o_colon_minutes
       { pc->time_zone = $1 + time_zone_hhmm ($2, $3); }
   | tDAYZONE
@@ -495,25 +499,9 @@ date:
 
 rel:
     relunit tAGO
-      {
-	pc->rel.ns -= $1.ns;
-	pc->rel.seconds -= $1.seconds;
-	pc->rel.minutes -= $1.minutes;
-	pc->rel.hour -= $1.hour;
-	pc->rel.day -= $1.day;
-	pc->rel.month -= $1.month;
-	pc->rel.year -= $1.year;
-      }
+      { apply_relative_time (pc, $1, -1); }
   | relunit
-      {
-	pc->rel.ns += $1.ns;
-	pc->rel.seconds += $1.seconds;
-	pc->rel.minutes += $1.minutes;
-	pc->rel.hour += $1.hour;
-	pc->rel.day += $1.day;
-	pc->rel.month += $1.month;
-	pc->rel.year += $1.year;
-      }
+      { apply_relative_time (pc, $1, 1); }
   ;
 
 relunit:
@@ -600,14 +588,7 @@ hybrid:
 	/* Hybrid all-digit and relative offset, so that we accept e.g.,
 	   "YYYYMMDD +N days" as well as "YYYYMMDD N days".  */
 	digits_to_date_time (pc, $1);
-	pc->rel.ns += $2.ns;
-	pc->rel.seconds += $2.seconds;
-	pc->rel.minutes += $2.minutes;
-	pc->rel.hour += $2.hour;
-	pc->rel.day += $2.day;
-	pc->rel.month += $2.month;
-	pc->rel.year += $2.year;
-	pc->rels_seen = true;
+	apply_relative_time (pc, $2, 1);
       }
   ;
 
@@ -919,7 +900,7 @@ lookup_word (parser_control const *pc, char *word)
   for (p = word; *p; p++)
     {
       unsigned char ch = *p;
-      *p = toupper (ch);
+      *p = c_toupper (ch);
     }
 
   for (tp = meridian_table; tp->name; tp++)
@@ -984,7 +965,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 
   for (;;)
     {
-      while (c = *pc->input, isspace (c))
+      while (c = *pc->input, c_isspace (c))
 	pc->input++;
 
       if (ISDIGIT (c) || c == '-' || c == '+')
@@ -995,7 +976,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 	  if (c == '-' || c == '+')
 	    {
 	      sign = c == '-' ? -1 : 1;
-	      while (c = *++pc->input, isspace (c))
+	      while (c = *++pc->input, c_isspace (c))
 		continue;
 	      if (! ISDIGIT (c))
 		/* skip the '-' sign */
@@ -1099,7 +1080,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 	    }
 	}
 
-      if (isalpha (c))
+      if (c_isalpha (c))
 	{
 	  char buff[20];
 	  char *p = buff;
@@ -1111,7 +1092,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 		*p++ = c;
 	      c = *++pc->input;
 	    }
-	  while (isalpha (c) || c == '.');
+	  while (c_isalpha (c) || c == '.');
 
 	  *p = '\0';
 	  tp = lookup_word (pc, buff);
@@ -1224,7 +1205,7 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
   if (! tmp)
     return false;
 
-  while (c = *p, isspace (c))
+  while (c = *p, c_isspace (c))
     p++;
 
   if (strncmp (p, "TZ=\"", 4) == 0)
@@ -1436,25 +1417,6 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
 	    goto fail;
 	}
 
-      if (pc.zones_seen)
-	{
-	  long int delta = pc.time_zone * 60;
-	  time_t t1;
-#ifdef HAVE_TM_GMTOFF
-	  delta -= tm.tm_gmtoff;
-#else
-	  time_t t = Start;
-	  struct tm const *gmt = gmtime (&t);
-	  if (! gmt)
-	    goto fail;
-	  delta -= tm_diff (&tm, gmt);
-#endif
-	  t1 = Start - delta;
-	  if ((Start < t1) != (delta < 0))
-	    goto fail;	/* time_t overflow */
-	  Start = t1;
-	}
-
       /* Add relative date.  */
       if (pc.rel.year | pc.rel.month | pc.rel.day)
 	{
@@ -1475,6 +1437,27 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
 	  Start = mktime (&tm);
 	  if (Start == (time_t) -1)
 	    goto fail;
+	}
+
+      /* The only "output" of this if-block is an updated Start value,
+	 so this block must follow others that clobber Start.  */
+      if (pc.zones_seen)
+	{
+	  long int delta = pc.time_zone * 60;
+	  time_t t1;
+#ifdef HAVE_TM_GMTOFF
+	  delta -= tm.tm_gmtoff;
+#else
+	  time_t t = Start;
+	  struct tm const *gmt = gmtime (&t);
+	  if (! gmt)
+	    goto fail;
+	  delta -= tm_diff (&tm, gmt);
+#endif
+	  t1 = Start - delta;
+	  if ((Start < t1) != (delta < 0))
+	    goto fail;	/* time_t overflow */
+	  Start = t1;
 	}
 
       /* Add relative hours, minutes, and seconds.  On hosts that support

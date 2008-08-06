@@ -43,10 +43,10 @@ AC_DEFUN([gl3_INIT],
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
   m4_ifval(gl3_LIBSOURCES_LIST, [
-    m4_syscmd([test ! -d ]gl3_LIBSOURCES_DIR[ ||
+    m4_syscmd([test ! -d ]m4_defn([gl3_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl3_LIBSOURCES_LIST[ ; do
-        if test ! -r ]gl3_LIBSOURCES_DIR[/$gl_file ; then
-          echo "missing file ]gl3_LIBSOURCES_DIR[/$gl_file" >&2
+        if test ! -r ]m4_defn([gl3_LIBSOURCES_DIR])[/$gl_file ; then
+          echo "missing file ]m4_defn([gl3_LIBSOURCES_DIR])[/$gl_file" >&2
           exit 1
         fi
       done])dnl
@@ -82,10 +82,10 @@ AC_DEFUN([gl3_INIT],
   gl_COMMON
   gl_source_base='tests'
   m4_ifval(gl3tests_LIBSOURCES_LIST, [
-    m4_syscmd([test ! -d ]gl3tests_LIBSOURCES_DIR[ ||
+    m4_syscmd([test ! -d ]m4_defn([gl3tests_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl3tests_LIBSOURCES_LIST[ ; do
-        if test ! -r ]gl3tests_LIBSOURCES_DIR[/$gl_file ; then
-          echo "missing file ]gl3tests_LIBSOURCES_DIR[/$gl_file" >&2
+        if test ! -r ]m4_defn([gl3tests_LIBSOURCES_DIR])[/$gl_file ; then
+          echo "missing file ]m4_defn([gl3tests_LIBSOURCES_DIR])[/$gl_file" >&2
           exit 1
         fi
       done])dnl

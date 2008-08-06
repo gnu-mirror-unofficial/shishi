@@ -49,10 +49,10 @@ AC_DEFUN([gl2_INIT],
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
   m4_ifval(gl2_LIBSOURCES_LIST, [
-    m4_syscmd([test ! -d ]gl2_LIBSOURCES_DIR[ ||
+    m4_syscmd([test ! -d ]m4_defn([gl2_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl2_LIBSOURCES_LIST[ ; do
-        if test ! -r ]gl2_LIBSOURCES_DIR[/$gl_file ; then
-          echo "missing file ]gl2_LIBSOURCES_DIR[/$gl_file" >&2
+        if test ! -r ]m4_defn([gl2_LIBSOURCES_DIR])[/$gl_file ; then
+          echo "missing file ]m4_defn([gl2_LIBSOURCES_DIR])[/$gl_file" >&2
           exit 1
         fi
       done])dnl
@@ -88,10 +88,10 @@ AC_DEFUN([gl2_INIT],
   gl_COMMON
   gl_source_base='tests'
   m4_ifval(gl2tests_LIBSOURCES_LIST, [
-    m4_syscmd([test ! -d ]gl2tests_LIBSOURCES_DIR[ ||
+    m4_syscmd([test ! -d ]m4_defn([gl2tests_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl2tests_LIBSOURCES_LIST[ ; do
-        if test ! -r ]gl2tests_LIBSOURCES_DIR[/$gl_file ; then
-          echo "missing file ]gl2tests_LIBSOURCES_DIR[/$gl_file" >&2
+        if test ! -r ]m4_defn([gl2tests_LIBSOURCES_DIR])[/$gl_file ; then
+          echo "missing file ]m4_defn([gl2tests_LIBSOURCES_DIR])[/$gl_file" >&2
           exit 1
         fi
       done])dnl
