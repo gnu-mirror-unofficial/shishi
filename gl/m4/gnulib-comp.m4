@@ -26,6 +26,7 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
   AC_REQUIRE([AC_GNU_SOURCE])
+  AB_INIT
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   AC_REQUIRE([AC_FUNC_FSEEKO])
   dnl Some compilers (e.g., AIX 5.3 cc) need to be in c99 mode
@@ -430,6 +431,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/alloca.m4
   m4/arcfour.m4
   m4/arpa_inet_h.m4
+  m4/autobuild.m4
   m4/base64.m4
   m4/bison.m4
   m4/clock_time.m4
