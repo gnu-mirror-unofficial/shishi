@@ -36,7 +36,6 @@ AC_SUBST(SOVERSION)
 
 AM_INIT_AUTOMAKE([1.10])
 AC_CONFIG_HEADERS(config.h)
-AB_INIT
 
 # Checks for header files.
 AC_PROG_CC
