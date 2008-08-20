@@ -638,7 +638,7 @@ Alias for @code{aes256-cts-hmac-sha1-96}.
 
 Shishi has at some point in time been tested on the following
 platforms.  Online build reports for each platforms and Shishi version
-is available at @url{http://josefsson.org/autobuild/}.
+is available at @url{http://autobuild.josefsson.org/shishi/}.
 
 @enumerate
 
@@ -823,7 +823,7 @@ mentioned here, contact the author (@pxref{Bug Reports}).
 
 The package can be downloaded from several places, including:
 
-@url{http://josefsson.org/shishi/releases/}
+@url{ftp://alpha.gnu.org/pub/gnu/shishi/}
 
 The latest version is stored in a file, e.g.,
 @samp{shishi-@value{VERSION}.tar.gz} where the @samp{@value{VERSION}}
@@ -839,7 +839,7 @@ and install the package.  You will need a few basic tools, such as
 @samp{sh}, @samp{make} and @samp{cc}.
 
 @example
-$ wget -q http://josefsson.org/shishi/releases/shishi-@value{VERSION}.tar.gz
+$ wget -q ftp://alpha.gnu.org/pub/gnu/shishi/shishi-@value{VERSION}.tar.gz
 $ tar xfz shishi-@value{VERSION}.tar.gz
 $ cd shishi-@value{VERSION}/
 $ ./configure
@@ -4413,7 +4413,7 @@ basic services, for more advanced uses you must use the native API.
 
 Since the GSS-API is not specific to Shishi, it is distributed
 independently from Shishi.  Further information on the GSS project can
-be found at @url{http://josefsson.org/gss/}.
+be found at @url{http://www.gnu.org/software/gss/}.
 
 @c **********************************************************
 @c *******************  Acknowledgements  *******************
