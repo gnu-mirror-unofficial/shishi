@@ -148,6 +148,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_STRTOK_R
   gl_STRING_MODULE_INDICATOR([strtok_r])
   gl_FUNC_STRVERSCMP
+  gl_STRING_MODULE_INDICATOR([strverscmp])
   gl_HEADER_SYS_SELECT
   AC_PROG_MKDIR_P
   gl_HEADER_SYS_SOCKET
@@ -400,7 +401,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strnlen.c
   lib/strtok_r.c
   lib/strverscmp.c
-  lib/strverscmp.h
   lib/sys_select.in.h
   lib/sys_socket.in.h
   lib/sys_stat.in.h
