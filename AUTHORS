@@ -1,13 +1,12 @@
 Shishi AUTHORS -- Information about the authors.
-Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Simon Josefsson
+Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson
 See the end for copying conditions.
 
 Simon Josefsson <simon@josefsson.org>
 Designed and implemented Shishi.
 
-SHISHI  Nicolas Pouvesle        France  1981    2003-09-09
-Assigns past and future changes to the Free Software Foundation.
-nico.pou@fnac.net
+Nicolas Pouvesle <nico.pou@fnac.net>
+Authorization system, crypto bugfixes, error handling, and more.
 
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 URL: http://josefsson.org/key.txt
