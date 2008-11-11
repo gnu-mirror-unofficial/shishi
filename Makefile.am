@@ -64,31 +64,3 @@ install-data-hook:
 	else \
 	  echo Database root $(DESTDIR)$(DBDIR) already exist.; \
 	fi
-
-# Maintainer targets
-
-.PHONY: examples
-examples:
-	(cd examples && make)
-
-ChangeLog:
-	git log --pretty --numstat --summary | git2cl > ChangeLog
-	cat .clcopying >> ChangeLog
-
-tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
-htmldir = ../www-$(PACKAGE)
-
-release:
-	! git-tag -l $(tag) | grep $(PACKAGE) > /dev/null
-	rm -f ChangeLog
-	$(MAKE) ChangeLog distcheck
-	git commit -m Generated. ChangeLog
-	git-tag -u b565716f! -m $(VERSION) $(tag)
-	cd doc && ../build-aux/gendocs.sh --html "--css-include=texinfo.css" \
-		-o ../$(htmldir)/manual/ $(PACKAGE) "Shishi"
-	cp -v doc/reference/html/*.html doc/reference/html/*.png doc/reference/html/*.devhelp doc/reference/html/*.css $(htmldir)/reference/
-	git-push --tags
-	git-push
-	build-aux/gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
-	cd $(htmldir) && cvs commit -m "Update." manual/ reference/
-

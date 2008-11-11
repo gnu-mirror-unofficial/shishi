@@ -41,7 +41,41 @@ update-po: refresh-po
 bootstrap: autoreconf
 	./configure $(CFGFLAGS)
 
-W32ROOT ?= $(HOME)/w32root
+# Mingw32
+
+W32ROOT ?= $(HOME)/gnutls4win/inst
 
 mingw32: autoreconf 
 	./configure $(CFGFLAGS) --host=i586-mingw32msvc --build=`./config.guess` --prefix=$(W32ROOT)
+
+# Code Coverage
+
+web-coverage:
+	rm -fv `find $(htmldir)/coverage -type f | grep -v CVS`
+	cp -rv doc/coverage/* $(htmldir)/coverage/
+
+upload-web-coverage:
+	cd $(htmldir) && \
+		cvs commit -m "Update." coverage
+
+ChangeLog:
+	git log --pretty --numstat --summary | git2cl > ChangeLog
+	cat .clcopying >> ChangeLog
+
+tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
+htmldir = ../www-$(PACKAGE)
+
+release:
+	! git-tag -l $(tag) | grep $(PACKAGE) > /dev/null
+	rm -f ChangeLog
+	$(MAKE) ChangeLog distcheck
+	git commit -m Generated. ChangeLog
+	git-tag -u b565716f! -m $(VERSION) $(tag)
+	cd doc && ../build-aux/gendocs.sh --html "--css-include=texinfo.css" \
+		-o ../$(htmldir)/manual/ $(PACKAGE) "Shishi"
+	cp -v doc/reference/html/*.html doc/reference/html/*.png doc/reference/html/*.devhelp doc/reference/html/*.css $(htmldir)/reference/
+	git-push --tags
+	git-push
+	build-aux/gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
+	cd $(htmldir) && cvs commit -m "Update." manual/ reference/
+
