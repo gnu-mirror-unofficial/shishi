@@ -1,5 +1,5 @@
 Shishi README -- Important introductory notes.
-Copyright (C) 2002, 2003, 2004, 2005, 2006 Simon Josefsson
+Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson
 See the end for copying conditions.
 
 This directory holds Shishi, an implementation of the RFC 1510/4120
@@ -9,13 +9,13 @@ See doc/shishi.{info,ps,pdf} for the manual.  Installation
 instructions are found in the INSTALL file in this directory.
 
 The library, applications and self tests (lib/, db/, src/, tests/) are
-licensed under the GNU General Public License license (see COPYING),
-and the documentation (doc/) is licensed under the GNU Free
-Documentation License.
+licensed under the GNU General Public License license version 3 or
+later (see COPYING), and the documentation (doc/) is licensed under
+the GNU Free Documentation License version 1.3 or later.
 
 Third party packages (asn1/ and gl/) are distributed here for
 convenience, and they have their own respective licenses, typically
-the GPL or LGPL.
+the GPL or the LGPL.
 
 For updates to the project, see <http://www.gnu.org/software/shishi/>.
 
