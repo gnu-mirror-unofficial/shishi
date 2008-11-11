@@ -23,10 +23,7 @@ ifeq ($(.DEFAULT_GOAL),abort-due-to-no-makefile)
 .DEFAULT_GOAL := bootstrap
 endif
 
-gtk-doc.make:
-	gtkdocize
-
-autoreconf: gtk-doc.make
+autoreconf:
 	for f in po/*.po.in; do \
 		cp $$f `echo $$f | sed 's/.in//'`; \
 	done
