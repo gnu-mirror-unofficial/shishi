@@ -48,11 +48,17 @@ AC_CHECK_HEADERS(termios.h pwd.h syslog.h resolv.h arpa/nameser.h netinet/in6.h)
 
 # For libshishi-XX.def.
 AC_MSG_CHECKING([if gcc/ld supports -Wl,--output-def])
-_gcc_ldflags_save=$LDFLAGS
-LDFLAGS="-Wl,--output-def,foo.def"
-AC_LINK_IFELSE(AC_LANG_PROGRAM([]),output_def=yes,output_def=no)
-AC_MSG_RESULT($output_def)
-LDFLAGS="$_gcc_ldflags_save"
+if test "$enable_shared" = no; then
+  output_def=no
+  AC_MSG_RESULT([no need, since shared libraries are disabled])
+else
+  _gcc_ldflags_save=$LDFLAGS
+  LDFLAGS="-Wl,--output-def,foo.def"
+  AC_LINK_IFELSE(AC_LANG_PROGRAM([]),output_def=yes,output_def=no)
+  rm -f foo.def
+  AC_MSG_RESULT($output_def)
+  LDFLAGS="$_gcc_ldflags_save"
+fi
 AM_CONDITIONAL(HAVE_LD_OUTPUT_DEF, test "$output_def" = "yes")
 
 # Checks for programs.
