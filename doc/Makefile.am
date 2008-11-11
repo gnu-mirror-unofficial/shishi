@@ -28,7 +28,7 @@ components.png: components.dia
 	$(DIA) --export=$@ --filter=png $<
 
 info_TEXINFOS = shishi.texi
-shishi_TEXINFOS = gpl-3.0.texi fdl.texi $(gdoc_TEXINFOS) \
+shishi_TEXINFOS = gpl-3.0.texi fdl-1.3.texi $(gdoc_TEXINFOS) \
 	shishi-api-error-labels.texi getdate.texi \
 	texinfo.css components.png keytab.txt ccache.txt
 

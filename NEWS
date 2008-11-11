@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.38 (unreleased)
 
+** doc: Change license on the manual to GFDLv1.3+.
+
 * Version 0.0.37 (released 2008-06-24)
 
 ** libshishi: New functions to set a password prompt callback.
