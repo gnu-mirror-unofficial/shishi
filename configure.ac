@@ -206,23 +206,19 @@ AM_CONDITIONAL(STARTTLS, test "$starttls" != "no")
 # Check for gtk-doc.
 GTK_DOC_CHECK(1.1)
 
-# For some systems we know that we have ld_version scripts.
-# Use it then as default.
-have_ld_version_script=no
-case "${host}" in
-    *-*-linux*)
-        have_ld_version_script=yes
-        ;;
-    *-*-gnu*)
-        have_ld_version_script=yes
-        ;;
-esac
 AC_ARG_ENABLE([ld-version-script],
-              AC_HELP_STRING([--enable-ld-version-script],
-                             [enable/disable use of linker version script.
-                              (default is system dependent)]),
-              [have_ld_version_script=$enableval],
-              [ : ] )
+  AS_HELP_STRING([--enable-ld-version-script],
+    [enable/disable linker version script (default is enabled when possible)]),
+    [have_ld_version_script=$enableval], [])
+if test -z "$have_ld_version_script"; then
+  AC_MSG_CHECKING([if -Wl,--version-script works])
+  save_LDFLAGS="$LDFLAGS"
+  LDFLAGS="$LDFLAGS -Wl,--version-script=$srcdir/lib/shishi.vers"
+  AC_LINK_IFELSE(AC_LANG_PROGRAM([], []),
+                 [have_ld_version_script=yes], [have_ld_version_script=no])
+  LDFLAGS="$save_LDFLAGS"
+  AC_MSG_RESULT($have_ld_version_script)
+fi
 AM_CONDITIONAL(HAVE_LD_VERSION_SCRIPT, test "$have_ld_version_script" = "yes")
 
 # Let people enable/disable various encryption/checksum types.
