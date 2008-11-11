@@ -44,8 +44,7 @@ gl_EARLY
 gl2_EARLY
 gl3_EARLY
 AC_HEADER_STDC
-AC_CHECK_HEADERS(netdb.h termios.h pwd.h errno.h syslog.h \
-	resolv.h fcntl.h arpa/nameser.h netinet/in6.h)
+AC_CHECK_HEADERS(termios.h pwd.h syslog.h resolv.h arpa/nameser.h netinet/in6.h)
 
 # For libshishi-XX.def.
 AC_MSG_CHECKING([if gcc/ld supports -Wl,--output-def])

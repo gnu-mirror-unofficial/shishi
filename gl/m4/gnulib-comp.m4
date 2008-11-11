@@ -77,6 +77,7 @@ AC_DEFUN([gl_INIT],
   gl_ENVIRON
   gl_UNISTD_MODULE_INDICATOR([environ])
   gl_HEADER_ERRNO_H
+  gl_FCNTL_H
   gl_FLOAT_H
   gl_FUNC_FSEEKO
   gl_STDIO_MODULE_INDICATOR([fseeko])
@@ -333,6 +334,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/des.c
   lib/des.h
   lib/errno.in.h
+  lib/fcntl.in.h
   lib/float+.h
   lib/float.in.h
   lib/fseeko.c
@@ -447,6 +449,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/environ.m4
   m4/errno_h.m4
   m4/extensions.m4
+  m4/fcntl_h.m4
   m4/float_h.m4
   m4/fseeko.m4
   m4/gc-des.m4

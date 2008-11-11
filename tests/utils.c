@@ -36,10 +36,8 @@
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
-
-#ifdef HAVE_NETDB_H
 #include <netdb.h>
-#endif
+#include <errno.h>
 
 #if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
 /* extern int h_errno; */
@@ -53,9 +51,6 @@
 #include <sys/ioctl.h>
 #endif
 
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
 
 #include <signal.h>
 

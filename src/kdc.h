@@ -34,14 +34,15 @@
 #include <unistd.h>
 
 /* Get gethostbyname, getservbyname. */
-#ifdef HAVE_NETDB_H
-# include <netdb.h>
-#endif
+#include <netdb.h>
 
 /* Get getpwnam. */
 #ifdef HAVE_PWD_H
 # include <pwd.h>
 #endif
+
+/* For errno. */
+#include <errno.h>
 
 /* For select, etc. */
 #include <sys/types.h>
@@ -63,14 +64,6 @@
 
 #ifdef HAVE_SYS_IOCTL_H
 # include <sys/ioctl.h>
-#endif
-
-/* Get errno. */
-#ifdef HAVE_ERRNO_H
-# include <errno.h>
-#endif
-#ifndef errno
-extern int errno;
 #endif
 
 /* Get signal, etc. */
