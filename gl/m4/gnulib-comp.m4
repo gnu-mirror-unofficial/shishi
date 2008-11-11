@@ -49,7 +49,6 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='gl'
-  gl_EOVERFLOW
   gl_FUNC_ALLOCA
   gl_HEADER_ARPA_INET
   AC_PROG_MKDIR_P
@@ -77,15 +76,19 @@ AC_DEFUN([gl_INIT],
   gl_MODULE_INDICATOR([gc-random])
   gl_ENVIRON
   gl_UNISTD_MODULE_INDICATOR([environ])
+  gl_HEADER_ERRNO_H
   gl_FLOAT_H
   gl_FUNC_FSEEKO
   gl_STDIO_MODULE_INDICATOR([fseeko])
   gl_GETADDRINFO
+  gl_NETDB_MODULE_INDICATOR([getaddrinfo])
   gl_GETDATE
   gl_FUNC_GETDELIM
   gl_STDIO_MODULE_INDICATOR([getdelim])
   gl_FUNC_GETDOMAINNAME
+  gl_UNISTD_MODULE_INDICATOR([getdomainname])
   gl_FUNC_GETHOSTNAME
+  gl_UNISTD_MODULE_INDICATOR([gethostname])
   gl_FUNC_GETLINE
   gl_STDIO_MODULE_INDICATOR([getline])
   gl_FUNC_GETPASS
@@ -115,6 +118,7 @@ AC_DEFUN([gl_INIT],
   gl_MALLOCA
   gl_MINMAX
   gl_FUNC_MKTIME
+  gl_HEADER_NETDB
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
   gl_FUNC_RAWMEMCHR
@@ -139,6 +143,8 @@ AC_DEFUN([gl_INIT],
   gl_STRING_MODULE_INDICATOR([strchrnul])
   gl_FUNC_STRDUP
   gl_STRING_MODULE_INDICATOR([strdup])
+  gl_FUNC_STRDUP_POSIX
+  gl_STRING_MODULE_INDICATOR([strdup])
   gl_HEADER_STRING_H
   gl_HEADER_STRINGS_H
   gl_FUNC_STRNDUP
@@ -152,6 +158,7 @@ AC_DEFUN([gl_INIT],
   gl_HEADER_SYS_SELECT
   AC_PROG_MKDIR_P
   gl_HEADER_SYS_SOCKET
+  gl_MODULE_INDICATOR([sys_socket])
   AC_PROG_MKDIR_P
   gl_HEADER_SYS_STAT_H
   AC_PROG_MKDIR_P
@@ -327,6 +334,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/crc.h
   lib/des.c
   lib/des.h
+  lib/errno.in.h
   lib/float+.h
   lib/float.in.h
   lib/fseeko.c
@@ -336,12 +344,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gc-pbkdf2-sha1.c
   lib/gc.h
   lib/getaddrinfo.c
-  lib/getaddrinfo.h
   lib/getdate.h
   lib/getdate.y
   lib/getdelim.c
   lib/getdomainname.c
-  lib/getdomainname.h
   lib/gethostname.c
   lib/getline.c
   lib/getpass.c
@@ -368,6 +374,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/memxor.h
   lib/minmax.h
   lib/mktime.c
+  lib/netdb.in.h
   lib/netinet_in.in.h
   lib/printf-args.c
   lib/printf-args.h
@@ -388,6 +395,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdbool.in.h
   lib/stdint.in.h
   lib/stdio-impl.h
+  lib/stdio-write.c
   lib/stdio.in.h
   lib/stdlib.in.h
   lib/strcasecmp.c
@@ -439,7 +447,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/des.m4
   m4/eealloc.m4
   m4/environ.m4
-  m4/eoverflow.m4
+  m4/errno_h.m4
   m4/extensions.m4
   m4/float_h.m4
   m4/fseeko.m4
@@ -481,6 +489,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/memxor.m4
   m4/minmax.m4
   m4/mktime.m4
+  m4/netdb_h.m4
   m4/netinet_in_h.m4
   m4/printf.m4
   m4/rawmemchr.m4

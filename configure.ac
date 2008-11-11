@@ -21,6 +21,7 @@
 AC_PREREQ(2.61)
 AC_INIT([GNU Shishi], [0.0.38], [bug-shishi@josefsson.org])
 AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0

@@ -40,6 +40,7 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([gl2_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='src/gl'
+  gl_HEADER_ERRNO_H
   gl_ERROR
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_XGETTEXT_OPTION([--flag=error:3:c-format])
@@ -176,6 +177,7 @@ AC_DEFUN([gl2tests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl2_FILE_LIST], [
+  lib/errno.in.h
   lib/error.c
   lib/error.h
   lib/getopt.c
@@ -188,6 +190,7 @@ AC_DEFUN([gl2_FILE_LIST], [
   lib/strerror.c
   lib/version-etc.c
   lib/version-etc.h
+  m4/errno_h.m4
   m4/error.m4
   m4/getopt.m4
   m4/gnulib-common.m4

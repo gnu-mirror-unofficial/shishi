@@ -21,7 +21,6 @@
  */
 
 #include "internal.h"
-#include <getaddrinfo.h>
 
 /* Get _shishi_sendrecv_tls, etc. */
 #include "starttls.h"

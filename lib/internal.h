@@ -47,9 +47,7 @@
 #include <sys/ioctl.h>
 #endif
 
-#ifdef HAVE_NETDB_H
 #include <netdb.h>
-#endif
 
 #if defined HAVE_DECL_H_ERRNO && !HAVE_DECL_H_ERRNO
 /*extern int h_errno;*/
@@ -59,9 +57,7 @@
 #include <fcntl.h>
 #endif
 
-#ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif
 
 #include <netinet/in.h>
 #ifdef HAVE_NETINET_IN6_H
