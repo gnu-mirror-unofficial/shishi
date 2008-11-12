@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2005, 2006, 2007 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2005, 2006, 2007, 2008 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -18,6 +18,8 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../../lib
+
 libdir = $(PAMDIR)
 
 lib_LTLIBRARIES = pam_shishi.la
@@ -26,8 +28,6 @@ pam_shishi_la_SOURCES = pam_shishi.c
 pam_shishi_la_LIBADD = ../../lib/libshishi.la
 # XXX add -Wl,-x too?  PAM documentation suggests it.
 pam_shishi_la_LDFLAGS = -module -avoid-version
-
-INCLUDES = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../../lib
 
 # -DDEBUG_PAM
 DEFS = @DEFS@

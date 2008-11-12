@@ -18,7 +18,7 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
-INCLUDES = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../lib
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../lib
 LDADD = ../gl/libgnu.la ../lib/libshishi.la @LTLIBINTL@
 
 noinst_PROGRAMS = client client-cksum client-safe client-priv \

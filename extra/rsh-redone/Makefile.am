@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2003, 2005, 2007 Simon Josefsson.
+# Copyright (C) 2003, 2005, 2007, 2008 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -18,9 +18,10 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
+AM_CPPFLAGS = -I../../lib
+
 EXTRA_DIST = $(man_MANS)
 
-INCLUDES = -I../../lib
 LDADD = ../../lib/libshishi.la
 
 DEFS = -DSHISHI @DEFS@
