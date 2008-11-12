@@ -20,8 +20,6 @@
 
 AC_PREREQ(2.61)
 AC_INIT([GNU Shishi], [0.0.38], [bug-shishi@josefsson.org])
-AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_MACRO_DIR([m4])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
@@ -35,7 +33,9 @@ AC_SUBST(LT_AGE, 0)
 SOVERSION=`expr ${LT_CURRENT} - ${LT_AGE}`
 AC_SUBST(SOVERSION)
 
-AM_INIT_AUTOMAKE([1.10])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([m4])
+AM_INIT_AUTOMAKE([1.10 -Wall -Werror -Wno-override])
 AC_CONFIG_HEADERS(config.h)
 
 # Checks for header files.
@@ -45,21 +45,6 @@ gl2_EARLY
 gl3_EARLY
 AC_HEADER_STDC
 AC_CHECK_HEADERS(termios.h pwd.h syslog.h resolv.h arpa/nameser.h netinet/in6.h)
-
-# For libshishi-XX.def.
-AC_MSG_CHECKING([if gcc/ld supports -Wl,--output-def])
-if test "$enable_shared" = no; then
-  output_def=no
-  AC_MSG_RESULT([no need, since shared libraries are disabled])
-else
-  _gcc_ldflags_save=$LDFLAGS
-  LDFLAGS="-Wl,--output-def,foo.def"
-  AC_LINK_IFELSE(AC_LANG_PROGRAM([]),output_def=yes,output_def=no)
-  rm -f foo.def
-  AC_MSG_RESULT($output_def)
-  LDFLAGS="$_gcc_ldflags_save"
-fi
-AM_CONDITIONAL(HAVE_LD_OUTPUT_DEF, test "$output_def" = "yes")
 
 # Checks for programs.
 AC_LIBTOOL_WIN32_DLL
@@ -215,21 +200,6 @@ AM_CONDITIONAL(STARTTLS, test "$starttls" != "no")
 # Check for gtk-doc.
 GTK_DOC_CHECK(1.1)
 
-AC_ARG_ENABLE([ld-version-script],
-  AS_HELP_STRING([--enable-ld-version-script],
-    [enable/disable linker version script (default is enabled when possible)]),
-    [have_ld_version_script=$enableval], [])
-if test -z "$have_ld_version_script"; then
-  AC_MSG_CHECKING([if -Wl,--version-script works])
-  save_LDFLAGS="$LDFLAGS"
-  LDFLAGS="$LDFLAGS -Wl,--version-script=$srcdir/lib/shishi.vers"
-  AC_LINK_IFELSE(AC_LANG_PROGRAM([], []),
-                 [have_ld_version_script=yes], [have_ld_version_script=no])
-  LDFLAGS="$save_LDFLAGS"
-  AC_MSG_RESULT($have_ld_version_script)
-fi
-AM_CONDITIONAL(HAVE_LD_VERSION_SCRIPT, test "$have_ld_version_script" = "yes")
-
 # Let people enable/disable various encryption/checksum types.
 AC_ARG_ENABLE(des, AC_HELP_STRING([--disable-des],
 			[disable DES related encryption/checksum types]),
@@ -338,33 +308,10 @@ AC_MSG_NOTICE([user database root path $DBDIR])
 
 AC_DEFINE([xalloc_die], [shishi_xalloc_die], [Fix namespace of xalloc_die.])
 
-# Run self-tests under valgrind?
-if test "$cross_compiling" = no; then
-  AC_CHECK_PROGS(VALGRIND, valgrind)
-fi
-if test -n "$VALGRIND" && $VALGRIND true > /dev/null 2>&1; then
-  opt_valgrind_tests=yes
-else
-  opt_valgrind_tests=no
-  VALGRIND=
-fi 
-AC_MSG_CHECKING([whether self tests are run under valgrind])
-AC_ARG_ENABLE(valgrind-tests,
-	AS_HELP_STRING([--enable-valgrind-tests],
-                       [run self tests under valgrind]),
-  opt_valgrind_tests=$enableval)
-AC_MSG_RESULT($opt_valgrind_tests)
-
-# Update version number in lib/shishi.h.
-if ! sed 's/SHISHI_VERSION ".*"/SHISHI_VERSION "'$PACKAGE_VERSION'"/' \
-    $srcdir/lib/shishi.h > fixhdr.tmp; then
-  AC_MSG_ERROR([[*** Failed to update version number in lib/shishi.h...]])
-fi
-if cmp -s $srcdir/lib/shishi.h fixhdr.tmp 2>/dev/null; then
-  rm -f fixhdr.tmp
-elif ! mv fixhdr.tmp $srcdir/lib/shishi.h; then
-  AC_MSG_ERROR([[*** Failed to move fixhdr.tmp to lib/shishi.h...]])
-fi
+sj_OUTPUT_DEF
+sj_VALGRIND
+sj_LINKER_SCRIPT([$srcdir/lib/shishi.vers])
+sj_UPDATE_HEADER_VERSION([$srcdir/lib/shishi.h])
 
 AC_CONFIG_FILES([
   Makefile
