@@ -355,6 +355,17 @@ AC_ARG_ENABLE(valgrind-tests,
   opt_valgrind_tests=$enableval)
 AC_MSG_RESULT($opt_valgrind_tests)
 
+# Update version number in lib/shishi.h.
+if ! sed 's/SHISHI_VERSION ".*"/SHISHI_VERSION "'$PACKAGE_VERSION'"/' \
+    $srcdir/lib/shishi.h > fixhdr.tmp; then
+  AC_MSG_ERROR([[*** Failed to update version number in lib/shishi.h...]])
+fi
+if cmp -s $srcdir/lib/shishi.h fixhdr.tmp 2>/dev/null; then
+  rm -f fixhdr.tmp
+elif ! mv fixhdr.tmp $srcdir/lib/shishi.h; then
+  AC_MSG_ERROR([[*** Failed to move fixhdr.tmp to lib/shishi.h...]])
+fi
+
 AC_CONFIG_FILES([
   Makefile
   shisa.conf
@@ -372,7 +383,6 @@ AC_CONFIG_FILES([
   extra/rsh-redone/Makefile
   gl/Makefile
   lib/Makefile
-  lib/shishi.h
   po/Makefile.in
   src/Makefile
   src/gl/Makefile

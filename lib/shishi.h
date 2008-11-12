@@ -29,7 +29,7 @@
 #include <time.h>		/* time_t */
 #include <shishi-int.h>		/* uint32_t */
 
-#define SHISHI_VERSION "@PACKAGE_VERSION@"
+#define SHISHI_VERSION "0.0.38"
 
 /* Error codes */
 typedef enum
