@@ -176,6 +176,7 @@ AC_DEFUN([gl_INIT],
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_XGETTEXT_OPTION([--flag=asprintf:2:c-format])
      AM_XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
+  gl_WARN_INIT
   gl_WCHAR_H
   gl_XALLOC
   gl_XSIZE
@@ -530,6 +531,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/unistd_h.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4
+  m4/warnings.m4
   m4/wchar.m4
   m4/wchar_t.m4
   m4/wint_t.m4

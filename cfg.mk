@@ -17,7 +17,7 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
-CFGFLAGS ?= --enable-gtk-doc --with-libgcrypt
+CFGFLAGS ?= --enable-gtk-doc --with-libgcrypt WARN_CFLAGS=-Werror
 
 ifeq ($(.DEFAULT_GOAL),abort-due-to-no-makefile)
 .DEFAULT_GOAL := bootstrap
