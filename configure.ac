@@ -352,12 +352,27 @@ AC_ARG_ENABLE(valgrind-tests,
   opt_valgrind_tests=$enableval)
 AC_MSG_RESULT($opt_valgrind_tests)
 
-AC_CONFIG_FILES(Makefile po/Makefile.in \
-	asn1/Makefile examples/Makefile src/gl/Makefile db/gl/Makefile \
-	lib/Makefile lib/shishi.h db/Makefile src/Makefile tests/Makefile \
-	doc/Makefile doc/reference/Makefile \
-	extra/Makefile extra/pam_shishi/Makefile extra/rsh-redone/Makefile \
-	gl/Makefile shishi.pc shishi.conf shishi.skel shisa.conf)
-
-# We are done
+AC_CONFIG_FILES([
+  Makefile
+  shisa.conf
+  shishi.conf
+  shishi.pc
+  shishi.skel
+  asn1/Makefile
+  db/Makefile
+  db/gl/Makefile
+  doc/Makefile
+  doc/reference/Makefile
+  examples/Makefile
+  extra/Makefile
+  extra/pam_shishi/Makefile
+  extra/rsh-redone/Makefile
+  gl/Makefile
+  lib/Makefile
+  lib/shishi.h
+  po/Makefile.in
+  src/Makefile
+  src/gl/Makefile
+  tests/Makefile
+])
 AC_OUTPUT
