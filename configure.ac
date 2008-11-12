@@ -91,6 +91,7 @@ gl2_INIT
 gl3_INIT
 
 gl_WARN_ADD([-Wall])
+gl_WARN_ADD([-Wno-unused])
 
 # Checks for library functions.
 AC_CHECK_FUNCS(signal select ngettext gethostbyname getpwnam getuid)

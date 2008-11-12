@@ -57,8 +57,8 @@ main (int argc, char *argv[])
 {
   struct gengetopt_args_info args;
   Shishi *sh;
-  char *infile = NULL;
-  char *outfile = NULL;
+  const char *infile = NULL;
+  const char *outfile = NULL;
   int rc;
 
   setlocale (LC_ALL, "");

@@ -1,5 +1,5 @@
 /* starttls.c --- Handle extended TCP connections (for TLS).
- * Copyright (C) 2002, 2003, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -82,7 +82,8 @@ logcertinfo (gnutls_session session)
 	  }
 
 	for (i = 0; i < md5fingerprintlen; i++)
-	  sprintf (&md5fingerprinthex[3 * i], "%.2x:", md5fingerprint[i]);
+	  sprintf ((char *) &md5fingerprinthex[3 * i], "%.2x:",
+		   md5fingerprint[i]);
 
 	expiration_time = gnutls_x509_crt_get_expiration_time (cert);
 	if (expiration_time == (time_t) - 1)
@@ -159,8 +160,7 @@ logcertinfo (gnutls_session session)
 
 	serialhex = xmalloc (2 * seriallen + 1);
 	for (i = 0; i < seriallen; i++)
-	  sprintf (&serialhex[2 * i], "%.2x", serial[i]);
-
+	  sprintf ((char *) &serialhex[2 * i], "%.2x", serial[i]);
 
 	algo = gnutls_x509_crt_get_pk_algorithm (cert, &bits);
 	if (algo == GNUTLS_PK_RSA)
