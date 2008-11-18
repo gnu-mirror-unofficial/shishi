@@ -6,6 +6,8 @@ See the end for copying conditions.
 
 ** doc: Change license on the manual to GFDLv1.3+.
 
+** minitasn1: Internal copy updated to libtasn1 v1.7.
+
 * Version 0.0.37 (released 2008-06-24)
 
 ** libshishi: New functions to set a password prompt callback.

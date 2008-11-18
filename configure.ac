@@ -159,8 +159,7 @@ AC_ARG_WITH(system-asn1,
 	AC_HELP_STRING([--with-system-asn1], [Use the system's libtasn1]),
 	system_asn1=$withval, system_asn1=yes)
 if test "$system_asn1" != "no"; then
-  AC_LIB_HAVE_LINKFLAGS(tasn1,, [#include <libtasn1.h>],
-    [asn1_find_node (0, 0);])
+  AC_LIB_HAVE_LINKFLAGS(tasn1,, [#include <libtasn1.h>], [asn1_strerror (0);])
 fi
 if test "$ac_cv_libtasn1" = "yes"; then
   system_asn1=yes
@@ -169,7 +168,7 @@ else
   LTLIBTASN1="\$(top_builddir)/asn1/libminitasn1.la"
   LIBTASN1_CFLAGS="-I\$(top_srcdir)/asn1"
   AC_SUBST(LIBTASN1_CFLAGS)
-  AC_MSG_WARN([Libtasn1 >= 0.3.1 not found. Using included one.])
+  AC_MSG_WARN([Libtasn1 >= 1.7 not found. Using included one.])
 fi
 AC_MSG_CHECKING([whether to use the system's libtasn1])
 AC_MSG_RESULT($system_asn1)
