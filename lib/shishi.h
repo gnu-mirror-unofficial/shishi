@@ -913,6 +913,8 @@ extern int shishi_etype_info_print (Shishi * handle, FILE * fh,
 				    Shishi_asn1 etypeinfo);
 extern int shishi_etype_info2_print (Shishi * handle, FILE * fh,
 				     Shishi_asn1 etypeinfo2);
+extern int shishi_methoddata_print (Shishi * handle, FILE * fh,
+				    Shishi_asn1 methoddata);
 
 /* authenticator.c */
 extern Shishi_asn1 shishi_authenticator (Shishi * handle);

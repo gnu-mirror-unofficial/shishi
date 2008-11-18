@@ -48,7 +48,7 @@ enum
   THE_END
 };
 
-static const char *_shishi_opts[] = {
+static char * const _shishi_opts[] = {
   /* [DEFAULT_REALM_OPTION] =        */ "default-realm",
   /* [DEFAULT_PRINCIPAL_OPTION] =    */ "default-principal",
   /* [CLIENT_KDC_ETYPES_OPTION] =    */ "client-kdc-etypes",
