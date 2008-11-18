@@ -1776,8 +1776,8 @@ shishi_decrypt (Shishi * handle,
  *
  * The algorithm is from "A Better Key Schedule For DES-like Ciphers"
  * by Uri Blumenthal and Steven M. Bellovin,
- * <URL:http://www.research.att.com/~smb/papers/ides.pdf>, although
- * the sample vectors provided by the paper are incorrect.
+ * http://www.research.att.com/~smb/papers/ides.pdf, although the
+ * sample vectors provided by the paper are incorrect.
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
