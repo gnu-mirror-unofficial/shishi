@@ -30,8 +30,8 @@
  * @handle: Shishi library handle create by shishi_init().
  *
  * Guesses the default ccache ticket filename; it is the contents of
- * the environment variable KRB5CCNAME or /tmp/krb5cc_<UID> where
- * <UID> is the user's identity in decimal, as returned by getuid().
+ * the environment variable KRB5CCNAME or /tmp/krb5cc_UID where UID is
+ * the user's identity in decimal, as returned by getuid().
  *
  * Return value: Returns default ccache filename as a string that has
  *   to be deallocated with free() by the caller.
