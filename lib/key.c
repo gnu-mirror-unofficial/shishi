@@ -1,5 +1,5 @@
 /* key.c --- Key related functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -43,7 +43,7 @@ struct Shishi_key
  * it, so don't modify or deallocate it.)
  **/
 const char *
-shishi_key_principal (Shishi_key * key)
+shishi_key_principal (const Shishi_key * key)
 {
   return key->principal;
 }
@@ -78,7 +78,7 @@ shishi_key_principal_set (Shishi_key * key, const char *principal)
  * (Not a copy of it, so don't modify or deallocate it.)
  **/
 const char *
-shishi_key_realm (Shishi_key * key)
+shishi_key_realm (const Shishi_key * key)
 {
   return key->realm;
 }
@@ -113,7 +113,7 @@ shishi_key_realm_set (Shishi_key * key, const char *realm)
  * the standard.
  **/
 int
-shishi_key_type (Shishi_key * key)
+shishi_key_type (const Shishi_key * key)
 {
   return key->type;
 }
@@ -140,8 +140,8 @@ shishi_key_type_set (Shishi_key * key, int32_t type)
  * Return value: Returns the key value as a pointer which is valid
  * throughout the lifetime of the key structure.
  **/
-char *
-shishi_key_value (Shishi_key * key)
+const char *
+shishi_key_value (const Shishi_key * key)
 {
   return key->value;
 }
@@ -174,7 +174,7 @@ shishi_key_value_set (Shishi_key * key, const char *value)
  * Return value: Returns the version of key ("kvno").
  **/
 uint32_t
-shishi_key_version (Shishi_key * key)
+shishi_key_version (const Shishi_key * key)
 {
   return key->kvno;
 }
@@ -216,7 +216,7 @@ shishi_key_name (Shishi_key * key)
  * Return value: Returns the length of the key value.
  **/
 size_t
-shishi_key_length (Shishi_key * key)
+shishi_key_length (const Shishi_key * key)
 {
   return shishi_cipher_keylen (key->type);
 }

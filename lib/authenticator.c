@@ -1,5 +1,5 @@
 /* authenticator.c --- Functions for authenticators.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -951,7 +951,7 @@ int
 shishi_authenticator_set_subkey (Shishi * handle,
 				 Shishi_asn1 authenticator,
 				 int32_t subkeytype,
-				 char *subkey, size_t subkeylen)
+				 const char *subkey, size_t subkeylen)
 {
   int res;
 

@@ -401,7 +401,7 @@ apply_options (const char *realm,
       dbkey->kvno = args.key_version_arg;
       dbkey->etype = etype;
       dbkey->priority = args.priority_arg;
-      dbkey->key = shishi_key_value (key);
+      dbkey->key = (char*) shishi_key_value (key);
       dbkey->keylen = shishi_key_length (key);
       dbkey->salt = salt;
       dbkey->saltlen = salt ? strlen (salt) : 0;

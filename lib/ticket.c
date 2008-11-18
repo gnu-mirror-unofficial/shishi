@@ -1,5 +1,5 @@
 /* ticket.c --- Low-level ASN.1 Ticket handling.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -177,7 +177,7 @@ shishi_ticket_set_server (Shishi * handle,
 {
   char *tmpserver;
   char **serverbuf;
-  char *tokptr;
+  char *tokptr = NULL;
   int res;
   int i;
 

@@ -42,10 +42,10 @@ _shishi_asn1_init (Shishi * handle)
   char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
   int asn1_result;
 
-  if (!asn1_check_version (LIBTASN1_VERSION))
+  if (!asn1_check_version (ASN1_VERSION))
     {
       shishi_warn (handle, "asn1_check-version(%s) failed: %s",
-		   LIBTASN1_VERSION, asn1_check_version (NULL));
+		   ASN1_VERSION, asn1_check_version (NULL));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -57,7 +57,7 @@ _shishi_asn1_init (Shishi * handle)
   if (asn1_result != ASN1_SUCCESS)
     {
       shishi_warn (handle, "asn1_array2tree() failed: %s\n",
-		   libtasn1_strerror (asn1_result));
+		   asn1_strerror (asn1_result));
       shishi_warn (handle, "%s", errorDescription);
       return SHISHI_ASN1_ERROR;
     }
@@ -128,7 +128,7 @@ shishi_asn1_read_inline (Shishi * handle, Shishi_asn1 node,
   rc = asn1_read_value (node, field, (unsigned char *) data, (int *) datalen);
   if (rc != ASN1_SUCCESS)
     {
-      shishi_error_set (handle, libtasn1_strerror (rc));
+      shishi_error_set (handle, asn1_strerror (rc));
       if (rc == ASN1_ELEMENT_NOT_FOUND)
 	return SHISHI_ASN1_NO_ELEMENT;
       else if (rc == ASN1_VALUE_NOT_FOUND)
@@ -168,7 +168,7 @@ shishi_asn1_read (Shishi * handle,
   rc = asn1_read_value (node, field, NULL, &len);
   if (rc != ASN1_SUCCESS && rc != ASN1_MEM_ERROR)
     {
-      shishi_error_set (handle, libtasn1_strerror (rc));
+      shishi_error_set (handle, asn1_strerror (rc));
       if (rc == ASN1_ELEMENT_NOT_FOUND)
 	return SHISHI_ASN1_NO_ELEMENT;
       else if (rc == ASN1_VALUE_NOT_FOUND)
@@ -322,7 +322,7 @@ shishi_asn1_write (Shishi * handle, Shishi_asn1 node,
 			 (const unsigned char *) data, (int) datalen);
   if (rc != ASN1_SUCCESS)
     {
-      shishi_error_set (handle, libtasn1_strerror (rc));
+      shishi_error_set (handle, asn1_strerror (rc));
       return SHISHI_ASN1_ERROR;
     }
 
@@ -336,7 +336,7 @@ shishi_asn1_write_uint32 (Shishi * handle, Shishi_asn1 node,
   char *buf;
   int res;
 
-  asprintf (&buf, "%lu", n);
+  asprintf (&buf, "%lu", (unsigned long) n);
   res = shishi_asn1_write (handle, node, field, buf, 0);
   free (buf);
   if (res != SHISHI_OK)
@@ -352,7 +352,7 @@ shishi_asn1_write_int32 (Shishi * handle, Shishi_asn1 node,
   char *buf;
   int res;
 
-  asprintf (&buf, "%ld", n);
+  asprintf (&buf, "%ld", (signed long) n);
   res = shishi_asn1_write (handle, node, field, buf, 0);
   free (buf);
   if (res != SHISHI_OK)
@@ -418,7 +418,7 @@ shishi_asn1_done (Shishi * handle, Shishi_asn1 node)
       rc = asn1_delete_structure (&node);
       if (rc != ASN1_SUCCESS)
 	shishi_error_printf (handle, "Cannot dellocate ASN.1 structure: %s",
-			     libtasn1_strerror (rc));
+			     asn1_strerror (rc));
     }
 }
 
@@ -431,7 +431,7 @@ asn1_new (Shishi * handle, const char *field, const char *name)
   res = asn1_create_element (handle->asn1, field, &node);
   if (res != ASN1_SUCCESS)
     {
-      shishi_error_set (handle, libtasn1_strerror (res));
+      shishi_error_set (handle, asn1_strerror (res));
       return NULL;
     }
 
@@ -797,14 +797,16 @@ shishi_asn1_to_der_field (Shishi * handle, Shishi_asn1 node,
 	 This typically happens when encoding req-body in KDC-REQ for
 	 TGS checksums.  */
 
-      rc = asn1_get_tag_der (*der, mylen, &class, &derlen, &tag);
+      rc = asn1_get_tag_der ((unsigned char*) *der, mylen, &class,
+			     &derlen, &tag);
       if (rc != ASN1_SUCCESS)
 	{
 	  shishi_error_set (handle, errorDescription);
 	  return SHISHI_ASN1_ERROR;
 	}
 
-      lenlen = asn1_get_length_der(*der + derlen, mylen - derlen, &derlen2);
+      lenlen = asn1_get_length_der((unsigned char*) *der + derlen,
+				   mylen - derlen, &derlen2);
       if (lenlen < 0)
 	return SHISHI_ASN1_ERROR;
 
@@ -852,7 +854,7 @@ der2asn1 (Shishi * handle,
   asn1_result = asn1_create_element (handle->asn1, fieldname, &structure);
   if (asn1_result != ASN1_SUCCESS)
     {
-      shishi_error_set (handle, libtasn1_strerror (asn1_result));
+      shishi_error_set (handle, asn1_strerror (asn1_result));
       return NULL;
     }
 
@@ -927,7 +929,7 @@ shishi_der_msgtype (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1 (Shishi * handle, const char *der, size_t derlen)
 {
-  Shishi_asn1 node;
+  Shishi_asn1 node = NULL;
 
   switch (shishi_der_msgtype (handle, der, derlen))
     {

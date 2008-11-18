@@ -460,6 +460,8 @@ shishi_tkt_to_ccache_mem (Shishi *handle,
   if (rc != SHISHI_OK)
     return rc;
 
+  return SHISHI_OK;
+
 #if 0
   {
 	char *cname[CCACHE_MAX_COMPONENTS + 1];
@@ -582,6 +584,9 @@ shishi_tkts_to_ccache_mem (Shishi *handle,
 			   Shishi_tkts *tkts,
 			   char **data, size_t *len)
 {
+  return SHISHI_CCACHE_ERROR;
+
+#if 0
   struct ccache info;
   int rc = SHISHI_OK;
   size_t i;
@@ -600,12 +605,11 @@ shishi_tkts_to_ccache_mem (Shishi *handle,
       printf ("f %d\n", rc);
     }
 
-#if 0
   memset (&info, 0, sizeof (info));
 
   rc = ccache_pack (&info, *data, *len);
   printf ("pack res %d len %d\n", rc, *len);
-#endif
 
   return rc;
+#endif
 }

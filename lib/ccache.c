@@ -1,5 +1,5 @@
 /* ccache.c --- Read MIT style Kerberos Credential Cache file.
- * Copyright (C) 2006, 2007  Simon Josefsson
+ * Copyright (C) 2006, 2007, 2008  Simon Josefsson
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -145,7 +145,7 @@ parse_principal (const char **data, size_t * len,
 
   if (*len < out->realm.length)
     return -1;
-  out->realm.data = *data;
+  out->realm.data = (char*) *data;
   *data += out->realm.length;
   *len -= out->realm.length;
 
@@ -162,7 +162,7 @@ parse_principal (const char **data, size_t * len,
 
       if (*len < out->components[n].length)
 	return -1;
-      out->components[n].data = *data;
+      out->components[n].data = (char*) *data;
       *data += out->components[n].length;
       *len -= out->components[n].length;
 
@@ -226,7 +226,6 @@ static int
 parse_credential (const char **data, size_t * len,
 		  struct ccache_credential *out)
 {
-  struct ccache_principal princ;
   uint32_t num_address;
   uint32_t num_authdata;
   int rc;
@@ -264,7 +263,7 @@ parse_credential (const char **data, size_t * len,
   if (*len < out->key.keylen)
     return -1;
 
-  out->key.keyvalue = *data;
+  out->key.keyvalue = (char*) *data;
 
   *data += out->key.keylen;
   *len -= out->key.keylen;
@@ -323,7 +322,7 @@ parse_credential (const char **data, size_t * len,
 
   if (*len < out->ticket.length)
     return -1;
-  out->ticket.data = *data;
+  out->ticket.data = (char*) *data;
   *data += out->ticket.length;
   *len -= out->ticket.length;
 
@@ -333,7 +332,7 @@ parse_credential (const char **data, size_t * len,
 
   if (*len < out->second_ticket.length)
     return -1;
-  out->second_ticket.data = *data;
+  out->second_ticket.data = (char*) *data;
   *data += out->second_ticket.length;
   *len -= out->second_ticket.length;
 
@@ -343,7 +342,6 @@ parse_credential (const char **data, size_t * len,
 int
 ccache_parse (const char *data, size_t len, struct ccache *out)
 {
-  size_t pos = 0;
   int rc;
 
   rc = get_uint16 (&data, &len, &out->file_format_version);
@@ -356,7 +354,7 @@ ccache_parse (const char *data, size_t len, struct ccache *out)
 
   if (len < out->headerlen)
     return -1;
-  out->header = data;
+  out->header = (char*) data;
   data += out->headerlen;
   len -= out->headerlen;
 
@@ -364,7 +362,7 @@ ccache_parse (const char *data, size_t len, struct ccache *out)
   if (rc < 0)
     return rc;
 
-  out->credentials = data;
+  out->credentials = (char*) data;
   out->credentialslen = len;
 
   return 0;
@@ -433,9 +431,6 @@ static int
 pack_credential (struct ccache_credential *cred,
 		 char **out, size_t *len)
 {
-  struct ccache_principal princ;
-  uint32_t num_address;
-  uint32_t num_authdata;
   int rc;
 
   rc = pack_principal (&cred->client, out, len);
@@ -569,8 +564,6 @@ ccache_pack (struct ccache *info, char *data, size_t *len)
 void
 ccache_print (struct ccache *ccache)
 {
-  size_t n;
-
   printf ("file_format_version %04x\n", ccache->file_format_version);
   printf ("headerlen %04x\n", ccache->headerlen);
   printf ("default_principal\n");

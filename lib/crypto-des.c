@@ -1,5 +1,5 @@
 /* crypto-des.c --- DES crypto functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -654,7 +654,7 @@ des_checksum (Shishi * handle,
       return res;
     }
 
-  keyp = shishi_key_value (key);
+  keyp = (char*) shishi_key_value (key);
 
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
@@ -755,7 +755,7 @@ des_verify (Shishi * handle, int algo,
    * verify_mic                decrypt and verify rsa-md5 checksum
    */
 
-  keyp = shishi_key_value (key);
+  keyp = (char*) shishi_key_value (key);
 
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;

@@ -986,7 +986,7 @@ extern int
 shishi_authenticator_set_subkey (Shishi * handle,
 				 Shishi_asn1 authenticator,
 				 int32_t subkeytype,
-				 char *subkey, size_t subkeylen);
+				 const char *subkey, size_t subkeylen);
 extern int
 shishi_authenticator_add_random_subkey (Shishi * handle,
 					Shishi_asn1 authenticator);
@@ -1850,18 +1850,18 @@ extern const char *shishi_ap_option2string (Shishi_apoptions option);
 extern Shishi_apoptions shishi_ap_string2option (const char *str);
 
 /* key.c */
-extern const char *shishi_key_principal (Shishi_key * key);
+extern const char *shishi_key_principal (const Shishi_key * key);
 extern void shishi_key_principal_set (Shishi_key * key,
 				      const char *principal);
-extern const char *shishi_key_realm (Shishi_key * key);
+extern const char *shishi_key_realm (const Shishi_key * key);
 extern void shishi_key_realm_set (Shishi_key * key, const char *realm);
-extern int shishi_key_type (Shishi_key * key);
+extern int shishi_key_type (const Shishi_key * key);
 extern void shishi_key_type_set (Shishi_key * key, int32_t type);
-extern char *shishi_key_value (Shishi_key * key);
+extern const char *shishi_key_value (const Shishi_key * key);
 extern void shishi_key_value_set (Shishi_key * key, const char *value);
 extern const char *shishi_key_name (Shishi_key * key);
-extern size_t shishi_key_length (Shishi_key * key);
-extern uint32_t shishi_key_version (Shishi_key * key);
+extern size_t shishi_key_length (const Shishi_key * key);
+extern uint32_t shishi_key_version (const Shishi_key * key);
 extern void shishi_key_version_set (Shishi_key * key, uint32_t kvno);
 extern int shishi_key (Shishi * handle, Shishi_key ** key);
 extern void shishi_key_done (Shishi_key * key);
