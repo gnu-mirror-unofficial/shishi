@@ -19,7 +19,7 @@
 # Floor, Boston, MA 02110-1301, USA.
 
 AM_CFLAGS = $(WARN_CFLAGS)
-AM_CPPFLAGS = @LIBTASN1_CFLAGS@ -I$(top_srcdir)/gl -I$(top_builddir)/gl
+AM_CPPFLAGS = $(LIBTASN1_CFLAGS) -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
@@ -79,9 +79,9 @@ endif
 if STARTTLS
 libshishi_la_SOURCES += starttls.c starttls.h
 endif
-libshishi_la_LIBADD = ../gl/libgnu.la @LIB_CLOCK_GETTIME@	\
-	@LTLIBGCRYPT@ @LTLIBTASN1@ @LTLIBGNUTLS@ @LTLIBIDN@	\
-	@LTLIBINTL@
+libshishi_la_LIBADD = ../gl/libgnu.la $(LIB_CLOCK_GETTIME)	\
+	$(LTLIBGNUTLS) $(LTLIBGCRYPT) $(LTLIBTASN1) $(LTLIBIDN)	\
+	$(LTLIBINTL)
 libshishi_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
