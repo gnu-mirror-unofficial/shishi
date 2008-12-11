@@ -312,19 +312,19 @@ sj_LINKER_SCRIPT([$srcdir/lib/shishi.vers])
 sj_UPDATE_HEADER_VERSION([$srcdir/lib/shishi.h])
 
 # Add many warnings, except some...
-nw="$nw -Wsystem-headers"         # Don't let system headers trigger warnings
-nw="$nw -Wc++-compat"             # We don't care strongly about C++ compilers
-nw="$nw -Wsign-conversion"        # Too many warnings for now
-nw="$nw -Wconversion"             # Too many warnings for now
-nw="$nw -Wpadded"                 # Our structs are not padded
-nw="$nw -Wunreachable-code"       # Too many false positives
-nw="$nw -Wtraditional"            # Warns on #elif which we use often
-nw="$nw -Wtraditional-conversion" # Too many warnings for now
-nw="$nw -Wcast-qual"              # Too many warnings for now
-nw="$nw -Wmissing-format-attribute"# Too many warnings for now
-nw="$nw -Wunsafe-loop-optimizations"# Too many warnings for now
-nw="$nw -Wundef"                  # Problems in gnulib files
-nw="$nw -Wstrict-overflow"        # Don't know how to avoid
+nw="$nw -Wsystem-headers"            # Ignore errors in system headers
+nw="$nw -Wc++-compat"                # We don't care much about C++ compilers
+nw="$nw -Wsign-conversion"           # Too many warnings for now
+nw="$nw -Wconversion"                # Too many warnings for now
+nw="$nw -Wpadded"                    # Our structs are not padded
+nw="$nw -Wunreachable-code"          # Too many false positives
+nw="$nw -Wtraditional"               # Warns on #elif which we use often
+nw="$nw -Wtraditional-conversion"    # Too many warnings for now
+nw="$nw -Wcast-qual"                 # Too many warnings for now
+nw="$nw -Wmissing-format-attribute"  # Too many warnings for now
+nw="$nw -Wunsafe-loop-optimizations" # Too many warnings for now
+nw="$nw -Wundef"                     # Problems in gnulib files
+nw="$nw -Wstrict-overflow"           # Don't know how to avoid
 gl_MANYWARN_ALL_GCC([ws])
 gl_MANYWARN_COMPLEMENT(ws, [$ws], [$nw])
 for w in $ws; do
