@@ -1,5 +1,5 @@
 /* as.c --- High level client AS functions
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -261,8 +261,7 @@ shishi_as_rep_process (Shishi_as * as, Shishi_key * key, const char *password)
 	{
 	  shishi_error_printf (as->handle, "Could not extract cname and "
 			       "realm from AS-REQ: %s\n",
-			       shishi_strerror (res),
-			       shishi_error (as->handle));
+			       shishi_strerror (res));
 	  return res;
 	}
 
