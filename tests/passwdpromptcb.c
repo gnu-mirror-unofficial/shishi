@@ -24,7 +24,7 @@
 
 int cb_ret = 0;
 
-int
+static int
 prompt_password (Shishi * handle, char **s, const char *format, va_list ap)
 {
   if (cb_ret == 0)
@@ -42,7 +42,7 @@ test (Shishi * handle)
 
   cb = shishi_prompt_password_callback_get (handle);
   if (cb)
-    fail ("callback not null: %x\n", cb);
+    fail ("callback not null: %p\n", cb);
   else
     success ("callback is null.\n");
 
@@ -50,7 +50,7 @@ test (Shishi * handle)
 
   cb = shishi_prompt_password_callback_get (handle);
   if (cb != prompt_password)
-    fail ("callback not equal: %x != %x\n", cb, prompt_password);
+    fail ("callback not equal: %p != %p\n", cb, prompt_password);
   else
     success ("callback equal to our function.\n");
 

@@ -34,8 +34,6 @@
 #include <locale.h>
 #include <gettext.h>
 #define _(String) gettext (String)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
 
 #include <shishi.h>
 
@@ -51,6 +49,9 @@ const char version_etc_copyright[] =
      symbol suitable for this locale, and %d is the copyright
      year.  */
   "Copyright %s %d Simon Josefsson.";
+
+static void
+usage (int status) __attribute__ ((__noreturn__));
 
 static void
 usage (int status)

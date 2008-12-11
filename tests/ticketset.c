@@ -204,8 +204,7 @@ test (Shishi * handle)
     fail ("shishi_der2asn1_encasreppart() failed\n");
 
   n = BUFSIZE;
-  if (!base64_decode (tkt1kdcrepb64, strlen (tkt1kdcrepb64),
-		      buffer, &n))
+  if (!base64_decode (tkt1kdcrepb64, strlen (tkt1kdcrepb64), buffer, &n))
     fail ("base64_decode() failed\n");
   tkt1asn3 = shishi_der2asn1_asrep (handle, buffer, n);
   if (!tkt1asn3)
@@ -280,8 +279,7 @@ test (Shishi * handle)
 
   /* create ticket */
   n = BUFSIZE;
-  if (!base64_decode (tkt2ticketb64, strlen (tkt2ticketb64),
-		      buffer, &n))
+  if (!base64_decode (tkt2ticketb64, strlen (tkt2ticketb64), buffer, &n))
     fail ("base64_decode() failed\n");
   tkt2asn1 = shishi_der2asn1_ticket (handle, buffer, n);
   if (!tkt2asn1)
@@ -296,8 +294,7 @@ test (Shishi * handle)
     fail ("shishi_der2asn1_enctgsreppart() failed\n");
 
   n = BUFSIZE;
-  if (!base64_decode (tkt2kdcrepb64, strlen (tkt2kdcrepb64),
-		      buffer, &n))
+  if (!base64_decode (tkt2kdcrepb64, strlen (tkt2kdcrepb64), buffer, &n))
     fail ("base64_decode() failed\n");
   tkt2asn3 = shishi_der2asn1_tgsrep (handle, buffer, n);
   if (!tkt2asn3)
@@ -333,7 +330,7 @@ test (Shishi * handle)
 
   /* shishi_tkts_find () */
   memset (&hint, 0, sizeof (hint));
-  hint.server = "host/latte.josefsson.org";
+  hint.server = (char *) "host/latte.josefsson.org";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
   if (debug)
@@ -345,7 +342,7 @@ test (Shishi * handle)
 
   /* shishi_tkts_find () */
   memset (&hint, 0, sizeof (hint));
-  hint.server = "krbtgt/JOSEFSSON.ORG";
+  hint.server = (char *) "krbtgt/JOSEFSSON.ORG";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
   if (t3 == t1)
@@ -355,7 +352,7 @@ test (Shishi * handle)
 
   /* shishi_tkts_find () */
   memset (&hint, 0, sizeof (hint));
-  hint.client = "jas";
+  hint.client = (char *) "jas";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
   if (debug)
@@ -367,7 +364,7 @@ test (Shishi * handle)
 
   /* shishi_tkts_find () */
   memset (&hint, 0, sizeof (hint));
-  hint.client = "jas";
+  hint.client = (char *) "jas";
   t3 = shishi_tkts_find (tktset, &hint);
   if (debug)
     printf ("t3=%p\n", t3);
@@ -411,7 +408,7 @@ test (Shishi * handle)
     fail ("shishi_tkts_remove() failed\n");
 
   memset (&hint, 0, sizeof (hint));
-  hint.server = "host/latte.josefsson.org";
+  hint.server = (char *) "host/latte.josefsson.org";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
   if (t3 == NULL)
@@ -420,7 +417,7 @@ test (Shishi * handle)
     fail ("shishi_tkts_find() for server failed\n");
 
   memset (&hint, 0, sizeof (hint));
-  hint.server = "krbtgt/JOSEFSSON.ORG";
+  hint.server = (char *) "krbtgt/JOSEFSSON.ORG";
   hint.flags = SHISHI_TKTSHINTFLAGS_ACCEPT_EXPIRED;
   t3 = shishi_tkts_find (tktset, &hint);
   if (t3 == t1)

@@ -1,5 +1,5 @@
 /* ccache.c --- Self test MIT ccache file readers.
- * Copyright (C) 2002, 2003, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -28,7 +28,7 @@ void
 test (Shishi * handle)
 {
   Shishi_tkts *tkts;
-  char *ccache = getenv ("CCACHE1");
+  const char *ccache = getenv ("CCACHE1");
   int rc;
 
   if (!ccache)

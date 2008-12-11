@@ -648,7 +648,7 @@ extern int shishi_init_server_with_paths (Shishi ** handle,
 					  const char *systemcfgfile);
 
 /* cfg.c */
-extern int shishi_cfg (Shishi * handle, char *option);
+extern int shishi_cfg (Shishi * handle, const char *option);
 extern int shishi_cfg_from_file (Shishi * handle, const char *cfg);
 extern int shishi_cfg_print (Shishi * handle, FILE * fh);
 extern const char *shishi_cfg_default_systemfile (Shishi * handle);
@@ -1470,8 +1470,8 @@ extern int shishi_aes_cts (Shishi * handle, int decryptp,
 /* crypto.c */
 extern int shishi_cipher_supported_p (int type);
 extern const char *shishi_cipher_name (int type);
-extern int shishi_cipher_blocksize (int type);
-extern int shishi_cipher_confoundersize (int type);
+extern size_t shishi_cipher_blocksize (int type);
+extern size_t shishi_cipher_confoundersize (int type);
 extern size_t shishi_cipher_keylen (int type);
 extern size_t shishi_cipher_randomlen (int type);
 extern int shishi_cipher_defaultcksumtype (int32_t type);

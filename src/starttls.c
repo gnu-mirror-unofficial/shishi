@@ -251,6 +251,9 @@ logtlsinfo (gnutls_session session)
       logcertinfo (session);
       break;
 
+    case GNUTLS_CRD_SRP:
+    case GNUTLS_CRD_PSK:
+    case GNUTLS_CRD_IA:
     default:
       syslog (LOG_ERR, "Unknown TLS authentication (%d)", cred);
       break;

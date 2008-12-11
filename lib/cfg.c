@@ -110,7 +110,7 @@ _shishi_realminfo_new (Shishi * handle, char *realm)
  * Return Value: Returns SHISHI_OK if option was valid.
  **/
 int
-shishi_cfg (Shishi * handle, char *option)
+shishi_cfg (Shishi * handle, const char *option)
 {
   char *value;
   char *realm = NULL;

@@ -35,8 +35,6 @@
 #include <locale.h>
 #include <gettext.h>
 #define _(String) gettext (String)
-#define gettext_noop(String) String
-#define N_(String) gettext_noop (String)
 
 #include <shishi.h>
 
@@ -52,9 +50,9 @@ int
 main (int argc, char *argv[])
 {
   struct gengetopt_args_info args;
+  const char *infile = NULL;
+  const char *outfile = NULL;
   Shishi *sh;
-  char *infile = NULL;
-  char *outfile = NULL;
   int rc;
 
   setlocale (LC_ALL, "");

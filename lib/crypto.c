@@ -567,7 +567,7 @@ shishi_cipher_name (int32_t type)
  * Return value: Return block size for encryption type, as defined in
  * the standards.
  **/
-int
+size_t
 shishi_cipher_blocksize (int32_t type)
 {
   size_t i;
@@ -586,9 +586,10 @@ shishi_cipher_blocksize (int32_t type)
  * Get length of confounder for cipher.
  *
  * Return value: Returns the size of the confounder (random data) for
- * encryption type, as defined in the standards.
+ * encryption type, as defined in the standards, or (size_t)-1 on
+ * error (e.g., unsupported encryption type).
  **/
-int
+size_t
 shishi_cipher_confoundersize (int32_t type)
 {
   size_t i;
@@ -628,7 +629,8 @@ shishi_cipher_keylen (int32_t type)
  * Get length of random data for cipher.
  *
  * Return value: Return length of random used for the encryption type,
- * as defined in the standards.
+ * as defined in the standards, or (size_t)-1 on error (e.g.,
+ * unsupported encryption type).
  **/
 size_t
 shishi_cipher_randomlen (int32_t type)

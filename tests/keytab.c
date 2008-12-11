@@ -1,5 +1,5 @@
 /* keytab.c --- Self test MIT keytab file readers.
- * Copyright (C) 2002, 2003, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -26,7 +26,7 @@ void
 test (Shishi * handle)
 {
   Shishi_keys *keys;
-  char *keytab = getenv ("KEYTAB1");
+  const char *keytab = getenv ("KEYTAB1");
   int rc;
 
   if (!keytab)

@@ -18,13 +18,17 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
-EXTRA_DIST = utils.c shisa.sh shishi.supp keytab1.bin ccache1.bin
+EXTRA_DIST = shisa.sh shishi.supp keytab1.bin ccache1.bin
 
+AM_CFLAGS = $(WARN_CFLAGS)
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
 	-I$(top_srcdir)/lib -I../lib
 AM_LDFLAGS = -no-install
 LDADD = @LTLIBINTL@ ../gl/libgnu.la @LTLIBTASN1@ @LTLIBGNUTLS@ \
-	../lib/libshishi.la
+	../lib/libshishi.la libutils.la
+
+noinst_LTLIBRARIES = libutils.la
+libutils_la_SOURCES = utils.h utils.c
 
 check_PROGRAMS = authenticator crypto gztime priv safe ticketset	\
 	crypto-ctx low-crypto rijndael key keytab ccache nonce		\

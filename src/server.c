@@ -1,5 +1,5 @@
 /* server.c --- Handle KDC sessions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -214,7 +214,7 @@ kdc_read (struct listenspec *ls)
 static int
 kdc_ready (struct listenspec *ls)
 {
-  int waitfor = ls->bufpos >= 4 ? C2I (ls->buf) : 4;
+  size_t waitfor = ls->bufpos >= 4 ? C2I (ls->buf) : 4;
 
   syslog (LOG_DEBUG, "Got %d bytes of %d bytes from %s on socket %d\n",
 	  ls->bufpos, waitfor + 4, ls->str, ls->sockfd);

@@ -1,5 +1,5 @@
 /* crypto-ctx.c --- Shishi crypto context self tests.
- * Copyright (C) 2002, 2003, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -51,7 +51,7 @@ const struct tv tv[] = {
   {SHISHI_AES256_CTS_HMAC_SHA1_96, 1, 1, 72},
   {SHISHI_ARCFOUR_HMAC, 0, 1, 72},
   {SHISHI_ARCFOUR_HMAC_EXP, 0, 1, 72},
-  {0}
+  {0, 0, 0, 0}
 };
 
 void
@@ -71,7 +71,7 @@ test (Shishi * handle)
   for (i = 0; tvp = &tv[i], tvp->etype; i++)
     {
       len = shishi_cipher_randomlen (tvp->etype);
-      if (len < 0)
+      if (len == (size_t) -1)
 	{
 	  fail ("shishi_cipher_randomlen(%d) failed: %d\n", tvp->etype, len);
 	  continue;
@@ -85,7 +85,7 @@ test (Shishi * handle)
 	}
 
       len = shishi_cipher_blocksize (tvp->etype);
-      if (len < 0)
+      if (len == (size_t) -1)
 	{
 	  fail ("shishi_cipher_blocksize (%d) failed: %d\n", tvp->etype, len);
 	  continue;

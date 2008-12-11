@@ -1,5 +1,5 @@
 /* kdc.c --- Process AS and TGS requests.
- * Copyright (C) 2002, 2003, 2004, 2005, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -36,7 +36,7 @@ asreq1 (Shishi_as * as)
   int rc;
   char *username = NULL, *servername = NULL, *realm = NULL;
   Shisa_principal server, user;
-  uint32_t sessionkeytype = -1;
+  int32_t sessionkeytype = -1;
   int32_t etype;
   int i;
 
@@ -1093,6 +1093,16 @@ process (const char *in, size_t inlen, char **out)
       rc = tgsreq (node, out, &outlen);
       break;
 
+    case SHISHI_MSGTYPE_AS_REP:
+    case SHISHI_MSGTYPE_TGS_REP:
+    case SHISHI_MSGTYPE_AP_REQ:
+    case SHISHI_MSGTYPE_AP_REP:
+    case SHISHI_MSGTYPE_RESERVED16:
+    case SHISHI_MSGTYPE_RESERVED17:
+    case SHISHI_MSGTYPE_SAFE:
+    case SHISHI_MSGTYPE_PRIV:
+    case SHISHI_MSGTYPE_CRED:
+    case SHISHI_MSGTYPE_ERROR:
     default:
       syslog (LOG_ERR, "Unsupported KDC message type %d (0x%x)",
 	      shishi_asn1_msgtype (handle, node),

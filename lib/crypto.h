@@ -116,11 +116,11 @@ struct cipherinfo
 {
   int32_t type;
   const char *name;
-  int blocksize;
-  int confoundersize;
-  int keylen;
-  int randomlen;
-  int defaultcksumtype;
+  size_t blocksize;
+  size_t confoundersize;
+  size_t keylen;
+  size_t randomlen;
+  uint32_t defaultcksumtype;
   Shishi_random_to_key_function random2key;
   Shishi_string_to_key_function string2key;
   Shishi_encrypt_function encrypt;

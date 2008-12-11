@@ -1,5 +1,5 @@
 /* crypto.c --- Shishi crypto self tests.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -172,47 +172,47 @@ const struct str2key str2key[] = {
 #if WITH_DES
   {"password",
    "ATHENA.MIT.EDUraeburn",
-   "\xCB\xC2\x2F\xAE\x23\x52\x98\xE3", SHISHI_DES_CBC_MD5},
+   "\xCB\xC2\x2F\xAE\x23\x52\x98\xE3", SHISHI_DES_CBC_MD5, NULL},
   {"potatoe",
    "WHITEHOUSE.GOVdanny",
-   "\xDF\x3D\x32\xA7\x4F\xD9\x2A\x01", SHISHI_DES_CBC_MD5},
+   "\xDF\x3D\x32\xA7\x4F\xD9\x2A\x01", SHISHI_DES_CBC_MD5, NULL},
   {"\xF0\x9D\x84\x9E",
    "EXAMPLE.COMpianist",
-   "\x4F\xFB\x26\xBA\xB0\xCD\x94\x13", SHISHI_DES_CBC_MD5},
+   "\x4F\xFB\x26\xBA\xB0\xCD\x94\x13", SHISHI_DES_CBC_MD5, NULL},
   {ESZETT,
    "ATHENA.MIT.EDUJuri" S_CARON "i" C_ACUTE,
-   "\x62\xC8\x1A\x52\x32\xB5\xE6\x9D", SHISHI_DES_CBC_MD5},
+   "\x62\xC8\x1A\x52\x32\xB5\xE6\x9D", SHISHI_DES_CBC_MD5, NULL},
   {"11119999",
-   "AAAAAAAA", "\x98\x40\x54\xD0\xF1\xA7\x3E\x31", SHISHI_DES_CBC_MD5},
+   "AAAAAAAA", "\x98\x40\x54\xD0\xF1\xA7\x3E\x31", SHISHI_DES_CBC_MD5, NULL},
   {"NNNN6666",
-   "FFFFAAAA", "\xC4\xBF\x6B\x25\xAD\xF7\xA4\xF8", SHISHI_DES_CBC_MD5},
+   "FFFFAAAA", "\xC4\xBF\x6B\x25\xAD\xF7\xA4\xF8", SHISHI_DES_CBC_MD5, NULL},
 #endif
 #if WITH_3DES
   {"password",
    "ATHENA.MIT.EDUraeburn",
    "\x85\x0b\xb5\x13\x58\x54\x8c\xd0\x5e\x86\x76\x8c"
    "\x31\x3e\x3b\xfe\xf7\x51\x19\x37\xdc\xf7\x2c\x3e",
-   SHISHI_DES3_CBC_HMAC_SHA1_KD},
+   SHISHI_DES3_CBC_HMAC_SHA1_KD, NULL},
   {"potatoe",
    "WHITEHOUSE.GOVdanny",
    "\xdf\xcd\x23\x3d\xd0\xa4\x32\x04\xea\x6d\xc4\x37"
    "\xfb\x15\xe0\x61\xb0\x29\x79\xc1\xf7\x4f\x37\x7a",
-   SHISHI_DES3_CBC_HMAC_SHA1_KD},
+   SHISHI_DES3_CBC_HMAC_SHA1_KD, NULL},
   {"penny",
    "EXAMPLE.COMbuckaroo",
    "\x6d\x2f\xcd\xf2\xd6\xfb\xbc\x3d\xdc\xad\xb5\xda"
    "\x57\x10\xa2\x34\x89\xb0\xd3\xb6\x9d\x5d\x9d\x4a",
-   SHISHI_DES3_CBC_HMAC_SHA1_KD},
+   SHISHI_DES3_CBC_HMAC_SHA1_KD, NULL},
   {ESZETT,
    "ATHENA.MIT.EDUJuri" S_CARON "i" C_ACUTE,
    "\x16\xd5\xa4\x0e\x1c\xe3\xba\xcb\x61\xb9\xdc\xe0"
    "\x04\x70\x32\x4c\x83\x19\x73\xa7\xb9\x52\xfe\xb0",
-   SHISHI_DES3_CBC_HMAC_SHA1_KD},
+   SHISHI_DES3_CBC_HMAC_SHA1_KD, NULL},
   {G_CLEF,
    "EXAMPLE.COMpianist",
    "\x85\x76\x37\x26\x58\x5d\xbc\x1c\xce\x6e\xc4\x3e"
    "\x1f\x75\x1f\x07\xf1\xc4\xcb\xb0\x98\xf4\x0b\x19",
-   SHISHI_DES3_CBC_HMAC_SHA1_KD},
+   SHISHI_DES3_CBC_HMAC_SHA1_KD, NULL},
 #endif
 #if WITH_AES
   {"password",
@@ -282,7 +282,7 @@ const struct str2key str2key[] = {
 #if WITH_ARCFOUR
   {"foo", "",
    "\xac\x8e\x65\x7f\x83\xdf\x82\xbe\xea\x5d\x43\xbd\xaf\x78\x00\xcc",
-   SHISHI_ARCFOUR_HMAC}
+   SHISHI_ARCFOUR_HMAC, NULL}
 #endif
 };
 
@@ -349,7 +349,7 @@ test (Shishi * handle)
 
   for (i = 0; i < sizeof (drdk) / sizeof (drdk[0]); i++)
     {
-      if (verbose)
+      if (debug)
 	printf ("DR entry %d\n", i);
 
       res = shishi_key_from_value (handle, drdk[i].type, drdk[i].key, &key);
@@ -367,7 +367,7 @@ test (Shishi * handle)
 	  continue;
 	}
 
-      if (verbose)
+      if (debug)
 	{
 	  printf ("DR(%s, key, usage)\n", shishi_cipher_name (drdk[i].type));
 
@@ -403,10 +403,10 @@ test (Shishi * handle)
       if (memcmp (drdk[i].dr, out, strlen (drdk[i].dr)) != 0)
 	{
 	  fail ("shishi_dr() entry %d failed\n", i);
-	  if (verbose)
+	  if (debug)
 	    printf ("ERROR\n");
 	}
-      else if (verbose)
+      else if (debug)
 	success ("OK\n");
 
       res = shishi_key_from_value (handle, drdk[i].type, drdk[i].key, &key);
@@ -426,7 +426,7 @@ test (Shishi * handle)
 	  continue;
 	}
 
-      if (verbose)
+      if (debug)
 	{
 	  printf ("DK(%s, key, usage)\n", shishi_cipher_name (drdk[i].type));
 
@@ -464,10 +464,10 @@ test (Shishi * handle)
 		    strlen (drdk[i].dk)) == 0))
 	{
 	  fail ("shishi_dk() entry %d failed\n", i);
-	  if (verbose)
+	  if (debug)
 	    printf ("ERROR\n");
 	}
-      else if (verbose)
+      else if (debug)
 	success ("OK\n");
 
       shishi_key_done (key2);
@@ -475,7 +475,7 @@ test (Shishi * handle)
 
   for (i = 0; i < sizeof (nfold) / sizeof (nfold[0]); i++)
     {
-      if (verbose)
+      if (debug)
 	printf ("N-FOLD entry %d\n", i);
 
       res = shishi_n_fold (handle,
@@ -488,7 +488,7 @@ test (Shishi * handle)
 	  continue;
 	}
 
-      if (verbose)
+      if (debug)
 	{
 	  printf ("in:\n");
 	  escapeprint (nfold[i].in, strlen (nfold[i].in));
@@ -515,10 +515,10 @@ test (Shishi * handle)
       if (memcmp (nfold[i].out, out, nfold[i].n / 8) != 0)
 	{
 	  fail ("shishi_n_fold() entry %d failed\n", i);
-	  if (verbose)
+	  if (debug)
 	    printf ("ERROR\n");
 	}
-      else if (verbose)
+      else if (debug)
 	success ("OK\n");
     }
 
@@ -529,7 +529,7 @@ test (Shishi * handle)
       int keylen = sizeof (key);
       const char *name = shishi_cipher_name (str2key[i].etype);
 
-      if (verbose)
+      if (debug)
 	printf ("STRING-TO-KEY entry %d (key type %s)\n", i,
 		name ? name : "NO NAME");
 
@@ -544,7 +544,7 @@ test (Shishi * handle)
 	  continue;
 	}
 
-      if (verbose)
+      if (debug)
 	{
 	  printf ("password:\n");
 	  escapeprint (str2key[i].password, n_password);
@@ -579,10 +579,10 @@ test (Shishi * handle)
 	{
 	  fail ("shishi_string_to_key() entry %d failed\n", i);
 
-	  if (verbose)
+	  if (debug)
 	    printf ("ERROR\n");
 	}
-      else if (verbose)
+      else if (debug)
 	success ("OK\n");
 
       shishi_key_done (key);
@@ -590,7 +590,7 @@ test (Shishi * handle)
 
   for (i = 0; i < sizeof (pkcs5) / sizeof (pkcs5[0]); i++)
     {
-      if (verbose)
+      if (debug)
 	printf ("PKCS5 entry %d\n", i);
 
       res = shishi_pbkdf2_sha1 (handle,
@@ -603,7 +603,7 @@ test (Shishi * handle)
 	  continue;
 	}
 
-      if (verbose)
+      if (debug)
 	{
 	  printf ("password:\n");
 	  escapeprint (pkcs5[i].password, strlen (pkcs5[i].password));
@@ -638,10 +638,10 @@ test (Shishi * handle)
 	{
 	  fail ("PKCS5 entry %d failed\n", i);
 
-	  if (verbose)
+	  if (debug)
 	    printf ("ERROR\n");
 	}
-      else if (verbose)
+      else if (debug)
 	success ("OK\n");
     }
 }

@@ -484,6 +484,9 @@ const char version_etc_copyright[] =
   "Copyright %s %d Simon Josefsson.";
 
 static void
+usage (int status) __attribute__ ((__noreturn__));
+
+static void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
