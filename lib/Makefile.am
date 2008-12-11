@@ -56,7 +56,7 @@ libshishi_la_SOURCES = shishi.h internal.h \
 	version.c password.c \
 	utils.c utils.h resolv.c \
 	kerberos5.asn1 shishi.vers \
-	low-crypto.c
+	low-crypto.c low-crypto.h
 
 if NULL
 libshishi_la_SOURCES += crypto-null.c
