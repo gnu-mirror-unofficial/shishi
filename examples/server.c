@@ -98,7 +98,7 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
   Shishi_ap *ap;
   Shishi_asn1 apreq;
   char *buf;
-  int buflen;
+  size_t buflen;
   int rc;
 
   printf ("Client: %s\n", cname);
