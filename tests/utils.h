@@ -23,9 +23,24 @@
 #ifndef UTILS_H
 # define UTILS_H
 
-# include <string.h>
+# include <stdio.h>
+# include <stdlib.h>
 # include <stdarg.h>
+# include <ctype.h>
+# include <stdint.h>
+# include <sys/types.h>
+# include <sys/select.h>
+# include <sys/socket.h>
+# include <unistd.h>
+# include <string.h>
+# include <sys/time.h>
+# include <time.h>
+# include <netdb.h>
+# include <errno.h>
+
 # include <shishi.h>
+
+#include "base64.h"
 
 extern int debug;
 extern int error_count;
