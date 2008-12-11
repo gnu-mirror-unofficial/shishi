@@ -325,6 +325,7 @@ nw="$nw -Wmissing-format-attribute"  # Too many warnings for now
 nw="$nw -Wunsafe-loop-optimizations" # Too many warnings for now
 nw="$nw -Wundef"                     # Problems in gnulib files
 nw="$nw -Wstrict-overflow"           # Don't know how to avoid
+nw="$nw -Waggregate-return"          # For src/resume.c:resume_db_fetch...
 gl_MANYWARN_ALL_GCC([ws])
 gl_MANYWARN_COMPLEMENT(ws, [$ws], [$nw])
 for w in $ws; do
