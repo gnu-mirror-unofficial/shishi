@@ -112,16 +112,16 @@ _shishi_realminfo_new (Shishi * handle, char *realm)
 int
 shishi_cfg (Shishi * handle, const char *option)
 {
+  char *opt = option ? xstrdup (option) : NULL;
+  char *p = opt;
   char *value;
   char *realm = NULL;
   int res;
   size_t i;
 
-  while (option != NULL && *option != '\0')
+  while (p != NULL && *p != '\0')
     {
-      switch (getsubopt ((char**) &option,
-			 (char * const *) _shishi_opts,
-			 &value))
+      switch (getsubopt (&p, (char * const *) _shishi_opts, &value))
 	{
 	case KDC_TIMEOUT_OPTION:
 	  if (value && atoi (value) > 0)
@@ -224,13 +224,13 @@ shishi_cfg (Shishi * handle, const char *option)
 	case CLIENT_KDC_ETYPES_OPTION:
 	  res = shishi_cfg_clientkdcetype_set (handle, value);
 	  if (res != SHISHI_OK)
-	    return res;
+	    goto out;
 	  break;
 
 	case AUTHORIZATION_TYPES_OPTION:
 	  res = shishi_cfg_authorizationtype_set (handle, value);
 	  if (res != SHISHI_OK)
-	    return res;
+	    goto out;
 	  break;
 
 	case STRINGPROCESS_OPTION:
@@ -270,30 +270,31 @@ shishi_cfg (Shishi * handle, const char *option)
 		struct sockaddr_in *sinaddr;
 		struct hostent *he;
 		struct servent *se;
-		char *p;
+		char *protstr;
 		int protocol = UDP;
 		int port = -1;
 
-		if ((p = strchr (value, '/')))
+		if ((protstr = strchr (value, '/')))
 		  {
-		    *p = '\0';
-		    p++;
-		    if (strcasecmp (p, "udp") == 0)
+		    *protstr = '\0';
+		    protstr++;
+		    if (strcasecmp (protstr, "udp") == 0)
 		      protocol = UDP;
-		    else if (strcasecmp (p, "tcp") == 0)
+		    else if (strcasecmp (protstr, "tcp") == 0)
 		      protocol = TCP;
-		    else if (strcasecmp (p, "tls") == 0)
+		    else if (strcasecmp (protstr, "tls") == 0)
 		      protocol = TLS;
 		    else
 		      shishi_warn (handle,
-				   "Ignoring unknown KDC parameter: %s", p);
+				   "Ignoring unknown KDC parameter: %s",
+				   protstr);
 		  }
 
-		if ((p = strchr (value, ':')))
+		if ((protstr = strchr (value, ':')))
 		  {
-		    *p = '\0';
-		    p++;
-		    port = atoi (p);
+		    *protstr = '\0';
+		    protstr++;
+		    port = atoi (protstr);
 		  }
 
 		he = gethostbyname (value);	/* XXX move to netio.c */
@@ -339,7 +340,11 @@ shishi_cfg (Shishi * handle, const char *option)
 	}
     }
 
-  return SHISHI_OK;
+  res = SHISHI_OK;
+
+ out:
+  free (opt);
+  return res;
 }
 
 /**

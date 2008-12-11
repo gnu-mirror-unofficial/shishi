@@ -1,5 +1,5 @@
 /* file.c --- File based Shisa database.
- * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -73,7 +73,7 @@ enum
   THE_END
 };
 
-static const char *_shisa_file_opts[] = {
+static const char * const _shisa_file_opts[] = {
   /* [READ_ONLY_OPTION] =        */ "read-only",
   /* [ALLOW_CREATE_OPTION] =     */ "allow-create",
   /* [THE_END] =                 */ NULL
@@ -85,10 +85,11 @@ shisa_file_cfg (Shisa * dbh, Shisa_file * info, const char *option)
   char *opt = option ? xstrdup (option) : NULL;
   char *p = opt;
   char *value;
+  int res;
 
   while (p != NULL && *p != '\0')
     {
-      switch (getsubopt (&p, _shisa_file_opts, &value))
+      switch (getsubopt (&p, (char * const *) _shisa_file_opts, &value))
 	{
 	case READ_ONLY_OPTION:
 	  info->readonly = 1;
@@ -100,15 +101,17 @@ shisa_file_cfg (Shisa * dbh, Shisa_file * info, const char *option)
 
 	default:
 	  shisa_info (dbh, "Unknown file database option: `%s'.", value);
-	  return SHISA_CFG_SYNTAX_ERROR;
+	  res = SHISA_CFG_SYNTAX_ERROR;
+	  goto out;
 	  break;
 	}
     }
 
-  if (opt)
-    free (opt);
+  res = SHISA_OK;
 
-  return SHISA_OK;
+ out:
+  free (opt);
+  return res;
 }
 
 /* Initialize file backend, i.e., parse options and check if file root
@@ -287,8 +290,6 @@ shisa_file_principal_update (Shisa * dbh,
 			     const char *principal,
 			     const Shisa_principal * ph)
 {
-  Shisa_file *info = state;
-
   return SHISA_OK;
 }
 
@@ -640,10 +641,6 @@ shisa_file_key_update (Shisa * dbh,
 		       const char *principal,
 		       const Shisa_key * oldkey, const Shisa_key * newkey)
 {
-  Shisa_file *info = state;
-
-  puts ("fku");
-
   return SHISA_NO_KEY;
 }
 

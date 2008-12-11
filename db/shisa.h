@@ -1,5 +1,5 @@
 /* shisa.h --- Header file for concurrent write-safe user information database.
- * Copyright (C) 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -98,7 +98,7 @@ extern int shisa_init (Shisa ** dbh);
 extern int shisa_init_with_paths (Shisa ** dbh, const char *file);
 
 /* cfg.c */
-extern int shisa_cfg (Shisa * dbh, char *option);
+extern int shisa_cfg (Shisa * dbh, const char *option);
 extern int shisa_cfg_db (Shisa * dbh, const char *value);
 extern int shisa_cfg_from_file (Shisa * dbh, const char *cfg);
 extern const char *shisa_cfg_default_systemfile (Shisa * dbh);

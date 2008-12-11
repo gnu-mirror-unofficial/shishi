@@ -1,5 +1,5 @@
 /* cfg.c --- Read Shisa Configuration file.
- * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,17 +21,6 @@
  */
 
 #include "info.h"
-
-enum
-{
-  DB_OPTION = 0,
-  THE_END
-};
-
-static const char *_shisa_opts[] = {
-  /* [DB_OPTION] =        */ "db",
-  /* [THE_END] =          */ NULL
-};
 
 /**
  * shisa_cfg_db:
@@ -106,7 +95,7 @@ shisa_cfg_db (Shisa * dbh, const char *value)
  * Return Value: Returns SHISA_OK if option was valid.
  **/
 int
-shisa_cfg (Shisa * dbh, char *option)
+shisa_cfg (Shisa * dbh, const char *option)
 {
   int rc;
 

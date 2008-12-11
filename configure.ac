@@ -318,6 +318,7 @@ nw="$nw -Wsign-conversion"           # Too many warnings for now
 nw="$nw -Wconversion"                # Too many warnings for now
 nw="$nw -Wpadded"                    # Our structs are not padded
 nw="$nw -Wunreachable-code"          # Too many false positives
+nw="$nw -Wlogical-op"                # Too many false positives
 nw="$nw -Wtraditional"               # Warns on #elif which we use often
 nw="$nw -Wtraditional-conversion"    # Too many warnings for now
 nw="$nw -Wcast-qual"                 # Too many warnings for now
