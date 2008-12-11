@@ -8,6 +8,8 @@ See the end for copying conditions.
 
 ** minitasn1: Internal copy updated to libtasn1 v1.7.
 
+** More compiler warnings enabled, and many warnings fixed.
+
 * Version 0.0.37 (released 2008-06-24)
 
 ** libshishi: New functions to set a password prompt callback.
