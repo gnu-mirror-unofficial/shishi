@@ -666,12 +666,16 @@ extern const char *shishi_strerror (int err);
 extern const char *shishi_error (Shishi * handle);
 extern void shishi_error_clear (Shishi * handle);
 extern void shishi_error_set (Shishi * handle, const char *errstr);
-extern void shishi_error_printf (Shishi * handle, const char *format, ...);
+extern void shishi_error_printf (Shishi * handle, const char *format, ...)
+  __attribute__ ((format (printf, 2, 3)));
 extern int shishi_error_outputtype (Shishi * handle);
 extern void shishi_error_set_outputtype (Shishi * handle, int type);
-extern void shishi_info (Shishi * handle, const char *format, ...);
-extern void shishi_warn (Shishi * handle, const char *format, ...);
-extern void shishi_verbose (Shishi * handle, const char *format, ...);
+extern void shishi_info (Shishi * handle, const char *format, ...)
+  __attribute__ ((format (printf, 2, 3)));
+extern void shishi_warn (Shishi * handle, const char *format, ...)
+  __attribute__ ((format (printf, 2, 3)));
+extern void shishi_verbose (Shishi * handle, const char *format, ...)
+  __attribute__ ((format (printf, 2, 3)));
 
 /* realm.c */
 extern char *shishi_realm_default_guess (void);
