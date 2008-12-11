@@ -209,7 +209,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 	pos += keylen;
       }
 
-      if (pos - entrystartpos < size + 4)
+      if (pos - entrystartpos < (size_t) size + 4)
 	{
 	  uint32_t vno /* only present if >= 4 bytes left in entry */
 	    = data[pos] << 24 | data[pos+1] << 16

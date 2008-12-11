@@ -1,5 +1,5 @@
 /* crypto-md.c --- DES crypto functions
- * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
  * Copyright (C) 2003  Free Software Foundation, Inc.
  *
  * This file is part of Shishi.
@@ -53,12 +53,14 @@ checksuminfo md4_info = {
   SHISHI_RSA_MD4,
   "rsa-md4",
   16,
-  md4_checksum
+  md4_checksum,
+  NULL
 };
 
 checksuminfo md5_info = {
   SHISHI_RSA_MD5,
   "rsa-md5",
   16,
-  md5_checksum
+  md5_checksum,
+  NULL
 };

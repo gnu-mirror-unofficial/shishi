@@ -48,6 +48,7 @@ shishi_sendrecv_udp (Shishi * handle,
   fd_set readfds;
   struct timeval tout;
   int rc;
+  ssize_t slen;
 
   memset (&lsa, 0, sizeof (lsa));
   lsa_inp->sin_family = AF_INET;
@@ -89,16 +90,17 @@ shishi_sendrecv_udp (Shishi * handle,
     }
 
   *outlen = sizeof (tmpbuf);
-  *outlen = recvfrom (sockfd, tmpbuf, *outlen, 0,
-		      (struct sockaddr *) &from_sa, &length);
+  slen = recvfrom (sockfd, tmpbuf, *outlen, 0,
+		   (struct sockaddr *) &from_sa, &length);
 
-  if (*outlen == -1)
+  if (slen == -1)
     {
       shishi_error_set (handle, strerror (errno));
       return SHISHI_RECVFROM_ERROR;
     }
 
   *outdata = xmalloc (*outlen);
+  *outlen = slen;
   memcpy (*outdata, tmpbuf, *outlen);
 
   if (close (sockfd) != 0)
@@ -125,6 +127,7 @@ shishi_sendrecv_tcp (Shishi * handle,
   fd_set readfds;
   struct timeval tout;
   int rc;
+  ssize_t slen;
 
   sockfd = socket (AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0)
@@ -168,19 +171,25 @@ shishi_sendrecv_tcp (Shishi * handle,
     }
 
   *outlen = 4;
-  *outlen = recvfrom (sockfd, tmpbuf, *outlen, 0,
-		      (struct sockaddr *) &from_sa, &length);
-  if (*outlen == -1)
+  slen = recvfrom (sockfd, tmpbuf, *outlen, 0,
+		   (struct sockaddr *) &from_sa, &length);
+  if (slen == -1)
     {
       shishi_error_set (handle, strerror (errno));
       return SHISHI_RECVFROM_ERROR;
     }
 
   *outlen = sizeof (tmpbuf);
-  *outlen = recvfrom (sockfd, tmpbuf, *outlen, 0,
+  slen = recvfrom (sockfd, tmpbuf, *outlen, 0,
 		      (struct sockaddr *) &from_sa, &length);
+  if (slen == -1)
+    {
+      shishi_error_set (handle, strerror (errno));
+      return SHISHI_RECVFROM_ERROR;
+    }
 
   *outdata = xmalloc (*outlen);
+  *outlen = slen;
   memcpy (*outdata, tmpbuf, *outlen);
 
   if (close (sockfd) != 0)

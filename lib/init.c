@@ -26,7 +26,7 @@
 #include "starttls.h"
 
 /* Get _shishi_crypto_init. */
-#include "crypto.h"
+#include "low-crypto.h"
 
 /* Get _shishi_asn1_init. */
 #include "asn1.h"

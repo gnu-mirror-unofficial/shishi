@@ -261,7 +261,7 @@ shishi_info (Shishi * handle, const char *format, ...)
     {
     case SHISHI_OUTPUTTYPE_SYSLOG:
       /* If we don't have syslog, log to stderr... */
-#if HAVE_SYSLOG
+#ifdef HAVE_SYSLOG
       syslog (LOG_ERR, _("libshishi: info: %s"), out);
       break;
 #endif
@@ -299,7 +299,7 @@ shishi_warn (Shishi * handle, const char *format, ...)
     {
     case SHISHI_OUTPUTTYPE_SYSLOG:
       /* If we don't have syslog, log to stderr... */
-#if HAVE_SYSLOG
+#ifdef HAVE_SYSLOG
       syslog (LOG_ERR, _("libshishi: warning: %s"), out);
       break;
 #endif
@@ -340,7 +340,7 @@ shishi_verbose (Shishi * handle, const char *format, ...)
     {
     case SHISHI_OUTPUTTYPE_SYSLOG:
       /* If we don't have syslog, log to stderr... */
-#if HAVE_SYSLOG
+#ifdef HAVE_SYSLOG
       syslog (LOG_DEBUG, "%s", out);
       break;
 #endif

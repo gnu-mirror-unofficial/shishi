@@ -1,5 +1,5 @@
 /* crypto-rc4.c --- draft-brezak-win2k-krb-rc4-hmac-04 crypto functions.
- * Copyright (C) 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -546,5 +546,6 @@ checksuminfo arcfour_hmac_md5_info = {
   SHISHI_ARCFOUR_HMAC_MD5,
   "arcfour-hmac-md5",
   16,
-  arcfour_hmac_md5_checksum
+  arcfour_hmac_md5_checksum,
+  NULL
 };

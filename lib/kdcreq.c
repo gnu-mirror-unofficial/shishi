@@ -1,5 +1,5 @@
 /* kdcreq.c --- Key distribution (AS/TGS) request functions.
- * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -35,8 +35,6 @@
 #define SHISHI_KDCREQ_DEFAULT_REQ_BODY_KDC_OPTIONS_LEN  32
 #define SHISHI_KDCREQ_DEFAULT_REQ_BODY_SNAME_NAME_TYPE "1"	/* SHISHI_NT_PRINCIPAL */
 #define SHISHI_KDCREQ_DEFAULT_REQ_BODY_SNAME_NAME_TYPE_LEN 0
-#define SHISHI_KDCREQ_DEFAULT_REQ_BODY_TILL ""
-#define SHISHI_KDCREQ_DEFAULT_REQ_BODY_TILL_LEN 1
 
 static Shishi_asn1
 _shishi_kdcreq (Shishi * handle, int as)

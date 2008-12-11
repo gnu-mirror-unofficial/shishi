@@ -154,8 +154,8 @@ int
 shishi_authorized_p (Shishi * handle, Shishi_tkt * tkt, const char *authzname)
 {
   char *client;
+  size_t i;
   int rc;
-  int i;
 
   rc = shishi_encticketpart_client (handle, shishi_tkt_encticketpart (tkt),
 				    &client, NULL);
@@ -175,6 +175,9 @@ shishi_authorized_p (Shishi * handle, Shishi_tkt * tkt, const char *authzname)
 	  if (shishi_authorize_k5login (handle, client, authzname))
 	    return 1;
 	  break;
+
+	default:
+	  return 0;
 	}
     }
 

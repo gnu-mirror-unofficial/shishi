@@ -1,5 +1,5 @@
 /* crypto-aes.c --- AES crypto functions.
- * Copyright (C) 2002, 2003, 2004, 2005, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -244,12 +244,14 @@ checksuminfo hmac_sha1_96_aes128_info = {
   SHISHI_HMAC_SHA1_96_AES128,
   "hmac-sha1-96-aes128",
   96 / 8,
-  aes128_checksum
+  aes128_checksum,
+  NULL
 };
 
 checksuminfo hmac_sha1_96_aes256_info = {
   SHISHI_HMAC_SHA1_96_AES256,
   "hmac-sha1-96-aes256",
   96 / 8,
-  aes256_checksum
+  aes256_checksum,
+  NULL
 };

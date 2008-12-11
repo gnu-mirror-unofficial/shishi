@@ -973,6 +973,8 @@ shishi_der2asn1 (Shishi * handle, const char *der, size_t derlen)
       node = shishi_der2asn1_krberror (handle, der, derlen);
       break;
 
+    case SHISHI_MSGTYPE_RESERVED16:
+    case SHISHI_MSGTYPE_RESERVED17:
     default:
       node = NULL;
       break;

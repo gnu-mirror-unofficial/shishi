@@ -426,6 +426,7 @@ shishi_tkts_from_ccache_file (Shishi * handle,
   return SHISHI_OK;
 }
 
+#if 0
 int
 shishi_tkt_to_ccache_mem (Shishi *handle,
 			  Shishi_tkt *tkt,
@@ -613,3 +614,4 @@ shishi_tkts_to_ccache_mem (Shishi *handle,
   return rc;
 #endif
 }
+#endif

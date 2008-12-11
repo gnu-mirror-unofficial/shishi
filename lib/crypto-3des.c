@@ -1,5 +1,5 @@
 /* crypto-3des.c --- 3DES crypto functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -314,5 +314,6 @@ checksuminfo hmac_sha1_des3_kd_info = {
   SHISHI_HMAC_SHA1_DES3_KD,
   "hmac-sha1-des3-kd",
   20,
-  des3_checksum
+  des3_checksum,
+  NULL
 };

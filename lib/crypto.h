@@ -1,5 +1,5 @@
 /* crypto.h --- Crypto prototypes.
- * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -24,8 +24,6 @@
 #define _CRYPTO_H
 
 #define SHISHI_DK_CONSTANT "\x6b\x65\x72\x62\x65\x72\x6f\x73"
-
-extern int _shishi_crypto_init (Shishi * handle);
 
 int
 _shishi_simplified_derivekey (Shishi * handle,

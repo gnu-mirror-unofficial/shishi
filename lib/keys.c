@@ -181,7 +181,7 @@ int
 shishi_keys_print (Shishi_keys * keys, FILE *fh)
 {
   int rc;
-  size_t i;
+  int i;
 
   for (i = 0; i < keys->nkeys; i++)
     {

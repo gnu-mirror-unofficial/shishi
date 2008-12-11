@@ -35,7 +35,7 @@
 char *
 shishi_principal_default_guess (void)
 {
-  char *envuser;
+  const char *envuser;
 
   envuser = getenv ("SHISHI_USER");
   if (!envuser)

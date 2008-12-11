@@ -888,6 +888,7 @@ checksuminfo crc32_info = {
   "crc32",
   4,
   des_crc_checksum,
+  NULL
 };
 
 checksuminfo md4_des_info = {
@@ -910,5 +911,6 @@ checksuminfo md5_gss_info = {
   SHISHI_RSA_MD5_DES_GSS,
   "rsa-md5-des-gss",
   8,
-  gss_des_checksum
+  gss_des_checksum,
+  NULL
 };

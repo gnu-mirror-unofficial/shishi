@@ -31,6 +31,17 @@
 
 #define SHISHI_VERSION "0.0.38"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
+#ifndef __attribute__
+/* This feature is available in gcc versions 2.5 and later.  */
+# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 5)
+#  define __attribute__(Spec)	/* empty */
+# endif
+#endif
+
 /* Error codes */
 typedef enum
 {
@@ -895,16 +906,8 @@ extern int shishi_ticket_save (Shishi * handle, FILE * fh,
 			       Shishi_asn1 ticket);
 extern int shishi_ticket_print (Shishi * handle, FILE * fh,
 				Shishi_asn1 ticket);
-extern int shishi_kdcreq_print (Shishi * handle, FILE * fh,
-				Shishi_asn1 kdcreq);
-extern int shishi_kdcrep_print (Shishi * handle, FILE * fh,
-				Shishi_asn1 kdcrep);
 extern int shishi_kdc_print (Shishi * handle, FILE * fh, Shishi_asn1 asreq,
 			     Shishi_asn1 asrep, Shishi_asn1 encasreppart);
-extern int shishi_kdcreq_parse (Shishi * handle, FILE * fh,
-				Shishi_asn1 * kdcreq);
-extern int shishi_kdcrep_parse (Shishi * handle, FILE * fh,
-				Shishi_asn1 * kdcrep);
 extern int shishi_ticket_parse (Shishi * handle, FILE * fh,
 				Shishi_asn1 * ticket);
 extern int shishi_ticket_read (Shishi * handle, FILE * fh,
@@ -913,6 +916,8 @@ extern int shishi_etype_info_print (Shishi * handle, FILE * fh,
 				    Shishi_asn1 etypeinfo);
 extern int shishi_etype_info2_print (Shishi * handle, FILE * fh,
 				     Shishi_asn1 etypeinfo2);
+extern int shishi_padata_print (Shishi * handle, FILE * fh,
+				Shishi_asn1 padata);
 extern int shishi_methoddata_print (Shishi * handle, FILE * fh,
 				    Shishi_asn1 methoddata);
 
@@ -2216,7 +2221,6 @@ extern char *shishi_x509ca_default_file_guess (Shishi * handle);
 extern void shishi_x509ca_default_file_set (Shishi * handle,
 					    const char *x509cafile);
 extern const char *shishi_x509ca_default_file (Shishi * handle);
-extern char *shishi_x509ca_default_file_guess (Shishi * handle);
 extern char *shishi_x509cert_default_file_guess (Shishi * handle);
 extern void shishi_x509cert_default_file_set (Shishi * handle,
 					      const char *x509certfile);
@@ -2228,10 +2232,19 @@ extern const char *shishi_x509key_default_file (Shishi * handle);
 
 /* utils.c */
 extern time_t shishi_get_date (const char *p, const time_t * now);
-extern void shishi_xalloc_die (void);
+/* Ugly hack to avoid re-declaring shishi_xalloc_die twice.  It is
+   already declared in xalloc.h internally in Shishi.h.  This is to
+   keep being able to use -Wredundant-decls. */
+#if defined(SYSTEMCFGFILE) && !defined(XALLOC_H_)
+extern void shishi_xalloc_die (void) __attribute__ ((__noreturn__));
+#endif
 
 /* resolv.c */
 extern Shishi_dns shishi_resolv (const char *zone, uint16_t querytype);
 extern void shishi_resolv_free (Shishi_dns rrs);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif

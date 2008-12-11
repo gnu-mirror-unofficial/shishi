@@ -1,5 +1,5 @@
 /* gztime.c --- Convertion functions for GeneralizedTime.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -146,10 +146,10 @@ int
 shishi_ctime (Shishi * handle, Shishi_asn1 node, const char *field, time_t *t)
 {
   char str[SHISHI_GENERALIZEDTIME_LENGTH + 1];
-  size_t strlen = sizeof (str);
+  size_t len = sizeof (str);
   int rc;
 
-  rc = shishi_asn1_read_inline (handle, node, field, str, &strlen);
+  rc = shishi_asn1_read_inline (handle, node, field, str, &len);
   if (rc != SHISHI_OK)
     return rc;
 

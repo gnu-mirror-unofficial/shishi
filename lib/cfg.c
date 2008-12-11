@@ -48,7 +48,7 @@ enum
   THE_END
 };
 
-static char * const _shishi_opts[] = {
+static const char * const _shishi_opts[] = {
   /* [DEFAULT_REALM_OPTION] =        */ "default-realm",
   /* [DEFAULT_PRINCIPAL_OPTION] =    */ "default-principal",
   /* [CLIENT_KDC_ETYPES_OPTION] =    */ "client-kdc-etypes",
@@ -119,7 +119,7 @@ shishi_cfg (Shishi * handle, char *option)
 
   while (option != NULL && *option != '\0')
     {
-      switch (getsubopt (&option, _shishi_opts, &value))
+      switch (getsubopt (&option, (char * const *) _shishi_opts, &value))
 	{
 	case KDC_TIMEOUT_OPTION:
 	  if (value && atoi (value) > 0)

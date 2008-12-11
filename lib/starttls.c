@@ -1,5 +1,5 @@
 /* starttls.c --- Network I/O functions for Shishi over TLS.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -169,7 +169,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
     }
 
   bytes_sent = gnutls_record_send (session, indata, inlen);
-  if (bytes_sent != inlen)
+  if (bytes_sent != (ssize_t) inlen)
     {
       shishi_error_printf (handle, "Bad TLS write (%d < %d)",
 			   bytes_sent, inlen);
@@ -202,7 +202,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
       free (*outdata);
       return SHISHI_RECVFROM_ERROR;
     }
-  else if (bytes_read != *outlen)
+  else if (bytes_read != (ssize_t) *outlen)
     {
       shishi_error_printf (handle, "TLS Read error (%d != %d)",
 			   *outlen, bytes_read);
