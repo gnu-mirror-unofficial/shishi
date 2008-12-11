@@ -48,20 +48,6 @@ W32ROOT ?= $(HOME)/gnutls4win/inst
 mingw32: autoreconf 
 	./configure $(CFGFLAGS) --host=i586-mingw32msvc --build=`./config.guess` --prefix=$(W32ROOT)
 
-# Code Coverage
-
-web-coverage:
-	rm -fv `find $(htmldir)/coverage -type f | grep -v CVS`
-	cp -rv doc/coverage/* $(htmldir)/coverage/
-
-upload-web-coverage:
-	cd $(htmldir) && \
-		cvs commit -m "Update." coverage
-
-ChangeLog:
-	git log --pretty --numstat --summary | git2cl > ChangeLog
-	cat .clcopying >> ChangeLog
-
 tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
 htmldir = ../www-$(PACKAGE)
 
