@@ -119,7 +119,9 @@ shishi_cfg (Shishi * handle, const char *option)
 
   while (option != NULL && *option != '\0')
     {
-      switch (getsubopt (&option, (char * const *) _shishi_opts, &value))
+      switch (getsubopt ((char**) &option,
+			 (char * const *) _shishi_opts,
+			 &value))
 	{
 	case KDC_TIMEOUT_OPTION:
 	  if (value && atoi (value) > 0)
