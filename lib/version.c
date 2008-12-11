@@ -22,8 +22,6 @@
 
 #include "internal.h"
 
-#include <string.h> /* for strverscmp */
-
 /**
  * shishi_check_version:
  * @req_version: version string to compare with, or NULL
