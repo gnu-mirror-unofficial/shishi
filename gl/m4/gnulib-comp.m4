@@ -109,6 +109,7 @@ AC_DEFUN([gl_INIT],
   	m4_defn([m4_PACKAGE_VERSION])), [1], [],
         [AC_CONFIG_LINKS([$GNUmakefile:$GNUmakefile], [],
   	[GNUmakefile=$GNUmakefile])])
+  gl_HOSTENT
   gl_INET_NTOP
   gl_ARPA_INET_MODULE_INDICATOR([inet_ntop])
   gl_INLINE
@@ -127,6 +128,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_READ_FILE
   gl_FUNC_REALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([realloc-posix])
+  gl_SERVENT
   gl_FUNC_SETENV
   gl_STDLIB_MODULE_INDICATOR([setenv])
   gl_SIGNAL_H
@@ -176,7 +178,7 @@ AC_DEFUN([gl_INIT],
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_XGETTEXT_OPTION([--flag=asprintf:2:c-format])
      AM_XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
-  gl_WARN_INIT
+  AC_SUBST([WARN_CFLAGS])
   gl_WCHAR_H
   gl_XALLOC
   gl_XSIZE
@@ -474,6 +476,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/gnulib-common.m4
   m4/hmac-md5.m4
   m4/hmac-sha1.m4
+  m4/hostent.m4
   m4/include_next.m4
   m4/inet_ntop.m4
   m4/inline.m4
@@ -497,6 +500,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/rawmemchr.m4
   m4/read-file.m4
   m4/realloc.m4
+  m4/servent.m4
   m4/setenv.m4
   m4/sha1.m4
   m4/signal_h.m4

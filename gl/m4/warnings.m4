@@ -1,17 +1,10 @@
-# warnings.m4 serial 1
+# warnings.m4 serial 2
 dnl Copyright (C) 2008 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 
 dnl From Simon Josefsson
-
-# gl_WARN_INIT
-# Initializes WARN_CFLAGS variable.
-AC_DEFUN([gl_WARN_INIT],
-[AC_SUBST([WARN_CFLAGS])dnl
-AC_ARG_VAR([WARN_CFLAGS], [C compiler warning flags])
-])
 
 # gl_AS_VAR_IF(VAR, VALUE, [IF-MATCH], [IF-NOT-MATCH])
 # ----------------------------------------------------
@@ -36,12 +29,12 @@ m4_ifdef([AS_VAR_APPEND],
 AC_DEFUN([gl_WARN_ADD],
 [AS_VAR_PUSHDEF([gl_Warn], [gl_cv_warn_$1])dnl
 AC_CACHE_CHECK([whether compiler handles $1], [gl_Warn], [
-  save_CFLAGS="$CFLAGS"
-  CFLAGS="${CFLAGS} $1"
+  save_CPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="${CPPFLAGS} $1"
   AC_PREPROC_IFELSE([AC_LANG_PROGRAM([])],
                     [AS_VAR_SET([gl_Warn], [yes])],
 		    [AS_VAR_SET([gl_Warn], [no])])
-  CFLAGS="$save_CFLAGS"
+  CPPFLAGS="$save_CPPFLAGS"
 ])
 AS_VAR_PUSHDEF([gl_Flags], m4_if([$2], [], [[WARN_CFLAGS]], [[$2]]))dnl
 gl_AS_VAR_IF([gl_Warn], [yes], [gl_AS_VAR_APPEND([gl_Flags], [" $1"])])
