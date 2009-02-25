@@ -1,5 +1,5 @@
 /* crypto.c --- Crypto functions.
- * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -567,7 +567,7 @@ shishi_cipher_name (int32_t type)
  * Return value: Return block size for encryption type, as defined in
  * the standards.
  **/
-size_t
+int
 shishi_cipher_blocksize (int32_t type)
 {
   size_t i;
@@ -589,7 +589,7 @@ shishi_cipher_blocksize (int32_t type)
  * encryption type, as defined in the standards, or (size_t)-1 on
  * error (e.g., unsupported encryption type).
  **/
-size_t
+int
 shishi_cipher_confoundersize (int32_t type)
 {
   size_t i;

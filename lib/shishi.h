@@ -1,5 +1,5 @@
 /* shishi.h --- Header file for Shishi library.                       -*- c -*-
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -1470,8 +1470,8 @@ extern int shishi_aes_cts (Shishi * handle, int decryptp,
 /* crypto.c */
 extern int shishi_cipher_supported_p (int type);
 extern const char *shishi_cipher_name (int type);
-extern size_t shishi_cipher_blocksize (int type);
-extern size_t shishi_cipher_confoundersize (int type);
+extern int shishi_cipher_blocksize (int type);
+extern int shishi_cipher_confoundersize (int type);
 extern size_t shishi_cipher_keylen (int type);
 extern size_t shishi_cipher_randomlen (int type);
 extern int shishi_cipher_defaultcksumtype (int32_t type);
