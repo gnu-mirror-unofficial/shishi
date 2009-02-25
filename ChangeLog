@@ -1,3 +1,401 @@
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.38.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c, lib/shishi.h: Revert ABI change.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS: Update PGP key.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk: Modernize release targets.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* .clcopying: Bump copyright years.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Clarify license version.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, asn1/coding.c, asn1/decoding.c, asn1/element.c,
+	asn1/errors.c, asn1/errors.h, asn1/gstr.c, asn1/int.h,
+	asn1/libtasn1.h, asn1/parser_aux.c, asn1/structure.c: Update to
+	libtasn1 v1.8.
+
+2009-02-25  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-02-25  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/gendocs.sh, build-aux/gnupload, db/gl/gnulib.mk,
+	db/gl/m4/00gnulib.m4, db/gl/m4/gnulib-cache.m4,
+	db/gl/m4/gnulib-common.m4, db/gl/m4/gnulib-comp.m4,
+	db/gl/m4/readlink.m4, doc/gendocs_template, gl/Makefile.am,
+	gl/arpa_inet.in.h, gl/fseeko.c, gl/gettimeofday.c,
+	gl/m4/00gnulib.m4, gl/m4/alloca.m4, gl/m4/bison.m4,
+	gl/m4/clock_time.m4, gl/m4/eealloc.m4, gl/m4/environ.m4,
+	gl/m4/errno_h.m4, gl/m4/extensions.m4, gl/m4/fcntl_h.m4,
+	gl/m4/gc-random.m4, gl/m4/gc.m4, gl/m4/getaddrinfo.m4,
+	gl/m4/getdate.m4, gl/m4/getdomainname.m4, gl/m4/gethostname.m4,
+	gl/m4/getline.m4, gl/m4/getpass.m4, gl/m4/gettime.m4,
+	gl/m4/gettimeofday.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-common.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/include_next.m4, gl/m4/inet_ntop.m4, gl/m4/inline.m4,
+	gl/m4/intmax_t.m4, gl/m4/inttypes_h.m4, gl/m4/lib-ld.m4,
+	gl/m4/lib-link.m4, gl/m4/longlong.m4, gl/m4/malloc.m4,
+	gl/m4/md4.m4, gl/m4/md5.m4, gl/m4/minmax.m4, gl/m4/mktime.m4,
+	gl/m4/multiarch.m4, gl/m4/printf.m4, gl/m4/realloc.m4,
+	gl/m4/setenv.m4, gl/m4/sha1.m4, gl/m4/size_max.m4,
+	gl/m4/sockpfaf.m4, gl/m4/stdbool.m4, gl/m4/stdint.m4,
+	gl/m4/stdint_h.m4, gl/m4/stdio_h.m4, gl/m4/stdlib_h.m4,
+	gl/m4/strcase.m4, gl/m4/strchrnul.m4, gl/m4/strdup.m4,
+	gl/m4/strndup.m4, gl/m4/strnlen.m4, gl/m4/strtok_r.m4,
+	gl/m4/strverscmp.m4, gl/m4/timegm.m4, gl/m4/tm_gmtoff.m4,
+	gl/m4/unistd_h.m4, gl/m4/vasnprintf.m4, gl/m4/wchar.m4,
+	gl/m4/wchar_t.m4, gl/m4/wint_t.m4, gl/m4/xsize.m4, gl/stdint.in.h,
+	gl/stdio.in.h, gl/stdlib.in.h, gl/sys_select.in.h,
+	gl/sys_stat.in.h, gl/unistd.in.h, gl/vasnprintf.c, gl/wchar.in.h,
+	src/gl/gnulib.mk, src/gl/m4/00gnulib.m4, src/gl/m4/errno_h.m4,
+	src/gl/m4/gnulib-cache.m4, src/gl/m4/gnulib-common.m4,
+	src/gl/m4/gnulib-comp.m4, src/gl/progname.c, src/gl/strerror.c,
+	src/gl/version-etc.c, src/gl/version-etc.h: Update gnulib files.
+
+2009-02-25  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am: Limit amount of exported symbols.
+
+2008-12-12  Simon Josefsson <simon@josefsson.org>
+
+	* doc/texinfo.css: Fix css.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/version.c: String.h is included via internal.h.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS: Update PGP key.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* tests/utils.h: Need headers.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, db/Makefile.am, db/config.c, db/file.c, db/shisa.h,
+	lib/cfg.c: Enable warnings in db/.  Fix warnings.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* examples/Makefile.am, examples/server.c: Compile examples with
+	warning flags.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* tests/utils.h: Add file.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Getsubopt is a cast mess.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c, lib/crypto.c, lib/crypto.h, lib/shishi.h,
+	src/Makefile.am, src/ccache2shishi.c, src/kdc.c,
+	src/keytab2shishi.c, src/server.c, src/shisa.c, src/shishi.c,
+	src/shishid.c, src/starttls.c, tests/Makefile.am, tests/ccache.c,
+	tests/crypto-ctx.c, tests/crypto.c, tests/key.c, tests/keytab.c,
+	tests/passwdpromptcb.c, tests/ticketset.c, tests/utils.c: Fix more
+	warnings.  Slight ABI change on 64 platforms.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Disable warning.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c: Fix warning.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix warnings.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h: Add print attributes.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/low-crypto.h: Add low-crypto.h.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/gettext.h: Update gnulib files.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/gettext.h, gl/override/lib/gettext.h.diff,
+	lib/asn1.c, lib/authorize.c, lib/cfg.c, lib/crypto-3des.c,
+	lib/crypto-aes.c, lib/crypto-des.c, lib/crypto-md.c,
+	lib/crypto-rc4.c, lib/crypto.h, lib/error.c, lib/gztime.c,
+	lib/init.c, lib/kdcreq.c, lib/keys.c, lib/keytab.c,
+	lib/low-crypto.c, lib/netio.c, lib/principal.c, lib/shishi.h,
+	lib/starttls.c, lib/tktccache.c: Update gnulib files.  Use
+	manywarning module.  Fix warnings.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/hostent.m4, gl/m4/manywarnings.m4, gl/m4/servent.m4: Update
+	gnulib files.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk: Remove code coverage, now in maint.mk.
+
+2008-12-11  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/gnupload, gl/m4/getaddrinfo.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/include_next.m4, gl/m4/netdb_h.m4, gl/m4/warnings.m4,
+	gl/netdb.in.h, gl/stdint.in.h, gl/sys_time.in.h, maint.mk: Update
+	gnulib files.
+
+2008-11-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Don't use @@ substitutions.
+
+2008-11-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c: Fix gtk-doc bug.
+
+2008-11-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tktccache.c: Fix gtk-doc bug.
+
+2008-11-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, asn1/coding.c, asn1/decoding.c, asn1/element.c,
+	asn1/element.h, asn1/errors.c, asn1/gstr.h, asn1/libtasn1.h,
+	asn1/parser_aux.c, asn1/parser_aux.h, asn1/structure.c,
+	asn1/structure.h, configure.ac: Upgrade libtasn1 to v1.7.
+
+2008-11-18  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, lib/Makefile.am, lib/asn1.c, lib/authenticator.c,
+	lib/ccache.c, lib/crypto-des.c, lib/key.c, lib/shishi.h,
+	lib/ticket.c, lib/tktccache.c, src/shisa.c: Fix warnings.
+
+2008-11-18  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c, lib/enckdcreppart.c, lib/shishi.h: Fix warnings.
+
+2008-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/Makefile.am, examples/Makefile.am,
+	extra/pam_shishi/Makefile.am, extra/rsh-redone/Makefile.am,
+	lib/Makefile.am: Fix automake warnings.
+
+2008-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, m4/linker-script.m4, m4/output-def.m4,
+	m4/update-header-version.m4, m4/valgrind.m4: Use shared checks.
+
+2008-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, lib/Makefile.am, lib/shishi.h, lib/shishi.h.in: 
+	Don't substitute in shishi.h.
+
+2008-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, src/ccache2shishi.c, src/shishid.c, src/starttls.c: 
+	Fix warnings.
+
+2008-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Add -Wall.
+
+2008-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk, configure.ac, gl/Makefile.am, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/warnings.m4: Use warnings module.
+
+2008-11-12  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Neatify.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* README: Update license.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, doc/Makefile.am, doc/fdl-1.3.texi, doc/fdl.texi,
+	doc/shishi.texi, gl/Makefile.am, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4: Use GFDL 1.3.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* doc/gdoc: Fix license and redoce code duplication.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix --output-def test.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, cfg.mk: Fix release targets.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk, gtk-doc.make: Modernize gtk-doc usage.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Use modern check for --enable-ld-version-script.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* m4/pkg.m4: Add.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* m4/gtk-doc.m4: Update from upstream.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, gl/Makefile.am, gl/fcntl.in.h, gl/m4/fcntl_h.m4,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4, src/kdc.h,
+	tests/utils.c: Modernize gnulib usage.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4: 
+	Update gnulib files.
+
+2008-11-11  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, configure.ac, db/gl/gnulib.mk,
+	db/gl/m4/gnulib-cache.m4, db/gl/m4/gnulib-common.m4, doc/fdl.texi,
+	doc/getdate.texi, gl/Makefile.am, gl/arpa_inet.in.h, gl/c-ctype.h,
+	gl/errno.in.h, gl/float.in.h, gl/fseeko.c, gl/gai_strerror.c,
+	gl/getaddrinfo.c, gl/getaddrinfo.h, gl/getdate.y,
+	gl/getdomainname.c, gl/getdomainname.h, gl/gethostname.c,
+	gl/m4/arpa_inet_h.m4, gl/m4/eoverflow.m4, gl/m4/errno_h.m4,
+	gl/m4/getaddrinfo.m4, gl/m4/getdomainname.m4, gl/m4/gethostname.m4,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-common.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/include_next.m4, gl/m4/inet_ntop.m4,
+	gl/m4/netdb_h.m4, gl/m4/printf.m4, gl/m4/signal_h.m4,
+	gl/m4/stdio_h.m4, gl/m4/stdlib_h.m4, gl/m4/strdup.m4,
+	gl/m4/string_h.m4, gl/m4/sys_select_h.m4, gl/m4/sys_socket_h.m4,
+	gl/m4/sys_stat_h.m4, gl/m4/unistd_h.m4, gl/m4/wchar.m4,
+	gl/netdb.in.h, gl/netinet_in.in.h, gl/signal.in.h, gl/stdarg.in.h,
+	gl/stdint.in.h, gl/stdio-write.c, gl/stdio.in.h, gl/stdlib.in.h,
+	gl/string.in.h, gl/strings.in.h, gl/sys_select.in.h,
+	gl/sys_socket.in.h, gl/sys_stat.in.h, gl/sys_time.in.h,
+	gl/time.in.h, gl/unistd.in.h, gl/vasnprintf.c, gl/wchar.in.h,
+	gl/xgetdomainname.c, lib/internal.h, lib/netio.c, maint.mk,
+	src/gl/errno.in.h, src/gl/gnulib.mk, src/gl/locale.in.h,
+	src/gl/m4/errno_h.m4, src/gl/m4/gnulib-cache.m4,
+	src/gl/m4/gnulib-common.m4, src/gl/m4/gnulib-comp.m4,
+	src/gl/m4/strerror.m4, src/gl/strerror.c: Update gnulib files.
+
+2008-10-15  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Drop sys/poll.h, check not used.
+
+2008-10-08  Simon Josefsson <simon@josefsson.org>
+
+	* m4/libgcrypt.m4: Remove.
+
+2008-10-02  Simon Josefsson <simon@josefsson.org>
+
+	* AUTHORS: Fix Nicolas' description.
+
+2008-09-10  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, build-aux/config.rpath, doc/getdate.texi,
+	gl/Makefile.am, gl/arpa_inet.in.h, gl/float.in.h, gl/getdate.y,
+	gl/getdelim.c, gl/m4/getdelim.m4, gl/m4/include_next.m4,
+	gl/m4/lib-link.m4, gl/m4/lib-prefix.m4, gl/netinet_in.in.h,
+	gl/signal.in.h, gl/stdarg.in.h, gl/stdint.in.h, gl/stdio.in.h,
+	gl/stdlib.in.h, gl/string.in.h, gl/strings.in.h,
+	gl/sys_select.in.h, gl/sys_socket.in.h, gl/sys_stat.in.h,
+	gl/sys_time.in.h, gl/time.in.h, gl/unistd.in.h, gl/vasnprintf.c,
+	gl/wchar.in.h, maint.mk, src/gl/gnulib.mk, src/gl/locale.in.h: 
+	Update gnulib files.
+
+2008-08-21  Simon Josefsson <simon@josefsson.org>
+
+	* lib/version.c: Update gnulib usage.
+
+2008-08-21  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/autobuild.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/string_h.m4, gl/m4/strverscmp.m4, gl/string.in.h,
+	gl/strverscmp.h: Update gnulib files.
+
+2008-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Don't copy archive to www dir.
+
+2008-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Use autobuild from gnulib.
+
+2008-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/gc-gnulib.c, gl/m4/autobuild.m4,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4, gl/m4/signal_h.m4,
+	gl/signal.in.h, m4/autobuild.m4: Update gnulib files.
+
+2008-08-20  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix URLs.
+
+2008-08-06  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, build-aux/gnupload, db/gl/m4/gnulib-comp.m4,
+	gl/Makefile.am, gl/c-ctype.c, gl/c-ctype.h, gl/getdate.y,
+	gl/m4/gnulib-comp.m4, gl/mktime.c, gl/vasnprintf.c,
+	src/gl/m4/gnulib-comp.m4: Update gnulib files.
+
+2008-06-30  Simon Josefsson <simon@josefsson.org>
+
+	* db/gl/m4/gnulib-tool.m4, gl/m4/getdate.m4, gl/m4/gnulib-tool.m4,
+	src/gl/m4/gnulib-tool.m4: Update gnulib files.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* THANKS: Fix.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix ypo.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am: Reorder uploads.
+
+2008-06-24  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2008-06-24  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.37.
@@ -15826,7 +16224,7 @@
 	* Initial release, version 0.0.0.
 
 
-    Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Simon Josefsson
+    Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Simon Josefsson
 
   This file is part of Shishi.
  
