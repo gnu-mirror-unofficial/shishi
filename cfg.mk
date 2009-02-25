@@ -1,4 +1,4 @@
-# Copyright (C) 2006, 2007, 2008 Simon Josefsson.
+# Copyright (C) 2006, 2007, 2008, 2009 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -48,20 +48,33 @@ W32ROOT ?= $(HOME)/gnutls4win/inst
 mingw32: autoreconf 
 	./configure $(CFGFLAGS) --host=i586-mingw32msvc --build=`./config.guess` --prefix=$(W32ROOT)
 
-tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
-htmldir = ../www-$(PACKAGE)
+ChangeLog:
+	git2cl > ChangeLog
+	cat .clcopying >> ChangeLog
 
-release:
+htmldir = ../www-$(PACKAGE)
+tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
+
+release: prepare upload web upload-web
+
+prepare:
 	! git-tag -l $(tag) | grep $(PACKAGE) > /dev/null
 	rm -f ChangeLog
 	$(MAKE) ChangeLog distcheck
 	git commit -m Generated. ChangeLog
 	git-tag -u b565716f! -m $(VERSION) $(tag)
-	cd doc && ../build-aux/gendocs.sh --html "--css-include=texinfo.css" \
-		-o ../$(htmldir)/manual/ $(PACKAGE) "Shishi"
-	cp -v doc/reference/html/*.html doc/reference/html/*.png doc/reference/html/*.devhelp doc/reference/html/*.css $(htmldir)/reference/
-	git-push --tags
-	git-push
-	build-aux/gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
-	cd $(htmldir) && cvs commit -m "Update." manual/ reference/
 
+upload:
+	git-push
+	git-push --tags
+	build-aux/gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
+	cp $(distdir).tar.gz $(distdir).tar.gz.sig ../releases/$(PACKAGE)/
+
+web:
+	cd doc && ../build-aux/gendocs.sh --html "--css-include=texinfo.css" \
+		-o ../$(htmldir)/manual/ $(PACKAGE) "$(PACKAGE_NAME)"
+	cp -v doc/reference/html/*.html doc/reference/html/*.png doc/reference/html/*.devhelp doc/reference/html/*.css $(htmldir)/reference/
+
+upload-web:
+	cd $(htmldir) && \
+		cvs commit -m "Update." manual/ reference/
