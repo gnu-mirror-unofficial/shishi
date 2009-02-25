@@ -8,7 +8,7 @@ See the end for copying conditions.
 
 ** doc: Change license on the manual to GFDLv1.3+.
 
-** minitasn1: Internal copy updated to libtasn1 v1.7.
+** minitasn1: Internal copy updated to libtasn1 v1.8.
 
 ** More compiler warnings enabled, and many warnings fixed.
 
