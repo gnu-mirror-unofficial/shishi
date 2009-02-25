@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2008 Free Software Foundation, Inc.
+# Copyright (C) 2002-2009 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -25,7 +25,6 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
-  AC_REQUIRE([AC_GNU_SOURCE])
   AB_INIT
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   AC_REQUIRE([AC_FUNC_FSEEKO])
@@ -76,7 +75,7 @@ AC_DEFUN([gl_INIT],
   gl_MODULE_INDICATOR([gc-random])
   gl_ENVIRON
   gl_UNISTD_MODULE_INDICATOR([environ])
-  gl_HEADER_ERRNO_H
+  AC_REQUIRE([gl_HEADER_ERRNO_H])
   gl_FCNTL_H
   gl_FLOAT_H
   gl_FUNC_FSEEKO
@@ -120,6 +119,7 @@ AC_DEFUN([gl_INIT],
   gl_MALLOCA
   gl_MINMAX
   gl_FUNC_MKTIME
+  AC_REQUIRE([gl_MULTIARCH])
   gl_HEADER_NETDB
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
@@ -439,6 +439,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xstrndup.h
   lib/xvasprintf.c
   lib/xvasprintf.h
+  m4/00gnulib.m4
   m4/alloca.m4
   m4/arcfour.m4
   m4/arpa_inet_h.m4
@@ -495,6 +496,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/memxor.m4
   m4/minmax.m4
   m4/mktime.m4
+  m4/multiarch.m4
   m4/netdb_h.m4
   m4/netinet_in_h.m4
   m4/printf.m4

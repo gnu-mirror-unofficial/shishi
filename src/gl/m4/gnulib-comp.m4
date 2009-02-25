@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2008 Free Software Foundation, Inc.
+# Copyright (C) 2002-2009 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -40,7 +40,7 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([gl2_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='src/gl'
-  gl_HEADER_ERRNO_H
+  AC_REQUIRE([gl_HEADER_ERRNO_H])
   gl_ERROR
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_XGETTEXT_OPTION([--flag=error:3:c-format])
@@ -190,6 +190,7 @@ AC_DEFUN([gl2_FILE_LIST], [
   lib/strerror.c
   lib/version-etc.c
   lib/version-etc.h
+  m4/00gnulib.m4
   m4/errno_h.m4
   m4/error.m4
   m4/getopt.m4
