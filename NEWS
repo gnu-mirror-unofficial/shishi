@@ -2,6 +2,8 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Simon Josefsson
 See the end for copying conditions.
 
+* Version 0.0.39 (unreleased)
+
 * Version 0.0.38 (released 2009-02-26)
 
 ** libshisa: Use libtool -export-symbols-regex to fix exported namespace.
@@ -11,6 +13,9 @@ See the end for copying conditions.
 ** minitasn1: Internal copy updated to libtasn1 v1.8.
 
 ** More compiler warnings enabled, and many warnings fixed.
+
+** API and ABI modifications:
+No changes since last version.
 
 * Version 0.0.37 (released 2008-06-24)
 

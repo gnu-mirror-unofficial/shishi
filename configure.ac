@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -19,14 +19,14 @@
 # Floor, Boston, MA 02110-1301, USA.
 
 AC_PREREQ(2.61)
-AC_INIT([GNU Shishi], [0.0.38], [bug-shishi@josefsson.org])
+AC_INIT([GNU Shishi], [0.0.39], [bug-shishi@josefsson.org])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 AC_SUBST(LT_CURRENT, 0)
-AC_SUBST(LT_REVISION, 38)
+AC_SUBST(LT_REVISION, 39)
 AC_SUBST(LT_AGE, 0)
 
 # Used when creating libshishi-XX.def.
