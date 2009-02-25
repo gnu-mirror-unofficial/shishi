@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008, 2009 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -38,4 +38,5 @@ libshisa_la_SOURCES = shisa.h info.h \
 	file.c file.h fileutil.h fileutil.c
 libshisa_la_LIBADD = gl/libgnu.la
 # XXX use different libtool version for this library?
-libshisa_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+libshisa_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+	-export-symbols-regex '^shisa.*' -no-undefined
