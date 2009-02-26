@@ -1,5 +1,5 @@
 /* ccache.c --- Credential Cache compatibility ticket set handling.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -426,12 +426,12 @@ shishi_tkts_from_ccache_file (Shishi * handle,
   return SHISHI_OK;
 }
 
-#if 0
 int
 shishi_tkt_to_ccache_mem (Shishi *handle,
 			  Shishi_tkt *tkt,
 			  char **data, size_t *len)
 {
+#if 0
   struct ccache_credential cred;
   char tmp[1024];
   size_t i;
@@ -577,7 +577,9 @@ shishi_tkt_to_ccache_mem (Shishi *handle,
 	ccache_print_credential (&foo);
       }
       _shishi_escapeprint (tmp, i);
+#endif
 
+      return SHISHI_CCACHE_ERROR;
 }
 
 int
@@ -614,4 +616,3 @@ shishi_tkts_to_ccache_mem (Shishi *handle,
   return rc;
 #endif
 }
-#endif
