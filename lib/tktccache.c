@@ -426,6 +426,10 @@ shishi_tkts_from_ccache_file (Shishi * handle,
   return SHISHI_OK;
 }
 
+extern int
+shishi_tkt_to_ccache_mem (Shishi *handle, Shishi_tkt *tkt,
+			  char **data, size_t *len);
+
 int
 shishi_tkt_to_ccache_mem (Shishi *handle,
 			  Shishi_tkt *tkt,
@@ -581,6 +585,10 @@ shishi_tkt_to_ccache_mem (Shishi *handle,
 
       return SHISHI_CCACHE_ERROR;
 }
+
+extern int
+shishi_tkts_to_ccache_mem (Shishi *handle, Shishi_tkts *tkts,
+			   char **data, size_t *len);
 
 int
 shishi_tkts_to_ccache_mem (Shishi *handle,
