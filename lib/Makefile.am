@@ -89,7 +89,7 @@ libshishi_la_LDFLAGS = -no-undefined \
 if HAVE_LD_VERSION_SCRIPT
 libshishi_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libshishi.map
 else
-libidn_la_LDFLAGS += -export-symbols-regex '^shishi*'
+libshishi_la_LDFLAGS += -export-symbols-regex '^shishi*'
 endif
 
 if HAVE_LD_OUTPUT_DEF
