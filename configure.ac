@@ -308,7 +308,6 @@ AC_DEFINE([xalloc_die], [shishi_xalloc_die], [Fix namespace of xalloc_die.])
 
 sj_OUTPUT_DEF
 sj_VALGRIND
-sj_LINKER_SCRIPT([$srcdir/lib/shishi.vers])
 sj_UPDATE_HEADER_VERSION([$srcdir/lib/shishi.h])
 
 # Add many warnings, except some...
@@ -369,5 +368,5 @@ AC_MSG_NOTICE([summary of build options:
   Warning flags:    ${WARN_CFLAGS}
   Library types:    Shared=${enable_shared}, Static=${enable_static}
   Valgrind:         ${VALGRIND}
-  Linker script:    $have_ld_version_script
+  Version script:   $have_ld_version_script
 ])
