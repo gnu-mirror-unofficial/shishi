@@ -960,7 +960,8 @@ problem, but you should use @samp{indent} to reformat the code
 @item Return errors.
 The only valid reason for ever aborting the execution of the program
 is due to memory allocation errors, but for that you should call
-@samp{xalloc_die} to allow the application to recover if it wants to.
+@samp{shishi_xalloc_die} to allow the application to recover if it
+wants to.
 
 @item Design with thread safety in mind.
 Don't use global variables.  Don't even write to per-handle global
