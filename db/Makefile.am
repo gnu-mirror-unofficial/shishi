@@ -33,10 +33,17 @@ DEFS = -DLOCALEDIR=\"$(localedir)\" \
 
 include_HEADERS = shisa.h
 lib_LTLIBRARIES = libshisa.la
-libshisa_la_SOURCES = shisa.h info.h \
+libshisa_la_SOURCES = libshisa.map \
+	shisa.h info.h \
 	setup.c config.c db.c err.c core.c \
 	file.c file.h fileutil.h fileutil.c
 libshisa_la_LIBADD = gl/libgnu.la
 # XXX use different libtool version for this library?
 libshisa_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
-	-export-symbols-regex '^shisa.*' -no-undefined
+	-no-undefined
+
+if HAVE_LD_VERSION_SCRIPT
+libshisa_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libshisa.map
+else
+libshisa_la_LDFLAGS += -export-symbols-regex '^shisa.*'
+endif

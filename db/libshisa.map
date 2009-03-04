@@ -1,0 +1,59 @@
+# Copyright (C) 2009 Simon Josefsson
+#
+# This file is part of Shishi.
+#
+# Shishi is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# Shishi is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Shishi; if not, see http://www.gnu.org/licenses or write
+# to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+# Floor, Boston, MA 02110-1301, USA.
+
+SHISA_0.0 {
+  global:
+    shisa;
+    shisa_cfg;
+    shisa_cfg_db;
+    shisa_cfg_default_systemfile;
+    shisa_cfg_from_file;
+    shisa_done;
+    shisa_enumerate_principals;
+    shisa_enumerate_realms;
+    shisa_file_done;
+    shisa_file_enumerate_principals;
+    shisa_file_enumerate_realms;
+    shisa_file_init;
+    shisa_file_key_add;
+    shisa_file_key_remove;
+    shisa_file_key_update;
+    shisa_file_keys_find;
+    shisa_file_principal_add;
+    shisa_file_principal_find;
+    shisa_file_principal_remove;
+    shisa_file_principal_update;
+    shisa_info;
+    shisa_init;
+    shisa_init_with_paths;
+    shisa_key_add;
+    shisa_key_free;
+    shisa_key_remove;
+    shisa_key_update;
+    shisa_keys_find;
+    shisa_keys_free;
+    shisa_principal_add;
+    shisa_principal_find;
+    shisa_principal_remove;
+    shisa_principal_update;
+    shisa_strerror;
+
+  local:
+    *;
+};
