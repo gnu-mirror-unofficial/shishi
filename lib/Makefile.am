@@ -40,7 +40,8 @@ shishi-int.h:
 
 include_HEADERS = shishi.h
 lib_LTLIBRARIES = libshishi.la
-libshishi_la_SOURCES = shishi.h internal.h \
+libshishi_la_SOURCES = libshishi.map \
+	shishi.h internal.h \
 	init.c cfg.c cfg.h realm.c principal.c error.c krberror.c \
 	gztime.c diskio.c diskio.h authorize.c pki.c \
 	authenticator.c \
@@ -55,7 +56,7 @@ libshishi_la_SOURCES = shishi.h internal.h \
 	asn1.c asn1.h kerberos5.c \
 	version.c password.c \
 	utils.c utils.h resolv.c \
-	kerberos5.asn1 shishi.vers \
+	kerberos5.asn1 \
 	low-crypto.c low-crypto.h
 
 if NULL
@@ -86,7 +87,9 @@ libshishi_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 if HAVE_LD_VERSION_SCRIPT
-libshishi_la_LDFLAGS += -Wl,--version-script=$(srcdir)/shishi.vers
+libshishi_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libshishi.map
+else
+libidn_la_LDFLAGS += -export-symbols-regex '^shishi*'
 endif
 
 if HAVE_LD_OUTPUT_DEF
