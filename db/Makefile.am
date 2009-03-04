@@ -20,7 +20,7 @@
 
 SUBDIRS = gl
 
-AM_CFLAGS = $(WARN_CFLAGS)
+AM_CFLAGS = $(WARN_CFLAGS) $(CFLAG_VISIBILITY)
 # -I../lib is to get shishi-int.h and uint32_t.
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
 	-I$(srcdir)/gl -I$(builddir)/gl \
