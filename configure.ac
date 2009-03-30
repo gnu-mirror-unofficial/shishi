@@ -19,7 +19,7 @@
 # Floor, Boston, MA 02110-1301, USA.
 
 AC_PREREQ(2.61)
-AC_INIT([GNU Shishi], [0.0.39], [bug-shishi@josefsson.org])
+AC_INIT([GNU Shishi], [0.0.39], [bug-shishi@gnu.org])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
