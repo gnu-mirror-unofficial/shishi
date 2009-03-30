@@ -1,5 +1,5 @@
 /* shisa.c --- Command line interface to Shishi database.
- * Copyright (C) 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2009  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -457,7 +457,10 @@ main (int argc, char *argv[])
 
   if (args.version_given)
     {
-      version_etc (stdout, "shisa", PACKAGE_NAME, VERSION,
+      const char *p = PACKAGE_NAME;
+      if (strcmp (shishi_check_version (NULL), PACKAGE_VERSION) != 0)
+	p = PACKAGE_STRING;
+      version_etc (stdout, program_name, p, shishi_check_version (NULL),
 		   "Simon Josefsson", (char *) NULL);
       return EXIT_SUCCESS;
     }
