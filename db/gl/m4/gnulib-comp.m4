@@ -42,7 +42,6 @@ AC_DEFUN([gl3_INIT],
   gl_source_base='db/gl'
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
-  gl_VISIBILITY
   m4_ifval(gl3_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl3_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl3_LIBSOURCES_LIST[ ; do
@@ -177,5 +176,4 @@ AC_DEFUN([gl3_FILE_LIST], [
   m4/00gnulib.m4
   m4/gnulib-common.m4
   m4/readlink.m4
-  m4/visibility.m4
 ])
