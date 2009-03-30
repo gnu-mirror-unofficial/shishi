@@ -4,6 +4,17 @@ See the end for copying conditions.
 
 * Version 0.0.39 (unreleased)
 
+** libshishi: The linker version script lists APIs explicitly.
+This will reduce the chance that a symbol is exported accidentally.
+
+** libshisa: Use a LD version script on platforms where it is supported.
+Currently only GNU LD and the Solaris linker supports it.  This helps
+Debian package tools to produce better dependencies.  Before we used
+Libtool -export-symbols-regex that created an anonymous version tag.
+We still fall back on -export-symbols-regex if the system does not
+support LD version scripts, although on most platforms this will just
+affect symbol visibility.
+
 ** API and ABI modifications:
 No changes since last version.
 
