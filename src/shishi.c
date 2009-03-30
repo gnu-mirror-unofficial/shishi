@@ -62,13 +62,9 @@ usage (int status)
   else
     {
       cmdline_parser_print_help ();
-      /* TRANSLATORS: The placeholder indicates the bug-reporting address
-	 for this package.  Please add _another line_ saying
-	 "Report translation bugs to <...>\n" with the address for translation
-	 bugs (typically your translation team's web or email address).  */
       printf (_("\nMandatory arguments to long options are "
-		"mandatory for short options too.\n\nReport bugs to <%s>.\n"),
-	      PACKAGE_BUGREPORT);
+		"mandatory for short options too.\n"));
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
