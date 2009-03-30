@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -55,7 +55,7 @@ shishi_cmd.c shishi_cmd.h: shishi.ggo Makefile.am
 		--input $< --file-name shishi_cmd
 
 shisa_SOURCES = shisa.c
-shisa_LDADD = ../gl/libgnu.la gl/libgnu.la libcmd-shishi.la		\
+shisa_LDADD = ../gl/libgnu.la gl/libgnu.la libcmd-shisa.la		\
 	../db/libshisa.la ../lib/libshishi.la @LTLIBINTL@
 noinst_LTLIBRARIES += libcmd-shisa.la
 libcmd_shisa_la_CFLAGS =
