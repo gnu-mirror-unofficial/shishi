@@ -41,6 +41,16 @@ update-po: refresh-po
 bootstrap: autoreconf
 	./configure $(CFGFLAGS)
 
+# Code Coverage
+
+web-coverage:
+	rm -fv `find $(htmldir)/coverage -type f | grep -v CVS`
+	cp -rv doc/coverage/* $(htmldir)/coverage/
+
+upload-web-coverage:
+	cd $(htmldir) && \
+		cvs commit -m "Update." coverage
+
 # Mingw32
 
 W32ROOT ?= $(HOME)/gnutls4win/inst
