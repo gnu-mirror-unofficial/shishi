@@ -1,3 +1,125 @@
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.39.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk: Add code coverage rules.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix bug address.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Need ltlibtasn1 before ltlibgnutls because the
+	latter drags in old libtasn1.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Only warn when using gcc.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* lib/libshishi.map: Don't use wildcards.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* db/gl/gnulib.mk, db/gl/m4/gnulib-cache.m4,
+	db/gl/m4/gnulib-comp.m4, db/gl/m4/visibility.m4, gl/Makefile.am,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4, gl/m4/visibility.m4: 
+	Update gnulib files.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: More debug output.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, build-aux/gnupload, gl/Makefile.am,
+	gl/m4/gnulib-comp.m4, gl/m4/signal_h.m4, gl/m4/sys_select_h.m4,
+	gl/signal.in.h, gl/sys_select.in.h, gl/unistd.in.h,
+	gl/vasnprintf.c, gl/xmalloc.c, maint.mk: Update gnulib files.
+
+2009-03-04  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi: Fix.
+
+2009-03-04  Simon Josefsson <simon@josefsson.org>
+
+	* db/gl/Makefile.am: Fix.
+
+2009-03-04  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am, db/libshisa.map: Use symbol map for libshisa.
+
+2009-03-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Another typo.
+
+2009-03-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Fix typo.
+
+2009-03-04  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am: Use CFLAG_VISIBILITY.
+
+2009-03-04  Simon Josefsson <simon@josefsson.org>
+
+	* db/gl/gnulib.mk, db/gl/m4/gnulib-cache.m4,
+	db/gl/m4/gnulib-comp.m4, db/gl/m4/visibility.m4: Update gnulib
+	files.
+
+2009-03-04  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am, lib/libshishi.map, lib/shishi.vers: Fix version
+	script filename.  Use libtool -export-symbols-regex as fallback.
+
+2009-03-04  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, db/gl/m4/gnulib-common.m4, gl/Makefile.am,
+	gl/fseeko.c, gl/gai_strerror.c, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-common.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/ld-version-script.m4, gl/m4/printf.m4, gl/m4/stdarg.m4,
+	gl/m4/stdint.m4, gl/m4/stdlib_h.m4, gl/m4/vasnprintf.m4,
+	gl/m4/visibility.m4, gl/stdint.in.h, gl/sys_socket.in.h,
+	gl/vasnprintf.c, lib/Makefile.am, m4/linker-script.m4,
+	src/gl/m4/gnulib-common.m4: Update gnulib files.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tktccache.c: Fix warning.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h: Bump version.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tktccache.c: Maintain ABIs even though functions aren't
+	implemented properly yet.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2009-02-26  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2009-02-26  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.38.
