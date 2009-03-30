@@ -369,4 +369,5 @@ AC_MSG_NOTICE([summary of build options:
   Library types:    Shared=${enable_shared}, Static=${enable_static}
   Valgrind:         ${VALGRIND}
   Version script:   $have_ld_version_script
+  System libtasn1:  $system_asn1
 ])
