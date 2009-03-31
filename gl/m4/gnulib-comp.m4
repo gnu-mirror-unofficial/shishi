@@ -48,11 +48,27 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='gl'
+changequote(,)dnl
+LTALLOCA=`echo "$ALLOCA" | sed 's/\.[^.]* /.lo /g;s/\.[^.]*$/.lo/'`
+changequote([, ])dnl
+AC_SUBST([LTALLOCA])
   gl_FUNC_ALLOCA
   gl_HEADER_ARPA_INET
   AC_PROG_MKDIR_P
   gl_FUNC_BASE64
+  AC_REQUIRE([gl_HEADER_SYS_SOCKET])
+  if test "$ac_cv_header_winsock2_h" = yes; then
+    AC_LIBOBJ([bind])
+  fi
+  gl_SYS_SOCKET_MODULE_INDICATOR([bind])
   gl_CLOCK_TIME
+  gl_FUNC_CLOSE
+  gl_UNISTD_MODULE_INDICATOR([close])
+  AC_REQUIRE([gl_HEADER_SYS_SOCKET])
+  if test "$ac_cv_header_winsock2_h" = yes; then
+    AC_LIBOBJ([connect])
+  fi
+  gl_SYS_SOCKET_MODULE_INDICATOR([connect])
   gl_CRC
   gl_ARCFOUR
   gl_GC
@@ -76,6 +92,8 @@ AC_DEFUN([gl_INIT],
   gl_ENVIRON
   gl_UNISTD_MODULE_INDICATOR([environ])
   AC_REQUIRE([gl_HEADER_ERRNO_H])
+  gl_FUNC_FCLOSE
+  gl_STDIO_MODULE_INDICATOR([fclose])
   gl_FCNTL_H
   gl_FLOAT_H
   gl_FUNC_FSEEKO
@@ -92,6 +110,11 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_GETLINE
   gl_STDIO_MODULE_INDICATOR([getline])
   gl_FUNC_GETPASS
+  AC_REQUIRE([gl_HEADER_SYS_SOCKET])
+  if test "$ac_cv_header_winsock2_h" = yes; then
+    AC_LIBOBJ([getpeername])
+  fi
+  gl_SYS_SOCKET_MODULE_INDICATOR([getpeername])
   gl_FUNC_GETSUBOPT
   gl_STDLIB_MODULE_INDICATOR([getsubopt])
   AC_SUBST([LIBINTL])
@@ -129,13 +152,35 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_READ_FILE
   gl_FUNC_REALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([realloc-posix])
+  AC_REQUIRE([gl_HEADER_SYS_SOCKET])
+  if test "$ac_cv_header_winsock2_h" = yes; then
+    AC_LIBOBJ([recvfrom])
+  fi
+  gl_SYS_SOCKET_MODULE_INDICATOR([recvfrom])
+  gl_FUNC_SELECT
+  gl_SYS_SELECT_MODULE_INDICATOR([select])
+  AC_REQUIRE([gl_HEADER_SYS_SOCKET])
+  if test "$ac_cv_header_winsock2_h" = yes; then
+    AC_LIBOBJ([sendto])
+  fi
+  gl_SYS_SOCKET_MODULE_INDICATOR([sendto])
   gl_SERVENT
   gl_FUNC_SETENV
   gl_STDLIB_MODULE_INDICATOR([setenv])
+  AC_REQUIRE([gl_HEADER_SYS_SOCKET])
+  if test "$ac_cv_header_winsock2_h" = yes; then
+    AC_LIBOBJ([shutdown])
+  fi
+  gl_SYS_SOCKET_MODULE_INDICATOR([shutdown])
   gl_SIGNAL_H
   gl_SIZE_MAX
   gl_FUNC_SNPRINTF
   gl_STDIO_MODULE_INDICATOR([snprintf])
+  AC_REQUIRE([gl_HEADER_SYS_SOCKET])
+  if test "$ac_cv_header_winsock2_h" = yes; then
+    AC_LIBOBJ([socket])
+  fi
+  gl_SYS_SOCKET_MODULE_INDICATOR([socket])
   gl_TYPE_SOCKLEN_T
   gl_STDARG_H
   AM_STDBOOL_H
@@ -324,6 +369,7 @@ AC_DEFUN([gl_FILE_LIST], [
   doc/gendocs_template
   doc/getdate.texi
   doc/gpl-3.0.texi
+  lib/alloca.c
   lib/alloca.in.h
   lib/arcfour.c
   lib/arcfour.h
@@ -332,13 +378,19 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/asprintf.c
   lib/base64.c
   lib/base64.h
+  lib/bind.c
   lib/c-ctype.c
   lib/c-ctype.h
+  lib/close-hook.c
+  lib/close-hook.h
+  lib/close.c
+  lib/connect.c
   lib/crc.c
   lib/crc.h
   lib/des.c
   lib/des.h
   lib/errno.in.h
+  lib/fclose.c
   lib/fcntl.in.h
   lib/float+.h
   lib/float.in.h
@@ -357,6 +409,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getline.c
   lib/getpass.c
   lib/getpass.h
+  lib/getpeername.c
   lib/getsubopt.c
   lib/gettext.h
   lib/gettime.c
@@ -390,12 +443,17 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/read-file.c
   lib/read-file.h
   lib/realloc.c
+  lib/recvfrom.c
+  lib/select.c
+  lib/sendto.c
   lib/setenv.c
   lib/sha1.c
   lib/sha1.h
+  lib/shutdown.c
   lib/signal.in.h
   lib/size_max.h
   lib/snprintf.c
+  lib/socket.c
   lib/stdarg.in.h
   lib/stdbool.in.h
   lib/stdint.in.h
@@ -429,6 +487,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/vasnprintf.h
   lib/vasprintf.c
   lib/verify.h
+  lib/w32sock.h
   lib/wchar.in.h
   lib/xalloc.h
   lib/xasprintf.c
@@ -450,12 +509,14 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/base64.m4
   m4/bison.m4
   m4/clock_time.m4
+  m4/close.m4
   m4/crc.m4
   m4/des.m4
   m4/eealloc.m4
   m4/environ.m4
   m4/errno_h.m4
   m4/extensions.m4
+  m4/fclose.m4
   m4/fcntl_h.m4
   m4/float_h.m4
   m4/fseeko.m4
@@ -507,6 +568,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/rawmemchr.m4
   m4/read-file.m4
   m4/realloc.m4
+  m4/select.m4
   m4/servent.m4
   m4/setenv.m4
   m4/sha1.m4
