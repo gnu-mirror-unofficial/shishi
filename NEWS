@@ -6,6 +6,10 @@ See the end for copying conditions.
 
 ** shisa: Fix bug that made command line parameter parsing unreliable.
 
+** Shishi can now be cross-compiled to Windows using MinGW.
+See <http://josefsson.org/gnutls4win/> for build scripts and pre-built
+binary packages.
+
 ** API and ABI modifications:
 No changes since last version.
 
