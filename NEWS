@@ -4,6 +4,8 @@ See the end for copying conditions.
 
 * Version 0.0.40 (unreleased)
 
+** shisa: Fix bug that made command line parameter parsing unreliable.
+
 ** API and ABI modifications:
 No changes since last version.
 
