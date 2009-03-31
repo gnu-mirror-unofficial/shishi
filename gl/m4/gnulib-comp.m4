@@ -147,6 +147,8 @@ AC_DEFUN([gl_INIT],
   gl_STRING_MODULE_INDICATOR([strchrnul])
   gl_FUNC_STRDUP_POSIX
   gl_STRING_MODULE_INDICATOR([strdup])
+  gl_FUNC_STRERROR
+  gl_STRING_MODULE_INDICATOR([strerror])
   gl_HEADER_STRING_H
   gl_HEADER_STRINGS_H
   gl_FUNC_STRNDUP
@@ -405,6 +407,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strchrnul.c
   lib/strchrnul.valgrind
   lib/strdup.c
+  lib/strerror.c
   lib/string.in.h
   lib/strings.in.h
   lib/strncasecmp.c
@@ -521,6 +524,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strcase.m4
   m4/strchrnul.m4
   m4/strdup.m4
+  m4/strerror.m4
   m4/string_h.m4
   m4/strings_h.m4
   m4/strndup.m4
