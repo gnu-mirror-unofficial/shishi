@@ -364,7 +364,7 @@ EXTRA_libgnu_la_SOURCES += getdomainname.c
 ## begin gnulib module gethostname
 
 
-EXTRA_DIST += gethostname.c
+EXTRA_DIST += gethostname.c w32sock.h
 
 EXTRA_libgnu_la_SOURCES += gethostname.c
 
