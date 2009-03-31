@@ -48,6 +48,7 @@ shishi_LDADD = ../gl/libgnu.la gl/libgnu.la libcmd-shishi.la		\
 	../lib/libshishi.la @LTLIBINTL@
 noinst_LTLIBRARIES += libcmd-shishi.la
 libcmd_shishi_la_CFLAGS =
+libcmd_shishi_la_LIBADD = gl/libgnu.la
 libcmd_shishi_la_SOURCES = shishi.ggo shishi_cmd.h shishi_cmd.c
 shishi_cmd.c shishi_cmd.h: shishi.ggo Makefile.am
 	gengetopt --unamed-opts="CLIENT [SERVER]"			\
@@ -59,6 +60,7 @@ shisa_LDADD = ../gl/libgnu.la gl/libgnu.la libcmd-shisa.la		\
 	../db/libshisa.la ../lib/libshishi.la @LTLIBINTL@
 noinst_LTLIBRARIES += libcmd-shisa.la
 libcmd_shisa_la_CFLAGS =
+libcmd_shisa_la_LIBADD = gl/libgnu.la
 libcmd_shisa_la_SOURCES = shisa.ggo shisa_cmd.h shisa_cmd.c
 shisa_cmd.c shisa_cmd.h: shisa.ggo Makefile.am
 	gengetopt --unamed-opts="REALM [PRINCIPAL]"			\
@@ -73,6 +75,7 @@ shishid_LDADD = ../gl/libgnu.la gl/libgnu.la ../lib/libshishi.la \
 	../db/libshisa.la @LTLIBGNUTLS@ @LTLIBINTL@ libcmd-shishid.la
 noinst_LTLIBRARIES += libcmd-shishid.la
 libcmd_shishid_la_CFLAGS =
+libcmd_shishid_la_LIBADD = gl/libgnu.la
 libcmd_shishid_la_SOURCES = shishid.ggo shishid_cmd.h shishid_cmd.c
 shishid_cmd.c shishid_cmd.h: shishid.ggo Makefile.am
 	gengetopt							\
@@ -84,6 +87,7 @@ keytab2shishi_LDADD = ../gl/libgnu.la gl/libgnu.la libcmd-keytab2shishi.la \
 	../lib/libshishi.la @LTLIBINTL@
 noinst_LTLIBRARIES += libcmd-keytab2shishi.la
 libcmd_keytab2shishi_la_CFLAGS =
+libcmd_keytab2shishi_la_LIBADD = gl/libgnu.la
 libcmd_keytab2shishi_la_SOURCES =  keytab2shishi.ggo			\
 	keytab2shishi_cmd.h keytab2shishi_cmd.c
 keytab2shishi_cmd.c keytab2shishi_cmd.h: keytab2shishi.ggo Makefile.am
@@ -96,6 +100,7 @@ ccache2shishi_LDADD = ../gl/libgnu.la gl/libgnu.la libcmd-ccache2shishi.la \
 	../lib/libshishi.la @LTLIBINTL@
 noinst_LTLIBRARIES += libcmd-ccache2shishi.la
 libcmd_ccache2shishi_la_CFLAGS =
+libcmd_ccache2shishi_la_LIBADD = gl/libgnu.la
 libcmd_ccache2shishi_la_SOURCES = ccache2shishi.ggo			\
 	ccache2shishi_cmd.h ccache2shishi_cmd.c
 ccache2shishi_cmd.c ccache2shishi_cmd.h: ccache2shishi.ggo Makefile.am
