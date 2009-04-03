@@ -22,6 +22,9 @@
 
 #include "internal.h"
 
+/* Get gl_sockets_startup. */
+#include "sockets.h"
+
 /* Get _shishi_tls_init. */
 #include "starttls.h"
 
