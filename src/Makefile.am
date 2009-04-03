@@ -21,9 +21,11 @@
 SUBDIRS = gl
 
 AM_CFLAGS = $(WARN_CFLAGS)
-AM_CPPFLAGS = -I$(srcdir)/gl -I$(builddir)/gl \
-	-I$(top_srcdir)/gl -I$(top_builddir)/gl \
-	-I$(top_srcdir)/db -I../lib
+AM_CPPFLAGS = \
+	-I$(builddir)/gl -I$(srcdir)/gl \
+	-I$(top_builddir)/gl -I$(top_srcdir)/gl \
+	-I$(top_builddir)/lib -I$(top_srcdir)/lib \
+	-I$(top_srcdir)/db
 localedir = $(datadir)/locale
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \
 	-DSYSTEMCFGFILE=\"$(CONFDIR)/shishi.conf\" \
