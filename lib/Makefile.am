@@ -82,7 +82,7 @@ libshishi_la_SOURCES += starttls.c starttls.h
 endif
 libshishi_la_LIBADD = ../gl/libgnu.la $(LIB_CLOCK_GETTIME)	\
 	$(LTLIBTASN1) $(LTLIBGNUTLS) $(LTLIBGCRYPT) $(LTLIBIDN)	\
-	$(LTLIBINTL)
+	$(LTLIBINTL) $(LIBSOCKET)
 libshishi_la_LDFLAGS = -no-undefined \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
