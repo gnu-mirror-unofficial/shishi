@@ -181,6 +181,7 @@ AC_SUBST([LTALLOCA])
     AC_LIBOBJ([socket])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([socket])
+  gl_SOCKETS
   gl_TYPE_SOCKLEN_T
   gl_STDARG_H
   AM_STDBOOL_H
@@ -454,6 +455,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/size_max.h
   lib/snprintf.c
   lib/socket.c
+  lib/sockets.c
+  lib/sockets.h
   lib/stdarg.in.h
   lib/stdbool.in.h
   lib/stdint.in.h
@@ -575,6 +578,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/signal_h.m4
   m4/size_max.m4
   m4/snprintf.m4
+  m4/sockets.m4
   m4/socklen.m4
   m4/sockpfaf.m4
   m4/stdarg.m4

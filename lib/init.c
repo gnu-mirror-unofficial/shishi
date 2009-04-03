@@ -1,5 +1,5 @@
 /* init.c --- Initialization functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -45,6 +45,14 @@ init_handle (int outputtype)
     {
       shishi_warn (handle, "Library and header version missmatch (%s vs %s).",
 		   shishi_check_version (NULL), SHISHI_VERSION);
+      free (handle);
+      return NULL;
+    }
+
+  rc = gl_sockets_startup (SOCKETS_2_1);
+  if (rc)
+    {
+      shishi_warn (handle, "Failed to initialized Windows sockets (%d)", rc);
       free (handle);
       return NULL;
     }
