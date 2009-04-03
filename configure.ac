@@ -69,11 +69,15 @@ AC_CHECK_SIZEOF(unsigned long int, 4)
 AC_CHECK_SIZEOF(unsigned int, 4)
 
 # For gnulib stuff in gl/.
-libgcrypt=yes
+with_libgcrypt=yes
 AC_DEFINE(OK_TO_USE_1S_CLOCK, 1, [Define to 1 to make gettime work.])
 gl_INIT
 gl2_INIT
 gl3_INIT
+
+if test "$ac_cv_libgcrypt" != yes; then
+  AC_MSG_ERROR([Cannot find libgcrypt])
+fi
 
 gl_WARN_ADD([-Wall])
 
