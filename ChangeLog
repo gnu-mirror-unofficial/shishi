@@ -1,3 +1,98 @@
+2009-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.40.
+
+2009-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/init.c: Need #include.
+
+2009-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/sockets.m4, gl/sockets.c, gl/sockets.h, lib/init.c: Need
+	WSAStartup.
+
+2009-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Fix -I's.
+
+2009-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/Makefile.am: Need to link with -lws2_32.
+
+2009-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Fix libgcrypt test.
+
+2009-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/gethostname.c, gl/m4/gethostname.m4: Revert
+	gethostname patch.
+
+2009-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* gl/m4/gnulib-cache.m4: Fix.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/gethostname.c, gl/m4/gethostname.m4: Update
+	gnulib files.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am: libshisa needs to link to libshishi for xalloc_die
+	etc (sigh!).
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: The libcmd* libraries need gl/libgnu for getopt.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/alloca.c, gl/bind.c, gl/close-hook.c,
+	gl/close-hook.h, gl/close.c, gl/connect.c, gl/fclose.c,
+	gl/getpeername.c, gl/m4/close.m4, gl/m4/fclose.m4,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4, gl/m4/select.m4,
+	gl/recvfrom.c, gl/select.c, gl/sendto.c, gl/shutdown.c,
+	gl/socket.c, gl/w32sock.h: Add socket gnulib modules, for mingw.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/strerror.m4, gl/strerror.c: Need strerror in lib/.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2009-03-31  Simon Josefsson <simon@josefsson.org>
+
+	* lib/shishi.h: Bump version.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac: Bump versions.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* src/Makefile.am: Fix typo that prevented shisa from working.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c, src/shishi.c: Use gnulib for address report.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* src/shisa.c, src/shishi.c: More version printing.
+
+2009-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2009-03-30  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.39.
