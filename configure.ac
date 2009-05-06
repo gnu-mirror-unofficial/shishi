@@ -337,6 +337,7 @@ if test "$GCC" = "yes"; then
     gl_WARN_ADD([$w])
   done
   gl_WARN_ADD([-Wno-unused-parameter]) # Too many warnings for now
+  gl_WARN_ADD([-Wno-stack-protector])            # Some functions cannot be protected
   gl_WARN_ADD([-fdiagnostics-show-option])
   export WARN_CFLAGS
 fi
