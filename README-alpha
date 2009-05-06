@@ -1,0 +1,61 @@
+Shishi README-alpha -- Information for developers.              -*- outline -*-
+Copyright (C) 2009 Simon Josefsson
+See the end for copying conditions.
+
+This file contains instructions for developers and advanced users that
+wants to build from version controlled sources.
+
+We require several tools to build the software, including:
+
+- Automake <http://www.gnu.org/software/automake/>
+- Autoconf <http://www.gnu.org/software/autoconf/>
+- Libtool <http://www.gnu.org/software/libtool/>
+- Gettext <http://www.gnu.org/software/gettext/>
+- Bison <http://www.gnu.org/software/bison/>
+- Texinfo <http://www.gnu.org/software/texinfo/>
+- help2man <http://www.gnu.org/software/help2man/>
+- Gengetopt <http://www.gnu.org/software/gengetopt/>
+- Tar <http://www.gnu.org/software/tar/>
+- Gzip <http://www.gnu.org/software/gzip/>
+- Texlive & epsf <http://www.tug.org/texlive/> (for PDF manual)
+- CVS <http://www.gnu.org/software/cvs/> (for gettext autopoint)
+- GTK-DOC <http://www.gtk.org/gtk-doc/> (for API manual)
+- Git <http://git.or.cz/>
+- Perl <http://www.cpan.org/>
+- Valgrind <http://valgrind.org/> (optional)
+- libgcrypt <http://www.gnupg.org/>
+- libtasn1 <http://josefsson.org/libtasn1/> (optional)
+- libidn <http://www.gnu.org/software/libidn/> (optional)
+- GnuTLS <http://www.gnu.org/software/gnutls/> (for TLS support)
+- PAM <http://www.gnu.org/software/gnutls/> (for pam-shishi)
+
+The required software is typically disitributed with your operating
+system, and the instructions for installing them differ.  Here are
+some hints:
+
+gNewSense/Debian/Ubuntu:
+sudo apt-get install git-core autoconf automake libtool gettext cvs 
+sudo apt-get install texinfo texlive texlive-generic-recommended texlive-extra-utils
+sudo apt-get install help2man gtk-doc-tools valgrind
+sudo apt-get install bison libgnutls-dev libidn11-dev libtasn1-3-dev libgcrypt-dev
+
+To download the version controlled sources:
+
+$ git clone git://git.savannah.gnu.org/shishi.git
+$ cd shishi
+
+The next step is to run autoreconf, ./configure, etc:
+
+$ make bootstrap
+
+Then build the project normally:
+
+$ make
+$ make check
+
+Happy hacking!
+
+----------------------------------------------------------------------
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
