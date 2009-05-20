@@ -40,7 +40,7 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([gl2_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='src/gl'
-  AC_REQUIRE([gl_HEADER_ERRNO_H])
+  gl_HEADER_ERRNO_H
   gl_ERROR
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_XGETTEXT_OPTION([--flag=error:3:c-format])

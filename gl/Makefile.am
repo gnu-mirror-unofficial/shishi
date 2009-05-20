@@ -38,6 +38,13 @@ libgnu_la_DEPENDENCIES = $(gl_LTLIBOBJS)
 EXTRA_libgnu_la_SOURCES =
 libgnu_la_LDFLAGS = $(AM_LDFLAGS)
 
+## begin gnulib module alignof
+
+
+EXTRA_DIST += alignof.h
+
+## end   gnulib module alignof
+
 ## begin gnulib module alloca
 
 
@@ -72,7 +79,7 @@ BUILT_SOURCES += $(ARPA_INET_H)
 
 # We need the following in order to create <arpa/inet.h> when the system
 # doesn't have one.
-arpa/inet.h:
+arpa/inet.h: arpa_inet.in.h
 	@MKDIR_P@ arpa
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
@@ -1174,6 +1181,8 @@ sys/socket.h: sys_socket.in.h
 	      -e 's|@''GNULIB_SHUTDOWN''@|$(GNULIB_SHUTDOWN)|g' \
 	      -e 's|@''HAVE_WINSOCK2_H''@|$(HAVE_WINSOCK2_H)|g' \
 	      -e 's|@''HAVE_WS2TCPIP_H''@|$(HAVE_WS2TCPIP_H)|g' \
+	      -e 's|@''HAVE_STRUCT_SOCKADDR_STORAGE''@|$(HAVE_STRUCT_SOCKADDR_STORAGE)|g' \
+	      -e 's|@''HAVE_SA_FAMILY_T''@|$(HAVE_SA_FAMILY_T)|g' \
 	      -e '/definition of GL_LINK_WARNING/r $(LINK_WARNING_H)' \
 	      < $(srcdir)/sys_socket.in.h; \
 	} > $@-t
@@ -1371,6 +1380,13 @@ EXTRA_libgnu_la_SOURCES += unsetenv.c
 
 ## end   gnulib module unsetenv
 
+## begin gnulib module useless-if-before-free
+
+
+EXTRA_DIST += $(top_srcdir)/build-aux/useless-if-before-free
+
+## end   gnulib module useless-if-before-free
+
 ## begin gnulib module vasnprintf
 
 
@@ -1388,6 +1404,13 @@ EXTRA_DIST += asprintf.c vasprintf.c
 EXTRA_libgnu_la_SOURCES += asprintf.c vasprintf.c
 
 ## end   gnulib module vasprintf
+
+## begin gnulib module vc-list-files
+
+
+EXTRA_DIST += $(top_srcdir)/build-aux/vc-list-files
+
+## end   gnulib module vc-list-files
 
 ## begin gnulib module verify
 
@@ -1441,6 +1464,7 @@ wchar.h: wchar.in.h
 	      -e 's|@''REPLACE_MBSNRTOWCS''@|$(REPLACE_MBSNRTOWCS)|g' \
 	      -e 's|@''REPLACE_WCRTOMB''@|$(REPLACE_WCRTOMB)|g' \
 	      -e 's|@''REPLACE_WCSRTOMBS''@|$(REPLACE_WCSRTOMBS)|g' \
+	      -e 's|@''REPLACE_WCSNRTOMBS''@|$(REPLACE_WCSNRTOMBS)|g' \
 	      -e 's|@''REPLACE_WCWIDTH''@|$(REPLACE_WCWIDTH)|g' \
 	      -e '/definition of GL_LINK_WARNING/r $(LINK_WARNING_H)' \
 	    < $(srcdir)/wchar.in.h; \

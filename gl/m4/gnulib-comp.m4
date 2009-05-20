@@ -91,7 +91,7 @@ AC_SUBST([LTALLOCA])
   gl_MODULE_INDICATOR([gc-random])
   gl_ENVIRON
   gl_UNISTD_MODULE_INDICATOR([environ])
-  AC_REQUIRE([gl_HEADER_ERRNO_H])
+  gl_HEADER_ERRNO_H
   gl_FUNC_FCLOSE
   gl_STDIO_MODULE_INDICATOR([fclose])
   gl_FCNTL_H
@@ -143,7 +143,7 @@ AC_SUBST([LTALLOCA])
   gl_MALLOCA
   gl_MINMAX
   gl_FUNC_MKTIME
-  AC_REQUIRE([gl_MULTIARCH])
+  gl_MULTIARCH
   gl_HEADER_NETDB
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
@@ -366,10 +366,13 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/gendocs.sh
   build-aux/gnupload
   build-aux/link-warning.h
+  build-aux/useless-if-before-free
+  build-aux/vc-list-files
   doc/fdl-1.3.texi
   doc/gendocs_template
   doc/getdate.texi
   doc/gpl-3.0.texi
+  lib/alignof.h
   lib/alloca.c
   lib/alloca.in.h
   lib/arcfour.c
