@@ -135,6 +135,7 @@ AC_SUBST([LTALLOCA])
   gl_INET_NTOP
   gl_ARPA_INET_MODULE_INDICATOR([inet_ntop])
   gl_INLINE
+  gl_LD_OUTPUT_DEF
   gl_LD_VERSION_SCRIPT
   gl_FUNC_LSEEK
   gl_UNISTD_MODULE_INDICATOR([lseek])
@@ -553,6 +554,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/inline.m4
   m4/intmax_t.m4
   m4/inttypes_h.m4
+  m4/ld-output-def.m4
   m4/ld-version-script.m4
   m4/lib-ld.m4
   m4/lib-link.m4
