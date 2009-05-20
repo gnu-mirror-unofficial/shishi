@@ -384,7 +384,7 @@ AC_MSG_NOTICE([summary of build options:
   Host type:        ${host}
   Install prefix:   ${prefix}
   Compiler:         ${CC}
-  Warning flags:    ${WARN_CFLAGS}
+  Warning flags:    errors: ${WERROR_CFLAGS} warnings: ${WARN_CFLAGS}
   Library types:    Shared=${enable_shared}, Static=${enable_static}
   Valgrind:         ${VALGRIND}
   Version script:   $have_ld_version_script

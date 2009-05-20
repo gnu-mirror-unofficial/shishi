@@ -18,7 +18,7 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
-AM_CFLAGS = $(WARN_CFLAGS) $(CFLAG_VISIBILITY)
+AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(CFLAG_VISIBILITY)
 AM_CPPFLAGS = $(LIBTASN1_CFLAGS) -I$(top_srcdir)/gl -I$(top_builddir)/gl
 
 DEFS = @DEFS@ -DLOCALEDIR=\"$(localedir)\" \

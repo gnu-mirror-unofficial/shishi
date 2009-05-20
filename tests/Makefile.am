@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -20,7 +20,7 @@
 
 EXTRA_DIST = shisa.sh shishi.supp keytab1.bin ccache1.bin
 
-AM_CFLAGS = $(WARN_CFLAGS)
+AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
 	-I$(top_srcdir)/lib -I../lib
 AM_LDFLAGS = -no-install
