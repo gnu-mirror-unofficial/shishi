@@ -49,6 +49,7 @@ AC_DEFUN([gl2_INIT],
   gl_LOCALE_H
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
+  gl_VERSION_ETC
   m4_ifval(gl2_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl2_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl2_LIBSOURCES_LIST[ ; do
@@ -197,4 +198,5 @@ AC_DEFUN([gl2_FILE_LIST], [
   m4/gnulib-common.m4
   m4/locale_h.m4
   m4/strerror.m4
+  m4/version-etc.m4
 ])

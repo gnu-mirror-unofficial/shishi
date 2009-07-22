@@ -109,6 +109,8 @@ AC_SUBST([LTALLOCA])
   gl_UNISTD_MODULE_INDICATOR([gethostname])
   gl_FUNC_GETLINE
   gl_STDIO_MODULE_INDICATOR([getline])
+  gl_FUNC_GETPAGESIZE
+  gl_UNISTD_MODULE_INDICATOR([getpagesize])
   gl_FUNC_GETPASS
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
@@ -142,6 +144,8 @@ AC_SUBST([LTALLOCA])
   gl_FUNC_MALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([malloc-posix])
   gl_MALLOCA
+  gl_FUNC_MEMCHR
+  gl_STRING_MODULE_INDICATOR([memchr])
   gl_MINMAX
   gl_FUNC_MKTIME
   gl_MULTIARCH
@@ -412,6 +416,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getdomainname.c
   lib/gethostname.c
   lib/getline.c
+  lib/getpagesize.c
   lib/getpass.c
   lib/getpass.h
   lib/getpeername.c
@@ -433,6 +438,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/md4.h
   lib/md5.c
   lib/md5.h
+  lib/memchr.c
+  lib/memchr.valgrind
   lib/memxor.c
   lib/memxor.h
   lib/minmax.h
@@ -541,6 +548,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/getdomainname.m4
   m4/gethostname.m4
   m4/getline.m4
+  m4/getpagesize.m4
   m4/getpass.m4
   m4/getsubopt.m4
   m4/gettime.m4
@@ -566,9 +574,11 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/manywarnings.m4
   m4/md4.m4
   m4/md5.m4
+  m4/memchr.m4
   m4/memxor.m4
   m4/minmax.m4
   m4/mktime.m4
+  m4/mmap-anon.m4
   m4/multiarch.m4
   m4/netdb_h.m4
   m4/netinet_in_h.m4
