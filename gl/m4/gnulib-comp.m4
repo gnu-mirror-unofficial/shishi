@@ -49,7 +49,7 @@ AC_DEFUN([gl_INIT],
   gl_COMMON
   gl_source_base='gl'
 changequote(,)dnl
-LTALLOCA=`echo "$ALLOCA" | sed 's/\.[^.]* /.lo /g;s/\.[^.]*$/.lo/'`
+LTALLOCA=`echo "$ALLOCA" | sed -e 's/\.[^.]* /.lo /g;s/\.[^.]*$/.lo/'`
 changequote([, ])dnl
 AC_SUBST([LTALLOCA])
   gl_FUNC_ALLOCA
@@ -89,11 +89,15 @@ AC_SUBST([LTALLOCA])
   gl_GC_PBKDF2_SHA1
   gl_GC_RANDOM
   gl_MODULE_INDICATOR([gc-random])
+  gl_FUNC_DUP2
+  gl_UNISTD_MODULE_INDICATOR([dup2])
   gl_ENVIRON
   gl_UNISTD_MODULE_INDICATOR([environ])
   gl_HEADER_ERRNO_H
   gl_FUNC_FCLOSE
   gl_STDIO_MODULE_INDICATOR([fclose])
+  gl_FUNC_FCNTL
+  gl_FCNTL_MODULE_INDICATOR([fcntl])
   gl_FCNTL_H
   gl_FLOAT_H
   gl_FUNC_FSEEKO
@@ -109,8 +113,6 @@ AC_SUBST([LTALLOCA])
   gl_UNISTD_MODULE_INDICATOR([gethostname])
   gl_FUNC_GETLINE
   gl_STDIO_MODULE_INDICATOR([getline])
-  gl_FUNC_GETPAGESIZE
-  gl_UNISTD_MODULE_INDICATOR([getpagesize])
   gl_FUNC_GETPASS
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
@@ -185,11 +187,21 @@ AC_SUBST([LTALLOCA])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([socket])
   fi
+  # When this module is used, sockets may actually occur as file descriptors,
+  # hence it is worth warning if the modules 'close' and 'ioctl' are not used.
+  m4_ifdef([gl_UNISTD_H_DEFAULTS], [AC_REQUIRE([gl_UNISTD_H_DEFAULTS])])
+  m4_ifdef([gl_SYS_IOCTL_H_DEFAULTS], [AC_REQUIRE([gl_SYS_IOCTL_H_DEFAULTS])])
+  AC_REQUIRE([gl_PREREQ_SYS_H_WINSOCK2])
+  if test "$ac_cv_header_winsock2_h" = yes; then
+    UNISTD_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS=1
+    SYS_IOCTL_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS=1
+  fi
   gl_SYS_SOCKET_MODULE_INDICATOR([socket])
   gl_SOCKETS
   gl_TYPE_SOCKLEN_T
   gl_STDARG_H
   AM_STDBOOL_H
+  gl_STDDEF_H
   gl_STDINT_H
   gl_STDIO_H
   gl_STDLIB_H
@@ -229,8 +241,8 @@ AC_SUBST([LTALLOCA])
   gl_FUNC_VASPRINTF
   gl_STDIO_MODULE_INDICATOR([vasprintf])
   m4_ifdef([AM_XGETTEXT_OPTION],
-    [AM_XGETTEXT_OPTION([--flag=asprintf:2:c-format])
-     AM_XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
+    [AM_][XGETTEXT_OPTION([--flag=asprintf:2:c-format])
+     AM_][XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
   AC_SUBST([WARN_CFLAGS])
   gl_WCHAR_H
   gl_XALLOC
@@ -238,7 +250,7 @@ AC_SUBST([LTALLOCA])
   gl_XSTRNDUP
   gl_XVASPRINTF
   m4_ifdef([AM_XGETTEXT_OPTION],
-    [AM_XGETTEXT_OPTION([--flag=xasprintf:1:c-format])])
+    [AM_][XGETTEXT_OPTION([--flag=xasprintf:1:c-format])])
   m4_ifval(gl_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl_LIBSOURCES_LIST[ ; do
@@ -261,7 +273,7 @@ AC_SUBST([LTALLOCA])
     if test -n "$gl_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gl_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gl_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gl_libobjs="$gl_libobjs $i.$ac_objext"
         gl_ltlibobjs="$gl_ltlibobjs $i.lo"
       done
@@ -300,7 +312,7 @@ AC_SUBST([LTALLOCA])
     if test -n "$gltests_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gltests_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gltests_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gltests_libobjs="$gltests_libobjs $i.$ac_objext"
         gltests_ltlibobjs="$gltests_ltlibobjs $i.lo"
       done
@@ -367,6 +379,7 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
+  build-aux/arg-nonnull.h
   build-aux/config.rpath
   build-aux/gendocs.sh
   build-aux/gnupload
@@ -398,8 +411,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/crc.h
   lib/des.c
   lib/des.h
+  lib/dup2.c
   lib/errno.in.h
   lib/fclose.c
+  lib/fcntl.c
   lib/fcntl.in.h
   lib/float+.h
   lib/float.in.h
@@ -416,7 +431,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getdomainname.c
   lib/gethostname.c
   lib/getline.c
-  lib/getpagesize.c
   lib/getpass.c
   lib/getpass.h
   lib/getpeername.c
@@ -443,6 +457,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/memxor.c
   lib/memxor.h
   lib/minmax.h
+  lib/mktime-internal.h
   lib/mktime.c
   lib/netdb.in.h
   lib/netinet_in.in.h
@@ -470,6 +485,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/sockets.h
   lib/stdarg.in.h
   lib/stdbool.in.h
+  lib/stddef.in.h
   lib/stdint.in.h
   lib/stdio-impl.h
   lib/stdio-write.c
@@ -526,11 +542,14 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/close.m4
   m4/crc.m4
   m4/des.m4
+  m4/dup2.m4
   m4/eealloc.m4
   m4/environ.m4
   m4/errno_h.m4
   m4/extensions.m4
   m4/fclose.m4
+  m4/fcntl-o.m4
+  m4/fcntl.m4
   m4/fcntl_h.m4
   m4/float_h.m4
   m4/fseeko.m4
@@ -548,7 +567,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/getdomainname.m4
   m4/gethostname.m4
   m4/getline.m4
-  m4/getpagesize.m4
   m4/getpass.m4
   m4/getsubopt.m4
   m4/gettime.m4
@@ -598,6 +616,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/sockpfaf.m4
   m4/stdarg.m4
   m4/stdbool.m4
+  m4/stddef_h.m4
   m4/stdint.m4
   m4/stdint_h.m4
   m4/stdio_h.m4

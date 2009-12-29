@@ -26,6 +26,7 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 
@@ -34,13 +35,13 @@
 #endif
 
 #ifdef WORDS_BIGENDIAN
-# define SWAP(n)							\
+# define SWAP(n)                                                        \
   (((n) << 24) | (((n) & 0xff00) << 8) | (((n) >> 8) & 0xff00) | ((n) >> 24))
 #else
 # define SWAP(n) (n)
 #endif
 
-#define BLOCKSIZE 4096
+#define BLOCKSIZE 32768
 #if BLOCKSIZE % 64 != 0
 # error "invalid BLOCKSIZE"
 #endif
@@ -107,7 +108,7 @@ md4_finish_ctx (struct md4_ctx *ctx, void *resbuf)
   /* Put the 64-bit file length in *bits* at the end of the buffer.  */
   ctx->buffer[(bytes + pad) / 4] = SWAP (ctx->total[0] << 3);
   ctx->buffer[(bytes + pad) / 4 + 1] = SWAP ((ctx->total[1] << 3) |
-					     (ctx->total[0] >> 29));
+                                             (ctx->total[0] >> 29));
 
   /* Process last bytes.  */
   md4_process_block (ctx->buffer, bytes + pad + 8, ctx);
@@ -122,8 +123,11 @@ int
 md4_stream (FILE * stream, void *resblock)
 {
   struct md4_ctx ctx;
-  char buffer[BLOCKSIZE + 72];
   size_t sum;
+
+  char *buffer = malloc (BLOCKSIZE + 72);
+  if (!buffer)
+    return 1;
 
   /* Initialize the computation context.  */
   md4_init_ctx (&ctx);
@@ -139,30 +143,33 @@ md4_stream (FILE * stream, void *resblock)
 
       /* Read block.  Take care for partial reads.  */
       while (1)
-	{
-	  n = fread (buffer + sum, 1, BLOCKSIZE - sum, stream);
+        {
+          n = fread (buffer + sum, 1, BLOCKSIZE - sum, stream);
 
-	  sum += n;
+          sum += n;
 
-	  if (sum == BLOCKSIZE)
-	    break;
+          if (sum == BLOCKSIZE)
+            break;
 
-	  if (n == 0)
-	    {
-	      /* Check for the error flag IFF N == 0, so that we don't
-	         exit the loop after a partial read due to e.g., EAGAIN
-	         or EWOULDBLOCK.  */
-	      if (ferror (stream))
-		return 1;
-	      goto process_partial_block;
-	    }
+          if (n == 0)
+            {
+              /* Check for the error flag IFF N == 0, so that we don't
+                 exit the loop after a partial read due to e.g., EAGAIN
+                 or EWOULDBLOCK.  */
+              if (ferror (stream))
+                {
+                  free (buffer);
+                  return 1;
+                }
+              goto process_partial_block;
+            }
 
-	  /* We've read at least one byte, so ignore errors.  But always
-	     check for EOF, since feof may be true even though N > 0.
-	     Otherwise, we could end up calling fread after EOF.  */
-	  if (feof (stream))
-	    goto process_partial_block;
-	}
+          /* We've read at least one byte, so ignore errors.  But always
+             check for EOF, since feof may be true even though N > 0.
+             Otherwise, we could end up calling fread after EOF.  */
+          if (feof (stream))
+            goto process_partial_block;
+        }
 
       /* Process buffer with BLOCKSIZE bytes.  Note that
          BLOCKSIZE % 64 == 0
@@ -178,6 +185,7 @@ process_partial_block:;
 
   /* Construct result in desired memory.  */
   md4_finish_ctx (&ctx, resblock);
+  free (buffer);
   return 0;
 }
 
@@ -214,14 +222,14 @@ md4_process_bytes (const void *buffer, size_t len, struct md4_ctx *ctx)
       ctx->buflen += add;
 
       if (ctx->buflen > 64)
-	{
-	  md4_process_block (ctx->buffer, ctx->buflen & ~63, ctx);
+        {
+          md4_process_block (ctx->buffer, ctx->buflen & ~63, ctx);
 
-	  ctx->buflen &= 63;
-	  /* The regions in the following copy operation cannot overlap.  */
-	  memcpy (ctx->buffer, &((char*)ctx->buffer)[(left_over + add) & ~63],
-		  ctx->buflen);
-	}
+          ctx->buflen &= 63;
+          /* The regions in the following copy operation cannot overlap.  */
+          memcpy (ctx->buffer, &((char*)ctx->buffer)[(left_over + add) & ~63],
+                  ctx->buflen);
+        }
 
       buffer = (const char *) buffer + add;
       len -= add;
@@ -240,19 +248,19 @@ md4_process_bytes (const void *buffer, size_t len, struct md4_ctx *ctx)
 #  define UNALIGNED_P(p) (((size_t) p) % alignof (uint32_t) != 0)
 # endif
       if (UNALIGNED_P (buffer))
-	while (len > 64)
-	  {
-	    md4_process_block (memcpy (ctx->buffer, buffer, 64), 64, ctx);
-	    buffer = (const char *) buffer + 64;
-	    len -= 64;
-	  }
+        while (len > 64)
+          {
+            md4_process_block (memcpy (ctx->buffer, buffer, 64), 64, ctx);
+            buffer = (const char *) buffer + 64;
+            len -= 64;
+          }
       else
 #endif
-	{
-	  md4_process_block (buffer, len & ~63, ctx);
-	  buffer = (const char *) buffer + (len & ~63);
-	  len &= 63;
-	}
+        {
+          md4_process_block (buffer, len & ~63, ctx);
+          buffer = (const char *) buffer + (len & ~63);
+          len &= 63;
+        }
     }
 
   /* Move remaining bytes in internal buffer.  */
@@ -263,11 +271,11 @@ md4_process_bytes (const void *buffer, size_t len, struct md4_ctx *ctx)
       memcpy (&((char*)ctx->buffer)[left_over], buffer, len);
       left_over += len;
       if (left_over >= 64)
-	{
-	  md4_process_block (ctx->buffer, 64, ctx);
-	  left_over -= 64;
-	  memcpy (ctx->buffer, &ctx->buffer[16], left_over);
-	}
+        {
+          md4_process_block (ctx->buffer, 64, ctx);
+          left_over -= 64;
+          memcpy (ctx->buffer, &ctx->buffer[16], left_over);
+        }
       ctx->buflen = left_over;
     }
 }
@@ -315,10 +323,10 @@ md4_process_block (const void *buffer, size_t len, struct md4_ctx *ctx)
     {
       int t;
       for (t = 0; t < 16; t++)
-	{
-	  x[t] = SWAP (*words);
-	  words++;
-	}
+        {
+          x[t] = SWAP (*words);
+          words++;
+        }
 
       /* Round 1.  */
       R1 (A, B, C, D, 0, 3);

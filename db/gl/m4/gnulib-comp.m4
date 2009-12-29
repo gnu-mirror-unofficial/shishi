@@ -25,6 +25,7 @@ AC_DEFUN([gl3_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
+  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -40,8 +41,18 @@ AC_DEFUN([gl3_INIT],
   m4_pushdef([gl3_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='db/gl'
+  gl_MULTIARCH
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
+  gl_FUNC_STAT
+  gl_SYS_STAT_MODULE_INDICATOR([stat])
+  AM_STDBOOL_H
+  gl_STDDEF_H
+  gl_STDINT_H
+  gl_HEADER_SYS_STAT_H
+  AC_PROG_MKDIR_P
+  gl_HEADER_TIME_H
+  gl_WCHAR_H
   m4_ifval(gl3_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl3_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl3_LIBSOURCES_LIST[ ; do
@@ -64,7 +75,7 @@ AC_DEFUN([gl3_INIT],
     if test -n "$gl3_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gl3_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gl3_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gl3_libobjs="$gl3_libobjs $i.$ac_objext"
         gl3_ltlibobjs="$gl3_ltlibobjs $i.lo"
       done
@@ -103,7 +114,7 @@ AC_DEFUN([gl3_INIT],
     if test -n "$gl3tests_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gl3tests_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gl3tests_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gl3tests_libobjs="$gl3tests_libobjs $i.$ac_objext"
         gl3tests_ltlibobjs="$gl3tests_ltlibobjs $i.lo"
       done
@@ -170,10 +181,32 @@ AC_DEFUN([gl3tests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl3_FILE_LIST], [
+  build-aux/arg-nonnull.h
   lib/areadlink.c
   lib/areadlink.h
   lib/readlink.c
+  lib/stat.c
+  lib/stdbool.in.h
+  lib/stddef.in.h
+  lib/stdint.in.h
+  lib/sys_stat.in.h
+  lib/time.in.h
+  lib/wchar.in.h
   m4/00gnulib.m4
+  m4/dos.m4
+  m4/extensions.m4
   m4/gnulib-common.m4
+  m4/longlong.m4
+  m4/multiarch.m4
   m4/readlink.m4
+  m4/stat.m4
+  m4/stdbool.m4
+  m4/stddef_h.m4
+  m4/stdint.m4
+  m4/sys_stat_h.m4
+  m4/time_h.m4
+  m4/unistd_h.m4
+  m4/wchar.m4
+  m4/wchar_t.m4
+  m4/wint_t.m4
 ])

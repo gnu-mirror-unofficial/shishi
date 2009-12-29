@@ -38,13 +38,14 @@ VC-tag = git tag -s -m '$(VERSION)' -u '$(gpg_key_ID)'
 VC_LIST = $(build_aux)/vc-list-files -C $(srcdir)
 
 VC_LIST_EXCEPT = \
-  $(VC_LIST) | if test -f $(srcdir)/.x-$@; then grep -vEf $(srcdir)/.x-$@; else grep -v ChangeLog; fi
+  $(VC_LIST) | if test -f $(srcdir)/.x-$@; then grep -vEf $(srcdir)/.x-$@; \
+	       else grep -Ev "$${VC_LIST_EXCEPT_DEFAULT-ChangeLog}"; fi
 
 ifeq ($(origin prev_version_file), undefined)
   prev_version_file = $(srcdir)/.prev-version
 endif
 
-PREV_VERSION := $(shell cat $(prev_version_file))
+PREV_VERSION := $(shell cat $(prev_version_file) 2>/dev/null)
 VERSION_REGEXP = $(subst .,\.,$(VERSION))
 PREV_VERSION_REGEXP = $(subst .,\.,$(PREV_VERSION))
 
@@ -62,6 +63,25 @@ my_distdir = $(PACKAGE)-$(VERSION)
 # Old releases are stored here.
 release_archive_dir ?= ../release
 
+# Override gnu_rel_host and url_dir_list in cfg.mk if these are not right.
+# Use alpha.gnu.org for alpha and beta releases.
+# Use ftp.gnu.org for stable releases.
+gnu_ftp_host-alpha = alpha.gnu.org
+gnu_ftp_host-beta = alpha.gnu.org
+gnu_ftp_host-stable = ftp.gnu.org
+gnu_rel_host ?= $(gnu_ftp_host-$(RELEASE_TYPE))
+
+ifeq ($(gnu_rel_host),ftp.gnu.org)
+url_dir_list ?= http://ftpmirror.gnu.org/$(PACKAGE)
+else
+url_dir_list ?= ftp://$(gnu_rel_host)/gnu/$(PACKAGE)
+endif
+
+# Override this in cfg.mk if you are using a different format in your
+# NEWS file.
+today = $(shell date +%Y-%m-%d)
+news-check-regexp ?= '^\*.* $(VERSION_REGEXP) \($(today)\)'
+
 # Prevent programs like 'sort' from considering distinct strings to be equal.
 # Doing it here saves us from having to set LC_ALL elsewhere in this file.
 export LC_ALL = C
@@ -70,9 +90,11 @@ export LC_ALL = C
 ## Sanity checks.  ##
 ## --------------- ##
 
+_cfg_mk := $(shell test -f $(srcdir)/cfg.mk && echo '$(srcdir)/cfg.mk')
+
 # Collect the names of rules starting with `sc_'.
-syntax-check-rules := $(shell sed -n 's/^\(sc_[a-zA-Z0-9_-]*\):.*/\1/p' \
-			$(srcdir)/$(ME) $(srcdir)/cfg.mk)
+syntax-check-rules := $(sort $(shell sed -n 's/^\(sc_[a-zA-Z0-9_-]*\):.*/\1/p' \
+			$(srcdir)/$(ME) $(_cfg_mk)))
 .PHONY: $(syntax-check-rules)
 
 local-checks-available = \
@@ -153,6 +175,21 @@ sc_prohibit_strcmp:
 	  { echo '$(ME): use STREQ in place of the above uses of str''cmp' \
 		1>&2; exit 1; } || :
 
+# Pass EXIT_*, not number, to usage, exit, and error (when exiting)
+# Convert all uses automatically, via these two commands:
+# git grep -l '\<exit *(1)' \
+#  | grep -vEf .x-sc_prohibit_magic_number_exit \
+#  | xargs --no-run-if-empty \
+#      perl -pi -e 's/(^|[^.])\b(exit ?)\(1\)/$1$2(EXIT_FAILURE)/'
+# git grep -l '\<exit *(0)' \
+#  | grep -vEf .x-sc_prohibit_magic_number_exit \
+#  | xargs --no-run-if-empty \
+#      perl -pi -e 's/(^|[^.])\b(exit ?)\(0\)/$1$2(EXIT_SUCCESS)/'
+sc_prohibit_magic_number_exit:
+	@re='(^|[^.])\<(usage|exit) ?\([0-9]|\<error ?\([1-9][0-9]*,'	\
+	msg='use EXIT_* values rather than magic number'		\
+	  $(_prohibit_regexp)
+
 # Using EXIT_SUCCESS as the first argument to error is misleading,
 # since when that parameter is 0, error does not exit.  Use `0' instead.
 sc_error_exit_success:
@@ -232,7 +269,8 @@ sc_prohibit_HAVE_MBRTOWC:
 # h: the header, enclosed in <> or ""
 # re: a regular expression that matches IFF something provided by $h is used.
 define _header_without_use
-  h_esc=`echo "$$h"|sed 's/\./\\./g'`;					\
+  dummy=; : so we do not need a semicolon before each use;		\
+  h_esc=`echo "$$h"|sed 's/\./\\\\./g'`;				\
   if $(VC_LIST_EXCEPT) | grep -l '\.c$$' > /dev/null; then		\
     files=$$(grep -l '^# *include '"$$h_esc"				\
 	     $$($(VC_LIST_EXCEPT) | grep '\.c$$')) &&			\
@@ -246,6 +284,10 @@ endef
 # Prohibit the inclusion of assert.h without an actual use of assert.
 sc_prohibit_assert_without_use:
 	@h='<assert.h>' re='\<assert *\(' $(_header_without_use)
+
+# Prohibit the inclusion of close-stream.h without an actual use.
+sc_prohibit_close_stream_without_use:
+	@h='"close-stream.h"' re='\<close_stream *\(' $(_header_without_use)
 
 # Prohibit the inclusion of getopt.h without an actual use.
 sc_prohibit_getopt_without_use:
@@ -275,6 +317,23 @@ sc_prohibit_error_without_use:
 	re='\<error(_at_line|_print_progname|_one_per_line|_message_count)? *\('\
 	  $(_header_without_use)
 
+# Don't include xalloc.h unless you use one of its functions.
+# Consider these symbols:
+# perl -lne '/^# *define (\w+)\(/ and print $1' lib/xalloc.h|grep -v '^__';
+# perl -lne '/^(?:extern )?(?:void|char) \*?(\w+) \(/ and print $1' lib/xalloc.h
+# Divide into two sets on case, and filter each through this:
+# | sort | perl -MRegexp::Assemble -le \
+#  'print Regexp::Assemble->new(file => "/dev/stdin")->as_string'|sed 's/\?://g'
+# Note this was produced by the above:
+# _xa1 = x(alloc_(oversized|die)|([cz]|2?re)alloc|m(alloc|emdup)|strdup)
+# But we can do better:
+_xa1 = x(alloc_(oversized|die)|([cmz]|2?re)alloc|(mem|str)dup)
+_xa2 = X([CZ]|N?M)ALLOC
+sc_prohibit_xalloc_without_use:
+	@h='"xalloc.h"' \
+	re='\<($(_xa1)|$(_xa2)) *\('\
+	  $(_header_without_use)
+
 sc_prohibit_safe_read_without_use:
 	@h='"safe-read.h"' re='(\<SAFE_READ_ERROR\>|\<safe_read *\()' \
 	  $(_header_without_use)
@@ -284,9 +343,19 @@ sc_prohibit_argmatch_without_use:
 	re='(\<(ARRAY_CARDINALITY|X?ARGMATCH(|_TO_ARGUMENT|_VERIFY))\>|\<argmatch(_exit_fn|_(in)?valid) *\()' \
 	  $(_header_without_use)
 
+sc_prohibit_canonicalize_without_use:
+	@h='"canonicalize.h"' \
+	re='CAN_(EXISTING|ALL_BUT_LAST|MISSING)|canonicalize_(mode_t|filename_mode)' \
+	  $(_header_without_use)
+
 sc_prohibit_root_dev_ino_without_use:
 	@h='"root-dev-ino.h"' \
 	re='(\<ROOT_DEV_INO_(CHECK|WARN)\>|\<get_root_dev_ino *\()' \
+	  $(_header_without_use)
+
+sc_prohibit_openat_without_use:
+	@h='"openat.h"' \
+	re='\<(openat_(permissive|needs_fchdir|(save|restore)_fail)|l?(stat|ch(own|mod))at|(euid)?accessat)\>' \
 	  $(_header_without_use)
 
 # Prohibit the inclusion of c-ctype.h without an actual use.
@@ -490,7 +559,7 @@ sc_immutable_NEWS:
 # Update the hash stored above.  Do this after each release and
 # for any corrections to old entries.
 update-NEWS-hash: NEWS
-	perl -pi -e 's/^(old_NEWS_hash = ).*/$${1}'"$(NEWS_hash)/" \
+	perl -pi -e 's/^(old_NEWS_hash[ \t]+:?=[ \t]+).*/$${1}'"$(NEWS_hash)/" \
 	  $(srcdir)/cfg.mk
 
 # Ensure that we use only the standard $(VAR) notation,
@@ -504,13 +573,12 @@ sc_makefile_check:
 	    $$($(VC_LIST_EXCEPT) | grep -E '(^|/)Makefile\.am$$')	\
 	  && { echo '$(ME): use $$(...), not @...@' 1>&2; exit 1; } || :
 
-news-date-check: NEWS
-	today=`date +%Y-%m-%d`;						\
-	if head $(srcdir)/NEWS | grep '^\*.* $(VERSION_REGEXP) ('$$today')' \
+news-check: NEWS
+	if head $(srcdir)/NEWS | grep -E $(news-check-regexp)		\
 	    >/dev/null; then						\
 	  :;								\
 	else								\
-	  echo "version or today's date is not in NEWS" 1>&2;		\
+	  echo 'NEWS: $$(news-check-regexp) failed to match' 1>&2;	\
 	  exit 1;							\
 	fi
 
@@ -614,32 +682,6 @@ vc-diff-check:
 	  rm vc-diffs;						\
 	fi
 
-cvs-check: vc-diff-check
-
-ALL_RECURSIVE_TARGETS += maintainer-distcheck
-maintainer-distcheck:
-	$(MAKE) distcheck
-	$(MAKE) taint-distcheck
-	$(MAKE) my-distcheck
-
-
-# Don't make a distribution if checks fail.
-# Also, make sure the NEWS file is up-to-date.
-ALL_RECURSIVE_TARGETS += vc-dist
-vc-dist: $(local-check) cvs-check maintainer-distcheck
-	XZ_OPT=-9ev $(MAKE) dist
-
-# Use this to make sure we don't run these programs when building
-# from a virgin tgz file, below.
-null_AM_MAKEFLAGS = \
-  ACLOCAL=false \
-  AUTOCONF=false \
-  AUTOMAKE=false \
-  AUTOHEADER=false \
-  MAKEINFO=false
-
-built_programs = $$(cd src && MAKEFLAGS= $(MAKE) -s built_programs.list)
-
 rel-files = $(DIST_ARCHIVES)
 
 gnulib_dir ?= $(srcdir)/gnulib
@@ -697,21 +739,32 @@ no-submodule-changes:
 	  : ;								\
 	fi
 
-.PHONY: alpha beta major
-ALL_RECURSIVE_TARGETS += alpha beta major
-alpha beta major: $(local-check) writable-files no-submodule-changes
-	test $@ = major						\
-	  && { echo $(VERSION) | grep -E '^[0-9]+(\.[0-9]+)+$$'	\
+.PHONY: alpha beta stable
+ALL_RECURSIVE_TARGETS += alpha beta stable
+alpha beta stable: $(local-check) writable-files no-submodule-changes
+	test $@ = stable						\
+	  && { echo $(VERSION) | grep -E '^[0-9]+(\.[0-9]+)+$$'		\
 	       || { echo "invalid version string: $(VERSION)" 1>&2; exit 1;};}\
 	  || :
-	$(MAKE) vc-dist
-	$(MAKE) news-date-check
-	$(MAKE) -s announcement RELEASE_TYPE=$@ > /tmp/announce-$(my_distdir)
+	$(MAKE) vc-diff-check
+	$(MAKE) news-check
+	$(MAKE) distcheck
+	$(MAKE) dist XZ_OPT=-9ev
+	$(MAKE) $(release-prep-hook) RELEASE_TYPE=$@
+	$(MAKE) -s emit_upload_commands RELEASE_TYPE=$@
+
+# Override this in cfg.mk if you follow different procedures.
+release-prep-hook ?= release-prep
+
+.PHONY: release-prep
+release-prep:
+	case $$RELEASE_TYPE in alpha|beta|stable) ;; \
+	  *) echo "invalid RELEASE_TYPE: $$RELEASE_TYPE" 1>&2; exit 1;; esac
+	$(MAKE) -s announcement > /tmp/announce-$(my_distdir)
 	if test -d $(release_archive_dir); then			\
 	  ln $(rel-files) $(release_archive_dir);		\
 	  chmod a-w $(rel-files);				\
 	fi
-	$(MAKE) -s emit_upload_commands RELEASE_TYPE=$@
 	echo $(VERSION) > $(prev_version_file)
 	$(MAKE) update-NEWS-hash
 	perl -pi -e '$$. == 3 and print "$(noteworthy)\n\n\n"' NEWS
@@ -769,3 +822,20 @@ INDENT_SOURCES ?= $(C_SOURCES)
 .PHONY: indent
 indent:
 	indent $(INDENT_SOURCES)
+
+# If you want to set UPDATE_COPYRIGHT_* environment variables,
+# put the assignments in this variable.
+update-copyright-env ?=
+
+# Run this rule once per year (usually early in January)
+# to update all FSF copyright year lists in your project.
+# If you have an additional project-specific rule,
+# add it in cfg.mk along with a line 'update-copyright: prereq'.
+# By default, exclude all variants of COPYING; you can also
+# add exemptions (such as ChangeLog..* for rotated change logs)
+# in the file .x-update-copyright.
+.PHONY: update-copyright
+update-copyright:
+	grep -l -w Copyright                                             \
+	  $$(export VC_LIST_EXCEPT_DEFAULT=COPYING && $(VC_LIST_EXCEPT)) \
+	  | $(update-copyright-env) xargs $(build_aux)/$@

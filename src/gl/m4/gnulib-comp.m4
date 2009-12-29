@@ -43,10 +43,15 @@ AC_DEFUN([gl2_INIT],
   gl_HEADER_ERRNO_H
   gl_ERROR
   m4_ifdef([AM_XGETTEXT_OPTION],
-    [AM_XGETTEXT_OPTION([--flag=error:3:c-format])
-     AM_XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
-  gl_GETOPT
+    [AM_][XGETTEXT_OPTION([--flag=error:3:c-format])
+     AM_][XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
+  gl_FUNC_GETOPT_GNU
+  gl_MODULE_INDICATOR([getopt-gnu])
+  gl_FUNC_GETOPT_POSIX
   gl_LOCALE_H
+  AC_CHECK_DECLS([program_invocation_name], [], [], [#include <errno.h>])
+  AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
+  gl_STDDEF_H
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
   gl_VERSION_ETC
@@ -72,7 +77,7 @@ AC_DEFUN([gl2_INIT],
     if test -n "$gl2_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gl2_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gl2_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gl2_libobjs="$gl2_libobjs $i.$ac_objext"
         gl2_ltlibobjs="$gl2_ltlibobjs $i.lo"
       done
@@ -111,7 +116,7 @@ AC_DEFUN([gl2_INIT],
     if test -n "$gl2tests_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gl2tests_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gl2tests_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gl2tests_libobjs="$gl2tests_libobjs $i.$ac_objext"
         gl2tests_ltlibobjs="$gl2tests_ltlibobjs $i.lo"
       done
@@ -178,6 +183,7 @@ AC_DEFUN([gl2tests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl2_FILE_LIST], [
+  build-aux/arg-nonnull.h
   lib/errno.in.h
   lib/error.c
   lib/error.h
@@ -188,6 +194,7 @@ AC_DEFUN([gl2_FILE_LIST], [
   lib/locale.in.h
   lib/progname.c
   lib/progname.h
+  lib/stddef.in.h
   lib/strerror.c
   lib/version-etc.c
   lib/version-etc.h
@@ -197,6 +204,8 @@ AC_DEFUN([gl2_FILE_LIST], [
   m4/getopt.m4
   m4/gnulib-common.m4
   m4/locale_h.m4
+  m4/stddef_h.m4
   m4/strerror.m4
   m4/version-etc.m4
+  m4/wchar_t.m4
 ])
