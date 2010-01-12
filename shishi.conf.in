@@ -119,4 +119,8 @@ stringprocess=UTF-8
 #renew-life=friday 17:00
 #renew-life=sunday
 
+# Setup libgcrypt to use quicker entropy generation.  If you want to
+# use /dev/random instead of /dev/urandom, uncomment this.
+quick-random
+
 # System configuration file ends here

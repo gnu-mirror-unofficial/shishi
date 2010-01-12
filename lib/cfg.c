@@ -25,6 +25,8 @@
 /* Get prototypes. */
 #include "cfg.h"
 
+#include "low-crypto.h"
+
 #define KDC_SERVICE_PORT "\x6b\x65\x72\x62\x65\x72\x6f\x73"
 
 enum
@@ -45,6 +47,7 @@ enum
   VERBOSE_NOISE_OPTION,
   VERBOSE_OPTION,
   STRINGPROCESS_OPTION,
+  QUICK_RANDOM,
   THE_END
 };
 
@@ -65,6 +68,7 @@ static const char * const _shishi_opts[] = {
   /* [VERBOSE_NOISE_OPTION] =        */ "verbose-noise",
   /* [VERBOSE_OPTION] =              */ "verbose",
   /* [STRINGPROCESS_OPTION] =        */ "stringprocess",
+  /* [QUICK_RANDOM] =                */ "quick-random",
   /* [THE_END] =                     */ NULL
 };
 
@@ -235,6 +239,10 @@ shishi_cfg (Shishi * handle, const char *option)
 	case STRINGPROCESS_OPTION:
 	  free (handle->stringprocess);
 	  handle->stringprocess = xstrdup (value);
+	  break;
+
+	case QUICK_RANDOM:
+	  _shishi_quick_random ();
 	  break;
 
 	case VERBOSE_OPTION:
