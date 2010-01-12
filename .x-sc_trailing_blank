@@ -1,0 +1,11 @@
+^COPYING
+^ChangeLog
+^asn1/
+^doc/components.png
+^doc/gdoc
+^doc/shishi.texi
+^doc/specifications/
+^extra/fetchmail.diff
+^extra/rsh-redone/
+^m4/pkg.m4
+^po/vi.po.in
