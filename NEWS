@@ -6,6 +6,10 @@ See the end for copying conditions.
 
 ** Add configuration keyword 'quick-random' to speed up libgcrypt.
 
+** Fix libgcrypt detection (problem with libgpg-error dependency).
+
+** Update many gnulib files.
+
 ** API and ABI modifications:
 No changes since last version.
 
