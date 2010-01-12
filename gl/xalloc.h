@@ -1,7 +1,8 @@
 /* xalloc.h -- malloc with out-of-memory checking
 
-   Copyright (C) 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
-   1999, 2000, 2003, 2004, 2006, 2007, 2008 Free Software Foundation, Inc.
+   Copyright (C) 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+   2000, 2003, 2004, 2006, 2007, 2008, 2009, 2010 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -105,10 +106,10 @@ char *xstrdup (char const *str) ATTRIBUTE_MALLOC;
 # if HAVE_INLINE
 #  define static_inline static inline
 # else
-   void *xnmalloc (size_t n, size_t s) ATTRIBUTE_MALLOC;
-   void *xnrealloc (void *p, size_t n, size_t s);
-   void *x2nrealloc (void *p, size_t *pn, size_t s);
-   char *xcharalloc (size_t n) ATTRIBUTE_MALLOC;
+void *xnmalloc (size_t n, size_t s) ATTRIBUTE_MALLOC;
+void *xnrealloc (void *p, size_t n, size_t s);
+void *x2nrealloc (void *p, size_t *pn, size_t s);
+char *xcharalloc (size_t n) ATTRIBUTE_MALLOC;
 # endif
 
 # ifdef static_inline

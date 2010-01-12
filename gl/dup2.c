@@ -1,7 +1,6 @@
 /* Duplicate an open file descriptor to a specified file descriptor.
 
-   Copyright (C) 1999, 2004, 2005, 2006, 2007, 2009 Free Software
-   Foundation, Inc.
+   Copyright (C) 1999, 2004-2007, 2009-2010 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,6 +51,13 @@ rpl_dup2 (int fd, int desired_fd)
           return -1;
         }
       return fd;
+    }
+  /* Wine 1.0.1 return 0 when desired_fd is negative but not -1:
+     http://bugs.winehq.org/show_bug.cgi?id=21289 */
+  if (desired_fd < 0)
+    {
+      errno = EBADF;
+      return -1;
     }
 # endif
   result = dup2 (fd, desired_fd);

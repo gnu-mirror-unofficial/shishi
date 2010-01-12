@@ -1,5 +1,5 @@
 /* A POSIX <locale.h>.
-   Copyright (C) 2007-2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2010 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@
 #if @HAVE_XLOCALE_H@
 # include <xlocale.h>
 #endif
+
+/* The definition of GL_LINK_WARNING is copied here.  */
 
 /* The definition of _GL_ARG_NONNULL is copied here.  */
 
