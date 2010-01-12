@@ -1,5 +1,5 @@
 /* internal.h --- Internal header file for Shishi.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -53,9 +53,7 @@
 /*extern int h_errno;*/
 #endif
 
-#ifdef HAVE_FCNTL_H
 #include <fcntl.h>
-#endif
 
 #include <errno.h>
 

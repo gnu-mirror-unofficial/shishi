@@ -1,5 +1,5 @@
 /* keytab2shishi.c --- Convert MIT keytab files to Shishi hostkeys
- * Copyright (C) 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -61,8 +61,11 @@ main (int argc, char *argv[])
   set_program_name (argv[0]);
 
   if (cmdline_parser (argc, argv, &args) != 0)
-    error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
-	   program_name);
+    {
+      fprintf (stderr, _("Try `%s --help' for more information.\n"),
+	       program_name);
+      exit (EXIT_FAILURE);
+    }
 
   if (args.inputs_num > 0)
     infile = args.inputs[0];
@@ -73,8 +76,9 @@ main (int argc, char *argv[])
   if (args.inputs_num > 2)
     {
       error (0, 0, _("too many arguments"));
-      error (EXIT_FAILURE, 0, _("Try `%s --help' for more information."),
-	     program_name);
+      fprintf (stderr, _("Try `%s --help' for more information.\n"),
+	       program_name);
+      exit (EXIT_FAILURE);
     }
 
   if (args.help_given)
@@ -88,7 +92,7 @@ main (int argc, char *argv[])
 
   sh = shishi ();
   if (!sh)
-    error (EXIT_FAILURE, 0, _("Could not initialize libshishi."));
+    error (EXIT_FAILURE, 0, _("cannot initialize libshishi"));
 
   if (args.verbose_given > 0)
     shishi_cfg (sh, "verbose");

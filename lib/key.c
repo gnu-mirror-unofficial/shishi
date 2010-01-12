@@ -1,5 +1,5 @@
 /* key.c --- Key related functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -60,8 +60,7 @@ shishi_key_principal (const Shishi_key * key)
 void
 shishi_key_principal_set (Shishi_key * key, const char *principal)
 {
-  if (key->principal)
-    free (key->principal);
+  free (key->principal);
   if (principal)
     key->principal = xstrdup (principal);
   else
@@ -95,8 +94,7 @@ shishi_key_realm (const Shishi_key * key)
 void
 shishi_key_realm_set (Shishi_key * key, const char *realm)
 {
-  if (key->realm)
-    free (key->realm);
+  free (key->realm);
   if (realm)
     key->realm = xstrdup (realm);
   else
@@ -250,10 +248,8 @@ shishi_key (Shishi * handle, Shishi_key ** key)
 void
 shishi_key_done (Shishi_key * key)
 {
-  if (key->realm)
-    free (key->realm);
-  if (key->principal)
-    free (key->principal);
+  free (key->realm);
+  free (key->principal);
   free (key);
 }
 

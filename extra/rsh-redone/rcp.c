@@ -1359,8 +1359,7 @@ allocbuf(BUF *bp, int fd, int blksize)
 	if (size == 0)
 		size = blksize;
 	if (bp->cnt < size) {
-		if (bp->buf != 0)
-			free(bp->buf);
+		free(bp->buf);
 		bp->buf = malloc(size);
 		if (!bp->buf) {
 			error("rcp: malloc: out of memory\n");

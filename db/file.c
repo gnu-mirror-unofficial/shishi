@@ -1,5 +1,5 @@
 /* file.c --- File based Shisa database.
- * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -144,11 +144,8 @@ shisa_file_done (Shisa * dbh, void *state)
   Shisa_file *info = state;
 
   if (info)
-    {
-      if (info->path)
-	free (info->path);
-      free (info);
-    }
+    free (info->path);
+  free (info);
 }
 
 /* Return a list of all realm names in backend, as zero-terminated
@@ -602,8 +599,7 @@ shisa_file_key_add (Shisa * dbh,
 
   do
     {
-      if (file)
-	free (file);
+      free (file);
       asprintf (&file, "keys/%d-%d-%d.key", key->kvno, key->etype, num++);
     }
   while (_shisa_isfile4 (info->path, realm, principal, file));

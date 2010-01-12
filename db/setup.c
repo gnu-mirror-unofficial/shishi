@@ -1,5 +1,5 @@
 /* init.c --- Initialization functions for the Shisa library.
- * Copyright (C) 2002, 2003, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -59,9 +59,7 @@ shisa_done (Shisa * dbh)
   for (i = 0, db = dbh->dbs; i < dbh->ndbs; i++, db++)
     db->backend->done (dbh, db->state);
 
-  if (dbh->dbs)
-    free (dbh->dbs);
-
+  free (dbh->dbs);
   free (dbh);
 }
 

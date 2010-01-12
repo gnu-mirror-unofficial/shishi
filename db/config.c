@@ -1,5 +1,5 @@
 /* cfg.c --- Read Shisa Configuration file.
- * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -171,8 +171,7 @@ shisa_cfg_from_file (Shisa * dbh, const char *cfg)
 	break;
     }
 
-  if (line)
-    free (line);
+  free (line);
 
   if (ferror (fh))
     if (rc == SHISA_OK)

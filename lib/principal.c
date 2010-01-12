@@ -1,5 +1,5 @@
 /* principal.c --- Get and set default principal.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -85,8 +85,7 @@ shishi_principal_default (Shishi * handle)
 void
 shishi_principal_default_set (Shishi * handle, const char *principal)
 {
-  if (handle->default_principal)
-    free (handle->default_principal);
+  free (handle->default_principal);
   if (principal)
     handle->default_principal = xstrdup (principal);
   else
@@ -446,10 +445,8 @@ shishi_derive_default_salt (Shishi * handle,
 
   if (!principal || !realm)
     {
-      if (realm)
-	free (realm);
-      if (principal)
-	free (principal);
+      free (realm);
+      free (principal);
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
 

@@ -1,5 +1,5 @@
 /* crypto-3des.c --- 3DES crypto functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -233,7 +233,7 @@ des3_string_to_key (Shishi * handle,
 
   /* s = passwordString + salt */
   n_s = stringlen + saltlen;
-  s = (char *) xmalloc (n_s);
+  s = xmalloc (n_s);
   memcpy (s, string, stringlen);
   memcpy (s + stringlen, salt, saltlen);
 

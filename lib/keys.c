@@ -1,5 +1,5 @@
 /* keys.c --- Functions for managing keys sets, and keys stored in files.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -70,9 +70,7 @@ shishi_keys_done (Shishi_keys ** keys)
     for (i = (*keys)->nkeys; i > 0; i--)
       shishi_key_done ((*keys)->keys[i - 1]);
 
-  if ((*keys)->keys)
-    free ((*keys)->keys);
-
+  free ((*keys)->keys);
   free (*keys);
 
   *keys = NULL;

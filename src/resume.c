@@ -1,5 +1,5 @@
 /* resume.c --- Handle the details of TLS session resumption.
- * Copyright (C) 2002, 2003, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -115,12 +115,9 @@ resume_db_done (void)
 
   for (i = 0; i < cache_db_size; i++)
     {
-      if (cache_db[i].id)
-	free (cache_db[i].id);
-      if (cache_db[i].data)
-	free (cache_db[i].data);
+      free (cache_db[i].id);
+      free (cache_db[i].data);
     }
 
-  if (cache_db)
-    free (cache_db);
+  free (cache_db);
 }

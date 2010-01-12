@@ -1,5 +1,5 @@
 /* utils.c --- Shishi self tests utilities.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -45,7 +45,7 @@ fail (const char *format, ...)
   va_end (arg_ptr);
   error_count++;
   if (break_on_error)
-    exit (1);
+    exit (EXIT_FAILURE);
 }
 
 void

@@ -1,5 +1,5 @@
 /* tkts.c --- Ticket set handling.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -92,8 +92,7 @@ shishi_tkts_default_file (Shishi * handle)
 void
 shishi_tkts_default_file_set (Shishi * handle, const char *tktsfile)
 {
-  if (handle->tktsdefaultfile)
-    free (handle->tktsdefaultfile);
+  free (handle->tktsdefaultfile);
   if (tktsfile)
     handle->tktsdefaultfile = xstrdup (tktsfile);
   else
@@ -233,8 +232,7 @@ shishi_tkts_remove (Shishi_tkts * tkts, int ticketno)
     }
   else
     {
-      if (tkts->tkts)
-	free (tkts->tkts);
+      free (tkts->tkts);
       tkts->tkts = NULL;
     }
 

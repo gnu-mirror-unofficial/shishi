@@ -1,4 +1,4 @@
-# Copyright (C) 2006, 2007, 2008, 2009 Simon Josefsson.
+# Copyright (C) 2006, 2007, 2008, 2009, 2010 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -24,6 +24,12 @@ CFGFLAGS ?= --enable-gtk-doc --with-libgcrypt $(ADDFLAGS) $(WFLAGS)
 ifeq ($(.DEFAULT_GOAL),abort-due-to-no-makefile)
 .DEFAULT_GOAL := bootstrap
 endif
+
+local-checks-to-skip = sc_copyright_check sc_error_message_uppercase	\
+	sc_immutable_NEWS sc_makefile_at_at_check sc_po_check		\
+	sc_prohibit_atoi_atof sc_prohibit_have_config_h			\
+	sc_prohibit_strcmp sc_require_config_h sc_require_config_h_first
+VC_LIST_NEVER = ^((db/|src/)?(gl|build-aux))/.*
 
 autoreconf:
 	for f in po/*.po.in; do \
@@ -57,7 +63,7 @@ upload-web-coverage:
 
 W32ROOT ?= $(HOME)/gnutls4win/inst
 
-mingw32: autoreconf 
+mingw32: autoreconf
 	./configure $(CFGFLAGS) --host=i586-mingw32msvc --build=`./config.guess` --prefix=$(W32ROOT)
 
 ChangeLog:

@@ -1,5 +1,5 @@
 /* version.c --- Version handling.
- * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -26,8 +26,8 @@
  * shishi_check_version:
  * @req_version: version string to compare with, or NULL
  *
- * Check that the the version of the library is at minimum the one
- * given as a string in @req_version.
+ * Check that the version of the library is at minimum the one given
+ * as a string in @req_version.
  *
  * Return value: the actual version string of the library; NULL if the
  *   condition is not met.  If %NULL is passed to this function no

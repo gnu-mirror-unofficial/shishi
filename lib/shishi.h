@@ -1,5 +1,5 @@
 /* shishi.h --- Header file for Shishi library.                       -*- c -*-
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -2239,7 +2239,7 @@ extern time_t shishi_get_date (const char *p, const time_t * now);
 /* Ugly hack to avoid re-declaring shishi_xalloc_die twice.  It is
    already declared in xalloc.h internally in Shishi.h.  This is to
    keep being able to use -Wredundant-decls. */
-#if defined(SYSTEMCFGFILE) && !defined(XALLOC_H_)
+#if defined SYSTEMCFGFILE && !defined XALLOC_H_
 extern void shishi_xalloc_die (void) __attribute__ ((__noreturn__));
 #endif
 

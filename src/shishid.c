@@ -1,5 +1,5 @@
 /* shishid.c --- Shishi Key Distribution Center daemon.
- * Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -102,7 +102,7 @@ kdc_listen (void)
     }
 
   if (maxfd == 0)
-    error (EXIT_FAILURE, 0, "Failed to bind any ports.");
+    error (EXIT_FAILURE, 0, "cannot bind any ports");
 
   if (!arg.quiet_flag)
     printf ("Listening on %d ports...\n", maxfd);
@@ -132,8 +132,7 @@ kdc_unlisten (void)
 		    ls->str, ls->sockfd, strerror (errno), errno);
 	}
 
-      if (ls->str)
-	free (ls->str);
+      free (ls->str);
     }
 }
 
@@ -153,7 +152,7 @@ kdc_setuid (void)
       if (errno)
 	error (EXIT_FAILURE, errno, "Cannot setuid because getpwnam failed");
       else
-	error (EXIT_FAILURE, 0, "No such user `%s'.", arg.setuid_arg);
+	error (EXIT_FAILURE, 0, "no such user `%s'", arg.setuid_arg);
     }
 
   rc = setuid (passwd->pw_uid);
@@ -537,8 +536,7 @@ main (int argc, char *argv[])
 
   free (arg.listen_arg);
   free (arg.configuration_file_arg);
-  if (arg.setuid_arg)
-    free (arg.setuid_arg);
+  free (arg.setuid_arg);
 
   return EXIT_SUCCESS;
 }

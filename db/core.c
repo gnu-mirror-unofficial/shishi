@@ -1,5 +1,5 @@
 /* core.c --- Core Shisa database API.
- * Copyright (C) 2003, 2007  Simon Josefsson
+ * Copyright (C) 2003, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -412,14 +412,10 @@ shisa_key_remove (Shisa * dbh,
 void
 shisa_key_free (Shisa * dbh, Shisa_key * key)
 {
-  if (key->key)
-    free (key->key);
-  if (key->salt)
-    free (key->salt);
-  if (key->str2keyparam)
-    free (key->str2keyparam);
-  if (key->password)
-    free (key->password);
+  free (key->key);
+  free (key->salt);
+  free (key->str2keyparam);
+  free (key->password);
   free (key);
 }
 

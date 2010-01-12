@@ -1,5 +1,5 @@
 /* kdc.c --- Process AS and TGS requests.
- * Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -468,12 +468,9 @@ asreq1 (Shishi_as * as)
 fatal:
   if (rc != SHISHI_OK)
     syslog (LOG_ERR, "AS-REQ failed (%d): %s", rc, shishi_strerror (rc));
-  if (realm)
-    free (realm);
-  if (username)
-    free (username);
-  if (servername)
-    free (servername);
+  free (realm);
+  free (username);
+  free (servername);
   if (userkeys)
     shisa_keys_free (dbh, userkeys, nuserkeys);
   if (serverkeys)
@@ -968,18 +965,12 @@ tgsreq1 (Shishi_tgs * tgs)
   rc = SHISHI_OK;
 
 fatal:
-  if (tgrealm)
-    free (tgrealm);
-  if (tgname)
-    free (tgname);
-  if (servername)
-    free (servername);
-  if (serverrealm)
-    free (serverrealm);
-  if (clientname)
-    free (clientname);
-  if (clientrealm)
-    free (clientrealm);
+  free (tgrealm);
+  free (tgname);
+  free (servername);
+  free (serverrealm);
+  free (clientname);
+  free (clientrealm);
   if (tgkeys)
     shisa_keys_free (dbh, tgkeys, ntgkeys);
   if (serverkeys)

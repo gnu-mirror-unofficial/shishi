@@ -1,5 +1,5 @@
 /* starttls.c --- Handle extended TCP connections (for TLS).
- * Copyright (C) 2002, 2003, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -185,18 +185,12 @@ logcertinfo (gnutls_session session)
 		gnutls_x509_crt_get_version (cert), keytype, bits, validity);
 
       cleanup:
-	if (serialhex)
-	  free (serialhex);
-	if (serial)
-	  free (serial);
-	if (expiration_time_str)
-	  free (expiration_time_str);
-	if (activation_time_str)
-	  free (activation_time_str);
-	if (issuer)
-	  free (issuer);
-	if (subject)
-	  free (subject);
+	free (serialhex);
+	free (serial);
+	free (expiration_time_str);
+	free (activation_time_str);
+	free (issuer);
+	free (subject);
       }
 
   gnutls_x509_crt_deinit (cert);

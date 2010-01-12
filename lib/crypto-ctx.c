@@ -1,5 +1,5 @@
 /* crypto-ctx.c   high-level crypto functions
- * Copyright (C) 2002, 2003, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -114,8 +114,7 @@ shishi_crypto_encrypt (Shishi_crypto * ctx,
 				      in, inlen, out, outlen);
   if (rc == SHISHI_OK)
     {
-      if (ctx->iv)
-	free (ctx->iv);
+      free (ctx->iv);
       ctx->iv = ivout;
       ctx->ivlen = ivoutlen;
     }
@@ -156,8 +155,7 @@ shishi_crypto_decrypt (Shishi_crypto * ctx,
 				      in, inlen, out, outlen);
   if (rc == SHISHI_OK)
     {
-      if (ctx->iv)
-	free (ctx->iv);
+      free (ctx->iv);
       ctx->iv = ivout;
       ctx->ivlen = ivoutlen;
     }
@@ -175,7 +173,6 @@ void
 shishi_crypto_close (Shishi_crypto * ctx)
 {
   shishi_key_done (ctx->key);
-  if (ctx->iv)
-    free (ctx->iv);
+  free (ctx->iv);
   free (ctx);
 }

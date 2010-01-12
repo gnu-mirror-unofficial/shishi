@@ -1,5 +1,5 @@
 /* ap.c --- AP functions
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -197,10 +197,8 @@ shishi_ap_nosubkey (Shishi * handle, Shishi_ap ** ap)
 void
 shishi_ap_done (Shishi_ap * ap)
 {
-  if (ap->authenticatorcksumdata)
-    free (ap->authenticatorcksumdata);
-  if (ap->authenticatorcksumraw)
-    free (ap->authenticatorcksumraw);
+  free (ap->authenticatorcksumdata);
+  free (ap->authenticatorcksumraw);
   shishi_asn1_done (ap->handle, ap->authenticator);
   shishi_asn1_done (ap->handle, ap->apreq);
   shishi_asn1_done (ap->handle, ap->aprep);
@@ -968,8 +966,7 @@ shishi_ap_req_process_keyusage (Shishi_ap * ap,
   if (VERBOSEASN1 (ap->handle))
     shishi_authenticator_print (ap->handle, stdout, authenticator);
 
-  if (ap->authenticatorcksumdata)
-    free (ap->authenticatorcksumdata);
+  free (ap->authenticatorcksumdata);
 
   rc = shishi_authenticator_cksum (ap->handle, authenticator,
 				   &ap->authenticatorcksumtype,

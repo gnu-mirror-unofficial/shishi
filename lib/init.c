@@ -1,5 +1,5 @@
 /* init.c --- Initialization functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -181,28 +181,18 @@ shishi_done (Shishi * handle)
 	{
 	  /* XXX free each address */
 
-	  if (handle->realminfos[i].kdcaddresses)
-	    free (handle->realminfos[i].kdcaddresses);
-
-	  if (handle->realminfos[i].name)
-	    free (handle->realminfos[i].name);
+	  free (handle->realminfos[i].kdcaddresses);
+	  free (handle->realminfos[i].name);
 	}
     }
 
-  if (handle->default_realm)
-    free (handle->default_realm);
-  if (handle->usercfgfile)
-    free (handle->usercfgfile);
-  if (handle->hostkeysdefaultfile)
-    free (handle->hostkeysdefaultfile);
-  if (handle->clientkdcetypes)
-    free (handle->clientkdcetypes);
-  if (handle->authorizationtypes)
-    free (handle->authorizationtypes);
-  if (handle->stringprocess)
-    free (handle->stringprocess);
-  if (handle->userdirectory)
-    free (handle->userdirectory);
+  free (handle->default_realm);
+  free (handle->usercfgfile);
+  free (handle->hostkeysdefaultfile);
+  free (handle->clientkdcetypes);
+  free (handle->authorizationtypes);
+  free (handle->stringprocess);
+  free (handle->userdirectory);
 
   if (handle->asn1)
     shishi_asn1_done (handle, handle->asn1);

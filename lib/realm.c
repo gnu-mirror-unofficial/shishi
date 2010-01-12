@@ -1,5 +1,5 @@
 /* realm.c --- Realm related functions.
- * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -44,15 +44,13 @@ shishi_realm_default_guess (void)
   if (realm && strlen (realm) > 0 && strcmp (realm, "(none)") != 0)
     return realm;
 
-  if (realm)
-    free (realm);
+  free (realm);
 
   realm = xgethostname ();
   if (realm && strlen (realm) > 0 && strcmp (realm, "(none)") != 0)
     return realm;
 
-  if (realm)
-    free (realm);
+  free (realm);
 
   realm = strdup ("could-not-guess-default-realm");
 
@@ -94,8 +92,7 @@ shishi_realm_default (Shishi * handle)
 void
 shishi_realm_default_set (Shishi * handle, const char *realm)
 {
-  if (handle->default_realm)
-    free (handle->default_realm);
+  free (handle->default_realm);
   if (realm)
     handle->default_realm = xstrdup (realm);
   else

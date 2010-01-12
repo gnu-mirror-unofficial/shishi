@@ -1,5 +1,5 @@
 /* pki.c --- Public Key Infrastructure support functions for Shishi.
- * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -57,8 +57,7 @@ shishi_x509ca_default_file_guess (Shishi * handle)
 void
 shishi_x509ca_default_file_set (Shishi * handle, const char *x509cafile)
 {
-  if (handle->x509cafile)
-    free (handle->x509cafile);
+  free (handle->x509cafile);
   if (x509cafile)
     handle->x509cafile = xstrdup (x509cafile);
   else
@@ -116,8 +115,7 @@ shishi_x509cert_default_file_guess (Shishi * handle)
 void
 shishi_x509cert_default_file_set (Shishi * handle, const char *x509certfile)
 {
-  if (handle->x509certfile)
-    free (handle->x509certfile);
+  free (handle->x509certfile);
   if (x509certfile)
     handle->x509certfile = xstrdup (x509certfile);
   else
@@ -174,8 +172,7 @@ shishi_x509key_default_file_guess (Shishi * handle)
 void
 shishi_x509key_default_file_set (Shishi * handle, const char *x509keyfile)
 {
-  if (handle->x509keyfile)
-    free (handle->x509keyfile);
+  free (handle->x509keyfile);
   if (x509keyfile)
     handle->x509keyfile = xstrdup (x509keyfile);
   else

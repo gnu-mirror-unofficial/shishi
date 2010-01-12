@@ -1,5 +1,5 @@
 /* ccache.c --- Credential Cache compatibility ticket set handling.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -90,8 +90,7 @@ shishi_tkts_default_ccache (Shishi * handle)
 void
 shishi_tkts_default_ccache_set (Shishi * handle, const char *ccache)
 {
-  if (handle->ccachedefault)
-    free (handle->ccachedefault);
+  free (handle->ccachedefault);
   if (ccache)
     handle->ccachedefault = xstrdup (ccache);
   else

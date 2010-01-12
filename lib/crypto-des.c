@@ -1,5 +1,5 @@
 /* crypto-des.c --- DES crypto functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -493,7 +493,7 @@ des_string_to_key (Shishi * handle,
   n_s = stringlen + saltlen;
   if ((n_s % 8) != 0)
     n_s += 8 - n_s % 8;
-  s = (char *) xmalloc (n_s);
+  s = xmalloc (n_s);
   memcpy (s, string, stringlen);
   if (saltlen > 0)
     memcpy (s + stringlen, salt, saltlen);

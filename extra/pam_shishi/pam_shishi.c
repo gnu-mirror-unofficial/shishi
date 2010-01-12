@@ -1,5 +1,5 @@
 /* pam_shishi.c	PAM module using Shishi.
- * Copyright (C) 2002, 2003, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -51,7 +51,7 @@
 #include <security/pam_modules.h>
 #endif
 
-#if defined(DEBUG_PAM) && defined(HAVE_SECURITY__PAM_MACROS_H)
+#if defined DEBUG_PAM && defined HAVE_SECURITY__PAM_MACROS_H
 #define DEBUG
 #include <security/_pam_macros.h>
 #else

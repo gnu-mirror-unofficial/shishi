@@ -1,5 +1,5 @@
 /* shishi.c --- Shishi command line interface.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2009, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -109,7 +109,7 @@ main (int argc, char *argv[])
 			       args.system_configuration_file_arg,
 			       args.configuration_file_arg);
   if (rc == SHISHI_HANDLE_ERROR)
-    error (EXIT_FAILURE, 0, _("Could not initialize libshishi."));
+    error (EXIT_FAILURE, 0, _("cannot initialize libshishi"));
 
   rc = shishi_cfg_clientkdcetype_set (sh, args.encryption_type_arg);
   if (rc != SHISHI_OK)
@@ -248,7 +248,7 @@ main (int argc, char *argv[])
     }
   else if (args.renew_given)
     {
-      error (EXIT_FAILURE, 0, "Command --renew not implemented.");
+      error (EXIT_FAILURE, 0, "command --renew not implemented");
     }
   else
     {
@@ -275,7 +275,7 @@ main (int argc, char *argv[])
 
       tkt = shishi_tkts_get (shishi_tkts_default (sh), &hint);
       if (!tkt)
-	error (EXIT_FAILURE, 0, _("Could not get ticket as `%s' for `%s'."),
+	error (EXIT_FAILURE, 0, _("could not get ticket as `%s' for `%s'"),
 	       hint.client ? hint.client : shishi_principal_default (sh),
 	       hint.server);
 

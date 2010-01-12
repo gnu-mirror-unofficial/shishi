@@ -1,5 +1,5 @@
 /* cfg.h --- Configuration file functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -186,8 +186,7 @@ shishi_cfg (Shishi * handle, const char *option)
 		if (handle->realminfos[i].nkdcaddresses > 0 ||
 		    handle->realminfos[i].kdcaddresses)
 		  {
-		    if (handle->realminfos[i].kdcaddresses)
-		      free (handle->realminfos[i].kdcaddresses);
+		    free (handle->realminfos[i].kdcaddresses);
 		    handle->realminfos[i].kdcaddresses = NULL;
 		    handle->realminfos[i].nkdcaddresses = 0;
 		  }
@@ -234,8 +233,7 @@ shishi_cfg (Shishi * handle, const char *option)
 	  break;
 
 	case STRINGPROCESS_OPTION:
-	  if (handle->stringprocess)
-	    free (handle->stringprocess);
+	  free (handle->stringprocess);
 	  handle->stringprocess = xstrdup (value);
 	  break;
 
@@ -397,8 +395,7 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
       shishi_cfg (handle, p);
     }
 
-  if (line)
-    free (line);
+  free (line);
 
   if (ferror (fh))
     shishi_error_printf (handle, "Error reading configuration file");

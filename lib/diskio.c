@@ -1,5 +1,5 @@
 /* diskio.c --- Read and write data structures from disk.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -271,8 +271,7 @@ _shishi_read_armored_data (Shishi * handle,
 
   free (armorbegin);
   free (armorend);
-  if (line)
-    free (line);
+  free (line);
 
   return res;
 }

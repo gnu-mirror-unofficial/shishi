@@ -29,7 +29,6 @@
 #include <string.h>
 #include <errno.h>
 #include <termios.h>
-#include <signal.h>
 #include <sys/ioctl.h>
 #include <errno.h>
 #include <security/pam_appl.h>

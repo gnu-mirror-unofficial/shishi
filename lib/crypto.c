@@ -1,5 +1,5 @@
 /* crypto.c --- Crypto functions.
- * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -380,12 +380,9 @@ _shishi_simplified_encrypt (Shishi * handle,
 	shishi_key_done (privacykey);
       if (integritykey)
 	shishi_key_done (integritykey);
-      if (hmac)
-	free (hmac);
-      if (ct)
-	free (ct);
-      if (pt)
-	free (pt);
+      free (hmac);
+      free (ct);
+      free (pt);
     }
   else
     {
@@ -1817,7 +1814,7 @@ shishi_n_fold (Shishi * handle,
 	      8 * m, 8 * n, m, n, lcmmn);
     }
 
-  buf = (char *) xmalloc (lcmmn);
+  buf = xmalloc (lcmmn);
 
   /* Replicate the input th the LCMMN length */
   for (i = 0; i < (lcmmn / m); i++)

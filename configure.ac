@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -70,7 +70,7 @@ AC_CHECK_SIZEOF(unsigned int, 4)
 
 # For gnulib stuff in gl/.
 with_libgcrypt=yes
-AC_DEFINE(OK_TO_USE_1S_CLOCK, 1, [Define to 1 to make gettime work.])
+AC_DEFINE([OK_TO_USE_1S_CLOCK], 1, [Define to 1 to make gettime work.])
 gl_INIT
 gl2_INIT
 gl3_INIT
@@ -135,7 +135,7 @@ if test "$enable_ipv6" != "no"; then
   enable_ipv6=$gl_cv_socket_ipv6
 fi
 if test "$enable_ipv6" != "no"; then
-  AC_DEFINE(WITH_IPV6, 1, [Define to 1 if you want IPv6.])
+  AC_DEFINE([WITH_IPV6], 1, [Define to 1 if you want IPv6.])
 else
   AC_MSG_WARN([[IPv6 support is disabled.]])
 fi
@@ -195,7 +195,7 @@ fi
 AC_MSG_CHECKING([if non-standard STARTTLS support should be enabled])
 AC_MSG_RESULT($starttls)
 if test "$starttls" != "no"; then
-	AC_DEFINE(USE_STARTTLS, 1, [Define to 1 if you want STARTTLS.])
+  AC_DEFINE([USE_STARTTLS], 1, [Define to 1 if you want STARTTLS.])
 fi
 AM_CONDITIONAL(STARTTLS, test "$starttls" != "no")
 
@@ -208,7 +208,7 @@ AC_ARG_ENABLE(des, AC_HELP_STRING([--disable-des],
 		enable_des=$enableval, enable_des=yes)
 AM_CONDITIONAL(DES, test "$enable_des" != "no")
 if test "$enable_des" != "no"; then
-	AC_DEFINE(WITH_DES, 1, [Define to 1 if you want DES {e,cksum}types.])
+  AC_DEFINE([WITH_DES], 1, [Define to 1 if you want DES {e,cksum}types.])
 fi
 AC_MSG_CHECKING([if DES related encryption/checksum types should be used])
 AC_MSG_RESULT($enable_des)
@@ -218,7 +218,7 @@ AC_ARG_ENABLE(3des, AC_HELP_STRING([--disable-3des],
 		enable_3des=$enableval, enable_3des=yes)
 AM_CONDITIONAL(DES3, test "$enable_3des" != "no")
 if test "$enable_3des" != "no"; then
-	AC_DEFINE(WITH_3DES, 1, [Define to 1 if you want 3DES {e,cksum}type.])
+  AC_DEFINE([WITH_3DES], 1, [Define to 1 if you want 3DES {e,cksum}type.])
 fi
 AC_MSG_CHECKING([if 3DES encryption/checksum type should be used])
 AC_MSG_RESULT($enable_3des)
@@ -228,7 +228,7 @@ AC_ARG_ENABLE(aes, AC_HELP_STRING([--disable-aes],
 		enable_aes=$enableval, enable_aes=yes)
 AM_CONDITIONAL(AES, test "$enable_aes" != "no")
 if test "$enable_aes" != "no"; then
-	AC_DEFINE(WITH_AES, 1, [Define to 1 if you want AES {e,cksum}types.])
+  AC_DEFINE([WITH_AES], 1, [Define to 1 if you want AES {e,cksum}types.])
 fi
 AC_MSG_CHECKING([if AES encryption/checksum types should be used])
 AC_MSG_RESULT($enable_aes)
@@ -238,7 +238,7 @@ AC_ARG_ENABLE(md, AC_HELP_STRING([--disable-md],
 		enable_md=$enableval, enable_md=yes)
 AM_CONDITIONAL(MD, test "$enable_md" != "no")
 if test "$enable_md" != "no"; then
-	AC_DEFINE(WITH_MD, 1, [Define to 1 if you want MD cksumtypes.])
+  AC_DEFINE([WITH_MD], 1, [Define to 1 if you want MD cksumtypes.])
 fi
 AC_MSG_CHECKING([if unkeyed MD checksum types should be used])
 AC_MSG_RESULT($enable_md)
@@ -248,7 +248,7 @@ AC_ARG_ENABLE(null, AC_HELP_STRING([--disable-null],
 		enable_null=$enableval, enable_null=yes)
 AM_CONDITIONAL(NULL, test "$enable_null" != "no")
 if test "$enable_null" != "no"; then
-	AC_DEFINE(WITH_NULL, 1, [Define to 1 if you want NULL {e,cksum}type.])
+  AC_DEFINE([WITH_NULL], 1, [Define to 1 if you want NULL {e,cksum}type.])
 fi
 AC_MSG_CHECKING([if dummy NULL encryption/checksum type should be used])
 AC_MSG_RESULT($enable_null)
@@ -258,8 +258,8 @@ AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--disable-arcfour],
 		enable_arcfour=$enableval, enable_arcfour=yes)
 AM_CONDITIONAL(ARCFOUR, test "$enable_arcfour" != "no")
 if test "$enable_arcfour" != "no"; then
-	AC_DEFINE(WITH_ARCFOUR, 1,
-			[Define to 1 if you want ARCFOUR {e,cksum}type.])
+  AC_DEFINE([WITH_ARCFOUR], 1,
+            [Define to 1 if you want ARCFOUR {e,cksum}type.])
 fi
 AC_MSG_CHECKING([if ARCFOUR encryption/checksum type should be used])
 AC_MSG_RESULT($enable_arcfour)
