@@ -29,7 +29,7 @@ local-checks-to-skip = sc_copyright_check sc_error_message_uppercase	\
 	sc_immutable_NEWS sc_makefile_at_at_check sc_po_check		\
 	sc_prohibit_atoi_atof sc_prohibit_have_config_h			\
 	sc_prohibit_strcmp sc_require_config_h sc_require_config_h_first
-VC_LIST_NEVER = ^((db/|src/)?(gl|build-aux))/.*
+VC_LIST_ALWAYS_EXCLUDE_REGEX = ^((db/|src/)?(gl|build-aux))/.*
 
 autoreconf:
 	for f in po/*.po.in; do \
