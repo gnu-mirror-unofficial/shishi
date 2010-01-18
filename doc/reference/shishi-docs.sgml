@@ -52,7 +52,7 @@ kind of devices including iPAQ handhelds and S/390 mainframes.
 
     <para>
 Shishi is free software licensed under the GNU General Public License
-version 3.0.
+version 3.0 (or later).
     </para>
 
     <figure id="components">
