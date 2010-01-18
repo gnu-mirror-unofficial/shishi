@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Simon Josefsson.
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010  Simon Josefsson
 #
 # This file is part of Shishi.
 #
@@ -832,7 +832,7 @@ doit:
 			-bugsto $(PACKAGE_BUGREPORT) \
 			-includefuncprefix \
 			-seeinfo $(PACKAGE) -verbatimcopying \
-			-copyright "2002-2008 Simon Josefsson" \
+			-copyright "2002-2010 Simon Josefsson" \
 			-function $$i \
 			$(GDOC_SRC) >> man/$$i.3 && \
 		echo -n "."; \
