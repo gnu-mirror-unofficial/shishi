@@ -1,6 +1,6 @@
 /*
- *      Copyright (C) 2004, 2006, 2008, 2009 Free Software Foundation
- *      Copyright (C) 2002 Fabio Fiorina
+ * Copyright (C) 2002, 2004, 2006, 2008, 2009, 2010 Free Software
+ * Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -806,8 +806,8 @@ _asn1_get_indefinite_length_string (const unsigned char *der, int *len)
   *   error occurred.
   *
   * Fill the structure *ELEMENT with values of a DER encoding
-  * string. The sructure must just be created with function
-  * 'create_stucture'.  If an error occurs during the decoding
+  * string. The structure must just be created with function
+  * 'asn1_create_element'.  If an error occurs during the decoding
   * procedure, the *ELEMENT is deleted and set equal to
   * %ASN1_TYPE_EMPTY.
   *
@@ -1364,8 +1364,8 @@ asn1_der_decoding (ASN1_TYPE * element, const void *ider, int len,
   *   error occurred.
   *
   * Fill the element named ELEMENTNAME with values of a DER encoding
-  * string.  The sructure must just be created with function
-  * 'create_stucture'.  The DER vector must contain the encoding
+  * string.  The structure must just be created with function
+  * 'asn1_create_element'.  The DER vector must contain the encoding
   * string of the whole STRUCTURE.  If an error occurs during the
   * decoding procedure, the *STRUCTURE is deleted and set equal to
   * %ASN1_TYPE_EMPTY.
