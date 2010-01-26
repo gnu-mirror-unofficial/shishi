@@ -182,6 +182,7 @@ AC_DEFUN([gl3tests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl3_FILE_LIST], [
   build-aux/arg-nonnull.h
+  build-aux/warn-on-use.h
   lib/areadlink.c
   lib/areadlink.h
   lib/readlink.c
@@ -206,6 +207,7 @@ AC_DEFUN([gl3_FILE_LIST], [
   m4/sys_stat_h.m4
   m4/time_h.m4
   m4/unistd_h.m4
+  m4/warn-on-use.m4
   m4/wchar.m4
   m4/wchar_t.m4
   m4/wint_t.m4

@@ -184,7 +184,7 @@ AC_DEFUN([gl2tests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl2_FILE_LIST], [
   build-aux/arg-nonnull.h
-  build-aux/link-warning.h
+  build-aux/warn-on-use.h
   lib/errno.in.h
   lib/error.c
   lib/error.h
@@ -208,5 +208,6 @@ AC_DEFUN([gl2_FILE_LIST], [
   m4/stddef_h.m4
   m4/strerror.m4
   m4/version-etc.m4
+  m4/warn-on-use.m4
   m4/wchar_t.m4
 ])

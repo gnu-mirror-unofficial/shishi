@@ -143,6 +143,8 @@ AC_SUBST([LTALLOCA])
   gl_LD_VERSION_SCRIPT
   gl_FUNC_LSEEK
   gl_UNISTD_MODULE_INDICATOR([lseek])
+  AC_CONFIG_COMMANDS_PRE([m4_ifdef([AH_HEADER],
+    [AC_SUBST([CONFIG_INCLUDE], m4_defn([AH_HEADER]))])])
   gl_FUNC_MALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([malloc-posix])
   gl_MALLOCA
@@ -383,7 +385,6 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/config.rpath
   build-aux/gendocs.sh
   build-aux/gnupload
-  build-aux/link-warning.h
   build-aux/useless-if-before-free
   build-aux/vc-list-files
   build-aux/warn-on-use.h
