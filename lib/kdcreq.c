@@ -1,5 +1,5 @@
 /* kdcreq.c --- Key distribution (AS/TGS) request functions.
- * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -1305,7 +1305,7 @@ shishi_kdcreq_add_padata_preauth (Shishi * handle,
   char *der, *data;
   size_t derlen, datalen;
   Shishi_asn1 pa;
-  struct timespec ts;
+  struct timeval tv;
   int rc;
   Shishi_asn1 ed;
 
@@ -1313,15 +1313,17 @@ shishi_kdcreq_add_padata_preauth (Shishi * handle,
   if (!pa)
     return SHISHI_ASN1_ERROR;
 
-  gettime (&ts);
+  rc = gettimeofday (&tv, NULL);
+  if (rc != 0)
+    return SHISHI_GETTIMEOFDAY_ERROR;
 
   rc = shishi_asn1_write (handle, pa, "patimestamp",
-			  shishi_generalize_time (handle, ts.tv_sec),
+			  shishi_generalize_time (handle, tv.tv_sec),
 			  SHISHI_GENERALIZEDTIME_LENGTH);
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_asn1_write_integer (handle, pa, "pausec", ts.tv_nsec / 1000);
+  rc = shishi_asn1_write_integer (handle, pa, "pausec", tv.tv_usec);
   if (rc != SHISHI_OK)
     return rc;
 
