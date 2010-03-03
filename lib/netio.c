@@ -1,5 +1,5 @@
 /* netio.c --- Network I/O functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -37,8 +37,7 @@ shishi_sendrecv_udp (Shishi * handle,
 		     const char *indata, int inlen,
 		     char **outdata, size_t * outlen, size_t timeout)
 {
-  struct sockaddr lsa;
-  struct sockaddr_in *lsa_inp = (struct sockaddr_in *) &lsa;
+  struct sockaddr_in lsa;
   char tmpbuf[BUFSIZ];		/* XXX can we do without it?
 				   MSG_PEEK|MSG_TRUNC doesn't work for udp.. */
   int sockfd;
@@ -51,8 +50,8 @@ shishi_sendrecv_udp (Shishi * handle,
   ssize_t slen;
 
   memset (&lsa, 0, sizeof (lsa));
-  lsa_inp->sin_family = AF_INET;
-  lsa_inp->sin_addr.s_addr = htonl (INADDR_ANY);
+  lsa.sin_family = AF_INET;
+  lsa.sin_addr.s_addr = htonl (INADDR_ANY);
 
   sockfd = socket (AF_INET, SOCK_DGRAM, 0);
   if (sockfd < 0)
