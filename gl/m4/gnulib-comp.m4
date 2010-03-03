@@ -109,6 +109,8 @@ AC_SUBST([LTALLOCA])
   gl_STDIO_MODULE_INDICATOR([getdelim])
   gl_FUNC_GETDOMAINNAME
   gl_UNISTD_MODULE_INDICATOR([getdomainname])
+  gl_FUNC_GETDTABLESIZE
+  gl_UNISTD_MODULE_INDICATOR([getdtablesize])
   gl_FUNC_GETHOSTNAME
   gl_UNISTD_MODULE_INDICATOR([gethostname])
   gl_FUNC_GETLINE
@@ -432,6 +434,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getdate.y
   lib/getdelim.c
   lib/getdomainname.c
+  lib/getdtablesize.c
   lib/gethostname.c
   lib/getline.c
   lib/getpass.c
@@ -568,6 +571,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/getdate.m4
   m4/getdelim.m4
   m4/getdomainname.m4
+  m4/getdtablesize.m4
   m4/gethostname.m4
   m4/getline.m4
   m4/getpass.m4
