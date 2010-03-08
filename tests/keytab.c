@@ -1,5 +1,5 @@
 /* keytab.c --- Self test MIT keytab file readers.
- * Copyright (C) 2002, 2003, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -21,23 +21,49 @@
  */
 
 #include "utils.c"
+#include "read-file.h"
 
 void
 test (Shishi * handle)
 {
   Shishi_keys *keys;
+  const Shishi_key *key;
   const char *keytab = getenv ("KEYTAB1");
+  char *data, *data2;
+  size_t len, len2;
   int rc;
+  int keyno = 0;
 
   if (!keytab)
     keytab = "keytab1.bin";
 
-  rc = shishi_keys_from_keytab_file (handle, keytab, &keys);
+  data = read_binary_file (keytab, &len);
+  if (data == NULL)
+    fail ("cannot read keytab file %s", keytab);
+
+  rc = shishi_keys_from_keytab_mem (handle, data, len, &keys);
   if (rc != SHISHI_OK)
-    fail ("shishi_keys_from_keytab_file() failed (%d)\n", rc);
+    fail ("shishi_keys_from_keytab_mem() failed (%d)\n", rc);
 
   if (shishi_keys_size (keys) != 6)
     fail ("shishi_keys_size() failed (%d)\n", shishi_keys_size (keys));
+
+  if (debug)
+    {
+      while ((key = shishi_keys_nth (keys, keyno++)) != NULL)
+	{
+	  rc = shishi_key_print (handle, stdout, key);
+	  if (rc != SHISHI_OK)
+	    fail ("shishi_key_print() failed (%d)\n", rc);
+	}
+    }
+
+  rc = shishi_keys_to_keytab_mem (handle, keys, &data2, &len2);
+  if (rc != SHISHI_OK)
+    fail ("shishi_keys_to_keytab_mem() failed (%d)\n", rc);
+
+  if (len != len2 || memcmp (data, data2, len) != 0)
+    fail ("memory comparison failed\n");
 
   shishi_keys_done (&keys);
 }

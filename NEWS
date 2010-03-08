@@ -4,8 +4,19 @@ See the end for copying conditions.
 
 * Version 0.0.42 (unreleased)
 
+** libshishi: Add APIs to save keys on keytab format.
+The functions are shishi_keys_to_keytab_file and
+shishi_keys_to_keytab_mem.
+
+** libshishi: Add APIs to retrieve/set the timestamp for a key.
+Typically only used by keytab format.  The functions are
+shishi_key_timestamp and shishi_key_timestamp_set.
+
 ** API and ABI modifications:
-No changes since last version.
+shishi_key_timestamp: ADD.
+shishi_key_timestamp_set: ADD.
+shishi_keys_to_keytab_file: ADD.
+shishi_keys_to_keytab_mem: ADD.
 
 * Version 0.0.41 (released 2010-01-19)
 

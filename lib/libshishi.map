@@ -1,5 +1,5 @@
 # libshishi.maps -- versioning script to control what symbols to export
-# Copyright (C) 2005, 2006, 2007, 2008, 2009 Simon Josefsson.
+# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -745,3 +745,12 @@ SHISHI_0.0 {
   local:
     *;
 };
+
+SHISHI_0.0.42
+{
+  global:
+    shishi_key_timestamp;
+    shishi_key_timestamp_set;
+    shishi_keys_to_keytab_file;
+    shishi_keys_to_keytab_mem;
+} SHISHI_0.0;

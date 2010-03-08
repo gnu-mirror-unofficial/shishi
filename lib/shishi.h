@@ -1872,6 +1872,8 @@ extern const char *shishi_key_name (Shishi_key * key);
 extern size_t shishi_key_length (const Shishi_key * key);
 extern uint32_t shishi_key_version (const Shishi_key * key);
 extern void shishi_key_version_set (Shishi_key * key, uint32_t kvno);
+extern time_t shishi_key_timestamp (const Shishi_key * key);
+extern void shishi_key_timestamp_set (Shishi_key * key, time_t timestamp);
 extern int shishi_key (Shishi * handle, Shishi_key ** key);
 extern void shishi_key_done (Shishi_key * key);
 extern void shishi_key_copy (Shishi_key * dstkey, Shishi_key * srckey);
@@ -1913,19 +1915,6 @@ extern const Shishi_key *shishi_keys_nth (Shishi_keys * keys, int keyno);
 extern void shishi_keys_remove (Shishi_keys * keys, int keyno);
 extern int shishi_keys_add (Shishi_keys * keys, Shishi_key * key);
 
-extern int shishi_keys_add_keytab_mem (Shishi * handle,
-				       const char *data, size_t len,
-				       Shishi_keys *keys);
-extern int shishi_keys_add_keytab_file (Shishi * handle,
-					const char *filename,
-					Shishi_keys *keys);
-extern int shishi_keys_from_keytab_mem (Shishi * handle,
-					const char *data, size_t len,
-					Shishi_keys **outkeys);
-extern int shishi_keys_from_keytab_file (Shishi * handle,
-					 const char *filename,
-					 Shishi_keys **outkeys);
-
 extern int shishi_keys_print (Shishi_keys * keys, FILE *fh);
 extern int shishi_keys_to_file (Shishi * handle,
 				const char *filename,
@@ -1945,6 +1934,26 @@ extern Shishi_key *shishi_keys_for_localservicerealm_in_file (Shishi * handle,
 							      *service,
 							      const char
 							      *realm);
+
+/* keytab.c */
+extern int shishi_keys_add_keytab_mem (Shishi * handle,
+				       const char *data, size_t len,
+				       Shishi_keys *keys);
+extern int shishi_keys_add_keytab_file (Shishi * handle,
+					const char *filename,
+					Shishi_keys *keys);
+extern int shishi_keys_from_keytab_mem (Shishi * handle,
+					const char *data, size_t len,
+					Shishi_keys **outkeys);
+extern int shishi_keys_from_keytab_file (Shishi * handle,
+					 const char *filename,
+					 Shishi_keys **outkeys);
+extern int shishi_keys_to_keytab_mem (Shishi * handle,
+				      Shishi_keys *keys,
+				      char **out, size_t *len);
+extern int shishi_keys_to_keytab_file (Shishi * handle,
+				       Shishi_keys *keys,
+				       const char *filename);
 
 /* hostkeys.c */
 extern const char *shishi_hostkeys_default_file (Shishi * handle);

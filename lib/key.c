@@ -30,6 +30,9 @@ struct Shishi_key
   int type;
   char value[MAX_KEY_LEN];
   uint32_t kvno; /* UINT32_MAX means undefined kvno */
+  time_t timestamp; /* Only used by keytab code. */
+  /* If you add anything here, check the functions shishi_key,
+     shishi_key_done and shishi_key_copy. */
 };
 
 /**
@@ -192,6 +195,40 @@ shishi_key_version_set (Shishi_key * key, uint32_t kvno)
 }
 
 /**
+ * shishi_key_timestamp:
+ * @key: structure that holds key information
+ *
+ * Get the time the key was established.  Typically only present when
+ * the key was imported from a keytab format.
+ *
+ * Return value: Returns the time the key was established, or
+ *   (time_t)-1 if not available.
+ *
+ * Since: 0.0.42
+ **/
+time_t
+shishi_key_timestamp (const Shishi_key * key)
+{
+  return key->timestamp;
+}
+
+/**
+ * shishi_key_timestamp_set:
+ * @key: structure that holds key information
+ * @timestamp: new timestamp.
+ *
+ * Set the time the key was established.  Typically only relevant when
+ * exporting the key to keytab format.
+ *
+ * Since: 0.0.42
+ **/
+void
+shishi_key_timestamp_set (Shishi_key * key, time_t timestamp)
+{
+  key->timestamp = timestamp;
+}
+
+/**
  * shishi_key_name:
  * @key: structure that holds key information
  *
@@ -268,6 +305,7 @@ shishi_key_copy (Shishi_key * dstkey, Shishi_key * srckey)
   shishi_key_type_set (dstkey, shishi_key_type (srckey));
   shishi_key_value_set (dstkey, shishi_key_value (srckey));
   shishi_key_version_set (dstkey, shishi_key_version (srckey));
+  shishi_key_timestamp_set (dstkey, shishi_key_timestamp (srckey));
 }
 
 /**
