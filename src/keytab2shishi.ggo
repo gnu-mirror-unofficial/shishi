@@ -1,5 +1,5 @@
 ## Process this file with gengetopt to produce keytab2shishi_cmd.*
-# Copyright (C) 2006, 2007 Simon Josefsson.
+# Copyright (C) 2006, 2007, 2010 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -23,6 +23,8 @@ package "keytab2shishi"
 purpose "Read keytab data from INFILE (usually /etc/krb5.keytab) and
 write Shishi hostkeys to OUTFILE.  If INFILE and OUTFILE are not
 specified, use the defaults."
+
+option "reverse" R "Reverse action, read Shishi hostkeys from INFILE and write keytab data to OUTFILE." flag off
 
 option "verbose" v "Produce verbose output.\nUse multiple times to increase amount of information." no multiple
 option "quiet" q "Don't produce any diagnostic output.\n" flag off

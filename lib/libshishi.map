@@ -751,6 +751,7 @@ SHISHI_0.0.42
   global:
     shishi_key_timestamp;
     shishi_key_timestamp_set;
+    shishi_keys_from_file;
     shishi_keys_to_keytab_file;
     shishi_keys_to_keytab_mem;
 } SHISHI_0.0;

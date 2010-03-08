@@ -235,6 +235,56 @@ shishi_keys_to_file (Shishi * handle,
 }
 
 /**
+ * shishi_keys_from_file:
+ * @keys: key set handle as allocated by shishi_keys().
+ * @filename: filename to read keys from.
+ *
+ * Read zero or more keys from file @filename and append them to the
+ * keyset @keys.  See shishi_key_print() for the format of the input.
+ *
+ * Return value: Returns %SHISHI_OK iff successful.
+ *
+ * Since: 0.0.42
+ **/
+int
+shishi_keys_from_file (Shishi_keys * keys, const char *filename)
+{
+  FILE *fh;
+  int res;
+
+  fh = fopen (filename, "r");
+  if (fh == NULL)
+    return SHISHI_FOPEN_ERROR;
+
+  res = SHISHI_OK;
+  while (!feof (fh))
+    {
+      Shishi_key *key = NULL;
+
+      res = shishi_key_parse (keys->handle, fh, &key);
+      if (res != SHISHI_OK || key == NULL)
+	break;
+
+      if (VERBOSENOISE (keys->handle))
+	{
+	  printf ("Read key:\n");
+	  shishi_key_print (keys->handle, stdout, key);
+	}
+
+      res = shishi_keys_add (keys, key);
+
+      shishi_key_done (key);
+      key = NULL;
+    }
+
+  res = fclose (fh);
+  if (res != 0)
+    return SHISHI_IO_ERROR;
+
+  return SHISHI_OK;
+}
+
+/**
  * shishi_keys_for_serverrealm_in_file
  * @handle: Shishi library handle create by shishi_init().
  * @filename: file to read keys from.

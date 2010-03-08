@@ -105,38 +105,76 @@ main (int argc, char *argv[])
   if (args.verbose_given > 4)
     shishi_cfg (sh, "verbose-crypto-noise");
 
-  if (!infile)
-    infile = "/etc/krb5.keytab";
+  if (args.reverse_flag)
+    {
+      Shishi_keys *keys;
 
-  if (!outfile)
-    outfile = HOSTKEYSFILE;
+      if (!infile)
+	infile = HOSTKEYSFILE;
 
-  {
-    Shishi_keys *keys;
+      if (!outfile)
+	outfile = "/etc/krb5.keytab";
 
-    rc = shishi_keys_from_keytab_file (sh, infile, &keys);
-    if (rc != SHISHI_OK)
-      error (EXIT_FAILURE, errno, "%s: %s", infile, shishi_strerror (rc));
+      rc = shishi_keys (sh, &keys);
+      if (rc != SHISHI_OK)
+	error (EXIT_FAILURE, errno, "%s", shishi_strerror (rc));
 
-    if (args.verbose_given)
-      shishi_keys_print (keys, stdout);
+      rc = shishi_keys_from_file (keys, infile);
+      if (rc != SHISHI_OK)
+	error (EXIT_FAILURE, errno, "%s: %s", infile, shishi_strerror (rc));
 
-    rc = shishi_keys_to_file (sh, outfile, keys);
-    if (rc != SHISHI_OK)
-      error (EXIT_FAILURE, errno, "%s:%s", outfile, shishi_strerror (rc));
+      if (args.verbose_given)
+	shishi_keys_print (keys, stdout);
 
-    if (!args.quiet_flag)
-      {
-	size_t nkeys = shishi_keys_size (keys);
-	if (nkeys == 0)
-	  printf (_("No keys written.\n"));
-	else
-	  printf (ngettext ("%d key written.\n",
-			    "%d keys written.\n", nkeys), nkeys);
-      }
+      rc = shishi_keys_to_keytab_file (sh, keys, outfile);
+      if (rc != SHISHI_OK)
+	error (EXIT_FAILURE, errno, "%s:%s", outfile, shishi_strerror (rc));
 
-    shishi_keys_done (&keys);
-  }
+      if (!args.quiet_flag)
+	{
+	  size_t nkeys = shishi_keys_size (keys);
+	  if (nkeys == 0)
+	    printf (_("No keys written.\n"));
+	  else
+	    printf (ngettext ("%d key written.\n",
+			      "%d keys written.\n", nkeys), nkeys);
+	}
+
+      shishi_keys_done (&keys);
+    }
+  else
+    {
+      Shishi_keys *keys;
+
+      if (!infile)
+	infile = "/etc/krb5.keytab";
+
+      if (!outfile)
+	outfile = HOSTKEYSFILE;
+
+      rc = shishi_keys_from_keytab_file (sh, infile, &keys);
+      if (rc != SHISHI_OK)
+	error (EXIT_FAILURE, errno, "%s: %s", infile, shishi_strerror (rc));
+
+      if (args.verbose_given)
+	shishi_keys_print (keys, stdout);
+
+      rc = shishi_keys_to_file (sh, outfile, keys);
+      if (rc != SHISHI_OK)
+	error (EXIT_FAILURE, errno, "%s:%s", outfile, shishi_strerror (rc));
+
+      if (!args.quiet_flag)
+	{
+	  size_t nkeys = shishi_keys_size (keys);
+	  if (nkeys == 0)
+	    printf (_("No keys written.\n"));
+	  else
+	    printf (ngettext ("%d key written.\n",
+			      "%d keys written.\n", nkeys), nkeys);
+	}
+
+      shishi_keys_done (&keys);
+    }
 
   shishi_done (sh);
 
