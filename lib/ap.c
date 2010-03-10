@@ -574,14 +574,18 @@ shishi_ap_tkt_set (Shishi_ap * ap, Shishi_tkt * tkt)
  *
  * Get checksum data from Authenticator.
  *
- * Return value: Returns SHISHI_OK if successful, or
- * SHISHI_TOO_SMALL_BUFFER if buffer provided was too small.
+ * Return value: Returns %SHISHI_OK if successful, or
+ *   %SHISHI_TOO_SMALL_BUFFER if buffer provided was too small (then @len
+ *   will hold necessary buffer size).
  **/
 int
 shishi_ap_authenticator_cksumdata (Shishi_ap * ap, char *out, size_t * len)
 {
   if (*len < ap->authenticatorcksumdatalen)
-    return SHISHI_TOO_SMALL_BUFFER;
+    {
+      *len = ap->authenticatorcksumdatalen;
+      return SHISHI_TOO_SMALL_BUFFER;
+    }
   if (ap->authenticatorcksumdata)
     memcpy (out, ap->authenticatorcksumdata, ap->authenticatorcksumdatalen);
   *len = ap->authenticatorcksumdatalen;
