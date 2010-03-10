@@ -586,7 +586,7 @@ shishi_ap_authenticator_cksumdata (Shishi_ap * ap, char *out, size_t * len)
       *len = ap->authenticatorcksumdatalen;
       return SHISHI_TOO_SMALL_BUFFER;
     }
-  if (ap->authenticatorcksumdata)
+  if (out && ap->authenticatorcksumdata)
     memcpy (out, ap->authenticatorcksumdata, ap->authenticatorcksumdatalen);
   *len = ap->authenticatorcksumdatalen;
   return SHISHI_OK;
