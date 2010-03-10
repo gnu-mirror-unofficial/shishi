@@ -697,7 +697,7 @@ shishi_cipher_parse (const char *cipher)
 
   i = strtol (cipher, &endptr, 0);
 
-  if (endptr != cipher)
+  if (*cipher && *endptr == '\0')
     return i;
 
   for (i = 0; i < sizeof (ciphers) / sizeof (ciphers[0]); i++)

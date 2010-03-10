@@ -1,5 +1,5 @@
 /* crypto.c --- Shishi crypto self tests.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -346,6 +346,10 @@ test (Shishi * handle)
 
   if (debug)
     shishi_cfg (handle, strdup ("verbose-crypto,verbose-crypto-noise"));
+
+  res = shishi_cipher_parse ("3des");
+  if (res != SHISHI_DES3_CBC_HMAC_SHA1_KD)
+    fail ("shishi_cipher_parse (\"3des\") == %d\n", res);
 
   for (i = 0; i < sizeof (drdk) / sizeof (drdk[0]); i++)
     {
