@@ -18,6 +18,8 @@ The function is shishi_keys_from_file.
 ** keytab2shishi: Add --reverse (-R) parameter to write Keytab files.
 This allows you to use create Keytab files from your Shishi hostkeys.
 
+** libshishi: Fix bug where '3des' is parsed as 'des'.
+
 ** API and ABI modifications:
 shishi_key_timestamp: ADD.
 shishi_key_timestamp_set: ADD.
