@@ -1,3 +1,120 @@
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.42.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, asn1/coding.c, asn1/decoding.c, asn1/element.c,
+	asn1/errors.c, asn1/libtasn1.h, asn1/parser_aux.c, asn1/structure.c: 
+	Upgrade libtasn1 to v2.5.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix last commit.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk: Add review-diff target.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/shishi-docs.sgml: Add index to GTK-DOC manual.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Generated.
+
+2010-03-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: (shishi_ap_authenticator_cksumdata): Also check @out.
+
+2010-03-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c: (shishi_ap_authenticator_cksumdata): Return requested size.
+
+2010-03-10  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2010-03-10  Simon Josefsson <simon@josefsson.org>
+
+	* lib/crypto.c, tests/crypto.c: libshishi: Fix bug where '3des' is
+	parsed as 'des'.
+
+2010-03-08  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, lib/keys.c, lib/libshishi.map, lib/shishi.h,
+	src/keytab2shishi.c, src/keytab2shishi.ggo: Add
+	shishi_keys_from_file and keytab2shishi -R parameter.
+
+2010-03-08  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, lib/key.c, lib/keytab.c, lib/libshishi.map, lib/shishi.h,
+	tests/keytab.c: libshishi: Add APIs to save keys on keytab format.
+
+2010-03-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Work around strict aliasing warning.
+
+2010-03-03  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/gendocs.sh, build-aux/gnupload,
+	build-aux/vc-list-files, db/gl/m4/gnulib-common.m4,
+	db/gl/m4/warn-on-use.m4, gl/Makefile.am, gl/getdtablesize.c,
+	gl/gettimeofday.c, gl/m4/getdtablesize.m4, gl/m4/gettimeofday.m4,
+	gl/m4/gnulib-common.m4, gl/m4/gnulib-comp.m4, gl/m4/lseek.m4,
+	gl/m4/sys_time_h.m4, gl/m4/warn-on-use.m4, gl/netdb.in.h,
+	gl/stdio.in.h, gl/sys_select.in.h, gl/sys_time.in.h, maint.mk,
+	src/gl/m4/gnulib-common.m4, src/gl/m4/warn-on-use.m4: Update gnulib
+	files.
+
+2010-02-03  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am: link libshisa with -lrt for clock_gettime in
+	libshishi.
+
+2010-02-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcreq.c: Don't use gettime where gettimeofday will do.
+
+2010-02-03  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/gnupload, gl/Makefile.am, gl/m4/getdelim.m4,
+	gl/m4/getline.m4, gl/m4/gettimeofday.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/stdio_h.m4, gl/m4/sys_time_h.m4, gl/stdio.in.h,
+	gl/sys_time.in.h, maint.mk: Update gnulib files.
+
+2010-01-26  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/link-warning.h, db/gl/gnulib.mk,
+	db/gl/m4/gnulib-comp.m4, db/gl/m4/sys_stat_h.m4,
+	db/gl/m4/unistd_h.m4, db/gl/m4/warn-on-use.m4, db/gl/m4/wchar.m4,
+	db/gl/sys_stat.in.h, db/gl/wchar.in.h, gl/Makefile.am,
+	gl/arpa_inet.in.h, gl/fcntl.in.h, gl/m4/arpa_inet_h.m4,
+	gl/m4/fcntl_h.m4, gl/m4/gnulib-comp.m4, gl/m4/signal_h.m4,
+	gl/m4/stdio_h.m4, gl/m4/stdlib_h.m4, gl/m4/string_h.m4,
+	gl/m4/strings_h.m4, gl/m4/sys_select_h.m4, gl/m4/sys_socket_h.m4,
+	gl/m4/sys_stat_h.m4, gl/m4/unistd_h.m4, gl/m4/wchar.m4,
+	gl/signal.in.h, gl/stdio.in.h, gl/stdlib.in.h, gl/string.in.h,
+	gl/strings.in.h, gl/sys_select.in.h, gl/sys_socket.in.h,
+	gl/sys_stat.in.h, gl/unistd.in.h, gl/vasnprintf.h, gl/wchar.in.h,
+	gl/xvasprintf.h, maint.mk, src/gl/error.h, src/gl/gnulib.mk,
+	src/gl/locale.in.h, src/gl/m4/gnulib-comp.m4,
+	src/gl/m4/locale_h.m4, src/gl/m4/warn-on-use.m4: Update gnulib
+	files.
+
+2010-01-19  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac, lib/shishi.h: Bump versions.
+
+2010-01-19  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2010-01-19  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.41.
