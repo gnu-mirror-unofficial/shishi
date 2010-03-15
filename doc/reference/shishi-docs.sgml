@@ -62,4 +62,11 @@ version 3.0 (or later).
 
     <xi:include href="xml/shishi.xml"/>
   </chapter>
+
+  <index id="api-index-full">
+    <title>Index of all symbols</title>
+  </index>
+  <index role="0.0.42" id="api-index-0-0-42">
+    <title>Index of new symbols in 0.0.42</title>
+  </index>
 </book>
