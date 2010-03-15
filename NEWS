@@ -20,6 +20,8 @@ This allows you to use create Keytab files from your Shishi hostkeys.
 
 ** libshishi: Fix bug where '3des' is parsed as 'des'.
 
+** minitasn1: Internal copy upgraded to GNU Libtasn1 v2.5.
+
 ** API and ABI modifications:
 shishi_key_timestamp: ADD.
 shishi_key_timestamp_set: ADD.
