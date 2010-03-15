@@ -96,3 +96,9 @@ web:
 upload-web:
 	cd $(htmldir) && \
 		cvs commit -m "Update." manual/ reference/
+
+review-diff:
+	git diff `git describe --abbrev=0`.. \
+	| grep -v -e ^index -e '^diff --git' \
+	| filterdiff -p 1 -x 'build-aux/*' -x 'gl/*' -x 'db/gl/*' -x 'src/gl/*' -x 'po/*' -x 'maint.mk' -x '.gitignore' -x '.x-sc*' -x ChangeLog -x GNUmakefile \
+	| less
