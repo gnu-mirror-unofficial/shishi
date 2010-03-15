@@ -79,7 +79,7 @@ shishi_encasreppart (Shishi * handle)
  * Extract the key to use with the ticket sent in the KDC-REP
  * associated with the EncKDCRepPart input variable.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_enckdcreppart_get_key (Shishi * handle,
@@ -117,7 +117,7 @@ shishi_enckdcreppart_get_key (Shishi * handle,
  * Set the EncKDCRepPart.key field to key type and value of supplied
  * key.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_enckdcreppart_key_set (Shishi * handle,
@@ -146,7 +146,7 @@ shishi_enckdcreppart_key_set (Shishi * handle,
  *
  * Set the EncKDCRepPart.nonce field.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_enckdcreppart_nonce_set (Shishi * handle,
@@ -169,7 +169,7 @@ shishi_enckdcreppart_nonce_set (Shishi * handle,
  *
  * Set the EncKDCRepPart.flags field.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_enckdcreppart_flags_set (Shishi * handle,
@@ -192,7 +192,7 @@ shishi_enckdcreppart_flags_set (Shishi * handle,
  *
  * Set the EncTicketPart.authtime to supplied value.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_enckdcreppart_authtime_set (Shishi * handle,
@@ -218,7 +218,7 @@ shishi_enckdcreppart_authtime_set (Shishi * handle,
  * Set the EncTicketPart.starttime to supplied value.  Use a NULL
  * value for @starttime to remove the field.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_enckdcreppart_starttime_set (Shishi * handle,
@@ -246,7 +246,7 @@ shishi_enckdcreppart_starttime_set (Shishi * handle,
  *
  * Set the EncTicketPart.endtime to supplied value.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_enckdcreppart_endtime_set (Shishi * handle,
@@ -272,7 +272,7 @@ shishi_enckdcreppart_endtime_set (Shishi * handle,
  * Set the EncTicketPart.renew-till to supplied value.  Use a NULL
  * value for @renew_till to remove the field.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_enckdcreppart_renew_till_set (Shishi * handle,
@@ -428,7 +428,7 @@ shishi_enckdcreppart_srealmserver_set (Shishi * handle,
  * fields of the EncKDCRepPart to the corresponding values in the
  * EncTicketPart.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_enckdcreppart_populate_encticketpart (Shishi * handle,

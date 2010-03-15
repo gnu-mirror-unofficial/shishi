@@ -1,5 +1,5 @@
 /* as.c --- High level client AS functions
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -494,7 +494,7 @@ shishi_as_krberror_set (Shishi_as * as, Shishi_asn1 krberror)
  *
  * Get Ticket in AS exchange.
  *
- * Return value: Returns the newly aquired tkt from the AS
+ * Return value: Returns the newly acquired tkt from the AS
  *               exchange, or NULL if not yet set or an error occured.
  **/
 Shishi_tkt *

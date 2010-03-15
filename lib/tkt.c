@@ -1,5 +1,5 @@
 /* tkt.c --- Ticket handling.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -115,7 +115,7 @@ shishi_tkt (Shishi * handle, Shishi_tkt ** tkt)
  * shishi_tkt2:
  * @handle: shishi handle as allocated by shishi_init().
  * @ticket: input variable with ticket.
- * @enckdcreppart: input variable with auxilliary ticket information.
+ * @enckdcreppart: input variable with auxiliary ticket information.
  * @kdcrep: input variable with KDC-REP ticket information.
  *
  * Create a new ticket handle.
@@ -203,7 +203,7 @@ shishi_tkt_ticket_set (Shishi_tkt * tkt, Shishi_asn1 ticket)
  *
  * Get ASN.1 EncKDCRepPart structure from ticket.
  *
- * Return value: Returns auxilliary ticket information.
+ * Return value: Returns auxiliary ticket information.
  **/
 Shishi_asn1
 shishi_tkt_enckdcreppart (Shishi_tkt * tkt)

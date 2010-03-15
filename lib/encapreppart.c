@@ -269,7 +269,7 @@ shishi_encapreppart_from_file (Shishi * handle, Shishi_asn1 * encapreppart,
  *
  * Extract the subkey from the encrypted AP-REP part.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_encapreppart_get_key (Shishi * handle,

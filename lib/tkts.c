@@ -248,7 +248,7 @@ shishi_tkts_remove (Shishi_tkts * tkts, int ticketno)
  * you modify @tkt, the ticket in the ticket set will also be
  * modified.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_tkts_add (Shishi_tkts * tkts, Shishi_tkt * tkt)
@@ -279,7 +279,7 @@ shishi_tkts_add (Shishi_tkts * tkts, Shishi_tkt * tkt)
  * reference, so you must not de-allocate them before the ticket is
  * removed from the ticket set and de-allocated.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_tkts_new (Shishi_tkts * tkts,
@@ -309,7 +309,7 @@ shishi_tkts_new (Shishi_tkts * tkts,
  *
  * Read tickets from file descriptor and add them to the ticket set.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_tkts_read (Shishi_tkts * tkts, FILE * fh)
@@ -362,7 +362,7 @@ shishi_tkts_read (Shishi_tkts * tkts, FILE * fh)
  *
  * Read tickets from file and add them to the ticket set.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_tkts_from_file (Shishi_tkts * tkts, const char *filename)
@@ -395,7 +395,7 @@ shishi_tkts_from_file (Shishi_tkts * tkts, const char *filename)
  *
  * Write tickets in set to file descriptor.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_tkts_write (Shishi_tkts * tkts, FILE * fh)
@@ -450,7 +450,7 @@ shishi_tkts_write (Shishi_tkts * tkts, FILE * fh)
  *
  * Remove expired tickets from ticket set.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_tkts_expire (Shishi_tkts * tkts)
@@ -487,7 +487,7 @@ shishi_tkts_expire (Shishi_tkts * tkts)
  *
  * Write tickets in set to file.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_tkts_to_file (Shishi_tkts * tkts, const char *filename)
@@ -522,7 +522,7 @@ shishi_tkts_to_file (Shishi_tkts * tkts, const char *filename)
  * Print description of tickets for specified service to file
  * descriptor.  If service is NULL, all tickets are printed.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh,
@@ -582,7 +582,7 @@ shishi_tkts_print_for_service (Shishi_tkts * tkts, FILE * fh,
  *
  * Print description of all tickets to file descriptor.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_tkts_print (Shishi_tkts * tkts, FILE * fh)

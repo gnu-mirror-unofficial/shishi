@@ -360,7 +360,7 @@ shishi_cfg (Shishi * handle, const char *option)
  *
  * Configure shishi library using configuration file.
  *
- * Return Value: Returns SHISHI_OK iff succesful.
+ * Return Value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_cfg_from_file (Shishi * handle, const char *cfg)

@@ -76,7 +76,7 @@ shishi_encticketpart (Shishi * handle)
  *
  * Extract the session key in the Ticket.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_encticketpart_get_key (Shishi * handle,
@@ -114,7 +114,7 @@ shishi_encticketpart_get_key (Shishi * handle,
  * Set the EncTicketPart.key field to key type and value of supplied
  * key.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_encticketpart_key_set (Shishi * handle,
@@ -145,7 +145,7 @@ shishi_encticketpart_key_set (Shishi * handle,
  *
  * Set the EncTicketPart.flags to supplied value.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_encticketpart_flags_set (Shishi * handle,
@@ -246,7 +246,7 @@ shishi_encticketpart_cname_set (Shishi * handle,
  *
  * Set the EncTicketPart.transited field to supplied value.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_encticketpart_transited_set (Shishi * handle,
@@ -277,7 +277,7 @@ shishi_encticketpart_transited_set (Shishi * handle,
  *
  * Set the EncTicketPart.authtime to supplied value.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_encticketpart_authtime_set (Shishi * handle,
@@ -302,7 +302,7 @@ shishi_encticketpart_authtime_set (Shishi * handle,
  *
  * Set the EncTicketPart.endtime to supplied value.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_encticketpart_endtime_set (Shishi * handle,

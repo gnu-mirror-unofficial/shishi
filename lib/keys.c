@@ -143,7 +143,7 @@ shishi_keys_remove (Shishi_keys * keys, int keyno)
  * changing @key, or deallocating it, will not modify the value stored
  * in the key set.
  *
- * Return value: Returns SHISHI_OK iff succesful.
+ * Return value: Returns %SHISHI_OK iff successful.
  **/
 int
 shishi_keys_add (Shishi_keys * keys, Shishi_key * key)
