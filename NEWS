@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Simon Josefsson
 See the end for copying conditions.
 
-* Version 0.0.42 (unreleased)
+* Version 0.0.42 (released 2010-03-15)
 
 ** libshishi: Add APIs to save keys on keytab format.
 The functions are shishi_keys_to_keytab_file and
@@ -23,6 +23,7 @@ This allows you to use create Keytab files from your Shishi hostkeys.
 ** API and ABI modifications:
 shishi_key_timestamp: ADD.
 shishi_key_timestamp_set: ADD.
+shishi_keys_from_file: ADD.
 shishi_keys_to_keytab_file: ADD.
 shishi_keys_to_keytab_mem: ADD.
 
