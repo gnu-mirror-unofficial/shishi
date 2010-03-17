@@ -215,13 +215,15 @@ kdc_ready (struct listenspec *ls)
 {
   size_t waitfor = ls->bufpos >= 4 ? C2I (ls->buf) : 4;
 
-  syslog (LOG_DEBUG, "Got %d bytes of %d bytes from %s on socket %d\n",
-	  ls->bufpos, waitfor + 4, ls->str, ls->sockfd);
 
   if (ls->type == SOCK_DGRAM && ls->bufpos > 0)
     return 1;
   else if (ls->bufpos > 4 && waitfor + 4 == ls->bufpos)
     return 1;
+
+  if (ls->type == SOCK_STREAM)
+    syslog (LOG_DEBUG, "Got %d bytes of %d bytes from %s on socket %d\n",
+	    ls->bufpos, waitfor + 4, ls->str, ls->sockfd);
 
   return 0;
 }
