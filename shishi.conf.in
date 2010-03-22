@@ -57,14 +57,15 @@
 #verbose-crypto-noise
 
 # Specify KDC addresses for realms.
-# Value is REALM,KDCADDRESS[/PROTOCOL][,KDCADDRESS[/PROTOCOL]...]
+# Value is REALM,KDCADDRESS[/TRANSPORT][,KDCADDRESS[/TRANSPORT]...]
 # KDCADDRESS is the hostname or IP address of KDC.
-# Optional PROTOCOL is "udp" for UDP, "tcp" for TCP, and "tls" for TLS
+# Optional TRANSPORT is "udp" for UDP, "tcp" for TCP, and "tls" for TLS
 # connections.  By default UDP is tried first, and TCP used as a
 # fallback if the KRB_ERR_RESPONSE_TOO_BIG error is received.  If not
 # specified, Shishi tries to locate the KDC using SRV RRs, which is
 # recommended.  This option should normally only be used during
-# experiments, or to access badly maintained realms.
+# experiments, to access badly maintained realms, or to make sure
+# you are not vulnerable to DNS redirection attacks.
 #realm-kdc=JOSEFSSON.ORG,ristretto.josefsson.org
 
 # Specify realm for servers.

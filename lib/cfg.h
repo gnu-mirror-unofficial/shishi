@@ -1,5 +1,5 @@
 /* cfg.h --- Configuration file prototypes.
- * Copyright (C) 2002, 2003, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -24,3 +24,4 @@ extern struct Shishi_realminfo *_shishi_realminfo (Shishi * handle,
 						   const char *realm);
 extern struct Shishi_realminfo *_shishi_realminfo_new (Shishi * handle,
 						       char *realm);
+extern const char *_shishi_transport2string (int transport);

@@ -115,6 +115,7 @@
 		  SHISHI_VERBOSE_CRYPTO_NOISE)
 #define VERBOSE(h) (h->verbose & ~VERBOSES)
 
+/* Transports */
 enum
 {
   UDP,
@@ -124,9 +125,9 @@ enum
 
 struct Shishi_kdcinfo
 {
-  char *name;
-  struct sockaddr sockaddress;
-  int protocol;
+  int transport;
+  char *hostname;
+  char *port;
 };
 
 struct Shishi_realminfo
@@ -155,7 +156,6 @@ struct Shishi
   size_t nauthorizationtypes;
   struct Shishi_realminfo *realminfos;
   size_t nrealminfos;
-  char *kdc;
   char error[1024];
   char gztime_buf[40];
   char *userdirectory;

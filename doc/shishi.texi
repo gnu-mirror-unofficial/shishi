@@ -1663,7 +1663,7 @@ ports.
 
 By default, Shishid listens on the @samp{kerberos} service port
 (typically translated to 88 via @file{/etc/services}) on the UDP and
-TCP protocols via IPv4 and (if your machine support it) IPv6 on all
+TCP transports via IPv4 and (if your machine support it) IPv6 on all
 interfaces on your machine.  Here is a typical startup.
 
 @example
@@ -2975,12 +2975,12 @@ verbose-noise
 @anchor{realm-kdc}
 
 Specify KDC addresses for realms.  Value is
-@samp{REALM,KDCADDRESS[/PROTOCOL][,KDCADDRESS[/PROTOCOL]...]}.
+@samp{REALM,KDCADDRESS[/TRANSPORT][,KDCADDRESS[/TRANSPORT]...]}.
 
 KDCADDRESS is the hostname or IP address of KDC.
 
-Optional PROTOCOL is udp for UDP, tcp for TCP, and TLS for TLS
-connections.  By default UDP is tried first, and TCP used as a
+Optional TRANSPORT is ``udp'' for UDP, ``tcp'' for TCP, and ``tls''
+for TLS connections.  By default UDP is tried first, and TCP used as a
 fallback if the KRB_ERR_RESPONSE_TOO_BIG error is received.
 
 If not specified, Shishi tries to locate the KDC using SRV RRs,

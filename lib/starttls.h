@@ -1,5 +1,5 @@
 /* starttls.h --- Network I/O functions for Shishi over TLS.
- * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -23,7 +23,6 @@
 extern int _shishi_tls_init (Shishi * handle);
 extern int _shishi_tls_done (Shishi * handle);
 extern int _shishi_sendrecv_tls (Shishi * handle,
-				 struct sockaddr *addr,
+				 struct addrinfo *ai,
 				 const char *indata, size_t inlen,
-				 char **outdata, size_t *outlen,
-				 size_t timeout, Shishi_tkts_hint * hint);
+				 char **outdata, size_t *outlen);

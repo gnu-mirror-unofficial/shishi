@@ -1,5 +1,5 @@
 /* starttls.c --- Network I/O functions for Shishi over TLS.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -224,10 +224,9 @@ _shishi_sendrecv_tls1 (Shishi * handle,
 /* Send request to KDC over TLS, receive reply, and disconnect. */
 int
 _shishi_sendrecv_tls (Shishi * handle,
-		      struct sockaddr *addr,
+		      struct addrinfo *ai,
 		      const char *indata, size_t inlen,
-		      char **outdata, size_t * outlen,
-		      size_t timeout, Shishi_tkts_hint * hint)
+		      char **outdata, size_t * outlen)
 {
   const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
     GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
@@ -240,6 +239,20 @@ _shishi_sendrecv_tls (Shishi * handle,
   const char *cafile = shishi_x509ca_default_file (handle);
   const char *certfile = shishi_x509cert_default_file (handle);
   const char *keyfile = shishi_x509key_default_file (handle);
+
+  sockfd = socket (ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+  if (sockfd < 0)
+    {
+      shishi_error_set (handle, strerror (errno));
+      return SHISHI_SOCKET_ERROR;
+    }
+
+  if (connect (sockfd, ai->ai_addr, ai->ai_addrlen) != 0)
+    {
+      shishi_error_set (handle, strerror (errno));
+      close (sockfd);
+      return SHISHI_BIND_ERROR;
+    }
 
   ret = gnutls_init (&session, GNUTLS_CLIENT);
   if (ret != GNUTLS_E_SUCCESS)
@@ -319,23 +332,9 @@ _shishi_sendrecv_tls (Shishi * handle,
       return SHISHI_CRYPTO_ERROR;
     }
 
-  sockfd = socket (AF_INET, SOCK_STREAM, 0);
-  if (sockfd < 0)
-    {
-      shishi_error_set (handle, strerror (errno));
-      return SHISHI_SOCKET_ERROR;
-    }
-
-  if (connect (sockfd, addr, sizeof (*addr)) != 0)
-    {
-      shishi_error_set (handle, strerror (errno));
-      close (sockfd);
-      return SHISHI_CONNECT_ERROR;
-    }
-
   /* Core part. */
   outerr = _shishi_sendrecv_tls1 (handle, sockfd, session, indata, inlen,
-				  outdata, outlen, timeout);
+				  outdata, outlen, handle->kdctimeout);
 
   ret = shutdown (sockfd, SHUT_RDWR);
   if (ret != 0)

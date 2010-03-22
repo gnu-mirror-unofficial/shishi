@@ -183,26 +183,34 @@ shishi_cfg (Shishi * handle, const char *option)
 	  break;
 
 	case REALM_KDC_OPTION:
-	  realm = xstrdup (value);
-	  for (i = 0; i < handle->nrealminfos; i++)
-	    if (strcmp (realm, handle->realminfos[i].name) == 0)
+	  {
+	    int add_realm = 1;
+
+	    realm = xstrdup (value);
+	    for (i = 0; i < handle->nrealminfos; i++)
+	      if (strcmp (realm, handle->realminfos[i].name) == 0)
+		{
+		  if (handle->realminfos[i].nkdcaddresses > 0 ||
+		      handle->realminfos[i].kdcaddresses)
+		    {
+		      free (handle->realminfos[i].kdcaddresses);
+		      handle->realminfos[i].kdcaddresses = NULL;
+		      handle->realminfos[i].nkdcaddresses = 0;
+		      add_realm = 0;
+		    }
+		  break;
+		}
+	    if (add_realm)
 	      {
-		if (handle->realminfos[i].nkdcaddresses > 0 ||
-		    handle->realminfos[i].kdcaddresses)
-		  {
-		    free (handle->realminfos[i].kdcaddresses);
-		    handle->realminfos[i].kdcaddresses = NULL;
-		    handle->realminfos[i].nkdcaddresses = 0;
-		  }
-		break;
+		handle->realminfos = xrealloc (handle->realminfos,
+					       (handle->nrealminfos + 1) *
+					       sizeof (*handle->realminfos));
+		memset (&handle->realminfos[handle->nrealminfos], 0,
+			sizeof (handle->realminfos[handle->nrealminfos]));
+		handle->realminfos[handle->nrealminfos].name = realm;
+		handle->nrealminfos++;
 	      }
-	  handle->realminfos = xrealloc (handle->realminfos,
-					 (handle->nrealminfos + 1) *
-					 sizeof (*handle->realminfos));
-	  memset (&handle->realminfos[handle->nrealminfos], 0,
-		  sizeof (handle->realminfos[handle->nrealminfos]));
-	  handle->realminfos[handle->nrealminfos].name = realm;
-	  handle->nrealminfos++;
+	  }
 	  break;
 
 	case SERVER_REALM_OPTION:
@@ -270,71 +278,42 @@ shishi_cfg (Shishi * handle, const char *option)
 	  if (!value)
 	    break;
 	  for (i = 0; i < handle->nrealminfos; i++)
-	    if (realm && handle->realminfos[i].name == realm)
+	    if (realm && strcmp (handle->realminfos[i].name, realm) == 0)
 	      {
 		struct Shishi_realminfo *ri = &handle->realminfos[i];
-		struct sockaddr_in *sinaddr;
-		struct hostent *he;
 		struct servent *se;
 		char *protstr;
-		int protocol = UDP;
-		int port = -1;
+		int transport = UDP;
 
 		if ((protstr = strchr (value, '/')))
 		  {
 		    *protstr = '\0';
 		    protstr++;
 		    if (strcasecmp (protstr, "udp") == 0)
-		      protocol = UDP;
+		      transport = UDP;
 		    else if (strcasecmp (protstr, "tcp") == 0)
-		      protocol = TCP;
+		      transport = TCP;
 		    else if (strcasecmp (protstr, "tls") == 0)
-		      protocol = TLS;
+		      transport = TLS;
 		    else
-		      shishi_warn (handle,
-				   "Ignoring unknown KDC parameter: %s",
+		      shishi_warn (handle, "Ignoring unknown KDC transport: %s",
 				   protstr);
-		  }
-
-		if ((protstr = strchr (value, ':')))
-		  {
-		    *protstr = '\0';
-		    protstr++;
-		    port = atoi (protstr);
-		  }
-
-		he = gethostbyname (value);	/* XXX move to netio.c */
-		if (he == NULL ||
-		    he->h_addr_list[0] == NULL || he->h_addrtype != AF_INET)
-		  {
-		    shishi_warn (handle,
-				 "Unknown KDC host `%s' (h_errno %d)",
-				 value, h_errno);
-		    break;
 		  }
 
 		ri->kdcaddresses = xrealloc (ri->kdcaddresses,
 					     (ri->nkdcaddresses + 1) *
 					     sizeof (*ri->kdcaddresses));
-		ri->kdcaddresses[ri->nkdcaddresses].name = xstrdup (value);
-		ri->kdcaddresses[ri->nkdcaddresses].protocol = protocol;
-		sinaddr = (struct sockaddr_in *)
-		  &ri->kdcaddresses[ri->nkdcaddresses].sockaddress;
-		memset (sinaddr, 0, sizeof (struct sockaddr));
-		ri->nkdcaddresses++;
-
-		sinaddr->sin_family = he->h_addrtype;
-		memcpy (&sinaddr->sin_addr, he->h_addr_list[0], he->h_length);
-		if (port == -1)
+		ri->kdcaddresses[ri->nkdcaddresses].transport = transport;
+		ri->kdcaddresses[ri->nkdcaddresses].hostname = xstrdup (value);
+		if ((protstr = strchr (value, ':')))
 		  {
-		    se = getservbyname (KDC_SERVICE_PORT, NULL);
-		    if (se)
-		      sinaddr->sin_port = se->s_port;
-		    else
-		      sinaddr->sin_port = htons (88);
+		    *protstr = '\0';
+		    protstr++;
+		    ri->kdcaddresses[ri->nkdcaddresses].port = protstr;
 		  }
 		else
-		  sinaddr->sin_port = htons (port);
+		  ri->kdcaddresses[ri->nkdcaddresses].port = NULL;
+		ri->nkdcaddresses++;
 	      }
 	  if (realm)
 	    break;
@@ -414,6 +393,19 @@ shishi_cfg_from_file (Shishi * handle, const char *cfg)
   return SHISHI_OK;
 }
 
+const char *
+_shishi_transport2string (int transport)
+{
+  if (transport == UDP)
+    return "UDP";
+  else if (transport == TCP)
+    return "TCP";
+  else if (transport == TLS)
+    return "TLS";
+  else
+    return "UNKNOWN";
+}
+
 /**
  * shishi_cfg_print:
  * @handle: Shishi library handle create by shishi_init().
@@ -438,7 +430,6 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
   for (i = 0; i < handle->nclientkdcetypes; i++)
     fprintf (fh, " %s", shishi_cipher_name (handle->clientkdcetypes[i]));
   fprintf (fh, "\n");
-  fprintf (fh, "\tKDC: %s\n", handle->kdc ? handle->kdc : "(NULL)");
   fprintf (fh, "\tVerbose: %d\n", handle->verbose);
   tmp = now + handle->ticketlife;
   fprintf (fh, "\tTicket life: %d seconds. %s",
@@ -448,12 +439,13 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
 	   handle->renewlife, ctime (&tmp));
   for (i = 0; i < handle->nrealminfos; i++)
     {
-      fprintf (fh, "\tRealm %s's KDCs:", handle->realminfos[i].name);
+      fprintf (fh, "\tKDCs for realm %s:\n", handle->realminfos[i].name);
       for (j = 0; j < handle->realminfos[i].nkdcaddresses; j++)
-	fprintf (fh, " %s (%s)", handle->realminfos[i].kdcaddresses[j].name,
-		 inet_ntoa (((struct sockaddr_in *) &handle->realminfos[i].
-			     kdcaddresses[j].sockaddress)->sin_addr));
-      fprintf (fh, "\n");
+	fprintf (fh, "\t\tTransport %s host %s port %d\n",
+		 _shishi_transport2string (handle->realminfos[i].
+					   kdcaddresses[j].transport),
+		 handle->realminfos[i].kdcaddresses[j].hostname,
+		 handle->realminfos[i].kdcaddresses[j].port);
     }
 
   return SHISHI_OK;
