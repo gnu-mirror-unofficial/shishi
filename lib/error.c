@@ -1,5 +1,5 @@
 /* error.c --- Error handling functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -172,7 +172,7 @@ shishi_error_set (Shishi * handle, const char *errstr)
     {
       strncpy (handle->error, errstr, sizeof (handle->error));
 
-      if (VERBOSE (handle))
+      if (VERBOSENOISE (handle))
 	puts (handle->error);
     }
   else
