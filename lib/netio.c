@@ -394,8 +394,8 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
   memset (&hints, 0, sizeof (hints));
   hints.ai_socktype = SOCK_DGRAM;
   hints.ai_flags = AI_ADDRCONFIG;
-  rc = getaddrinfo (realm, port, &hints, &ai);
 
+  rc = getaddrinfo (realm, port, &hints, &ai);
   if (rc != 0)
     {
       shishi_error_printf (handle, "No direct realm host for realm %s",
@@ -404,16 +404,29 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
       return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
     }
 
-  shishi_verbose (handle, "Sending to %s:%s (%s)", realm, port,
-		  inet_ntoa (((struct sockaddr_in *) ai->ai_addr)->sin_addr));
+  do
+    {
+      char nodename[NI_MAXHOST];
+
+      rc = getnameinfo (ai->ai_addr, ai->ai_addrlen,
+			nodename, sizeof (nodename),
+			NULL, 0, NI_NUMERICHOST);
+      if (rc == 0)
+	shishi_verbose (handle, "Sending to %s port %s", nodename, port);
+      else
+	shishi_verbose (handle, "Sending to %s port %s (unknown address)",
+			nodename, port);
+
+      rc = shishi_sendrecv_udp (handle, ai->ai_addr,
+				indata, inlen, outdata, outlen,
+				handle->kdctimeout);
+
+      if (rc == SHISHI_KDC_TIMEOUT)
+	shishi_verbose (handle, "Timeout sending to KDC");
+    }
+  while (rc == SHISHI_KDC_TIMEOUT && (ai = ai->ai_next));
 
   free (port);
-
-  rc = shishi_sendrecv_udp (handle, ai->ai_addr,
-			    indata, inlen, outdata, outlen,
-			    handle->kdctimeout);
-
-  freeaddrinfo (ai);
 
   return rc;
 }
