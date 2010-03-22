@@ -122,7 +122,7 @@ shisa_cfg (Shisa * dbh, const char *option)
  *
  * Configure shisa library using configuration file.
  *
- * Return Value: Returns %SHISA_OK iff succesful.
+ * Return Value: Returns %SHISA_OK iff successful.
  **/
 int
 shisa_cfg_from_file (Shisa * dbh, const char *cfg)
