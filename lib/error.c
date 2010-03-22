@@ -55,6 +55,8 @@ static const struct shishi_error_msgs _shishi_error_messages[] = {
   {SHISHI_CRYPTO_ERROR,
    N_("Low-level cryptographic primitive failed.  This usually indicates "
       "bad password or data corruption.")},
+  {SHISHI_RECVFROM_ERROR,
+   N_("Error receiving data from server")},
   {SHISHI_KDC_TIMEOUT,
    N_("Timedout talking to KDC. This usually indicates a network "
       "or KDC address problem.")},
