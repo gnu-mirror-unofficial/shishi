@@ -28,16 +28,10 @@ AC_DEFUN([gl3_EARLY],
   # Code from module areadlink:
   # Code from module arg-nonnull:
   # Code from module c++defs:
-  # Code from module extensions:
-  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   # Code from module multiarch:
   # Code from module readlink:
-  # Code from module stat:
-  # Code from module stdbool:
   # Code from module stddef:
   # Code from module stdint:
-  # Code from module sys_stat:
-  # Code from module time:
   # Code from module warn-on-use:
   # Code from module wchar:
 ])
@@ -58,26 +52,15 @@ AC_DEFUN([gl3_INIT],
   # Code from module areadlink:
   # Code from module arg-nonnull:
   # Code from module c++defs:
-  # Code from module extensions:
   # Code from module multiarch:
   gl_MULTIARCH
   # Code from module readlink:
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
-  # Code from module stat:
-  gl_FUNC_STAT
-  gl_SYS_STAT_MODULE_INDICATOR([stat])
-  # Code from module stdbool:
-  AM_STDBOOL_H
   # Code from module stddef:
   gl_STDDEF_H
   # Code from module stdint:
   gl_STDINT_H
-  # Code from module sys_stat:
-  gl_HEADER_SYS_STAT_H
-  AC_PROG_MKDIR_P
-  # Code from module time:
-  gl_HEADER_TIME_H
   # Code from module warn-on-use:
   # Code from module wchar:
   gl_WCHAR_H
@@ -216,27 +199,16 @@ AC_DEFUN([gl3_FILE_LIST], [
   lib/areadlink.c
   lib/areadlink.h
   lib/readlink.c
-  lib/stat.c
-  lib/stdbool.in.h
   lib/stddef.in.h
   lib/stdint.in.h
-  lib/sys_stat.in.h
-  lib/time.in.h
   lib/wchar.in.h
   m4/00gnulib.m4
-  m4/dos.m4
-  m4/extensions.m4
   m4/gnulib-common.m4
   m4/longlong.m4
   m4/multiarch.m4
   m4/readlink.m4
-  m4/stat.m4
-  m4/stdbool.m4
   m4/stddef_h.m4
   m4/stdint.m4
-  m4/sys_stat_h.m4
-  m4/time_h.m4
-  m4/unistd_h.m4
   m4/warn-on-use.m4
   m4/wchar_h.m4
   m4/wchar_t.m4

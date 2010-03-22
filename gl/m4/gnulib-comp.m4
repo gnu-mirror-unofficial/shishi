@@ -113,6 +113,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module socket:
   # Code from module sockets:
   # Code from module socklen:
+  # Code from module stat:
   # Code from module stdarg:
   dnl Some compilers (e.g., AIX 5.3 cc) need to be in c99 mode
   dnl for the builtin va_copy to work.  With Autoconf 2.60 or later,
@@ -415,6 +416,9 @@ AC_SUBST([LTALLOCA])
   gl_SOCKETS
   # Code from module socklen:
   gl_TYPE_SOCKLEN_T
+  # Code from module stat:
+  gl_FUNC_STAT
+  gl_SYS_STAT_MODULE_INDICATOR([stat])
   # Code from module stdarg:
   gl_STDARG_H
   # Code from module stdbool:
@@ -744,6 +748,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/socket.c
   lib/sockets.c
   lib/sockets.h
+  lib/stat.c
   lib/stdarg.in.h
   lib/stdbool.in.h
   lib/stddef.in.h
@@ -803,6 +808,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/close.m4
   m4/crc.m4
   m4/des.m4
+  m4/dos.m4
   m4/dup2.m4
   m4/eealloc.m4
   m4/environ.m4
@@ -876,6 +882,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/sockets.m4
   m4/socklen.m4
   m4/sockpfaf.m4
+  m4/stat.m4
   m4/stdarg.m4
   m4/stdbool.m4
   m4/stddef_h.m4

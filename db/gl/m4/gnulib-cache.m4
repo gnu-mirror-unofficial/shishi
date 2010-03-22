@@ -15,14 +15,14 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=db/gl --m4-base=db/gl/m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --avoid=absolute-header --avoid=include_next --avoid=link-warning --avoid=malloc-posix --avoid=ssize_t --avoid=stdlib --avoid=unistd --makefile-name=gnulib.mk --libtool --macro-prefix=gl3 --no-vc-files areadlink
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=db/gl --m4-base=db/gl/m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --avoid=absolute-header --avoid=include_next --avoid=link-warning --avoid=malloc-posix --avoid=ssize_t --avoid=stat --avoid=stdlib --avoid=unistd --makefile-name=gnulib.mk --libtool --macro-prefix=gl3 --no-vc-files areadlink
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
 gl_MODULES([
   areadlink
 ])
-gl_AVOID([absolute-header include_next link-warning malloc-posix ssize_t stdlib unistd])
+gl_AVOID([absolute-header include_next link-warning malloc-posix ssize_t stat stdlib unistd])
 gl_SOURCE_BASE([db/gl])
 gl_M4_BASE([db/gl/m4])
 gl_PO_BASE([])
