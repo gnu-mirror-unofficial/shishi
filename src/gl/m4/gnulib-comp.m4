@@ -25,6 +25,18 @@ AC_DEFUN([gl2_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
+  # Code from module arg-nonnull:
+  # Code from module c++defs:
+  # Code from module errno:
+  # Code from module error:
+  # Code from module getopt-gnu:
+  # Code from module getopt-posix:
+  # Code from module locale:
+  # Code from module progname:
+  # Code from module stddef:
+  # Code from module strerror:
+  # Code from module version-etc:
+  # Code from module warn-on-use:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -40,21 +52,34 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([gl2_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='src/gl'
+  # Code from module arg-nonnull:
+  # Code from module c++defs:
+  # Code from module errno:
   gl_HEADER_ERRNO_H
+  # Code from module error:
   gl_ERROR
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_][XGETTEXT_OPTION([--flag=error:3:c-format])
      AM_][XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
+  # Code from module getopt-gnu:
   gl_FUNC_GETOPT_GNU
   gl_MODULE_INDICATOR([getopt-gnu])
+  # Code from module getopt-posix:
   gl_FUNC_GETOPT_POSIX
+  # Code from module locale:
   gl_LOCALE_H
+  # Code from module progname:
   AC_CHECK_DECLS([program_invocation_name], [], [], [#include <errno.h>])
   AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
+  # Code from module stddef:
   gl_STDDEF_H
+  # Code from module strerror:
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
+  # Code from module version-etc:
   gl_VERSION_ETC
+  # Code from module warn-on-use:
+  # End of code from modules
   m4_ifval(gl2_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl2_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl2_LIBSOURCES_LIST[ ; do
@@ -184,6 +209,7 @@ AC_DEFUN([gl2tests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl2_FILE_LIST], [
   build-aux/arg-nonnull.h
+  build-aux/c++defs.h
   build-aux/warn-on-use.h
   lib/errno.in.h
   lib/error.c

@@ -25,14 +25,139 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
+  # Code from module alignof:
+  # Code from module alloca:
+  # Code from module alloca-opt:
+  # Code from module arg-nonnull:
+  # Code from module arpa_inet:
+  # Code from module autobuild:
   AB_INIT
+  # Code from module base64:
+  # Code from module bind:
+  # Code from module c++defs:
+  # Code from module c-ctype:
+  # Code from module clock-time:
+  # Code from module close:
+  # Code from module close-hook:
+  # Code from module connect:
+  # Code from module crc:
+  # Code from module crypto/arcfour:
+  # Code from module crypto/gc:
+  # Code from module crypto/gc-des:
+  # Code from module crypto/gc-hmac-md5:
+  # Code from module crypto/gc-hmac-sha1:
+  # Code from module crypto/gc-md4:
+  # Code from module crypto/gc-md5:
+  # Code from module crypto/gc-pbkdf2-sha1:
+  # Code from module crypto/gc-random:
+  # Code from module dup2:
+  # Code from module environ:
+  # Code from module errno:
+  # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  # Code from module fclose:
+  # Code from module fcntl:
+  # Code from module fcntl-h:
+  # Code from module fdl-1.3:
+  # Code from module float:
+  # Code from module fseeko:
   AC_REQUIRE([AC_FUNC_FSEEKO])
+  # Code from module gendocs:
+  # Code from module getaddrinfo:
+  # Code from module getdate:
+  # Code from module getdelim:
+  # Code from module getdomainname:
+  # Code from module getdtablesize:
+  # Code from module gethostname:
+  # Code from module getline:
+  # Code from module getpass:
+  # Code from module getpeername:
+  # Code from module getsubopt:
+  # Code from module gettext-h:
+  # Code from module gettime:
+  # Code from module gettimeofday:
+  # Code from module gnumakefile:
+  # Code from module gnupload:
+  # Code from module gpl-3.0:
+  # Code from module havelib:
+  # Code from module hostent:
+  # Code from module include_next:
+  # Code from module inet_ntop:
+  # Code from module inline:
+  # Code from module intprops:
+  # Code from module lib-msvc-compat:
+  # Code from module lib-symbol-versions:
+  # Code from module lseek:
+  # Code from module maintainer-makefile:
+  # Code from module malloc-posix:
+  # Code from module malloca:
+  # Code from module manywarnings:
+  # Code from module memchr:
+  # Code from module minmax:
+  # Code from module mktime:
+  # Code from module multiarch:
+  # Code from module netdb:
+  # Code from module netinet_in:
+  # Code from module rawmemchr:
+  # Code from module read-file:
+  # Code from module realloc-posix:
+  # Code from module recvfrom:
+  # Code from module select:
+  # Code from module sendto:
+  # Code from module servent:
+  # Code from module setenv:
+  # Code from module shutdown:
+  # Code from module signal:
+  # Code from module size_max:
+  # Code from module snprintf:
+  # Code from module socket:
+  # Code from module sockets:
+  # Code from module socklen:
+  # Code from module stdarg:
   dnl Some compilers (e.g., AIX 5.3 cc) need to be in c99 mode
   dnl for the builtin va_copy to work.  With Autoconf 2.60 or later,
   dnl AC_PROG_CC_STDC arranges for this.  With older Autoconf AC_PROG_CC_STDC
   dnl shouldn't hurt, though installers are on their own to set c99 mode.
   AC_REQUIRE([AC_PROG_CC_STDC])
+  # Code from module stdbool:
+  # Code from module stddef:
+  # Code from module stdint:
+  # Code from module stdio:
+  # Code from module stdlib:
+  # Code from module strcase:
+  # Code from module strchrnul:
+  # Code from module strdup-posix:
+  # Code from module strerror:
+  # Code from module string:
+  # Code from module strings:
+  # Code from module strndup:
+  # Code from module strnlen:
+  # Code from module strtok_r:
+  # Code from module strverscmp:
+  # Code from module sys_select:
+  # Code from module sys_socket:
+  # Code from module sys_stat:
+  # Code from module sys_time:
+  # Code from module time:
+  # Code from module time_r:
+  # Code from module timegm:
+  # Code from module timespec:
+  # Code from module unistd:
+  # Code from module unsetenv:
+  # Code from module useless-if-before-free:
+  # Code from module vasnprintf:
+  # Code from module vasprintf:
+  # Code from module vc-list-files:
+  # Code from module verify:
+  # Code from module warn-on-use:
+  # Code from module warnings:
+  # Code from module wchar:
+  # Code from module xalloc:
+  # Code from module xgetdomainname:
+  # Code from module xgethostname:
+  # Code from module xsize:
+  # Code from module xstrndup:
+  # Code from module xvasprintf:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -48,86 +173,135 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='gl'
+  # Code from module alignof:
+  # Code from module alloca:
 changequote(,)dnl
 LTALLOCA=`echo "$ALLOCA" | sed -e 's/\.[^.]* /.lo /g;s/\.[^.]*$/.lo/'`
 changequote([, ])dnl
 AC_SUBST([LTALLOCA])
+  # Code from module alloca-opt:
   gl_FUNC_ALLOCA
+  # Code from module arg-nonnull:
+  # Code from module arpa_inet:
   gl_HEADER_ARPA_INET
   AC_PROG_MKDIR_P
+  # Code from module autobuild:
+  # Code from module base64:
   gl_FUNC_BASE64
+  # Code from module bind:
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([bind])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([bind])
+  # Code from module c++defs:
+  # Code from module c-ctype:
+  # Code from module clock-time:
   gl_CLOCK_TIME
+  # Code from module close:
   gl_FUNC_CLOSE
   gl_UNISTD_MODULE_INDICATOR([close])
+  # Code from module close-hook:
+  # Code from module connect:
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([connect])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([connect])
+  # Code from module crc:
   gl_CRC
+  # Code from module crypto/arcfour:
   gl_ARCFOUR
+  # Code from module crypto/gc:
   gl_GC
   if test $gl_cond_libtool = false; then
     gl_ltlibdeps="$gl_ltlibdeps $LTLIBGCRYPT"
     gl_libdeps="$gl_libdeps $LIBGCRYPT"
   fi
+  # Code from module crypto/gc-des:
   gl_GC_DES
   gl_MODULE_INDICATOR([gc-des])
+  # Code from module crypto/gc-hmac-md5:
   gl_GC_HMAC_MD5
   gl_MODULE_INDICATOR([gc-hmac-md5])
+  # Code from module crypto/gc-hmac-sha1:
   gl_GC_HMAC_SHA1
   gl_MODULE_INDICATOR([gc-hmac-sha1])
+  # Code from module crypto/gc-md4:
   gl_GC_MD4
   gl_MODULE_INDICATOR([gc-md4])
+  # Code from module crypto/gc-md5:
   gl_GC_MD5
   gl_MODULE_INDICATOR([gc-md5])
+  # Code from module crypto/gc-pbkdf2-sha1:
   gl_GC_PBKDF2_SHA1
+  # Code from module crypto/gc-random:
   gl_GC_RANDOM
   gl_MODULE_INDICATOR([gc-random])
+  # Code from module dup2:
   gl_FUNC_DUP2
   gl_UNISTD_MODULE_INDICATOR([dup2])
+  # Code from module environ:
   gl_ENVIRON
   gl_UNISTD_MODULE_INDICATOR([environ])
+  # Code from module errno:
   gl_HEADER_ERRNO_H
+  # Code from module extensions:
+  # Code from module fclose:
   gl_FUNC_FCLOSE
   gl_STDIO_MODULE_INDICATOR([fclose])
+  # Code from module fcntl:
   gl_FUNC_FCNTL
   gl_FCNTL_MODULE_INDICATOR([fcntl])
+  # Code from module fcntl-h:
   gl_FCNTL_H
+  # Code from module fdl-1.3:
+  # Code from module float:
   gl_FLOAT_H
+  # Code from module fseeko:
   gl_FUNC_FSEEKO
   gl_STDIO_MODULE_INDICATOR([fseeko])
+  # Code from module gendocs:
+  # Code from module getaddrinfo:
   gl_GETADDRINFO
   gl_NETDB_MODULE_INDICATOR([getaddrinfo])
+  # Code from module getdate:
   gl_GETDATE
+  # Code from module getdelim:
   gl_FUNC_GETDELIM
   gl_STDIO_MODULE_INDICATOR([getdelim])
+  # Code from module getdomainname:
   gl_FUNC_GETDOMAINNAME
   gl_UNISTD_MODULE_INDICATOR([getdomainname])
+  # Code from module getdtablesize:
   gl_FUNC_GETDTABLESIZE
   gl_UNISTD_MODULE_INDICATOR([getdtablesize])
+  # Code from module gethostname:
   gl_FUNC_GETHOSTNAME
   gl_UNISTD_MODULE_INDICATOR([gethostname])
+  # Code from module getline:
   gl_FUNC_GETLINE
   gl_STDIO_MODULE_INDICATOR([getline])
+  # Code from module getpass:
   gl_FUNC_GETPASS
+  # Code from module getpeername:
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([getpeername])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([getpeername])
+  # Code from module getsubopt:
   gl_FUNC_GETSUBOPT
   gl_STDLIB_MODULE_INDICATOR([getsubopt])
+  # Code from module gettext-h:
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
+  # Code from module gettime:
   gl_GETTIME
+  # Code from module gettimeofday:
   gl_FUNC_GETTIMEOFDAY
   gl_SYS_TIME_MODULE_INDICATOR([gettimeofday])
+  # Code from module gnumakefile:
   # Autoconf 2.61a.99 and earlier don't support linking a file only
   # in VPATH builds.  But since GNUmakefile is for maintainer use
   # only, it does not matter if we skip the link with older autoconf.
@@ -138,56 +312,91 @@ AC_SUBST([LTALLOCA])
   	m4_defn([m4_PACKAGE_VERSION])), [1], [],
         [AC_CONFIG_LINKS([$GNUmakefile:$GNUmakefile], [],
   	[GNUmakefile=$GNUmakefile])])
+  # Code from module gnupload:
+  # Code from module gpl-3.0:
+  # Code from module havelib:
+  # Code from module hostent:
   gl_HOSTENT
+  # Code from module include_next:
+  # Code from module inet_ntop:
   gl_INET_NTOP
   gl_ARPA_INET_MODULE_INDICATOR([inet_ntop])
+  # Code from module inline:
   gl_INLINE
+  # Code from module intprops:
+  # Code from module lib-msvc-compat:
   gl_LD_OUTPUT_DEF
+  # Code from module lib-symbol-versions:
   gl_LD_VERSION_SCRIPT
+  # Code from module lseek:
   gl_FUNC_LSEEK
   gl_UNISTD_MODULE_INDICATOR([lseek])
+  # Code from module maintainer-makefile:
   AC_CONFIG_COMMANDS_PRE([m4_ifdef([AH_HEADER],
     [AC_SUBST([CONFIG_INCLUDE], m4_defn([AH_HEADER]))])])
+  # Code from module malloc-posix:
   gl_FUNC_MALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([malloc-posix])
+  # Code from module malloca:
   gl_MALLOCA
+  # Code from module manywarnings:
+  # Code from module memchr:
   gl_FUNC_MEMCHR
   gl_STRING_MODULE_INDICATOR([memchr])
+  # Code from module minmax:
   gl_MINMAX
+  # Code from module mktime:
   gl_FUNC_MKTIME
+  gl_TIME_MODULE_INDICATOR([mktime])
+  # Code from module multiarch:
   gl_MULTIARCH
+  # Code from module netdb:
   gl_HEADER_NETDB
+  # Code from module netinet_in:
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
+  # Code from module rawmemchr:
   gl_FUNC_RAWMEMCHR
   gl_STRING_MODULE_INDICATOR([rawmemchr])
+  # Code from module read-file:
   gl_FUNC_READ_FILE
+  # Code from module realloc-posix:
   gl_FUNC_REALLOC_POSIX
   gl_STDLIB_MODULE_INDICATOR([realloc-posix])
+  # Code from module recvfrom:
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([recvfrom])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([recvfrom])
+  # Code from module select:
   gl_FUNC_SELECT
   gl_SYS_SELECT_MODULE_INDICATOR([select])
+  # Code from module sendto:
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([sendto])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([sendto])
+  # Code from module servent:
   gl_SERVENT
+  # Code from module setenv:
   gl_FUNC_SETENV
   gl_STDLIB_MODULE_INDICATOR([setenv])
+  # Code from module shutdown:
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([shutdown])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([shutdown])
+  # Code from module signal:
   gl_SIGNAL_H
+  # Code from module size_max:
   gl_SIZE_MAX
+  # Code from module snprintf:
   gl_FUNC_SNPRINTF
   gl_STDIO_MODULE_INDICATOR([snprintf])
+  # Code from module socket:
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([socket])
@@ -202,60 +411,105 @@ AC_SUBST([LTALLOCA])
     SYS_IOCTL_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS=1
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([socket])
+  # Code from module sockets:
   gl_SOCKETS
+  # Code from module socklen:
   gl_TYPE_SOCKLEN_T
+  # Code from module stdarg:
   gl_STDARG_H
+  # Code from module stdbool:
   AM_STDBOOL_H
+  # Code from module stddef:
   gl_STDDEF_H
+  # Code from module stdint:
   gl_STDINT_H
+  # Code from module stdio:
   gl_STDIO_H
+  # Code from module stdlib:
   gl_STDLIB_H
+  # Code from module strcase:
   gl_STRCASE
+  # Code from module strchrnul:
   gl_FUNC_STRCHRNUL
   gl_STRING_MODULE_INDICATOR([strchrnul])
+  # Code from module strdup-posix:
   gl_FUNC_STRDUP_POSIX
   gl_STRING_MODULE_INDICATOR([strdup])
+  # Code from module strerror:
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
+  # Code from module string:
   gl_HEADER_STRING_H
+  # Code from module strings:
   gl_HEADER_STRINGS_H
+  # Code from module strndup:
   gl_FUNC_STRNDUP
   gl_STRING_MODULE_INDICATOR([strndup])
+  # Code from module strnlen:
   gl_FUNC_STRNLEN
   gl_STRING_MODULE_INDICATOR([strnlen])
+  # Code from module strtok_r:
   gl_FUNC_STRTOK_R
   gl_STRING_MODULE_INDICATOR([strtok_r])
+  # Code from module strverscmp:
   gl_FUNC_STRVERSCMP
   gl_STRING_MODULE_INDICATOR([strverscmp])
+  # Code from module sys_select:
   gl_HEADER_SYS_SELECT
   AC_PROG_MKDIR_P
+  # Code from module sys_socket:
   gl_HEADER_SYS_SOCKET
   AC_PROG_MKDIR_P
+  # Code from module sys_stat:
   gl_HEADER_SYS_STAT_H
   AC_PROG_MKDIR_P
+  # Code from module sys_time:
   gl_HEADER_SYS_TIME_H
   AC_PROG_MKDIR_P
+  # Code from module time:
   gl_HEADER_TIME_H
+  # Code from module time_r:
   gl_TIME_R
+  gl_TIME_MODULE_INDICATOR([time_r])
+  # Code from module timegm:
   gl_FUNC_TIMEGM
+  gl_TIME_MODULE_INDICATOR([timegm])
+  # Code from module timespec:
   gl_TIMESPEC
+  # Code from module unistd:
   gl_UNISTD_H
+  # Code from module unsetenv:
   gl_FUNC_UNSETENV
   gl_STDLIB_MODULE_INDICATOR([unsetenv])
+  # Code from module useless-if-before-free:
+  # Code from module vasnprintf:
   gl_FUNC_VASNPRINTF
+  # Code from module vasprintf:
   gl_FUNC_VASPRINTF
   gl_STDIO_MODULE_INDICATOR([vasprintf])
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_][XGETTEXT_OPTION([--flag=asprintf:2:c-format])
      AM_][XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
+  # Code from module vc-list-files:
+  # Code from module verify:
+  # Code from module warn-on-use:
+  # Code from module warnings:
   AC_SUBST([WARN_CFLAGS])
+  # Code from module wchar:
   gl_WCHAR_H
+  # Code from module xalloc:
   gl_XALLOC
+  # Code from module xgetdomainname:
+  # Code from module xgethostname:
+  # Code from module xsize:
   gl_XSIZE
+  # Code from module xstrndup:
   gl_XSTRNDUP
+  # Code from module xvasprintf:
   gl_XVASPRINTF
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_][XGETTEXT_OPTION([--flag=xasprintf:1:c-format])])
+  # End of code from modules
   m4_ifval(gl_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl_LIBSOURCES_LIST[ ; do
@@ -385,6 +639,7 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
   build-aux/arg-nonnull.h
+  build-aux/c++defs.h
   build-aux/config.rpath
   build-aux/gendocs.sh
   build-aux/gnupload
@@ -652,7 +907,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/vasprintf.m4
   m4/warn-on-use.m4
   m4/warnings.m4
-  m4/wchar.m4
+  m4/wchar_h.m4
   m4/wchar_t.m4
   m4/wint_t.m4
   m4/xalloc.m4

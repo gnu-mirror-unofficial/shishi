@@ -25,7 +25,21 @@ AC_DEFUN([gl3_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
+  # Code from module areadlink:
+  # Code from module arg-nonnull:
+  # Code from module c++defs:
+  # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  # Code from module multiarch:
+  # Code from module readlink:
+  # Code from module stat:
+  # Code from module stdbool:
+  # Code from module stddef:
+  # Code from module stdint:
+  # Code from module sys_stat:
+  # Code from module time:
+  # Code from module warn-on-use:
+  # Code from module wchar:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -41,18 +55,33 @@ AC_DEFUN([gl3_INIT],
   m4_pushdef([gl3_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='db/gl'
+  # Code from module areadlink:
+  # Code from module arg-nonnull:
+  # Code from module c++defs:
+  # Code from module extensions:
+  # Code from module multiarch:
   gl_MULTIARCH
+  # Code from module readlink:
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
+  # Code from module stat:
   gl_FUNC_STAT
   gl_SYS_STAT_MODULE_INDICATOR([stat])
+  # Code from module stdbool:
   AM_STDBOOL_H
+  # Code from module stddef:
   gl_STDDEF_H
+  # Code from module stdint:
   gl_STDINT_H
+  # Code from module sys_stat:
   gl_HEADER_SYS_STAT_H
   AC_PROG_MKDIR_P
+  # Code from module time:
   gl_HEADER_TIME_H
+  # Code from module warn-on-use:
+  # Code from module wchar:
   gl_WCHAR_H
+  # End of code from modules
   m4_ifval(gl3_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl3_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl3_LIBSOURCES_LIST[ ; do
@@ -182,6 +211,7 @@ AC_DEFUN([gl3tests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl3_FILE_LIST], [
   build-aux/arg-nonnull.h
+  build-aux/c++defs.h
   build-aux/warn-on-use.h
   lib/areadlink.c
   lib/areadlink.h
@@ -208,7 +238,7 @@ AC_DEFUN([gl3_FILE_LIST], [
   m4/time_h.m4
   m4/unistd_h.m4
   m4/warn-on-use.m4
-  m4/wchar.m4
+  m4/wchar_h.m4
   m4/wchar_t.m4
   m4/wint_t.m4
 ])
