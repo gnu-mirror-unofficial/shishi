@@ -313,6 +313,7 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 
       memset (&hints, 0, sizeof (hints));
       hints.ai_socktype = SOCK_DGRAM;
+      hints.ai_flags = AI_ADDRCONFIG;
       port = xasprintf ("%d", srv->port);
       rc = getaddrinfo (srv->name, port, &hints, &ai);
       free (port);
@@ -392,6 +393,7 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
 
   memset (&hints, 0, sizeof (hints));
   hints.ai_socktype = SOCK_DGRAM;
+  hints.ai_flags = AI_ADDRCONFIG;
   rc = getaddrinfo (realm, port, &hints, &ai);
 
   if (rc != 0)
