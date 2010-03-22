@@ -45,14 +45,15 @@ gnutls_certificate_credentials x509cred;
 static void
 kdc_listen (void)
 {
-  struct listenspec *ls, *tmp;
+  struct listenspec *ls, *tmp, *last;
   int maxfd = 0;
   int yes;
 
-  for (ls = listenspec; ls; ls = ls->next)
+  for (last = NULL, ls = listenspec; ls; last = ls, ls = ls->next)
     {
       struct addrinfo *rp;
 
+    restart:
       for (rp = ls->ai; rp != NULL; rp = rp->ai_next)
 	{
 	  ls->sockfd = socket (ls->family, rp->ai_socktype, rp->ai_protocol);
@@ -111,13 +112,16 @@ kdc_listen (void)
       close (ls->sockfd);
     error:
       tmp = ls->next;
-      if (listenspec == ls)
+      if (last == NULL)
 	listenspec = tmp;
+      else
+	last->next = tmp;
       free (ls->str);
       free (ls);
       ls = tmp;
       if (!ls)
 	break;
+      goto restart;
     }
 
   if (maxfd == 0)
