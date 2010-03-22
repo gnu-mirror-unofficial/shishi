@@ -138,7 +138,7 @@ kdc_send (struct listenspec *ls)
 {
   if (ls->type == SOCK_DGRAM)
     syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via UDP",
-	    ls->bufpos, ls->addrname, ls->sockfd);
+	    ls->bufpos, ls->clientaddrname, ls->sockfd);
   else
     {
       syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via %s",
@@ -221,13 +221,13 @@ kdc_read (struct listenspec *ls)
     {
       int rc = getnameinfo ((struct sockaddr *) &ls->udpclientaddr,
 			    ls->udpclientaddrlen,
-			    ls->addrname, sizeof (ls->addrname),
+			    ls->clientaddrname, sizeof (ls->clientaddrname),
 			    NULL, 0, NI_NUMERICHOST);
       if (rc != 0)
-	strcpy (ls->addrname, "unknown address");
+	strcpy (ls->clientaddrname, "unknown address");
 
       syslog (LOG_DEBUG, "Read %d bytes from %s on socket %d\n",
-	      ls->bufpos, ls->addrname, ls->sockfd);
+	      ls->bufpos, ls->clientaddrname, ls->sockfd);
     }
   else
     syslog (LOG_DEBUG, "Read %d bytes from %s on socket %d\n",
