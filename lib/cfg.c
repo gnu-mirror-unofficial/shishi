@@ -27,8 +27,6 @@
 
 #include "low-crypto.h"
 
-#define KDC_SERVICE_PORT "\x6b\x65\x72\x62\x65\x72\x6f\x73"
-
 enum
 {
   DEFAULT_REALM_OPTION = 0,
@@ -281,7 +279,6 @@ shishi_cfg (Shishi * handle, const char *option)
 	    if (realm && strcmp (handle->realminfos[i].name, realm) == 0)
 	      {
 		struct Shishi_realminfo *ri = &handle->realminfos[i];
-		struct servent *se;
 		char *protstr;
 		int transport = UDP;
 
@@ -441,7 +438,7 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
     {
       fprintf (fh, "\tKDCs for realm %s:\n", handle->realminfos[i].name);
       for (j = 0; j < handle->realminfos[i].nkdcaddresses; j++)
-	fprintf (fh, "\t\tTransport %s host %s port %d\n",
+	fprintf (fh, "\t\tTransport %s host %s port %s\n",
 		 _shishi_transport2string (handle->realminfos[i].
 					   kdcaddresses[j].transport),
 		 handle->realminfos[i].kdcaddresses[j].hostname,
