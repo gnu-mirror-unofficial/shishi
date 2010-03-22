@@ -260,7 +260,7 @@ shishi_kdc_sendrecv_1 (Shishi * handle, struct Shishi_kdcinfo *ki,
 }
 
 static int
-shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
+shishi_kdc_sendrecv_static (Shishi * handle, const char *realm,
 			    const char *indata, size_t inlen,
 			    char **outdata, size_t * outlen,
 			    Shishi_tkts_hint * hint)
@@ -290,7 +290,7 @@ shishi_kdc_sendrecv_static (Shishi * handle, char *realm,
 }
 
 static int
-shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
+shishi_kdc_sendrecv_srv_1 (Shishi * handle, const char *realm,
 			   const char *indata, size_t inlen,
 			   char **outdata, size_t * outlen, Shishi_dns rrs)
 {
@@ -344,7 +344,7 @@ shishi_kdc_sendrecv_srv_1 (Shishi * handle, char *realm,
 }
 
 static int
-shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
+shishi_kdc_sendrecv_srv (Shishi * handle, const char *realm,
 			 const char *indata, size_t inlen,
 			 char **outdata, size_t * outlen)
 {
@@ -373,7 +373,7 @@ shishi_kdc_sendrecv_srv (Shishi * handle, char *realm,
 }
 
 static int
-shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
+shishi_kdc_sendrecv_direct (Shishi * handle, const char *realm,
 			    const char *indata, size_t inlen,
 			    char **outdata, size_t * outlen)
 {
@@ -432,7 +432,7 @@ shishi_kdc_sendrecv_direct (Shishi * handle, char *realm,
 }
 
 int
-shishi_kdc_sendrecv_hint (Shishi * handle, char *realm,
+shishi_kdc_sendrecv_hint (Shishi * handle, const char *realm,
 			  const char *indata, size_t inlen,
 			  char **outdata, size_t * outlen,
 			  Shishi_tkts_hint * hint)
@@ -452,7 +452,7 @@ shishi_kdc_sendrecv_hint (Shishi * handle, char *realm,
 }
 
 int
-shishi_kdc_sendrecv (Shishi * handle, char *realm,
+shishi_kdc_sendrecv (Shishi * handle, const char *realm,
 		     const char *indata, size_t inlen,
 		     char **outdata, size_t * outlen)
 {

@@ -2086,10 +2086,10 @@ extern int shishi_aprep_get_enc_part_etype (Shishi * handle,
 					    int32_t * etype);
 
 /* netio.c */
-extern int shishi_kdc_sendrecv (Shishi * handle, char *realm,
+extern int shishi_kdc_sendrecv (Shishi * handle, const char *realm,
 				const char *indata, size_t inlen,
 				char **outdata, size_t * outlen);
-extern int shishi_kdc_sendrecv_hint (Shishi * handle, char *realm,
+extern int shishi_kdc_sendrecv_hint (Shishi * handle, const char *realm,
 				     const char *indata, size_t inlen,
 				     char **outdata, size_t * outlen,
 				     Shishi_tkts_hint * hint);
