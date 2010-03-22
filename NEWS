@@ -8,6 +8,8 @@ See the end for copying conditions.
 
 ** shishid: Make server-side IPv6 support work.
 
+** doc: Fix spelling typos noticed by lintian.
+
 ** Update gnulib files.
 
 ** API and ABI modifications:
