@@ -228,6 +228,7 @@ sendrecv_host (Shishi * handle,
   do
     {
       char nodename[NI_MAXHOST];
+      size_t j = 0;
 
       rc = getnameinfo (ai->ai_addr, ai->ai_addrlen,
 			nodename, sizeof (nodename),
@@ -236,15 +237,21 @@ sendrecv_host (Shishi * handle,
 		      host, rc == 0 ? nodename : "unknown address", port,
 		      _shishi_transport2string (transport));
 
-      if (transport == TCP)
-	rc = sendrecv_tcp (handle, ai, indata, inlen, outdata, outlen);
-      else if (transport == TLS)
-	rc = _shishi_sendrecv_tls (handle, ai, indata, inlen, outdata, outlen);
-      else
-	rc = sendrecv_udp (handle, ai, indata, inlen, outdata, outlen);
+      do
+	{
+	  if (transport == TCP)
+	    rc = sendrecv_tcp (handle, ai, indata, inlen, outdata, outlen);
+	  else if (transport == TLS)
+	    rc = _shishi_sendrecv_tls (handle, ai, indata, inlen,
+				       outdata, outlen);
+	  else
+	    rc = sendrecv_udp (handle, ai, indata, inlen, outdata, outlen);
 
-      if (rc == SHISHI_KDC_TIMEOUT)
-	shishi_verbose (handle, "Timeout sending to KDC");
+	  if (rc != SHISHI_OK)
+	    shishi_verbose (handle, "Error sending to KDC: %s",
+			    shishi_strerror (rc));
+	}
+      while (rc == SHISHI_KDC_TIMEOUT && ++j < handle->kdcretries);
     }
   while (rc != SHISHI_OK && (ai = ai->ai_next));
 
@@ -257,9 +264,10 @@ sendrecv_srv3 (Shishi * handle,
 	       const char *realm,
 	       const char *indata, size_t inlen,
 	       char **outdata, size_t * outlen,
-	       Shishi_dns rrs)
+	       Shishi_dns rrs,
+	       bool *found_srv_records)
 {
-  int rc;
+  int rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
 
   for (; rrs; rrs = rrs->next)
     {
@@ -273,6 +281,7 @@ sendrecv_srv3 (Shishi * handle,
 
       shishi_verbose (handle, "Found SRV host %s port %d",
 		      srv->name, srv->port);
+      *found_srv_records = true;
 
       port = xasprintf ("%d", srv->port);
       rc = sendrecv_host (handle, transport,
@@ -281,11 +290,11 @@ sendrecv_srv3 (Shishi * handle,
 			  outdata, outlen);
       free (port);
 
-      if (rc != SHISHI_KDC_TIMEOUT)
+      if (rc == SHISHI_OK)
 	return rc;
     }
 
-  return SHISHI_KDC_TIMEOUT;
+  return rc;
 }
 
 static int
@@ -293,7 +302,8 @@ sendrecv_srv2 (Shishi * handle,
 	       int transport,
 	       const char *realm,
 	       const char *indata, size_t inlen,
-	       char **outdata, size_t * outlen)
+	       char **outdata, size_t * outlen,
+	       bool *found_srv_records)
 {
   Shishi_dns rrs;
   char *tmp;
@@ -310,12 +320,9 @@ sendrecv_srv2 (Shishi * handle,
 
   if (rrs)
     rc = sendrecv_srv3 (handle, transport, realm, indata, inlen,
-			outdata, outlen, rrs);
+			outdata, outlen, rrs, found_srv_records);
   else
-    {
-      shishi_error_printf (handle, "No KDC SRV RRs for realm %s", realm);
-      rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
-    }
+    rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
 
   shishi_resolv_free (rrs);
 
@@ -325,15 +332,15 @@ sendrecv_srv2 (Shishi * handle,
 static int
 sendrecv_srv (Shishi * handle, const char *realm,
 	      const char *indata, size_t inlen,
-	      char **outdata, size_t * outlen)
+	      char **outdata, size_t * outlen,
+	      bool *found_srv_records)
 {
-  int rc;
-  rc = sendrecv_srv2 (handle, UDP, realm,
-		      indata, inlen, outdata, outlen);
-  if (rc != SHISHI_KDC_TIMEOUT && rc != SHISHI_KDC_NOT_KNOWN_FOR_REALM)
+  int rc = sendrecv_srv2 (handle, UDP, realm, indata, inlen,
+			  outdata, outlen, found_srv_records);
+  if (rc == SHISHI_OK)
     return rc;
-  return sendrecv_srv2 (handle, TCP, realm,
-			indata, inlen, outdata, outlen);
+  return sendrecv_srv2 (handle, TCP, realm, indata, inlen,
+			outdata, outlen, found_srv_records);
 }
 
 static int
@@ -342,30 +349,29 @@ sendrecv_static (Shishi * handle, const char *realm,
 		 char **outdata, size_t * outlen)
 {
   struct Shishi_realminfo *ri;
-  size_t j, k;
+  size_t k;
   int rc;
 
   ri = _shishi_realminfo (handle, realm);
-  if (!ri)
+  if (!ri || ri->nkdcaddresses == 0)
     {
       shishi_error_printf (handle, "No KDC configured for %s", realm);
       return SHISHI_KDC_NOT_KNOWN_FOR_REALM;
     }
 
-  for (j = 0; j < handle->kdcretries; j++)
-    for (k = 0; k < ri->nkdcaddresses; k++)
-      {
-	rc = sendrecv_host (handle,
-			    ri->kdcaddresses[k].transport,
-			    ri->kdcaddresses[k].hostname,
-			    ri->kdcaddresses[k].port,
-			    indata, inlen, outdata, outlen);
-	if (rc != SHISHI_KDC_TIMEOUT && rc != SHISHI_KDC_NOT_KNOWN_FOR_REALM)
-	  return rc;
-      }
+  rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
+  for (k = 0; k < ri->nkdcaddresses; k++)
+    {
+      rc = sendrecv_host (handle,
+			  ri->kdcaddresses[k].transport,
+			  ri->kdcaddresses[k].hostname,
+			  ri->kdcaddresses[k].port,
+			  indata, inlen, outdata, outlen);
+      if (rc == SHISHI_OK)
+	return rc;
+    }
 
-  shishi_error_clear (handle);
-  return SHISHI_KDC_TIMEOUT;
+  return rc;
 }
 
 /**
@@ -392,16 +398,22 @@ shishi_kdc_sendrecv_hint (Shishi * handle, const char *realm,
 			  char **outdata, size_t * outlen,
 			  Shishi_tkts_hint * hint)
 {
+  struct Shishi_realminfo *ri;
+  bool found_srv_records = false;
   int rc;
 
-  rc = sendrecv_static (handle, realm, indata, inlen,
-				   outdata, outlen);
-  if (rc == SHISHI_KDC_NOT_KNOWN_FOR_REALM)
-    rc = sendrecv_srv (handle, realm,
-				  indata, inlen, outdata, outlen);
-  if (rc == SHISHI_KDC_NOT_KNOWN_FOR_REALM)
+  ri = _shishi_realminfo (handle, realm);
+  if (ri && ri->nkdcaddresses > 0)
+    /* If we have configured KDCs, never use DNS or direct method. */
+    return sendrecv_static (handle, realm, indata, inlen,
+			    outdata, outlen);
+
+  rc = sendrecv_srv (handle, realm, indata, inlen, outdata, outlen,
+		     &found_srv_records);
+  if (rc != SHISHI_OK && !found_srv_records)
     {
-      shishi_verbose (handle, "Trying realm host mapping for %s", realm);
+      shishi_verbose (handle, "No SRV RRs, trying realm host mapping for %s",
+		      realm);
       rc = sendrecv_host (handle, UDP, realm, NULL,
 			  indata, inlen, outdata, outlen);
     }
