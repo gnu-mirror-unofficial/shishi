@@ -1,5 +1,5 @@
 /* kdc.h --- Header file with common definitions for Shishid.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -107,11 +107,11 @@ struct listenspec
   char *str;
   int family;
   int listening;
-  struct sockaddr listenaddr;
-  struct sockaddr addr;
-  socklen_t addrlen;
-  struct sockaddr_in *sin;
-  int port;
+  struct addrinfo *ai;
+  char addrname[NI_MAXHOST];
+  struct sockaddr_storage udpclientaddr;
+  socklen_t udpclientaddrlen;
+  char clientaddrname[NI_MAXHOST];
   int type;
   int sockfd;
   char buf[BUFSIZ];		/* XXX */

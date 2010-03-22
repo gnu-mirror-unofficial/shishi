@@ -6,6 +6,8 @@ See the end for copying conditions.
 
 ** libshishi: Make client-side IPv6 support work.
 
+** shishid: Make server-side IPv6 support work.
+
 ** Update gnulib files.
 
 ** API and ABI modifications:

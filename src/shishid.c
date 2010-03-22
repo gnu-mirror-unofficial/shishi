@@ -51,15 +51,41 @@ kdc_listen (void)
 
   for (ls = listenspec; ls; ls = ls->next)
     {
-      if (!arg.quiet_flag)
-	printf ("Listening on %s...\n", ls->str);
+      struct addrinfo *rp;
 
-      ls->sockfd = socket (ls->family, ls->type, 0);
-      if (ls->sockfd < 0)
+      for (rp = ls->ai; rp != NULL; rp = rp->ai_next)
 	{
-	  error (0, errno, "Cannot listen on %s because socket failed",
-		 ls->str);
-	  goto error;
+	  ls->sockfd = socket (ls->family, rp->ai_socktype, rp->ai_protocol);
+	  if (ls->sockfd == -1)
+	    {
+	      error (0, errno, "Cannot listen on %s because socket failed",
+		     ls->str);
+	      continue;
+	    }
+
+	  if (bind (ls->sockfd, rp->ai_addr, rp->ai_addrlen) != 0)
+	    {
+	      error (0, errno, "Cannot listen on %s because bind failed",
+		     ls->str);
+	      close (ls->sockfd);
+	      ls->sockfd = -1;
+	      continue;
+	    }
+
+	  break; /* Success */
+	}
+
+      if (ls->sockfd < 0)
+	goto error;
+
+      if (!arg.quiet_flag)
+	{
+	  int rc = getnameinfo (rp->ai_addr, rp->ai_addrlen,
+				ls->addrname, sizeof (ls->addrname),
+				NULL, 0, NI_NUMERICHOST);
+	  if (rc != 0)
+	    strcpy (ls->addrname, "unknown address");
+	  printf ("Listening on %s (%s)...\n", ls->str, ls->addrname);
 	}
 
       yes = 1;
@@ -67,13 +93,6 @@ kdc_listen (void)
 		      (char *) &yes, sizeof (yes)) < 0)
 	{
 	  error (0, errno, "Cannot listen on %s because setsockopt failed",
-		 ls->str);
-	  goto errorclose;
-	}
-
-      if (bind (ls->sockfd, &ls->listenaddr, sizeof (ls->listenaddr)) != 0)
-	{
-	  error (0, errno, "Cannot listen on %s because bind failed",
 		 ls->str);
 	  goto errorclose;
 	}
@@ -370,13 +389,7 @@ parse_listen (char *listenstr)
 			       ", \t", &ptrptr)); i++)
     {
       char *service, *proto;
-      struct servent *se;
-      struct hostent *he;
       struct listenspec *ls;
-      struct sockaddr_in *sockin;
-#ifdef WITH_IPV6
-      struct sockaddr_in6 *sockin6;
-#endif
 
       ls = xzalloc (sizeof (*ls));
       ls->next = listenspec;
@@ -385,10 +398,6 @@ parse_listen (char *listenstr)
       ls->str = strdup (val);
       ls->bufpos = 0;
       ls->listening = 1;
-      sockin = (struct sockaddr_in *) &ls->listenaddr;
-#ifdef WITH_IPV6
-      sockin6 = (struct sockaddr_in6 *) &ls->listenaddr;
-#endif
 
       proto = strrchr (val, '/');
       if (proto == NULL)
@@ -409,24 +418,6 @@ parse_listen (char *listenstr)
       *service = '\0';
       service++;
 
-      se = getservbyname (service, proto);
-      if (se)
-	ls->port = ntohs (se->s_port);
-      else if (strcmp (service, "kerberos") == 0)
-	ls->port = 88;
-      else if (atoi (service) != 0)
-	ls->port = atoi (service);
-      else
-	error (EXIT_FAILURE, 0, "Unknown service `%s' in listen spec: `%s'",
-	       service, ls->str);
-
-#ifdef WITH_IPV6
-      if (ls->family == AF_INET6)
-	sockin6->sin6_port = htons (ls->port);
-      else
-#endif
-	sockin->sin_port = htons (ls->port);
-
       if (strncmp (val, FAMILY_IPV4 ":", strlen (FAMILY_IPV4 ":")) == 0)
 	{
 	  ls->family = AF_INET;
@@ -444,35 +435,33 @@ parse_listen (char *listenstr)
 
       if (strcmp (val, "*") == 0)
 	{
-#ifdef WITH_IPV6
-	  if (ls->family == AF_INET6)
-	    sockin6->sin6_addr = in6addr_any;
-	  else
-#endif
-	    sockin->sin_addr.s_addr = htonl (INADDR_ANY);
-	}
-      else if ((he = gethostbyname (val)))
-	{
-	  if (he->h_addrtype == AF_INET)
-	    {
-	      sockin->sin_family = AF_INET;
-	      memcpy (&sockin->sin_addr, he->h_addr_list[0], he->h_length);
-	    }
-#ifdef WITH_IPV6
-	  else if (he->h_addrtype == AF_INET6)
-	    {
-	      sockin6->sin6_family = AF_INET6;
-	      memcpy (&sockin6->sin6_addr, he->h_addr_list[0], he->h_length);
-	    }
-#endif
-	  else
-	    error (EXIT_FAILURE, 0, "Unknown protocol family (%d) returned "
-		   "by gethostbyname(\"%s\"): `%s'", he->h_addrtype,
-		   val, ls->str);
+	  struct addrinfo hints;
+	  int rc;
+
+	  memset (&hints, 0, sizeof (hints));
+	  hints.ai_family = ls->family;
+	  hints.ai_socktype = ls->type;
+	  hints.ai_flags = AI_PASSIVE;
+	  rc = getaddrinfo (NULL, "kerberos", &hints, &ls->ai);
+	  if (rc != 0)
+	    error (EXIT_FAILURE, errno, "Cannot get listen socket for %s",
+		   ls->str);
 	}
       else
-	error (EXIT_FAILURE, 0, "Unknown host `%s' in listen spec: `%s'",
-	       val, ls->str);
+	{
+	  struct addrinfo hints;
+	  int rc;
+
+	  memset (&hints, 0, sizeof (hints));
+	  hints.ai_family = ls->family;
+	  hints.ai_socktype = ls->type;
+	  hints.ai_flags = AI_PASSIVE;
+	  rc = getaddrinfo (val, "kerberos", &hints, &ls->ai);
+	  if (rc != 0)
+	    error (EXIT_FAILURE, errno,
+		   "Cannot get host %s listen socket for %s",
+		   val, ls->str);
+	}
     }
 }
 

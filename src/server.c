@@ -30,6 +30,9 @@ static void
 kdc_accept (struct listenspec *ls)
 {
   struct listenspec *newls;
+  struct sockaddr addr;
+  socklen_t addrlen;
+  int rc;
 
   newls = xzalloc (sizeof (*newls));
   newls->next = ls->next;
@@ -37,11 +40,15 @@ kdc_accept (struct listenspec *ls)
 
   newls->bufpos = 0;
   newls->type = ls->type;
-  newls->addrlen = sizeof (newls->addr);
-  newls->sockfd = accept (ls->sockfd, &newls->addr, &newls->addrlen);
-  newls->sin = (struct sockaddr_in *) &newls->addr;
-  asprintf (&newls->str, "%s peer %s", ls->str,
-	    inet_ntoa (newls->sin->sin_addr));
+  addrlen = sizeof (addr);
+  newls->sockfd = accept (ls->sockfd, &addr, &addrlen);
+
+  rc = getnameinfo (&addr, addrlen,
+		    newls->addrname, sizeof (newls->addrname),
+		    NULL, 0, NI_NUMERICHOST);
+  if (rc != 0)
+    strcpy (newls->addrname, "unknown address");
+  asprintf (&newls->str, "%s (%s)", newls->addrname, ls->str);
 
   syslog (LOG_DEBUG, "Accepted socket %d from socket %d as %s",
 	  newls->sockfd, ls->sockfd, newls->str);
@@ -105,8 +112,12 @@ kdc_send1 (struct listenspec *ls)
       sent_bytes = gnutls_record_send (ls->session, ls->buf, ls->bufpos);
     else
 #endif
-      sent_bytes = sendto (ls->sockfd, ls->buf, ls->bufpos,
-			   0, &ls->addr, ls->addrlen);
+      if (ls->type == SOCK_DGRAM)
+	sent_bytes = sendto (ls->sockfd, ls->buf, ls->bufpos, 0,
+			     (struct sockaddr *) &ls->udpclientaddr,
+			     ls->udpclientaddrlen);
+      else
+	sent_bytes = send (ls->sockfd, ls->buf, ls->bufpos, 0);
   while (sent_bytes == -1 && errno == EAGAIN);
 
   if (sent_bytes < 0)
@@ -127,7 +138,7 @@ kdc_send (struct listenspec *ls)
 {
   if (ls->type == SOCK_DGRAM)
     syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via UDP",
-	    ls->bufpos, ls->str, ls->sockfd);
+	    ls->bufpos, ls->addrname, ls->sockfd);
   else
     {
       syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via %s",
@@ -164,7 +175,6 @@ kdc_read (struct listenspec *ls)
 {
   ssize_t read_bytes;
 
-  ls->addrlen = sizeof (ls->addr);
 #ifdef USE_STARTTLS
   if (ls->usetls)
     read_bytes = gnutls_record_recv (ls->session,
@@ -172,9 +182,18 @@ kdc_read (struct listenspec *ls)
 				     sizeof (ls->buf) - ls->bufpos);
   else
 #endif
-    read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
-			   sizeof (ls->buf) - ls->bufpos, 0,
-			   &ls->addr, &ls->addrlen);
+    if (ls->type == SOCK_DGRAM)
+      {
+	ls->udpclientaddrlen = sizeof (ls->udpclientaddr);
+	read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
+			       sizeof (ls->buf) - ls->bufpos, 0,
+			       (struct sockaddr *) &ls->udpclientaddr,
+			       &ls->udpclientaddrlen);
+      }
+    else
+      read_bytes = recv (ls->sockfd, ls->buf + ls->bufpos,
+			 sizeof (ls->buf) - ls->bufpos, 0);
+
   if (read_bytes < 0)
     {
 #ifdef USE_STARTTLS
@@ -198,8 +217,21 @@ kdc_read (struct listenspec *ls)
 
   ls->bufpos += read_bytes;
 
-  syslog (LOG_DEBUG, "Has %d bytes from %s on socket %d\n",
-	  ls->bufpos, ls->str, ls->sockfd);
+  if (ls->type == SOCK_DGRAM)
+    {
+      int rc = getnameinfo ((struct sockaddr *) &ls->udpclientaddr,
+			    ls->udpclientaddrlen,
+			    ls->addrname, sizeof (ls->addrname),
+			    NULL, 0, NI_NUMERICHOST);
+      if (rc != 0)
+	strcpy (ls->addrname, "unknown address");
+
+      syslog (LOG_DEBUG, "Read %d bytes from %s on socket %d\n",
+	      ls->bufpos, ls->addrname, ls->sockfd);
+    }
+  else
+    syslog (LOG_DEBUG, "Read %d bytes from %s on socket %d\n",
+	    ls->bufpos, ls->str, ls->sockfd);
 
   return 0;
 }
@@ -214,7 +246,6 @@ static int
 kdc_ready (struct listenspec *ls)
 {
   size_t waitfor = ls->bufpos >= 4 ? C2I (ls->buf) : 4;
-
 
   if (ls->type == SOCK_DGRAM && ls->bufpos > 0)
     return 1;
@@ -235,8 +266,8 @@ kdc_process (struct listenspec *ls)
   char *p;
   ssize_t plen;
 
-  syslog (LOG_DEBUG, "Processing %d from %s on socket %d",
-	  ls->bufpos, ls->str, ls->sockfd);
+  syslog (LOG_DEBUG, "Processing %d bytes on socket %d",
+	  ls->bufpos, ls->sockfd);
 
   if (ls->type == SOCK_DGRAM)
     plen = process (ls->buf, ls->bufpos, &p);
@@ -245,8 +276,7 @@ kdc_process (struct listenspec *ls)
 
   if (plen <= 0)
     {
-      syslog (LOG_ERR, "Processing request failed for %s on socket %d (%d)",
-	      ls->str, ls->sockfd, plen);
+      syslog (LOG_ERR, "Processing request failed on socket %d", ls->sockfd);
       memcpy (ls->buf, fatal_krberror, fatal_krberror_len);
       ls->bufpos = fatal_krberror_len;
     }
@@ -257,8 +287,8 @@ kdc_process (struct listenspec *ls)
       free (p);
     }
 
-  syslog (LOG_DEBUG, "Have %d bytes for %s on socket %d",
-	  ls->bufpos, ls->str, ls->sockfd);
+  syslog (LOG_DEBUG, "Generated %d bytes response for socket %d",
+	  ls->bufpos, ls->sockfd);
 }
 
 int quit = 0;
@@ -303,8 +333,8 @@ kdc_loop (void)
 		{
 		  maxfd = MAX (maxfd, ls->sockfd + 1);
 		  if (!arg.quiet_flag)
-		    syslog (LOG_DEBUG, "Listening on %s socket %d\n",
-			    ls->str, ls->sockfd);
+		    syslog (LOG_DEBUG, "Listening on %s (%s) socket %d\n",
+			    ls->str, ls->addrname, ls->sockfd);
 		  FD_SET (ls->sockfd, &readfds);
 		}
 	    }
