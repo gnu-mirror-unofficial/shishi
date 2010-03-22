@@ -208,8 +208,8 @@ shishi_tkts_nth (Shishi_tkts * tkts, int ticketno)
  *
  * Remove a ticket, indexed by @ticketno, in ticket set.
  *
- * Return value: Returns SHISHI_OK if succesful or if ticketno larger
- *   than size of ticket set.
+ * Return value: %SHISHI_OK if successful or if @ticketno larger than
+ *   size of ticket set.
  **/
 int
 shishi_tkts_remove (Shishi_tkts * tkts, int ticketno)
