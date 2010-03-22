@@ -11,6 +11,8 @@ See the end for copying conditions.
 ** doc: Fix spelling typos noticed by lintian.
 
 ** Update gnulib files.
+Including moving the 'stat' module from db/ to gl/ so that libshishi
+builds properly.
 
 ** API and ABI modifications:
 No changes since last version.
