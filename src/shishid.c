@@ -51,42 +51,23 @@ kdc_listen (void)
 
   for (last = NULL, ls = listenspec; ls; last = ls, ls = ls->next)
     {
-      struct addrinfo *rp;
-
     restart:
-      for (rp = ls->ai; rp != NULL; rp = rp->ai_next)
+      ls->sockfd = socket (ls->ai.ai_family, ls->ai.ai_socktype,
+			   ls->ai.ai_protocol);
+      if (ls->sockfd == -1)
 	{
-	  ls->sockfd = socket (ls->family, rp->ai_socktype, rp->ai_protocol);
-	  if (ls->sockfd == -1)
-	    {
-	      error (0, errno, "Cannot listen on %s because socket failed",
-		     ls->str);
-	      continue;
-	    }
-
-	  if (bind (ls->sockfd, rp->ai_addr, rp->ai_addrlen) != 0)
-	    {
-	      error (0, errno, "Cannot listen on %s because bind failed",
-		     ls->str);
-	      close (ls->sockfd);
-	      ls->sockfd = -1;
-	      continue;
-	    }
-
-	  break; /* Success */
+	  error (0, errno,
+		 "Cannot listen on %s because socket (%d,%d,%d) failed",
+		 ls->str, ls->ai.ai_family, ls->ai.ai_socktype,
+		 ls->ai.ai_protocol);
+	  goto error;
 	}
 
-      if (ls->sockfd < 0)
-	goto error;
-
-      if (!arg.quiet_flag)
+      if (bind (ls->sockfd, ls->ai.ai_addr, ls->ai.ai_addrlen) != 0)
 	{
-	  int rc = getnameinfo (rp->ai_addr, rp->ai_addrlen,
-				ls->addrname, sizeof (ls->addrname),
-				NULL, 0, NI_NUMERICHOST);
-	  if (rc != 0)
-	    strcpy (ls->addrname, "unknown address");
-	  printf ("Listening on %s (%s)...\n", ls->str, ls->addrname);
+	  error (0, errno, "Cannot listen on %s because bind %s failed",
+		 ls->str, ls->addrname);
+	  goto errorclose;
 	}
 
       yes = 1;
@@ -98,12 +79,16 @@ kdc_listen (void)
 	  goto errorclose;
 	}
 
-      if (ls->type == SOCK_STREAM && listen (ls->sockfd, SOMAXCONN) != 0)
+      if (ls->ai.ai_socktype == SOCK_STREAM
+	  && listen (ls->sockfd, SOMAXCONN) != 0)
 	{
 	  error (0, errno, "Cannot listen on %s because listen failed",
 		 ls->str);
 	  goto errorclose;
 	}
+
+      if (!arg.quiet_flag)
+	printf ("Listening on %s (%s)...\n", ls->str, ls->addrname);
 
       maxfd++;
       continue;
@@ -128,18 +113,20 @@ kdc_listen (void)
     error (EXIT_FAILURE, 0, "cannot bind any ports");
 
   if (!arg.quiet_flag)
-    printf ("Listening on %d ports...\n", maxfd);
+    printf ("Listening on %d sockets...\n", maxfd);
 }
 
 /* Close open sockets, reporting any errors. */
 static void
 kdc_unlisten (void)
 {
-  struct listenspec *ls;
+  struct listenspec *ls, *tmp;
   int rc;
 
-  for (ls = listenspec; ls; ls = ls->next)
+  for (ls = listenspec; ls; ls = tmp)
     {
+      tmp = ls->next;
+
       if (!ls->listening)
 	syslog (LOG_NOTICE,
 		"Closing outstanding connection to %s on socket %d",
@@ -155,7 +142,10 @@ kdc_unlisten (void)
 		    ls->str, ls->sockfd, strerror (errno), errno);
 	}
 
+
+      free (ls->ai.ai_addr);
       free (ls->str);
+      free (ls);
     }
 }
 
@@ -369,17 +359,10 @@ doit (void)
   shishi_done (handle);
 }
 
-#define FAMILY_IPV4 "IPv4"
-#define FAMILY_IPV6 "IPv6"
+#define FAMILY_IPV4 "IPv4:"
+#define FAMILY_IPV6 "IPv6:"
 
-#ifdef WITH_IPV6
-# define LISTEN_DEFAULT FAMILY_IPV4 ":*:kerberos/udp, " \
-  FAMILY_IPV4 ":*:kerberos/tcp, "			\
-  FAMILY_IPV6 ":*:kerberos/udp, "			\
-  FAMILY_IPV6 ":*:kerberos/tcp"
-#else
-# define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
-#endif
+#define LISTEN_DEFAULT "*:kerberos/udp, *:kerberos/tcp"
 
 /* Parse the --listen parameter, creating listenspec elements. */
 static void
@@ -392,80 +375,88 @@ parse_listen (char *listenstr)
   for (i = 0; (val = strtok_r (i == 0 ? listenstr : NULL,
 			       ", \t", &ptrptr)); i++)
     {
-      char *service, *proto;
+      char *name, *service, *proto;
       struct listenspec *ls;
+      struct addrinfo hints, *res, *p;
+      int rc;
 
-      ls = xzalloc (sizeof (*ls));
-      ls->next = listenspec;
-      listenspec = ls;
+      name = xstrdup (val);
 
-      ls->str = strdup (val);
-      ls->bufpos = 0;
-      ls->listening = 1;
+      memset (&hints, 0, sizeof (hints));
+
+      if (strncmp (val, FAMILY_IPV4, strlen (FAMILY_IPV4)) == 0)
+	{
+	  hints.ai_family = AF_INET;
+	  val += strlen (FAMILY_IPV4);
+	}
+#ifdef WITH_IPV6
+      else if (strncmp (val, FAMILY_IPV6, strlen (FAMILY_IPV6)) == 0)
+	{
+	  hints.ai_family = AF_INET6;
+	  val += strlen (FAMILY_IPV6);
+	}
+#endif
+      else
+	hints.ai_family = AF_UNSPEC;
 
       proto = strrchr (val, '/');
       if (proto == NULL)
-	error (EXIT_FAILURE, 0, "Could not find type in listen spec: `%s'",
-	       ls->str);
+	error (EXIT_FAILURE, 0, "Could not find protocol type in: `%s'",
+	       name);
       *proto = '\0';
       proto++;
 
       if (strcmp (proto, "tcp") == 0)
-	ls->type = SOCK_STREAM;
+	hints.ai_socktype = SOCK_STREAM;
+      else if (strcmp (proto, "udp") == 0)
+	hints.ai_socktype = SOCK_DGRAM;
       else
-	ls->type = SOCK_DGRAM;
+	error (EXIT_FAILURE, 0, "Unknown protocol type in `%s': %s",
+	       name, proto);
 
       service = strrchr (val, ':');
       if (service == NULL)
 	error (EXIT_FAILURE, 0, "Could not find service in listen spec: `%s'",
-	       ls->str);
+	       name);
       *service = '\0';
       service++;
 
-      if (strncmp (val, FAMILY_IPV4 ":", strlen (FAMILY_IPV4 ":")) == 0)
-	{
-	  ls->family = AF_INET;
-	  val += strlen (FAMILY_IPV4 ":");
-	}
-#ifdef WITH_IPV6
-      else if (strncmp (val, FAMILY_IPV6 ":", strlen (FAMILY_IPV6 ":")) == 0)
-	{
-	  ls->family = AF_INET6;
-	  val += strlen (FAMILY_IPV6 ":");
-	}
-#endif
-      else
-	ls->family = AF_INET;
+      hints.ai_flags = AI_ADDRCONFIG;
 
       if (strcmp (val, "*") == 0)
 	{
-	  struct addrinfo hints;
-	  int rc;
-
-	  memset (&hints, 0, sizeof (hints));
-	  hints.ai_family = ls->family;
-	  hints.ai_socktype = ls->type;
-	  hints.ai_flags = AI_PASSIVE;
-	  rc = getaddrinfo (NULL, "kerberos", &hints, &ls->ai);
-	  if (rc != 0)
-	    error (EXIT_FAILURE, errno, "Cannot get listen socket for %s",
-		   ls->str);
+	  hints.ai_flags |= AI_PASSIVE;
+	  rc = getaddrinfo (NULL, "kerberos", &hints, &res);
 	}
       else
-	{
-	  struct addrinfo hints;
-	  int rc;
+	rc = getaddrinfo (val, "kerberos", &hints, &res);
+      if (rc != 0)
+	error (EXIT_FAILURE, errno,
+	       "Cannot get listen socket for %s (host %s)",
+	       name, val);
 
-	  memset (&hints, 0, sizeof (hints));
-	  hints.ai_family = ls->family;
-	  hints.ai_socktype = ls->type;
-	  hints.ai_flags = AI_PASSIVE;
-	  rc = getaddrinfo (val, "kerberos", &hints, &ls->ai);
+      for (p = res; p; p = p->ai_next)
+	{
+	  ls = xzalloc (sizeof (*ls));
+	  ls->next = listenspec;
+	  listenspec = ls;
+
+	  ls->str = xstrdup (name);
+	  ls->bufpos = 0;
+	  ls->listening = 1;
+
+	  memcpy (&ls->ai, p, sizeof (*p));
+	  ls->ai.ai_addr = xmemdup (p->ai_addr, p->ai_addrlen);
+	  ls->ai.ai_next = NULL;
+
+	  rc = getnameinfo (ls->ai.ai_addr, ls->ai.ai_addrlen,
+			    ls->addrname, sizeof (ls->addrname),
+			    NULL, 0, NI_NUMERICHOST);
 	  if (rc != 0)
-	    error (EXIT_FAILURE, errno,
-		   "Cannot get host %s listen socket for %s",
-		   val, ls->str);
+	    strncpy (ls->addrname, "unknown address", sizeof (ls->addrname));
 	}
+      freeaddrinfo (res);
+      free (name);
     }
 }
 

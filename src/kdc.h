@@ -105,14 +105,12 @@
 struct listenspec
 {
   char *str;
-  int family;
   int listening;
-  struct addrinfo *ai;
+  struct addrinfo ai;
   char addrname[NI_MAXHOST];
   struct sockaddr_storage udpclientaddr;
   socklen_t udpclientaddrlen;
   char clientaddrname[NI_MAXHOST];
-  int type;
   int sockfd;
   char buf[BUFSIZ];		/* XXX */
   size_t bufpos;

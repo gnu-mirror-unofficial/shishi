@@ -39,7 +39,7 @@ kdc_accept (struct listenspec *ls)
   ls->next = newls;
 
   newls->bufpos = 0;
-  newls->type = ls->type;
+  newls->ai.ai_socktype = ls->ai.ai_socktype;
   addrlen = sizeof (addr);
   newls->sockfd = accept (ls->sockfd, &addr, &addrlen);
 
@@ -112,7 +112,7 @@ kdc_send1 (struct listenspec *ls)
       sent_bytes = gnutls_record_send (ls->session, ls->buf, ls->bufpos);
     else
 #endif
-      if (ls->type == SOCK_DGRAM)
+      if (ls->ai.ai_socktype == SOCK_DGRAM)
 	sent_bytes = sendto (ls->sockfd, ls->buf, ls->bufpos, 0,
 			     (struct sockaddr *) &ls->udpclientaddr,
 			     ls->udpclientaddrlen);
@@ -136,7 +136,7 @@ kdc_send1 (struct listenspec *ls)
 static void
 kdc_send (struct listenspec *ls)
 {
-  if (ls->type == SOCK_DGRAM)
+  if (ls->ai.ai_socktype == SOCK_DGRAM)
     syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via UDP",
 	    ls->bufpos, ls->clientaddrname, ls->sockfd);
   else
@@ -182,7 +182,7 @@ kdc_read (struct listenspec *ls)
 				     sizeof (ls->buf) - ls->bufpos);
   else
 #endif
-    if (ls->type == SOCK_DGRAM)
+    if (ls->ai.ai_socktype == SOCK_DGRAM)
       {
 	ls->udpclientaddrlen = sizeof (ls->udpclientaddr);
 	read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
@@ -208,7 +208,7 @@ kdc_read (struct listenspec *ls)
       return -1;
     }
 
-  if (read_bytes == 0 && ls->type == SOCK_STREAM)
+  if (read_bytes == 0 && ls->ai.ai_socktype == SOCK_STREAM)
     {
       syslog (LOG_DEBUG, "Peer %s disconnected on socket %d\n",
 	      ls->str, ls->sockfd);
@@ -217,7 +217,7 @@ kdc_read (struct listenspec *ls)
 
   ls->bufpos += read_bytes;
 
-  if (ls->type == SOCK_DGRAM)
+  if (ls->ai.ai_socktype == SOCK_DGRAM)
     {
       int rc = getnameinfo ((struct sockaddr *) &ls->udpclientaddr,
 			    ls->udpclientaddrlen,
@@ -247,12 +247,12 @@ kdc_ready (struct listenspec *ls)
 {
   size_t waitfor = ls->bufpos >= 4 ? C2I (ls->buf) : 4;
 
-  if (ls->type == SOCK_DGRAM && ls->bufpos > 0)
+  if (ls->ai.ai_socktype == SOCK_DGRAM && ls->bufpos > 0)
     return 1;
   else if (ls->bufpos > 4 && waitfor + 4 == ls->bufpos)
     return 1;
 
-  if (ls->type == SOCK_STREAM)
+  if (ls->ai.ai_socktype == SOCK_STREAM)
     syslog (LOG_DEBUG, "Got %d bytes of %d bytes from %s on socket %d\n",
 	    ls->bufpos, waitfor + 4, ls->str, ls->sockfd);
 
@@ -269,7 +269,7 @@ kdc_process (struct listenspec *ls)
   syslog (LOG_DEBUG, "Processing %d bytes on socket %d",
 	  ls->bufpos, ls->sockfd);
 
-  if (ls->type == SOCK_DGRAM)
+  if (ls->ai.ai_socktype == SOCK_DGRAM)
     plen = process (ls->buf, ls->bufpos, &p);
   else
     plen = process (ls->buf + 4, ls->bufpos - 4, &p);
@@ -352,7 +352,7 @@ kdc_loop (void)
       for (ls = listenspec; ls; ls = ls->next)
 	if (ls->sockfd > 0 && FD_ISSET (ls->sockfd, &readfds))
 	  {
-	    if (ls->type == SOCK_STREAM && ls->listening)
+	    if (ls->ai.ai_socktype == SOCK_STREAM && ls->listening)
 	      kdc_accept (ls);
 	    else if (kdc_read (ls) < 0)
 	      ls = kdc_close (ls);
