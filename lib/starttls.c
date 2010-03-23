@@ -68,12 +68,11 @@ _shishi_tls_done (Shishi * handle)
  *
  * Derive EncKDCRepPart key from TLS PRF?  Hm.
  *
- * The code currently implements
- * draft-josefsson-krb-tcp-expansion-02.txt and
+ * The code currently implements rfc5021.txt and
  * draft-josefsson-kerberos5-starttls-02.txt.
  */
 
-#define STARTTLS_CLIENT_REQUEST "\x70\x00\x00\x01"
+#define STARTTLS_CLIENT_REQUEST "\x80\x00\x00\x01"
 #define STARTTLS_SERVER_ACCEPT "\x00\x00\x00\x00"
 #define STARTTLS_LEN 4
 
@@ -88,7 +87,8 @@ _shishi_sendrecv_tls1 (Shishi * handle,
 		       int sockfd,
 		       gnutls_session session,
 		       const char *indata, size_t inlen,
-		       char **outdata, size_t * outlen, size_t timeout)
+		       char **outdata, size_t * outlen,
+		       size_t timeout, bool have_cas)
 {
   int ret;
   ssize_t bytes_sent, bytes_read;
@@ -125,15 +125,18 @@ _shishi_sendrecv_tls1 (Shishi * handle,
   else
     shishi_error_printf (handle, "TLS handshake completed (not resumed)");
 
-  ret = gnutls_certificate_verify_peers2 (session, &status);
-  if (ret != 0 || status != 0)
+  if (have_cas)
     {
-      shishi_error_printf (handle, "TLS verification of CA failed (%d/%d)",
-			   ret, status);
-      return SHISHI_RECVFROM_ERROR;
-    }
+      ret = gnutls_certificate_verify_peers2 (session, &status);
+      if (ret != 0 || status != 0)
+	{
+	  shishi_error_printf (handle, "TLS verification of CA failed (%d/%d)",
+			       ret, status);
+	  return SHISHI_RECVFROM_ERROR;
+	}
 
-  /* XXX: We need to verify the CA cert further here. */
+      /* XXX: We need to verify the CA cert further here. */
+    }
 
   if (session_data_size == 0)
     {
@@ -239,6 +242,7 @@ _shishi_sendrecv_tls (Shishi * handle,
   const char *cafile = shishi_x509ca_default_file (handle);
   const char *certfile = shishi_x509cert_default_file (handle);
   const char *keyfile = shishi_x509key_default_file (handle);
+  bool have_cas = false;
 
   sockfd = socket (ai->ai_family, ai->ai_socktype, ai->ai_protocol);
   if (sockfd < 0)
@@ -303,7 +307,10 @@ _shishi_sendrecv_tls (Shishi * handle,
       return SHISHI_CRYPTO_ERROR;
     }
   else if (ret == GNUTLS_E_SUCCESS)
-    shishi_error_printf (handle, "Loaded CA certificate");
+    {
+      shishi_error_printf (handle, "Loaded CA certificate");
+      have_cas = true;
+    }
 
   ret = gnutls_certificate_set_x509_key_file (x509cred, certfile,
 					      keyfile, GNUTLS_X509_FMT_PEM);
@@ -334,7 +341,8 @@ _shishi_sendrecv_tls (Shishi * handle,
 
   /* Core part. */
   outerr = _shishi_sendrecv_tls1 (handle, sockfd, session, indata, inlen,
-				  outdata, outlen, handle->kdctimeout);
+				  outdata, outlen, handle->kdctimeout,
+				  have_cas);
 
   ret = shutdown (sockfd, SHUT_RDWR);
   if (ret != 0)
