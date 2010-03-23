@@ -254,7 +254,7 @@ logtlsinfo (gnutls_session session)
     }
 }
 
-#define STARTTLS_CLIENT_REQUEST "\x70\x00\x00\x01"
+#define STARTTLS_CLIENT_REQUEST "\x80\x00\x00\x01"
 #define STARTTLS_SERVER_ACCEPT "\x00\x00\x00\x00"
 #define STARTTLS_LEN 4
 
@@ -262,87 +262,92 @@ logtlsinfo (gnutls_session session)
 int
 kdc_extension (struct listenspec *ls)
 {
+  const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
+			  GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
+  };
   int rc;
 
-  if (!ls->usetls && ls->ai.ai_socktype == SOCK_STREAM && ls->bufpos == 4 &&
-      x509cred && memcmp (ls->buf, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN) == 0)
+  if (ls->usetls
+      || ls->ai.ai_socktype != SOCK_STREAM
+      || ls->bufpos < 4
+      || (ls->bufpos >= 4 && !(ls->buf[0] & 0x80)))
+    return 0;
+
+  if (x509cred == NULL || memcmp (ls->buf, STARTTLS_CLIENT_REQUEST,
+				  STARTTLS_LEN) != 0)
+    return kdc_extension_reject (ls);
+
+  syslog (LOG_INFO, "Trying STARTTLS");
+
+  memcpy (ls->buf, STARTTLS_SERVER_ACCEPT, STARTTLS_LEN);
+  ls->bufpos = STARTTLS_LEN;
+
+  kdc_send1 (ls);
+
+  rc = gnutls_init (&ls->session, GNUTLS_SERVER);
+  if (rc != GNUTLS_E_SUCCESS)
     {
-      const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
-	GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
-      };
-
-      syslog (LOG_INFO, "Trying STARTTLS");
-
-      memcpy (ls->buf, STARTTLS_SERVER_ACCEPT, STARTTLS_LEN);
-      ls->bufpos = STARTTLS_LEN;
-
-      kdc_send1 (ls);
-
-      rc = gnutls_init (&ls->session, GNUTLS_SERVER);
-      if (rc != GNUTLS_E_SUCCESS)
-	{
-	  syslog (LOG_ERR, "TLS initialization failed (%d): %s", rc,
-		  gnutls_strerror (rc));
-	  return -1;
-	}
-
-      rc = gnutls_set_default_priority (ls->session);
-      if (rc != GNUTLS_E_SUCCESS)
-	{
-	  syslog (LOG_ERR, "TLS failed, gnutls_sdp %d: %s", rc,
-		  gnutls_strerror (rc));
-	  return -1;
-	}
-
-      rc = gnutls_kx_set_priority (ls->session, kx_prio);
-      if (rc != GNUTLS_E_SUCCESS)
-	{
-	  syslog (LOG_ERR, "TLS failed, gnutls_ksp %d: %s", rc,
-		  gnutls_strerror (rc));
-	  return -1;
-	}
-
-      rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_ANON, anoncred);
-      if (rc != GNUTLS_E_SUCCESS)
-	{
-	  syslog (LOG_ERR, "TLS failed, gnutls_cs %d: %s", rc,
-		  gnutls_strerror (rc));
-	  return -1;
-	}
-
-      rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_CERTIFICATE,
-				   x509cred);
-      if (rc != GNUTLS_E_SUCCESS)
-	{
-	  syslog (LOG_ERR, "TLS failed, gnutls_cs X.509 %d: %s", rc,
-		  gnutls_strerror (rc));
-	  return -1;
-	}
-
-      gnutls_certificate_server_set_request (ls->session,
-					     GNUTLS_CERT_REQUEST);
-
-      gnutls_dh_set_prime_bits (ls->session, DH_BITS);
-      gnutls_transport_set_ptr (ls->session,
-				(gnutls_transport_ptr) ls->sockfd);
-
-      gnutls_db_set_retrieve_function (ls->session, resume_db_fetch);
-      gnutls_db_set_store_function (ls->session, resume_db_store);
-      gnutls_db_set_remove_function (ls->session, resume_db_delete);
-
-      rc = gnutls_handshake (ls->session);
-      if (rc < 0)
-	{
-	  syslog (LOG_ERR, "TLS handshake failed (%d): %s\n",
-		  rc, gnutls_strerror (rc));
-	  return -1;
-	}
-
-      logtlsinfo (ls->session);
-
-      ls->bufpos = 0;
-      ls->usetls = 1;
+      syslog (LOG_ERR, "TLS initialization failed (%d): %s", rc,
+	      gnutls_strerror (rc));
+      return -1;
     }
+
+  rc = gnutls_set_default_priority (ls->session);
+  if (rc != GNUTLS_E_SUCCESS)
+    {
+      syslog (LOG_ERR, "TLS failed, gnutls_sdp %d: %s", rc,
+	      gnutls_strerror (rc));
+      return -1;
+    }
+
+  rc = gnutls_kx_set_priority (ls->session, kx_prio);
+  if (rc != GNUTLS_E_SUCCESS)
+    {
+      syslog (LOG_ERR, "TLS failed, gnutls_ksp %d: %s", rc,
+	      gnutls_strerror (rc));
+      return -1;
+    }
+
+  rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_ANON, anoncred);
+  if (rc != GNUTLS_E_SUCCESS)
+    {
+      syslog (LOG_ERR, "TLS failed, gnutls_cs %d: %s", rc,
+	      gnutls_strerror (rc));
+      return -1;
+    }
+
+  rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_CERTIFICATE,
+			       x509cred);
+  if (rc != GNUTLS_E_SUCCESS)
+    {
+      syslog (LOG_ERR, "TLS failed, gnutls_cs X.509 %d: %s", rc,
+	      gnutls_strerror (rc));
+      return -1;
+    }
+
+  gnutls_certificate_server_set_request (ls->session,
+					 GNUTLS_CERT_REQUEST);
+
+  gnutls_dh_set_prime_bits (ls->session, DH_BITS);
+  gnutls_transport_set_ptr (ls->session,
+			    (gnutls_transport_ptr) ls->sockfd);
+
+  gnutls_db_set_retrieve_function (ls->session, resume_db_fetch);
+  gnutls_db_set_store_function (ls->session, resume_db_store);
+  gnutls_db_set_remove_function (ls->session, resume_db_delete);
+
+  rc = gnutls_handshake (ls->session);
+  if (rc < 0)
+    {
+      syslog (LOG_ERR, "TLS handshake failed (%d): %s\n",
+	      rc, gnutls_strerror (rc));
+      return -1;
+    }
+
+  logtlsinfo (ls->session);
+
+  ls->bufpos = 0;
+  ls->usetls = 1;
 
   return 0;
 }

@@ -10,6 +10,8 @@ See the end for copying conditions.
 
 ** shishid: Add --no-tls parameter to disable TLS support.
 
+** libshishi, shishid: STARTTLS extension negotiation now follows RFC 5021.
+
 ** doc: Fix spelling typos noticed by lintian.
 
 ** Update gnulib files.

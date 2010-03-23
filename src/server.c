@@ -160,11 +160,55 @@ kdc_send (struct listenspec *ls)
   ls->bufpos = 0;
 }
 
+int
+kdc_extension_reject (struct listenspec *ls)
+{
+  Shishi_asn1 krberr;
+  char *der;
+  size_t derlen;
+  int rc;
+
+  syslog (LOG_INFO, "Reject extension from %s on socket %d",
+	  ls->str, ls->sockfd);
+
+  krberr = shishi_krberror (handle);
+  if (!krberr)
+    return SHISHI_MALLOC_ERROR;
+
+  rc = shishi_krberror_errorcode_set (handle, krberr,
+				      SHISHI_KRB_ERR_FIELD_TOOLONG);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_set_etext (handle, krberr, "Extension not support");
+  if (rc != SHISHI_OK)
+    return rc;
+
+  rc = shishi_krberror_der (handle, krberr, &der, &derlen);
+  if (rc != SHISHI_OK)
+    return rc;
+
+  if (derlen >= BUFSIZ)
+    return -1;
+
+  memcpy (ls->buf, der, derlen);
+  ls->bufpos = derlen;
+
+  free (der);
+
+  kdc_send1 (ls);
+
+  return -1;
+}
+
 #ifndef USE_STARTTLS
 /* Dummy function to replace starttls.c functionality. */
 int
 kdc_extension (struct listenspec *ls)
 {
+  if (ls->ai.ai_socktype == SOCK_STREAM
+      && ls->bufpos == 4 && ls->buf[0] & 0x80)
+    return kdc_extension_reject (ls);
   return 0;
 }
 #endif

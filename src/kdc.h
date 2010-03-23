@@ -143,6 +143,7 @@ extern ssize_t process (const char *in, size_t inlen, char **out);
 
 /* Interface between server.c and starttls.c. */
 extern void kdc_send1 (struct listenspec *ls);
+extern int kdc_extension_reject (struct listenspec *ls);
 extern int kdc_extension (struct listenspec *ls);
 
 /* Interface between shishid.c, server.c and resume.c. */
