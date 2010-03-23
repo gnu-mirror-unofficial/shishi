@@ -4,9 +4,7 @@ See the end for copying conditions.
 
 * Version 0.0.43 (unreleased)
 
-** libshishi: Make client-side IPv6 support work.
-
-** shishid: Make server-side IPv6 support work.
+** libshishi, shishid: Make IPv6 support work.
 
 ** shishid: Add --no-tls parameter to disable TLS support.
 
