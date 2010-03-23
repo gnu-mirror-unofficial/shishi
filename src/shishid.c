@@ -135,7 +135,7 @@ kdc_unlisten (void)
       if (ls->sockfd)
 	{
 	  if (!arg.quiet_flag)
-	    printf ("Closing %s...\n", ls->str);
+	    printf ("Closing %s (%s)...\n", ls->str, ls->addrname);
 	  rc = close (ls->sockfd);
 	  if (rc != 0)
 	    syslog (LOG_ERR, "Could not close %s on socket %d: %s (%d)",
