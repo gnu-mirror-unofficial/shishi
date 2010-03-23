@@ -238,90 +238,95 @@ doit (void)
 	   shisa_strerror (rc), rc);
 
 #ifdef USE_STARTTLS
-  if (!arg.quiet_flag)
-    printf ("Initializing GNUTLS...\n");
-
-  rc = gnutls_global_init ();
-  if (rc)
-    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS: %s (%d)",
-	   gnutls_strerror (rc), rc);
-
-  rc = gnutls_anon_allocate_server_credentials (&anoncred);
-  if (rc)
-    error (EXIT_FAILURE, 0, "Cannot allocate GNUTLS credential: %s (%d)",
-	   gnutls_strerror (rc), rc);
-
-  rc = gnutls_certificate_allocate_credentials (&x509cred);
-  if (rc)
-    error (EXIT_FAILURE, 0,
-	   "Cannot allocate GNUTLS X.509 credential: %s (%d)",
-	   gnutls_strerror (rc), rc);
-
-  if (arg.x509cafile_given)
+  if (!arg.no_tls_flag)
     {
-      int num;
-      num = gnutls_certificate_set_x509_trust_file (x509cred,
-						    arg.x509cafile_arg,
-						    GNUTLS_X509_FMT_PEM);
-      if (num <= 0)
-	error (EXIT_FAILURE, 0, "No X.509 CAs found in `%s' (%d): %s",
-	       arg.x509cafile_arg, num, gnutls_strerror (num));
       if (!arg.quiet_flag)
-	printf ("Parsed %d CAs...\n", num);
-    }
+	printf ("Initializing GNUTLS...\n");
 
-  if (arg.x509crlfile_given)
-    {
-      int num;
+      rc = gnutls_global_init ();
+      if (rc)
+	error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS: %s (%d)",
+	       gnutls_strerror (rc), rc);
 
-      num = gnutls_certificate_set_x509_crl_file (x509cred,
-						  arg.x509crlfile_arg,
-						  GNUTLS_X509_FMT_PEM);
-      if (num <= 0)
-	error (EXIT_FAILURE, 0, "No X.509 CRLs found in `%s' (%d): %s",
-	       arg.x509crlfile_arg, num, gnutls_strerror (num));
-      if (!arg.quiet_flag)
-	printf ("Parsed %d CRLs...\n", num);
-    }
+      rc = gnutls_anon_allocate_server_credentials (&anoncred);
+      if (rc)
+	error (EXIT_FAILURE, 0, "Cannot allocate GNUTLS credential: %s (%d)",
+	       gnutls_strerror (rc), rc);
 
-  if (arg.x509certfile_given && arg.x509keyfile_given)
-    {
-      rc = gnutls_certificate_set_x509_key_file (x509cred,
-						 arg.x509certfile_arg,
-						 arg.x509keyfile_arg,
-						 GNUTLS_X509_FMT_PEM);
-      if (rc != GNUTLS_E_SUCCESS)
+      rc = gnutls_certificate_allocate_credentials (&x509cred);
+      if (rc)
 	error (EXIT_FAILURE, 0,
-	       "No X.509 server certificate/key found in `%s'/`%s' (%d): %s",
-	       arg.x509certfile_arg, arg.x509keyfile_arg, rc,
-	       gnutls_strerror (rc));
+	       "Cannot allocate GNUTLS X.509 credential: %s (%d)",
+	       gnutls_strerror (rc), rc);
+
+      if (arg.x509cafile_given)
+	{
+	  int num;
+	  num = gnutls_certificate_set_x509_trust_file (x509cred,
+							arg.x509cafile_arg,
+							GNUTLS_X509_FMT_PEM);
+	  if (num <= 0)
+	    error (EXIT_FAILURE, 0, "No X.509 CAs found in `%s' (%d): %s",
+		   arg.x509cafile_arg, num, gnutls_strerror (num));
+	  if (!arg.quiet_flag)
+	    printf ("Parsed %d CAs...\n", num);
+	}
+
+      if (arg.x509crlfile_given)
+	{
+	  int num;
+
+	  num = gnutls_certificate_set_x509_crl_file (x509cred,
+						      arg.x509crlfile_arg,
+						      GNUTLS_X509_FMT_PEM);
+	  if (num <= 0)
+	    error (EXIT_FAILURE, 0, "No X.509 CRLs found in `%s' (%d): %s",
+		   arg.x509crlfile_arg, num, gnutls_strerror (num));
+	  if (!arg.quiet_flag)
+	    printf ("Parsed %d CRLs...\n", num);
+	}
+
+      if (arg.x509certfile_given && arg.x509keyfile_given)
+	{
+	  rc = gnutls_certificate_set_x509_key_file (x509cred,
+						     arg.x509certfile_arg,
+						     arg.x509keyfile_arg,
+						     GNUTLS_X509_FMT_PEM);
+	  if (rc != GNUTLS_E_SUCCESS)
+	    error (EXIT_FAILURE, 0,
+		   "No X.509 server certificate/key found in `%s'/`%s' (%d): %s",
+		   arg.x509certfile_arg, arg.x509keyfile_arg, rc,
+		   gnutls_strerror (rc));
+	  if (!arg.quiet_flag)
+	    printf ("Loaded server certificate/key...\n");
+	}
+      else if (arg.x509certfile_given || arg.x509keyfile_given)
+	error (EXIT_FAILURE, 0, "Need both --x509certfile and --x509keyfile");
+
+      rc = gnutls_dh_params_init (&dh_params);
+      if (rc)
+	error (EXIT_FAILURE, 0,
+	       "Cannot initialize GNUTLS DH parameters: %s (%d)",
+	       gnutls_strerror (rc), rc);
+
       if (!arg.quiet_flag)
-	printf ("Loaded server certificate/key...\n");
+	printf ("Generating Diffie-Hellman parameters...\n");
+
+      rc = gnutls_dh_params_generate2 (dh_params, DH_BITS);
+      if (rc)
+	error (EXIT_FAILURE, 0,
+	       "Cannot generate GNUTLS DH parameters: %s (%d)",
+	       gnutls_strerror (rc), rc);
+
+      gnutls_anon_set_server_dh_params (anoncred, dh_params);
+
+      gnutls_certificate_set_dh_params (x509cred, dh_params);
+
+      resume_db_init (arg.resume_limit_arg);
+
+      if (!arg.quiet_flag)
+	printf ("Initializing GNUTLS...done\n");
     }
-  else if (arg.x509certfile_given || arg.x509keyfile_given)
-    error (EXIT_FAILURE, 0, "Need both --x509certfile and --x509keyfile");
-
-  rc = gnutls_dh_params_init (&dh_params);
-  if (rc)
-    error (EXIT_FAILURE, 0, "Cannot initialize GNUTLS DH parameters: %s (%d)",
-	   gnutls_strerror (rc), rc);
-
-  if (!arg.quiet_flag)
-    printf ("Generating Diffie-Hellman parameters...\n");
-
-  rc = gnutls_dh_params_generate2 (dh_params, DH_BITS);
-  if (rc)
-    error (EXIT_FAILURE, 0, "Cannot generate GNUTLS DH parameters: %s (%d)",
-	   gnutls_strerror (rc), rc);
-
-  gnutls_anon_set_server_dh_params (anoncred, dh_params);
-
-  gnutls_certificate_set_dh_params (x509cred, dh_params);
-
-  resume_db_init (arg.resume_limit_arg);
-
-  if (!arg.quiet_flag)
-    printf ("Initializing GNUTLS...done\n");
 #endif
 
   kdc_listen ();
@@ -344,15 +349,18 @@ doit (void)
   kdc_unlisten ();
 
 #ifdef USE_STARTTLS
-  if (!arg.quiet_flag)
-    printf ("Deinitializing GNUTLS...\n");
+  if (!arg.no_tls_flag)
+    {
+      if (!arg.quiet_flag)
+	printf ("Deinitializing GNUTLS...\n");
 
-  resume_db_done ();
+      resume_db_done ();
 
-  gnutls_global_deinit ();
+      gnutls_global_deinit ();
 
-  if (!arg.quiet_flag)
-    printf ("Deinitializing GNUTLS...done\n");
+      if (!arg.quiet_flag)
+	printf ("Deinitializing GNUTLS...done\n");
+    }
 #endif
 
   shisa_done (dbh);

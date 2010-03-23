@@ -8,6 +8,8 @@ See the end for copying conditions.
 
 ** shishid: Make server-side IPv6 support work.
 
+** shishid: Add --no-tls parameter to disable TLS support.
+
 ** doc: Fix spelling typos noticed by lintian.
 
 ** Update gnulib files.

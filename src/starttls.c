@@ -265,7 +265,7 @@ kdc_extension (struct listenspec *ls)
   int rc;
 
   if (!ls->usetls && ls->ai.ai_socktype == SOCK_STREAM && ls->bufpos == 4 &&
-      memcmp (ls->buf, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN) == 0)
+      x509cred && memcmp (ls->buf, STARTTLS_CLIENT_REQUEST, STARTTLS_LEN) == 0)
     {
       const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
 	GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
