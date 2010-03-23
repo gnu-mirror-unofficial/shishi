@@ -63,19 +63,19 @@ kdc_listen (void)
 	  goto error;
 	}
 
-      if (bind (ls->sockfd, ls->ai.ai_addr, ls->ai.ai_addrlen) != 0)
-	{
-	  error (0, errno, "Cannot listen on %s because bind %s failed",
-		 ls->str, ls->addrname);
-	  goto errorclose;
-	}
-
       yes = 1;
       if (setsockopt (ls->sockfd, SOL_SOCKET, SO_REUSEADDR,
 		      (char *) &yes, sizeof (yes)) < 0)
 	{
 	  error (0, errno, "Cannot listen on %s because setsockopt failed",
 		 ls->str);
+	  goto errorclose;
+	}
+
+      if (bind (ls->sockfd, ls->ai.ai_addr, ls->ai.ai_addrlen) != 0)
+	{
+	  error (0, errno, "Cannot listen on %s because bind %s failed",
+		 ls->str, ls->addrname);
 	  goto errorclose;
 	}
 
