@@ -1,3 +1,205 @@
+2010-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 0.0.43.
+
+2010-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* db/gl/m4/gnulib-common.m4, db/gl/m4/gnulib-comp.m4,
+	db/gl/m4/stddef_h.m4, db/gl/m4/wchar_h.m4, db/gl/stdint.in.h,
+	gl/arpa_inet.in.h, gl/errno.in.h, gl/float.in.h, gl/getaddrinfo.c,
+	gl/gettext.h, gl/m4/arpa_inet_h.m4, gl/m4/fcntl-o.m4,
+	gl/m4/fcntl_h.m4, gl/m4/getaddrinfo.m4, gl/m4/gnulib-common.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/inet_ntop.m4, gl/m4/netdb_h.m4,
+	gl/m4/signal_h.m4, gl/m4/stddef_h.m4, gl/m4/stdio_h.m4,
+	gl/m4/stdlib_h.m4, gl/m4/string_h.m4, gl/m4/strings_h.m4,
+	gl/m4/sys_select_h.m4, gl/m4/sys_socket_h.m4, gl/m4/sys_stat_h.m4,
+	gl/m4/sys_time_h.m4, gl/m4/time_h.m4, gl/m4/unistd_h.m4,
+	gl/m4/wchar_h.m4, gl/netdb.in.h, gl/netinet_in.in.h, gl/select.c,
+	gl/stdarg.in.h, gl/stdint.in.h, gl/string.in.h, gl/strings.in.h,
+	gl/sys_socket.in.h, gl/sys_stat.in.h, gl/time.in.h, gl/unistd.in.h,
+	maint.mk, src/gl/errno.in.h, src/gl/getopt.in.h,
+	src/gl/locale.in.h, src/gl/m4/gnulib-common.m4,
+	src/gl/m4/gnulib-comp.m4, src/gl/m4/locale_h.m4,
+	src/gl/m4/stddef_h.m4: Update gnulib files.
+
+2010-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2010-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Need to do SO_REUSEADDR before bind.
+
+2010-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Improve debug output.
+
+2010-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, src/kdc.h, src/server.c, src/starttls.c: Upgrade TCP
+	extension logic.
+
+2010-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* lib/starttls.c: Use RFC 5021 starttls negotiation.  Don't verify
+	cert if we don't have a CA.
+
+2010-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, doc/shishi.texi, src/shishid.c, src/shishid.ggo,
+	src/starttls.c: shishid: Add --no-tls parameter to disable TLS
+	support.
+
+2010-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.h, src/server.c, src/shishid.c, src/starttls.c: shishid:
+	Improve server listening logic.
+
+2010-03-23  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c: Print proper addresses.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Remove failed listeners from list properly.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/tkts.c: Fix lintian typo.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* db/config.c: Fix lintian typo.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Generated.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* db/Makefile.am: Add $(LIBSOCKET), for MinGW.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* db/gl/gnulib.mk, db/gl/m4/dos.m4, db/gl/m4/extensions.m4,
+	db/gl/m4/gnulib-cache.m4, db/gl/m4/gnulib-comp.m4,
+	db/gl/m4/stat.m4, db/gl/m4/stdbool.m4, db/gl/m4/sys_stat_h.m4,
+	db/gl/m4/time_h.m4, db/gl/m4/unistd_h.m4, db/gl/stat.c,
+	db/gl/stdbool.in.h, db/gl/sys_stat.in.h, db/gl/time.in.h,
+	gl/Makefile.am, gl/m4/dos.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/stat.m4, gl/stat.c: Update gnulib files.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/unistd.in.h: Update gnulib files.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* .gitignore: Ignore more.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, src/kdc.h, src/server.c, src/shishid.c: shishid: Support
+	IPv6 by using getaddrinfo.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: Add error explanation.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/cfg.c: Build fixes.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Improve retry counter and error codes.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* doc/shishi.texi, lib/cfg.c, lib/cfg.h, lib/internal.h,
+	lib/netio.c, lib/starttls.c, lib/starttls.h, shishi.conf.in,
+	shishi.skel.in: Rewrite network handling to supprt IPv6 and delay
+	name resolution.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: Reduce unnecessary noise.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c, lib/shishi.h: Const'ify shishi_kdc_sendrecv*.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Iterate through all KDC addresses for direct sends.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* lib/netio.c: Only attempt to use IPv6 if local system has IPv6.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2010-03-22  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/c++defs.h, build-aux/warn-on-use.h, db/gl/gnulib.mk,
+	db/gl/m4/gnulib-comp.m4, db/gl/m4/sys_stat_h.m4,
+	db/gl/m4/time_h.m4, db/gl/m4/unistd_h.m4, db/gl/m4/wchar.m4,
+	db/gl/m4/wchar_h.m4, db/gl/sys_stat.in.h, db/gl/time.in.h,
+	db/gl/wchar.in.h, gl/Makefile.am, gl/bind.c, gl/connect.c,
+	gl/fcntl.in.h, gl/getpeername.c, gl/m4/fcntl_h.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/setenv.m4, gl/m4/signal_h.m4,
+	gl/m4/stdio_h.m4, gl/m4/stdlib_h.m4, gl/m4/string_h.m4,
+	gl/m4/sys_select_h.m4, gl/m4/sys_socket_h.m4, gl/m4/sys_stat_h.m4,
+	gl/m4/sys_time_h.m4, gl/m4/time_h.m4, gl/m4/unistd_h.m4,
+	gl/m4/wchar.m4, gl/m4/wchar_h.m4, gl/recvfrom.c, gl/sendto.c,
+	gl/signal.in.h, gl/stdio.in.h, gl/stdlib.in.h, gl/string.in.h,
+	gl/sys_select.in.h, gl/sys_socket.in.h, gl/sys_stat.in.h,
+	gl/sys_time.in.h, gl/time.in.h, gl/unistd.in.h, gl/wchar.in.h,
+	maint.mk, src/gl/getopt.c, src/gl/gnulib.mk, src/gl/locale.in.h,
+	src/gl/m4/gnulib-comp.m4, src/gl/m4/locale_h.m4: Update gnulib
+	files.
+
+2010-03-18  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha: Mention gengetopt.
+
+2010-03-17  Simon Josefsson <simon@josefsson.org>
+
+	* src/server.c: Avoid printing garbage message for UDP and reduce
+	noice for TCP.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c, lib/cfg.c, lib/encapreppart.c, lib/enckdcreppart.c,
+	lib/encticketpart.c, lib/keys.c, lib/tgs.c, lib/tkt.c, lib/tkts.c: 
+	Fix lintian typos.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac, lib/shishi.h: Bump versions.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* doc/announce.txt: Add.
+
+2010-03-15  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2010-03-15  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.42.
