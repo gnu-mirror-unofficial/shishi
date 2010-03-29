@@ -85,7 +85,7 @@ prepare:
 upload:
 	git push
 	git push --tags
-	build-aux/gnupload --to alpha.gnu.org:shishi $(distdir).tar.gz
+	build-aux/gnupload --to ftp.gnu.org:shishi $(distdir).tar.gz
 	cp $(distdir).tar.gz $(distdir).tar.gz.sig ../releases/$(PACKAGE)/
 
 web:
