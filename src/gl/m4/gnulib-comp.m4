@@ -63,7 +63,7 @@ AC_DEFUN([gl2_INIT],
      AM_][XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
   # Code from module getopt-gnu:
   gl_FUNC_GETOPT_GNU
-  gl_MODULE_INDICATOR([getopt-gnu])
+  gl_MODULE_INDICATOR_FOR_TESTS([getopt-gnu])
   # Code from module getopt-posix:
   gl_FUNC_GETOPT_POSIX
   # Code from module locale:
@@ -119,6 +119,13 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([gl2tests_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='tests'
+changequote(,)dnl
+  gl2tests_WITNESS=IN_`echo "${PACKAGE-$PACKAGE_TARNAME}" | LC_ALL=C tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ | LC_ALL=C sed -e 's/[^A-Z0-9_]/_/g'`_GNULIB_TESTS
+changequote([, ])dnl
+  AC_SUBST([gl2tests_WITNESS])
+  gl_module_indicator_condition=$gl2tests_WITNESS
+  m4_pushdef([gl_MODULE_INDICATOR_CONDITION], [$gl_module_indicator_condition])
+  m4_popdef([gl_MODULE_INDICATOR_CONDITION])
   m4_ifval(gl2tests_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl2tests_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl2tests_LIBSOURCES_LIST[ ; do
