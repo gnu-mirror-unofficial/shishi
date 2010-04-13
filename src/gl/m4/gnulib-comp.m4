@@ -45,6 +45,7 @@ AC_DEFUN([gl2_INIT],
 [
   AM_CONDITIONAL([GL_COND_LIBTOOL], [true])
   gl_cond_libtool=true
+  gl_m4_base='src/gl/m4'
   m4_pushdef([AC_LIBOBJ], m4_defn([gl2_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl2_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl2_LIBSOURCES]))

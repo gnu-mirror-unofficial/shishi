@@ -14,11 +14,11 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
+#ifndef _GL_LOCALE_H
+
 #if __GNUC__ >= 3
 @PRAGMA_SYSTEM_HEADER@
 #endif
-
-#ifndef _GL_LOCALE_H
 
 /* The include_next requires a split double-inclusion guard.  */
 #@INCLUDE_NEXT@ @NEXT_LOCALE_H@
@@ -59,7 +59,9 @@ _GL_CXXALIAS_RPL (duplocale, locale_t, (locale_t locale));
 _GL_CXXALIAS_SYS (duplocale, locale_t, (locale_t locale));
 #  endif
 # endif
+# if @HAVE_DUPLOCALE@
 _GL_CXXALIASWARN (duplocale);
+# endif
 #elif defined GNULIB_POSIXCHECK
 # undef duplocale
 # if HAVE_RAW_DECL_DUPLOCALE

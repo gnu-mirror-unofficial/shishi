@@ -1304,7 +1304,7 @@ server up and running, we discuss how you can set up multiple Kerberos
 servers, to increase availability or offer load-balancing.  Finally,
 we include some information intended for developers, that will enable
 you to customize Shisa to use an external user database, such as a
-@acronym{LDAP} server or @acronym{SQL} database.
+LDAP server or SQL database.
 
 @menu
 * Introduction to Shisa::       Explanation of the Shishi user database.
@@ -1336,10 +1336,10 @@ have re-used the same password.  On the other hand, you may already
 store the password in your customized database, in which case being
 able to change it via the Shisa interface can be useful.
 
-Shisa is a small (a few thousand lines of @acronym{C} code) standalone
+Shisa is a small (a few thousand lines of C code) standalone
 library.  Shisa does not depend on the Shishi library.  Because a user
 database with passwords may be useful for other applications as well
-(e.g., @acronym{GNU} @acronym{SASL}), it may be separated into its own
+(e.g., GNU SASL), it may be separated into its own
 project later on.  You should keep this in mind, so that you don't
 consider writing a Shisa backend for your own database a purely Shishi
 specific project.  You may, for example, chose to use the Shisa
@@ -1368,7 +1368,7 @@ this file, the defaults should be acceptable to first-time users.  The
 file is used to define where you user database reside, and some
 options such as making the database read-only or whether errors
 detected when accessing the database should be ignored.  (The latter
-may be useful if the server is a remote @acronym{LDAP} server that may
+may be useful if the server is a remote LDAP server that may
 be unavailable, and you want to fail over to a local copy of the
 database.)
 
@@ -1507,7 +1507,7 @@ You should now have a working, but empty, Shisa database.  Let's set
 up the realm manually, step by step.  The first step is to decide on
 name for your realm.  The full story is explained elsewhere
 (@pxref{Realm and Principal Naming}) but the short story is to take
-your @acronym{DNS} domain name and translate it to upper case.  For
+your DNS domain name and translate it to upper case.  For
 example, if your organization uses @code{example.org} it is a good
 idea to use @code{EXAMPLE.ORG} as the name of your Kerberos realm.
 We'll use @code{EXAMPLE.ORG} as the realm name in these examples.
@@ -1553,7 +1553,7 @@ EXAMPLE.ORG
 jas@@latte:~$
 @end example
 
-To use host based security services like @acronym{SSH} or Telnet with
+To use host based security services like SSH or Telnet with
 Kerberos, each host must have a key shared between the host and the
 KDC.  The key is typically stored in
 @file{/usr/local/etc/shishi/shishi.keys}.  We assume your server is
@@ -1745,7 +1745,7 @@ You may use the '-v' parameter for Shishid and Shishi to generate more
 debugging information.
 
 To illustrate what an application, such as the Shishi patched versions
-of @acronym{GNU} lsh or Telnet from @acronym{GNU} InetUtils, would do
+of GNU lsh or Telnet from GNU InetUtils, would do
 when contacting the host @samp{mail.example.org} we illustrate using
 the TGS service as well.
 
@@ -1965,29 +1965,29 @@ shishid: Listening on IPv4:*:4711/tcp socket 4
 @cindex authenticated tls
 @cindex client authentication
 @cindex server authentication
-@cindex certificate authority (@acronym{CA})
+@cindex certificate authority (CA)
 
 Setting up X.509 authentication is slightly more complicated than
 anonymous authentication.  You need a X.509 certificate authority
-(@acronym{CA}) that can generate certificates for your Kerberos server
-and Kerberos clients.  It is often easiest to setup the @acronym{CA}
-yourself.  Managing a @acronym{CA} can be a daunting task, and we only
+(CA) that can generate certificates for your Kerberos server
+and Kerberos clients.  It is often easiest to setup the CA
+yourself.  Managing a CA can be a daunting task, and we only
 give the bare essentials to get things up and running.  We suggest
 that you study the relevant literature.  As a first step beyond this
 introduction, you may wish to explore more secure forms of key storage
 than storing them unencrypted on disk.
 
-The following three sections describe how you create the @acronym{CA},
+The following three sections describe how you create the CA,
 KDC certificate, and client certificates.  You can use any tool you
 like for this task, as long as they generate X.509 (PKIX) certificates
 in PEM format and RSA keys in PKCS#1 format.  Here we use
-@file{certtool} that come with @acronym{GNUTLS}, which is widely
+@file{certtool} that come with GNUTLS, which is widely
 available.  We conclude by discussing how you use these certificates
 in the KDC and in the Shishi client.
 
 @subsubsection Create a Kerberos Certificate Authority
 
-First create a @acronym{CA} key.
+First create a CA key.
 
 @example
 jas@@latte:~$ certtool --generate-privkey \
@@ -1997,7 +1997,7 @@ Generating a 1024 bit RSA private key...
 jas@@latte:~$
 @end example
 
-Then create the @acronym{CA} certificate.  Use whatever details you
+Then create the CA certificate.  Use whatever details you
 prefer.
 
 @example
@@ -2062,7 +2062,7 @@ Generating a 1024 bit RSA private key...
 jas@@latte:~$
 @end example
 
-Then create actual KDC certificate, signed by the @acronym{CA}
+Then create actual KDC certificate, signed by the CA
 certificate created in the previous step.
 
 @example
@@ -2131,7 +2131,7 @@ Generating a 1024 bit RSA private key...
 jas@@latte:~$
 @end example
 
-Then create the client certificate, signed by the @acronym{CA}.  An
+Then create the client certificate, signed by the CA.  An
 alternative would be to have the KDC sign the client certificates.
 
 @example
@@ -2190,7 +2190,7 @@ jas@@latte:~$
 
 @subsubsection Starting KDC with X.509 authentication support
 
-The KDC need the @acronym{CA} certificate (to verify client
+The KDC need the CA certificate (to verify client
 certificates) and the server certificate and key (to authenticate
 itself to the clients).  See elsewhere (@pxref{Parameters for
 shishid}) for the entire description of the parameters.
@@ -2268,15 +2268,15 @@ shishid: Listening on *:4711/tcp socket 4
 Setting up multiple servers is as easy as replicating the user
 database.  Since the default @samp{file} user database is stored in
 the normal file system, you can use any common tools to replicate a
-file system.  Network file system like @acronym{NFS} (properly secured
-by, e.g., a point-to-point symmetrically encrypted @acronym{IPSEC}
+file system.  Network file system like NFS (properly secured
+by, e.g., a point-to-point symmetrically encrypted IPSEC
 connection) and file synchronizing tools like @samp{rsync} are typical
 choices.
 
 @cindex master server
 @cindex secondary server
 The secondary server should be configured just like the master server.
-If you use the @samp{file} database over @acronym{NFS} you do not have
+If you use the @samp{file} database over NFS you do not have
 to make any modifications.  If you use, e.g., a cron job to
 @samp{rsync} the directory every hour or so, you may want to add a
 @samp{--read-only} flag to the Shisa @samp{db} definition
@@ -2302,10 +2302,10 @@ should cause infinite loops or data loss.  However, unexpected results
 might occur if two writers try to update information about a principal
 simultaneous.
 
-If you use a remote @acronym{LDAP} server or @acronym{SQL} database to
+If you use a remote LDAP server or SQL database to
 store the user database, and access it via a Shisa backend, you have
 make sure your Shisa backend handle concurrent writers properly.  If
-you use a modern @acronym{SQL} database, this probably is not a
+you use a modern SQL database, this probably is not a
 concern.  If it is a problem, you may be able to work around it by
 implementing some kind of synchronization or semaphore mechanism.  If
 all else sounds too complicated, you can set up the secondary servers
@@ -2314,7 +2314,7 @@ functionality (like changing passwords via the secondary server, or
 updating timestamps when the last ticket request occurred).
 
 One function that is of particular use for users with remote databases
-(be it @acronym{LDAP} or @acronym{SQL}) is the ``database override''
+(be it LDAP or SQL) is the ``database override''
 feature.  Using this you can have the security critical principals
 (such as the ticket granting ticket) stored on local file system
 storage, but use the remote database for user principals.  Of course,
@@ -2330,7 +2330,7 @@ This instruct the Shisa library to access the two databases
 sequentially, for each query using the first database that know about
 the requested principal.  If you put the @samp{krbtgt/REALM} principal
 in the local @samp{file} database, this will override the
-@acronym{LDAP} interface.  Naturally, you can have as many @samp{db}
+LDAP interface.  Naturally, you can have as many @samp{db}
 definition lines as you wish.
 
 @cindex High Availability
@@ -2345,7 +2345,7 @@ db --ignore-errors ldap kdc.example.org ca=/etc/shisa/kdc-ca.pem
 db --read-only file /var/cache/ldap-copy
 @end example
 
-This instruct the Shisa library to try the @acronym{LDAP} backend
+This instruct the Shisa library to try the LDAP backend
 first, but if it fails, instead of returning an error, continue to try
 the operation on a read only local @samp{file} based database.  Of
 course, write requests will still fail, but it may be better than
@@ -2867,7 +2867,7 @@ Principal names consist of a sequence of strings, which is often
 tedious to parse.  Therefor, Shishi often uses a ``printed'' form of
 principal which embed the entire principal name string sequence, and
 optionally also the realm, into one string.  The format is taken from
-the Kerberos 5 @acronym{GSS-API} mechanism (@acronym{RFC} 1964).
+the Kerberos 5 GSS-API mechanism (RFC 1964).
 
 The elements included within this name representation are as follows,
 proceeding from the beginning of the string:
@@ -4870,7 +4870,7 @@ with MIT's one.
 
 @strong{Warning:} If you are seriously considering using Kerberos rsh
 or rlogin, instead of more robust remote access protocols such as
-@acronym{SSH}, you may first want to explore
+SSH, you may first want to explore
 @url{http://www.cs.berkeley.edu/~hildrum/kerberos/} and the full paper
 at @url{http://www.cs.berkeley.edu/~hildrum/043.pdf}.
 
@@ -5176,9 +5176,9 @@ by user2 or root and user1 name is present in this file.
 @section Key as initialization vector
 
 The @code{des-cbc-crc} algorithm (@pxref{Cryptographic Overview}) uses
-the @acronym{DES} key as the initialization vector.  This is
-problematic in general (see below@footnote{The post is copyrighted by
-David Wagner, included here with permission, the canonical location is
+the DES key as the initialization vector.  This is problematic in
+general (see below@footnote{The post is copyrighted by David Wagner,
+included here with permission, the canonical location is
 @url{http://www.cs.berkeley.edu/~daw/my-posts/key-as-iv-broken}}), but
 may be mitigated in Kerberos by the CRC checksum that is also
 included.
