@@ -130,8 +130,9 @@ _shishi_sendrecv_tls1 (Shishi * handle,
       ret = gnutls_certificate_verify_peers2 (session, &status);
       if (ret != 0 || status != 0)
 	{
-	  shishi_error_printf (handle, "TLS verification of CA failed (%d/%d)",
-			       ret, status);
+	  shishi_error_printf (handle,
+			       "TLS verification of CA failed (%d/%d)", ret,
+			       status);
 	  return SHISHI_RECVFROM_ERROR;
 	}
 
@@ -166,8 +167,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
   bytes_sent = gnutls_record_send (session, tmpbuf, 4);
   if (bytes_sent != 4)
     {
-      shishi_error_printf (handle, "Bad TLS write (%d < 4)",
-			   bytes_sent);
+      shishi_error_printf (handle, "Bad TLS write (%d < 4)", bytes_sent);
       return SHISHI_SENDTO_ERROR;
     }
 
@@ -182,13 +182,12 @@ _shishi_sendrecv_tls1 (Shishi * handle,
   bytes_read = gnutls_record_recv (session, tmpbuf, 4);
   if (bytes_read != 4)
     {
-      shishi_error_printf (handle, "Bad TLS read (%d < 4)",
-			   bytes_read);
+      shishi_error_printf (handle, "Bad TLS read (%d < 4)", bytes_read);
       return SHISHI_SENDTO_ERROR;
     }
 
   /* XXX sanities input. */
-  *outlen = C2I(tmpbuf);
+  *outlen = C2I (tmpbuf);
   *outdata = xmalloc (*outlen);
 
   bytes_read = gnutls_record_recv (session, *outdata, *outlen);
@@ -205,7 +204,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
       free (*outdata);
       return SHISHI_RECVFROM_ERROR;
     }
-  else if (bytes_read != (ssize_t) *outlen)
+  else if (bytes_read != (ssize_t) * outlen)
     {
       shishi_error_printf (handle, "TLS Read error (%d != %d)",
 			   *outlen, bytes_read);

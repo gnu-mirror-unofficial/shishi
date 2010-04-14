@@ -112,12 +112,12 @@ kdc_send1 (struct listenspec *ls)
       sent_bytes = gnutls_record_send (ls->session, ls->buf, ls->bufpos);
     else
 #endif
-      if (ls->ai.ai_socktype == SOCK_DGRAM)
-	sent_bytes = sendto (ls->sockfd, ls->buf, ls->bufpos, 0,
-			     (struct sockaddr *) &ls->udpclientaddr,
-			     ls->udpclientaddrlen);
-      else
-	sent_bytes = send (ls->sockfd, ls->buf, ls->bufpos, 0);
+    if (ls->ai.ai_socktype == SOCK_DGRAM)
+      sent_bytes = sendto (ls->sockfd, ls->buf, ls->bufpos, 0,
+			   (struct sockaddr *) &ls->udpclientaddr,
+			   ls->udpclientaddrlen);
+    else
+      sent_bytes = send (ls->sockfd, ls->buf, ls->bufpos, 0);
   while (sent_bytes == -1 && errno == EAGAIN);
 
   if (sent_bytes < 0)
@@ -226,17 +226,17 @@ kdc_read (struct listenspec *ls)
 				     sizeof (ls->buf) - ls->bufpos);
   else
 #endif
-    if (ls->ai.ai_socktype == SOCK_DGRAM)
-      {
-	ls->udpclientaddrlen = sizeof (ls->udpclientaddr);
-	read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
-			       sizeof (ls->buf) - ls->bufpos, 0,
-			       (struct sockaddr *) &ls->udpclientaddr,
-			       &ls->udpclientaddrlen);
-      }
-    else
-      read_bytes = recv (ls->sockfd, ls->buf + ls->bufpos,
-			 sizeof (ls->buf) - ls->bufpos, 0);
+  if (ls->ai.ai_socktype == SOCK_DGRAM)
+    {
+      ls->udpclientaddrlen = sizeof (ls->udpclientaddr);
+      read_bytes = recvfrom (ls->sockfd, ls->buf + ls->bufpos,
+			     sizeof (ls->buf) - ls->bufpos, 0,
+			     (struct sockaddr *) &ls->udpclientaddr,
+			     &ls->udpclientaddrlen);
+    }
+  else
+    read_bytes = recv (ls->sockfd, ls->buf + ls->bufpos,
+		       sizeof (ls->buf) - ls->bufpos, 0);
 
   if (read_bytes < 0)
     {

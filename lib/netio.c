@@ -34,8 +34,7 @@
 static int
 sendrecv_udp (Shishi * handle,
 	      struct addrinfo *ai,
-	      const char *indata, int inlen,
-	      char **outdata, size_t * outlen)
+	      const char *indata, int inlen, char **outdata, size_t * outlen)
 {
   char tmpbuf[BUFSIZ];		/* XXX can we do without it?
 				   MSG_PEEK|MSG_TRUNC doesn't work for udp.. */
@@ -107,8 +106,7 @@ sendrecv_udp (Shishi * handle,
 static int
 sendrecv_tcp (Shishi * handle,
 	      struct addrinfo *ai,
-	      const char *indata, int inlen,
-	      char **outdata, size_t * outlen)
+	      const char *indata, int inlen, char **outdata, size_t * outlen)
 {
   char tmpbuf[BUFSIZ];		/* XXX can we do without it?
 				   MSG_PEEK|MSG_TRUNC doesn't work for udp.. */
@@ -231,8 +229,7 @@ sendrecv_host (Shishi * handle,
       size_t j = 0;
 
       rc = getnameinfo (ai->ai_addr, ai->ai_addrlen,
-			nodename, sizeof (nodename),
-			NULL, 0, NI_NUMERICHOST);
+			nodename, sizeof (nodename), NULL, 0, NI_NUMERICHOST);
       shishi_verbose (handle, "Sending to %s (%s) port %s transport %s",
 		      host, rc == 0 ? nodename : "unknown address", port,
 		      _shishi_transport2string (transport));
@@ -266,8 +263,7 @@ sendrecv_srv3 (Shishi * handle,
 	       const char *realm,
 	       const char *indata, size_t inlen,
 	       char **outdata, size_t * outlen,
-	       Shishi_dns rrs,
-	       bool *found_srv_records)
+	       Shishi_dns rrs, bool * found_srv_records)
 {
   int rc = SHISHI_KDC_NOT_KNOWN_FOR_REALM;
 
@@ -287,9 +283,7 @@ sendrecv_srv3 (Shishi * handle,
 
       port = xasprintf ("%d", srv->port);
       rc = sendrecv_host (handle, transport,
-			  srv->name, port,
-			  indata, inlen,
-			  outdata, outlen);
+			  srv->name, port, indata, inlen, outdata, outlen);
       free (port);
 
       if (rc == SHISHI_OK)
@@ -304,8 +298,7 @@ sendrecv_srv2 (Shishi * handle,
 	       int transport,
 	       const char *realm,
 	       const char *indata, size_t inlen,
-	       char **outdata, size_t * outlen,
-	       bool *found_srv_records)
+	       char **outdata, size_t * outlen, bool * found_srv_records)
 {
   Shishi_dns rrs;
   char *tmp;
@@ -334,8 +327,7 @@ sendrecv_srv2 (Shishi * handle,
 static int
 sendrecv_srv (Shishi * handle, const char *realm,
 	      const char *indata, size_t inlen,
-	      char **outdata, size_t * outlen,
-	      bool *found_srv_records)
+	      char **outdata, size_t * outlen, bool * found_srv_records)
 {
   int rc = sendrecv_srv2 (handle, UDP, realm, indata, inlen,
 			  outdata, outlen, found_srv_records);
@@ -407,8 +399,7 @@ shishi_kdc_sendrecv_hint (Shishi * handle, const char *realm,
   ri = _shishi_realminfo (handle, realm);
   if (ri && ri->nkdcaddresses > 0)
     /* If we have configured KDCs, never use DNS or direct method. */
-    return sendrecv_static (handle, realm, indata, inlen,
-			    outdata, outlen);
+    return sendrecv_static (handle, realm, indata, inlen, outdata, outlen);
 
   rc = sendrecv_srv (handle, realm, indata, inlen, outdata, outlen,
 		     &found_srv_records);

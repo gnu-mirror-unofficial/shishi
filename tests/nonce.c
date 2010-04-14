@@ -20,8 +20,10 @@
  *
  */
 
-const char *asreq = "aoGQMIGNoQMCAQWiAwIBCqSBgDB+oAcDBQAAAAAAoRAwDqADAgEAoQcwBRsDamFzog8bDUpPU0VGU1NPTi5PUkejIjAgoAMCAQGhGTAXGwZrcmJ0Z3QbDUpPU0VGU1NPTi5PUkelERgPMjAwNjExMDEyMDMwMDVapwYCBAlXUoOoETAPAgESAgEQAgEDAgECAgEB";
-const char *asreppart = "eYGYMIGVoCMwIaADAgEQoRoEGPSJH0z06kWoouBUejc+L566tgEBAQEZDqECMACiBgIEf////6QHAwUAAEAAAKURGA8yMDA2MTEwMTEyMDkyNVqnERgPMjAwNjExMDEyMDA5MjVaqQ8bDUpPU0VGU1NPTi5PUkeqIjAgoAMCAQGhGTAXGwZrcmJ0Z3QbDUpPU0VGU1NPTi5PUkc=";
+const char *asreq =
+  "aoGQMIGNoQMCAQWiAwIBCqSBgDB+oAcDBQAAAAAAoRAwDqADAgEAoQcwBRsDamFzog8bDUpPU0VGU1NPTi5PUkejIjAgoAMCAQGhGTAXGwZrcmJ0Z3QbDUpPU0VGU1NPTi5PUkelERgPMjAwNjExMDEyMDMwMDVapwYCBAlXUoOoETAPAgESAgEQAgEDAgECAgEB";
+const char *asreppart =
+  "eYGYMIGVoCMwIaADAgEQoRoEGPSJH0z06kWoouBUejc+L566tgEBAQEZDqECMACiBgIEf////6QHAwUAAEAAAKURGA8yMDA2MTEwMTEyMDkyNVqnERgPMjAwNjExMDEyMDA5MjVaqQ8bDUpPU0VGU1NPTi5PUkeqIjAgoAMCAQGhGTAXGwZrcmJ0Z3QbDUpPU0VGU1NPTi5PUkc=";
 
 #include "utils.c"
 
@@ -39,7 +41,8 @@ test (Shishi * handle)
   if (!base64_decode_alloc (asreq, strlen (asreq), &reqder, &reqderlen))
     fail ("base64 req\n");
 
-  if (!base64_decode_alloc (asreppart, strlen (asreppart), &repder, &repderlen))
+  if (!base64_decode_alloc
+      (asreppart, strlen (asreppart), &repder, &repderlen))
     fail ("base64 rep\n");
 
   req = shishi_der2asn1_asreq (handle, reqder, reqderlen);

@@ -654,7 +654,7 @@ des_checksum (Shishi * handle,
       return res;
     }
 
-  keyp = (char*) shishi_key_value (key);
+  keyp = (char *) shishi_key_value (key);
 
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;
@@ -755,7 +755,7 @@ des_verify (Shishi * handle, int algo,
    * verify_mic                decrypt and verify rsa-md5 checksum
    */
 
-  keyp = (char*) shishi_key_value (key);
+  keyp = (char *) shishi_key_value (key);
 
   for (i = 0; i < 8; i++)
     keyp[i] ^= 0xF0;

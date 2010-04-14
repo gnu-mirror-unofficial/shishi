@@ -71,7 +71,7 @@ test (Shishi * handle)
   for (i = 0; tvp = &tv[i], tvp->etype; i++)
     {
       len = shishi_cipher_randomlen (tvp->etype);
-      if (len == (size_t) -1)
+      if (len == (size_t) - 1)
 	{
 	  fail ("shishi_cipher_randomlen(%d) failed: %d\n", tvp->etype, len);
 	  continue;
@@ -85,7 +85,7 @@ test (Shishi * handle)
 	}
 
       len = shishi_cipher_blocksize (tvp->etype);
-      if (len == (size_t) -1)
+      if (len == (size_t) - 1)
 	{
 	  fail ("shishi_cipher_blocksize (%d) failed: %d\n", tvp->etype, len);
 	  continue;

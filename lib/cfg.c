@@ -49,7 +49,7 @@ enum
   THE_END
 };
 
-static const char * const _shishi_opts[] = {
+static const char *const _shishi_opts[] = {
   /* [DEFAULT_REALM_OPTION] =        */ "default-realm",
   /* [DEFAULT_PRINCIPAL_OPTION] =    */ "default-principal",
   /* [CLIENT_KDC_ETYPES_OPTION] =    */ "client-kdc-etypes",
@@ -123,7 +123,7 @@ shishi_cfg (Shishi * handle, const char *option)
 
   while (p != NULL && *p != '\0')
     {
-      switch (getsubopt (&p, (char * const *) _shishi_opts, &value))
+      switch (getsubopt (&p, (char *const *) _shishi_opts, &value))
 	{
 	case KDC_TIMEOUT_OPTION:
 	  if (value && atoi (value) > 0)
@@ -293,7 +293,8 @@ shishi_cfg (Shishi * handle, const char *option)
 		    else if (strcasecmp (protstr, "tls") == 0)
 		      transport = TLS;
 		    else
-		      shishi_warn (handle, "Ignoring unknown KDC transport: %s",
+		      shishi_warn (handle,
+				   "Ignoring unknown KDC transport: %s",
 				   protstr);
 		  }
 
@@ -301,7 +302,8 @@ shishi_cfg (Shishi * handle, const char *option)
 					     (ri->nkdcaddresses + 1) *
 					     sizeof (*ri->kdcaddresses));
 		ri->kdcaddresses[ri->nkdcaddresses].transport = transport;
-		ri->kdcaddresses[ri->nkdcaddresses].hostname = xstrdup (value);
+		ri->kdcaddresses[ri->nkdcaddresses].hostname =
+		  xstrdup (value);
 		if ((protstr = strchr (value, ':')))
 		  {
 		    *protstr = '\0';
@@ -324,7 +326,7 @@ shishi_cfg (Shishi * handle, const char *option)
 
   res = SHISHI_OK;
 
- out:
+out:
   free (opt);
   return res;
 }
@@ -439,8 +441,9 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
       fprintf (fh, "\tKDCs for realm %s:\n", handle->realminfos[i].name);
       for (j = 0; j < handle->realminfos[i].nkdcaddresses; j++)
 	fprintf (fh, "\t\tTransport %s host %s port %s\n",
-		 _shishi_transport2string (handle->realminfos[i].
-					   kdcaddresses[j].transport),
+		 _shishi_transport2string (handle->
+					   realminfos[i].kdcaddresses[j].
+					   transport),
 		 handle->realminfos[i].kdcaddresses[j].hostname,
 		 handle->realminfos[i].kdcaddresses[j].port);
     }

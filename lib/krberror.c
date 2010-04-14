@@ -1085,7 +1085,7 @@ shishi_krberror_edata (Shishi * handle, Shishi_asn1 krberror,
  **/
 int
 shishi_krberror_methoddata (Shishi * handle, Shishi_asn1 krberror,
-			    Shishi_asn1 *methoddata)
+			    Shishi_asn1 * methoddata)
 {
   int rc;
 
@@ -1254,7 +1254,7 @@ struct krb_error_msgs
 };
 
 static const struct krb_error_msgs
-_shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
+  _shishi_krberror_messages[SHISHI_LAST_ERROR_CODE] = {
   {SHISHI_KDC_ERR_NONE,
    N_("No error")},
   {SHISHI_KDC_ERR_NAME_EXP,

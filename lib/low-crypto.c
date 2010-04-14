@@ -115,8 +115,7 @@ shishi_crc (Shishi * handle, const char *in, size_t inlen, char *out[4])
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_md4 (Shishi * handle,
-	    const char *in, size_t inlen, char *out[16])
+shishi_md4 (Shishi * handle, const char *in, size_t inlen, char *out[16])
 {
   Gc_rc rc;
 
@@ -141,8 +140,7 @@ shishi_md4 (Shishi * handle,
  * Return value: Returns SHISHI_OK iff successful.
  **/
 int
-shishi_md5 (Shishi * handle,
-	    const char *in, size_t inlen, char *out[16])
+shishi_md5 (Shishi * handle, const char *in, size_t inlen, char *out[16])
 {
   Gc_rc rc;
 
@@ -200,8 +198,7 @@ shishi_hmac_md5 (Shishi * handle,
 int
 shishi_hmac_sha1 (Shishi * handle,
 		  const char *key, size_t keylen,
-		  const char *in, size_t inlen,
-		  char *outhash[20])
+		  const char *in, size_t inlen, char *outhash[20])
 {
   Gc_rc rc;
 
@@ -273,7 +270,7 @@ shishi_des_cbc_mac (Shishi * handle,
 
   res = SHISHI_OK;
 
- done:
+done:
   gcry_cipher_close (ch);
   return res;
 }
@@ -430,8 +427,7 @@ int
 shishi_des (Shishi * handle, int decryptp,
 	    const char key[8],
 	    const char iv[8],
-	    char *ivout[8],
-	    const char *in, size_t inlen, char **out)
+	    char *ivout[8], const char *in, size_t inlen, char **out)
 {
   return libgcrypt_dencrypt (handle, GCRY_CIPHER_DES, 0, GCRY_CIPHER_MODE_CBC,
 			     decryptp, key, 8, iv, ivout, in, inlen, out);
@@ -457,8 +453,7 @@ int
 shishi_3des (Shishi * handle, int decryptp,
 	     const char key[8],
 	     const char iv[8],
-	     char *ivout[8],
-	     const char *in, size_t inlen, char **out)
+	     char *ivout[8], const char *in, size_t inlen, char **out)
 {
   return libgcrypt_dencrypt (handle, GCRY_CIPHER_3DES, 0,
 			     GCRY_CIPHER_MODE_CBC, decryptp, key, 24, iv,
@@ -488,8 +483,7 @@ int
 shishi_aes_cts (Shishi * handle, int decryptp,
 		const char *key, size_t keylen,
 		const char iv[16],
-		char *ivout[16],
-		const char *in, size_t inlen, char **out)
+		char *ivout[16], const char *in, size_t inlen, char **out)
 {
   return libgcrypt_dencrypt (handle, GCRY_CIPHER_AES, GCRY_CIPHER_CBC_CTS,
 			     GCRY_CIPHER_MODE_CBC, decryptp,

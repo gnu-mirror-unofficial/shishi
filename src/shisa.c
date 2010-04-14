@@ -106,8 +106,7 @@ printdbkey (const char *realm, const char *principal, Shisa_key * dbkey)
       shishi_key_print (sh, stdout, key);
     }
   else
-    error (0, 0, "shishi_key_from_value (%d):\n%s",
-	   rc, shishi_strerror (rc));
+    error (0, 0, "shishi_key_from_value (%d):\n%s", rc, shishi_strerror (rc));
 }
 
 static int
@@ -399,7 +398,7 @@ apply_options (const char *realm,
       dbkey->kvno = args.key_version_arg;
       dbkey->etype = etype;
       dbkey->priority = args.priority_arg;
-      dbkey->key = (char*) shishi_key_value (key);
+      dbkey->key = (char *) shishi_key_value (key);
       dbkey->keylen = shishi_key_length (key);
       dbkey->salt = salt;
       dbkey->saltlen = salt ? strlen (salt) : 0;
@@ -415,8 +414,7 @@ const char version_etc_copyright[] =
      year.  */
   "Copyright %s %d Simon Josefsson.";
 
-static void
-usage (int status) __attribute__ ((__noreturn__));
+static void usage (int status) __attribute__ ((__noreturn__));
 
 static void
 usage (int status)

@@ -792,12 +792,12 @@ shishi_asn1_to_der_field (Shishi * handle, Shishi_asn1 node,
       signed long lenlen;
 
       /* XXX when encoding a field inside a SEQUENCE, libtasn1 appear
-	 to include the tag from the SEQUENCE in the encoding of a
-	 particular field.  This appear wrong, so we frob it here.
-	 This typically happens when encoding req-body in KDC-REQ for
-	 TGS checksums.  */
+         to include the tag from the SEQUENCE in the encoding of a
+         particular field.  This appear wrong, so we frob it here.
+         This typically happens when encoding req-body in KDC-REQ for
+         TGS checksums.  */
 
-      rc = asn1_get_tag_der ((unsigned char*) *der, mylen, &class,
+      rc = asn1_get_tag_der ((unsigned char *) *der, mylen, &class,
 			     &derlen, &tag);
       if (rc != ASN1_SUCCESS)
 	{
@@ -805,8 +805,8 @@ shishi_asn1_to_der_field (Shishi * handle, Shishi_asn1 node,
 	  return SHISHI_ASN1_ERROR;
 	}
 
-      lenlen = asn1_get_length_der((unsigned char*) *der + derlen,
-				   mylen - derlen, &derlen2);
+      lenlen = asn1_get_length_der ((unsigned char *) *der + derlen,
+				    mylen - derlen, &derlen2);
       if (lenlen < 0)
 	return SHISHI_ASN1_ERROR;
 
@@ -1012,7 +1012,8 @@ shishi_der2asn1_padata (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_methoddata (Shishi * handle, const char *der, size_t derlen)
 {
-  return der2asn1 (handle, ASN1NAME "METHOD-DATA", "METHOD-DATA", der, derlen);
+  return der2asn1 (handle, ASN1NAME "METHOD-DATA", "METHOD-DATA", der,
+		   derlen);
 }
 
 /**
@@ -1044,7 +1045,8 @@ shishi_der2asn1_etype_info (Shishi * handle, const char *der, size_t derlen)
 Shishi_asn1
 shishi_der2asn1_etype_info2 (Shishi * handle, const char *der, size_t derlen)
 {
-  return der2asn1 (handle, ASN1NAME "ETYPE-INFO2", "ETYPE-INFO2", der, derlen);
+  return der2asn1 (handle, ASN1NAME "ETYPE-INFO2", "ETYPE-INFO2", der,
+		   derlen);
 }
 
 /**

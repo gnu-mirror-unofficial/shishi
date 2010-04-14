@@ -176,7 +176,7 @@ shishi_keys_add (Shishi_keys * keys, Shishi_key * key)
  * Returns: Returns %SHISHI_OK on success.
  **/
 int
-shishi_keys_print (Shishi_keys * keys, FILE *fh)
+shishi_keys_print (Shishi_keys * keys, FILE * fh)
 {
   int rc;
   int i;
@@ -207,8 +207,7 @@ shishi_keys_print (Shishi_keys * keys, FILE *fh)
  **/
 int
 shishi_keys_to_file (Shishi * handle,
-		     const char *filename,
-		     Shishi_keys * keys)
+		     const char *filename, Shishi_keys * keys)
 {
   FILE *fh;
   int res;

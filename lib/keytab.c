@@ -45,13 +45,12 @@
  **/
 int
 shishi_keys_add_keytab_mem (Shishi * handle,
-			    const char *data, size_t len,
-			    Shishi_keys *keys)
+			    const char *data, size_t len, Shishi_keys * keys)
 {
   int rc;
   uint16_t file_format_version;
   size_t entrystartpos;
-  uint16_t num_components;    /* sub 1 if version 0x501 */
+  uint16_t num_components;	/* sub 1 if version 0x501 */
   size_t i;
   Shishi_key *key;
 
@@ -74,8 +73,8 @@ shishi_keys_add_keytab_mem (Shishi * handle,
   entrystartpos = 2;
   while (entrystartpos < len)
     {
-      int32_t size = data[entrystartpos] << 24 | data[entrystartpos+1] << 16
-	| data[entrystartpos+2] << 8 | data[entrystartpos+3];
+      int32_t size = data[entrystartpos] << 24 | data[entrystartpos + 1] << 16
+	| data[entrystartpos + 2] << 8 | data[entrystartpos + 3];
       entrystartpos += 4;
 
       if (VERBOSENOISE (handle))
@@ -101,15 +100,15 @@ shishi_keys_add_keytab_mem (Shishi * handle,
   while (entrystartpos < len)
     {
       size_t pos = entrystartpos;
-      uint16_t size = data[pos] << 24 | data[pos+1] << 16
-	| data[pos+2] << 8 | data[pos+3];
+      uint16_t size = data[pos] << 24 | data[pos + 1] << 16
+	| data[pos + 2] << 8 | data[pos + 3];
       pos += 4;
 
       if (VERBOSENOISE (handle))
 	printf ("keytab size %d (%x)\n", size, size);
 
       /* Num_components */
-      num_components = data[pos] << 8 | data[pos+1];
+      num_components = data[pos] << 8 | data[pos + 1];
       pos += 2;
 
       if (file_format_version == 0x0501)
@@ -117,7 +116,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 
       /* Realm */
       {
-	uint16_t realmlen = data[pos] << 8 | data[pos+1];
+	uint16_t realmlen = data[pos] << 8 | data[pos + 1];
 	char *realm = xstrndup (&data[pos + 2], realmlen);;
 
 	pos += 2 + realmlen;
@@ -135,7 +134,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 	  {
 	    size_t l;
 
-	    l = data[pos] << 8 | data[pos+1];
+	    l = data[pos] << 8 | data[pos + 1];
 	    pos += 2;
 
 	    name = xrealloc (name, namelen + l + 1);
@@ -153,9 +152,9 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 
       /* Name_type */
       {
-	uint32_t name_type   /* not present if version 0x501 */
-	  = data[pos] << 24 | data[pos+1] << 16
-	  | data[pos+2] << 8 | data[pos+3];
+	uint32_t name_type	/* not present if version 0x501 */
+	  = data[pos] << 24 | data[pos + 1] << 16
+	  | data[pos + 2] << 8 | data[pos + 3];
 	pos += 4;
 
 	if (VERBOSENOISE (handle))
@@ -166,9 +165,8 @@ shishi_keys_add_keytab_mem (Shishi * handle,
       {
 	uint32_t timestamp =
 	  ((data[pos] << 24) & 0xFF000000)
-	  | ((data[pos+1] << 16) & 0xFF0000)
-	  | ((data[pos+2] << 8) & 0xFF00)
-	  | ((data[pos+3] & 0xFF));
+	  | ((data[pos + 1] << 16) & 0xFF0000)
+	  | ((data[pos + 2] << 8) & 0xFF00) | ((data[pos + 3] & 0xFF));
 	time_t t = timestamp;
 	pos += 4;
 
@@ -190,7 +188,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 
       /* key, keytype */
       {
-	uint32_t keytype = data[pos] << 8 | data[pos+1];
+	uint32_t keytype = data[pos] << 8 | data[pos + 1];
 	pos += 2;
 
 	if (VERBOSENOISE (handle))
@@ -201,7 +199,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 
       /* key, length and data */
       {
-	uint16_t keylen = data[pos] << 8 | data[pos+1];
+	uint16_t keylen = data[pos] << 8 | data[pos + 1];
 	pos += 2;
 
 	if (VERBOSENOISE (handle))
@@ -217,9 +215,9 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 
       if (pos - entrystartpos < (size_t) size + 4)
 	{
-	  uint32_t vno /* only present if >= 4 bytes left in entry */
-	    = data[pos] << 24 | data[pos+1] << 16
-	    | data[pos+2] << 8 | data[pos+3];
+	  uint32_t vno		/* only present if >= 4 bytes left in entry */
+	    = data[pos] << 24 | data[pos + 1] << 16
+	    | data[pos + 2] << 8 | data[pos + 3];
 	  pos += 4;
 
 	  if (VERBOSENOISE (handle))
@@ -241,7 +239,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 
   rc = SHISHI_OK;
 
- done:
+done:
   shishi_key_done (key);
 
   return rc;
@@ -267,8 +265,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
  **/
 int
 shishi_keys_add_keytab_file (Shishi * handle,
-			     const char *filename,
-			     Shishi_keys *keys)
+			     const char *filename, Shishi_keys * keys)
 {
   size_t len;
   char *keytab = read_binary_file (filename, &len);
@@ -306,7 +303,7 @@ shishi_keys_add_keytab_file (Shishi * handle,
 int
 shishi_keys_from_keytab_mem (Shishi * handle,
 			     const char *data, size_t len,
-			     Shishi_keys **outkeys)
+			     Shishi_keys ** outkeys)
 {
   int rc;
 
@@ -345,8 +342,7 @@ shishi_keys_from_keytab_mem (Shishi * handle,
  **/
 int
 shishi_keys_from_keytab_file (Shishi * handle,
-			      const char *filename,
-			      Shishi_keys **outkeys)
+			      const char *filename, Shishi_keys ** outkeys)
 {
   int rc;
 
@@ -366,8 +362,7 @@ shishi_keys_from_keytab_file (Shishi * handle,
 
 static int
 key_to_keytab_entry (Shishi * handle,
-		     const Shishi_key *key,
-		     char **out, size_t *len)
+		     const Shishi_key * key, char **out, size_t * len)
 {
   uint16_t num_components = 0;
   const char *realm = shishi_key_realm (key);
@@ -462,7 +457,7 @@ key_to_keytab_entry (Shishi * handle,
   if (version < 256)
     p[0] = version & 0xFF;
   else
-    p[0] = 0; /* use vno */
+    p[0] = 0;			/* use vno */
   p += 1;
 
   /* Key */
@@ -509,8 +504,7 @@ key_to_keytab_entry (Shishi * handle,
  **/
 int
 shishi_keys_to_keytab_mem (Shishi * handle,
-			   Shishi_keys *keys,
-			   char **out, size_t *len)
+			   Shishi_keys * keys, char **out, size_t * len)
 {
   int rc;
   const Shishi_key *key;
@@ -587,8 +581,7 @@ write_binary_file (const char *filename, const char *data, size_t length)
  **/
 int
 shishi_keys_to_keytab_file (Shishi * handle,
-			    Shishi_keys *keys,
-			    const char *filename)
+			    Shishi_keys * keys, const char *filename)
 {
   int rc;
   char *data;

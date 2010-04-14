@@ -216,7 +216,7 @@ _shishi_simplified_derivekey (Shishi * handle,
 	prfconstant[4] = '\x99';
       else if (derivekeymode == SHISHI_DERIVEKEYMODE_INTEGRITY)
 	prfconstant[4] = '\x55';
-      else /* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
+      else			/* if (derivekeymode == SHISHI_DERIVEKEYMODE_PRIVACY) */
 	prfconstant[4] = '\xAA';
 
       res = shishi_dk (handle, key, prfconstant, 5, derivedkey);

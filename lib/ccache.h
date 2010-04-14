@@ -54,8 +54,8 @@ struct ccache_keyblock
   uint16_t etype;
   uint16_t keylen;
   char *keyvalue;
-  char storage[CCACHE_MAX_KEYLEN];  /* usable by caller for storing
-				       keys that keyvalue point to. */
+  char storage[CCACHE_MAX_KEYLEN];	/* usable by caller for storing
+					   keys that keyvalue point to. */
 };
 
 struct ccache_credential
@@ -89,9 +89,9 @@ extern int ccache_parse_credential (const char *data, size_t len,
 				    struct ccache_credential *out,
 				    size_t * n);
 
-extern int ccache_pack (struct ccache *info, char *data, size_t *len);
+extern int ccache_pack (struct ccache *info, char *data, size_t * len);
 extern int ccache_pack_credential (struct ccache_credential *cred,
-				   char *out, size_t *len);
+				   char *out, size_t * len);
 
 extern void ccache_print (struct ccache *ccache);
 extern void ccache_print_principal (struct ccache_principal *princ);

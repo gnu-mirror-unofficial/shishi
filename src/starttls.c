@@ -263,14 +263,13 @@ int
 kdc_extension (struct listenspec *ls)
 {
   const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
-			  GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
+    GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
   };
   int rc;
 
   if (ls->usetls
       || ls->ai.ai_socktype != SOCK_STREAM
-      || ls->bufpos < 4
-      || (ls->bufpos >= 4 && !(ls->buf[0] & 0x80)))
+      || ls->bufpos < 4 || (ls->bufpos >= 4 && !(ls->buf[0] & 0x80)))
     return 0;
 
   if (x509cred == NULL || memcmp (ls->buf, STARTTLS_CLIENT_REQUEST,
@@ -316,8 +315,7 @@ kdc_extension (struct listenspec *ls)
       return -1;
     }
 
-  rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_CERTIFICATE,
-			       x509cred);
+  rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_CERTIFICATE, x509cred);
   if (rc != GNUTLS_E_SUCCESS)
     {
       syslog (LOG_ERR, "TLS failed, gnutls_cs X.509 %d: %s", rc,
@@ -325,12 +323,10 @@ kdc_extension (struct listenspec *ls)
       return -1;
     }
 
-  gnutls_certificate_server_set_request (ls->session,
-					 GNUTLS_CERT_REQUEST);
+  gnutls_certificate_server_set_request (ls->session, GNUTLS_CERT_REQUEST);
 
   gnutls_dh_set_prime_bits (ls->session, DH_BITS);
-  gnutls_transport_set_ptr (ls->session,
-			    (gnutls_transport_ptr) ls->sockfd);
+  gnutls_transport_set_ptr (ls->session, (gnutls_transport_ptr) ls->sockfd);
 
   gnutls_db_set_retrieve_function (ls->session, resume_db_fetch);
   gnutls_db_set_store_function (ls->session, resume_db_store);

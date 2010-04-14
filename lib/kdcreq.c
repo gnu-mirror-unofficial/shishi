@@ -1299,8 +1299,7 @@ shishi_kdcreq_add_padata_tgs (Shishi * handle,
  **/
 int
 shishi_kdcreq_add_padata_preauth (Shishi * handle,
-				  Shishi_asn1 kdcreq,
-				  Shishi_key *key)
+				  Shishi_asn1 kdcreq, Shishi_key * key)
 {
   char *der, *data;
   size_t derlen, datalen;
@@ -1329,7 +1328,7 @@ shishi_kdcreq_add_padata_preauth (Shishi * handle,
 
   rc = shishi_asn1_to_der (handle, pa, &der, &derlen);
   if (rc != SHISHI_OK)
-      return rc;
+    return rc;
 
   rc = shishi_encrypt (handle, key, SHISHI_KEYUSAGE_ASREQ_PA_ENC_TIMESTAMP,
 		       der, derlen, &data, &datalen);

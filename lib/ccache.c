@@ -145,13 +145,13 @@ parse_principal (const char **data, size_t * len,
 
   if (*len < out->realm.length)
     return -1;
-  out->realm.data = (char*) *data;
+  out->realm.data = (char *) *data;
   *data += out->realm.length;
   *len -= out->realm.length;
 
   /* Make sure realm will be zero terminated.  This limits component
      lengths to 2^24 bytes. */
-  if (**(char**)data != '\0')
+  if (**(char **) data != '\0')
     return -1;
 
   for (n = 0; n < out->num_components; n++)
@@ -162,14 +162,14 @@ parse_principal (const char **data, size_t * len,
 
       if (*len < out->components[n].length)
 	return -1;
-      out->components[n].data = (char*) *data;
+      out->components[n].data = (char *) *data;
       *data += out->components[n].length;
       *len -= out->components[n].length;
 
       /* Make sure component is zero terminated.  This limits the
-	 length of the next component to 2^24 bytes.  Note that you'll
-	 have to test after the last component elsewhere. */
-      if (*len > 0 && **(char**)data != '\0')
+         length of the next component to 2^24 bytes.  Note that you'll
+         have to test after the last component elsewhere. */
+      if (*len > 0 && **(char **) data != '\0')
 	return -1;
     }
 
@@ -236,7 +236,7 @@ parse_credential (const char **data, size_t * len,
 
   /* Make sure the last component is zero terminated.  This limits the
      next name-type to 2^24 bytes.  */
-  if (*len > 0 && **(char**)data != '\0')
+  if (*len > 0 && **(char **) data != '\0')
     return -1;
 
   rc = parse_principal (data, len, &out->server);
@@ -245,7 +245,7 @@ parse_credential (const char **data, size_t * len,
 
   /* Make sure the last component is zero terminated.  This limits the
      next key-type to lower 1 byte.  */
-  if (*len > 0 && **(char**)data != '\0')
+  if (*len > 0 && **(char **) data != '\0')
     return -1;
 
   rc = get_uint16 (data, len, &out->key.keytype);
@@ -263,7 +263,7 @@ parse_credential (const char **data, size_t * len,
   if (*len < out->key.keylen)
     return -1;
 
-  out->key.keyvalue = (char*) *data;
+  out->key.keyvalue = (char *) *data;
 
   *data += out->key.keylen;
   *len -= out->key.keylen;
@@ -322,7 +322,7 @@ parse_credential (const char **data, size_t * len,
 
   if (*len < out->ticket.length)
     return -1;
-  out->ticket.data = (char*) *data;
+  out->ticket.data = (char *) *data;
   *data += out->ticket.length;
   *len -= out->ticket.length;
 
@@ -332,7 +332,7 @@ parse_credential (const char **data, size_t * len,
 
   if (*len < out->second_ticket.length)
     return -1;
-  out->second_ticket.data = (char*) *data;
+  out->second_ticket.data = (char *) *data;
   *data += out->second_ticket.length;
   *len -= out->second_ticket.length;
 
@@ -354,7 +354,7 @@ ccache_parse (const char *data, size_t len, struct ccache *out)
 
   if (len < out->headerlen)
     return -1;
-  out->header = (char*) data;
+  out->header = (char *) data;
   data += out->headerlen;
   len -= out->headerlen;
 
@@ -362,7 +362,7 @@ ccache_parse (const char *data, size_t len, struct ccache *out)
   if (rc < 0)
     return rc;
 
-  out->credentials = (char*) data;
+  out->credentials = (char *) data;
   out->credentialslen = len;
 
   return 0;
@@ -383,9 +383,7 @@ ccache_parse_credential (const char *data, size_t len,
 }
 
 static int
-pack_principal (struct ccache_principal *princ,
-		char **out, size_t * len)
-
+pack_principal (struct ccache_principal *princ, char **out, size_t * len)
 {
   size_t n;
   int rc;
@@ -428,8 +426,7 @@ pack_principal (struct ccache_principal *princ,
 }
 
 static int
-pack_credential (struct ccache_credential *cred,
-		 char **out, size_t *len)
+pack_credential (struct ccache_credential *cred, char **out, size_t * len)
 {
   int rc;
 
@@ -520,7 +517,7 @@ pack_credential (struct ccache_credential *cred,
 
 int
 ccache_pack_credential (struct ccache_credential *cred,
-			char *out, size_t *len)
+			char *out, size_t * len)
 {
   size_t savelen = *len;
   int rc = pack_credential (cred, &out, len);
@@ -533,7 +530,7 @@ ccache_pack_credential (struct ccache_credential *cred,
 }
 
 int
-ccache_pack (struct ccache *info, char *data, size_t *len)
+ccache_pack (struct ccache *info, char *data, size_t * len)
 {
   size_t savelen = *len;
   int rc;

@@ -177,7 +177,7 @@ shishi_done (Shishi * handle)
     {
       size_t i;
 
-      for (i= 0; i < handle->nrealminfos; i++)
+      for (i = 0; i < handle->nrealminfos; i++)
 	{
 	  /* XXX free each address */
 

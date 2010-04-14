@@ -38,22 +38,22 @@
 
 static char *
 armor_data (const char *data, size_t len,
-	    const char *armortype,
-	    const char *armorheaders)
+	    const char *armortype, const char *armorheaders)
 {
   /* Must be a multiple of 4. */
 #define WRAP_COL 64
   char *armorbegin, *armorend;
   char *b64data, *out;
-  size_t wrapb64len = BASE64_LENGTH (len) + BASE64_LENGTH (len) / WRAP_COL + 1;
+  size_t wrapb64len =
+    BASE64_LENGTH (len) + BASE64_LENGTH (len) / WRAP_COL + 1;
   size_t i;
 
   b64data = xmalloc (wrapb64len + 1);
 
   for (i = 0; i <= BASE64_LENGTH (len) / WRAP_COL; i++)
     {
-      size_t readpos = i * WRAP_COL * 3 /4;
-      size_t nread = WRAP_COL * 3 /4;
+      size_t readpos = i * WRAP_COL * 3 / 4;
+      size_t nread = WRAP_COL * 3 / 4;
       size_t storepos = i * WRAP_COL + i;
       size_t nstore = WRAP_COL;
 
@@ -84,9 +84,7 @@ armor_data (const char *data, size_t len,
   out = xasprintf ("%s\n%s%s%s%s\n",
 		   armorbegin,
 		   armorheaders ? armorheaders : "",
-		   armorheaders ? "\n" : "",
-		   b64data,
-		   armorend);
+		   armorheaders ? "\n" : "", b64data, armorend);
 
   free (b64data);
   free (armorend);
@@ -97,9 +95,7 @@ armor_data (const char *data, size_t len,
 
 static char *
 armor_asn1 (Shishi * handle,
-	    Shishi_asn1 asn1,
-	    const char *armortype,
-	    const char *armorheaders)
+	    Shishi_asn1 asn1, const char *armortype, const char *armorheaders)
 {
   char *der;
   size_t derlen;
@@ -267,7 +263,7 @@ _shishi_read_armored_data (Shishi * handle,
   if (phase != 2)
     res = SHISHI_IO_ERROR;
 
- done:
+done:
 
   free (armorbegin);
   free (armorend);
@@ -932,7 +928,8 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 
       if (in_body)
 	{
-	  int ok = base64_decode_alloc (line, strlen (line), &b64buffer, NULL);
+	  int ok =
+	    base64_decode_alloc (line, strlen (line), &b64buffer, NULL);
 	  if (!ok)
 	    return SHISHI_BASE64_ERROR;
 	  shishi_key_value_set (lkey, b64buffer);

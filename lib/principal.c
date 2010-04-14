@@ -431,9 +431,7 @@ shishi_principal_set (Shishi * handle,
  * Return value: Return SHISHI_OK if successful.
  **/
 int
-shishi_derive_default_salt (Shishi * handle,
-			    const char *name,
-			    char **salt)
+shishi_derive_default_salt (Shishi * handle, const char *name, char **salt)
 {
   char *principal;
   char *realm;

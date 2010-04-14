@@ -46,9 +46,9 @@ shishi_tkts_default_ccache_guess (Shishi * handle)
     return xstrdup (envfile);
 
 #if HAVE_GETUID
-  return xasprintf("/tmp/krb5cc_%lu", (unsigned long) getuid ());
+  return xasprintf ("/tmp/krb5cc_%lu", (unsigned long) getuid ());
 #else
-  return xasprintf("/tmp/krb5cc_0");
+  return xasprintf ("/tmp/krb5cc_0");
 #endif
 }
 
@@ -117,8 +117,7 @@ shishi_tkts_default_ccache_set (Shishi * handle, const char *ccache)
  **/
 int
 shishi_tkts_add_ccache_mem (Shishi * handle,
-			    const char *data, size_t len,
-			    Shishi_tkts *tkts)
+			    const char *data, size_t len, Shishi_tkts * tkts)
 {
   int rc = SHISHI_OK;
   struct ccache ccache;
@@ -174,7 +173,7 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
 	size_t i;
 
 	for (i = 0; i < cred.client.num_components
-	       && i < CCACHE_MAX_COMPONENTS; i++)
+	     && i < CCACHE_MAX_COMPONENTS; i++)
 	  cname[i] = cred.client.components[i].data;
 	cname[i] = NULL;
 
@@ -186,8 +185,7 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
 
 	rc = shishi_kdcrep_cname_set (handle,
 				      shishi_tkt_kdcrep (tkt),
-				      cred.client.name_type,
-				      cname);
+				      cred.client.name_type, cname);
 	if (rc != SHISHI_OK)
 	  return rc;
       }
@@ -197,7 +195,7 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
 	size_t i;
 
 	for (i = 0; i < cred.server.num_components
-	       && i < CCACHE_MAX_COMPONENTS; i++)
+	     && i < CCACHE_MAX_COMPONENTS; i++)
 	  sname[i] = cred.server.components[i].data;
 	sname[i] = NULL;
 
@@ -209,8 +207,7 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
 
 	rc = shishi_enckdcreppart_sname_set (handle,
 					     shishi_tkt_enckdcreppart (tkt),
-					     cred.server.name_type,
-					     sname);
+					     cred.server.name_type, sname);
 	if (rc != SHISHI_OK)
 	  return rc;
       }
@@ -328,8 +325,7 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
  **/
 int
 shishi_tkts_add_ccache_file (Shishi * handle,
-			     const char *filename,
-			     Shishi_tkts *tkts)
+			     const char *filename, Shishi_tkts * tkts)
 {
   size_t len;
   char *ccache = read_binary_file (filename, &len);
@@ -367,7 +363,7 @@ shishi_tkts_add_ccache_file (Shishi * handle,
 int
 shishi_tkts_from_ccache_mem (Shishi * handle,
 			     const char *data, size_t len,
-			     Shishi_tkts **outtkts)
+			     Shishi_tkts ** outtkts)
 {
   int rc;
 
@@ -406,8 +402,7 @@ shishi_tkts_from_ccache_mem (Shishi * handle,
  **/
 int
 shishi_tkts_from_ccache_file (Shishi * handle,
-			      const char *filename,
-			      Shishi_tkts **outtkts)
+			      const char *filename, Shishi_tkts ** outtkts)
 {
   int rc;
 
@@ -426,13 +421,12 @@ shishi_tkts_from_ccache_file (Shishi * handle,
 }
 
 extern int
-shishi_tkt_to_ccache_mem (Shishi *handle, Shishi_tkt *tkt,
-			  char **data, size_t *len);
+shishi_tkt_to_ccache_mem (Shishi * handle, Shishi_tkt * tkt,
+			  char **data, size_t * len);
 
 int
-shishi_tkt_to_ccache_mem (Shishi *handle,
-			  Shishi_tkt *tkt,
-			  char **data, size_t *len)
+shishi_tkt_to_ccache_mem (Shishi * handle,
+			  Shishi_tkt * tkt, char **data, size_t * len)
 {
 #if 0
   struct ccache_credential cred;
@@ -453,14 +447,12 @@ shishi_tkt_to_ccache_mem (Shishi *handle,
     return SHISHI_CCACHE_ERROR;
 
   rc = shishi_asn1_read (handle, shishi_tkt_kdcrep (tkt), "crealm",
-			 &cred.client.realm.data,
-			 &cred.client.realm.length);
+			 &cred.client.realm.data, &cred.client.realm.length);
   if (rc != SHISHI_OK)
     return rc;
 
   rc = shishi_asn1_read (handle, shishi_tkt_enckdcreppart (tkt), "srealm",
-			 &cred.server.realm.data,
-			 &cred.server.realm.length);
+			 &cred.server.realm.data, &cred.server.realm.length);
   if (rc != SHISHI_OK)
     return rc;
 
@@ -468,131 +460,127 @@ shishi_tkt_to_ccache_mem (Shishi *handle,
 
 #if 0
   {
-	char *cname[CCACHE_MAX_COMPONENTS + 1];
-	size_t i;
+    char *cname[CCACHE_MAX_COMPONENTS + 1];
+    size_t i;
 
-	for (i = 0; i < cred.client.num_components
-	       && i < CCACHE_MAX_COMPONENTS; i++)
-	  cname[i] = cred.client.components[i].data;
-	cname[i] = NULL;
+    for (i = 0; i < cred.client.num_components
+	 && i < CCACHE_MAX_COMPONENTS; i++)
+      cname[i] = cred.client.components[i].data;
+    cname[i] = NULL;
 
-	rc = shishi_kdcrep_crealm_set (handle,
-				       shishi_tkt_kdcrep (tkt),
-				       cred.client.realm.data);
-	if (rc != SHISHI_OK)
-	  return rc;
+    rc = shishi_kdcrep_crealm_set (handle,
+				   shishi_tkt_kdcrep (tkt),
+				   cred.client.realm.data);
+    if (rc != SHISHI_OK)
+      return rc;
 
-	rc = shishi_kdcrep_cname_set (handle,
-				      shishi_tkt_kdcrep (tkt),
-				      cred.client.name_type,
-				      cname);
-	if (rc != SHISHI_OK)
-	  return rc;
-      }
+    rc = shishi_kdcrep_cname_set (handle,
+				  shishi_tkt_kdcrep (tkt),
+				  cred.client.name_type, cname);
+    if (rc != SHISHI_OK)
+      return rc;
+  }
 
-      {
-	char *sname[CCACHE_MAX_COMPONENTS + 1];
-	size_t i;
+  {
+    char *sname[CCACHE_MAX_COMPONENTS + 1];
+    size_t i;
 
-	for (i = 0; i < cred.server.num_components
-	       && i < CCACHE_MAX_COMPONENTS; i++)
-	  sname[i] = cred.server.components[i].data;
-	sname[i] = NULL;
+    for (i = 0; i < cred.server.num_components
+	 && i < CCACHE_MAX_COMPONENTS; i++)
+      sname[i] = cred.server.components[i].data;
+    sname[i] = NULL;
 
-	rc = shishi_enckdcreppart_srealm_set (handle,
-					      shishi_tkt_enckdcreppart (tkt),
-					      cred.server.realm.data);
-	if (rc != SHISHI_OK)
-	  return rc;
+    rc = shishi_enckdcreppart_srealm_set (handle,
+					  shishi_tkt_enckdcreppart (tkt),
+					  cred.server.realm.data);
+    if (rc != SHISHI_OK)
+      return rc;
 
-	rc = shishi_enckdcreppart_sname_set (handle,
-					     shishi_tkt_enckdcreppart (tkt),
-					     cred.server.name_type,
-					     sname);
-	if (rc != SHISHI_OK)
-	  return rc;
-      }
+    rc = shishi_enckdcreppart_sname_set (handle,
+					 shishi_tkt_enckdcreppart (tkt),
+					 cred.server.name_type, sname);
+    if (rc != SHISHI_OK)
+      return rc;
+  }
 #endif
 
-      rc = shishi_tkt_flags (tkt, &cred.tktflags);
-      if (rc != SHISHI_OK)
-	return rc;
+  rc = shishi_tkt_flags (tkt, &cred.tktflags);
+  if (rc != SHISHI_OK)
+    return rc;
 
-      {
-	time_t t;
-	rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
-			   "authtime", &t);
-	if (rc != SHISHI_OK)
-	  return rc;
-	cred.authtime = t;
-      }
+  {
+    time_t t;
+    rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+		       "authtime", &t);
+    if (rc != SHISHI_OK)
+      return rc;
+    cred.authtime = t;
+  }
 
-      {
-	time_t t;
-	rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
-			   "starttime", &t);
-	if (rc == SHISHI_ASN1_NO_ELEMENT)
-	  cred.starttime = 0;
-	else if (rc != SHISHI_OK)
-	  return rc;
-	cred.starttime = t;
-      }
+  {
+    time_t t;
+    rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+		       "starttime", &t);
+    if (rc == SHISHI_ASN1_NO_ELEMENT)
+      cred.starttime = 0;
+    else if (rc != SHISHI_OK)
+      return rc;
+    cred.starttime = t;
+  }
 
-      {
-	time_t t;
-	rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
-			 "endtime", &t);
-	if (rc != SHISHI_OK)
-	  return rc;
-	cred.endtime = t;
-      }
+  {
+    time_t t;
+    rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt), "endtime", &t);
+    if (rc != SHISHI_OK)
+      return rc;
+    cred.endtime = t;
+  }
 
-      {
-	time_t t;
-	rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
-			   "renew-till", &t);
-	if (rc == SHISHI_ASN1_NO_ELEMENT)
-	  cred.renew_till = 0;
-	else if (rc != SHISHI_OK)
-	  return rc;
-	cred.renew_till = t;
-      }
+  {
+    time_t t;
+    rc = shishi_ctime (handle, shishi_tkt_enckdcreppart (tkt),
+		       "renew-till", &t);
+    if (rc == SHISHI_ASN1_NO_ELEMENT)
+      cred.renew_till = 0;
+    else if (rc != SHISHI_OK)
+      return rc;
+    cred.renew_till = t;
+  }
 
-      cred.key.keylen = shishi_key_length (shishi_tkt_key (tkt));
-      cred.key.keytype = shishi_key_type (shishi_tkt_key (tkt));
-      memcpy (cred.key.storage, shishi_key_value (shishi_tkt_key (tkt)),
-	      shishi_key_length (shishi_tkt_key (tkt)));
-      cred.key.keyvalue = &cred.key.storage[0];
+  cred.key.keylen = shishi_key_length (shishi_tkt_key (tkt));
+  cred.key.keytype = shishi_key_type (shishi_tkt_key (tkt));
+  memcpy (cred.key.storage, shishi_key_value (shishi_tkt_key (tkt)),
+	  shishi_key_length (shishi_tkt_key (tkt)));
+  cred.key.keyvalue = &cred.key.storage[0];
 
-      i = 1024;
-      rc = ccache_pack_credential (&cred, tmp, &i);
-      printf ("rc %d len %d\n", rc, i);
+  i = 1024;
+  rc = ccache_pack_credential (&cred, tmp, &i);
+  printf ("rc %d len %d\n", rc, i);
 
-      {
-	struct ccache_credential foo;
-	size_t n;
+  {
+    struct ccache_credential foo;
+    size_t n;
 
-	rc = ccache_parse_credential (tmp, i, &foo, &n);
-	if (rc < 0)
-	  return SHISHI_CCACHE_ERROR;
-
-	printf ("packed:");
-	ccache_print_credential (&foo);
-      }
-      _shishi_escapeprint (tmp, i);
-#endif
-
+    rc = ccache_parse_credential (tmp, i, &foo, &n);
+    if (rc < 0)
       return SHISHI_CCACHE_ERROR;
+
+    printf ("packed:");
+    ccache_print_credential (&foo);
+  }
+  _shishi_escapeprint (tmp, i);
+#endif
+
+  return SHISHI_CCACHE_ERROR;
 }
 
 extern int
-shishi_tkts_to_ccache_mem (Shishi *handle, Shishi_tkts *tkts,
-			   char **data, size_t *len);
+shishi_tkts_to_ccache_mem (Shishi * handle, Shishi_tkts * tkts,
+			   char **data, size_t * len);
 
 int
-shishi_tkts_to_ccache_mem (Shishi *handle,
-			   Shishi_tkts *tkts,
-			   char **data, size_t *len)
+shishi_tkts_to_ccache_mem (Shishi * handle,
+			   Shishi_tkts * tkts, char **data, size_t * len)
 {
   return SHISHI_CCACHE_ERROR;
 

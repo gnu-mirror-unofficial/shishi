@@ -25,4 +25,4 @@ extern int _shishi_tls_done (Shishi * handle);
 extern int _shishi_sendrecv_tls (Shishi * handle,
 				 struct addrinfo *ai,
 				 const char *indata, size_t inlen,
-				 char **outdata, size_t *outlen);
+				 char **outdata, size_t * outlen);

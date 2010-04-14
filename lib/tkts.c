@@ -905,7 +905,7 @@ set_tgtflags_based_on_hint (Shishi_tkts_hint * tkthint,
 /* Pre-authenticate request, based on LOCHINT.  Currently only
    PA-ENC-TIMESTAMP is supported.  */
 static int
-do_preauth (Shishi_tkts *tkts, Shishi_tkts_hint *lochint, Shishi_as *as)
+do_preauth (Shishi_tkts * tkts, Shishi_tkts_hint * lochint, Shishi_as * as)
 {
   int rc = SHISHI_OK;
 
@@ -956,12 +956,10 @@ do_preauth (Shishi_tkts *tkts, Shishi_tkts_hint *lochint, Shishi_as *as)
 
 /* Handle ETYPE-INFO and ETYPE-INFO2 pre-auth data. */
 static int
-recover_preauth_info (Shishi_tkts *tkts,
-		      Shishi_as *as,
-		      Shishi_tkts_hint *lochint,
-		      Shishi_asn1 einfos,
-		      bool isinfo2,
-		      bool *retry)
+recover_preauth_info (Shishi_tkts * tkts,
+		      Shishi_as * as,
+		      Shishi_tkts_hint * lochint,
+		      Shishi_asn1 einfos, bool isinfo2, bool * retry)
 {
   size_t foundpos = SIZE_MAX;
   size_t i, n;
@@ -969,7 +967,7 @@ recover_preauth_info (Shishi_tkts *tkts,
 
   shishi_verbose (tkts->handle, "Found INFO-ETYPE(2) pre-auth hints");
 
-  if (VERBOSEASN1(tkts->handle))
+  if (VERBOSEASN1 (tkts->handle))
     {
       if (isinfo2)
 	shishi_etype_info2_print (tkts->handle, stdout, einfos);
@@ -1005,9 +1003,10 @@ recover_preauth_info (Shishi_tkts *tkts,
 	    {
 	      if (etype == tkts->handle->clientkdcetypes[j])
 		{
-		  if (j < foundpos && VERBOSENOISE(tkts->handle))
+		  if (j < foundpos && VERBOSENOISE (tkts->handle))
 		    {
-		      shishi_verbose (tkts->handle, "New best etype %d", etype);
+		      shishi_verbose (tkts->handle, "New best etype %d",
+				      etype);
 
 		      /* XXX mem leak. */
 
@@ -1024,14 +1023,15 @@ recover_preauth_info (Shishi_tkts *tkts,
 			  format = xasprintf ("?%d.s2kparams", i);
 			  rc = shishi_asn1_read (tkts->handle, einfos, format,
 						 &lochint->preauths2kparams,
-						 &lochint->preauths2kparamslen);
+						 &lochint->
+						 preauths2kparamslen);
 			  free (format);
 			  if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
 			    return rc;
 			}
 		    }
 
-		  foundpos = MIN(foundpos, j);
+		  foundpos = MIN (foundpos, j);
 		}
 	    }
 	}
@@ -1056,10 +1056,8 @@ recover_preauth_info (Shishi_tkts *tkts,
    error, set *RETRY to true and set any hints in LOCHINT that help
    do_preauth() compute the proper pre-auth data.  */
 static int
-recover_preauth (Shishi_tkts *tkts,
-		 Shishi_as *as,
-		 Shishi_tkts_hint *lochint,
-		 bool *retry)
+recover_preauth (Shishi_tkts * tkts,
+		 Shishi_as * as, Shishi_tkts_hint * lochint, bool * retry)
 {
   Shishi_asn1 krberror = shishi_as_krberror (as);
   Shishi_asn1 pas;
@@ -1083,7 +1081,7 @@ recover_preauth (Shishi_tkts *tkts,
 	  int32_t padatatype;
 
 	  rc = shishi_asn1_read_int32 (tkts->handle, pas, format,
-					&padatatype);
+				       &padatatype);
 	  free (format);
 	  if (rc == SHISHI_OK)
 	    {
@@ -1198,7 +1196,7 @@ shishi_tkts_get_tgt (Shishi_tkts * tkts, Shishi_tkts_hint * hint)
   if (hint->flags & SHISHI_TKTSHINTFLAGS_NON_INTERACTIVE)
     return NULL;
 
- again:
+again:
   rc = shishi_as (tkts->handle, &as);
   if (rc == SHISHI_OK)
     rc = act_hint_on_kdcreq (tkts->handle, &lochint, shishi_as_req (as));

@@ -440,8 +440,7 @@ parse_listen (char *listenstr)
 	rc = getaddrinfo (val, "kerberos", &hints, &res);
       if (rc != 0)
 	error (EXIT_FAILURE, errno,
-	       "Cannot get listen socket for %s (host %s)",
-	       name, val);
+	       "Cannot get listen socket for %s (host %s)", name, val);
 
       for (p = res; p; p = p->ai_next)
 	{
@@ -474,8 +473,7 @@ const char version_etc_copyright[] =
      year.  */
   "Copyright %s %d Simon Josefsson.";
 
-static void
-usage (int status) __attribute__ ((__noreturn__));
+static void usage (int status) __attribute__ ((__noreturn__));
 
 static void
 usage (int status)
@@ -487,9 +485,9 @@ usage (int status)
     {
       cmdline_parser_print_help ();
       /* TRANSLATORS: The placeholder indicates the bug-reporting address
-	 for this package.  Please add _another line_ saying
-	 "Report translation bugs to <...>\n" with the address for translation
-	 bugs (typically your translation team's web or email address).  */
+         for this package.  Please add _another line_ saying
+         "Report translation bugs to <...>\n" with the address for translation
+         bugs (typically your translation team's web or email address).  */
       printf (_("\nMandatory arguments to long options are "
 		"mandatory for short options too.\n\nReport bugs to <%s>.\n"),
 	      PACKAGE_BUGREPORT);

@@ -29,8 +29,8 @@ struct Shishi_key
   char *realm;
   int type;
   char value[MAX_KEY_LEN];
-  uint32_t kvno; /* UINT32_MAX means undefined kvno */
-  time_t timestamp; /* Only used by keytab code. */
+  uint32_t kvno;		/* UINT32_MAX means undefined kvno */
+  time_t timestamp;		/* Only used by keytab code. */
   /* If you add anything here, check the functions shishi_key,
      shishi_key_done and shishi_key_copy. */
 };

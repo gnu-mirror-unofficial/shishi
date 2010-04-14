@@ -143,7 +143,8 @@ shishi_time (Shishi * handle, Shishi_asn1 node, const char *field, char **t)
  *   SHISHI_ASN1_ERROR otherwise.
  **/
 int
-shishi_ctime (Shishi * handle, Shishi_asn1 node, const char *field, time_t *t)
+shishi_ctime (Shishi * handle, Shishi_asn1 node, const char *field,
+	      time_t * t)
 {
   char str[SHISHI_GENERALIZEDTIME_LENGTH + 1];
   size_t len = sizeof (str);
