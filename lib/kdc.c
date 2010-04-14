@@ -687,8 +687,8 @@ shishi_as_process (Shishi * handle,
  * shishi_kdcrep_get_ticket() to extract the ticket.  This function
  * verifies the various conditions that must hold if the response is
  * to be considered valid, specifically it compares nonces
- * (shishi_check_nonce()) and if the exchange was a AS exchange, it
- * also compares cname and crealm (shishi_as_check_cname() and
+ * (shishi_kdc_check_nonce()) and if the exchange was a AS exchange,
+ * it also compares cname and crealm (shishi_as_check_cname() and
  * shishi_as_check_crealm()).
  *
  * Usually the shishi_as_process() and shishi_tgs_process() functions
