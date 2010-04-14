@@ -1,5 +1,5 @@
 /* priv.c --- Application data privacy protection.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -277,10 +277,8 @@ shishi_priv_encprivpart_set (Shishi_priv * priv, Shishi_asn1 asn1encprivpart)
  * @out: output array with newly allocated DER encoding of ENCPRIVPART.
  * @outlen: length of output array with DER encoding of ENCPRIVPART.
  *
- * DER encode ENCPRIVPART structure.  Typically
- * shishi_encprivpart_build() is used to build the ENCPRIVPART
- * structure first.  @out is allocated by this function, and it is the
- * responsibility of caller to deallocate it.
+ * DER encode ENCPRIVPART structure.  @out is allocated by this
+ * function, and it is the responsibility of caller to deallocate it.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/

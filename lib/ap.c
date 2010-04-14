@@ -359,9 +359,9 @@ shishi_ap_set_tktoptionsasn1usage (Shishi_ap * ap,
  * @options: AP-REQ options to set in newly created AP.
  *
  * Create a new AP exchange using shishi_ap(), and set the ticket and
- * AP-REQ apoptions using shishi_ap_set_tktoption().  A random session
- * key is added to the authenticator, using the same keytype as the
- * ticket.
+ * AP-REQ apoptions using shishi_ap_set_tktoptions().  A random
+ * session key is added to the authenticator, using the same keytype
+ * as the ticket.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/

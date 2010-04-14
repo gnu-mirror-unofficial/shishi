@@ -1,5 +1,5 @@
 /* kdc.c --- Key distribution (AS/TGS) functions.
- * Copyright (C) 2002, 2003, 2004, 2007  Simon Josefsson
+ * Copyright (C) 2002, 2003, 2004, 2007, 2010  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -687,9 +687,9 @@ shishi_as_process (Shishi * handle,
  * shishi_kdcrep_get_ticket() to extract the ticket.  This function
  * verifies the various conditions that must hold if the response is
  * to be considered valid, specifically it compares nonces
- * (shishi_check_nonces()) and if the exchange was a AS exchange, it
- * also compares cname and crealm (shishi_check_cname() and
- * shishi_check_crealm()).
+ * (shishi_check_nonce()) and if the exchange was a AS exchange, it
+ * also compares cname and crealm (shishi_as_check_cname() and
+ * shishi_as_check_crealm()).
  *
  * Usually the shishi_as_process() and shishi_tgs_process() functions
  * should be used instead, since they simplify the decryption key

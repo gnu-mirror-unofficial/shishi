@@ -50,7 +50,7 @@ struct Shishi_crypto
  *
  * When the application no longer need to use the context, it should
  * deallocate resources associated with it by calling
- * shishi_crypto_done().
+ * shishi_crypto_close().
  *
  * Return value: Return a newly allocated crypto context.
  **/
@@ -95,7 +95,7 @@ shishi_crypto (Shishi * handle,
  *
  * When the application no longer need to use the context, it should
  * deallocate resources associated with it by calling
- * shishi_crypto_done().
+ * shishi_crypto_close().
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
@@ -136,7 +136,7 @@ shishi_crypto_encrypt (Shishi_crypto * ctx,
  *
  * When the application no longer need to use the context, it should
  * deallocate resources associated with it by calling
- * shishi_crypto_done().
+ * shishi_crypto_close().
  *
  * Return value: Returns %SHISHI_OK iff successful.
  **/
