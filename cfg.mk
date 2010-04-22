@@ -21,6 +21,8 @@ WFLAGS ?= --enable-gcc-warnings
 ADDFLAGS ?=
 CFGFLAGS ?= --enable-gtk-doc --with-libgcrypt $(ADDFLAGS) $(WFLAGS)
 
+INDENT_SOURCES = `find . -name \*.[ch] | grep -v -e ^./asn1/ -e ^./build-aux/ -e ^./db/gl/ -e ^./extra/rsh-redone/ -e ^./gl/ -e ^./lib/kerberos5.c -e ^./src/gl/`
+
 ifeq ($(.DEFAULT_GOAL),abort-due-to-no-makefile)
 .DEFAULT_GOAL := bootstrap
 endif

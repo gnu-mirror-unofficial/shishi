@@ -44,7 +44,7 @@ doit (Shishi * handle, Shishi_ap * ap, int verbose)
     {
       Shishi_safe *safe;
 
-      line[strlen(line)-1] = '\0';
+      line[strlen (line) - 1] = '\0';
       printf ("read: %s\n", line);
 
       res = shishi_safe (handle, &safe);

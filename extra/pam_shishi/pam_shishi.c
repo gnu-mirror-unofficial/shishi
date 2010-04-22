@@ -144,7 +144,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 
       password = resp->resp;
 
-      retval = pam_set_item(pamh, PAM_AUTHTOK, password);
+      retval = pam_set_item (pamh, PAM_AUTHTOK, password);
       if (retval != PAM_SUCCESS)
 	{
 	  D (("set_item returned error: %s", pam_strerror (pamh, retval)));
@@ -153,7 +153,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
     }
 
   tkt = shishi_tkts_get_for_localservicepasswd (shishi_tkts_default (h),
-						 "host", password);
+						"host", password);
   if (tkt == NULL)
     {
       D (("TGS exchange failed: %s\n", shishi_error (h)));

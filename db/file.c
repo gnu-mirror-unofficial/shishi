@@ -73,7 +73,7 @@ enum
   THE_END
 };
 
-static const char * const _shisa_file_opts[] = {
+static const char *const _shisa_file_opts[] = {
   /* [READ_ONLY_OPTION] =        */ "read-only",
   /* [ALLOW_CREATE_OPTION] =     */ "allow-create",
   /* [THE_END] =                 */ NULL
@@ -89,7 +89,7 @@ shisa_file_cfg (Shisa * dbh, Shisa_file * info, const char *option)
 
   while (p != NULL && *p != '\0')
     {
-      switch (getsubopt (&p, (char * const *) _shisa_file_opts, &value))
+      switch (getsubopt (&p, (char *const *) _shisa_file_opts, &value))
 	{
 	case READ_ONLY_OPTION:
 	  info->readonly = 1;
@@ -109,7 +109,7 @@ shisa_file_cfg (Shisa * dbh, Shisa_file * info, const char *option)
 
   res = SHISA_OK;
 
- out:
+out:
   free (opt);
   return res;
 }

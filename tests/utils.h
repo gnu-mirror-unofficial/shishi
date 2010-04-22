@@ -55,6 +55,6 @@ extern void hexprint (const char *str, size_t len);
 extern void binprint (const char *str, size_t len);
 
 /* This must be implemented elsewhere. */
-extern void test (Shishi *handle);
+extern void test (Shishi * handle);
 
 #endif /* UTILS_H */

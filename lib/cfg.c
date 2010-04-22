@@ -441,9 +441,8 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
       fprintf (fh, "\tKDCs for realm %s:\n", handle->realminfos[i].name);
       for (j = 0; j < handle->realminfos[i].nkdcaddresses; j++)
 	fprintf (fh, "\t\tTransport %s host %s port %s\n",
-		 _shishi_transport2string (handle->
-					   realminfos[i].kdcaddresses[j].
-					   transport),
+		 _shishi_transport2string (handle->realminfos[i].
+					   kdcaddresses[j].transport),
 		 handle->realminfos[i].kdcaddresses[j].hostname,
 		 handle->realminfos[i].kdcaddresses[j].port);
     }

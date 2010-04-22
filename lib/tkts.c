@@ -1023,8 +1023,7 @@ recover_preauth_info (Shishi_tkts * tkts,
 			  format = xasprintf ("?%d.s2kparams", i);
 			  rc = shishi_asn1_read (tkts->handle, einfos, format,
 						 &lochint->preauths2kparams,
-						 &lochint->
-						 preauths2kparamslen);
+						 &lochint->preauths2kparamslen);
 			  free (format);
 			  if (rc != SHISHI_OK && rc != SHISHI_ASN1_NO_ELEMENT)
 			    return rc;
