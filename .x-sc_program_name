@@ -1,4 +1,5 @@
 ^tests/
 ^lib/ccache.c
 ^examples/
+^extra/pam_shishi/test.c
 ^extra/rsh-redone/
