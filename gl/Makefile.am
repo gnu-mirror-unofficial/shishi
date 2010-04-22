@@ -621,7 +621,7 @@ EXTRA_libgnu_la_SOURCES += mktime.c
 
 ## begin gnulib module netdb
 
-BUILT_SOURCES += $(NETDB_H)
+BUILT_SOURCES += netdb.h
 
 # We need the following in order to create <netdb.h> when the system
 # doesn't have one that works with the given compiler.
