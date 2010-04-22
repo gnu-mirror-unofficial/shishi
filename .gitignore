@@ -177,6 +177,7 @@ gl/libgnu.la
 gl/link-warning.h
 gl/malloca.lo
 gl/malloca.o
+gl/netdb.h
 gl/printf-args.lo
 gl/printf-args.o
 gl/printf-parse.lo
@@ -393,6 +394,11 @@ src/gl/Makefile
 src/gl/Makefile.in
 src/gl/arg-nonnull.h
 src/gl/c++defs.h
+src/gl/getopt.h
+src/gl/getopt.lo
+src/gl/getopt.o
+src/gl/getopt1.lo
+src/gl/getopt1.o
 src/gl/libgnu.la
 src/gl/link-warning.h
 src/gl/locale.h
