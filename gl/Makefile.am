@@ -418,8 +418,20 @@ EXTRA_libgnu_la_SOURCES += gai_strerror.c getaddrinfo.c
 
 ## begin gnulib module getdate
 
+# This rule overrides the Automake generated .y.c rule, to ensure that the
+# getdate.c file gets generated in the source directory, not in the build
+# directory.
+getdate.c: getdate.y
+	$(AM_V_GEN)$(SHELL) $(YLWRAP) $(srcdir)/getdate.y \
+	                              y.tab.c getdate.c \
+	                              y.tab.h getdate.h \
+	                              y.output getdate.output \
+	                              -- $(YACC) $(YFLAGS) $(AM_YFLAGS) && \
+	mv getdate.c getdate.c-t && \
+	mv getdate.c-t $(srcdir)/getdate.c
 libgnu_la_SOURCES += getdate.y
 BUILT_SOURCES += getdate.c
+MOSTLYCLEANFILES += getdate.c-t
 MAINTAINERCLEANFILES += getdate.c
 EXTRA_DIST += getdate.c
 
@@ -625,7 +637,7 @@ BUILT_SOURCES += netdb.h
 
 # We need the following in order to create <netdb.h> when the system
 # doesn't have one that works with the given compiler.
-netdb.h: netdb.in.h $(ARG_NONNULL_H)
+netdb.h: netdb.in.h $(ARG_NONNULL_H) $(WARN_ON_USE_H)
 	$(AM_V_GEN)rm -f $@-t $@ && \
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
 	  sed -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
@@ -639,6 +651,7 @@ netdb.h: netdb.in.h $(ARG_NONNULL_H)
 	      -e 's|@''HAVE_DECL_GETADDRINFO''@|$(HAVE_DECL_GETADDRINFO)|g' \
 	      -e 's|@''HAVE_DECL_GETNAMEINFO''@|$(HAVE_DECL_GETNAMEINFO)|g' \
 	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
+	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)' \
 	      < $(srcdir)/netdb.in.h; \
 	} > $@-t && \
 	mv $@-t $@
@@ -1632,6 +1645,7 @@ unistd.h: unistd.in.h $(CXXDEFS_H) $(ARG_NONNULL_H) $(WARN_ON_USE_H)
 	      -e 's|@''REPLACE_RMDIR''@|$(REPLACE_RMDIR)|g' \
 	      -e 's|@''REPLACE_SLEEP''@|$(REPLACE_SLEEP)|g' \
 	      -e 's|@''REPLACE_SYMLINK''@|$(REPLACE_SYMLINK)|g' \
+	      -e 's|@''REPLACE_TTYNAME_R''@|$(REPLACE_TTYNAME_R)|g' \
 	      -e 's|@''REPLACE_UNLINK''@|$(REPLACE_UNLINK)|g' \
 	      -e 's|@''REPLACE_UNLINKAT''@|$(REPLACE_UNLINKAT)|g' \
 	      -e 's|@''REPLACE_USLEEP''@|$(REPLACE_USLEEP)|g' \
