@@ -19,14 +19,14 @@
 # Floor, Boston, MA 02110-1301, USA.
 
 AC_PREREQ(2.61)
-AC_INIT([GNU Shishi], [1.0.0], [bug-shishi@gnu.org])
+AC_INIT([GNU Shishi], [1.0.1], [bug-shishi@gnu.org])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 AC_SUBST(LT_CURRENT, 1)
-AC_SUBST(LT_REVISION, 0)
+AC_SUBST(LT_REVISION, 1)
 AC_SUBST(LT_AGE, 1)
 
 # Used when creating libshishi-XX.def.
