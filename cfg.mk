@@ -19,7 +19,8 @@
 
 WFLAGS ?= --enable-gcc-warnings
 ADDFLAGS ?=
-CFGFLAGS ?= --enable-gtk-doc --with-libgcrypt $(ADDFLAGS) $(WFLAGS)
+CFGFLAGS ?= --enable-gtk-doc --enable-gtk-doc-pdf \
+	--with-libgcrypt $(ADDFLAGS) $(WFLAGS)
 
 INDENT_SOURCES = `find . -name \*.[ch] | grep -v -e ^./asn1/ -e ^./build-aux/ -e ^./db/gl/ -e ^./extra/rsh-redone/ -e ^./gl/ -e ^./lib/kerberos5.c -e ^./src/gl/`
 

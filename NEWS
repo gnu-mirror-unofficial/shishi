@@ -4,6 +4,9 @@ See the end for copying conditions.
 
 * Version 1.0.0 (unreleased)
 
+** doc: Added PDF version of API reference manual.
+See doc/reference/shishi.pdf.
+
 ** Fix building with --disable-starttls.
 Reported by Johan van Selst <johans@stack.nl> in
 <http://lists.gnu.org/archive/html/help-shishi/2010-04/msg00000.html>.
