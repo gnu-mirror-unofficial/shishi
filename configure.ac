@@ -310,7 +310,6 @@ AC_MSG_NOTICE([user database root path $DBDIR])
 
 AC_DEFINE([xalloc_die], [shishi_xalloc_die], [Fix namespace of xalloc_die.])
 
-sj_VALGRIND
 sj_UPDATE_HEADER_VERSION([$srcdir/lib/shishi.h])
 
 AC_ARG_ENABLE([gcc-warnings],

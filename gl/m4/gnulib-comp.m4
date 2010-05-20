@@ -146,6 +146,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module unistd:
   # Code from module unsetenv:
   # Code from module useless-if-before-free:
+  # Code from module valgrind-tests:
   # Code from module vasnprintf:
   # Code from module vasprintf:
   # Code from module vc-list-files:
@@ -487,6 +488,8 @@ AC_SUBST([LTALLOCA])
   gl_FUNC_UNSETENV
   gl_STDLIB_MODULE_INDICATOR([unsetenv])
   # Code from module useless-if-before-free:
+  # Code from module valgrind-tests:
+  gl_VALGRIND_TESTS
   # Code from module vasnprintf:
   gl_FUNC_VASNPRINTF
   # Code from module vasprintf:
@@ -560,6 +563,7 @@ changequote([, ])dnl
   AC_SUBST([gltests_WITNESS])
   gl_module_indicator_condition=$gltests_WITNESS
   m4_pushdef([gl_MODULE_INDICATOR_CONDITION], [$gl_module_indicator_condition])
+  gl_VALGRIND_TESTS
   m4_popdef([gl_MODULE_INDICATOR_CONDITION])
   m4_ifval(gltests_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gltests_LIBSOURCES_DIR])[ ||
@@ -809,6 +813,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/alloca.m4
   m4/arcfour.m4
   m4/arpa_inet_h.m4
+  m4/asm-underscore.m4
   m4/autobuild.m4
   m4/base64.m4
   m4/bison.m4
@@ -918,6 +923,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/timespec.m4
   m4/tm_gmtoff.m4
   m4/unistd_h.m4
+  m4/valgrind-tests.m4
   m4/vasnprintf.m4
   m4/vasprintf.m4
   m4/warn-on-use.m4
