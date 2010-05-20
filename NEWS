@@ -7,7 +7,10 @@ See the end for copying conditions.
 ** doc: Added PDF version of API reference manual.
 See doc/reference/shishi.pdf.
 
-** Fix building with --disable-starttls.
+** doc: Added Cyclomatic Code Complexity charts.
+See doc/cyclo/.
+
+** build: Fix building with --disable-starttls.
 Reported by Johan van Selst <johans@stack.nl> in
 <http://lists.gnu.org/archive/html/help-shishi/2010-04/msg00000.html>.
 
