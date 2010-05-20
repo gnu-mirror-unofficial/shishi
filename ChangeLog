@@ -1,3 +1,150 @@
+2010-05-20  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.0.0.
+
+2010-05-20  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Fix.
+
+2010-05-20  Simon Josefsson <simon@josefsson.org>
+
+	* .gitignore, build-aux/pmccabe.css, build-aux/pmccabe2html,
+	cfg.mk, configure.ac, doc/cyclo/Makefile.am, gl/Makefile.am,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4: Add cyclomatic code
+	complexity chart.
+
+2010-05-20  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, cfg.mk, doc/gendocs_template, doc/reference/Makefile.am,
+	gl/override/doc/gendocs_template.diff, gtk-doc.make, m4/gtk-doc.m4: 
+	Update GTK-DOC files to enable PDF manual.
+
+2010-05-20  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/c++defs.h, build-aux/gendocs.sh, configure.ac,
+	db/gl/wchar.in.h, doc/gendocs_template, gl/Makefile.am,
+	gl/m4/asm-underscore.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/stdio_h.m4, gl/m4/unistd_h.m4,
+	gl/m4/valgrind-tests.m4, gl/stdio-write.c, gl/stdio.in.h,
+	gl/unistd.in.h, gl/vasnprintf.c, gl/verify.h, gl/wchar.in.h,
+	m4/valgrind.m4, maint.mk, src/gl/error.c: Update gnulib files, use
+	valgrind-tests module.
+
+2010-04-29  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/gnupload, db/gl/m4/gnulib-common.m4, gl/Makefile.am,
+	gl/m4/gnulib-common.m4, gl/m4/netdb_h.m4, gl/m4/unistd_h.m4,
+	gl/netdb.in.h, gl/unistd.in.h, maint.mk, src/gl/m4/gnulib-common.m4: 
+	Update gnulib files.
+
+2010-04-25  Simon Josefsson <simon@josefsson.org>
+
+	* build-aux/vc-list-files, gl/m4/strnlen.m4, gl/vasnprintf.c,
+	maint.mk: Update gnulib files.
+
+2010-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* .gitignore: Ignore more.
+
+2010-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* m4/valgrind.m4: Use valgrind -q.
+
+2010-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* .x-sc_program_name: Fix syntax-check nit.
+
+2010-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, asn1/Makefile.am, asn1/coding.c, asn1/decoding.c,
+	asn1/element.h, asn1/gstr.h, asn1/libtasn1.h, asn1/parser_aux.c,
+	asn1/parser_aux.h, asn1/structure.h, asn1/version.c: minitasn1:
+	Internal copy upgraded to GNU Libtasn1 v2.6.
+
+2010-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk, db/file.c, examples/client-priv.c,
+	examples/client-safe.c, extra/pam_shishi/pam_shishi.c,
+	extra/pam_shishi/test.c, lib/cfg.c, lib/tkts.c, tests/utils.h: 
+	Indent code.
+
+2010-04-22  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/gc-libgcrypt.c, gl/m4/netdb_h.m4, gl/setenv.c,
+	gl/stdbool.in.h, maint.mk, src/gl/getopt.c, src/gl/getopt_int.h: 
+	Update gnulib files.
+
+2010-04-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdc.c: Doc typo fixes.
+
+2010-04-14  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2010-04-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/ap.c, lib/crypto-ctx.c, lib/kdc.c, lib/priv.c: Doc typo fixes.
+
+2010-04-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/as.c, lib/asn1.c, lib/ccache.c, lib/ccache.h, lib/cfg.c,
+	lib/crypto-des.c, lib/crypto.c, lib/diskio.c, lib/gztime.c,
+	lib/init.c, lib/kdcreq.c, lib/key.c, lib/keys.c, lib/keytab.c,
+	lib/krberror.c, lib/low-crypto.c, lib/netio.c, lib/principal.c,
+	lib/shishi.h, lib/starttls.c, lib/starttls.h, lib/tktccache.c,
+	lib/tkts.c, src/server.c, src/shisa.c, src/shishi.c, src/shishid.c,
+	src/starttls.c, tests/crypto-ctx.c, tests/nonce.c: Indent code.
+
+2010-04-14  Simon Josefsson <simon@josefsson.org>
+
+	* src/gl/getopt.c, src/gl/m4/getopt.m4: Update gnulib files.
+
+2010-04-13  Simon Josefsson <simon@josefsson.org>
+
+	* .x-sc_prohibit_empty_lines_at_EOF, .x-sc_texinfo_acronym,
+	.x-sc_unmarked_diagnostics, GNUmakefile, build-aux/c++defs.h,
+	build-aux/warn-on-use.h, db/gl/m4/gnulib-common.m4,
+	db/gl/m4/gnulib-comp.m4, db/gl/stdint.in.h, db/gl/wchar.in.h,
+	doc/reference/Makefile.am, doc/shishi.texi,
+	extra/rsh-redone/rlogin.c, extra/rsh-redone/rsh.c, gl/Makefile.am,
+	gl/arpa_inet.in.h, gl/errno.in.h, gl/float.in.h, gl/fseeko.c,
+	gl/m4/fseeko.m4, gl/m4/gnulib-common.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/lib-link.m4, gl/m4/memchr.m4, gl/m4/stdio_h.m4,
+	gl/m4/stdlib_h.m4, gl/m4/strdup.m4, gl/m4/string_h.m4,
+	gl/m4/strnlen.m4, gl/m4/strtok_r.m4, gl/m4/time_h.m4,
+	gl/m4/time_r.m4, gl/m4/timegm.m4, gl/m4/unistd_h.m4,
+	gl/m4/vasnprintf.m4, gl/netdb.in.h, gl/netinet_in.in.h,
+	gl/stdarg.in.h, gl/stdint.in.h, gl/stdio-impl.h, gl/stdio.in.h,
+	gl/stdlib.in.h, gl/string.in.h, gl/strings.in.h,
+	gl/sys_socket.in.h, gl/sys_stat.in.h, gl/time.in.h, gl/time_r.c,
+	gl/unistd.in.h, gl/vasnprintf.c, gl/wchar.in.h, maint.mk,
+	src/gl/errno.in.h, src/gl/getopt.in.h, src/gl/locale.in.h,
+	src/gl/m4/gnulib-common.m4, src/gl/m4/gnulib-comp.m4: Update gnulib
+	files.  Fix syntax-check warnings.
+
+2010-04-13  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, THANKS, lib/netio.c: Fix building with --disable-starttls.  Reported by Johan van Selst <johans@stack.nl> in
+
+	<http://lists.gnu.org/archive/html/help-shishi/2010-04/msg00000.html>.
+
+2010-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk: Prepare for non-alpha upload.
+
+2010-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, configure.ac, lib/shishi.h: Bump versions.
+
+2010-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* doc/announce.txt: Update.
+
+2010-03-30  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2010-03-30  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 0.0.43.

@@ -18,8 +18,9 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
+SUBDIRS = . cyclo
 if ENABLE_GTK_DOC
-SUBDIRS = . reference
+SUBDIRS += reference
 endif
 
 EXTRA_DIST = gdoc gdoc-error shishi.html shishi.pdf shishi.ps components.dia
