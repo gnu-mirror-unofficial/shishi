@@ -1,39 +1,36 @@
-Subject: Shishi 0.0.43 (release candidate for 1.0.0)
 To: help-shishi@gnu.org, info-gnu@gnu.org
+Subject: Shishi 1.0.0
 <#part sign=pgpmime>
-
 Shishi is an implementation of the Kerberos 5 network authentication
 system.  Shishi can be used to authenticate users in distributed
 systems.  Shishi is part of a GNU system.
 
-Note that we plan to release version 1.0.0 soon and this release
-should be regarded as a release candidate.  Shishi has been relatively
-stable for a long period of time, so it deserves a non-alpha release.
+* Version 1.0.0 (released 2010-05-20)
 
-* Version 0.0.43 (released 2010-03-30)
+** doc: Added PDF version of API reference manual.
+See doc/reference/shishi.pdf.
 
-** libshishi, shishid: Make IPv6 support work.
+** doc: Added Cyclomatic Code Complexity charts.
+See doc/cyclo/.
 
-** shishid: Add --no-tls parameter to disable TLS support.
+** build: Fix building with --disable-starttls.
+Reported by Johan van Selst <johans@stack.nl> in
+<http://lists.gnu.org/archive/html/help-shishi/2010-04/msg00000.html>.
 
-** libshishi, shishid: STARTTLS extension negotiation now follows RFC 5021.
+** minitasn1: Internal copy upgraded to GNU Libtasn1 v2.6.
 
-** doc: Fix spelling typos noticed by lintian.
-
-** Update gnulib files.
-Including moving the 'stat' module from db/ to gl/ so that libshishi
-builds properly.
+** Doc fixes.
 
 ** API and ABI modifications:
 No changes since last version.
 
-Shishi contains a library ('libshishi') that can be used by application
-developers to add support for Kerberos 5.  Shishi contains a command
-line utility ('shishi') that is used by users to acquire and manage
-tickets (and more).  The server side, a Key Distribution Center (KDC),
-is implemented by 'shishid', and support X.509 authenticated TLS via
-GnuTLS.  Of course, a manual documenting usage aspects as well as the
-programming API is included.
+Shishi contains a library ('libshishi') that can be used by
+application developers to add support for Kerberos 5.  Shishi contains
+a command line utility ('shishi') that is used by users to acquire and
+manage tickets (and more).  The server side, a Key Distribution Center
+(KDC), is implemented by 'shishid', and support X.509 authenticated
+TLS via GnuTLS.  Of course, a manual documenting usage aspects as well
+as the programming API is included.
 
 Shishi currently supports AS/TGS exchanges for acquiring tickets,
 pre-authentication, the AP exchange for performing client and server
@@ -44,15 +41,15 @@ cryptographic algorithms are supported.
 Shishi aims to be internationalized, thread safe and portable.  Shishi
 is written in ANSI/ISO C89, and has been ported to numerous platforms,
 including most major Unix platforms and Windows, running on devices
-including iPAQ handhelds and S/390 mainframes.  Shishi can also be cross
-compiled to Microsoft Windows using mingw32 and embedded platforms such
-as the Motorola Coldfire.
+including iPAQ handhelds and S/390 mainframes.  Shishi can also be
+cross compiled to Microsoft Windows using mingw32 and embedded
+platforms such as the Motorola Coldfire.
 
-Current work items include improvements on the server (KDC), integration
-of initial authentication via OpenPGP using GnuTLS, set-passwd
-implementation, and a LDAP backend for the Shisa library used in the KDC
-for information storage.  Assistance is appreciated on any of these (or
-other) items.
+Current work items include improvements on the server (KDC),
+integration of initial authentication via OpenPGP using GnuTLS,
+set-passwd implementation, and a LDAP backend for the Shisa library
+used in the KDC for information storage.  Assistance is appreciated on
+any of these (or other) items.
 
 The project web page is available at:
   http://www.gnu.org/software/shishi/
@@ -60,39 +57,34 @@ The project web page is available at:
 All manuals are available from:
   http://www.gnu.org/software/shishi/manual/
 
-Specifically, the following formats are available.
+Direct links to the manual:
+  HTML: http://www.gnu.org/software/shishi/manual/shishi.html
+  PDF: http://www.gnu.org/software/shishi/manual/shishi.pdf
 
-The main manual:
-  http://www.gnu.org/software/shishi/manual/shishi.html - HTML format
-  http://www.gnu.org/software/shishi/manual/shishi.pdf - PDF format
+Direct links to the API Reference manual:
+  HTML: http://www.gnu.org/software/shishi/reference/
+  PDF: http://www.gnu.org/software/shishi/reference/shishi.pdf
 
-API Reference manual:
-  http://www.gnu.org/software/shishi/reference/ - GTK-DOC HTML
-
-Also useful are code coverage charts which indicate parts of the source
-code that needs to be tested better by the included self-tests:
+For code coverage and cyclomatic code complexity charts:
   http://www.gnu.org/software/shishi/coverage/
+  http://www.gnu.org/software/shishi/cyclo/cyclo-shishi.html
 
 If you need help to use Shishi, or want to help others, you are
 invited to join our help-shishi mailing list, see:
 <http://lists.gnu.org/mailman/listinfo/help-shishi>.
 
-Here are the compressed sources (4.1MB):
-  ftp://alpha.gnu.org/gnu/shishi/shishi-0.0.43.tar.gz
-  http://alpha.gnu.org/gnu/shishi/shishi-0.0.43.tar.gz
+Here are the compressed sources (4.8MB):
+  ftp://ftp.gnu.org/gnu/shishi/shishi-1.0.0.tar.gz
+  http://ftp.gnu.org/gnu/shishi/shishi-1.0.0.tar.gz
 
 Here are GPG detached signatures signed using key 0xB565716F:
-  ftp://alpha.gnu.org/gnu/shishi/shishi-0.0.43.tar.gz.sig
-  http://alpha.gnu.org/gnu/shishi/shishi-0.0.43.tar.gz.sig
-
-We also provide pre-built Windows binaries:
-  http://josefsson.org/gnutls4win/shishi-0.0.43.zip
-  http://josefsson.org/gnutls4win/mingw32-shishi_0.0.43-1_all.deb
+  ftp://ftp.gnu.org/gnu/shishi/shishi-1.0.0.tar.gz.sig
+  http://ftp.gnu.org/gnu/shishi/shishi-1.0.0.tar.gz.sig
 
 Improving Shishi is costly, but you can help!  We are looking for
-organizations that find Shishi useful and wish to contribute back.  You
-can contribute by reporting bugs, improve the software, or donate money
-or equipment.
+organizations that find Shishi useful and wish to contribute back.
+You can contribute by reporting bugs, improve the software, or donate
+money or equipment.
 
 Commercial support contracts for Shishi are available, and they help
 finance continued maintenance.  Simon Josefsson Datakonsult AB, a
@@ -121,14 +113,8 @@ Here are the build reports for various platforms:
 
 Here are the SHA-1 and SHA-224 checksums:
 
-43a64c126f3711f32089b84b62a205a162d22ddd  shishi-0.0.43.tar.gz
-5bc6a30bb79d091e963d872ae75b885afffe11024a3ad37000eaaaa0  shishi-0.0.43.tar.gz
-
-be24fbed8d518b3d67c3ee72013780c50ab9fa53  shishi-0.0.43.zip
-d837e8074647096dbd21061ff124ceee368f73dcf779133816cb9a7c  shishi-0.0.43.zip
-
-ebd75c7f79b00417134535d7b13f2c476052f19c  mingw32-shishi_0.0.43-1_all.deb
-609d055e2b2ae0bbb9bf46c9bcf4ad2c26bdef0f94d2ec0958f967da  mingw32-shishi_0.0.43-1_all.deb
+076626b59459cbf34f2f5837cc9e482787889fe9  shishi-1.0.0.tar.gz
+c9ba1ca6d92cd98374c0a358b64e09eed2fcd6983c63fc11c7bfb72b  shishi-1.0.0.tar.gz
 
 Happy hacking,
 Simon
