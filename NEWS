@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Simon Josefsson
 See the end for copying conditions.
 
-* Version 1.0.0 (unreleased)
+* Version 1.0.0 (released 2010-05-20)
 
 ** doc: Added PDF version of API reference manual.
 See doc/reference/shishi.pdf.
