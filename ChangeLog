@@ -1,5 +1,9 @@
 2010-05-20  Simon Josefsson <simon@josefsson.org>
 
+	* ChangeLog, doc/Makefile.am: Make it build.
+
+2010-05-20  Simon Josefsson <simon@josefsson.org>
+
 	* NEWS: Version 1.0.0.
 
 2010-05-20  Simon Josefsson <simon@josefsson.org>
