@@ -98,6 +98,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module multiarch:
   # Code from module netdb:
   # Code from module netinet_in:
+  # Code from module pmccabe2html:
   # Code from module rawmemchr:
   # Code from module read-file:
   # Code from module realloc-posix:
@@ -358,6 +359,8 @@ AC_SUBST([LTALLOCA])
   # Code from module netinet_in:
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
+  # Code from module pmccabe2html:
+  AC_PATH_PROG([PMCCABE], [pmccabe], [false])
   # Code from module rawmemchr:
   gl_FUNC_RAWMEMCHR
   gl_STRING_MODULE_INDICATOR([rawmemchr])
@@ -659,6 +662,8 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/config.rpath
   build-aux/gendocs.sh
   build-aux/gnupload
+  build-aux/pmccabe.css
+  build-aux/pmccabe2html
   build-aux/useless-if-before-free
   build-aux/vc-list-files
   build-aux/warn-on-use.h

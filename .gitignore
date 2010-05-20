@@ -58,6 +58,7 @@ db/setup.o
 doc/Makefile
 doc/Makefile.in
 doc/ccache2shishi.1
+doc/cyclo/cyclo-shishi.html
 doc/keytab2shishi.1
 doc/man/
 doc/reference/Makefile
@@ -65,6 +66,8 @@ doc/reference/Makefile.in
 doc/reference/html-build.stamp
 doc/reference/html.stamp
 doc/reference/html/
+doc/reference/pdf-build.stamp
+doc/reference/pdf.stamp
 doc/reference/scan-build.stamp
 doc/reference/sgml-build.stamp
 doc/reference/sgml.stamp
@@ -79,6 +82,7 @@ doc/reference/shishi-unused.txt
 doc/reference/shishi.args
 doc/reference/shishi.hierarchy
 doc/reference/shishi.interfaces
+doc/reference/shishi.pdf
 doc/reference/shishi.prerequisites
 doc/reference/shishi.signals
 doc/reference/shishi.types

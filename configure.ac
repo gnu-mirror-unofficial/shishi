@@ -363,6 +363,7 @@ AC_CONFIG_FILES([
   db/Makefile
   db/gl/Makefile
   doc/Makefile
+  doc/cyclo/Makefile
   doc/reference/Makefile
   examples/Makefile
   extra/Makefile

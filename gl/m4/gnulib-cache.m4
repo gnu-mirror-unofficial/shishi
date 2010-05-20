@@ -15,7 +15,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --local-dir=gl/override --lib=libgnu --source-base=gl --m4-base=gl/m4 --doc-base=doc --tests-base=gl/tests --aux-dir=build-aux --avoid=xalloc-die --libtool --macro-prefix=gl --no-vc-files arpa_inet autobuild base64 bind close connect crc crypto/arcfour crypto/gc-des crypto/gc-hmac-md5 crypto/gc-hmac-sha1 crypto/gc-md4 crypto/gc-md5 crypto/gc-pbkdf2-sha1 crypto/gc-random fcntl fdl-1.3 gendocs getaddrinfo getdate getline getpass getsubopt gnupload gpl-3.0 lib-msvc-compat lib-symbol-versions maintainer-makefile manywarnings minmax netinet_in read-file recvfrom select sendto shutdown signal socket sockets socklen stat stdint strcase strerror strndup strtok_r strverscmp sys_select sys_socket sys_stat sys_time time timegm unistd valgrind-tests vasnprintf vasprintf warnings xalloc xgetdomainname xgethostname xstrndup xvasprintf
+#   gnulib-tool --import --dir=. --local-dir=gl/override --lib=libgnu --source-base=gl --m4-base=gl/m4 --doc-base=doc --tests-base=gl/tests --aux-dir=build-aux --avoid=xalloc-die --libtool --macro-prefix=gl --no-vc-files arpa_inet autobuild base64 bind close connect crc crypto/arcfour crypto/gc-des crypto/gc-hmac-md5 crypto/gc-hmac-sha1 crypto/gc-md4 crypto/gc-md5 crypto/gc-pbkdf2-sha1 crypto/gc-random fcntl fdl-1.3 gendocs getaddrinfo getdate getline getpass getsubopt gnupload gpl-3.0 lib-msvc-compat lib-symbol-versions maintainer-makefile manywarnings minmax netinet_in pmccabe2html read-file recvfrom select sendto shutdown signal socket sockets socklen stat stdint strcase strerror strndup strtok_r strverscmp sys_select sys_socket sys_stat sys_time time timegm unistd valgrind-tests vasnprintf vasprintf warnings xalloc xgetdomainname xgethostname xstrndup xvasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([gl/override])
@@ -51,6 +51,7 @@ gl_MODULES([
   manywarnings
   minmax
   netinet_in
+  pmccabe2html
   read-file
   recvfrom
   select
