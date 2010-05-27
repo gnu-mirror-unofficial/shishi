@@ -1,5 +1,5 @@
 To: help-shishi@gnu.org, info-gnu@gnu.org
-Subject: Shishi 1.0.0
+Subject: Shishi 1.0.0 released
 <#part sign=pgpmime>
 Shishi is an implementation of the Kerberos 5 network authentication
 system.  Shishi can be used to authenticate users in distributed
