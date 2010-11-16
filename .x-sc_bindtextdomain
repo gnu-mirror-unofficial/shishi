@@ -1,0 +1,4 @@
+^examples/
+^extra/
+^lib/ccache.c
+^tests/
