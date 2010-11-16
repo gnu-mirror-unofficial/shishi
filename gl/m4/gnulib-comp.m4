@@ -12,7 +12,8 @@
 # This file represents the compiled summary of the specification in
 # gnulib-cache.m4. It lists the computed macro invocations that need
 # to be invoked from configure.ac.
-# In projects using CVS, this file can be treated like other built files.
+# In projects that use version control, this file can be treated like
+# other built files.
 
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -62,6 +63,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module float:
   # Code from module fseeko:
   AC_REQUIRE([AC_FUNC_FSEEKO])
+  # Code from module ftello:
+  AC_REQUIRE([AC_FUNC_FSEEKO])
   # Code from module gendocs:
   # Code from module getaddrinfo:
   # Code from module getdate:
@@ -98,6 +101,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module multiarch:
   # Code from module netdb:
   # Code from module netinet_in:
+  # Code from module parse-datetime:
   # Code from module pmccabe2html:
   # Code from module rawmemchr:
   # Code from module read-file:
@@ -112,6 +116,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module size_max:
   # Code from module snprintf:
   # Code from module socket:
+  # Code from module socketlib:
   # Code from module sockets:
   # Code from module socklen:
   # Code from module stat:
@@ -265,12 +270,14 @@ AC_SUBST([LTALLOCA])
   # Code from module fseeko:
   gl_FUNC_FSEEKO
   gl_STDIO_MODULE_INDICATOR([fseeko])
+  # Code from module ftello:
+  gl_FUNC_FTELLO
+  gl_STDIO_MODULE_INDICATOR([ftello])
   # Code from module gendocs:
   # Code from module getaddrinfo:
   gl_GETADDRINFO
   gl_NETDB_MODULE_INDICATOR([getaddrinfo])
   # Code from module getdate:
-  gl_GETDATE
   # Code from module getdelim:
   gl_FUNC_GETDELIM
   gl_STDIO_MODULE_INDICATOR([getdelim])
@@ -359,6 +366,8 @@ AC_SUBST([LTALLOCA])
   # Code from module netinet_in:
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
+  # Code from module parse-datetime:
+  gl_PARSE_DATETIME
   # Code from module pmccabe2html:
   AC_PATH_PROG([PMCCABE], [pmccabe], [false])
   # Code from module rawmemchr:
@@ -417,6 +426,8 @@ AC_SUBST([LTALLOCA])
     SYS_IOCTL_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS=1
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([socket])
+  # Code from module socketlib:
+  gl_SOCKETLIB
   # Code from module sockets:
   gl_SOCKETS
   # Code from module socklen:
@@ -671,6 +682,7 @@ AC_DEFUN([gl_FILE_LIST], [
   doc/gendocs_template
   doc/getdate.texi
   doc/gpl-3.0.texi
+  doc/parse-datetime.texi
   lib/alignof.h
   lib/alloca.c
   lib/alloca.in.h
@@ -700,6 +712,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/float+.h
   lib/float.in.h
   lib/fseeko.c
+  lib/ftello.c
   lib/gai_strerror.c
   lib/gc-gnulib.c
   lib/gc-libgcrypt.c
@@ -707,7 +720,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gc.h
   lib/getaddrinfo.c
   lib/getdate.h
-  lib/getdate.y
   lib/getdelim.c
   lib/getdomainname.c
   lib/getdtablesize.c
@@ -743,6 +755,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mktime.c
   lib/netdb.in.h
   lib/netinet_in.in.h
+  lib/parse-datetime.h
+  lib/parse-datetime.y
   lib/printf-args.c
   lib/printf-args.h
   lib/printf-parse.c
@@ -838,6 +852,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fcntl_h.m4
   m4/float_h.m4
   m4/fseeko.m4
+  m4/ftello.m4
   m4/gc-des.m4
   m4/gc-hmac-md5.m4
   m4/gc-hmac-sha1.m4
@@ -847,7 +862,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/gc-random.m4
   m4/gc.m4
   m4/getaddrinfo.m4
-  m4/getdate.m4
   m4/getdelim.m4
   m4/getdomainname.m4
   m4/getdtablesize.m4
@@ -886,6 +900,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/multiarch.m4
   m4/netdb_h.m4
   m4/netinet_in_h.m4
+  m4/parse-datetime.m4
   m4/printf.m4
   m4/rawmemchr.m4
   m4/read-file.m4
@@ -897,6 +912,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/signal_h.m4
   m4/size_max.m4
   m4/snprintf.m4
+  m4/socketlib.m4
   m4/sockets.m4
   m4/socklen.m4
   m4/sockpfaf.m4
