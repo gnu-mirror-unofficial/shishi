@@ -1,0 +1,1073 @@
+# Finnish messages for shishi.
+# Copyright © 2010 Free Software Foundation, Inc.
+# Copyright © 2007, 2010 Simon Josefsson
+# This file is distributed under the same license as the shishi package.
+# Jorma Karvonen <karvonen.jorma@gmail.com>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: shishi-1.0.0\n"
+"Report-Msgid-Bugs-To: bug-shishi@gnu.org\n"
+"POT-Creation-Date: 2010-05-20 20:29+0200\n"
+"PO-Revision-Date: 2010-08-31 12:00+0200\n"
+"Last-Translator: Jorma Karvonen <karvonen.jorma@gmail.com>\n"
+"Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fi\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.11.2\n"
+
+#: lib/error.c:33
+msgid "Shishi success"
+msgstr "Shishi onnistui"
+
+#: lib/error.c:35
+msgid "Error in ASN.1 function (corrupt data?)"
+msgstr "Virhe ASN.1-funktiossa (tiedot vaurioituneet?)"
+
+#: lib/error.c:37
+msgid "Could not open file"
+msgstr "Ei voitu avata tiedostoa"
+
+#: lib/error.c:39
+msgid "File input/output error"
+msgstr "Tiedoston siirräntävirhe"
+
+#: lib/error.c:41
+msgid "Memory allocation error in shishi library."
+msgstr "Muistinvarausvirhe shishi-kirjastossa"
+
+#: lib/error.c:43
+msgid "Base64 encoding or decoding failed. Data corrupt?"
+msgstr "Base64-koodaus tai -dekoodaus epäonnistui. Tiedot vaurioituneet?"
+
+#: lib/error.c:45
+msgid "Client realm value differ between request and reply."
+msgstr "Asiakasalue eroaa pyynnön ja vastauksen välillä."
+
+#: lib/error.c:47
+msgid "Client name value differ between request and reply."
+msgstr "Asiakasnimi eroaa pyynnön ja vastauksen välillä."
+
+#: lib/error.c:49
+msgid "Replay protection value (nonce) differ between request and reply."
+msgstr "Toista suoja-arvon (vain kerran esiintyvä numero tai bittimerkkijono) ero pyynnön ja vastauksen välillä."
+
+#  Kerberos indentity or ticket
+#: lib/error.c:51
+msgid "Keytype used to encrypt ticket doesn't match provided key. This usually indicates an internal application error."
+msgstr "Avaintyyppi, jota käytettiin pääsylipun salaukseen, ei täsmää tarjotun avaimen kanssa. Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+
+#: lib/error.c:54
+msgid "Internal error in low-level crypto routines."
+msgstr "Sisäinen virhe alemman tason salausrutiineissa."
+
+#: lib/error.c:56
+msgid "Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption."
+msgstr "Alemman tason salausprimitiivi epäonnistui. Tämä tavallisesti viittaa väärään salasanaan tai tietojen vaurioitumiseen."
+
+#: lib/error.c:59
+msgid "Error receiving data from server"
+msgstr "Virhe vastaanotettaessa tietoja palvelimelta"
+
+#  KDC on Kerberoksen käyttämä "Key Distribution Center"
+#: lib/error.c:61
+msgid "Timedout talking to KDC. This usually indicates a network or KDC address problem."
+msgstr "KDC-keskustelun aikavalvontakatkaisu. Tämä viittaa tavallisesti verkon tai KDC-osoitteen pulmiin."
+
+#: lib/error.c:64
+msgid "No KDC for realm known."
+msgstr "Ei tunneta KDC:tä alueelle."
+
+#: lib/error.c:66
+msgid "The system call socket() failed.  This usually indicates that your system does not support the socket type."
+msgstr "Järjestelmäkutsu socket() epäonnistui. Tämä tavallisesti viittaa siihen, että järjestelmäsi ei tue pistoketyyppiä."
+
+#: lib/error.c:69
+msgid "The system call bind() failed.  This usually indicates insufficient permissions."
+msgstr "Järjestelmäkutsu bind() epäonnistui. Tämä on tavallisesti merkkinä riittämättömistä käyttöoikeuksista."
+
+#: lib/error.c:72
+msgid "The system call sendto() failed."
+msgstr "Järjestelmäkutsu sendto() epäonnistui."
+
+#: lib/error.c:74
+msgid "The system call close() failed."
+msgstr "Järjestelmäkutsu close() epäonnistui."
+
+#: lib/error.c:76
+msgid "Server replied with an error message to request."
+msgstr "Palvelin vastasi pyyntöön virheilmoituksella."
+
+#: lib/error.c:78
+msgid "Ticketset not initialized.  This usually indicates an internal application error."
+msgstr "Pääsylippujoukkoa ei ole alustettu.  Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+
+#: lib/error.c:81
+msgid "Could not decrypt AP-REQ using provided key. This usually indicates an internal application error."
+msgstr "Ei voitu purkaa AP-REQ-salausta käyttäen tarjottua avainta. Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+
+#: lib/error.c:84
+msgid "Could not decrypt Ticket using provided key. This usually indicates an internal application error."
+msgstr "Ei voitu purkaa pääsylipun salausta käyttäen tarjottua avainta. Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+
+#: lib/error.c:87
+msgid "Failed to parse keytab file"
+msgstr "Keytab-tiedoston jäsentäminen epäonnistui"
+
+#  Kerberos-palvelimen asiakkaalle lähettämän Credentials-valtakirjan sisällä on ticket ja session key. Se on salattu asiakkaan salaisella avaimella ja sisältää väliaikaisen salausavaimen. Valtakirja on mielestäni parempi suomennos kuin ATK-sanakirjan valtuustieto.
+#: lib/error.c:89
+msgid "Failed to parse credential cache file"
+msgstr "Valtakirjavälimuistitiedoston jäsentäminen epäonnistui"
+
+#: lib/error.c:106
+msgid "Unknown error"
+msgstr "Tuntematon virhe"
+
+#: lib/error.c:137 lib/krberror.c:1259
+msgid "No error"
+msgstr "Ei virhettä"
+
+#: lib/error.c:267
+#, c-format
+msgid "libshishi: info: %s"
+msgstr "libshishi: tiedot: %s"
+
+#: lib/error.c:271
+#, c-format
+msgid "libshishi: info: %s\n"
+msgstr "libshishi: tiedot: %s\n"
+
+#: lib/error.c:305
+#, c-format
+msgid "libshishi: warning: %s"
+msgstr "libshishi: varoitus: %s"
+
+#: lib/error.c:309
+#, c-format
+msgid "libshishi: warning: %s\n"
+msgstr "libshishi: varoitus: %s\n"
+
+#: lib/krberror.c:137
+#, c-format
+msgid "Writing KRB-ERROR to %s...\n"
+msgstr "Kirjoitetaan KRB-ERROR tiedostoon n %s...\n"
+
+#: lib/krberror.c:144
+#, c-format
+msgid "Writing KRB-ERROR in %s format...\n"
+msgstr "Kirjoitetaan KRB-ERROR %s-muodossa...\n"
+
+#: lib/krberror.c:159
+#, c-format
+msgid "Writing KRB-ERROR to %s...done\n"
+msgstr "Kirjoitetaan KRB-ERROR tiedostoon %s...valmis\n"
+
+#: lib/krberror.c:217
+#, c-format
+msgid "Reading KRB-ERROR from %s...\n"
+msgstr "Luetaan KRB-ERROR tiedostosta %s...\n"
+
+#: lib/krberror.c:224
+#, c-format
+msgid "Reading KRB-ERROR in %s format...\n"
+msgstr "Luetaan KRB-ERROR %s-muodossa...\n"
+
+#: lib/krberror.c:239
+#, c-format
+msgid "Reading KRB-ERROR from %s...done\n"
+msgstr "Luetaan KRB-ERROR tiedostosta %s...valmis\n"
+
+#: lib/krberror.c:1261
+msgid "Client's entry in database has expired"
+msgstr "Asiakkaan tiedot tietokannassa ovat vanhentuneet"
+
+#: lib/krberror.c:1263
+msgid "Server's entry in database has expired"
+msgstr "Palvelimen tiedot tietokannassa ovat vanhentuneet"
+
+#: lib/krberror.c:1265
+msgid "Requested protocol version number not supported"
+msgstr "Pyydettyä yhteyskäytäntöversionumeroa ei tueta"
+
+#: lib/krberror.c:1267
+msgid "Client's key encrypted in old master key"
+msgstr "Asiakkaan avain salattu vanhassa pääavaimessa"
+
+#: lib/krberror.c:1269
+msgid "Server's key encrypted in old master key"
+msgstr "Palvelimen avain salattu vanhassa pääavaimessa"
+
+#: lib/krberror.c:1271
+msgid "Client not found in database"
+msgstr "Asiakasta ei löytynyt tietokannasta"
+
+#: lib/krberror.c:1273
+msgid "Server not found in database"
+msgstr "Palvelinta ei löytynyt tietokannasta"
+
+#  Principal on Kerberos-tietokannan tietue, joka sisältää tiedot joko työaseman käyttäjästä tai kerberos-verkoon sisältyvästä palvelimesta (ei siis kerberos-palvelimesta). Sanakirjan mukaan yksi principal-sanan määrittelyjä on "chief participant in a transaction".
+#: lib/krberror.c:1275
+msgid "Multiple principal entries in database"
+msgstr "Useita pääosapuolitietueita tietokannassa"
+
+#: lib/krberror.c:1277
+msgid "The client or server has a null key"
+msgstr "Asiakkaalla tai palvelimella on null-avain"
+
+#: lib/krberror.c:1279
+msgid "Ticket not eligible for postdating"
+msgstr "Pääsylippu ei ole sopiva jälkiajoitukselle"
+
+#: lib/krberror.c:1281
+msgid "Requested start time is later than end time"
+msgstr "Pyydetty aloitusaika on myöhäisempi kuin lopettamisaika"
+
+#: lib/krberror.c:1283
+msgid "KDC policy rejects request"
+msgstr "KDC-toimintaperiaate kieltää pyynnön"
+
+#: lib/krberror.c:1285
+msgid "KDC cannot accommodate requested option"
+msgstr "KDC ei voi mukautua pyydettyyn valitsimeen"
+
+#: lib/krberror.c:1287
+msgid "KDC has no support for encryption type"
+msgstr "KDC ei tue salaustyyppiä"
+
+#: lib/krberror.c:1289
+msgid "KDC has no support for checksum type"
+msgstr "KDC ei tue tarkistussummatyyppiä"
+
+#  Historiallisesti padata on tarkoittanut esitodennettua dataa, mutta nykyisin sen merkitys on laajempi.
+#: lib/krberror.c:1291
+msgid "KDC has no support for padata type"
+msgstr "KDC ei tue padata-tyyppiä"
+
+#  Tämä viittaa ehkä "transited encoding types"-käsitteeseen.
+#: lib/krberror.c:1293
+msgid "KDC has no support for transited type"
+msgstr "KDC ei tue transited-tyyppiä"
+
+#: lib/krberror.c:1295
+msgid "Clients credentials have been revoked"
+msgstr "Asiakkaan valtakirja on peruutettu"
+
+#: lib/krberror.c:1297
+msgid "Credentials for server have been revoked"
+msgstr "Valtakirjat palvelimelle on peruutettu"
+
+#  TGT tarkoittaa Ticket-Granting-Ticket eli pääsylippua, joka myöntää pääsylipun.
+#: lib/krberror.c:1299
+msgid "TGT has been revoked"
+msgstr "TGT on peruutettu"
+
+#: lib/krberror.c:1301
+msgid "Client not yet valid - try again later"
+msgstr "Asiakas ei ole vielä kelvollinen - yritä myöhemmin uudelleen"
+
+#: lib/krberror.c:1303
+msgid "Server not yet valid - try again later"
+msgstr "Palvelin ei ole vielä kelvollinen - yritä myöhemmin uudelleen"
+
+#: lib/krberror.c:1305
+msgid "Password has expired "
+msgstr "Salasana on vanhentunut"
+
+#: lib/krberror.c:1307
+msgid "Pre-authentication information was invalid"
+msgstr "Esitodennustiedot olivat virheelliset"
+
+#: lib/krberror.c:1309
+msgid "Additional pre-authentication required"
+msgstr "Lisäesitodennusta tarvittu"
+
+#: lib/krberror.c:1311
+msgid "Requested server and ticket don't match"
+msgstr "Pyydetty palvelin ja pääsylippu eivät täsmää"
+
+#: lib/krberror.c:1313
+msgid "Server principal valid for user2user only"
+msgstr "Palvelinpääosapuoli on kelvollinen vain käyttäjä-käyttäjä -viestintään"
+
+#: lib/krberror.c:1315
+msgid "KDC Policy rejects transited path"
+msgstr "KDC-toimintaperiaate kieltää siirretyn polun"
+
+#: lib/krberror.c:1317
+msgid "A service is not available"
+msgstr "Palvelu ei ole käytettävissä"
+
+#: lib/krberror.c:1319
+msgid "Integrity check on decrypted field failed"
+msgstr "Salauspuretun tiedoston eheystarkistus epäonnistui"
+
+#: lib/krberror.c:1321
+msgid "Ticket expired"
+msgstr "Pääsylippu on vanhentunut"
+
+#: lib/krberror.c:1323
+msgid "Ticket not yet valid"
+msgstr "Pääsylippu ei ole vielä kelvollinen"
+
+#: lib/krberror.c:1325
+msgid "Request is a replay"
+msgstr "Pyyntö on toisto"
+
+#: lib/krberror.c:1327
+msgid "The ticket isn't for us"
+msgstr "Pääsylippu ei ole meille"
+
+#: lib/krberror.c:1329
+msgid "Ticket and authenticator don't match"
+msgstr "Pääsylippu ja todentaja eivät täsmää"
+
+#: lib/krberror.c:1331
+msgid "Clock skew too great"
+msgstr "Aikavääristymä on liian suuri"
+
+#: lib/krberror.c:1333
+msgid "Incorrect net address"
+msgstr "Väärä verkko-osoite"
+
+#: lib/krberror.c:1335
+msgid "Protocol version mismatch"
+msgstr "Yhteyskäytäntöversion täsmäämättömyys"
+
+#: lib/krberror.c:1337
+msgid "Invalid msg type"
+msgstr "Virheellinen viestityyppi"
+
+#: lib/krberror.c:1339
+msgid "Message stream modified"
+msgstr "Viestivirta muutettu"
+
+#: lib/krberror.c:1341
+msgid "Message out of order"
+msgstr "Viesti on rikki"
+
+#: lib/krberror.c:1343
+msgid "Specified version of key is not available"
+msgstr "Avaimen määritelty versio ei ole käytettävissä"
+
+#: lib/krberror.c:1345
+msgid "Service key not available"
+msgstr "Palveluavain ei ollut käytettävissä"
+
+#: lib/krberror.c:1347
+msgid "Mutual authentication failed"
+msgstr "Molemminpuolinen todennus epäonnistui"
+
+#: lib/krberror.c:1349
+msgid "Incorrect message direction"
+msgstr "Virheellinen viestisuunta"
+
+#: lib/krberror.c:1351
+msgid "Alternative authentication method required"
+msgstr "Vaihtoehtoinen todennusmenetelmä vaadittiin"
+
+#: lib/krberror.c:1353
+msgid "Incorrect sequence number in message"
+msgstr "Virheellinen sekvenssinumero viestissä"
+
+#: lib/krberror.c:1355
+msgid "Inappropriate type of checksum in message"
+msgstr "Sanomassa oli sopimaton tarkistussummatyyppi"
+
+#: lib/krberror.c:1357
+msgid "Policy rejects transited path"
+msgstr "Toimintaperiaate kieltää siirretyn polun"
+
+#: lib/krberror.c:1359
+msgid "Response too big for UDP, retry with TCP"
+msgstr "Vastaus on liian suuri UDP:lle, yritetään uudelleen TCP:nä"
+
+#: lib/krberror.c:1361
+msgid "Generic error (description in e-text)"
+msgstr "Yleinen virhe (kuvaus e-text -tekstissä)"
+
+#: lib/krberror.c:1363
+msgid "Field is too long for this implementation"
+msgstr "Kenttä on liian pitkä tälle toteutukselle"
+
+#: lib/krberror.c:1365 lib/krberror.c:1367 lib/krberror.c:1369
+#: lib/krberror.c:1371 lib/krberror.c:1373 lib/krberror.c:1381
+#: lib/krberror.c:1383 lib/krberror.c:1385 lib/krberror.c:1387
+#: lib/krberror.c:1389 lib/krberror.c:1391 lib/krberror.c:1393
+msgid "(pkinit)"
+msgstr "(pkinit)"
+
+#: lib/krberror.c:1375 lib/krberror.c:1377 lib/krberror.c:1379
+msgid "(user-to-user)"
+msgstr "(käyttäjältä-käyttäjälle)"
+
+#: lib/krberror.c:1420
+#, c-format
+msgid "Unknown KRB-ERROR error code %d."
+msgstr "Tuntematon KRB-ERROR-virhekoodi %d."
+
+#: db/err.c:33
+msgid "Shisa success"
+msgstr "Shisa onnistui"
+
+#: db/err.c:35
+msgid "Shisa could not be initialized."
+msgstr "Shisaa ei voitu alustaa."
+
+#: db/err.c:37
+msgid "The Shisa configuration file does not exist."
+msgstr "Shisa-asetustiedostoa ei ole olemassa."
+
+#: db/err.c:39
+msgid "File I/O error for Shisa configuration file."
+msgstr "Tiedostosiirräntävirhe Shisa-asetustiedostolle."
+
+#  Token-sanan tässä merkkijono [jossa ei ole tyhjemerkkejä (välilyöntejä)]
+#: db/err.c:41
+msgid "Syntax error in Shisa configuration token."
+msgstr "Syntaksivirhe Shisa-asetusmerkkijonossa."
+
+#: db/err.c:43
+msgid "Shisa database could not be opened."
+msgstr "Shisa-tietokantaa ei voitu avata."
+
+#: db/err.c:45
+msgid "Error enumerating realms in database."
+msgstr "Virhe muunnettaessa alueita luetelluiksi tyypeiksi tietokannassa."
+
+#: db/err.c:47
+msgid "Error enumerating principals in database."
+msgstr "Virhe muunnettaessa pääosapuolia luetelluiksi tyypeiksi tietokannassa"
+
+#: db/err.c:49
+msgid "Error enumerating keys in database."
+msgstr "Virhe muunnettaessa avaimia luetelluiksi tyypeiksi tietokannassa"
+
+#: db/err.c:51
+msgid "Supplied realm does not exist."
+msgstr "Tarjottu alue ei ollut olemassa."
+
+#: db/err.c:53
+msgid "Supplied principal does not exist."
+msgstr "Tarjottua pääosapuolta ei ole olemassa."
+
+#: db/err.c:55
+msgid "Principal is not associated with any matching key."
+msgstr "Pääosapuoli ei ole liitetty mihinkään täsmäävään avaimeen."
+
+#: db/err.c:57
+msgid "Error finding principal."
+msgstr "Virhe etsittäessä pääosapuolta."
+
+#: db/err.c:59
+msgid "Tried to add a realm that already exist."
+msgstr "Yritettiin lisätä alue, joka on jo olemassa."
+
+#: db/err.c:61
+msgid "Error adding realm to database."
+msgstr "Virhe lisättäessä aluetta tietokantaan."
+
+#: db/err.c:63
+msgid "Tried to remove a non-empty realm."
+msgstr "Yritettiin poistaa ei-tyhjä alue."
+
+#: db/err.c:65
+msgid "Error removing realm from database."
+msgstr "Virhe poistettaessa alue tietokannasta."
+
+#: db/err.c:67
+msgid "Tried to add a principal that already exist."
+msgstr "Yritettiin lisätä pääosapuoli, joka on jo olemassa."
+
+#: db/err.c:69
+msgid "Error adding principal to database."
+msgstr "Virhe lisättäessä pääosapuolta tietokantaan."
+
+#: db/err.c:71
+msgid "Error removing principal from database."
+msgstr "Virhe poistettaessa pääosapuolta tietokannasta."
+
+#: db/err.c:73
+msgid "Error adding key to principal."
+msgstr "Virhe lisättäessä avainta pääosapuoleen."
+
+#: db/err.c:75
+msgid "Error removing key from principal."
+msgstr "Virhe poistettaessa avainta pääosapuolesta."
+
+#: db/err.c:77
+msgid "More than one key match given search criteria."
+msgstr "Useampi kuin yksi avain täsmää annettuun hakukriteeriin."
+
+#: db/err.c:98
+msgid "Unknown Shisa error"
+msgstr "Tuntematon Shisa-virhe"
+
+#: db/err.c:118
+#, c-format
+msgid "shisa: %s\n"
+msgstr "shisa: %s\n"
+
+#: src/shisa.c:143
+msgid "Account is"
+msgstr "Tili on"
+
+#: src/shisa.c:144
+msgid "DISABLED"
+msgstr "POISTETTU KÄYTÖSTÄ"
+
+#: src/shisa.c:144
+msgid "enabled"
+msgstr "otettu käyttöön"
+
+#: src/shisa.c:145
+msgid "Current key version"
+msgstr "Nykyinen avainversio"
+
+#: src/shisa.c:147
+msgid "Account not valid before"
+msgstr "Tili ei ole kelvollinen ennen"
+
+#: src/shisa.c:149
+msgid "Last initial TGT request at"
+msgstr "Viimeinen alustus-TGT -pyyntö pääosapuolessa"
+
+#: src/shisa.c:151
+msgid "Last initial request at"
+msgstr "Viimeinen alustuspyyntö pääosapuolessa"
+
+#: src/shisa.c:153
+msgid "Last TGT request at"
+msgstr "Viimeinen TGT-pyyntö pääosapuolessa"
+
+#: src/shisa.c:155
+msgid "Last ticket renewal at"
+msgstr "Viimeinen pääsylippu-uudistaminen pääosapuolessa"
+
+#  Shisa_principal.passwordexpire
+#: src/shisa.c:157
+msgid "Password expire on"
+msgstr "Salasana vanheni pääosapuolessa"
+
+#  Shisa_principal.accountexpire
+#: src/shisa.c:159
+msgid "Account expire on"
+msgstr "Tili vanheni pääosapuolessa"
+
+#: src/shisa.c:172
+msgid "Key"
+msgstr "Avain"
+
+#  Shishi_cipher_name (keys[i]->etype), etype on lyhennys termistä "Encryption Type"
+#: src/shisa.c:174
+msgid "\tEtype"
+msgstr "\tSalaustyyppi"
+
+#: src/shisa.c:177
+msgid "\tPriority"
+msgstr "\tPrioriteetti"
+
+#  keys[i]->salt, string2key()-funktion valinnainen argumentti, yleensä "principal@realm"
+#: src/shisa.c:181
+msgid "\tSalt"
+msgstr "\tSalt-argumentti"
+
+#: src/shisa.c:183
+msgid "\tS2K params"
+msgstr "\tS2K-parametrit"
+
+#: src/shisa.c:186
+msgid "\tPassword"
+msgstr "\tSalasana"
+
+#  Muodostaa taulukoidun lauseen (ilman välilyöntiä) seuraavan MISSING-sanan kanssa
+#: src/shisa.c:189
+msgid "\tKey is"
+msgstr "\tAvain"
+
+#: src/shisa.c:189
+msgid "MISSING"
+msgstr "PUUTTUU"
+
+#: src/shisa.c:267
+#, c-format
+msgid "Adding realm `%s'...\n"
+msgstr "Lisätään alue ”%s”...\n"
+
+#: src/shisa.c:269
+#, c-format
+msgid "Adding principal `%s@%s'...\n"
+msgstr "Lisätään pääosapuoli ”%s@%s”...\n"
+
+#: src/shisa.c:280
+#, c-format
+msgid "Adding realm `%s'...done\n"
+msgstr "Lisätään alue ”%s”...valmis\n"
+
+#: src/shisa.c:282
+#, c-format
+msgid "Adding principal `%s@%s'...done\n"
+msgstr "Lisätään pääosapuoli ”%s@%s”...valmis\n"
+
+#: src/shisa.c:313
+#, c-format
+msgid "Removing realm `%s'...\n"
+msgstr "Poistetaan alue ”%s”...\n"
+
+#: src/shisa.c:315
+#, c-format
+msgid "Removing principal `%s@%s'...\n"
+msgstr "Poistetaan pääosapuoli ”%s@%s”...\n"
+
+#: src/shisa.c:323
+#, c-format
+msgid "Removing realm `%s'...done\n"
+msgstr "Poistetaan alue ”%s”...valmis\n"
+
+#: src/shisa.c:325
+#, c-format
+msgid "Removing principal `%s@%s'...done\n"
+msgstr "Poistetaan pääosapuoli ”%s@%s”...valmis\n"
+
+#: src/shisa.c:372
+#, c-format
+msgid "Password for `%s@%s': "
+msgstr "Salasana käyttäjälle ”%s@%s”: "
+
+#: src/shisa.c:375
+msgid "Password: "
+msgstr "Salasana: "
+
+#: src/shisa.c:377
+#, c-format
+msgid "Could not read password"
+msgstr "Ei voi lukea salasanaa"
+
+#: src/shisa.c:389
+#, c-format
+msgid ""
+"Could not create key (%d):\n"
+"%s"
+msgstr ""
+"Ei voitu luoda avainta (%d):\n"
+"%s"
+
+#: src/shisa.c:423 src/shishi.c:59 src/shishid.c:482
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr "Lisätietoja komennolla ”%s --help”.\n"
+
+#: src/shisa.c:428 src/shishi.c:64
+#, c-format
+msgid ""
+"\n"
+"Mandatory arguments to long options are mandatory for short options too.\n"
+msgstr ""
+"\n"
+"Pakolliset argumentit pitkille valitsimille ovat pakollisia myös lyhyille valitsimille.\n"
+
+#: src/shisa.c:468 src/shishi.c:100
+#, c-format
+msgid "too many arguments"
+msgstr "liian monia argumentteja"
+
+#: src/shisa.c:477
+#, c-format
+msgid ""
+"Initialization failed:\n"
+"%s"
+msgstr ""
+"Alustus epäonnistui:\n"
+"%s"
+
+#: src/shisa.c:482
+#, c-format
+msgid ""
+"Could not read library options `%s':\n"
+"%s"
+msgstr ""
+"Ei voitu lukea kirjastovalitsimia ”%s”:\n"
+"%s"
+
+#: src/shisa.c:487
+#, c-format
+msgid ""
+"Shishi initialization failed:\n"
+"%s"
+msgstr ""
+"Shishi-alustus epäonnistui:\n"
+"%s"
+
+#: src/shisa.c:492
+#, c-format
+msgid ""
+"Could not set encryption type `%s':\n"
+"%s"
+msgstr ""
+"Ei voitu asettaa salaustyyppiä ”%s”:\n"
+"%s"
+
+#: src/shisa.c:500
+#, c-format
+msgid "too few arguments"
+msgstr "liian vähän argumentteja"
+
+#: src/shisa.c:531
+#, c-format
+msgid "Adding default realm `%s'...\n"
+msgstr "Lisätään oletusalue ”%s”...\n"
+
+#: src/shisa.c:551
+#, c-format
+msgid "Modifying principal `%s@%s'...\n"
+msgstr "Muokataan pääosapuolta ”%s@%s”...\n"
+
+#: src/shisa.c:558
+#, c-format
+msgid "Modifying principal `%s@%s'...done\n"
+msgstr "Muokataan pääosapuolta ”%s@%s”...valmis\n"
+
+#  principal@realm
+#: src/shisa.c:562
+#, c-format
+msgid "Adding key to `%s@%s'...\n"
+msgstr "Lisätään avain pääosapuoleen ”%s@%s”...\n"
+
+#  principal@realm
+#: src/shisa.c:572
+#, c-format
+msgid "Adding key to `%s@%s'...done\n"
+msgstr "Lisätään avain pääosapuoleen ”%s@%s”...valmis\n"
+
+#  principal@realm
+#: src/shisa.c:576
+#, c-format
+msgid "Removing key from `%s@%s'...\n"
+msgstr "Poistetaan avain pääosapuolesta ”%s@%s”...\n"
+
+#  principal@realm
+#: src/shisa.c:589
+#, c-format
+msgid "Removing key from `%s@%s'...done\n"
+msgstr "Poistetaan avain pääosapuolesta ”%s@%s”...valmis\n"
+
+#: src/shishi.c:111
+#, c-format
+msgid "cannot initialize libshishi"
+msgstr "ei voi alustaa kirjastoa libshishi"
+
+#: src/shishi.c:115
+#, c-format
+msgid "Could not set encryption types: %s"
+msgstr "Ei voitu asettaa salaustyyppejä: %s"
+
+#: src/shishi.c:127
+#, c-format
+msgid "Could not parse client principal \"%s\": %s"
+msgstr "Ei voitu jäsentää asiakaspääosapuolta ”%s”: %s"
+
+#: src/shishi.c:140
+#, c-format
+msgid "Could not parse server principal \"%s\": %s"
+msgstr "Ei voitu jäsentää palvelinpääosapuolta ”%s”: %s"
+
+#: src/shishi.c:146
+#, c-format
+msgid "Could not read library options: %s"
+msgstr "Ei voitu lukea kirjastovalitsimia: %s"
+
+#: src/shishi.c:164
+#, c-format
+msgid "Invalid --starttime date `%s'"
+msgstr "Virheellinen --starttime -päivämäärä ”%s”"
+
+#: src/shishi.c:174
+#, c-format
+msgid "Invalid --endtime date `%s'"
+msgstr "Virheellinen --endtime -päivämäärä ”%s”"
+
+#: src/shishi.c:184
+#, c-format
+msgid "Invalid --renew-till date `%s'"
+msgstr "Virheellinen --renew-till -päivämäärä ”%s”"
+
+#: src/shishi.c:203
+#, c-format
+msgid "Tickets in `%s':\n"
+msgstr "Pääsyliput oletustiedostossa ”%s”:\n"
+
+#: src/shishi.c:208
+#, c-format
+msgid "Could not list tickets: %s"
+msgstr "Ei voitu luetella pääsylippuja: %s"
+
+#: src/shishi.c:225
+#, c-format
+msgid "Removing ticket:\n"
+msgstr "Poistetaan pääsylippu:\n"
+
+#: src/shishi.c:232
+#, c-format
+msgid ""
+"Could not destroy ticket %d:\n"
+"%s"
+msgstr ""
+"Ei voitu tuhota pääsylippua %d:\n"
+"%s"
+
+#: src/shishi.c:242
+#, c-format
+msgid "No tickets removed.\n"
+msgstr "Pääsylippuja ei ole poistettu.\n"
+
+#: src/shishi.c:244
+#, c-format
+msgid "%d ticket removed.\n"
+msgid_plural "%d tickets removed.\n"
+msgstr[0] "%d pääsylippu poistettu.\n"
+msgstr[1] "%d pääsylippua poistettu.\n"
+
+#: src/shishi.c:277
+#, c-format
+msgid "could not get ticket as `%s' for `%s'"
+msgstr "ei voitu saada pääsylippua pääosapuolena ”%s” palvelimelle ”%s”."
+
+#. TRANSLATORS: The placeholder indicates the bug-reporting address
+#. for this package.  Please add _another line_ saying
+#. "Report translation bugs to <...>\n" with the address for translation
+#. bugs (typically your translation team's web or email address).
+#: src/shishid.c:491
+#, c-format
+msgid ""
+"\n"
+"Mandatory arguments to long options are mandatory for short options too.\n"
+"\n"
+"Report bugs to <%s>.\n"
+msgstr ""
+"\n"
+"Pakolliset argumentit pitkille valitsimille ovat pakollisia myös lyhyille valitsimille.\n"
+"\n"
+"Ilmoita virheistä (englanniksi) osoitteeseen <%s>.\n"
+"Ilmoita käännösvirheistä osoitteeseen <translation-team-fi@lists.sourceforge.net>.\n"
+
+#~ msgid "Report bugs to <%s>.\n"
+#~ msgstr ""
+#~ "Ilmoita virheistä (englanniksi) osoitteeseen <%s>.\n"
+#~ "Ilmoita käännösvirheistä osoitteeseen <translation-team-fi@lists.sourceforge.net>.\n"
+
+#~ msgid ""
+#~ "Shishi command line client.  If no command is given, Shishi\n"
+#~ "acquire or list a valid ticket for you, identified by CLIENT (if\n"
+#~ "empty, default username in default realm), for the service SERVER (if\n"
+#~ "empty, ticket granting ticket for client realm)."
+#~ msgstr ""
+#~ "Shishi-komentoriviasiakas.  Jos komento annetaan, Shishi\n"
+#~ "hankkii tai luettelee sinulle ASIAKKAAN tunnistaman kelvollisen pääsylipun (jos\n"
+#~ "tyhjä, käytetään oletuskäyttäjänimeä oletusalueessa), SERVER-palvelulle (jos\n"
+#~ "tyhjä, pääsylipun-myöntämis-pääsylippu asiakasalueelle)."
+
+#~ msgid "Usage: shishi [OPTIONS]... [CLIENT [SERVER]]..."
+#~ msgstr "Käyttö: shishi [VALITSIMET]... [ASIAKAS [PALVELIN]]..."
+
+#~ msgid "  -h, --help                    Print help and exit"
+#~ msgstr "  -h, --help                    Tulosta opaste ja poistu"
+
+#~ msgid "  -V, --version                 Print version and exit"
+#~ msgstr "  -V, --version                 Tulosta versio ja poistu"
+
+#~ msgid ""
+#~ "\n"
+#~ "Commands:"
+#~ msgstr ""
+#~ "\n"
+#~ "Komennot:"
+
+#~ msgid ""
+#~ "  -d, --destroy                 Destroy tickets in local cache, limited by any \n"
+#~ "                                  --client-name or --server-name.  \n"
+#~ "                                  (default=off)"
+#~ msgstr ""
+#~ "  -d, --destroy                 Tuhoa pääsyliput paikallisessa välimuistissa, valitsimen \n"
+#~ "                                  --client-name tai --server-name rajoittamana.  \n"
+#~ "                                  (oletus=off)"
+
+#~ msgid ""
+#~ "  -l, --list                    List tickets in local cache, limited by any \n"
+#~ "                                  --client-name and --server-name.  \n"
+#~ "                                  (default=off)"
+#~ msgstr ""
+#~ "  -l, --list                    Luettele pääsyliput paikallisessa välimuistissa, valitsimen \n"
+#~ "                                  --client-name ja/tai --server-name rajoittamana.  \n"
+#~ "                                  (oletus=off)"
+
+#~ msgid ""
+#~ "  -r, --renew                   Renew ticket.  Use --server-name to specify \n"
+#~ "                                  ticket, default is the most recent renewable \n"
+#~ "                                  ticket granting ticket for the default realm. \n"
+#~ "                                   (default=off)"
+#~ msgstr ""
+#~ "  -r, --renew                   Uudista pääsylippu.  Käytä valitsinta --server-name \n"
+#~ "                                  määrittämään pääsylippu, oletus on viimeisin uudistettava \n"
+#~ "                                  pääsylipun-myöntämis-pääsylippu (TGT) oletusalueelle. \n"
+#~ "                                   (oletus=off)"
+
+#~ msgid ""
+#~ "\n"
+#~ "Flags:"
+#~ msgstr ""
+#~ "\n"
+#~ "Liput:"
+
+#~ msgid ""
+#~ "      --forwardable             Get a forwardable ticket, i.e., one that can be \n"
+#~ "                                  used to get forwarded tickets.  (default=off)"
+#~ msgstr ""
+#~ "      --forwardable             Hae eteenpäinvälitettävä pääsylippu, ts., sellainen, joka \n"
+#~ "                                  voidaan käyttää eteenpäinvälitettävien pääsylippujen \n"
+#~ "                                  hakemiseen.  (oletus=off)"
+
+#~ msgid "      --forwarded               Get a forwarded ticket.  (default=off)"
+#~ msgstr "      --forwarded               Hae eteenpäinvälitetty pääsylippu.  (oletus=off)"
+
+#~ msgid ""
+#~ "      --proxiable               Get a proxiable ticket, i.e., one that can be \n"
+#~ "                                  used to get proxy tickets.  (default=off)"
+#~ msgstr ""
+#~ "      --proxiable               Hae välityspalvelinkelpoinen pääsylippu, ts. sellainen, \n"
+#~ "                                  jota voidaan käyttää hakemaan \n"
+#~ "                                  välityspalvelinpääsylippuja.  (oletus=off)"
+
+#~ msgid "      --proxy                   Get a proxy ticket.  (default=off)"
+#~ msgstr "      --proxy                   Hae välityspalvelinpääsylippu.  (oletus=off)"
+
+#~ msgid "      --renewable               Get a renewable ticket.  (default=off)"
+#~ msgstr "      --renewable               Hae uusintakelpoinen pääsylippu.  (oletus=off)"
+
+#~ msgid ""
+#~ "\n"
+#~ "Options:"
+#~ msgstr ""
+#~ "\n"
+#~ "Valitsimet:"
+
+#~ msgid "      --client-name=NAME        Client name. Default is login username."
+#~ msgstr "      --client-name=NIMI        Asiakkaan nimi. Oletus on kirjautumiskäyttäjänimi."
+
+#~ msgid ""
+#~ "  -E, --encryption-type=ETYPE,[ETYPE...]\n"
+#~ "                                Encryption types to use.  ETYPE is either \n"
+#~ "                                  registered name or integer.  Valid values \n"
+#~ "                                  include 'aes128', 'aes256', 'aes' (same as \n"
+#~ "                                  'aes256'), '3des', 'des-md5', 'des-md4', \n"
+#~ "                                  'des-crc', 'des' (same as 'des-md5'), and \n"
+#~ "                                  'arcfour'."
+#~ msgstr ""
+#~ "  -E, --encryption-type=ETYPE,[ETYPE...]\n"
+#~ "                                Käytettävät salaustyypit.  ETYPE on joko \n"
+#~ "                                  rekisteröity nimi tai kokonaisluku.  Kelvollisiin \n"
+#~ "                                  arvoihin sisältyvät ’aes128’, ’aes256’, ’aes’ \n"
+#~ "                                  (sama kuin ’aes256’), ’3des’, ’des-md5’, ’des-md4’, \n"
+#~ "                                  ’des-crc’, ’des’ (sama kuin ’des-md5’), ja \n"
+#~ "                                  ’arcfour’."
+
+#~ msgid ""
+#~ "  -e, --endtime=STRING          Specify when ticket validity should expire.  \n"
+#~ "                                  The time syntax may be relative (to the start \n"
+#~ "                                  time), such as '20 hours', or absolute, such \n"
+#~ "                                  as '2001-02-03 04:05:06 CET'. The default is \n"
+#~ "                                  8 hours after the start time."
+#~ msgstr ""
+#~ "  -e, --endtime=MERKKIJONO      Määrittää, milloin pääsylippuen kelpoisuusaika vanhenee.  \n"
+#~ "                                  Aikasyntaksi saattaa olla suhteellinen (aloitusajasta), \n"
+#~ "                                  sellaisia kuin ’20 hours’, tai absoluuttinen, sellaisia \n"
+#~ "                                  kuin ’2001-02-03 04:05:06 CET’. Oletus on \n"
+#~ "                                  8 tuntia aloitusajan jälkeen."
+
+#~ msgid "      --realm=STRING            Set default realm."
+#~ msgstr "      --realm=MERKKIJONO        Aseta oletusalue."
+
+#~ msgid ""
+#~ "      --renew-till=STRING       Specify renewable life of ticket.  Implies \n"
+#~ "                                  --renewable.  Accepts same time syntax as \n"
+#~ "                                  --endtime.  If --renewable is specified, the \n"
+#~ "                                  default is 1 week after the start time."
+#~ msgstr ""
+#~ "      --renew-till=MERKKIJONO   Määritä pääsylipun eliniän uusittavuus.  Käyttää \n"
+#~ "                                  valitsinta --renewable.  Hyväksyy saman aikasyntaksin \n"
+#~ "                                  kuin valitsin --endtime.  Jos valitsin --renewable on \n"
+#~ "                                  määritelty, oletus on 1 viikko aloitusajan jälkeen."
+
+#~ msgid ""
+#~ "      --server-name=NAME        Server name. Default is 'krbtgt/REALM' where \n"
+#~ "                                  REALM is client realm."
+#~ msgstr ""
+#~ "      --server-name=NIMI        Palvelinnimi. Oletus on ’krbtgt/REALM’ missä \n"
+#~ "                                  REALM on asiakkaan alue."
+
+#~ msgid ""
+#~ "  -s, --starttime=STRING        Specify when ticket should start to be valid.  \n"
+#~ "                                  Accepts same time syntax as --endtime. The \n"
+#~ "                                  default is to become valid immediately."
+#~ msgstr ""
+#~ "  -s, --starttime=MERKKIJONO    Määrittää milloin pääsylipun kelpoisuus alkaa.  \n"
+#~ "                                  Hyväksyy saman aikasyntaksin kuin valitsin --endtime. \n"
+#~ "                                  Oletus on, että tulee kelvolliseksi välittömästi."
+
+#~ msgid ""
+#~ "      --ticket-granter=NAME     Service name in ticket to use for \n"
+#~ "                                  authenticating request. Only for TGS. \n"
+#~ "                                  Defaults to 'krbtgt/REALM@REALM' where REALM \n"
+#~ "                                  is client realm."
+#~ msgstr ""
+#~ "      --ticket-granter=NIMI     Palvelunimi pääsylipussa käytettäväksi \n"
+#~ "                                  todennuspyynnölle. Ainoastaan TGS:lle. \n"
+#~ "                                  Oletus on ’krbtgt/REALM@REALM’ missä REALM \n"
+#~ "                                  on asiakkaan alue."
+
+#~ msgid ""
+#~ "\n"
+#~ "Other options:"
+#~ msgstr ""
+#~ "\n"
+#~ "Muut valitsimet:"
+
+#~ msgid "      --configuration-file=FILE Read user configuration from FILE."
+#~ msgstr "      --configuration-file=FILE Lue käyttäjäasetukset tiedostosta FILE."
+
+#~ msgid "  -c, --ticket-file=FILE        Read tickets from FILE."
+#~ msgstr "  -c, --ticket-file=TIEDOSTO    Lue pääsyliput TIEDOSTOsta."
+
+#~ msgid "  -o, --library-options=STRING  Parse STRING as a configuration file statement."
+#~ msgstr "  -o, --library-options=STRING  Jäsennä STRING-merkkijono asetustiedostokäskynä."
+
+#~ msgid ""
+#~ "  -q, --quiet                   Don't produce any diagnostic output.\n"
+#~ "                                    (default=off)"
+#~ msgstr ""
+#~ "  -q, --quiet                   Älä tuota mitään diagnostoivaa tulostetta.\n"
+#~ "                                    (oletus=off)"
+
+#~ msgid ""
+#~ "      --system-configuration-file=FILE\n"
+#~ "                                Read system configuration from FILE."
+#~ msgstr ""
+#~ "      --system-configuration-file=TIEDOSTO\n"
+#~ "                                Lue järjestelmäasetukset TIEDOSTOsta."
+
+#~ msgid ""
+#~ "      --ticket-write-file=FILE  Write tickets from FILE.  Default is to write \n"
+#~ "                                  them back to where they were read from."
+#~ msgstr ""
+#~ "      --ticket-write-file=FILE  Kirjoita pääsyliput tiedostosta FILE.  Oletus \n"
+#~ "                                  on kirjoittaa ne takaisin sinne mistä ne luettiin."
+
+#~ msgid ""
+#~ "  -v, --verbose                 Produce verbose output.\n"
+#~ "                                  Use multiple times to increase amount of \n"
+#~ "                                  information."
+#~ msgstr ""
+#~ "  -v, --verbose                 Tuota lavea tuloste.\n"
+#~ "                                  Käytä useita kertoja tietojen määrän \n"
+#~ "                                  kasvattamiseen."

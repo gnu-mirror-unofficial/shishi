@@ -1,14 +1,14 @@
 # Polish translation for shishi.
-# Copyright (C) 2004, 2006, 2007, 2008 Free Software Foundation, Inc.
+# Copyright (C) 2004, 2006, 2007, 2008, 2010 Free Software Foundation, Inc.
 # This file is distributed under the same license as the shishi package.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2004-2008.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2004-2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: shishi 0.0.34\n"
-"Report-Msgid-Bugs-To: bug-shishi@josefsson.org\n"
-"POT-Creation-Date: 2008-01-16 17:59+0100\n"
-"PO-Revision-Date: 2008-01-23 07:20+0100\n"
+"Project-Id-Version: shishi 1.0.0\n"
+"Report-Msgid-Bugs-To: bug-shishi@gnu.org\n"
+"POT-Creation-Date: 2010-05-20 20:29+0200\n"
+"PO-Revision-Date: 2010-09-01 07:12+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -65,77 +65,81 @@ msgid "Low-level cryptographic primitive failed.  This usually indicates bad pas
 msgstr "Niskopoziomowa operacja kryptograficzna nie powiod³a siê. Zwykle oznacza to z³e has³o lub uszkodzenie danych."
 
 #: lib/error.c:59
+msgid "Error receiving data from server"
+msgstr "B³±d podczas odbierania danych z serwera"
+
+#: lib/error.c:61
 msgid "Timedout talking to KDC. This usually indicates a network or KDC address problem."
 msgstr "Up³yn±³ limit czasu przy komunikacji z KDC. Zwykle oznacza to problem z sieci± lub adresem KDC."
 
-#: lib/error.c:62
+#: lib/error.c:64
 msgid "No KDC for realm known."
 msgstr "Nie ma znanego KDC dla tej dziedziny."
 
-#: lib/error.c:64
+#: lib/error.c:66
 msgid "The system call socket() failed.  This usually indicates that your system does not support the socket type."
 msgstr "Wywo³anie systemowe socket() nie powiod³o siê. Zwykle oznacza to, ¿e system nie obs³uguje danego rodzaju gniazdo."
 
-#: lib/error.c:67
+#: lib/error.c:69
 msgid "The system call bind() failed.  This usually indicates insufficient permissions."
 msgstr "Wywo³anie systemowe bind() nie powiod³o siê. Zwykle oznacza to niewystarczaj±ce uprawnienia."
 
-#: lib/error.c:70
+#: lib/error.c:72
 msgid "The system call sendto() failed."
 msgstr "Wywo³anie systemowe sendto() nie powiod³o siê."
 
-#: lib/error.c:72
+#: lib/error.c:74
 msgid "The system call close() failed."
 msgstr "Wywo³anie systemowe close() nie powiod³o siê."
 
-#: lib/error.c:74
+#: lib/error.c:76
 msgid "Server replied with an error message to request."
 msgstr "Serwer odpowiedzia³ komunikatem b³êdu na ¿±danie."
 
-#: lib/error.c:76
+#: lib/error.c:78
 msgid "Ticketset not initialized.  This usually indicates an internal application error."
 msgstr "Zbiór biletów nie zainicjowany. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
-#: lib/error.c:79
+#: lib/error.c:81
 msgid "Could not decrypt AP-REQ using provided key. This usually indicates an internal application error."
 msgstr "Nie uda³o siê odszyfrowaæ AP-REQ przy u¿yciu dostarczonego klucza. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
-#: lib/error.c:82
+#: lib/error.c:84
 msgid "Could not decrypt Ticket using provided key. This usually indicates an internal application error."
 msgstr "Nie uda³o siê odszyfrowaæ biletu przy u¿yciu dostarczonego klucza. Zwykle oznacza to b³±d wewnêtrzny aplikacji."
 
-#: lib/error.c:85
+#: lib/error.c:87
 msgid "Failed to parse keytab file"
 msgstr "Nie uda³o siê przeanalizowaæ pliku keytab"
 
-#: lib/error.c:87
+#: lib/error.c:89
 msgid "Failed to parse credential cache file"
 msgstr "Nie uda³o siê przeanalizowaæ pliku cache'a danych uwierzytelniaj±cych"
 
-#: lib/error.c:104
+#: lib/error.c:106
 msgid "Unknown error"
 msgstr "Nieznany b³±d"
 
-#: lib/error.c:135 lib/krberror.c:1259
+#: lib/error.c:137 lib/krberror.c:1259
 msgid "No error"
 msgstr "Brak b³êdu"
 
-#: lib/error.c:265
+#: lib/error.c:267
 #, c-format
 msgid "libshishi: info: %s"
 msgstr "libshishi: info: %s"
 
-#: lib/error.c:269
+#: lib/error.c:271
 #, c-format
 msgid "libshishi: info: %s\n"
 msgstr "libshishi: info: %s\n"
 
-#: lib/error.c:303
+#: lib/error.c:305
 #, c-format
 msgid "libshishi: warning: %s"
 msgstr "libshishi: uwaga: %s"
 
-#: lib/error.c:307
+#: lib/error.c:309
 #, c-format
 msgid "libshishi: warning: %s\n"
 msgstr "libshishi: uwaga: %s\n"
@@ -495,137 +499,137 @@ msgstr "Nieznany b³±d Shisy"
 msgid "shisa: %s\n"
 msgstr "shisa: %s\n"
 
-#: src/shisa.c:146
+#: src/shisa.c:143
 msgid "Account is"
 msgstr "Konto jest"
 
-#: src/shisa.c:147
+#: src/shisa.c:144
 msgid "DISABLED"
 msgstr "WY£¡CZONE"
 
-#: src/shisa.c:147
+#: src/shisa.c:144
 msgid "enabled"
 msgstr "w³±czone"
 
-#: src/shisa.c:148
+#: src/shisa.c:145
 msgid "Current key version"
 msgstr "Bie¿±ca wersja klucza"
 
-#: src/shisa.c:150
+#: src/shisa.c:147
 msgid "Account not valid before"
 msgstr "Konto niewa¿ne przed"
 
-#: src/shisa.c:152
+#: src/shisa.c:149
 msgid "Last initial TGT request at"
 msgstr "Ostatnie pocz±tkowe ¿±danie TGT"
 
-#: src/shisa.c:154
+#: src/shisa.c:151
 msgid "Last initial request at"
 msgstr "Ostatnie pocz±tkowe ¿±danie"
 
-#: src/shisa.c:156
+#: src/shisa.c:153
 msgid "Last TGT request at"
 msgstr "Ostatnie ¿±danie TGT"
 
-#: src/shisa.c:158
+#: src/shisa.c:155
 msgid "Last ticket renewal at"
 msgstr "Ostatnie odnowienie biletu"
 
-#: src/shisa.c:160
+#: src/shisa.c:157
 msgid "Password expire on"
 msgstr "Has³o wygasa"
 
-#: src/shisa.c:162
+#: src/shisa.c:159
 msgid "Account expire on"
 msgstr "Konto wygasa"
 
-#: src/shisa.c:175
+#: src/shisa.c:172
 msgid "Key"
 msgstr "Klucz"
 
-#: src/shisa.c:177
+#: src/shisa.c:174
 msgid "\tEtype"
 msgstr "\tEtype"
 
-#: src/shisa.c:180
+#: src/shisa.c:177
 msgid "\tPriority"
 msgstr "\tPriorytet"
 
-#: src/shisa.c:184
+#: src/shisa.c:181
 msgid "\tSalt"
 msgstr "\tZarodek"
 
-#: src/shisa.c:186
+#: src/shisa.c:183
 msgid "\tS2K params"
 msgstr "\tParametry S2K"
 
-#: src/shisa.c:189
+#: src/shisa.c:186
 msgid "\tPassword"
 msgstr "\tHas³o"
 
-#: src/shisa.c:192
+#: src/shisa.c:189
 msgid "\tKey is"
 msgstr "\tKlucz jest"
 
-#: src/shisa.c:192
+#: src/shisa.c:189
 msgid "MISSING"
 msgstr "BRAKUJ¡CY"
 
-#: src/shisa.c:270
+#: src/shisa.c:267
 #, c-format
 msgid "Adding realm `%s'...\n"
 msgstr "Dodawanie dziedziny `%s'...\n"
 
-#: src/shisa.c:272
+#: src/shisa.c:269
 #, c-format
 msgid "Adding principal `%s@%s'...\n"
 msgstr "Dodawanie zarz±dcy `%s@%s'...\n"
 
-#: src/shisa.c:283
+#: src/shisa.c:280
 #, c-format
 msgid "Adding realm `%s'...done\n"
 msgstr "Dodawanie dziedziny `%s'... zakoñczone\n"
 
-#: src/shisa.c:285
+#: src/shisa.c:282
 #, c-format
 msgid "Adding principal `%s@%s'...done\n"
 msgstr "Dodawanie zarz±dcy `%s@%s'... zakoñczone\n"
 
-#: src/shisa.c:316
+#: src/shisa.c:313
 #, c-format
 msgid "Removing realm `%s'...\n"
 msgstr "Usuwanie dziedziny `%s'...\n"
 
-#: src/shisa.c:318
+#: src/shisa.c:315
 #, c-format
 msgid "Removing principal `%s@%s'...\n"
 msgstr "Usuwanie zarz±dcy `%s@%s'...\n"
 
-#: src/shisa.c:326
+#: src/shisa.c:323
 #, c-format
 msgid "Removing realm `%s'...done\n"
 msgstr "Usuwanie dziedziny `%s'... zakoñczone\n"
 
-#: src/shisa.c:328
+#: src/shisa.c:325
 #, c-format
 msgid "Removing principal `%s@%s'...done\n"
 msgstr "Usuwanie zarz±dcy `%s@%s'... zakoñczone\n"
 
-#: src/shisa.c:375
+#: src/shisa.c:372
 #, c-format
 msgid "Password for `%s@%s': "
 msgstr "Has³o dla `%s@%s': "
 
-#: src/shisa.c:378
+#: src/shisa.c:375
 msgid "Password: "
 msgstr "Has³o: "
 
-#: src/shisa.c:380
+#: src/shisa.c:377
 #, c-format
 msgid "Could not read password"
 msgstr "Nie uda³o siê odczytaæ has³a"
 
-#: src/shisa.c:392
+#: src/shisa.c:389
 #, c-format
 msgid ""
 "Could not create key (%d):\n"
@@ -634,16 +638,188 @@ msgstr ""
 "Nie uda³o siê utworzyæ klucza (%d):\n"
 "%s"
 
-#: src/shisa.c:424 src/shishi.c:59 src/shishid.c:490
+#: src/shisa.c:423 src/shishi.c:59 src/shishid.c:482
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "`%s --help' poda wiêcej informacji.\n"
+
+#: src/shisa.c:428 src/shishi.c:64
+#, c-format
+msgid ""
+"\n"
+"Mandatory arguments to long options are mandatory for short options too.\n"
+msgstr ""
+"\n"
+"Argumenty obowi±zkowe dla opcji d³ugich s± obowi±zkowe tak¿e dla opcji krótkich.\n"
+
+#: src/shisa.c:468 src/shishi.c:100
+#, c-format
+msgid "too many arguments"
+msgstr "zbyt wiele argumentów"
+
+#: src/shisa.c:477
+#, c-format
+msgid ""
+"Initialization failed:\n"
+"%s"
+msgstr ""
+"Inicjalizacja nie powiod³a siê:\n"
+"%s"
+
+#: src/shisa.c:482
+#, c-format
+msgid ""
+"Could not read library options `%s':\n"
+"%s"
+msgstr ""
+"Nie uda³o siê odczytaæ opcji biblioteki `%s':\n"
+"%s"
+
+#: src/shisa.c:487
+#, c-format
+msgid ""
+"Shishi initialization failed:\n"
+"%s"
+msgstr ""
+"Inicjalizacja Shishi nie powiod³a siê:\n"
+"%s"
+
+#: src/shisa.c:492
+#, c-format
+msgid ""
+"Could not set encryption type `%s':\n"
+"%s"
+msgstr ""
+"Nie uda³o siê ustawiæ rodzaju szyfrowania `%s':\n"
+"%s"
+
+#: src/shisa.c:500
+#, c-format
+msgid "too few arguments"
+msgstr "zbyt ma³o argumentów"
+
+#: src/shisa.c:531
+#, c-format
+msgid "Adding default realm `%s'...\n"
+msgstr "Dodawanie domy¶lnej dziedziny `%s'...\n"
+
+#: src/shisa.c:551
+#, c-format
+msgid "Modifying principal `%s@%s'...\n"
+msgstr "Modyfikowanie zarz±dcy `%s@%s'...\n"
+
+#: src/shisa.c:558
+#, c-format
+msgid "Modifying principal `%s@%s'...done\n"
+msgstr "Modyfikowanie zarz±dcy `%s@%s'... zakoñczone\n"
+
+#: src/shisa.c:562
+#, c-format
+msgid "Adding key to `%s@%s'...\n"
+msgstr "Dodawanie klucza do `%s@%s'...\n"
+
+#: src/shisa.c:572
+#, c-format
+msgid "Adding key to `%s@%s'...done\n"
+msgstr "Dodawanie klucza do `%s@%s'... zakoñczone\n"
+
+#: src/shisa.c:576
+#, c-format
+msgid "Removing key from `%s@%s'...\n"
+msgstr "Usuwanie klucza z `%s@%s'...\n"
+
+#: src/shisa.c:589
+#, c-format
+msgid "Removing key from `%s@%s'...done\n"
+msgstr "Usuwanie klucza z `%s@%s'... zakoñczone\n"
+
+#: src/shishi.c:111
+#, c-format
+msgid "cannot initialize libshishi"
+msgstr "nie mo¿na zainicjowaæ libshishi"
+
+#: src/shishi.c:115
+#, c-format
+msgid "Could not set encryption types: %s"
+msgstr "Nie uda³o siê ustawiæ rodzajów szyfrowania: %s"
+
+#: src/shishi.c:127
+#, c-format
+msgid "Could not parse client principal \"%s\": %s"
+msgstr "Nie uda³o siê przeanalizowaæ zarz±dcy klienta \"%s\": %s"
+
+#: src/shishi.c:140
+#, c-format
+msgid "Could not parse server principal \"%s\": %s"
+msgstr "Nie uda³o siê przeanalizowaæ zarz±dcy serwera \"%s\": %s"
+
+#: src/shishi.c:146
+#, c-format
+msgid "Could not read library options: %s"
+msgstr "Nie uda³o siê odczytaæ opcji biblioteki: %s"
+
+#: src/shishi.c:164
+#, c-format
+msgid "Invalid --starttime date `%s'"
+msgstr "Nieprawid³owa data --starttime `%s'"
+
+#: src/shishi.c:174
+#, c-format
+msgid "Invalid --endtime date `%s'"
+msgstr "Nieprawid³owa data --endtime `%s'"
+
+#: src/shishi.c:184
+#, c-format
+msgid "Invalid --renew-till date `%s'"
+msgstr "Nieprawid³owa data --renew-till `%s'"
+
+#: src/shishi.c:203
+#, c-format
+msgid "Tickets in `%s':\n"
+msgstr "Bilety w `%s':\n"
+
+#: src/shishi.c:208
+#, c-format
+msgid "Could not list tickets: %s"
+msgstr "Nie uda³o siê wylistowaæ biletów: %s"
+
+#: src/shishi.c:225
+#, c-format
+msgid "Removing ticket:\n"
+msgstr "Usuwanie biletu:\n"
+
+#: src/shishi.c:232
+#, c-format
+msgid ""
+"Could not destroy ticket %d:\n"
+"%s"
+msgstr ""
+"Nie uda³o siê zniszczyæ biletu %d:\n"
+"%s"
+
+#: src/shishi.c:242
+#, c-format
+msgid "No tickets removed.\n"
+msgstr "Nie usuniêto ¿adnego biletu.\n"
+
+#: src/shishi.c:244
+#, c-format
+msgid "%d ticket removed.\n"
+msgid_plural "%d tickets removed.\n"
+msgstr[0] "Usuniêto %d bilet.\n"
+msgstr[1] "Usuniêto %d bilety.\n"
+msgstr[2] "Usuniêto %d biletów.\n"
+
+#: src/shishi.c:277
+#, c-format
+msgid "could not get ticket as `%s' for `%s'"
+msgstr "nie uda³o siê pobraæ biletu jako `%s' dla `%s'"
 
 #. TRANSLATORS: The placeholder indicates the bug-reporting address
 #. for this package.  Please add _another line_ saying
 #. "Report translation bugs to <...>\n" with the address for translation
 #. bugs (typically your translation team's web or email address).
-#: src/shisa.c:433 src/shishi.c:68 src/shishid.c:499
+#: src/shishid.c:491
 #, c-format
 msgid ""
 "\n"
@@ -656,166 +832,3 @@ msgstr ""
 "\n"
 "Prosimy zg³aszaæ b³êdy na adres <%s>.\n"
 "B³êdy w t³umaczeniu prosimy zg³aszaæ na adres <qboosh@pld-linux.org>.\n"
-
-#: src/shisa.c:470 src/shishi.c:101
-#, c-format
-msgid "too many arguments"
-msgstr "zbyt wiele argumentów"
-
-#: src/shisa.c:479
-#, c-format
-msgid ""
-"Initialization failed:\n"
-"%s"
-msgstr ""
-"Inicjalizacja nie powiod³a siê:\n"
-"%s"
-
-#: src/shisa.c:484
-#, c-format
-msgid ""
-"Could not read library options `%s':\n"
-"%s"
-msgstr ""
-"Nie uda³o siê odczytaæ opcji biblioteki `%s':\n"
-"%s"
-
-#: src/shisa.c:489
-#, c-format
-msgid ""
-"Shishi initialization failed:\n"
-"%s"
-msgstr ""
-"Inicjalizacja Shishi nie powiod³a siê:\n"
-"%s"
-
-#: src/shisa.c:494
-#, c-format
-msgid ""
-"Could not set encryption type `%s':\n"
-"%s"
-msgstr ""
-"Nie uda³o siê ustawiæ rodzaju szyfrowania `%s':\n"
-"%s"
-
-#: src/shisa.c:502
-#, c-format
-msgid "too few arguments"
-msgstr "zbyt ma³o argumentów"
-
-#: src/shisa.c:533
-#, c-format
-msgid "Adding default realm `%s'...\n"
-msgstr "Dodawanie domy¶lnej dziedziny `%s'...\n"
-
-#: src/shisa.c:553
-#, c-format
-msgid "Modifying principal `%s@%s'...\n"
-msgstr "Modyfikowanie zarz±dcy `%s@%s'...\n"
-
-#: src/shisa.c:560
-#, c-format
-msgid "Modifying principal `%s@%s'...done\n"
-msgstr "Modyfikowanie zarz±dcy `%s@%s'... zakoñczone\n"
-
-#: src/shisa.c:564
-#, c-format
-msgid "Adding key to `%s@%s'...\n"
-msgstr "Dodawanie klucza do `%s@%s'...\n"
-
-#: src/shisa.c:574
-#, c-format
-msgid "Adding key to `%s@%s'...done\n"
-msgstr "Dodawanie klucza do `%s@%s'... zakoñczone\n"
-
-#: src/shisa.c:578
-#, c-format
-msgid "Removing key from `%s@%s'...\n"
-msgstr "Usuwanie klucza z `%s@%s'...\n"
-
-#: src/shisa.c:591
-#, c-format
-msgid "Removing key from `%s@%s'...done\n"
-msgstr "Usuwanie klucza z `%s@%s'... zakoñczone\n"
-
-#: src/shishi.c:112
-#, c-format
-msgid "Could not initialize libshishi."
-msgstr "Nie uda³o siê zainicjowaæ libshishi."
-
-#: src/shishi.c:116
-#, c-format
-msgid "Could not set encryption types: %s"
-msgstr "Nie uda³o siê ustawiæ rodzajów szyfrowania: %s"
-
-#: src/shishi.c:128
-#, c-format
-msgid "Could not parse client principal \"%s\": %s"
-msgstr "Nie uda³o siê przeanalizowaæ zarz±dcy klienta \"%s\": %s"
-
-#: src/shishi.c:141
-#, c-format
-msgid "Could not parse server principal \"%s\": %s"
-msgstr "Nie uda³o siê przeanalizowaæ zarz±dcy serwera \"%s\": %s"
-
-#: src/shishi.c:147
-#, c-format
-msgid "Could not read library options: %s"
-msgstr "Nie uda³o siê odczytaæ opcji biblioteki: %s"
-
-#: src/shishi.c:165
-#, c-format
-msgid "Invalid --starttime date `%s'"
-msgstr "Nieprawid³owa data --starttime `%s'"
-
-#: src/shishi.c:175
-#, c-format
-msgid "Invalid --endtime date `%s'"
-msgstr "Nieprawid³owa data --endtime `%s'"
-
-#: src/shishi.c:185
-#, c-format
-msgid "Invalid --renew-till date `%s'"
-msgstr "Nieprawid³owa data --renew-till `%s'"
-
-#: src/shishi.c:204
-#, c-format
-msgid "Tickets in `%s':\n"
-msgstr "Bilety w `%s':\n"
-
-#: src/shishi.c:209
-#, c-format
-msgid "Could not list tickets: %s"
-msgstr "Nie uda³o siê wylistowaæ biletów: %s"
-
-#: src/shishi.c:226
-#, c-format
-msgid "Removing ticket:\n"
-msgstr "Usuwanie biletu:\n"
-
-#: src/shishi.c:233
-#, c-format
-msgid ""
-"Could not destroy ticket %d:\n"
-"%s"
-msgstr ""
-"Nie uda³o siê zniszczyæ biletu %d:\n"
-"%s"
-
-#: src/shishi.c:243
-#, c-format
-msgid "No tickets removed.\n"
-msgstr "Nie usuniêto ¿adnego biletu.\n"
-
-#: src/shishi.c:245
-#, c-format
-msgid "%d ticket removed.\n"
-msgid_plural "%d tickets removed.\n"
-msgstr[0] "Usuniêto %d bilet.\n"
-msgstr[1] "Usuniêto %d bilety.\n"
-msgstr[2] "Usuniêto %d biletów.\n"
-
-#: src/shishi.c:278
-#, c-format
-msgid "Could not get ticket as `%s' for `%s'."
-msgstr "Nie uda³o siê pobraæ biletu jako `%s' dla `%s'."
