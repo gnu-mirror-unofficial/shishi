@@ -1,4 +1,5 @@
 ^ChangeLog
+^doc/components.dia
 ^doc/specifications/
 ^extra/rsh-redone/
-^doc/components.dia
+^gtk-doc.make
