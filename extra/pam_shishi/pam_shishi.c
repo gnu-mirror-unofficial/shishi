@@ -132,7 +132,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
       retval = conv->conv (nargs, (const struct pam_message **) pmsg,
 			   &resp, conv->appdata_ptr);
 
-      free (msg[0].msg);
+      free ((char *) msg[0].msg);
 
       if (retval != PAM_SUCCESS)
 	{
