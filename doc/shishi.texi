@@ -15,7 +15,7 @@
 This manual is last updated @value{UPDATED} for version
 @value{VERSION} of Shishi.
 
-Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Simon Josefsson.
+Copyright @copyright{} 2002-2011 Simon Josefsson.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -3400,7 +3400,7 @@ library.  If not specified, it will be @code{$SHISHI_HOME/tickets}, or
 @end itemize
 
 @lowersections
-@include getdate.texi
+@include parse-datetime.texi
 @raisesections
 
 @c **********************************************************
@@ -4798,7 +4798,7 @@ authentication systems in popular use today.  New telnet
 AUTHENTICATION mechanisms may specify alternative methods for
 determining the keys to be used for this cipher suite in their
 specification, if the session key negotiated by that authentication
-mechanism is not a DES key and and where this algorithm may not be
+mechanism is not a DES key and where this algorithm may not be
 safely used.
 
 Kerberos 5 authentication clarification: The key used to encrypt data

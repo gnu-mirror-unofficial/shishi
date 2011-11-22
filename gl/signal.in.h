@@ -1,6 +1,6 @@
 /* A GNU-like <signal.h>.
 
-   Copyright (C) 2006-2010 Free Software Foundation, Inc.
+   Copyright (C) 2006-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,21 +20,49 @@
 #endif
 @PRAGMA_COLUMNS@
 
-#if defined __need_sig_atomic_t || defined __need_sigset_t
-/* Special invocation convention inside glibc header files.  */
+#if defined __need_sig_atomic_t || defined __need_sigset_t || defined _GL_ALREADY_INCLUDING_SIGNAL_H || (defined _SIGNAL_H && !defined __SIZEOF_PTHREAD_MUTEX_T)
+/* Special invocation convention:
+   - Inside glibc header files.
+   - On glibc systems we have a sequence of nested includes
+     <signal.h> -> <ucontext.h> -> <signal.h>.
+     In this situation, the functions are not yet declared, therefore we cannot
+     provide the C++ aliases.
+   - On glibc systems with GCC 4.3 we have a sequence of nested includes
+     <csignal> -> </usr/include/signal.h> -> <sys/ucontext.h> -> <signal.h>.
+     In this situation, some of the functions are not yet declared, therefore
+     we cannot provide the C++ aliases.  */
 
 # @INCLUDE_NEXT@ @NEXT_SIGNAL_H@
 
 #else
 /* Normal invocation convention.  */
 
-#ifndef _GL_SIGNAL_H
+#ifndef _@GUARD_PREFIX@_SIGNAL_H
+
+#define _GL_ALREADY_INCLUDING_SIGNAL_H
+
+/* Define pid_t, uid_t.
+   Also, mingw defines sigset_t not in <signal.h>, but in <sys/types.h>.
+   On Solaris 10, <signal.h> includes <sys/types.h>, which eventually includes
+   us; so include <sys/types.h> now, before the second inclusion guard.  */
+#include <sys/types.h>
 
 /* The include_next requires a split double-inclusion guard.  */
 #@INCLUDE_NEXT@ @NEXT_SIGNAL_H@
 
-#ifndef _GL_SIGNAL_H
-#define _GL_SIGNAL_H
+#undef _GL_ALREADY_INCLUDING_SIGNAL_H
+
+#ifndef _@GUARD_PREFIX@_SIGNAL_H
+#define _@GUARD_PREFIX@_SIGNAL_H
+
+/* MacOS X 10.3, FreeBSD 6.4, OpenBSD 3.8, OSF/1 4.0, Solaris 2.6 declare
+   pthread_sigmask in <pthread.h>, not in <signal.h>.
+   But avoid namespace pollution on glibc systems.*/
+#if (@GNULIB_PTHREAD_SIGMASK@ || defined GNULIB_POSIXCHECK) \
+    && ((defined __APPLE__ && defined __MACH__) || defined __FreeBSD__ || defined __OpenBSD__ || defined __osf__ || defined __sun) \
+    && ! defined __GLIBC__
+# include <pthread.h>
+#endif
 
 /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
 
@@ -42,22 +70,38 @@
 
 /* The definition of _GL_WARN_ON_USE is copied here.  */
 
-/* Define pid_t, uid_t.
-   Also, mingw defines sigset_t not in <signal.h>, but in <sys/types.h>.  */
-#include <sys/types.h>
-
 /* On AIX, sig_atomic_t already includes volatile.  C99 requires that
    'volatile sig_atomic_t' ignore the extra modifier, but C89 did not.
    Hence, redefine this to a non-volatile type as needed.  */
 #if ! @HAVE_TYPE_VOLATILE_SIG_ATOMIC_T@
+# if !GNULIB_defined_sig_atomic_t
 typedef int rpl_sig_atomic_t;
-# undef sig_atomic_t
-# define sig_atomic_t rpl_sig_atomic_t
+#  undef sig_atomic_t
+#  define sig_atomic_t rpl_sig_atomic_t
+#  define GNULIB_defined_sig_atomic_t 1
+# endif
 #endif
 
 /* A set or mask of signals.  */
 #if !@HAVE_SIGSET_T@
+# if !GNULIB_defined_sigset_t
 typedef unsigned int sigset_t;
+#  define GNULIB_defined_sigset_t 1
+# endif
+#endif
+
+/* Define sighandler_t, the type of signal handlers.  A GNU extension.  */
+#if !@HAVE_SIGHANDLER_T@
+# ifdef __cplusplus
+extern "C" {
+# endif
+# if !GNULIB_defined_sighandler_t
+typedef void (*sighandler_t) (int);
+#  define GNULIB_defined_sighandler_t 1
+# endif
+# ifdef __cplusplus
+}
+# endif
 #endif
 
 
@@ -72,8 +116,71 @@ typedef unsigned int sigset_t;
 #endif
 
 
+/* Maximum signal number + 1.  */
+#ifndef NSIG
+# if defined __TANDEM
+#  define NSIG 32
+# endif
+#endif
+
+
+#if @GNULIB_PTHREAD_SIGMASK@
+# if @REPLACE_PTHREAD_SIGMASK@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef pthread_sigmask
+#   define pthread_sigmask rpl_pthread_sigmask
+#  endif
+_GL_FUNCDECL_RPL (pthread_sigmask, int,
+                  (int how, const sigset_t *new_mask, sigset_t *old_mask));
+_GL_CXXALIAS_RPL (pthread_sigmask, int,
+                  (int how, const sigset_t *new_mask, sigset_t *old_mask));
+# else
+#  if !@HAVE_PTHREAD_SIGMASK@
+_GL_FUNCDECL_SYS (pthread_sigmask, int,
+                  (int how, const sigset_t *new_mask, sigset_t *old_mask));
+#  endif
+_GL_CXXALIAS_SYS (pthread_sigmask, int,
+                  (int how, const sigset_t *new_mask, sigset_t *old_mask));
+# endif
+_GL_CXXALIASWARN (pthread_sigmask);
+#elif defined GNULIB_POSIXCHECK
+# undef pthread_sigmask
+# if HAVE_RAW_DECL_PTHREAD_SIGMASK
+_GL_WARN_ON_USE (pthread_sigmask, "pthread_sigmask is not portable - "
+                 "use gnulib module pthread_sigmask for portability");
+# endif
+#endif
+
+
+#if @GNULIB_RAISE@
+# if @REPLACE_RAISE@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef raise
+#   define raise rpl_raise
+#  endif
+_GL_FUNCDECL_RPL (raise, int, (int sig));
+_GL_CXXALIAS_RPL (raise, int, (int sig));
+# else
+#  if !@HAVE_RAISE@
+_GL_FUNCDECL_SYS (raise, int, (int sig));
+#  endif
+_GL_CXXALIAS_SYS (raise, int, (int sig));
+# endif
+_GL_CXXALIASWARN (raise);
+#elif defined GNULIB_POSIXCHECK
+# undef raise
+/* Assume raise is always declared.  */
+_GL_WARN_ON_USE (raise, "raise can crash on native Windows - "
+                 "use gnulib module raise for portability");
+#endif
+
+
 #if @GNULIB_SIGPROCMASK@
 # if !@HAVE_POSIX_SIGNALBLOCKING@
+
+#  ifndef GNULIB_defined_signal_blocking
+#   define GNULIB_defined_signal_blocking 1
+#  endif
 
 /* Maximum signal number + 1.  */
 #  ifndef NSIG
@@ -81,7 +188,10 @@ typedef unsigned int sigset_t;
 #  endif
 
 /* This code supports only 32 signals.  */
+#  if !GNULIB_defined_verify_NSIG_constraint
 typedef int verify_NSIG_constraint[NSIG <= 32 ? 1 : -1];
+#   define GNULIB_defined_verify_NSIG_constraint 1
+#  endif
 
 # endif
 
@@ -176,7 +286,10 @@ _GL_CXXALIASWARN (sigprocmask);
 # ifdef __cplusplus
 extern "C" {
 # endif
+# if !GNULIB_defined_function_taking_int_returning_void_t
 typedef void (*_gl_function_taking_int_returning_void_t) (int);
+#  define GNULIB_defined_function_taking_int_returning_void_t 1
+# endif
 # ifdef __cplusplus
 }
 # endif
@@ -194,18 +307,10 @@ _GL_CXXALIAS_SYS (signal, _gl_function_taking_int_returning_void_t,
 # endif
 _GL_CXXALIASWARN (signal);
 
-/* Raise signal SIG.  */
 # if !@HAVE_POSIX_SIGNALBLOCKING@ && GNULIB_defined_SIGPIPE
-#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
-#   undef raise
-#   define raise rpl_raise
-#  endif
-_GL_FUNCDECL_RPL (raise, int, (int sig));
-_GL_CXXALIAS_RPL (raise, int, (int sig));
-# else
-_GL_CXXALIAS_SYS (raise, int, (int sig));
+/* Raise signal SIGPIPE.  */
+_GL_EXTERN_C int _gl_raise_SIGPIPE (void);
 # endif
-_GL_CXXALIASWARN (raise);
 
 #elif defined GNULIB_POSIXCHECK
 # undef sigaddset
@@ -250,6 +355,9 @@ _GL_WARN_ON_USE (sigprocmask, "sigprocmask is unportable - "
 # if !@HAVE_SIGACTION@
 
 #  if !@HAVE_SIGINFO_T@
+
+#   if !GNULIB_defined_siginfo_types
+
 /* Present to allow compilation, but unsupported by gnulib.  */
 union sigval
 {
@@ -271,10 +379,16 @@ struct siginfo_t
   union sigval si_value;
 };
 typedef struct siginfo_t siginfo_t;
+
+#    define GNULIB_defined_siginfo_types 1
+#   endif
+
 #  endif /* !@HAVE_SIGINFO_T@ */
 
 /* We assume that platforms which lack the sigaction() function also lack
    the 'struct sigaction' type, and vice versa.  */
+
+#  if !GNULIB_defined_struct_sigaction
 
 struct sigaction
 {
@@ -291,12 +405,15 @@ struct sigaction
   /* Not all POSIX flags are supported.  */
   int sa_flags;
 };
-#  define sa_handler _sa_func._sa_handler
-#  define sa_sigaction _sa_func._sa_sigaction
+#   define sa_handler _sa_func._sa_handler
+#   define sa_sigaction _sa_func._sa_sigaction
 /* Unsupported flags are not present.  */
-#  define SA_RESETHAND 1
-#  define SA_NODEFER 2
-#  define SA_RESTART 4
+#   define SA_RESETHAND 1
+#   define SA_NODEFER 2
+#   define SA_RESTART 4
+
+#   define GNULIB_defined_struct_sigaction 1
+#  endif
 
 _GL_FUNCDECL_SYS (sigaction, int, (int, const struct sigaction *restrict,
                                    struct sigaction *restrict));
@@ -325,6 +442,6 @@ _GL_WARN_ON_USE (sigaction, "sigaction is unportable - "
 #endif
 
 
-#endif /* _GL_SIGNAL_H */
-#endif /* _GL_SIGNAL_H */
+#endif /* _@GUARD_PREFIX@_SIGNAL_H */
+#endif /* _@GUARD_PREFIX@_SIGNAL_H */
 #endif

@@ -1,5 +1,5 @@
-# serial 16
-dnl Copyright (C) 2002-2003, 2005-2007, 2009-2010 Free Software Foundation,
+# serial 21
+dnl Copyright (C) 2002-2003, 2005-2007, 2009-2011 Free Software Foundation,
 dnl Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
@@ -7,21 +7,24 @@ dnl with or without modifications, as long as this notice is preserved.
 
 dnl From Jim Meyering.
 
-# Redefine AC_FUNC_MKTIME, because it is no longer maintained in Autoconf.
-# AC_FUNC_MKTIME
-# --------------
-AC_DEFUN([AC_FUNC_MKTIME],
-[AC_CHECK_HEADERS_ONCE([unistd.h])
-AC_CHECK_FUNCS_ONCE([alarm])
-AC_REQUIRE([gl_MULTIARCH])
-if test $APPLE_UNIVERSAL_BUILD = 1; then
-  # A universal build on Apple MacOS X platforms.
-  # The test result would be 'yes' in 32-bit mode and 'no' in 64-bit mode.
-  # But we need a configuration result that is valid in both modes.
-  ac_cv_func_working_mktime=no
-fi
-AC_CACHE_CHECK([for working mktime], [ac_cv_func_working_mktime],
-[AC_RUN_IFELSE([AC_LANG_SOURCE(
+AC_DEFUN([gl_FUNC_MKTIME],
+[
+  AC_REQUIRE([gl_HEADER_TIME_H_DEFAULTS])
+
+  dnl We don't use AC_FUNC_MKTIME any more, because it is no longer maintained
+  dnl in Autoconf and because it invokes AC_LIBOBJ.
+  AC_CHECK_HEADERS_ONCE([unistd.h])
+  AC_CHECK_FUNCS_ONCE([alarm])
+  AC_REQUIRE([gl_MULTIARCH])
+  if test $APPLE_UNIVERSAL_BUILD = 1; then
+    # A universal build on Apple MacOS X platforms.
+    # The test result would be 'yes' in 32-bit mode and 'no' in 64-bit mode.
+    # But we need a configuration result that is valid in both modes.
+    gl_cv_func_working_mktime=no
+  fi
+  AC_CACHE_CHECK([for working mktime], [gl_cv_func_working_mktime],
+    [AC_RUN_IFELSE(
+       [AC_LANG_SOURCE(
 [[/* Test program from Paul Eggert and Tony Leneis.  */
 #include <limits.h>
 #include <stdlib.h>
@@ -162,22 +165,26 @@ year_2050_test ()
 int
 main ()
 {
+  int result = 0;
   time_t t, delta;
   int i, j;
+  int time_t_signed_magnitude = (time_t) ~ (time_t) 0 < (time_t) -1;
+  int time_t_signed = ! ((time_t) 0 < (time_t) -1);
 
   /* This test makes some buggy mktime implementations loop.
      Give up after 60 seconds; a mktime slower than that
      isn't worth using anyway.  */
   alarm (60);
 
-  for (;;)
-    {
-      t = (time_t_max << 1) + 1;
-      if (t <= time_t_max)
-        break;
-      time_t_max = t;
-    }
-  time_t_min = - ((time_t) ~ (time_t) 0 == (time_t) -1) - time_t_max;
+  time_t_max = (! time_t_signed
+                ? (time_t) -1
+                : ((((time_t) 1 << (sizeof (time_t) * CHAR_BIT - 2)) - 1)
+                   * 2 + 1));
+  time_t_min = (! time_t_signed
+                ? (time_t) 0
+                : time_t_signed_magnitude
+                ? ~ (time_t) 0
+                : ~ time_t_max);
 
   delta = time_t_max / 997; /* a suitable prime number */
   for (i = 0; i < N_STRINGS; i++)
@@ -187,40 +194,52 @@ main ()
 
       for (t = 0; t <= time_t_max - delta; t += delta)
         if (! mktime_test (t))
-          return 1;
+          result |= 1;
       if (! (mktime_test ((time_t) 1)
              && mktime_test ((time_t) (60 * 60))
              && mktime_test ((time_t) (60 * 60 * 24))))
-        return 1;
+        result |= 2;
 
       for (j = 1; ; j <<= 1)
         if (! bigtime_test (j))
-          return 1;
+          result |= 4;
         else if (INT_MAX / 2 < j)
           break;
       if (! bigtime_test (INT_MAX))
-        return 1;
+        result |= 8;
     }
-  return ! (irix_6_4_bug () && spring_forward_gap () && year_2050_test ());
+  if (! irix_6_4_bug ())
+    result |= 16;
+  if (! spring_forward_gap ())
+    result |= 32;
+  if (! year_2050_test ())
+    result |= 64;
+  return result;
 }]])],
-               [ac_cv_func_working_mktime=yes],
-               [ac_cv_func_working_mktime=no],
-               [ac_cv_func_working_mktime=no])])
-if test $ac_cv_func_working_mktime = no; then
-  AC_LIBOBJ([mktime])
-fi
-])# AC_FUNC_MKTIME
+       [gl_cv_func_working_mktime=yes],
+       [gl_cv_func_working_mktime=no],
+       [gl_cv_func_working_mktime=no])
+    ])
 
-AC_DEFUN([gl_FUNC_MKTIME],
-[
-  AC_REQUIRE([gl_HEADER_TIME_H_DEFAULTS])
-  AC_FUNC_MKTIME
-  dnl Note: AC_FUNC_MKTIME does AC_LIBOBJ([mktime]).
-  if test $ac_cv_func_working_mktime = no; then
+  if test $gl_cv_func_working_mktime = no; then
     REPLACE_MKTIME=1
-    gl_PREREQ_MKTIME
   else
     REPLACE_MKTIME=0
+  fi
+])
+
+AC_DEFUN([gl_FUNC_MKTIME_INTERNAL], [
+  AC_REQUIRE([gl_FUNC_MKTIME])
+  if test $REPLACE_MKTIME = 0; then
+    dnl BeOS has __mktime_internal in libc, but other platforms don't.
+    AC_CHECK_FUNC([__mktime_internal],
+      [AC_DEFINE([mktime_internal], [__mktime_internal],
+         [Define to the real name of the mktime_internal function.])
+      ],
+      [dnl mktime works but it doesn't export __mktime_internal,
+       dnl so we need to substitute our own mktime implementation.
+       REPLACE_MKTIME=1
+      ])
   fi
 ])
 

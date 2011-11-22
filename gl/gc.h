@@ -1,5 +1,5 @@
 /* gc.h --- Header file for implementation agnostic crypto wrapper API.
- * Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002-2005, 2007-2008, 2011 Free Software Foundation, Inc.
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -168,7 +168,7 @@ extern Gc_rc gc_hmac_sha1 (const void *key, size_t keylen,
    larger value means this function take more time (typical iteration
    counts are 1000-20000).  This function "stretches" the key to be
    exactly dkLen bytes long.  GC_OK is returned on success, otherwise
-   an Gc_rc error code is returned.  */
+   a Gc_rc error code is returned.  */
 extern Gc_rc
 gc_pbkdf2_sha1 (const char *P, size_t Plen,
                 const char *S, size_t Slen,

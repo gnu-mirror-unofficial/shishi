@@ -1,5 +1,5 @@
 /* starttls.c --- Handle extended TCP connections (for TLS).
- * Copyright (C) 2002, 2003, 2006, 2007, 2008, 2010  Simon Josefsson
+ * Copyright (C) 2002-2011  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -326,7 +326,8 @@ kdc_extension (struct listenspec *ls)
   gnutls_certificate_server_set_request (ls->session, GNUTLS_CERT_REQUEST);
 
   gnutls_dh_set_prime_bits (ls->session, DH_BITS);
-  gnutls_transport_set_ptr (ls->session, (gnutls_transport_ptr) ls->sockfd);
+  gnutls_transport_set_ptr (ls->session, (gnutls_transport_ptr)
+			    (unsigned long) ls->sockfd);
 
   gnutls_db_set_retrieve_function (ls->session, resume_db_fetch);
   gnutls_db_set_store_function (ls->session, resume_db_store);

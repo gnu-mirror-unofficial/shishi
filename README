@@ -1,5 +1,5 @@
 Shishi README -- Important introductory notes.
-Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010  Simon Josefsson
+Copyright (C) 2002-2011  Simon Josefsson
 See the end for copying conditions.
 
 This directory holds Shishi, an implementation of the RFC 1510/4120
@@ -25,6 +25,9 @@ invited to join our mailing list help-shishi@gnu.org, see
 
 Report bugs to bug-shishi@gnu.org, but please read the section "Bug
 reports" in the manual first.
+
+For any copyright year range specified as YYYY-ZZZZ in this package
+note that the range specifies every single year in that closed interval.
 
 ----------------------------------------------------------------------
 Copying and distribution of this file, with or without modification,

@@ -1,7 +1,7 @@
 /* Functions to compute MD4 message digest of files or memory blocks.
    according to the definition of MD4 in RFC 1320 from April 1992.
-   Copyright (C) 1995, 1996, 1997, 1999, 2000, 2001, 2002, 2003, 2005, 2006,
-   2008, 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 1995-1997, 1999-2003, 2005-2006, 2008-2011 Free Software
+   Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -24,8 +24,8 @@
 
 #include "md4.h"
 
-#include <stddef.h>
-#include <stdlib.h>
+#include <stdalign.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -239,14 +239,7 @@ md4_process_bytes (const void *buffer, size_t len, struct md4_ctx *ctx)
   if (len >= 64)
     {
 #if !_STRING_ARCH_unaligned
-      /* To check alignment gcc has an appropriate operator.  Other
-         compilers don't.  */
-# if __GNUC__ >= 2
-#  define UNALIGNED_P(p) (((uintptr_t) p) % __alignof__ (uint32_t) != 0)
-# else
-#  define alignof(type) offsetof (struct { char c; type x; }, x)
-#  define UNALIGNED_P(p) (((size_t) p) % alignof (uint32_t) != 0)
-# endif
+# define UNALIGNED_P(p) ((uintptr_t) (p) % alignof (uint32_t) != 0)
       if (UNALIGNED_P (buffer))
         while (len > 64)
           {

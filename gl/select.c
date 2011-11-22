@@ -1,7 +1,7 @@
 /* Emulation for select(2)
    Contributed by Paolo Bonzini.
 
-   Copyright 2008-2010 Free Software Foundation, Inc.
+   Copyright 2008-2011 Free Software Foundation, Inc.
 
    This file is part of gnulib.
 
@@ -27,7 +27,6 @@
 /* Native Win32.  */
 
 #include <sys/types.h>
-#include <stdbool.h>
 #include <errno.h>
 #include <limits.h>
 
@@ -37,6 +36,8 @@
 #include <stdio.h>
 #include <conio.h>
 #include <time.h>
+
+#include "msvc-nothrow.h"
 
 struct bitset {
   unsigned char in[FD_SETSIZE / CHAR_BIT];

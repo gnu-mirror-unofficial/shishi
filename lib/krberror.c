@@ -1,5 +1,5 @@
 /* krberror.c --- Functions related to KRB-ERROR packet.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002-2011  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -1222,7 +1222,7 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
 
 	      for (i = 1; i <= n; i++)
 		{
-		  char *format = xasprintf ("?%d.padata-type", i);
+		  char *format = xasprintf ("?%ld.padata-type", i);
 		  int32_t padatatype;
 
 		  if (i > 1)

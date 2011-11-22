@@ -1,4 +1,4 @@
-# Copyright (C) 2006, 2007, 2008, 2009, 2010 Simon Josefsson.
+# Copyright (C) 2006-2011 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -31,8 +31,23 @@ endif
 local-checks-to-skip = sc_copyright_check sc_error_message_uppercase	\
 	sc_immutable_NEWS sc_makefile_at_at_check sc_po_check		\
 	sc_prohibit_atoi_atof sc_prohibit_have_config_h			\
-	sc_prohibit_strcmp sc_require_config_h sc_require_config_h_first
-VC_LIST_ALWAYS_EXCLUDE_REGEX = ^((db/|src/)?(gl|build-aux))/.*
+	sc_prohibit_strcmp sc_require_config_h				\
+	sc_require_config_h_first sc_GPL_version
+VC_LIST_ALWAYS_EXCLUDE_REGEX = ^COPYING|maint.mk|gtk-doc.make|doc/fdl-1.3.texi|doc/gdoc|doc/parse-datetime.texi|doc/specifications/.*|m4/pkg.m4|((db/|src/)?(gl|build-aux))/.*$$
+
+# Explicit syntax-check exceptions.
+exclude_file_name_regexp--sc_bindtextdomain = ^examples/|extra/|lib/ccache.c|tests/utils.c
+exclude_file_name_regexp--sc_prohibit_doubled_word = ^doc/shishi.texi|lib/
+exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF = ^doc/components.dia|doc/components.png|tests/ccache1.bin|tests/keytab1.bin
+exclude_file_name_regexp--sc_cast_of_argument_to_free = ^lib/keys.c|lib/tkts.c
+exclude_file_name_regexp--sc_program_name = ^examples/|extra/|lib/|tests/
+exclude_file_name_regexp--sc_prohibit_cvs_keyword = ^extra/rsh-redone/
+exclude_file_name_regexp--sc_prohibit_magic_number_exit = ^extra/rsh-redone/
+exclude_file_name_regexp--sc_space_tab = ^doc/components.dia|extra/rsh-redone/
+exclude_file_name_regexp--sc_trailing_blank = ^doc/components.png|doc/shishi.texi|extra/fetchmail.diff|extra/rsh-redone/
+exclude_file_name_regexp--sc_two_space_separator_in_usage = ^doc/shishi.texi
+exclude_file_name_regexp--sc_unmarked_diagnostics = ^extra/rsh-redone/|src/shisa.c|src/shishi.c|src/shishid.c
+exclude_file_name_regexp--sc_useless_cpp_parens = ^extra/rsh-redone/
 
 autoreconf:
 	for f in po/*.po.in; do \

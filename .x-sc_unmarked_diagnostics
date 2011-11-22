@@ -1,5 +1,0 @@
-^doc/specifications/
-^src/shisa.c
-^src/shishi.c
-^src/shishid.c
-^extra/rsh-redone/rcp.c

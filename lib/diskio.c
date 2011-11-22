@@ -1,5 +1,5 @@
 /* diskio.c --- Read and write data structures from disk.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
+ * Copyright (C) 2002-2011  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -303,7 +303,7 @@ _shishi_ticket_input (Shishi * handle,
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -360,7 +360,7 @@ _shishi_enckdcreppart_input (Shishi * handle,
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -439,7 +439,7 @@ _shishi_kdcreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * asreq,
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -502,7 +502,7 @@ _shishi_kdcrep_input (Shishi * handle, FILE * fh, Shishi_asn1 * asrep,
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -564,7 +564,7 @@ _shishi_apreq_input (Shishi * handle, FILE * fh, Shishi_asn1 * apreq,
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -613,7 +613,7 @@ _shishi_aprep_input (Shishi * handle, FILE * fh, Shishi_asn1 * aprep,
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -664,7 +664,7 @@ _shishi_encapreppart_input (Shishi * handle, FILE * fh,
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -714,7 +714,7 @@ _shishi_authenticator_input (Shishi * handle,
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -764,7 +764,7 @@ _shishi_krberror_input (Shishi * handle,
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -813,7 +813,7 @@ _shishi_safe_input (Shishi * handle, FILE * fh, Shishi_asn1 * safe, int type)
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -862,7 +862,7 @@ _shishi_priv_input (Shishi * handle, FILE * fh, Shishi_asn1 * priv, int type)
       if (derlen <= 0 || !feof (fh) || ferror (fh))
 	{
 	  shishi_error_printf (handle,
-			       "Error reading from file (got %d bytes)...",
+			       "Error reading from file (got %ld bytes)...",
 			       derlen);
 	  return !SHISHI_OK;
 	}
@@ -908,7 +908,7 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 	}
       line[strlen (line) - 1] = '\0';
       if (VERBOSENOISE (handle))
-	printf ("line %d read %d bytes: %s\n", lno, strlen (line), line);
+	printf ("line %d read %ld bytes: %s\n", lno, strlen (line), line);
 
       if (!in_key)
 	{

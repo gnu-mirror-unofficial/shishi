@@ -1,5 +1,5 @@
 /* Convenience header for conditional use of GNU <libintl.h>.
-   Copyright (C) 1995-1998, 2000-2002, 2004-2006, 2009-2010 Free Software
+   Copyright (C) 1995-1998, 2000-2002, 2004-2006, 2009-2011 Free Software
    Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,7 @@
    it now, to make later inclusions of <libintl.h> a NOP.  */
 #if defined(__cplusplus) && defined(__GNUG__) && (__GNUC__ >= 3)
 # include <cstdlib>
-# if (__GLIBC__ >= 2) || _GLIBCXX_HAVE_LIBINTL_H
+# if (__GLIBC__ >= 2 && !defined __UCLIBC__) || _GLIBCXX_HAVE_LIBINTL_H
 #  include <libintl.h>
 # endif
 #endif
@@ -93,6 +93,12 @@
 
 #endif
 
+/* Prefer gnulib's setlocale override over libintl's setlocale override.  */
+#ifdef GNULIB_defined_setlocale
+# undef setlocale
+# define setlocale rpl_setlocale
+#endif
+
 /* A pseudo function call that serves as a marker for the automated
    extraction of messages, but does not call gettext().  The run-time
    translation is done at a different place in the code.
@@ -101,75 +107,5 @@
    The macro's expansion is not parenthesized, so that it is suitable as
    initializer for static 'char[]' or 'const char[]' variables.  */
 #define gettext_noop(String) String
-
-/* The separator between msgctxt and msgid in a .mo file.  */
-#define GETTEXT_CONTEXT_GLUE "\004"
-
-/* Pseudo function calls, taking a MSGCTXT and a MSGID instead of just a
-   MSGID.  MSGCTXT and MSGID must be string literals.  MSGCTXT should be
-   short and rarely need to change.
-   The letter 'p' stands for 'particular' or 'special'.  */
-#ifdef DEFAULT_TEXT_DOMAIN
-# define pgettext(Msgctxt, Msgid) \
-   pgettext_aux (DEFAULT_TEXT_DOMAIN, Msgctxt GETTEXT_CONTEXT_GLUE Msgid, Msgid, LC_MESSAGES)
-#else
-# define pgettext(Msgctxt, Msgid) \
-   pgettext_aux (NULL, Msgctxt GETTEXT_CONTEXT_GLUE Msgid, Msgid, LC_MESSAGES)
-#endif
-#define dpgettext(Domainname, Msgctxt, Msgid) \
-  pgettext_aux (Domainname, Msgctxt GETTEXT_CONTEXT_GLUE Msgid, Msgid, LC_MESSAGES)
-#define dcpgettext(Domainname, Msgctxt, Msgid, Category) \
-  pgettext_aux (Domainname, Msgctxt GETTEXT_CONTEXT_GLUE Msgid, Msgid, Category)
-#ifdef DEFAULT_TEXT_DOMAIN
-# define npgettext(Msgctxt, Msgid, MsgidPlural, N) \
-   npgettext_aux (DEFAULT_TEXT_DOMAIN, Msgctxt GETTEXT_CONTEXT_GLUE Msgid, Msgid, MsgidPlural, N, LC_MESSAGES)
-#else
-# define npgettext(Msgctxt, Msgid, MsgidPlural, N) \
-   npgettext_aux (NULL, Msgctxt GETTEXT_CONTEXT_GLUE Msgid, Msgid, MsgidPlural, N, LC_MESSAGES)
-#endif
-#define dnpgettext(Domainname, Msgctxt, Msgid, MsgidPlural, N) \
-  npgettext_aux (Domainname, Msgctxt GETTEXT_CONTEXT_GLUE Msgid, Msgid, MsgidPlural, N, LC_MESSAGES)
-#define dcnpgettext(Domainname, Msgctxt, Msgid, MsgidPlural, N, Category) \
-  npgettext_aux (Domainname, Msgctxt GETTEXT_CONTEXT_GLUE Msgid, Msgid, MsgidPlural, N, Category)
-
-#ifdef __GNUC__
-__inline
-#else
-#ifdef __cplusplus
-inline
-#endif
-#endif
-static const char *
-pgettext_aux (const char *domain,
-              const char *msg_ctxt_id, const char *msgid,
-              int category)
-{
-  const char *translation = dcgettext (domain, msg_ctxt_id, category);
-  if (translation == msg_ctxt_id)
-    return msgid;
-  else
-    return translation;
-}
-
-#ifdef __GNUC__
-__inline
-#else
-#ifdef __cplusplus
-inline
-#endif
-#endif
-static const char *
-npgettext_aux (const char *domain,
-               const char *msg_ctxt_id, const char *msgid,
-               const char *msgid_plural, unsigned long int n,
-               int category)
-{
-  const char *translation =
-    dcngettext (domain, msg_ctxt_id, msgid_plural, n, category);
-  if (translation == msg_ctxt_id || translation == msgid_plural)
-    return (n == 1 ? msgid : msgid_plural);
-  else
-    return translation;
-}
 
 #endif /* _LIBGETTEXT_H */

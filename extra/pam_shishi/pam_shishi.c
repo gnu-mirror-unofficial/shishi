@@ -1,5 +1,5 @@
 /* pam_shishi.c	PAM module using Shishi.
- * Copyright (C) 2002, 2003, 2007, 2010  Simon Josefsson
+ * Copyright (C) 2002-2011  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -132,7 +132,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
       retval = conv->conv (nargs, (const struct pam_message **) pmsg,
 			   &resp, conv->appdata_ptr);
 
-      free ((char *) msg[0].msg);
+      free (msg[0].msg);
 
       if (retval != PAM_SUCCESS)
 	{

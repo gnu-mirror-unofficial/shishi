@@ -1,5 +1,5 @@
 /* principal.c --- Get and set default principal.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
+ * Copyright (C) 2002-2011  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -196,7 +196,7 @@ shishi_principal_name (Shishi * handle,
       size_t tmplen;
       size_t safetmplen;
 
-      asprintf (&format, "%s.name-string.?%d", namefield, i);
+      asprintf (&format, "%s.name-string.?%ld", namefield, i);
       res = shishi_asn1_read (handle, namenode, format, &tmp, &tmplen);
       free (format);
       if (res != SHISHI_OK)

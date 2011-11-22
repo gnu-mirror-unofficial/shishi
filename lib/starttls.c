@@ -1,5 +1,5 @@
 /* starttls.c --- Network I/O functions for Shishi over TLS.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007, 2008, 2010  Simon Josefsson
+ * Copyright (C) 2002-2011  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -107,7 +107,8 @@ _shishi_sendrecv_tls1 (Shishi * handle,
       memcmp (extbuf, STARTTLS_SERVER_ACCEPT, STARTTLS_LEN) != 0)
     return SHISHI_RECVFROM_ERROR;
 
-  gnutls_transport_set_ptr (session, (gnutls_transport_ptr) sockfd);
+  gnutls_transport_set_ptr (session, (gnutls_transport_ptr)
+			    (unsigned long) sockfd);
 
   if (session_data_size > 0)
     gnutls_session_set_data (session, session_data, session_data_size);

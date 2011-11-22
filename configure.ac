@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Simon Josefsson.
+# Copyright (C) 2002-2011 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -20,6 +20,12 @@
 
 AC_PREREQ(2.61)
 AC_INIT([GNU Shishi], [1.0.1], [bug-shishi@gnu.org])
+AC_COPYRIGHT([Copyright (c) 2002-2011 Simon Josefsson <simon@josefsson.org>.])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_HEADERS(config.h)
+AM_INIT_AUTOMAKE([1.10 -Wall -Werror -Wno-override])
+AM_SILENT_RULES([yes])
 
 # Library code modified:                              REVISION++
 # Interfaces changed/added/removed:   CURRENT++       REVISION=0
@@ -29,15 +35,6 @@ AC_SUBST(LT_CURRENT, 1)
 AC_SUBST(LT_REVISION, 1)
 AC_SUBST(LT_AGE, 1)
 
-# Used when creating libshishi-XX.def.
-SOVERSION=`expr ${LT_CURRENT} - ${LT_AGE}`
-AC_SUBST(SOVERSION)
-
-AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([1.10 -Wall -Werror -Wno-override])
-AC_CONFIG_HEADERS(config.h)
-
 # Checks for header files.
 AC_PROG_CC
 gl_EARLY
@@ -45,6 +42,10 @@ gl2_EARLY
 gl3_EARLY
 AC_HEADER_STDC
 AC_CHECK_HEADERS(termios.h pwd.h syslog.h resolv.h arpa/nameser.h netinet/in6.h)
+
+# Used when creating libshishi-XX.def.
+SOVERSION=`expr ${LT_CURRENT} - ${LT_AGE}`
+AC_SUBST(SOVERSION)
 
 # Checks for programs.
 AC_LIBTOOL_WIN32_DLL
@@ -56,8 +57,8 @@ AM_MISSING_PROG(GENGETOPT, gengetopt, $missing_dir)
 AM_MISSING_PROG(DIA, dia, $missing_dir)
 
 # Internationalization.
-AM_GNU_GETTEXT(external, need-ngettext)
-AM_GNU_GETTEXT_VERSION(0.17)
+AM_GNU_GETTEXT([external], [need-ngettext])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_UID_T
@@ -78,8 +79,6 @@ gl3_INIT
 if test "$ac_cv_libgcrypt" != yes; then
   AC_MSG_ERROR([Cannot find libgcrypt])
 fi
-
-gl_WARN_ADD([-Wall])
 
 # Checks for library functions.
 AC_CHECK_FUNCS(signal select ngettext gethostbyname getpwnam getuid)
@@ -348,6 +347,7 @@ if test "$gl_gcc_warnings" = yes; then
     gl_WARN_ADD([$w])
   done
 
+  gl_WARN_ADD([-Wno-format])           # Too many warnings for now
   gl_WARN_ADD([-Wno-unused-parameter]) # Too many warnings for now
   gl_WARN_ADD([-Wno-stack-protector])  # Some functions cannot be protected
   gl_WARN_ADD([-fdiagnostics-show-option])

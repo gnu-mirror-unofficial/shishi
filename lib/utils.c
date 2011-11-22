@@ -1,5 +1,5 @@
 /* utils.c --- Auxilliary help functions.
- * Copyright (C) 2002, 2003, 2004, 2006, 2007  Simon Josefsson
+ * Copyright (C) 2002-2011  Simon Josefsson
  *
  * This file is part of Shishi.
  *
@@ -131,7 +131,7 @@ shishi_get_date (const char *p, const time_t * now)
   else
     nowspec.tv_sec = time (NULL);
 
-  if (!get_date (&thenspec, p, &nowspec))
+  if (!parse_datetime (&thenspec, p, &nowspec))
     {
       thenspec.tv_sec = (time_t) - 1;
       thenspec.tv_nsec = 0;
