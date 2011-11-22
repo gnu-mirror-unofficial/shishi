@@ -73,6 +73,7 @@ doc/reference/html/
 doc/reference/pdf-build.stamp
 doc/reference/pdf.stamp
 doc/reference/scan-build.stamp
+doc/reference/setup-build.stamp
 doc/reference/sgml-build.stamp
 doc/reference/sgml.stamp
 doc/reference/shishi-decl-list.txt
@@ -95,6 +96,7 @@ doc/reference/tmpl.stamp
 doc/reference/tmpl/low-crypto.sgml
 doc/reference/tmpl/shishi.sgml
 doc/reference/tmpl/shishi.sgml.bak
+doc/reference/version.xml
 doc/reference/xml/
 doc/shisa.1
 doc/shishi-api-error-labels.texi

@@ -355,16 +355,13 @@ fi
 
 AC_CONFIG_FILES([
   Makefile
-  shisa.conf
-  shishi.conf
-  shishi.pc
-  shishi.skel
   asn1/Makefile
   db/Makefile
   db/gl/Makefile
   doc/Makefile
   doc/cyclo/Makefile
   doc/reference/Makefile
+  doc/reference/version.xml
   examples/Makefile
   extra/Makefile
   extra/pam_shishi/Makefile
@@ -372,6 +369,10 @@ AC_CONFIG_FILES([
   gl/Makefile
   lib/Makefile
   po/Makefile.in
+  shisa.conf
+  shishi.conf
+  shishi.pc
+  shishi.skel
   src/Makefile
   src/gl/Makefile
   tests/Makefile

@@ -1,12 +1,21 @@
 <?xml version="1.0"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
-<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index">
   <bookinfo>
     <title>Shishi API Reference Manual</title>
+    <releaseinfo>
+      for Shishi &version;.
+      The latest version of this documentation can be found on-line at
+      <ulink role="online-location" url="https://www.gnu.org/software/shishi/reference/">https://www.gnu.org/software/shishi/reference/</ulink>.
+    </releaseinfo>
   </bookinfo>
 
-  <chapter>
+  <chapter id="intro">
     <title>Shishi API Reference Manual</title>
 
     <para>
@@ -61,10 +70,11 @@ version 3.0 (or later).
     </figure>
 
     <xi:include href="xml/shishi.xml"/>
-  </chapter>
 
+  </chapter>
   <index id="api-index-full">
-    <title>Index of all symbols</title>
+    <title>API Index</title>
+    <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
   </index>
   <index role="0.0.42" id="api-index-0-0-42">
     <title>Index of new symbols in 0.0.42</title>
