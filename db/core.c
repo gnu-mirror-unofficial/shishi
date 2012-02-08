@@ -1,5 +1,5 @@
 /* core.c --- Core Shisa database API.
- * Copyright (C) 2003, 2007, 2010  Simon Josefsson
+ * Copyright (C) 2003-2012 Simon Josefsson
  *
  * This file is part of Shishi.
  *

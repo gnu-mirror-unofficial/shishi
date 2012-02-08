@@ -1,5 +1,5 @@
 /* ccache2shishi.c --- Print and convert MIT ccache files.
- * Copyright (C) 2006, 2007, 2008, 2010  Simon Josefsson
+ * Copyright (C) 2006-2012 Simon Josefsson
  *
  * This file is part of Shishi.
  *

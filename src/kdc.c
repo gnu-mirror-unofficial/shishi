@@ -1,5 +1,5 @@
 /* kdc.c --- Process AS and TGS requests.
- * Copyright (C) 2002, 2003, 2004, 2005, 2007, 2008, 2010  Simon Josefsson
+ * Copyright (C) 2002-2012 Simon Josefsson
  *
  * This file is part of Shishi.
  *

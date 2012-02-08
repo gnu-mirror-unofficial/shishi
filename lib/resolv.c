@@ -1,5 +1,5 @@
 /* resolv.c --- Resolver glue.
- * Copyright (C) 2003, 2004, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2003-2012 Simon Josefsson
  * Copyright (C) 2002 Jeremie Miller, Thomas Muldowney,
  *                    Ryan Eatmon, Robert Norris
  *

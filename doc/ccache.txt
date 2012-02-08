@@ -1,5 +1,5 @@
 The Kerberos Credential Cache Binary File Format
-Copyright (C) 2006 Simon Josefsson <simon josefsson.org>
+Copyright (C) 2006-2012 Simon Josefsson <simon josefsson.org>
 http://josefsson.org/shishi/ccache.txt
 Last updated: Sat Sep 23 12:04:11 CEST 2006
 

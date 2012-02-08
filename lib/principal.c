@@ -1,5 +1,5 @@
 /* principal.c --- Get and set default principal.
- * Copyright (C) 2002-2011  Simon Josefsson
+ * Copyright (C) 2002-2012 Simon Josefsson
  *
  * This file is part of Shishi.
  *

@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010  Simon Josefsson
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010, 2012  Simon Josefsson
 #
 # This file is part of Shishi.
 #
@@ -29,7 +29,7 @@ components.png: components.dia
 	$(DIA) --export=$@ --filter=png $<
 
 info_TEXINFOS = shishi.texi
-shishi_TEXINFOS = gpl-3.0.texi fdl-1.3.texi $(gdoc_TEXINFOS) \
+shishi_TEXINFOS = fdl-1.3.texi $(gdoc_TEXINFOS) \
 	shishi-api-error-labels.texi parse-datetime.texi \
 	texinfo.css components.png keytab.txt ccache.txt
 

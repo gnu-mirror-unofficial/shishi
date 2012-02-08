@@ -1,5 +1,5 @@
 /* crypto-md.c --- DES crypto functions
- * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002-2012 Simon Josefsson
  * Copyright (C) 2003  Free Software Foundation, Inc.
  *
  * This file is part of Shishi.

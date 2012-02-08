@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2011 Simon Josefsson.
+# Copyright (C) 2006-2012 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -33,7 +33,9 @@ local-checks-to-skip = sc_copyright_check sc_error_message_uppercase	\
 	sc_prohibit_atoi_atof sc_prohibit_have_config_h			\
 	sc_prohibit_strcmp sc_require_config_h				\
 	sc_require_config_h_first sc_GPL_version
-VC_LIST_ALWAYS_EXCLUDE_REGEX = ^COPYING|maint.mk|gtk-doc.make|doc/fdl-1.3.texi|doc/gdoc|doc/parse-datetime.texi|doc/specifications/.*|m4/pkg.m4|((db/|src/)?(gl|build-aux))/.*$$
+VC_LIST_ALWAYS_EXCLUDE_REGEX = ^GNUmakefile|maint.mk|gtk-doc.make|asn1/.*\.[ch]|build-aux/|doc/keytab.txt|doc/fdl-1.3.texi|doc/gdoc|doc/parse-datetime.texi|doc/specifications/.*|extra/.*\.[1ch]|m4/pkg.m4|po/.*.po.in|((db/|src/)?gl)/.*$$
+
+update-copyright-env = UPDATE_COPYRIGHT_HOLDER="Simon Josefsson" UPDATE_COPYRIGHT_USE_INTERVALS=2
 
 # Explicit syntax-check exceptions.
 exclude_file_name_regexp--sc_bindtextdomain = ^examples/|extra/|lib/ccache.c|tests/utils.c

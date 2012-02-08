@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2003, 2005, 2007 Simon Josefsson.
+# Copyright (C) 2003-2012 Simon Josefsson.
 #
 # This file is part of Shishi.
 #

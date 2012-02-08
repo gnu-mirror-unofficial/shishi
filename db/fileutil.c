@@ -1,5 +1,5 @@
 /* fileutil.c --- Utility functions used by file.c.
- * Copyright (C) 2002, 2003, 2004, 2007, 2008  Simon Josefsson
+ * Copyright (C) 2002-2012 Simon Josefsson
  *
  * This file is part of Shishi.
  *
