@@ -231,9 +231,6 @@ _shishi_sendrecv_tls (Shishi * handle,
 		      const char *indata, size_t inlen,
 		      char **outdata, size_t * outlen)
 {
-  const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
-    GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
-  };
   gnutls_session session;
   gnutls_anon_client_credentials anoncred;
   gnutls_certificate_credentials x509cred;
@@ -266,10 +263,10 @@ _shishi_sendrecv_tls (Shishi * handle,
       return SHISHI_CRYPTO_ERROR;
     }
 
-  ret = gnutls_set_default_priority (session);
+  ret = gnutls_priority_set_direct (session, "NORMAL:+ANON-DH", NULL);
   if (ret != GNUTLS_E_SUCCESS)
     {
-      shishi_error_printf (handle, "TLS sdp failed (%d): %s",
+      shishi_error_printf (handle, "TLS psd failed (%d): %s",
 			   ret, gnutls_strerror (ret));
       return SHISHI_CRYPTO_ERROR;
     }
@@ -327,14 +324,6 @@ _shishi_sendrecv_tls (Shishi * handle,
   if (ret != GNUTLS_E_SUCCESS)
     {
       shishi_error_printf (handle, "TLS cs X.509 failed (%d): %s",
-			   ret, gnutls_strerror (ret));
-      return SHISHI_CRYPTO_ERROR;
-    }
-
-  ret = gnutls_kx_set_priority (session, kx_prio);
-  if (ret != GNUTLS_E_SUCCESS)
-    {
-      shishi_error_printf (handle, "TLS ksp failed (%d): %s",
 			   ret, gnutls_strerror (ret));
       return SHISHI_CRYPTO_ERROR;
     }

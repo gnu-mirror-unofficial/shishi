@@ -195,10 +195,16 @@ logcertinfo (gnutls_session session)
 
   gnutls_x509_crt_deinit (cert);
 
-  rc = gnutls_certificate_verify_peers (session);
-  if (rc != GNUTLS_E_SUCCESS)
-    syslog (LOG_ERR, "TLS client certificate verify failed (%d): %s",
-	    rc, gnutls_strerror (rc));
+  {
+    unsigned int status;
+    rc = gnutls_certificate_verify_peers2 (session, &status);
+    if (rc != GNUTLS_E_SUCCESS)
+      syslog (LOG_ERR, "TLS client certificate failed (%d): %s",
+	      rc, gnutls_strerror (rc));
+    if (status != 0)
+      syslog (LOG_ERR, "TLS client certificate verify failure (%d)",
+	      status);
+  }
 }
 
 /* This function will log some details of the given session. */
@@ -262,9 +268,6 @@ logtlsinfo (gnutls_session session)
 int
 kdc_extension (struct listenspec *ls)
 {
-  const int kx_prio[] = { GNUTLS_KX_RSA, GNUTLS_KX_DHE_DSS,
-    GNUTLS_KX_DHE_RSA, GNUTLS_KX_ANON_DH, 0
-  };
   int rc;
 
   if (ls->usetls
@@ -291,18 +294,10 @@ kdc_extension (struct listenspec *ls)
       return -1;
     }
 
-  rc = gnutls_set_default_priority (ls->session);
+  rc = gnutls_priority_set_direct (ls->session, "NORMAL:+ANON-DH", NULL);
   if (rc != GNUTLS_E_SUCCESS)
     {
-      syslog (LOG_ERR, "TLS failed, gnutls_sdp %d: %s", rc,
-	      gnutls_strerror (rc));
-      return -1;
-    }
-
-  rc = gnutls_kx_set_priority (ls->session, kx_prio);
-  if (rc != GNUTLS_E_SUCCESS)
-    {
-      syslog (LOG_ERR, "TLS failed, gnutls_ksp %d: %s", rc,
+      syslog (LOG_ERR, "TLS failed, gnutls_psd %d: %s", rc,
 	      gnutls_strerror (rc));
       return -1;
     }
