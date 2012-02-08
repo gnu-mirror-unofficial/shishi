@@ -1,7 +1,7 @@
 %{
 /* Parse a string into an internal time stamp.
 
-   Copyright (C) 1999-2000, 2002-2011 Free Software Foundation, Inc.
+   Copyright (C) 1999-2000, 2002-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@
    - It's typically faster.
    POSIX says that only '0' through '9' are digits.  Prefer ISDIGIT to
    isdigit unless it's important to use the locale's definition
-   of `digit' even when the host does not conform to POSIX.  */
+   of "digit" even when the host does not conform to POSIX.  */
 #define ISDIGIT(c) ((unsigned int) (c) - '0' <= 9)
 
 /* Shift A right by B bits portably, by dividing A by 2**B and
@@ -204,7 +204,7 @@ typedef struct
   size_t times_seen;
   size_t zones_seen;
 
-  /* Table of local time zone abbrevations, terminated by a null entry.  */
+  /* Table of local time zone abbreviations, terminated by a null entry.  */
   table local_time_zone_table[3];
 } parser_control;
 
@@ -754,7 +754,7 @@ static table const universal_time_zone_table[] =
    zone abbreviations are ambiguous; e.g. Australians interpret "EST"
    as Eastern time in Australia, not as US Eastern Standard Time.
    You cannot rely on parse_datetime to handle arbitrary time zone
-   abbreviations; use numeric abbreviations like `-0500' instead.  */
+   abbreviations; use numeric abbreviations like "-0500" instead.  */
 static table const time_zone_table[] =
 {
   { "WET",      tZONE,     HOUR ( 0) }, /* Western European */
@@ -905,7 +905,7 @@ to_year (textint textyear)
   return year;
 }
 
-static table const *
+static table const * _GL_ATTRIBUTE_PURE
 lookup_zone (parser_control const *pc, char const *name)
 {
   table const *tp;
@@ -1394,7 +1394,7 @@ parse_datetime (struct timespec *result, char const *p,
       && ! strcmp (pc.local_time_zone_table[0].name,
                    pc.local_time_zone_table[1].name))
     {
-      /* This locale uses the same abbrevation for standard and
+      /* This locale uses the same abbreviation for standard and
          daylight times.  So if we see that abbreviation, we don't
          know whether it's daylight time.  */
       pc.local_time_zone_table[0].value = -1;
