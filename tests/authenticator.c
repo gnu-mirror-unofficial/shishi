@@ -348,4 +348,8 @@ test (Shishi * handle)
     success ("unlink() OK\n");
   else
     fail ("unlink() failed\n");
+
+  /* shishi_asn1_done */
+  shishi_asn1_done (handle, a);
+  success ("shishi_asn1_done() OK\n");
 }

@@ -50,5 +50,12 @@ test (Shishi * handle)
   if (rc != SHISHI_OK)
     fail ("shishi_tkts_print() failed (%d)\n", rc);
 
+  {
+    Shishi_tkt *tkt;
+    size_t i = 0;
+    while ((tkt = shishi_tkts_nth (tkts, i++)) != NULL)
+      shishi_tkt_done (tkt);
+  }
+
   shishi_tkts_done (&tkts);
 }

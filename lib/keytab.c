@@ -532,6 +532,7 @@ shishi_keys_to_keytab_mem (Shishi * handle,
       *out = xrealloc (*out, *len + tmplen);
       memcpy (*out + *len, tmp, tmplen);
       *len += tmplen;
+      free (tmp);
     }
 
   if (VERBOSENOISE (handle))

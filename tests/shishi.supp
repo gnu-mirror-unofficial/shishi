@@ -19,7 +19,6 @@
    fun:gcry_check_version
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
 }
 
 {
@@ -35,8 +34,6 @@
    fun:gc_pseudo_random
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -47,8 +44,6 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -60,8 +55,6 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -73,8 +66,6 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -85,8 +76,6 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -98,8 +87,6 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -111,8 +98,6 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -123,8 +108,6 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -137,8 +120,6 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -150,8 +131,6 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
 }
 
 {
@@ -162,6 +141,156 @@
    fun:asn1_array2tree
    fun:gnutls_global_init
    fun:_shishi_tls_init
-   fun:init_handle
-   fun:main
+}
+
+{
+   gnutls leak
+   Memcheck:Leak
+   fun:malloc
+   fun:gnutls_system_mutex_init
+   fun:wrap_nettle_rnd_init
+   fun:_gnutls_rnd_init
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+}
+
+{
+   p11 leak
+   Memcheck:Leak
+   fun:malloc
+   fun:hash_create
+   fun:init_globals_unlocked
+   fun:_p11_kit_initialize_registered_unlocked_reentrant
+   fun:p11_kit_initialize_registered
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+}
+
+{
+   p11 leak
+   Memcheck:Leak
+   fun:malloc
+   fun:hash_create
+   fun:_p11_conf_parse_file
+   fun:_p11_conf_load_globals
+   fun:_p11_kit_initialize_registered_unlocked_reentrant
+   fun:p11_kit_initialize_registered
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+}
+
+{
+   p11 leak
+   Memcheck:Leak
+   fun:calloc
+   fun:hash_create
+   fun:init_globals_unlocked
+   fun:_p11_kit_initialize_registered_unlocked_reentrant
+   fun:p11_kit_initialize_registered
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+}
+
+{
+   p11 leak
+   Memcheck:Leak
+   fun:calloc
+   fun:hash_create
+   fun:_p11_conf_parse_file
+   fun:_p11_conf_load_globals
+   fun:_p11_kit_initialize_registered_unlocked_reentrant
+   fun:p11_kit_initialize_registered
+   fun:gnutls_pkcs11_init
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+}
+
+{
+   gcrypt leak
+   Memcheck:Leak
+   fun:malloc
+   fun:do_malloc
+   fun:_gcry_malloc
+   fun:_gcry_module_add
+   fun:pk_register_default
+   fun:_gcry_pk_init
+   fun:global_init
+   fun:_gcry_vcontrol
+   fun:gcry_control
+   fun:gc_init
+   fun:_shishi_crypto_init
+}
+
+{
+   gnutls leak?
+   Memcheck:Leak
+   fun:realloc
+   fun:_gnutls_ext_register
+   fun:gnutls_global_init
+   fun:_shishi_tls_init
+}
+
+{
+   gcrypt leak
+   Memcheck:Leak
+   fun:malloc
+   fun:do_malloc
+   fun:_gcry_malloc
+   fun:_gcry_module_add
+   fun:md_register_default
+   fun:_gcry_md_init
+   fun:global_init
+   fun:_gcry_vcontrol
+   fun:gcry_control
+   fun:gc_init
+   fun:_shishi_crypto_init
+}
+
+{
+   gcrypt leak?
+   Memcheck:Leak
+   fun:malloc
+   fun:do_malloc
+   fun:_gcry_malloc
+   fun:_gcry_xmalloc
+   fun:_gcry_xcalloc
+   fun:initialize
+   fun:_gcry_rngcsprng_randomize
+   fun:gc_pseudo_random
+   fun:shishi_randomize
+   fun:shishi_authenticator
+}
+
+{
+   gcrypt leak?
+   Memcheck:Leak
+   fun:malloc
+   fun:do_malloc
+   fun:_gcry_malloc
+   fun:_gcry_xmalloc
+   fun:_gcry_xcalloc
+   fun:initialize
+   fun:_gcry_rngcsprng_randomize
+   fun:gc_pseudo_random
+   fun:shishi_randomize
+   fun:shishi_authenticator
+}
+
+{
+   gcrypt leak?
+   Memcheck:Leak
+   fun:malloc
+   fun:do_malloc
+   fun:_gcry_malloc
+   fun:_gcry_module_add
+   fun:cipher_register_default
+   fun:_gcry_cipher_init
+   fun:global_init
+   fun:_gcry_vcontrol
+   fun:gcry_control
+   fun:gc_init
+   fun:_shishi_crypto_init
 }

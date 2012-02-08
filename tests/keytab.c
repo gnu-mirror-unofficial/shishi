@@ -66,4 +66,6 @@ test (Shishi * handle)
     fail ("memory comparison failed\n");
 
   shishi_keys_done (&keys);
+  free (data);
+  free (data2);
 }

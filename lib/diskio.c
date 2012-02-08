@@ -125,6 +125,8 @@ _shishi_print_armored_data (Shishi * handle,
 
   fprintf (fh, "%s\n", data);
 
+  free (data);
+
   return SHISHI_OK;
 }
 
