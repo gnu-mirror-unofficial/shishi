@@ -2,7 +2,7 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002-2012 Simon Josefsson
 See the end for copying conditions.
 
-* Version 1.0.1 (unreleased)
+* Version 1.0.1 (released 2012-03-12)
 
 ** Builds with GnuTLS 3.x.
 
