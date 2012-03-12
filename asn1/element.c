@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2000, 2001, 2002, 2003, 2004, 2006, 2008, 2009, 2010
- * Free Software Foundation, Inc.
+ * Copyright (C) 2000, 2001, 2002, 2003, 2004, 2006, 2008, 2009, 2010,
+ * 2011 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -76,7 +76,7 @@ _asn1_hierarchical_name (ASN1_TYPE node, char *name, int name_size)
 /* Return: ASN1_MEM_ERROR or ASN1_SUCCESS                         */
 /******************************************************************/
 asn1_retCode
-_asn1_convert_integer (const char *value, unsigned char *value_out,
+_asn1_convert_integer (const unsigned char *value, unsigned char *value_out,
 		       int value_out_size, int *len)
 {
   char negative;
@@ -84,7 +84,7 @@ _asn1_convert_integer (const char *value, unsigned char *value_out,
   long valtmp;
   int k, k2;
 
-  valtmp = strtol (value, NULL, 10);
+  valtmp = _asn1_strtol (value, NULL, 10);
 
   for (k = 0; k < SIZEOF_UNSIGNED_LONG_INT; k++)
     {
@@ -264,13 +264,9 @@ _asn1_append_sequence_set (ASN1_TYPE node)
  *           result=asn1_write_value(cert,
  *           "tbsCertificate.subject.rdnSequence.?LAST", "NEW", 1);
  *
- * Returns:
- *
- *   %ASN1_SUCCESS: Set value OK.
- *
- *   %ASN1_ELEMENT_NOT_FOUND: NAME is not a valid element.
- *
- *   %ASN1_VALUE_NOT_VALID: VALUE has a wrong format.
+ * Returns: %ASN1_SUCCESS if the value was set,
+ *   %ASN1_ELEMENT_NOT_FOUND if @name is not a valid element, and
+ *   %ASN1_VALUE_NOT_VALID if @ivalue has a wrong format.
  **/
 asn1_retCode
 asn1_write_value (ASN1_TYPE node_root, const char *name,
@@ -309,7 +305,7 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
   switch (type_field (node->type))
     {
     case TYPE_BOOLEAN:
-      if (!strcmp (value, "TRUE"))
+      if (!_asn1_strcmp (value, "TRUE"))
 	{
 	  if (node->type & CONST_DEFAULT)
 	    {
@@ -324,7 +320,7 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
 	  else
 	    _asn1_set_value (node, "T", 1);
 	}
-      else if (!strcmp (value, "FALSE"))
+      else if (!_asn1_strcmp (value, "FALSE"))
 	{
 	  if (node->type & CONST_DEFAULT)
 	    {
@@ -365,7 +361,7 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
 		{
 		  if (type_field (p->type) == TYPE_CONSTANT)
 		    {
-		      if ((p->name) && (!strcmp (p->name, value)))
+		      if ((p->name) && (!_asn1_strcmp (p->name, value)))
 			{
 			  value_temp =
 			    (unsigned char *)
@@ -448,7 +444,7 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
 		{
 		  if (type_field (p2->type) == TYPE_CONSTANT)
 		    {
-		      if ((p2->name) && (!strcmp (p2->name, p->value)))
+		      if ((p2->name) && (!_asn1_strcmp (p2->name, p->value)))
 			{
 			  default_temp =
 			    (unsigned char *)
@@ -491,7 +487,7 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
       _asn1_free (value_temp);
       break;
     case TYPE_OBJECT_ID:
-      for (i = 0; i < strlen (value); i++)
+      for (i = 0; i < _asn1_strlen (value); i++)
 	if ((!isdigit (value[i])) && (value[i] != '.') && (value[i] != '+'))
 	  return ASN1_VALUE_NOT_VALID;
       if (node->type & CONST_DEFAULT)
@@ -499,23 +495,23 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
 	  p = node->down;
 	  while (type_field (p->type) != TYPE_DEFAULT)
 	    p = p->right;
-	  if (!strcmp (value, p->value))
+	  if (!_asn1_strcmp (value, p->value))
 	    {
 	      _asn1_set_value (node, NULL, 0);
 	      break;
 	    }
 	}
-      _asn1_set_value (node, value, strlen (value) + 1);
+      _asn1_set_value (node, value, _asn1_strlen (value) + 1);
       break;
     case TYPE_TIME:
       if (node->type & CONST_UTC)
 	{
-	  if (strlen (value) < 11)
+	  if (_asn1_strlen (value) < 11)
 	    return ASN1_VALUE_NOT_VALID;
 	  for (k = 0; k < 10; k++)
 	    if (!isdigit (value[k]))
 	      return ASN1_VALUE_NOT_VALID;
-	  switch (strlen (value))
+	  switch (_asn1_strlen (value))
 	    {
 	    case 11:
 	      if (value[10] != 'Z')
@@ -545,27 +541,27 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
 	    default:
 	      return ASN1_VALUE_NOT_FOUND;
 	    }
-	  _asn1_set_value (node, value, strlen (value) + 1);
+	  _asn1_set_value (node, value, _asn1_strlen (value) + 1);
 	}
       else
 	{			/* GENERALIZED TIME */
 	  if (value)
-	    _asn1_set_value (node, value, strlen (value) + 1);
+	    _asn1_set_value (node, value, _asn1_strlen (value) + 1);
 	}
       break;
     case TYPE_OCTET_STRING:
       if (len == 0)
-	len = strlen (value);
+	len = _asn1_strlen (value);
       _asn1_set_value_octet (node, value, len);
       break;
     case TYPE_GENERALSTRING:
       if (len == 0)
-	len = strlen (value);
+	len = _asn1_strlen (value);
       _asn1_set_value_octet (node, value, len);
       break;
     case TYPE_BIT_STRING:
       if (len == 0)
-	len = strlen (value);
+	len = _asn1_strlen (value);
       asn1_length_der ((len >> 3) + 2, NULL, &len2);
       temp = (unsigned char *) _asn1_malloc ((len >> 3) + 2 + len2);
       if (temp == NULL)
@@ -579,7 +575,7 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
       p = node->down;
       while (p)
 	{
-	  if (!strcmp (p->name, value))
+	  if (!_asn1_strcmp (p->name, value))
 	    {
 	      p2 = node->down;
 	      while (p2)
@@ -604,7 +600,7 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
       break;
     case TYPE_SEQUENCE_OF:
     case TYPE_SET_OF:
-      if (strcmp (value, "NEW"))
+      if (_asn1_strcmp (value, "NEW"))
 	return ASN1_VALUE_NOT_VALID;
       _asn1_append_sequence_set (node);
       break;
@@ -626,21 +622,21 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
 	}
 
 #define PUT_STR_VALUE( ptr, ptr_size, data) \
-	*len = strlen(data) + 1; \
+	*len = _asn1_strlen(data) + 1; \
 	if (ptr_size < *len) { \
 		return ASN1_MEM_ERROR; \
 	} else { \
 		/* this strcpy is checked */ \
-		strcpy(ptr, data); \
+		_asn1_strcpy(ptr, data); \
 	}
 
 #define ADD_STR_VALUE( ptr, ptr_size, data) \
-	*len = (int) strlen(data) + 1; \
-	if (ptr_size < (int) strlen(ptr)+(*len)) { \
+	*len = (int) _asn1_strlen(data) + 1; \
+	if (ptr_size < (int) _asn1_strlen(ptr)+(*len)) { \
 		return ASN1_MEM_ERROR; \
 	} else { \
 		/* this strcat is checked */ \
-		strcat(ptr, data); \
+		_asn1_strcat(ptr, data); \
 	}
 
 /**
@@ -697,16 +693,12 @@ asn1_write_value (ASN1_TYPE node_root, const char *name,
  * ANY: If NAME indicates an any type, VALUE will indicate the DER
  *   encoding of the structure actually used.
  *
- * Returns:
- *
- *   %ASN1_SUCCESS: Set value OK.
- *
- *   %ASN1_ELEMENT_NOT_FOUND: NAME is not a valid element.
- *
- *   %ASN1_VALUE_NOT_FOUND: There isn't any value for the element selected.
- *
- *   %ASN1_MEM_ERROR: The value vector isn't big enough to store the result.
- *   In this case LEN will contain the number of bytes needed.
+ * Returns: %ASN1_SUCCESS if value is returned,
+ *   %ASN1_ELEMENT_NOT_FOUND if @name is not a valid element,
+ *   %ASN1_VALUE_NOT_FOUND if there isn't any value for the element
+ *   selected, and %ASN1_MEM_ERROR if The value vector isn't big enough
+ *   to store the result, and in this case @len will contain the number of
+ *   bytes needed.
  **/
 asn1_retCode
 asn1_read_value (ASN1_TYPE root, const char *name, void *ivalue, int *len)
@@ -776,7 +768,7 @@ asn1_read_value (ASN1_TYPE root, const char *name, void *ivalue, int *len)
 		{
 		  if (type_field (p2->type) == TYPE_CONSTANT)
 		    {
-		      if ((p2->name) && (!strcmp (p2->name, p->value)))
+		      if ((p2->name) && (!_asn1_strcmp (p2->name, p->value)))
 			{
 			  if (_asn1_convert_integer
 			      (p2->value, value, value_size,
@@ -815,7 +807,7 @@ asn1_read_value (ASN1_TYPE root, const char *name, void *ivalue, int *len)
 		}
 	      p = p->right;
 	    }
-	  *len = strlen (value) + 1;
+	  *len = _asn1_strlen (value) + 1;
 	}
       else if ((node->type & CONST_DEFAULT) && (node->value == NULL))
 	{
@@ -883,11 +875,8 @@ asn1_read_value (ASN1_TYPE root, const char *name, void *ivalue, int *len)
  * %ASN1_CLASS_UNIVERSAL, %ASN1_CLASS_PRIVATE or
  * %ASN1_CLASS_CONTEXT_SPECIFIC.
  *
- * Returns:
- *
- *   %ASN1_SUCCESS: Set value OK.
- *
- *   %ASN1_ELEMENT_NOT_FOUND: NAME is not a valid element.
+ * Returns: %ASN1_SUCCESS if successful, %ASN1_ELEMENT_NOT_FOUND if
+ *   @name is not a valid element.
  **/
 asn1_retCode
 asn1_read_tag (ASN1_TYPE root, const char *name, int *tagValue,
@@ -920,7 +909,7 @@ asn1_read_tag (ASN1_TYPE root, const char *name, int *tagValue,
 
   if (pTag)
     {
-      *tagValue = strtoul (pTag->value, NULL, 10);
+      *tagValue = _asn1_strtoul (pTag->value, NULL, 10);
 
       if (pTag->type & CONST_APPLICATION)
 	*classValue = ASN1_CLASS_APPLICATION;
@@ -986,7 +975,5 @@ asn1_read_tag (ASN1_TYPE root, const char *name, int *tagValue,
 	}
     }
 
-
   return ASN1_SUCCESS;
-
 }

@@ -6,6 +6,8 @@ See the end for copying conditions.
 
 ** Builds with GnuTLS 3.x.
 
+** minitasn1: Internal copy upgraded to GNU Libtasn1 v2.11.
+
 ** Translation updates.
 Added Finnish translation, thanks to Jorma Karvonen.
 
