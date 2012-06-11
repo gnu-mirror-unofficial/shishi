@@ -295,6 +295,7 @@ gl_STDIO_MODULE_INDICATOR([fseek])
 gl_FUNC_FSEEKO
 if test $HAVE_FSEEKO = 0 || test $REPLACE_FSEEKO = 1; then
   AC_LIBOBJ([fseeko])
+  gl_PREREQ_FSEEKO
 fi
 gl_STDIO_MODULE_INDICATOR([fseeko])
 gl_FUNC_FSTAT
@@ -311,6 +312,7 @@ gl_STDIO_MODULE_INDICATOR([ftell])
 gl_FUNC_FTELLO
 if test $HAVE_FTELLO = 0 || test $REPLACE_FTELLO = 1; then
   AC_LIBOBJ([ftello])
+  gl_PREREQ_FTELLO
 fi
 gl_STDIO_MODULE_INDICATOR([ftello])
 gl_GETADDRINFO
@@ -394,6 +396,7 @@ if test $HAVE_INET_NTOP = 0 || test $REPLACE_INET_NTOP = 1; then
 fi
 gl_ARPA_INET_MODULE_INDICATOR([inet_ntop])
 gl_INLINE
+AC_REQUIRE([gl_LARGEFILE])
 gl_LD_OUTPUT_DEF
 gl_LD_VERSION_SCRIPT
 gl_FUNC_LSEEK
@@ -615,7 +618,6 @@ gl_STDIO_MODULE_INDICATOR([vasprintf])
 m4_ifdef([AM_XGETTEXT_OPTION],
   [AM_][XGETTEXT_OPTION([--flag=asprintf:2:c-format])
    AM_][XGETTEXT_OPTION([--flag=vasprintf:2:c-format])])
-AC_SUBST([WARN_CFLAGS])
 gl_WCHAR_H
 gl_XALLOC
 gl_XSIZE
@@ -1004,6 +1006,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/multiarch.m4
   m4/netdb_h.m4
   m4/netinet_in_h.m4
+  m4/off_t.m4
   m4/parse-datetime.m4
   m4/pathmax.m4
   m4/printf.m4

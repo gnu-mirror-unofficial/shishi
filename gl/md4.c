@@ -14,8 +14,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
 
 /* Adapted by Simon Josefsson from gnulib md5.? and Libgcrypt
    cipher/md4.c . */
@@ -302,13 +301,13 @@ md4_process_block (const void *buffer, size_t len, struct md4_ctx *ctx)
   uint32_t B = ctx->B;
   uint32_t C = ctx->C;
   uint32_t D = ctx->D;
+  uint32_t lolen = len;
 
   /* First increment the byte count.  RFC 1320 specifies the possible
      length of the file up to 2^64 bits.  Here we only compute the
      number of bytes.  Do a double word increment.  */
-  ctx->total[0] += len;
-  if (ctx->total[0] < len)
-    ++ctx->total[1];
+  ctx->total[0] += lolen;
+  ctx->total[1] += (len >> 31 >> 1) + (ctx->total[0] < lolen);
 
   /* Process all bytes in the buffer with 64 bytes in each round of
      the loop.  */
