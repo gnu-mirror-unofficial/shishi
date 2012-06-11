@@ -19,8 +19,8 @@
 # Floor, Boston, MA 02110-1301, USA.
 
 AC_PREREQ(2.61)
-AC_INIT([GNU Shishi], [1.0.1], [bug-shishi@gnu.org])
-AC_COPYRIGHT([Copyright (c) 2002-2011 Simon Josefsson <simon@josefsson.org>.])
+AC_INIT([GNU Shishi], [1.0.2], [bug-shishi@gnu.org])
+AC_COPYRIGHT([Copyright (c) 2002-2012 Simon Josefsson <simon@josefsson.org>.])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
@@ -32,7 +32,7 @@ AM_SILENT_RULES([yes])
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 AC_SUBST(LT_CURRENT, 1)
-AC_SUBST(LT_REVISION, 1)
+AC_SUBST(LT_REVISION, 2)
 AC_SUBST(LT_AGE, 1)
 
 # Checks for header files.

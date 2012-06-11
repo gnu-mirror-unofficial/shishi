@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2002, 2005, 2006, 2008, 2009, 2010, 2011 Free Software
- * Foundation, Inc.
+ * Copyright (C) 2002-2012 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -22,7 +21,7 @@
 
 #include <int.h>
 #ifdef STDC_HEADERS
-# include <stdarg.h>
+#include <stdarg.h>
 #endif
 
 #define LIBTASN1_ERROR_ENTRY(name) { #name, name }

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2002, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011
- * Free Software Foundation, Inc.
+ * Copyright (C) 2002-2012 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -24,7 +23,7 @@
 #define INT_H
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#include <config.h>
 #endif
 
 #include <string.h>
@@ -34,7 +33,7 @@
 #include <stdint.h>
 
 #ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
+#include <sys/types.h>
 #endif
 
 #include <libtasn1.h>

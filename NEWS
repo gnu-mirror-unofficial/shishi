@@ -2,6 +2,10 @@ Shishi NEWS -- History of user-visible changes.                 -*- outline -*-
 Copyright (C) 2002-2012 Simon Josefsson
 See the end for copying conditions.
 
+* Version 1.0.2 (unreleased)
+
+** minitasn1: Internal copy upgraded to GNU Libtasn1 v2.13.
+
 * Version 1.0.1 (released 2012-03-12)
 
 ** Builds with GnuTLS 3.x.
