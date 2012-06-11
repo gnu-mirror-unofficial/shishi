@@ -892,13 +892,11 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
   char armorend[BUFSIZE];
   int in_key = 0, in_body = 0;
   int res;
-  size_t len;
   Shishi_key *lkey = NULL;
 
   sprintf (armorbegin, HEADERBEG, "KEY");
   sprintf (armorend, HEADEREND, "KEY");
 
-  len = 0;
   while (fgets (line, sizeof (line), fh))
     {
       lno++;

@@ -340,6 +340,8 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wundef"                     # Problems in gnulib files
   nw="$nw -Wstrict-overflow"           # Don't know how to avoid
   nw="$nw -Waggregate-return"          # For src/resume.c:resume_db_fetch...
+  nw="$nw -Wsuggest-attribute=pure" # Is it worth using attributes?
+  nw="$nw -Wsuggest-attribute=const" # Is it worth using attributes?
 
   gl_MANYWARN_ALL_GCC([ws])
   gl_MANYWARN_COMPLEMENT(ws, [$ws], [$nw])
@@ -350,6 +352,7 @@ if test "$gl_gcc_warnings" = yes; then
   gl_WARN_ADD([-Wno-format])           # Too many warnings for now
   gl_WARN_ADD([-Wno-unused-parameter]) # Too many warnings for now
   gl_WARN_ADD([-Wno-stack-protector])  # Some functions cannot be protected
+  gl_WARN_ADD([-Wno-unused-result])
   gl_WARN_ADD([-fdiagnostics-show-option])
 fi
 

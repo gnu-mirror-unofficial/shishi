@@ -60,11 +60,10 @@ shishi_crypto (Shishi * handle,
 	       int keyusage, int32_t etype, const char *iv, size_t ivlen)
 {
   Shishi_crypto *ctx;
-  int rc;
 
   ctx = xmalloc (sizeof (*ctx));
 
-  rc = shishi_key (handle, &ctx->key);
+  shishi_key (handle, &ctx->key);
   /* XXX handle rc, or rather:
      change shishi_key() to return key instead of int. */
   shishi_key_copy (ctx->key, key);
