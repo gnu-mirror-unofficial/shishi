@@ -30,7 +30,7 @@
 
 #include "internal.h"
 
-#ifdef HAVE_LIBRESOLV
+#if defined HAVE_LIBRESOLV || defined HAVE_RES_QUERY
 
 /* the largest packet we'll send and receive */
 #if PACKETSZ > 1024

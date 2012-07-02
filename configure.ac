@@ -41,7 +41,9 @@ gl_EARLY
 gl2_EARLY
 gl3_EARLY
 AC_HEADER_STDC
-AC_CHECK_HEADERS(termios.h pwd.h syslog.h resolv.h arpa/nameser.h netinet/in6.h)
+AC_CHECK_HEADERS(termios.h pwd.h syslog.h arpa/nameser.h netinet/in6.h)
+AC_CHECK_HEADERS(resolv.h, , , [#include <sys/types.h>
+#include <netinet/in.h>])
 
 # Used when creating libshishi-XX.def.
 SOVERSION=`expr ${LT_CURRENT} - ${LT_AGE}`
@@ -81,7 +83,7 @@ if test "$ac_cv_libgcrypt" != yes; then
 fi
 
 # Checks for library functions.
-AC_CHECK_FUNCS(signal select ngettext gethostbyname getpwnam getuid)
+AC_CHECK_FUNCS(signal select ngettext gethostbyname getpwnam getuid res_query)
 AC_CHECK_LIB(resolv, res_query,, AC_MSG_WARN([[no libresolv, SRV RRs not used]]))
 AC_SEARCH_LIBS(socket, socket)
 AC_SEARCH_LIBS(gethostbyname, nsl)
