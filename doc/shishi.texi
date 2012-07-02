@@ -143,7 +143,7 @@ can be used in an application.  Forward references are included where
 necessary.  Later on, the manual can be used as a reference manual to
 get just the information needed about any particular interface of the
 library.  Experienced programmers might want to start looking at the
-examples at the end of the manual, and then only read up those parts
+examples at the end of the manual, and then only read up on those parts
 of the interface which are unclear.
 
 @node Features and Status
@@ -161,7 +161,7 @@ GNU General Public License version 3.0 or later.
 The library uses no global variables.
 
 @item It's internationalized
-It handles non-ASCII username and passwords and user visible strings
+It handles non-ASCII username and passwords, and user visible strings
 used in the library (error messages) can be translated into the users'
 language.
 
@@ -989,18 +989,18 @@ formatted, are extracted into Texinfo manuals and GTK-DOC web pages.
 
 Usually Shishi interacts with you to get some initial authentication
 information like a password, and then contacts a server to receive a
-so called ticket granting ticket.  From now on, you rarely interacts
-with Shishi directly.  Applications that needs security services
+so called ticket granting ticket.  From now on, you rarely interact
+with Shishi directly.  Applications that need security services
 instruct the Shishi library to use the ticket granting ticket to get
 new tickets for various servers.  An example could be if you log on to
 a host remotely via @samp{telnet}.  The host usually requires
 authentication before permitting you in.  The @samp{telnet} client
 uses the ticket granting ticket to get a ticket for the server, and
-then use this ticket to authenticate you against the server (typically
+then uses this ticket to authenticate you against the server (typically
 the server is also authenticated to you).  You perform the initial
 authentication by typing @command{shishi} at the prompt.  Sometimes it
 is necessary to supply options telling Shishi what your principal name
-(user name in the Kerberos realm) or realm is.  In the example, I
+(user name in the Kerberos realm) or your realm is.  In the example, I
 specify the client name @code{simon@@JOSEFSSON.ORG}.
 
 @example
@@ -1018,10 +1018,10 @@ $
 As you can see, Shishi also prints a short description of the ticket
 received.
 
-A logical next step is to display all tickets you have received (by
-the way, the tickets are usually stored as text in
-@file{~/.shishi/tickets}).  This is achieved by typing @command{shishi
---list}.
+A logical next step is to display all tickets you have received.
+By the way, the tickets are usually stored as text in
+@file{~/.shishi/tickets}.  This is achieved by typing
+@command{shishi --list}.
 
 @example
 $ shishi --list
@@ -1053,7 +1053,7 @@ If, for some reason, you want to manually get a ticket for a specific
 server, you can use the @command{shishi --server-name} command.
 Normally, however, the application that uses Shishi will take care of
 getting a ticket for the appropriate server, so you normally wouldn't
-need this command.
+need to issue this command.
 
 @example
 $ shishi --server-name=user/billg --encryption-type=des-cbc-md4
@@ -1070,14 +1070,14 @@ As you can see, I acquired a ticket for @samp{user/billg} with a
 @samp{des-cbc-md4} (@pxref{Cryptographic Overview}) encryption key
 specified with the @samp{--encryption-type} parameter.
 
-To wrap up this introduction, lets see how you can remove tickets.
+To wrap up this introduction, let us see how you can remove tickets.
 You may want to do this if you leave your terminal for lunch or
 similar, and don't want someone to be able to copy the file and then
-use your credentials.  Note that this only destroy the tickets
-locally, it does not contact any server and tell it that these
-credentials are no longer valid.  So if someone stole your ticket
-file, you must contact your administrator and have them reset your
-account, simply using this parameter is not sufficient.
+use your credentials.  Note that this only destroys the tickets
+locally, it does not contact any server telling that these
+credentials are no longer valid.  So, if someone stole your ticket
+file, you must still contact your administrator and have them reset your
+account. Simply using this switch is not sufficient.
 
 @example
 $ shishi --server-name=imap/latte.josefsson.org --destroy
@@ -1089,11 +1089,10 @@ $ shishi --destroy
 $
 @end example
 
-Since the @samp{--server-name} parameter takes a long to type, it is
-possible to type the server name directly, after the client name.  The
-following example demonstrate a AS-REQ followed by a TGS-REQ for a
-specific server (assuming you did not have any tickets from the
-start).
+Since the @samp{--server-name} parameter takes a long string to type,
+it is possible to type the server name directly, after the client name.
+The following example demonstrates an AS-REQ followed by a TGS-REQ for a
+specific server (assuming you did not have any tickets to begin with).
 
 @example
 $ src/shishi simon@@latte.josefsson.org imap/latte.josefsson.org
@@ -1109,7 +1108,7 @@ $
 
 Refer to the reference manual for all available parameters
 (@pxref{Parameters for shishi}).  The rest of this section contains
-description of more specialized usage modes that can be ignored by
+descriptions of more specialized usage modes that can be ignored by
 most users.
 
 @section Proxiable and Proxy Tickets
@@ -1295,9 +1294,9 @@ $
 Here you will learn how to set up, run and maintain the Shishi
 Kerberos server.  Kerberos is incompatible with the standard Unix
 @file{/etc/passwd} password database@footnote{And besides, Shishi is
-intended to work on non-Unix platforms as well.}, therefor the first
+intended to work on non-Unix platforms as well.}, therefore the first
 step will be to create a Kerberos user database.  Shishi's user
-database system is called Shisa.  Once Shisa is configured, you can
+database system is called Shisa.  Once Shisa has been configured, you can
 then start the server and begin issuing Kerberos tickets to your
 users.  The Shishi server is called @file{shishid}.  After getting the
 server up and running, we discuss how you can set up multiple Kerberos
@@ -1323,37 +1322,37 @@ LDAP server or SQL database.
 The user database part of Shishi is called Shisa.  The Shisa library
 is independent of the core Shishi library.  Shisa is responsible for
 storing the name of your realms, the name of your principals (users),
-accounting information for the users (i.e., when each account start to
-be valid and when it expire), and the cryptographic keys each user
-have.  Some Kerberos internal data can also be stored, such as the key
+accounting information for the users (i.e., when each account starts to
+be valid and when it expires), and the cryptographic keys each user
+has.  Some Kerberos internal data can also be stored, such as the key
 version number, the last dates for when various ticket requests were
 made, the cryptographic salt, string-to-key parameters and password
 for each user.  Not all information need to be stored.  For example,
 in some situations it is prudent to leave the password field empty, so
-that somebody who manage to steal the user database will only be able
-to compromise your system, and not other systems were your user may
+that somebody who manages to steal the user database will only be able
+to compromise your system, and not any other systems were your user may
 have re-used the same password.  On the other hand, you may already
-store the password in your customized database, in which case being
+be storing the password in your customized database, in which case being
 able to change it via the Shisa interface can be useful.
 
 Shisa is a small (a few thousand lines of C code) standalone
 library.  Shisa does not depend on the Shishi library.  Because a user
 database with passwords may be useful for other applications as well
-(e.g., GNU SASL), it may be separated into its own
+(e.g., GNU SASL), it might be separated into its own
 project later on.  You should keep this in mind, so that you don't
-consider writing a Shisa backend for your own database a purely Shishi
-specific project.  You may, for example, chose to use the Shisa
+consider writing a Shisa backend for your own database as a purely Shishi
+specific project.  You can, for example, choose to use the Shisa
 interface in your own applications to have a simple interface to your
 user database.  Your experience and feedback is appreciated if you
-chose to explore this.
+have chosen to explore this.
 
 Note that the Shisa database does not expose everything you may want
 to know about a user, such as its full human name, telephone number or
-even the user's login account name or home directory.  It only store
+even the user's login account name or home directory.  It only stores
 what is needed to authenticate a peer claiming to be an entity.  Thus
 it does not make sense to replace your current user database or
 @file{/etc/passwd} with data derived from the Shisa database.
-Instead, it is intended that you write a Shisa backend that export
+Instead, it is intended that you write a Shisa backend that exports
 @i{some} of the information stored in your user database.  You may be
 able to replace some existing functionality, such as the password
 field in @file{/etc/passwd} with a Kerberos PAM module, but there is
@@ -1363,22 +1362,22 @@ no requirement for doing so.
 @section Configuring Shisa
 
 The configuration file for Shisa is typically stored in
-@file{/usr/local/etc/shishi/shisa.conf}.  You do not have to configure
+@file{/usr/local/etc/shishi/shisa.conf}.  You do not have to modify
 this file, the defaults should be acceptable to first-time users.  The
-file is used to define where you user database reside, and some
-options such as making the database read-only or whether errors
+file is used to define where your user database resides, and some
+options such as making the database read-only, or whether errors
 detected when accessing the database should be ignored.  (The latter
-may be useful if the server is a remote LDAP server that may
-be unavailable, and you want to fail over to a local copy of the
-database.)
+could be useful if the server is a remote LDAP server that might
+be unavailable, and then you would want to fall back to a local copy
+of the database.)
 
 The default will store the user database using directories and files,
-rooted by default in @file{/usr/local/var/shishi}.  You may use
+rooted by default in @file{/usr/local/var/shishi}.  You can use
 standard file permission settings to control access to the directory
 hierarchy.  It is strongly recommended to restrict access to the
-directory.  Storing the directory on local storage (i.e., hard disk or
-removal media) is recommended.  We discourage placing the database on
-a network file system, but realize it can be useful in some situations
+directory.  Storing the directory on local storage, i.e., hard disk or
+removable media, is recommended.  We discourage placing the database on
+a network file system, but realize this can be useful in some situations
 (@pxref{Multiple servers}).
 
 See the reference manual (@pxref{Shisa Configuration}) for the details
@@ -1389,8 +1388,8 @@ modify anything unless you are an experienced Shishi administrator.
 @section Using Shisa
 
 There is a command line interface to the Shisa library, aptly named
-@file{shisa}.  You will use this tool to add, remove and change
-information stored in the database about realms, principals and keys.
+@file{shisa}.  You will use this tool to add, remove, and change
+information stored in the database about realms, principals, and keys.
 The tool can also be used to ``dump'' all information in the database,
 for backup or debugging purposes.  (Currently the output format cannot
 be read by any tool, but functionality to do this will be added in the
@@ -1400,10 +1399,10 @@ The reference manual (@pxref{Parameters for shisa}) explains all
 parameters, but here we will give you a walk-through of the typical
 uses of the tool.
 
-Installing Shishi usually create a realm with two principals; one
+Installing Shishi usually creates a realm with two principals: one
 ticket granting ticket for the realm, and one host key for the server.
 This is what you typically need to get started, but it doesn't serve
-our purposes.  So we start by removing the principals and the realm.
+our purposes, so we start by removing the principals and the realm.
 To do that, we need to figure out the name of the realm.  The
 @samp{--list} or @samp{--dump} parameters can be used for this.  (Most
 ``long'' parameters, like @samp{--dump}, have shorter names as well,
@@ -1429,16 +1428,16 @@ jas@@latte:~$
 
 The realm names are printed at column 0, the principal names are
 indented with one @samp{TAB} character (aka @samp{\t} or ASCII 0x09
-Horizontal Tabulation), and the information about each principal are
+Horizontal Tabulation), and the information about each principal is
 indented with two @samp{TAB} characters.  The above output means that
-there is one realm @samp{latte} with two principals;
+there is one realm @samp{latte} with two principals:
 @samp{krbtgt/latte} (which is used to authenticate Kerberos ticket
 requests) and @samp{host/latte} (used to authenticate host-based
 applications like Telnet).  They were created during @samp{make
 install} on a host called @samp{latte}.
 
 If the installation did not create a default database for you, you
-might get an error similar to the following.
+might get an error similar to the following output.
 
 @example
 jas@@latte:~$ shisa -d
@@ -1449,16 +1448,16 @@ Shisa database could not be opened.
 jas@@latte:~$
 @end example
 
-This indicate the database do not exist.  For a file database, you can
-create it by simply creating the directory, as follows.  Note the
+This indicates that the database does not exist.  For a file database,
+you can create it simply by creating the directory, as follows.  Note the
 access permission change with @samp{chmod}.  Typically the @samp{root}
 user would own the files, but as these examples demonstrate, setting
 up a Kerberos server does not require root access.  Indeed, it may be
 prudent to run all Shishi applications as a special non-@samp{root}
 user, and have all Shishi related files owned by that user, so that
-any security vulnerabilities does not lead to a system compromise.
-(However, if the user database is stolen, system compromises of other
-systems may be possible if you use, e.g., Kerberos Telnet.)
+any security vulnerabilities do not lead to a system compromise.
+(However, if the user database is ever stolen, system compromises of other
+systems may be inoccured, should you use, e.g., a kerberized Telnet.)
 
 @example
 jas@@latte:~$ mkdir /usr/local/var/shishi
@@ -1489,7 +1488,7 @@ jas@@latte:~$
 You may be asking yourself ``What if the realm has many more
 principals?''.  If you fear manual labor (or a small @samp{sed}
 script, recall the format of @samp{--list}?), don't worry, there is a
-@samp{--force} (short form @samp{-f}) flag.  Use with care.  Here is a
+@samp{--force} (short form @samp{-f}) flag.  Use it with care.  Here is a
 faster way to do the above:
 
 @example
@@ -1505,8 +1504,8 @@ jas@@latte:~$
 
 You should now have a working, but empty, Shisa database.  Let's set
 up the realm manually, step by step.  The first step is to decide on
-name for your realm.  The full story is explained elsewhere
-(@pxref{Realm and Principal Naming}) but the short story is to take
+a name for your realm.  The full story is explained elsewhere
+(@pxref{Realm and Principal Naming}), but the short story is to take
 your DNS domain name and translate it to upper case.  For
 example, if your organization uses @code{example.org} it is a good
 idea to use @code{EXAMPLE.ORG} as the name of your Kerberos realm.
@@ -1522,10 +1521,10 @@ jas@@latte:~$
 
 Currently, there are no properties associated with entire realms.  In
 the future, it may be possible to set a default realm-wide password
-expiry policy or similar.  Each realm normally have one principal that
+expiry policy or similar.  Each realm normally has one principal that
 is used for authenticating against the ``ticket granting service'' on
 the Kerberos server with a ticket instead of using the password.  This
-is used by the user when she acquire a ticket for servers.  This
+is used by the user when she acquire a ticket for a server.  The
 principal must look like @samp{krbtgt/REALM} (@pxref{krbtgt,,Name of
 the TGS}).  Let's create it.
 
@@ -1538,7 +1537,7 @@ jas@@latte:~$
 
 Now that wasn't difficult, although not very satisfying either.  What
 does adding a principal mean?  The name is created, obviously, but it
-also mean setting a few values in the database.  Let's view the entry
+also means setting a few values in the database.  Let's view the entry
 to find out which values.
 
 @example
@@ -1557,7 +1556,7 @@ To use host based security services like SSH or Telnet with
 Kerberos, each host must have a key shared between the host and the
 KDC.  The key is typically stored in
 @file{/usr/local/etc/shishi/shishi.keys}.  We assume your server is
-called @samp{mail.example.org} and create the principal.  To
+called @samp{mail.example.org} and we create the principal.  To
 illustrate a new parameter, we also set the specific algorithm to use
 by using the @samp{--encryption-type} (short form @samp{-E})
 parameter.
@@ -1596,7 +1595,7 @@ So to set up the host, simply redirect output to the host key file.
 
 @example
 jas@@latte:~$ shisa -d --keys EXAMPLE.ORG \
-     host/mail.example.org > /usr/local/etc/shishi/shishi.keys
+     host/mail.example.org >> /usr/local/etc/shishi/shishi.keys
 jas@@latte:~$
 @end example
 
