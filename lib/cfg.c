@@ -584,7 +584,7 @@ shishi_cfg_clientkdcetype_fast (Shishi * handle)
 
 /**
  * shishi_cfg_clientkdcetype_set:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  * @value: string with encryption types.
  *
  * Set the "client-kdc-etypes" configuration option from given string.
@@ -592,20 +592,23 @@ shishi_cfg_clientkdcetype_fast (Shishi * handle)
  * by comma or whitespace, e.g. "aes256-cts-hmac-sha1-96
  * des3-cbc-sha1-kd des-cbc-md5".
  *
- * Return value: Return SHISHI_OK iff successful.
+ * Return value: Returns SHISHI_OK if successful.
  **/
 int
 shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
 {
   char *ptrptr;
-  char *val;
+  char *val, *tmpvalue;
   int i;
   int tot = 0;
+  int rc = SHISHI_INVALID_ARGUMENT;
 
   if (value == NULL || *value == '\0')
     return SHISHI_OK;
 
-  for (i = 0; (val = strtok_r (i == 0 ? value : NULL, ", \t", &ptrptr)); i++)
+  tmpvalue = xstrdup (value);
+
+  for (i = 0; (val = strtok_r (i == 0 ? tmpvalue : NULL, ", \t", &ptrptr)); i++)
     {
       int etype = shishi_cipher_parse (val);
 
@@ -621,35 +624,41 @@ shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
 	  handle->clientkdcetypes = new;
 	  handle->clientkdcetypes[tot - 1] = etype;
 	  handle->nclientkdcetypes = tot;
+	  rc = SHISHI_OK;	/* At least one valid type.  */
 	}
     }
 
-  return SHISHI_OK;
+  free (tmpvalue);
+
+  return rc;
 }
 
 /**
  * shishi_cfg_authorizationtype_set:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  * @value: string with authorization types.
  *
  * Set the "authorization-types" configuration option from given string.
  * The string contains authorization types (integer or names) separated
  * by comma or whitespace, e.g. "basic k5login".
  *
- * Return value: Return SHISHI_OK iff successful.
+ * Return value: Returns SHISHI_OK if successful.
  **/
 int
 shishi_cfg_authorizationtype_set (Shishi * handle, char *value)
 {
   char *ptrptr;
-  char *val;
+  char *val, *tmpvalue;
   int i;
   int tot = 0;
+  int rc = SHISHI_INVALID_ARGUMENT;
 
   if (value == NULL || *value == '\0')
     return SHISHI_OK;
 
-  for (i = 0; (val = strtok_r (i == 0 ? value : NULL, ", \t", &ptrptr)); i++)
+  tmpvalue = xstrdup (value);
+
+  for (i = 0; (val = strtok_r (i == 0 ? tmpvalue : NULL, ", \t", &ptrptr)); i++)
     {
       int atype = shishi_authorization_parse (val);
 
@@ -666,8 +675,11 @@ shishi_cfg_authorizationtype_set (Shishi * handle, char *value)
 	  handle->authorizationtypes = new;
 	  handle->authorizationtypes[tot - 1] = atype;
 	  handle->nauthorizationtypes = tot;
+	  rc = SHISHI_OK;	/* At least one valid type.  */
 	}
     }
 
-  return SHISHI_OK;
+  free (tmpvalue);
+
+  return rc;
 }
