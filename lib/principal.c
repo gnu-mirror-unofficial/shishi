@@ -26,11 +26,11 @@
  * shishi_principal_default_guess:
  *
  * Guesses the principal name for the user, looking at environment
- * variables SHISHI_USER and USER, or if that fails, returns the
- * string "user".
+ * variables SHISHI_USER, USER and LOGNAME, or if that fails, returns
+ * the string "user".
  *
  * Return value: Returns guessed default principal for user as a
- * string that has to be deallocated with free() by the caller.
+ * string that has to be deallocated by the caller with free().
  **/
 char *
 shishi_principal_default_guess (void)
@@ -41,6 +41,8 @@ shishi_principal_default_guess (void)
   if (!envuser)
     envuser = getenv ("USER");
   if (!envuser)
+    envuser = getenv ("LOGNAME");
+  if (!envuser)
     envuser = "user";
 
   return xstrdup (envuser);
@@ -49,13 +51,13 @@ shishi_principal_default_guess (void)
 
 /**
  * shishi_principal_default:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  *
  * The default principal name is the name in the environment variable
- * USER, but can be overridden by specifying the environment variable
- * SHISHI_USER.
+ * USER, or LOGNAME for some systems, but it can be overridden by
+ * specifying the environment variable SHISHI_USER.
  *
- * Return value: Returns the default principal name used in the
+ * Return value: Returns the default principal name used by the
  * library.  (Not a copy of it, so don't modify or deallocate it.)
  **/
 const char *
@@ -74,11 +76,11 @@ shishi_principal_default (Shishi * handle)
 
 /**
  * shishi_principal_default_set:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  * @principal: string with new default principal name, or NULL to
  * reset to default.
  *
- * Set the default realm used in the library.  The string is copied
+ * Set the default realm used by the library.  The string is copied
  * into the library, so you can dispose of the variable immediately
  * after calling this function.
  **/
@@ -94,19 +96,19 @@ shishi_principal_default_set (Shishi * handle, const char *principal)
 
 /**
  * shishi_parse_name:
- * @handle: Shishi library handle create by shishi_init().
- * @name: Input principal name string, e.g. imap/mail.gnu.org@GNU.ORG.
+ * @handle: Shishi library handle created by shishi_init().
+ * @name: input principal name string, e.g. imap/mail.gnu.org@GNU.ORG.
  * @principal: newly allocated output string with principal name.
  * @realm: newly allocated output string with realm name.
  *
- * Split up principal name (e.g., "simon@JOSEFSSON.ORG") into two
- * newly allocated strings, the principal ("simon") and realm
+ * Split principal name (e.g., "simon@JOSEFSSON.ORG") into two
+ * newly allocated strings, the principal ("simon"), and the realm
  * ("JOSEFSSON.ORG").  If there is no realm part in NAME, REALM is set
  * to NULL.
  *
  * Return value: Returns SHISHI_INVALID_PRINCIPAL_NAME if NAME is NULL
- *   or ends with the escape character "\", or SHISHI_OK iff
- *   successful
+ *   or ends with the escape character "\", and SHISHI_OK if
+ *   successful.
  **/
 int
 shishi_parse_name (Shishi * handle, const char *name,
@@ -158,20 +160,20 @@ shishi_parse_name (Shishi * handle, const char *name,
 
 /**
  * shishi_principal_name:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  * @namenode: ASN.1 structure with principal in @namefield.
  * @namefield: name of field in @namenode containing principal name.
- * @out: pointer to newly allocated zero terminated string containing
+ * @out: pointer to newly allocated, null terminated, string containing
  *   principal name.  May be %NULL (to only populate @outlen).
  * @outlen: pointer to length of @out on output, excluding terminating
- *   zero.  May be %NULL (to only populate @out).
+ *   null.  May be %NULL (to only populate @out).
  *
- * Represent principal name in ASN.1 structure as zero-terminated
- * string.  The string is allocate by this function, and it is the
+ * Represent principal name in ASN.1 structure as null-terminated
+ * string.  The string is allocated by this function, and it is the
  * responsibility of the caller to deallocate it.  Note that the
- * output length @outlen does not include the terminating zero.
+ * output length @outlen does not include the terminating null.
  *
- * Return value: Returns SHISHI_OK iff successful.
+ * Return value: Returns SHISHI_OK if successful.
  **/
 int
 shishi_principal_name (Shishi * handle,
@@ -239,23 +241,23 @@ shishi_principal_name (Shishi * handle,
 
 /**
  * shishi_principal_name_realm:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  * @namenode: ASN.1 structure with principal name in @namefield.
  * @namefield: name of field in @namenode containing principal name.
  * @realmnode: ASN.1 structure with principal realm in @realmfield.
  * @realmfield: name of field in @realmnode containing principal realm.
- * @out: pointer to newly allocated zero terminated string containing
+ * @out: pointer to newly allocated null terminated string containing
  *   principal name.  May be %NULL (to only populate @outlen).
  * @outlen: pointer to length of @out on output, excluding terminating
- *   zero.  May be %NULL (to only populate @out).
+ *   null.  May be %NULL (to only populate @out).
  *
  * Represent principal name and realm in ASN.1 structure as
- * zero-terminated string.  The string is allocate by this function,
- * and it is the responsibility of the caller to deallocate it.  Note
+ * null-terminated string.  The string is allocated by this function.
+ * It is the responsibility of the caller to deallocate it.  Note
  * that the output length @outlen does not include the terminating
- * zero.
+ * null character.
  *
- * Return value: Returns SHISHI_OK iff successful.
+ * Return value: Returns SHISHI_OK if successful.
  **/
 int
 shishi_principal_name_realm (Shishi * handle,
@@ -322,14 +324,14 @@ shishi_principal_name_realm (Shishi * handle,
  * shishi_principal_name_set:
  * @handle: shishi handle as allocated by shishi_init().
  * @namenode: ASN.1 structure with principal in @namefield.
- * @namefield: name of field in namenode containing principal name.
- * @name_type: type of principial, see Shishi_name_type, usually
+ * @namefield: name of field in @namenode containing principal name.
+ * @name_type: type of principal, see Shishi_name_type, usually
  *             SHISHI_NT_UNKNOWN.
- * @name: zero-terminated input array with principal name.
+ * @name: null-terminated input array with principal name.
  *
- * Set the given principal name field to given name.
+ * Set the given principal name field to the given name.
  *
- * Return value: Returns SHISHI_OK iff successful.
+ * Return value: Returns SHISHI_OK if successful.
  **/
 int
 shishi_principal_name_set (Shishi * handle,
@@ -378,12 +380,12 @@ shishi_principal_name_set (Shishi * handle,
  * shishi_principal_set:
  * @handle: shishi handle as allocated by shishi_init().
  * @namenode: ASN.1 structure with principal in @namefield.
- * @namefield: name of field in namenode containing principal name.
- * @name: zero-terminated string with principal name on RFC 1964 form.
+ * @namefield: name of field in @namenode containing principal name.
+ * @name: null-terminated string with principal name in RFC 1964 form.
  *
- * Set principal name field in ASN.1 structure to given name.
+ * Set principal name field in an ASN.1 structure to the given name.
  *
- * Return value: Returns SHISHI_OK iff successful.
+ * Return value: Returns SHISHI_OK if successful.
  **/
 int
 shishi_principal_set (Shishi * handle,
@@ -426,7 +428,7 @@ shishi_principal_set (Shishi * handle,
  * @salt: output variable with newly allocated salt string.
  *
  * Derive the default salt from a principal.  The default salt is the
- * concatenation of the decoded realm and principal.
+ * concatenation of the decoded realm and the principal.
  *
  * Return value: Return SHISHI_OK if successful.
  **/
@@ -459,10 +461,10 @@ shishi_derive_default_salt (Shishi * handle, const char *name, char **salt)
 /**
  * shishi_server_for_local_service:
  * @handle: shishi handle as allocated by shishi_init().
- * @service: zero terminated string with name of service, e.g., "host".
+ * @service: null terminated string with name of service, e.g., "host".
  *
  * Construct a service principal (e.g., "imap/yxa.extuno.com") based
- * on supplied service name (i.e., "imap") and the system hostname as
+ * on supplied service name (i.e., "imap") and the system's hostname as
  * returned by hostname() (i.e., "yxa.extundo.com").  The string must
  * be deallocated by the caller.
  *
