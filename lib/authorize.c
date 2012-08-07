@@ -26,6 +26,19 @@
 # include <pwd.h>
 #endif
 
+/**
+ * shishi_authorize_strcmp:
+ * @handle: shishi handle allocated by shishi_init().
+ * @principal: string with desired principal name.
+ * @authzname: authorization name.
+ *
+ * Authorization of @authzname against desired @principal
+ * according to "basic" authentication, i.e., testing for
+ * identical strings.
+ *
+ * Return value: Returns 1 if @authzname is authorized for services
+ *   by the encrypted principal, and 0 otherwise.
+ **/
 int
 shishi_authorize_strcmp (Shishi * handle, const char *principal,
 			 const char *authzname)
@@ -37,6 +50,18 @@ shishi_authorize_strcmp (Shishi * handle, const char *principal,
 }
 
 /* MIT/Heimdal authorization method */
+/**
+ * shishi_authorize_k5login:
+ * @handle: shishi handle allocated by shishi_init().
+ * @principal: string with desired principal name and realm.
+ * @authzname: authorization name.
+ *
+ * Authorization of @authzname against desired @principal
+ * in accordance with the MIT/Heimdal authorization method.
+ *
+ * Return value: Returns 1 if @authzname is authorized for services
+ * by @principal, and returns 0 otherwise.
+ **/
 int
 shishi_authorize_k5login (Shishi * handle, const char *principal,
 			  const char *authzname)
@@ -54,15 +79,24 @@ shishi_authorize_k5login (Shishi * handle, const char *principal,
   if (pwd == NULL || pwd->pw_dir == NULL)
     return 0;
 
-  asprintf (&ficname, "%s%s", pwd->pw_dir, ".k5login");
+  asprintf (&ficname, "%s/%s", pwd->pw_dir, ".k5login");
 
   if (stat (ficname, &sta) != 0)
-    /* If file .k5login does not exist */
-    if (strcmp (principal, authzname) == 0)
-      return shishi_authorize_strcmp (handle, principal, authzname);
+    {
+      /* File .k5login does not exist.  */
+      free (ficname);
+      return 0;
+    }
 
-  /* Owner should be user or root */
+  /* Owner should be acting user, or root.  */
   if ((sta.st_uid != pwd->pw_uid) && (sta.st_uid != 0))
+    {
+      free (ficname);
+      return 0;
+    }
+
+  /* Write access is forbidden for group and world.  */
+  if ((sta.st_mode & S_IWGRP) || (sta.st_mode & S_IWOTH))
     {
       free (ficname);
       return 0;
@@ -77,9 +111,13 @@ shishi_authorize_k5login (Shishi * handle, const char *principal,
 
   while (!feof (fic))
     {
+      char *p;
+
       if (getline (&line, &linelength, fic) == -1)
 	break;
-      line[linelength - 1] = '\0';
+      p = strchr (line, '\n');
+      if (p)
+	*p = '\0';
 
       if (strcmp (principal, line) == 0)
 	{
@@ -111,11 +149,11 @@ static const struct Authorization_aliases authorization_aliases[] = {
 
 /**
  * shishi_authorization_parse:
- * @authorization: name of authorization type, e.g. "basic".
+ * @authorization: name of authorization type, "basic" or "k5login".
  *
  * Parse authorization type name.
  *
- * Return value: Return authorization type corresponding to a string.
+ * Return value: Returns authorization type corresponding to a string.
  **/
 int
 shishi_authorization_parse (const char *authorization)
@@ -139,21 +177,23 @@ shishi_authorization_parse (const char *authorization)
 
 /**
  * shishi_authorized_p:
- * @handle: shishi handle as allocated by shishi_init().
+ * @handle: shishi handle allocated by shishi_init().
  * @tkt: input variable with ticket info.
  * @authzname: authorization name.
  *
  * Simplistic authorization of @authzname against encrypted client
- * principal name inside ticket.  Currently this function only compare
- * the principal name with @authzname using strcmp().
+ * principal name inside ticket.  For "basic" authentication type,
+ * the principal name must coincide with @authzname. The "k5login"
+ * authentication type attempts the MIT/Heimdal method of parsing
+ * the file "~/.k5login" for additional equivalence names.
  *
- * Return value: Returns 1 if authzname is authorized for services by
- *   authenticated client principal, or 0 otherwise.
+ * Return value: Returns 1 if @authzname is authorized for services
+ * by the encrypted principal, and 0 otherwise.
  **/
 int
 shishi_authorized_p (Shishi * handle, Shishi_tkt * tkt, const char *authzname)
 {
-  char *client;
+  char *client = NULL, *clientrealm = NULL;
   size_t i;
   int rc;
 
@@ -162,24 +202,43 @@ shishi_authorized_p (Shishi * handle, Shishi_tkt * tkt, const char *authzname)
   if (rc != SHISHI_OK)
     return 0;
 
+  rc = shishi_encticketpart_clientrealm (handle,
+					 shishi_tkt_encticketpart (tkt),
+					 &clientrealm, NULL);
+  if (rc != SHISHI_OK)
+    {
+      free (client);
+      return 0;
+    }
+
   for (i = 0; i < handle->nauthorizationtypes; i++)
     {
       switch (handle->authorizationtypes[i])
 	{
 	case SHISHI_AUTHORIZATION_BASIC:
 	  if (shishi_authorize_strcmp (handle, client, authzname))
-	    return 1;
+	    {
+	      free (client);
+	      free (clientrealm);
+	      return 1;
+	    }
 	  break;
 
 	case SHISHI_AUTHORIZATION_K5LOGIN:
-	  if (shishi_authorize_k5login (handle, client, authzname))
-	    return 1;
+	  if (shishi_authorize_k5login (handle, clientrealm, authzname))
+	    {
+	      free (client);
+	      free (clientrealm);
+	      return 1;
+	    }
 	  break;
 
 	default:
-	  return 0;
+	  break;	/* Ignore unknown types.  Continue searching.  */
 	}
     }
 
+  free (client);
+  free (clientrealm);
   return 0;
 }
