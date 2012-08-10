@@ -30,7 +30,11 @@
 
 #include "internal.h"
 
-#if defined HAVE_LIBRESOLV || defined HAVE_RES_QUERY
+#ifdef HAVE_LIBRESOLV
+
+#include <netinet/in.h>
+#include <arpa/nameser.h>
+#include <resolv.h>
 
 /* the largest packet we'll send and receive */
 #if PACKETSZ > 1024

@@ -63,13 +63,6 @@
 #endif
 #include <arpa/inet.h>
 
-#ifdef HAVE_ARPA_NAMESER_H
-#include <arpa/nameser.h>
-#endif
-#ifdef HAVE_RESOLV_H
-#include <resolv.h>
-#endif
-
 #ifdef HAVE_SYSLOG_H
 #include <syslog.h>
 #endif
