@@ -336,10 +336,11 @@ doit (void)
     const char *shortname = (slash != NULL ? slash + 1 : program_name);
 
 #ifdef LOG_PERROR
-    openlog (shortname, LOG_CONS | LOG_PERROR, LOG_DAEMON);
-#else
-    openlog (shortname, LOG_CONS, LOG_DAEMON);
+    if (arg.verbose_given > 0)
+      openlog (shortname, LOG_CONS | LOG_PERROR, LOG_DAEMON);
+    else
 #endif
+      openlog (shortname, LOG_CONS, LOG_DAEMON);
   }
 
   kdc_setuid ();
