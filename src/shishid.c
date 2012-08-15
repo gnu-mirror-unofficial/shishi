@@ -63,6 +63,17 @@ kdc_listen (void)
 	  goto error;
 	}
 
+#ifdef IPV6_V6ONLY
+      if (ls->ai.ai_family == AF_INET6)
+	{
+	  yes = 1;
+	  if (setsockopt (ls->sockfd, IPPROTO_IPV6, IPV6_V6ONLY,
+			  (char *) &yes, sizeof (yes)) < 0)
+	    error (0, errno, "Cannot restrict %s to AF_INET6 only.",
+		   ls->addrname);
+	}
+#endif
+
       yes = 1;
       if (setsockopt (ls->sockfd, SOL_SOCKET, SO_REUSEADDR,
 		      (char *) &yes, sizeof (yes)) < 0)
