@@ -212,24 +212,12 @@ shishi_encticketpart_cname_set (Shishi * handle,
 {
   int res;
 
+  res = shishi_principal_set (handle, encticketpart, "cname", principal);
+  if (res != SHISHI_OK)
+    return res;
+
   res = shishi_asn1_write_uint32 (handle, encticketpart,
 				  "cname.name-type", name_type);
-  if (res != SHISHI_OK)
-    return res;
-
-  res = shishi_asn1_write (handle, encticketpart,
-			   "cname.name-string", NULL, 0);
-  if (res != SHISHI_OK)
-    return res;
-
-  res = shishi_asn1_write (handle, encticketpart,
-			   "cname.name-string", "NEW", 1);
-  if (res != SHISHI_OK)
-    return res;
-
-  res = shishi_asn1_write (handle, encticketpart,
-			   "cname.name-string.?1",
-			   principal, strlen (principal));
   if (res != SHISHI_OK)
     return res;
 
