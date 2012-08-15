@@ -119,7 +119,10 @@ shishi_parse_name (Shishi * handle, const char *name,
   int escaped = 0;
 
   if (!name)
-    return SHISHI_INVALID_PRINCIPAL_NAME;
+    {
+      shishi_error_printf (handle, "Name is NULL\n");
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
 
   while (*p && (*p != '@' || escaped))
     if (escaped)
@@ -128,7 +131,12 @@ shishi_parse_name (Shishi * handle, const char *name,
       escaped = 1;
 
   if (escaped)
-    return SHISHI_INVALID_PRINCIPAL_NAME;
+    {
+      shishi_error_printf (handle,
+			   "Principal ended with escape character: %s\n",
+			   name);
+      return SHISHI_INVALID_PRINCIPAL_NAME;
+    }
 
   if (principal)
     {
@@ -147,7 +155,12 @@ shishi_parse_name (Shishi * handle, const char *name,
 	  escaped = 1;
 
       if (escaped)
-	return SHISHI_INVALID_PRINCIPAL_NAME;
+	{
+	  shishi_error_printf (handle,
+			       "Realm ended with escape character: %s\n",
+			       name);
+	  return SHISHI_INVALID_PRINCIPAL_NAME;
+	}
 
       if (realm)
 	*realm = xstrdup (p);
