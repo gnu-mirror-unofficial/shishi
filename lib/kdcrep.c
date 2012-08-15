@@ -291,7 +291,7 @@ shishi_kdcrep_crealm_set (Shishi * handle,
  *             SHISHI_NT_UNKNOWN.
  * @cname: input array with principal name.
  *
- * Set the server name field in the KDC-REP.
+ * Set the client name field in the KDC-REP.
  *
  * Return value: Returns SHISHI_OK iff successful.
  **/
