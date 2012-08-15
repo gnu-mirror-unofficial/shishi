@@ -97,11 +97,11 @@ shishi_principal_default_set (Shishi * handle, const char *principal)
 /**
  * shishi_parse_name:
  * @handle: Shishi library handle created by shishi_init().
- * @name: input principal name string, e.g. imap/mail.gnu.org@@GNU.ORG.
+ * @name: input principal name string, e.g. imap/mail.gnu.org\@GNU.ORG.
  * @principal: newly allocated output string with principal name.
  * @realm: newly allocated output string with realm name.
  *
- * Split principal name (e.g., "simon@@JOSEFSSON.ORG") into two
+ * Split principal name (e.g., "simon\@JOSEFSSON.ORG") into two
  * newly allocated strings, the @principal ("simon"), and the @realm
  * ("JOSEFSSON.ORG").  If there is no realm part in @name, @realm is set
  * to NULL.
