@@ -1075,12 +1075,10 @@ process (const char *in, size_t inlen, char **out)
   switch (shishi_asn1_msgtype (handle, node))
     {
     case SHISHI_MSGTYPE_AS_REQ:
-      syslog (LOG_ERR, "Trying AS-REQ");
       rc = asreq (node, out, &outlen);
       break;
 
     case SHISHI_MSGTYPE_TGS_REQ:
-      syslog (LOG_ERR, "Trying TGS-REQ");
       rc = tgsreq (node, out, &outlen);
       break;
 
