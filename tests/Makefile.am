@@ -32,7 +32,7 @@ libutils_la_SOURCES = utils.h utils.c
 
 check_PROGRAMS = authenticator crypto gztime priv safe ticketset	\
 	crypto-ctx low-crypto rijndael key keytab ccache nonce		\
-	passwdpromptcb
+	passwdpromptcb multiname
 TESTS = $(check_PROGRAMS)
 
 TESTS_ENVIRONMENT = \
