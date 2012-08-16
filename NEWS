@@ -6,12 +6,17 @@ See the end for copying conditions.
 
 ** libshishi: Fix salt derivation for principals with multiple components.
 Before, when adding a principal such as "user/admin" using shisa it
-would use the wrong salt.
+would use the wrong salt.  Reported by Mats Erik Andersson
+<gnu@gisladisker.se>.
 
 ** libshishi: Fix setting principals with multiple components in encticketpart.
 Before, the shishid KDC would return the wrong client principal name
 in a KDC-REP when principals such as "user/admin" were used.  That
 would lead to errors when getting a ticket for such principals.
+Reported by Mats Erik Andersson <gnu@gisladisker.se>.
+
+** shishid: The syslog facility is now LOG_AUTHPRIV instead of LOG_DAEMON.
+Suggested by Mats Erik Andersson <gnu@gisladisker.se>.
 
 ** minitasn1: Internal copy upgraded to GNU Libtasn1 v2.13.
 
