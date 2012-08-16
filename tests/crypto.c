@@ -343,6 +343,7 @@ test (Shishi * handle)
   char out[BUFSIZ];
   size_t i;
   int res;
+  char *salt;
 
   if (debug)
     shishi_cfg (handle, strdup ("verbose-crypto,verbose-crypto-noise"));
@@ -350,6 +351,18 @@ test (Shishi * handle)
   res = shishi_cipher_parse ("3des");
   if (res != SHISHI_DES3_CBC_HMAC_SHA1_KD)
     fail ("shishi_cipher_parse (\"3des\") == %d\n", res);
+
+  res = shishi_derive_default_salt (handle, "foo@BAR", &salt);
+  if (res != SHISHI_OK)
+    fail ("shishi_derive_default_salt failed %d\n", res);
+  if (strcmp (salt, "BARfoo") != 0)
+    fail ("shishi_derive_default_salt comparison failed %s\n", salt);
+
+  res = shishi_derive_default_salt (handle, "foo/bar@BAR", &salt);
+  if (res != SHISHI_OK)
+    fail ("shishi_derive_default_salt failed %d\n", res);
+  if (strcmp (salt, "BARfoobar") != 0)
+    fail ("shishi_derive_default_salt comparison failed %s\n", salt);
 
   for (i = 0; i < sizeof (drdk) / sizeof (drdk[0]); i++)
     {
