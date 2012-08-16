@@ -4,6 +4,15 @@ See the end for copying conditions.
 
 * Version 1.0.2 (unreleased)
 
+** libshishi: Fix salt derivation for principals with multiple components.
+Before, when adding a principal such as "user/admin" using shisa it
+would use the wrong salt.
+
+** libshishi: Fix setting principals with multiple components in encticketpart.
+Before, the shishid KDC would return the wrong client principal name
+in a KDC-REP when principals such as "user/admin" were used.  That
+would lead to errors when getting a ticket for such principals.
+
 ** minitasn1: Internal copy upgraded to GNU Libtasn1 v2.13.
 
 ** Update gnulib files.
