@@ -450,7 +450,10 @@ shishi_derive_default_salt (Shishi * handle, const char *name, char **salt)
 {
   char *principal;
   char *realm;
+  char *p;
   int rc;
+
+  /* XXX also deal with escaped /'s. */
 
   rc = shishi_parse_name (handle, name, &principal, &realm);
   if (rc != SHISHI_OK)
@@ -462,6 +465,9 @@ shishi_derive_default_salt (Shishi * handle, const char *name, char **salt)
       free (principal);
       return SHISHI_INVALID_PRINCIPAL_NAME;
     }
+
+  while ((p = strchr (principal, '/')))
+    memmove (p, p + 1, strlen (p));
 
   *salt = xasprintf ("%s%s", realm, principal);
 
