@@ -337,10 +337,10 @@ doit (void)
 
 #ifdef LOG_PERROR
     if (arg.verbose_given > 0)
-      openlog (shortname, LOG_CONS | LOG_PERROR, LOG_AUTHPRIV);
+      openlog (shortname, LOG_CONS | LOG_PERROR, LOG_AUTH);
     else
 #endif
-      openlog (shortname, LOG_CONS, LOG_AUTHPRIV);
+      openlog (shortname, LOG_CONS, LOG_AUTH);
   }
 
   kdc_setuid ();
