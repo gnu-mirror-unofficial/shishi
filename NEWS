@@ -15,12 +15,15 @@ in a KDC-REP when principals such as "user/admin" were used.  That
 would lead to errors when getting a ticket for such principals.
 Reported by Mats Erik Andersson <gnu@gisladisker.se>.
 
+** libshishi: Fixes to .k5login authorization.
+Patch by Mats Erik Andersson <gnu@gisladisker.se>.
+
 ** shishid: The syslog facility is now LOG_AUTH instead of LOG_DAEMON.
 Suggested by Mats Erik Andersson <gnu@gisladisker.se>.
 
 ** minitasn1: Internal copy upgraded to GNU Libtasn1 v2.13.
 
-** Update gnulib files.
+** Update gnulib files and various other fixes.
 
 * Version 1.0.1 (released 2012-03-12)
 
