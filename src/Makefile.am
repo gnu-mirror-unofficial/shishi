@@ -52,10 +52,10 @@ noinst_LTLIBRARIES += libcmd-shishi.la
 libcmd_shishi_la_CFLAGS =
 libcmd_shishi_la_LIBADD = gl/libgnu.la
 libcmd_shishi_la_SOURCES = shishi.ggo shishi_cmd.h shishi_cmd.c
-shishi_cmd.c shishi_cmd.h: shishi.ggo Makefile.am
+shishi_cmd.c shishi_cmd.h: $(srcdir)/shishi.ggo Makefile.am
 	gengetopt --unamed-opts="CLIENT [SERVER]"			\
 		--no-handle-help --no-handle-error --no-handle-version	\
-		--input $< --file-name shishi_cmd
+		--input $(srcdir)/shishi.ggo --file-name shishi_cmd
 
 shisa_SOURCES = shisa.c
 shisa_LDADD = ../gl/libgnu.la gl/libgnu.la libcmd-shisa.la		\
@@ -64,10 +64,10 @@ noinst_LTLIBRARIES += libcmd-shisa.la
 libcmd_shisa_la_CFLAGS =
 libcmd_shisa_la_LIBADD = gl/libgnu.la
 libcmd_shisa_la_SOURCES = shisa.ggo shisa_cmd.h shisa_cmd.c
-shisa_cmd.c shisa_cmd.h: shisa.ggo Makefile.am
+shisa_cmd.c shisa_cmd.h: $(srcdir)/shisa.ggo Makefile.am
 	gengetopt --unamed-opts="REALM [PRINCIPAL]"			\
 		--no-handle-help --no-handle-error --no-handle-version	\
-		--input $< --file-name shisa_cmd
+		--input $(srcdir)/shisa.ggo --file-name shisa_cmd
 
 shishid_SOURCES = shishid.c server.c kdc.h kdc.c
 if STARTTLS
@@ -79,10 +79,10 @@ noinst_LTLIBRARIES += libcmd-shishid.la
 libcmd_shishid_la_CFLAGS =
 libcmd_shishid_la_LIBADD = gl/libgnu.la
 libcmd_shishid_la_SOURCES = shishid.ggo shishid_cmd.h shishid_cmd.c
-shishid_cmd.c shishid_cmd.h: shishid.ggo Makefile.am
+shishid_cmd.c shishid_cmd.h: $(srcdir)/shishid.ggo Makefile.am
 	gengetopt							\
 		--no-handle-help --no-handle-error --no-handle-version	\
-		--input $< --file-name shishid_cmd
+		--input $(srcdir)/shishid.ggo --file-name shishid_cmd
 
 keytab2shishi_SOURCES = keytab2shishi.c
 keytab2shishi_LDADD = ../gl/libgnu.la gl/libgnu.la libcmd-keytab2shishi.la \
@@ -92,10 +92,10 @@ libcmd_keytab2shishi_la_CFLAGS =
 libcmd_keytab2shishi_la_LIBADD = gl/libgnu.la
 libcmd_keytab2shishi_la_SOURCES =  keytab2shishi.ggo			\
 	keytab2shishi_cmd.h keytab2shishi_cmd.c
-keytab2shishi_cmd.c keytab2shishi_cmd.h: keytab2shishi.ggo Makefile.am
+keytab2shishi_cmd.c keytab2shishi_cmd.h: $(srcdir)/keytab2shishi.ggo Makefile.am
 	gengetopt --unamed-opts="INFILE [OUTFILE]"			\
 		--no-handle-help --no-handle-error			\
-		--input $< --file-name keytab2shishi_cmd
+		--input $(srcdir)/keytab2shishi.ggo --file-name keytab2shishi_cmd
 
 ccache2shishi_SOURCES = ccache2shishi.c
 ccache2shishi_LDADD = ../gl/libgnu.la gl/libgnu.la libcmd-ccache2shishi.la \
@@ -105,7 +105,7 @@ libcmd_ccache2shishi_la_CFLAGS =
 libcmd_ccache2shishi_la_LIBADD = gl/libgnu.la
 libcmd_ccache2shishi_la_SOURCES = ccache2shishi.ggo			\
 	ccache2shishi_cmd.h ccache2shishi_cmd.c
-ccache2shishi_cmd.c ccache2shishi_cmd.h: ccache2shishi.ggo Makefile.am
+ccache2shishi_cmd.c ccache2shishi_cmd.h: $(srcdir)/ccache2shishi.ggo Makefile.am
 	gengetopt --unamed-opts="INFILE [OUTFILE]"			\
 		--no-handle-help --no-handle-error			\
-		--input $< --file-name ccache2shishi_cmd
+		--input $(srcdir)/ccache2shishi.ggo --file-name ccache2shishi_cmd

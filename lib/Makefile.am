@@ -100,4 +100,4 @@ DISTCLEANFILES += $(defexec_DATA)
 endif
 
 kerberos5.c: $(srcdir)/kerberos5.asn1
-	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $^
+	-@ASN1PARSER@ -o $@ -n shishi_asn1_tab $(srcdir)/kerberos5.asn1

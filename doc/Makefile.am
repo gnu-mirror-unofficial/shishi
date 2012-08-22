@@ -26,7 +26,7 @@ endif
 EXTRA_DIST = gdoc gdoc-error shishi.html shishi.pdf shishi.ps components.dia
 
 components.png: components.dia
-	$(DIA) --export=$@ --filter=png $<
+	$(DIA) --export=$@ --filter=png components.dia
 
 info_TEXINFOS = shishi.texi
 shishi_TEXINFOS = fdl-1.3.texi $(gdoc_TEXINFOS) \
@@ -71,7 +71,7 @@ ccache2shishi.1: $(top_srcdir)/src/ccache2shishi.c \
 		--output=$@ $(top_builddir)/src/ccache2shishi$(EXEEXT)
 
 shishi-api-error-labels.texi: $(top_srcdir)/lib/error.c
-	$(PERL) $(srcdir)/gdoc-error $^ > $@
+	$(PERL) $(srcdir)/gdoc-error $(top_srcdir)/lib/error.c > $@
 
 gdoc_MANS =
 gdoc_MANS += man/shishi_ap.3
@@ -823,7 +823,7 @@ update-makefile:
 		BASE=`basename $$i`; \
 		TEXINFOS="$$TEXINFOS\ngdoc_TEXINFOS += texi/$$BASE.texi"; \
 	done; \
-	FUNCS=`./gdoc -listfunc $(GDOC_SRC)`; \
+	FUNCS=`$(srcdir)/gdoc -listfunc $(GDOC_SRC)`; \
 	for i in $$FUNCS; do \
 		MANS="$$MANS\ngdoc_MANS += man/$$i.3"; \
 	done; \
@@ -836,8 +836,8 @@ update-makefile:
 doit:
 	@$(mkdir_p) man texi; \
 	echo -n "Creating function documentation" && \
-	for i in `./gdoc -listfunc $(GDOC_SRC)`; do \
-		./gdoc -man \
+	for i in `$(srcdir)/gdoc -listfunc $(GDOC_SRC)`; do \
+		$(srcdir)/gdoc -man \
 			-module $(PACKAGE) -sourceversion $(VERSION) \
 			-bugsto $(PACKAGE_BUGREPORT) \
 			-includefuncprefix \
@@ -851,7 +851,7 @@ doit:
 	echo -n "Creating file documentation" && \
 	for i in $(GDOC_SRC); do \
 		BASE=`basename $$i`; \
-		./gdoc -texinfo $$i >> texi/$$BASE.texi && \
+		$(srcdir)/gdoc -texinfo $$i >> texi/$$BASE.texi && \
 		echo -n "."; \
 	done; \
 	echo ""
