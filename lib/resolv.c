@@ -30,11 +30,15 @@
 
 #include "internal.h"
 
-#ifdef HAVE_LIBRESOLV
+#ifdef HAVE_RES_QUERY
 
 #include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <resolv.h>
+# ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h>
+# endif
+# ifdef HAVE_RESOLV_H
+#  include <resolv.h>
+# endif
 
 /* the largest packet we'll send and receive */
 #if PACKETSZ > 1024
@@ -263,7 +267,7 @@ shishi_resolv (const char *zone, uint16_t querytype)
   return first;
 }
 
-#else
+#else /* !HAVE_RES_QUERY */
 
 Shishi_dns
 shishi_resolv (const char *zone, uint16_t querytype)

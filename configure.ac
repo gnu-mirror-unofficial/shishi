@@ -42,6 +42,12 @@ gl2_EARLY
 gl3_EARLY
 AC_HEADER_STDC
 AC_CHECK_HEADERS(termios.h pwd.h syslog.h arpa/nameser.h netinet/in6.h)
+AC_CHECK_HEADERS(resolv.h, , , [#include <sys/types.h>
+  #include <netinet/in.h>
+  #ifdef HAVE_ARPA_NAMESER_H
+  # include <arpa/nameser.h>
+  #endif
+])
 
 # Used when creating libshishi-XX.def.
 SOVERSION=`expr ${LT_CURRENT} - ${LT_AGE}`
@@ -82,14 +88,27 @@ if test "$ac_cv_libgcrypt" != yes; then
 fi
 
 # Checks for library functions.
-AC_CHECK_FUNCS(signal select ngettext gethostbyname getpwnam getuid)
+AC_CHECK_FUNCS(signal select ngettext gethostbyname getpwnam getuid res_query)
 AC_SEARCH_LIBS(socket, socket)
 AC_SEARCH_LIBS(gethostbyname, nsl)
-AC_LIB_HAVE_LINKFLAGS(resolv,, [
-  #include <netinet/in.h>
-  #include <arpa/nameser.h>
-  #include <resolv.h>
-], [res_query (0, 0, 0, 0, 0);])
+
+# BSD systems deliver res_query in libc.
+# Most of them do not even offer libresolv.
+if test "$ac_cv_func_res_query" != yes; then
+  AC_LIB_HAVE_LINKFLAGS(resolv,, [
+    #include <netinet/in.h>
+    #include <arpa/nameser.h>
+    #include <resolv.h>
+  ], [res_query (0, 0, 0, 0, 0);])
+  # Check again, with newly acquired knowledge.
+  if test "$ac_cv_libresolv" = yes; then
+    AC_DEFINE([HAVE_RES_QUERY], 1,
+      [Define to 1 if you have the res_query function.])
+  fi
+fi
+dnl Declare LIBRESOLV and LTLIBRESOLV in all cases.
+AC_SUBST(LIBRESOLV)
+AC_SUBST(LTLIBRESOLV)
 
 # Shishid needs a logging mechanism, and right now there is no
 # alternative to syslog.  A 'fprintf(stderr,...)' mechanism may be
