@@ -117,7 +117,6 @@ shishi_cfg (Shishi * handle, const char *option)
   char *opt = option ? xstrdup (option) : NULL;
   char *p = opt;
   char *value;
-  char *realm = NULL;
   int res;
   size_t i;
 
@@ -182,6 +181,10 @@ shishi_cfg (Shishi * handle, const char *option)
 
 	case REALM_KDC_OPTION:
 	  {
+	    struct Shishi_realminfo *ri;
+	    char *realm = NULL;
+	    char *protstr;
+	    int transport = UDP;
 	    int add_realm = 1;
 
 	    realm = xstrdup (value);
@@ -194,6 +197,7 @@ shishi_cfg (Shishi * handle, const char *option)
 		      free (handle->realminfos[i].kdcaddresses);
 		      handle->realminfos[i].kdcaddresses = NULL;
 		      handle->realminfos[i].nkdcaddresses = 0;
+		      ri = &handle->realminfos[i];
 		      add_realm = 0;
 		    }
 		  break;
@@ -206,19 +210,71 @@ shishi_cfg (Shishi * handle, const char *option)
 		memset (&handle->realminfos[handle->nrealminfos], 0,
 			sizeof (handle->realminfos[handle->nrealminfos]));
 		handle->realminfos[handle->nrealminfos].name = realm;
+		ri = &handle->realminfos[handle->nrealminfos];
 		handle->nrealminfos++;
 	      }
+	    if ((protstr = strchr (p, '/')))
+	      {
+		*protstr = '\0';
+		protstr++;
+		if (strcasecmp (protstr, "udp") == 0)
+		  transport = UDP;
+		else if (strcasecmp (protstr, "tcp") == 0)
+		  transport = TCP;
+		else if (strcasecmp (protstr, "tls") == 0)
+		  transport = TLS;
+		else
+		  shishi_warn (handle,
+			       "Ignoring unknown KDC transport: %s",
+				   protstr);
+	      }
+
+	    ri->kdcaddresses = xrealloc (ri->kdcaddresses,
+					 (ri->nkdcaddresses + 1) *
+					   sizeof (*ri->kdcaddresses));
+	    ri->kdcaddresses[ri->nkdcaddresses].transport = transport;
+	    ri->kdcaddresses[ri->nkdcaddresses].hostname = xstrdup (p);
+	    if ((protstr = strchr (value, ':')))
+	      {
+		*protstr = '\0';
+		protstr++;
+		ri->kdcaddresses[ri->nkdcaddresses].port = protstr;
+	      }
+	    else
+	      ri->kdcaddresses[ri->nkdcaddresses].port = NULL;
+	    ri->nkdcaddresses++;
+
+	    p = NULL;	/* Done with suboptions.  */
 	  }
 	  break;
 
 	case SERVER_REALM_OPTION:
 	  {
 	    struct Shishi_realminfo *ri;
-	    ri = _shishi_realminfo_new (handle, value);
-	    ri->serverwildcards = xrealloc (ri->serverwildcards,
-					    ++ri->nserverwildcards *
-					    sizeof (*ri->serverwildcards));
-	    ri->serverwildcards[ri->nserverwildcards - 1] = xstrdup (value);
+	    char *subopts, *part, *next;
+
+	    if (!p || (*p == 0))
+	      {
+		shishi_warn (handle, "Empty server-realm for '%s'.", value);
+		break;
+	      }
+
+	    ri = _shishi_realminfo_new (handle, xstrdup (value));
+
+	    part = subopts = xstrdup (p);	/* List of patterns.  */
+	    while (part && *part)
+	      {
+		next = strchr (part, ',');
+		if (next)
+		  *(next++) = '\0';
+
+		ri->serverwildcards = xrealloc (ri->serverwildcards,
+						++ri->nserverwildcards *
+						sizeof (*ri->serverwildcards));
+		ri->serverwildcards[ri->nserverwildcards - 1] = xstrdup (part);
+		part = next;
+	      }
+	    p = NULL;	/* Done with suboptions.  */
 	  }
 	  break;
 
@@ -274,47 +330,6 @@ shishi_cfg (Shishi * handle, const char *option)
 
 	case -1:
 	  if (!value)
-	    break;
-	  for (i = 0; i < handle->nrealminfos; i++)
-	    if (realm && strcmp (handle->realminfos[i].name, realm) == 0)
-	      {
-		struct Shishi_realminfo *ri = &handle->realminfos[i];
-		char *protstr;
-		int transport = UDP;
-
-		if ((protstr = strchr (value, '/')))
-		  {
-		    *protstr = '\0';
-		    protstr++;
-		    if (strcasecmp (protstr, "udp") == 0)
-		      transport = UDP;
-		    else if (strcasecmp (protstr, "tcp") == 0)
-		      transport = TCP;
-		    else if (strcasecmp (protstr, "tls") == 0)
-		      transport = TLS;
-		    else
-		      shishi_warn (handle,
-				   "Ignoring unknown KDC transport: %s",
-				   protstr);
-		  }
-
-		ri->kdcaddresses = xrealloc (ri->kdcaddresses,
-					     (ri->nkdcaddresses + 1) *
-					     sizeof (*ri->kdcaddresses));
-		ri->kdcaddresses[ri->nkdcaddresses].transport = transport;
-		ri->kdcaddresses[ri->nkdcaddresses].hostname =
-		  xstrdup (value);
-		if ((protstr = strchr (value, ':')))
-		  {
-		    *protstr = '\0';
-		    protstr++;
-		    ri->kdcaddresses[ri->nkdcaddresses].port = protstr;
-		  }
-		else
-		  ri->kdcaddresses[ri->nkdcaddresses].port = NULL;
-		ri->nkdcaddresses++;
-	      }
-	  if (realm)
 	    break;
 	  /* fall through */
 

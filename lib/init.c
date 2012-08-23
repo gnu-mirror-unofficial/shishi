@@ -175,7 +175,7 @@ shishi_done (Shishi * handle)
 
   if (handle->realminfos)
     {
-      size_t i;
+      size_t i, j;
 
       for (i = 0; i < handle->nrealminfos; i++)
 	{
@@ -183,6 +183,9 @@ shishi_done (Shishi * handle)
 
 	  free (handle->realminfos[i].kdcaddresses);
 	  free (handle->realminfos[i].name);
+
+	  for (j = 0; j < handle->realminfos[i].nserverwildcards; j++)
+	    free (handle->realminfos[i].serverwildcards[j]);
 	}
     }
 

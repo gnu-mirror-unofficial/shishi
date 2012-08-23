@@ -111,6 +111,35 @@ shishi_realm_default_set (Shishi * handle, const char *realm)
 char *
 shishi_realm_for_server_file (Shishi * handle, char *server)
 {
+  struct Shishi_realminfo *ri;
+  size_t i, j;
+  char *p;
+
+  for (i = 0; i < handle->nrealminfos; i++)
+    {
+      ri = &handle->realminfos[i];
+
+      if (!ri->nserverwildcards)
+	continue;
+
+      for (j = 0; j < ri->nserverwildcards; j++)
+	{
+	  /* Exact server name match.  */
+	  if (strcmp (server, ri->serverwildcards[j]) == 0)
+	    return ri->name;
+
+	  /* Is this a tail pattern?  */
+	  if (*(ri->serverwildcards[j]) != '.')
+	    continue;
+
+	  /* Domain part matching.  */
+	  p = server;
+	  while (p = strchr (p, '.'))
+	    if (strcmp (p++, ri->serverwildcards[j]) == 0)
+	      return ri->name;
+	}
+    }
+
   return NULL;
 }
 

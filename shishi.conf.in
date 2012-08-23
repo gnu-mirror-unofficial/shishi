@@ -70,8 +70,11 @@
 
 # Specify realm for servers.
 # Value is REALM,SERVERREGEXP[,SERVERREGEXP...]
-# SERVERREGEXP is a regular expression matching servers in the realm.
-# The first match is used.
+# SERVERREGEXP is a pattern used to establish membership in the
+# given realm.  The pattern is either the exact name of a server,
+# or a trailing domain part expected in a qualified server name,
+# whenever the pattern commences with a period.  The first match
+# found will be used in library calls.
 #server-realm=JOSEFSSON.ORG,.josefsson.org
 
 # How long shishi waits for a response from a KDC before continuing
