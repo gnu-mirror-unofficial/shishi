@@ -134,7 +134,7 @@ shishi_realm_for_server_file (Shishi * handle, char *server)
 
 	  /* Domain part matching.  */
 	  p = server;
-	  while (p = strchr (p, '.'))
+	  while ((p = strchr (p, '.')))
 	    if (strcmp (p++, ri->serverwildcards[j]) == 0)
 	      return ri->name;
 	}
