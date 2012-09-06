@@ -4,6 +4,9 @@ See the end for copying conditions.
 
 * Version 1.0.2 (unreleased)
 
+** libshishi: Fix server-realm handling.
+Reported by Mats Erik Andersson <gnu@gisladisker.se>.
+
 ** libshishi: Fix salt derivation for principals with multiple components.
 Before, when adding a principal such as "user/admin" using shisa it
 would use the wrong salt.  Reported by Mats Erik Andersson
