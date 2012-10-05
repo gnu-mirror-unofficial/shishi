@@ -19,7 +19,7 @@
 # Floor, Boston, MA 02110-1301, USA.
 
 AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
-AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl -I../lib
+AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_srcdir)/lib -I$(top_builddir)/gl -I$(top_builddir)/lib
 LDADD = ../gl/libgnu.la ../lib/libshishi.la @LTLIBINTL@
 
 noinst_PROGRAMS = client client-cksum client-safe client-priv \
