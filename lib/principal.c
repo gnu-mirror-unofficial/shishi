@@ -80,7 +80,7 @@ shishi_principal_default (Shishi * handle)
  * @principal: string with new default principal name, or NULL to
  * reset to default.
  *
- * Set the default realm used by the library.  The string is copied
+ * Set the default principal used by the library.  The string is copied
  * into the library, so you can dispose of the variable immediately
  * after calling this function.
  **/

@@ -1327,15 +1327,15 @@ shishi_tkts_get_tgs (Shishi_tkts * tkts,
 /**
  * shishi_tkts_get:
  * @tkts: ticket set handle as allocated by shishi_tkts().
- * @hint: structure with characteristics of ticket to begot.
+ * @hint: structure with characteristics of ticket to be found.
  *
  * Get a ticket matching given characteristics.  This function first
- * looks in the ticket set for the ticket, then tries to find a
+ * looks in the ticket set for a ticket, then tries to find a
  * suitable TGT, possibly via an AS exchange, using
- * shishi_tkts_get_tgt(), and then use that TGT in a TGS exchange to
+ * shishi_tkts_get_tgt(), and then uses that TGT in a TGS exchange to
  * get the ticket.
  *
- * Currently this function do not implement cross realm logic.
+ * Currently this function does not implement cross realm logic.
  *
  * Return value: Returns a ticket if found, or NULL if this function
  *               is unable to get the ticket.
@@ -1403,8 +1403,8 @@ shishi_tkts_get_for_clientserver (Shishi_tkts * tkts,
  * @tkts: ticket set handle as allocated by shishi_tkts().
  * @server: server name to get ticket for.
  *
- * Short-hand function for getting a ticket for the given server and
- * the default principal client.  See shishi_tkts_get().
+ * Short-hand function for getting a ticket to the given server and
+ * for the default principal client.  See shishi_tkts_get().
  *
  * Return value: Returns a ticket if found, or NULL.
  **/
@@ -1415,6 +1415,19 @@ shishi_tkts_get_for_server (Shishi_tkts * tkts, const char *server)
     (tkts, shishi_principal_default (tkts->handle), server);
 }
 
+/**
+ * shishi_tkts_get_for_localservicepasswd:
+ * @tkts: ticket set handle as allocated by shishi_tkts().
+ * @service: service name to get ticket for.
+ * @passwd: password for the default client principal.
+ *
+ * Short-hand function for getting a ticket to the given
+ * local service, and for the default principal client.
+ * The latter's password is given as argument.
+ * See shishi_tkts_get().
+ *
+ * Return value: Returns a ticket if found, or NULL otherwise.
+ **/
 Shishi_tkt *
 shishi_tkts_get_for_localservicepasswd (Shishi_tkts * tkts,
 					const char *service,
