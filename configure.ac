@@ -48,6 +48,7 @@ SOVERSION=`expr ${LT_CURRENT} - ${LT_AGE}`
 AC_SUBST(SOVERSION)
 
 # Checks for programs.
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
 AM_MISSING_PROG(PERL, perl, $missing_dir)

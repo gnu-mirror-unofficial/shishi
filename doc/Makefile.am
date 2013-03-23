@@ -834,7 +834,7 @@ update-makefile:
 	mv Makefile.am.new Makefile.am
 
 doit:
-	@$(mkdir_p) man texi; \
+	@$(MKDIR_P) man texi; \
 	echo -n "Creating function documentation" && \
 	for i in `$(srcdir)/gdoc -listfunc $(GDOC_SRC)`; do \
 		$(srcdir)/gdoc -man \
