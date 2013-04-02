@@ -50,6 +50,7 @@ exclude_file_name_regexp--sc_trailing_blank = ^doc/components.png|doc/shishi.tex
 exclude_file_name_regexp--sc_two_space_separator_in_usage = ^doc/shishi.texi
 exclude_file_name_regexp--sc_unmarked_diagnostics = ^extra/rsh-redone/|src/shisa.c|src/shishi.c|src/shishid.c
 exclude_file_name_regexp--sc_useless_cpp_parens = ^extra/rsh-redone/
+exclude_file_name_regexp--sc_prohibit_strncpy =^lib/error.c|src/shishid.c
 
 autoreconf:
 	for f in po/*.po.in; do \

@@ -3653,8 +3653,9 @@ performing a initial authentication (@pxref{AS Functions}) or
 subsequent authentication (@pxref{TGS Functions}) and storing the new
 ticket in the ticket set are also provided.
 
-To manipulate each individual ticket, @xref{Ticket Functions}.  For
-low-level ASN.1 manipulation see @xref{Ticket (ASN.1) Functions}.
+
+@xref{Ticket Functions}, to manipulate each individual ticket.
+@xref{Ticket (ASN.1) Functions}, for low-level ASN.1 manipulation.
 
 @include texi/tkts.c.texi
 
