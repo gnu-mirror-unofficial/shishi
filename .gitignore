@@ -9,6 +9,7 @@ asn1/.deps/
 asn1/Makefile
 asn1/Makefile.in
 autom4te.cache/
+build-aux/ar-lib
 build-aux/config.guess
 build-aux/config.sub
 build-aux/depcomp
@@ -224,8 +225,14 @@ gl/stdlib.h
 gl/string.h
 gl/strings.h
 gl/sys/
+gl/sys_socket.lo
+gl/sys_socket.o
 gl/time.h
+gl/timespec.lo
+gl/timespec.o
 gl/unistd.h
+gl/unistd.lo
+gl/unistd.o
 gl/vasnprintf.lo
 gl/vasnprintf.o
 gl/warn-on-use.h
@@ -238,6 +245,8 @@ gl/xgethostname.lo
 gl/xgethostname.o
 gl/xmalloc.lo
 gl/xmalloc.o
+gl/xsize.lo
+gl/xsize.o
 gl/xstrndup.lo
 gl/xstrndup.o
 gl/xvasprintf.lo
@@ -499,6 +508,8 @@ tests/keytab.o
 tests/libutils.la
 tests/low-crypto
 tests/low-crypto.o
+tests/multiname
+tests/multiname.o
 tests/nonce
 tests/nonce.o
 tests/passwdpromptcb
