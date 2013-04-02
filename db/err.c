@@ -1,5 +1,5 @@
 /* error.c --- Error handling functions for the Shisa library.
- * Copyright (C) 2002-2012 Simon Josefsson
+ * Copyright (C) 2002-2013 Simon Josefsson
  *
  * This file is part of Shishi.
  *

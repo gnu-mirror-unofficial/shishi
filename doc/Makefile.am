@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010, 2012  Simon Josefsson
+# Copyright (C) 2002-2013 Simon Josefsson
 #
 # This file is part of Shishi.
 #

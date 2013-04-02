@@ -1,6 +1,6 @@
 /* client-priv.c --- Sample Shishi authenticated client, with privacy
  *                   protected application data exchange.
- * Copyright (C) 2003-2012 Simon Josefsson
+ * Copyright (C) 2003-2013 Simon Josefsson
  *
  * This file is part of Shishi.
  *

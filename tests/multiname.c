@@ -1,5 +1,5 @@
 /* encticketpart.c --- Shishi encticketpart self tests.
- * Copyright (C) 2012 Simon Josefsson
+ * Copyright (C) 2012-2013 Simon Josefsson
  *
  * This file is part of Shishi.
  *

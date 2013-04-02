@@ -1,5 +1,5 @@
 /* keytab2shishi.c --- Convert MIT keytab files to Shishi hostkeys
- * Copyright (C) 2006-2012 Simon Josefsson
+ * Copyright (C) 2006-2013 Simon Josefsson
  *
  * This file is part of Shishi.
  *

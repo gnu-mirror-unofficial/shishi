@@ -1,5 +1,5 @@
 /* nonce.c --- Shishi nonce handling regression self tests.
- * Copyright (C) 2006-2012 Simon Josefsson
+ * Copyright (C) 2006-2013 Simon Josefsson
  *
  * This file is part of Shishi.
  *
