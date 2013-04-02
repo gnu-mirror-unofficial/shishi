@@ -39,7 +39,7 @@ extern const ASN1_ARRAY_TYPE shishi_asn1_tab[];
 int
 _shishi_asn1_init (Shishi * handle)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
+  char errorDescription[ASN1_MAX_ERROR_DESCRIPTION_SIZE] = "";
   int asn1_result;
 
   if (!asn1_check_version (ASN1_VERSION))
@@ -764,7 +764,7 @@ int
 shishi_asn1_to_der_field (Shishi * handle, Shishi_asn1 node,
 			  const char *field, char **der, size_t * len)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
+  char errorDescription[ASN1_MAX_ERROR_DESCRIPTION_SIZE] = "";
   int mylen = 0;
   int rc;
 
@@ -847,7 +847,7 @@ der2asn1 (Shishi * handle,
 	  const char *fieldname,
 	  const char *nodename, const char *der, size_t derlen)
 {
-  char errorDescription[MAX_ERROR_DESCRIPTION_SIZE] = "";
+  char errorDescription[ASN1_MAX_ERROR_DESCRIPTION_SIZE] = "";
   Shishi_asn1 structure = NULL;
   int asn1_result = ASN1_SUCCESS;
 
