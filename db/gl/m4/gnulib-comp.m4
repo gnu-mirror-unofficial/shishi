@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2012 Free Software Foundation, Inc.
+# Copyright (C) 2002-2013 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,13 +58,13 @@ AC_DEFUN([gl3_INIT],
   m4_pushdef([gl3_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='db/gl'
-AC_CHECK_FUNCS_ONCE([readlinkat])
-gl_FUNC_READLINK
-if test $HAVE_READLINK = 0 || test $REPLACE_READLINK = 1; then
-  AC_LIBOBJ([readlink])
-  gl_PREREQ_READLINK
-fi
-gl_UNISTD_MODULE_INDICATOR([readlink])
+  AC_CHECK_FUNCS_ONCE([readlinkat])
+  gl_FUNC_READLINK
+  if test $HAVE_READLINK = 0 || test $REPLACE_READLINK = 1; then
+    AC_LIBOBJ([readlink])
+    gl_PREREQ_READLINK
+  fi
+  gl_UNISTD_MODULE_INDICATOR([readlink])
   # End of code from modules
   m4_ifval(gl3_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl3_LIBSOURCES_DIR])[ ||

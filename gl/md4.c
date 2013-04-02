@@ -1,6 +1,6 @@
 /* Functions to compute MD4 message digest of files or memory blocks.
    according to the definition of MD4 in RFC 1320 from April 1992.
-   Copyright (C) 1995-1997, 1999-2003, 2005-2006, 2008-2012 Free Software
+   Copyright (C) 1995-1997, 1999-2003, 2005-2006, 2008-2013 Free Software
    Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify it
@@ -67,7 +67,7 @@ md4_init_ctx (struct md4_ctx *ctx)
 /* Copy the 4 byte value from v into the memory location pointed to by *cp,
    If your architecture allows unaligned access this is equivalent to
    * (uint32_t *) cp = v  */
-static inline void
+static void
 set_uint32 (char *cp, uint32_t v)
 {
   memcpy (cp, &v, sizeof v);
