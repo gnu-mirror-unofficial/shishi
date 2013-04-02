@@ -24,7 +24,7 @@ AC_COPYRIGHT([Copyright (c) 2002-2012 Simon Josefsson <simon@josefsson.org>.])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
-AM_INIT_AUTOMAKE([1.10 -Wall -Werror -Wno-override])
+AM_INIT_AUTOMAKE([1.11 -Wall -Wno-override])
 AM_SILENT_RULES([yes])
 
 # Library code modified:                              REVISION++
