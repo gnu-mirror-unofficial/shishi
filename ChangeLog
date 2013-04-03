@@ -1,3 +1,418 @@
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Version 1.0.2.
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk: Copy devhelp2 file.
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Drop AC_COPYRIGHT, it is just one more place to keep
+	updated.
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* Makefile.am, NEWS, README, README-alpha, asn1/Makefile.am,
+	asn1/README, asn1/coding.c, asn1/decoding.c, asn1/element.c,
+	asn1/element.h, asn1/errors.c, asn1/errors.h, asn1/gstr.c,
+	asn1/gstr.h, asn1/int.h, asn1/libtasn1.h, asn1/parser_aux.c,
+	asn1/parser_aux.h, asn1/structure.c, asn1/structure.h,
+	asn1/version.c, configure.ac: Drop internal minitasn1 copy.
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* extra/pam_shishi/Makefile.am: Add libtool -shared when building
+	pam_shishi.  Suggested by Russ Allbery <rra@stanford.edu>.
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Generated.
+
+2012-08-22  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* configure.ac, lib/resolv.c: Locate res_query and libresolv.  For portability res_query must be searched in libc, and in
+	libresolv. The latter need not even exist on systems such as BSD.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* .gitignore: Ignore more.
+
+2012-10-26  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* lib/principal.c, lib/tkts.c: Documentation update.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2012-10-05  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* examples/Makefile.am, extra/pam_shishi/Makefile.am,
+	extra/rsh-redone/Makefile.am: Inclusion paths for out-of-tree.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* lib/asn1.c: Don't use deprecated libtasn1 features.
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac: Require automake 1.11 or later.  Drop automake
+	-Werror.
+
+2013-03-23  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* configure.ac, doc/Makefile.am: Port to recent automake.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* po/LINGUAS, po/sr.po.in: Sync with TP.
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* cfg.mk, doc/shishi.texi, lib/internal.h, src/shishid.c: Fix
+	syntax-check nits.
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* .clcopying, AUTHORS, ChangeLog, Makefile.am, NEWS, README,
+	README-alpha, THANKS, asn1/Makefile.am, asn1/README, cfg.mk,
+	configure.ac, db/Makefile.am, db/config.c, db/core.c, db/db.c,
+	db/err.c, db/file.c, db/file.h, db/fileutil.c, db/fileutil.h,
+	db/info.h, db/libshisa.map, db/setup.c, db/shisa.h,
+	doc/Makefile.am, doc/ccache.txt, doc/cyclo/Makefile.am,
+	doc/shishi.texi, examples/Makefile.am, examples/client-cksum.c,
+	examples/client-priv.c, examples/client-safe.c, examples/client.c,
+	examples/server.c, extra/Makefile.am, extra/README,
+	extra/pam_shishi/Makefile.am, extra/rsh-redone/Makefile.am,
+	lib/Makefile.am, lib/ap.c, lib/aprep.c, lib/apreq.c, lib/as.c,
+	lib/asn1.c, lib/asn1.h, lib/authenticator.c, lib/authorize.c,
+	lib/ccache.c, lib/ccache.h, lib/cfg.c, lib/cfg.h,
+	lib/crypto-3des.c, lib/crypto-aes.c, lib/crypto-ctx.c,
+	lib/crypto-des.c, lib/crypto-md.c, lib/crypto-null.c,
+	lib/crypto-rc4.c, lib/crypto.c, lib/crypto.h, lib/diskio.c,
+	lib/diskio.h, lib/encapreppart.c, lib/enckdcreppart.c,
+	lib/encticketpart.c, lib/error.c, lib/gztime.c, lib/hostkeys.c,
+	lib/init.c, lib/internal.h, lib/kdc.c, lib/kdcrep.c, lib/kdcreq.c,
+	lib/kerberos5.asn1, lib/key.c, lib/keys.c, lib/keytab.c,
+	lib/krberror.c, lib/libshishi.map, lib/low-crypto.c,
+	lib/low-crypto.h, lib/netio.c, lib/password.c, lib/pki.c,
+	lib/principal.c, lib/priv.c, lib/realm.c, lib/resolv.c, lib/safe.c,
+	lib/shishi.h, lib/starttls.c, lib/starttls.h, lib/tgs.c,
+	lib/ticket.c, lib/tkt.c, lib/tktccache.c, lib/tkts.c, lib/utils.c,
+	lib/utils.h, lib/version.c, po/POTFILES.in, shisa.conf.in,
+	shishi.conf.in, shishi.pc.in, shishi.skel.in, src/Makefile.am,
+	src/ccache2shishi.c, src/ccache2shishi.ggo, src/kdc.c, src/kdc.h,
+	src/keytab2shishi.c, src/keytab2shishi.ggo, src/resume.c,
+	src/server.c, src/shisa.c, src/shisa.ggo, src/shishi.c,
+	src/shishi.ggo, src/shishid.c, src/shishid.ggo, src/starttls.c,
+	tests/Makefile.am, tests/authenticator.c, tests/ccache.c,
+	tests/crypto-ctx.c, tests/crypto.c, tests/gztime.c, tests/key.c,
+	tests/keytab.c, tests/low-crypto.c, tests/multiname.c,
+	tests/nonce.c, tests/passwdpromptcb.c, tests/priv.c,
+	tests/rijndael.c, tests/safe.c, tests/shisa.sh, tests/shishi.supp,
+	tests/ticketset.c, tests/utils.c, tests/utils.h: Bump copyright
+	years.
+
+2013-04-03  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, build-aux/config.rpath, build-aux/gendocs.sh,
+	build-aux/gnupload, build-aux/pmccabe2html,
+	build-aux/snippet/arg-nonnull.h, build-aux/snippet/c++defs.h,
+	build-aux/snippet/warn-on-use.h, build-aux/update-copyright,
+	build-aux/useless-if-before-free, build-aux/vc-list-files,
+	db/gl/allocator.h, db/gl/areadlink.c, db/gl/areadlink.h,
+	db/gl/careadlinkat.c, db/gl/careadlinkat.h, db/gl/gnulib.mk,
+	db/gl/m4/00gnulib.m4, db/gl/m4/gnulib-cache.m4,
+	db/gl/m4/gnulib-common.m4, db/gl/m4/gnulib-comp.m4,
+	db/gl/m4/gnulib-tool.m4, db/gl/m4/readlink.m4, db/gl/readlink.c,
+	doc/fdl-1.3.texi, doc/gendocs_template, doc/parse-datetime.texi,
+	gl/Makefile.am, gl/alloca.in.h, gl/arcfour.c, gl/arcfour.h,
+	gl/arpa_inet.in.h, gl/asnprintf.c, gl/asprintf.c, gl/base64.c,
+	gl/base64.h, gl/bind.c, gl/c-ctype.c, gl/c-ctype.h, gl/close.c,
+	gl/connect.c, gl/crc.c, gl/crc.h, gl/des.c, gl/des.h, gl/dosname.h,
+	gl/dup2.c, gl/errno.in.h, gl/fcntl.c, gl/fcntl.in.h, gl/fd-hook.c,
+	gl/fd-hook.h, gl/float+.h, gl/float.c, gl/float.in.h, gl/fseek.c,
+	gl/fseeko.c, gl/fstat.c, gl/ftell.c, gl/ftello.c,
+	gl/gai_strerror.c, gl/gc-gnulib.c, gl/gc-libgcrypt.c,
+	gl/gc-pbkdf2-sha1.c, gl/gc.h, gl/getaddrinfo.c, gl/getdelim.c,
+	gl/getdomainname.c, gl/getdtablesize.c, gl/gethostname.c,
+	gl/getline.c, gl/getpass.c, gl/getpass.h, gl/getpeername.c,
+	gl/getsubopt.c, gl/gettext.h, gl/gettime.c, gl/gettimeofday.c,
+	gl/hmac-md5.c, gl/hmac-sha1.c, gl/hmac.h, gl/inet_ntop.c,
+	gl/intprops.h, gl/itold.c, gl/lseek.c, gl/m4/00gnulib.m4,
+	gl/m4/alloca.m4, gl/m4/arpa_inet_h.m4, gl/m4/autobuild.m4,
+	gl/m4/base64.m4, gl/m4/bison.m4, gl/m4/clock_time.m4,
+	gl/m4/close.m4, gl/m4/dup2.m4, gl/m4/eealloc.m4, gl/m4/environ.m4,
+	gl/m4/errno_h.m4, gl/m4/exponentd.m4, gl/m4/extensions.m4,
+	gl/m4/extern-inline.m4, gl/m4/fcntl-o.m4, gl/m4/fcntl.m4,
+	gl/m4/fcntl_h.m4, gl/m4/float_h.m4, gl/m4/fseek.m4,
+	gl/m4/fseeko.m4, gl/m4/fstat.m4, gl/m4/ftell.m4, gl/m4/ftello.m4,
+	gl/m4/gc-des.m4, gl/m4/gc-hmac-md5.m4, gl/m4/gc-hmac-sha1.m4,
+	gl/m4/gc-md4.m4, gl/m4/gc-md5.m4, gl/m4/gc-random.m4, gl/m4/gc.m4,
+	gl/m4/getaddrinfo.m4, gl/m4/getdelim.m4, gl/m4/getdomainname.m4,
+	gl/m4/getdtablesize.m4, gl/m4/gethostname.m4, gl/m4/getline.m4,
+	gl/m4/getpass.m4, gl/m4/getsubopt.m4, gl/m4/gettime.m4,
+	gl/m4/gettimeofday.m4, gl/m4/gnulib-cache.m4,
+	gl/m4/gnulib-common.m4, gl/m4/gnulib-comp.m4, gl/m4/gnulib-tool.m4,
+	gl/m4/hostent.m4, gl/m4/include_next.m4, gl/m4/inet_ntop.m4,
+	gl/m4/inline.m4, gl/m4/intmax_t.m4, gl/m4/inttypes_h.m4,
+	gl/m4/largefile.m4, gl/m4/ld-output-def.m4,
+	gl/m4/ld-version-script.m4, gl/m4/lib-ld.m4, gl/m4/lib-link.m4,
+	gl/m4/lib-prefix.m4, gl/m4/longlong.m4, gl/m4/lseek.m4,
+	gl/m4/malloc.m4, gl/m4/malloca.m4, gl/m4/manywarnings.m4,
+	gl/m4/math_h.m4, gl/m4/md4.m4, gl/m4/md5.m4, gl/m4/memchr.m4,
+	gl/m4/memxor.m4, gl/m4/minmax.m4, gl/m4/mktime.m4,
+	gl/m4/mmap-anon.m4, gl/m4/msvc-inval.m4, gl/m4/msvc-nothrow.m4,
+	gl/m4/multiarch.m4, gl/m4/netdb_h.m4, gl/m4/netinet_in_h.m4,
+	gl/m4/off_t.m4, gl/m4/parse-datetime.m4, gl/m4/pathmax.m4,
+	gl/m4/printf.m4, gl/m4/rawmemchr.m4, gl/m4/read-file.m4,
+	gl/m4/realloc.m4, gl/m4/select.m4, gl/m4/servent.m4,
+	gl/m4/setenv.m4, gl/m4/sha1.m4, gl/m4/signal_h.m4,
+	gl/m4/size_max.m4, gl/m4/snprintf.m4, gl/m4/socketlib.m4,
+	gl/m4/sockets.m4, gl/m4/socklen.m4, gl/m4/sockpfaf.m4,
+	gl/m4/ssize_t.m4, gl/m4/stat.m4, gl/m4/stdalign.m4,
+	gl/m4/stdarg.m4, gl/m4/stdbool.m4, gl/m4/stddef_h.m4,
+	gl/m4/stdint.m4, gl/m4/stdint_h.m4, gl/m4/stdio_h.m4,
+	gl/m4/stdlib_h.m4, gl/m4/strcase.m4, gl/m4/strchrnul.m4,
+	gl/m4/strdup.m4, gl/m4/strerror.m4, gl/m4/string_h.m4,
+	gl/m4/strings_h.m4, gl/m4/strndup.m4, gl/m4/strnlen.m4,
+	gl/m4/strtok_r.m4, gl/m4/strverscmp.m4, gl/m4/sys_select_h.m4,
+	gl/m4/sys_socket_h.m4, gl/m4/sys_stat_h.m4, gl/m4/sys_time_h.m4,
+	gl/m4/sys_types_h.m4, gl/m4/sys_uio_h.m4, gl/m4/time_h.m4,
+	gl/m4/time_r.m4, gl/m4/timegm.m4, gl/m4/timespec.m4,
+	gl/m4/tm_gmtoff.m4, gl/m4/unistd_h.m4, gl/m4/valgrind-tests.m4,
+	gl/m4/vasnprintf.m4, gl/m4/vasprintf.m4, gl/m4/warn-on-use.m4,
+	gl/m4/warnings.m4, gl/m4/wchar_h.m4, gl/m4/wchar_t.m4,
+	gl/m4/wint_t.m4, gl/m4/xalloc.m4, gl/m4/xsize.m4,
+	gl/m4/xstrndup.m4, gl/m4/xvasprintf.m4, gl/malloc.c, gl/malloca.c,
+	gl/malloca.h, gl/md4.c, gl/md4.h, gl/md5.c, gl/md5.h, gl/memchr.c,
+	gl/memxor.c, gl/memxor.h, gl/minmax.h, gl/mktime.c,
+	gl/msvc-inval.c, gl/msvc-inval.h, gl/msvc-nothrow.c,
+	gl/msvc-nothrow.h, gl/netdb.in.h, gl/netinet_in.in.h,
+	gl/override/lib/gettext.h.diff, gl/parse-datetime.h,
+	gl/parse-datetime.y, gl/pathmax.h, gl/printf-args.c,
+	gl/printf-args.h, gl/printf-parse.c, gl/printf-parse.h,
+	gl/rawmemchr.c, gl/read-file.c, gl/read-file.h, gl/realloc.c,
+	gl/recvfrom.c, gl/select.c, gl/sendto.c, gl/setenv.c, gl/sha1.c,
+	gl/sha1.h, gl/shutdown.c, gl/signal.in.h, gl/size_max.h,
+	gl/snprintf.c, gl/socket.c, gl/sockets.c, gl/sockets.h, gl/stat.c,
+	gl/stdalign.in.h, gl/stdarg.in.h, gl/stdbool.in.h, gl/stddef.in.h,
+	gl/stdint.in.h, gl/stdio-impl.h, gl/stdio.in.h, gl/stdlib.in.h,
+	gl/strcasecmp.c, gl/strchrnul.c, gl/strdup.c,
+	gl/strerror-override.c, gl/strerror-override.h, gl/strerror.c,
+	gl/string.in.h, gl/strings.in.h, gl/strncasecmp.c, gl/strndup.c,
+	gl/strnlen.c, gl/strtok_r.c, gl/strverscmp.c, gl/sys_select.in.h,
+	gl/sys_socket.c, gl/sys_socket.in.h, gl/sys_stat.in.h,
+	gl/sys_time.in.h, gl/sys_types.in.h, gl/sys_uio.in.h, gl/time.in.h,
+	gl/time_r.c, gl/timegm.c, gl/timespec.c, gl/timespec.h,
+	gl/unistd.c, gl/unistd.in.h, gl/unsetenv.c, gl/vasnprintf.c,
+	gl/vasnprintf.h, gl/vasprintf.c, gl/verify.h, gl/w32sock.h,
+	gl/wchar.in.h, gl/xalloc-oversized.h, gl/xalloc.h, gl/xasprintf.c,
+	gl/xgetdomainname.c, gl/xgetdomainname.h, gl/xgethostname.c,
+	gl/xmalloc.c, gl/xsize.c, gl/xsize.h, gl/xstrndup.c, gl/xstrndup.h,
+	gl/xvasprintf.c, gl/xvasprintf.h, maint.mk, src/gl/errno.in.h,
+	src/gl/error.c, src/gl/error.h, src/gl/getopt.c,
+	src/gl/getopt.in.h, src/gl/getopt1.c, src/gl/getopt_int.h,
+	src/gl/gnulib.mk, src/gl/locale.in.h, src/gl/m4/00gnulib.m4,
+	src/gl/m4/errno_h.m4, src/gl/m4/error.m4, src/gl/m4/getopt.m4,
+	src/gl/m4/gnulib-cache.m4, src/gl/m4/gnulib-common.m4,
+	src/gl/m4/gnulib-comp.m4, src/gl/m4/gnulib-tool.m4,
+	src/gl/m4/locale_h.m4, src/gl/m4/msvc-inval.m4,
+	src/gl/m4/msvc-nothrow.m4, src/gl/m4/nocrash.m4,
+	src/gl/m4/stddef_h.m4, src/gl/m4/strerror.m4,
+	src/gl/m4/sys_socket_h.m4, src/gl/m4/version-etc.m4,
+	src/gl/m4/warn-on-use.m4, src/gl/m4/wchar_t.m4,
+	src/gl/msvc-inval.c, src/gl/msvc-inval.h, src/gl/msvc-nothrow.c,
+	src/gl/msvc-nothrow.h, src/gl/progname.c, src/gl/progname.h,
+	src/gl/stddef.in.h, src/gl/strerror-override.c,
+	src/gl/strerror-override.h, src/gl/strerror.c, src/gl/verify.h,
+	src/gl/version-etc.c, src/gl/version-etc.h: Update gnulib files.
+
+2012-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2012-09-06  Simon Josefsson <simon@josefsson.org>
+
+	* lib/realm.c: Fix warning.
+
+2012-08-15  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* src/shishid.c: shishid: Use single stacked AF_INET6 sockets.  On dual stacked hosts, running an AF_INET6 wildcard socket blocks
+	AF_INET wildcards. Make it single stacked using IPV6_V6ONLY instead.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2012-08-23  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* lib/cfg.c, lib/init.c, lib/realm.c, shishi.conf.in: Configuration
+	parsing of suboptions.  The library call getsubopt() is not portable enough to rely on a
+	catch all case `-1'.  In particular, FreeBSD was not able to parse
+	`kdc-realm=EX.ORG,localhost' at all.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2012-08-22  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* doc/Makefile.am, lib/Makefile.am, src/Makefile.am: Portability
+	issues for BSD make.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2012-08-18  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2012-08-17  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, src/shishid.c: Use LOG_AUTH instead of LOG_AUTHPRIV.
+
+2012-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, THANKS, src/shishid.c: Use LOG_AUTHPRIV for shishid.
+
+2012-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Doc fix.
+
+2012-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Fix salt derivation, reported by Mats.
+
+2012-08-16  Simon Josefsson <simon@josefsson.org>
+
+	* tests/crypto.c: Test shishi_derive_default_salt more, to catch
+	regression.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Doc fix.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/encticketpart.c: Fix encticketpart cname encoding bug,
+	reported by Mats.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* tests/Makefile.am, tests/multiname.c: Check regression for
+	encticketpart cname encoding bug.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/kdcrep.c: Doc fix.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/shishid.c: Only use LOG_PERROR when verbose.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* src/kdc.c: Drop useless syslog messages, based on report from
+	Mats.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: Improve error messages.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/error.c: Improve error messages, from Mats.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Improve error messages, suggested by Mats.
+
+2012-08-15  Simon Josefsson <simon@josefsson.org>
+
+	* lib/principal.c: Doc fix from Mats Erik Andersson
+	<gnu@gisladisker.se>.
+
+2012-08-10  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, doc/Makefile.am, lib/Makefile.am, lib/internal.h,
+	lib/resolv.c: Improve res_query detection.  Reported by Eray Aslan <eray.aslan@caf.com.tr>.
+
+2012-07-02  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* configure.ac, lib/resolv.c: Issues with libresolv.  Some BSD variants must use <netinet/in.h> before including
+	<resolv.h>.  Additionally, res_query() is present in libc on most
+	BSD systems.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2012-07-02  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* doc/shishi.texi: shishi.texi: Grammar and spelling.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2012-08-07  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* lib/principal.c: Support LOGNAME in guessing principals.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2012-08-07  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* lib/cfg.c: Segfault in config list parsing.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2012-08-07  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* lib/authorize.c: Authentication type k5login.  Repair the completely broken k5login type for authentication of user
+	access.  Signed-off-by: Simon Josefsson <simon@josefsson.org>
+
+2012-06-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS: Add.
+
+2012-06-11  Simon Josefsson <simon@josefsson.org>
+
+	* configure.ac, lib/crypto-ctx.c, lib/diskio.c: Silence compiler
+	warnings.
+
+2012-06-11  Simon Josefsson <simon@josefsson.org>
+
+	* GNUmakefile, build-aux/gnupload, build-aux/snippet/_Noreturn.h,
+	db/gl/m4/gnulib-common.m4, db/gl/m4/readlink.m4, gl/Makefile.am,
+	gl/alloca.in.h, gl/arcfour.c, gl/arcfour.h, gl/arpa_inet.in.h,
+	gl/asnprintf.c, gl/asprintf.c, gl/base64.c, gl/base64.h,
+	gl/c-ctype.c, gl/c-ctype.h, gl/des.c, gl/des.h, gl/errno.in.h,
+	gl/fcntl.in.h, gl/float+.h, gl/fseeko.c, gl/fstat.c, gl/ftello.c,
+	gl/gai_strerror.c, gl/gc-gnulib.c, gl/gc-libgcrypt.c,
+	gl/gc-pbkdf2-sha1.c, gl/gc.h, gl/getaddrinfo.c, gl/getdelim.c,
+	gl/getline.c, gl/getpass.c, gl/getpass.h, gl/gettext.h,
+	gl/gettimeofday.c, gl/hmac-md5.c, gl/hmac-sha1.c, gl/hmac.h,
+	gl/inet_ntop.c, gl/lseek.c, gl/m4/dup2.m4, gl/m4/errno_h.m4,
+	gl/m4/fseeko.m4, gl/m4/fstat.m4, gl/m4/ftello.m4, gl/m4/gc.m4,
+	gl/m4/getdelim.m4, gl/m4/getline.m4, gl/m4/gettimeofday.m4,
+	gl/m4/gnulib-common.m4, gl/m4/gnulib-comp.m4, gl/m4/largefile.m4,
+	gl/m4/lseek.m4, gl/m4/malloc.m4, gl/m4/manywarnings.m4,
+	gl/m4/math_h.m4, gl/m4/mmap-anon.m4, gl/m4/off_t.m4,
+	gl/m4/realloc.m4, gl/m4/setenv.m4, gl/m4/stat.m4, gl/m4/stdio_h.m4,
+	gl/m4/strerror.m4, gl/m4/sys_stat_h.m4, gl/m4/sys_types_h.m4,
+	gl/m4/unistd_h.m4, gl/m4/warn-on-use.m4, gl/m4/warnings.m4,
+	gl/malloc.c, gl/malloca.c, gl/malloca.h, gl/md4.c, gl/md4.h,
+	gl/md5.c, gl/md5.h, gl/memxor.c, gl/memxor.h, gl/minmax.h,
+	gl/mktime.c, gl/msvc-inval.c, gl/msvc-inval.h, gl/msvc-nothrow.c,
+	gl/msvc-nothrow.h, gl/netdb.in.h, gl/netinet_in.in.h, gl/pathmax.h,
+	gl/printf-args.c, gl/printf-args.h, gl/printf-parse.c,
+	gl/printf-parse.h, gl/read-file.c, gl/read-file.h, gl/select.c,
+	gl/sha1.c, gl/sha1.h, gl/size_max.h, gl/snprintf.c, gl/stat.c,
+	gl/stdalign.in.h, gl/stdarg.in.h, gl/stdbool.in.h, gl/stddef.in.h,
+	gl/stdint.in.h, gl/stdio.in.h, gl/stdlib.in.h, gl/strcasecmp.c,
+	gl/strdup.c, gl/strerror-override.c, gl/strerror-override.h,
+	gl/string.in.h, gl/strings.in.h, gl/strncasecmp.c, gl/strndup.c,
+	gl/strnlen.c, gl/strverscmp.c, gl/sys_select.in.h,
+	gl/sys_socket.in.h, gl/sys_stat.in.h, gl/sys_time.in.h,
+	gl/sys_types.in.h, gl/sys_uio.in.h, gl/time.in.h, gl/time_r.c,
+	gl/timegm.c, gl/unistd.in.h, gl/vasnprintf.c, gl/vasnprintf.h,
+	gl/vasprintf.c, gl/wchar.in.h, gl/xsize.h, maint.mk,
+	src/gl/errno.in.h, src/gl/gnulib.mk, src/gl/locale.in.h,
+	src/gl/m4/errno_h.m4, src/gl/m4/gnulib-common.m4,
+	src/gl/m4/locale_h.m4, src/gl/m4/strerror.m4,
+	src/gl/m4/warn-on-use.m4, src/gl/msvc-inval.c, src/gl/msvc-inval.h,
+	src/gl/msvc-nothrow.c, src/gl/msvc-nothrow.h, src/gl/stddef.in.h,
+	src/gl/strerror-override.c, src/gl/strerror-override.h: Update
+	gnulib files.
+
+2012-06-11  Simon Josefsson <simon@josefsson.org>
+
+	* NEWS, asn1/coding.c, asn1/decoding.c, asn1/element.c,
+	asn1/element.h, asn1/errors.c, asn1/gstr.c, asn1/gstr.h,
+	asn1/int.h, asn1/libtasn1.h, asn1/parser_aux.c, asn1/parser_aux.h,
+	asn1/structure.c, asn1/structure.h, asn1/version.c, configure.ac,
+	lib/shishi.h: Bump versions.  Libtasn1 2.13.
+
+2012-03-12  Simon Josefsson <simon@josefsson.org>
+
+	* ChangeLog: Generated.
+
 2012-03-12  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 1.0.1.
