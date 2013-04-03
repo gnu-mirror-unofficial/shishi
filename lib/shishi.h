@@ -29,7 +29,7 @@
 #include <time.h>		/* time_t */
 #include <shishi-int.h>		/* uint32_t */
 
-#define SHISHI_VERSION "1.0.2"
+#define SHISHI_VERSION "1.0.3"
 
 # ifdef __cplusplus
 extern "C"
