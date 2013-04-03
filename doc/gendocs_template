@@ -56,7 +56,7 @@
 <ul>
   <li><a href="../reference/">HTML API Reference Manual (GTK-DOC)</a>.</li>
   <li><a href="../reference/%%PACKAGE%%.pdf">PDF Reference API Manual (GTK-DOC)</a>.
-  <li><a href="../reference/gsasl.devhelp">DevHelp API Reference Manual (GTK-DOC)</a>.</li>
+  <li><a href="../reference/shishi.devhelp2">DevHelp API Reference Manual (GTK-DOC)</a>.</li>
   <li><a href="../components.png">PNG image with developer and API information</a>.</li>
 </ul>
 

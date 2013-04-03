@@ -111,7 +111,10 @@ upload:
 
 web:
 	cd doc && ../build-aux/gendocs.sh --html "--css-include=texinfo.css" \
-		-o ../$(htmldir)/manual/ $(PACKAGE) "$(PACKAGE_NAME)"
+		--email $(PACKAGE_BUGREPORT) \
+		-o ../$(htmldir)/tmpmanual/ $(PACKAGE) "$(PACKAGE_NAME)"
+	rsync -r $(htmldir)/tmpmanual/ $(htmldir)/manual/
+	rm -rf $(htmldir)/tmpmanual/
 	cp -v doc/reference/$(PACKAGE).pdf doc/reference/html/*.html doc/reference/html/*.png doc/reference/html/*.devhelp2 doc/reference/html/*.css $(htmldir)/reference/
 	cp -v doc/cyclo/cyclo-$(PACKAGE).html $(htmldir)/cyclo/
 
