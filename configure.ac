@@ -72,10 +72,6 @@ AC_TYPE_UID_T
 AC_TYPE_SIGNAL
 AC_CHECK_DECLS(h_errno)
 
-# For libtasn1
-AC_CHECK_SIZEOF(unsigned long int, 4)
-AC_CHECK_SIZEOF(unsigned int, 4)
-
 # For gnulib stuff in gl/.
 with_libgcrypt=yes
 AC_DEFINE([OK_TO_USE_1S_CLOCK], 1, [Define to 1 to make gettime work.])
@@ -182,24 +178,10 @@ AC_MSG_CHECKING([if String processing support via Libidn should be built])
 AC_MSG_RESULT($stringprep)
 
 # Check for libtasn1
-AC_ARG_WITH(system-asn1,
-	AC_HELP_STRING([--with-system-asn1], [Use the system's libtasn1]),
-	system_asn1=$withval, system_asn1=yes)
-if test "$system_asn1" != "no"; then
-  AC_LIB_HAVE_LINKFLAGS(tasn1,, [#include <libtasn1.h>], [asn1_strerror (0);])
+AC_LIB_HAVE_LINKFLAGS(tasn1,, [#include <libtasn1.h>], [asn1_strerror (0);])
+if test "$ac_cv_libtasn1" != "yes"; then
+  AC_MSG_ERROR([Libtasn1 not found.])
 fi
-if test "$ac_cv_libtasn1" = "yes"; then
-  system_asn1=yes
-else
-  system_asn1=no
-  LTLIBTASN1="\$(top_builddir)/asn1/libminitasn1.la"
-  LIBTASN1_CFLAGS="-I\$(top_srcdir)/asn1"
-  AC_SUBST(LIBTASN1_CFLAGS)
-  AC_MSG_WARN([Libtasn1 >= 1.7 not found. Using included one.])
-fi
-AC_MSG_CHECKING([whether to use the system's libtasn1])
-AC_MSG_RESULT($system_asn1)
-AM_CONDITIONAL(ASN1, test "$system_asn1" = "no")
 
 # Check for gnutls.
 AC_ARG_ENABLE(starttls,
@@ -382,7 +364,6 @@ fi
 
 AC_CONFIG_FILES([
   Makefile
-  asn1/Makefile
   db/Makefile
   db/gl/Makefile
   doc/Makefile
@@ -416,5 +397,4 @@ AC_MSG_NOTICE([summary of build options:
   Library types:    Shared=${enable_shared}, Static=${enable_static}
   Valgrind:         ${VALGRIND}
   Version script:   $have_ld_version_script
-  System libtasn1:  $system_asn1
 ])

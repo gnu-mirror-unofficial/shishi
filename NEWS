@@ -24,7 +24,9 @@ Patch by Mats Erik Andersson <gnu@gisladisker.se>.
 ** shishid: The syslog facility is now LOG_AUTH instead of LOG_DAEMON.
 Suggested by Mats Erik Andersson <gnu@gisladisker.se>.
 
-** minitasn1: Internal copy upgraded to GNU Libtasn1 v2.13.
+** minitasn1: Removed.  You must use an external installed libtasn1.
+With recent libtasn1 it is no longer trivial to build libtasn1 as
+copied source code files.
 
 ** Update gnulib files and various other fixes.
 

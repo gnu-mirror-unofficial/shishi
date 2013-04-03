@@ -25,7 +25,7 @@ We require several tools to build the software, including:
 - Perl <http://www.cpan.org/>
 - Valgrind <http://valgrind.org/> (optional)
 - libgcrypt <http://www.gnupg.org/>
-- libtasn1 <http://josefsson.org/libtasn1/> (optional)
+- libtasn1 <http://www.gnu.org/software/libtasn1/>
 - libidn <http://www.gnu.org/software/libidn/> (optional)
 - GnuTLS <http://www.gnu.org/software/gnutls/> (for TLS support)
 - PAM <http://www.gnu.org/software/gnutls/> (for pam-shishi)

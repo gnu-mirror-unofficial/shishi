@@ -13,9 +13,8 @@ licensed under the GNU General Public License license version 3 or
 later (see COPYING), and the documentation (doc/) is licensed under
 the GNU Free Documentation License version 1.3 or later.
 
-Third party packages (asn1/ and gl/) are distributed here for
-convenience, and they have their own respective licenses, typically
-the GPL or the LGPL.
+Third party files (e.g., gl/) are distributed here for convenience,
+and they have their own respective licenses, typically the (L)GPL.
 
 For updates to the project, see <http://www.gnu.org/software/shishi/>.
 

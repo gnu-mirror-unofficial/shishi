@@ -18,18 +18,11 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc \
-	--without-system-asn1 --without-libgcrypt
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --without-libgcrypt
 
 EXTRA_DIST = cfg.mk maint.mk .clcopying
 
-SUBDIRS = po gl
-
-if ASN1
-SUBDIRS += asn1
-endif
-
-SUBDIRS += lib db src tests doc extra examples
+SUBDIRS = po gl lib db src tests doc extra examples
 
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4 -I src/gl/m4 -I db/gl/m4
 
