@@ -20,7 +20,6 @@
 
 AC_PREREQ(2.61)
 AC_INIT([GNU Shishi], [1.0.2], [bug-shishi@gnu.org])
-AC_COPYRIGHT([Copyright (c) 2002-2012 Simon Josefsson <simon@josefsson.org>.])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
