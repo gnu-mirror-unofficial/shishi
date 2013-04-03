@@ -727,6 +727,7 @@ gdoc_MANS += man/shishi_tkts_get_tgs.3
 gdoc_MANS += man/shishi_tkts_get.3
 gdoc_MANS += man/shishi_tkts_get_for_clientserver.3
 gdoc_MANS += man/shishi_tkts_get_for_server.3
+gdoc_MANS += man/shishi_tkts_get_for_localservicepasswd.3
 gdoc_MANS += man/shishi_check_version.3
 gdoc_MANS += man/shisa_cfg_db.3
 gdoc_MANS += man/shisa_cfg.3
