@@ -1,23 +1,37 @@
 To: help-shishi@gnu.org, info-gnu@gnu.org
-Subject: Shishi 1.0.1 released
+Subject: Shishi 1.0.2 released
 <#part sign=pgpmime>
 Shishi is an implementation of the Kerberos 5 network authentication
 system.  Shishi can be used to authenticate users in distributed
 systems.  Shishi is part of a GNU system.
 
-* Version 1.0.1 (released 2012-03-12)
+* Version 1.0.2 (released 2013-04-03)
 
-** Builds with GnuTLS 3.x.
+** libshishi: Fix server-realm handling.
+Reported by Mats Erik Andersson <gnu@gisladisker.se>.
 
-** minitasn1: Internal copy upgraded to GNU Libtasn1 v2.11.
+** libshishi: Fix salt derivation for principals with multiple components.
+Before, when adding a principal such as "user/admin" using shisa it
+would use the wrong salt.  Reported by Mats Erik Andersson
+<gnu@gisladisker.se>.
 
-** Translation updates.
-Added Finnish translation, thanks to Jorma Karvonen.
+** libshishi: Fix setting principals with multiple components in encticketpart.
+Before, the shishid KDC would return the wrong client principal name
+in a KDC-REP when principals such as "user/admin" were used.  That
+would lead to errors when getting a ticket for such principals.
+Reported by Mats Erik Andersson <gnu@gisladisker.se>.
 
-** Update gnulib files.  Many internal cleanups and improvements.
+** libshishi: Fixes to .k5login authorization.
+Patch by Mats Erik Andersson <gnu@gisladisker.se>.
 
-** API and ABI modifications:
-No changes since last version.
+** shishid: The syslog facility is now LOG_AUTH instead of LOG_DAEMON.
+Suggested by Mats Erik Andersson <gnu@gisladisker.se>.
+
+** minitasn1: Removed.  You must use an external installed libtasn1.
+With recent libtasn1 it is no longer trivial to build libtasn1 as
+copied source code files.
+
+** Update gnulib files and various other fixes.
 
 Shishi contains a library ('libshishi') that can be used by application
 developers to add support for Kerberos 5.  Shishi contains a command
@@ -69,12 +83,12 @@ invited to join our help-shishi mailing list, see:
 <https://lists.gnu.org/mailman/listinfo/help-shishi>.
 
 Here are the compressed sources (4.8MB):
-  ftp://ftp.gnu.org/gnu/shishi/shishi-1.0.1.tar.gz
-  http://ftp.gnu.org/gnu/shishi/shishi-1.0.1.tar.gz
+  ftp://ftp.gnu.org/gnu/shishi/shishi-1.0.2.tar.gz
+  http://ftp.gnu.org/gnu/shishi/shishi-1.0.2.tar.gz
 
 Here are GPG detached signatures signed using key 0xB565716F:
-  ftp://ftp.gnu.org/gnu/shishi/shishi-1.0.1.tar.gz.sig
-  http://ftp.gnu.org/gnu/shishi/shishi-1.0.1.tar.gz.sig
+  ftp://ftp.gnu.org/gnu/shishi/shishi-1.0.2.tar.gz.sig
+  http://ftp.gnu.org/gnu/shishi/shishi-1.0.2.tar.gz.sig
 
 Improving Shishi is costly, but you can help!  We are looking for
 organizations that find Shishi useful and wish to contribute back.  You
@@ -93,7 +107,7 @@ key identified by the following information:
 pub   1280R/B565716F 2002-05-05 [expires: 2013-05-10]
       Key fingerprint = 0424 D4EE 81A0 E3D1 19C6  F835 EDA2 1E94 B565 716F
 uid                  Simon Josefsson <simon@josefsson.org>
-sub   1280R/4D5D40AE 2002-05-05 [expires: 2013-05-10]
+sub   2048R/105E722E 2012-03-13 [expires: 2013-07-26]
 
 The key is available from:
   http://josefsson.org/key.txt
@@ -101,8 +115,8 @@ The key is available from:
 
 Here are the SHA-1 and SHA-224 checksums:
 
-0e914dbcc27516702acd668929b29c42f850daf5  shishi-1.0.1.tar.gz
-96f6eb214fa32a05f4ddb6650ad8ff392b9d36f4fca3a37b8e462e45  shishi-1.0.1.tar.gz
+c065838baae18d2e39ccd0556e7b7364e2db48bb  shishi-1.0.2.tar.gz
+1244002979c0087cb3ebbaee9faab5b1e11391e3607f40cbd1d9223c  shishi-1.0.2.tar.gz
 
 Happy hacking,
 Simon
