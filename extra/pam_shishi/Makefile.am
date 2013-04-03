@@ -27,7 +27,7 @@ lib_LTLIBRARIES = pam_shishi.la
 pam_shishi_la_SOURCES = pam_shishi.c
 pam_shishi_la_LIBADD = ../../lib/libshishi.la
 # XXX add -Wl,-x too?  PAM documentation suggests it.
-pam_shishi_la_LDFLAGS = -module -avoid-version
+pam_shishi_la_LDFLAGS = -module -shared -avoid-version
 
 # -DDEBUG_PAM
 DEFS = @DEFS@
