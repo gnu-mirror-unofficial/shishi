@@ -33,7 +33,7 @@ shishi_TEXINFOS = fdl-1.3.texi $(gdoc_TEXINFOS) \
 	shishi-api-error-labels.texi parse-datetime.texi \
 	texinfo.css components.png keytab.txt ccache.txt
 
-AM_MAKEINFOHTMLFLAGS = --no-split --number-sections --css-include=texinfo.css
+AM_MAKEINFOHTMLFLAGS = --no-split --number-sections --css-include=$(srcdir)/texinfo.css
 
 dist_man_MANS = shishi.1 shisa.1 shishid.1 keytab2shishi.1 ccache2shishi.1 \
 	$(gdoc_MANS)

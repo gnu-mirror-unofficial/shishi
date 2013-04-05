@@ -1,3 +1,8 @@
+2013-04-05  Mats Erik Andersson <gnu@gisladisker.se>
+
+	* doc/Makefile.am (AM_MAKEINFOHTMLFLAGS): Add $(srcdir)
+	to `--css-include'.
+
 2013-04-03  Simon Josefsson <simon@josefsson.org>
 
 	* NEWS: Version 1.0.2.
