@@ -1,5 +1,14 @@
 2013-04-05  Mats Erik Andersson <gnu@gisladisker.se>
 
+	Replacement headers from Gnulib put macros into <config.h>,
+	which are needed for portability to FreeBSD.
+
+	* examples/client-cksum.c, examples/client-priv.c,
+	examples/client-safe.c, examples/client.c,
+	examples/server.c [HAVE_CONFIG_H]: Include <config.h>.
+
+2013-04-05  Mats Erik Andersson <gnu@gisladisker.se>
+
 	* doc/Makefile.am (AM_MAKEINFOHTMLFLAGS): Add $(srcdir)
 	to `--css-include'.
 
