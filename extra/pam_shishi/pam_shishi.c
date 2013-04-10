@@ -21,22 +21,17 @@
  */
 
 #if HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
 
 #ifdef STDC_HEADERS
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <ctype.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <stdarg.h>
+# include <ctype.h>
 #endif
 
 #include <shishi.h>
-
-/* Libtool defines PIC for shared objects */
-#ifndef PIC
-#define PAM_STATIC
-#endif
 
 /* These #defines must be present according to PAM documentation. */
 #define PAM_SM_AUTH
@@ -45,26 +40,26 @@
 #define PAM_SM_PASSWORD
 
 #ifdef HAVE_SECURITY_PAM_APPL_H
-#include <security/pam_appl.h>
+# include <security/pam_appl.h>
 #endif
 #ifdef HAVE_SECURITY_PAM_MODULES_H
-#include <security/pam_modules.h>
+# include <security/pam_modules.h>
 #endif
 
 #if defined DEBUG_PAM && defined HAVE_SECURITY__PAM_MACROS_H
-#define DEBUG
-#include <security/_pam_macros.h>
+# define DEBUG
+# include <security/_pam_macros.h>
 #else
-#define D(x)			/* nothing */
+# define D(x)			/* nothing */
 #endif
 
+/* Rely on <security/pam_modules.h>
+ * for settings in general, as PAM_EXTERN
+ * is not universal among PAM implementations.
+ */
 #ifndef PAM_EXTERN
-#ifdef PAM_STATIC
-#define PAM_EXTERN static
-#else
-#define PAM_EXTERN extern
-#endif
-#endif
+# define PAM_EXTERN
+#endif /* !PAM_EXTERN */
 
 PAM_EXTERN int
 pam_sm_authenticate (pam_handle_t * pamh,
@@ -287,6 +282,7 @@ pam_sm_chauthtok (pam_handle_t * pamh, int flags, int argc, const char **argv)
   return retval;
 }
 
+/* Linux-PAM.  */
 #ifdef PAM_STATIC
 
 struct pam_module _pam_shishi_modstruct = {
@@ -299,4 +295,11 @@ struct pam_module _pam_shishi_modstruct = {
   pam_sm_chauthtok
 };
 
-#endif
+#endif /* PAM_STATIC */
+
+/* OpenPAM */
+#ifdef PAM_MODULE_ENTRY
+
+PAM_MODULE_ENTRY("pam_shishi");
+
+#endif /* PAM_MODULE_ENTRY */
