@@ -115,9 +115,12 @@ AM_CONDITIONAL(ENABLE_SHISHID, test "$ac_cv_search_syslog" != "no")
 AC_ARG_ENABLE(pam,
   AC_HELP_STRING([--disable-pam], [Don't use PAM even if available]))
 if test "$enable_pam" != "no"; then
-	AC_CHECK_HEADERS(security/pam_appl.h)
-	AC_CHECK_HEADERS(security/pam_modules.h, [], [],
+	AC_CHECK_HEADERS([security/pam_appl.h security/pam_ext.h])
+	AC_CHECK_HEADERS([security/pam_modules.h security/openpam.h], [], [],
 	[
+#if HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
 #if HAVE_SECURITY_PAM_APPL_H
 #include <security/pam_appl.h>
 #endif

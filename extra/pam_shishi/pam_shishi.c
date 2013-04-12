@@ -29,6 +29,7 @@
 # include <stdlib.h>
 # include <stdarg.h>
 # include <ctype.h>
+# include <string.h>
 #endif
 
 #include <shishi.h>
@@ -39,11 +40,25 @@
 #define PAM_SM_SESSION
 #define PAM_SM_PASSWORD
 
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+
 #ifdef HAVE_SECURITY_PAM_APPL_H
 # include <security/pam_appl.h>
 #endif
 #ifdef HAVE_SECURITY_PAM_MODULES_H
 # include <security/pam_modules.h>
+#endif
+
+#ifdef HAVE_SECURITY_PAM_EXT_H
+# include <syslog.h>
+# include <security/pam_ext.h>
+# define SHISHI_LINUXPAM_LOGGING 1
+#endif
+#ifdef HAVE_SECURITY_OPENPAM_H
+# include <security/openpam.h>
+# define SHISHI_OPENPAM_LOGGING 1
 #endif
 
 #if defined DEBUG_PAM && defined HAVE_SECURITY__PAM_MACROS_H
@@ -61,6 +76,30 @@
 # define PAM_EXTERN
 #endif /* !PAM_EXTERN */
 
+/* Flagging of options.  */
+static int opt_debug;
+static const char *opt_principal = NULL;
+static const char *opt_realm = NULL;
+
+static char *servername = NULL;
+static char *principal = NULL;
+
+void
+parse_argv (int argc, const char **argv)
+{
+  int i;
+
+  for (i = 0; i < argc; i++)
+    {
+      if (!strcmp ("debug", argv[i]))
+	opt_debug++;
+      else if (!strncmp ("principal=", argv[i], strlen ("principal=")))
+	opt_principal = argv[i] + strlen ("principal=");
+      else if (!strncmp ("realm=", argv[i], strlen ("realm=")))
+	opt_realm = argv[i] + strlen ("realm=");
+    }
+}
+
 PAM_EXTERN int
 pam_sm_authenticate (pam_handle_t * pamh,
 		     int flags, int argc, const char **argv)
@@ -68,9 +107,11 @@ pam_sm_authenticate (pam_handle_t * pamh,
   Shishi *h = NULL;
   Shishi_key *key = NULL;
   Shishi_tkt *tkt = NULL;
+  Shishi_tkts_hint hint;
   int retval, rc;
   const char *user = NULL;
   const char *password = NULL;
+  char *realm = NULL;
   int i;
   struct pam_conv *conv;
   struct pam_message *pmsg[1], msg[1];
@@ -82,6 +123,8 @@ pam_sm_authenticate (pam_handle_t * pamh,
   for (i = 0; i < argc; i++)
     D (("argv[%d]=%s", i, argv[i]));
 
+  parse_argv (argc, argv);
+
   rc = shishi_init (&h);
   if (rc != SHISHI_OK)
     {
@@ -91,6 +134,29 @@ pam_sm_authenticate (pam_handle_t * pamh,
       goto done;
     }
 
+  /* Extract overriding realm setting.  */
+  if (opt_realm && *opt_realm)
+    shishi_realm_default_set (h, opt_realm);
+
+  /* Extract overriding host principal name.  */
+  if (opt_principal && *opt_principal)
+    {
+      rc = shishi_parse_name (h, opt_principal, &principal, &realm);
+      if (rc != SHISHI_OK)
+	{
+	  D (("Could not parse name: %s\n", shishi_strerror (rc)));
+	  retval = PAM_AUTHINFO_UNAVAIL;
+	  goto done;
+	}
+
+      /* The present REALM is allowed to override OPT_REALM.
+       * PRINCIPAL is available for later use in the ticket.
+       */
+      if (realm && *realm)
+	shishi_realm_default_set (h, realm);
+    }
+
+  /* Detect the calling user client.  */
   retval = pam_get_user (pamh, &user, NULL);
   if (retval != PAM_SUCCESS)
     {
@@ -100,6 +166,17 @@ pam_sm_authenticate (pam_handle_t * pamh,
   D (("get user returned: %s", user));
 
   shishi_principal_default_set (h, user);
+
+  if (opt_debug)
+    {
+#if defined SHISHI_LINUXPAM_LOGGING
+      pam_syslog (pamh, LOG_INFO, "Request from `%s@%s'.",
+		  shishi_principal_default (h), shishi_realm_default (h));
+#elif defined SHISHI_OPENPAM_LOGGING
+      openpam_log (PAM_LOG_VERBOSE, "Request from `%s@%s'.",
+		   shishi_principal_default (h), shishi_realm_default (h));
+#endif
+    }
 
   retval = pam_get_item (pamh, PAM_AUTHTOK, (const void **) &password);
   if (retval != PAM_SUCCESS)
@@ -147,22 +224,57 @@ pam_sm_authenticate (pam_handle_t * pamh,
 	}
     }
 
-  tkt = shishi_tkts_get_for_localservicepasswd (shishi_tkts_default (h),
-						"host", password);
+  /* Is the service name "host" being overridden?  */
+  if (principal && *principal && strchr (principal, '/'))
+    {
+      servername = strdup (principal);
+      if (!servername)
+	{
+	  retval = PAM_BUF_ERR;
+	  D (("failed at duplicating name: %s", principal));
+	  goto done;
+	}
+    }
+
+  if (!servername)
+    servername= shishi_server_for_local_service (h, "host");
+
+  memset (&hint, 0, sizeof (hint));
+  hint.client = (char *) shishi_principal_default (h);
+  hint.server = servername;
+  hint.passwd = (char *) password;
+
+  tkt = shishi_tkts_get (shishi_tkts_default (h), &hint);
   if (tkt == NULL)
     {
+      free (servername);
       D (("TGS exchange failed: %s\n", shishi_error (h)));
       retval = PAM_AUTHINFO_UNAVAIL;
       goto done;
     }
 
-  key = shishi_hostkeys_for_localservice (h, "host");
+  key = shishi_hostkeys_for_serverrealm (h, servername,
+					 shishi_realm_default (h));
   if (key == NULL)
     {
+      free (servername);
       D (("Key not found: %s\n", shishi_error (h)));
       retval = PAM_AUTHINFO_UNAVAIL;
       goto done;
     }
+
+  if (opt_debug)
+    {
+#if defined SHISHI_LINUXPAM_LOGGING
+      pam_syslog (pamh, LOG_INFO, "Requested server `%s@%s'.",
+		  servername, shishi_realm_default (h));
+#elif defined SHISHI_OPENPAM_LOGGING
+      openpam_log (PAM_LOG_VERBOSE, "Requested server `%s@%s'.",
+		  servername, shishi_realm_default (h));
+#endif
+    }
+
+  free (servername);
 
   rc = shishi_tkt_decrypt (tkt, key);
   if (rc != SHISHI_OK)
