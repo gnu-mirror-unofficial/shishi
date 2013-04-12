@@ -811,9 +811,9 @@ gdoc_TEXINFOS += texi/fileutil.c.texi
 gdoc_TEXINFOS += texi/setup.c.texi
 
 $(gdoc_MANS) $(gdoc_TEXINFOS):
-	make update-makefile
-	make Makefile
-	make doit
+	$(MAKE) update-makefile
+	$(MAKE) Makefile
+	$(MAKE) doit
 
 GDOC_SRC = $(top_srcdir)/lib/*.c $(top_srcdir)/db/*.c
 
