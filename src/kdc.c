@@ -184,6 +184,7 @@ asreq1 (Shishi_as * as)
       if (userdbkey == NULL)
 	for (j = 0; j < nuserkeys; j++)
 	  {
+	    /* Keep facility coordinated with 'AS-REQ as ...'.  */
 	    syslog (LOG_DEBUG,
 		    "Matching client etype %d against user key etype %d",
 		    etype, userkeys[j]->etype);
@@ -194,6 +195,7 @@ asreq1 (Shishi_as * as)
 
   if (userdbkey == NULL)
     {
+      /* Again keeping facility coordinated with 'AS-REQ as ...'.  */
       syslog (LOG_NOTICE, "No matching client keys for %s@%s",
 	      username, realm);
       rc = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),

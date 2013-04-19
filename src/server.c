@@ -50,7 +50,8 @@ kdc_accept (struct listenspec *ls)
     strcpy (newls->addrname, "unknown address");
   asprintf (&newls->str, "%s (%s)", newls->addrname, ls->str);
 
-  syslog (LOG_DEBUG, "Accepted socket %d from socket %d as %s",
+  syslog (LOG_DEBUG | LOG_DAEMON,
+	  "Accepted socket %d from socket %d as %s",
 	  newls->sockfd, ls->sockfd, newls->str);
 }
 
@@ -137,11 +138,13 @@ static void
 kdc_send (struct listenspec *ls)
 {
   if (ls->ai.ai_socktype == SOCK_DGRAM)
-    syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via UDP",
+    syslog (LOG_DEBUG | LOG_DAEMON,
+	    "Sending %d bytes to %s socket %d via UDP",
 	    ls->bufpos, ls->clientaddrname, ls->sockfd);
   else
     {
-      syslog (LOG_DEBUG, "Sending %d bytes to %s socket %d via %s",
+      syslog (LOG_DEBUG | LOG_DAEMON,
+	      "Sending %d bytes to %s socket %d via %s",
 	      ls->bufpos, ls->str, ls->sockfd, ls->usetls ? "TLS" : "TCP");
 
       if (ls->bufpos + 4 >= sizeof (ls->buf))
@@ -254,7 +257,8 @@ kdc_read (struct listenspec *ls)
 
   if (read_bytes == 0 && ls->ai.ai_socktype == SOCK_STREAM)
     {
-      syslog (LOG_DEBUG, "Peer %s disconnected on socket %d\n",
+      syslog (LOG_DEBUG | LOG_DAEMON,
+	      "Peer %s disconnected on socket %d\n",
 	      ls->str, ls->sockfd);
       return -1;
     }
@@ -270,11 +274,13 @@ kdc_read (struct listenspec *ls)
       if (rc != 0)
 	strcpy (ls->clientaddrname, "unknown address");
 
-      syslog (LOG_DEBUG, "Read %d bytes from %s on socket %d\n",
+      syslog (LOG_DEBUG | LOG_DAEMON,
+	      "Read %d bytes from %s on socket %d\n",
 	      ls->bufpos, ls->clientaddrname, ls->sockfd);
     }
   else
-    syslog (LOG_DEBUG, "Read %d bytes from %s on socket %d\n",
+    syslog (LOG_DEBUG | LOG_DAEMON,
+	    "Read %d bytes from %s on socket %d\n",
 	    ls->bufpos, ls->str, ls->sockfd);
 
   return 0;
@@ -297,7 +303,8 @@ kdc_ready (struct listenspec *ls)
     return 1;
 
   if (ls->ai.ai_socktype == SOCK_STREAM)
-    syslog (LOG_DEBUG, "Got %d bytes of %d bytes from %s on socket %d\n",
+    syslog (LOG_DEBUG | LOG_DAEMON,
+	    "Got %d bytes of %d bytes from %s on socket %d\n",
 	    ls->bufpos, waitfor + 4, ls->str, ls->sockfd);
 
   return 0;
@@ -310,7 +317,8 @@ kdc_process (struct listenspec *ls)
   char *p;
   ssize_t plen;
 
-  syslog (LOG_DEBUG, "Processing %d bytes on socket %d",
+  syslog (LOG_DEBUG | LOG_DAEMON,
+	  "Processing %d bytes on socket %d",
 	  ls->bufpos, ls->sockfd);
 
   if (ls->ai.ai_socktype == SOCK_DGRAM)
@@ -331,7 +339,8 @@ kdc_process (struct listenspec *ls)
       free (p);
     }
 
-  syslog (LOG_DEBUG, "Generated %d bytes response for socket %d",
+  syslog (LOG_DEBUG | LOG_DAEMON,
+	  "Generated %d bytes response for socket %d",
 	  ls->bufpos, ls->sockfd);
 }
 
@@ -360,9 +369,10 @@ kdc_loop (void)
   signal (SIGTERM, ctrlc);
 
 #ifdef USE_STARTTLS
-  syslog (LOG_DEBUG, "Starting (GNUTLS `%s')", gnutls_check_version (NULL));
+  syslog (LOG_DEBUG | LOG_DAEMON, "Starting (GNUTLS `%s')",
+	  gnutls_check_version (NULL));
 #else
-  syslog (LOG_DEBUG, "Starting (no TLS)");
+  syslog (LOG_DEBUG | LOG_DAEMON, "Starting (no TLS)");
 #endif
 
   while (!quit)
@@ -377,7 +387,8 @@ kdc_loop (void)
 		{
 		  maxfd = MAX (maxfd, ls->sockfd + 1);
 		  if (!arg.quiet_flag)
-		    syslog (LOG_DEBUG, "Listening on %s (%s) socket %d\n",
+		    syslog (LOG_DEBUG | LOG_DAEMON,
+			    "Listening on %s (%s) socket %d\n",
 			    ls->str, ls->addrname, ls->sockfd);
 		  FD_SET (ls->sockfd, &readfds);
 		}
@@ -410,5 +421,5 @@ kdc_loop (void)
 	  }
     }
 
-  syslog (LOG_DEBUG, "Shutting down");
+  syslog (LOG_DEBUG | LOG_DAEMON, "Shutting down");
 }
