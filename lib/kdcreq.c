@@ -578,18 +578,18 @@ shishi_kdcreq_set_realmserver (Shishi * handle,
 
 /**
  * shishi_kdcreq_till:
- * @handle: Shishi library handle create by shishi_init().
- * @kdcreq: KDC-REQ variable to get client name from.
- * @till: pointer to newly allocated zero terminated string containing
- *   "till" field with generalized time.  May be %NULL (to only
- *   populate @realmlen).
- * @tilllen: pointer to length of @till on output, excluding
- *   terminating zero.  May be %NULL (to only populate @tilllen).
+ * @handle: Shishi library handle created by shishi_init().
+ * @kdcreq: KDC-REQ variable to get endtime from.
+ * @till: pointer to newly allocated null terminated string containing
+ *   "till" field with generalized time.  May be passed as %NULL
+ *   to only populate @tilllen.
+ * @tilllen: pointer to length of @till for output, excluding the
+ *   terminating null.  Set to %NULL, only @till is populated.
  *
- * Get "till" field (i.e. "endtime") in KDC-REQ, as zero-terminated
- * string.  The string is typically 15 characters long.  The string is
- * allocated by this function, and it is the responsibility of the
- * caller to deallocate it.  Note that the output length @realmlen
+ * Get "till" field, i.e., "endtime", in KDC-REQ as a null-terminated
+ * string.  The string is typically 15 characters long and is
+ * allocated by this function. It is the responsibility of the
+ * caller to deallocate it.  Note that the output length @tilllen
  * does not include the terminating zero.
  *
  * Return value: Returns SHISHI_OK iff successful.
@@ -603,13 +603,13 @@ shishi_kdcreq_till (Shishi * handle, Shishi_asn1 kdcreq,
 
 /**
  * shishi_kdcreq_tillc:
- * @handle: Shishi library handle create by shishi_init().
- * @kdcreq: KDC-REQ variable to get till field from.
+ * @handle: Shishi library handle created by shishi_init().
+ * @kdcreq: KDC-REQ variable to get "till" field from.
  *
  * Extract C time corresponding to the "till" field.
  *
- * Return value: Returns C time interpretation of the "till" field in
- * KDC-REQ.
+ * Return value: Returns the C time interpretation of the "till"
+ * field in KDC-REQ.
  **/
 time_t
 shishi_kdcreq_tillc (Shishi * handle, Shishi_asn1 kdcreq)
