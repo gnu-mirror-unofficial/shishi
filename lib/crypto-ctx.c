@@ -171,7 +171,10 @@ shishi_crypto_decrypt (Shishi_crypto * ctx,
 void
 shishi_crypto_close (Shishi_crypto * ctx)
 {
-  shishi_key_done (ctx->key);
-  free (ctx->iv);
-  free (ctx);
+  if (ctx)
+    {
+      shishi_key_done (ctx->key);
+      free (ctx->iv);
+      free (ctx);
+    }
 }
