@@ -171,7 +171,8 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 	pos += 4;
 
 	if (VERBOSENOISE (handle))
-	  printf ("keytab timestamp %u (0x%08ux)\n", timestamp, timestamp);
+	  printf ("keytab timestamp %s (0x%08x)\n",
+		  shishi_generalize_time (handle, timestamp), timestamp);
 
 	shishi_key_timestamp_set (key, t);
       }
