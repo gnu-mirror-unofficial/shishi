@@ -960,6 +960,14 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 	    {
 	      shishi_key_principal_set (lkey, line + strlen ("Principal: "));
 	    }
+	  else if (strncmp (line, "Timestamp: ", strlen ("Timestamp: ")) == 0)
+	    {
+	      time_t timestamp;
+
+	      timestamp = shishi_generalize_ctime (handle,
+				line + strlen ("Timestamp: "));
+	      shishi_key_timestamp_set (lkey, timestamp);
+	    }
 	}
     }
 
@@ -985,6 +993,7 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
  * Principal: host/latte.josefsson.org
  * Realm: JOSEFSSON.ORG
  * Key-Version-Number: 1
+ * Timestamp: 20130420150337Z
  *
  * P1QdeW/oSiag/bTyVEBAY2msiGSTmgLXlopuCKoppDs=
  * -----END SHISHI KEY-----
@@ -1013,6 +1022,9 @@ shishi_key_print (Shishi * handle, FILE * fh, const Shishi_key * key)
     fprintf (fh, "Realm: %s\n", shishi_key_realm (key));
   if (shishi_key_version (key) != UINT32_MAX)
     fprintf (fh, "Key-Version-Number: %d\n", shishi_key_version (key));
+  if (shishi_key_timestamp (key))
+    fprintf (fh, "Timestamp: %s\n",
+	     shishi_generalize_time (handle, shishi_key_timestamp (key)));
   fprintf (fh, "\n");
 
   for (i = 0; i < strlen (b64key); i++)
