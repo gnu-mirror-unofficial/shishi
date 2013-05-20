@@ -468,13 +468,13 @@ shishi_apreq_set_ticket (Shishi * handle, Shishi_asn1 apreq,
       if (res != SHISHI_OK)
 	return res;
 
-      asprintf (&format, "sname.name-string.?%d", i);
+      asprintf (&format, "sname.name-string.?%zu", i);
       res = shishi_asn1_read (handle, ticket, format, &buf, &buflen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
 
-      asprintf (&format, "ticket.sname.name-string.?%d", i);
+      asprintf (&format, "ticket.sname.name-string.?%zu", i);
       res = shishi_asn1_write (handle, apreq, format, buf, buflen);
       free (format);
       free (buf);
@@ -740,13 +740,13 @@ shishi_apreq_get_ticket (Shishi * handle,
       if (res != SHISHI_OK)
 	goto error;
 
-      asprintf (&format, "ticket.sname.name-string.?%d", i);
+      asprintf (&format, "ticket.sname.name-string.?%zu", i);
       res = shishi_asn1_read (handle, apreq, format, &buf, &buflen);
       free (format);
       if (res != SHISHI_OK)
 	goto error;
 
-      asprintf (&format, "sname.name-string.?%d", i);
+      asprintf (&format, "sname.name-string.?%zu", i);
       res = shishi_asn1_write (handle, *ticket, format, buf, buflen);
       free (format);
       free (buf);

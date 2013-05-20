@@ -136,8 +136,8 @@ main (int argc, char *argv[])
 	  if (nkeys == 0)
 	    printf (_("No keys written.\n"));
 	  else
-	    printf (ngettext ("%d key written.\n",
-			      "%d keys written.\n", nkeys), nkeys);
+	    printf (ngettext ("%zu key written.\n",
+			      "%zu keys written.\n", nkeys), nkeys);
 	}
 
       shishi_keys_done (&keys);
@@ -169,8 +169,8 @@ main (int argc, char *argv[])
 	  if (nkeys == 0)
 	    printf (_("No keys written.\n"));
 	  else
-	    printf (ngettext ("%d key written.\n",
-			      "%d keys written.\n", nkeys), nkeys);
+	    printf (ngettext ("%zu key written.\n",
+			      "%zu keys written.\n", nkeys), nkeys);
 	}
 
       shishi_keys_done (&keys);

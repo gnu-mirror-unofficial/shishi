@@ -433,13 +433,13 @@ shishi_kdcrep_get_ticket (Shishi * handle,
       if (res != SHISHI_OK)
 	goto error;
 
-      format = xasprintf ("ticket.sname.name-string.?%d", i);
+      format = xasprintf ("ticket.sname.name-string.?%zu", i);
       res = shishi_asn1_read (handle, kdcrep, format, &buf, &buflen);
       free (format);
       if (res != SHISHI_OK)
 	goto error;
 
-      format = xasprintf ("sname.name-string.?%d", i);
+      format = xasprintf ("sname.name-string.?%zu", i);
       res = shishi_asn1_write (handle, *ticket, format, buf, buflen);
       free (format);
       free (buf);
@@ -549,13 +549,13 @@ shishi_kdcrep_set_ticket (Shishi * handle, Shishi_asn1 kdcrep,
       if (res != SHISHI_OK)
 	return res;
 
-      format = xasprintf ("sname.name-string.?%d", i);
+      format = xasprintf ("sname.name-string.?%zu", i);
       res = shishi_asn1_read (handle, ticket, format, &buf, &buflen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
 
-      format = xasprintf ("ticket.sname.name-string.?%d", i);
+      format = xasprintf ("ticket.sname.name-string.?%zu", i);
       res = shishi_asn1_write (handle, kdcrep, format, buf, buflen);
       free (format);
       free (buf);

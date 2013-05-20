@@ -124,7 +124,7 @@ shishi_tkts_add_ccache_mem (Shishi * handle,
 
   if (VERBOSENOISE (handle))
     {
-      printf ("ccache len %d (0x%x)\n", len, len);
+      printf ("ccache len %zu (0x%zx)\n", len, len);
       _shishi_hexprint (data, len);
     }
 

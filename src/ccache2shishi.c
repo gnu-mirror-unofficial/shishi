@@ -135,8 +135,8 @@ main (int argc, char *argv[])
 	if (ntkts == 0)
 	  printf (_("No tickets written.\n"));
 	else
-	  printf (ngettext ("%d ticket written.\n",
-			    "%d tickets written.\n", ntkts), ntkts);
+	  printf (ngettext ("%zu ticket written.\n",
+			    "%zu tickets written.\n", ntkts), ntkts);
       }
 
     shishi_tkts_done (&tkts);

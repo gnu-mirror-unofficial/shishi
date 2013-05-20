@@ -600,7 +600,7 @@ shisa_file_key_add (Shisa * dbh,
   do
     {
       free (file);
-      asprintf (&file, "keys/%d-%d-%d.key", key->kvno, key->etype, num++);
+      asprintf (&file, "keys/%d-%d-%zu.key", key->kvno, key->etype, num++);
     }
   while (_shisa_isfile4 (info->path, realm, principal, file));
   fh = _shisa_fopen4 (info->path, realm, principal, file, "w");
@@ -611,7 +611,7 @@ shisa_file_key_add (Shisa * dbh,
       return SHISA_ADD_KEY_ERROR;
     }
 
-  fprintf (fh, "%u %u %u %u %u %u\n", key->etype, key->keylen,
+  fprintf (fh, "%u %zu %zu %zu %zu %u\n", key->etype, key->keylen,
 	   key->saltlen, key->str2keyparamlen, passwdlen, key->priority);
   if (key->keylen > 0)
     fwrite (key->key, 1, key->keylen, fh);

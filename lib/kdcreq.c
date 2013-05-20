@@ -1142,7 +1142,7 @@ shishi_kdcreq_get_padata (Shishi * handle,
     {
       int32_t patype;
 
-      asprintf (&format, "padata.?%d.padata-type", i);
+      asprintf (&format, "padata.?%zu.padata-type", i);
       res = shishi_asn1_read_int32 (handle, kdcreq, format, &patype);
       free (format);
       if (res != SHISHI_OK)
@@ -1150,7 +1150,7 @@ shishi_kdcreq_get_padata (Shishi * handle,
 
       if (patype == (int32_t) padatatype)
 	{
-	  asprintf (&format, "padata.?%d.padata-value", i);
+	  asprintf (&format, "padata.?%zu.padata-value", i);
 	  res = shishi_asn1_read (handle, kdcreq, format, out, outlen);
 	  free (format);
 	  if (res != SHISHI_OK)
@@ -1234,13 +1234,13 @@ shishi_kdcreq_add_padata (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  asprintf (&format, "padata.?%d.padata-value", i);
+  asprintf (&format, "padata.?%zu.padata-value", i);
   res = shishi_asn1_write (handle, kdcreq, format, data, datalen);
   free (format);
   if (res != SHISHI_OK)
     return res;
 
-  asprintf (&format, "padata.?%d.padata-type", i);
+  asprintf (&format, "padata.?%zu.padata-type", i);
   res = shishi_asn1_write_uint32 (handle, kdcreq, format, padatatype);
   free (format);
   if (res != SHISHI_OK)

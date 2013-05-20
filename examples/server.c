@@ -158,17 +158,17 @@ auth (Shishi * h, int verbose, const char *cname, const char *sname)
 
   rc = shishi_authenticator_client (h, shishi_ap_authenticator (ap),
 				    &buf, &buflen);
-  printf ("Client name (from authenticator): %.*s\n", buflen, buf);
+  printf ("Client name (from authenticator): %.*s\n", (int) buflen, buf);
   free (buf);
 
   rc = shishi_encticketpart_clientrealm
     (h, shishi_tkt_encticketpart (shishi_ap_tkt (ap)), &buf, &buflen);
-  printf ("Client name (from encticketpart): %.*s\n", buflen, buf);
+  printf ("Client name (from encticketpart): %.*s\n", (int) buflen, buf);
   free (buf);
 
   rc = shishi_ticket_server (h, shishi_tkt_ticket (shishi_ap_tkt (ap)),
 			     &buf, &buflen);
-  printf ("Server name (from ticket): %.*s\n", buflen, buf);
+  printf ("Server name (from ticket): %.*s\n", (int) buflen, buf);
   free (buf);
 
   /* User is authenticated. */

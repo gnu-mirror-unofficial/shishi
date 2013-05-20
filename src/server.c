@@ -122,13 +122,13 @@ kdc_send1 (struct listenspec *ls)
   while (sent_bytes == -1 && errno == EAGAIN);
 
   if (sent_bytes < 0)
-    syslog (LOG_ERR, "Error writing %d bytes to %s on socket %d: %s",
+    syslog (LOG_ERR, "Error writing %zu bytes to %s on socket %d: %s",
 	    ls->bufpos, ls->str, ls->sockfd, strerror (errno));
   else if ((size_t) sent_bytes > ls->bufpos)
-    syslog (LOG_ERR, "Overlong write (%d > %d) to %s on socket %d",
+    syslog (LOG_ERR, "Overlong write (%zu > %zu) to %s on socket %d",
 	    sent_bytes, ls->bufpos, ls->str, ls->sockfd);
   else if ((size_t) sent_bytes < ls->bufpos)
-    syslog (LOG_ERR, "Short write (%d < %d) to %s on socket %d",
+    syslog (LOG_ERR, "Short write (%zu < %zu) to %s on socket %d",
 	    sent_bytes, ls->bufpos, ls->str, ls->sockfd);
 }
 
@@ -139,12 +139,12 @@ kdc_send (struct listenspec *ls)
 {
   if (ls->ai.ai_socktype == SOCK_DGRAM)
     syslog (LOG_DEBUG | LOG_DAEMON,
-	    "Sending %d bytes to %s socket %d via UDP",
+	    "Sending %zu bytes to %s socket %d via UDP",
 	    ls->bufpos, ls->clientaddrname, ls->sockfd);
   else
     {
       syslog (LOG_DEBUG | LOG_DAEMON,
-	      "Sending %d bytes to %s socket %d via %s",
+	      "Sending %zu bytes to %s socket %d via %s",
 	      ls->bufpos, ls->str, ls->sockfd, ls->usetls ? "TLS" : "TCP");
 
       if (ls->bufpos + 4 >= sizeof (ls->buf))
@@ -245,12 +245,12 @@ kdc_read (struct listenspec *ls)
     {
 #ifdef USE_STARTTLS
       if (ls->usetls)
-	syslog (LOG_ERR, "Corrupt TLS data from %s on socket %d (%d): %s",
+	syslog (LOG_ERR, "Corrupt TLS data from %s on socket %d (%zd): %s",
 		ls->str, ls->sockfd, read_bytes,
 		gnutls_strerror (read_bytes));
       else
 #endif
-	syslog (LOG_ERR, "Error reading from %s on socket %d (%d): %s",
+	syslog (LOG_ERR, "Error reading from %s on socket %d (%zd): %s",
 		ls->str, ls->sockfd, read_bytes, strerror (read_bytes));
       return -1;
     }
@@ -275,12 +275,12 @@ kdc_read (struct listenspec *ls)
 	strcpy (ls->clientaddrname, "unknown address");
 
       syslog (LOG_DEBUG | LOG_DAEMON,
-	      "Read %d bytes from %s on socket %d\n",
+	      "Read %zu bytes from %s on socket %d\n",
 	      ls->bufpos, ls->clientaddrname, ls->sockfd);
     }
   else
     syslog (LOG_DEBUG | LOG_DAEMON,
-	    "Read %d bytes from %s on socket %d\n",
+	    "Read %zu bytes from %s on socket %d\n",
 	    ls->bufpos, ls->str, ls->sockfd);
 
   return 0;
@@ -304,7 +304,7 @@ kdc_ready (struct listenspec *ls)
 
   if (ls->ai.ai_socktype == SOCK_STREAM)
     syslog (LOG_DEBUG | LOG_DAEMON,
-	    "Got %d bytes of %d bytes from %s on socket %d\n",
+	    "Got %zu bytes of %zu bytes from %s on socket %d\n",
 	    ls->bufpos, waitfor + 4, ls->str, ls->sockfd);
 
   return 0;
@@ -318,7 +318,7 @@ kdc_process (struct listenspec *ls)
   ssize_t plen;
 
   syslog (LOG_DEBUG | LOG_DAEMON,
-	  "Processing %d bytes on socket %d",
+	  "Processing %zu bytes on socket %d",
 	  ls->bufpos, ls->sockfd);
 
   if (ls->ai.ai_socktype == SOCK_DGRAM)
@@ -340,7 +340,7 @@ kdc_process (struct listenspec *ls)
     }
 
   syslog (LOG_DEBUG | LOG_DAEMON,
-	  "Generated %d bytes response for socket %d",
+	  "Generated %zu bytes response for socket %d",
 	  ls->bufpos, ls->sockfd);
 }
 

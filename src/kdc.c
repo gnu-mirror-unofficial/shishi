@@ -355,8 +355,8 @@ asreq1 (Shishi_as * as)
 
     if (tilllen != 16 || strlen (till) != 15)
       {
-	syslog (LOG_ERR, "Invalid 'till' field in request (%d): %s", tilllen,
-		till);
+	syslog (LOG_ERR, "Invalid 'till' field in request (%zu): %s",
+		tilllen, till);
 	goto fatal;
       }
 
@@ -1070,7 +1070,7 @@ process (const char *in, size_t inlen, char **out)
   node = shishi_der2asn1 (handle, in, inlen);
   if (node == NULL)
     {
-      syslog (LOG_ERR, "Received %d bytes of unknown data", inlen);
+      syslog (LOG_ERR, "Received %zu bytes of unknown data", inlen);
       return -1;
     }
 

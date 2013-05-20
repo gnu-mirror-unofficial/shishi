@@ -124,7 +124,7 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
   if (VERBOSENOISE (handle))
     {
       size_t i;
-      printf ("Read password (length %d): ", strlen (*s));
+      printf ("Read password (length %zu): ", strlen (*s));
       for (i = 0; i < strlen (*s); i++)
 	printf ("%02x ", (*s)[i] & 0xFF);
       printf ("\n");
@@ -151,7 +151,7 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
       if (VERBOSENOISE (handle))
 	{
 	  size_t i;
-	  printf ("Password converted to %s (length %d): ",
+	  printf ("Password converted to %s (length %zu): ",
 		  strcasecmp (handle->stringprocess, "stringprep") == 0 ?
 		  "UTF-8" : handle->stringprocess, strlen (*s));
 	  for (i = 0; i < strlen (*s); i++)
@@ -175,7 +175,7 @@ shishi_prompt_password (Shishi * handle, char **s, const char *format, ...)
 	  if (VERBOSENOISE (handle))
 	    {
 	      size_t i;
-	      printf ("Stringprep'ed password (length %d): ", strlen (*s));
+	      printf ("Stringprep'ed password (length %zu): ", strlen (*s));
 	      for (i = 0; i < strlen (*s); i++)
 		printf ("%02x ", (*s)[i] & 0xFF);
 	      printf ("\n");

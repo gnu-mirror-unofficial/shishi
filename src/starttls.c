@@ -66,8 +66,8 @@ logcertinfo (gnutls_session session)
 				     GNUTLS_X509_FMT_DER);
 	if (rc < 0)
 	  {
-	    syslog (LOG_ERR, "TLS xci[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS xci[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 
@@ -76,8 +76,8 @@ logcertinfo (gnutls_session session)
 				 md5fingerprint, &md5fingerprintlen);
 	if (rc != GNUTLS_E_SUCCESS)
 	  {
-	    syslog (LOG_ERR, "TLS f[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS f[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 
@@ -88,16 +88,16 @@ logcertinfo (gnutls_session session)
 	expiration_time = gnutls_x509_crt_get_expiration_time (cert);
 	if (expiration_time == (time_t) - 1)
 	  {
-	    syslog (LOG_ERR, "TLS xcget[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS xcget[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 
 	activation_time = gnutls_x509_crt_get_activation_time (cert);
 	if (expiration_time == (time_t) - 1)
 	  {
-	    syslog (LOG_ERR, "TLS xcgat[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS xcgat[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 
@@ -112,32 +112,32 @@ logcertinfo (gnutls_session session)
 	rc = gnutls_x509_crt_get_dn (cert, NULL, &subjectlen);
 	if (rc != GNUTLS_E_SUCCESS && rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
 	  {
-	    syslog (LOG_ERR, "TLS xcgd[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS xcgd[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 	subject = xmalloc (++subjectlen);
 	rc = gnutls_x509_crt_get_dn (cert, subject, &subjectlen);
 	if (rc != GNUTLS_E_SUCCESS)
 	  {
-	    syslog (LOG_ERR, "TLS xcgd2[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS xcgd2[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 
 	rc = gnutls_x509_crt_get_issuer_dn (cert, NULL, &issuerlen);
 	if (rc != GNUTLS_E_SUCCESS && rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
 	  {
-	    syslog (LOG_ERR, "TLS xcgid[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS xcgid[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 	issuer = xmalloc (++issuerlen);
 	rc = gnutls_x509_crt_get_issuer_dn (cert, issuer, &issuerlen);
 	if (rc != GNUTLS_E_SUCCESS)
 	  {
-	    syslog (LOG_ERR, "TLS xcgid2[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS xcgid2[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 
@@ -145,16 +145,16 @@ logcertinfo (gnutls_session session)
 	rc = gnutls_x509_crt_get_serial (cert, NULL, &seriallen);
 	if (rc != GNUTLS_E_SUCCESS && rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
 	  {
-	    syslog (LOG_ERR, "TLS xcgs[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS xcgs[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 	serial = xmalloc (seriallen);
 	rc = gnutls_x509_crt_get_serial (cert, serial, &seriallen);
 	if (rc != GNUTLS_E_SUCCESS)
 	  {
-	    syslog (LOG_ERR, "TLS xcgs2[%d] failed (%d): %s", i,
-		    rc, gnutls_strerror (rc));
+	    syslog (LOG_ERR, "TLS xcgs2[%zu] failed (%d): %s",
+		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
 

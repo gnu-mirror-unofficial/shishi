@@ -990,7 +990,7 @@ recover_preauth_info (Shishi_tkts * tkts,
       char *format;
       int32_t etype;
 
-      format = xasprintf ("?%d.etype", i);
+      format = xasprintf ("?%zu.etype", i);
       rc = shishi_asn1_read_int32 (tkts->handle, einfos, format, &etype);
       free (format);
       if (rc == SHISHI_OK)
@@ -1010,7 +1010,7 @@ recover_preauth_info (Shishi_tkts * tkts,
 
 		      /* XXX mem leak. */
 
-		      format = xasprintf ("?%d.salt", i);
+		      format = xasprintf ("?%zu.salt", i);
 		      rc = shishi_asn1_read (tkts->handle, einfos, format,
 					     &lochint->preauthsalt,
 					     &lochint->preauthsaltlen);
@@ -1020,7 +1020,7 @@ recover_preauth_info (Shishi_tkts * tkts,
 
 		      if (isinfo2)
 			{
-			  format = xasprintf ("?%d.s2kparams", i);
+			  format = xasprintf ("?%zu.s2kparams", i);
 			  rc = shishi_asn1_read (tkts->handle, einfos, format,
 						 &lochint->preauths2kparams,
 						 &lochint->preauths2kparamslen);
@@ -1076,7 +1076,7 @@ recover_preauth (Shishi_tkts * tkts,
     {
       for (i = 1; i <= n; i++)
 	{
-	  char *format = xasprintf ("?%d.padata-type", i);
+	  char *format = xasprintf ("?%zu.padata-type", i);
 	  int32_t padatatype;
 
 	  rc = shishi_asn1_read_int32 (tkts->handle, pas, format,
@@ -1099,7 +1099,7 @@ recover_preauth (Shishi_tkts * tkts,
 		    size_t len;
 		    Shishi_asn1 einfos;
 
-		    format = xasprintf ("?%d.padata-value", i);
+		    format = xasprintf ("?%zu.padata-value", i);
 		    rc = shishi_asn1_read (tkts->handle, pas, format,
 					   &der, &len);
 		    free (format);

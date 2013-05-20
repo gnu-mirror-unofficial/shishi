@@ -56,7 +56,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 
   if (VERBOSENOISE (handle))
     {
-      printf ("keytab len %d (0x%x)\n", len, len);
+      printf ("keytab len %zu (0x%zx)\n", len, len);
       _shishi_hexprint (data, len);
     }
 
@@ -80,7 +80,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
       if (VERBOSENOISE (handle))
 	{
 	  printf ("keytab size %d (%x)\n", size, size);
-	  printf ("keytab pos %d < %d\n", entrystartpos + size, len);
+	  printf ("keytab pos %zu < %zu\n", entrystartpos + size, len);
 	}
 
       if (entrystartpos + size > len)
@@ -204,7 +204,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 	pos += 2;
 
 	if (VERBOSENOISE (handle))
-	  printf ("keytab keylen %d (0x%x) eq? %d\n", keylen, keylen,
+	  printf ("keytab keylen %d (0x%x) eq? %zu\n", keylen, keylen,
 		  shishi_key_length (key));
 
 	if (VERBOSENOISE (handle))
@@ -538,7 +538,7 @@ shishi_keys_to_keytab_mem (Shishi * handle,
 
   if (VERBOSENOISE (handle))
     {
-      printf ("keys_to_keytab len %d (0x%x)\n", *len, *len);
+      printf ("keys_to_keytab len %zu (0x%zx)\n", *len, *len);
       _shishi_hexprint (*out, *len);
     }
 

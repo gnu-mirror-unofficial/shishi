@@ -228,7 +228,7 @@ _shishi_simplified_derivekey (Shishi * handle,
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("\t ;; simplified_derivekey out (%d):\n",
+      printf ("\t ;; simplified_derivekey out (%zu):\n",
 	      shishi_key_length (derivedkey));
       _shishi_hexprint (shishi_key_value (derivedkey),
 			shishi_key_length (derivedkey));
@@ -1055,7 +1055,7 @@ shishi_checksum (Shishi * handle,
     {
       printf ("checksum (%s, %d, in, out)\n",
 	      shishi_key_name (key), cksumtype);
-      printf ("\t ;; key (%d):\n", shishi_key_length (key));
+      printf ("\t ;; key (%zu):\n", shishi_key_length (key));
       _shishi_hexprint (shishi_key_value (key), shishi_key_length (key));
       printf ("\t ;; in:\n");
       _shishi_escapeprint (in, inlen);
@@ -1117,7 +1117,7 @@ shishi_verify (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       printf ("verify (%s, %d, in, out)\n", shishi_key_name (key), cksumtype);
-      printf ("\t ;; key (%d):\n", shishi_key_length (key));
+      printf ("\t ;; key (%zu):\n", shishi_key_length (key));
       _shishi_hexprint (shishi_key_value (key), shishi_key_length (key));
       printf ("\t ;; data:\n");
       _shishi_escapeprint (in, inlen);
@@ -1197,14 +1197,14 @@ shishi_encrypt_ivupdate_etype (Shishi * handle,
     {
       printf ("encrypt (type=%s, usage=%d, key, in)\n",
 	      shishi_key_name (key), keyusage);
-      printf ("\t ;; key (%d):\n", shishi_key_length (key));
+      printf ("\t ;; key (%zu):\n", shishi_key_length (key));
       _shishi_hexprint (shishi_key_value (key), shishi_key_length (key));
-      printf ("\t ;; in (%d):\n", inlen);
+      printf ("\t ;; in (%zu):\n", inlen);
       _shishi_escapeprint (in, inlen);
       _shishi_hexprint (in, inlen);
       if (iv)
 	{
-	  printf ("\t ;; iv (%d):\n", ivlen);
+	  printf ("\t ;; iv (%zu):\n", ivlen);
 	  _shishi_escapeprint (iv, ivlen);
 	  _shishi_hexprint (iv, ivlen);
 	}
@@ -1507,14 +1507,14 @@ shishi_decrypt_ivupdate_etype (Shishi * handle,
     {
       printf ("decrypt (type=%s, usage=%d, key, in, out)\n",
 	      shishi_key_name (key), keyusage);
-      printf ("\t ;; key (%d):\n", shishi_key_length (key));
+      printf ("\t ;; key (%zu):\n", shishi_key_length (key));
       _shishi_hexprint (shishi_key_value (key), shishi_key_length (key));
-      printf ("\t ;; in (%d):\n", inlen);
+      printf ("\t ;; in (%zu):\n", inlen);
       _shishi_escapeprint (in, inlen);
       _shishi_hexprint (in, inlen);
       if (iv)
 	{
-	  printf ("\t ;; iv (%d):\n", ivlen);
+	  printf ("\t ;; iv (%zu):\n", ivlen);
 	  _shishi_escapeprint (iv, ivlen);
 	  _shishi_hexprint (iv, ivlen);
 	}
@@ -1913,9 +1913,9 @@ shishi_dr (Shishi * handle,
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("dr (%s, key, prfconstant, %d)\n",
+      printf ("dr (%s, key, prfconstant, %zu)\n",
 	      shishi_cipher_name (shishi_key_type (key)), derivedrandomlen);
-      printf ("\t ;; key (length %d):\n", shishi_key_length (key));
+      printf ("\t ;; key (length %zu):\n", shishi_key_length (key));
       _shishi_hexprint (shishi_key_value (key), shishi_key_length (key));
       _shishi_binprint (shishi_key_value (key), shishi_key_length (key));
       printf ("\t ;; prfconstant  %s':\n", prfconstant);
@@ -1939,7 +1939,7 @@ shishi_dr (Shishi * handle,
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("\t ;; possibly nfolded prfconstant (length %d):\n", blocksize);
+      printf ("\t ;; possibly nfolded prfconstant (length %zu):\n", blocksize);
       _shishi_escapeprint (nfoldprfconstant, blocksize);
       _shishi_hexprint (nfoldprfconstant, blocksize);
       _shishi_binprint (nfoldprfconstant, blocksize);
@@ -1965,7 +1965,7 @@ shishi_dr (Shishi * handle,
 
   if (VERBOSECRYPTO (handle))
     {
-      printf ("\t ;; derived random (length %d):\n", derivedrandomlen);
+      printf ("\t ;; derived random (length %zu):\n", derivedrandomlen);
       _shishi_hexprint (derivedrandom, derivedrandomlen);
       _shishi_binprint (derivedrandom, derivedrandomlen);
     }
@@ -1998,7 +1998,7 @@ shishi_dk (Shishi * handle,
   if (VERBOSECRYPTO (handle))
     {
       printf ("dk (%s, key, prfconstant)\n", shishi_key_name (key));
-      printf ("\t ;; key (length %d):\n", shishi_key_length (key));
+      printf ("\t ;; key (length %zu):\n", shishi_key_length (key));
       _shishi_hexprint (shishi_key_value (key), shishi_key_length (key));
       _shishi_binprint (shishi_key_value (key), shishi_key_length (key));
       printf ("\t ;; prfconstant:\n");
