@@ -139,7 +139,7 @@ test (Shishi * handle)
   /* shishi_tkts_size () */
   n = shishi_tkts_size (tktset);
   if (debug)
-    printf ("shishi_tkts_size () => `%d'.\n", n);
+    printf ("shishi_tkts_size () => `%zu'.\n", n);
   if (n == 0)
     success ("shishi_tkts_size() OK\n");
   else
@@ -220,7 +220,7 @@ test (Shishi * handle)
   /* shishi_tkts_size () */
   n = shishi_tkts_size (tktset);
   if (debug)
-    printf ("shishi_tkts_size () => `%d'.\n", n);
+    printf ("shishi_tkts_size () => `%zu'.\n", n);
   if (n == 1)
     success ("shishi_tkts_size() OK\n");
   else
@@ -248,7 +248,7 @@ test (Shishi * handle)
   /* shishi_tkts_size () */
   n = shishi_tkts_size (tktset);
   if (debug)
-    printf ("shishi_tkts_size () => `%d'.\n", n);
+    printf ("shishi_tkts_size () => `%zu'.\n", n);
   if (n == 0)
     success ("shishi_tkts_size() OK\n");
   else
@@ -271,7 +271,7 @@ test (Shishi * handle)
   /* shishi_tkts_size () */
   n = shishi_tkts_size (tktset);
   if (debug)
-    printf ("shishi_tkts_size () => `%d'.\n", n);
+    printf ("shishi_tkts_size () => `%zu'.\n", n);
   if (n == 1)
     success ("shishi_tkts_size() OK\n");
   else
@@ -310,7 +310,7 @@ test (Shishi * handle)
   /* shishi_tkts_size () */
   n = shishi_tkts_size (tktset);
   if (debug)
-    printf ("shishi_tkts_size () => `%d'.\n", n);
+    printf ("shishi_tkts_size () => `%zu'.\n", n);
   if (n == 2)
     success ("shishi_tkts_size() OK\n");
   else
@@ -442,7 +442,7 @@ test (Shishi * handle)
   /* shishi_tkts_size () */
   n = shishi_tkts_size (tktset);
   if (debug)
-    printf ("shishi_tkts_size () => `%d'.\n", n);
+    printf ("shishi_tkts_size () => `%zu'.\n", n);
   if (n == 0)
     success ("shishi_tkts_size() OK\n");
   else
@@ -478,7 +478,7 @@ test (Shishi * handle)
   /* shishi_tkts_size () */
   n = shishi_tkts_size (tktset);
   if (debug)
-    printf ("shishi_tkts_size () => `%d'.\n", n);
+    printf ("shishi_tkts_size () => `%zu'.\n", n);
   if (n == 2)
     success ("shishi_tkts_size() OK\n");
   else

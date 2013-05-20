@@ -64,7 +64,7 @@ escapeprint (const char *str, size_t len)
 {
   size_t i;
 
-  printf (" (length %d bytes):\n\t", len);
+  printf (" (length %zu bytes):\n\t", len);
   for (i = 0; i < len; i++)
     {
       if (((str[i] & 0xFF) >= 'A' && (str[i] & 0xFF) <= 'Z') ||

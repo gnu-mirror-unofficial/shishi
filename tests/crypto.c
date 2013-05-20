@@ -367,7 +367,7 @@ test (Shishi * handle)
   for (i = 0; i < sizeof (drdk) / sizeof (drdk[0]); i++)
     {
       if (debug)
-	printf ("DR entry %d\n", i);
+	printf ("DR entry %zu\n", i);
 
       res = shishi_key_from_value (handle, drdk[i].type, drdk[i].key, &key);
 
@@ -379,7 +379,7 @@ test (Shishi * handle)
 
       if (res != SHISHI_OK)
 	{
-	  fail ("shishi_dr() entry %d failed (%s)\n",
+	  fail ("shishi_dr() entry %zu failed (%s)\n",
 		i, shishi_error (handle));
 	  continue;
 	}
@@ -419,7 +419,7 @@ test (Shishi * handle)
 
       if (memcmp (drdk[i].dr, out, strlen (drdk[i].dr)) != 0)
 	{
-	  fail ("shishi_dr() entry %d failed\n", i);
+	  fail ("shishi_dr() entry %zu failed\n", i);
 	  if (debug)
 	    printf ("ERROR\n");
 	}
@@ -438,7 +438,7 @@ test (Shishi * handle)
 
       if (res != SHISHI_OK)
 	{
-	  fail ("shishi_dk() entry %d failed (%s)\n",
+	  fail ("shishi_dk() entry %zu failed (%s)\n",
 		i, shishi_error (handle));
 	  continue;
 	}
@@ -480,7 +480,7 @@ test (Shishi * handle)
 	    memcmp (drdk[i].dk, shishi_key_value (key2),
 		    strlen (drdk[i].dk)) == 0))
 	{
-	  fail ("shishi_dk() entry %d failed\n", i);
+	  fail ("shishi_dk() entry %zu failed\n", i);
 	  if (debug)
 	    printf ("ERROR\n");
 	}
@@ -493,14 +493,14 @@ test (Shishi * handle)
   for (i = 0; i < sizeof (nfold) / sizeof (nfold[0]); i++)
     {
       if (debug)
-	printf ("N-FOLD entry %d\n", i);
+	printf ("N-FOLD entry %zu\n", i);
 
       res = shishi_n_fold (handle,
 			   nfold[i].in, strlen (nfold[i].in),
 			   out, nfold[i].n / 8);
       if (res != SHISHI_OK)
 	{
-	  fail ("shishi_n_fold() entry %d failed (%s)\n",
+	  fail ("shishi_n_fold() entry %zu failed (%s)\n",
 		i, shishi_error (handle));
 	  continue;
 	}
@@ -531,7 +531,7 @@ test (Shishi * handle)
 
       if (memcmp (nfold[i].out, out, nfold[i].n / 8) != 0)
 	{
-	  fail ("shishi_n_fold() entry %d failed\n", i);
+	  fail ("shishi_n_fold() entry %zu failed\n", i);
 	  if (debug)
 	    printf ("ERROR\n");
 	}
@@ -547,7 +547,7 @@ test (Shishi * handle)
       const char *name = shishi_cipher_name (str2key[i].etype);
 
       if (debug)
-	printf ("STRING-TO-KEY entry %d (key type %s)\n", i,
+	printf ("STRING-TO-KEY entry %zu (key type %s)\n", i,
 		name ? name : "NO NAME");
 
       res = shishi_key_from_string (handle, str2key[i].etype,
@@ -556,7 +556,7 @@ test (Shishi * handle)
 				    str2key[i].parameters, &key);
       if (res != SHISHI_OK)
 	{
-	  fail ("shishi_string_to_key() entry %d failed (%s)\n",
+	  fail ("shishi_string_to_key() entry %zu failed (%s)\n",
 		i, shishi_error (handle));
 	  continue;
 	}
@@ -594,7 +594,7 @@ test (Shishi * handle)
 
       if (memcmp (str2key[i].key, shishi_key_value (key), keylen) != 0)
 	{
-	  fail ("shishi_string_to_key() entry %d failed\n", i);
+	  fail ("shishi_string_to_key() entry %zu failed\n", i);
 
 	  if (debug)
 	    printf ("ERROR\n");
@@ -608,7 +608,7 @@ test (Shishi * handle)
   for (i = 0; i < sizeof (pkcs5) / sizeof (pkcs5[0]); i++)
     {
       if (debug)
-	printf ("PKCS5 entry %d\n", i);
+	printf ("PKCS5 entry %zu\n", i);
 
       res = shishi_pbkdf2_sha1 (handle,
 				pkcs5[i].password, strlen (pkcs5[i].password),
@@ -616,7 +616,7 @@ test (Shishi * handle)
 				pkcs5[i].iterations, pkcs5[i].dklen, out);
       if (res != SHISHI_OK)
 	{
-	  fail ("PKCS5 entry %d failed fatally: %d\n", i, res);
+	  fail ("PKCS5 entry %zu failed fatally: %d\n", i, res);
 	  continue;
 	}
 
@@ -653,7 +653,7 @@ test (Shishi * handle)
 
       if (memcmp (pkcs5[i].expected, out, pkcs5[i].dklen) != 0)
 	{
-	  fail ("PKCS5 entry %d failed\n", i);
+	  fail ("PKCS5 entry %zu failed\n", i);
 
 	  if (debug)
 	    printf ("ERROR\n");

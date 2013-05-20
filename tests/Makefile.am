@@ -36,6 +36,7 @@ check_PROGRAMS = authenticator crypto gztime priv safe ticketset	\
 TESTS = $(check_PROGRAMS)
 
 TESTS_ENVIRONMENT = \
+	LD_LIBRARY_PATH = $(top_builddir)/lib/.libs \
 	KEYTAB1=$(srcdir)/keytab1.bin	\
 	CCACHE1=$(srcdir)/ccache1.bin	\
 	$(VALGRIND)

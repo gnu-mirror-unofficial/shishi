@@ -124,18 +124,18 @@ test (Shishi * handle)
 	}
 
       if (err)
-	fail ("shishi_aes_cts(%d) failed: %d\n", i, err);
+	fail ("shishi_aes_cts(%zu) failed: %d\n", i, err);
       else
 	{
 	  if (memcmp (out, tv[i].out, tv[i].outlen) == 0)
-	    success ("shishi_aes_cts(%d) OK\n", i);
+	    success ("shishi_aes_cts(%zu) OK\n", i);
 	  else
-	    fail ("shishi_aes_cts(%d) failure\n", i);
+	    fail ("shishi_aes_cts(%zu) failure\n", i);
 
 	  if (memcmp (ivout, tv[i].nextiv, IVLEN) == 0)
-	    success ("shishi_aes_cts(%d) IV OK\n", i);
+	    success ("shishi_aes_cts(%zu) IV OK\n", i);
 	  else
-	    fail ("shishi_aes_cts(%d) failure IV\n", i);
+	    fail ("shishi_aes_cts(%zu) failure IV\n", i);
 
 	  free (out);
 	  free (ivout);
