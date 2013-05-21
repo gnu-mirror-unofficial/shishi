@@ -211,7 +211,7 @@ shishi_principal_name (Shishi * handle,
       size_t tmplen;
       size_t safetmplen;
 
-      asprintf (&format, "%s.name-string.?%ld", namefield, i);
+      asprintf (&format, "%s.name-string.?%zu", namefield, i);
       res = shishi_asn1_read (handle, namenode, format, &tmp, &tmplen);
       free (format);
       if (res != SHISHI_OK)

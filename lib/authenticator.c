@@ -803,7 +803,7 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
   if (res != SHISHI_OK)
     return res;
 
-  asprintf (&format, "authorization-data.?%ld.ad-type", i);
+  asprintf (&format, "authorization-data.?%zu.ad-type", i);
   res = shishi_asn1_write_integer (handle, authenticator, format, adtype);
   if (res != SHISHI_OK)
     {
@@ -811,7 +811,7 @@ shishi_authenticator_add_authorizationdata (Shishi * handle,
       return res;
     }
 
-  sprintf (format, "authorization-data.?%ld.ad-data", i);
+  sprintf (format, "authorization-data.?%zu.ad-data", i);
   res = shishi_asn1_write (handle, authenticator, format, addata, addatalen);
   free (format);
   if (res != SHISHI_OK)
@@ -853,13 +853,13 @@ shishi_authenticator_authorizationdata (Shishi * handle,
   if (nth > i)
     return SHISHI_OUT_OF_RANGE;
 
-  asprintf (&format, "authorization-data.?%ld.ad-type", nth);
+  asprintf (&format, "authorization-data.?%zu.ad-type", nth);
   res = shishi_asn1_read_int32 (handle, authenticator, format, adtype);
   free (format);
   if (res != SHISHI_OK)
     return res;
 
-  asprintf (&format, "authorization-data.?%ld.ad-data", i);
+  asprintf (&format, "authorization-data.?%zu.ad-data", i);
   res = shishi_asn1_read (handle, authenticator, format, addata, addatalen);
   free (format);
   if (res != SHISHI_OK)

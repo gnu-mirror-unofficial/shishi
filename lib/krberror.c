@@ -1222,7 +1222,7 @@ shishi_krberror_pretty_print (Shishi * handle, FILE * fh,
 
 	      for (i = 1; i <= n; i++)
 		{
-		  char *format = xasprintf ("?%ld.padata-type", i);
+		  char *format = xasprintf ("?%zu.padata-type", i);
 		  int32_t padatatype;
 
 		  if (i > 1)

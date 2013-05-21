@@ -57,7 +57,7 @@ shishi_as_derive_salt (Shishi * handle,
     {
       int patype;
 
-      asprintf (&format, "padata.?%ld.padata-type", i);
+      asprintf (&format, "padata.?%zu.padata-type", i);
       res = shishi_asn1_read_int32 (handle, asrep, format, &patype);
       free (format);
       if (res != SHISHI_OK)
@@ -65,7 +65,7 @@ shishi_as_derive_salt (Shishi * handle,
 
       if (patype == SHISHI_PA_PW_SALT)
 	{
-	  asprintf (&format, "padata.?%ld.padata-value", i);
+	  asprintf (&format, "padata.?%zu.padata-value", i);
 	  res = shishi_asn1_read (handle, asrep, format, salt, saltlen);
 	  free (format);
 	  if (res != SHISHI_OK)
@@ -89,7 +89,7 @@ shishi_as_derive_salt (Shishi * handle,
       char *tmp;
       size_t tmplen;
 
-      asprintf (&format, "req-body.cname.name-string.?%ld", i);
+      asprintf (&format, "req-body.cname.name-string.?%zu", i);
       res = shishi_asn1_read (handle, asreq, format, &tmp, &tmplen);
       free (format);
       if (res != SHISHI_OK)
@@ -165,7 +165,7 @@ shishi_kdcreq_sendrecv_hint (Shishi * handle,
   free (der);
 
   if (VERBOSEASN1 (handle))
-    printf ("received %ld bytes\n", buflen);
+    printf ("received %zu bytes\n", buflen);
 
   *kdcrep = shishi_der2asn1_asrep (handle, buffer, buflen);
   if (*kdcrep == NULL)
@@ -352,13 +352,13 @@ shishi_kdc_copy_cname (Shishi * handle,
       if (res != SHISHI_OK)
 	return res;
 
-      asprintf (&format, "cname.name-string.?%ld", i);
+      asprintf (&format, "cname.name-string.?%zu", i);
       res = shishi_asn1_read (handle, encticketpart, format, &buf, &buflen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
 
-      asprintf (&format, "cname.name-string.?%ld", i);
+      asprintf (&format, "cname.name-string.?%zu", i);
       res = shishi_asn1_write (handle, kdcrep, format, buf, buflen);
       free (format);
       free (buf);
@@ -407,13 +407,13 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 
   for (i = 1; i <= j; i++)
     {
-      asprintf (&format, "req-body.cname.name-string.?%ld", i);
+      asprintf (&format, "req-body.cname.name-string.?%zu", i);
       res = shishi_asn1_read (handle, asreq, format, &reqcname, &reqcnamelen);
       free (format);
       if (res != SHISHI_OK)
 	return res;
 
-      asprintf (&format, "cname.name-string.?%ld", i);
+      asprintf (&format, "cname.name-string.?%zu", i);
       res = shishi_asn1_read (handle, asrep, format, &repcname, &repcnamelen);
       free (format);
       if (res != SHISHI_OK)
@@ -423,8 +423,8 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 	{
 	  reqcname[reqcnamelen] = '\0';
 	  repcname[repcnamelen] = '\0';
-	  printf ("request cname %ld: %s\n", i, reqcname);
-	  printf ("reply cname %ld: %s\n", i, repcname);
+	  printf ("request cname %zu: %s\n", i, reqcname);
+	  printf ("reply cname %zu: %s\n", i, repcname);
 	}
 
       res = (reqcnamelen != repcnamelen) ||
@@ -477,11 +477,11 @@ shishi_kdc_check_nonce_1 (Shishi * handle,
     {
       size_t i;
 
-      printf ("request nonce (len=%ld) ", reqnoncelen);
+      printf ("request nonce (len=%zu) ", reqnoncelen);
       for (i = 0; i < reqnoncelen; i++)
 	printf ("%02x", reqnonce[i] & 0xFF);
       printf ("\n");
-      printf ("reply nonce (len=%ld) ", repnoncelen);
+      printf ("reply nonce (len=%zu) ", repnoncelen);
       for (i = 0; i < repnoncelen; i++)
 	printf ("%02x", repnonce[i] & 0xFF);
       printf ("\n");
