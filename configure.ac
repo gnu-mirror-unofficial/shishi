@@ -210,6 +210,7 @@ AM_CONDITIONAL(STARTTLS, test "$starttls" != "no")
 GTK_DOC_CHECK(1.1)
 
 # Let people enable/disable various encryption/checksum types.
+# DES
 AC_ARG_ENABLE(des, AC_HELP_STRING([--disable-des],
 			[disable DES related encryption/checksum types]),
 		enable_des=$enableval, enable_des=yes)
@@ -220,6 +221,7 @@ fi
 AC_MSG_CHECKING([if DES related encryption/checksum types should be used])
 AC_MSG_RESULT($enable_des)
 
+# 3DES
 AC_ARG_ENABLE(3des, AC_HELP_STRING([--disable-3des],
 			[disable 3DES encryption/checksum type]),
 		enable_3des=$enableval, enable_3des=yes)
@@ -230,6 +232,7 @@ fi
 AC_MSG_CHECKING([if 3DES encryption/checksum type should be used])
 AC_MSG_RESULT($enable_3des)
 
+# AES
 AC_ARG_ENABLE(aes, AC_HELP_STRING([--disable-aes],
 			[disable AES encryption/checksum types]),
 		enable_aes=$enableval, enable_aes=yes)
@@ -240,6 +243,7 @@ fi
 AC_MSG_CHECKING([if AES encryption/checksum types should be used])
 AC_MSG_RESULT($enable_aes)
 
+# MD: MD4/MD5
 AC_ARG_ENABLE(md, AC_HELP_STRING([--disable-md],
 			[disable unkeyed MD4/MD5 checksum types]),
 		enable_md=$enableval, enable_md=yes)
@@ -250,6 +254,7 @@ fi
 AC_MSG_CHECKING([if unkeyed MD checksum types should be used])
 AC_MSG_RESULT($enable_md)
 
+# NULL-encryption
 AC_ARG_ENABLE(null, AC_HELP_STRING([--disable-null],
 			[disable dummy NULL encryption/checksum type]),
 		enable_null=$enableval, enable_null=yes)
@@ -260,6 +265,7 @@ fi
 AC_MSG_CHECKING([if dummy NULL encryption/checksum type should be used])
 AC_MSG_RESULT($enable_null)
 
+# ARCFOUR
 AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--disable-arcfour],
 			[disable ARCFOUR encryption/checksum type]),
 		enable_arcfour=$enableval, enable_arcfour=yes)
@@ -271,6 +277,7 @@ fi
 AC_MSG_CHECKING([if ARCFOUR encryption/checksum type should be used])
 AC_MSG_RESULT($enable_arcfour)
 
+# Location of configuration directory.
 AC_SUBST(CONFDIR, "\$(sysconfdir)/\$(PACKAGE)")
 AC_ARG_WITH(conf-dir,
             AC_HELP_STRING([--with-conf-dir=DIR],
@@ -282,6 +289,7 @@ AC_ARG_WITH(conf-dir,
             esac])
 AC_MSG_NOTICE([configuration files will be stored in $CONFDIR])
 
+# Location of skeleton directory.
 AC_SUBST(SKELDIR, "\$(sysconfdir)/\$(PACKAGE)")
 AC_ARG_WITH(skel-dir,
             AC_HELP_STRING([--with-skel-dir=DIR],
@@ -293,6 +301,7 @@ AC_ARG_WITH(skel-dir,
             esac])
 AC_MSG_NOTICE([user template configuration file in $SKELDIR])
 
+# Location of host key lookup file.
 AC_SUBST(KEYDIR, "\$(sysconfdir)/\$(PACKAGE)")
 AC_ARG_WITH(key-dir,
             AC_HELP_STRING([--with-key-dir=DIR],
@@ -304,6 +313,7 @@ AC_ARG_WITH(key-dir,
             esac])
 AC_MSG_NOTICE([host keys will be stored in $KEYDIR])
 
+# Location of Shisa database.
 AC_SUBST(DBDIR, "\$(localstatedir)/\$(PACKAGE)")
 AC_ARG_WITH(db-dir,
             AC_HELP_STRING([--with-db-dir=DIR],
@@ -315,10 +325,12 @@ AC_ARG_WITH(db-dir,
             esac])
 AC_MSG_NOTICE([user database root path $DBDIR])
 
+# Some select fixes.
 AC_DEFINE([xalloc_die], [shishi_xalloc_die], [Fix namespace of xalloc_die.])
 
 sj_UPDATE_HEADER_VERSION([$srcdir/lib/shishi.h])
 
+# Activation of additional compiler warnings.
 AC_ARG_ENABLE([gcc-warnings],
   [AS_HELP_STRING([--enable-gcc-warnings],
 		  [turn on lots of GCC warnings (for developers)])],
@@ -348,8 +360,8 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wundef"                     # Problems in gnulib files
   nw="$nw -Wstrict-overflow"           # Don't know how to avoid
   nw="$nw -Waggregate-return"          # For src/resume.c:resume_db_fetch...
-  nw="$nw -Wsuggest-attribute=pure" # Is it worth using attributes?
-  nw="$nw -Wsuggest-attribute=const" # Is it worth using attributes?
+  nw="$nw -Wsuggest-attribute=pure"    # Is it worth using attributes?
+  nw="$nw -Wsuggest-attribute=const"   # Is it worth using attributes?
 
   gl_MANYWARN_ALL_GCC([ws])
   gl_MANYWARN_COMPLEMENT(ws, [$ws], [$nw])
@@ -357,6 +369,7 @@ if test "$gl_gcc_warnings" = yes; then
     gl_WARN_ADD([$w])
   done
 
+  # Disable some, but evaluate these as the project moves on.
   gl_WARN_ADD([-Wno-format])           # Too many warnings for now
   gl_WARN_ADD([-Wno-unused-parameter]) # Too many warnings for now
   gl_WARN_ADD([-Wno-stack-protector])  # Some functions cannot be protected
@@ -391,12 +404,13 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([summary of build options:
 
-  version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE
+  Version:          ${VERSION} shared $LT_CURRENT:$LT_REVISION:$LT_AGE
   Host type:        ${host}
   Install prefix:   ${prefix}
   Compiler:         ${CC}
   Warning flags:    errors: ${WERROR_CFLAGS} warnings: ${WARN_CFLAGS}
   Library types:    Shared=${enable_shared}, Static=${enable_static}
-  Valgrind:         ${VALGRIND}
+  PAM module:       ${enable_pam}
+  Valgrind:         ${VALGRIND:-no}
   Version script:   $have_ld_version_script
 ])
