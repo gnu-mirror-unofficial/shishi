@@ -841,6 +841,7 @@ doit:
 		$(srcdir)/gdoc -man \
 			-module $(PACKAGE) -sourceversion $(VERSION) \
 			-bugsto $(PACKAGE_BUGREPORT) \
+			-pkg-name "$(PACKAGE_NAME)" \
 			-includefuncprefix \
 			-seeinfo $(PACKAGE) -verbatimcopying \
 			-copyright "2002-2010 Simon Josefsson" \

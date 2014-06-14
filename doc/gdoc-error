@@ -1,4 +1,7 @@
-#!/usr/bin/perl
+eval '(exit $?0)' && eval 'exec perl -S "$0" ${1+"$@"}'
+  & eval 'exec perl -S "$0" $argv:q'
+    if 0;
+# Generate error strings from source code.
 
 # Copyright (C) 2002, 2004 Simon Josefsson.
 #
@@ -20,6 +23,7 @@
 # you will.
 
 use strict;
+use warnings;
 
 my ($inerror);
 my ($label, $txt);
