@@ -133,7 +133,8 @@ eval '(exit $?0)' && eval 'exec perl -S "$0" ${1+"$@"}'
 # 3. xxx\: with xxx:
 
 # XXX: Migrate to strict code with warnings.
-#      Possibly rewrite with Getopt::Long.
+
+use Getopt::Long;
 
 use POSIX qw(strftime);
 
@@ -147,6 +148,8 @@ $type_env =	 '(\$\w+)';
 
 # Output conversion substitutions.
 #  One for each output format
+
+my @known_modes = qw/ docbook html man sgml tex texinfo text /;
 
 # these work fairly well
 %highlights_html = ( $type_constant =>	"<i>\$1</i>",
@@ -201,11 +204,6 @@ sub usage {
     exit 1;
 }
 
-# read arguments
-if ($#ARGV==-1) {
-    usage();
-}
-
 $verbose = 0;
 $output_mode = "man";
 %highlights = %highlights_man;
@@ -216,62 +214,50 @@ $function_only = 0;
 
 my $lineprefix = "";
 
-while ($ARGV[0] =~ m/^-(.*)/) {
-    $cmd = shift @ARGV;
-    if ($cmd eq "-html") {
-	$output_mode = "html";
-	%highlights = %highlights_html;
-	$blankline = $blankline_html;
-    } elsif ($cmd eq "-man") {
-	$output_mode = "man";
-	%highlights = %highlights_man;
-	$blankline = $blankline_man;
-    } elsif ($cmd eq "-tex") {
-	$output_mode = "tex";
-	%highlights = %highlights_tex;
-	$blankline = $blankline_tex;
-    } elsif ($cmd eq "-texinfo") {
-	$output_mode = "texinfo";
-	%highlights = %highlights_texinfo;
-	$blankline = $blankline_texinfo;
-    } elsif ($cmd eq "-text") {
-	$output_mode = "text";
-	%highlights = %highlights_text;
-	$blankline = $blankline_text;
-    } elsif ($cmd eq "-docbook") {
-	$output_mode = "sgml";
-	%highlights = %highlights_sgml;
-	$blankline = $blankline_sgml;
-    } elsif ($cmd eq "-listfunc") {
-	$output_mode = "listfunc";
-    } elsif ($cmd eq "-module") { # not needed for sgml, inherits from calling document
-	$modulename = shift @ARGV;
-    } elsif ($cmd eq "-sourceversion") {
-	$sourceversion = shift @ARGV;
-    } elsif ($cmd eq "-include") {
-	$include = shift @ARGV;
-    } elsif ($cmd eq "-includefuncprefix") {
-	$includefuncprefix = 1;
-    } elsif ($cmd eq "-bugsto") {
-	$bugsto = shift @ARGV;
-    } elsif ($cmd eq "-pkg-name") {
-	$pkgname = shift @ARGV;
-    } elsif ($cmd eq "-copyright") {
-	$copyright = shift @ARGV;
-    } elsif ($cmd eq "-verbatimcopying") {
-	$verbatimcopying = 1;
-    } elsif ($cmd eq "-seeinfo") {
-	$seeinfo = shift @ARGV;
-    } elsif ($cmd eq "-function") { # to only output specific functions
-	$function_only = 1;
-	$function = shift @ARGV;
-	$function_table{$function} = 1;
-    } elsif ($cmd eq "-v") {
-	$verbose++;
-    } elsif (($cmd eq "-h") || ($cmd eq "--help")) {
-	usage();
-    }
+##
+# Option handling and helpers.
+#
+sub set_output_mode {
+    my ($name, $mode) = @_;
+
+    $mode = $name	unless grep m/^$mode$/, @known_modes;
+
+    $mode = "sgml"	if $mode eq "docbook";
+
+    # Pass the selected mode to state parameters.
+    $output_mode = $mode;
+    eval "\%highlights = \%highlights_$mode";
+    eval "\$blankline = \$blankline_$mode";
 }
+
+my %opts = ( # Output modes
+	"docbook|sgml"	=> \&set_output_mode,
+	"listfunc"	=> sub { $output_mode = "listfunc" },
+	"html"		=> \&set_output_mode,
+	"man"		=> \&set_output_mode,
+	"mode=s"	=> \&set_output_mode,
+	"tex"		=> \&set_output_mode,
+	"texinfo"	=> \&set_output_mode,
+	"text"		=> \&set_output_mode,
+	# Parameter settings
+	"bugsto=s"	=> \$bugsto,
+	"copyright=s"	=> \$copyright,
+	"function=s"	=> sub { $function = $_[1];
+				 $function_only = 1;
+				 $function_table{$function} = 1;
+			       },
+	"include=s"	=> \$include,
+	"includefuncprefix+" => \$includefuncprefix,
+	"module=s"	=> \$modulename, # No effect in SGML mode.
+	"pkg-name=s"	=> \$pkgname,
+	"seeinfo=s"	=> \$seeinfo,
+	"sourceversion=s" => \$sourceversion,
+	"verbatimcopying+" => \$verbatimcopying,
+	"verbose|v+"	=> \$verbose,
+	# Help and usage
+	"h|usage"	=> \&usage,
+	"help|?"	=> \&usage,	# XXX: Use Pod::Usage.
+    );
 
 ##
 # dumps section contents to arrays/hashes intended for that purpose.
@@ -817,6 +803,14 @@ sub dump_function {
 # 1 - looking for function name
 # 2 - scanning field start.
 # 3 - scanning prototype.
+
+# read arguments
+if ($#ARGV==-1) {
+    usage();
+}
+
+GetOptions(%opts)	or die "\n";
+
 $state = 0;
 $section = "";
 
