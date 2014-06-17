@@ -135,6 +135,7 @@ eval '(exit $?0)' && eval 'exec perl -S "$0" ${1+"$@"}'
 # XXX: Migrate to strict code with warnings.
 
 use Getopt::Long;
+use Pod::Usage;
 
 use POSIX qw(strftime);
 
@@ -256,9 +257,12 @@ my %opts = ( # Output modes
 	"sourceversion=s" => \$sourceversion,
 	"verbatimcopying+" => \$verbatimcopying,
 	"verbose|v+"	=> \$verbose,
-	# Help and usage
-	"h|usage"	=> \&usage,
-	"help|?"	=> \&usage,	# XXX: Use Pod::Usage.
+	# Help and usage.
+	# Legacy response to '-h' was like the present '-usage'.
+	"usage|h"	=> sub { pod2usage( -exitval => 0,
+					    -verbose => 0 ) },
+	"help|?"	=> sub { pod2usage( -exitval => 0,
+					    -verbose => 1 ) },
     );
 
 ##
@@ -823,10 +827,11 @@ sub dump_function {
 
 # read arguments
 if ($#ARGV==-1) {
-    usage();
+    pod2usage( -exitval => 1, -verbose => 0, -output => \*STDERR);
 }
 
-GetOptions(%opts)	or die "\n";
+GetOptions(%opts)
+    or pod2usage( -exitval => 1, -verbose => 0, -output => \*STDERR);
 
 $state = 0;
 $section = "";
@@ -950,3 +955,254 @@ foreach my $file (@ARGV) {
 	}
     }
 }
+
+__END__
+
+=pod
+
+=head1 NAME
+
+gdoc - Generate documentation from source code.
+
+=head1 SYNOPSIS
+
+ gdoc [ -docbook | -html | -listfunc | -sgml | -tex |
+        -texinfo | -text | -mode=MODE ]
+      [ -v ] [ -function funcname [ -function funcname ...] ]
+      file ...  >  outputfile
+
+ gdoc [ -v ] [ -man ]
+      [ -include file | -includefuncprefix ]
+      [ -seeinfo infonode ] [ -sourceversion verno ]
+      [ -copyright notice ] [ -verbatimcopying ]
+      [ -bugsto address ] [ -pkg-name packagename ]
+      [ -function funcname [ -function funcname ...] ]
+      file ...  >  outputfile
+
+ gdoc [ -h | --usage ] [ -? | --help ]
+
+=head1 DESCRIPTION
+
+Read one or more C source code files and scan for embedded comments
+in the style of Gnome comments.
+The output format can be set to a handful modes, but the default
+is the standard Unix man page.
+
+Package specific information can be inserted, and output may be
+limited to a subset of the available function within a particular
+set of files.
+
+When multiple functions are being documented, the output text is a
+simple concatenation of the text for each individual function.
+This must be taken into account with the more complex output modes.
+
+All expected output goes to F<stdout>, while errors go
+to F<stderr>.
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-function> I<NAME>
+
+If set, then generate documentation only for the given function.
+Other functions are ignored.
+
+Multiple use is allowed, thus making extraction of function
+subsets feasible, at least by scripting.
+
+=item B<-v>, B<-verbose>
+
+Print some internal messages for tracking.
+
+=back
+
+The next few options are output mode selectors.
+
+=over 8
+
+=item B<-docbook>, B<-sgml>
+
+Two synonyms for Docbook formatted output, producing one
+I<refentry> block for each selected function.
+Some tweeking may be needed in corner cases.
+
+=item B<-html>
+
+A fragment containing the full function description.
+Editing is recommended for use with multiple functions.
+
+=item B<-listfunc>
+
+A pseudo format intended as a tool:
+On separate lines, the names of each function being documented
+in each source file, are listed.
+
+=item B<-man>
+
+Produce a man page.
+This is the default format when no selection is indicated at all.
+
+=item B<-mode> I<MODE>
+
+Select any mode among the explicit alternatives described here.
+
+=item B<-tex>
+
+Output is written in the typesetting language LaTeX.
+
+=item B<-texinfo>
+
+The Texinfo format of the GNU Project.
+
+=item B<-text>
+
+Plain text formatting.
+
+=back
+
+Finally, a set of options relevant in man page mode only.
+
+=over 8
+
+=item B<-bugsto> I<ADDRESS>
+
+Include a section about bug reporting and mention
+the given e-mail address as the desired recipient, e.g,
+'help-shishi@gnu.org'.
+
+=item B<-copyright> I<TEXT>
+
+Add a copyright section with the stated text inserted
+after a standard preamble.
+A typical notice could be '2003 Barac Uda'.
+
+=item B<-include> F<FILE>
+
+Mention C<#include E<lt>FILE.hE<gt>> within the synopsis.
+
+=item B<-includefuncprefix>
+
+Mention an include directive of F<FILE.h> in the synopsis.
+Now I<FILE> is derived from the function prefix.
+As an example, a function I<gss_init_sec_context> will generate
+an include statement C<#include E<lt>gss.hE<gt>>.
+
+=item B<-pkg-name> I<NAME>
+
+As a refinement when also B<-bugsto> is in use, include a URL
+to the the project's home page, and prepend I<NAME>.
+As an example, "GNU Shishi".
+
+=item B<-seeinfo> I<INFO-NODE>
+
+Include, in the man page, a section that points to
+a Tex info manual at I<INFO-NODE> for further information.
+
+=item B<-sourceversion> I<STRING>
+
+Version number of source code, e.g. '1.0.4'.
+This is put in the man page header, defaulting
+to the current date when not made explicit.
+
+=item B<-verbatimcopying>
+
+Used in addition to B<-copyright>, a licensing statement is added,
+stating that I<verbatim copying> is a permitted use of the
+formatted text.
+
+=back
+
+=head1 FORMATTING OF COMMENTS
+
+The comments in source code must obey a preset structure
+in order to be detected by B<gdoc>.
+Their elements are somewhat tersely conveyed here.
+
+A comment block commences with C</**> and ends with C<**/>,
+or with the normal C<*/> as is standard in B<C> source.
+The following template displays all elements, and will be
+complemented by examples in the next section.
+
+In the following template, the notation C<(...)?> denotes
+an optional construct (to be placed in the ellipse).
+In contrast, C<(...)*> denotes a construct present zero
+or more times.
+Both are standard notions in most kinds of regular expressions.
+
+   /**
+    * function_name(:)? (- short description)?
+   (* @parameterx: (description of parameter x)?)*
+   (* a blank line)?
+    * (Description:)? (Description of function)?
+    * (Section header: (section description)? )*
+    (*)?*/
+
+Descriptions are allowed to be multiline, the only exception
+being the I<short description>.
+
+In addition to separating the comment into functional parts,
+the descriptive text is processed further by a scanner,
+which is looking for the following special patterns.
+
+   funcname()    -- name of a function,
+   #struct_name  -- name of a structure,
+   @parameter    -- name of a parameter,
+   %CONST        -- name of a constant,
+   $ENVVAR       -- environmental variable (OBSOLETE!).
+
+The lexical tokens thus identified are then highlighted
+as is appropriate for the chosen output mode.
+
+=head1 EXAMPLE OF COMMENTS
+
+The minimal comment is obvious:
+
+   /**
+    * my_function
+    **/
+
+A more useful form names one argument and a description:
+
+   /**
+    * my_function - does my stuff
+    * @my_arg: it is mine for sure
+    * Description: My stuff explained.
+    */
+
+Should the header tag I<Description:> be omitted, then a blank
+line is mandatory after the last parameter specification:
+
+   /**
+    * my_function - does my stuff
+    * @my_arg: it is still mine
+    *
+    * My stuff explained.
+    */
+
+=head1 CAVEATS
+
+Most of the output modes produce a usable and conformant document
+for a single function only, since multiple functions lead to simple
+concatenation of the individual documents.
+
+=head1 AUTHORS
+
+Michael Zucchi wrote the first implementation.
+Nikos Mavrogiannopoulos added the LaTex mode.
+Simon Josefsson added Tex info mode, I<listfunc> mode,
+and improved the man page formatter.
+Mats Erik Andersson wrote POD and went bug hunting.
+
+=head1 COPYRIGHT
+
+Copyright (c) 1998 Michael Zucchi
+              2001, 2002 Nikos Mavrogiannopoulos
+              2002-2013 Simon Josefsson
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+=cut
