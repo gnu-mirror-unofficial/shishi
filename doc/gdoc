@@ -140,11 +140,11 @@ use Pod::Usage;
 use POSIX qw(strftime);
 
 # match expressions used to find embedded type information
-$type_constant = '%(\w+)';
-$type_func =	 '(\w+\(\))';
-$type_param =	 '@(\w+)';
-$type_struct =	 '#(\w+)';
-$type_env =	 '(\$\w+)';
+$type_constant	= '%(\w+)';
+$type_func	= '(\w+\(\))';
+$type_param	= '@(\w+|\.\.\.)';
+$type_struct	= '#(\w+)';
+$type_env	= '\$(\w+)';
 
 
 # Output conversion substitutions.
@@ -159,10 +159,10 @@ my @known_modes = qw/ docbook html man sgml tex texinfo text /;
 		     $type_param =>	"<tt><b>\$1</b></tt>" );
 $blankline_html = "<p>";
 
-%highlights_texinfo = ( $type_constant => "\\\@code{\$1}",
-			$type_func =>	  "\\\@code{\$1}",
-			$type_struct =>	  "\\\@code{\$1}",
-			$type_param =>	  "\\\@code{\$1}" );
+%highlights_texinfo = ( $type_constant	=> '@code{$1}',
+			$type_func	=> '@code{$1}',
+			$type_struct	=> '@code{$1}',
+			$type_param	=> '@var{$1}' );
 $blankline_texinfo = "";
 
 %highlights_tex = ( $type_constant =>	"{\\\\it \$1}",
@@ -385,7 +385,12 @@ sub output_texinfo {
     print "(";
     $count = 0;
     foreach $parameter (@{$args{'parameterlist'}}) {
-	print $args{'parametertypes'}{$parameter}." \@var{".$parameter."}";
+	# Variadic arguments carry no type.
+	print $args{'parametertypes'}{$parameter}, " "
+	    if $args{'parametertypes'}{$parameter};
+
+	print '@var{', $parameter, '}';
+
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
 	    print ", ";
@@ -400,7 +405,7 @@ sub output_texinfo {
 	}
     }
     foreach $section (@{$args{'sectionlist'}}) {
-	print "\n\@strong{$section:} " if $section ne $section_default;
+	print "\n\@strong{$section:} ";
 	$args{'sections'}{$section} =~ s:([{}]):\@$1:gs;
 	output_highlight($args{'sections'}{$section});
     }
@@ -419,7 +424,12 @@ sub output_html {
     print "(";
     $count = 0;
     foreach $parameter (@{$args{'parameterlist'}}) {
-	print "<i>".$args{'parametertypes'}{$parameter}."</i> <b>".$parameter."</b>\n";
+	# Variadic arguments carry no type.
+	print '<i>', $args{'parametertypes'}{$parameter}, '</i> '
+	    if $args{'parametertypes'}{$parameter};
+
+	print '<b>', $parameter, "</b>\n";
+
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
 	    print ", ";
@@ -432,9 +442,12 @@ sub output_html {
 
     if ($#{$args{'parameterlist'}} >= 0) {
 	foreach $parameter (@{$args{'parameterlist'}}) {
-	    print "<dt>",
-		  "<i>" . $args{'parametertypes'}{$parameter} . "</i>",
-		  " <b>" . $parameter . "</b>\n";
+	    print '<dt>';
+	    # Variadic arguments carry no type.
+	    print "<i>" . $args{'parametertypes'}{$parameter} . "</i> "
+		if $args{'parametertypes'}{$parameter};
+
+	    print '<b>', $parameter, "</b>\n";
 	    print "<dd>";
 
 	    output_highlight($args{'parameters'}{$parameter});
@@ -481,12 +494,17 @@ sub output_tex {
     print "(";
     $count = 0;
     foreach $parameter (@{$args{'parameterlist'}}) {
-        $param = $args{'parametertypes'}{$parameter};
-        $param2 = $parameter;
-	$param =~ s/_/\\_/g;
-        $param2 =~ s/_/\\_/g;
+	my $param = $args{'parametertypes'}{$parameter};
+	my $param2 = $parameter;
 
-	print "{\\it ".$param."} {\\bf ".$param2."}";
+	$param =~ s/_/\\_/g;
+	$param2 =~ s/_/\\_/g;
+
+	# Variadic arguments carry no type.
+	print '{\it ', $param, '} '	if $param;
+
+	print '{\bf ', $param2, '}';
+
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
 	    print ", ";
@@ -499,13 +517,18 @@ sub output_tex {
     print "\\begin{itemize}\n";
     $check=0;
     foreach $parameter (@{$args{'parameterlist'}}) {
-        $param1 = $args{'parametertypes'}{$parameter};
-        $param1 =~ s/_/\\_/g;
-        $param2 = $parameter;
+	my $param1 = $args{'parametertypes'}{$parameter};
+	my $param2 = $parameter;
+
+	$param1 =~ s/_/\\_/g;
 	$param2 =~ s/_/\\_/g;
 
 	$check = 1;
-	print "\\item {\\it ".$param1."} {\\bf ".$param2."}: \n";
+
+	# Variadic arguments carry no type: insert a place holder.
+	print '\item ',
+	      $param1 ? '{\it ' . $param1 . '}' : '{\vphantom{l}}',
+	      ' {\bf ', $param2, "}: \n";
 #	print "\n";
 
 	$param3 = $args{'parameters'}{$parameter};
@@ -602,8 +625,13 @@ sub output_sgml {
     $count = 0;
     if ($#{$args{'parameterlist'}} >= 0) {
 	foreach $parameter (@{$args{'parameterlist'}}) {
-	    print "   <paramdef>" . $args{'parametertypes'}{$parameter};
-	    print " <parameter>$parameter</parameter></paramdef>\n";
+	    print '   <paramdef>';
+
+	    # A variadic parameter has no type.
+	    print $args{'parametertypes'}{$parameter}, ' '
+		if  $args{'parametertypes'}{$parameter};
+
+	    print "<parameter>$parameter</parameter></paramdef>\n";
 	}
     } else {
 	print "   <void />\n";
@@ -694,7 +722,12 @@ sub output_man {
 
     print ".SH ARGUMENTS\n";
     foreach $parameter (@{$args{'parameterlist'}}) {
-	print ".IP \"".$args{'parametertypes'}{$parameter}." ".$parameter."\" 12\n";
+	print '.IP "';
+	# Variadic arguments carry no type.
+	print $args{'parametertypes'}{$parameter}, ' '
+	    if $args{'parametertypes'}{$parameter};
+	print $parameter, "\" 12\n";
+
 	$param = $args{'parameters'}{$parameter};
 	$param =~ s/-/\\-/g;
 	output_highlight($param);
@@ -757,14 +790,19 @@ sub output_text {
     print "Function = ".$args{'function'}."\n";
     print "  return type: ".$args{'functiontype'}."\n\n";
     foreach $parameter (@{$args{'parameterlist'}}) {
-	print " ".$args{'parametertypes'}{$parameter}." ".$parameter."\n";
-	print "    -> ".$args{'parameters'}{$parameter}."\n";
+	# Variadic arguments carry no type.
+	print ' ', $args{'parametertypes'}{$parameter}
+	    if $args{'parametertypes'}{$parameter};
+	print ' ', $parameter, "\n";
+	print '    -> ';
+	output_highlight($args{'parameters'}{$parameter});
     }
     foreach $section (@{$args{'sectionlist'}}) {
 	print " $section:\n";
 	print "    -> ";
 	output_highlight($args{'sections'}{$section});
     }
+    print "\n";
 }
 
 ##
@@ -811,7 +849,7 @@ sub dump_function {
 		$param = $2;
 		push @args, $1;
 	    }
-	    if ($param =~ m/^(.*)(\[\])$/) {
+	    if ($param =~ m/^(.*)(\[\d*\])$/) {
 		$param = $1;
 		push @args, $2;
 	    }
@@ -874,13 +912,25 @@ GetOptions(%opts)
 $state = 0;
 $section = "";
 
-$doc_special = "\@\%\$\#";
-
 $doc_start = "^/\\*\\*\$";
 $doc_end = "\\*/";
 $doc_com = "\\s*\\*\\s*";
 $doc_func = $doc_com."(\\w+):?";
-$doc_sect = $doc_com."([".$doc_special."[:upper:]][\\w ]+):\\s*(.*)";
+
+# $doc_special = '@%$#';
+
+# $doc_sect = $doc_com."([".$doc_special."[:upper:]][\\w ]+):\\s*(.*)";
+
+# Sections commence with either of
+#
+#   \u\w\w+:
+#   @\w+:
+#   @\.\.\.:
+#
+# The latter is a variadic placeholder used in a parameter section.
+
+$doc_sect = $doc_com . '([@[:upper:]][\w ]+|@\.\.\.):\s*(.*)';
+
 $doc_content = $doc_com."(.*)";
 
 %constants = ();
