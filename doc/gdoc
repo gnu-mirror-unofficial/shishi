@@ -150,7 +150,7 @@ $type_env	= '\$(\w+)';
 # Output conversion substitutions.
 #  One for each output format
 
-my @known_modes = qw/ docbook html man sgml tex texinfo text /;
+my @known_modes = qw/ docbook html listfunc man sgml tex texinfo text /;
 
 # these work fairly well
 %highlights_html = ( $type_constant =>	"<i>\$1</i>",
@@ -225,7 +225,7 @@ my $scanned_file;	# Presently active source file.
 sub set_output_mode {
     my ($name, $mode) = @_;
 
-    $mode = $name	unless grep m/^$mode$/, @known_modes;
+    $mode = $name	if grep m/^$name$/, @known_modes;
 
     $mode = "sgml"	if $mode eq "docbook";
 
@@ -901,13 +901,25 @@ sub dump_function {
 # 2 - scanning field start.
 # 3 - scanning prototype.
 
-# read arguments
-if ($#ARGV==-1) {
-    pod2usage( -exitval => 1, -verbose => 0, -output => \*STDERR);
-}
-
 GetOptions(%opts)
     or pod2usage( -exitval => 1, -verbose => 0, -output => \*STDERR);
+
+if ($output_mode eq '?' or $output_mode eq 'help') {
+    print "Available modes: @known_modes\n";
+    exit 0;
+}
+
+if (not grep m/^$output_mode$/, @known_modes) {
+    print STDERR 'Not a supported mode: ', "$output_mode\n",
+		 'Use one of: ', "@known_modes\n";
+    exit 1;
+}
+
+# read arguments
+if ($#ARGV==-1) {
+    pod2usage( -message => 'No file argument was specified.' . "\n",
+	       -exitval => 1, -verbose => 0, -output => \*STDERR);
+}
 
 $state = 0;
 $section = "";
@@ -1158,6 +1170,8 @@ This is the default format when no selection is indicated at all.
 =item B<-mode> I<MODE>
 
 Select any mode among the explicit alternatives described here.
+When I<MODE> is either of '?' or "help", the supported modes
+are printed in a simple listing.
 
 =item B<-tex>
 
