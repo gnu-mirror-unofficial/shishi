@@ -297,8 +297,9 @@ sub dump_section {
 #  function => "function name"
 #  parameterlist => @list of parameters
 #  parameters => %parameter descriptions
+#  arraylength => %brackets of parameter
 #  sectionlist => @list of sections
-#  sections => %descriont descriptions
+#  sections => %section descriptions
 #  
 
 sub repstr {
@@ -389,7 +390,8 @@ sub output_texinfo {
 	print $args{'parametertypes'}{$parameter}, " "
 	    if $args{'parametertypes'}{$parameter};
 
-	print '@var{', $parameter, '}';
+	print '@var{', $parameter, '}',
+	      $args{'arraylength'}{$parameter};
 
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
@@ -399,7 +401,8 @@ sub output_texinfo {
     print ")\n";
     foreach $parameter (@{$args{'parameterlist'}}) {
 	if ($args{'parameters'}{$parameter}) {
-	    print "\@var{".$parameter."}: ";
+	    print '@var{', $parameter, '}: ';
+
 	    output_highlight($args{'parameters'}{$parameter});
 	    print "\n";
 	}
@@ -428,7 +431,12 @@ sub output_html {
 	print '<i>', $args{'parametertypes'}{$parameter}, '</i> '
 	    if $args{'parametertypes'}{$parameter};
 
-	print '<b>', $parameter, "</b>\n";
+	print '<b>', $parameter, '</b>';
+
+	print '<i>', $args{'arraylength'}{$parameter}, '</i>'
+	      if $args{'arraylength'}{$parameter};
+
+	print "\n";
 
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
@@ -447,8 +455,12 @@ sub output_html {
 	    print "<i>" . $args{'parametertypes'}{$parameter} . "</i> "
 		if $args{'parametertypes'}{$parameter};
 
-	    print '<b>', $parameter, "</b>\n";
-	    print "<dd>";
+	    print '<b>', $parameter, '</b>';
+
+	    print '<i>', $args{'arraylength'}{$parameter}, '</i>'
+		if $args{'arraylength'}{$parameter};
+
+	    print "\n<dd>";
 
 	    output_highlight($args{'parameters'}{$parameter});
 	}
@@ -496,14 +508,18 @@ sub output_tex {
     foreach $parameter (@{$args{'parameterlist'}}) {
 	my $param = $args{'parametertypes'}{$parameter};
 	my $param2 = $parameter;
+	my $param3 = $args{'arraylength'}{$parameter};
 
 	$param =~ s/_/\\_/g;
 	$param2 =~ s/_/\\_/g;
+#	$param3 =~ s,([][]),\\$1,g;
 
 	# Variadic arguments carry no type.
 	print '{\it ', $param, '} '	if $param;
 
 	print '{\bf ', $param2, '}';
+
+	print '{\it ', $param3, '}'	if $param3;
 
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
@@ -519,16 +535,20 @@ sub output_tex {
     foreach $parameter (@{$args{'parameterlist'}}) {
 	my $param1 = $args{'parametertypes'}{$parameter};
 	my $param2 = $parameter;
+	my $param4 = $args{'arraylength'}{$parameter};
 
 	$param1 =~ s/_/\\_/g;
 	$param2 =~ s/_/\\_/g;
+#	$param4 =~ s,([][]),\\$1,g;
 
 	$check = 1;
 
 	# Variadic arguments carry no type: insert a place holder.
 	print '\item ',
 	      $param1 ? '{\it ' . $param1 . '}' : '{\vphantom{l}}',
-	      ' {\bf ', $param2, "}: \n";
+	      ' {\bf ', $param2, '}',
+	      $param4 ? '{\it ' . $param4 . '}' : '',
+	      ": \n";
 #	print "\n";
 
 	$param3 = $args{'parameters'}{$parameter};
@@ -631,7 +651,9 @@ sub output_sgml {
 	    print $args{'parametertypes'}{$parameter}, ' '
 		if  $args{'parametertypes'}{$parameter};
 
-	    print "<parameter>$parameter</parameter></paramdef>\n";
+	    print "<parameter>$parameter</parameter>",
+		  $args{'arraylength'}{$parameter},
+		  "</paramdef>\n";
 	}
     } else {
 	print "   <void />\n";
@@ -712,7 +734,10 @@ sub output_man {
     print ".BI \"".$args{'functiontype'}." ".$args{'function'}."(";
     $count = 0;
     foreach $parameter (@{$args{'parameterlist'}}) {
-	print $args{'parametertypes'}{$parameter}." \" ".$parameter." \"";
+	print $args{'parametertypes'}{$parameter},
+	      ' " ', $parameter, ' "',
+	      $args{'arraylength'}{$parameter};
+
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
 	    print ", ";
@@ -726,7 +751,7 @@ sub output_man {
 	# Variadic arguments carry no type.
 	print $args{'parametertypes'}{$parameter}, ' '
 	    if $args{'parametertypes'}{$parameter};
-	print $parameter, "\" 12\n";
+	print $parameter, $args{'arraylength'}{$parameter}, "\" 12\n";
 
 	$param = $args{'parameters'}{$parameter};
 	$param =~ s/-/\\-/g;
@@ -793,7 +818,7 @@ sub output_text {
 	# Variadic arguments carry no type.
 	print ' ', $args{'parametertypes'}{$parameter}
 	    if $args{'parametertypes'}{$parameter};
-	print ' ', $parameter, "\n";
+	print ' ', $parameter, $args{'arraylength'}{$parameter}, "\n";
 	print '    -> ';
 	output_highlight($args{'parameters'}{$parameter});
     }
@@ -816,9 +841,11 @@ sub output_function {
 
 ##
 # takes a function prototype and spits out all the details
-# stored in the global arrays/hsahes.
+# stored in global arrays/hashes.
 sub dump_function {
     my $prototype = shift @_;
+
+    my %arraylength;
 
     if ($prototype =~ m/^()([a-zA-Z0-9_~:]+)\s*\(([^\)]*)\)/ ||
 	$prototype =~ m/^(\w+)\s+([a-zA-Z0-9_~:]+)\s*\(([^\)]*)\)/ ||
@@ -851,7 +878,7 @@ sub dump_function {
 	    }
 	    if ($param =~ m/^(.*)(\[\d*\])$/) {
 		$param = $1;
-		push @args, $2;
+		$arraylength{$param} = $2	if $2;
 	    }
 #	    print STDERR " :> @args\n";
 	    $type = join " ", @args;
@@ -883,6 +910,7 @@ sub dump_function {
 			 'verbatimcopying' => $verbatimcopying,
 			 'seeinfo' => $seeinfo,
 			 'functiontype' => $return_type,
+			 'arraylength' => \%arraylength,
 			 'parameterlist' => \@parameterlist,
 			 'parameters' => \%parameters,
 			 'parametertypes' => \%parametertypes,
