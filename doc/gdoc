@@ -843,6 +843,7 @@ sub output_function {
 # takes a function prototype and spits out all the details
 # stored in global arrays/hashes.
 sub dump_function {
+    my $docname = shift @_;
     my $prototype = shift @_;
 
     my %arraylength;
@@ -885,7 +886,10 @@ sub dump_function {
 
 	    if ($param ne "void" and not $parameters{$param}) {
 		$parameters{$param} = "-- undescribed --";
-		print STDERR "warning: $lineno: Function parameter '$param' not described in '$function_name'\n";
+		print STDERR 'Warning(', $lineno - 1, '): ',
+			     'Function parameter "', $param, '" ',
+			     'is not described by "', $docname, '".',
+			     "\n";
 	    }
 
 	    push @parameterlist, $param;
@@ -894,9 +898,16 @@ sub dump_function {
 #	    print STDERR "param = '$param', type = '$type'\n";
 	}
     } else {
-	print STDERR "warning: $lineno: Cannot understand prototype: '$prototype'\n";
+	print STDERR 'Warning(', $lineno - 1, '): ',
+		     'Cannot understand prototype: ',
+		     "'$prototype'.\n";
 	return;
     }
+
+    print STDERR 'Warning(', $lineno - 1, '): ',
+		 'Defines "', $function_name, '"',
+		 ', but "', $docname, '" was documented.', "\n"
+	if $docname ne $function_name;
 
     if ($function_only==0 || defined($function_table{$function_name})) {
 	output_function({'function' => $function_name,
@@ -1012,7 +1023,7 @@ foreach my $file (@ARGV) {
 		    print STDERR "Info($lineno): Scanning doc for $function\n";
 		}
 	    } else {
-		print STDERR "warning: $lineno: Cannot understand $_ on line $lineno",
+		print STDERR "Warning($lineno): Cannot understand '$_' on line $lineno",
 		" - I thought it was a doc line\n";
 		$state = 0;
 	    }
@@ -1054,7 +1065,7 @@ foreach my $file (@ARGV) {
 		}
 	    } else {
 		# i dont know - bad line?  ignore.
-		print STDERR "warning: $lineno: Bad line: $_";
+		print STDERR "Warning($lineno): Bad line: $_\n";
 	    }
 	} elsif ($state == 3) {	# scanning for function { (end of prototype)
 	    if (m#\s*/\*\s+MACDOC\s*#io) {
@@ -1067,7 +1078,8 @@ foreach my $file (@ARGV) {
 		$prototype =~ s@/\*.*?\*/@@gos;	# strip comments.
 		$prototype =~ s@[\r\n]+@ @gos; # strip newlines/cr's.
 		$prototype =~ s@^ +@@gos; # strip leading spaces
-		dump_function($prototype);
+
+		dump_function($function, $prototype);
 
 		$function = "";
 		%constants = ();

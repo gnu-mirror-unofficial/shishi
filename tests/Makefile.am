@@ -18,7 +18,8 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
-EXTRA_DIST = shisa.sh shishi.supp keytab1.bin ccache1.bin
+EXTRA_DIST = shisa.sh shishi.supp keytab1.bin ccache1.bin \
+	     check_docbook.sh
 
 AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS)
 AM_CPPFLAGS = -I$(top_srcdir)/gl -I$(top_builddir)/gl \
