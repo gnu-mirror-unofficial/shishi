@@ -157,7 +157,7 @@ my @known_modes = qw/ docbook html listfunc man sgml tex texinfo text /;
 		     $type_func =>	"<b>\$1</b>",
 		     $type_struct =>	"<i>\$1</i>",
 		     $type_param =>	"<tt><b>\$1</b></tt>" );
-$blankline_html = "<p>";
+$blankline_html = '</p><p>';
 
 %highlights_texinfo = ( $type_constant	=> '@code{$1}',
 			$type_func	=> '@code{$1}',
@@ -420,9 +420,10 @@ sub output_html {
     my %args = %{$_[0]};
     my ($parameter, $section);
     my $count;
-    print "\n\n<a name=\"". $args{'function'} . "\">&nbsp;</a><h2>Function</h2>\n";
+    print "\n", '<a name="', $args{'function'}, '">&nbsp;</a>', "\n",
+	  '<h2>Function</h2>', "\n";
 
-    print "<i>".$args{'functiontype'}."</i>\n";
+    print '<i>', $args{'functiontype'}, '</i> ';
     print "<b>".$args{'function'}."</b>\n";
     print "(";
     $count = 0;
@@ -433,14 +434,12 @@ sub output_html {
 
 	print '<b>', $parameter, '</b>';
 
-	print '<i>', $args{'arraylength'}{$parameter}, '</i>'
+	print $args{'arraylength'}{$parameter}
 	      if $args{'arraylength'}{$parameter};
-
-	print "\n";
 
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
-	    print ", ";
+	    print ",\n";
 	}
     }
     print ")\n";
@@ -457,29 +456,30 @@ sub output_html {
 
 	    print '<b>', $parameter, '</b>';
 
-	    print '<i>', $args{'arraylength'}{$parameter}, '</i>'
+	    print $args{'arraylength'}{$parameter}
 		if $args{'arraylength'}{$parameter};
 
-	    print "\n<dd>";
+	    print "</dt>\n<dd><p>";
 
 	    output_highlight($args{'parameters'}{$parameter});
+	    print "</p></dd>\n";
 	}
     } else {
-	print "<dt>None\n";
+	print "<dt>None</dt>\n";
     }
 
     print "</dl>\n";
     foreach $section (@{$args{'sectionlist'}}) {
 	print "<h3>$section</h3>\n";
-	print "<ul>\n";
+	print "<p>\n";
 
 	# Escape all ampersands before displaying.
 	my $text = just_highlight($args{'sections'}{$section});
 	$text =~ s|&|\&amp;|g;
 	print "$text";
-	print "</ul>\n";
+	print "</p>\n";
     }
-    print "<hr>\n";
+    print "<hr />\n";
 }
 
 # output in tex
