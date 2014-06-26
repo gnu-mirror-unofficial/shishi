@@ -24,14 +24,17 @@
 
 /**
  * shishi_check_version:
- * @req_version: version string to compare with, or NULL
+ * @req_version: Oldest acceptable version, or %NULL.
  *
- * Check that the version of the library is at minimum the one given
- * as a string in @req_version.
+ * Checks that the installed library version is at least
+ * as recent as the one provided in @req_version.
+ * The version string is formatted like "1.0.2".
  *
- * Return value: the actual version string of the library; NULL if the
- *   condition is not met.  If %NULL is passed to this function no
- *   check is done and only the version string is returned.
+ * Whenever %NULL is passed to this function, the check is
+ * suppressed, but the library version is still returned.
+ *
+ * Return value: Returns the active library version,
+ *   or %NULL, should the running library be too old.
  **/
 const char *
 shishi_check_version (const char *req_version)

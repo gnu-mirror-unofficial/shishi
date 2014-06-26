@@ -734,8 +734,10 @@ sub output_man {
     print ".BI \"".$args{'functiontype'}." ".$args{'function'}."(";
     $count = 0;
     foreach $parameter (@{$args{'parameterlist'}}) {
-	print $args{'parametertypes'}{$parameter},
-	      ' " ', $parameter, ' "',
+	print $args{'parametertypes'}{$parameter}, ' '
+	    if $args{'parametertypes'}{$parameter};
+
+	print '" ', $parameter, ' "',
 	      $args{'arraylength'}{$parameter};
 
 	if ($count != $#{$args{'parameterlist'}}) {
@@ -745,18 +747,22 @@ sub output_man {
     }
     print ");\"\n";
 
-    print ".SH ARGUMENTS\n";
-    foreach $parameter (@{$args{'parameterlist'}}) {
-	print '.IP "';
-	# Variadic arguments carry no type.
-	print $args{'parametertypes'}{$parameter}, ' '
-	    if $args{'parametertypes'}{$parameter};
-	print $parameter, $args{'arraylength'}{$parameter}, "\" 12\n";
+    if (@{$args{'parameterlist'}}) {
+	print ".SH ARGUMENTS\n";
+	foreach $parameter (@{$args{'parameterlist'}}) {
+	    print '.IP "';
+	    # Variadic arguments carry no type.
+	    print $args{'parametertypes'}{$parameter}, ' '
+		if $args{'parametertypes'}{$parameter};
+	    print $parameter, $args{'arraylength'}{$parameter},
+		  "\" 12\n";
 
-	$param = $args{'parameters'}{$parameter};
-	$param =~ s/-/\\-/g;
-	output_highlight($param);
+	    $param = $args{'parameters'}{$parameter};
+	    $param =~ s/-/\\-/g;
+	    output_highlight($param);
+	}
     }
+
     foreach $section (@{$args{'sectionlist'}}) {
 	print ".SH \"" . uc($section) . "\"\n";
 	$sec = $args{'sections'}{$section};

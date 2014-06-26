@@ -79,11 +79,14 @@ static const struct shisa_error_msgs _shisa_error_messages[] = {
 
 /**
  * shisa_strerror:
- * @err: shisa error code
+ * @err: Shisa error code.
  *
- * Return value: Returns a pointer to a statically allocated string
- * containing a description of the error with the error value @err.
- * This string can be used to output a diagnostic message to the user.
+ * Explains verbally an error status @err.
+ * The returned string can be used to compose a diagnostic
+ * message of benefit to a user.
+ *
+ * Return value: Returns a pointer to a statically allocated string,
+ * containing a description of the error given as input argument.
  **/
 const char *
 shisa_strerror (int err)
@@ -101,10 +104,10 @@ shisa_strerror (int err)
 /**
  * shisa_info:
  * @dbh: Shisa library handle created by shisa().
- * @format: printf style format string.
- * @...: print style arguments.
+ * @format: printf(3) style format string.
+ * @...: printf(3) style arguments.
  *
- * Print informational message to standard error.
+ * Prints an informational message to standard error.
  **/
 void
 shisa_info (Shisa * dbh, const char *format, ...)

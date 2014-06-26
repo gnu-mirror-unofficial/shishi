@@ -27,13 +27,14 @@
 
 /**
  * shishi_generalize_time:
- * @handle: shishi handle as allocated by shishi_init().
+ * @handle: Shishi handle as allocated by shishi_init().
  * @t: C time to convert.
  *
- * Convert C time to KerberosTime.  The string must not be deallocate
- * by caller.
+ * Converts C time @t to a KerberosTime string representation.
+ * The returned string must not be deallocated by the caller.
  *
- * Return value: Return a KerberosTime time string corresponding to C time t.
+ * Return value: Returns a KerberosTime formatted string
+ *    corresponding to the input parameter.
  **/
 const char *
 shishi_generalize_time (Shishi * handle, time_t t)
@@ -49,13 +50,13 @@ shishi_generalize_time (Shishi * handle, time_t t)
 
 /**
  * shishi_generalize_now:
- * @handle: shishi handle as allocated by shishi_init().
+ * @handle: Shishi handle as allocated by shishi_init().
  *
- * Convert current time to KerberosTime.  The string must not be
- * deallocate by caller.
+ * Converts the current time to a KerberosTime string.
+ * The returned string must not be deallocated by the caller.
  *
- * Return value: Return a KerberosTime time string corresponding to
- *   current time.
+ * Return value: Returns a KerberosTime formatted string
+ *   corresponding to the current time.
  **/
 const char *
 shishi_generalize_now (Shishi * handle)
@@ -67,12 +68,14 @@ shishi_generalize_now (Shishi * handle)
 
 /**
  * shishi_generalize_ctime:
- * @handle: shishi handle as allocated by shishi_init().
- * @t: KerberosTime to convert.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @t: KerberosTime string to convert.
  *
- * Convert KerberosTime to C time.
+ * Converts a KerberosTime formatted string in @t to
+ * integral C time representation.
  *
- * Return value: Returns C time corresponding to KerberosTime t.
+ * Return value: Returns the C time corresponding to the input
+ *   argument.
  **/
 time_t
 shishi_generalize_ctime (Shishi * handle, const char *t)
@@ -95,14 +98,17 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
 
 /**
  * shishi_time:
- * @handle: shishi handle as allocated by shishi_init().
- * @node: ASN.1 node to get time from.
- * @field: Name of field in ASN.1 node to get time from.
- * @t: newly allocated output array with zero terminated time string.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @node: ASN.1 structure to get time from.
+ * @field: Name of the field in the ASN.1 node carrying time.
+ * @t: Returned pointer to an allocated char array containing
+ *   a null-terminated time string.
  *
- * Extract time from ASN.1 structure.
+ * Extracts time information from an ASN.1 structure,
+ * and to be precise, does so from the named field @field
+ * within the structure @node.
  *
- * Return value: Returns SHISHI_OK iff successful.
+ * Return value: Returns %SHISHI_OK if successful, or an error..
  **/
 int
 shishi_time (Shishi * handle, Shishi_asn1 node, const char *field, char **t)
@@ -130,17 +136,19 @@ shishi_time (Shishi * handle, Shishi_asn1 node, const char *field, char **t)
 
 /**
  * shishi_ctime:
- * @handle: shishi handle as allocated by shishi_init().
- * @node: ASN.1 variable to read field from.
- * @field: name of field in @node to read.
- * @t: pointer to time field to set.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @node: ASN.1 structure to read field from.
+ * @field: Name of field in @node to read.
+ * @t: Pointer to a C-time valued integer, being updated with
+ *   the time value to be extracted.
  *
- * Extract time from ASN.1 structure.
+ * Extracts time information from an ASN.1 structure @node,
+ * and from an arbitrary element @field of that structure.
  *
- * Return value: Returns SHISHI_OK if successful,
- *   SHISHI_ASN1_NO_ELEMENT if the element do not exist,
- *   SHISHI_ASN1_NO_VALUE if the field has no value, ot
- *   SHISHI_ASN1_ERROR otherwise.
+ * Return value: Returns %SHISHI_OK if successful,
+ *   %SHISHI_ASN1_NO_ELEMENT if the element does not exist,
+ *   %SHISHI_ASN1_NO_VALUE if the field has no value.
+ *   In all other cases, %SHISHI_ASN1_ERROR is returned.
  **/
 int
 shishi_ctime (Shishi * handle, Shishi_asn1 node, const char *field,

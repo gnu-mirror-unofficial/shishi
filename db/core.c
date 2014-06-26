@@ -25,14 +25,16 @@
 /**
  * shisa_enumerate_realms:
  * @dbh: Shisa library handle created by shisa().
- * @realms: Pointer to newly allocated array of newly allocated
- *   zero-terminated UTF-8 strings indicating name of realm.
- * @nrealms: Pointer to number indicating number of allocated realm strings.
+ * @realms: Returned pointer to a newly allocated array of also
+ *   allocated and null-terminated UTF-8 strings with realm names.
+ * @nrealms: Pointer to a number which is updated with the number
+ *   of just allocated and returned realm strings.
  *
- * Extract a list of all realm names in backend, as zero-terminated
- * UTF-8 strings.  The caller must deallocate the strings.
+ * Extracts a list of all realm names in backend, as null-terminated
+ * UTF-8 strings.  The caller is responsible for deallocating all
+ * strings as well as the array *@realms.
  *
- * Return value: Returns SHISA_OK on success, or error code.
+ * Return value: Returns %SHISA_OK on success, or an error code.
  **/
 int
 shisa_enumerate_realms (Shisa * dbh, char ***realms, size_t * nrealms)
@@ -59,18 +61,19 @@ shisa_enumerate_realms (Shisa * dbh, char ***realms, size_t * nrealms)
 /**
  * shisa_enumerate_principals:
  * @dbh: Shisa library handle created by shisa().
- * @realm: Name of realm, as zero-terminated UTF-8 string.
- * @principal: Pointer to newly allocated array of newly allocated
- *   zero-terminated UTF-8 strings indicating name of principal.
- * @nprincipals: Pointer to number indicating number of allocated
- *   realm strings.
+ * @realm: Name of realm, as null-terminated UTF-8 string.
+ * @principals: Returned pointer to newly allocated array of just
+ *   allocated null-terminated UTF-8 strings with principal names.
+ * @nprincipals: Pointer to number updated with the number of just
+ *   allocated and returned principal names.
  *
- * Extract a list of all principal names in realm in backend, as
- * zero-terminated UTF-8 strings.  The caller must deallocate the
- * strings.
+ * Extracts a list of all principal names in backend belonging to
+ * the realm @realm, as null-terminated UTF-8 strings.  The caller
+ * is responsible for deallocating all strings and the array
+ * *@principals.
  *
- * Return value: Returns SHISA_OK on success, SHISA_NO_REALM if the
- *   specified realm does not exist, or error code.
+ * Return value: Returns %SHISA_OK on success, %SHISA_NO_REALM if the
+ *   specified realm does not exist, or an error code otherwise.
  **/
 int
 shisa_enumerate_principals (Shisa * dbh,
@@ -100,16 +103,17 @@ shisa_enumerate_principals (Shisa * dbh,
 /**
  * shisa_principal_find:
  * @dbh: Shisa library handle created by shisa().
- * @realm: Name of realm the principal belongs in.
- * @principal: Name of principal to get information on.
- * @ph: Pointer to previously allocated principal structure to fill
- *   out with information about principal.
+ * @realm: Name of the realm the principal belongs to.
+ * @principal: Name of principal to get information about.
+ * @ph: Pointer to a previously allocated principal structure
+ *   where information about the principal is to be stored.
  *
- * Extract information about given PRINCIPAL@REALM.
+ * Extracts information about given the PRINCIPAL@REALM pair
+ * selected by @principal and @realm.
  *
  * Return value: Returns %SHISA_OK iff successful, %SHISA_NO_REALM if
  *   the indicated realm does not exist, %SHISA_NO_PRINCIPAL if the
- *   indicated principal does not exist, or an error code.
+ *   indicated principal does not exist, or an error code otherwise.
  **/
 int
 shisa_principal_find (Shisa * dbh,
@@ -133,23 +137,26 @@ shisa_principal_find (Shisa * dbh,
 /**
  * shisa_principal_update:
  * @dbh: Shisa library handle created by shisa().
- * @realm: Name of realm the principal belongs in.
- * @principal: Name of principal to get information on.
- * @ph: Pointer to principal structure with information to store in database.
+ * @realm: Name of the realm the principal belongs to.
+ * @principal: Name of principal to get information about.
+ * @ph: Pointer to an existing principal structure containing
+ * information to store in the database.
  *
- * Modify information stored for given PRINCIPAL@REALM.  Note that it
- * is usually a good idea to only set the fields in @ph that you
- * actually want to update.  Specifically, first calling
- * shisa_principal_find() to get the current information, then
- * modifying one field, and calling shisa_principal_update() is not
- * recommended in general, as this will 1) overwrite any modifications
- * made to other fields between the two calls (by other processes) and
+ * Modifies information stored about the given principal
+ * PRINCIPAL@REALM.  Note that it is usually a good idea to set
+ * in @ph only the fields that are to be updated.
+ * Specifically, it is recommended to first call
+ * shisa_principal_find() to get the current information, then to
+ * modify one field and call shisa_principal_update().
+ * Modifying several values is not recommended in general,
+ * as this will 1) overwrite any modifications made to other fields
+ * between the two calls (by other processes) and
  * 2) will cause all values to be written again, which may generate
  * more overhead.
  *
- * Return value: Returns SHISA_OK if successful, %SHISA_NO_REALM if
+ * Return value: Returns %SHISA_OK if successful, %SHISA_NO_REALM if
  *   the indicated realm does not exist, %SHISA_NO_PRINCIPAL if the
- *   indicated principal does not exist, or an error code.
+ *   indicated principal does not exist, or an error code otherwise.
  **/
 int
 shisa_principal_update (Shisa * dbh,
@@ -175,15 +182,21 @@ shisa_principal_update (Shisa * dbh,
 /**
  * shisa_principal_add:
  * @dbh: Shisa library handle created by shisa().
- * @realm: Name of realm the principal belongs in.
- * @principal: Name of principal to add, may be %NULL to indicate that
- *   the @realm should be created, in which case @ph and @key are not used.
- * @ph: Pointer to principal structure with information to store in database.
- * @key: Pointer to key structure with information to store in database.
+ * @realm: Name of the realm the principal belongs to.
+ * @principal: Name of principal to add.  When set to %NULL,
+ *   only the realm @realm is created.
+ * @ph: Pointer to a principal structure with information to store
+ *   in the database.
+ * @key: Pointer to a key structure with information to store in
+ *   the database.
  *
- * Add given information to database as PRINCIPAL@REALM.
+ * Inserts the given information into the database for the
+ * principal PRINCIPAL@REALM.  In case @principal is %NULL,
+ * the prameters @ph and @key are not used and only the realm
+ * added to the database.
  *
- * Return value: Returns SHISA_OK iff successfully added, or an error code.
+ * Return value: Returns %SHISA_OK iff successfully added,
+ *   or an error code.
  **/
 int
 shisa_principal_add (Shisa * dbh,
@@ -213,12 +226,16 @@ shisa_principal_add (Shisa * dbh,
 /**
  * shisa_principal_remove:
  * @dbh: Shisa library handle created by shisa().
- * @realm: Name of realm the principal belongs in.
- * @principal: Name of principal to remove, may be %NULL to indicate
+ * @realm: Name of the realm the principal belongs to.
+ * @principal: Name of principal to remove.  Set to %NULL,
+ *   only the realm @realm is removed.
  *   that the @realm itself should be removed (requires that the realm
  *   to be empty).
  *
- * Remove all information stored in the database for given PRINCIPAL@REALM.
+ * Removes all information stored in the database for the given
+ * principal PRINCIPAL@REALM.  When @principal is %NULL, then the
+ * realm @realm is itself remove, but this will only succeed if
+ * the realm is already empty.
  *
  * Return value: Returns %SHISA_OK if successful, or an error code.
  **/
@@ -246,18 +263,22 @@ shisa_principal_remove (Shisa * dbh, const char *realm, const char *principal)
 /**
  * shisa_keys_find:
  * @dbh: Shisa library handle created by shisa().
- * @realm: Name of realm the principal belongs in.
- * @principal: Name of principal to add key for.
- * @hint: Pointer to Shisa key structure with hints on matching the key
- *   to modify, may be %NULL to match all keys.
- * @keys: pointer to newly allocated array with Shisa key structures.
- * @nkeys: pointer to number of newly allocated Shisa key structures in @keys.
+ * @realm: Name of the realm the principal belongs to.
+ * @principal: Name of the principal whose keys are examined.
+ * @hint: Pointer to a Shisa key structure with hints on matching
+ *   criteria for relevant keys.  %NULL matches all keys.
+ * @keys: Returned pointer to a newly allocated array of Shisa
+ *   key structures.
+ * @nkeys: Pointer to number updated with the number of allocated
+ *   Shisa key structures in *@keys.
  *
- * Iterate through keys for given PRINCIPAL@REALM and extract any keys
- * that match @hint.  Not all elements of @hint need to be filled out,
- * only use the fields you are interested in.  For example, if you
- * want to extract all keys with an etype of 3 (DES-CBC-MD5), set the
- * @key->etype field to 3, and set all other fields to 0.
+ * Iterates through the set of keys belonging to the principal
+ * PRINCIPAL@REALM, as specified by @principal and @realm,
+ * and then extracts any keys that match the criteria in @hint.
+ * Not all elements of @hint need to be filled out.
+ * Set only the fields you are interested in.  For example, if you
+ * want to extract all keys with an etype of 3, i.e., DES-CBC-MD5,
+ * set the @key->etype field to 3, and all other fields to 0.
  *
  * Return value: Returns %SHISA_OK iff successful, or an error code.
  **/
@@ -290,11 +311,12 @@ shisa_keys_find (Shisa * dbh,
 /**
  * shisa_key_add:
  * @dbh: Shisa library handle created by shisa().
- * @realm: Name of realm the principal belongs in.
- * @principal: Name of principal to add key for.
- * @key: Pointer to Shisa key structure with key to add.
+ * @realm: Name of the realm the principal belongs to.
+ * @principal: Name of the principal to add a new key for.
+ * @key: Pointer to a Shisa key structure with the new key.
  *
- * Add key to database for given PRINCIPAL@REALM.
+ * Adds @key to the database entry belonging to the
+ * principal PRINCIPAL@REALM, built from @principal and @realm.
  *
  * Return value: Returns %SHISA_OK iff successful, or an error code.
  **/
@@ -321,27 +343,29 @@ shisa_key_add (Shisa * dbh,
 /**
  * shisa_key_update:
  * @dbh: Shisa library handle created by shisa().
- * @realm: Name of realm the principal belongs in.
- * @principal: Name of principal to remove key for.
- * @oldkey: Pointer to Shisa key structure with hints on matching the key
- *   to modify.
- * @newkey: Pointer to Shisa key structure with new values for the
- *   key, note that all fields are used (and not just the ones specified
- *   by @oldkey).
+ * @realm: Name of the realm the principal belongs to.
+ * @principal: Name of the principal needing an updated key.
+ * @oldkey: Pointer to a Shisa key structure giving matching
+ *   criteria for locating the key to be updated.
+ * @newkey: Pointer to a complete Shisa key structure, in which
+ *   all fields are used for the new key.  Note that @oldkey
+ *   normally has far fewer fields filled-in.
  *
- * Modify data about a key in the database, for the given
- * PRINCIPAL@REALM.  First the @oldkey is used to locate the key to
- * update (similar to shisa_keys_find()), then that key is modified to
- * contain whatever information is stored in @newkey.  Not all
- * elements of @oldkey need to be filled out, only enough as to
- * identify the key uniquely.  For example, if you want to modify the
- * information stored for the only key with an etype of 3
- * (DES-CBC-MD5), set the @key->etype field to 3, and set all other
- * fields to 0.
+ * Modifies data about a key stored in the database, a key belonging
+ * to the principal built from @principal and @realm.
+ * First @oldkey is used to locate the key to
+ * update (similar to shisa_keys_find()), then found key is
+ * modified to contain whatever information is stored in @newkey.
+ * Not all elements of @oldkey need to be filled out, only sufficiently
+ * man so as to uniquely identify the desired key.
+ * For example, if you want to modify the information stored for
+ * the only key with an etype of 3, * i.e., DES-CBC-MD5,
+ * then set the @key->etype field to 3, and all other fields to 0.
  *
- * Return value: Returns %SHISA_OK on success, %SHISA_NO_KEY if no key
- *   could be identified, and %SHISA_MULTIPLE_KEY_MATCH if more than one
- *   key matched the given criteria, or an error code.
+ * Return value: Returns %SHISA_OK on success, %SHISA_NO_KEY if no
+ *   key could be located , %SHISA_MULTIPLE_KEY_MATCH if more
+ *   than a single key matched the given criteria, or an error code
+ *   otherwise.
  **/
 int
 shisa_key_update (Shisa * dbh,
@@ -367,20 +391,21 @@ shisa_key_update (Shisa * dbh,
 /**
  * shisa_key_remove:
  * @dbh: Shisa library handle created by shisa().
- * @realm: Name of realm the principal belongs in.
- * @principal: Name of principal to remove key for.
- * @key: Pointer to Shisa key structure with hints on matching the key
- *   to remove.
+ * @realm: Name of the realm the principal belongs to.
+ * @principal: Name of the principal whose key is to be removed.
+ * @key: Pointer to a Shisa key structure with hints on matching
+ *   criteria for the key to be removed.
  *
- * Remove a key, matching the hints in @key, from the Shisa database
+ * Removes from the Shisa database a key, matching the hints in @key,
  * for the user PRINCIPAL@REALM.  Not all elements of @key need to be
- * filled out, only those you are interested in.  For example, if you
- * want to remove the only key with an etype of 3 (DES-CBC-MD5), set
- * the @key->etype field to 3, and set all other fields to 0.
+ * filled in, only those relevant to locate the key.  For example,
+ * if you want to remove the only key with an etype of 3, i.e.,
+ * DES-CBC-MD5, set the @key->etype field to 3, and all other
+ * fields to 0.
  *
  * Return value: Returns %SHISA_OK on success, %SHISA_NO_KEY if no key
- *   could be identified, and %SHISA_MULTIPLE_KEY_MATCH if more than one
- *   key matched the given criteria, or an error code.
+ *   could be located, %SHISA_MULTIPLE_KEY_MATCH if more than one
+ *   key matched the given criteria, or an error code otherwise.
  **/
 int
 shisa_key_remove (Shisa * dbh,
@@ -404,9 +429,9 @@ shisa_key_remove (Shisa * dbh,
 /**
  * shisa_key_free:
  * @dbh: Shisa library handle created by shisa().
- * @key: Pointer to Shisa key structure to deallocate.
+ * @key: Pointer to a Shisa key structure to be deallocated.
  *
- * Deallocate the fields of a Shisa key structure, and the structure
+ * Deallocates the fields of a Shisa key structure, and the structure
  * itself.
  **/
 void
@@ -423,11 +448,11 @@ shisa_key_free (Shisa * dbh, Shisa_key * key)
 /**
  * shisa_keys_free:
  * @dbh: Shisa library handle created by shisa().
- * @keys: Pointer to array with @nkeys elements of keys.
- * @nkeys: Number of key elements in @keys array.
+ * @keys: Pointer to an array of Shisa key structures, @nkeys in number.
+ * @nkeys: Number of key elements in the array @keys.
  *
- * Deallocate each element of an array with Shisa database keys, using
- * shisa_key_free().
+ * Deallocates each key element in an array of Shisa database keys,
+ * using repeated calls to shisa_key_free().
  **/
 void
 shisa_keys_free (Shisa * dbh, Shisa_key ** keys, size_t nkeys)

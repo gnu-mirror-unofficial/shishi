@@ -26,9 +26,9 @@
  * shisa:
  *
  * Initializes the Shisa library.  If this function fails, it may
- * print diagnostic errors to stderr.
+ * print diagnostic errors to standard error.
  *
- * Return value: Returns Shisa library handle, or %NULL on error.
+ * Return value: Returns a Shisa library handle, or %NULL on error.
  **/
 Shisa *
 shisa (void)
@@ -45,10 +45,10 @@ shisa (void)
 
 /**
  * shisa_done:
- * @handle: shisa handle as allocated by shisa().
+ * @dbh: Shisa handle as allocated by shisa().
  *
  * Deallocates the shisa library handle.  The handle must not be used
- * in any calls to shisa functions after this.
+ * in calls to any shisa function after the completion of this call.
  **/
 void
 shisa_done (Shisa * dbh)
@@ -65,18 +65,19 @@ shisa_done (Shisa * dbh)
 
 /**
  * shisa_init:
- * @dbh: pointer to library handle to be created.
+ * @dbh: Returned pointer to a created Shisa library handle.
  *
- * Create a Shisa library handle, using shisa(), and read the system
- * configuration file from their default locations.  The paths to the
+ * Creates a Shisa library handle, using shisa(), and reads the system
+ * configuration file from its default location.  The path to the
  * default system configuration file is decided at compile time
  * ($sysconfdir/shisa.conf).
  *
- * The handle is allocated regardless of return values, except for
- * SHISA_INIT_ERROR which indicates a problem allocating the handle.
- * (The other error conditions comes from reading the files.)
+ * The handle is allocated regardless of return value, except for
+ * %SHISA_INIT_ERROR which indicates a problem in allocating the
+ * handle.  Other error conditions arise while reading a file.
  *
- * Return value: Returns %SHISA_OK iff successful.
+ * Return value: Returns %SHISA_OK, or an error code.  The error
+ *   code %SHISA_INIT_ERROR indicates a failure to create the handle.
  **/
 int
 shisa_init (Shisa ** dbh)
@@ -86,19 +87,21 @@ shisa_init (Shisa ** dbh)
 
 /**
  * shisa_init_with_paths:
- * @dbh: pointer to library handle to be created.
- * @file: Filename of system configuration, or NULL.
+ * @dbh: Returned pointer to a created Shisa library handle.
+ * @file: Filename of system configuration, or %NULL.
  *
- * Create a Shisa library handle, using shisa(), and read the system
- * configuration file indicated location (or the default location, if
- * %NULL).  The paths to the default system configuration file is
+ * Creates a Shisa library handle, using shisa(), and reads the system
+ * configuration file from the indicated location at @file, or at the
+ * default location, should @file be %NULL.
+ * The path to the default system configuration file is
  * decided at compile time ($sysconfdir/shisa.conf).
  *
- * The handle is allocated regardless of return values, except for
- * SHISA_INIT_ERROR which indicates a problem allocating the handle.
- * (The other error conditions comes from reading the files.)
+ * The handle is allocated regardless of return value, except for
+ * %SHISA_INIT_ERROR which indicates a problem in allocating the
+ * handle.  Other error conditions arise while reading a file.
  *
- * Return value: Returns %SHISA_OK iff successful.
+ * Return value: Returns %SHISA_OK, or an error code.  The error
+ *   %SHISA_INIT_ERROR indicates a failure to create the handle.
  **/
 int
 shisa_init_with_paths (Shisa ** dbh, const char *file)
