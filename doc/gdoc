@@ -171,7 +171,7 @@ $blankline_texinfo = "";
 		     $type_param =>	'{\\bf $1}' );
 # Ideally this value should be place on the line preceding
 # the detected empty line.  Then '\\' would be ideal.
-$blankline_tex = '\smallskip'
+$blankline_tex = '\smallskip';
 
 # sgml, docbook format
 %highlights_sgml = ( $type_constant =>
