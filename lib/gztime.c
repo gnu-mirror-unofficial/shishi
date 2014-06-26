@@ -108,7 +108,7 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
  * and to be precise, does so from the named field @field
  * within the structure @node.
  *
- * Return value: Returns %SHISHI_OK if successful, or an error..
+ * Return value: Returns %SHISHI_OK if successful, or an error.
  **/
 int
 shishi_time (Shishi * handle, Shishi_asn1 node, const char *field, char **t)

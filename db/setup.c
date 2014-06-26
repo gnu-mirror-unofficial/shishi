@@ -71,7 +71,6 @@ shisa_done (Shisa * dbh)
  * configuration file from its default location.  The path to the
  * default system configuration file is decided at compile time
  * ($sysconfdir/shisa.conf).
- *
  * The handle is allocated regardless of return value, except for
  * %SHISA_INIT_ERROR which indicates a problem in allocating the
  * handle.  Other error conditions arise while reading a file.
@@ -95,7 +94,6 @@ shisa_init (Shisa ** dbh)
  * default location, should @file be %NULL.
  * The path to the default system configuration file is
  * decided at compile time ($sysconfdir/shisa.conf).
- *
  * The handle is allocated regardless of return value, except for
  * %SHISA_INIT_ERROR which indicates a problem in allocating the
  * handle.  Other error conditions arise while reading a file.

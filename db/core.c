@@ -363,7 +363,7 @@ shisa_key_add (Shisa * dbh,
  * then set the @key->etype field to 3, and all other fields to 0.
  *
  * Return value: Returns %SHISA_OK on success, %SHISA_NO_KEY if no
- *   key could be located , %SHISA_MULTIPLE_KEY_MATCH if more
+ *   key could be located, %SHISA_MULTIPLE_KEY_MATCH if more
  *   than a single key matched the given criteria, or an error code
  *   otherwise.
  **/

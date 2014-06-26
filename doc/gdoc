@@ -96,8 +96,8 @@ eval '(exit $?0)' && eval 'exec perl -S "$0" ${1+"$@"}'
 #  * my_function
 #  **/
 #
-# If the Description: header tag is ommitted, then there must be a blank line
-# after the last parameter specification.
+# If the Description: header tag is omitted, then there must be
+# a blank line after the last parameter specification.
 # e.g.
 # /**
 #  * my_function - does my stuff
@@ -165,11 +165,13 @@ $blankline_html = '</p><p>';
 			$type_param	=> '@var{$1}' );
 $blankline_texinfo = "";
 
-%highlights_tex = ( $type_constant =>	"{\\\\it \$1}",
-		     $type_func =>	"{\\\\bf \$1}",
-		     $type_struct =>	"{\\\\it \$1}",
-		     $type_param =>	"{\\\\bf \$1}" );
-$blankline_tex = "\\\\";
+%highlights_tex = ( $type_constant =>	'{\\it $1}',
+		     $type_func =>	'{\\bf $1}',
+		     $type_struct =>	'{\\it $1}',
+		     $type_param =>	'{\\bf $1}' );
+# Ideally this value should be place on the line preceding
+# the detected empty line.  Then '\\' would be ideal.
+$blankline_tex = '\smallskip'
 
 # sgml, docbook format
 %highlights_sgml = ( $type_constant =>
@@ -496,7 +498,8 @@ sub output_tex {
 
     $func =~ s/_/\\_/g;
 
-    print "\n\n\\subsection{". $func . "}\n\\label{" . $args{'function'} . "}\n";
+    print "\n", '\subsection*{', $func, "}\n",
+	  '\label{', $args{'function'}, "}\n";
 
     $type = $args{'functiontype'};
     $type =~ s/_/\\_/g;
@@ -526,9 +529,9 @@ sub output_tex {
 	    print ", ";
 	}
     }
-    print ")\n";
+    print ")\n\n";
 
-    print "\n{\\large{Arguments}}\n";
+    print '\subsection*{Arguments}', "\n";
 
     print "\\begin{itemize}\n";
     $check=0;
@@ -545,11 +548,10 @@ sub output_tex {
 
 	# Variadic arguments carry no type: insert a place holder.
 	print '\item ',
-	      $param1 ? '{\it ' . $param1 . '}' : '{\vphantom{l}}',
-	      ' {\bf ', $param2, '}',
+	      $param1 ? '{\it ' . $param1 . '} ' : '',
+	      '{\bf ', $param2, '}',
 	      $param4 ? '{\it ' . $param4 . '}' : '',
-	      ": \n";
-#	print "\n";
+	      '\hspace{0.3ex}:', "\n";	# Small space for readability.
 
 	$param3 = $args{'parameters'}{$parameter};
 	$param3 =~ s/#([a-zA-Z\_]+)/{\\it $1}/g;
@@ -568,17 +570,27 @@ sub output_tex {
 	$sec =~ s/_/\\_/g;
 	$sec =~ s/#([a-zA-Z\_]+)/{\\it $1}/g;
 
-	print "\n{\\large{$sec}}\\\\\n";
+	print "\n", '\subsection*{', $sec, '}', "\n";
 	print "\\begin{rmfamily}\n";
 
 	$sec = $args{'sections'}{$section};
 	$sec =~ s/\\:/:/g;
 	$sec =~ s/#([a-zA-Z\_]+)/{\\it $1}/g;
-	$sec =~ s/->/\$\\rightarrow\$/g;
-	$sec =~ s/([0-9]+)\^([0-9]+)/\$\{$1\}\^\{$2\}\$/g;
 
 	$out = just_highlight($sec);
 	$out =~ s/_/\\_/g;
+
+	# Ampersands may appear in embedded code samples, and are
+	# at the same time tokens in TeX source, so we escape them.
+	$out =~ s/&/\\&/g;
+
+	# The dollar sign starts math mode in TeX and must there-
+	# fore be escaped.  Furthermore, the rewrite rules for
+	# '->' and '#^#' must be delayed until that protection
+	# is in place.
+	$out =~ s/\$/\\\$/g;
+	$out =~ s/->/\$\\rightarrow\$/g;
+	$out =~ s/([0-9]+)\^([0-9]+)/\$\{$1\}\^\{$2\}\$/g;
 
 	print $out;
 	print "\\end{rmfamily}\n";
