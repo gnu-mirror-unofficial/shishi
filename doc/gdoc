@@ -132,20 +132,39 @@ eval '(exit $?0)' && eval 'exec perl -S "$0" ${1+"$@"}'
 # 2. x^y with ${x}^{y}$.
 # 3. xxx\: with xxx:
 
-# XXX: Migrate to strict code with warnings.
+use strict;
+use warnings;
 
 use Getopt::Long;
 use Pod::Usage;
 
 use POSIX qw(strftime);
 
-# match expressions used to find embedded type information
-$type_constant	= '%(\w+)';
-$type_func	= '(\w+\(\))';
-$type_param	= '@(\w+|\.\.\.)';
-$type_struct	= '#(\w+)';
-$type_env	= '\$(\w+)';
+# Global symbols.
+my ($function_purpose, $lineprefix, $scanned_file) = ('', '', 'unknown');
+my ($lineno, $section_default) = (0, 'Description');
 
+# Symbols set by parser and used by rendering subroutines.
+my %constants;
+my %function_table;
+my %parameters;
+my %parametertypes;
+my @parameterlist;
+my %sections;
+my @sectionlist;
+
+# Variables used in options.
+my ($function_only, $opt_dtd, $output_mode, $verbose) =
+    (0, 0, undef, 0);
+my ($bugsto, $copyright, $include, $includefuncprefix);
+my ($modulename, $pkgname, $seeinfo, $sourceversion, $verbatimcopying);
+
+# Matching expressions used to find embedded type information.
+my $type_constant = '%(\w+)';
+my $type_func	= '(\w+\(\))';
+my $type_param	= '@(\w+|\.\.\.)';
+my $type_struct	= '#(\w+)';
+my $type_env	= '\$(\w+)';
 
 # Output conversion substitutions.
 #  One for each output format
@@ -153,48 +172,60 @@ $type_env	= '\$(\w+)';
 my @known_modes = qw/ docbook html listfunc man sgml tex texinfo text /;
 
 # these work fairly well
-%highlights_html = ( $type_constant =>	"<i>\$1</i>",
-		     $type_func =>	"<b>\$1</b>",
-		     $type_struct =>	"<i>\$1</i>",
-		     $type_param =>	"<tt><b>\$1</b></tt>" );
-$blankline_html = '</p><p>';
+my %highlights_html = (
+	$type_constant	=> '<i>$1</i>',
+	$type_func	=> '<b>$1</b>',
+	$type_struct	=> '<i>$1</i>',
+	$type_param	=> '<tt><b>$1</b></tt>',
+);
+my $blankline_html = '</p><p>';
 
-%highlights_texinfo = ( $type_constant	=> '@code{$1}',
-			$type_func	=> '@code{$1}',
-			$type_struct	=> '@code{$1}',
-			$type_param	=> '@var{$1}' );
-$blankline_texinfo = "";
+my %highlights_texinfo = (
+	$type_constant	=> '@code{$1}',
+	$type_func	=> '@code{$1}',
+	$type_struct	=> '@code{$1}',
+	$type_param	=> '@var{$1}',
+);
+my $blankline_texinfo = '';
 
-%highlights_tex = ( $type_constant =>	'{\\it $1}',
-		     $type_func =>	'{\\bf $1}',
-		     $type_struct =>	'{\\it $1}',
-		     $type_param =>	'{\\bf $1}' );
+my %highlights_tex = (
+	$type_constant	=> '{\\it $1}',
+	$type_func	=> '{\\bf $1}',
+	$type_struct	=> '{\\it $1}',
+	$type_param	=> '{\\bf $1}',
+);
 # Ideally this value should be place on the line preceding
 # the detected empty line.  Then '\\' would be ideal.
-$blankline_tex = '\smallskip';
+my $blankline_tex = '\smallskip';
 
 # sgml, docbook format
-%highlights_sgml = ( $type_constant =>
-			"<replaceable class=\"option\">\$1</replaceable>",
-		     $type_func =>	"<function>\$1</function>",
-		     $type_struct =>	"<structname>\$1</structname>",
-		     $type_env =>	"<envar>\$1</envar>",
-		     $type_param =>	"<parameter>\$1</parameter>" );
-$blankline_sgml = "</para><para>\n";
+my %highlights_sgml = (
+	$type_constant	=>
+		'<replaceable class="option">$1</replaceable>',
+	$type_func	=> '<function>$1</function>',
+	$type_struct	=> '<structname>$1</structname>',
+	$type_env	=> '<envar>$1</envar>',
+	$type_param	=> '<parameter>$1</parameter>',
+);
+my $blankline_sgml = "</para><para>\n";
 
 # these are pretty rough
-%highlights_man = ( $type_constant =>	"\\\\fB\$1\\\\fP",
-		    $type_func =>	"\\\\fB\$1\\\\fP",
-		    $type_struct =>	"\\\\fB\$1\\\\fP",
-		    $type_param =>	"\\\\fI\$1\\\\fP" );
-$blankline_man = "";
+my %highlights_man = (
+	$type_constant	=> '\\fB$1\\fP',
+	$type_func	=> '\\fB$1\\fP',
+	$type_struct	=> '\\fB$1\\fP',
+	$type_param	=> '\\fI$1\\fP',
+);
+my $blankline_man = '';
 
 # text-mode
-%highlights_text = ( $type_constant =>	"\$1",
-		     $type_func =>	"\$1",
-		     $type_struct =>	"\$1",
-		     $type_param =>	"\$1" );
-$blankline_text = "";
+my %highlights_text = (
+	$type_constant	=> '$1',
+	$type_func	=> '$1',
+	$type_struct	=> '$1',
+	$type_param	=> '$1',
+);
+my $blankline_text = '';
 
 
 sub usage {
@@ -207,19 +238,12 @@ sub usage {
     exit 1;
 }
 
-$verbose = 0;
+my %highlights = %highlights_man;
+my $blankline = $blankline_man;
+
 $output_mode = "man";
-%highlights = %highlights_man;
-$blankline = $blankline_man;
 $modulename = "API Documentation";
 $sourceversion = strftime "%Y-%m-%d", localtime;
-$function_only = 0;
-
-my $opt_dtd = 0;
-
-my $lineprefix = "";
-
-my $scanned_file;	# Presently active source file.
 
 ##
 # Option handling and helpers.
@@ -250,9 +274,8 @@ my %opts = ( # Output modes
 	"bugsto=s"	=> \$bugsto,
 	"copyright=s"	=> \$copyright,
 	"dtd+"		=> \$opt_dtd,
-	"function=s"	=> sub { $function = $_[1];
-				 $function_only = 1;
-				 $function_table{$function} = 1;
+	"function=s"	=> sub { $function_only = 1;
+				 $function_table{$_[1]} = 1;
 			       },
 	"include=s"	=> \$include,
 	"includefuncprefix+" => \$includefuncprefix,
@@ -305,20 +328,14 @@ sub dump_section {
 #  
 
 sub repstr {
-    $pattern = shift;
-    $repl = shift;
-    $match1 = shift;
-    $match2 = shift;
-    $match3 = shift;
-    $match4 = shift;
+    my ($pattern, $repl, $match1, $match2, $match3, $match4) = @_;
+    my ($output, $return);
 
     $output = $repl;
     $output =~ s,\$1,$match1,g;
     $output =~ s,\$2,$match2,g;
     $output =~ s,\$3,$match3,g;
     $output =~ s,\$4,$match4,g;
-
-    my $return;
 
     # Try two different quoting forms to circumvent collisions.
     # The standard delimiter '/' corrupts end marks in HTML and XML.
@@ -359,6 +376,7 @@ sub just_highlight {
 
 	$contents =~ s:$pattern:repstr($pattern, $highlights{$pattern}, $1, $2, $3, $4):gse;
     }
+
     foreach my $line (split "\n", $contents) {
 	if ($line eq ""){
 	    $ret = $ret . $lineprefix . $blankline;
@@ -378,7 +396,6 @@ sub output_highlight {
 # output in texinfo
 sub output_texinfo {
     my %args = %{$_[0]};
-    my ($parameter, $section);
     my $count;
 
     print "\@subheading ".$args{'function'}."\n";
@@ -387,13 +404,15 @@ sub output_texinfo {
     print "{".$args{'function'}."} ";
     print "(";
     $count = 0;
-    foreach $parameter (@{$args{'parameterlist'}}) {
+
+    foreach my $parameter (@{$args{'parameterlist'}}) {
 	# Variadic arguments carry no type.
 	print $args{'parametertypes'}{$parameter}, " "
 	    if $args{'parametertypes'}{$parameter};
 
-	print '@var{', $parameter, '}',
-	      $args{'arraylength'}{$parameter};
+	print '@var{', $parameter, '}';
+	print $args{'arraylength'}{$parameter}
+	    if $args{'arraylength'}{$parameter};
 
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
@@ -401,7 +420,8 @@ sub output_texinfo {
 	}
     }
     print ")\n";
-    foreach $parameter (@{$args{'parameterlist'}}) {
+
+    foreach my $parameter (@{$args{'parameterlist'}}) {
 	if ($args{'parameters'}{$parameter}) {
 	    print '@var{', $parameter, '}: ';
 
@@ -409,7 +429,8 @@ sub output_texinfo {
 	    print "\n";
 	}
     }
-    foreach $section (@{$args{'sectionlist'}}) {
+
+    foreach my $section (@{$args{'sectionlist'}}) {
 	print "\n\@strong{$section:} ";
 	$args{'sections'}{$section} =~ s:([{}]):\@$1:gs;
 	output_highlight($args{'sections'}{$section});
@@ -420,8 +441,8 @@ sub output_texinfo {
 # output in html
 sub output_html {
     my %args = %{$_[0]};
-    my ($parameter, $section);
     my $count;
+
     print "\n", '<a name="', $args{'function'}, '">&nbsp;</a>', "\n",
 	  '<h2>Function</h2>', "\n";
 
@@ -429,7 +450,8 @@ sub output_html {
     print "<b>".$args{'function'}."</b>\n";
     print "(";
     $count = 0;
-    foreach $parameter (@{$args{'parameterlist'}}) {
+
+    foreach my $parameter (@{$args{'parameterlist'}}) {
 	# Variadic arguments carry no type.
 	print '<i>', $args{'parametertypes'}{$parameter}, '</i> '
 	    if $args{'parametertypes'}{$parameter};
@@ -437,7 +459,7 @@ sub output_html {
 	print '<b>', $parameter, '</b>';
 
 	print $args{'arraylength'}{$parameter}
-	      if $args{'arraylength'}{$parameter};
+	    if $args{'arraylength'}{$parameter};
 
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
@@ -450,7 +472,7 @@ sub output_html {
     print "<dl>\n";
 
     if ($#{$args{'parameterlist'}} >= 0) {
-	foreach $parameter (@{$args{'parameterlist'}}) {
+	foreach my $parameter (@{$args{'parameterlist'}}) {
 	    print '<dt>';
 	    # Variadic arguments carry no type.
 	    print "<i>" . $args{'parametertypes'}{$parameter} . "</i> "
@@ -469,9 +491,9 @@ sub output_html {
     } else {
 	print "<dt>None</dt>\n";
     }
-
     print "</dl>\n";
-    foreach $section (@{$args{'sectionlist'}}) {
+
+    foreach my $section (@{$args{'sectionlist'}}) {
 	print "<h3>$section</h3>\n";
 	print "<p>\n";
 
@@ -487,14 +509,8 @@ sub output_html {
 # output in tex
 sub output_tex {
     my %args = %{$_[0]};
-    my ($parameter, $section);
-    my $count;
+    my ($count, $check, $type);
     my $func = $args{'function'};
-    my $param;
-    my $param2;
-    my $sec;
-    my $check;
-    my $type;
 
     $func =~ s/_/\\_/g;
 
@@ -508,7 +524,8 @@ sub output_tex {
     print "{\\bf ".$func."}\n";
     print "(";
     $count = 0;
-    foreach $parameter (@{$args{'parameterlist'}}) {
+
+    foreach my $parameter (@{$args{'parameterlist'}}) {
 	my $param = $args{'parametertypes'}{$parameter};
 	my $param2 = $parameter;
 	my $param3 = $args{'arraylength'}{$parameter};
@@ -535,7 +552,8 @@ sub output_tex {
 
     print "\\begin{itemize}\n";
     $check=0;
-    foreach $parameter (@{$args{'parameterlist'}}) {
+
+    foreach my $parameter (@{$args{'parameterlist'}}) {
 	my $param1 = $args{'parametertypes'}{$parameter};
 	my $param2 = $parameter;
 	my $param4 = $args{'arraylength'}{$parameter};
@@ -553,10 +571,10 @@ sub output_tex {
 	      $param4 ? '{\it ' . $param4 . '}' : '',
 	      '\hspace{0.3ex}:', "\n";	# Small space for readability.
 
-	$param3 = $args{'parameters'}{$parameter};
+	my $param3 = $args{'parameters'}{$parameter};
 	$param3 =~ s/#([a-zA-Z\_]+)/{\\it $1}/g;
 
-	$out = just_highlight($param3);
+	my $out = just_highlight($param3);
 	$out =~ s/_/\\_/g;
 	print $out;
     }
@@ -565,8 +583,8 @@ sub output_tex {
     }
     print "\\end{itemize}\n";
 
-    foreach $section (@{$args{'sectionlist'}}) {
-	$sec = $section;
+    foreach my $section (@{$args{'sectionlist'}}) {
+	my $sec = $section;
 	$sec =~ s/_/\\_/g;
 	$sec =~ s/#([a-zA-Z\_]+)/{\\it $1}/g;
 
@@ -577,7 +595,7 @@ sub output_tex {
 	$sec =~ s/\\:/:/g;
 	$sec =~ s/#([a-zA-Z\_]+)/{\\it $1}/g;
 
-	$out = just_highlight($sec);
+	my $out = just_highlight($sec);
 	$out =~ s/_/\\_/g;
 
 	# Ampersands may appear in embedded code samples, and are
@@ -602,7 +620,6 @@ sub output_tex {
 # output in sgml DocBook
 sub output_sgml {
     my %args = %{$_[0]};
-    my ($parameter, $section);
     my $count;
     my $id;
     my $base_element = "refentry";
@@ -656,16 +673,19 @@ sub output_sgml {
 
     $count = 0;
     if ($#{$args{'parameterlist'}} >= 0) {
-	foreach $parameter (@{$args{'parameterlist'}}) {
+	foreach my $parameter (@{$args{'parameterlist'}}) {
 	    print '   <paramdef>';
 
 	    # A variadic parameter has no type.
 	    print $args{'parametertypes'}{$parameter}, ' '
 		if  $args{'parametertypes'}{$parameter};
 
-	    print "<parameter>$parameter</parameter>",
-		  $args{'arraylength'}{$parameter},
-		  "</paramdef>\n";
+	    print '<parameter>', $parameter, '</parameter>';
+
+	    print $args{'arraylength'}{$parameter}
+	        if $args{'arraylength'}{$parameter};
+
+	    print '</paramdef>', "\n";
 	}
     } else {
 	print "   <void />\n";
@@ -683,7 +703,7 @@ sub output_sgml {
 #    print "<para>\nArguments\n";
     if ($#{$args{'parameterlist'}} >= 0) {
 	print " <variablelist>\n";
-	foreach $parameter (@{$args{'parameterlist'}}) {
+	foreach my $parameter (@{$args{'parameterlist'}}) {
 	    print "  <varlistentry>\n   <term><parameter>$parameter</parameter></term>\n";
 	    print "   <listitem>\n    <para>\n";
 	    $lineprefix="     ";
@@ -698,7 +718,8 @@ sub output_sgml {
 
     # print out each section
     $lineprefix="   ";
-    foreach $section (@{$args{'sectionlist'}}) {
+
+    foreach my $section (@{$args{'sectionlist'}}) {
 	print "<refsect1>\n <title>$section</title>\n <para>\n";
 #	print "<para>\n$section\n";
 	if ($section =~ m/EXAMPLE/i) {
@@ -722,7 +743,6 @@ sub output_sgml {
 # output in man
 sub output_man {
     my %args = %{$_[0]};
-    my ($parameter, $section);
     my $count;
 
     print ".\\\" DO NOT MODIFY THIS FILE!  It was generated by gdoc.\n";
@@ -745,12 +765,15 @@ sub output_man {
     print ".sp\n";
     print ".BI \"".$args{'functiontype'}." ".$args{'function'}."(";
     $count = 0;
-    foreach $parameter (@{$args{'parameterlist'}}) {
+
+    foreach my $parameter (@{$args{'parameterlist'}}) {
 	print $args{'parametertypes'}{$parameter}, ' '
 	    if $args{'parametertypes'}{$parameter};
 
-	print '" ', $parameter, ' "',
-	      $args{'arraylength'}{$parameter};
+	print '" ', $parameter, ' "';
+
+	print $args{'arraylength'}{$parameter}
+	    if $args{'arraylength'}{$parameter};
 
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
@@ -761,24 +784,32 @@ sub output_man {
 
     if (@{$args{'parameterlist'}}) {
 	print ".SH ARGUMENTS\n";
-	foreach $parameter (@{$args{'parameterlist'}}) {
+	foreach my $parameter (@{$args{'parameterlist'}}) {
 	    print '.IP "';
+
 	    # Variadic arguments carry no type.
 	    print $args{'parametertypes'}{$parameter}, ' '
 		if $args{'parametertypes'}{$parameter};
-	    print $parameter, $args{'arraylength'}{$parameter},
-		  "\" 12\n";
 
-	    $param = $args{'parameters'}{$parameter};
+	    print $parameter;
+
+	    print $args{'arraylength'}{$parameter}
+		if $args{'arraylength'}{$parameter};
+
+	    print '" 12', "\n";
+
+	    my $param = $args{'parameters'}{$parameter};
 	    $param =~ s/-/\\-/g;
+
 	    output_highlight($param);
 	}
     }
 
-    foreach $section (@{$args{'sectionlist'}}) {
-	print ".SH \"" . uc($section) . "\"\n";
-	$sec = $args{'sections'}{$section};
+    foreach my $section (@{$args{'sectionlist'}}) {
+	my $sec = $args{'sections'}{$section};
 	$sec =~ s/-/\\-/g;
+
+	print '.SH "', uc($section), "\"\n";
 	output_highlight($sec);
     }
 
@@ -828,19 +859,26 @@ sub output_listfunc {
 # output in text
 sub output_text {
     my %args = %{$_[0]};
-    my ($parameter, $section);
 
     print "Function = ".$args{'function'}."\n";
     print "  return type: ".$args{'functiontype'}."\n\n";
-    foreach $parameter (@{$args{'parameterlist'}}) {
+
+    foreach my $parameter (@{$args{'parameterlist'}}) {
 	# Variadic arguments carry no type.
 	print ' ', $args{'parametertypes'}{$parameter}
 	    if $args{'parametertypes'}{$parameter};
-	print ' ', $parameter, $args{'arraylength'}{$parameter}, "\n";
-	print '    -> ';
+
+	print ' ', $parameter;
+
+	print $args{'arraylength'}{$parameter}
+	    if $args{'arraylength'}{$parameter};
+
+	print "\n    -> ";
+
 	output_highlight($args{'parameters'}{$parameter});
     }
-    foreach $section (@{$args{'sectionlist'}}) {
+
+    foreach my $section (@{$args{'sectionlist'}}) {
 	print " $section:\n";
 	print "    -> ";
 	output_highlight($args{'sections'}{$section});
@@ -864,6 +902,7 @@ sub dump_function {
     my $docname = shift @_;
     my $prototype = shift @_;
 
+    my ($return_type, $function_name);
     my %arraylength;
 
     if ($prototype =~ m/^()([a-zA-Z0-9_~:]+)\s*\(([^\)]*)\)/ ||
@@ -873,11 +912,11 @@ sub dump_function {
 	$prototype =~ m/^(\w+\s+\w+\s*\*)\s*([a-zA-Z0-9_~:]+)\s*\(([^\)]*)\)/)  {
 	$return_type = $1;
 	$function_name = $2;
-	$args = $3;
+	my $args = $3;
 
 #	print STDERR "ARGS = '$args'\n";
 
-	foreach $arg (split ',', $args) {
+	foreach my $arg (split ',', $args) {
 	    # strip leading/trailing spaces
 	    $arg =~ s/^\s*//;
 	    $arg =~ s/\s*$//;
@@ -886,21 +925,25 @@ sub dump_function {
 	    # Ignore any isolated 'void'.
 	    next	if ($arg eq 'void');
 
-	    @args = split('\s', $arg);
+	    my @args = split('\s', $arg);
 
 #	    print STDERR " -> @args\n";
-	    $param = pop @args;
-#	    print STDERR " -> @args\n";
+	    my $param = pop @args;
+
+	    # Push leading asterisques into the type list.
 	    if ($param =~ m/^(\*+)(.*)/) {
 		$param = $2;
 		push @args, $1;
 	    }
+
+	    # Extract closing array lengths for separate bookkeeping.
 	    if ($param =~ m/^(.*)(\[\d*\])$/) {
 		$param = $1;
-		$arraylength{$param} = $2	if $2;
+		$arraylength{$param} = $2;
 	    }
+
 #	    print STDERR " :> @args\n";
-	    $type = join " ", @args;
+	    my $type = join " ", @args;
 
 	    if ($param ne "void" and not $parameters{$param}) {
 		$parameters{$param} = "-- undescribed --";
@@ -978,13 +1021,10 @@ if ($#ARGV==-1) {
 	       -exitval => 1, -verbose => 0, -output => \*STDERR);
 }
 
-$state = 0;
-$section = "";
-
-$doc_start = "^/\\*\\*\$";
-$doc_end = "\\*/";
-$doc_com = "\\s*\\*\\s*";
-$doc_func = $doc_com."(\\w+):?";
+my $doc_start = "^/\\*\\*\$";
+my $doc_end = "\\*/";
+my $doc_com = "\\s*\\*\\s*";
+my $doc_func = $doc_com."(\\w+):?";
 
 # $doc_special = '@%$#';
 
@@ -998,9 +1038,9 @@ $doc_func = $doc_com."(\\w+):?";
 #
 # The latter is a variadic placeholder used in a parameter section.
 
-$doc_sect = $doc_com . '([@[:upper:]][\w ]+|@\.\.\.):\s*(.*)';
+my $doc_sect = $doc_com . '([@[:upper:]][\w ]+|@\.\.\.):\s*(.*)';
 
-$doc_content = $doc_com."(.*)";
+my $doc_content = $doc_com."(.*)";
 
 %constants = ();
 %parameters = ();
@@ -1008,18 +1048,18 @@ $doc_content = $doc_com."(.*)";
 %sections = ();
 @sectionlist = ();
 
-$contents = "";
-$section_default = "Description";	# default section
-$section = $section_default;
-
-$lineno = 0;
 foreach my $file (@ARGV) {
-    if (!open(IN,"<$file")) {
+    my ($contents, $function, $prototype, $section) =
+	('', '', '', $section_default);
+
+    if (!open(IN, '<', $file)) {
 	print STDERR "Error: Cannot open file $file\n";
 	next;
     }
 
     $scanned_file = $file;
+
+    my $state = 0;	# State of parser automata.
 
     while (<IN>) {
 	$lineno++;
@@ -1047,8 +1087,8 @@ foreach my $file (@ARGV) {
 	    }
 	} elsif ($state == 2) {	# look for head: lines, and include content
 	    if (/$doc_sect/o) {
-		$newsection = $1;
-		$newcontents = $2;
+		my $newsection = $1;
+		my $newcontents = $2;
 
 		if ($contents ne "") {
 		    dump_section($section, $contents);
