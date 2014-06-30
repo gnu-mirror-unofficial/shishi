@@ -947,7 +947,7 @@ sub dump_function {
 
 	    if ($param ne "void" and not $parameters{$param}) {
 		$parameters{$param} = "-- undescribed --";
-		print STDERR 'Warning(', $lineno - 1, '): ',
+		print STDERR "Warning($scanned_file:", $lineno - 1, '): ',
 			     'Function parameter "', $param, '" ',
 			     'is not described by "', $docname, '".',
 			     "\n";
@@ -959,13 +959,13 @@ sub dump_function {
 #	    print STDERR "param = '$param', type = '$type'\n";
 	}
     } else {
-	print STDERR 'Warning(', $lineno - 1, '): ',
+	print STDERR "Warning($scanned_file:", $lineno - 1, '): ',
 		     'Cannot understand prototype: ',
 		     "'$prototype'.\n";
 	return;
     }
 
-    print STDERR 'Warning(', $lineno - 1, '): ',
+    print STDERR "Warning($scanned_file:", $lineno - 1, '): ',
 		 'Defines "', $function_name, '"',
 		 ', but "', $docname, '" was documented.', "\n"
 	if $docname ne $function_name;
@@ -1058,6 +1058,7 @@ foreach my $file (@ARGV) {
     }
 
     $scanned_file = $file;
+    $lineno = 0;
 
     my $state = 0;	# State of parser automata.
 
@@ -1078,11 +1079,13 @@ foreach my $file (@ARGV) {
 		    $function_purpose = "";
 		}
 		if ($verbose) {
-		    print STDERR "Info($lineno): Scanning doc for $function\n";
+		    print STDERR "Info($scanned_file:$lineno): ",
+				 "Scanning docs for func '$function'.\n";
 		}
 	    } else {
-		print STDERR "Warning($lineno): Cannot understand '$_' on line $lineno",
-		" - I thought it was a doc line\n";
+		print STDERR "Warning($scanned_file:$lineno): ",
+			     "Cannot understand '$_' on line $lineno",
+			     " - I thought it was a doc line.\n";
 		$state = 0;
 	    }
 	} elsif ($state == 2) {	# look for head: lines, and include content
@@ -1123,7 +1126,8 @@ foreach my $file (@ARGV) {
 		}
 	    } else {
 		# i dont know - bad line?  ignore.
-		print STDERR "Warning($lineno): Bad line: $_\n";
+		print STDERR "Warning($scanned_file:$lineno): ",
+			     "Bad line: $_\n";
 	    }
 	} elsif ($state == 3) {	# scanning for function { (end of prototype)
 	    if (m#\s*/\*\s+MACDOC\s*#io) {
