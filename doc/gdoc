@@ -207,7 +207,7 @@ my %highlights_sgml = (
 	$type_env	=> '<envar>$1</envar>',
 	$type_param	=> '<parameter>$1</parameter>',
 );
-my $blankline_sgml = "</para><para>\n";
+my $blankline_sgml = "</para><para>";
 
 # these are pretty rough
 my %highlights_man = (
@@ -378,6 +378,9 @@ sub just_highlight {
     }
 
     foreach my $line (split "\n", $contents) {
+	# Never add a blank line without previous content.
+	next	if not $line and not $ret;
+
 	if ($line eq ""){
 	    $ret = $ret . $lineprefix . $blankline;
 	} else {
@@ -950,7 +953,8 @@ sub dump_function {
 		print STDERR "Warning($scanned_file:", $lineno - 1, '): ',
 			     'Function parameter "', $param, '" ',
 			     'is not described by "', $docname, '".',
-			     "\n";
+			     "\n"
+		    if $output_mode ne 'listfunc';
 	    }
 
 	    push @parameterlist, $param;
@@ -968,7 +972,7 @@ sub dump_function {
     print STDERR "Warning($scanned_file:", $lineno - 1, '): ',
 		 'Defines "', $function_name, '"',
 		 ', but "', $docname, '" was documented.', "\n"
-	if $docname ne $function_name;
+	if $output_mode ne 'listfunc' and $docname ne $function_name;
 
     if ($function_only==0 || defined($function_table{$function_name})) {
 	output_function({'function' => $function_name,
@@ -1005,13 +1009,13 @@ GetOptions(%opts)
     or pod2usage( -exitval => 1, -verbose => 0, -output => \*STDERR);
 
 if ($output_mode eq '?' or $output_mode eq 'help') {
-    print "Available modes: @known_modes\n";
+    print "@known_modes\n";
     exit 0;
 }
 
 if (not grep m/^$output_mode$/, @known_modes) {
     print STDERR 'Not a supported mode: ', "$output_mode\n",
-		 'Use one of: ', "@known_modes\n";
+		 'Available modes: ', "@known_modes\n";
     exit 1;
 }
 
