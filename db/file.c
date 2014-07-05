@@ -423,7 +423,7 @@ read_key (Shisa * dbh,
   Shisa_key tmpkey;
   FILE *fh;
   char *file;
-  unsigned passwdlen;
+  size_t passwdlen;
   char junk;
   int rc;
 
@@ -435,7 +435,7 @@ read_key (Shisa * dbh,
 
   memset (&tmpkey, 0, sizeof (tmpkey));
 
-  rc = fscanf (fh, "%u %u %u %u %u %u", &tmpkey.etype, &tmpkey.keylen,
+  rc = fscanf (fh, "%u %zu %zu %zu %zu %u", &tmpkey.etype, &tmpkey.keylen,
 	       &tmpkey.saltlen, &tmpkey.str2keyparamlen, &passwdlen,
 	       &tmpkey.priority);
   if (rc != 5 && rc != 6)

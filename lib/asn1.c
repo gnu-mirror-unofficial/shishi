@@ -124,8 +124,9 @@ shishi_asn1_read_inline (Shishi * handle, Shishi_asn1 node,
 			 const char *field, char *data, size_t * datalen)
 {
   int rc;
+  int len = (int) *datalen;
 
-  rc = asn1_read_value (node, field, (unsigned char *) data, (int *) datalen);
+  rc = asn1_read_value (node, field, (unsigned char *) data, &len);
   if (rc != ASN1_SUCCESS)
     {
       shishi_error_set (handle, asn1_strerror (rc));
@@ -136,6 +137,8 @@ shishi_asn1_read_inline (Shishi * handle, Shishi_asn1 node,
       else
 	return SHISHI_ASN1_ERROR;
     }
+
+  *datalen = len;
 
   return SHISHI_OK;
 }
@@ -402,7 +405,7 @@ shishi_asn1_write_bitstring (Shishi * handle, Shishi_asn1 node,
 /**
  * shishi_asn1_done:
  * @handle: shishi handle as allocated by shishi_init().
- * @node: ASN.1 node to dellocate.
+ * @node: ASN.1 node to deallocate.
  *
  * Deallocate resources associated with ASN.1 structure.  Note that
  * the node must not be used after this call.
@@ -417,7 +420,7 @@ shishi_asn1_done (Shishi * handle, Shishi_asn1 node)
     {
       rc = asn1_delete_structure (&node);
       if (rc != ASN1_SUCCESS)
-	shishi_error_printf (handle, "Cannot dellocate ASN.1 structure: %s",
+	shishi_error_printf (handle, "Cannot deallocate ASN.1 structure: %s",
 			     asn1_strerror (rc));
     }
 }

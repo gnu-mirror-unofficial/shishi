@@ -289,7 +289,7 @@ pam_sm_authenticate (pam_handle_t * pamh,
 done:
   if (h)
     shishi_done (h);
-  pam_set_data (pamh, "shishi_setcred_return", (void *) retval, NULL);
+  pam_set_data (pamh, "shishi_setcred_return", (void *) (intptr_t) retval, NULL);
   D (("done. [%s]", pam_strerror (pamh, retval)));
 
   return retval;
