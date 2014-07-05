@@ -28,12 +28,12 @@
 /* This function will print information about this session's peer
  * certificate. */
 static void
-logcertinfo (gnutls_session session)
+logcertinfo (gnutls_session_t session)
 {
   time_t now = time (NULL);
-  const gnutls_datum *cert_list;
+  const gnutls_datum_t *cert_list;
   unsigned cert_list_size = 0;
-  gnutls_x509_crt cert;
+  gnutls_x509_crt_t cert;
   size_t i;
   int rc;
 
@@ -209,12 +209,12 @@ logcertinfo (gnutls_session session)
 
 /* This function will log some details of the given session. */
 static void
-logtlsinfo (gnutls_session session)
+logtlsinfo (gnutls_session_t session)
 {
-  gnutls_credentials_type cred;
+  gnutls_credentials_type_t cred;
   const char *protocol =
     gnutls_protocol_get_name (gnutls_protocol_get_version (session));
-  gnutls_kx_algorithm kx = gnutls_kx_get (session);
+  gnutls_kx_algorithm_t kx = gnutls_kx_get (session);
   const char *keyexchange = gnutls_kx_get_name (kx);
   const char *certtype =
     gnutls_certificate_type_get_name (gnutls_certificate_type_get (session));
@@ -321,7 +321,7 @@ kdc_extension (struct listenspec *ls)
   gnutls_certificate_server_set_request (ls->session, GNUTLS_CERT_REQUEST);
 
   gnutls_dh_set_prime_bits (ls->session, DH_BITS);
-  gnutls_transport_set_ptr (ls->session, (gnutls_transport_ptr)
+  gnutls_transport_set_ptr (ls->session, (gnutls_transport_ptr_t)
 			    (unsigned long) ls->sockfd);
 
   gnutls_db_set_retrieve_function (ls->session, resume_db_fetch);

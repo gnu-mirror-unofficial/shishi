@@ -85,7 +85,7 @@ _shishi_tls_done (Shishi * handle)
 static int
 _shishi_sendrecv_tls1 (Shishi * handle,
 		       int sockfd,
-		       gnutls_session session,
+		       gnutls_session_t session,
 		       const char *indata, size_t inlen,
 		       char **outdata, size_t * outlen,
 		       size_t timeout, bool have_cas)
@@ -107,7 +107,7 @@ _shishi_sendrecv_tls1 (Shishi * handle,
       memcmp (extbuf, STARTTLS_SERVER_ACCEPT, STARTTLS_LEN) != 0)
     return SHISHI_RECVFROM_ERROR;
 
-  gnutls_transport_set_ptr (session, (gnutls_transport_ptr)
+  gnutls_transport_set_ptr (session, (gnutls_transport_ptr_t)
 			    (unsigned long) sockfd);
 
   if (session_data_size > 0)
@@ -231,9 +231,9 @@ _shishi_sendrecv_tls (Shishi * handle,
 		      const char *indata, size_t inlen,
 		      char **outdata, size_t * outlen)
 {
-  gnutls_session session;
-  gnutls_anon_client_credentials anoncred;
-  gnutls_certificate_credentials x509cred;
+  gnutls_session_t session;
+  gnutls_anon_client_credentials_t anoncred;
+  gnutls_certificate_credentials_t x509cred;
   int sockfd;
   int ret, outerr;
   const char *cafile = shishi_x509ca_default_file (handle);
@@ -263,7 +263,7 @@ _shishi_sendrecv_tls (Shishi * handle,
       return SHISHI_CRYPTO_ERROR;
     }
 
-  ret = gnutls_priority_set_direct (session, "NORMAL:+ANON-DH", NULL);
+  ret = gnutls_priority_set_direct (session, "NORMAL:+ANON-ECDH:+ANON-DH", NULL);
   if (ret != GNUTLS_E_SUCCESS)
     {
       shishi_error_printf (handle, "TLS psd failed (%d): %s",

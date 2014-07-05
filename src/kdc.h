@@ -116,7 +116,7 @@ struct listenspec
   size_t bufpos;
   int usetls;
 #ifdef USE_STARTTLS
-  gnutls_session session;
+  gnutls_session_t session;
 #endif
   struct listenspec *next;
 };
@@ -130,9 +130,9 @@ extern size_t fatal_krberror_len;
 
 #ifdef USE_STARTTLS
 #define DH_BITS 1024
-extern gnutls_dh_params dh_params;
-extern gnutls_anon_server_credentials anoncred;
-extern gnutls_certificate_credentials x509cred;
+extern gnutls_dh_params_t dh_params;
+extern gnutls_anon_server_credentials_t anoncred;
+extern gnutls_certificate_credentials_t x509cred;
 #endif
 
 /* Interface between shishid.c and server.c. */
@@ -150,7 +150,7 @@ extern int kdc_extension (struct listenspec *ls);
 #ifdef USE_STARTTLS
 extern void resume_db_init (size_t nconnections);
 extern void resume_db_done (void);
-extern int resume_db_store (void *dbf, gnutls_datum key, gnutls_datum data);
-extern gnutls_datum resume_db_fetch (void *dbf, gnutls_datum key);
-extern int resume_db_delete (void *dbf, gnutls_datum key);
+extern int resume_db_store (void *dbf, gnutls_datum_t key, gnutls_datum_t data);
+extern gnutls_datum_t resume_db_fetch (void *dbf, gnutls_datum_t key);
+extern int resume_db_delete (void *dbf, gnutls_datum_t key);
 #endif

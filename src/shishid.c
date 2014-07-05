@@ -36,9 +36,9 @@ struct listenspec *listenspec;
 char *fatal_krberror;
 size_t fatal_krberror_len;
 #ifdef USE_STARTTLS
-gnutls_dh_params dh_params;
-gnutls_anon_server_credentials anoncred;
-gnutls_certificate_credentials x509cred;
+gnutls_dh_params_t dh_params;
+gnutls_anon_server_credentials_t anoncred;
+gnutls_certificate_credentials_t x509cred;
 #endif
 
 /* Listen to all listenspec's, removing entries that fail. */

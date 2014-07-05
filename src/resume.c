@@ -38,7 +38,7 @@ static size_t cache_db_ptr = 0;
 static size_t cache_db_size = 0;
 
 int
-resume_db_store (void *dbf, gnutls_datum key, gnutls_datum data)
+resume_db_store (void *dbf, gnutls_datum_t key, gnutls_datum_t data)
 {
   if (cache_db_size == 0)
     return -1;
@@ -58,10 +58,10 @@ resume_db_store (void *dbf, gnutls_datum key, gnutls_datum data)
   return 0;
 }
 
-gnutls_datum
-resume_db_fetch (void *dbf, gnutls_datum key)
+gnutls_datum_t
+resume_db_fetch (void *dbf, gnutls_datum_t key)
 {
-  gnutls_datum res = { NULL, 0 };
+  gnutls_datum_t res = { NULL, 0 };
   size_t i;
 
   for (i = 0; i < cache_db_size; i++)
@@ -83,7 +83,7 @@ resume_db_fetch (void *dbf, gnutls_datum key)
 }
 
 int
-resume_db_delete (void *dbf, gnutls_datum key)
+resume_db_delete (void *dbf, gnutls_datum_t key)
 {
   size_t i;
 
