@@ -196,7 +196,7 @@ my %highlights_tex = (
 );
 # Ideally this value should be place on the line preceding
 # the detected empty line.  Then '\\' would be ideal.
-my $blankline_tex = '\smallskip';
+my $blankline_tex = '\newline';
 
 # sgml, docbook format
 my %highlights_sgml = (
@@ -616,7 +616,7 @@ sub output_tex {
 	print $out;
 	print "\\end{rmfamily}\n";
     }
-    print "\n";
+    print '\pagebreak[2]', "\n";
 }
 
 
