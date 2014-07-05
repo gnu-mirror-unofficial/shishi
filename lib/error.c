@@ -30,13 +30,13 @@ struct shishi_error_msgs
 
 static const struct shishi_error_msgs _shishi_error_messages[] = {
   {SHISHI_OK,
-   N_("Shishi success")},
+   N_("Shishi success.")},
   {SHISHI_ASN1_ERROR,
-   N_("Error in ASN.1 function (corrupt data?)")},
+   N_("Error in ASN.1 function. (corrupt data?)")},
   {SHISHI_FOPEN_ERROR,
-   N_("Could not open file")},
+   N_("Could not open file.")},
   {SHISHI_IO_ERROR,
-   N_("File input/output error")},
+   N_("File input/output error.")},
   {SHISHI_MALLOC_ERROR,
    N_("Memory allocation error in shishi library.")},
   {SHISHI_BASE64_ERROR,
@@ -77,11 +77,11 @@ static const struct shishi_error_msgs _shishi_error_messages[] = {
   {SHISHI_SENDTO_ERROR,
    N_("The system call sendto() failed.")},
   {SHISHI_RECVFROM_ERROR,
-   N_("Error receiving data from server")},
+   N_("Error receiving data from server.")},
   {SHISHI_CLOSE_ERROR,
    N_("The system call close() failed.")},
   {SHISHI_KDC_TIMEOUT,
-   N_("Timed out talking to KDC. This usually indicates a network "
+   N_("Timed out talking to KDC.  This usually indicates a network "
       "or KDC address problem.")},
   {SHISHI_KDC_NOT_KNOWN_FOR_REALM,
    N_("No KDC known for given realm.")},
@@ -143,9 +143,9 @@ static const struct shishi_error_msgs _shishi_error_messages[] = {
    N_("A request for present time of day has failed. "
       "This is usually internal, but a valid time is imperative for us.")},
   {SHISHI_KEYTAB_ERROR,
-   N_("Failed to parse keytab file")},
+   N_("Failed to parse keytab file.")},
   {SHISHI_CCACHE_ERROR,
-   N_("Failed to parse credential cache file")},
+   N_("Failed to parse credential cache file.")},
   {-1, NULL}
 };
 
@@ -153,10 +153,10 @@ static const struct shishi_error_msgs _shishi_error_messages[] = {
  * shishi_strerror:
  * @err: shishi error code.
  *
- * Convert return code to human readable string.
+ * Converts the return code in @err to a human readable string.
  *
  * Return value: Returns a pointer to a statically allocated string
- * containing a description of the error with the error value @err.
+ * containing a description of the error with code @err.
  * This string can be used to output a diagnostic message to the user.
  **/
 const char *
@@ -180,12 +180,12 @@ shishi_strerror (int err)
  * shishi_error:
  * @handle: shishi handle as allocated by shishi_init().
  *
- * Extract detailed error information string.  Note that the memory is
- * managed by the Shishi library, so you must not deallocate the
- * string.
+ * Extracts detailed information on the most recently occurred
+ * error condition.  Note that memory is managed by the Shishi
+ * library, so the returned string must not be deallocated.
  *
- * Return value: Returns pointer to error information string, that must
- *   not be deallocate by caller.
+ * Return value: Returns a pointer to a string describing an error.
+ *   The string must not be deallocated by the caller.
  **/
 const char *
 shishi_error (Shishi * handle)
@@ -200,11 +200,12 @@ shishi_error (Shishi * handle)
  * shishi_error_clear:
  * @handle: shishi handle as allocated by shishi_init().
  *
- * Clear the detailed error information string.  See shishi_error()
- * for how to access the error string, and shishi_error_set() and
- * shishi_error_printf() for how to set the error string.  This
- * function is mostly for Shishi internal use, but if you develop an
- * extension of Shishi, it may be useful to use the same error
+ * Clears the internal error description.  See shishi_error()
+ * on how to access the error string, and shishi_error_set() as well
+ * as shishi_error_printf() on how to set the error string.
+ *
+ * This function is mostly for Shishi's internal use, but if you develop
+ * an extension of Shishi, it may be useful to support the same error
  * handling infrastructure.
  **/
 void
@@ -216,14 +217,15 @@ shishi_error_clear (Shishi * handle)
 /**
  * shishi_error_set:
  * @handle: shishi handle as allocated by shishi_init().
- * @errstr: Zero terminated character array containing error description,
- *   or NULL to clear the error description string.
+ * @errstr: A null-terminated character string holding a description,
+ *   or %NULL to clear the internal error string.
  *
- * Set the detailed error information string to specified string.  The
+ * Sets the error description to the content of @errstr.  The
  * string is copied into the Shishi internal structure, so you can
- * deallocate the string passed to this function after the call.  This
- * function is mostly for Shishi internal use, but if you develop an
- * extension of Shishi, it may be useful to use the same error
+ * deallocate any string passed to this function.
+ *
+ * This function is mostly for Shishi's internal use, but if you develop
+ * an extension of Shishi, it may be useful to support the same error
  * handling infrastructure.
  **/
 void
@@ -244,12 +246,12 @@ shishi_error_set (Shishi * handle, const char *errstr)
  * shishi_error_printf:
  * @handle: shishi handle as allocated by shishi_init().
  * @format: printf style format string.
- * @...: print style arguments.
+ * @...: printf style arguments.
  *
- * Set the detailed error information string to a printf formatted
- * string.  This function is mostly for Shishi internal use, but if
- * you develop an extension of Shishi, it may be useful to use the
- * same error handling infrastructure.
+ * Sets the internal error description to a printf(3) formatted
+ * string.  This function is mostly for Shishi's internal use, but if
+ * you develop an extension of Shishi, it may be useful to support the
+ * same infrastructure for error handling.
  **/
 void
 shishi_error_printf (Shishi * handle, const char *format, ...)
@@ -274,10 +276,12 @@ shishi_error_printf (Shishi * handle, const char *format, ...)
  * shishi_error_outputtype:
  * @handle: shishi handle as allocated by shishi_init().
  *
- * Get the current output type for logging messages.
+ * Reports the current output type used in message logging.
  *
- * Return value: Return output type (NULL, stderr or syslog) for
- *   informational and warning messages.
+ * Return value: Returns the output type.  %SHISHI_OUTPUTTYPE_NULL
+ *   means no output. %SHISHI_OUTPUTTYPE_STDERR and
+ *   %SHISHI_OUTPUTTYPE_SYSLOG direct text to the console, or to the
+ *   syslog system.
  **/
 int
 shishi_error_outputtype (Shishi * handle)
@@ -288,10 +292,13 @@ shishi_error_outputtype (Shishi * handle)
 /**
  * shishi_error_set_outputtype:
  * @handle: shishi handle as allocated by shishi_init().
- * @type: output type.
+ * @type: output type, of enum type #Shishi_outputtype.
  *
- * Set output type (NULL, stderr or syslog) for informational
- * and warning messages.
+ * Sets the output type (%NULL, %stderr or %syslog) used for information
+ * and warning messages.  Intended values are %SHISHI_OUTPUTTYPE_NULL,
+ * for no output at all, %SHISHI_OUTPUTTYPE_STDERR for output to the
+ * console, and %SHISHI_OUTPUTTYPE_SYSLOG for syslog messaging.
+ * The first value covers everything different from the latter two values.
  **/
 void
 shishi_error_set_outputtype (Shishi * handle, int type)
@@ -303,9 +310,10 @@ shishi_error_set_outputtype (Shishi * handle, int type)
  * shishi_info:
  * @handle: shishi handle as allocated by shishi_init().
  * @format: printf style format string.
- * @...: print style arguments.
+ * @...: printf style arguments.
  *
- * Print informational message to output as defined in handle.
+ * Prints an informational message, composed from the arguments,
+ * to the output stream set in @handle.
  **/
 void
 shishi_info (Shishi * handle, const char *format, ...)
@@ -341,9 +349,10 @@ shishi_info (Shishi * handle, const char *format, ...)
  * shishi_warn:
  * @handle: shishi handle as allocated by shishi_init().
  * @format: printf style format string.
- * @...: print style arguments.
+ * @...: printf style arguments.
  *
- * Print a warning to output as defined in handle.
+ * Prints a warning, composed from the arguments, to the output
+ * stream set in @handle.
  **/
 void
 shishi_warn (Shishi * handle, const char *format, ...)
@@ -379,9 +388,12 @@ shishi_warn (Shishi * handle, const char *format, ...)
  * shishi_verbose:
  * @handle: shishi handle as allocated by shishi_init().
  * @format: printf style format string.
- * @...: print style arguments.
+ * @...: printf style arguments.
  *
- * Print a diagnostic message to output as defined in handle.
+ * Prints a diagnostic message, composed from the arguments,
+ * to the output stream set in @handle.  The current verbosity
+ * setting determines whether the message is actually printed,
+ * or is suppressed due to low significance.
  **/
 void
 shishi_verbose (Shishi * handle, const char *format, ...)
