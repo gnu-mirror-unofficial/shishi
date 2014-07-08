@@ -340,7 +340,7 @@ shishi_init (Shishi ** handle)
 
 /**
  * shishi_init_with_paths:
- * @handle: Pointer to a Shishi handle created by this call .
+ * @handle: Pointer to a Shishi handle created by this call.
  * @tktsfile: Filename of ticket file, or %NULL.
  * @systemcfgfile: Filename of system configuration, or %NULL.
  * @usercfgfile: Filename of user configuration, or %NULL.
@@ -376,7 +376,7 @@ shishi_init_with_paths (Shishi ** handle,
 
 /**
  * shishi_init_server:
- * @handle: Pointer to a Shishi handle created by this call .
+ * @handle: Pointer to a Shishi handle created by this call.
  *
  * Creates a Shishi library handle, using shishi_server(), and reads
  * the system configuration file.  The path to the system configuration
@@ -410,7 +410,7 @@ shishi_init_server (Shishi ** handle)
 
 /**
  * shishi_init_server_with_paths:
- * @handle: Pointer to a Shishi handle created by this call .
+ * @handle: Pointer to a Shishi handle created by this call.
  * @systemcfgfile: Filename of system configuration, or %NULL.
  *
  * Creates a Shishi library handle, using shishi_server(), and reads

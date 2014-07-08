@@ -178,7 +178,6 @@ my %highlights_html = (
 	$type_struct	=> '<i>$1</i>',
 	$type_param	=> '<tt><b>$1</b></tt>',
 );
-my $blankline_html = '</p><p>';
 
 my %highlights_texinfo = (
 	$type_constant	=> '@code{$1}',
@@ -186,7 +185,6 @@ my %highlights_texinfo = (
 	$type_struct	=> '@code{$1}',
 	$type_param	=> '@var{$1}',
 );
-my $blankline_texinfo = '';
 
 my %highlights_tex = (
 	$type_constant	=> '{\\it $1}',
@@ -194,9 +192,6 @@ my %highlights_tex = (
 	$type_struct	=> '{\\it $1}',
 	$type_param	=> '{\\bf $1}',
 );
-# Ideally this value should be place on the line preceding
-# the detected empty line.  Then '\\' would be ideal.
-my $blankline_tex = '\newline';
 
 # sgml, docbook format
 my %highlights_sgml = (
@@ -207,7 +202,6 @@ my %highlights_sgml = (
 	$type_env	=> '<envar>$1</envar>',
 	$type_param	=> '<parameter>$1</parameter>',
 );
-my $blankline_sgml = "</para><para>";
 
 # these are pretty rough
 my %highlights_man = (
@@ -216,7 +210,6 @@ my %highlights_man = (
 	$type_struct	=> '\\fB$1\\fP',
 	$type_param	=> '\\fI$1\\fP',
 );
-my $blankline_man = '';
 
 # text-mode
 my %highlights_text = (
@@ -225,8 +218,26 @@ my %highlights_text = (
 	$type_struct	=> '$1',
 	$type_param	=> '$1',
 );
-my $blankline_text = '';
 
+my %highlights_master = (
+	docbook	=> \%highlights_sgml,
+	html	=> \%highlights_html,
+	man	=> \%highlights_man,
+	sgml	=> \%highlights_sgml,
+	tex	=> \%highlights_tex,
+	texinfo	=> \%highlights_texinfo,
+	text	=> \%highlights_text,
+);
+
+my %blankline = (
+	docbook	=> '</para><para>',
+	html	=> '</p><p>',
+	man	=> '',
+	sgml	=> '</para><para>',
+	tex	=> '\newline',
+	texinfo	=> '',
+	text	=> '',
+);
 
 sub usage {
     print "Usage: $0 [ -v ] [ -docbook | -html | -text | -man | -tex | -texinfo  -listfunc ]\n";
@@ -238,10 +249,11 @@ sub usage {
     exit 1;
 }
 
-my %highlights = %highlights_man;
-my $blankline = $blankline_man;
-
 $output_mode = "man";
+
+my %highlights = %{$highlights_master{'man'}};
+my $blankline = $blankline{'man'};
+
 $modulename = "API Documentation";
 $sourceversion = strftime "%Y-%m-%d", localtime;
 
@@ -257,8 +269,9 @@ sub set_output_mode {
 
     # Pass the selected mode to state parameters.
     $output_mode = $mode;
-    eval "\%highlights = \%highlights_$mode";
-    eval "\$blankline = \$blankline_$mode";
+    %highlights = %{$highlights_master{$output_mode}}
+	if defined $highlights_master{$output_mode};
+    $blankline = $blankline{$mode};
 }
 
 my %opts = ( # Output modes
@@ -329,7 +342,7 @@ sub dump_section {
 
 sub repstr {
     my ($pattern, $repl, $match1, $match2, $match3, $match4) = @_;
-    my ($output, $return);
+    my ($output);
 
     $output = $repl;
     $output =~ s,\$1,$match1,g;
@@ -337,20 +350,12 @@ sub repstr {
     $output =~ s,\$3,$match3,g;
     $output =~ s,\$4,$match4,g;
 
-    # Try two different quoting forms to circumvent collisions.
-    # The standard delimiter '/' corrupts end marks in HTML and XML.
-    if ($output =~ m/]/) {
-	eval "\$return = q#$output#";		# Is '|' any safer?
-    } else {
-	eval "\$return = q[$output]";		# Prefer brackets.
-    }
-
     if ($verbose > 1) {
 	print STDERR "Pattern $pattern matched with \$1='$match1' \$2='$match2' \$3='$match3' \$4='$match4'\n",
-		"\tReplacement $repl produces $output, interpolated as $return\n";
+		"\tReplacement $repl produces $output\n";
     }
 
-    return $return;
+    return $output;
 }
 
 sub just_highlight {
@@ -409,6 +414,9 @@ sub output_texinfo {
     $count = 0;
 
     foreach my $parameter (@{$args{'parameterlist'}}) {
+	# Encapsulate parameter as non-breakable phrase.
+	print '@w{';
+
 	# Variadic arguments carry no type.
 	print $args{'parametertypes'}{$parameter}, " "
 	    if $args{'parametertypes'}{$parameter};
@@ -417,6 +425,8 @@ sub output_texinfo {
 	print $args{'arraylength'}{$parameter}
 	    if $args{'arraylength'}{$parameter};
 
+	print '}';	# Close the protected phrase.
+
 	if ($count != $#{$args{'parameterlist'}}) {
 	    $count++;
 	    print ", ";
@@ -424,12 +434,17 @@ sub output_texinfo {
     }
     print ")\n";
 
+    # Insert line breaks only between arguments, not after, not before.
+    my $interbreak = 0;
+
     foreach my $parameter (@{$args{'parameterlist'}}) {
+	print '@*'	if $interbreak;
+	$interbreak++;
+
 	if ($args{'parameters'}{$parameter}) {
 	    print '@var{', $parameter, '}: ';
 
 	    output_highlight($args{'parameters'}{$parameter});
-	    print "\n";
 	}
     }
 
@@ -881,22 +896,26 @@ sub output_text {
 	output_highlight($args{'parameters'}{$parameter});
     }
 
+    print "\n"	if scalar @{$args{'parameterlist'}};
+
     foreach my $section (@{$args{'sectionlist'}}) {
 	print " $section:\n";
-	print "    -> ";
-	output_highlight($args{'sections'}{$section});
+
+	# Minimal indentation inside section name.
+	my $visual = just_highlight($args{'sections'}{$section});
+	$visual =~ s|^(.+)|  $1|mg;
+
+	#print '    ->';
+	print $visual, "\n";
     }
-    print "\n";
 }
 
 ##
 # generic output function - calls the right one based
 # on current output mode.
 sub output_function {
-#    output_html(@_);
-    eval "output_".$output_mode."(\@_);";
+    eval 'output_' . $output_mode . '(@_);';
 }
-
 
 ##
 # takes a function prototype and spits out all the details
