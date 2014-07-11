@@ -162,7 +162,8 @@ my ($modulename, $pkgname, $seeinfo, $sourceversion, $verbatimcopying);
 # Matching expressions used to find embedded type information.
 my $type_constant = '%(\w+)';
 my $type_func	= '(\w+\(\))';
-my $type_param	= '@(\w+|\.\.\.)';
+my $type_param	= '\B@(\w+|\.\.\.)';
+my $type_addr	= '\b@\b';
 my $type_struct	= '#(\w+)';
 my $type_env	= '\$(\w+)';
 
@@ -180,6 +181,7 @@ my %highlights_html = (
 );
 
 my %highlights_texinfo = (
+	$type_addr	=> '@@',
 	$type_constant	=> '@code{$1}',
 	$type_func	=> '@code{$1}',
 	$type_struct	=> '@code{$1}',
@@ -368,11 +370,10 @@ sub just_highlight {
     #
     # The ordering of hash keys cannot be guaranteed!
 
-    my @patterns = grep ! m/^@/, keys %highlights;
+    my @patterns = grep { $_ ne $type_param; } keys %highlights;
 
     unshift @patterns, $type_param
-	if defined $highlights{$type_param}
-	    and grep m/^@/, keys %highlights;
+	if defined $highlights{$type_param};
 
     foreach my $pattern (@patterns) {
 	if ($verbose > 1) {
