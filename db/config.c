@@ -28,11 +28,11 @@
  * @value: String containing database definition.
  *
  * Sets up and opens a new database.  The syntax of the parameter
- * @value is "TYPE[ LOCATION[ PARAMETER]]", where TYPE is one of the
- * supported database types, typically "file", and LOCATION as
- * well as PARAMETER are optional strings passed on to
- * the database during initialization.
+ * @value is "TYPE[ LOCATION[ PARAMETER]]", where TYPE is one of
+ * the supported database types, typically "file".
  *
+ * The above substrings LOCATION and PARAMETER are optional strings
+ * passed on verbatim to the database during initialization.
  * Neither TYPE nor LOCATION may contain embedded spaces,
  * but PARAMETER may do so.
  *
@@ -94,12 +94,12 @@ shisa_cfg_db (Shisa * dbh, const char *value)
  * @option: String with options to prime the Shisa library.
  *
  * Configures the Shisa library from the specification @option.
- * This call expects a string declaration of the form "db=VALUE"
- * or "db VALUE", where VALUE is of the form
- * "TYPE[ LOCATION[ PARAMETER]]", as is described for
- * shisa_cfg_db().
+ * This call expects a string declaration of the form "db=VALUE",
+ * or "db VALUE".  Here VALUE is the same declaration as used by
+ * shisa_cfg_db(), i.e., of the form "TYPE[ LOCATION[ PARAMETER]]".
  *
- * Thus shisa_cfg() comes closer to a syntax with key-value pairs.
+ * The prefix "db", mandatory in @option, makes shisa_cfg() suited
+ * to a syntax with key-value pairs also in PARAMETER.
  *
  * Return Value: Returns %SHISA_OK if @option is valid.
  **/
@@ -132,7 +132,8 @@ shisa_cfg (Shisa * dbh, const char *option)
  * Configures the Shisa library using a configuration file
  * located at @cfg.
  *
- * Return Value: Returns %SHISA_OK iff successful.
+ * Return Value: Returns %SHISA_OK if successful.  Typically
+ *   returns %SHISA_CFG_NO_FILE in response to a misnamed file.
  **/
 int
 shisa_cfg_from_file (Shisa * dbh, const char *cfg)
@@ -198,9 +199,9 @@ shisa_cfg_from_file (Shisa * dbh, const char *cfg)
  * shisa_cfg_default_systemfile:
  * @dbh: Shisa library handle created by shisa().
  *
- * Recovers information on the installed configuration.
+ * Fetches information on the installed configuration.
  *
- * Return value: Returns the file name of the active
+ * Return value: Returns file name of the active
  *   system configuration.
  **/
 const char *

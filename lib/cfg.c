@@ -104,12 +104,14 @@ _shishi_realminfo_new (Shishi * handle, char *realm)
 
 /**
  * shishi_cfg:
- * @handle: Shishi library handle create by shishi_init().
- * @option: string with shishi library option.
+ * @handle: Shishi library handle created by shishi_init().
+ * @option: String containing shishi library options.
  *
- * Configure shishi library with given option.
+ * Configures the shishi library according to the options
+ * given in @option.
  *
- * Return Value: Returns SHISHI_OK if option was valid.
+ * Return Value: Returns SHISHI_OK if @option is valid
+ *   and configuration was successful.
  **/
 int
 shishi_cfg (Shishi * handle, const char *option)
@@ -348,12 +350,13 @@ out:
 
 /**
  * shishi_cfg_from_file:
- * @handle: Shishi library handle create by shishi_init().
- * @cfg: filename to read configuration from.
+ * @handle: Shishi library handle created by shishi_init().
+ * @cfg: Name of configuration file.
  *
- * Configure shishi library using configuration file.
+ * Configures the shishi library using a configuration file
+ * located at @cfg.
  *
- * Return Value: Returns %SHISHI_OK iff successful.
+ * Return Value: Returns %SHISHI_OK if successful.
  **/
 int
 shishi_cfg_from_file (Shishi * handle, const char *cfg)
@@ -422,12 +425,13 @@ _shishi_transport2string (int transport)
 
 /**
  * shishi_cfg_print:
- * @handle: Shishi library handle create by shishi_init().
- * @fh: file descriptor opened for writing.
+ * @handle: Shishi library handle created by shishi_init().
+ * @fh: File stream handle opened for writing.
  *
- * Print library configuration status, mostly for debugging purposes.
+ * Prints library configuration status to @fh.  This function is
+ * mostly intended for debugging purposes.
  *
- * Return Value: Returns SHISHI_OK.
+ * Return Value: Always returns SHISHI_OK.
  **/
 int
 shishi_cfg_print (Shishi * handle, FILE * fh)
@@ -467,12 +471,15 @@ shishi_cfg_print (Shishi * handle, FILE * fh)
 
 /**
  * shishi_cfg_default_systemfile:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  *
- * The system configuration file name is decided at compile-time, but
- * may be overridden by the environment variable SHISHI_CONFIG.
+ * The system configuration file name is decided at compile
+ * time, but is replaced by assigning another file name to
+ * the environment variable $SHISHI_CONFIG.  This call offers
+ * a single interface for determining the file name, to which
+ * the library turns for its settings.
  *
- * Return value: Return system configuration file name.
+ * Return value: Returns file name of present system configuration.
  **/
 const char *
 shishi_cfg_default_systemfile (Shishi * handle)
@@ -490,15 +497,20 @@ shishi_cfg_default_systemfile (Shishi * handle)
 
 /**
  * shishi_cfg_default_userdirectory:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  *
- * The default user directory (used for, e.g. Shishi ticket cache) is
- * normally computed by appending BASE_DIR ("/.shishi") to the content
- * of the environment variable $HOME, but can be overridden by
- * specifying the complete path in the environment variable
- * SHISHI_HOME.
+ * The default user directory, referred to for Shishi ticket cache
+ * and other purposes, is normally computed by appending the compile
+ * time macro %BASE_DIR ("/.shishi" by default) to the content of
+ * the environment variable $HOME.
  *
- * Return value: Return directory with configuration files etc.
+ * The hard coded directory, generally "$HOME/.shishi/", will be
+ * replaced by whatever complete path is stored in the environment
+ * variable $SHISHI_HOME.
+ *
+ * Return value: Returns the user's directory name where the Shishi
+ *   library will search for configuration files, ticket caches,
+ *   etcetera.
  **/
 const char *
 shishi_cfg_default_userdirectory (Shishi * handle)
@@ -522,15 +534,20 @@ shishi_cfg_default_userdirectory (Shishi * handle)
 
 /**
  * shishi_cfg_userdirectory_file:
- * @handle: Shishi library handle create by shishi_init().
- * @file: basename of file to find in user directory.
+ * @handle: Shishi library handle created by shishi_init().
+ * @file: Basename of file to use for the user's configuration
+ *   settings of the library.
  *
- * Get the full path to specified @file in the users' configuration
- * directory.
+ * Reports the full path to the file where the Shishi library
+ * expects to find the user's library configuration, given that
+ * the file itself is named by the parameter @file.
  *
- * Return value: Return full path to given relative filename, relative
- *   to the user specific Shishi configuration directory as returned
- *   by shishi_cfg_default_userdirectory() (typically $HOME/.shishi).
+ * The answer is composed from the value of @file and the directory
+ * returned by shishi_cfg_default_userdirectory().  Typically, the
+ * returned string would be expanded from "$HOME/.shishi/@file".
+ *
+ * Return value: Returns the absolute filename to the argument @file,
+ *   relative to the user specific Shishi configuration directory.
  **/
 char *
 shishi_cfg_userdirectory_file (Shishi * handle, const char *file)
@@ -546,12 +563,15 @@ shishi_cfg_userdirectory_file (Shishi * handle, const char *file)
 
 /**
  * shishi_cfg_default_userfile:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  *
- * Get filename of default user configuration file, typically
- * $HOME/shishi.conf.
+ * Reports the absolute filename of the default user configuration
+ * file.  This is typically "$HOME/.shishi/shishi.conf".
  *
- * Return value: Return user configuration filename.
+ * The value of $SHISHI_HOME will change the directory part,
+ * as stated regarding shishi_cfg_default_userdirectory().
+ *
+ * Return value: Returns the user's configuration filename.
  **/
 const char *
 shishi_cfg_default_userfile (Shishi * handle)
@@ -565,13 +585,14 @@ shishi_cfg_default_userfile (Shishi * handle)
 
 /**
  * shishi_cfg_clientkdcetype:
- * @handle: Shishi library handle create by shishi_init().
- * @etypes: output array with encryption types.
+ * @handle: Shishi library handle created by shishi_init().
+ * @etypes: Pointer to an array of encryption types.
  *
- * Set the etypes variable to the array of preferred client etypes.
+ * Sets the variable @etypes to a static array of preferred encryption
+ * types applicable to clients.
  *
- * Return value: Return the number of encryption types in the array,
- *               0 means none.
+ * Return value: Returns the number of encryption types referred to
+ *   by the updated array pointer, or zero, should no type exist.
  **/
 int
 shishi_cfg_clientkdcetype (Shishi * handle, int32_t ** etypes)
@@ -582,11 +603,15 @@ shishi_cfg_clientkdcetype (Shishi * handle, int32_t ** etypes)
 
 /**
  * shishi_cfg_clientkdcetype_fast:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  *
- * Extract the default etype from the list of preferred client etypes.
+ * Extracts the default encryption type from the list of preferred
+ * encryption types acceptable to the client.
  *
- * Return value: Return the default encryption types.
+ * When the preferred list is empty, %SHISHI_AES256_CTS_HMAC_SHA1_96
+ * is returned as a sensible default type.
+ *
+ * Return value: Returns the default encryption type.
  **/
 int32_t
 shishi_cfg_clientkdcetype_fast (Shishi * handle)
@@ -600,14 +625,17 @@ shishi_cfg_clientkdcetype_fast (Shishi * handle)
 /**
  * shishi_cfg_clientkdcetype_set:
  * @handle: Shishi library handle created by shishi_init().
- * @value: string with encryption types.
+ * @value: String naming acceptable encryption types.
  *
- * Set the "client-kdc-etypes" configuration option from given string.
- * The string contains encryption types (integer or names) separated
- * by comma or whitespace, e.g. "aes256-cts-hmac-sha1-96
- * des3-cbc-sha1-kd des-cbc-md5".
+ * Sets the configuration option "client-kdc-etypes" from @value.
+ * The string contains encryption types, integers or names,
+ * separated by comma or by whitespace.  An example naming three
+ * encryption types could be:
  *
- * Return value: Returns SHISHI_OK if successful.
+ * aes256-cts-hmac-sha1-96  des3-cbc-sha1-kd  des-cbc-md5
+ *
+ * Return value: Returns SHISHI_OK if successful, and
+ *   %SHISHI_INVALID_ARGUMENT otherwise.
  **/
 int
 shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
@@ -651,13 +679,18 @@ shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
 /**
  * shishi_cfg_authorizationtype_set:
  * @handle: Shishi library handle created by shishi_init().
- * @value: string with authorization types.
+ * @value: String listing acceptable authorization types.
  *
- * Set the "authorization-types" configuration option from given string.
- * The string contains authorization types (integer or names) separated
- * by comma or whitespace, e.g. "basic k5login".
+ * Sets the configuration option "authorization-types" from @value.
+ * The string contains authorization types, integers or names,
+ * separated by comma or whitespace.
  *
- * Return value: Returns SHISHI_OK if successful.
+ * As an example, "k5login basic" would first check Kerberos5
+ * authentication based on preset principals, and then fall back
+ * to the basic test of identical principal names.
+ *
+ * Return value: Returns SHISHI_OK if successful, and
+ *   %SHISHI_INVALID_ARGUMENT otherwise.
  **/
 int
 shishi_cfg_authorizationtype_set (Shishi * handle, char *value)

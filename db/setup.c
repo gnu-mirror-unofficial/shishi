@@ -67,16 +67,18 @@ shisa_done (Shisa * dbh)
  * shisa_init:
  * @dbh: Returned pointer to a created Shisa library handle.
  *
- * Creates a Shisa library handle, using shisa(), and reads the system
+ * Creates a Shisa library handle, using shisa(), reading the system
  * configuration file from its default location.  The path to the
  * default system configuration file is decided at compile time
  * ($sysconfdir/shisa.conf).
- * The handle is allocated regardless of return value, except for
- * %SHISA_INIT_ERROR which indicates a problem in allocating the
- * handle.  Other error conditions arise while reading a file.
  *
- * Return value: Returns %SHISA_OK, or an error code.  The error
- *   code %SHISA_INIT_ERROR indicates a failure to create the handle.
+ * The handle is allocated regardless of return value, the only
+ * exception being %SHISA_INIT_ERROR, which indicates a problem
+ * in allocating the handle.  Other error conditions arise while
+ * reading a file.
+ *
+ * Return value: Returns %SHISA_OK, or an error code.  The value
+ *   %SHISA_INIT_ERROR indicates a failure to create the handle.
  **/
 int
 shisa_init (Shisa ** dbh)
@@ -89,16 +91,18 @@ shisa_init (Shisa ** dbh)
  * @dbh: Returned pointer to a created Shisa library handle.
  * @file: Filename of system configuration, or %NULL.
  *
- * Creates a Shisa library handle, using shisa(), and reads the system
- * configuration file from the indicated location at @file, or at the
- * default location, should @file be %NULL.
- * The path to the default system configuration file is
- * decided at compile time ($sysconfdir/shisa.conf).
- * The handle is allocated regardless of return value, except for
- * %SHISA_INIT_ERROR which indicates a problem in allocating the
- * handle.  Other error conditions arise while reading a file.
+ * Creates a Shisa library handle, using shisa(), but reading
+ * the system configuration file at the location @file, or at
+ * the default location, should @file be %NULL.  The path to
+ * the default system configuration file is decided at compile
+ * time ($sysconfdir/shisa.conf).
  *
- * Return value: Returns %SHISA_OK, or an error code.  The error
+ * The handle is allocated regardless of return value, the only
+ * exception being %SHISA_INIT_ERROR, which indicates a problem
+ * in allocating the handle.  Other error conditions arise while
+ * reading a file.
+ *
+ * Return value: Returns %SHISA_OK, or an error code.  The value
  *   %SHISA_INIT_ERROR indicates a failure to create the handle.
  **/
 int
