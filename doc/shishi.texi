@@ -267,7 +267,7 @@ the interface is rather libtasn1 centric.
 This would provide mutual authentication of the KDC in a way that is
 easier to analyze.  Currently the mutual authentication property is
 only implicit from successful decryption of the KDC-REP and the 4 byte
-nonce.
+@code{nonce}.
 
 @item GUI applet for managing tickets.
 This is supported via the ticket-applet, of which a Shishi port is
@@ -1012,7 +1012,7 @@ Endtime:        Fri Aug 15 05:01:29 2003
 Server:         krbtgt/JOSEFSSON.ORG key des3-cbc-sha1-kd (16)
 Ticket key:     des3-cbc-sha1-kd (16) protected by des3-cbc-sha1-kd (16)
 Ticket flags:   INITIAL (512)
-$ 
+$
 @end example
 
 As you can see, Shishi also prints a short description of the ticket
@@ -1026,21 +1026,21 @@ By the way, the tickets are usually stored as text in
 @example
 $ shishi --list
 Tickets in `/home/jas/.shishi/tickets':
-                                                                                
+
 jas@@JOSEFSSON.ORG:
 Authtime:       Fri Aug 15 04:49:46 2003
 Endtime:        Fri Aug 15 05:06:26 2003
 Server:         krbtgt/JOSEFSSON.ORG key des-cbc-md5 (3)
 Ticket key:     des-cbc-md5 (3) protected by des-cbc-md5 (3)
 Ticket flags:   INITIAL (512)
-                                                                                
+
 jas@@JOSEFSSON.ORG:
 Authtime:       Fri Aug 15 04:49:46 2003
 Starttime:      Fri Aug 15 04:49:49 2003
 Endtime:        Fri Aug 15 05:06:26 2003
 Server:         host/latte.josefsson.org key des-cbc-md5 (3)
 Ticket key:     des-cbc-md5 (3) protected by des-cbc-md5 (3)
-                                                                                
+
 2 tickets found.
 $
 @end example
@@ -1584,7 +1584,7 @@ EXAMPLE.ORG
 Keytype: 16 (des3-cbc-sha1-kd)
 Principal: host/mail.example.org
 Realm: EXAMPLE.ORG
- 
+
 iQdA8hxdvOUHZNliZJv7noM02rXHV8gq
 -----END SHISHI KEY-----
                         Salt EXAMPLE.ORGhost/mail.example.org.
@@ -1632,7 +1632,7 @@ EXAMPLE.ORG
 Keytype: 18 (aes256-cts-hmac-sha1-96)
 Principal: simon
 Realm: EXAMPLE.ORG
- 
+
 Ja7ciNtrAI3gtodLaVDQ5zhcH58ffk0kS5tGAM7ILvM=
 -----END SHISHI KEY-----
                         Salt EXAMPLE.ORGsimon.
@@ -2015,20 +2015,13 @@ Common name: CA
 This field should not be used in new certificates.
 E-mail:
 Enter the certificate's serial number (decimal): 0
- 
- 
 Activation/Expiration time.
 The generated certificate will expire in (days): 180
- 
- 
 Extensions.
 Does the certificate belong to an authority? (Y/N): y
 Is this a web server certificate? (Y/N): n
 Enter the e-mail of the subject of the certificate:
- 
- 
 X.509 certificate info:
- 
 Version: 3
 Serial Number (hex): 00
 Validity:
@@ -2037,14 +2030,10 @@ Validity:
 Subject: C=SE,O=Shishi Example CA,CN=CA
 Subject Public Key Info:
         Public Key Algorithm: RSA
- 
 X.509 Extensions:
         Basic Constraints: (critical)
                 CA:TRUE
- 
 Is the above information ok? (Y/N): y
- 
- 
 Signing certificate...
 jas@@latte:~$
 @end example
@@ -2084,20 +2073,13 @@ Common name: KDC
 This field should not be used in new certificates.
 E-mail:
 Enter the certificate's serial number (decimal): 0
- 
- 
 Activation/Expiration time.
 The generated certificate will expire in (days): 180
- 
- 
 Extensions.
 Does the certificate belong to an authority? (Y/N): n
 Is this a web server certificate? (Y/N): n
 Enter the e-mail of the subject of the certificate:
- 
- 
 X.509 certificate info:
- 
 Version: 3
 Serial Number (hex): 00
 Validity:
@@ -2106,14 +2088,10 @@ Validity:
 Subject: C=SE,O=Shishi Example KDC,CN=KDC
 Subject Public Key Info:
         Public Key Algorithm: RSA
- 
 X.509 Extensions:
         Basic Constraints: (critical)
                 CA:FALSE
- 
 Is the above information ok? (Y/N): y
- 
- 
 Signing certificate...
 jas@@latte:~$
 @end example
@@ -2153,20 +2131,13 @@ Common name: Client
 This field should not be used in new certificates.
 E-mail:
 Enter the certificate's serial number (decimal): 0
- 
- 
 Activation/Expiration time.
 The generated certificate will expire in (days): 180
- 
- 
 Extensions.
 Does the certificate belong to an authority? (Y/N): n
 Is this a web server certificate? (Y/N): n
 Enter the e-mail of the subject of the certificate:
- 
- 
 X.509 certificate info:
- 
 Version: 3
 Serial Number (hex): 00
 Validity:
@@ -2175,14 +2146,10 @@ Validity:
 Subject: C=SE,O=Shishi Example Client,CN=Client
 Subject Public Key Info:
         Public Key Algorithm: RSA
- 
 X.509 Extensions:
         Basic Constraints: (critical)
                 CA:FALSE
- 
 Is the above information ok? (Y/N): y
- 
- 
 Signing certificate...
 jas@@latte:~$
 @end example
@@ -3174,10 +3141,10 @@ too.
 
 @example
 Usage: shishi [OPTIONS]... [CLIENT [SERVER]]...
- 
+
   -h, --help                              Print help and exit
   -V, --version                           Print version and exit
- 
+
 Commands:
   -d, --destroy                           Destroy tickets in local cache,
                                             limited by any --client-name or
@@ -3190,7 +3157,7 @@ Commands:
                                             most recent renewable ticket
                                             granting ticket for the default
                                             realm.  (default=off)
- 
+
 Flags:
       --forwardable                       Get a forwardable ticket, i.e., one
                                             that can be used to get forwarded
@@ -3203,7 +3170,7 @@ Flags:
       --proxy                             Get a proxy ticket.  (default=off)
       --renewable                         Get a renewable ticket.  (default=
                                             off)
- 
+
 Options:
       --client-name=NAME                  Client name. Default is login
                                             username.
@@ -3240,7 +3207,7 @@ Options:
                                             TGS. Defaults to
                                             'krbtgt/REALM@@REALM' where REALM
                                             is client realm.
- 
+
 Other options:
       --configuration-file=FILE           Read user configuration from FILE.
   -c, --ticket-file=FILE                  Read tickets from FILE.
@@ -3317,7 +3284,7 @@ Usage: shisa [OPTIONS]... [REALM [PRINCIPAL]]...
 
   -h, --help                         Print help and exit
   -V, --version                      Print version and exit
- 
+
 Operations:
   -a, --add                          Add realm or principal to database.
   -d, --dump                         Dump entries in database.
@@ -3327,7 +3294,7 @@ Operations:
   -l, --list                         List entries in database.
   -m, --modify                       Modify principal entry in database.
   -r, --remove                       Remove realm or principal from database.
- 
+
 Parameters:
   -f, --force                        Allow removal of non-empty realms.
                                          (default=off)
@@ -3337,7 +3304,7 @@ Parameters:
                                          (default=off)
       --keys                         Print cryptographic key and password in
                                        hostkey format.  (default=off)
- 
+
 Values:
   -E, --encryption-type=STRING       Override default key encryption type.
                                        Valid values include 'aes128',
@@ -3357,7 +3324,7 @@ Values:
                                        this, where it is interpreted as the
                                        iteration count of the PKCS#5 PBKDF2
                                        key deriver.
- 
+
 Other options:
   -c, --configuration-file=FILE      Use specified configuration file.
   -o, --library-options=STRING       Parse string as configuration file
@@ -4279,7 +4246,7 @@ default username), and you must write the key for the server into
 Keytype: 16 (des3-cbc-sha1-kd)
 Principal: sample/latte.josefsson.org
 Realm: JOSEFSSON.ORG
- 
+
 8W0VrQQBpxlACPQEqN91EHxbvFFo2ltt
 -----END SHISHI KEY-----
 @end example
@@ -4486,6 +4453,7 @@ information was never added to the specification.
 
 @node Protocol Extensions
 @appendix Protocol Extensions
+@cindex Protocol Extensions
 
 This appendix specifies the non-standard protocol elements implemented
 by Shishi.  By nature of being non-standard, everything described here
@@ -4677,8 +4645,11 @@ could be insecure.
 No channel bindings are provided in the Kerberos messages.  It is an
 open question whether, and how, this should be fixed.
 
+@page
 @node Telnet encryption with AES-CCM
 @section Telnet encryption with AES-CCM
+@cindex Telnet encryption
+@cindex AES-CCM
 
 This appendix describe how Shishi use the Advanced Encryption Standard
 (AES) encryption algorithm in Counter with CBC-MAC mode (RFC 3610)
@@ -4704,50 +4675,53 @@ Suboption Commands
    IAC SB ENCRYPT IS AES_CCM AES_CCM_INFO <M> <L> <nonce> IAC SE
 @end verbatim
 
-The sender of this command select desired M and L parameters, and
-nonce, as described in RFC 3610, and sends it to the other side of the
-connection.  The parameters and the nonce are sent in clear text.
-Only the side of the connection that is WILL ENCRYPT may send the
+The sender of this command selects desired @var{M} and @var{L} parameters,
+and @code{nonce}, as described in RFC 3610, and sends it to
+the other side of the connection.
+The parameters and the @code{nonce} are sent in clear text.
+Only the side of the connection that is WILL@tie{}ENCRYPT may send the
 AES_CCM_INFO command.
 
 @verbatim
    IAC SB ENCRYPT REPLY AES_CCM AES_CCM_INFO_BAD IAC SE
 @end verbatim
 
-The sender of this command reject the parameters received in the
-AES_CCM_INFO command.  Only the side of the connection that is DO
-ENCRYPT may send the AES_CCM_INFO_BAD command.  The command MUST be
-sent if the nonce field length does not match the selected value for
-L.  The command MAY be sent if the receiver do not accept the
-parameters for reason such as policy.  No capability is provided to
-negotiate these parameters.
+The sender of this command rejects the parameters received in the
+AES_CCM_INFO command.  Only the side of the connection that is
+DO@tie{}ENCRYPT may send the AES_CCM_INFO_BAD command.
+The command MUST be sent if the @code{nonce} field length does not
+match the selected value of @var{L}.
+The command MAY be sent if the receiver does not accept the
+parameters for a reason such as policy.  No capability is provided
+for negotiating these parameters.
 
 @verbatim
    IAC SB ENCRYPT REPLY AES_CCM AES_CCM_INFO_OK IAC SE
 @end verbatim
 
 The sender of this command accepts the parameters received in the
-AES_CCM_INFO command.  Only the side of the connection that is DO
-ENCRYPT may send the AES_CCM_INFO_BAD command.  The command MUST NOT
-be sent if the nonce field length does not match the selected value
-for L.
+AES_CCM_INFO command.  Only the side of the connection that is
+DO@tie{}ENCRYPT may send the AES_CCM_INFO_BAD command.
+The command MUST NOT be sent if the @code{nonce} field length
+does not match the selected value of @var{L}.
 
 @subsection Implementation Rules
 
-Once a AES_CCM_INFO_OK command has been received, the WILL ENCRYPT
+Once an AES_CCM_INFO_OK command has been received, the WILL@tie{}ENCRYPT
 side of the connection should do keyid negotiation using the ENC_KEYID
 command.  Once the keyid negotiation has successfully identified a
 common keyid, then START and END commands may be sent by the side of
-the connection that is WILL ENCRYPT.  Data will be encrypted using the
-AES-CCM algorithm, with the negotiated nonce and parameters M and L.
-After each successful encryption and decryption, the nonce is treated
-as an integer in network byte order, and incremented by one.
+the connection that is WILL@tie{}ENCRYPT.
+Data will be encrypted using the AES-CCM algorithm, with the negotiated
+@code{nonce} and parameters @var{M} and @var{L}.
+After each successful encryption and decryption, the @code{nonce} is
+treated as an integer in network byte order, and is incremented by one.
 
 If encryption (decryption) is turned off and back on again, and the
-same keyid is used when re-starting the encryption (decryption), the
-intervening clear text must not change the state of the encryption
-(decryption) machine.  In particular, the AES-CCM nonce must not be
-re-set.
+same keyid is used when re-starting the encryption (decryption),
+then the intervening clear text must not change the state of
+the encryption (decryption) machine.
+In particular, the AES-CCM @code{nonce} must not have been re-set.
 
 If a START command is sent (received) with a different keyid, the
 encryption (decryption) machine must be re-initialized immediately
@@ -4757,22 +4731,22 @@ parameters sent (received) in the last AES_CCM_INFO command.
 If a new AES_CCM_INFO command is sent (received), and encryption
 (decryption) is enabled, the encryption (decryption) machine must be
 re-initialized immediately following the end of the AES_CCM_INFO
-command with the new nonce and parameters, and the keyid sent
+command with the new @code{nonce} and parameters, and the keyid sent
 (received) in the last START command.
 
-If encryption (decryption) is not enabled when a AES_CCM_INFO command
+If encryption (decryption) is not enabled when an AES_CCM_INFO command
 is sent (received), the encryption (decryption) machine must be re-
 initialized after the next START command, with the keyid sent
-(received) in that START command, and the nonce and parameters sent
-(received) in this AES_CCM_INFO command.
+(received) in that START command, and the @code{nonce} and parameters
+sent (received) in this AES_CCM_INFO command.
 
-At all times MUST each end make sure that a AES-CCM nonce is not used
-twice under the same encryption key.  The rules above help accomplish
-this in an interoperable way.
+At all times each peer MUST make sure that an AES-CCM
+@code{nonce} is not used twice with the same encryption key.
+The rules above help accomplish this in an interoperable way.
 
 @subsection Integration with the AUTHENTICATION telnet option
 
-<<This section is slightly complicated.  Can't we simplify this?>>
+@c <<This section is slightly complicated.  Can't we simplify this?>>
 
 As noted in the telnet ENCRYPTION option specifications, a keyid value
 of zero indicates the default encryption key, as might be derived from
@@ -4818,8 +4792,8 @@ an implementation should not be vulnerable to various
 implementation-specific attacks such as buffer overflows or
 side-channel analysis.
 
-We wish to repeat the suggestion from RFC 2946, to investigate in a
-STARTTLS approach for Telnet encryption (and also authentication),
+We wish to repeat the suggestion from RFC 2946, to investigate
+a STARTTLS approach for Telnet encryption (and also authentication),
 when the security level provided by this specification is not
 adequate.
 
@@ -4828,9 +4802,8 @@ adequate.
 The security consideration of the Telnet encryption protocol are
 inherited.
 
-It should be noted that the it is up to the authentication protocol
-used, if any, to bind the authenticity of the peers to a specific
-session.
+It should be noted that it is up to the authentication protocol used,
+if any, to bind the authenticity of the peers to a specific session.
 
 The Telnet encryption protocol does not, in general, protect against
 possibly malicious downgrading to any mutually acceptable, but not
@@ -4842,8 +4815,8 @@ mutually acceptable encryption type is always selected.
 @subsubsection AES-CCM Security Considerations
 
 The integrity and privacy claims are inherited from AES-CCM.  In
-particular, the implementation must make sure a nonce is not used more
-than once together with the same key.
+particular, the implementation must make sure a @code{nonce}
+is not used more than once together with a single key.
 
 Furthermore, the encryption key is assumed to be random, i.e., it
 should not be possible to guess it with probability of success higher
@@ -4855,108 +4828,142 @@ overview of issues and recommendations related to randomness.
 This document is based on the various Telnet Encryption RFCs (RFC
 2946, RFC 2947, RFC 2948, RFC 2952 and RFC 2953).
 
+@page
 @node Kerberized rsh and rlogin
 @section Kerberized rsh and rlogin
+@cindex rsh and rlogin
+@cindex KCMDV0.2
 
-This appendix describe the KCMDV0.2 protocol used in shishi patched
-version of inetutils. The KCMD protocol was developped by the MIT
-Kerberos team for kerberized rsh an rlogin programs. Differences
-between rlogin an rsh will be explained, like those between v0.1 and
-v0.2 of the protocol for compatibility reasons.
+This appendix describes the KCMDV0.2 protocol used in versions of
+inetutils patched for shishi. The KCMD protocol was developed by
+the MIT@tie{}Kerberos team for the kerberized @command{rsh} and
+@command{rlogin} programs.
+The differences between @command{rlogin} and @command{rsh}
+are explained below, as are differences between protocol versions v0.1
+and v0.2.  Both remain in use resons of compatibility.
+
 It is possible that some parts of this document are not in conformity
-with original KCMD protocol because there is no official specification
-about it. However, it seems that shishi implementation is compatible
-with MIT's one.
+with the original KCMD protocol, because there is no official
+specification of it.  However, it seems that shishi's implementation
+is compatible with MIT's protocol.
 
-@strong{Warning:} If you are seriously considering using Kerberos rsh
-or rlogin, instead of more robust remote access protocols such as
-SSH, you may first want to explore
-@url{http://www.cs.berkeley.edu/~hildrum/kerberos/} and the full paper
+@strong{Warning:} If you are seriously considering using Kerberized
+@command{rsh} or @command{rlogin}, instead of more robust remote
+access protocols, such as @emph{SSH}, you may first want to explore
+@url{http://www.cs.berkeley.edu/~hildrum/kerberos/} or the full paper
 at @url{http://www.cs.berkeley.edu/~hildrum/043.pdf}.
 
 @subsection Establish connection
 
-First the client should establish a TCP connection with the
-server. Default ports are 543 (klogin), 544 (kshell), 2105 (eklogin).
-eklogin is the same as klogin but with encryption. Their is no longer
-ekshell port because encrypted and normal connection use the same port
-(kshell).
-Kshell need a second connection for stderr. The client should send a
-null terminated string that represent the port of this second
-connection.
-Klogin and eklogin does not use a second connection for stderr so the
-client must send a null byte to the server.
-Contrary to classic rsh/rlogin, server must not check if the client
-port is in the range 0-1023. 
+Initially the client establishs a TCP connection to the server.
+Default ports are 543 (@samp{klogin}), 544 (@samp{kshell}),
+and 2105 (@samp{eklogin}).
+Here @samp{eklogin} is the same as @samp{klogin}, but with encryption.
+There is no longer a separate @samp{ekshell} port, because encrypted
+and normal connection now use the same port @samp{kshell}.
+
+Normally @samp{kshell} needs a second connection for @code{stderr}.
+The client should send a null terminated string containing an ascii
+encoding of the port number to be used for this second connection.
+Since @samp{klogin} and @samp{eklogin} do not use a second connection
+for @code{stderr}, the client just sends an additional null byte
+to the server, which can be thought of as an empty string.
+Contrary to classic @command{rsh} and @command{rlogin}, the server
+need not check if the client's port lies in the range 0-1023.
 
 @subsection Kerberos identification
 
-When connections are established, first thing to do is to indicate
-kerberos authentication must be used.
-So the client will send a string to indicate it will used kerberos
-5. It will call a length-string "strl" the couple (lenght of the string
-strl, null terminated string strl). Length of the string is an int32
-(32bits int) in MSB order (for the network).
-So the client send this length-string strl :
+When a connection is being established, the first thing to do is
+to indicate that Kerberos authentication is desired.
+The client will send a string to indicate it will use Kerberos@tie{}5.
+Let us say ``length-string'' of @var{strl}, and mean the couple
+
+@verbatim
+  (length of the string strl, null-terminated string strl).
+@end verbatim
+
+@noindent when @var{strl} itself is given.
+The string length is encoded as an @code{int32} (32-bit integer)
+in MSB order, i.e., network byte order.
+So the client first sends an authentication message,
+the length-string of
 
 @verbatim
    KRB5_SENDAUTH_V1.0
 @end verbatim
 
-After that the client must indicate which version of the protocol it
-will used by sending this length-string strl :
+@noindent After that, the client must tell which version of the
+protocol it uses by sending a version message, consisting of
+a second length-string.  This time based on
 
 @verbatim
    KCMDV0.2
 @end verbatim
 
-It can be V0.1 for older versions.
-If indentification from client is good, server will send a null
-byte (0x00). Else if authentication message is wrong, server send byte
-0x01, else if protocol version message is wrong server send byte 0x02.
+@noindent or on ``KCMDV0.1'', for the older version.
+
+If the client's indentification is acceptable, the server will respond
+with a null byte (@code{0x00}).
+Otherwise, if the authentication message was incorrect, then the server
+responds with the single byte @code{0x01}, while if the protocol version
+message was unacceptable, then the response is a single @code{0x02}.
 
 @subsection Kerberos authentication
 
-When client is indentified, kerberos authentication can begin. The
-client must send an AP-REQ to the server. AP-REQ authenticator must
-have a subkey (only for KCMDV0.2) and a checksum.
-Authenticator checksum is created on following string :
+When the client is indentified, Kerberos authentication can begin.
+The client must send an AP-REQ to the server; an AP-REQ authenticator
+must contain a subkey (only for KCMDV0.2) and a checksum.
+The authenticator checksum is calculated from the following string.
 
 @example
-"serverport:""terminaltype""remoteusername"
+"serverport":"terminaltype""remoteusername"
 @end example
 
-for example :
+@noindent Observe the mandatory colon, serving as a delimiter
+to the terminal type.
+Here @var{remote@-username} is whatever identity the client desires
+to use at the remote end.
+The simple example
 
 @example
 543:linux/38400user
 @end example
 
-remoteusername corresponds to the identity of the client on remote machine.
+@noindent demonstrates that the terminal type expects a terminfo
+name and a speed as decimal number.
 
-AP-REQ is sended in der encoded format. The length (int32) of der
-encoded AP-REQ is sended in network format (MSB), following by the der
-encoded AP-REQ.
-If all is correct, server send a null int32 (MSB format but like it is
-null it is not important).
-KCMD protocol use mutual authentication, so server must now send and
-AP-REP : (in32 lenght in MSB of der encoded AP-REP)(der encoded
-AP-REP).
+Once the AP-REQ has been updated with the checksum, it is ready for
+transmission to the server.
+Its length (as @code{int32}) is first sent in network order (MSB),
+followed by the DER encoded AP-REQ itself.
 
-Now server and client are partially authenticated.
+If all is acceptable, the server reponds with an @code{int32} of
+value null.
+(In MSB order, but as it is null, order is irrelevant!).
+The KCMD protocol uses mutual authentication, so the server must
+also send an AP-REP back:
+
+@example
+(int32-length in MSB of DER encoded AP-REP)
+(DER encoded AP-REP)
+@end example
+
+@noindent Now server and client are provisionally authenticated.
 
 @subsection Extended authentication
+@anchor{basic authorization}
+@cindex basic authorization
 
-Client must now send 3 different null terminated strings (without
-lenght) :
+The client next sends three different null terminated strings,
+without length :
 
 @itemize
 @item remote user name (user identity on remote machine)
-@item terminal type for rlogin or command for rsh
+@item terminal type for @command{rlogin} or command for @command{rsh}
 @item local user name (user identity on client machine)
 @end itemize
 
-example for rsh :
+An example for @command{rsh} :
 
 @example
 "rname\0"
@@ -4964,161 +4971,188 @@ example for rsh :
 "lname\0"
 @end example
 
-Server must verify that checksum in AP-REQ authenticator is correct by
-computing a new hash like client has done.
+The server must next verify that the checksum delivered in the
+AP-REQ authenticator is correct, by computing a new hash like
+the client has previously done.
 
-Server must verify that principal (in AP-REQ) has right to log in on
-the remote user account.
-For the moment shishi only check if remote user name is equal to
-principal. A more complex authorization code is planned.
-Look at the end to know how MIT/Heimdal do to check authorization.
+The server must also verify that the requesting principal
+(found in AP-REQ) has the right to log in to the remote user account.
+In the @samp{basic} authorization, this is done by checking
+whether the remote user name is identical to the principal's name.
+The alternative is @samp{k5login} mode, which is discussed in
+@ref{kerberos authorization}.
 
-If all is correct server send a null byte, else an error message
-string (null terminated string) is sent. User read the first byte. If
-it is equal to zero, authentication is correct and is logged on the
-remote host. Else user can read the error messsage send by the server.
+If all is correct, the server sends a null byte, i.e., an empty string,
+or else an error message string (null terminated).
+The remote client reads the first byte.
+If it is equal to zero, authentication is successful and the user
+is logged in at the remote host.
+In any other case, the client has the error message available,
+as sent by the server, to help the user understand the failure.
 
 @subsection Window size
 
-For rlogin protocol, when authentication is complete, the server can
-optionnaly send a message to ask for window terminal size of
-user. Then the user can respond but it is not an obligation.
+In the @command{rlogin} protocol, when authentication completes,
+the server can optionally send a message asking for terminal window
+size suitable for the user.
+The client can respond, but it is not obliged to do so.
 
-In KCMDV0.1 server send an urgent TCP message (MSG_OOB) with one byte
-:
+Under KCMDV0.1, the server sends a single byte, an urgent TCP message
+(@code{MSG_OOB}) :
 
 @example
 TIOCPKT_WINDOW = 0x80
 @end example
 
-In KCMDV0.2 server does not send an urgent message but write on the
-socket 5 bytes :
+With KCMDV0.2, the server does not send an urgent message at all,
+but writes five bytes to the socket :
 
 @example
 '\377', '\377', 'o', 'o', TIOCPKT_WINDOW
 @end example
 
-If encryption is enabled (eklogin) server must send this 5 bytes
-encrypted.
+If encryption is enabled (@samp{eklogin}) the server must send those
+five bytes in encrypted form.
 
-Client can answer in both protocol version with :
-       
+The client answers alike in both protocol versions :
+
 @example
 '\377', '\377', 's', 's', "struct winsize"
 @end example
 
-The winsize structure is filled with corresponding setting to client's
-terminal.
-If encryption is enabled this answer must be send encrypted.
+The winsize structure is filled in with the settings from
+the client's terminal.
+With encryption enabled, this answer must be sent encrypted.
 
 @subsection End of authentication
 
-The "classic" rsh/rlogin can be used now.
+The legacy exchange supported by @command{rsh} and @command{rlogin}
+continues from this point onwards.
 
 
 @subsection Encryption
+@cindex eklogin
 
-Encryption mode is used when a connection with eklogin is established.
-Encryption with krsh can be used too. Before, there was a specific port
-for that (ekshell), but now to indicate that encryption must be used with
-krsh, client must add "-x " before the command when it send it between
-remote user name and local user name.
-When the client compute the checksum for AP-REQ authenticator the "-
-x" must not be included.
+Encryption mode is always used when connecting via the port @samp{eklogin}.
+The port @samp{kshell} also supports encryption.
+Previously, there was a specific port @samp{ekshell} for that purpose,
+a use which is now extinct.
+Instead, whenever an encrypted exchange is desired via the port
+@samp{kshell}, client must prefix the string ``-x '' to the
+command string, when it is sent inbetween the remote user name
+and the local user name.
+In contrast, when the client computes the checksum for the AP-REQ
+authenticator, the string ``-x '' must not be included.
 
-Encryption in KCMDV0.2 is not the same as in KCMDV0.1. 
-KCMDV0.1 uses ticket session key as encryption key, and use standard
-Kerberos encryption functions. This protocol only supports des-cbc-crc,
-des-cbc-md4, des-cbc-md5 and does not use initialisation vectors.
+Encryption porcedure under version KCMDV0.2 differs from that in the
+older protocol version.
+Under version KCMDV0.1, the ticket session key is put to use
+as encryption key, and only standard Kerberos encryption functions
+are usable.
+Thus it supports only @samp{des-cbc-crc}, @samp{des-cbc-md4},
+@samp{des-cbc-md5}, and does not allow use of initialisation vectors.
 
-For example on each encryption/decryption calls, the following
-prototype kerberos function should be used :
-	 
+As an example of encryption/decryption calls, the following
+Kerberos function prototype should be used :
+
 @example
-kerberos_encrypt (key, keyusage, in, out)  (or decrypt)
+kerberos_encrypt (key, keyusage, in, out)  (or kerberos_decrypt)
 @end example
 
-KCMDV0.2 can be used with all kerberos encryption modes (des, 3des,
-aes, arcfour) and use AP-REQ authenticator subkey. In opposite to
-KCMDV0.1 initialisation vectors are used. All encryptions/descryptions
-must be made using a cryptographic context (for example to use the
-updated iv, or sbox) :
+To contrast, KCMDV0.2 can be used with all Kerberos encryption modes,
+i.e., @samp{des}, @samp{3des}, @samp{aes}, @samp{arcfour},
+and it uses an AP-REQ authenticator subkey. In opposition to KCMDV0.1,
+initialisation vectors are used.
+All encryption and descryption must be made using a cryptographic context.
+A typical coding example updates the context with an @code{iv},
+then executes an encryption call :
 
 @example
 kerberos_init(ctx, iv, key, keyusage)
 kerberos_encrypt (ctx, in, out)
 @end example
 
-For both protocols, keyusage id for des-cbc-md5, des-cbc-md4,
-des-cbc-crc and des3-cbc-sha1 (for KCMDV0.2) :
-	
-@example    
+For both protocols, default keyusage identity allowing @samp{des-cbc-md5},
+@samp{des-cbc-md4}, @samp{des-cbc-crc}, and @samp{des3-cbc-sha1}
+(the latter applicable only to KCMDV0.2) is identical :
+
+@example
 keyusage = 1026
 @end example
 
-For other KCMDV0.2 modes keyusage is different for each
-encryption/decryption usage.
-To understand, eklogin use 1 socket. It encrypts data (output 1) to
-send and decrypts (input 1) received data.
-Kshell use 2 sockets (1 for transmit data, 1 for stderr). So there are
-four modes :
-     
+KCMDV0.2 encryption modes, other than the four named above,
+specify distinct values for @var{keyusage},
+unique to each encryption/decryption mode.
+
+In conclusion, @samp{eklogin} uses a single socket.
+It encrypts data ``output 1'' prior to sending,
+and it decrypts ``input 1'' received data.
+
+@samp{kshell} uses two sockets: one for transmitting data,
+and one for a side channel carrying @code{stderr}.
+Thus there are four streams available :
+
 @verbatim
-   transmit  : input  1 
+   transmit  : input  1
 	       output 1
 
    stderr    : input  2
 	       output 2
 @end verbatim
 
-There is a keyusage for each modes. The keyusage must correspond on
-client and server side. For example in klogin client input 1 keyusage
-will be server output 1 keyusage.
+There is a key usage set for each mode.
+The values of each @var{keyusage} must be compatible between
+client and server side.
+
+An example with @samp{klogin}, shows the client's ``input 1''
+key usage to be identical to the server's ``output 1'' usage.
 
 @multitable @columnfractions .15 .15 .15
 @item I/O @tab Client @tab Server
-@item intput 1 @tab 1028 @tab 1030
+@item input 1 @tab 1028 @tab 1030
 @item output 1 @tab 1030 @tab 1028
-@item intput 2 @tab 1032 @tab 1034
+@item input 2 @tab 1032 @tab 1034
 @item output 2 @tab 1034 @tab 1032
 @end multitable
 
-Those keyusages must be used with AES and ARCFOUR modes.
+The stated key usages are for AES and ARCFOUR modes.
 
-KCMDV0.2 uses IV (initialisation vector). Like for keyusage, client IV
-must correspond to server IV. IV size is equal to key type,
-blocksize. All bytes of IV must be initialised to :
+KCMDV0.2 uses an IV (initialisation vector) with AES.
+Like for key usage, the client IV must correspond to the server IV.
+The IV size is equal to the blocksize of the chosen key type.
+All bytes of IV must be initialised too :
 
 @multitable @columnfractions .15 .15 .15
 @item I/O @tab Client @tab Server
-@item intput 1 @tab 0 @tab 1
+@item input 1 @tab 0 @tab 1
 @item output 1 @tab 1 @tab 0
-@item intput 2 @tab 2 @tab 3
+@item input 2 @tab 2 @tab 3
 @item output 2 @tab 3 @tab 2
 @end multitable
 
-ARCFOUR mode does not use IV. However, like it is said before, a context
-must be used to keep the updated sbox.
+ARCFOUR mode does not use an IV.
+However, like mentioned before, a context must be used to keep
+the updating the sbox.
 
-Normal message with klogin and kshell are sent like that :
+A normal message for @samp{klogin} or @samp{kshell} is set up like this :
 
 @example
-(int 32 lenght of message in MSB order)
+(int32-length of message in MSB order)
 (message)
 @end example
 
-In encrypted mode it is a bit different :
+In encrypted mode, the format is only slightly different :
 
 @example
-(int 32 length of unencrypted message in MSB order)
+(int32-length of unencrypted message in MSB order)
 (encrypted message)
 @end example
 
-In KCMDV0.2 encrypted message is create like that :
+Under KCMDV0.2, the encrypted message is create like this :
 
 @example
 encrypt (
-(int 32 length of message in MSB order)
+(int32-length of message in MSB order)
 (message)
 )
 @end example
@@ -5126,51 +5160,70 @@ encrypt (
 A check on message size can be made in second version of the protocol.
 
 @subsection  KCMDV0.3
+@cindex KCMDV0.3
 
+This part only gives possible ways to extend the KCMD protocol.
+They should not be understood as some kind of ``must have''
+in a future KCMD implementation.
 
-This part only gives possible ways to extend KCMD protocol. Does not
-take that as must have in KCMD implementation.
+Extensions to KCMV0.2 can be imagined.
+For example, @samp{kshell} assumes there are no files of names
+like ``-x *''.
+I think the same thing can be assumed of terminal names for @samp{klogin}.
+So the client could add ``-x '' to the terminal type it transmits
+to the server, in order to indicate the desire to use encryption.
 
-Extensions of KCMV0.2 could be made. For example kshell supposes there
-are no files with name "-x *". I think the same thing can be supposed
-with terminal name for klogin. So client could add "-x " to terminal
-type it sends to server to indicate it will use encryption. Like that
-there will be only one port for klogin/eklogin : 543.
+Under this provision, there need only be one port shared by
+@samp{klogin} and @samp{eklogin}, namely the IANA defined port
+number 543.
 
-In encrypted mode kshell send command in clear on the network, this
-could be considered as insecure as user have decided to use
-encryption.
-This is not really a problem for klogin because it just sends terminal
-type.
+Before encryption begins, @samp{kshell} passes the intended
+commands in the clear through the network.
+This could be considered insecure, once the user has decided
+to use encryption.
+It is not really a problem with @samp{klogin}, because it just
+tells which terminal type to target.
 
-In encrypted mode, klogin and kshell clients could only send "-x" as
-command or terminal type.
-After that encryption is activated, and the client could send terminal
-type or command encrypted.
-The server will send the null byte to say that all is correct, or
-error message in encrypted form.
+One could imagine, when the client intends to use encrypted mode,
+that the client side initially transmits a mundane ``-x'' and
+nothing else to either of @samp{klogin} and @samp{kshell},
+in place of either a command or a terminal type, respectively.
+Once encryption is in place, the client could send terminal
+type or command in a second, now encrypted exchange.
+The server could respond with a single null byte, saying that all
+is well, or respond with an error message, which already enjoys the
+added benefit of being encrypted.
 
 @subsection MIT/Heimdal authorization
+@anchor{kerberos authorization}
+@cindex k5login authorization
 
-This part describes how MIT/Heimdal version check authorization of the
-user to log in on the remote machine.
+This short part describes how MIT/Heimdal versions of Kerberos@tie{}5
+check authorization of any user seeking to log in to a remote machine.
 
-Authorization check is made by looking if the file .k5login exists on
-the account of the remote user.
-If this file does not exist, remote user name must be the same as
-principal in AP-REQ to valid authorization.
-Else if this file exists, check first verify that remote user or root
-are the owner of .k5login.
-If it is not the case, the check fails.
-If it is good, check reads each line of that file and compare each
-readed name to principal.
-If principal is found in .k5login, authorization is valid, else user
-is not allowed to connect on remote host with the specified remote
-user name (that can be the same as principal).
+The authorization stage begins by testing whether the file @file{.k5login}
+exists in the home directory of the remote user.
+If this file does not exist, then a valid authorization demands that
+the remote user's name must be the same as the name of the principal
+contained in the request AP-REQ.
+(This is the legacy @samp{basic} authorization.)
+Else, if the file is present, the serve first verifies that the remote
+user, or root, is the owner of @file{.k5login}, then goes on to verify
+that the file is not readable by group, nor by world.
+If either fails, then the check fails entirely.
 
-So someone (for example user "user1") can remote log into "user2"
-account if .k5login is present in user2 home dir and this file is owned
-by user2 or root and user1 name is present in this file.
+If all is good so far, then each line of that file is examined,
+and each name read in is compared to the principal.
+If the principal is found listed somewhere in @file{.k5login},
+then authorization is successful.
+In the contrary case, the user is not admitted to the remote host as
+the requested remote user, a name that could have been derived to be
+the very same as in the principal itself.
+
+So someone, ``user1'' say, can remotely log in to the account
+of ``user2'', if the file @file{.k5login} is present in the home
+directory of ``user2'', and it is owned by ``user2'' or by root,
+and at the same time the name ``user1'' is listed in this file.
 
 @node Key as initialization vector
 @section Key as initialization vector
@@ -5232,22 +5285,25 @@ of a counter, or something like that.
 
 @node The Keytab Binary File Format
 @section The Keytab Binary File Format
+@cindex keytab, file format of
 
 The keytab file format is described in the file @file{keytab.txt},
-included in verbatim below.
+here included verbatim.
 
 @verbatiminclude keytab.txt
 
 @node The Credential Cache Binary File Format
 @section The Credential Cache Binary File Format
+@cindex credential cache, file format of
 
 The credential cache file format is described in the file
-@file{keytab.txt}, included in verbatim below.
+@file{keytab.txt}, included verbatim.
 
 @verbatiminclude ccache.txt
 
 @node Copying Information
 @appendix Copying Information
+@cindex copying information
 
 @menu
 * GNU Free Documentation License::   License for copying this manual.
