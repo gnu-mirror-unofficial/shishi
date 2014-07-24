@@ -183,9 +183,10 @@ my %highlights_html = (
 my %highlights_texinfo = (
 	$type_addr	=> '@@',
 	$type_constant	=> '@code{$1}',
+	$type_env	=> '@env{$1}',
 	$type_func	=> '@code{$1}',
-	$type_struct	=> '@code{$1}',
 	$type_param	=> '@var{$1}',
+	$type_struct	=> '@code{$1}',
 );
 
 my %highlights_tex = (
