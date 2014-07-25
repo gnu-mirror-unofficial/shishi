@@ -981,12 +981,12 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
 
 /**
  * shishi_key_print:
- * @handle: shishi handle as allocated by shishi_init().
- * @fh: file handle opened for writing.
- * @key: key to print.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @fh: File handle open for writing.
+ * @key: Key to print.
  *
- * Print an ASCII representation of a key structure to file
- * descriptor.  Example output:
+ * Prints an ASCII representation of a key structure @key
+ * to the file descriptor @fh.  Example output:
  *
  * -----BEGIN SHISHI KEY-----
  * Keytype: 18 (aes256-cts-hmac-sha1-96)
@@ -998,7 +998,8 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
  * P1QdeW/oSiag/bTyVEBAY2msiGSTmgLXlopuCKoppDs=
  * -----END SHISHI KEY-----
  *
- * Return value: Returns SHISHI_OK iff successful.
+ * Return value: Returns %SHISHI_OK if successful.
+ *   The only failure is %SHISHI_MALLOC_ERROR.
  **/
 int
 shishi_key_print (Shishi * handle, FILE * fh, const Shishi_key * key)
@@ -1054,15 +1055,16 @@ shishi_key_print (Shishi * handle, FILE * fh, const Shishi_key * key)
 
 /**
  * shishi_key_to_file:
- * @handle: shishi handle as allocated by shishi_init().
- * @filename: filename to append key to.
- * @key: key to print.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @filename: Name of file, to which the key text is appended.
+ * @key: Key to print.
  *
- * Print an ASCII representation of a key structure to a file.  The
- * file is appended to if it exists.  See shishi_key_print() for
- * format of output.
+ * Prints an ASCII representation of a key structure @key
+ * to the file @filename.  The text is appended if the file
+ * exists.  See shishi_key_print() for an example of output text.
  *
- * Return value: Returns SHISHI_OK iff successful.
+ * Return value: Returns %SHISHI_OK if successful.
+ *   Failures are due to I/O issues, or to allocation.
  **/
 int
 shishi_key_to_file (Shishi * handle, const char *filename, Shishi_key * key)

@@ -36,7 +36,7 @@
  * Neither TYPE nor LOCATION may contain embedded spaces,
  * but PARAMETER may do so.
  *
- * Return Value: Returns %SHISA_OK if a database was parsed and opened
+ * Return value: Returns %SHISA_OK if a database was parsed and opened
  *   successfully.
  **/
 int
@@ -101,7 +101,7 @@ shisa_cfg_db (Shisa * dbh, const char *value)
  * The prefix "db", mandatory in @option, makes shisa_cfg() suited
  * to a syntax with key-value pairs also in PARAMETER.
  *
- * Return Value: Returns %SHISA_OK if @option is valid.
+ * Return value: Returns %SHISA_OK if @option is valid.
  **/
 int
 shisa_cfg (Shisa * dbh, const char *option)
@@ -132,7 +132,7 @@ shisa_cfg (Shisa * dbh, const char *option)
  * Configures the Shisa library using a configuration file
  * located at @cfg.
  *
- * Return Value: Returns %SHISA_OK if successful.  Typically
+ * Return value: Returns %SHISA_OK if successful.  Typically
  *   returns %SHISA_CFG_NO_FILE in response to a misnamed file.
  **/
 int

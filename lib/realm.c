@@ -25,15 +25,24 @@
 /**
  * shishi_realm_default_guess:
  *
- * Guesses a realm based on getdomainname() (which really is NIS/YP
- * domain, but if it is set it might be a good guess), or if it fails,
- * based on gethostname(), or if it fails, the string
- * "could-not-guess-default-realm". Note that the hostname is not
- * trimmed off of the data returned by gethostname() to get the domain
- * name and use that as the realm.
+ * Guesses a realm based on getdomainname(), which really responds
+ * with a NIS/YP domain, but if set properly, it might be a good
+ * first guess.  If this NIS query fails, call gethostname(),
+ * and on its failure, fall back to returning the artificial
+ * string "could-not-guess-default-realm".
  *
- * Return value: Returns guessed realm for host as a string that has
- * to be deallocated with free() by the caller.
+ * Note that the hostname is not trimmed off of the string returned
+ * by gethostname(), thus pretending the local host name is a valid
+ * realm name.  The resulting corner case could merit a check that
+ * the suggested realm is distinct from the fully qualifies host,
+ * and if not, simply strip the host name from the returned string
+ * before it is used in an application.  One reason for sticking
+ * with the present behaviour, is that some systems respond with
+ * a non-qualified host name as reply from gethostname().
+ *
+ * Return value: Returns a guessed realm for the running host,
+ *   containing a string that has to be deallocated with
+ *   free() by the caller.
  **/
 char *
 shishi_realm_default_guess (void)
@@ -59,12 +68,14 @@ shishi_realm_default_guess (void)
 
 /**
  * shishi_realm_default:
- * @handle: Shishi library handle create by shishi_init().
+ * @handle: Shishi library handle created by shishi_init().
  *
- * Get name of default realm.
+ * Determines name of default realm, i.e., the name of whatever
+ * realm the library will use whenever an explicit realm is not
+ * stated during a library call.
  *
- * Return value: Returns the default realm used in the library.  (Not
- * a copy of it, so don't modify or deallocate it.)
+ * Return value: Returns the default realm in use by the library.
+ *   Not a copy, so do not modify or deallocate the returned string.
  **/
 const char *
 shishi_realm_default (Shishi * handle)
@@ -82,12 +93,15 @@ shishi_realm_default (Shishi * handle)
 
 /**
  * shishi_realm_default_set:
- * @handle: Shishi library handle create by shishi_init().
- * @realm: string with new default realm name, or NULL to reset to default.
+ * @handle: Shishi library handle created by shishi_init().
+ * @realm: String stating a new default realm name, or %NULL.
  *
- * Set the default realm used in the library.  The string is copied
- * into the library, so you can dispose of the variable immediately
- * after calling this function.
+ * Sets the default realm used by the library; or, with @realm
+ * set to %NULL, resets the library realm setting to that name
+ * selected by configuration for default value.
+ *
+ * The string is copied into the library, so you can dispose of
+ * the content in @realm immediately after calling this function.
  **/
 void
 shishi_realm_default_set (Shishi * handle, const char *realm)
@@ -101,12 +115,13 @@ shishi_realm_default_set (Shishi * handle, const char *realm)
 
 /**
  * shishi_realm_for_server_file:
- * @handle: Shishi library handle create by shishi_init().
- * @server: hostname to find realm for.
+ * @handle: Shishi library handle created by shishi_init().
+ * @server: Hostname to determine realm for.
  *
- * Find realm for a host using configuration file.
+ * Finds the realm applicable to a host @server, using the
+ * standard configuration file.
  *
- * Return value: Returns realm for host, or NULL if not found.
+ * Return value: Returns realm for host, or %NULL if not known.
  **/
 char *
 shishi_realm_for_server_file (Shishi * handle, char *server)
@@ -145,35 +160,40 @@ shishi_realm_for_server_file (Shishi * handle, char *server)
 
 /**
  * shishi_realm_for_server_dns:
- * @handle: Shishi library handle create by shishi_init().
- * @server: hostname to find realm for.
+ * @handle: Shishi library handle created by shishi_init().
+ * @server: Hostname to find realm for.
  *
- * Find realm for a host using DNS lookups, according to
- * draft-ietf-krb-wg-krb-dns-locate-03.txt.  Since DNS lookups may be
- * spoofed, relying on the realm information may result in a
- * redirection attack.  In a single-realm scenario, this only achieves
- * a denial of service, but with cross-realm trust it may redirect you
- * to a compromised realm.  For this reason, Shishi prints a warning,
- * suggesting that the user should add the proper 'server-realm'
- * configuration tokens instead.
+ * Finds the realm for a host @server using DNS lookup, as is
+ * prescribed in "draft-ietf-krb-wg-krb-dns-locate-03.txt".
+ *
+ * Since DNS lookup can be spoofed, relying on the realm information
+ * may result in a redirection attack.  In a single-realm scenario,
+ * this only achieves a denial of service, but with trust across
+ * multiple realms the attack may redirect you to a compromised realm.
+ * For this reason, Shishi prints a warning, suggesting that the user
+ * should instead add a proper 'server-realm' configuration token.
  *
  * To illustrate the DNS information used, here is an extract from a
  * zone file for the domain ASDF.COM:
  *
- * _kerberos.asdf.com.             IN      TXT     "ASDF.COM"
- * _kerberos.mrkserver.asdf.com.   IN      TXT     "MARKETING.ASDF.COM"
- * _kerberos.salesserver.asdf.com. IN      TXT     "SALES.ASDF.COM"
+ * _kerberos.asdf.com.             IN   TXT     "ASDF.COM"
+ * _kerberos.mrkserver.asdf.com.   IN   TXT     "MARKETING.ASDF.COM"
+ * _kerberos.salesserver.asdf.com. IN   TXT     "SALES.ASDF.COM"
  *
  * Let us suppose that in this case, a client wishes to use a service
- * on the host foo.asdf.com.  It would first query:
+ * on the host "foo.asdf.com".  It would first query for
  *
- * _kerberos.foo.asdf.com. IN TXT
+ * _kerberos.foo.asdf.com.  IN TXT
  *
- * Finding no match, it would then query:
+ * Finding no match, it would then query for
  *
- * _kerberos.asdf.com. IN TXT
+ * _kerberos.asdf.com.      IN TXT
  *
- * Return value: Returns realm for host, or NULL if not found.
+ * With the resource records stated above, the latter query returns
+ * a positive answer.
+ *
+ * Return value: Returns realm for the indicated host, or %NULL
+ *   if no relevant TXT record could be found.
  **/
 char *
 shishi_realm_for_server_dns (Shishi * handle, char *server)
@@ -211,15 +231,19 @@ shishi_realm_for_server_dns (Shishi * handle, char *server)
 
 /**
  * shishi_realm_for_server:
- * @handle: Shishi library handle create by shishi_init().
- * @server: hostname to find realm for.
+ * @handle: Shishi library handle created by shishi_init().
+ * @server: Hostname to find realm for.
  *
- * Find realm for a host, using various methods.  Currently this
- * includes static configuration files (see
- * shishi_realm_for_server_file()) and DNS (see
- * shishi_realm_for_server_dns()).
+ * Finds a realm for the host @server, using various methods.
  *
- * Return value: Returns realm for host, or NULL if not found.
+ * Currently this includes static configuration files, using
+ * the library call shishi_realm_for_server_file(), and DNS
+ * lookup using shishi_realm_for_server_dns().  They are
+ * attempted in the stated order.  See the documentation of
+ * either function for more information.
+ *
+ * Return value: Returns realm for the indicated host, or %NULL
+ *   if nothing is known about @server.
  **/
 char *
 shishi_realm_for_server (Shishi * handle, char *server)

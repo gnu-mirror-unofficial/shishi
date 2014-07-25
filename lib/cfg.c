@@ -110,7 +110,7 @@ _shishi_realminfo_new (Shishi * handle, char *realm)
  * Configures the shishi library according to the options
  * given in @option.
  *
- * Return Value: Returns SHISHI_OK if @option is valid
+ * Return value: Returns %SHISHI_OK if @option is valid
  *   and configuration was successful.
  **/
 int
@@ -356,7 +356,7 @@ out:
  * Configures the shishi library using a configuration file
  * located at @cfg.
  *
- * Return Value: Returns %SHISHI_OK if successful.
+ * Return value: Returns %SHISHI_OK if successful.
  **/
 int
 shishi_cfg_from_file (Shishi * handle, const char *cfg)
@@ -431,7 +431,7 @@ _shishi_transport2string (int transport)
  * Prints library configuration status to @fh.  This function is
  * mostly intended for debugging purposes.
  *
- * Return Value: Always returns SHISHI_OK.
+ * Return value: Always returns %SHISHI_OK.
  **/
 int
 shishi_cfg_print (Shishi * handle, FILE * fh)
@@ -500,13 +500,12 @@ shishi_cfg_default_systemfile (Shishi * handle)
  * @handle: Shishi library handle created by shishi_init().
  *
  * The default user directory, referred to for Shishi ticket cache
- * and other purposes, is normally computed by appending the compile
- * time macro %BASE_DIR ("/.shishi" by default) to the content of
- * the environment variable $HOME.
+ * and other purposes, is normally computed by appending the fixed
+ * string "/.shishi" to the content of the environment variable $HOME.
  *
- * The hard coded directory, generally "$HOME/.shishi/", will be
- * replaced by whatever complete path is stored in the environment
- * variable $SHISHI_HOME.
+ * This hard coded directory, i.e., "$HOME/.shishi/", can be replaced
+ * by whatever complete path is stored in the environment variable
+ * $SHISHI_HOME.
  *
  * Return value: Returns the user's directory name where the Shishi
  *   library will search for configuration files, ticket caches,
@@ -634,7 +633,7 @@ shishi_cfg_clientkdcetype_fast (Shishi * handle)
  *
  * aes256-cts-hmac-sha1-96  des3-cbc-sha1-kd  des-cbc-md5
  *
- * Return value: Returns SHISHI_OK if successful, and
+ * Return value: Returns %SHISHI_OK if successful, and
  *   %SHISHI_INVALID_ARGUMENT otherwise.
  **/
 int
@@ -689,7 +688,7 @@ shishi_cfg_clientkdcetype_set (Shishi * handle, char *value)
  * authentication based on preset principals, and then fall back
  * to the basic test of identical principal names.
  *
- * Return value: Returns SHISHI_OK if successful, and
+ * Return value: Returns %SHISHI_OK if successful, and
  *   %SHISHI_INVALID_ARGUMENT otherwise.
  **/
 int

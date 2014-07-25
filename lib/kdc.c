@@ -24,19 +24,21 @@
 
 /**
  * shishi_as_derive_salt:
- * @handle: shishi handle as allocated by shishi_init().
- * @asreq: input AS-REQ variable.
- * @asrep: input AS-REP variable.
- * @salt: newly allocated output array with salt.
- * @saltlen: holds actual size of output array with salt.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @asreq: Input AS-REQ variable.
+ * @asrep: Input AS-REP variable.
+ * @salt: Returned pointer to newly allocated output array.
+ * @saltlen: Pointer to integer, returning size of output array.
  *
- * Derive the salt that should be used when deriving a key via
- * shishi_string_to_key() for an AS exchange.  Currently this searches
- * for PA-DATA of type SHISHI_PA_PW_SALT in the AS-REP and returns it
- * if found, otherwise the salt is derived from the client name and
- * realm in AS-REQ.
+ * Computes the salt that should be used when deriving a key via
+ * shishi_string_to_key() for an AS exchange.  Currently this
+ * searches for PA-DATA of type %SHISHI_PA_PW_SALT in the AS-REP
+ * provided by @asrep, and if present returns it.  Otherwise the
+ * salt is composed from the client name and the realm, both are
+ * extracted from the request @asreq.
  *
- * Return value: Returns SHISHI_OK iff successful.
+ * Return value: Returns %SHISHI_OK if successful.
+ *   Failure conditions include various ASN.1 issues.
  **/
 int
 shishi_as_derive_salt (Shishi * handle,
@@ -109,17 +111,19 @@ shishi_as_derive_salt (Shishi * handle,
 /**
  * shishi_kdcreq_sendrecv_hint:
  * @handle: Shishi library handle created by shishi_init().
- * @kdcreq: input variable with a prepared AS-REQ.
- * @kdcrep: output variable with decoded AS-REP.
- * @hint: input #Shishi_tkts_hint structure with flags.
+ * @kdcreq: Input variable with a prepared AS-REQ.
+ * @kdcrep: Output pointer variable for decoded AS-REP.
+ * @hint: Input #Shishi_tkts_hint structure with flags.
  *
- * Send a request to KDC, and receive the response.
- * The provided AS-REQ and the hints structure determine
- * transmitted data.  On reception the reply is decoded to AS-REP.
+ * Sends a request to KDC, and receives the response.
+ * The provided request @kdcreq and the hints structure @hint,
+ * together determine transmitted data.  On reception the reply
+ * is decoded as AS-REP into @kdcrep.
  *
- * Returns: %SHISHI_OK on success, %SHISHI_KDC_TIMEOUT on timeouts,
- *   %SHISHI_ASN1_ERROR on translation errors,
- *   or %SHISHI_GOT_KRBERROR for other corruptions.
+ * Return value: Return code is %SHISHI_OK on success,
+ *   %SHISHI_KDC_TIMEOUT on timeouts, %SHISHI_ASN1_ERROR on
+ *   translation errors, and %SHISHI_GOT_KRBERROR for other
+ *   corruptions.
  **/
 int
 shishi_kdcreq_sendrecv_hint (Shishi * handle,
@@ -203,16 +207,18 @@ shishi_kdcreq_sendrecv_hint (Shishi * handle,
 /**
  * shishi_kdcreq_sendrecv:
  * @handle: Shishi library handle created by shishi_init().
- * @kdcreq: input variable with a prepared AS-REQ.
- * @kdcrep: output variable with received AS-REP.
+ * @kdcreq: Input variable with a prepared AS-REQ.
+ * @kdcrep: Output pointer variable returning received AS-REP.
  *
- * Send a request to KDC, and receive the response.
- * The provided AS-REQ sets all data for the request.
- * On reception the reply is decoded to AS-REP.
+ * Sends a request to KDC, and receives the response.
+ * The provided AS-REQ, in @kdcreq, sets all data for the
+ * request.  On reception the reply is decoded as AS-REP
+ * into @kdcrep.
  *
- * Returns: %SHISHI_OK on success, %SHISHI_KDC_TIMEOUT on timeouts,
- *   %SHISHI_ASN1_ERROR on translation errors,
- *   or %SHISHI_GOT_KRBERROR for other corruptions.
+ * Return value: Return code is %SHISHI_OK on success,
+ *   %SHISHI_KDC_TIMEOUT on timeouts, %SHISHI_ASN1_ERROR on
+ *   translation errors, and %SHISHI_GOT_KRBERROR for other
+ *   corruptions.
  **/
 int
 shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
@@ -223,13 +229,15 @@ shishi_kdcreq_sendrecv (Shishi * handle, Shishi_asn1 kdcreq,
 
 /**
  * shishi_kdc_copy_crealm:
- * @handle: shishi handle as allocated by shishi_init().
- * @kdcrep: KDC-REP to read crealm from.
- * @encticketpart: EncTicketPart to set crealm in.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @kdcrep: KDC-REP where the field "crealm" is updated.
+ * @encticketpart: EncTicketPart providing "crealm" field.
  *
- * Set crealm in KDC-REP to value in EncTicketPart.
+ * Reads the field "crealm" from the ticket @encticketpart
+ * and copies the value into the reply @kdcrep.
  *
- * Return value: Returns SHISHI_OK if successful.
+ * Return value: Returns %SHISHI_OK if successful, and ASN.1
+ *   failures otherwise.
  **/
 int
 shishi_kdc_copy_crealm (Shishi * handle,
@@ -253,16 +261,18 @@ shishi_kdc_copy_crealm (Shishi * handle,
 
 /**
  * shishi_as_check_crealm:
- * @handle: shishi handle as allocated by shishi_init().
- * @asreq: AS-REQ to compare realm field in.
- * @asrep: AS-REP to compare realm field in.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @asreq: Request of type AS-REQ.
+ * @asrep: Reply structure of type AS-REP.
  *
- * Verify that AS-REQ.req-body.realm and AS-REP.crealm fields match.
- * This is one of the steps that has to be performed when processing a
- * AS-REQ and AS-REP exchange, see shishi_kdc_process().
+ * Verifies that the fields @asreq.req-body.realm and @asrep.crealm
+ * contain identical realm names.  This is one of the steps that
+ * has to be performed when processing an exchange of AS-REQ and
+ * AS-REP; see shishi_kdc_process() for more details.
  *
- * Return value: Returns SHISHI_OK if successful,
- * SHISHI_REALM_MISMATCH if the values differ, or an error code.
+ * Return value: Returns %SHISHI_OK if successful,
+ *   %SHISHI_REALM_MISMATCH whenever the realm names differ,
+ *   and an error code otherwise.
  **/
 int
 shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
@@ -310,13 +320,15 @@ shishi_as_check_crealm (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 
 /**
  * shishi_kdc_copy_cname:
- * @handle: shishi handle as allocated by shishi_init().
- * @kdcrep: KDC-REP to read cname from.
- * @encticketpart: EncTicketPart to set cname in.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @kdcrep: KDC-REP where the field "cname" is updated.
+ * @encticketpart: EncTicketPart providing "cname" field.
  *
- * Set cname in KDC-REP to value in EncTicketPart.
+ * Reads the field "cname" from the ticket @encticketpart
+ * and copies the value into the reply @kdcrep.
  *
- * Return value: Returns SHISHI_OK if successful.
+ * Return value: Returns %SHISHI_OK if successful, and ASN.1
+ *   failures otherwise.
  **/
 int
 shishi_kdc_copy_cname (Shishi * handle,
@@ -371,16 +383,18 @@ shishi_kdc_copy_cname (Shishi * handle,
 
 /**
  * shishi_as_check_cname:
- * @handle: shishi handle as allocated by shishi_init().
- * @asreq: AS-REQ to compare client name field in.
- * @asrep: AS-REP to compare client name field in.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @asreq: Request of type AS-REQ.
+ * @asrep: Reply structure of type AS-REP.
  *
- * Verify that AS-REQ.req-body.cname and AS-REP.cname fields match.
- * This is one of the steps that has to be performed when processing a
- * AS-REQ and AS-REP exchange, see shishi_kdc_process().
+ * Verifies that the fields @asreq.req-body.cname and @asrep.cname
+ * contain identical names.  This is one of the steps that has to
+ * be performed when processing an exchange of AS-REQ and AS-REP;
+ * see shishi_kdc_process() for more details.
  *
- * Return value: Returns SHISHI_OK if successful,
- * SHISHI_CNAME_MISMATCH if the values differ, or an error code.
+ * Return value: Returns %SHISHI_OK if successful,
+ *   %SHISHI_CNAME_MISMATCH if the names differ,
+ *   and an error code otherwise.
  **/
 int
 shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
@@ -442,13 +456,14 @@ shishi_as_check_cname (Shishi * handle, Shishi_asn1 asreq, Shishi_asn1 asrep)
 
 /**
  * shishi_kdc_copy_nonce:
- * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: KDC-REQ to read nonce from.
- * @enckdcreppart: EncKDCRepPart to set nonce in.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @kdcreq: KDC-REQ providing "nonce" field.
+ * @enckdcreppart: EncKDCRepPart where "nonce" field is updated.
  *
- * Set nonce in EncKDCRepPart to value in KDC-REQ.
+ * Sets the field "nonce" in @enckdcreppart to a value retreived
+ * from the corresponding field in @kdcreq.
  *
- * Return value: Returns SHISHI_OK if successful.
+ * Return value: Returns %SHISHI_OK if successful.
  **/
 int
 shishi_kdc_copy_nonce (Shishi * handle,
@@ -493,12 +508,12 @@ shishi_kdc_check_nonce_1 (Shishi * handle,
        *
        * RFC 1510 didn't restrict nonce to 4 bytes, so the nonce field
        * may be longer. There are KDCs that will accept longer nonces
-       * but truncated them to 4 bytes in the response.  If we happen
+       * but truncate them to 4 bytes in the response.  If we happen
        * to parse such a KDC request, we consider it OK even though it
        * isn't.  I doubt this is a security problem, because you need
-       * to break the integrity protection of the encryption system
-       * as well as guess the nonce correctly.  The nonce doesn't seem
-       * to serve any purpose at all, really.
+       * to break the integrity protection of the encryption system,
+       * as well as guessing the nonce correctly.  The nonce doesn't
+       * seem to serve any purpose at all, really.
        *
        */
 
@@ -519,18 +534,19 @@ shishi_kdc_check_nonce_1 (Shishi * handle,
 
 /**
  * shishi_kdc_check_nonce:
- * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: KDC-REQ to compare nonce field in.
- * @enckdcreppart: Encrypted KDC-REP part to compare nonce field in.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @kdcreq: Request of type KDC-REQ.
+ * @enckdcreppart: Encrypted KDC-REP part.
  *
- * Verify that KDC-REQ.req-body.nonce and EncKDCRepPart.nonce fields
- * match.  This is one of the steps that has to be performed when
- * processing a KDC-REQ and KDC-REP exchange.
+ * Verifies that @kdcreq.req-body.nonce and @enckdcreppart.nonce
+ * contain matching values.  This is one of the steps that has to
+ * be performed when processing an exchange of KDC-REQ and KDC-REP.
  *
- * Return value: Returns SHISHI_OK if successful,
- * SHISHI_NONCE_LENGTH_MISMATCH if the nonces have different lengths
- * (usually indicates that buggy server truncated nonce to 4 bytes),
- * SHISHI_NONCE_MISMATCH if the values differ, or an error code.
+ * Return value: Returns %SHISHI_OK if successful,
+ *   %SHISHI_NONCE_MISMATCH whenever the nonces are of
+ *   differing lengths (usually a sign that a buggy server
+ *   truncates the nonce to 4 bytes) and the same code if the
+ *   nonce values differ, or an error code otherwise.
  **/
 int
 shishi_kdc_check_nonce (Shishi * handle,
@@ -571,20 +587,23 @@ shishi_kdc_check_nonce (Shishi * handle,
 
 /**
  * shishi_tgs_process:
- * @handle: shishi handle as allocated by shishi_init().
- * @tgsreq: input variable holding the transmitted KDC-REQ.
- * @tgsrep: input variable holding the received KDC-REP.
- * @authenticator: input variable with Authenticator from AP-REQ in KDC-REQ.
- * @oldenckdcreppart: input variable with EncKDCRepPart used in request.
- * @enckdcreppart: output variable holding the new EncKDCRepPart.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @tgsreq: Input variable holding the transmitted KDC-REQ.
+ * @tgsrep: Input variable holding the received KDC-REP.
+ * @authenticator: Input variable with an authenticator extracted
+ *   from the AP-REQ part of @tgsreq.
+ * @oldenckdcreppart: Input variable with EncKDCRepPart used
+ *   in the request.
+ * @enckdcreppart: Output variable holding the new EncKDCRepPart.
  *
- * Process a TGS client exchange and output the decrypted EncKDCRepPart
- * which holds details for the received ticket.  This function
- * simply derives the encryption key from the ticket used to construct
- * the TGS request, and then calls shishi_kdc_process().
+ * Processes a TGS client exchange and outputs the decrypted
+ * EncKDCRepPart, holding details about the received ticket.
+ * This function simply derives the encryption key from the
+ * ticket used to construct the original TGS request, and then
+ * calls shishi_kdc_process().
  *
- * Return value: Returns SHISHI_OK iff the TGS client exchange was
- * successful.
+ * Return value: Returns %SHISHI_OK if the TGS client exchange
+ *   was successful.  Failures include ASN.1 and TGS conditions.
  **/
 int
 shishi_tgs_process (Shishi * handle,
@@ -653,19 +672,19 @@ shishi_tgs_process (Shishi * handle,
 
 /**
  * shishi_as_process:
- * @handle: shishi handle as allocated by shishi_init().
- * @asreq: input variable holding the transmitted KDC-REQ.
- * @asrep: input variable holding the received KDC-REP.
- * @string: input variable with a null terminated password.
- * @enckdcreppart: output variable holding a new EncKDCRepPart.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @asreq: Input variable holding the transmitted KDC-REQ.
+ * @asrep: Input variable holding the received KDC-REP.
+ * @string: Input variable with a null terminated password.
+ * @enckdcreppart: Output variable returning a new EncKDCRepPart.
  *
- * Process an AS client exchange and output the decrypted EncKDCRepPart
- * which holds details for the received ticket.  This function
- * simply derives the encryption key from the password, and then calls
- * shishi_kdc_process().
+ * Processes an AS client exchange and returns the decrypted
+ * EncKDCRepPart, holding details about the received ticket.
+ * This function simply derives the encryption key from the
+ * password, and then calls shishi_kdc_process().
  *
- * Return value: Returns SHISHI_OK iff the AS client exchange was
- * successful.
+ * Return value: Returns %SHISHI_OK if the AS client exchange was
+ *   successful.  Multiple failure conditions are possible.
  **/
 int
 shishi_as_process (Shishi * handle,
@@ -704,28 +723,28 @@ shishi_as_process (Shishi * handle,
 
 /**
  * shishi_kdc_process:
- * @handle: shishi handle as allocated by shishi_init().
- * @kdcreq: input variable holding the transmitted KDC-REQ.
- * @kdcrep: input variable holding the received KDC-REP.
- * @key: input array with key for decrypting the encrypted part of KDC-REP.
- * @keyusage: kerberos key usage value.
- * @enckdcreppart: output variable holding the new EncKDCRepPart.
+ * @handle: Shishi handle as allocated by shishi_init().
+ * @kdcreq: Input variable holding the transmitted KDC-REQ.
+ * @kdcrep: Input variable holding the received KDC-REP.
+ * @key: Input pointet to key for decrypting parts of @kdcrep.
+ * @keyusage: Kerberos key usage code.
+ * @enckdcreppart: Output pointer for the extracted EncKDCRepPart.
  *
- * Process a KDC client exchange and output the decrypted EncKDCRepPart,
- * which holds details for the received ticket.  Use
- * shishi_kdcrep_get_ticket() to extract the ticket.  This function
- * verifies the various conditions that must hold if the response is
- * to be considered valid.  In particular it compares nonces
- * (shishi_kdc_check_nonce()), and if the exchange was an AS exchange,
- * it also checks cname and crealm (shishi_as_check_cname() and
- * shishi_as_check_crealm()).
+ * Processes a KDC client exchange and extracts a decrypted
+ * EncKDCRepPart, holding details about the received ticket.
+ * Use shishi_kdcrep_get_ticket() to extract the ticket itself.
+ * This function verifies the various conditions that must hold
+ * if the response is to be considered valid.  In particular,
+ * it compares nonces (using shishi_kdc_check_nonce()), and if
+ * the exchange was an AS exchange, it also checks cname and
+ * crealm (using shishi_as_check_cname(), shishi_as_check_crealm()).
  *
- * Usually the shishi_as_process() and shishi_tgs_process() functions
- * should be used instead, since they simplify the decryption key
- * computation.
+ * Usually shishi_as_process() and shishi_tgs_process() should be
+ * used instead of this call, since they simplify computation of
+ * the decryption key.
  *
- * Return value: Returns SHISHI_OK iff the KDC client exchange was
- * successful.
+ * Return value: Returns %SHISHI_OK if the KDC client exchange was
+ * successful.  Multiple failure conditions are possible.
  **/
 int
 shishi_kdc_process (Shishi * handle,

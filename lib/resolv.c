@@ -124,14 +124,18 @@ srv_compare (const void *a, const void *b)
 
 /**
  * shishi_resolv:
- * @zone: owner name of data, e.g. "EXAMPLE.ORG"
- * @querytype: type of data to query for, e.g., SHISHI_DNS_TXT.
+ * @zone: Domain name of authentication zone, e.g. "EXAMPLE.ORG"
+ * @querytype: Type of domain data to query for.
  *
- * Query DNS resolver for data of type @querytype at owner name @zone.
- * Currently TXT and SRV types are supported.
+ * Queries the DNS resolver for data of type @querytype about
+ * the domain name @zone.  Currently, the types %SHISHI_DNS_TXT
+ * and %SHISHI_DNS_SRV are the only supported kinds.
  *
- * Return value: Returns linked list of DNS records, or NULL if query
- *   failed.
+ * After its use, the returned list should be deallocated by
+ * a call to shishi_resolv_free().
+ *
+ * Return value: Returns a linked list of DNS resource records,
+ *   or %NULL if the query failed.
  **/
 Shishi_dns
 shishi_resolv (const char *zone, uint16_t querytype)
@@ -279,9 +283,10 @@ shishi_resolv (const char *zone, uint16_t querytype)
 
 /**
  * shishi_resolv_free:
- * @rrs: list of DNS RR as returned by shishi_resolv().
+ * @rrs: List of DNS RRs as returned by shishi_resolv().
  *
- * Deallocate list of DNS RR as returned by shishi_resolv().
+ * Deallocates a list of DNS resource records returned by
+ * a call to shishi_resolv().
  **/
 void
 shishi_resolv_free (Shishi_dns rrs)
