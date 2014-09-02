@@ -139,7 +139,7 @@ kdc_unlisten (void)
       tmp = ls->next;
 
       if (!ls->listening)
-	syslog (LOG_NOTICE,
+	syslog (LOG_NOTICE | LOG_DAEMON,
 		"Closing outstanding connection to %s on socket %d",
 		ls->str, ls->sockfd);
 
@@ -149,7 +149,8 @@ kdc_unlisten (void)
 	    printf ("Closing %s (%s)...\n", ls->str, ls->addrname);
 	  rc = close (ls->sockfd);
 	  if (rc != 0)
-	    syslog (LOG_ERR, "Could not close %s on socket %d: %s (%d)",
+	    syslog (LOG_ERR | LOG_DAEMON,
+		    "Could not close %s on socket %d: %s (%d)",
 		    ls->str, ls->sockfd, strerror (errno), errno);
 	}
 
@@ -520,7 +521,7 @@ main (int argc, char *argv[])
 
   if (arg.version_given)
     {
-      version_etc (stdout, "shishid", PACKAGE_NAME, VERSION,
+      version_etc (stdout, "shishid", PACKAGE_NAME, PACKAGE_VERSION,
 		   "Simon Josefsson", (char *) NULL);
       return EXIT_SUCCESS;
     }

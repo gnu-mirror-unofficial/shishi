@@ -64,7 +64,8 @@ kdc_close (struct listenspec *ls)
   struct listenspec *tmp;
   int rc;
 
-  syslog (LOG_INFO, "Closing %s socket %d", ls->str, ls->sockfd);
+  syslog (LOG_DEBUG | LOG_DAEMON,
+	  "Closing %s socket %d", ls->str, ls->sockfd);
 
 #ifdef USE_STARTTLS
   if (ls->usetls)
@@ -74,7 +75,8 @@ kdc_close (struct listenspec *ls)
       while (rc == GNUTLS_E_AGAIN || rc == GNUTLS_E_INTERRUPTED);
 
       if (rc != GNUTLS_E_SUCCESS)
-	syslog (LOG_ERR, "TLS terminate failed to %s on socket %d (%d): %s",
+	syslog (LOG_ERR | LOG_DAEMON,
+		"TLS terminate failed to %s on socket %d (%d): %s",
 		ls->str, ls->sockfd, rc, gnutls_strerror (rc));
 
       gnutls_deinit (ls->session);
@@ -85,7 +87,8 @@ kdc_close (struct listenspec *ls)
     {
       rc = close (ls->sockfd);
       if (rc != 0)
-	syslog (LOG_ERR, "Close failed to %s on socket %d (%d): %s",
+	syslog (LOG_ERR | LOG_DAEMON,
+		"Close failed to %s on socket %d (%d): %s",
 		ls->str, ls->sockfd, rc, strerror (rc));
     }
 
@@ -122,13 +125,16 @@ kdc_send1 (struct listenspec *ls)
   while (sent_bytes == -1 && errno == EAGAIN);
 
   if (sent_bytes < 0)
-    syslog (LOG_ERR, "Error writing %zu bytes to %s on socket %d: %s",
+    syslog (LOG_ERR | LOG_DAEMON,
+	    "Error writing %zu bytes to %s on socket %d: %s",
 	    ls->bufpos, ls->str, ls->sockfd, strerror (errno));
   else if ((size_t) sent_bytes > ls->bufpos)
-    syslog (LOG_ERR, "Overlong write (%zu > %zu) to %s on socket %d",
+    syslog (LOG_ERR | LOG_DAEMON,
+	    "Overlong write (%zu > %zu) to %s on socket %d",
 	    sent_bytes, ls->bufpos, ls->str, ls->sockfd);
   else if ((size_t) sent_bytes < ls->bufpos)
-    syslog (LOG_ERR, "Short write (%zu < %zu) to %s on socket %d",
+    syslog (LOG_ERR | LOG_DAEMON,
+	    "Short write (%zu < %zu) to %s on socket %d",
 	    sent_bytes, ls->bufpos, ls->str, ls->sockfd);
 }
 
@@ -171,8 +177,8 @@ kdc_extension_reject (struct listenspec *ls)
   size_t derlen;
   int rc;
 
-  syslog (LOG_INFO, "Reject extension from %s on socket %d",
-	  ls->str, ls->sockfd);
+  syslog (LOG_NOTICE | LOG_AUTH,
+	  "Reject extension from %s on socket %d", ls->str, ls->sockfd);
 
   krberr = shishi_krberror (handle);
   if (!krberr)
@@ -183,7 +189,7 @@ kdc_extension_reject (struct listenspec *ls)
   if (rc != SHISHI_OK)
     return rc;
 
-  rc = shishi_krberror_set_etext (handle, krberr, "Extension not support");
+  rc = shishi_krberror_set_etext (handle, krberr, "Extension not supported");
   if (rc != SHISHI_OK)
     return rc;
 
@@ -245,12 +251,14 @@ kdc_read (struct listenspec *ls)
     {
 #ifdef USE_STARTTLS
       if (ls->usetls)
-	syslog (LOG_ERR, "Corrupt TLS data from %s on socket %d (%zd): %s",
+	syslog (LOG_ERR | LOG_DAEMON,
+		"Corrupt TLS data from %s on socket %d (%zd): %s",
 		ls->str, ls->sockfd, read_bytes,
 		gnutls_strerror (read_bytes));
       else
 #endif
-	syslog (LOG_ERR, "Error reading from %s on socket %d (%zd): %s",
+	syslog (LOG_ERR | LOG_DAEMON,
+		"Error reading from %s on socket %d (%zd): %s",
 		ls->str, ls->sockfd, read_bytes, strerror (read_bytes));
       return -1;
     }
@@ -328,7 +336,8 @@ kdc_process (struct listenspec *ls)
 
   if (plen <= 0)
     {
-      syslog (LOG_ERR, "Processing request failed on socket %d", ls->sockfd);
+      syslog (LOG_ERR | LOG_DAEMON,
+	      "Processing request failed on socket %d", ls->sockfd);
       memcpy (ls->buf, fatal_krberror, fatal_krberror_len);
       ls->bufpos = fatal_krberror_len;
     }
@@ -354,9 +363,9 @@ ctrlc (int signum)
 
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 
-/* Main KDC logic, loop around select and call kdc_accept, kdc_read,
-   kdc_extension, kdc_process and kdc_send.  This return when the
-   SIGINT or SIGTERM signals are received. */
+/* Main KDC logic, loops around select and calls kdc_accept, kdc_read,
+   kdc_extension, kdc_process and kdc_send.  This returns when either
+   of the signals SIGINT or SIGTERM is received. */
 void
 kdc_loop (void)
 {
@@ -369,10 +378,10 @@ kdc_loop (void)
   signal (SIGTERM, ctrlc);
 
 #ifdef USE_STARTTLS
-  syslog (LOG_DEBUG | LOG_DAEMON, "Starting (GNUTLS `%s')",
+  syslog (LOG_INFO | LOG_DAEMON, "Starting (GNUTLS `%s')",
 	  gnutls_check_version (NULL));
 #else
-  syslog (LOG_DEBUG | LOG_DAEMON, "Starting (no TLS)");
+  syslog (LOG_INFO | LOG_DAEMON, "Starting (no TLS)");
 #endif
 
   while (!quit)
@@ -399,7 +408,8 @@ kdc_loop (void)
       if (rc < 0)
 	{
 	  if (errno != EINTR)
-	    syslog (LOG_ERR, "Error listening on sockets (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON,
+		    "Error listening on sockets (%d): %s",
 		    rc, strerror (errno));
 	  continue;
 	}
@@ -421,5 +431,5 @@ kdc_loop (void)
 	  }
     }
 
-  syslog (LOG_DEBUG | LOG_DAEMON, "Shutting down");
+  syslog (LOG_INFO | LOG_DAEMON, "Shutting down");
 }

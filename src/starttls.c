@@ -44,7 +44,8 @@ logcertinfo (gnutls_session_t session)
   rc = gnutls_x509_crt_init (&cert);
   if (rc < 0)
     {
-      syslog (LOG_ERR, "TLS xci failed (%d): %s", rc, gnutls_strerror (rc));
+      syslog (LOG_ERR | LOG_DAEMON, "TLS xci failed (%d): %s",
+	      rc, gnutls_strerror (rc));
       return;
     }
 
@@ -66,7 +67,7 @@ logcertinfo (gnutls_session_t session)
 				     GNUTLS_X509_FMT_DER);
 	if (rc < 0)
 	  {
-	    syslog (LOG_ERR, "TLS xci[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS xci[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -76,7 +77,7 @@ logcertinfo (gnutls_session_t session)
 				 md5fingerprint, &md5fingerprintlen);
 	if (rc != GNUTLS_E_SUCCESS)
 	  {
-	    syslog (LOG_ERR, "TLS f[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS f[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -88,7 +89,7 @@ logcertinfo (gnutls_session_t session)
 	expiration_time = gnutls_x509_crt_get_expiration_time (cert);
 	if (expiration_time == (time_t) - 1)
 	  {
-	    syslog (LOG_ERR, "TLS xcget[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS xcget[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -96,7 +97,7 @@ logcertinfo (gnutls_session_t session)
 	activation_time = gnutls_x509_crt_get_activation_time (cert);
 	if (expiration_time == (time_t) - 1)
 	  {
-	    syslog (LOG_ERR, "TLS xcgat[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS xcgat[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -112,7 +113,7 @@ logcertinfo (gnutls_session_t session)
 	rc = gnutls_x509_crt_get_dn (cert, NULL, &subjectlen);
 	if (rc != GNUTLS_E_SUCCESS && rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
 	  {
-	    syslog (LOG_ERR, "TLS xcgd[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS xcgd[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -120,7 +121,7 @@ logcertinfo (gnutls_session_t session)
 	rc = gnutls_x509_crt_get_dn (cert, subject, &subjectlen);
 	if (rc != GNUTLS_E_SUCCESS)
 	  {
-	    syslog (LOG_ERR, "TLS xcgd2[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS xcgd2[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -128,7 +129,7 @@ logcertinfo (gnutls_session_t session)
 	rc = gnutls_x509_crt_get_issuer_dn (cert, NULL, &issuerlen);
 	if (rc != GNUTLS_E_SUCCESS && rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
 	  {
-	    syslog (LOG_ERR, "TLS xcgid[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS xcgid[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -136,7 +137,7 @@ logcertinfo (gnutls_session_t session)
 	rc = gnutls_x509_crt_get_issuer_dn (cert, issuer, &issuerlen);
 	if (rc != GNUTLS_E_SUCCESS)
 	  {
-	    syslog (LOG_ERR, "TLS xcgid2[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS xcgid2[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -145,7 +146,7 @@ logcertinfo (gnutls_session_t session)
 	rc = gnutls_x509_crt_get_serial (cert, NULL, &seriallen);
 	if (rc != GNUTLS_E_SUCCESS && rc != GNUTLS_E_SHORT_MEMORY_BUFFER)
 	  {
-	    syslog (LOG_ERR, "TLS xcgs[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS xcgs[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -153,7 +154,7 @@ logcertinfo (gnutls_session_t session)
 	rc = gnutls_x509_crt_get_serial (cert, serial, &seriallen);
 	if (rc != GNUTLS_E_SUCCESS)
 	  {
-	    syslog (LOG_ERR, "TLS xcgs2[%zu] failed (%d): %s",
+	    syslog (LOG_ERR | LOG_DAEMON, "TLS xcgs2[%zu] failed (%d): %s",
 		    i, rc, gnutls_strerror (rc));
 	    goto cleanup;
 	  }
@@ -177,6 +178,7 @@ logcertinfo (gnutls_session_t session)
 	else
 	  validity = "valid";
 
+	/* This message can arguably belong to LOG_AUTH.  */
 	syslog (LOG_INFO, "TLS client certificate `%s', issued by `%s', "
 		"serial number `%s', MD5 fingerprint `%s', activated `%s', "
 		"expires `%s', version #%d, key %s %d bits, currently %s",
@@ -197,6 +199,9 @@ logcertinfo (gnutls_session_t session)
 
   {
     unsigned int status;
+
+    /* Accept default syslog facility for these errors.
+     * They are clearly relevant as audit traces.  */
     rc = gnutls_certificate_verify_peers2 (session, &status);
     if (rc != GNUTLS_E_SUCCESS)
       syslog (LOG_ERR, "TLS client certificate failed (%d): %s",
@@ -224,6 +229,7 @@ logtlsinfo (gnutls_session_t session)
     gnutls_compression_get_name (gnutls_compression_get (session));
   int resumedp = gnutls_session_is_resumed (session);
 
+  /* This message can arguably belong to LOG_AUTH.  */
   syslog (LOG_INFO, "TLS handshake negotiated protocol `%s', "
 	  "key exchange `%s', certficate type `%s', cipher `%s', "
 	  "mac `%s', compression `%s', %s",
@@ -238,14 +244,15 @@ logtlsinfo (gnutls_session_t session)
   switch (cred)
     {
     case GNUTLS_CRD_ANON:
-      syslog (LOG_INFO,
+      syslog (LOG_INFO | LOG_DAEMON,
 	      "TLS anonymous authentication with %d bit Diffie-Hellman",
 	      gnutls_dh_get_prime_bits (session));
       break;
 
     case GNUTLS_CRD_CERTIFICATE:
       if (kx == GNUTLS_KX_DHE_RSA || kx == GNUTLS_KX_DHE_DSS)
-	syslog (LOG_INFO, "TLS certificate authentication with %d bit "
+	syslog (LOG_INFO | LOG_DAEMON,
+		"TLS certificate authentication with %d bits "
 		"ephemeral Diffie-Hellman",
 		gnutls_dh_get_prime_bits (session));
       logcertinfo (session);
@@ -255,7 +262,7 @@ logtlsinfo (gnutls_session_t session)
     case GNUTLS_CRD_PSK:
     case GNUTLS_CRD_IA:
     default:
-      syslog (LOG_ERR, "Unknown TLS authentication (%d)", cred);
+      syslog (LOG_ERR | LOG_DAEMON, "Unknown TLS authentication (%d)", cred);
       break;
     }
 }
@@ -279,6 +286,8 @@ kdc_extension (struct listenspec *ls)
 				  STARTTLS_LEN) != 0)
     return kdc_extension_reject (ls);
 
+  /* This message can arguably belong to LOG_AUTH,
+   * but leave it at the default facility.  */
   syslog (LOG_INFO, "Trying STARTTLS");
 
   memcpy (ls->buf, STARTTLS_SERVER_ACCEPT, STARTTLS_LEN);
@@ -289,32 +298,32 @@ kdc_extension (struct listenspec *ls)
   rc = gnutls_init (&ls->session, GNUTLS_SERVER);
   if (rc != GNUTLS_E_SUCCESS)
     {
-      syslog (LOG_ERR, "TLS initialization failed (%d): %s", rc,
-	      gnutls_strerror (rc));
+      syslog (LOG_ERR | LOG_DAEMON, "TLS initialization failed (%d): %s",
+	      rc, gnutls_strerror (rc));
       return -1;
     }
 
   rc = gnutls_priority_set_direct (ls->session, "NORMAL:+ANON-DH", NULL);
   if (rc != GNUTLS_E_SUCCESS)
     {
-      syslog (LOG_ERR, "TLS failed, gnutls_psd %d: %s", rc,
-	      gnutls_strerror (rc));
+      syslog (LOG_ERR | LOG_DAEMON, "TLS failed, gnutls_psd %d: %s",
+	      rc, gnutls_strerror (rc));
       return -1;
     }
 
   rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_ANON, anoncred);
   if (rc != GNUTLS_E_SUCCESS)
     {
-      syslog (LOG_ERR, "TLS failed, gnutls_cs %d: %s", rc,
-	      gnutls_strerror (rc));
+      syslog (LOG_ERR | LOG_DAEMON, "TLS failed, gnutls_cs %d: %s",
+	      rc, gnutls_strerror (rc));
       return -1;
     }
 
   rc = gnutls_credentials_set (ls->session, GNUTLS_CRD_CERTIFICATE, x509cred);
   if (rc != GNUTLS_E_SUCCESS)
     {
-      syslog (LOG_ERR, "TLS failed, gnutls_cs X.509 %d: %s", rc,
-	      gnutls_strerror (rc));
+      syslog (LOG_ERR | LOG_DAEMON, "TLS failed, gnutls_cs X.509 %d: %s",
+	      rc, gnutls_strerror (rc));
       return -1;
     }
 
@@ -331,7 +340,7 @@ kdc_extension (struct listenspec *ls)
   rc = gnutls_handshake (ls->session);
   if (rc < 0)
     {
-      syslog (LOG_ERR, "TLS handshake failed (%d): %s\n",
+      syslog (LOG_ERR | LOG_DAEMON, "TLS handshake failed (%d): %s\n",
 	      rc, gnutls_strerror (rc));
       return -1;
     }

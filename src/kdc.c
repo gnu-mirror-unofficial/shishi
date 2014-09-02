@@ -20,7 +20,12 @@
  *
  */
 
-/* Note: only use syslog to report errors in this file. */
+/* Note: only use syslog to report errors in this file.
+ *
+ * XXX: Examine in detail the made choices of syslog facility.
+ *      Messages should not exessively use 'auth', be it as default
+ *      by openlog(), or explicitly.
+ */
 
 /* Get Shishid stuff. */
 #include "kdc.h"
@@ -116,8 +121,8 @@ asreq1 (Shishi_as * as)
   if (rc == SHISA_NO_PRINCIPAL)
     {
       syslog (LOG_NOTICE,
-	      "AS-REQ from %s@%s for %s@%s failed: no such server", username,
-	      realm, servername, realm);
+	      "AS-REQ from %s@%s for %s@%s failed: no such server",
+	      username, realm, servername, realm);
       rc =
 	shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
 				       SHISHI_KDC_ERR_S_PRINCIPAL_UNKNOWN);
@@ -184,7 +189,7 @@ asreq1 (Shishi_as * as)
       if (userdbkey == NULL)
 	for (j = 0; j < nuserkeys; j++)
 	  {
-	    /* Keep facility coordinated with 'AS-REQ as ...'.  */
+	    /* Keep facility coordinated with 'AS-REQ from ...'.  */
 	    syslog (LOG_DEBUG,
 		    "Matching client etype %d against user key etype %d",
 		    etype, userkeys[j]->etype);
@@ -195,7 +200,7 @@ asreq1 (Shishi_as * as)
 
   if (userdbkey == NULL)
     {
-      /* Again keeping facility coordinated with 'AS-REQ as ...'.  */
+      /* Again keeping facility coordinated with 'AS-REQ from ...'.  */
       syslog (LOG_NOTICE, "No matching client keys for %s@%s",
 	      username, realm);
       rc = shishi_krberror_errorcode_set (handle, shishi_as_krberror (as),
