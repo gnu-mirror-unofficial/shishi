@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2013 Simon Josefsson.
+# Copyright (C) 2006-2014 Simon Josefsson.
 #
 # This file is part of Shishi.
 #

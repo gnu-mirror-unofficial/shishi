@@ -1,5 +1,5 @@
 Shishi extra/README -- Notes for the extra/ subdirectory.
-Copyright (C) 2002-2013 Simon Josefsson
+Copyright (C) 2002-2014 Simon Josefsson
 See the end for copying conditions.
 
 The pam_shishi/ sub-directory contains a PAM module that uses Shishi

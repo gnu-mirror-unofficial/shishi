@@ -1,5 +1,5 @@
 /* db.c --- Definitions of all Shisa database backends.
- * Copyright (C) 2003-2013 Simon Josefsson
+ * Copyright (C) 2003-2014 Simon Josefsson
  *
  * This file is part of Shishi.
  *

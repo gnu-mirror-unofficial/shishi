@@ -1,5 +1,5 @@
 /* diskio.h --- Read and write data structures from disk.
- * Copyright (C) 2002-2013 Simon Josefsson
+ * Copyright (C) 2002-2014 Simon Josefsson
  *
  * This file is part of Shishi.
  *

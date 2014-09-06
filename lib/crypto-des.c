@@ -1,5 +1,5 @@
 /* crypto-des.c --- DES crypto functions.
- * Copyright (C) 2002-2013 Simon Josefsson
+ * Copyright (C) 2002-2014 Simon Josefsson
  *
  * This file is part of Shishi.
  *

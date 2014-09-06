@@ -1,5 +1,5 @@
 /* keys.c --- Functions for reading /etc/krb5.keytab style key files.
- * Copyright (C) 2002-2013 Simon Josefsson
+ * Copyright (C) 2002-2014 Simon Josefsson
  *
  * This file is part of Shishi.
  *
