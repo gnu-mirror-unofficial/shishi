@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2013 Free Software Foundation, Inc.
+# Copyright (C) 2002-2014 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,9 +50,12 @@ AC_DEFUN([gl2_EARLY],
   # Code from module snippet/arg-nonnull:
   # Code from module snippet/c++defs:
   # Code from module snippet/warn-on-use:
+  # Code from module ssize_t:
   # Code from module stddef:
+  # Code from module stdio:
   # Code from module strerror:
   # Code from module strerror-override:
+  # Code from module sys_types:
   # Code from module verify:
   # Code from module version-etc:
 ])
@@ -110,7 +113,9 @@ AC_DEFUN([gl2_INIT],
   fi
   AC_CHECK_DECLS([program_invocation_name], [], [], [#include <errno.h>])
   AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
+  gt_TYPE_SSIZE_T
   gl_STDDEF_H
+  gl_STDIO_H
   gl_FUNC_STRERROR
   if test $REPLACE_STRERROR = 1; then
     AC_LIBOBJ([strerror])
@@ -123,6 +128,8 @@ AC_DEFUN([gl2_INIT],
     AC_LIBOBJ([strerror-override])
     gl_PREREQ_SYS_H_WINSOCK2
   fi
+  gl_SYS_TYPES_H
+  AC_PROG_MKDIR_P
   gl_VERSION_ETC
   # End of code from modules
   m4_ifval(gl2_LIBSOURCES_LIST, [
@@ -278,9 +285,11 @@ AC_DEFUN([gl2_FILE_LIST], [
   lib/progname.c
   lib/progname.h
   lib/stddef.in.h
+  lib/stdio.in.h
   lib/strerror-override.c
   lib/strerror-override.h
   lib/strerror.c
+  lib/sys_types.in.h
   lib/verify.h
   lib/version-etc.c
   lib/version-etc.h
@@ -293,9 +302,13 @@ AC_DEFUN([gl2_FILE_LIST], [
   m4/msvc-inval.m4
   m4/msvc-nothrow.m4
   m4/nocrash.m4
+  m4/off_t.m4
+  m4/ssize_t.m4
   m4/stddef_h.m4
+  m4/stdio_h.m4
   m4/strerror.m4
   m4/sys_socket_h.m4
+  m4/sys_types_h.m4
   m4/version-etc.m4
   m4/warn-on-use.m4
   m4/wchar_t.m4
