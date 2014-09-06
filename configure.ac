@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-# Copyright (C) 2002-2013 Simon Josefsson.
+# Copyright (C) 2002-2014 Simon Josefsson.
 #
 # This file is part of Shishi.
 #
@@ -346,22 +346,12 @@ if test "$gl_gcc_warnings" = yes; then
   gl_WARN_ADD([-Werror], [WERROR_CFLAGS])
 
   nw="$nw -Wsystem-headers"            # Ignore errors in system headers
-  nw="$nw -Wc++-compat"                # We don't care much about C++ compilers
-  nw="$nw -Wsign-conversion"           # Too many warnings for now
-  nw="$nw -Wconversion"                # Too many warnings for now
-  nw="$nw -Wpadded"                    # Our structs are not padded
-  nw="$nw -Wunreachable-code"          # Too many false positives
   nw="$nw -Wlogical-op"                # Too many false positives
-  nw="$nw -Wtraditional"               # Warns on #elif which we use often
-  nw="$nw -Wtraditional-conversion"    # Too many warnings for now
-  nw="$nw -Wcast-qual"                 # Too many warnings for now
-  nw="$nw -Wmissing-format-attribute"  # Too many warnings for now
   nw="$nw -Wunsafe-loop-optimizations" # Too many warnings for now
-  nw="$nw -Wundef"                     # Problems in gnulib files
   nw="$nw -Wstrict-overflow"           # Don't know how to avoid
-  nw="$nw -Waggregate-return"          # For src/resume.c:resume_db_fetch...
   nw="$nw -Wsuggest-attribute=pure"    # Is it worth using attributes?
   nw="$nw -Wsuggest-attribute=const"   # Is it worth using attributes?
+  nw="$nw -Wsuggest-attribute=format"  # Is it worth using attributes?
 
   gl_MANYWARN_ALL_GCC([ws])
   gl_MANYWARN_COMPLEMENT(ws, [$ws], [$nw])
@@ -370,11 +360,7 @@ if test "$gl_gcc_warnings" = yes; then
   done
 
   # Disable some, but evaluate these as the project moves on.
-  gl_WARN_ADD([-Wno-format])           # Too many warnings for now
   gl_WARN_ADD([-Wno-unused-parameter]) # Too many warnings for now
-  gl_WARN_ADD([-Wno-stack-protector])  # Some functions cannot be protected
-  gl_WARN_ADD([-Wno-unused-result])
-  gl_WARN_ADD([-fdiagnostics-show-option])
 fi
 
 AC_CONFIG_FILES([
