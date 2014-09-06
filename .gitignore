@@ -450,6 +450,8 @@ src/gl/link-warning.h
 src/gl/locale.h
 src/gl/progname.lo
 src/gl/progname.o
+src/gl/stdio.h
+src/gl/sys/
 src/gl/version-etc.lo
 src/gl/version-etc.o
 src/gl/warn-on-use.h
