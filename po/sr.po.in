@@ -1,15 +1,15 @@
 # Serbian translation for shishi.
 # Copyright (C) 2012 Free Software Foundation, Inc.
 # This file is distributed under the same license as the shishi package.
-# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2012.
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2012, 2013.
 msgid ""
 msgstr ""
-"Project-Id-Version: shishi 1.0.0\n"
+"Project-Id-Version: shishi-1.0.2\n"
 "Report-Msgid-Bugs-To: bug-shishi@gnu.org\n"
-"POT-Creation-Date: 2010-05-20 20:29+0200\n"
-"PO-Revision-Date: 2012-07-29 23:19+0200\n"
+"POT-Creation-Date: 2013-04-03 11:27+0200\n"
+"PO-Revision-Date: 2013-10-17 20:05+0200\n"
 "Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
-"Language-Team: Serbian <gnu@prevod.org>\n"
+"Language-Team: Serbian <(nothing)>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -53,93 +53,205 @@ msgid "Replay protection value (nonce) differ between request and reply."
 msgstr "Вредност заштите одговора (nonce) се разликује између захтева и одговора."
 
 #: lib/error.c:51
-msgid "Keytype used to encrypt ticket doesn't match provided key. This usually indicates an internal application error."
-msgstr "Врста кључа коришћеног за шифровање карте не одговара достављеном кључу. Ово обично указује на унутрашњу грешку програма."
+msgid "Incorrect key type used in TGS reply."
+msgstr "Нетачна врста кључа коришћеног у ТГС одговору."
 
-#: lib/error.c:54
-msgid "Internal error in low-level crypto routines."
-msgstr "Унутрашња грешка у рутини шифровања ниског нивоа."
+#: lib/error.c:53
+msgid "Incorrect key type used in reply from KDC."
+msgstr "Нетачна врста кључа коришћеног у одговору са КДЦ-а."
 
-#: lib/error.c:56
+#: lib/error.c:55
+msgid "Incorrect key type used in AP reply."
+msgstr "Нетачна врста кључа коришћеног у АП одговору."
+
+#: lib/error.c:57
+msgid "Failed verification of AP reply."
+msgstr "Није успела провера АП одговора."
+
+#: lib/error.c:59
+msgid "Incorrect key type used in AP request."
+msgstr "Нетачна врста кључа коришћеног у АП захтеву."
+
+#: lib/error.c:61
+msgid "Provided buffer was too small."
+msgstr "Обезбеђена међумеморија беше премала."
+
+#: lib/error.c:63
+msgid "Derived key material is too short to be applicable."
+msgstr "Материјал произашлог кључа је прекратак да би био примењив."
+
+#: lib/error.c:65
+msgid "The key is too large to be usable."
+msgstr "Кључ је превелик да би био употребљив."
+
+#: lib/error.c:67
 msgid "Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption."
 msgstr "Криптографија ниског нивоа није успела.  Ово обично указује на лошу лозинку или на оштећене податке."
 
-#: lib/error.c:59
-msgid "Error receiving data from server"
-msgstr "Грешка у примању података са сервера"
+#: lib/error.c:70
+msgid "Internal error in low-level crypto routines."
+msgstr "Унутрашња грешка у рутини шифровања ниског нивоа."
 
-#: lib/error.c:61
-msgid "Timedout talking to KDC. This usually indicates a network or KDC address problem."
-msgstr "Истекло је време за разговор са КДЦ-ом. Ово обично указује на проблеме са мрежом или КДЦ адресом."
-
-#: lib/error.c:64
-msgid "No KDC for realm known."
-msgstr "Није познат КДЦ за подручје."
-
-#: lib/error.c:66
+#: lib/error.c:72
 msgid "The system call socket() failed.  This usually indicates that your system does not support the socket type."
 msgstr "Системски позив „socket()“ није успео.  Ово обично указује на то да ваш систем не подржава врсту прикључнице."
 
-#: lib/error.c:69
+#: lib/error.c:75
 msgid "The system call bind() failed.  This usually indicates insufficient permissions."
 msgstr "Системски позив „bind()“ није успео.  Ово обично указује на недовољна овлашћења."
 
-#: lib/error.c:72
+#: lib/error.c:78
 msgid "The system call sendto() failed."
 msgstr "Системски позив „sendto()“ није успео."
 
-#: lib/error.c:74
+#: lib/error.c:80
+msgid "Error receiving data from server"
+msgstr "Грешка у примању података са сервера"
+
+#: lib/error.c:82
 msgid "The system call close() failed."
 msgstr "Системски позив „close()“ није успео."
 
-#: lib/error.c:76
-msgid "Server replied with an error message to request."
+#: lib/error.c:84
+msgid "Timed out talking to KDC. This usually indicates a network or KDC address problem."
+msgstr "Истекло је време за разговор са КДЦ-ом. Ово обично указује на проблеме са мрежом или КДЦ адресом."
+
+#: lib/error.c:87
+msgid "No KDC known for given realm."
+msgstr "Ниједан КДЦ није познат за подручје."
+
+#: lib/error.c:89
+msgid "No TTY assigned to process."
+msgstr "Ниједан ТТУ није придружен процесу."
+
+#: lib/error.c:91
+msgid "Server replied to the request with an error message."
 msgstr "Сервер је одговорио поруком грешке на захтев."
 
-#: lib/error.c:78
-msgid "Ticketset not initialized.  This usually indicates an internal application error."
+#: lib/error.c:93
+msgid "Failure to use handle.  Missing handle, or misconfigured."
+msgstr "Неуспех коришћења ручице.  Ручица недостаје, или је лоше подешена."
+
+#: lib/error.c:95
+msgid "Ticket set not initialized.  This usually indicates an internal application error."
 msgstr "Није покренут скуп картица.  Ово обично указује на унутрашњу грешку програма."
 
-#: lib/error.c:81
+#: lib/error.c:98
+msgid "Key type used to encrypt ticket doesn't match provided key. This usually indicates an internal application error."
+msgstr "Врста кључа коришћеног за шифровање карте не одговара достављеном кључу. Ово обично указује на унутрашњу грешку програма."
+
+#: lib/error.c:101
+msgid "Reference to invalid encryption key."
+msgstr "Упута на неисправан кључ шифровања."
+
+#: lib/error.c:103
 msgid "Could not decrypt AP-REQ using provided key. This usually indicates an internal application error."
 msgstr "Не могу да дешифрујем АП-ЗАХ користећи достављени кључ. Ово обично указује на унутрашњу грешку програма."
 
-#: lib/error.c:84
+#: lib/error.c:106
 msgid "Could not decrypt Ticket using provided key. This usually indicates an internal application error."
 msgstr "Не могу да дешифрујем Карту користећи достављени кључ. Ово обично указује на унутрашњу грешку програма."
 
-#: lib/error.c:87
+#: lib/error.c:109
+msgid "Invalid ticked passed in call."
+msgstr "Неисправна картица је прослеђена у позиву."
+
+#: lib/error.c:111
+msgid "Argument lies outside of valid range."
+msgstr "Аргумент лежи ван исправног опсега."
+
+#: lib/error.c:113
+msgid "The ASN.1 structure does not contain the indicated element."
+msgstr "АСН.1 структура не садржи назначени елемент."
+
+#: lib/error.c:115
+msgid "Attempted access to non-existent key type."
+msgstr "Покушан је приступ непостојећој врсти кључа."
+
+#: lib/error.c:117 lib/error.c:135
+msgid "Verification failed on either side."
+msgstr "Провера није успела на обе стране."
+
+#: lib/error.c:119
+msgid "Invalid PKCS5 descriptor."
+msgstr "Неисправан ПКЦС5 описник."
+
+#: lib/error.c:121
+msgid "Invalid claim of iteration count in PKCS5 descriptor."
+msgstr "Неисправна тврдња броја опетовања у ПКЦС5 описнику."
+
+#: lib/error.c:123
+msgid "Derived key length is incorrect for PKCS5 descriptor."
+msgstr "Дужина произашлог кључа је нетачна за ПКЦС5 описника."
+
+#: lib/error.c:125
+msgid "Derived key is too long for PKCS5 descriptor."
+msgstr "Дужина произашлог кључа је предуга за ПКЦС5 описника."
+
+#: lib/error.c:127
+msgid "Principal name syntax error."
+msgstr "Грешка синтаксе назива главника."
+
+#: lib/error.c:129
+msgid "Invalid argument passed in call.  Wrong or unknown value."
+msgstr "Неисправан аргумент је прослеђен у позиву.  Погрешна или непозната вредност."
+
+#: lib/error.c:131
+msgid "The indicated ASN.1 element does not carry a value."
+msgstr "Назначени АСН.1 елемент не носи вредност."
+
+#: lib/error.c:133
+msgid "Connection attempt failed.  Try again, or check availability."
+msgstr "Покушај повезивања није успео.  Покушајте поново, или проверите доступност."
+
+#: lib/error.c:137
+msgid "The private key uses an incompatible encryption type."
+msgstr "Лични кључ користи несагласну врсту шифровања."
+
+#: lib/error.c:139
+msgid "The desired file could not be accessed.  Check permissions."
+msgstr "Жељеном документу се не може приступити.  Проверите дозволе."
+
+#: lib/error.c:141
+msgid "The present AP reply specifies an inpermissible key type."
+msgstr "Присутни АП одговор наводи недозвољиву врсту кључа."
+
+#: lib/error.c:143
+msgid "A request for present time of day has failed. This is usually internal, but a valid time is imperative for us."
+msgstr "Захтев за садашњим временом дана није успео. Ово је уобичајено унутрашње, али је исправно време за нас императив."
+
+#: lib/error.c:146
 msgid "Failed to parse keytab file"
 msgstr "Нисам успео да обрадим датотеку табеле кључа"
 
-#: lib/error.c:89
+#: lib/error.c:148
 msgid "Failed to parse credential cache file"
 msgstr "Нисам успео да обрадим датотеку оставе уверења"
 
-#: lib/error.c:106
+#: lib/error.c:165
 msgid "Unknown error"
 msgstr "Непозната грешка"
 
-#: lib/error.c:137 lib/krberror.c:1259
+#: lib/error.c:196 lib/krberror.c:1259
 msgid "No error"
 msgstr "Нема грешке"
 
-#: lib/error.c:267
+#: lib/error.c:326
 #, c-format
 msgid "libshishi: info: %s"
 msgstr "либшиши: подаци: %s"
 
-#: lib/error.c:271
+#: lib/error.c:330
 #, c-format
 msgid "libshishi: info: %s\n"
 msgstr "либшиши: подаци: %s\n"
 
-#: lib/error.c:305
+#: lib/error.c:364
 #, c-format
 msgid "libshishi: warning: %s"
 msgstr "либшиши: упозорење: %s"
 
-#: lib/error.c:309
+#: lib/error.c:368
 #, c-format
 msgid "libshishi: warning: %s\n"
 msgstr "либшиши: упозорење: %s\n"
@@ -204,7 +316,7 @@ msgstr "Сервер није пронађен у бази података"
 
 #: lib/krberror.c:1275
 msgid "Multiple principal entries in database"
-msgstr "Више почетних уноса у бази података"
+msgstr "Више уноса главника у бази података"
 
 #: lib/krberror.c:1277
 msgid "The client or server has a null key"
@@ -280,7 +392,7 @@ msgstr "Захтевани сервер и картица се не подуда
 
 #: lib/krberror.c:1313
 msgid "Server principal valid for user2user only"
-msgstr "Почетни сервера је исправан само од корисника-до-корисника"
+msgstr "Главник сервера је исправан само од корисника-до-корисника"
 
 #: lib/krberror.c:1315
 msgid "KDC Policy rejects transited path"
@@ -429,7 +541,7 @@ msgstr "Грешка нумерисања подручја у бази пода�
 
 #: db/err.c:47
 msgid "Error enumerating principals in database."
-msgstr "Грешка нумерисања почетних у бази података."
+msgstr "Грешка нумерисања главника у бази података."
 
 #: db/err.c:49
 msgid "Error enumerating keys in database."
@@ -441,15 +553,15 @@ msgstr "Достављено подручје не постоји."
 
 #: db/err.c:53
 msgid "Supplied principal does not exist."
-msgstr "Достављени почетни не постоји."
+msgstr "Достављени главник не постоји."
 
 #: db/err.c:55
 msgid "Principal is not associated with any matching key."
-msgstr "Почетни није придружен ниједном поклопљеном кључу."
+msgstr "Главник није придружен ниједном одговарајућем кључу."
 
 #: db/err.c:57
 msgid "Error finding principal."
-msgstr "Грешка проналажења главног."
+msgstr "Грешка проналажења главника."
 
 #: db/err.c:59
 msgid "Tried to add a realm that already exist."
@@ -469,23 +581,23 @@ msgstr "Грешка уклањања подручја из базе подат�
 
 #: db/err.c:67
 msgid "Tried to add a principal that already exist."
-msgstr "Покушах да додам почетни које већ постоји."
+msgstr "Покушах да додам главника који већ постоји."
 
 #: db/err.c:69
 msgid "Error adding principal to database."
-msgstr "Грешка додавања почетног у базу података."
+msgstr "Грешка додавања главника у базу података."
 
 #: db/err.c:71
 msgid "Error removing principal from database."
-msgstr "Грешка уклањања почетног из базе података."
+msgstr "Грешка уклањања главника из базе података."
 
 #: db/err.c:73
 msgid "Error adding key to principal."
-msgstr "Грешка додавања кључа почетном."
+msgstr "Грешка додавања кључа главнику."
 
 #: db/err.c:75
 msgid "Error removing key from principal."
-msgstr "Грешка уклањања кључа из почетног."
+msgstr "Грешка уклањања кључа из главника."
 
 #: db/err.c:77
 msgid "More than one key match given search criteria."
@@ -584,7 +696,7 @@ msgstr "Додајем подручје „%s“...\n"
 #: src/shisa.c:269
 #, c-format
 msgid "Adding principal `%s@%s'...\n"
-msgstr "Додајем почетног „%s@%s“...\n"
+msgstr "Додајем главника „%s@%s“...\n"
 
 #: src/shisa.c:280
 #, c-format
@@ -594,7 +706,7 @@ msgstr "Додајем подручје „%s“...готово\n"
 #: src/shisa.c:282
 #, c-format
 msgid "Adding principal `%s@%s'...done\n"
-msgstr "Додајем почетног „%s@%s“...готово\n"
+msgstr "Додајем главника „%s@%s“...готово\n"
 
 #: src/shisa.c:313
 #, c-format
@@ -604,7 +716,7 @@ msgstr "Уклањам подручје „%s“...\n"
 #: src/shisa.c:315
 #, c-format
 msgid "Removing principal `%s@%s'...\n"
-msgstr "Уклањам почетног „%s@%s“...\n"
+msgstr "Уклањам главника „%s@%s“...\n"
 
 #: src/shisa.c:323
 #, c-format
@@ -614,7 +726,7 @@ msgstr "Уклањам подручје „%s“...готово\n"
 #: src/shisa.c:325
 #, c-format
 msgid "Removing principal `%s@%s'...done\n"
-msgstr "Уклањам почетног „%s@%s“...готово\n"
+msgstr "Уклањам главника „%s@%s“...готово\n"
 
 #: src/shisa.c:372
 #, c-format
@@ -639,7 +751,7 @@ msgstr ""
 "Не могу да направим кључ (%d):\n"
 "%s"
 
-#: src/shisa.c:423 src/shishi.c:59 src/shishid.c:482
+#: src/shisa.c:423 src/shishi.c:59 src/shishid.c:494
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Пробајте „%s --help“ за више података.\n"
@@ -707,12 +819,12 @@ msgstr "Додајем основно подручје „%s“...\n"
 #: src/shisa.c:551
 #, c-format
 msgid "Modifying principal `%s@%s'...\n"
-msgstr "Мењам почетног „%s@%s“...\n"
+msgstr "Мењам главника „%s@%s“...\n"
 
 #: src/shisa.c:558
 #, c-format
 msgid "Modifying principal `%s@%s'...done\n"
-msgstr "Мењам почетног „%s@%s“...готово\n"
+msgstr "Мењам главника „%s@%s“...готово\n"
 
 #: src/shisa.c:562
 #, c-format
@@ -747,12 +859,12 @@ msgstr "Не могу да подесим врсте шифровања: %s"
 #: src/shishi.c:127
 #, c-format
 msgid "Could not parse client principal \"%s\": %s"
-msgstr "Не могу да обрадим главног клијента „%s“: %s"
+msgstr "Не могу да обрадим главника клијента „%s“: %s"
 
 #: src/shishi.c:140
 #, c-format
 msgid "Could not parse server principal \"%s\": %s"
-msgstr "Не могу да обрадим главног сервера „%s“: %s"
+msgstr "Не могу да обрадим главника сервера „%s“: %s"
 
 #: src/shishi.c:146
 #, c-format
@@ -820,7 +932,7 @@ msgstr "не могу да добавим картицу као „%s“ за �
 #. for this package.  Please add _another line_ saying
 #. "Report translation bugs to <...>\n" with the address for translation
 #. bugs (typically your translation team's web or email address).
-#: src/shishid.c:491
+#: src/shishid.c:503
 #, c-format
 msgid ""
 "\n"

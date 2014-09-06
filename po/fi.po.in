@@ -1,21 +1,21 @@
 # Finnish messages for shishi.
-# Copyright © 2010 Free Software Foundation, Inc.
+# Copyright © 2010, 2013 Free Software Foundation, Inc.
 # Copyright © 2007, 2010 Simon Josefsson
 # This file is distributed under the same license as the shishi package.
-# Jorma Karvonen <karvonen.jorma@gmail.com>, 2010.
+# Jorma Karvonen <karvonen.jorma@gmail.com>, 2010, 2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: shishi-1.0.0\n"
+"Project-Id-Version: shishi-1.0.2\n"
 "Report-Msgid-Bugs-To: bug-shishi@gnu.org\n"
-"POT-Creation-Date: 2010-05-20 20:29+0200\n"
-"PO-Revision-Date: 2010-08-31 12:00+0200\n"
+"POT-Creation-Date: 2013-04-03 11:27+0200\n"
+"PO-Revision-Date: 2013-04-04 11:26+0300\n"
 "Last-Translator: Jorma Karvonen <karvonen.jorma@gmail.com>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
+"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.2\n"
 
@@ -29,7 +29,7 @@ msgstr "Virhe ASN.1-funktiossa (tiedot vaurioituneet?)"
 
 #: lib/error.c:37
 msgid "Could not open file"
-msgstr "Ei voitu avata tiedostoa"
+msgstr "Tiedoston avaus epäonnistui"
 
 #: lib/error.c:39
 msgid "File input/output error"
@@ -55,97 +55,210 @@ msgstr "Asiakasnimi eroaa pyynnön ja vastauksen välillä."
 msgid "Replay protection value (nonce) differ between request and reply."
 msgstr "Toista suoja-arvon (vain kerran esiintyvä numero tai bittimerkkijono) ero pyynnön ja vastauksen välillä."
 
-#  Kerberos indentity or ticket
 #: lib/error.c:51
-msgid "Keytype used to encrypt ticket doesn't match provided key. This usually indicates an internal application error."
-msgstr "Avaintyyppi, jota käytettiin pääsylipun salaukseen, ei täsmää tarjotun avaimen kanssa. Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+msgid "Incorrect key type used in TGS reply."
+msgstr "TGS-vastauksessa käytetty virheellistä avaintyyppiä."
 
-#: lib/error.c:54
-msgid "Internal error in low-level crypto routines."
-msgstr "Sisäinen virhe alemman tason salausrutiineissa."
+#: lib/error.c:53
+msgid "Incorrect key type used in reply from KDC."
+msgstr "Vastauksessa KDC:stä käytetty virheellistä avaintyyppiä."
 
-#: lib/error.c:56
+#: lib/error.c:55
+msgid "Incorrect key type used in AP reply."
+msgstr "AP-vastauksessa käytetty virheellistä avaintyyppiä."
+
+#: lib/error.c:57
+msgid "Failed verification of AP reply."
+msgstr "AP-vastauksen todentaminen epäonnistui."
+
+#: lib/error.c:59
+msgid "Incorrect key type used in AP request."
+msgstr "AP-pyynnössä käytetty virheellistä avaintyyppiä."
+
+#: lib/error.c:61
+msgid "Provided buffer was too small."
+msgstr "Tarjottu puskuri oli liian pieni."
+
+#: lib/error.c:63
+msgid "Derived key material is too short to be applicable."
+msgstr "Periytynyt avainmateriaali oli liian lyhyt ollakseen käyttökelpoinen."
+
+#: lib/error.c:65
+msgid "The key is too large to be usable."
+msgstr "Avain on liian suuri käytettäväksi."
+
+#: lib/error.c:67
 msgid "Low-level cryptographic primitive failed.  This usually indicates bad password or data corruption."
 msgstr "Alemman tason salausprimitiivi epäonnistui. Tämä tavallisesti viittaa väärään salasanaan tai tietojen vaurioitumiseen."
 
-#: lib/error.c:59
-msgid "Error receiving data from server"
-msgstr "Virhe vastaanotettaessa tietoja palvelimelta"
+#: lib/error.c:70
+msgid "Internal error in low-level crypto routines."
+msgstr "Sisäinen virhe alemman tason salausrutiineissa."
 
-#  KDC on Kerberoksen käyttämä "Key Distribution Center"
-#: lib/error.c:61
-msgid "Timedout talking to KDC. This usually indicates a network or KDC address problem."
-msgstr "KDC-keskustelun aikavalvontakatkaisu. Tämä viittaa tavallisesti verkon tai KDC-osoitteen pulmiin."
-
-#: lib/error.c:64
-msgid "No KDC for realm known."
-msgstr "Ei tunneta KDC:tä alueelle."
-
-#: lib/error.c:66
+#: lib/error.c:72
 msgid "The system call socket() failed.  This usually indicates that your system does not support the socket type."
 msgstr "Järjestelmäkutsu socket() epäonnistui. Tämä tavallisesti viittaa siihen, että järjestelmäsi ei tue pistoketyyppiä."
 
-#: lib/error.c:69
+#: lib/error.c:75
 msgid "The system call bind() failed.  This usually indicates insufficient permissions."
 msgstr "Järjestelmäkutsu bind() epäonnistui. Tämä on tavallisesti merkkinä riittämättömistä käyttöoikeuksista."
 
-#: lib/error.c:72
+#: lib/error.c:78
 msgid "The system call sendto() failed."
 msgstr "Järjestelmäkutsu sendto() epäonnistui."
 
-#: lib/error.c:74
+#: lib/error.c:80
+msgid "Error receiving data from server"
+msgstr "Virhe vastaanotettaessa tietoja palvelimelta"
+
+#: lib/error.c:82
 msgid "The system call close() failed."
 msgstr "Järjestelmäkutsu close() epäonnistui."
 
-#: lib/error.c:76
-msgid "Server replied with an error message to request."
-msgstr "Palvelin vastasi pyyntöön virheilmoituksella."
-
-#: lib/error.c:78
-msgid "Ticketset not initialized.  This usually indicates an internal application error."
-msgstr "Pääsylippujoukkoa ei ole alustettu.  Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
-
-#: lib/error.c:81
-msgid "Could not decrypt AP-REQ using provided key. This usually indicates an internal application error."
-msgstr "Ei voitu purkaa AP-REQ-salausta käyttäen tarjottua avainta. Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
-
+#  KDC on Kerberoksen käyttämä "Key Distribution Center"
 #: lib/error.c:84
-msgid "Could not decrypt Ticket using provided key. This usually indicates an internal application error."
-msgstr "Ei voitu purkaa pääsylipun salausta käyttäen tarjottua avainta. Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+msgid "Timed out talking to KDC. This usually indicates a network or KDC address problem."
+msgstr "KDC-keskustelun aikavalvontakatkaisu. Tämä viittaa tavallisesti verkon tai KDC-osoitteen pulmiin."
 
 #: lib/error.c:87
+msgid "No KDC known for given realm."
+msgstr "Ei tunneta KDC:tä annetulle alueelle."
+
+#: lib/error.c:89
+msgid "No TTY assigned to process."
+msgstr "Prosessiin ei ole liitetty TTY:tä"
+
+#: lib/error.c:91
+msgid "Server replied to the request with an error message."
+msgstr "Palvelin vastasi pyyntöön virheilmoituksella."
+
+#: lib/error.c:93
+msgid "Failure to use handle.  Missing handle, or misconfigured."
+msgstr "Häiriö kahvan käytössä. Kahva puuttuu tai on väärinasetettu."
+
+#: lib/error.c:95
+msgid "Ticket set not initialized.  This usually indicates an internal application error."
+msgstr "Pääsylippujoukkoa ei ole alustettu.  Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+
+#  Kerberos indentity or ticket
+#: lib/error.c:98
+msgid "Key type used to encrypt ticket doesn't match provided key. This usually indicates an internal application error."
+msgstr "Avaintyyppi, jota käytettiin pääsylipun salaukseen, ei täsmää tarjotun avaimen kanssa. Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+
+#: lib/error.c:101
+msgid "Reference to invalid encryption key."
+msgstr "Viite virheellisen salausavaimeen."
+
+#: lib/error.c:103
+msgid "Could not decrypt AP-REQ using provided key. This usually indicates an internal application error."
+msgstr "AP-REQ-salauksen purkaminen käyttäen tarjottua avainta epäonnistui. Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+
+#: lib/error.c:106
+msgid "Could not decrypt Ticket using provided key. This usually indicates an internal application error."
+msgstr "Pääsylipun salauksen purkaminen käyttäen tarjottua avainta epäonnistui. Tämä viittaa tavallisesti sisäiseen sovellusvirheeseen."
+
+#: lib/error.c:109
+msgid "Invalid ticked passed in call."
+msgstr "Kutsussa välitetty virheellinen pääsylippu."
+
+#: lib/error.c:111
+msgid "Argument lies outside of valid range."
+msgstr "Argumentti on sallitun lukualueen ulkopuolella."
+
+#: lib/error.c:113
+msgid "The ASN.1 structure does not contain the indicated element."
+msgstr "ASN.1-rakenne ei sisällä osoitettua elementtiä."
+
+#: lib/error.c:115
+msgid "Attempted access to non-existent key type."
+msgstr "Yritettiin kutsua ei-olemassaolevaa avaintyyppiä."
+
+#: lib/error.c:117 lib/error.c:135
+msgid "Verification failed on either side."
+msgstr "Todennus epäonnistui molemmilla puolilla."
+
+#: lib/error.c:119
+msgid "Invalid PKCS5 descriptor."
+msgstr "Virheellinen PKCS5-määrittelijä."
+
+#: lib/error.c:121
+msgid "Invalid claim of iteration count in PKCS5 descriptor."
+msgstr "Virheellinen iteraatiolaskinvaatimus PKCS5-määrittelijässä."
+
+#: lib/error.c:123
+msgid "Derived key length is incorrect for PKCS5 descriptor."
+msgstr "Periytynyt avainpituus on virheellinen PKCS5-määrittelijälle."
+
+#: lib/error.c:125
+msgid "Derived key is too long for PKCS5 descriptor."
+msgstr "Periytynyt avain on liian pitkä PKCS5-määrittelijälle."
+
+#: lib/error.c:127
+msgid "Principal name syntax error."
+msgstr "Pääosapuolen nimisyntaksivirhe."
+
+#: lib/error.c:129
+msgid "Invalid argument passed in call.  Wrong or unknown value."
+msgstr "Kutsussa välitetty virheellinen argumenti. Väärä tai tuntematon arvo."
+
+#: lib/error.c:131
+msgid "The indicated ASN.1 element does not carry a value."
+msgstr "Virheellinen ASN.1-elementti ei sisällä arvoa."
+
+#: lib/error.c:133
+msgid "Connection attempt failed.  Try again, or check availability."
+msgstr "Yhteysyritys epäonnistui. Yritä uudelleen tai tarkista saatavuus."
+
+#: lib/error.c:137
+msgid "The private key uses an incompatible encryption type."
+msgstr "Yksityinen avain käyttää yhteensopimatonta salaustyyppiä."
+
+#: lib/error.c:139
+msgid "The desired file could not be accessed.  Check permissions."
+msgstr "Halutun tiedoston haku epäonnistui. Tarkista käyttöoikeudet."
+
+#  It should be impermissible
+#: lib/error.c:141
+msgid "The present AP reply specifies an inpermissible key type."
+msgstr "Nykyinen AP-vastaus määrittelee luvattoman avaintyypin."
+
+#: lib/error.c:143
+msgid "A request for present time of day has failed. This is usually internal, but a valid time is imperative for us."
+msgstr "Pyyntö päivän nykyisestä hetkestä epäonnistui. Tämä on tavallisesti sisäinen, mutta kelvollinen aika on meille välttämätön."
+
+#: lib/error.c:146
 msgid "Failed to parse keytab file"
 msgstr "Keytab-tiedoston jäsentäminen epäonnistui"
 
 #  Kerberos-palvelimen asiakkaalle lähettämän Credentials-valtakirjan sisällä on ticket ja session key. Se on salattu asiakkaan salaisella avaimella ja sisältää väliaikaisen salausavaimen. Valtakirja on mielestäni parempi suomennos kuin ATK-sanakirjan valtuustieto.
-#: lib/error.c:89
+#: lib/error.c:148
 msgid "Failed to parse credential cache file"
 msgstr "Valtakirjavälimuistitiedoston jäsentäminen epäonnistui"
 
-#: lib/error.c:106
+#: lib/error.c:165
 msgid "Unknown error"
 msgstr "Tuntematon virhe"
 
-#: lib/error.c:137 lib/krberror.c:1259
+#: lib/error.c:196 lib/krberror.c:1259
 msgid "No error"
 msgstr "Ei virhettä"
 
-#: lib/error.c:267
+#: lib/error.c:326
 #, c-format
 msgid "libshishi: info: %s"
 msgstr "libshishi: tiedot: %s"
 
-#: lib/error.c:271
+#: lib/error.c:330
 #, c-format
 msgid "libshishi: info: %s\n"
 msgstr "libshishi: tiedot: %s\n"
 
-#: lib/error.c:305
+#: lib/error.c:364
 #, c-format
 msgid "libshishi: warning: %s"
 msgstr "libshishi: varoitus: %s"
 
-#: lib/error.c:309
+#: lib/error.c:368
 #, c-format
 msgid "libshishi: warning: %s\n"
 msgstr "libshishi: varoitus: %s\n"
@@ -414,7 +527,7 @@ msgstr "Shisa onnistui"
 
 #: db/err.c:35
 msgid "Shisa could not be initialized."
-msgstr "Shisaa ei voitu alustaa."
+msgstr "Shisa-alustus epäonnistui."
 
 #: db/err.c:37
 msgid "The Shisa configuration file does not exist."
@@ -431,7 +544,7 @@ msgstr "Syntaksivirhe Shisa-asetusmerkkijonossa."
 
 #: db/err.c:43
 msgid "Shisa database could not be opened."
-msgstr "Shisa-tietokantaa ei voitu avata."
+msgstr "Shisa-tietokannan avaus epäonnistui."
 
 #: db/err.c:45
 msgid "Error enumerating realms in database."
@@ -643,7 +756,7 @@ msgstr "Salasana: "
 #: src/shisa.c:377
 #, c-format
 msgid "Could not read password"
-msgstr "Ei voi lukea salasanaa"
+msgstr "Salasanan lukeminen epäonnistui"
 
 #: src/shisa.c:389
 #, c-format
@@ -651,10 +764,10 @@ msgid ""
 "Could not create key (%d):\n"
 "%s"
 msgstr ""
-"Ei voitu luoda avainta (%d):\n"
+"Avaimen (%d) luominen epäonnistui:\n"
 "%s"
 
-#: src/shisa.c:423 src/shishi.c:59 src/shishid.c:482
+#: src/shisa.c:423 src/shishi.c:59 src/shishid.c:494
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Lisätietoja komennolla ”%s --help”.\n"
@@ -688,7 +801,7 @@ msgid ""
 "Could not read library options `%s':\n"
 "%s"
 msgstr ""
-"Ei voitu lukea kirjastovalitsimia ”%s”:\n"
+"Kirjastovalitsimien ”%s” lukeminen epäonnistui:\n"
 "%s"
 
 #: src/shisa.c:487
@@ -706,7 +819,7 @@ msgid ""
 "Could not set encryption type `%s':\n"
 "%s"
 msgstr ""
-"Ei voitu asettaa salaustyyppiä ”%s”:\n"
+"Salaustyypin ”%s” asettaminen epäonnistui:\n"
 "%s"
 
 #: src/shisa.c:500
@@ -756,27 +869,27 @@ msgstr "Poistetaan avain pääosapuolesta ”%s@%s”...valmis\n"
 #: src/shishi.c:111
 #, c-format
 msgid "cannot initialize libshishi"
-msgstr "ei voi alustaa kirjastoa libshishi"
+msgstr "kirjaston libshishi alustaminen epäonnistui"
 
 #: src/shishi.c:115
 #, c-format
 msgid "Could not set encryption types: %s"
-msgstr "Ei voitu asettaa salaustyyppejä: %s"
+msgstr "Salaustyyppien asettaminen epäonnistui: %s"
 
 #: src/shishi.c:127
 #, c-format
 msgid "Could not parse client principal \"%s\": %s"
-msgstr "Ei voitu jäsentää asiakaspääosapuolta ”%s”: %s"
+msgstr "Asiakaspääosapuolen ”%s” jäsentäminen epäonnistui: %s"
 
 #: src/shishi.c:140
 #, c-format
 msgid "Could not parse server principal \"%s\": %s"
-msgstr "Ei voitu jäsentää palvelinpääosapuolta ”%s”: %s"
+msgstr "Palvelinpääosapuolen ”%s” jäsentäminen epäonnistui: %s"
 
 #: src/shishi.c:146
 #, c-format
 msgid "Could not read library options: %s"
-msgstr "Ei voitu lukea kirjastovalitsimia: %s"
+msgstr "Kirjastovalitsimien lukeminen epäonnistui: %s"
 
 #: src/shishi.c:164
 #, c-format
@@ -801,7 +914,7 @@ msgstr "Pääsyliput oletustiedostossa ”%s”:\n"
 #: src/shishi.c:208
 #, c-format
 msgid "Could not list tickets: %s"
-msgstr "Ei voitu luetella pääsylippuja: %s"
+msgstr "Pääsylippujen luetteleminen epäonnistui: %s"
 
 #: src/shishi.c:225
 #, c-format
@@ -814,7 +927,7 @@ msgid ""
 "Could not destroy ticket %d:\n"
 "%s"
 msgstr ""
-"Ei voitu tuhota pääsylippua %d:\n"
+"Pääsylipun %d tuhoaminen epäonnistui:\n"
 "%s"
 
 #: src/shishi.c:242
@@ -832,13 +945,13 @@ msgstr[1] "%d pääsylippua poistettu.\n"
 #: src/shishi.c:277
 #, c-format
 msgid "could not get ticket as `%s' for `%s'"
-msgstr "ei voitu saada pääsylippua pääosapuolena ”%s” palvelimelle ”%s”."
+msgstr "pääsylipun hakeminen pääosapuolena ”%s” palvelimelle ”%s” epäonnistui."
 
 #. TRANSLATORS: The placeholder indicates the bug-reporting address
 #. for this package.  Please add _another line_ saying
 #. "Report translation bugs to <...>\n" with the address for translation
 #. bugs (typically your translation team's web or email address).
-#: src/shishid.c:491
+#: src/shishid.c:503
 #, c-format
 msgid ""
 "\n"
