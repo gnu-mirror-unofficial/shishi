@@ -158,6 +158,24 @@ test (Shishi * handle)
       free (out);
     }
 
+  /* Decryption of previous case.  */
+  err = shishi_arcfour (handle, 1 /* ignored! */, "keykeykey", 9, NULL,
+			NULL, "\x6a\x0e\x57\x89\x41\xe9\x1c\x22", 8,
+			&out);
+  if (err)
+    fail ("shishi_arcfour() failed: %d\n", err);
+  else
+    {
+      if (memcmp (out, "abcdefgh", 8) == 0)
+	success ("shishi_arcfour() OK decrypt\n");
+      else
+	{
+	  hexprint (out, 8);
+	  fail ("shishi_arcfour() failure\n");
+	}
+      free (out);
+    }
+
   err = shishi_arcfour (handle, 0, "keykeyke", 8, NULL, &ivout,
 			"abcdefghi", 9, &out);
   if (err)
@@ -209,6 +227,43 @@ test (Shishi * handle)
 	{
 	  hexprint (ivout, 258);
 	  fail ("shishi_arcfour() failure IV\n");
+	}
+      free (out);
+      free (ivout);
+    }
+
+  err = shishi_arcfour (handle, 0, "keykeyk", 8, NULL, &ivout,
+			"Chr Dedekind", 13, &out);
+  if (err)
+    fail ("shishi_arcfour() failed: %d\n", err);
+  else
+    {
+      /* We have a valid seed in IVOUT.  */
+      free (out);
+
+      err = shishi_arcfour (handle, 0, "keykeyk", 8, ivout, NULL,
+			    "Johann Jeep", 12, &out);
+      if (err)
+	fail ("shishi_arcfour() failed: %d\n", err);
+      else
+	{
+	  char *out2;
+
+	  err = shishi_arcfour (handle, 1, "keykeyk", 8, ivout, NULL,
+				out, 12, &out2);
+	  if (err)
+	    fail ("shishi_arcfour() failed: %d\n", err);
+	  else
+	    {
+	      if (memcmp (out2, "Johann Jeep", 12) == 0)
+		success ("shishi_arcfour() OK IV decrypt\n");
+	      else
+		{
+		  hexprint (out2, 12);
+		  fail ("shishi_arcfour() failure\n");
+		}
+	       free (out2);
+	    }
 	}
       free (out);
       free (ivout);
