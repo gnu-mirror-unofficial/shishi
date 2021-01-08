@@ -117,7 +117,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
       /* Realm */
       {
 	uint16_t realmlen = data[pos] << 8 | data[pos + 1];
-	char *realm = xstrndup (&data[pos + 2], realmlen);;
+	char *realm = xstrndup (&data[pos + 2], realmlen);
 
 	pos += 2 + realmlen;
 
