@@ -1,5 +1,5 @@
 /* passwdpromptcb.c --- Self test the password prompt callback stuff.
- * Copyright (C) 2008-2014 Simon Josefsson
+ * Copyright (C) 2008-2021 Simon Josefsson
  *
  * This file is part of Shishi.
  *

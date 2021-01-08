@@ -1,5 +1,5 @@
 /* resume.c --- Handle the details of TLS session resumption.
- * Copyright (C) 2002-2014 Simon Josefsson
+ * Copyright (C) 2002-2021 Simon Josefsson
  *
  * This file is part of Shishi.
  *

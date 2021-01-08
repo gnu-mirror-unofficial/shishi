@@ -1,5 +1,5 @@
 /* file.c --- File based Shisa database.
- * Copyright (C) 2002-2014 Simon Josefsson
+ * Copyright (C) 2002-2021 Simon Josefsson
  *
  * This file is part of Shishi.
  *
