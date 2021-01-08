@@ -1,5 +1,5 @@
 /* pam_shishi.c	PAM module using Shishi.
- * Copyright (C) 2002-2012 Simon Josefsson
+ * Copyright (C) 2002-2021 Simon Josefsson
  *
  * This file is part of Shishi.
  *
