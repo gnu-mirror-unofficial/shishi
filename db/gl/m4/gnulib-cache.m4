@@ -1,4 +1,4 @@
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2021 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,7 +11,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this file.  If not, see <http://www.gnu.org/licenses/>.
+# along with this file.  If not, see <https://www.gnu.org/licenses/>.
 #
 # As a special exception to the GNU General Public License,
 # this file may be distributed as part of a program that
@@ -27,7 +27,27 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=db/gl --m4-base=db/gl/m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --avoid=absolute-header --avoid=include_next --avoid=link-warning --avoid=malloc-posix --avoid=ssize_t --avoid=stat --avoid=stdlib --avoid=unistd --makefile-name=gnulib.mk --no-conditional-dependencies --libtool --macro-prefix=gl3 --no-vc-files areadlink
+# gnulib-tool --import \
+#  --lib=libgnu \
+#  --source-base=db/gl \
+#  --m4-base=db/gl/m4 \
+#  --doc-base=doc \
+#  --tests-base=tests \
+#  --aux-dir=build-aux \
+#  --makefile-name=gnulib.mk \
+#  --no-conditional-dependencies \
+#  --libtool \
+#  --macro-prefix=gl3 \
+#  --no-vc-files \
+#  --avoid=absolute-header \
+#  --avoid=include_next \
+#  --avoid=link-warning \
+#  --avoid=malloc-posix \
+#  --avoid=ssize_t \
+#  --avoid=stat \
+#  --avoid=stdlib \
+#  --avoid=unistd \
+#  areadlink
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])

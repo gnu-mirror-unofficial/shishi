@@ -1,5 +1,5 @@
 /* gc.h --- Header file for implementation agnostic crypto wrapper API.
- * Copyright (C) 2002-2005, 2007-2008, 2011-2014 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2005, 2007-2008, 2011-2021 Free Software Foundation, Inc.
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -12,12 +12,12 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this file; if not, see <http://www.gnu.org/licenses/>.
+ * along with this file; if not, see <https://www.gnu.org/licenses/>.
  *
  */
 
-#ifndef GC_H
-# define GC_H
+#ifndef _GL_GC_H
+# define _GL_GC_H
 
 /* Get size_t. */
 # include <stddef.h>
@@ -47,13 +47,15 @@ enum Gc_hash
   GC_SHA256,
   GC_SHA384,
   GC_SHA512,
-  GC_SHA224
+  GC_SHA224,
+  GC_SM3
 };
 typedef enum Gc_hash Gc_hash;
 
 enum Gc_hash_mode
 {
-  GC_HMAC = 1
+  GC_NULL,
+  GC_HMAC
 };
 typedef enum Gc_hash_mode Gc_hash_mode;
 
@@ -68,6 +70,9 @@ typedef void *gc_hash_handle;
 #define GC_SHA384_DIGEST_SIZE 48
 #define GC_SHA512_DIGEST_SIZE 64
 #define GC_SHA224_DIGEST_SIZE 24
+#define GC_SM3_DIGEST_SIZE 32
+
+#define GC_MAX_DIGEST_SIZE 64
 
 /* Cipher types. */
 enum Gc_cipher
@@ -133,7 +138,8 @@ extern Gc_rc gc_cipher_close (gc_cipher_handle handle);
 extern Gc_rc gc_hash_open (Gc_hash hash, Gc_hash_mode mode,
                            gc_hash_handle *outhandle);
 extern Gc_rc gc_hash_clone (gc_hash_handle handle, gc_hash_handle *outhandle);
-extern size_t gc_hash_digest_length (Gc_hash hash);
+extern size_t gc_hash_digest_length (Gc_hash hash)
+                                     _GL_ATTRIBUTE_CONST;
 extern void gc_hash_hmac_setkey (gc_hash_handle handle,
                                  size_t len, const char *key);
 extern void gc_hash_write (gc_hash_handle handle,
@@ -155,6 +161,9 @@ extern Gc_rc gc_md2 (const void *in, size_t inlen, void *resbuf);
 extern Gc_rc gc_md4 (const void *in, size_t inlen, void *resbuf);
 extern Gc_rc gc_md5 (const void *in, size_t inlen, void *resbuf);
 extern Gc_rc gc_sha1 (const void *in, size_t inlen, void *resbuf);
+extern Gc_rc gc_sha256 (const void *in, size_t inlen, void *resbuf);
+extern Gc_rc gc_sha512 (const void *in, size_t inlen, void *resbuf);
+extern Gc_rc gc_sm3 (const void *in, size_t inlen, void *resbuf);
 extern Gc_rc gc_hmac_md5 (const void *key, size_t keylen,
                           const void *in, size_t inlen, char *resbuf);
 extern Gc_rc gc_hmac_sha1 (const void *key, size_t keylen,
@@ -164,17 +173,24 @@ extern Gc_rc gc_hmac_sha256 (const void *key, size_t keylen,
 extern Gc_rc gc_hmac_sha512 (const void *key, size_t keylen,
                              const void *in, size_t inlen, char *resbuf);
 
-/* Derive cryptographic keys from a password P of length PLEN, with
-   salt S of length SLEN, placing the result in pre-allocated buffer
-   DK of length DKLEN.  An iteration count is specified in C, where a
-   larger value means this function take more time (typical iteration
-   counts are 1000-20000).  This function "stretches" the key to be
-   exactly dkLen bytes long.  GC_OK is returned on success, otherwise
-   a Gc_rc error code is returned.  */
+/* Derive cryptographic keys using PKCS#5 PBKDF2 (RFC 2898) from a
+   password P of length PLEN, with salt S of length SLEN, placing the
+   result in pre-allocated buffer DK of length DKLEN.  The PRF is hard
+   coded to be HMAC with HASH.  An iteration count is specified in C
+   (> 0), where a larger value means this function take more time
+   (typical iteration counts are 1000-20000).  This function
+   "stretches" the key to be exactly dkLen bytes long.  GC_OK is
+   returned on success, otherwise a Gc_rc error code is returned.  */
+extern Gc_rc
+gc_pbkdf2_hmac (Gc_hash hash,
+                const char *P, size_t Plen,
+                const char *S, size_t Slen,
+                unsigned int c, char *restrict DK, size_t dkLen);
+
 extern Gc_rc
 gc_pbkdf2_sha1 (const char *P, size_t Plen,
                 const char *S, size_t Slen,
-                unsigned int c, char *DK, size_t dkLen);
+                unsigned int c, char *restrict DK, size_t dkLen);
 
 /*
   TODO:
@@ -316,4 +332,4 @@ gc_pbkdf2_sha1 (const char *P, size_t Plen,
   Simon
  */
 
-#endif /* GC_H */
+#endif /* _GL_GC_H */

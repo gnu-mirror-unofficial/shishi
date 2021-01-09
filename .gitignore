@@ -161,13 +161,11 @@ gl/Makefile.in
 gl/alloca.h
 gl/arcfour.lo
 gl/arcfour.o
-gl/arg-nonnull.h
 gl/arpa/
 gl/asnprintf.lo
 gl/asnprintf.o
 gl/base64.lo
 gl/base64.o
-gl/c++defs.h
 gl/c-ctype.lo
 gl/c-ctype.o
 gl/close-hook.lo
@@ -237,7 +235,6 @@ gl/unistd.lo
 gl/unistd.o
 gl/vasnprintf.lo
 gl/vasnprintf.o
-gl/warn-on-use.h
 gl/wchar.h
 gl/xasprintf.lo
 gl/xasprintf.o
@@ -438,8 +435,6 @@ src/gl/.deps/
 src/gl/.libs/
 src/gl/Makefile
 src/gl/Makefile.in
-src/gl/arg-nonnull.h
-src/gl/c++defs.h
 src/gl/getopt.h
 src/gl/getopt.lo
 src/gl/getopt.o
@@ -454,7 +449,6 @@ src/gl/stdio.h
 src/gl/sys/
 src/gl/version-etc.lo
 src/gl/version-etc.o
-src/gl/warn-on-use.h
 src/kdc.o
 src/keytab2shishi
 src/keytab2shishi.o

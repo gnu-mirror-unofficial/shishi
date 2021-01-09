@@ -1,5 +1,5 @@
 /* arcfour.c --- The arcfour stream cipher
- * Copyright (C) 2000-2003, 2005-2006, 2009-2014 Free Software Foundation, Inc.
+ * Copyright (C) 2000-2003, 2005-2006, 2009-2021 Free Software Foundation, Inc.
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -12,7 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this file; if not, see <http://www.gnu.org/licenses/>.
+ * along with this file; if not, see <https://www.gnu.org/licenses/>.
  *
  */
 

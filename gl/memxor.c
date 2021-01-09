@@ -1,5 +1,5 @@
-/* memxor.c -- perform binary exclusive OR operation of two memory blocks.
-   Copyright (C) 2005-2006, 2009-2014 Free Software Foundation, Inc.
+/* Binary exclusive OR operation of two memory blocks.  -*- coding: utf-8 -*-
+   Copyright (C) 2005-2006, 2009-2021 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
+   along with this program; if not, see <https://www.gnu.org/licenses/>.  */
 
 /* Written by Simon Josefsson.  The interface was inspired by memxor
    in Niels Möller's Nettle. */

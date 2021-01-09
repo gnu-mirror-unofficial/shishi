@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2021 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this file.  If not, see <http://www.gnu.org/licenses/>.
+# along with this file.  If not, see <https://www.gnu.org/licenses/>.
 #
 # As a special exception to the GNU General Public License,
 # this file may be distributed as part of a program that
@@ -37,27 +37,60 @@ AC_DEFUN([gl2_EARLY],
   m4_pattern_allow([^gl_ES$])dnl a valid locale name
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
+
+  # Pre-early section.
   AC_REQUIRE([gl_PROG_AR_RANLIB])
+
+  # Code from module alloca-opt:
+  # Code from module basename-lgpl:
+  # Code from module c99:
+  # Code from module cloexec:
+  # Code from module close:
+  # Code from module double-slash-root:
+  # Code from module dup2:
   # Code from module errno:
   # Code from module error:
+  # Code from module extern-inline:
+  # Code from module fcntl:
+  # Code from module fcntl-h:
+  # Code from module fd-hook:
+  # Code from module filename:
+  # Code from module fstat:
+  # Code from module getdtablesize:
   # Code from module getopt-gnu:
   # Code from module getopt-posix:
+  # Code from module getprogname:
+  # Code from module largefile:
+  AC_REQUIRE([AC_SYS_LARGEFILE])
+  # Code from module limits-h:
   # Code from module locale:
+  # Code from module malloca:
   # Code from module msvc-inval:
   # Code from module msvc-nothrow:
+  # Code from module multiarch:
   # Code from module nocrash:
+  # Code from module open:
+  # Code from module pathmax:
   # Code from module progname:
   # Code from module snippet/arg-nonnull:
   # Code from module snippet/c++defs:
   # Code from module snippet/warn-on-use:
   # Code from module ssize_t:
+  # Code from module stat:
+  # Code from module stat-time:
+  # Code from module std-gnu11:
+  # Code from module stdbool:
   # Code from module stddef:
+  # Code from module stdint:
   # Code from module stdio:
   # Code from module strerror:
   # Code from module strerror-override:
+  # Code from module sys_stat:
   # Code from module sys_types:
+  # Code from module time:
   # Code from module verify:
   # Code from module version-etc:
+  # Code from module xalloc-oversized:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -74,6 +107,20 @@ AC_DEFUN([gl2_INIT],
   m4_pushdef([gl2_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='src/gl'
+  gl_FUNC_ALLOCA
+  gl_MODULE_INDICATOR_FOR_TESTS([cloexec])
+  gl_FUNC_CLOSE
+  if test $REPLACE_CLOSE = 1; then
+    AC_LIBOBJ([close])
+  fi
+  gl_UNISTD_MODULE_INDICATOR([close])
+  gl_DOUBLE_SLASH_ROOT
+  gl_FUNC_DUP2
+  if test $REPLACE_DUP2 = 1; then
+    AC_LIBOBJ([dup2])
+    gl_PREREQ_DUP2
+  fi
+  gl_UNISTD_MODULE_INDICATOR([dup2])
   gl_HEADER_ERRNO_H
   gl_ERROR
   if test $ac_cv_lib_error_at_line = no; then
@@ -83,38 +130,84 @@ AC_DEFUN([gl2_INIT],
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_][XGETTEXT_OPTION([--flag=error:3:c-format])
      AM_][XGETTEXT_OPTION([--flag=error_at_line:5:c-format])])
-  gl_FUNC_GETOPT_GNU
-  if test $REPLACE_GETOPT = 1; then
-    AC_LIBOBJ([getopt])
-    AC_LIBOBJ([getopt1])
-    gl_PREREQ_GETOPT
-    dnl Arrange for unistd.h to include getopt.h.
-    GNULIB_GL_GL2_UNISTD_H_GETOPT=1
+  AC_REQUIRE([gl_EXTERN_INLINE])
+  gl_FUNC_FCNTL
+  if test $HAVE_FCNTL = 0 || test $REPLACE_FCNTL = 1; then
+    AC_LIBOBJ([fcntl])
   fi
-  AC_SUBST([GNULIB_GL_GL2_UNISTD_H_GETOPT])
-  gl_MODULE_INDICATOR_FOR_TESTS([getopt-gnu])
+  gl_FCNTL_MODULE_INDICATOR([fcntl])
+  gl_FCNTL_H
+  gl_FUNC_FSTAT
+  if test $REPLACE_FSTAT = 1; then
+    AC_LIBOBJ([fstat])
+    case "$host_os" in
+      mingw*)
+        AC_LIBOBJ([stat-w32])
+        ;;
+    esac
+    gl_PREREQ_FSTAT
+  fi
+  gl_SYS_STAT_MODULE_INDICATOR([fstat])
+  gl_FUNC_GETDTABLESIZE
+  if test $HAVE_GETDTABLESIZE = 0 || test $REPLACE_GETDTABLESIZE = 1; then
+    AC_LIBOBJ([getdtablesize])
+    gl_PREREQ_GETDTABLESIZE
+  fi
+  gl_UNISTD_MODULE_INDICATOR([getdtablesize])
+  gl_FUNC_GETOPT_GNU
+  dnl Because of the way gl_FUNC_GETOPT_GNU is implemented (the gl_getopt_required
+  dnl mechanism), there is no need to do any AC_LIBOBJ or AC_SUBST here; they are
+  dnl done in the getopt-posix module.
   gl_FUNC_GETOPT_POSIX
   if test $REPLACE_GETOPT = 1; then
     AC_LIBOBJ([getopt])
     AC_LIBOBJ([getopt1])
-    gl_PREREQ_GETOPT
     dnl Arrange for unistd.h to include getopt.h.
     GNULIB_GL_GL2_UNISTD_H_GETOPT=1
   fi
   AC_SUBST([GNULIB_GL_GL2_UNISTD_H_GETOPT])
+  gl_UNISTD_MODULE_INDICATOR([getopt-posix])
+  gl_FUNC_GETPROGNAME
+  AC_REQUIRE([gl_LARGEFILE])
+  gl_LIMITS_H
   gl_LOCALE_H
-  gl_MSVC_INVAL
+  gl_MALLOCA
+  AC_REQUIRE([gl_MSVC_INVAL])
   if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
     AC_LIBOBJ([msvc-inval])
   fi
-  gl_MSVC_NOTHROW
+  AC_REQUIRE([gl_MSVC_NOTHROW])
   if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
     AC_LIBOBJ([msvc-nothrow])
   fi
+  gl_MODULE_INDICATOR([msvc-nothrow])
+  gl_MULTIARCH
+  gl_FUNC_OPEN
+  if test $REPLACE_OPEN = 1; then
+    AC_LIBOBJ([open])
+    gl_PREREQ_OPEN
+  fi
+  gl_FCNTL_MODULE_INDICATOR([open])
+  gl_PATHMAX
   AC_CHECK_DECLS([program_invocation_name], [], [], [#include <errno.h>])
   AC_CHECK_DECLS([program_invocation_short_name], [], [], [#include <errno.h>])
   gt_TYPE_SSIZE_T
+  gl_FUNC_STAT
+  if test $REPLACE_STAT = 1; then
+    AC_LIBOBJ([stat])
+    case "$host_os" in
+      mingw*)
+        AC_LIBOBJ([stat-w32])
+        ;;
+    esac
+    gl_PREREQ_STAT
+  fi
+  gl_SYS_STAT_MODULE_INDICATOR([stat])
+  gl_STAT_TIME
+  gl_STAT_BIRTHTIME
+  AM_STDBOOL_H
   gl_STDDEF_H
+  gl_STDINT_H
   gl_STDIO_H
   gl_FUNC_STRERROR
   if test $REPLACE_STRERROR = 1; then
@@ -128,8 +221,11 @@ AC_DEFUN([gl2_INIT],
     AC_LIBOBJ([strerror-override])
     gl_PREREQ_SYS_H_WINSOCK2
   fi
+  gl_HEADER_SYS_STAT_H
+  AC_PROG_MKDIR_P
   gl_SYS_TYPES_H
   AC_PROG_MKDIR_P
+  gl_HEADER_TIME_H
   gl_VERSION_ETC
   # End of code from modules
   m4_ifval(gl2_LIBSOURCES_LIST, [
@@ -267,49 +363,117 @@ AC_DEFUN([gl2tests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl2_FILE_LIST], [
-  build-aux/snippet/arg-nonnull.h
-  build-aux/snippet/c++defs.h
-  build-aux/snippet/warn-on-use.h
+  lib/alloca.in.h
+  lib/arg-nonnull.h
+  lib/basename-lgpl.c
+  lib/basename-lgpl.h
+  lib/c++defs.h
+  lib/cloexec.c
+  lib/cloexec.h
+  lib/close.c
+  lib/dup2.c
   lib/errno.in.h
   lib/error.c
   lib/error.h
+  lib/fcntl.c
+  lib/fcntl.in.h
+  lib/fd-hook.c
+  lib/fd-hook.h
+  lib/filename.h
+  lib/fstat.c
+  lib/getdtablesize.c
+  lib/getopt-cdefs.in.h
+  lib/getopt-core.h
+  lib/getopt-ext.h
+  lib/getopt-pfx-core.h
+  lib/getopt-pfx-ext.h
   lib/getopt.c
   lib/getopt.in.h
   lib/getopt1.c
   lib/getopt_int.h
+  lib/getprogname.c
+  lib/getprogname.h
+  lib/limits.in.h
   lib/locale.in.h
+  lib/malloca.c
+  lib/malloca.h
   lib/msvc-inval.c
   lib/msvc-inval.h
   lib/msvc-nothrow.c
   lib/msvc-nothrow.h
+  lib/open.c
+  lib/pathmax.h
   lib/progname.c
   lib/progname.h
+  lib/stat-time.c
+  lib/stat-time.h
+  lib/stat-w32.c
+  lib/stat-w32.h
+  lib/stat.c
+  lib/stdbool.in.h
   lib/stddef.in.h
+  lib/stdint.in.h
   lib/stdio.in.h
   lib/strerror-override.c
   lib/strerror-override.h
   lib/strerror.c
+  lib/sys_stat.in.h
   lib/sys_types.in.h
+  lib/time.in.h
   lib/verify.h
   lib/version-etc.c
   lib/version-etc.h
+  lib/warn-on-use.h
+  lib/xalloc-oversized.h
   m4/00gnulib.m4
+  m4/alloca.m4
+  m4/close.m4
+  m4/double-slash-root.m4
+  m4/dup2.m4
+  m4/eealloc.m4
   m4/errno_h.m4
   m4/error.m4
+  m4/extern-inline.m4
+  m4/fcntl-o.m4
+  m4/fcntl.m4
+  m4/fcntl_h.m4
+  m4/fstat.m4
+  m4/getdtablesize.m4
   m4/getopt.m4
+  m4/getprogname.m4
   m4/gnulib-common.m4
+  m4/largefile.m4
+  m4/limits-h.m4
   m4/locale_h.m4
+  m4/malloca.m4
+  m4/mode_t.m4
   m4/msvc-inval.m4
   m4/msvc-nothrow.m4
+  m4/multiarch.m4
   m4/nocrash.m4
   m4/off_t.m4
+  m4/open-cloexec.m4
+  m4/open-slash.m4
+  m4/open.m4
+  m4/pathmax.m4
+  m4/pid_t.m4
   m4/ssize_t.m4
+  m4/stat-time.m4
+  m4/stat.m4
+  m4/std-gnu11.m4
+  m4/stdbool.m4
   m4/stddef_h.m4
+  m4/stdint.m4
   m4/stdio_h.m4
   m4/strerror.m4
   m4/sys_socket_h.m4
+  m4/sys_stat_h.m4
   m4/sys_types_h.m4
+  m4/time_h.m4
+  m4/unistd_h.m4
   m4/version-etc.m4
   m4/warn-on-use.m4
   m4/wchar_t.m4
+  m4/wint_t.m4
+  m4/zzgnulib.m4
 ])

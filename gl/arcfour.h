@@ -1,5 +1,5 @@
 /* arcfour.h --- The arcfour stream cipher
- * Copyright (C) 2000-2005, 2009-2014 Free Software Foundation, Inc.
+ * Copyright (C) 2000-2005, 2009-2021 Free Software Foundation, Inc.
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -12,7 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this file; if not, see <http://www.gnu.org/licenses/>.
+ * along with this file; if not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -37,7 +37,7 @@ typedef struct
    before this function is called. */
 extern void
 arcfour_stream (arcfour_context * context,
-                const char *inbuf, char *outbuf, size_t length);
+                const char *inbuf, char *restrict outbuf, size_t length);
 
 /* Initialize CONTEXT using encryption KEY of KEYLEN bytes.  KEY
    should be 40 bits (5 bytes) or longer.  The KEY cannot be zero

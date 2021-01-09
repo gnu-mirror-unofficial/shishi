@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2021 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this file.  If not, see <http://www.gnu.org/licenses/>.
+# along with this file.  If not, see <https://www.gnu.org/licenses/>.
 #
 # As a special exception to the GNU General Public License,
 # this file may be distributed as part of a program that
@@ -37,7 +37,10 @@ AC_DEFUN([gl3_EARLY],
   m4_pattern_allow([^gl_ES$])dnl a valid locale name
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
+
+  # Pre-early section.
   AC_REQUIRE([gl_PROG_AR_RANLIB])
+
   # Code from module allocator:
   # Code from module areadlink:
   # Code from module careadlinkat:
@@ -58,6 +61,7 @@ AC_DEFUN([gl3_INIT],
   m4_pushdef([gl3_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='db/gl'
+  AC_REQUIRE([AC_C_RESTRICT])
   AC_CHECK_FUNCS_ONCE([readlinkat])
   gl_FUNC_READLINK
   if test $HAVE_READLINK = 0 || test $REPLACE_READLINK = 1; then
@@ -211,4 +215,5 @@ AC_DEFUN([gl3_FILE_LIST], [
   m4/00gnulib.m4
   m4/gnulib-common.m4
   m4/readlink.m4
+  m4/zzgnulib.m4
 ])

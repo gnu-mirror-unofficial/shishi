@@ -1,6 +1,6 @@
---- gendocs_template.orig	2008-06-19 15:48:31.000000000 +0200
-+++ gendocs_template	2008-06-19 15:49:05.000000000 +0200
-@@ -59,6 +59,15 @@
+--- doc/gendocs_template~	2021-01-09 19:47:19.693690223 +0100
++++ doc/gendocs_template	2021-01-09 19:47:29.709778056 +0100
+@@ -62,6 +62,15 @@
      (%%TEXI_TGZ_SIZE%%K bytes gzipped tar file).</a></li>
  </ul>
  
@@ -13,6 +13,6 @@
 +  <li><a href="../components.png">PNG image with developer and API information</a>.</li>
 +</ul>
 +
- <p>You can <a href="http://shop.fsf.org/">buy printed copies of
+ <p>You can <a href="https://shop.fsf.org/">buy printed copies of
  some manuals</a> (among other items) from the Free Software Foundation;
  this helps support FSF activities.</p>

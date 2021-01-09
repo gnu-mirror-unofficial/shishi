@@ -1,5 +1,5 @@
 /* gc-libgcrypt.c --- Crypto wrappers around Libgcrypt for GC.
- * Copyright (C) 2002-2014 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2021 Free Software Foundation, Inc.
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -12,7 +12,7 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this file; if not, see <http://www.gnu.org/licenses/>.
+ * along with this file; if not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -28,8 +28,13 @@
 
 /* Get libgcrypt API. */
 #include <gcrypt.h>
-#ifdef GNULIB_GC_MD2
+#if GNULIB_GC_MD2
+/* libgcrypt declares GCRY_MD_MD2 but does not actually implement the
+   MD2 algorithm.  Therefore take the implementation from gnulib.  */
 # include "md2.h"
+#endif
+#if GNULIB_GC_SM3 && !LIBGCRYPT_HAS_MD_SM3
+# include "sm3.h"
 #endif
 
 #include <assert.h>
@@ -68,7 +73,7 @@ gc_done (void)
   return;
 }
 
-#ifdef GNULIB_GC_RANDOM
+#if GNULIB_GC_RANDOM
 
 /* Randomness. */
 
@@ -241,13 +246,21 @@ gc_cipher_close (gc_cipher_handle handle)
 
 /* Hashes. */
 
+/* Maximum of GC_MD2_DIGEST_SIZE and GC_SM3_DIGEST_SIZE.  */
+#define MAX_DIGEST_SIZE 32
+
 typedef struct _gc_hash_ctx {
   Gc_hash alg;
   Gc_hash_mode mode;
   gcry_md_hd_t gch;
-#ifdef GNULIB_GC_MD2
-  char hash[GC_MD2_DIGEST_SIZE];
+#if GNULIB_GC_MD2 || (GNULIB_GC_SM3 && !LIBGCRYPT_HAS_MD_SM3)
+  char hash[MAX_DIGEST_SIZE];
+#endif
+#if GNULIB_GC_MD2
   struct md2_ctx md2Context;
+#endif
+#if GNULIB_GC_SM3 && !LIBGCRYPT_HAS_MD_SM3
+  struct sm3_ctx sm3Context;
 #endif
 } _gc_hash_ctx;
 
@@ -268,9 +281,13 @@ gc_hash_open (Gc_hash hash, Gc_hash_mode mode, gc_hash_handle * outhandle)
 
   switch (hash)
     {
+#if GNULIB_GC_MD2
     case GC_MD2:
+      /* Not needed, because ctx is already zero-initialized.  */
+      /*md2_init_ctx (&ctx->md2Context);*/
       gcryalg = GCRY_MD_NONE;
       break;
+#endif
 
     case GC_MD4:
       gcryalg = GCRY_MD_MD4;
@@ -304,13 +321,24 @@ gc_hash_open (Gc_hash hash, Gc_hash_mode mode, gc_hash_handle * outhandle)
       gcryalg = GCRY_MD_RMD160;
       break;
 
+#if GNULIB_GC_SM3
+    case GC_SM3:
+# if LIBGCRYPT_HAS_MD_SM3
+      gcryalg = GCRY_MD_SM3;
+# else
+      sm3_init_ctx (&ctx->sm3Context);
+      gcryalg = GCRY_MD_NONE;
+# endif
+      break;
+#endif
+
     default:
       rc = GC_INVALID_HASH;
     }
 
   switch (mode)
     {
-    case 0:
+    case GC_NULL:
       gcrymode = 0;
       break;
 
@@ -403,6 +431,10 @@ gc_hash_digest_length (Gc_hash hash)
       len = GC_SHA224_DIGEST_SIZE;
       break;
 
+    case GC_SM3:
+      len = GC_SM3_DIGEST_SIZE;
+      break;
+
     default:
       return 0;
     }
@@ -414,10 +446,13 @@ void
 gc_hash_hmac_setkey (gc_hash_handle handle, size_t len, const char *key)
 {
   _gc_hash_ctx *ctx = handle;
-#ifdef GNULIB_GC_MD2
+#if GNULIB_GC_MD2
   if (ctx->alg != GC_MD2)
 #endif
-    gcry_md_setkey (ctx->gch, key, len);
+#if GNULIB_GC_SM3 && !LIBGCRYPT_HAS_MD_SM3
+    if (ctx->alg != GC_SM3)
+#endif
+      gcry_md_setkey (ctx->gch, key, len);
 }
 
 void
@@ -425,9 +460,14 @@ gc_hash_write (gc_hash_handle handle, size_t len, const char *data)
 {
   _gc_hash_ctx *ctx = handle;
 
-#ifdef GNULIB_GC_MD2
+#if GNULIB_GC_MD2
   if (ctx->alg == GC_MD2)
     md2_process_bytes (data, len, &ctx->md2Context);
+  else
+#endif
+#if GNULIB_GC_SM3 && !LIBGCRYPT_HAS_MD_SM3
+  if (ctx->alg == GC_SM3)
+    sm3_process_bytes (data, len, &ctx->sm3Context);
   else
 #endif
     gcry_md_write (ctx->gch, data, len);
@@ -439,7 +479,7 @@ gc_hash_read (gc_hash_handle handle)
   _gc_hash_ctx *ctx = handle;
   const char *digest;
 
-#ifdef GNULIB_GC_MD2
+#if GNULIB_GC_MD2
   if (ctx->alg == GC_MD2)
     {
       md2_finish_ctx (&ctx->md2Context, ctx->hash);
@@ -447,9 +487,17 @@ gc_hash_read (gc_hash_handle handle)
     }
   else
 #endif
+#if GNULIB_GC_SM3 && !LIBGCRYPT_HAS_MD_SM3
+  if (ctx->alg == GC_SM3)
+    {
+      sm3_finish_ctx (&ctx->sm3Context, ctx->hash);
+      digest = ctx->hash;
+    }
+  else
+#endif
     {
       gcry_md_final (ctx->gch);
-      digest = gcry_md_read (ctx->gch, 0);
+      digest = (const char *) gcry_md_read (ctx->gch, 0);
     }
 
   return digest;
@@ -460,10 +508,13 @@ gc_hash_close (gc_hash_handle handle)
 {
   _gc_hash_ctx *ctx = handle;
 
-#ifdef GNULIB_GC_MD2
+#if GNULIB_GC_MD2
   if (ctx->alg != GC_MD2)
 #endif
-    gcry_md_close (ctx->gch);
+#if GNULIB_GC_SM3 && !LIBGCRYPT_HAS_MD_SM3
+    if (ctx->alg != GC_SM3)
+#endif
+      gcry_md_close (ctx->gch);
 
   free (ctx);
 }
@@ -475,59 +526,69 @@ gc_hash_buffer (Gc_hash hash, const void *in, size_t inlen, char *resbuf)
 
   switch (hash)
     {
-#ifdef GNULIB_GC_MD2
+#if GNULIB_GC_MD2
     case GC_MD2:
       md2_buffer (in, inlen, resbuf);
       return GC_OK;
-      break;
 #endif
 
-#ifdef GNULIB_GC_MD4
+#if GNULIB_GC_MD4
     case GC_MD4:
       gcryalg = GCRY_MD_MD4;
       break;
 #endif
 
-#ifdef GNULIB_GC_MD5
+#if GNULIB_GC_MD5
     case GC_MD5:
       gcryalg = GCRY_MD_MD5;
       break;
 #endif
 
-#ifdef GNULIB_GC_SHA1
+#if GNULIB_GC_SHA1
     case GC_SHA1:
       gcryalg = GCRY_MD_SHA1;
       break;
 #endif
 
-#ifdef GNULIB_GC_SHA256
+#if GNULIB_GC_SHA256
     case GC_SHA256:
       gcryalg = GCRY_MD_SHA256;
       break;
 #endif
 
-#ifdef GNULIB_GC_SHA384
+#if GNULIB_GC_SHA384
     case GC_SHA384:
       gcryalg = GCRY_MD_SHA384;
       break;
 #endif
 
-#ifdef GNULIB_GC_SHA512
+#if GNULIB_GC_SHA512
     case GC_SHA512:
       gcryalg = GCRY_MD_SHA512;
       break;
 #endif
 
-#ifdef GNULIB_GC_SHA224
+#if GNULIB_GC_SHA224
     case GC_SHA224:
       gcryalg = GCRY_MD_SHA224;
       break;
 #endif
 
-#ifdef GNULIB_GC_RMD160
+#if GNULIB_GC_RMD160
     case GC_RMD160:
       gcryalg = GCRY_MD_RMD160;
       break;
+#endif
+
+#if GNULIB_GC_SM3
+    case GC_SM3:
+# if !LIBGCRYPT_HAS_MD_SM3
+      sm3_buffer (in, inlen, resbuf);
+      return GC_OK;
+# else
+      gcryalg = GCRY_MD_SM3;
+      break;
+# endif
 #endif
 
     default:
@@ -541,7 +602,7 @@ gc_hash_buffer (Gc_hash hash, const void *in, size_t inlen, char *resbuf)
 
 /* One-call interface. */
 
-#ifdef GNULIB_GC_MD2
+#if GNULIB_GC_MD2
 Gc_rc
 gc_md2 (const void *in, size_t inlen, void *resbuf)
 {
@@ -550,7 +611,7 @@ gc_md2 (const void *in, size_t inlen, void *resbuf)
 }
 #endif
 
-#ifdef GNULIB_GC_MD4
+#if GNULIB_GC_MD4
 Gc_rc
 gc_md4 (const void *in, size_t inlen, void *resbuf)
 {
@@ -582,7 +643,7 @@ gc_md4 (const void *in, size_t inlen, void *resbuf)
 }
 #endif
 
-#ifdef GNULIB_GC_MD5
+#if GNULIB_GC_MD5
 Gc_rc
 gc_md5 (const void *in, size_t inlen, void *resbuf)
 {
@@ -614,7 +675,7 @@ gc_md5 (const void *in, size_t inlen, void *resbuf)
 }
 #endif
 
-#ifdef GNULIB_GC_SHA1
+#if GNULIB_GC_SHA1
 Gc_rc
 gc_sha1 (const void *in, size_t inlen, void *resbuf)
 {
@@ -646,7 +707,108 @@ gc_sha1 (const void *in, size_t inlen, void *resbuf)
 }
 #endif
 
-#ifdef GNULIB_GC_HMAC_MD5
+#if GNULIB_GC_SHA256
+Gc_rc
+gc_sha256 (const void *in, size_t inlen, void *resbuf)
+{
+  size_t outlen = gcry_md_get_algo_dlen (GCRY_MD_SHA256);
+  gcry_md_hd_t hd;
+  gpg_error_t err;
+  unsigned char *p;
+
+  assert (outlen == GC_SHA256_DIGEST_SIZE);
+
+  err = gcry_md_open (&hd, GCRY_MD_SHA256, 0);
+  if (err != GPG_ERR_NO_ERROR)
+    return GC_INVALID_HASH;
+
+  gcry_md_write (hd, in, inlen);
+
+  p = gcry_md_read (hd, GCRY_MD_SHA256);
+  if (p == NULL)
+    {
+      gcry_md_close (hd);
+      return GC_INVALID_HASH;
+    }
+
+  memcpy (resbuf, p, outlen);
+
+  gcry_md_close (hd);
+
+  return GC_OK;
+}
+#endif
+
+#if GNULIB_GC_SHA512
+Gc_rc
+gc_sha512 (const void *in, size_t inlen, void *resbuf)
+{
+  size_t outlen = gcry_md_get_algo_dlen (GCRY_MD_SHA512);
+  gcry_md_hd_t hd;
+  gpg_error_t err;
+  unsigned char *p;
+
+  assert (outlen == GC_SHA512_DIGEST_SIZE);
+
+  err = gcry_md_open (&hd, GCRY_MD_SHA512, 0);
+  if (err != GPG_ERR_NO_ERROR)
+    return GC_INVALID_HASH;
+
+  gcry_md_write (hd, in, inlen);
+
+  p = gcry_md_read (hd, GCRY_MD_SHA512);
+  if (p == NULL)
+    {
+      gcry_md_close (hd);
+      return GC_INVALID_HASH;
+    }
+
+  memcpy (resbuf, p, outlen);
+
+  gcry_md_close (hd);
+
+  return GC_OK;
+}
+#endif
+
+#if GNULIB_GC_SM3
+Gc_rc
+gc_sm3  (const void *in, size_t inlen, void *resbuf)
+{
+# if !LIBGCRYPT_HAS_MD_SM3
+  sm3_buffer (in, inlen, resbuf);
+  return GC_OK;
+# else
+  size_t outlen = gcry_md_get_algo_dlen (GCRY_MD_SM3);
+  gcry_md_hd_t hd;
+  gpg_error_t err;
+  unsigned char *p;
+
+  assert (outlen == GC_SM3_DIGEST_SIZE);
+
+  err = gcry_md_open (&hd, GCRY_MD_SM3, 0);
+  if (err != GPG_ERR_NO_ERROR)
+    return GC_INVALID_HASH;
+
+  gcry_md_write (hd, in, inlen);
+
+  p = gcry_md_read (hd, GCRY_MD_SM3);
+  if (p == NULL)
+    {
+      gcry_md_close (hd);
+      return GC_INVALID_HASH;
+    }
+
+  memcpy (resbuf, p, outlen);
+
+  gcry_md_close (hd);
+
+  return GC_OK;
+# endif
+}
+#endif
+
+#if GNULIB_GC_HMAC_MD5
 Gc_rc
 gc_hmac_md5 (const void *key, size_t keylen,
              const void *in, size_t inlen, char *resbuf)
@@ -686,7 +848,7 @@ gc_hmac_md5 (const void *key, size_t keylen,
 }
 #endif
 
-#ifdef GNULIB_GC_HMAC_SHA1
+#if GNULIB_GC_HMAC_SHA1
 Gc_rc
 gc_hmac_sha1 (const void *key, size_t keylen,
               const void *in, size_t inlen, char *resbuf)
@@ -726,7 +888,7 @@ gc_hmac_sha1 (const void *key, size_t keylen,
 }
 #endif
 
-#ifdef GNULIB_GC_HMAC_SHA256
+#if GNULIB_GC_HMAC_SHA256
 Gc_rc
 gc_hmac_sha256 (const void *key, size_t keylen,
              const void *in, size_t inlen, char *resbuf)
@@ -766,7 +928,7 @@ gc_hmac_sha256 (const void *key, size_t keylen,
 }
 #endif
 
-#ifdef GNULIB_GC_HMAC_SHA512
+#if GNULIB_GC_HMAC_SHA512
 Gc_rc
 gc_hmac_sha512 (const void *key, size_t keylen,
               const void *in, size_t inlen, char *resbuf)
