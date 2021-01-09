@@ -37,7 +37,7 @@ test (Shishi * handle)
   if (!keytab)
     keytab = "keytab1.bin";
 
-  data = read_binary_file (keytab, &len);
+  data = read_file (keytab, RF_BINARY, &len);
   if (data == NULL)
     fail ("cannot read keytab file %s", keytab);
 

@@ -37,7 +37,7 @@ _shishi_escapeprint (const char *str, int len)
 	(str[i] >= '0' && str[i] <= '9') || str[i] == '.')
       printf ("%c", str[i] & 0xFF);
     else
-      printf ("\\x%02x", str[i] & 0xFF);
+      printf ("\\x%02x", (unsigned) str[i] & 0xFF);
   printf ("' (length %d bytes)\n", len);
 }
 
@@ -49,7 +49,7 @@ _shishi_hexprint (const char *str, int len)
   printf ("\t ;; ");
   for (i = 0; i < len; i++)
     {
-      printf ("%02x ", str[i] & 0xFF);
+      printf ("%02x ", (unsigned) str[i] & 0xFF);
       if ((i + 1) % 8 == 0)
 	printf (" ");
       if ((i + 1) % 16 == 0 && i + 1 < len)

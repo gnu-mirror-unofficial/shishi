@@ -1464,7 +1464,7 @@ shishi_tkt_pretty_print (Shishi_tkt * tkt, FILE * fh)
 	fprintf (fh, "TRANSITEDPOLICYCHECKED ");
       if (shishi_tkt_ok_as_delegate_p (tkt))
 	fprintf (fh, "OKASDELEGATE ");
-      fprintf (fh, "(%d)\n", flags);
+      fprintf (fh, "(%" PRIu32 ")\n", flags);
     }
 }
 

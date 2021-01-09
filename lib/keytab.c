@@ -79,7 +79,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 
       if (VERBOSENOISE (handle))
 	{
-	  printf ("keytab size %d (%x)\n", size, size);
+	  printf ("keytab size %d (%x)\n", size, (unsigned) size);
 	  printf ("keytab pos %zu < %zu\n", entrystartpos + size, len);
 	}
 
@@ -158,7 +158,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 	pos += 4;
 
 	if (VERBOSENOISE (handle))
-	  printf ("keytab nametype %d (0x%08x)\n", name_type, name_type);
+	  printf ("keytab nametype %" PRIu32 " (0x%08x)\n", name_type, name_type);
       }
 
       /* Timestamp */
@@ -193,7 +193,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 	pos += 2;
 
 	if (VERBOSENOISE (handle))
-	  printf ("keytab keytype %d (0x%x)\n", keytype, keytype);
+	  printf ("keytab keytype %" PRIu32 " (0x%x)\n", keytype, keytype);
 
 	shishi_key_type_set (key, keytype);
       }
@@ -222,7 +222,7 @@ shishi_keys_add_keytab_mem (Shishi * handle,
 	  pos += 4;
 
 	  if (VERBOSENOISE (handle))
-	    printf ("keytab kvno %d (0x%08x)\n", vno, vno);
+	    printf ("keytab kvno %" PRIu32 " (0x%08x)\n", vno, vno);
 
 	  shishi_key_version_set (key, vno);
 	}
@@ -269,7 +269,7 @@ shishi_keys_add_keytab_file (Shishi * handle,
 			     const char *filename, Shishi_keys * keys)
 {
   size_t len;
-  char *keytab = read_binary_file (filename, &len);
+  char *keytab = read_file (filename, RF_BINARY, &len);
   int rc;
 
   if (!keytab)

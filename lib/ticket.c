@@ -142,7 +142,7 @@ shishi_ticket_sname_set (Shishi * handle,
   char *buf;
   int i;
 
-  asprintf (&buf, "%d", name_type);
+  asprintf (&buf, "%u", name_type);
   res = shishi_asn1_write (handle, ticket, "sname.name-type", buf, 0);
   free (buf);
   if (res != SHISHI_OK)

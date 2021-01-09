@@ -575,12 +575,12 @@ ccache_print_principal (struct ccache_principal *princ)
   printf ("\tname_type %04x\n", princ->name_type);
   printf ("\tnum_components %04x\n", princ->num_components);
   printf ("\trealmlen %04x\n", princ->realm.length);
-  printf ("\trealm %.*s\n", princ->realm.length, princ->realm.data);
+  printf ("\trealm %.*s\n", (int) princ->realm.length, princ->realm.data);
 
   for (n = 0; n < princ->num_components; n++)
     {
       printf ("\t\tcomponentlen %04x\n", princ->components[n].length);
-      printf ("\t\tcomponent %.*s\n", princ->components[n].length,
+      printf ("\t\tcomponent %.*s\n", (int) princ->components[n].length,
 	      princ->components[n].data);
     }
 }
@@ -599,7 +599,7 @@ ccache_print_credential (struct ccache_credential *cred)
   printf ("\t\tkeylen %04x\n", cred->key.keylen);
   printf ("\t\tkey value: ");
   for (i = 0; i < cred->key.keylen; i++)
-    printf ("%02x", ((char *) cred->key.keyvalue)[i] & 0xFF);
+    printf ("%02x", (unsigned) ((char *) cred->key.keyvalue)[i] & 0xFF);
   printf ("\n");
   printf ("\ttimes:\n");
   printf ("\t\tauthtime %04x\n", cred->authtime);

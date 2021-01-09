@@ -494,11 +494,11 @@ shishi_kdc_check_nonce_1 (Shishi * handle,
 
       printf ("request nonce (len=%zu) ", reqnoncelen);
       for (i = 0; i < reqnoncelen; i++)
-	printf ("%02x", reqnonce[i] & 0xFF);
+	printf ("%02x", (unsigned) reqnonce[i] & 0xFF);
       printf ("\n");
       printf ("reply nonce (len=%zu) ", repnoncelen);
       for (i = 0; i < repnoncelen; i++)
-	printf ("%02x", repnonce[i] & 0xFF);
+	printf ("%02x", (unsigned) repnonce[i] & 0xFF);
       printf ("\n");
     }
 

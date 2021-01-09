@@ -903,7 +903,7 @@ shishi_key_parse (Shishi * handle, FILE * fh, Shishi_key ** key)
       line[sizeof (line) - 1] = '\0';
       if (!*line || line[strlen (line) - 1] != '\n')
 	{
-	  fprintf (stderr, "input line %u too long or missing LF\n", lno);
+	  fprintf (stderr, "input line %d too long or missing LF\n", lno);
 	  continue;
 	}
       line[strlen (line) - 1] = '\0';
@@ -1022,7 +1022,7 @@ shishi_key_print (Shishi * handle, FILE * fh, const Shishi_key * key)
   if (shishi_key_realm (key))
     fprintf (fh, "Realm: %s\n", shishi_key_realm (key));
   if (shishi_key_version (key) != UINT32_MAX)
-    fprintf (fh, "Key-Version-Number: %d\n", shishi_key_version (key));
+    fprintf (fh, "Key-Version-Number: %" PRIu32 "\n", shishi_key_version (key));
   if (shishi_key_timestamp (key))
     fprintf (fh, "Timestamp: %s\n",
 	     shishi_generalize_time (handle, shishi_key_timestamp (key)));

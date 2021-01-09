@@ -75,5 +75,5 @@ test (Shishi * handle)
   else
     fail ("shishi_asn1_read_uint32() failed\n");
   if (i != 42)
-    fail ("encticketpart name-type failed (%d)\n", i);
+    fail ("encticketpart name-type failed (%u)\n", i);
 }

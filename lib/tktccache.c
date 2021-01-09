@@ -328,7 +328,7 @@ shishi_tkts_add_ccache_file (Shishi * handle,
 			     const char *filename, Shishi_tkts * tkts)
 {
   size_t len;
-  char *ccache = read_binary_file (filename, &len);
+  char *ccache = read_file (filename, RF_BINARY, &len);
   int rc;
 
   if (!ccache)

@@ -39,5 +39,5 @@ TESTS = $(check_PROGRAMS)
 TESTS_ENVIRONMENT = \
 	LD_LIBRARY_PATH=$(top_builddir)/lib/.libs \
 	KEYTAB1=$(srcdir)/keytab1.bin	\
-	CCACHE1=$(srcdir)/ccache1.bin	\
-	$(VALGRIND)
+	CCACHE1=$(srcdir)/ccache1.bin
+LOG_COMPILER=$(VALGRIND)

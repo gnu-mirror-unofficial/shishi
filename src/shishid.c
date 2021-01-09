@@ -185,8 +185,8 @@ kdc_setuid (void)
     error (EXIT_FAILURE, errno, "Cannot setuid");
 
   if (!arg.quiet_flag)
-    printf ("User identity set to `%s' (%d)...\n",
-	    passwd->pw_name, passwd->pw_uid);
+    printf ("User identity set to `%s' (%lu)...\n",
+	    passwd->pw_name, (unsigned long) passwd->pw_uid);
 }
 
 /* Create a hard coded error message that can be used in case kdc.c

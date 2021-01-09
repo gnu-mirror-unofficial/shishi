@@ -62,7 +62,7 @@ AM_MISSING_PROG(DIA, dia, $missing_dir)
 
 # Internationalization.
 AM_GNU_GETTEXT([external], [need-ngettext])
-AM_GNU_GETTEXT_VERSION([0.19.8])
+AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.6])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_UID_T
@@ -74,6 +74,7 @@ AC_DEFINE([OK_TO_USE_1S_CLOCK], 1, [Define to 1 to make gettime work.])
 gl_INIT
 gl2_INIT
 gl3_INIT
+AC_DEFINE([GNULIB_NO_VLA], 1, [Disable VLA usage in gettext.h.])
 
 if test "$ac_cv_libgcrypt" != yes; then
   AC_MSG_ERROR([Cannot find libgcrypt])
@@ -323,6 +324,7 @@ AC_ARG_WITH(db-dir,
 AC_MSG_NOTICE([user database root path $DBDIR])
 
 # Some select fixes.
+AC_DEFINE([GNULIB_XALLOC_DIE], [1], [Make xalloc.h declare prototype for xalloc_die.])
 AC_DEFINE([xalloc_die], [shishi_xalloc_die], [Fix namespace of xalloc_die.])
 
 sj_UPDATE_HEADER_VERSION([$srcdir/lib/shishi.h])
@@ -340,7 +342,7 @@ AC_ARG_ENABLE([gcc-warnings],
 )
 
 if test "$gl_gcc_warnings" = yes; then
-  gl_WARN_ADD([-Werror], [WERROR_CFLAGS])
+  gl_WARN_ADD([], [WERROR_CFLAGS])     # Put -Werror here, via cfg.mk.
 
   nw="$nw -Wsystem-headers"            # Ignore errors in system headers
   nw="$nw -Wlogical-op"                # Too many false positives
@@ -349,6 +351,7 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wsuggest-attribute=pure"    # Is it worth using attributes?
   nw="$nw -Wsuggest-attribute=const"   # Is it worth using attributes?
   nw="$nw -Wsuggest-attribute=format"  # Is it worth using attributes?
+  nw="$nw -Wsuggest-attribute=malloc"  # Is it worth using attributes?
 
   gl_MANYWARN_ALL_GCC([ws])
   gl_MANYWARN_COMPLEMENT(ws, [$ws], [$nw])
@@ -358,6 +361,7 @@ if test "$gl_gcc_warnings" = yes; then
 
   # Disable some, but evaluate these as the project moves on.
   gl_WARN_ADD([-Wno-unused-parameter]) # Too many warnings for now
+  gl_WARN_ADD([-Wno-implicit-fallthrough]) # Too useful not to use
 fi
 
 AC_CONFIG_FILES([

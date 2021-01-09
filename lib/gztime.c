@@ -85,7 +85,7 @@ shishi_generalize_ctime (Shishi * handle, const char *t)
 
   memset (&tm, 0, sizeof (tm));
 
-  sscanf (t, "%4u%2u%2u%2u%2u%2uZ",
+  sscanf (t, "%4d%2d%2d%2d%2d%2dZ",
 	  &tm.tm_year, &tm.tm_mon, &tm.tm_mday,
 	  &tm.tm_hour, &tm.tm_min, &tm.tm_sec);
   tm.tm_year -= 1900;

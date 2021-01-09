@@ -17,7 +17,7 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
-WFLAGS ?= --enable-gcc-warnings
+WFLAGS ?= --enable-gcc-warnings WERROR_CFLAGS=-Werror
 ADDFLAGS ?=
 CFGFLAGS ?= --enable-gtk-doc --enable-gtk-doc-pdf \
 	--with-libgcrypt $(ADDFLAGS) $(WFLAGS)
@@ -56,9 +56,14 @@ autoreconf:
 	for f in po/*.po.in; do \
 		cp $$f `echo $$f | sed 's/.in//'`; \
 	done
-	mv build-aux/config.rpath build-aux/config.rpath-
-	test -f ./configure || autoreconf --install
-	mv build-aux/config.rpath- build-aux/config.rpath
+	autopoint --force
+	for f in m4/*.m4; do \
+		if test -f gl/$$f; then \
+			rm -f $$f; \
+			touch gl/$$f; \
+		fi; \
+	done
+	AUTOPOINT=true autoreconf --install
 
 update-po: refresh-po
 	for f in `ls po/*.po | grep -v quot.po`; do \
@@ -94,7 +99,7 @@ ChangeLog:
 htmldir = ../www-$(PACKAGE)
 tag = $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'`
 
-release: prepare upload web upload-web
+release: prepare release-upload web upload-web
 
 prepare:
 	! git tag -l $(tag) | grep $(PACKAGE) > /dev/null
@@ -103,7 +108,7 @@ prepare:
 	git commit -m Generated. ChangeLog
 	git tag -u b565716f! -m $(VERSION) $(tag)
 
-upload:
+release-upload:
 	git push
 	git push --tags
 	build-aux/gnupload --to ftp.gnu.org:shishi $(distdir).tar.gz

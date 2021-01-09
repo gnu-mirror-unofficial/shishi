@@ -32,6 +32,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <string.h>
+#include <inttypes.h>
 
 #include "gettext.h"
 #define _(String) dgettext (PACKAGE, String)

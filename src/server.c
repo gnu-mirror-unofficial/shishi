@@ -130,11 +130,11 @@ kdc_send1 (struct listenspec *ls)
 	    ls->bufpos, ls->str, ls->sockfd, strerror (errno));
   else if ((size_t) sent_bytes > ls->bufpos)
     syslog (LOG_ERR | LOG_DAEMON,
-	    "Overlong write (%zu > %zu) to %s on socket %d",
+	    "Overlong write (%zd > %zu) to %s on socket %d",
 	    sent_bytes, ls->bufpos, ls->str, ls->sockfd);
   else if ((size_t) sent_bytes < ls->bufpos)
     syslog (LOG_ERR | LOG_DAEMON,
-	    "Short write (%zu < %zu) to %s on socket %d",
+	    "Short write (%zd < %zu) to %s on socket %d",
 	    sent_bytes, ls->bufpos, ls->str, ls->sockfd);
 }
 

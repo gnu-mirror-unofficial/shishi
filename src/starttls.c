@@ -181,7 +181,7 @@ logcertinfo (gnutls_session_t session)
 	/* This message can arguably belong to LOG_AUTH.  */
 	syslog (LOG_INFO, "TLS client certificate `%s', issued by `%s', "
 		"serial number `%s', MD5 fingerprint `%s', activated `%s', "
-		"expires `%s', version #%d, key %s %d bits, currently %s",
+		"expires `%s', version #%d, key %s %u bits, currently %s",
 		subject, issuer, serialhex, md5fingerprinthex,
 		activation_time_str, expiration_time_str,
 		gnutls_x509_crt_get_version (cert), keytype, bits, validity);
@@ -207,7 +207,7 @@ logcertinfo (gnutls_session_t session)
       syslog (LOG_ERR, "TLS client certificate failed (%d): %s",
 	      rc, gnutls_strerror (rc));
     if (status != 0)
-      syslog (LOG_ERR, "TLS client certificate verify failure (%d)",
+      syslog (LOG_ERR, "TLS client certificate verify failure (%u)",
 	      status);
   }
 }
@@ -225,19 +225,17 @@ logtlsinfo (gnutls_session_t session)
     gnutls_certificate_type_get_name (gnutls_certificate_type_get (session));
   const char *cipher = gnutls_cipher_get_name (gnutls_cipher_get (session));
   const char *mac = gnutls_mac_get_name (gnutls_mac_get (session));
-  const char *compression =
-    gnutls_compression_get_name (gnutls_compression_get (session));
   int resumedp = gnutls_session_is_resumed (session);
 
   /* This message can arguably belong to LOG_AUTH.  */
   syslog (LOG_INFO, "TLS handshake negotiated protocol `%s', "
 	  "key exchange `%s', certficate type `%s', cipher `%s', "
-	  "mac `%s', compression `%s', %s",
+	  "mac `%s', %s",
 	  protocol ? protocol : "N/A",
 	  keyexchange ? keyexchange : "N/A",
 	  certtype ? certtype : "N/A",
 	  cipher ? cipher : "N/A",
-	  mac ? mac : "N/A", compression ? compression : "N/A",
+	  mac ? mac : "N/A",
 	  resumedp ? "resumed session" : "session not resumed");
 
   cred = gnutls_auth_get_type (session);
@@ -262,7 +260,7 @@ logtlsinfo (gnutls_session_t session)
     case GNUTLS_CRD_PSK:
     case GNUTLS_CRD_IA:
     default:
-      syslog (LOG_ERR | LOG_DAEMON, "Unknown TLS authentication (%d)", cred);
+      syslog (LOG_ERR | LOG_DAEMON, "Unknown TLS authentication (%u)", cred);
       break;
     }
 }

@@ -1100,7 +1100,7 @@ process (const char *in, size_t inlen, char **out)
     case SHISHI_MSGTYPE_CRED:
     case SHISHI_MSGTYPE_ERROR:
     default:
-      syslog (LOG_ERR, "Unsupported KDC message type %d (0x%x)",
+      syslog (LOG_ERR, "Unsupported KDC message type %u (0x%x)",
 	      shishi_asn1_msgtype (handle, node),
 	      shishi_asn1_msgtype (handle, node));
       rc = SHISHI_ASN1_ERROR;

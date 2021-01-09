@@ -86,7 +86,7 @@ aes_string_to_key (Shishi * handle,
   char key[256 / 8];
   int keylen = shishi_key_length (outkey);
   Shishi_key *tmpkey;
-  int iterations = 0x00001000;
+  unsigned iterations = 0x00001000;
   int res;
 
   if (parameter)
@@ -106,7 +106,7 @@ aes_string_to_key (Shishi * handle,
       printf ("\t ;; Salt:\n");
       _shishi_escapeprint (salt, saltlen);
       _shishi_hexprint (salt, saltlen);
-      printf ("\t ;; Iteration count %d (%08x):\n", iterations, iterations);
+      printf ("\t ;; Iteration count %u (%08x):\n", iterations, iterations);
     }
 
   /* tkey = random2key(PBKDF2(passphrase, salt, iter_count, keylength)) */

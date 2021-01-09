@@ -233,7 +233,8 @@ shishi_error_set (Shishi * handle, const char *errstr)
 {
   if (errstr)
     {
-      strncpy (handle->error, errstr, sizeof (handle->error));
+      strncpy (handle->error, errstr, sizeof (handle->error) - 1);
+      handle->error[sizeof (handle->error) - 1] = '\0';
 
       if (VERBOSENOISE (handle))
 	puts (handle->error);

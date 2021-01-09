@@ -29,6 +29,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
+#include <inttypes.h>
 
 /* Setup i18n. */
 #include <locale.h>
@@ -71,7 +72,7 @@ printtimefield (const char *fieldname, time_t t)
 static void
 printintfield (const char *fieldname, int num)
 {
-  char *p = xasprintf ("%d (0x%x)", num, num);
+  char *p = xasprintf ("%d (0x%x)", num, (unsigned) num);
   printfield (fieldname, p);
   free (p);
 }
@@ -79,7 +80,7 @@ printintfield (const char *fieldname, int num)
 static void
 printuint32field (const char *fieldname, uint32_t num)
 {
-  char *p = xasprintf ("%d (0x%x)", num, num);
+  char *p = xasprintf ("%" PRIu32 " (0x%x)", num, num);
   printfield (fieldname, p);
   free (p);
 }
@@ -87,7 +88,7 @@ printuint32field (const char *fieldname, uint32_t num)
 static void
 print3field (const char *fieldname, const char *text, uint32_t num)
 {
-  char *p = xasprintf ("%s (0x%x, %d)", text, num, num);
+  char *p = xasprintf ("%s (0x%x, %" PRIu32 ")", text, num, num);
   printfield (fieldname, p);
   free (p);
 }
