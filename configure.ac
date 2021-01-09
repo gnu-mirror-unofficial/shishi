@@ -23,7 +23,7 @@ AC_INIT([GNU Shishi],[1.0.3],[bug-shishi@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
-AM_INIT_AUTOMAKE([1.11 -Wall -Wno-override])
+AM_INIT_AUTOMAKE([1.13 -Wall -Wno-override])
 AM_SILENT_RULES([yes])
 
 # Library code modified:                              REVISION++
@@ -39,6 +39,7 @@ AC_PROG_CC
 gl_EARLY
 gl2_EARLY
 gl3_EARLY
+AM_PROG_AR
 AC_CHECK_HEADERS(termios.h pwd.h syslog.h arpa/nameser.h netinet/in6.h)
 AC_CHECK_HEADERS(resolv.h, , , [#include <sys/types.h>
   #include <netinet/in.h>
@@ -52,9 +53,7 @@ SOVERSION=`expr ${LT_CURRENT} - ${LT_AGE}`
 AC_SUBST(SOVERSION)
 
 # Checks for programs.
-m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
-AC_LIBTOOL_WIN32_DLL
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 AM_MISSING_PROG(PERL, perl, $missing_dir)
 AM_MISSING_PROG(HELP2MAN, help2man, $missing_dir)
 AM_MISSING_PROG(ASN1PARSER, asn1Parser, $missing_dir)
@@ -63,7 +62,7 @@ AM_MISSING_PROG(DIA, dia, $missing_dir)
 
 # Internationalization.
 AM_GNU_GETTEXT([external], [need-ngettext])
-AM_GNU_GETTEXT_VERSION([0.18.1])
+AM_GNU_GETTEXT_VERSION([0.19.8])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_UID_T
