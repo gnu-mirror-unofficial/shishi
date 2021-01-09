@@ -18,8 +18,8 @@
 # to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
 
-AC_PREREQ(2.64)
-AC_INIT([GNU Shishi], [1.0.3], [bug-shishi@gnu.org])
+AC_PREREQ([2.64])
+AC_INIT([GNU Shishi],[1.0.3],[bug-shishi@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS(config.h)
@@ -39,7 +39,6 @@ AC_PROG_CC
 gl_EARLY
 gl2_EARLY
 gl3_EARLY
-AC_HEADER_STDC
 AC_CHECK_HEADERS(termios.h pwd.h syslog.h arpa/nameser.h netinet/in6.h)
 AC_CHECK_HEADERS(resolv.h, , , [#include <sys/types.h>
   #include <netinet/in.h>
@@ -68,7 +67,6 @@ AM_GNU_GETTEXT_VERSION([0.18.1])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_UID_T
-AC_TYPE_SIGNAL
 AC_CHECK_DECLS(h_errno)
 
 # For gnulib stuff in gl/.
@@ -113,7 +111,7 @@ AM_CONDITIONAL(ENABLE_SHISHID, test "$ac_cv_search_syslog" != "no")
 
 # Check for PAM
 AC_ARG_ENABLE(pam,
-  AC_HELP_STRING([--disable-pam], [Don't use PAM even if available]))
+  AS_HELP_STRING([--disable-pam], [Don't use PAM even if available]))
 if test "$enable_pam" != "no"; then
 	AC_CHECK_HEADERS([security/pam_appl.h security/pam_ext.h])
 	AC_CHECK_HEADERS([security/pam_modules.h security/openpam.h], [], [],
@@ -139,7 +137,7 @@ AC_MSG_RESULT($enable_pam)
 
 AC_SUBST(PAMDIR, "\$(exec_prefix)/lib/security")
 AC_ARG_WITH(pam-dir,
-  AC_HELP_STRING([--with-pam-dir=DIR],
+  AS_HELP_STRING([--with-pam-dir=DIR],
                  [Where to install PAM module [[PREFIX/lib/security]]]),
             [case "${withval}" in
             /*) PAMDIR="${withval}";;
@@ -150,7 +148,7 @@ AC_MSG_NOTICE([PAM installation path $PAMDIR])
 
 # Check for IPv6
 AC_ARG_ENABLE(ipv6,
-  AC_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
+  AS_HELP_STRING([--disable-ipv6], [Don't use IPv6 even if available]))
 if test "$enable_ipv6" != "no"; then
   gl_SOCKET_FAMILIES
   enable_ipv6=$gl_cv_socket_ipv6
@@ -165,7 +163,7 @@ AC_MSG_RESULT($enable_ipv6)
 
 # Check for idn
 AC_ARG_WITH(stringprep,
-  AC_HELP_STRING([--without-stringprep],
+  AS_HELP_STRING([--without-stringprep],
 		[don't use libidn for string processing even if available]),
 	stringprep=$withval, stringprep=yes)
 if test "$stringprep" != "no"; then
@@ -187,7 +185,7 @@ fi
 
 # Check for gnutls.
 AC_ARG_ENABLE(starttls,
-	AC_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
+	AS_HELP_STRING([--disable-starttls], [disable non-standard STARTTLS]),
 	starttls=$enableval, starttls=yes)
 if test "$starttls" != "no"; then
   AC_LIB_HAVE_LINKFLAGS(gnutls,, [#include <gnutls/gnutls.h>],
@@ -211,7 +209,7 @@ GTK_DOC_CHECK(1.1)
 
 # Let people enable/disable various encryption/checksum types.
 # DES
-AC_ARG_ENABLE(des, AC_HELP_STRING([--disable-des],
+AC_ARG_ENABLE(des, AS_HELP_STRING([--disable-des],
 			[disable DES related encryption/checksum types]),
 		enable_des=$enableval, enable_des=yes)
 AM_CONDITIONAL(DES, test "$enable_des" != "no")
@@ -222,7 +220,7 @@ AC_MSG_CHECKING([if DES related encryption/checksum types should be used])
 AC_MSG_RESULT($enable_des)
 
 # 3DES
-AC_ARG_ENABLE(3des, AC_HELP_STRING([--disable-3des],
+AC_ARG_ENABLE(3des, AS_HELP_STRING([--disable-3des],
 			[disable 3DES encryption/checksum type]),
 		enable_3des=$enableval, enable_3des=yes)
 AM_CONDITIONAL(DES3, test "$enable_3des" != "no")
@@ -233,7 +231,7 @@ AC_MSG_CHECKING([if 3DES encryption/checksum type should be used])
 AC_MSG_RESULT($enable_3des)
 
 # AES
-AC_ARG_ENABLE(aes, AC_HELP_STRING([--disable-aes],
+AC_ARG_ENABLE(aes, AS_HELP_STRING([--disable-aes],
 			[disable AES encryption/checksum types]),
 		enable_aes=$enableval, enable_aes=yes)
 AM_CONDITIONAL(AES, test "$enable_aes" != "no")
@@ -244,7 +242,7 @@ AC_MSG_CHECKING([if AES encryption/checksum types should be used])
 AC_MSG_RESULT($enable_aes)
 
 # MD: MD4/MD5
-AC_ARG_ENABLE(md, AC_HELP_STRING([--disable-md],
+AC_ARG_ENABLE(md, AS_HELP_STRING([--disable-md],
 			[disable unkeyed MD4/MD5 checksum types]),
 		enable_md=$enableval, enable_md=yes)
 AM_CONDITIONAL(MD, test "$enable_md" != "no")
@@ -255,7 +253,7 @@ AC_MSG_CHECKING([if unkeyed MD checksum types should be used])
 AC_MSG_RESULT($enable_md)
 
 # NULL-encryption
-AC_ARG_ENABLE(null, AC_HELP_STRING([--disable-null],
+AC_ARG_ENABLE(null, AS_HELP_STRING([--disable-null],
 			[disable dummy NULL encryption/checksum type]),
 		enable_null=$enableval, enable_null=yes)
 AM_CONDITIONAL(NULL, test "$enable_null" != "no")
@@ -266,7 +264,7 @@ AC_MSG_CHECKING([if dummy NULL encryption/checksum type should be used])
 AC_MSG_RESULT($enable_null)
 
 # ARCFOUR
-AC_ARG_ENABLE(arcfour, AC_HELP_STRING([--disable-arcfour],
+AC_ARG_ENABLE(arcfour, AS_HELP_STRING([--disable-arcfour],
 			[disable ARCFOUR encryption/checksum type]),
 		enable_arcfour=$enableval, enable_arcfour=yes)
 AM_CONDITIONAL(ARCFOUR, test "$enable_arcfour" != "no")
@@ -280,7 +278,7 @@ AC_MSG_RESULT($enable_arcfour)
 # Location of configuration directory.
 AC_SUBST(CONFDIR, "\$(sysconfdir)/\$(PACKAGE)")
 AC_ARG_WITH(conf-dir,
-            AC_HELP_STRING([--with-conf-dir=DIR],
+            AS_HELP_STRING([--with-conf-dir=DIR],
                            [store configuration in DIR [[PREFIX/etc/shishi]]]),
             [case "${withval}" in
             /*) CONFDIR="${withval}";;
@@ -292,7 +290,7 @@ AC_MSG_NOTICE([configuration files will be stored in $CONFDIR])
 # Location of skeleton directory.
 AC_SUBST(SKELDIR, "\$(sysconfdir)/\$(PACKAGE)")
 AC_ARG_WITH(skel-dir,
-            AC_HELP_STRING([--with-skel-dir=DIR],
+            AS_HELP_STRING([--with-skel-dir=DIR],
                            [store template cfg in DIR [[PREFIX/etc/shishi]]]),
             [case "${withval}" in
             /*) SKELDIR="${withval}";;
@@ -304,7 +302,7 @@ AC_MSG_NOTICE([user template configuration file in $SKELDIR])
 # Location of host key lookup file.
 AC_SUBST(KEYDIR, "\$(sysconfdir)/\$(PACKAGE)")
 AC_ARG_WITH(key-dir,
-            AC_HELP_STRING([--with-key-dir=DIR],
+            AS_HELP_STRING([--with-key-dir=DIR],
                            [store host keys in DIR [[PREFIX/etc/shishi]]]),
             [case "${withval}" in
             /*) KEYDIR="${withval}";;
@@ -316,7 +314,7 @@ AC_MSG_NOTICE([host keys will be stored in $KEYDIR])
 # Location of Shisa database.
 AC_SUBST(DBDIR, "\$(localstatedir)/\$(PACKAGE)")
 AC_ARG_WITH(db-dir,
-            AC_HELP_STRING([--with-db-dir=DIR],
+            AS_HELP_STRING([--with-db-dir=DIR],
                            [Shisa database in DIR [[PREFIX/var/shishi]])]),
             [case "${withval}" in
             /*) DBDIR="${withval}";;
