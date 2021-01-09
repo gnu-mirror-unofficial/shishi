@@ -1,0 +1,11 @@
+--- gl/m4/valgrind-tests.m4.orig	2021-01-09 22:29:44.571054974 +0100
++++ gl/m4/valgrind-tests.m4	2021-01-09 22:29:57.719167798 +0100
+@@ -45,7 +45,7 @@
+     if test -n "$VALGRIND"; then
+       AC_CACHE_CHECK([for valgrind options for tests],
+         [gl_cv_opt_valgrind_tests],
+-        [gl_valgrind_opts='-q --error-exitcode=1 --leak-check=full'
++        [gl_valgrind_opts='-q --error-exitcode=1 --leak-check=no'
+          if $VALGRIND $gl_valgrind_opts ls > /dev/null 2>&1; then
+            gl_cv_opt_valgrind_tests="$gl_valgrind_opts"
+          else

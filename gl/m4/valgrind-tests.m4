@@ -45,7 +45,7 @@ AC_DEFUN([gl_VALGRIND_TESTS],
     if test -n "$VALGRIND"; then
       AC_CACHE_CHECK([for valgrind options for tests],
         [gl_cv_opt_valgrind_tests],
-        [gl_valgrind_opts='-q --error-exitcode=1 --leak-check=full'
+        [gl_valgrind_opts='-q --error-exitcode=1 --leak-check=no'
          if $VALGRIND $gl_valgrind_opts ls > /dev/null 2>&1; then
            gl_cv_opt_valgrind_tests="$gl_valgrind_opts"
          else
